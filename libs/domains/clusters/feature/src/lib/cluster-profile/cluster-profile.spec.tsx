@@ -4,7 +4,7 @@ import {
   type PlatformTemplateComponentResponse,
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
 import { usePlatformBinding } from '../platform-configuration/hooks/use-platform-binding'
@@ -12,6 +12,10 @@ import { usePlatformComponentConfigurations } from '../platform-configuration/ho
 import { ClusterProfileFeature } from './cluster-profile'
 
 jest.mock('@tanstack/react-router', () => ({ useParams: jest.fn() }))
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useDebounce: <T,>(value: T) => value,
+}))
 jest.mock('../hooks/use-cluster/use-cluster')
 jest.mock('../hooks/use-platform-templates/use-platform-templates')
 jest.mock('../platform-configuration/hooks/use-platform-binding')
@@ -118,7 +122,52 @@ const mockTemplates = [
         key: 'network',
         mandatory: false,
         enabledByDefault: true,
-        components: [createComponent('envoy')],
+        components: [
+          createComponent('envoy', [
+            {
+              key: 'envoy.client_validation.ca_certificates',
+              label: 'Client-validation CA certificates',
+              description: 'Trust anchors required for mutual TLS client validation.',
+              type: 'array',
+              required: false,
+              sensitive: false,
+              constraints: { minItems: null, maxItems: 2, uniqueItems: false },
+              items: {
+                type: 'object',
+                fields: [
+                  {
+                    key: 'name',
+                    label: 'Certificate name',
+                    type: 'string',
+                    required: true,
+                    sensitive: false,
+                    defaultValue: null,
+                    constraints: {},
+                  },
+                  {
+                    key: 'ca_crt',
+                    label: 'CA certificate PEM',
+                    type: 'string',
+                    required: true,
+                    sensitive: false,
+                    defaultValue: null,
+                    constraints: {},
+                  },
+                ],
+              },
+              itemFields: [],
+            },
+            {
+              key: 'envoy.trusted_cidrs',
+              label: 'Trusted CIDRs',
+              type: 'array',
+              required: false,
+              sensitive: false,
+              constraints: { uniqueItems: true },
+              items: { type: 'string', constraints: {} },
+            },
+          ]),
+        ],
       },
     ],
   },
@@ -293,6 +342,119 @@ describe('ClusterProfileFeature', () => {
     await userEvent.click(screen.getByRole('tab', { name: 'Loki' }))
 
     expect(onActiveComponentChange).toHaveBeenCalledWith('loki')
+  })
+
+  describe('array fields', () => {
+    beforeEach(() => {
+      mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['envoy']))
+    })
+
+    it('adds, edits and removes object array items through a modal', async () => {
+      const { userEvent } = renderWithProviders(
+        <ClusterProfileFeature organizationId="organization-id" activeComponentKey="envoy" />
+      )
+
+      expect(screen.getByText('Client-validation CA certificates')).toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: 'Add item to Client-validation CA certificates' }))
+
+      const dialog = await screen.findByRole('dialog')
+      expect(within(dialog).getByText('Client-validation CA certificates')).toBeInTheDocument()
+      expect(within(dialog).getByRole('button', { name: 'Add' })).toBeDisabled()
+
+      await userEvent.type(within(dialog).getByLabelText('Certificate name'), 'client-ca')
+      await userEvent.type(within(dialog).getByLabelText('CA certificate PEM'), 'pem')
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Add' }))
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(screen.getByText('client-ca')).toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Edit client-ca' }))
+      const editDialog = await screen.findByRole('dialog')
+      const nameInput = within(editDialog).getByLabelText('Certificate name')
+      expect(nameInput).toHaveValue('client-ca')
+      await userEvent.clear(nameInput)
+      await userEvent.type(nameInput, 'renamed-ca')
+      await userEvent.click(within(editDialog).getByRole('button', { name: 'Save' }))
+
+      expect(screen.getByText('renamed-ca')).toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Remove renamed-ca' }))
+      expect(screen.queryByText('renamed-ca')).not.toBeInTheDocument()
+    })
+
+    it('disables the add button once the item limit is reached', () => {
+      mockUsePlatformBinding.mockReturnValue({
+        data: {
+          managedConfig: {
+            envoy: {
+              'envoy.client_validation.ca_certificates': [
+                { name: 'first', ca_crt: 'pem' },
+                { name: 'second', ca_crt: 'pem' },
+              ],
+            },
+          },
+        },
+        isError: false,
+        isLoading: false,
+      } as unknown as ReturnType<typeof usePlatformBinding>)
+
+      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" activeComponentKey="envoy" />)
+
+      expect(screen.getByRole('button', { name: 'Add item to Client-validation CA certificates' })).toBeDisabled()
+      expect(screen.getByText('Limit of 2 reached.')).toBeInTheDocument()
+    })
+
+    it('adds scalar array items through a modal', async () => {
+      const { userEvent } = renderWithProviders(
+        <ClusterProfileFeature organizationId="organization-id" activeComponentKey="envoy" />
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: 'Add item to Trusted CIDRs' }))
+      const dialog = await screen.findByRole('dialog')
+      await userEvent.type(within(dialog).getByLabelText('Trusted CIDRs'), '10.0.0.0/8')
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Add' }))
+
+      expect(screen.getByText('10.0.0.0/8')).toBeInTheDocument()
+      const calls = mockUsePlatformComponentConfigurations.mock.calls
+      expect(calls[calls.length - 1][0].requests['envoy'].profileConfig).toEqual({
+        'envoy.trusted_cidrs': ['10.0.0.0/8'],
+      })
+    })
+
+    it('shows violations on array items and unmapped violations', () => {
+      mockUsePlatformBinding.mockReturnValue({
+        data: {
+          managedConfig: {
+            envoy: { 'envoy.client_validation.ca_certificates': [{ name: 'INVALID', ca_crt: 'pem' }] },
+          },
+        },
+        isError: false,
+        isLoading: false,
+      } as unknown as ReturnType<typeof usePlatformBinding>)
+      mockUsePlatformComponentConfigurations.mockReturnValue([
+        {
+          data: {
+            ...createResolution('envoy'),
+            violations: [
+              {
+                code: 'PATTERN',
+                fieldPath: 'envoy.client_validation.ca_certificates[0].name',
+                message: 'Name must be lowercase.',
+              },
+              { code: 'UNKNOWN', fieldPath: 'envoy.unknown', message: 'Something else is wrong.' },
+            ],
+          },
+          isError: false,
+          isFetching: false,
+        },
+      ] as ReturnType<typeof usePlatformComponentConfigurations>)
+
+      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" activeComponentKey="envoy" />)
+
+      expect(screen.getByText('INVALID')).toBeInTheDocument()
+      expect(screen.getByText('Name must be lowercase.')).toBeInTheDocument()
+      expect(screen.getByRole('alert')).toHaveTextContent('Something else is wrong.')
+    })
   })
 
   it('filters the layer tree from the search input', async () => {

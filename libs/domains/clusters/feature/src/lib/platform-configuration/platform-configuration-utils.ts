@@ -52,8 +52,89 @@ export type PlatformFieldDescriptor = {
   defaultValue?: string | null
 }
 
+export type PlatformArrayField = Extract<FieldSchemaResponse, { type: 'array' }>
+
+export type PlatformObjectField = Extract<FieldSchemaResponse, { type: 'object' }>
+
 export function isPlatformScalarField(field: FieldSchemaResponse): field is PlatformScalarField {
   return field.type === 'string' || field.type === 'number' || field.type === 'bool'
+}
+
+export function isPlatformArrayField(field: FieldSchemaResponse): field is PlatformArrayField {
+  return field.type === 'array'
+}
+
+export function isPlatformObjectField(field: FieldSchemaResponse): field is PlatformObjectField {
+  return field.type === 'object'
+}
+
+export function isSupportedPlatformField(field: FieldSchemaResponse) {
+  return isPlatformScalarField(field) || isPlatformArrayField(field) || isPlatformObjectField(field)
+}
+
+export function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+export function getPlatformFieldPath(parentPath: string | undefined, fieldKey: string) {
+  return parentPath ? `${parentPath}.${fieldKey}` : fieldKey
+}
+
+export function getPlatformArrayItemPath(arrayPath: string, index: number) {
+  return `${arrayPath}[${index}]`
+}
+
+// Prefer the row-specific descriptors evaluated by the resolver; items.fields
+// covers rows added locally that have not been resolved yet.
+export function getPlatformArrayItemFields(field: PlatformArrayField, index: number): FieldSchemaResponse[] {
+  if (field.items.type !== 'object') return []
+  return field.itemFields?.[index] ?? field.items.fields
+}
+
+export function toPlatformArrayItemDescriptor(field: PlatformArrayField): PlatformFieldDescriptor {
+  return {
+    key: 'value',
+    label: field.label,
+    type: field.items.type === 'object' ? 'string' : field.items.type,
+    sensitive: field.sensitive,
+    required: true,
+    constraints: field.items.type === 'object' ? {} : field.items.constraints,
+  }
+}
+
+export function getPlatformFieldPaths(
+  fields: FieldSchemaResponse[],
+  values: Record<string, unknown>,
+  parentPath?: string
+): string[] {
+  return fields.flatMap((field) => {
+    const path = getPlatformFieldPath(parentPath, field.key)
+    const value = values[field.key]
+
+    if (isPlatformObjectField(field)) {
+      return [path, ...getPlatformFieldPaths(field.fields, isPlainObject(value) ? value : {}, path)]
+    }
+
+    if (isPlatformArrayField(field)) {
+      const items = Array.isArray(value) ? value : []
+      return [
+        path,
+        ...items.flatMap((item, index) => {
+          const itemPath = getPlatformArrayItemPath(path, index)
+          return [
+            itemPath,
+            ...getPlatformFieldPaths(
+              getPlatformArrayItemFields(field, index),
+              isPlainObject(item) ? item : {},
+              itemPath
+            ),
+          ]
+        }),
+      ]
+    }
+
+    return isPlatformScalarField(field) ? [path] : []
+  })
 }
 
 export function getTemplateId(template: Pick<PlatformTemplateSummaryResponse, 'key' | 'version'>) {
@@ -158,8 +239,19 @@ export function toPlatformConfigurationValue(
   return Number.isFinite(numberValue) ? numberValue : value
 }
 
+function omitEmptyNestedValues(value: unknown): unknown {
+  // Array rows are kept in place so their indexes keep matching violation paths.
+  if (Array.isArray(value)) return value.map(omitEmptyNestedValues)
+  if (isPlainObject(value)) return omitEmptyValues(value)
+  return value
+}
+
 export function omitEmptyValues(values: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(Object.entries(values).filter(([, value]) => value !== '' && value !== undefined))
+  return Object.fromEntries(
+    Object.entries(values).flatMap(([key, value]) =>
+      value === '' || value === undefined ? [] : [[key, omitEmptyNestedValues(value)]]
+    )
+  )
 }
 
 export function updateComponentValue<T>(
@@ -184,20 +276,21 @@ export function updateComponentValue<T>(
 
 export function getFieldViolation(
   violations: PlatformComponentConfigurationViolationResponse[],
-  fieldKey: string,
+  fieldPath: string,
   source?: 'clusterInputs'
 ) {
-  const expectedPath = source ? `${source}.${fieldKey}` : fieldKey
+  const expectedPath = source ? `${source}.${fieldPath}` : fieldPath
   return violations.find((violation) => violation.fieldPath === expectedPath)?.message
 }
 
 export function getUnmappedViolations(
   violations: PlatformComponentConfigurationViolationResponse[],
   fields: FieldSchemaResponse[],
+  values: Record<string, unknown>,
   requirements: PlatformComponentInputRequirementResponse[]
 ) {
   const mappedPaths = new Set([
-    ...fields.map((field) => field.key),
+    ...getPlatformFieldPaths(fields, values),
     ...requirements.map((requirement) => `clusterInputs.${requirement.key}`),
   ])
   return violations.filter((violation) => !mappedPaths.has(violation.fieldPath))

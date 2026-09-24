@@ -207,7 +207,6 @@ export function ClusterProfileSidebar({
           </ul>
         </nav>
       </div>
-
     </aside>
   )
 }

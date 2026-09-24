@@ -19,12 +19,12 @@ import {
   type PlatformFieldDescriptor,
   applyPlatformConfigurationDefaults,
   getFieldViolation,
-  isPlatformScalarField,
+  getUnmappedViolations,
+  isSupportedPlatformField,
   omitEmptyValues,
   toCatalogVariableField,
   toPlatformCloudVendor,
   toPlatformClusterMode,
-  toPlatformConfigurationValue,
   updateComponentValue,
 } from '../platform-configuration/platform-configuration-utils'
 import {
@@ -32,6 +32,7 @@ import {
   ClusterProfileSidebar,
   type ClusterProfileSidebarLayer,
 } from './cluster-profile-sidebar'
+import { ProfileConfigurationField } from './profile-configuration-field'
 
 export const ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG = 'engine-v2-platform-configuration'
 
@@ -139,7 +140,7 @@ function getProfileSections(
 }
 
 function getSectionFields(section: ProfileSection, preview?: PlatformComponentConfigurationResolutionResponse) {
-  const fields = (preview?.fields ?? section.component.fields).filter(isPlatformScalarField)
+  const fields = (preview?.fields ?? section.component.fields).filter(isSupportedPlatformField)
   if (!section.fieldKeys) return fields
 
   return fields.filter((field) => section.fieldKeys?.includes(field.key))
@@ -188,24 +189,34 @@ function ProfileConfigurationSection({
   preview?: PlatformComponentConfigurationResolutionResponse
   profileConfig: Record<string, unknown>
   clusterInputs: Record<string, string>
-  onProfileConfigChange: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
+  onProfileConfigChange: (componentKey: string, fieldKey: string, value: unknown) => void
   onClusterInputChange: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
 }) {
   const fields = getSectionFields(section, preview)
   const requirements = preview?.requirements ?? []
   const violations = preview?.violations ?? []
+  // Sections showing a subset of a source component's fields would surface that component's other violations.
+  const unmappedViolations = section.fieldKeys
+    ? []
+    : getUnmappedViolations(violations, fields, profileConfig, requirements)
 
   return (
     <section className="flex flex-col">
+      {unmappedViolations.length > 0 ? (
+        <ul role="alert" className="flex flex-col gap-1 border-b border-neutral px-4 py-3 text-sm text-negative">
+          {unmappedViolations.map((violation) => (
+            <li key={`${violation.fieldPath}-${violation.code}`}>{violation.message}</li>
+          ))}
+        </ul>
+      ) : null}
       {fields.map((field) => (
-        <CatalogVariableInput
+        <ProfileConfigurationField
           key={field.key}
-          booleanControl="toggle"
-          field={toCatalogVariableField(field)}
-          layout="row"
-          value={getCatalogVariableValue(field, profileConfig[field.key])}
-          error={getFieldViolation(violations, field.key)}
-          onChange={(value) => onProfileConfigChange(section.component.key, field, value)}
+          field={field}
+          path={field.key}
+          value={profileConfig[field.key]}
+          violations={violations}
+          onChange={(value) => onProfileConfigChange(section.component.key, field.key, value)}
         />
       ))}
 
@@ -405,10 +416,8 @@ export function ClusterProfileFeature({
     [profileTree]
   )
 
-  const updateProfileConfig = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
-    setProfileValues((currentValues) =>
-      updateComponentValue(currentValues, componentKey, field.key, toPlatformConfigurationValue(field, value))
-    )
+  const updateProfileConfig = (componentKey: string, fieldKey: string, value: unknown) => {
+    setProfileValues((currentValues) => updateComponentValue(currentValues, componentKey, fieldKey, value))
   }
 
   const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {

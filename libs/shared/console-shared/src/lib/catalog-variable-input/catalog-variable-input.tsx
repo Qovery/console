@@ -22,7 +22,7 @@ export interface CatalogVariableInputProps {
 const DESCRIPTION_TRUNCATE_LIMIT = 200
 const formatDescription = (description: string) => description.replace(/([.!?])\s+/g, '$1\n')
 
-function CatalogVariableDescription({ description }: { description: string }) {
+export function CatalogVariableDescription({ description }: { description: string }) {
   const formattedDescription = formatDescription(description)
 
   return (
@@ -37,6 +37,72 @@ function CatalogVariableDescription({ description }: { description: string }) {
   )
 }
 
+function CatalogVariableControl({
+  autoFocus,
+  booleanControl = 'toggle',
+  error,
+  field,
+  onChange,
+  value,
+}: Omit<CatalogVariableInputProps, 'layout'>) {
+  if (field.type === 'bool') {
+    if (booleanControl === 'checkbox') {
+      return (
+        <Checkbox
+          name={field.key}
+          id={field.key}
+          autoFocus={autoFocus}
+          checked={typeof value === 'boolean' ? value : false}
+          onCheckedChange={(checked) => {
+            if (checked === 'indeterminate') return
+            onChange(checked)
+          }}
+        />
+      )
+    }
+
+    return (
+      <InputToggle
+        small
+        value={typeof value === 'boolean' ? value : false}
+        ariaLabel={field.label}
+        autoFocus={autoFocus}
+        onChange={onChange}
+      />
+    )
+  }
+
+  if (field.allowedValues?.length) {
+    return (
+      <InputSelectSmall
+        name={field.key}
+        ariaLabel={field.label}
+        inputClassName="h-10"
+        defaultValue={typeof value === 'string' ? value : ''}
+        items={field.allowedValues.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
+        onChange={(nextValue) => {
+          if (nextValue !== undefined) onChange(nextValue)
+        }}
+      />
+    )
+  }
+
+  return (
+    <InputTextSmall
+      name={field.key}
+      id={field.key}
+      label={field.label}
+      className="w-full [&>div[data-testid=input]]:!h-10 [&>div[data-testid=input]]:!min-h-10"
+      type={field.type === 'number' ? 'number' : field.sensitive ? 'password' : 'text'}
+      value={typeof value === 'string' ? value : ''}
+      error={error}
+      hasShowPasswordButton={field.sensitive}
+      autoFocus={autoFocus}
+      onChange={(event) => onChange(event.currentTarget.value)}
+    />
+  )
+}
+
 function CatalogVariableInputRow({
   autoFocus,
   booleanControl,
@@ -45,64 +111,6 @@ function CatalogVariableInputRow({
   onChange,
   value,
 }: Omit<CatalogVariableInputProps, 'layout'>) {
-  const renderControl = () => {
-    if (field.type === 'bool') {
-      if (booleanControl === 'checkbox') {
-        return (
-          <Checkbox
-            name={field.key}
-            id={field.key}
-            autoFocus={autoFocus}
-            checked={typeof value === 'boolean' ? value : false}
-            onCheckedChange={(checked) => {
-              if (checked === 'indeterminate') return
-              onChange(checked)
-            }}
-          />
-        )
-      }
-
-      return (
-        <InputToggle
-          small
-          value={typeof value === 'boolean' ? value : false}
-          ariaLabel={field.label}
-          autoFocus={autoFocus}
-          onChange={onChange}
-        />
-      )
-    }
-
-    if (field.allowedValues?.length) {
-      return (
-        <InputSelectSmall
-          name={field.key}
-          ariaLabel={field.label}
-          inputClassName="h-10"
-          defaultValue={typeof value === 'string' ? value : ''}
-          items={field.allowedValues.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
-          onChange={(nextValue) => {
-            if (nextValue !== undefined) onChange(nextValue)
-          }}
-        />
-      )
-    }
-
-    return (
-      <InputTextSmall
-        name={field.key}
-        label={field.label}
-        className="w-full [&>div[data-testid=input]]:!h-10 [&>div[data-testid=input]]:!min-h-10"
-        type={field.type === 'number' ? 'number' : field.sensitive ? 'password' : 'text'}
-        value={typeof value === 'string' ? value : ''}
-        error={error}
-        hasShowPasswordButton={field.sensitive}
-        autoFocus={autoFocus}
-        onChange={(event) => onChange(event.currentTarget.value)}
-      />
-    )
-  }
-
   return (
     <div className="flex flex-col gap-4 border-b border-neutral p-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0 flex-1">
@@ -110,7 +118,14 @@ function CatalogVariableInputRow({
         {field.description ? <CatalogVariableDescription description={field.description} /> : null}
       </div>
       <div className={field.type === 'bool' ? 'flex shrink-0 flex-col items-end' : 'w-full shrink-0 md:w-[400px]'}>
-        {renderControl()}
+        <CatalogVariableControl
+          autoFocus={autoFocus}
+          booleanControl={booleanControl}
+          error={error}
+          field={field}
+          onChange={onChange}
+          value={value}
+        />
         {error && (field.type === 'bool' || field.allowedValues?.length) ? (
           <p className="mt-1 text-xs font-medium text-negative">{error}</p>
         ) : null}
