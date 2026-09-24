@@ -190,4 +190,47 @@ describe('RowServiceLogs', () => {
       expect(screen.queryByText('ENVOY')).not.toBeInTheDocument()
     })
   })
+
+  describe('clickable URLs', () => {
+    const urlLog = {
+      ...mockLog,
+      message: 'Server ready at https://app.qovery.com now',
+    }
+
+    it('renders URLs in the message as links opening in a new tab', () => {
+      renderRowServiceLogs(urlLog)
+
+      const link = screen.getByRole('link', { name: 'https://app.qovery.com' })
+      expect(link).toHaveAttribute('href', 'https://app.qovery.com')
+      expect(link).toHaveAttribute('target', '_blank')
+    })
+
+    it('renders a URL preceded by a plus sign as a link while preserving punctuation and highlighting', () => {
+      renderRowServiceLogs(
+        {
+          ...mockLog,
+          message: '"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"',
+        },
+        false,
+        'http'
+      )
+
+      const link = screen.getByRole('link', { name: 'http://www.google.com/bot.html' })
+      expect(link).toHaveAttribute('href', 'http://www.google.com/bot.html')
+      expect(link).toHaveTextContent('http://www.google.com/bot.html')
+      expect(link).not.toHaveTextContent(')')
+      expect(link.querySelector('mark')).toHaveTextContent('http')
+      expect(link.closest('.code-ansi')).toBeInTheDocument()
+      expect(link).toHaveClass('underline')
+    })
+
+    it('does not toggle the row when a link is clicked', async () => {
+      const { userEvent } = renderRowServiceLogs(urlLog)
+
+      await userEvent.click(screen.getByRole('link', { name: 'https://app.qovery.com' }))
+
+      expect(screen.queryByText('Instance')).not.toBeInTheDocument()
+      expect(screen.queryByText('Container')).not.toBeInTheDocument()
+    })
+  })
 })
