@@ -106,13 +106,13 @@ export function GitProviderSetting({
             },
       ]
     : [
-        ...mergeProviders(showAuthProviders ? authProviders : [], gitTokens),
         {
           label: 'Public repository (Github, Gitlab, Bitbucket)',
           value: 'PUBLIC',
           icon: <Icon iconName="folder-closed" iconStyle="regular" width={16} height={16} />,
           searchText: 'Public repository Github Gitlab Bitbucket',
         },
+        ...mergeProviders(showAuthProviders ? authProviders : [], gitTokens),
       ]
 
   const onChange = (value: string, newToken?: GitTokenResponse) => {
