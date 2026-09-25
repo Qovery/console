@@ -84,13 +84,18 @@ export function AdvancedSettings({
   const advancedSettings = advancedSettingsProp ?? advancedSettingsFetched
   const defaultAdvancedSettings = defaultAdvancedSettingsProp ?? defaultAdvancedSettingsFetched
 
+  const hasBuildSettingsPage = ['APPLICATION', 'JOB', 'TERRAFORM'].includes(serviceType)
+  const shouldHideKey = (key: string) => hasBuildSettingsPage && key.startsWith('build.')
+
   const [overriddenOnly, setOverriddenOnly] = useState(false)
   const { control, handleSubmit, formState, reset } = useForm<Record<string, string>>({
     mode: 'onChange',
     defaultValues: {
       ...(advancedSettings
         ? Object.entries(advancedSettings).reduce<Record<string, string>>((acc, [key, value]) => {
-            acc[key] = formatValue(value)
+            if (!shouldHideKey(key)) {
+              acc[key] = formatValue(value)
+            }
             return acc
           }, {})
         : {}),
@@ -115,14 +120,14 @@ export function AdvancedSettings({
       }
     }
     return entries
-      .filter((entry) => !entry.name.startsWith('build.'))
+      .filter((entry) => !shouldHideKey(entry.name))
       .sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
   }, [advancedSettings, defaultAdvancedSettings])
 
   const onSubmit = handleSubmit((data: Record<string, string>) => {
     let dataFormatted = { ...data }
     Object.keys(dataFormatted).forEach((key) => {
-      if (key.includes('.')) delete dataFormatted[key]
+      if (key.includes('.') || shouldHideKey(key)) delete dataFormatted[key]
     })
     dataFormatted = objectFlattener(dataFormatted)
     Object.keys(dataFormatted).forEach((key) => {

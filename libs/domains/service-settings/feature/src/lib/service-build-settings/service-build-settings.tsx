@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { type Application, type Job, type Terraform } from '@qovery/domains/services/data-access'
 import {
@@ -14,6 +14,12 @@ import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 type BuildSettingsService = Application | Job | Terraform
+
+const BUILD_SETTINGS_SERVICE_TYPES = ['APPLICATION', 'JOB', 'TERRAFORM'] as const
+
+function isBuildSettingsServiceType(serviceType: string): serviceType is BuildSettingsService['serviceType'] {
+  return (BUILD_SETTINGS_SERVICE_TYPES as readonly string[]).includes(serviceType)
+}
 
 interface BuildSettingsFormData {
   timeout_max_sec: number | ''
@@ -61,10 +67,7 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="px-8 pb-8 pt-6">
-        <SettingsHeading
-          title="Build settings"
-          description="Configure the build parameters for this service."
-        />
+        <SettingsHeading title="Build settings" description="Configure the build parameters for this service." />
         <div className="max-w-content-with-navigation-left">
           {disabled && (
             <Callout.Root color="yellow" className="mb-6">
@@ -73,7 +76,14 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
               </Callout.Icon>
               <Callout.Text className="flex w-full items-center justify-between">
                 <span>Build settings customization is not available for your organization.</span>
-                <Button type="button" size="sm" variant="outline" color="yellow" className="shrink-0" onClick={showChat}>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  color="yellow"
+                  className="shrink-0"
+                  onClick={showChat}
+                >
                   Contact support
                 </Button>
               </Callout.Text>
@@ -190,14 +200,44 @@ function ServiceBuildSettingsContent() {
 
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
 
+  if (!service || !isBuildSettingsServiceType(service.serviceType)) {
+    return <p className="p-8 text-sm text-neutral-subtle">Build settings are not available for this service type.</p>
+  }
+
+  return (
+    <ServiceBuildSettingsForm
+      service={service as BuildSettingsService}
+      organizationId={organizationId}
+      projectId={projectId}
+      environmentId={environmentId}
+      serviceId={serviceId}
+    />
+  )
+}
+
+interface ServiceBuildSettingsFormProps {
+  service: BuildSettingsService
+  organizationId: string
+  projectId: string
+  environmentId: string
+  serviceId: string
+}
+
+function ServiceBuildSettingsForm({
+  service,
+  organizationId,
+  projectId,
+  environmentId,
+  serviceId,
+}: ServiceBuildSettingsFormProps) {
   const { data: advancedSettings } = useAdvancedSettings({
     serviceId,
-    serviceType: service?.serviceType as BuildSettingsService['serviceType'],
+    serviceType: service.serviceType,
     suspense: true,
   })
 
   const { data: defaultAdvancedSettings } = useDefaultAdvancedSettings({
-    serviceType: service?.serviceType as BuildSettingsService['serviceType'],
+    serviceType: service.serviceType,
     suspense: true,
   })
 
@@ -215,19 +255,26 @@ function ServiceBuildSettingsContent() {
     ),
   })
 
-  if (!service) return null
+  // Reset form when navigating between services
+  useEffect(() => {
+    methods.reset(
+      getDefaultValues(
+        advancedSettings as Record<string, unknown> | undefined,
+        defaultAdvancedSettings as Record<string, unknown> | undefined
+      )
+    )
+  }, [serviceId, advancedSettings, defaultAdvancedSettings, methods])
 
-  const buildService = service as BuildSettingsService
-  const isTerraform = buildService.serviceType === 'TERRAFORM'
+  const isTerraform = service.serviceType === 'TERRAFORM'
   // TODO: remove cast once SDK is regenerated with build_settings_editable field
-  const buildSettingsEditable = (buildService as BuildSettingsService & { build_settings_editable?: boolean })
-    .build_settings_editable ?? false
+  const buildSettingsEditable =
+    (service as BuildSettingsService & { build_settings_editable?: boolean }).build_settings_editable ?? false
 
   const onSubmit = methods.handleSubmit((data) => {
     const buildSettings: Record<string, unknown> = {
-      timeout_max_sec: Number(data.timeout_max_sec),
-      cpu_max_in_milli: Number(data.cpu_max_in_milli),
-      ram_max_in_gib: Number(data.ram_max_in_gib),
+      timeout_max_sec: toNumberOrNull(data.timeout_max_sec),
+      cpu_max_in_milli: toNumberOrNull(data.cpu_max_in_milli),
+      ram_max_in_gib: toNumberOrNull(data.ram_max_in_gib),
       ephemeral_storage_in_gib: toNumberOrNull(data.ephemeral_storage_in_gib),
       skip_git_submodules: data.skip_git_submodules,
     }
@@ -237,20 +284,17 @@ function ServiceBuildSettingsContent() {
     }
 
     const payload = buildEditServicePayload({
-      service: buildService,
+      service,
       request: { build_settings: buildSettings },
     } as Parameters<typeof buildEditServicePayload>[0])
 
-    editService(
-      { serviceId, payload },
-      { onSuccess: () => methods.reset(data) }
-    )
+    editService({ serviceId, payload }, { onSuccess: () => methods.reset(data) })
   })
 
   return (
     <FormProvider {...methods}>
       <BuildSettingsForm
-        service={buildService}
+        service={service}
         onSubmit={onSubmit}
         loading={isLoading}
         disabled={!buildSettingsEditable}

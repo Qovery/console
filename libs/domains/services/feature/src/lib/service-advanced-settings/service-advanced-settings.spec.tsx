@@ -1,5 +1,5 @@
-import { type Application } from '@qovery/domains/services/data-access'
-import { applicationFactoryMock } from '@qovery/shared/factories'
+import { type Application, type Container } from '@qovery/domains/services/data-access'
+import { applicationFactoryMock, containerFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitForElementToBeRemoved } from '@qovery/shared/util-tests'
 import { AdvancedSettings } from './service-advanced-settings'
 
@@ -23,6 +23,7 @@ jest.mock('../hooks/use-edit-advanced-settings/use-edit-advanced-settings', () =
 }))
 
 const mockApplication: Application = applicationFactoryMock(1)[0]
+const mockContainer: Container = containerFactoryMock(1)[0]
 
 type AdvancedSettingsType = string | number | object | boolean | null
 
@@ -178,6 +179,25 @@ describe('AdvancedSettings', () => {
     expect(screen.queryByText('build.cpu_max_in_milli')).not.toBeInTheDocument()
     expect(screen.queryByText('build.ram_max_in_gib')).not.toBeInTheDocument()
     expect(screen.getByText('deployment.custom_domain_check_enabled')).toBeInTheDocument()
+  })
+
+  it('should still display build.* keys for Container services', () => {
+    const advancedSettingsWithBuild = {
+      ...advancedSettings,
+      'build.timeout_max_sec': 1800,
+    }
+    const defaultAdvancedSettingsWithBuild = {
+      ...defaultAdvancedSettings,
+      'build.timeout_max_sec': 1800,
+    }
+    renderWithProviders(
+      <AdvancedSettings
+        service={mockContainer}
+        advancedSettings={advancedSettingsWithBuild}
+        defaultAdvancedSettings={defaultAdvancedSettingsWithBuild}
+      />
+    )
+    expect(screen.getByText('build.timeout_max_sec')).toBeInTheDocument()
   })
 
   it('should hide the sticky toaster after a successful submit', async () => {
