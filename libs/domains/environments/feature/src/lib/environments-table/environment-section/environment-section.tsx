@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { EnvironmentModeEnum, type EnvironmentOverviewResponse, StateEnum } from 'qovery-typescript-axios'
-import { type KeyboardEvent, type MouseEvent, useMemo } from 'react'
+import { type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
 import { Button, Checkbox, DeploymentAction, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
@@ -192,6 +192,71 @@ function lastOperationTimestamp(overview: EnvironmentOverviewResponse) {
   return lastDeploymentDate ? new Date(lastDeploymentDate).getTime() : 0
 }
 
+function lastUpdateTimestamp(overview: EnvironmentOverviewResponse) {
+  return new Date(overview.updated_at ?? Date.now()).getTime()
+}
+
+type EnvironmentSortColumn = 'name' | 'last-operation' | 'cluster' | 'last-update'
+type SortDirection = 'asc' | 'desc'
+
+interface EnvironmentSort {
+  column: EnvironmentSortColumn
+  direction: SortDirection
+}
+
+function compareEnvironments(
+  environmentA: EnvironmentOverviewResponse,
+  environmentB: EnvironmentOverviewResponse,
+  column: EnvironmentSortColumn
+) {
+  return match(column)
+    .with('name', () => (environmentA.name ?? '').localeCompare(environmentB.name ?? ''))
+    .with('cluster', () => (environmentA.cluster?.name ?? '').localeCompare(environmentB.cluster?.name ?? ''))
+    .with('last-operation', () => lastOperationTimestamp(environmentA) - lastOperationTimestamp(environmentB))
+    .with('last-update', () => lastUpdateTimestamp(environmentA) - lastUpdateTimestamp(environmentB))
+    .exhaustive()
+}
+
+function SortableColumnHeader({
+  label,
+  column,
+  sort,
+  onSort,
+  className,
+  buttonClassName,
+}: {
+  label: string
+  column: EnvironmentSortColumn
+  sort: EnvironmentSort | null
+  onSort: (column: EnvironmentSortColumn) => void
+  className?: string
+  buttonClassName?: string
+}) {
+  const isSorted = sort?.column === column
+
+  return (
+    <Table.ColumnHeaderCell
+      aria-sort={isSorted ? (sort?.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
+      className={twMerge('flex h-9 items-center p-0 text-neutral-subtle', className)}
+    >
+      <button
+        type="button"
+        aria-label={`Sort by ${label.toLowerCase()}`}
+        className={twMerge('flex h-full w-full cursor-pointer select-none items-center gap-1', buttonClassName)}
+        onClick={() => onSort(column)}
+      >
+        {label}
+        {isSorted &&
+          sort &&
+          match(sort.direction)
+            .with('asc', () => <Icon className="text-ssm" iconName="arrow-down" />)
+            .with('desc', () => <Icon className="text-ssm" iconName="arrow-up" />)
+            .exhaustive()}
+      </button>
+    </Table.ColumnHeaderCell>
+  )
+}
+
 export function EnvironmentSection({
   type,
   items,
@@ -214,15 +279,34 @@ export function EnvironmentSection({
     .with('PREVIEW', () => 'Ephemeral')
     .exhaustive()
 
-  const sortedItems = useMemo(() => {
-    if (type !== EnvironmentModeEnum.PREVIEW) {
-      return items
-    }
+  // Ephemeral environments default to the most recent operation first, every other
+  // section keeps the historical alphabetical order. Clicking a header overrides this.
+  const [sort, setSort] = useState<EnvironmentSort | null>(null)
 
-    return [...items].sort(
-      (environmentA, environmentB) => lastOperationTimestamp(environmentB) - lastOperationTimestamp(environmentA)
-    )
-  }, [items, type])
+  const handleSort = useCallback((column: EnvironmentSortColumn) => {
+    setSort((currentSort) => {
+      if (currentSort?.column !== column) return { column, direction: 'asc' }
+      return currentSort.direction === 'asc' ? { column, direction: 'desc' } : null
+    })
+  }, [])
+
+  const sortedItems = useMemo(() => {
+    const activeSort: EnvironmentSort =
+      sort ??
+      (type === EnvironmentModeEnum.PREVIEW
+        ? { column: 'last-operation', direction: 'desc' }
+        : { column: 'name', direction: 'asc' })
+    const directionFactor = activeSort.direction === 'asc' ? 1 : -1
+
+    return [...items].sort((environmentA, environmentB) => {
+      const comparison = compareEnvironments(environmentA, environmentB, activeSort.column)
+      if (comparison !== 0) {
+        return directionFactor * comparison
+      }
+      // Stable, predictable fallback so rows with equal values keep an alphabetical order
+      return (environmentA.name ?? '').localeCompare(environmentB.name ?? '')
+    })
+  }, [items, sort, type])
 
   const EmptyState = () =>
     match(type)
@@ -291,18 +375,37 @@ export function EnvironmentSection({
                   />
                 </div>
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-9 items-center py-0 pl-0 pr-4 text-neutral-subtle">
-                Environment
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
-                Last operation
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
-                Cluster
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
-                Last update
-              </Table.ColumnHeaderCell>
+              <SortableColumnHeader
+                label="Environment"
+                column="name"
+                sort={sort}
+                onSort={handleSort}
+                buttonClassName="pl-0 pr-4"
+              />
+              <SortableColumnHeader
+                label="Last operation"
+                column="last-operation"
+                sort={sort}
+                onSort={handleSort}
+                className="border-l border-neutral"
+                buttonClassName="px-4"
+              />
+              <SortableColumnHeader
+                label="Cluster"
+                column="cluster"
+                sort={sort}
+                onSort={handleSort}
+                className="border-l border-neutral"
+                buttonClassName="px-4"
+              />
+              <SortableColumnHeader
+                label="Last update"
+                column="last-update"
+                sort={sort}
+                onSort={handleSort}
+                className="border-l border-neutral"
+                buttonClassName="px-4"
+              />
               <Table.ColumnHeaderCell className="flex h-9 items-center justify-end border-l border-neutral text-left text-neutral-subtle">
                 Actions
               </Table.ColumnHeaderCell>

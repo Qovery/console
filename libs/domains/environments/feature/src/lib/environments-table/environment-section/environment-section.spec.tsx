@@ -157,6 +157,94 @@ describe('EnvironmentSection', () => {
     expect(screen.queryByText(/0 seconds ago/i)).not.toBeInTheDocument()
   })
 
+  it('sorts environments on click and restores the default order after the third click', async () => {
+    const environments = [
+      { ...overview, id: 'env-b', name: 'Beta' },
+      { ...overview, id: 'env-a', name: 'Alpha' },
+    ] as EnvironmentOverviewResponse[]
+
+    const { userEvent } = renderWithProviders(
+      <EnvironmentSection type={EnvironmentModeEnum.DEVELOPMENT} items={environments} />
+    )
+
+    const getEnvironmentNames = () =>
+      screen
+        .getAllByRole('checkbox', { name: /^Select (Alpha|Beta)$/i })
+        .map((checkbox) => checkbox.getAttribute('aria-label')?.replace('Select ', ''))
+
+    expect(getEnvironmentNames()).toEqual(['Alpha', 'Beta'])
+
+    await userEvent.click(screen.getByRole('button', { name: /sort by environment/i }))
+
+    expect(getEnvironmentNames()).toEqual(['Alpha', 'Beta'])
+
+    await userEvent.click(screen.getByRole('button', { name: /sort by environment/i }))
+
+    expect(getEnvironmentNames()).toEqual(['Beta', 'Alpha'])
+
+    await userEvent.click(screen.getByRole('button', { name: /sort by environment/i }))
+
+    expect(getEnvironmentNames()).toEqual(['Alpha', 'Beta'])
+  })
+
+  it('sorts a missing last update as just now, as displayed in its row', async () => {
+    jest.setSystemTime(new Date('2026-03-18T12:00:00.000Z'))
+    const environments = [
+      { ...overview, id: 'env-a', name: 'Alpha' },
+      { ...overview, id: 'env-b', name: 'Beta', updated_at: undefined },
+    ] as EnvironmentOverviewResponse[]
+
+    const { userEvent } = renderWithProviders(
+      <EnvironmentSection type={EnvironmentModeEnum.DEVELOPMENT} items={environments} />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /sort by last update/i }))
+    const getEnvironmentNames = () =>
+      screen
+        .getAllByRole('checkbox', { name: /^Select (Alpha|Beta)$/i })
+        .map((checkbox) => checkbox.getAttribute('aria-label')?.replace('Select ', ''))
+
+    expect(getEnvironmentNames()).toEqual(['Alpha', 'Beta'])
+
+    await userEvent.click(screen.getByRole('button', { name: /sort by last update/i }))
+    expect(getEnvironmentNames()).toEqual(['Beta', 'Alpha'])
+  })
+
+  it('should reflect the current sort state through aria-sort on the column headers', async () => {
+    const { userEvent } = renderWithProviders(
+      <EnvironmentSection type={EnvironmentModeEnum.DEVELOPMENT} items={[overview]} />
+    )
+
+    const environmentHeader = screen.getByRole('columnheader', { name: 'Environment' })
+    const clusterHeader = screen.getByRole('columnheader', { name: 'Cluster' })
+
+    expect(environmentHeader).toHaveAttribute('aria-sort', 'none')
+    expect(clusterHeader).toHaveAttribute('aria-sort', 'none')
+    expect(environmentHeader.querySelector('.fa-arrow-down')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /sort by environment/i }))
+    expect(environmentHeader).toHaveAttribute('aria-sort', 'ascending')
+    expect(environmentHeader.querySelector('.fa-arrow-down')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /sort by environment/i }))
+    expect(environmentHeader).toHaveAttribute('aria-sort', 'descending')
+    expect(environmentHeader.querySelector('.fa-arrow-up')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /sort by cluster/i }))
+    expect(clusterHeader).toHaveAttribute('aria-sort', 'ascending')
+    expect(environmentHeader).toHaveAttribute('aria-sort', 'none')
+    expect(clusterHeader.querySelector('.fa-arrow-down')).toBeInTheDocument()
+    expect(environmentHeader.querySelector('.fa-arrow-up')).not.toBeInTheDocument()
+  })
+
+  it('keeps the ephemeral default sort without showing an arrow initially', () => {
+    renderWithProviders(<EnvironmentSection type={EnvironmentModeEnum.PREVIEW} items={[overview]} />)
+
+    const lastOperationHeader = screen.getByRole('columnheader', { name: 'Last operation' })
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'none')
+    expect(lastOperationHeader.querySelector('.fa-arrow-up')).not.toBeInTheDocument()
+  })
+
   it('should disable the deploy button when the environment is managed by ArgoCD', async () => {
     const { userEvent } = renderWithProviders(
       <EnvironmentSection

@@ -240,19 +240,27 @@ export function ServiceList({ className, containerClassName, environment, ...pro
           return <StatusChip status={info.row.original.status} />
         },
       }),
-      columnHelper.display({
-        id: 'last_deployment',
-        header: 'Last operation',
-        enableColumnFilter: false,
-        enableSorting: false,
-        cell: (info) => (
-          <ServiceLastDeploymentCell
-            service={info.row.original}
-            environment={environment}
-            isSkipped={info.row.original.isSkipped}
-          />
-        ),
-      }),
+      columnHelper.accessor(
+        (service) => {
+          const lastDeploymentDate = service.isSkipped ? undefined : service.deploymentStatus?.last_deployment_date
+          return lastDeploymentDate ? new Date(lastDeploymentDate).getTime() : 0
+        },
+        {
+          id: 'last_deployment',
+          header: 'Last operation',
+          enableColumnFilter: false,
+          enableSorting: true,
+          sortingFn: 'basic',
+          sortDescFirst: false,
+          cell: (info) => (
+            <ServiceLastDeploymentCell
+              service={info.row.original}
+              environment={environment}
+              isSkipped={info.row.original.isSkipped}
+            />
+          ),
+        }
+      ),
       columnHelper.accessor('version', {
         header: 'Target version',
         enableColumnFilter: false,
