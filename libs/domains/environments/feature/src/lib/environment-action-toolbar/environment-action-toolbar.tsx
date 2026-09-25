@@ -12,7 +12,7 @@ import { isArgoCd, isEditableService } from '@qovery/domains/services/data-acces
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
 import { useVariables } from '@qovery/domains/variables/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, OVERVIEW_URL } from '@qovery/shared/routes'
+import { OVERVIEW_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
@@ -94,18 +94,25 @@ export function MenuManageDeployment({
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  const logsLink =
-    ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) + ENVIRONMENT_STAGES_URL()
-
   const { mutate: deployEnvironment } = useDeployEnvironment({
+    organizationId: environment.organization.id,
     projectId: environment.project.id,
-    logsLink,
+    environmentId: environment.id,
   })
-  const { mutate: stopEnvironment } = useStopEnvironment({ projectId: environment.project.id, logsLink })
-  const { mutate: uninstallEnvironment } = useUninstallEnvironment({ projectId: environment.project.id, logsLink })
-  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
+  const { mutate: stopEnvironment } = useStopEnvironment({
+    organizationId: environment.organization.id,
     projectId: environment.project.id,
-    logsLink,
+    environmentId: environment.id,
+  })
+  const { mutate: uninstallEnvironment } = useUninstallEnvironment({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+  })
+  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
   })
   // XXX: Required to display a warning for managed Database
   // https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1416

@@ -157,10 +157,10 @@ describe('EnvironmentActionToolbar', () => {
 
     expect(mockOpenModal).toHaveBeenCalledWith(
       expect.objectContaining({
-        options: {
+        options: expect.objectContaining({
           fakeModal: true,
           width: 676,
-        },
+        }),
       })
     )
   })

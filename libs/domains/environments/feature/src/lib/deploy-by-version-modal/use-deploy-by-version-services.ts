@@ -23,7 +23,7 @@ interface UseDeployByVersionServicesProps {
 const queryOptions = {
   staleTime: 3 * 60 * 1000,
   retry: false,
-  retryOnMount: false,
+  retryOnMount: true,
   refetchOnWindowFocus: false,
 } as const
 

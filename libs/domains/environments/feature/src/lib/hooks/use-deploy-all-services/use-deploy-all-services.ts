@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
+import { type EnvironmentStatus } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/services/data-access'
-import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { queries } from '@qovery/state/util-queries'
+import { getLatestEnvironmentDeploymentId } from '../get-latest-environment-deployment-id'
 
 // XXX: Duplicate with the one in the Services domain
 // Necessary to avoid circular dependencies
@@ -54,7 +55,8 @@ export function useDeployAllServices() {
       }
     },
     meta: {
-      notifyOnSuccess(_: unknown, variables: unknown) {
+      notifyOnSuccess(data: unknown, variables: unknown) {
+        const { last_deployment_id: deploymentId } = data as EnvironmentStatus
         const {
           environment: {
             id: environmentId,
@@ -64,10 +66,18 @@ export function useDeployAllServices() {
         } = variables as Parameters<typeof mutations.deployAllServices>[0]
         return {
           title: 'Your services are being deployed',
-          labelAction: 'See deployment logs',
-          callback() {
+          labelAction: 'See pipeline',
+          callback: async () => {
+            const resolvedDeploymentId = await getLatestEnvironmentDeploymentId(
+              queryClient,
+              environmentId,
+              deploymentId
+            )
+            if (!resolvedDeploymentId) return
+
             navigate({
-              to: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId),
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
+              params: { organizationId, projectId, environmentId, deploymentId: resolvedDeploymentId },
             })
           },
         }
