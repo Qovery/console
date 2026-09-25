@@ -1,15 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { type EnvironmentStatus } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
-import { getLatestEnvironmentDeploymentId } from '../get-latest-environment-deployment-id'
+import { useNavigateToEnvironmentPipeline } from '../use-navigate-to-environment-pipeline'
 
 // XXX: Duplicate with the one in the Services domain
 // Necessary to avoid circular dependencies
 export function useDeployAllServices() {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const navigateToEnvironmentPipeline = useNavigateToEnvironmentPipeline()
 
   return useMutation(mutations.deployAllServices, {
     onSuccess(_, { environment, payload }) {
@@ -67,19 +66,7 @@ export function useDeployAllServices() {
         return {
           title: 'Your services are being deployed',
           labelAction: 'See pipeline',
-          callback: async () => {
-            const resolvedDeploymentId = await getLatestEnvironmentDeploymentId(
-              queryClient,
-              environmentId,
-              deploymentId
-            )
-            if (!resolvedDeploymentId) return
-
-            navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
-              params: { organizationId, projectId, environmentId, deploymentId: resolvedDeploymentId },
-            })
-          },
+          callback: () => navigateToEnvironmentPipeline({ organizationId, projectId, environmentId, deploymentId }),
         }
       },
       notifyOnError: true,

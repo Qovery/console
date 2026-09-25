@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { type Status } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
-import { getLatestEnvironmentDeploymentId } from '../get-latest-environment-deployment-id'
+import { useNavigateToEnvironmentPipeline } from '../use-navigate-to-environment-pipeline'
 
 export function useDeployEnvironment({
   organizationId,
@@ -15,7 +14,7 @@ export function useDeployEnvironment({
   environmentId: string
 }) {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const navigateToEnvironmentPipeline = useNavigateToEnvironmentPipeline()
 
   return useMutation(mutations.deployEnvironment, {
     onSuccess(_, { environmentId }) {
@@ -36,19 +35,7 @@ export function useDeployEnvironment({
         return {
           title: 'Your environment is redeploying',
           labelAction: 'See pipeline',
-          callback: async () => {
-            const resolvedDeploymentId = await getLatestEnvironmentDeploymentId(
-              queryClient,
-              environmentId,
-              deploymentId
-            )
-            if (!resolvedDeploymentId) return
-
-            navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
-              params: { organizationId, projectId, environmentId, deploymentId: resolvedDeploymentId },
-            })
-          },
+          callback: () => navigateToEnvironmentPipeline({ organizationId, projectId, environmentId, deploymentId }),
         }
       },
       notifyOnError: true,
