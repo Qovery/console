@@ -24,7 +24,7 @@ export async function getLatestEnvironmentDeploymentId(
       staleTime: 0,
     })
 
-    const latestDeploymentId = [...deployments].sort(
+    const latestDeploymentId = [...(deployments ?? [])].sort(
       (a, b) => new Date(b.auditing_data.created_at).getTime() - new Date(a.auditing_data.created_at).getTime()
     )[0]?.identifier.execution_id
 
