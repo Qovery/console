@@ -439,7 +439,7 @@ function ClusterProfileView({
 
   return (
     <div className="flex h-page-container min-h-0 flex-col overflow-hidden bg-background-secondary text-sm">
-      <header className="flex min-h-11 items-center justify-between gap-4 bg-surface-neutral px-4 py-2">
+      <header className="flex min-h-11 items-center justify-between gap-4 px-4 py-2">
         <div className="flex min-w-0 items-center gap-2">
           <Icon name={IconEnum.AWS} width={20} height={20} />
           <p className="truncate font-medium text-neutral">{cluster?.name ?? 'Cluster'}</p>
