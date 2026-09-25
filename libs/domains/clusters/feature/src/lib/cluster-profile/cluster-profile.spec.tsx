@@ -204,7 +204,7 @@ function createComponentQueries(componentKeys: string[], isFetching = false, isE
 describe('ClusterProfileFeature', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseParams.mockReturnValue({ clusterId: 'cluster-id' })
+    mockUseParams.mockReturnValue({ organizationId: 'organization-id', clusterId: 'cluster-id' })
     mockUseCluster.mockReturnValue({
       data: { cloud_provider: 'AWS', kubernetes: 'SELF_MANAGED' },
       isError: false,
@@ -228,7 +228,7 @@ describe('ClusterProfileFeature', () => {
   })
 
   it('renders API-defined configuration fields', () => {
-    const { container } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+    const { container } = renderWithProviders(<ClusterProfileFeature />)
 
     expect(mockUsePlatformTemplates).toHaveBeenCalledWith({
       organizationId: 'organization-id',
@@ -259,7 +259,7 @@ describe('ClusterProfileFeature', () => {
   })
 
   it('allows the UI controls to be previewed locally', async () => {
-    const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+    const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
     expect(screen.getByRole('tab', { name: 'Loki' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toHaveValue(12)
@@ -273,21 +273,19 @@ describe('ClusterProfileFeature', () => {
   })
 
   it('renders configuration sections from their source component', () => {
-    renderWithProviders(<ClusterProfileFeature organizationId="organization-id" activeComponentKey="alloy" />)
+    renderWithProviders(<ClusterProfileFeature activeComponentKey="alloy" />)
 
     expect(screen.getByRole('textbox', { name: 'Endpoint' })).toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: 'Resource profile' })).toBeInTheDocument()
   })
 
   it('shows a skeleton instead of stale fields while switching components', () => {
-    const { rerender } = renderWithProviders(
-      <ClusterProfileFeature organizationId="organization-id" activeComponentKey="loki" />
-    )
+    const { rerender } = renderWithProviders(<ClusterProfileFeature activeComponentKey="loki" />)
 
     expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toBeInTheDocument()
 
     mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki'], true))
-    rerender(<ClusterProfileFeature organizationId="organization-id" activeComponentKey="alloy" />)
+    rerender(<ClusterProfileFeature activeComponentKey="alloy" />)
 
     expect(screen.getByRole('status', { name: 'Loading configuration' })).toBeInTheDocument()
     expect(screen.queryByRole('spinbutton', { name: 'Retention period' })).not.toBeInTheDocument()
@@ -298,14 +296,14 @@ describe('ClusterProfileFeature', () => {
       { data: undefined, isError: false, isFetching: true },
     ] as ReturnType<typeof usePlatformComponentConfigurations>)
 
-    renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+    renderWithProviders(<ClusterProfileFeature />)
 
     expect(screen.getByRole('status', { name: 'Loading configuration' })).toBeInTheDocument()
     expect(screen.queryByRole('spinbutton', { name: 'Retention period' })).not.toBeInTheDocument()
   })
 
   it('keeps the form visible while a field edit triggers a resolver refetch', async () => {
-    const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+    const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
     const highAvailability = screen.getByRole('switch', { name: 'High availability' })
 
     await userEvent.click(highAvailability)
@@ -318,7 +316,7 @@ describe('ClusterProfileFeature', () => {
   it('keeps the last resolved form visible when a background resolver refresh fails', () => {
     mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki'], false, true))
 
-    renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+    renderWithProviders(<ClusterProfileFeature />)
 
     expect(screen.getByRole('alert')).toHaveTextContent('The last resolved fields are still shown.')
     expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toBeInTheDocument()
@@ -330,7 +328,7 @@ describe('ClusterProfileFeature', () => {
       ...createComponentQueries(['alloy'], false, true),
     ])
 
-    renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+    renderWithProviders(<ClusterProfileFeature />)
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toBeInTheDocument()
@@ -339,11 +337,7 @@ describe('ClusterProfileFeature', () => {
   it('uses the URL-selected component as the active sidebar item', async () => {
     const onActiveComponentChange = jest.fn()
     const { userEvent } = renderWithProviders(
-      <ClusterProfileFeature
-        organizationId="organization-id"
-        activeComponentKey="alloy"
-        onActiveComponentChange={onActiveComponentChange}
-      />
+      <ClusterProfileFeature activeComponentKey="alloy" onActiveComponentChange={onActiveComponentChange} />
     )
 
     expect(screen.getByRole('button', { name: 'Log infra' }).closest('li')).toHaveClass('bg-surface-neutral-component')
@@ -362,9 +356,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('adds, edits and removes object array items through a modal', async () => {
-      const { userEvent } = renderWithProviders(
-        <ClusterProfileFeature organizationId="organization-id" activeComponentKey="envoy" />
-      )
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature activeComponentKey="envoy" />)
 
       expect(screen.getByText('Client-validation CA certificates')).toBeInTheDocument()
       await userEvent.click(screen.getByRole('button', { name: 'Add item to Client-validation CA certificates' }))
@@ -410,16 +402,14 @@ describe('ClusterProfileFeature', () => {
         isLoading: false,
       } as unknown as ReturnType<typeof usePlatformBinding>)
 
-      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" activeComponentKey="envoy" />)
+      renderWithProviders(<ClusterProfileFeature activeComponentKey="envoy" />)
 
       expect(screen.getByRole('button', { name: 'Add item to Client-validation CA certificates' })).toBeDisabled()
       expect(screen.getByText('Limit of 2 reached.')).toBeInTheDocument()
     })
 
     it('adds scalar array items through a modal', async () => {
-      const { userEvent } = renderWithProviders(
-        <ClusterProfileFeature organizationId="organization-id" activeComponentKey="envoy" />
-      )
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature activeComponentKey="envoy" />)
 
       await userEvent.click(screen.getByRole('button', { name: 'Add item to Trusted CIDRs' }))
       const dialog = await screen.findByRole('dialog')
@@ -461,7 +451,7 @@ describe('ClusterProfileFeature', () => {
         },
       ] as ReturnType<typeof usePlatformComponentConfigurations>)
 
-      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" activeComponentKey="envoy" />)
+      renderWithProviders(<ClusterProfileFeature activeComponentKey="envoy" />)
 
       expect(screen.getByText('INVALID')).toBeInTheDocument()
       expect(screen.getByText('Name must be lowercase.')).toBeInTheDocument()
@@ -472,9 +462,7 @@ describe('ClusterProfileFeature', () => {
   describe('search', () => {
     it('reports search input changes', async () => {
       const onSearchChange = jest.fn()
-      const { userEvent } = renderWithProviders(
-        <ClusterProfileFeature organizationId="organization-id" onSearchChange={onSearchChange} />
-      )
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature onSearchChange={onSearchChange} />)
 
       await userEvent.type(screen.getByRole('textbox', { name: 'Search layers' }), 'n')
 
@@ -482,7 +470,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('keeps the whole layer when its label matches', () => {
-      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" search="network" />)
+      renderWithProviders(<ClusterProfileFeature search="network" />)
 
       expect(screen.getByRole('textbox', { name: 'Search layers' })).toHaveValue('network')
       expect(screen.getByRole('button', { name: 'Network' })).toBeInTheDocument()
@@ -491,7 +479,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('filters components and fields matching the search', () => {
-      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" search="Resource" />)
+      renderWithProviders(<ClusterProfileFeature search="Resource" />)
 
       expect(screen.getByRole('button', { name: 'Loki' })).toHaveAttribute('aria-current', 'page')
       // Alloy renders the Loki resource profile through a configuration section.
@@ -502,9 +490,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('selects the first matching component when the URL one does not match', () => {
-      renderWithProviders(
-        <ClusterProfileFeature organizationId="organization-id" activeComponentKey="loki" search="certificate name" />
-      )
+      renderWithProviders(<ClusterProfileFeature activeComponentKey="loki" search="certificate name" />)
 
       expect(screen.getByRole('button', { name: 'Envoy' })).toHaveAttribute('aria-current', 'page')
       expect(screen.getByRole('tab', { name: 'Envoy' })).toHaveAttribute('aria-selected', 'true')
@@ -512,7 +498,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('shows empty states when nothing matches', () => {
-      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" search="CPUza" />)
+      renderWithProviders(<ClusterProfileFeature search="CPUza" />)
 
       expect(screen.getByText('No results found. Review your search or applied filters.')).toBeInTheDocument()
       expect(screen.getByText('No settings found matching your search and filters.')).toBeInTheDocument()
@@ -523,7 +509,7 @@ describe('ClusterProfileFeature', () => {
 
   describe('changes bar', () => {
     it('appears once a value differs from the saved one', async () => {
-      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
       expect(screen.queryByRole('button', { name: 'Deploy' })).not.toBeInTheDocument()
       expect(screen.queryByRole('region', { name: 'Unsaved profile changes' })).not.toBeInTheDocument()
@@ -541,7 +527,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('resets the local changes', async () => {
-      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
       await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
       await userEvent.click(screen.getByRole('button', { name: 'Reset' }))
@@ -553,7 +539,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('saves the changes into the cluster binding', async () => {
-      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
       await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
       await userEvent.click(screen.getByRole('button', { name: 'Save' }))
@@ -571,7 +557,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('deploys the cluster once the changes are saved', async () => {
-      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
       await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
       await userEvent.click(screen.getByRole('button', { name: 'Save and deploy' }))
@@ -582,7 +568,7 @@ describe('ClusterProfileFeature', () => {
 
     it('does not deploy when saving fails', async () => {
       mockUpdatePlatformBinding.mockRejectedValue(new Error('Invalid profile'))
-      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
       await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
       await userEvent.click(screen.getByRole('button', { name: 'Save and deploy' }))

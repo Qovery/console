@@ -1,39 +1,22 @@
-import { useParams } from '@tanstack/react-router'
-import equal from 'fast-deep-equal'
-import {
-  type ClusterPlatformBindingRequest,
-  type ClusterPlatformBindingResponse,
-  type PlatformComponentConfigurationResolutionResponse,
-  type PlatformTemplateComponentResponse,
-  type PlatformTemplateSummaryResponse,
-} from 'qovery-typescript-axios'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
+import { useEffect, useMemo, useRef } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, Button, EmptyState, Heading, Icon, InputToggle, Skeleton, toast } from '@qovery/shared/ui'
+import { Badge, Button, EmptyState, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
-import { useCluster } from '../hooks/use-cluster/use-cluster'
-import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
-import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformBinding } from '../platform-configuration/hooks/use-platform-binding'
 import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
-import { useUpdatePlatformBinding } from '../platform-configuration/hooks/use-update-platform-binding'
 import {
   type PlatformFieldDescriptor,
-  type PlatformScalarField,
   applyPlatformConfigurationDefaults,
   getFieldViolation,
   getUnmappedViolations,
-  isPlatformScalarField,
   isSupportedPlatformField,
   omitEmptyValues,
   toCatalogVariableField,
-  toPlatformCloudVendor,
-  toPlatformClusterMode,
-  updateComponentValue,
 } from '../platform-configuration/platform-configuration-utils'
+import { ClusterProfileProvider, useClusterProfileContext } from './cluster-profile-context'
 import {
   ClusterProfileItemIcon,
   ClusterProfileSidebar,
@@ -47,15 +30,11 @@ import {
   matchesProfileSearch,
   normalizeProfileSearch,
 } from './profile-search'
+import { type ProfileComponent, type ProfileTreeItem, formatProfileLabel } from './profile-tree'
 
 export const ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG = 'engine-v2-platform-configuration'
 
 type ProfileTab = {
-  id: string
-  label: string
-}
-
-type ProfileComponent = PlatformTemplateComponentResponse & {
   id: string
   label: string
 }
@@ -67,42 +46,6 @@ type ProfileSection = {
   fieldKeys?: readonly string[]
   // Search restricting the displayed fields; unset when the whole component matched.
   fieldSearch?: string
-}
-
-type ProfileTreeItem = {
-  id: string
-  label: string
-  description?: string | null
-  status: 'disabled' | 'success' | 'warning'
-  children: readonly ProfileComponent[]
-}
-
-function formatProfileLabel(value: string) {
-  const label = value.replace(/[-_]+/g, ' ').trim().toLowerCase()
-  return label ? `${label[0].toUpperCase()}${label.slice(1)}` : value
-}
-
-function getProfileTree(template: PlatformTemplateSummaryResponse | undefined): ProfileTreeItem[] {
-  return (
-    template?.layers.map((layer) => {
-      const label = formatProfileLabel(layer.key)
-      const normalizedLabel = label.toLowerCase()
-      const isDisabled = normalizedLabel === 'infrastructure' || normalizedLabel === 'qovery stack'
-
-      return {
-        id: layer.key,
-        label,
-        description: layer.description,
-        status: isDisabled ? 'disabled' : normalizedLabel === 'gateway api' ? 'warning' : 'success',
-        children: layer.components.map((component) => ({
-          ...component,
-          id: `${layer.key}/${component.key}`,
-          key: component.key,
-          label: formatProfileLabel(component.key),
-        })),
-      }
-    }) ?? []
-  )
 }
 
 function findProfileComponent(profileTree: ProfileTreeItem[], requestedKey?: string) {
@@ -195,67 +138,6 @@ function getSectionFields(section: ProfileSection, preview?: PlatformComponentCo
   )
 
   return section.fieldSearch ? filterFieldsByProfileSearch(fields, section.fieldSearch) : fields
-}
-
-type ProfileValues = Record<string, Record<string, unknown>>
-type ClusterInputValues = Record<string, Record<string, string>>
-
-// Scalars are compared as the inputs display them: an unset toggle shows as off, an unset text as empty.
-function getDisplayedScalarValue(field: PlatformScalarField, value: unknown) {
-  return getCatalogVariableValue(field, value) ?? (field.type === 'bool' ? false : '')
-}
-
-// Local edits differing from the saved (or default) value; edits reverted by hand do not count.
-function countProfileChanges(
-  profileTree: ProfileTreeItem[],
-  binding: ClusterPlatformBindingResponse | null | undefined,
-  profileValues: ProfileValues,
-  clusterInputs: ClusterInputValues
-) {
-  const fieldsByComponent = new Map(
-    profileTree.flatMap((layer) => layer.children).map((component) => [component.key, component.fields])
-  )
-  const profileChanges = Object.entries(profileValues).flatMap(([componentKey, values]) => {
-    const fields = fieldsByComponent.get(componentKey) ?? []
-    const savedValues = applyPlatformConfigurationDefaults(fields, binding?.managedConfig?.[componentKey] ?? {})
-    return Object.entries(values).filter(([fieldKey, value]) => {
-      const field = fields.find(({ key }) => key === fieldKey)
-      return field && isPlatformScalarField(field)
-        ? getDisplayedScalarValue(field, value) !== getDisplayedScalarValue(field, savedValues[fieldKey])
-        : !equal(value, savedValues[fieldKey])
-    })
-  })
-  const clusterInputChanges = Object.entries(clusterInputs).flatMap(([componentKey, values]) =>
-    Object.entries(values).filter(
-      ([inputKey, value]) => value !== (binding?.customerProvidedInputs?.[componentKey]?.[inputKey] ?? '')
-    )
-  )
-
-  return profileChanges.length + clusterInputChanges.length
-}
-
-function getBindingRequest(
-  template: PlatformTemplateSummaryResponse,
-  binding: ClusterPlatformBindingResponse | null | undefined,
-  profileValues: ProfileValues,
-  clusterInputs: ClusterInputValues
-): ClusterPlatformBindingRequest {
-  const managedConfig = { ...binding?.managedConfig }
-  for (const [componentKey, values] of Object.entries(profileValues)) {
-    managedConfig[componentKey] = omitEmptyValues({ ...binding?.managedConfig?.[componentKey], ...values })
-  }
-  const customerProvidedInputs = { ...binding?.customerProvidedInputs }
-  for (const [componentKey, values] of Object.entries(clusterInputs)) {
-    customerProvidedInputs[componentKey] = { ...binding?.customerProvidedInputs?.[componentKey], ...values }
-  }
-
-  return {
-    templateKey: binding?.templateKey ?? template.key,
-    templateVersion: binding?.templateVersion ?? template.version,
-    layerSelections: binding?.layerSelections,
-    managedConfig,
-    customerProvidedInputs,
-  }
 }
 
 function RequirementStatus({ status }: { status: 'MISSING' | 'READY' }) {
@@ -372,61 +254,47 @@ function ProfileConfigurationSection({
 }
 
 type ClusterProfileFeatureProps = {
-  organizationId: string
   activeComponentKey?: string
   search?: string
   onActiveComponentChange?: (componentKey: string) => void
   onSearchChange?: (search: string) => void
 }
 
-export function ClusterProfileFeature({
-  organizationId,
+export function ClusterProfileFeature(props: ClusterProfileFeatureProps) {
+  return (
+    <ClusterProfileProvider>
+      <ClusterProfileView {...props} />
+    </ClusterProfileProvider>
+  )
+}
+
+function ClusterProfileView({
   activeComponentKey: requestedComponentKey,
   search = '',
   onActiveComponentChange,
   onSearchChange,
 }: ClusterProfileFeatureProps) {
-  const { clusterId = '' } = useParams({ strict: false })
-  const [profileValues, setProfileValues] = useState<ProfileValues>({})
-  const [clusterInputs, setClusterInputs] = useState<ClusterInputValues>({})
-  // Some inputs are uncontrolled: remounting the form is what shows the saved values again after a reset.
-  const [formKey, setFormKey] = useState(0)
-  const [isSaveAndDeployPending, setIsSaveAndDeployPending] = useState(false)
-  const { mutateAsync: updatePlatformBinding, isLoading: isSavingBinding } = useUpdatePlatformBinding()
-  const { mutateAsync: deployCluster } = useDeployCluster()
   const {
-    data: cluster,
-    isError: isClusterError,
-    isLoading: isClusterLoading,
-  } = useCluster({
     organizationId,
     clusterId,
-  })
-  const clusterMode = toPlatformClusterMode(cluster?.kubernetes)
-  const cloudProvider = toPlatformCloudVendor(cluster?.cloud_provider)
-  const {
-    data: templates,
-    isError: isTemplateError,
-    isLoading: isTemplateLoading,
-  } = usePlatformTemplates({
-    organizationId,
-    clusterMode,
-    cloudProvider,
-    enabled: Boolean(clusterMode && cloudProvider),
-  })
-  const {
-    data: binding,
-    isError: isBindingError,
-    isLoading: isBindingLoading,
-  } = usePlatformBinding({ organizationId, clusterId })
-  const selectedTemplate = useMemo(
-    () =>
-      templates?.find(
-        (template) => template.key === binding?.templateKey && template.version === binding?.templateVersion
-      ) ?? templates?.[0],
-    [binding?.templateKey, binding?.templateVersion, templates]
-  )
-  const profileTree = useMemo(() => getProfileTree(selectedTemplate), [selectedTemplate])
+    cluster,
+    templates,
+    binding,
+    profileTree,
+    isLoading,
+    isError,
+    profileValues,
+    clusterInputs,
+    formKey,
+    changeCount,
+    isSaving,
+    isDeploying,
+    updateProfileConfig,
+    updateClusterInput,
+    resetChanges,
+    saveChanges,
+    saveAndDeployChanges,
+  } = useClusterProfileContext()
   const searchQuery = normalizeProfileSearch(search)
   const visibleProfileTree = useMemo(() => filterProfileTree(profileTree, searchQuery), [profileTree, searchQuery])
   // The header keeps showing a layer when nothing matches the search.
@@ -546,57 +414,6 @@ export function ClusterProfileFeature({
     [visibleProfileTree]
   )
 
-  const updateProfileConfig = (componentKey: string, fieldKey: string, value: unknown) => {
-    setProfileValues((currentValues) => updateComponentValue(currentValues, componentKey, fieldKey, value))
-  }
-
-  const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
-    setClusterInputs((currentValues) => updateComponentValue(currentValues, componentKey, field.key, String(value)))
-  }
-
-  const changeCount = countProfileChanges(profileTree, binding, profileValues, clusterInputs)
-
-  const resetProfileChanges = () => {
-    setProfileValues({})
-    setClusterInputs({})
-    setFormKey((key) => key + 1)
-  }
-
-  const saveProfileChanges = async () => {
-    if (!selectedTemplate) return
-    await updatePlatformBinding({
-      organizationId,
-      clusterId,
-      bindingRequest: getBindingRequest(selectedTemplate, binding, profileValues, clusterInputs),
-    })
-    // The saved binding now carries the edits, so the local copies can go.
-    setProfileValues({})
-    setClusterInputs({})
-  }
-
-  const handleSave = async () => {
-    try {
-      await saveProfileChanges()
-      toast('success', 'Profile saved', 'Deploy the cluster to apply the changes.')
-    } catch {
-      // Errors are notified by the mutation.
-    }
-  }
-
-  const handleSaveAndDeploy = async () => {
-    setIsSaveAndDeployPending(true)
-    try {
-      await saveProfileChanges()
-      await deployCluster({ organizationId, clusterId })
-    } catch {
-      // Errors are notified by the mutations.
-    } finally {
-      setIsSaveAndDeployPending(false)
-    }
-  }
-
-  const isLoading = isClusterLoading || isTemplateLoading || isBindingLoading
-  const isError = isClusterError || isTemplateError || isBindingError
   const displayedComponentKeys = [...new Set(profileSections.map((section) => section.component.key))]
   const displayedComponentKeySet = new Set(displayedComponentKeys)
   const hasResolvedConfiguration = displayedComponentKeys.every(
@@ -740,11 +557,11 @@ export function ClusterProfileFeature({
           <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center px-4">
             <ProfileChangesBar
               changeCount={changeCount}
-              isSaving={isSavingBinding && !isSaveAndDeployPending}
-              isDeploying={isSaveAndDeployPending}
-              onReset={resetProfileChanges}
-              onSave={handleSave}
-              onSaveAndDeploy={handleSaveAndDeploy}
+              isSaving={isSaving}
+              isDeploying={isDeploying}
+              onReset={resetChanges}
+              onSave={saveChanges}
+              onSaveAndDeploy={saveAndDeployChanges}
             />
           </div>
         </section>

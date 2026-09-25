@@ -31,7 +31,6 @@ function RouteComponent() {
 
   return (
     <ClusterProfileFeature
-      organizationId={organizationId}
       activeComponentKey={component}
       search={search}
       onActiveComponentChange={(nextComponent) =>
