@@ -1,7 +1,12 @@
 import { useParams } from '@tanstack/react-router'
 import { Suspense, useEffect } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
-import { type Application, type Job, type Terraform } from '@qovery/domains/services/data-access'
+import {
+  type Application,
+  BUILD_SETTINGS_SERVICE_TYPES,
+  type Job,
+  type Terraform,
+} from '@qovery/domains/services/data-access'
 import {
   useAdvancedSettings,
   useDefaultAdvancedSettings,
@@ -14,8 +19,6 @@ import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 type BuildSettingsService = Application | Job | Terraform
-
-const BUILD_SETTINGS_SERVICE_TYPES = ['APPLICATION', 'JOB', 'TERRAFORM'] as const
 
 function isBuildSettingsServiceType(serviceType: string): serviceType is BuildSettingsService['serviceType'] {
   return (BUILD_SETTINGS_SERVICE_TYPES as readonly string[]).includes(serviceType)
@@ -255,7 +258,6 @@ function ServiceBuildSettingsForm({
     ),
   })
 
-  // Reset form when navigating between services
   useEffect(() => {
     methods.reset(
       getDefaultValues(
@@ -266,7 +268,6 @@ function ServiceBuildSettingsForm({
   }, [serviceId, advancedSettings, defaultAdvancedSettings, methods])
 
   const isTerraform = service.serviceType === 'TERRAFORM'
-  // TODO: remove cast once SDK is regenerated with build_settings_editable field
   const buildSettingsEditable =
     (service as BuildSettingsService & { build_settings_editable?: boolean }).build_settings_editable ?? false
 
