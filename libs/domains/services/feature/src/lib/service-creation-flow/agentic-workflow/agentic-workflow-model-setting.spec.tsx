@@ -126,7 +126,7 @@ describe('AgenticWorkflowModelSetting', () => {
   it('lists Bedrock models and serializes the first model', async () => {
     mockModels = [
       { id: 'eu.anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null },
-      { id: 'eu.anthropic.claude-sonnet-4', display_name: 'Claude Sonnet 4', created_at: null },
+      { id: 'us.anthropic.claude-sonnet-4', display_name: 'Claude Sonnet 4', created_at: null },
     ]
     const onChange = jest.fn()
 
@@ -140,6 +140,9 @@ describe('AgenticWorkflowModelSetting', () => {
     )
 
     expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    await selectEvent.openMenu(screen.getByLabelText('Model'))
+    expect(document.querySelector('img[src*="/eu.svg"]')).toBeInTheDocument()
+    expect(document.querySelector('img[src*="/us.svg"]')).toBeInTheDocument()
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'eu.anthropic.claude-opus-5' })
   })

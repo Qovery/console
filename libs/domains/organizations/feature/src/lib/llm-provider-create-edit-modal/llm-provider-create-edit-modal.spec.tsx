@@ -129,6 +129,7 @@ describe('LlmProviderCreateEditModal', () => {
     const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
 
     await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
+    expect(document.querySelector('[data-testid="selected-icon"] img[src*="/eu.svg"]')).toBeInTheDocument()
     await userEvent.type(screen.getByLabelText('Name'), 'EU Bedrock')
     await userEvent.type(screen.getByLabelText('Token'), 'aws-credentials')
     await selectEvent.select(screen.getByLabelText('AWS region'), 'London (eu-west-2)', {

@@ -1,3 +1,4 @@
+export * from './lib/aws-location-flag-code'
 export * from './lib/build-git-repo-url'
 export * from './lib/compute-available-environment-variable-scope'
 export * from './lib/container-registry-kind-to-icon'

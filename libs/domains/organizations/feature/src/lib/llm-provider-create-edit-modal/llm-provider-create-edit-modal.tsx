@@ -8,7 +8,8 @@ import {
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
-import { InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
+import { IconFlag, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
+import { getAwsLocationFlagCode } from '@qovery/shared/util-js'
 import { useCreateLlmProvider } from '../hooks/use-create-llm-provider/use-create-llm-provider'
 import { useEditLlmProvider } from '../hooks/use-edit-llm-provider/use-edit-llm-provider'
 
@@ -55,10 +56,14 @@ const SCOPE_OPTIONS = [
 function BedrockRegionSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const { data: cloudProviders = [], isError, isLoading } = useCloudProviders()
   const awsRegions = cloudProviders.find(({ short_name }) => short_name === CloudProviderEnum.AWS)?.regions ?? []
-  const options = awsRegions.map(({ city, name }) => ({ label: `${city} (${name})`, value: name }))
+  const options = awsRegions.map(({ city, name }) => {
+    const flagCode = getAwsLocationFlagCode(name)
+    return { label: `${city} (${name})`, value: name, icon: flagCode ? <IconFlag code={flagCode} /> : undefined }
+  })
 
   if (value && !options.some(({ value: region }) => region === value)) {
-    options.push({ label: value, value })
+    const flagCode = getAwsLocationFlagCode(value)
+    options.push({ label: value, value, icon: flagCode ? <IconFlag code={flagCode} /> : undefined })
   }
 
   return (

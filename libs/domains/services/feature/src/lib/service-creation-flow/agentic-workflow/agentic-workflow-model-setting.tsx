@@ -2,7 +2,8 @@ import { LlmProviderType, type LlmProviderType as LlmProviderTypeValue } from 'q
 import { useEffect, useRef } from 'react'
 import { match } from 'ts-pattern'
 import { useLlmProviderModels } from '@qovery/domains/organizations/feature'
-import { InputSelect } from '@qovery/shared/ui'
+import { IconFlag, InputSelect } from '@qovery/shared/ui'
+import { getAwsLocationFlagCode } from '@qovery/shared/util-js'
 
 function parseModelSettings(value: string): Record<string, unknown> | undefined {
   try {
@@ -96,7 +97,10 @@ export function AgenticWorkflowModelSetting({
 
   if (!hasModelProvider) return null
 
-  const modelOptions = models.map(({ id, display_name }) => ({ value: id, label: display_name }))
+  const modelOptions = models.map(({ id, display_name }) => {
+    const flagCode = providerType === LlmProviderType.BEDROCK ? getAwsLocationFlagCode(id) : undefined
+    return { value: id, label: display_name, icon: flagCode ? <IconFlag code={flagCode} /> : undefined }
+  })
   const hasModelsError = isError || (!isLoading && models.length === 0)
   const modelsError = match([isError, providerType === LlmProviderType.BEDROCK])
     .with([true, true], () => 'We couldn’t load models. Check this token’s AWS credentials and region.')
