@@ -11,6 +11,7 @@ import {
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
   type ApplicationEditRequest,
+  type ApplicationGitRepository,
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
@@ -245,13 +246,21 @@ export function isBlueprintService(service: AnyService): service is BlueprintSer
   return 'blueprint_id' in service && Boolean(service.blueprint_id)
 }
 
-export function getBlueprintGitRepository(service: BlueprintService) {
+// Helm blueprints pull their chart from the manifest's upstream repository, but come from the catalog
+export const BLUEPRINT_CATALOG_GIT_REPOSITORY: ApplicationGitRepository = {
+  provider: 'GITHUB',
+  owner: 'Qovery',
+  name: 'Qovery/service-catalog',
+  url: 'https://github.com/Qovery/service-catalog.git',
+}
+
+export function getBlueprintGitRepository(service: BlueprintService): ApplicationGitRepository | undefined {
   if (service.serviceType === 'TERRAFORM') {
     return service.terraform_files_source?.git?.git_repository
   }
 
-  if (service.serviceType === 'HELM' && isHelmGitSource(service.source)) {
-    return service.source.git?.git_repository
+  if (service.serviceType === 'HELM') {
+    return isHelmGitSource(service.source) ? service.source.git?.git_repository : BLUEPRINT_CATALOG_GIT_REPOSITORY
   }
 
   return undefined

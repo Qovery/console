@@ -277,7 +277,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
       )}
       {helmRepository && (
         <>
-          {helmRepository.repository && (
+          {helmRepository.repository && !blueprintId && (
             <ExternalLink
               href={helmRepository.repository.url}
               target="_blank"
