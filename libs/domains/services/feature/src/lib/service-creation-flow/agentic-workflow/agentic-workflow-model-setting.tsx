@@ -105,7 +105,11 @@ export function AgenticWorkflowModelSetting({
       providerType === LlmProviderType.BEDROCK && !isCrossRegionProfile
         ? getAwsLocationFlagCode(id) ?? getAwsLocationFlagCode(providerRegion ?? '')
         : undefined
-    const icon = flagCode ? <IconFlag code={flagCode} /> : isCrossRegionProfile ? <Icon iconName="globe" /> : undefined
+    const icon = flagCode ? (
+      <IconFlag code={flagCode} />
+    ) : isCrossRegionProfile ? (
+      <Icon iconName="globe" className="text-xs" />
+    ) : undefined
     return { value: id, label: display_name, icon }
   })
   const hasModelsError = isError || (!isLoading && models.length === 0)
