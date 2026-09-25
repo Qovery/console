@@ -114,7 +114,9 @@ export function AdvancedSettings({
         }
       }
     }
-    return entries.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
+    return entries
+      .filter((entry) => !entry.name.startsWith('build.'))
+      .sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
   }, [advancedSettings, defaultAdvancedSettings])
 
   const onSubmit = handleSubmit((data: Record<string, string>) => {

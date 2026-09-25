@@ -154,6 +154,32 @@ describe('AdvancedSettings', () => {
     )
   })
 
+  it('should not display build.* keys in the table', () => {
+    const advancedSettingsWithBuild = {
+      ...advancedSettings,
+      'build.timeout_max_sec': 1800,
+      'build.cpu_max_in_milli': 4000,
+      'build.ram_max_in_gib': 8,
+    }
+    const defaultAdvancedSettingsWithBuild = {
+      ...defaultAdvancedSettings,
+      'build.timeout_max_sec': 1800,
+      'build.cpu_max_in_milli': 4000,
+      'build.ram_max_in_gib': 8,
+    }
+    renderWithProviders(
+      <AdvancedSettings
+        service={mockApplication}
+        advancedSettings={advancedSettingsWithBuild}
+        defaultAdvancedSettings={defaultAdvancedSettingsWithBuild}
+      />
+    )
+    expect(screen.queryByText('build.timeout_max_sec')).not.toBeInTheDocument()
+    expect(screen.queryByText('build.cpu_max_in_milli')).not.toBeInTheDocument()
+    expect(screen.queryByText('build.ram_max_in_gib')).not.toBeInTheDocument()
+    expect(screen.getByText('deployment.custom_domain_check_enabled')).toBeInTheDocument()
+  })
+
   it('should hide the sticky toaster after a successful submit', async () => {
     mockMutateEdit.mockImplementation((_variables, options) => {
       options?.onSuccess?.()
