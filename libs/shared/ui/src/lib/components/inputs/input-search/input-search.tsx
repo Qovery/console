@@ -3,7 +3,9 @@ import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputSearchProps {
+  ariaLabel?: string
   placeholder?: string
+  defaultValue?: string
   className?: string
   onChange?: (value: string) => void
   isEmpty?: boolean
@@ -14,7 +16,9 @@ export interface InputSearchProps {
 
 export function InputSearch(props: InputSearchProps) {
   const {
+    ariaLabel,
     placeholder = '',
+    defaultValue,
     className = '',
     onChange,
     isEmpty = false,
@@ -24,7 +28,7 @@ export function InputSearch(props: InputSearchProps) {
   } = props
 
   const ref = useRef<HTMLInputElement>(null)
-  const [toggleDelete, setToggleDelete] = useState(false)
+  const [toggleDelete, setToggleDelete] = useState(Boolean(defaultValue))
 
   const getValue = (value: string) => {
     if (onChange) onChange(value)
@@ -57,6 +61,8 @@ export function InputSearch(props: InputSearchProps) {
             customSize
           )}
           type="text"
+          aria-label={ariaLabel}
+          defaultValue={defaultValue}
           placeholder={placeholder}
           disabled={false}
           onChange={(e) => getValue(e.currentTarget.value)}

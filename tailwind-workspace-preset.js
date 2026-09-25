@@ -293,6 +293,7 @@ module.exports = {
           warning: {
             solid: 'var(--warning-9)',
             solidHover: 'var(--warning-10)',
+            strong: 'var(--warning-5)',
             component: 'var(--warning-3)',
             subtle: 'var(--warning-2)',
           },
