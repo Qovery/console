@@ -6,7 +6,11 @@ describe('getAwsLocationFlagCode', () => {
     ['eu.anthropic.claude-sonnet', 'EU'],
     ['us-east-1', 'US'],
     ['us.anthropic.claude-sonnet', 'US'],
-    ['ap-southeast-1', undefined],
+    ['af-south-1', 'ZA'],
+    ['ap-east-1', 'HK'],
+    ['ap-south-2', 'IN'],
+    ['ap-northeast-1', 'JP'],
+    ['ap-southeast-1', 'SG'],
     ['global.anthropic.claude-sonnet', undefined],
   ])('maps %s to %s', (location, expected) => {
     expect(getAwsLocationFlagCode(location)).toBe(expected)

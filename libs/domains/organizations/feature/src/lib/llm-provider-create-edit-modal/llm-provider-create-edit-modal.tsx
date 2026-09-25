@@ -56,8 +56,8 @@ const SCOPE_OPTIONS = [
 function BedrockRegionSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const { data: cloudProviders = [], isError, isLoading } = useCloudProviders()
   const awsRegions = cloudProviders.find(({ short_name }) => short_name === CloudProviderEnum.AWS)?.regions ?? []
-  const options = awsRegions.map(({ city, name }) => {
-    const flagCode = getAwsLocationFlagCode(name)
+  const options = awsRegions.map(({ city, country_code, name }) => {
+    const flagCode = country_code || getAwsLocationFlagCode(name)
     return { label: `${city} (${name})`, value: name, icon: flagCode ? <IconFlag code={flagCode} /> : undefined }
   })
 

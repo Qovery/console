@@ -30,8 +30,13 @@ describe('LlmProviderCreateEditModal', () => {
         {
           short_name: 'AWS',
           regions: [
-            { name: 'eu-west-1', city: 'Dublin' },
-            { name: 'eu-west-2', city: 'London' },
+            { name: 'eu-west-1', city: 'Dublin', country_code: 'IE' },
+            { name: 'eu-west-2', city: 'London', country_code: 'GB' },
+            { name: 'us-east-2', city: 'Ohio', country_code: 'US' },
+            { name: 'af-south-1', city: 'Cape Town', country_code: 'ZA' },
+            { name: 'ap-east-1', city: 'Hong Kong', country_code: 'HK' },
+            { name: 'ap-south-1', city: 'Mumbai', country_code: 'IN' },
+            { name: 'ap-northeast-1', city: 'Tokyo', country_code: 'JP' },
           ],
         },
         { short_name: 'GCP', regions: [{ name: 'europe-west1', city: 'Belgium' }] },
@@ -129,7 +134,7 @@ describe('LlmProviderCreateEditModal', () => {
     const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
 
     await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
-    expect(document.querySelector('[data-testid="selected-icon"] img[src*="/eu.svg"]')).toBeInTheDocument()
+    expect(document.querySelector('[data-testid="selected-icon"] img[src*="/ie.svg"]')).toBeInTheDocument()
     await userEvent.type(screen.getByLabelText('Name'), 'EU Bedrock')
     await userEvent.type(screen.getByLabelText('Token'), 'aws-credentials')
     await selectEvent.select(screen.getByLabelText('AWS region'), 'London (eu-west-2)', {
@@ -150,6 +155,17 @@ describe('LlmProviderCreateEditModal', () => {
         },
       })
     )
+  })
+
+  it('shows the country flag for every AWS region option', async () => {
+    renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+    await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
+    await selectEvent.openMenu(screen.getByLabelText('AWS region'))
+
+    for (const code of ['gb', 'us', 'za', 'hk', 'in', 'jp']) {
+      expect(document.querySelector(`img[src$="/${code}.svg"]`)).toBeInTheDocument()
+    }
   })
 
   it('should select eu-west-1 as the default AWS region', async () => {

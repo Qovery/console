@@ -2,7 +2,7 @@ import { LlmProviderType, type LlmProviderType as LlmProviderTypeValue } from 'q
 import { useEffect, useRef } from 'react'
 import { match } from 'ts-pattern'
 import { useLlmProviderModels } from '@qovery/domains/organizations/feature'
-import { IconFlag, InputSelect } from '@qovery/shared/ui'
+import { Icon, IconFlag, InputSelect } from '@qovery/shared/ui'
 import { getAwsLocationFlagCode } from '@qovery/shared/util-js'
 
 function parseModelSettings(value: string): Record<string, unknown> | undefined {
@@ -29,6 +29,7 @@ export function updateAgenticWorkflowModel(value: string, model: string) {
 export interface AgenticWorkflowModelSettingProps {
   llmProviderId: string
   providerType?: LlmProviderTypeValue
+  providerRegion?: string | null
   settings: string
   onChange: (value: string) => void
 }
@@ -36,6 +37,7 @@ export interface AgenticWorkflowModelSettingProps {
 export function AgenticWorkflowModelSetting({
   llmProviderId,
   providerType,
+  providerRegion,
   settings,
   onChange,
 }: AgenticWorkflowModelSettingProps) {
@@ -98,8 +100,13 @@ export function AgenticWorkflowModelSetting({
   if (!hasModelProvider) return null
 
   const modelOptions = models.map(({ id, display_name }) => {
-    const flagCode = providerType === LlmProviderType.BEDROCK ? getAwsLocationFlagCode(id) : undefined
-    return { value: id, label: display_name, icon: flagCode ? <IconFlag code={flagCode} /> : undefined }
+    const isCrossRegionProfile = providerType === LlmProviderType.BEDROCK && /^(global|apac)\./.test(id)
+    const flagCode =
+      providerType === LlmProviderType.BEDROCK && !isCrossRegionProfile
+        ? getAwsLocationFlagCode(id) ?? getAwsLocationFlagCode(providerRegion ?? '')
+        : undefined
+    const icon = flagCode ? <IconFlag code={flagCode} /> : isCrossRegionProfile ? <Icon iconName="globe" /> : undefined
+    return { value: id, label: display_name, icon }
   })
   const hasModelsError = isError || (!isLoading && models.length === 0)
   const modelsError = match([isError, providerType === LlmProviderType.BEDROCK])

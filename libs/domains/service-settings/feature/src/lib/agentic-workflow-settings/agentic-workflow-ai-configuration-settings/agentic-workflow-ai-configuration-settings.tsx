@@ -16,6 +16,7 @@ export function AgenticWorkflowAiConfigurationSettings({
 }) {
   const llmProviderId = form.watch('llmProviderId')
   const currentModelType = form.watch('modelType')
+  const providerRegion = llmProviders.find(({ id }) => id === llmProviderId)?.region
 
   return (
     <>
@@ -47,6 +48,7 @@ export function AgenticWorkflowAiConfigurationSettings({
             <AgenticWorkflowModelSetting
               llmProviderId={llmProviderId}
               providerType={currentModelType ?? modelType}
+              providerRegion={providerRegion}
               settings={field.value}
               onChange={field.onChange}
             />
