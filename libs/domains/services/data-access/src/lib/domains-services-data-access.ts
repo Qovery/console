@@ -168,6 +168,8 @@ export type TerraformType = Extract<ServiceType, 'TERRAFORM'>
 export type ArgoCdType = Extract<ServiceType, 'ARGOCD_APP'>
 export type AgenticWorkflowType = Extract<ServiceType, 'AGENTIC_WORKFLOW'>
 
+export const BUILD_SETTINGS_SERVICE_TYPES: readonly ServiceType[] = ['APPLICATION', 'JOB', 'TERRAFORM'] as const
+
 // XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
 // Waiting to have this implementation available in the edition interfaces.
 export type Application = _Application & {
