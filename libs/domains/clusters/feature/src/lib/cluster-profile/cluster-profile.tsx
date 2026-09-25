@@ -1,5 +1,8 @@
 import { useParams } from '@tanstack/react-router'
+import equal from 'fast-deep-equal'
 import {
+  type ClusterPlatformBindingRequest,
+  type ClusterPlatformBindingResponse,
   type PlatformComponentConfigurationResolutionResponse,
   type PlatformTemplateComponentResponse,
   type PlatformTemplateSummaryResponse,
@@ -7,19 +10,23 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, Button, EmptyState, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
+import { Badge, Button, EmptyState, Heading, Icon, InputToggle, Skeleton, toast } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
+import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
 import { usePlatformBinding } from '../platform-configuration/hooks/use-platform-binding'
 import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
+import { useUpdatePlatformBinding } from '../platform-configuration/hooks/use-update-platform-binding'
 import {
   type PlatformFieldDescriptor,
+  type PlatformScalarField,
   applyPlatformConfigurationDefaults,
   getFieldViolation,
   getUnmappedViolations,
+  isPlatformScalarField,
   isSupportedPlatformField,
   omitEmptyValues,
   toCatalogVariableField,
@@ -32,6 +39,7 @@ import {
   ClusterProfileSidebar,
   type ClusterProfileSidebarLayer,
 } from './cluster-profile-sidebar'
+import { ProfileChangesBar } from './profile-changes-bar'
 import { ProfileConfigurationField } from './profile-configuration-field'
 import {
   fieldMatchesProfileSearch,
@@ -189,6 +197,67 @@ function getSectionFields(section: ProfileSection, preview?: PlatformComponentCo
   return section.fieldSearch ? filterFieldsByProfileSearch(fields, section.fieldSearch) : fields
 }
 
+type ProfileValues = Record<string, Record<string, unknown>>
+type ClusterInputValues = Record<string, Record<string, string>>
+
+// Scalars are compared as the inputs display them: an unset toggle shows as off, an unset text as empty.
+function getDisplayedScalarValue(field: PlatformScalarField, value: unknown) {
+  return getCatalogVariableValue(field, value) ?? (field.type === 'bool' ? false : '')
+}
+
+// Local edits differing from the saved (or default) value; edits reverted by hand do not count.
+function countProfileChanges(
+  profileTree: ProfileTreeItem[],
+  binding: ClusterPlatformBindingResponse | null | undefined,
+  profileValues: ProfileValues,
+  clusterInputs: ClusterInputValues
+) {
+  const fieldsByComponent = new Map(
+    profileTree.flatMap((layer) => layer.children).map((component) => [component.key, component.fields])
+  )
+  const profileChanges = Object.entries(profileValues).flatMap(([componentKey, values]) => {
+    const fields = fieldsByComponent.get(componentKey) ?? []
+    const savedValues = applyPlatformConfigurationDefaults(fields, binding?.managedConfig?.[componentKey] ?? {})
+    return Object.entries(values).filter(([fieldKey, value]) => {
+      const field = fields.find(({ key }) => key === fieldKey)
+      return field && isPlatformScalarField(field)
+        ? getDisplayedScalarValue(field, value) !== getDisplayedScalarValue(field, savedValues[fieldKey])
+        : !equal(value, savedValues[fieldKey])
+    })
+  })
+  const clusterInputChanges = Object.entries(clusterInputs).flatMap(([componentKey, values]) =>
+    Object.entries(values).filter(
+      ([inputKey, value]) => value !== (binding?.customerProvidedInputs?.[componentKey]?.[inputKey] ?? '')
+    )
+  )
+
+  return profileChanges.length + clusterInputChanges.length
+}
+
+function getBindingRequest(
+  template: PlatformTemplateSummaryResponse,
+  binding: ClusterPlatformBindingResponse | null | undefined,
+  profileValues: ProfileValues,
+  clusterInputs: ClusterInputValues
+): ClusterPlatformBindingRequest {
+  const managedConfig = { ...binding?.managedConfig }
+  for (const [componentKey, values] of Object.entries(profileValues)) {
+    managedConfig[componentKey] = omitEmptyValues({ ...binding?.managedConfig?.[componentKey], ...values })
+  }
+  const customerProvidedInputs = { ...binding?.customerProvidedInputs }
+  for (const [componentKey, values] of Object.entries(clusterInputs)) {
+    customerProvidedInputs[componentKey] = { ...binding?.customerProvidedInputs?.[componentKey], ...values }
+  }
+
+  return {
+    templateKey: binding?.templateKey ?? template.key,
+    templateVersion: binding?.templateVersion ?? template.version,
+    layerSelections: binding?.layerSelections,
+    managedConfig,
+    customerProvidedInputs,
+  }
+}
+
 function RequirementStatus({ status }: { status: 'MISSING' | 'READY' }) {
   return status === 'MISSING' ? (
     <Badge size="sm" variant="surface" color="yellow">
@@ -318,8 +387,13 @@ export function ClusterProfileFeature({
   onSearchChange,
 }: ClusterProfileFeatureProps) {
   const { clusterId = '' } = useParams({ strict: false })
-  const [profileValues, setProfileValues] = useState<Record<string, Record<string, unknown>>>({})
-  const [clusterInputs, setClusterInputs] = useState<Record<string, Record<string, string>>>({})
+  const [profileValues, setProfileValues] = useState<ProfileValues>({})
+  const [clusterInputs, setClusterInputs] = useState<ClusterInputValues>({})
+  // Some inputs are uncontrolled: remounting the form is what shows the saved values again after a reset.
+  const [formKey, setFormKey] = useState(0)
+  const [isSaveAndDeployPending, setIsSaveAndDeployPending] = useState(false)
+  const { mutateAsync: updatePlatformBinding, isLoading: isSavingBinding } = useUpdatePlatformBinding()
+  const { mutateAsync: deployCluster } = useDeployCluster()
   const {
     data: cluster,
     isError: isClusterError,
@@ -480,6 +554,47 @@ export function ClusterProfileFeature({
     setClusterInputs((currentValues) => updateComponentValue(currentValues, componentKey, field.key, String(value)))
   }
 
+  const changeCount = countProfileChanges(profileTree, binding, profileValues, clusterInputs)
+
+  const resetProfileChanges = () => {
+    setProfileValues({})
+    setClusterInputs({})
+    setFormKey((key) => key + 1)
+  }
+
+  const saveProfileChanges = async () => {
+    if (!selectedTemplate) return
+    await updatePlatformBinding({
+      organizationId,
+      clusterId,
+      bindingRequest: getBindingRequest(selectedTemplate, binding, profileValues, clusterInputs),
+    })
+    // The saved binding now carries the edits, so the local copies can go.
+    setProfileValues({})
+    setClusterInputs({})
+  }
+
+  const handleSave = async () => {
+    try {
+      await saveProfileChanges()
+      toast('success', 'Profile saved', 'Deploy the cluster to apply the changes.')
+    } catch {
+      // Errors are notified by the mutation.
+    }
+  }
+
+  const handleSaveAndDeploy = async () => {
+    setIsSaveAndDeployPending(true)
+    try {
+      await saveProfileChanges()
+      await deployCluster({ organizationId, clusterId })
+    } catch {
+      // Errors are notified by the mutations.
+    } finally {
+      setIsSaveAndDeployPending(false)
+    }
+  }
+
   const isLoading = isClusterLoading || isTemplateLoading || isBindingLoading
   const isError = isClusterError || isTemplateError || isBindingError
   const displayedComponentKeys = [...new Set(profileSections.map((section) => section.component.key))]
@@ -512,11 +627,6 @@ export function ClusterProfileFeature({
           <Icon name={IconEnum.AWS} width={20} height={20} />
           <p className="truncate font-medium text-neutral">{cluster?.name ?? 'Cluster'}</p>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Button variant="outline" color="neutral" size="sm" disabled>
-            Deploy
-          </Button>
-        </div>
       </header>
 
       <div className="flex min-h-0 flex-1 items-stretch pr-4">
@@ -532,7 +642,7 @@ export function ClusterProfileFeature({
           onSelectItem={handleSelectItem}
         />
 
-        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
+        <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
           <div className="flex items-start justify-between gap-4 bg-surface-neutral px-4 pb-2 pt-4">
             <div className="min-w-0">
               <Heading level={2} className="!text-base font-medium leading-6">
@@ -584,7 +694,7 @@ export function ClusterProfileFeature({
             role="tabpanel"
             className="min-h-0 flex-1 overflow-y-auto"
           >
-            <div className="flex min-h-full flex-col">
+            <div key={formKey} className="flex min-h-full flex-col">
               {searchQuery && !isLoading && !activeComponent ? (
                 <div className="p-4">
                   <EmptyState
@@ -622,7 +732,20 @@ export function ClusterProfileFeature({
                   ))}
                 </>
               )}
+              {/* Keeps the last settings reachable above the floating changes bar. */}
+              {changeCount > 0 ? <div aria-hidden="true" className="h-28 shrink-0" /> : null}
             </div>
+          </div>
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center px-4">
+            <ProfileChangesBar
+              changeCount={changeCount}
+              isSaving={isSavingBinding && !isSaveAndDeployPending}
+              isDeploying={isSaveAndDeployPending}
+              onReset={resetProfileChanges}
+              onSave={handleSave}
+              onSaveAndDeploy={handleSaveAndDeploy}
+            />
           </div>
         </section>
       </div>

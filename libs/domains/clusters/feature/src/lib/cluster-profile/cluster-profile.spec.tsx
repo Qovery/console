@@ -4,11 +4,13 @@ import {
   type PlatformTemplateComponentResponse,
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
-import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
+import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
 import { usePlatformBinding } from '../platform-configuration/hooks/use-platform-binding'
 import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
+import { useUpdatePlatformBinding } from '../platform-configuration/hooks/use-update-platform-binding'
 import { ClusterProfileFeature } from './cluster-profile'
 
 jest.mock('@tanstack/react-router', () => ({ useParams: jest.fn() }))
@@ -17,6 +19,8 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   useDebounce: <T,>(value: T) => value,
 }))
 jest.mock('../hooks/use-cluster/use-cluster')
+jest.mock('../hooks/use-deploy-cluster/use-deploy-cluster')
+jest.mock('../platform-configuration/hooks/use-update-platform-binding')
 jest.mock('../hooks/use-platform-templates/use-platform-templates')
 jest.mock('../platform-configuration/hooks/use-platform-binding')
 jest.mock('../platform-configuration/hooks/use-platform-component-configurations')
@@ -25,6 +29,10 @@ const mockUseParams = useParams as jest.Mock
 const mockUseCluster = useCluster as jest.MockedFunction<typeof useCluster>
 const mockUsePlatformTemplates = usePlatformTemplates as jest.MockedFunction<typeof usePlatformTemplates>
 const mockUsePlatformBinding = usePlatformBinding as jest.MockedFunction<typeof usePlatformBinding>
+const mockUseDeployCluster = useDeployCluster as jest.Mock
+const mockUseUpdatePlatformBinding = useUpdatePlatformBinding as jest.Mock
+const mockDeployCluster = jest.fn()
+const mockUpdatePlatformBinding = jest.fn()
 const mockUsePlatformComponentConfigurations = usePlatformComponentConfigurations as jest.MockedFunction<
   typeof usePlatformComponentConfigurations
 >
@@ -213,6 +221,10 @@ describe('ClusterProfileFeature', () => {
       isLoading: false,
     } as ReturnType<typeof usePlatformBinding>)
     mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki', 'alloy']))
+    mockUpdatePlatformBinding.mockResolvedValue({})
+    mockDeployCluster.mockResolvedValue({})
+    mockUseUpdatePlatformBinding.mockReturnValue({ mutateAsync: mockUpdatePlatformBinding, isLoading: false })
+    mockUseDeployCluster.mockReturnValue({ mutateAsync: mockDeployCluster, isLoading: false })
   })
 
   it('renders API-defined configuration fields', () => {
@@ -506,6 +518,77 @@ describe('ClusterProfileFeature', () => {
       expect(screen.getByText('No settings found matching your search and filters.')).toBeInTheDocument()
       expect(screen.getByRole('heading', { name: 'Log infra' })).toBeInTheDocument()
       expect(screen.queryByRole('tab')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('changes bar', () => {
+    it('appears once a value differs from the saved one', async () => {
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+
+      expect(screen.queryByRole('button', { name: 'Deploy' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('region', { name: 'Unsaved profile changes' })).not.toBeInTheDocument()
+
+      const highAvailability = screen.getByRole('switch', { name: 'High availability' })
+      await userEvent.click(highAvailability)
+
+      expect(screen.getByRole('region', { name: 'Unsaved profile changes' })).toHaveTextContent('1 change ongoing')
+
+      await userEvent.click(highAvailability)
+
+      await waitFor(() =>
+        expect(screen.queryByRole('region', { name: 'Unsaved profile changes' })).not.toBeInTheDocument()
+      )
+    })
+
+    it('resets the local changes', async () => {
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Reset' }))
+
+      expect(screen.getByRole('switch', { name: 'High availability' })).not.toBeChecked()
+      await waitFor(() =>
+        expect(screen.queryByRole('region', { name: 'Unsaved profile changes' })).not.toBeInTheDocument()
+      )
+    })
+
+    it('saves the changes into the cluster binding', async () => {
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+      expect(mockUpdatePlatformBinding).toHaveBeenCalledWith({
+        organizationId: 'organization-id',
+        clusterId: 'cluster-id',
+        bindingRequest: expect.objectContaining({
+          templateKey: 'qovery-cluster-v0',
+          templateVersion: '1.0.0',
+          managedConfig: { loki: { 'high-availability': true } },
+        }),
+      })
+      expect(mockDeployCluster).not.toHaveBeenCalled()
+    })
+
+    it('deploys the cluster once the changes are saved', async () => {
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Save and deploy' }))
+
+      expect(mockUpdatePlatformBinding).toHaveBeenCalled()
+      expect(mockDeployCluster).toHaveBeenCalledWith({ organizationId: 'organization-id', clusterId: 'cluster-id' })
+    })
+
+    it('does not deploy when saving fails', async () => {
+      mockUpdatePlatformBinding.mockRejectedValue(new Error('Invalid profile'))
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Save and deploy' }))
+
+      expect(mockDeployCluster).not.toHaveBeenCalled()
+      expect(screen.getByRole('region', { name: 'Unsaved profile changes' })).toBeInTheDocument()
     })
   })
 })

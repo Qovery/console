@@ -1,5 +1,6 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  type ClusterPlatformBindingRequest,
   type PlatformCloudVendor,
   type PlatformClusterMode,
   type PlatformComponentConfigurationPreviewRequest,
@@ -60,3 +61,22 @@ export const platformConfiguration = createQueryKeys('platformConfiguration', {
     },
   }),
 })
+
+export const platformConfigurationMutations = {
+  async updateBinding({
+    organizationId,
+    clusterId,
+    bindingRequest,
+  }: {
+    organizationId: string
+    clusterId: string
+    bindingRequest: ClusterPlatformBindingRequest
+  }) {
+    const response = await platformConfigurationApi.updateClusterPlatformBinding(
+      organizationId,
+      clusterId,
+      bindingRequest
+    )
+    return response.data
+  },
+}
