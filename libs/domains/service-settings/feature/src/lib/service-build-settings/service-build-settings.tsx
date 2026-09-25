@@ -160,6 +160,7 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
                   control={control}
                   render={({ field }) => (
                     <InputToggle
+                      small
                       value={field.value}
                       onChange={field.onChange}
                       disabled={disabled}
@@ -174,6 +175,7 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
                 control={control}
                 render={({ field }) => (
                   <InputToggle
+                    small
                     value={field.value}
                     onChange={field.onChange}
                     disabled={disabled}
