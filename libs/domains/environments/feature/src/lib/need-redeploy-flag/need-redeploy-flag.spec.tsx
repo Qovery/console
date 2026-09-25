@@ -6,14 +6,13 @@ import NeedRedeployFlag from './need-redeploy-flag'
 
 const useDeployEnvironmentSpy = jest.spyOn(useDeployEnvironmentImport, 'useDeployEnvironment') as jest.Mock
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({
     organizationId: 'organization-id',
     projectId: 'project-id',
     environmentId: 'environment-id',
   }),
-  useNavigate: () => jest.fn(),
 }))
 
 describe('NeedRedeployFlag', () => {

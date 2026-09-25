@@ -14,7 +14,6 @@ const mockCancel = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 
 jest.mock('@qovery/domains/services/feature', () => ({
-  useDeployAllServices: () => ({ mutate: mockDeployAllServices }),
   useRestartAllServices: () => ({ mutate: mockRestartAllServices }),
   useStopAllServices: () => ({ mutate: mockStopAllServices }),
   useUninstallAllServices: () => ({ mutate: mockUninstallAllServices }),
@@ -24,6 +23,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
 jest.mock('@qovery/domains/environments/feature', () => ({
   ...jest.requireActual('@qovery/domains/environments/feature'),
   useCancelDeploymentEnvironment: () => ({ mutate: mockCancel }),
+  useDeployAllServices: () => ({ mutate: mockDeployAllServices }),
 }))
 
 jest.mock('@qovery/shared/ui', () => ({

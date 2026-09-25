@@ -15,7 +15,6 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
 import { Icon } from '@qovery/shared/ui'
 import { dateUTCString, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
@@ -271,13 +270,12 @@ export function DropdownServices({ environment, deploymentHistory, stages, size 
                                 asChild
                               >
                                 <Link
-                                  to={
-                                    ENVIRONMENT_LOGS_URL(
-                                      environment.organization.id,
-                                      environment.project.id,
-                                      environment.id
-                                    ) + ENVIRONMENT_STAGES_URL()
-                                  }
+                                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployments"
+                                  params={{
+                                    organizationId: environment.organization.id,
+                                    projectId: environment.project.id,
+                                    environmentId: environment.id,
+                                  }}
                                   onClick={(event) => {
                                     event.stopPropagation()
                                   }}

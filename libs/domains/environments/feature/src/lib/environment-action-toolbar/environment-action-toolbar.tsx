@@ -12,7 +12,7 @@ import { isArgoCd, isEditableService } from '@qovery/domains/services/data-acces
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
 import { useVariables } from '@qovery/domains/variables/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, OVERVIEW_URL } from '@qovery/shared/routes'
+import { OVERVIEW_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
@@ -23,6 +23,7 @@ import {
   isStopAvailable,
 } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
+import { DeployByVersionModal } from '../deploy-by-version-modal/deploy-by-version-modal'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
 import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
@@ -31,7 +32,6 @@ import { useEnvironmentServices } from '../hooks/use-environment-services/use-en
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 import useUninstallEnvironment from '../hooks/use-uninstall-environment/use-uninstall-environment'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
-import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'header'
 const NAMESPACE_VARIABLE_NAME = 'QOVERY_KUBERNETES_NAMESPACE_NAME'
@@ -94,18 +94,25 @@ export function MenuManageDeployment({
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  const logsLink =
-    ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) + ENVIRONMENT_STAGES_URL()
-
   const { mutate: deployEnvironment } = useDeployEnvironment({
+    organizationId: environment.organization.id,
     projectId: environment.project.id,
-    logsLink,
+    environmentId: environment.id,
   })
-  const { mutate: stopEnvironment } = useStopEnvironment({ projectId: environment.project.id, logsLink })
-  const { mutate: uninstallEnvironment } = useUninstallEnvironment({ projectId: environment.project.id, logsLink })
-  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
+  const { mutate: stopEnvironment } = useStopEnvironment({
+    organizationId: environment.organization.id,
     projectId: environment.project.id,
-    logsLink,
+    environmentId: environment.id,
+  })
+  const { mutate: uninstallEnvironment } = useUninstallEnvironment({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+  })
+  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
   })
   // XXX: Required to display a warning for managed Database
   // https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1416
@@ -177,10 +184,11 @@ export function MenuManageDeployment({
     })
   }
 
-  const openUpdateAllModal = () => {
+  const openDeployByVersionModal = () => {
     openModal({
-      content: <UpdateAllModal environment={environment} />,
+      content: <DeployByVersionModal environment={environment} />,
       options: {
+        fakeModal: true,
         width: 676,
       },
     })
@@ -283,8 +291,8 @@ export function MenuManageDeployment({
           .otherwise(() => (
             <>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item icon={<Icon iconName="rotate" />} onSelect={openUpdateAllModal}>
-                Deploy latest version for..
+              <DropdownMenu.Item icon={<Icon iconName="code-branch" />} onSelect={openDeployByVersionModal}>
+                Deploy by version
               </DropdownMenu.Item>
             </>
           ))}

@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { VariableList, VariablesActionToolbar } from '@qovery/domains/variables/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -16,8 +15,9 @@ function RouteComponent() {
   useDocumentTitle('Custom variables - Environment')
 
   const { mutate: deployEnvironment } = useDeployEnvironment({
+    organizationId,
     projectId,
-    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
+    environmentId,
   })
 
   const toasterCallback = () => {
