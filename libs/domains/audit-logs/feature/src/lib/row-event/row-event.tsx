@@ -128,7 +128,8 @@ export function RowEvent(props: RowEventProps) {
     return <span className="truncate">{target_name}</span>
   }
 
-  const isEventTypeFailed = event.event_type?.toLowerCase().includes('fail')
+  const isEventTypeFailed =
+    event.event_type === OrganizationEventType.ACCESS_DENIED || event.event_type?.toLowerCase().includes('fail')
 
   const eventIcon = match(event.event_type)
     .with(
