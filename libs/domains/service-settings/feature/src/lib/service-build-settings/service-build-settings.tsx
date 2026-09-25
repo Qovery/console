@@ -71,9 +71,9 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
               <Callout.Icon>
                 <Icon iconName="triangle-exclamation" iconStyle="regular" />
               </Callout.Icon>
-              <Callout.Text className="flex items-center justify-between">
+              <Callout.Text className="flex w-full items-center justify-between">
                 <span>Build settings customization is not available for your organization.</span>
-                <Button type="button" size="sm" variant="outline" onClick={showChat}>
+                <Button type="button" size="sm" variant="outline" color="yellow" className="shrink-0" onClick={showChat}>
                   Contact support
                 </Button>
               </Callout.Text>
