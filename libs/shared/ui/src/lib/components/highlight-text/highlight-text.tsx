@@ -14,7 +14,7 @@ export function HighlightText({ text, highlight }: HighlightTextProps) {
     <>
       {parts.map((part, index) =>
         index % 2 === 1 ? (
-          <mark key={index} className="bg-surface-warning-strong rounded-sm text-neutral">
+          <mark key={index} className="rounded-sm bg-surface-warning-strong text-neutral">
             {part}
           </mark>
         ) : (
