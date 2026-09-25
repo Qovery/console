@@ -163,7 +163,7 @@ describe('LlmProviderCreateEditModal', () => {
     await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
     await selectEvent.openMenu(screen.getByLabelText('AWS region'))
 
-    for (const code of ['gb', 'us', 'za', 'hk', 'in', 'jp']) {
+    for (const code of ['ie', 'gb', 'us', 'za', 'hk', 'in', 'jp']) {
       expect(document.querySelector(`img[src$="/${code}.svg"]`)).toBeInTheDocument()
     }
   })
