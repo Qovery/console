@@ -218,7 +218,7 @@ describe('EnvironmentSection', () => {
     const environmentHeader = screen.getByRole('columnheader', { name: 'Environment' })
     const clusterHeader = screen.getByRole('columnheader', { name: 'Cluster' })
 
-    expect(environmentHeader).toHaveAttribute('aria-sort', 'none')
+    expect(environmentHeader).toHaveAttribute('aria-sort', 'ascending')
     expect(clusterHeader).toHaveAttribute('aria-sort', 'none')
     expect(environmentHeader.querySelector('.fa-arrow-down')).not.toBeInTheDocument()
 
@@ -235,13 +235,19 @@ describe('EnvironmentSection', () => {
     expect(environmentHeader).toHaveAttribute('aria-sort', 'none')
     expect(clusterHeader.querySelector('.fa-arrow-down')).toBeInTheDocument()
     expect(environmentHeader.querySelector('.fa-arrow-up')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /sort by cluster/i }))
+    await userEvent.click(screen.getByRole('button', { name: /sort by cluster/i }))
+    expect(clusterHeader).toHaveAttribute('aria-sort', 'none')
+    expect(environmentHeader).toHaveAttribute('aria-sort', 'ascending')
+    expect(clusterHeader.querySelector('.fa-arrow-down, .fa-arrow-up')).not.toBeInTheDocument()
   })
 
   it('keeps the ephemeral default sort without showing an arrow initially', () => {
     renderWithProviders(<EnvironmentSection type={EnvironmentModeEnum.PREVIEW} items={[overview]} />)
 
     const lastOperationHeader = screen.getByRole('columnheader', { name: 'Last operation' })
-    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'none')
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'descending')
     expect(lastOperationHeader.querySelector('.fa-arrow-up')).not.toBeInTheDocument()
   })
 

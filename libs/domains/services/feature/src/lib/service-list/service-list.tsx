@@ -398,6 +398,15 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
+                    aria-sort={
+                      header.column.getCanSort()
+                        ? match(header.column.getIsSorted())
+                            .with('asc', () => 'ascending' as const)
+                            .with('desc', () => 'descending' as const)
+                            .with(false, () => 'none' as const)
+                            .exhaustive()
+                        : undefined
+                    }
                     className={twMerge(
                       'relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0',
                       i === 1 || i === 0 ? 'border-none p-0' : ''

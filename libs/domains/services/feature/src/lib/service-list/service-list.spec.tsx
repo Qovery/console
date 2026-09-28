@@ -453,19 +453,23 @@ describe('ServiceList', () => {
         .map((row) => row.textContent?.match(/FRONT-END|back-end-A|CRONJOB|seed_script/)?.[0])
 
     expect(lastOperationHeader.querySelector('.fa-arrow-down, .fa-arrow-up')).not.toBeInTheDocument()
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'none')
     expect(getServiceNames()).toEqual(['FRONT-END', 'back-end-A', 'CRONJOB', 'seed_script'])
 
     await userEvent.click(screen.getByRole('button', { name: 'Last operation' }))
     expect(getServiceNames()).toEqual(['FRONT-END', 'CRONJOB', 'back-end-A', 'seed_script'])
     expect(lastOperationHeader.querySelector('.fa-arrow-down')).toBeInTheDocument()
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'ascending')
 
     await userEvent.click(screen.getByRole('button', { name: 'Last operation' }))
     expect(getServiceNames()).toEqual(['seed_script', 'back-end-A', 'CRONJOB', 'FRONT-END'])
     expect(lastOperationHeader.querySelector('.fa-arrow-up')).toBeInTheDocument()
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'descending')
 
     await userEvent.click(screen.getByRole('button', { name: 'Last operation' }))
     expect(getServiceNames()).toEqual(['FRONT-END', 'back-end-A', 'CRONJOB', 'seed_script'])
     expect(lastOperationHeader.querySelector('.fa-arrow-down, .fa-arrow-up')).not.toBeInTheDocument()
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'none')
   })
 
   it('should not display ArgoCD services', () => {

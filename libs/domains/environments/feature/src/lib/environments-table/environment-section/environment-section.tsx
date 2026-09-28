@@ -192,8 +192,14 @@ function lastOperationTimestamp(overview: EnvironmentOverviewResponse) {
   return lastDeploymentDate ? new Date(lastDeploymentDate).getTime() : 0
 }
 
-function lastUpdateTimestamp(overview: EnvironmentOverviewResponse) {
-  return new Date(overview.updated_at ?? Date.now()).getTime()
+function lastUpdateTimestamp(overview: EnvironmentOverviewResponse, fallbackTimestamp: number) {
+  return overview.updated_at ? new Date(overview.updated_at).getTime() : fallbackTimestamp
+}
+
+function defaultEnvironmentSort(type: EnvironmentModeEnum): EnvironmentSort {
+  return type === EnvironmentModeEnum.PREVIEW
+    ? { column: 'last-operation', direction: 'desc' }
+    : { column: 'name', direction: 'asc' }
 }
 
 type EnvironmentSortColumn = 'name' | 'last-operation' | 'cluster' | 'last-update'
@@ -207,13 +213,17 @@ interface EnvironmentSort {
 function compareEnvironments(
   environmentA: EnvironmentOverviewResponse,
   environmentB: EnvironmentOverviewResponse,
-  column: EnvironmentSortColumn
+  column: EnvironmentSortColumn,
+  fallbackTimestamp: number
 ) {
   return match(column)
     .with('name', () => (environmentA.name ?? '').localeCompare(environmentB.name ?? ''))
     .with('cluster', () => (environmentA.cluster?.name ?? '').localeCompare(environmentB.cluster?.name ?? ''))
     .with('last-operation', () => lastOperationTimestamp(environmentA) - lastOperationTimestamp(environmentB))
-    .with('last-update', () => lastUpdateTimestamp(environmentA) - lastUpdateTimestamp(environmentB))
+    .with(
+      'last-update',
+      () => lastUpdateTimestamp(environmentA, fallbackTimestamp) - lastUpdateTimestamp(environmentB, fallbackTimestamp)
+    )
     .exhaustive()
 }
 
@@ -221,6 +231,7 @@ function SortableColumnHeader({
   label,
   column,
   sort,
+  effectiveSort,
   onSort,
   className,
   buttonClassName,
@@ -228,6 +239,7 @@ function SortableColumnHeader({
   label: string
   column: EnvironmentSortColumn
   sort: EnvironmentSort | null
+  effectiveSort: EnvironmentSort
   onSort: (column: EnvironmentSortColumn) => void
   className?: string
   buttonClassName?: string
@@ -236,7 +248,9 @@ function SortableColumnHeader({
 
   return (
     <Table.ColumnHeaderCell
-      aria-sort={isSorted ? (sort?.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
+      aria-sort={
+        effectiveSort.column === column ? (effectiveSort.direction === 'asc' ? 'ascending' : 'descending') : 'none'
+      }
       className={twMerge('flex h-9 items-center p-0 text-neutral-subtle', className)}
     >
       <button
@@ -282,6 +296,7 @@ export function EnvironmentSection({
   // Ephemeral environments default to the most recent operation first, every other
   // section keeps the historical alphabetical order. Clicking a header overrides this.
   const [sort, setSort] = useState<EnvironmentSort | null>(null)
+  const effectiveSort = sort ?? defaultEnvironmentSort(type)
 
   const handleSort = useCallback((column: EnvironmentSortColumn) => {
     setSort((currentSort) => {
@@ -291,15 +306,12 @@ export function EnvironmentSection({
   }, [])
 
   const sortedItems = useMemo(() => {
-    const activeSort: EnvironmentSort =
-      sort ??
-      (type === EnvironmentModeEnum.PREVIEW
-        ? { column: 'last-operation', direction: 'desc' }
-        : { column: 'name', direction: 'asc' })
+    const activeSort = sort ?? defaultEnvironmentSort(type)
     const directionFactor = activeSort.direction === 'asc' ? 1 : -1
+    const fallbackTimestamp = Date.now()
 
     return [...items].sort((environmentA, environmentB) => {
-      const comparison = compareEnvironments(environmentA, environmentB, activeSort.column)
+      const comparison = compareEnvironments(environmentA, environmentB, activeSort.column, fallbackTimestamp)
       if (comparison !== 0) {
         return directionFactor * comparison
       }
@@ -379,6 +391,7 @@ export function EnvironmentSection({
                 label="Environment"
                 column="name"
                 sort={sort}
+                effectiveSort={effectiveSort}
                 onSort={handleSort}
                 buttonClassName="pl-0 pr-4"
               />
@@ -386,6 +399,7 @@ export function EnvironmentSection({
                 label="Last operation"
                 column="last-operation"
                 sort={sort}
+                effectiveSort={effectiveSort}
                 onSort={handleSort}
                 className="border-l border-neutral"
                 buttonClassName="px-4"
@@ -394,6 +408,7 @@ export function EnvironmentSection({
                 label="Cluster"
                 column="cluster"
                 sort={sort}
+                effectiveSort={effectiveSort}
                 onSort={handleSort}
                 className="border-l border-neutral"
                 buttonClassName="px-4"
@@ -402,6 +417,7 @@ export function EnvironmentSection({
                 label="Last update"
                 column="last-update"
                 sort={sort}
+                effectiveSort={effectiveSort}
                 onSort={handleSort}
                 className="border-l border-neutral"
                 buttonClassName="px-4"
