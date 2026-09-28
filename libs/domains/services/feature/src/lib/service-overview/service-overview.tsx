@@ -14,7 +14,7 @@ import {
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { CopyToClipboardButtonIcon, Heading, Icon, InputText, Link, Navbar, Section } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
-import { AgenticWorkflowRuns } from '../agentic-workflow-runs/agentic-workflow-runs'
+import { AgenticWorkflowLastRun } from '../agentic-workflow-runs/agentic-workflow-runs'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
@@ -256,7 +256,7 @@ function ServiceOverviewContent({
             {isAgenticWorkflow(service) && (
               <Section className="gap-3">
                 <div className="flex items-center justify-between gap-2">
-                  <Heading>Runs</Heading>
+                  <Heading>Last run</Heading>
                   <Link
                     to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/runs"
                     params={{
@@ -272,7 +272,7 @@ function ServiceOverviewContent({
                     See all runs <Icon iconName="angle-right" className="text-ssm" />
                   </Link>
                 </div>
-                <AgenticWorkflowRuns key={service.id} serviceId={service.id} compact />
+                <AgenticWorkflowLastRun key={service.id} serviceId={service.id} />
               </Section>
             )}
             {(isEditableService(service) || isAgenticWorkflow(service)) && (

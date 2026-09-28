@@ -1,7 +1,7 @@
 import { waitFor, within } from '@testing-library/react'
 import { type AgenticWorkflowRun } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { AgenticWorkflowRuns } from './agentic-workflow-runs'
+import { AgenticWorkflowLastRun, AgenticWorkflowRuns } from './agentic-workflow-runs'
 
 const mockUseRunHistory = jest.fn()
 
@@ -96,10 +96,26 @@ describe('AgenticWorkflowRuns', () => {
       isError: false,
     })
 
-    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" compact />)
+    renderWithProviders(<AgenticWorkflowLastRun serviceId="workflow-123" />)
 
     expect(screen.getByText('No runs yet')).toBeInTheDocument()
-    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: 5 })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: 1 })
+  })
+
+  it('shows only the latest run in the overview card and opens its details', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [run, { ...run, id: 'run-older', prompt: 'Older prompt' }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowLastRun serviceId="workflow-123" />)
+
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.queryByText('Older prompt')).not.toBeInTheDocument()
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: 1 })
+    await userEvent.click(screen.getByRole('button', { name: /Webhook run/i }))
+
+    expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
   })
 
   it('allows retrying after an API error', async () => {

@@ -11,7 +11,7 @@ import {
   Skeleton,
   TablePrimitives,
 } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/util-dates'
+import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
 
 const { Table } = TablePrimitives
@@ -93,17 +93,9 @@ function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => 
   )
 }
 
-export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId: string; compact?: boolean }) {
+export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
   const [selectedRun, setSelectedRun] = useState<AgenticWorkflowRun | null>(null)
-  const {
-    data: runs = [],
-    isLoading,
-    isError,
-    refetch,
-  } = useAgenticWorkflowRunHistory({
-    serviceId,
-    limit: compact ? 5 : undefined,
-  })
+  const { data: runs = [], isLoading, isError, refetch } = useAgenticWorkflowRunHistory({ serviceId })
 
   if (isLoading) {
     return (
@@ -213,5 +205,68 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
       </Table.Root>
       {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}
     </div>
+  )
+}
+
+export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
+  const [selectedRun, setSelectedRun] = useState<AgenticWorkflowRun | null>(null)
+  const { data: runs = [], isLoading, isError, refetch } = useAgenticWorkflowRunHistory({ serviceId, limit: 1 })
+  const lastRun = runs[0]
+
+  if (isLoading) {
+    return (
+      <div
+        className="flex gap-2.5 rounded-lg border border-neutral bg-surface-neutral p-4"
+        aria-label="Loading last run"
+      >
+        <Skeleton width={100} height={16} />
+        <Skeleton width={100} height={16} />
+        <Skeleton width={150} height={16} />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <EmptyState size="sm" icon="triangle-exclamation" title="Last run could not be loaded">
+        <Button color="neutral" variant="outline" size="md" onClick={() => refetch()}>
+          Retry
+        </Button>
+      </EmptyState>
+    )
+  }
+
+  if (!lastRun) {
+    return (
+      <EmptyState
+        size="sm"
+        icon="play"
+        title="No runs yet"
+        description="Trigger this agent task to see its latest run."
+      />
+    )
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        className="relative flex w-full rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition-colors hover:bg-surface-neutral-subtle"
+        onClick={() => setSelectedRun(lastRun)}
+      >
+        <span className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
+          <span className="font-medium">{triggerLabel(lastRun.trigger)} run</span>
+          <span className="h-[3px] w-[3px] rounded-full bg-neutral-disabled" aria-hidden="true" />
+          <span className="text-neutral-subtle">{timeAgo(new Date(lastRun.created_at))} ago</span>
+          {lastRun.prompt?.trim() && (
+            <>
+              <span className="h-[3px] w-[3px] rounded-full bg-neutral-disabled" aria-hidden="true" />
+              <span className="max-w-full truncate text-neutral-subtle">{promptPreview(lastRun.prompt)}</span>
+            </>
+          )}
+        </span>
+      </button>
+      {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}
+    </>
   )
 }
