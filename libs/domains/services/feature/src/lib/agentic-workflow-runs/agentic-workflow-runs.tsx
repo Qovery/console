@@ -1,11 +1,19 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-typescript-axios'
 import { type KeyboardEvent, useState } from 'react'
-import { Button, CopyToClipboardButtonIcon, EmptyState, Heading, Icon, Sheet, Skeleton } from '@qovery/shared/ui'
+import {
+  Button,
+  CopyToClipboardButtonIcon,
+  EmptyState,
+  Heading,
+  Sheet,
+  Skeleton,
+  TablePrimitives,
+} from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
 
-const PAGE_SIZE = 20
+const { Table } = TablePrimitives
 
 function triggerLabel(trigger: AgenticWorkflowRun['trigger']) {
   return {
@@ -65,35 +73,9 @@ function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => 
 }
 
 export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId: string; compact?: boolean }) {
-  const [page, setPage] = useState(1)
   const [selectedRun, setSelectedRun] = useState<AgenticWorkflowRun | null>(null)
-  const pageSize = compact ? 5 : PAGE_SIZE
-  const { data, isLoading, isError, isFetching, isPreviousData, refetch } = useAgenticWorkflowRunHistory({
-    serviceId,
-    page,
-    pageSize,
-  })
-  const runs = data?.results ?? []
-  const checkNextPage = !compact && !isLoading && !isError && !isPreviousData && runs.length === pageSize
-  const {
-    data: nextPageData,
-    isLoading: isCheckingNextPage,
-    isError: isNextPageError,
-    isPreviousData: isNextPagePreviousData,
-    refetch: refetchNextPage,
-  } = useAgenticWorkflowRunHistory({
-    serviceId,
-    page: page + 1,
-    pageSize,
-    enabled: checkNextPage,
-    refetchInterval: false,
-  })
-  const hasNextPage =
-    checkNextPage &&
-    !isCheckingNextPage &&
-    !isNextPageError &&
-    !isNextPagePreviousData &&
-    Boolean(nextPageData?.results?.length)
+  const { data, isLoading, isError, refetch } = useAgenticWorkflowRunHistory({ serviceId })
+  const runs = compact ? data?.slice(0, 5) ?? [] : data ?? []
 
   if (isLoading) {
     return (
@@ -120,7 +102,7 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
     )
   }
 
-  if (runs.length === 0 && page === 1) {
+  if (runs.length === 0) {
     return (
       <EmptyState
         size="sm"
@@ -132,77 +114,69 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
   }
 
   const openRunWithKeyboard = (event: KeyboardEvent<HTMLTableRowElement>, run: AgenticWorkflowRun) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault()
       setSelectedRun(run)
     }
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="overflow-x-auto rounded-lg border border-neutral">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-neutral bg-surface-neutral-subtle font-mono text-xs text-neutral-subtle">
-            <tr>
-              {['Run ID', 'Trigger', 'Requested', 'Recorded', 'Prompt'].map((title) => (
-                <th key={title} className="whitespace-nowrap px-4 py-3 font-normal">
+    <div className="flex grow flex-col justify-between">
+      <div className="overflow-x-auto">
+        <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
+          <Table.Header>
+            <Table.Row className="divide-x divide-neutral">
+              {['Date', 'Trigger', 'Recorded', 'Prompt'].map((title) => (
+                <Table.ColumnHeaderCell
+                  key={title}
+                  className={title === 'Date' ? 'w-[40%] font-medium' : 'font-medium'}
+                >
                   {title}
-                </th>
+                </Table.ColumnHeaderCell>
               ))}
-            </tr>
-          </thead>
-          <tbody>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
             {runs.map((run) => (
-              <tr
+              <Table.Row
                 key={run.id}
-                className="cursor-pointer border-b border-neutral last:border-0 hover:bg-surface-neutral-subtle"
+                className="h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
                 tabIndex={0}
                 onClick={() => setSelectedRun(run)}
                 onKeyDown={(event) => openRunWithKeyboard(event, run)}
               >
-                <td className="px-4 py-4">
-                  <span className="font-mono text-xs hover:underline">{run.id.slice(0, 8)}</span>
-                </td>
-                <td className="whitespace-nowrap px-4 py-4">{triggerLabel(run.trigger)}</td>
-                <td className="whitespace-nowrap px-4 py-4">{runDate(run.created_at)}</td>
-                <td className="whitespace-nowrap px-4 py-4">{runDate(run.recorded_at)}</td>
-                <td className="max-w-80 truncate px-4 py-4" title={run.prompt ?? undefined}>
-                  {run.prompt || '—'}
-                </td>
-              </tr>
+                <Table.Cell className="w-[40%]">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium">{runDate(run.created_at)}</span>
+                    <span className="truncate text-neutral-subtle" title={run.id}>
+                      {run.id}
+                    </span>
+                  </div>
+                </Table.Cell>
+                <Table.Cell>{triggerLabel(run.trigger)}</Table.Cell>
+                <Table.Cell>{runDate(run.recorded_at)}</Table.Cell>
+                <Table.Cell>
+                  {run.prompt ? (
+                    <Button
+                      color="neutral"
+                      variant="plain"
+                      size="md"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setSelectedRun(run)
+                      }}
+                    >
+                      See the full prompt
+                    </Button>
+                  ) : (
+                    '—'
+                  )}
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </tbody>
-        </table>
-        {runs.length === 0 && <div className="p-8 text-center text-sm text-neutral-subtle">No runs on this page.</div>}
+          </Table.Body>
+        </Table.Root>
       </div>
-      {!compact && (
-        <div className="flex items-center justify-end gap-3">
-          {isNextPageError && (
-            <Button color="neutral" variant="outline" size="md" onClick={() => refetchNextPage()}>
-              Retry next page
-            </Button>
-          )}
-          <Button
-            color="neutral"
-            variant="outline"
-            size="md"
-            disabled={page === 1 || isFetching}
-            onClick={() => setPage(page - 1)}
-          >
-            Previous
-          </Button>
-          <span className="text-sm text-neutral-subtle">Page {page}</span>
-          <Button
-            color="neutral"
-            variant="outline"
-            size="md"
-            disabled={!hasNextPage || isFetching}
-            onClick={() => setPage(page + 1)}
-          >
-            Next <Icon iconName="angle-right" />
-          </Button>
-        </div>
-      )}
       {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}
     </div>
   )
