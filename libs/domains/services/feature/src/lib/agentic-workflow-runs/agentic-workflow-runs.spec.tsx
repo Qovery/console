@@ -52,7 +52,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByText('Check the latest deployment')).toBeInTheDocument()
     expect(screen.queryByText('No prompt recorded.')).not.toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Close run details' }))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
