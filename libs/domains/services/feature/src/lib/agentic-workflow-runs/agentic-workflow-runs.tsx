@@ -53,10 +53,6 @@ function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => 
                 <dd>{triggerLabel(run.trigger)}</dd>
                 <dt className="text-neutral-subtle">Requested (UTC)</dt>
                 <dd>{runDate(run.created_at)}</dd>
-                <dt className="text-neutral-subtle">Recorded in history (UTC)</dt>
-                <dd>{runDate(run.recorded_at)}</dd>
-                <dt className="text-neutral-subtle">Agent Task ID</dt>
-                <dd className="break-all font-mono text-xs">{run.source_workflow_id}</dd>
               </dl>
               <section className="flex flex-col gap-2">
                 <Heading level={3}>Prompt</Heading>
@@ -134,7 +130,6 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
           <Table.Row className="divide-x divide-neutral">
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[170px] font-medium">Recorded</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="font-medium">Prompt</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
@@ -167,7 +162,6 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
                 </div>
               </Table.Cell>
               <Table.Cell className="w-[196px]">{triggerLabel(run.trigger)}</Table.Cell>
-              <Table.Cell className="w-[170px]">{runDate(run.recorded_at)}</Table.Cell>
               <Table.Cell>
                 {run.prompt ? (
                   <Button

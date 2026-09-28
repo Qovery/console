@@ -37,6 +37,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByText('run-123')).toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Duration' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Recorded' })).not.toBeInTheDocument()
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: undefined })
   })
 
@@ -46,7 +47,8 @@ describe('AgenticWorkflowRuns', () => {
     await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
 
     expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
-    expect(screen.getByText('workflow-123')).toBeInTheDocument()
+    expect(screen.queryByText('Agent Task ID')).not.toBeInTheDocument()
+    expect(screen.queryByText('Recorded in history (UTC)')).not.toBeInTheDocument()
     expect(screen.getByText('Check the latest deployment')).toBeInTheDocument()
     expect(screen.queryByText('No prompt recorded.')).not.toBeInTheDocument()
 
