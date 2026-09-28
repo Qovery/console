@@ -2,6 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { type AgenticWorkflowScheduleResponse, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import {
+  type AgenticWorkflow,
   type AnyService,
   type EditableService,
   type Job,
@@ -37,7 +38,7 @@ function ServiceLastDeploymentSection({
   service,
 }: {
   environment: Environment
-  service: EditableService
+  service: EditableService | AgenticWorkflow
 }) {
   return (
     <Section className="gap-3">
@@ -257,7 +258,7 @@ function ServiceOverviewContent({
                 <div className="flex items-center justify-between gap-2">
                   <Heading>Runs</Heading>
                   <Link
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/runs"
                     params={{
                       organizationId: environment.organization.id,
                       projectId: environment.project.id,
@@ -274,7 +275,9 @@ function ServiceOverviewContent({
                 <AgenticWorkflowRuns key={service.id} serviceId={service.id} compact />
               </Section>
             )}
-            {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
+            {(isEditableService(service) || isAgenticWorkflow(service)) && (
+              <ServiceLastDeploymentSection environment={environment} service={service} />
+            )}
             {!isTerraformService && (isEditableService(service) || isAgenticWorkflow(service)) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />
             )}

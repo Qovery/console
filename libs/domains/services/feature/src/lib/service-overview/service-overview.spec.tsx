@@ -194,7 +194,8 @@ describe('ServiceOverview', () => {
     expect(screen.getByRole('heading', { name: 'Runs' })).toBeInTheDocument()
     expect(screen.getByText('See all runs')).toBeInTheDocument()
     expect(screen.getByText('agentic-workflow-runs')).toBeInTheDocument()
-    expect(screen.queryByText('service-last-deployment')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Last deployment' })).toBeInTheDocument()
+    expect(screen.getByText('service-last-deployment')).toBeInTheDocument()
   })
 
   it('renders the schedule instead of the webhook for a scheduled agentic workflow', () => {

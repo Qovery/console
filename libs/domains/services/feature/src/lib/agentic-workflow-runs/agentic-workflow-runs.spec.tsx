@@ -40,6 +40,20 @@ describe('AgenticWorkflowRuns', () => {
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', page: 1, pageSize: 20 })
   })
 
+  it('opens the run details in a sheet and closes it', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('row', { name: /run-123/i }))
+
+    expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
+    expect(screen.getByText('workflow-123')).toBeInTheDocument()
+    expect(screen.queryByText('No prompt recorded.')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
   it('checks the next page and disables Next after the last run', async () => {
     mockUseRunHistory.mockImplementation(({ page }: { page: number }) => ({
       data: {

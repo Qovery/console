@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
-  AgenticWorkflowRuns,
   AgenticWorkflowServiceActions,
   ServiceActions,
   ServiceDeploymentList,
@@ -32,7 +31,7 @@ function RouteComponent() {
       <Section className="min-h-0 flex-1 gap-8">
         <div className="flex shrink-0 flex-col gap-6">
           <div className="flex justify-between">
-            <Heading>{isAgentTask ? 'Runs' : 'Deployments'}</Heading>
+            <Heading>Deployments</Heading>
             {isAgentTask ? (
               <AgenticWorkflowServiceActions environment={environment} service={service} variant="header" />
             ) : (
@@ -42,13 +41,9 @@ function RouteComponent() {
           <hr className="w-full border-neutral" />
         </div>
         <div className="flex min-h-0 flex-1 flex-col gap-8 pb-20">
-          {isAgentTask ? (
-            <AgenticWorkflowRuns key={serviceId} serviceId={serviceId} />
-          ) : (
-            <Suspense fallback={<ServiceDeploymentListSkeleton />}>
-              <ServiceDeploymentList environment={environment} serviceId={serviceId} />
-            </Suspense>
-          )}
+          <Suspense fallback={<ServiceDeploymentListSkeleton />}>
+            <ServiceDeploymentList environment={environment} serviceId={serviceId} />
+          </Suspense>
         </div>
       </Section>
     </div>

@@ -1,24 +1,72 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-typescript-axios'
-import { useState } from 'react'
-import { Button, CopyToClipboardButtonIcon, EmptyState, Icon, Skeleton, TablePrimitives } from '@qovery/shared/ui'
+import { type KeyboardEvent, useState } from 'react'
+import { Button, CopyToClipboardButtonIcon, EmptyState, Heading, Icon, Sheet, Skeleton } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
 
-const { Table } = TablePrimitives
 const PAGE_SIZE = 20
 
-function RunTrigger({ trigger }: { trigger: AgenticWorkflowRun['trigger'] }) {
-  const label = {
+function triggerLabel(trigger: AgenticWorkflowRun['trigger']) {
+  return {
     [AgenticWorkflowRunTrigger.MANUAL]: 'Manual',
     [AgenticWorkflowRunTrigger.SCHEDULE]: 'Schedule',
     [AgenticWorkflowRunTrigger.WEBHOOK]: 'Webhook',
   }[trigger]
+}
 
-  return <span>{label}</span>
+function runDate(value: string | null) {
+  return value ? dateFullFormat(value, 'UTC', 'dd MMM, HH:mm') : '—'
+}
+
+function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => void }) {
+  return (
+    <Dialog.Root open onOpenChange={(open) => !open && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-overlay bg-background-overlay" />
+        <Dialog.Content asChild aria-describedby={undefined}>
+          <Sheet className="fixed bottom-0 right-0 top-0 z-modal w-full max-w-2xl" aria-label="Run details">
+            <div className="flex items-center justify-between border-b border-neutral p-6">
+              <Dialog.Title asChild>
+                <Heading level={2}>Run {run.id.slice(0, 8)}</Heading>
+              </Dialog.Title>
+              <Button color="neutral" variant="outline" onClick={onClose}>
+                Close
+              </Button>
+            </div>
+            <div className="flex flex-col gap-6 overflow-y-auto p-6 text-sm">
+              <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
+                <dt className="text-neutral-subtle">Run ID</dt>
+                <dd className="flex min-w-0 items-center gap-2">
+                  <span className="break-all font-mono text-xs">{run.id}</span>
+                  <CopyToClipboardButtonIcon content={run.id} tooltipContent="Copy run ID" />
+                </dd>
+                <dt className="text-neutral-subtle">Trigger</dt>
+                <dd>{triggerLabel(run.trigger)}</dd>
+                <dt className="text-neutral-subtle">Requested (UTC)</dt>
+                <dd>{runDate(run.created_at)}</dd>
+                <dt className="text-neutral-subtle">Recorded in history (UTC)</dt>
+                <dd>{runDate(run.recorded_at)}</dd>
+                <dt className="text-neutral-subtle">Agent Task ID</dt>
+                <dd className="break-all font-mono text-xs">{run.source_workflow_id}</dd>
+              </dl>
+              <section className="flex flex-col gap-2">
+                <Heading level={3}>Prompt</Heading>
+                <p className="whitespace-pre-wrap rounded border border-neutral p-4">
+                  {run.prompt ?? 'No prompt recorded.'}
+                </p>
+              </section>
+            </div>
+          </Sheet>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  )
 }
 
 export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId: string; compact?: boolean }) {
   const [page, setPage] = useState(1)
+  const [selectedRun, setSelectedRun] = useState<AgenticWorkflowRun | null>(null)
   const pageSize = compact ? 5 : PAGE_SIZE
   const { data, isLoading, isError, isFetching, isPreviousData, refetch } = useAgenticWorkflowRunHistory({
     serviceId,
@@ -83,45 +131,50 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
     )
   }
 
+  const openRunWithKeyboard = (event: KeyboardEvent<HTMLTableRowElement>, run: AgenticWorkflowRun) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      setSelectedRun(run)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      {runs.length === 0 ? (
-        <p className="py-8 text-center text-sm text-neutral-subtle">No runs on this page.</p>
-      ) : (
-        <Table.Root className="min-w-[680px] table-fixed">
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell className="w-40">Requested</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="w-28">Trigger</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Prompt</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="w-44">Run ID</Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
+      <div className="overflow-x-auto rounded-lg border border-neutral">
+        <table className="w-full text-left text-sm">
+          <thead className="border-b border-neutral bg-surface-neutral-subtle font-mono text-xs text-neutral-subtle">
+            <tr>
+              {['Run ID', 'Trigger', 'Requested', 'Recorded', 'Prompt'].map((title) => (
+                <th key={title} className="whitespace-nowrap px-4 py-3 font-normal">
+                  {title}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
             {runs.map((run) => (
-              <Table.Row key={run.id}>
-                <Table.Cell className="whitespace-nowrap">
-                  {dateFullFormat(run.created_at, undefined, 'dd MMM, HH:mm')}
-                </Table.Cell>
-                <Table.Cell>
-                  <RunTrigger trigger={run.trigger} />
-                </Table.Cell>
-                <Table.Cell className="max-w-0 truncate" title={run.prompt ?? undefined}>
+              <tr
+                key={run.id}
+                className="cursor-pointer border-b border-neutral last:border-0 hover:bg-surface-neutral-subtle"
+                tabIndex={0}
+                onClick={() => setSelectedRun(run)}
+                onKeyDown={(event) => openRunWithKeyboard(event, run)}
+              >
+                <td className="px-4 py-4">
+                  <span className="font-mono text-xs hover:underline">{run.id.slice(0, 8)}</span>
+                </td>
+                <td className="whitespace-nowrap px-4 py-4">{triggerLabel(run.trigger)}</td>
+                <td className="whitespace-nowrap px-4 py-4">{runDate(run.created_at)}</td>
+                <td className="whitespace-nowrap px-4 py-4">{runDate(run.recorded_at)}</td>
+                <td className="max-w-80 truncate px-4 py-4" title={run.prompt ?? undefined}>
                   {run.prompt || '—'}
-                </Table.Cell>
-                <Table.Cell>
-                  <div className="flex items-center gap-1 font-code text-xs">
-                    <span className="truncate" title={run.id}>
-                      {run.id}
-                    </span>
-                    <CopyToClipboardButtonIcon content={run.id} tooltipContent="Copy run ID" className="shrink-0" />
-                  </div>
-                </Table.Cell>
-              </Table.Row>
+                </td>
+              </tr>
             ))}
-          </Table.Body>
-        </Table.Root>
-      )}
+          </tbody>
+        </table>
+        {runs.length === 0 && <div className="p-8 text-center text-sm text-neutral-subtle">No runs on this page.</div>}
+      </div>
       {!compact && (
         <div className="flex items-center justify-end gap-3">
           {isNextPageError && (
@@ -150,6 +203,7 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
           </Button>
         </div>
       )}
+      {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}
     </div>
   )
 }
