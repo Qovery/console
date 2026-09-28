@@ -129,62 +129,66 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
 
   return (
     <div className="flex grow flex-col justify-between">
-      <div className="overflow-x-auto">
-        <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
-          <Table.Header>
-            <Table.Row className="divide-x divide-neutral">
-              {['Date', 'Trigger', 'Recorded', 'Prompt'].map((title) => (
-                <Table.ColumnHeaderCell
-                  key={title}
-                  className={title === 'Date' ? 'w-[40%] font-medium' : 'font-medium'}
-                >
-                  {title}
-                </Table.ColumnHeaderCell>
-              ))}
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {runs.map((run) => (
-              <Table.Row
-                key={run.id}
-                role="button"
-                className="h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
-                tabIndex={0}
-                onClick={() => setSelectedRun(run)}
-                onKeyDown={(event) => openRunWithKeyboard(event, run)}
-              >
-                <Table.Cell className="w-[40%]">
-                  <div className="flex flex-col gap-1">
-                    <span className="font-medium">{runDate(run.created_at)}</span>
-                    <span className="truncate text-neutral-subtle" title={run.id}>
+      <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
+        <Table.Header>
+          <Table.Row className="divide-x divide-neutral">
+            <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[170px] font-medium">Recorded</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="font-medium">Prompt</Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {runs.map((run) => (
+            <Table.Row
+              key={run.id}
+              role="button"
+              className="h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
+              tabIndex={0}
+              onClick={() => setSelectedRun(run)}
+              onKeyDown={(event) => openRunWithKeyboard(event, run)}
+            >
+              <Table.Cell className="w-[420px]">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium text-neutral">{runDate(run.created_at)}</span>
+                  <span className="group flex min-w-0 items-center gap-0.5 text-ssm text-neutral-subtle">
+                    <span className="truncate" title={run.id}>
                       {run.id}
                     </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>{triggerLabel(run.trigger)}</Table.Cell>
-                <Table.Cell>{runDate(run.recorded_at)}</Table.Cell>
-                <Table.Cell>
-                  {run.prompt ? (
-                    <Button
-                      color="neutral"
-                      variant="plain"
-                      size="md"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        setSelectedRun(run)
-                      }}
-                    >
-                      See the full prompt
-                    </Button>
-                  ) : (
-                    '—'
-                  )}
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
-      </div>
+                    <span onClick={(event) => event.stopPropagation()}>
+                      <CopyToClipboardButtonIcon
+                        content={run.id}
+                        tooltipContent="Copy run ID"
+                        className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                        iconClassName="text-xs"
+                      />
+                    </span>
+                  </span>
+                </div>
+              </Table.Cell>
+              <Table.Cell className="w-[196px]">{triggerLabel(run.trigger)}</Table.Cell>
+              <Table.Cell className="w-[170px]">{runDate(run.recorded_at)}</Table.Cell>
+              <Table.Cell>
+                {run.prompt ? (
+                  <Button
+                    color="neutral"
+                    variant="plain"
+                    size="md"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setSelectedRun(run)
+                    }}
+                  >
+                    See the full prompt
+                  </Button>
+                ) : (
+                  '—'
+                )}
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table.Root>
       {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}
     </div>
   )
