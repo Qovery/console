@@ -1,3 +1,4 @@
+import { waitFor, within } from '@testing-library/react'
 import { type AgenticWorkflowRun } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowRuns } from './agentic-workflow-runs'
@@ -50,7 +51,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
     expect(screen.queryByText('Agent Task ID')).not.toBeInTheDocument()
     expect(screen.queryByText('Recorded in history (UTC)')).not.toBeInTheDocument()
-    expect(screen.getByText('Check the latest deployment')).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText('Check the latest deployment')).toBeInTheDocument()
     expect(screen.queryByText('No prompt recorded.')).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Close run details' }))
@@ -59,13 +60,33 @@ describe('AgenticWorkflowRuns', () => {
   })
 
   it('opens the full prompt from the row button without pagination', async () => {
+    const fullPrompt = '123456789012345678901234567890 more details'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, prompt: fullPrompt }],
+      isLoading: false,
+      isError: false,
+    })
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    await userEvent.click(screen.getByRole('button', { name: 'See the full prompt' }))
+    const promptButton = screen.getByRole('button', { name: 'See the full prompt' })
+    expect(promptButton).toHaveTextContent('123456789012345678901234567890…')
+    expect(screen.queryByText(fullPrompt)).not.toBeInTheDocument()
+
+    await userEvent.click(promptButton)
 
     expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
-    expect(screen.getByText('Check the latest deployment')).toBeInTheDocument()
+    expect(screen.getByText(fullPrompt)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument()
+  })
+
+  it('closes the copy tooltip when the run sheet opens', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.hover(screen.getByRole('button', { name: 'Copy run ID' }))
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Copy run ID')
+
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+    await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument())
   })
 
   it('shows an empty state when no runs exist', () => {

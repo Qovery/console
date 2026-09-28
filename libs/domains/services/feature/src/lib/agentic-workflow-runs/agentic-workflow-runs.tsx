@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-typescript-axios'
-import { type KeyboardEvent, useState } from 'react'
+import { type KeyboardEvent, useRef, useState } from 'react'
 import {
   Button,
   CopyToClipboardButtonIcon,
@@ -28,12 +28,26 @@ function runDate(value: string | null) {
   return value ? dateFullFormat(value, 'UTC', 'dd MMM, HH:mm') : '—'
 }
 
+function promptPreview(prompt: string) {
+  const normalized = prompt.replace(/\s+/g, ' ').trim()
+  return normalized.length > 30 ? `${normalized.slice(0, 30)}…` : normalized
+}
+
 function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => void }) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
   return (
     <Dialog.Root open onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-overlay bg-background-overlay" />
-        <Dialog.Content asChild aria-describedby={undefined}>
+        <Dialog.Content
+          asChild
+          aria-describedby={undefined}
+          onOpenAutoFocus={(event) => {
+            event.preventDefault()
+            closeButtonRef.current?.focus()
+          }}
+        >
           <Sheet
             className="fixed bottom-0 right-0 top-0 z-modal w-[940px] max-w-[calc(100vw-32px)] focus:outline-none"
             aria-label="Run details"
@@ -64,6 +78,7 @@ function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => 
             </div>
             <Dialog.Close asChild>
               <button
+                ref={closeButtonRef}
                 type="button"
                 className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded text-neutral-subtle hover:bg-surface-neutral-subtle hover:text-neutral"
                 aria-label="Close run details"
@@ -164,6 +179,7 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
                       <CopyToClipboardButtonIcon
                         content={run.id}
                         tooltipContent="Copy run ID"
+                        tooltipOpen={selectedRun ? false : undefined}
                         asButton
                         className="shrink-0 opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100"
                         iconClassName="text-xs"
@@ -174,17 +190,18 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
               </Table.Cell>
               <Table.Cell className="w-[196px]">{triggerLabel(run.trigger)}</Table.Cell>
               <Table.Cell>
-                {run.prompt ? (
+                {run.prompt?.trim() ? (
                   <Button
                     color="neutral"
                     variant="plain"
                     size="md"
+                    aria-label="See the full prompt"
                     onClick={(event) => {
                       event.stopPropagation()
                       setSelectedRun(run)
                     }}
                   >
-                    See the full prompt
+                    {promptPreview(run.prompt)}
                   </Button>
                 ) : (
                   '—'

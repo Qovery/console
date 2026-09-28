@@ -10,11 +10,12 @@ export interface CopyToClipboardButtonIconProps {
   className?: string
   iconClassName?: string
   tooltipContent?: string
+  tooltipOpen?: boolean
   asButton?: boolean
 }
 
 export function CopyToClipboardButtonIcon(props: CopyToClipboardButtonIconProps) {
-  const { content, className = '', iconClassName = '', tooltipContent = 'Copy', asButton = false } = props
+  const { content, className = '', iconClassName = '', tooltipContent = 'Copy', tooltipOpen, asButton = false } = props
 
   const [icon, setIcon] = useState<IconName>('copy')
   const [, copyToClipboard] = useCopyToClipboard()
@@ -32,7 +33,7 @@ export function CopyToClipboardButtonIcon(props: CopyToClipboardButtonIconProps)
   )
 
   return (
-    <Tooltip content={tooltipContent}>
+    <Tooltip content={tooltipContent} open={tooltipOpen}>
       {asButton ? (
         <button
           type="button"
