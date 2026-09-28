@@ -59,6 +59,10 @@ jest.mock('./service-last-deployment/service-last-deployment', () => ({
   ServiceLastDeployment: () => <div>service-last-deployment</div>,
 }))
 
+jest.mock('../agentic-workflow-runs/agentic-workflow-runs', () => ({
+  AgenticWorkflowRuns: () => <div>agentic-workflow-runs</div>,
+}))
+
 jest.mock('../keda/scaled-object-status/scaled-object-status', () => ({
   ScaledObjectStatus: () => <div>scaled-object-status</div>,
 }))
@@ -187,9 +191,10 @@ describe('ServiceOverview', () => {
     expect(screen.getByText('service-instance')).toBeInTheDocument()
     expect(screen.getByText('Webhook')).toBeInTheDocument()
     expect(screen.getByLabelText('Webhook URL')).toHaveValue('https://api.qovery.com/agentic-workflow/webhook-1')
-    expect(screen.getByRole('heading', { name: 'Last execution' })).toBeInTheDocument()
-    expect(screen.getByText('See all executions')).toBeInTheDocument()
-    expect(screen.getByText('service-last-deployment')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Runs' })).toBeInTheDocument()
+    expect(screen.getByText('See all runs')).toBeInTheDocument()
+    expect(screen.getByText('agentic-workflow-runs')).toBeInTheDocument()
+    expect(screen.queryByText('service-last-deployment')).not.toBeInTheDocument()
   })
 
   it('renders the schedule instead of the webhook for a scheduled agentic workflow', () => {

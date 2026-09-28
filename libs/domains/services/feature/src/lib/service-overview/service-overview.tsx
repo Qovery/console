@@ -2,7 +2,6 @@ import { useParams } from '@tanstack/react-router'
 import { type AgenticWorkflowScheduleResponse, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import {
-  type AgenticWorkflow,
   type AnyService,
   type EditableService,
   type Job,
@@ -14,6 +13,7 @@ import {
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { CopyToClipboardButtonIcon, Heading, Icon, InputText, Link, Navbar, Section } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
+import { AgenticWorkflowRuns } from '../agentic-workflow-runs/agentic-workflow-runs'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
@@ -37,14 +37,12 @@ function ServiceLastDeploymentSection({
   service,
 }: {
   environment: Environment
-  service: EditableService | AgenticWorkflow
+  service: EditableService
 }) {
-  const isAgentTask = isAgenticWorkflow(service)
-
   return (
     <Section className="gap-3">
       <div className="flex items-center justify-between gap-2">
-        <Heading>{isAgentTask ? 'Last execution' : 'Last deployment'}</Heading>
+        <Heading>Last deployment</Heading>
         <Link
           to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
           params={{
@@ -57,7 +55,7 @@ function ServiceLastDeploymentSection({
           size="ssm"
           className="gap-0.5 text-neutral-subtle hover:text-neutral"
         >
-          {isAgentTask ? 'See all executions' : 'See all deployments'}
+          See all deployments
           <Icon iconName="angle-right" className="text-ssm" />
         </Link>
       </div>
@@ -254,9 +252,29 @@ function ServiceOverviewContent({
               ) : (
                 <AgenticWorkflowWebhookSection webhookUrl={service.webhook.url} />
               ))}
-            {(isEditableService(service) || isAgenticWorkflow(service)) && (
-              <ServiceLastDeploymentSection environment={environment} service={service} />
+            {isAgenticWorkflow(service) && (
+              <Section className="gap-3">
+                <div className="flex items-center justify-between gap-2">
+                  <Heading>Runs</Heading>
+                  <Link
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+                    params={{
+                      organizationId: environment.organization.id,
+                      projectId: environment.project.id,
+                      environmentId: environment.id,
+                      serviceId: service.id,
+                    }}
+                    color="neutral"
+                    size="ssm"
+                    className="gap-0.5 text-neutral-subtle hover:text-neutral"
+                  >
+                    See all runs <Icon iconName="angle-right" className="text-ssm" />
+                  </Link>
+                </div>
+                <AgenticWorkflowRuns key={service.id} serviceId={service.id} compact />
+              </Section>
             )}
+            {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
             {!isTerraformService && (isEditableService(service) || isAgenticWorkflow(service)) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />
             )}

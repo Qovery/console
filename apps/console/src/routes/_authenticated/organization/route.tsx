@@ -261,7 +261,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster, isAgenticWorkfl
   if (isAgenticWorkflow(service)) {
     return SERVICE_TABS.filter(
       (tab) => AGENTIC_WORKFLOW_SERVICE_TAB_IDS.includes(tab.id) && (isAgenticWorkflowEnabled || tab.id !== 'variables')
-    )
+    ).map((tab) => (tab.id === 'deployments' ? { ...tab, label: 'Runs' } : tab))
   }
 
   const isDatabase = service?.serviceType === 'DATABASE'
