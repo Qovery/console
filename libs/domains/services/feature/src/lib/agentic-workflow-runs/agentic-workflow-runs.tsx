@@ -47,7 +47,7 @@ function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => 
                   <dt className="text-neutral-subtle">Run ID</dt>
                   <dd className="flex min-w-0 items-center gap-2">
                     <span className="break-all font-mono text-xs">{run.id}</span>
-                    <CopyToClipboardButtonIcon content={run.id} tooltipContent="Copy run ID" />
+                    <CopyToClipboardButtonIcon content={run.id} tooltipContent="Copy run ID" asButton />
                   </dd>
                   <dt className="text-neutral-subtle">Trigger</dt>
                   <dd>{triggerLabel(run.trigger)}</dd>
@@ -164,7 +164,8 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
                       <CopyToClipboardButtonIcon
                         content={run.id}
                         tooltipContent="Copy run ID"
-                        className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                        asButton
+                        className="shrink-0 opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100"
                         iconClassName="text-xs"
                       />
                     </span>

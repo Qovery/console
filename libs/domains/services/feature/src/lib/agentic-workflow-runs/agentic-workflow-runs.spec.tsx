@@ -34,6 +34,7 @@ describe('AgenticWorkflowRuns', () => {
 
     expect(screen.getByText('Webhook')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'See the full prompt' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Copy run ID' })).toBeInTheDocument()
     expect(screen.getByText('run-123')).toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Duration' })).not.toBeInTheDocument()
