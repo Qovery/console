@@ -11,7 +11,7 @@ export interface AgenticWorkflowServiceActionsProps {
   environment: Environment
   service: AgenticWorkflow
   onAction?: (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
-  variant?: 'default' | 'header'
+  variant?: 'default' | 'header' | 'menu-only'
 }
 
 export function AgenticWorkflowServiceActions({
@@ -63,26 +63,28 @@ export function AgenticWorkflowServiceActions({
 
   return (
     <div className="flex items-center gap-2" onClick={onAction}>
-      <Tooltip content="Trigger">
-        <Button
-          aria-label="Trigger"
-          variant="outline"
-          size={variant === 'header' ? 'md' : 'sm'}
-          iconOnly
-          loading={isDeploying}
-          disabled={isDeploying}
-          onClick={() => deployAgenticWorkflow({ agenticWorkflowId: service.id })}
-          onKeyDown={onAction}
-        >
-          <Icon iconName="play" />
-        </Button>
-      </Tooltip>
+      {variant !== 'menu-only' && (
+        <Tooltip content="Trigger">
+          <Button
+            aria-label="Trigger"
+            variant="outline"
+            size={variant === 'header' ? 'md' : 'sm'}
+            iconOnly
+            loading={isDeploying}
+            disabled={isDeploying}
+            onClick={() => deployAgenticWorkflow({ agenticWorkflowId: service.id })}
+            onKeyDown={onAction}
+          >
+            <Icon iconName="play" />
+          </Button>
+        </Tooltip>
+      )}
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <Button
             aria-label={`Other actions for ${service.name}`}
             variant="outline"
-            size={variant === 'header' ? 'md' : 'sm'}
+            size={variant === 'header' || variant === 'menu-only' ? 'md' : 'sm'}
             iconOnly
             onKeyDown={onAction}
           >

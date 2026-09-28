@@ -119,6 +119,15 @@ describe('AgenticWorkflowServiceActions', () => {
     expect(screen.getByRole('button', { name: 'Trigger' })).toBeInTheDocument()
   })
 
+  it('shows only the actions menu in the runs header', () => {
+    renderWithProviders(
+      <AgenticWorkflowServiceActions environment={environment} service={service} variant="menu-only" />
+    )
+
+    expect(screen.getByRole('button', { name: 'Other actions for Review pull requests' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Trigger' })).not.toBeInTheDocument()
+  })
+
   it('disables the trigger button while a request is pending', () => {
     mockIsDeploying = true
 
