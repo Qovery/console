@@ -41,13 +41,17 @@ When receiving a Linear webhook, first check the current issue status and whethe
 
 Understand the acceptance criteria, inspect the relevant repository and existing conventions, implement the smallest complete change, and run focused tests and linting. Open a pull request that links the Linear issue and summarizes the change and verification. Never merge the pull request or deploy without human approval.`
 
-const BUILD_OPTIMIZER_PROMPT = `You are a build and deployment optimizer. Find concrete ways to make builds and deployments faster and cheaper, and propose them.
+const BUILD_OPTIMIZER_PROMPT = `Use the qovery-speedup skill to analyze build/deployment speed for the current service/environment.
 
-1. Inspect the service's build setup: Dockerfile, dependency installation, layer caching, image size, and the build/deploy configuration in Qovery.
-2. Identify optimization levers (e.g. better layer ordering and caching, multi-stage builds, smaller base images, pruning unused dependencies, parallelisable steps).
-3. For each lever, estimate the expected gain (build time, image size, or cost) and the risk.
-4. Open a PR with the proposed changes to the build configuration, and/or update the build configuration in Qovery.
-5. Summarise what you changed, the expected gain, and anything that needs a human decision. Never merge — leave the human as the gate.`
+The skill lives at: https://github.com/Qovery/qovery-skills/tree/main/qovery-speedup
+Start from SKILL.md and follow its reference/ files as needed.
+
+Execution context — read-only + propose, nothing applied live:
+- Do NOT apply any change directly — not even the ones the skill marks as "auto-fix allowed" (health check timing, deployment stage, resource requests, etc.). Treat every finding as a proposal only.
+- Inspect, identify the bottlenecks, and diagnose root causes (including whether a slow build is actually an avoidable image-mirroring miss).
+- For every proposed change to a file (Dockerfile, build config, IaC/Terraform config, etc.), open a PR on the relevant repo: branch, commit, push, PR description with before/after and expected gain. Never merge it yourself.
+- For anything that can only be changed via the Qovery Console/API directly (no corresponding file in a repo), do not call the mutating endpoint — just document it clearly as a recommendation in the summary, with the exact change needed and expected gain.
+- Finish with a summary: what was found, what's proposed in which PR(s), and what needs a human decision (including any config-only change with no PR).`
 
 const webhookAutomation = (id: string) => [
   {
@@ -133,7 +137,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
       memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       automations: weeklyScheduleAutomation('build-optimizer'),
-      whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
+      whitelistHosts: 'github.com,api.github.com,raw.githubusercontent.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
   },
   {
