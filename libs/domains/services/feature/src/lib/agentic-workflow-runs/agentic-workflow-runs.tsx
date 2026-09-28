@@ -20,8 +20,26 @@ function RunTrigger({ trigger }: { trigger: AgenticWorkflowRun['trigger'] }) {
 export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId: string; compact?: boolean }) {
   const [page, setPage] = useState(1)
   const pageSize = compact ? 5 : PAGE_SIZE
-  const { data, isLoading, isError, isFetching, refetch } = useAgenticWorkflowRunHistory({ serviceId, page, pageSize })
+  const { data, isLoading, isError, isFetching, isPreviousData, refetch } = useAgenticWorkflowRunHistory({
+    serviceId,
+    page,
+    pageSize,
+  })
   const runs = data?.results ?? []
+  const checkNextPage = !compact && !isLoading && !isError && !isPreviousData && runs.length === pageSize
+  const {
+    data: nextPageData,
+    isLoading: isCheckingNextPage,
+    isError: isNextPageError,
+    isPreviousData: isNextPagePreviousData,
+    refetch: refetchNextPage,
+  } = useAgenticWorkflowRunHistory({ serviceId, page: page + 1, pageSize, enabled: checkNextPage })
+  const hasNextPage =
+    checkNextPage &&
+    !isCheckingNextPage &&
+    !isNextPageError &&
+    !isNextPagePreviousData &&
+    Boolean(nextPageData?.results?.length)
 
   if (isLoading) {
     return (
@@ -100,6 +118,11 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
       )}
       {!compact && (
         <div className="flex items-center justify-end gap-3">
+          {isNextPageError && (
+            <Button color="neutral" variant="outline" size="md" onClick={() => refetchNextPage()}>
+              Retry next page
+            </Button>
+          )}
           <Button
             color="neutral"
             variant="outline"
@@ -114,7 +137,7 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
             color="neutral"
             variant="outline"
             size="md"
-            disabled={runs.length < PAGE_SIZE || isFetching}
+            disabled={!hasNextPage || isFetching}
             onClick={() => setPage(page + 1)}
           >
             Next <Icon iconName="angle-right" />

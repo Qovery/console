@@ -40,12 +40,17 @@ describe('AgenticWorkflowRuns', () => {
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', page: 1, pageSize: 20 })
   })
 
-  it('requests the next page and disables Next when fewer than 20 runs are returned', async () => {
+  it('checks the next page and disables Next after the last run', async () => {
     mockUseRunHistory.mockImplementation(({ page }: { page: number }) => ({
       data: {
         page,
         page_size: 20,
-        results: page === 1 ? Array.from({ length: 20 }, (_, index) => ({ ...run, id: `run-${index}` })) : [run],
+        results:
+          page === 1
+            ? Array.from({ length: 20 }, (_, index) => ({ ...run, id: `run-${index}` }))
+            : page === 2
+              ? [run]
+              : [],
       },
       isLoading: false,
       isError: false,
@@ -56,9 +61,30 @@ describe('AgenticWorkflowRuns', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /Next/i }))
 
-    expect(mockUseRunHistory).toHaveBeenLastCalledWith({ serviceId: 'workflow-123', page: 2, pageSize: 20 })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', page: 2, pageSize: 20, enabled: true })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', page: 2, pageSize: 20 })
     expect(screen.getByRole('button', { name: /Next/i })).toBeDisabled()
     expect(screen.getByText('Page 2')).toBeInTheDocument()
+  })
+
+  it('does not open an empty page when the final page contains exactly 20 runs', () => {
+    mockUseRunHistory.mockImplementation(({ page }: { page: number }) => ({
+      data: {
+        page,
+        page_size: 20,
+        results: page === 1 ? Array.from({ length: 20 }, (_, index) => ({ ...run, id: `run-${index}` })) : [],
+      },
+      isLoading: false,
+      isError: false,
+      isFetching: false,
+      refetch: jest.fn(),
+    }))
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', page: 2, pageSize: 20, enabled: true })
+    expect(screen.getByRole('button', { name: /Next/i })).toBeDisabled()
+    expect(screen.queryByText('No runs on this page.')).not.toBeInTheDocument()
   })
 
   it('shows an empty state when no runs exist', () => {
