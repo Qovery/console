@@ -71,7 +71,7 @@ function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => 
                 <section className="flex flex-col gap-2">
                   <Heading level={3}>Prompt</Heading>
                   <p className="whitespace-pre-wrap rounded border border-neutral p-4">
-                    {run.prompt ?? 'No prompt recorded.'}
+                    {run.prompt?.trim() ? run.prompt : 'No prompt recorded.'}
                   </p>
                 </section>
               </div>

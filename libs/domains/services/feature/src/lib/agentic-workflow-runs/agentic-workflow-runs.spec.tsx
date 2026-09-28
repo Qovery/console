@@ -79,6 +79,20 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument()
   })
 
+  it('treats whitespace-only prompts as missing in the table and sheet', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, prompt: '  \n  ' }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.queryByRole('button', { name: 'See the full prompt' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    expect(within(screen.getByRole('dialog')).getByText('No prompt recorded.')).toBeInTheDocument()
+  })
+
   it('closes the copy tooltip when the run sheet opens', async () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
