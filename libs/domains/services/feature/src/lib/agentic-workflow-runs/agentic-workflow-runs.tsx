@@ -33,7 +33,13 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
     isError: isNextPageError,
     isPreviousData: isNextPagePreviousData,
     refetch: refetchNextPage,
-  } = useAgenticWorkflowRunHistory({ serviceId, page: page + 1, pageSize, enabled: checkNextPage })
+  } = useAgenticWorkflowRunHistory({
+    serviceId,
+    page: page + 1,
+    pageSize,
+    enabled: checkNextPage,
+    refetchInterval: false,
+  })
   const hasNextPage =
     checkNextPage &&
     !isCheckingNextPage &&

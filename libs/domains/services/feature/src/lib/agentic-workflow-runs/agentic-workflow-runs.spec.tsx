@@ -61,7 +61,13 @@ describe('AgenticWorkflowRuns', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /Next/i }))
 
-    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', page: 2, pageSize: 20, enabled: true })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({
+      serviceId: 'workflow-123',
+      page: 2,
+      pageSize: 20,
+      enabled: true,
+      refetchInterval: false,
+    })
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', page: 2, pageSize: 20 })
     expect(screen.getByRole('button', { name: /Next/i })).toBeDisabled()
     expect(screen.getByText('Page 2')).toBeInTheDocument()
@@ -82,7 +88,13 @@ describe('AgenticWorkflowRuns', () => {
 
     renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', page: 2, pageSize: 20, enabled: true })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({
+      serviceId: 'workflow-123',
+      page: 2,
+      pageSize: 20,
+      enabled: true,
+      refetchInterval: false,
+    })
     expect(screen.getByRole('button', { name: /Next/i })).toBeDisabled()
     expect(screen.queryByText('No runs on this page.')).not.toBeInTheDocument()
   })
