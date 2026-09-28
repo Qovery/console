@@ -48,6 +48,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </div>
               </th>
               <th
+                aria-sort="none"
                 class="text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0 border-none p-0"
               >
                 <button
@@ -61,9 +62,15 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0"
               />
               <th
+                aria-sort="none"
                 class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0"
               >
-                Last operation
+                <button
+                  class="flex items-center gap-1 truncate cursor-pointer select-none"
+                  type="button"
+                >
+                  Last operation
+                </button>
               </th>
               <th
                 class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0"
