@@ -4,7 +4,7 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
-import { useAuth } from '@qovery/shared/auth'
+import { getSsoConnectionName, useAuth } from '@qovery/shared/auth'
 import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
@@ -42,10 +42,7 @@ function useRedirectIfLogged(connection?: string) {
 
   useEffect(() => {
     if (connection && !isAuthenticated) {
-      const trimmed = connection.trim()
-      const domainWithoutDots = trimmed.includes('.') ? trimmed.substring(0, trimmed.lastIndexOf('.')) : trimmed
-
-      authLogin(domainWithoutDots).catch((error) => {
+      authLogin(getSsoConnectionName(connection)).catch((error) => {
         console.error('Auto-connection failed:', error)
       })
 
