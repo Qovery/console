@@ -279,6 +279,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster, isAgenticWorkfl
   // Databases should not expose the variables tab.
   return SERVICE_TABS.filter(
     (tab) =>
+      tab.id !== 'runs' &&
       !(isDatabase && tab.id === 'variables') &&
       !(isManagedDatabaseService && tab.id === 'cloud-shell') &&
       tab.id !== 'manifest' &&

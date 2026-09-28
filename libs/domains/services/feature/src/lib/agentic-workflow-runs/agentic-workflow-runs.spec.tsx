@@ -37,13 +37,13 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByText('run-123')).toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Duration' })).not.toBeInTheDocument()
-    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123' })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: undefined })
   })
 
   it('opens the run details in a sheet and closes it', async () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    await userEvent.click(screen.getByRole('row', { name: /run-123/i }))
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
 
     expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
     expect(screen.getByText('workflow-123')).toBeInTheDocument()
@@ -75,7 +75,7 @@ describe('AgenticWorkflowRuns', () => {
     renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" compact />)
 
     expect(screen.getByText('No runs yet')).toBeInTheDocument()
-    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123' })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: 5 })
   })
 
   it('allows retrying after an API error', async () => {

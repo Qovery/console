@@ -1,4 +1,4 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { AgenticWorkflowRuns, AgenticWorkflowServiceActions, useService } from '@qovery/domains/services/feature'
@@ -9,11 +9,20 @@ export const Route = createFileRoute(
 )({ component: RouteComponent })
 
 function RouteComponent() {
-  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
 
-  if (!environment || !isAgenticWorkflow(service)) return null
+  if (!environment || !service) return null
+  if (!isAgenticWorkflow(service)) {
+    return (
+      <Navigate
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+        params={{ organizationId, projectId, environmentId, serviceId }}
+        replace
+      />
+    )
+  }
 
   return (
     <div className="container mx-auto flex min-h-page-container flex-col pt-6">

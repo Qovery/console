@@ -18,8 +18,10 @@ jest.mock('@qovery/shared/ui', () => ({
 describe('useDeployAgenticWorkflow', () => {
   it('invalidates run history for the triggered service', () => {
     const runHistory = queries.services.agenticWorkflowRunHistory({ serviceId: 'workflow-1' }).queryKey
+    const recentRuns = queries.services.agenticWorkflowRunHistory({ serviceId: 'workflow-1', limit: 5 }).queryKey
     const otherService = queries.services.agenticWorkflowRunHistory({ serviceId: 'workflow-2' }).queryKey
     mockQueryClient.setQueryData(runHistory, [])
+    mockQueryClient.setQueryData(recentRuns, [])
     mockQueryClient.setQueryData(otherService, [])
 
     useDeployAgenticWorkflow({ environmentId: 'env-1', serviceId: 'workflow-1' })
@@ -27,6 +29,7 @@ describe('useDeployAgenticWorkflow', () => {
     options.onSuccess()
 
     expect(mockQueryClient.getQueryState(runHistory)?.isInvalidated).toBe(true)
+    expect(mockQueryClient.getQueryState(recentRuns)?.isInvalidated).toBe(true)
     expect(mockQueryClient.getQueryState(otherService)?.isInvalidated).toBe(false)
   })
 })

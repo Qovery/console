@@ -74,8 +74,15 @@ function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => 
 
 export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId: string; compact?: boolean }) {
   const [selectedRun, setSelectedRun] = useState<AgenticWorkflowRun | null>(null)
-  const { data, isLoading, isError, refetch } = useAgenticWorkflowRunHistory({ serviceId })
-  const runs = compact ? data?.slice(0, 5) ?? [] : data ?? []
+  const {
+    data: runs = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useAgenticWorkflowRunHistory({
+    serviceId,
+    limit: compact ? 5 : undefined,
+  })
 
   if (isLoading) {
     return (
@@ -140,6 +147,7 @@ export function AgenticWorkflowRuns({ serviceId, compact = false }: { serviceId:
             {runs.map((run) => (
               <Table.Row
                 key={run.id}
+                role="button"
                 className="h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
                 tabIndex={0}
                 onClick={() => setSelectedRun(run)}

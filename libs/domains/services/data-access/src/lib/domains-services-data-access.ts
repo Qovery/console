@@ -628,9 +628,12 @@ export const services = createQueryKeys('services', {
         .exhaustive()
     },
   }),
-  agenticWorkflowRunHistory: ({ serviceId }: { serviceId: string }) => ({
-    queryKey: [serviceId],
+  agenticWorkflowRunHistory: ({ serviceId, limit }: { serviceId: string; limit?: number }) => ({
+    queryKey: [serviceId, limit ?? 'all'],
     async queryFn() {
+      if (limit) {
+        return (await agenticWorkflowsApi.listAgenticWorkflowRunHistory(serviceId, 1, limit)).data.results ?? []
+      }
       const pageSize = 100
       const runs: AgenticWorkflowRun[] = []
       let page = 1
