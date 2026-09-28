@@ -1,11 +1,12 @@
 import { Auth0Provider, type User, useAuth0 } from '@auth0/auth0-react'
 import { createContext, useContext } from 'react'
+import { clearLegacyJwtTokenCookie } from '@qovery/shared/auth'
 import { OAUTH_AUDIENCE, OAUTH_DOMAIN, OAUTH_KEY } from '@qovery/shared/util-node-env'
 
 export interface Auth0ContextType {
   isAuthenticated: boolean
   user: User | undefined
-  login: (returnTo?: string) => void
+  login: (returnTo?: string, connection?: string) => Promise<void>
   logout: () => void
   isLoading: boolean
 }
@@ -52,7 +53,10 @@ function Auth0ContextProvider({ children }: { children: React.ReactNode }) {
   const contextValue = {
     isAuthenticated: isAuthenticated || Boolean(e2eAuthToken),
     user,
-    login: (returnTo?: string) => loginWithRedirect({ appState: { returnTo } }),
+    login: (returnTo?: string, connection?: string) => {
+      clearLegacyJwtTokenCookie()
+      return loginWithRedirect({ authorizationParams: { connection }, appState: { returnTo } })
+    },
     logout: () => logout({ logoutParams: { returnTo: window.location.origin } }),
     isLoading: e2eAuthToken ? false : isLoading,
   }

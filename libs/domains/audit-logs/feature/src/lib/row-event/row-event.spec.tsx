@@ -1,4 +1,8 @@
-import { type OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
+import {
+  type OrganizationEventResponse,
+  OrganizationEventTargetType,
+  OrganizationEventType,
+} from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -113,6 +117,15 @@ describe('RowEvent', () => {
 
     expect(screen.getByText('unsupported-target')).not.toHaveAttribute('href')
   })
+
+  it.each([OrganizationEventType.POLICY_FAILED, OrganizationEventType.ACCESS_DENIED])(
+    'should render %s as a failed event',
+    (eventType) => {
+      renderWithProviders(<RowEvent {...props} event={{ ...props.event, event_type: eventType }} />)
+
+      expect(screen.getByTestId('tag').querySelector('.text-negative')).toBeInTheDocument()
+    }
+  )
 
   it('should render Agent task for the agentic workflow target type', () => {
     renderWithProviders(

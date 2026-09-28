@@ -1182,6 +1182,7 @@ export function AgenticWorkflowConfiguration() {
                       <AgenticWorkflowModelSetting
                         llmProviderId={values.llmProviderId}
                         providerType={selectedProviderType}
+                        providerRegion={availableLlmProviders.find(({ id }) => id === values.llmProviderId)?.region}
                         settings={field.value}
                         onChange={field.onChange}
                       />

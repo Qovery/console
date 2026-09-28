@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { AuthEnum, useAuth } from '@qovery/shared/auth'
+import { AuthEnum, getSsoConnectionName, useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
 import { Badge, Button, Icon, InputTextSmall, Link } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
@@ -120,6 +120,8 @@ const TESTIMONIALS = [
 
 const loginSearchParamsSchema = z.object({
   redirect: z.string().optional(),
+  // SAML / OIDC connection (or company domain) to send the user straight to their IdP
+  connection: z.string().optional(),
 })
 
 function getSafeRedirect(redirectPath?: string) {
@@ -179,9 +181,19 @@ function useAuth0Error() {
 
 export const Route = createFileRoute('/login/')({
   validateSearch: loginSearchParamsSchema,
-  beforeLoad: ({ context, search }) => {
+  beforeLoad: async ({ context, search }) => {
     if (context.auth.isAuthenticated) {
       throw redirect({ to: getSafeRedirect(search.redirect) })
+    }
+
+    const connection = search.connection && getSsoConnectionName(search.connection)
+    if (connection) {
+      try {
+        await context.auth.login(getSafeRedirect(search.redirect), connection)
+      } catch (error) {
+        // Fall back to the login form rather than failing the route
+        console.error('SSO auto-connection failed:', error)
+      }
     }
   },
   component: RouteComponent,
@@ -239,12 +251,6 @@ function RouteComponent() {
     setLastUsedLogin(lastUsedProvider)
 
     try {
-      // XXX: Cleanup legacy jwtToken cookie which can cause RequestHeaderSectionTooLarge problems
-      // https://qovery.atlassian.net/browse/FRT-1086
-      // https://github.com/Qovery/console/pull/1188
-      if (document.cookie.split(';').some((item) => item.trim().startsWith('jwtToken='))) {
-        document.cookie = 'jwtToken=; Max-Age=-99999999; domain=.qovery.com'
-      }
       await authLogin(provider, getSafeRedirect(search.redirect))
     } catch (error) {
       console.error(error)
@@ -252,9 +258,7 @@ function RouteComponent() {
   }
 
   const validateAndConnect = () => {
-    const trimmed = methods.getValues('ssoDomain').trim()
-    const domainWithoutDots = trimmed.includes('.') ? trimmed.substring(0, trimmed.lastIndexOf('.')) : trimmed
-    onClickAuthLogin(domainWithoutDots, 'saml_sso')
+    onClickAuthLogin(getSsoConnectionName(methods.getValues('ssoDomain')), 'saml_sso')
   }
 
   return (

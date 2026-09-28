@@ -64,6 +64,7 @@ describe('AgenticWorkflowModelSetting', () => {
 
     expect(screen.getByLabelText('Model')).toBeInTheDocument()
     expect(screen.queryByText('Bedrock settings')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('selected-icon')).not.toBeInTheDocument()
     await selectEvent.select(screen.getByLabelText('Model'), 'Claude Sonnet', {
       container: document.body,
     })
@@ -126,7 +127,7 @@ describe('AgenticWorkflowModelSetting', () => {
   it('lists Bedrock models and serializes the first model', async () => {
     mockModels = [
       { id: 'eu.anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null },
-      { id: 'eu.anthropic.claude-sonnet-4', display_name: 'Claude Sonnet 4', created_at: null },
+      { id: 'us.anthropic.claude-sonnet-4', display_name: 'Claude Sonnet 4', created_at: null },
     ]
     const onChange = jest.fn()
 
@@ -134,14 +135,53 @@ describe('AgenticWorkflowModelSetting', () => {
       <AgenticWorkflowModelSetting
         llmProviderId="provider-1"
         providerType={LlmProviderType.BEDROCK}
+        providerRegion="us-east-1"
         settings="{}"
         onChange={onChange}
       />
     )
 
     expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    await selectEvent.openMenu(screen.getByLabelText('Model'))
+    expect(document.querySelector('img[src*="/eu.svg"]')).toBeInTheDocument()
+    expect(document.querySelector('img[src*="/us.svg"]')).toBeInTheDocument()
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'eu.anthropic.claude-opus-5' })
+  })
+
+  it('uses the Bedrock token region for a model without a geographic prefix', async () => {
+    mockModels = [{ id: 'anthropic.claude-sonnet-4', display_name: 'Claude Sonnet 4', created_at: null }]
+
+    renderWithProviders(
+      <AgenticWorkflowModelSetting
+        llmProviderId="provider-1"
+        providerType={LlmProviderType.BEDROCK}
+        providerRegion="ap-south-1"
+        settings={'{"model":"anthropic.claude-sonnet-4"}'}
+        onChange={jest.fn()}
+      />
+    )
+
+    expect(document.querySelector('[data-testid="selected-icon"] img[src*="/in.svg"]')).toBeInTheDocument()
+    await selectEvent.openMenu(screen.getByLabelText('Model'))
+    expect(document.querySelector('img[src*="/in.svg"]')).toBeInTheDocument()
+  })
+
+  it('shows a globe for a global Bedrock model', () => {
+    mockModels = [{ id: 'global.anthropic.claude-sonnet-4', display_name: 'Claude Sonnet 4', created_at: null }]
+
+    renderWithProviders(
+      <AgenticWorkflowModelSetting
+        llmProviderId="provider-1"
+        providerType={LlmProviderType.BEDROCK}
+        providerRegion="eu-west-1"
+        settings={'{"model":"global.anthropic.claude-sonnet-4"}'}
+        onChange={jest.fn()}
+      />
+    )
+
+    expect(document.querySelector('[data-testid="selected-icon"] .fa-globe')).toBeInTheDocument()
+    expect(document.querySelector('img[src*="/eu.svg"]')).not.toBeInTheDocument()
   })
 
   it('repairs invalid Bedrock settings with the first available model', async () => {

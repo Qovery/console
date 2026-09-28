@@ -30,6 +30,7 @@ const bedrockProvider: LlmProviderResponse = {
   id: 'provider-2',
   name: 'Bedrock token',
   type: LlmProviderType.BEDROCK,
+  region: 'eu-west-1',
 }
 
 describe('AgenticWorkflowAiConfigurationSettings', () => {
@@ -104,13 +105,19 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
 
   it('shows the model selector for Bedrock', () => {
     useLlmProviderModelsSpy.mockReturnValue({
-      data: [{ id: 'eu.anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null }],
+      data: [{ id: 'anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null }],
       isError: false,
       isLoading: false,
     })
 
     renderWithProviders(
-      <AgenticWorkflowSettingsFormHarness values={{ llmProviderId: bedrockProvider.id, modelSettings: '' }}>
+      <AgenticWorkflowSettingsFormHarness
+        values={{
+          llmProviderId: bedrockProvider.id,
+          modelType: AgenticWorkflowModelType.BEDROCK,
+          modelSettings: '{"model":"anthropic.claude-opus-5"}',
+        }}
+      >
         {(form) => (
           <AgenticWorkflowAiConfigurationSettings
             form={form}
@@ -122,6 +129,7 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
     )
 
     expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    expect(document.querySelector('[data-testid="selected-icon"] img[src*="/eu.svg"]')).toBeInTheDocument()
     expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
   })
 })
