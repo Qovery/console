@@ -6,7 +6,7 @@ import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-acc
 import { useService } from '@qovery/domains/services/feature'
 import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Button, DatePicker, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { dateFullFormat, dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { HeaderLogs } from '../../header-logs/header-logs'
 import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
 import { mergeServiceLogsParams } from '../../search-service-logs/search-service-logs-utils'
@@ -77,6 +77,14 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
   const maxDate = useMemo(() => new Date(), [isOpenDatePicker])
   const minDate = useMemo(() => subDays(maxDate, 84), [maxDate])
 
+  const formatTimeframeDate = useCallback(
+    (date: Date) =>
+      updateTimeContextValue.utc
+        ? dateFullFormat(date.getTime(), 'UTC', 'yyyy-MM-dd HH:mm')
+        : dateYearMonthDayHourMinuteSecond(date, true, false),
+    [updateTimeContextValue.utc]
+  )
+
   return (
     <>
       <HeaderLogs
@@ -131,7 +139,9 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             minDate={minDate}
             defaultDates={defaultDates}
             showDateTimeInputs
-            useLocalTime
+            useLocalTime={!updateTimeContextValue.utc}
+            showTimezoneSelect
+            onTimezoneChange={(useLocalTime) => setUpdateTimeContext({ utc: !useLocalTime })}
             onClickOutside={() => setIsOpenDatePicker(false)}
           >
             {!startDate && !endDate ? (
@@ -149,11 +159,11 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
               <Button type="button" size="md" onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}>
                 <span className="inline-flex text-nowrap">
                   {hasDeploymentId && startDate && !endDate ? (
-                    <>from: {dateYearMonthDayHourMinuteSecond(startDate, true, false)}</>
+                    <>from: {formatTimeframeDate(startDate)}</>
                   ) : (
                     <>
-                      from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
-                      {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
+                      from: {formatTimeframeDate(startDate ?? new Date())} - to:{' '}
+                      {formatTimeframeDate(endDate ?? new Date())}
                     </>
                   )}
                 </span>

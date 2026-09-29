@@ -443,6 +443,35 @@ describe('ServiceList', () => {
     expect(rows).toHaveLength(5)
   })
 
+  it('sorts services by last operation and clears the sort on the third click', async () => {
+    const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
+    const lastOperationHeader = screen.getByRole('columnheader', { name: 'Last operation' })
+    const getServiceNames = () =>
+      screen
+        .getAllByRole('row')
+        .slice(1)
+        .map((row) => row.textContent?.match(/FRONT-END|back-end-A|CRONJOB|seed_script/)?.[0])
+
+    expect(lastOperationHeader.querySelector('.fa-arrow-down, .fa-arrow-up')).not.toBeInTheDocument()
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'none')
+    expect(getServiceNames()).toEqual(['FRONT-END', 'back-end-A', 'CRONJOB', 'seed_script'])
+
+    await userEvent.click(screen.getByRole('button', { name: 'Last operation' }))
+    expect(getServiceNames()).toEqual(['FRONT-END', 'CRONJOB', 'back-end-A', 'seed_script'])
+    expect(lastOperationHeader.querySelector('.fa-arrow-down')).toBeInTheDocument()
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'ascending')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Last operation' }))
+    expect(getServiceNames()).toEqual(['seed_script', 'back-end-A', 'CRONJOB', 'FRONT-END'])
+    expect(lastOperationHeader.querySelector('.fa-arrow-up')).toBeInTheDocument()
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'descending')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Last operation' }))
+    expect(getServiceNames()).toEqual(['FRONT-END', 'back-end-A', 'CRONJOB', 'seed_script'])
+    expect(lastOperationHeader.querySelector('.fa-arrow-down, .fa-arrow-up')).not.toBeInTheDocument()
+    expect(lastOperationHeader).toHaveAttribute('aria-sort', 'none')
+  })
+
   it('should not display ArgoCD services', () => {
     renderWithProviders(<ServiceList {...serviceListProps} />)
     expect(screen.queryByText('ARGOCD APP')).not.toBeInTheDocument()

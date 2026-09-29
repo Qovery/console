@@ -240,19 +240,27 @@ export function ServiceList({ className, containerClassName, environment, ...pro
           return <StatusChip status={info.row.original.status} />
         },
       }),
-      columnHelper.display({
-        id: 'last_deployment',
-        header: 'Last operation',
-        enableColumnFilter: false,
-        enableSorting: false,
-        cell: (info) => (
-          <ServiceLastDeploymentCell
-            service={info.row.original}
-            environment={environment}
-            isSkipped={info.row.original.isSkipped}
-          />
-        ),
-      }),
+      columnHelper.accessor(
+        (service) => {
+          const lastDeploymentDate = service.isSkipped ? undefined : service.deploymentStatus?.last_deployment_date
+          return lastDeploymentDate ? new Date(lastDeploymentDate).getTime() : 0
+        },
+        {
+          id: 'last_deployment',
+          header: 'Last operation',
+          enableColumnFilter: false,
+          enableSorting: true,
+          sortingFn: 'basic',
+          sortDescFirst: false,
+          cell: (info) => (
+            <ServiceLastDeploymentCell
+              service={info.row.original}
+              environment={environment}
+              isSkipped={info.row.original.isSkipped}
+            />
+          ),
+        }
+      ),
       columnHelper.accessor('version', {
         header: 'Target version',
         enableColumnFilter: false,
@@ -390,6 +398,15 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
+                    aria-sort={
+                      header.column.getCanSort()
+                        ? match(header.column.getIsSorted())
+                            .with('asc', () => 'ascending' as const)
+                            .with('desc', () => 'descending' as const)
+                            .with(false, () => 'none' as const)
+                            .exhaustive()
+                        : undefined
+                    }
                     className={twMerge(
                       'relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0',
                       i === 1 || i === 0 ? 'border-none p-0' : ''
