@@ -165,17 +165,17 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                   </dd>
                 </dl>
                 <section className="flex flex-col gap-2">
-                  <Heading level={3}>Prompt</Heading>
-                  <p className="whitespace-pre-wrap rounded border border-neutral p-4">
-                    {run.prompt?.trim() ? run.prompt : 'No prompt recorded.'}
-                  </p>
-                </section>
-                <section className="flex flex-col gap-2">
                   <Heading level={3}>Payload</Heading>
                   <p className="whitespace-pre-wrap break-words rounded border border-neutral p-4">
                     {run.payload === null || run.payload === undefined
                       ? 'No payload recorded.'
                       : run.payload || 'Empty payload.'}
+                  </p>
+                </section>
+                <section className="flex flex-col gap-2">
+                  <Heading level={3}>Prompt</Heading>
+                  <p className="whitespace-pre-wrap rounded border border-neutral p-4">
+                    {run.prompt?.trim() ? run.prompt : 'No prompt recorded.'}
                   </p>
                 </section>
               </div>
