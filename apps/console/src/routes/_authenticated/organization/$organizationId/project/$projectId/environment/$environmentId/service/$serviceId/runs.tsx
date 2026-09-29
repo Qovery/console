@@ -30,7 +30,7 @@ function RouteComponent() {
         <div className="flex shrink-0 flex-col gap-6">
           <div className="flex justify-between">
             <Heading>Runs</Heading>
-            <AgenticWorkflowServiceActions environment={environment} service={service} variant="menu-only" />
+            <AgenticWorkflowServiceActions environment={environment} service={service} variant="header" />
           </div>
           <hr className="w-full border-neutral" />
         </div>
