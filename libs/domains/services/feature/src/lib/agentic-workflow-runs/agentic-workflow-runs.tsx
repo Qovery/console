@@ -110,6 +110,11 @@ function runDate(value: string | null) {
   return value ? dateFullFormat(value, 'UTC', 'dd MMM, HH:mm') : '—'
 }
 
+function runEndDate(startedAt: string, finishedAt: string) {
+  const sameUtcDay = new Date(startedAt).toISOString().slice(0, 10) === new Date(finishedAt).toISOString().slice(0, 10)
+  return dateFullFormat(finishedAt, 'UTC', sameUtcDay ? 'HH:mm' : 'dd MMM, HH:mm')
+}
+
 function promptPreview(prompt: string) {
   const normalized = prompt.replace(/\s+/g, ' ').trim()
   return normalized.length > 30 ? `${normalized.slice(0, 30)}…` : normalized
@@ -275,7 +280,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                     {run.started_at && run.finished_at && (
                       <>
                         <Icon iconName="arrow-right" className="text-xs text-neutral-subtle" />
-                        <span title="Finished (UTC)">{runDate(run.finished_at)}</span>
+                        <span title="Finished (UTC)">{runEndDate(run.started_at, run.finished_at)}</span>
                       </>
                     )}
                   </span>

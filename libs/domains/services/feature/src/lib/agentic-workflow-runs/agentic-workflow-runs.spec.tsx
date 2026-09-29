@@ -51,7 +51,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByRole('button', { name: 'Copy run ID' })).toBeInTheDocument()
     expect(screen.getByText('run-123')).toBeInTheDocument()
     expect(screen.getByTitle('Started (UTC)')).toHaveTextContent('23 Sep, 12:01')
-    expect(screen.getByTitle('Finished (UTC)')).toHaveTextContent('23 Sep, 12:02')
+    expect(screen.getByTitle('Finished (UTC)')).toHaveTextContent('12:02')
     expect(screen.getByTitle('Started (UTC)').parentElement?.querySelector('i')).toHaveClass('fa-arrow-right')
     expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
@@ -72,6 +72,19 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByText('Webhook').querySelector('i')).toHaveClass('fa-webhook')
     expect(screen.queryByRole('columnheader', { name: 'Recorded' })).not.toBeInTheDocument()
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: undefined })
+  })
+
+  it('keeps the finish date when a run crosses a UTC day boundary', () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, started_at: '2026-09-23T23:59:00Z', finished_at: '2026-09-24T00:01:00Z' }],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByTitle('Started (UTC)')).toHaveTextContent('23 Sep, 23:59')
+    expect(screen.getByTitle('Finished (UTC)')).toHaveTextContent('24 Sep, 00:01')
   })
 
   it.each([
