@@ -11,9 +11,10 @@ import {
   Icon,
   Sheet,
   Skeleton,
+  StatusChip,
   TablePrimitives,
 } from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
+import { dateFullFormat, formatDuration, timeAgo } from '@qovery/shared/util-dates'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
 
 const { Table } = TablePrimitives
@@ -29,25 +30,37 @@ type RunWithLifecycle = AgenticWorkflowRun & {
 
 const RUN_STATUS_CONFIG: Record<
   RunStatus,
-  { label: string; color: 'neutral' | 'sky' | 'green' | 'red'; icon: IconName }
+  {
+    label: string
+    color: 'neutral' | 'sky' | 'green' | 'red'
+    iconStatus: 'QUEUED' | 'ONGOING' | 'COMPLETED' | 'ERROR' | 'CANCELED'
+  }
 > = {
-  QUEUED: { label: 'Queued', color: 'neutral', icon: 'clock' },
-  RUNNING: { label: 'Running', color: 'sky', icon: 'circle-play' },
-  COMPLETED: { label: 'Completed', color: 'green', icon: 'circle-check' },
-  FAILED: { label: 'Failed', color: 'red', icon: 'circle-xmark' },
-  CANCELLED: { label: 'Cancelled', color: 'neutral', icon: 'ban' },
+  QUEUED: { label: 'Queued', color: 'neutral', iconStatus: 'QUEUED' },
+  RUNNING: { label: 'Running', color: 'sky', iconStatus: 'ONGOING' },
+  COMPLETED: { label: 'Completed', color: 'green', iconStatus: 'COMPLETED' },
+  FAILED: { label: 'Failed', color: 'red', iconStatus: 'ERROR' },
+  CANCELLED: { label: 'Cancelled', color: 'neutral', iconStatus: 'CANCELED' },
+}
+
+const RUN_TRIGGER_ICONS: Record<AgenticWorkflowRun['trigger'], IconName> = {
+  [AgenticWorkflowRunTrigger.MANUAL]: 'play',
+  [AgenticWorkflowRunTrigger.SCHEDULE]: 'calendar-day',
+  [AgenticWorkflowRunTrigger.WEBHOOK]: 'webhook',
 }
 
 function runStatus(status?: RunStatus) {
   if (!status) return '—'
 
-  const { label, color, icon } = RUN_STATUS_CONFIG[status]
+  const { label, color, iconStatus } = RUN_STATUS_CONFIG[status]
 
   return (
-    <Badge color={color} variant="surface" className="gap-1 whitespace-nowrap">
-      <Icon iconName={icon} iconStyle="regular" className="text-xs" />
-      {label}
-    </Badge>
+    <span className="inline-flex items-center gap-2">
+      <Badge color={color} variant="surface" className="whitespace-nowrap">
+        {label}
+      </Badge>
+      <StatusChip status={iconStatus} disabledTooltip />
+    </span>
   )
 }
 
@@ -56,9 +69,21 @@ function runDuration(duration?: number | null) {
   if (duration < 1000) return `${duration}ms`
 
   const totalSeconds = Math.floor(duration / 1000)
-  const minutes = Math.floor(totalSeconds / 60)
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
   const seconds = totalSeconds % 60
-  return minutes ? `${minutes}m ${seconds}s` : `${(duration / 1000).toFixed(1).replace(/\.0$/, '')}s`
+  return formatDuration(`PT${hours}H${minutes}M${seconds}S`)
+}
+
+function RunDuration({ duration }: { duration?: number | null }) {
+  if (duration == null) return <span className="text-neutral-subtle">—</span>
+
+  return (
+    <span className="flex items-center gap-1 text-neutral-subtle">
+      <Icon iconName="clock-eight" iconStyle="regular" />
+      {runDuration(duration)}
+    </span>
+  )
 }
 
 function triggerLabel(trigger: AgenticWorkflowRun['trigger']) {
@@ -67,6 +92,15 @@ function triggerLabel(trigger: AgenticWorkflowRun['trigger']) {
     [AgenticWorkflowRunTrigger.SCHEDULE]: 'Schedule',
     [AgenticWorkflowRunTrigger.WEBHOOK]: 'Webhook',
   }[trigger]
+}
+
+function RunTrigger({ trigger }: { trigger: AgenticWorkflowRun['trigger'] }) {
+  return (
+    <span className="flex items-center gap-2">
+      <Icon iconName={RUN_TRIGGER_ICONS[trigger]} iconStyle="regular" />
+      {triggerLabel(trigger)}
+    </span>
+  )
 }
 
 function runDate(value: string | null) {
@@ -109,7 +143,9 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                     <CopyToClipboardButtonIcon content={run.id} tooltipContent="Copy run ID" asButton />
                   </dd>
                   <dt className="text-neutral-subtle">Trigger</dt>
-                  <dd>{triggerLabel(run.trigger)}</dd>
+                  <dd>
+                    <RunTrigger trigger={run.trigger} />
+                  </dd>
                   <dt className="text-neutral-subtle">Requested (UTC)</dt>
                   <dd>{runDate(run.created_at)}</dd>
                   <dt className="text-neutral-subtle">Status</dt>
@@ -119,7 +155,9 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                   <dt className="text-neutral-subtle">Finished (UTC)</dt>
                   <dd>{runDate(run.finished_at ?? null)}</dd>
                   <dt className="text-neutral-subtle">Duration</dt>
-                  <dd>{runDuration(run.duration_ms)}</dd>
+                  <dd>
+                    <RunDuration duration={run.duration_ms} />
+                  </dd>
                 </dl>
                 <section className="flex flex-col gap-2">
                   <Heading level={3}>Prompt</Heading>
@@ -245,8 +283,12 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                 </div>
               </Table.Cell>
               <Table.Cell className="w-[128px]">{runStatus(run.status)}</Table.Cell>
-              <Table.Cell className="w-[196px]">{triggerLabel(run.trigger)}</Table.Cell>
-              <Table.Cell className="w-[112px]">{runDuration(run.duration_ms)}</Table.Cell>
+              <Table.Cell className="w-[196px]">
+                <RunTrigger trigger={run.trigger} />
+              </Table.Cell>
+              <Table.Cell className="w-[112px]">
+                <RunDuration duration={run.duration_ms} />
+              </Table.Cell>
               <Table.Cell>
                 {run.prompt?.trim() ? (
                   <Button
@@ -321,7 +363,10 @@ export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
         onClick={() => setSelectedRun(lastRun)}
       >
         <span className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
-          <span className="font-medium">{triggerLabel(lastRun.trigger)} run</span>
+          <span className="flex items-center gap-1 font-medium">
+            <RunTrigger trigger={lastRun.trigger} />
+            run
+          </span>
           <span className="h-[3px] w-[3px] rounded-full bg-neutral-disabled" aria-hidden="true" />
           <span className="text-neutral-subtle">{timeAgo(new Date(lastRun.created_at))} ago</span>
           {lastRun.status && (

@@ -54,7 +54,9 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
     expect(screen.getByText('Completed')).toBeInTheDocument()
     expect(screen.getByText('Completed').closest('[data-accent-color]')).toHaveAttribute('data-accent-color', 'green')
-    expect(screen.getByText('1m 5s')).toBeInTheDocument()
+    expect(screen.getByText('Completed').closest('td')?.querySelector('svg')).toBeInTheDocument()
+    expect(screen.getByText('00:01:05').querySelector('i')).toHaveClass('fa-clock-eight')
+    expect(screen.getByText('Webhook').querySelector('i')).toHaveClass('fa-webhook')
     expect(screen.queryByRole('columnheader', { name: 'Recorded' })).not.toBeInTheDocument()
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: undefined })
   })
@@ -135,9 +137,22 @@ describe('AgenticWorkflowRuns', () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
     expect(screen.getByText('Manual')).toBeInTheDocument()
+    expect(screen.getByText('Manual').querySelector('i')).toHaveClass('fa-play')
     await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
 
     expect(within(screen.getByRole('dialog')).getByText('Empty payload.')).toBeInTheDocument()
+  })
+
+  it('shows a schedule icon before a scheduled run', () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, trigger: 'SCHEDULE' }],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('Schedule').querySelector('i')).toHaveClass('fa-calendar-day')
   })
 
   it('opens the full prompt from the row button without pagination', async () => {
