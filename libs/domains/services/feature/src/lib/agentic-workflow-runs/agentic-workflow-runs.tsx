@@ -263,7 +263,14 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
   }
 
   if (runs.length === 0) {
-    return <EmptyState icon="play" title="No runs yet" className="mt-2 pt-10" />
+    return (
+      <EmptyState
+        icon="play"
+        title="No runs yet"
+        description="Run the agent task by using the “Play” button in the header above"
+        className="mt-2 pt-10"
+      />
+    )
   }
 
   const openRunWithKeyboard = (event: KeyboardEvent<HTMLTableRowElement>, run: AgenticWorkflowRun) => {
