@@ -192,7 +192,7 @@ function MenuManageDeployment({
       <DropdownMenu.Item
         key="1"
         icon={<Icon iconName="rotate-right" />}
-        onSelect={isSelfManagedCluster ? mutationDeploy : mutationUpdate}
+        onSelect={mutationUpdate}
         className="relative"
         color={clusterNeedUpdate ? 'yellow' : 'brand'}
       >

@@ -8,6 +8,7 @@ import {
 import type { ReactNode } from 'react'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { ClusterUpdateModal } from '../cluster-update-modal/cluster-update-modal'
 import { ClusterActions } from './cluster-actions'
 
 const mockCluster = clusterFactoryMock(1)[0]
@@ -155,44 +156,55 @@ describe('ClusterActions', () => {
     expect(screen.getByText('Update another version')).toBeInTheDocument()
   })
 
-  it.each([
-    { status: ClusterStateEnum.READY, isDeployed: false },
-    { status: ClusterStateEnum.DEPLOYED, isDeployed: true },
-  ])(
-    'should deploy an Engine v2 self-managed cluster in $status state when the feature flag is enabled',
-    async ({ status, isDeployed }) => {
-      mockUseFeatureFlagEnabled.mockReturnValue(true)
-      mockUseClusterPlatformConfiguration.mockReturnValue({
-        data: { platform: { templateKey: 'qovery-cluster-v0', templateVersion: '0.1.0' } },
-      })
-      const selfManagedCluster = {
-        ...mockCluster,
-        kubernetes: KubernetesEnum.SELF_MANAGED,
-      }
-      const clusterStatus: ClusterStatus = {
-        cluster_id: selfManagedCluster.id,
-        status,
-        is_deployed: isDeployed,
-      }
-      const { userEvent } = renderWithProviders(
-        <ClusterActions cluster={selfManagedCluster} clusterStatus={clusterStatus} />,
-        { container: document.body }
-      )
-
-      expect(mockUseClusterPlatformConfiguration).toHaveBeenCalledWith({
-        clusterId: selfManagedCluster.id,
-        enabled: true,
-      })
-      expect(screen.getByLabelText('Installation guide')).toBeInTheDocument()
-      await userEvent.click(screen.getByLabelText(/manage deployment/i))
-      await userEvent.click(screen.getByRole('menuitem', { name: 'Deploy' }))
-
-      expect(mockDeployCluster).toHaveBeenCalledWith({
-        organizationId: selfManagedCluster.organization.id,
-        clusterId: selfManagedCluster.id,
-      })
+  const renderEngineV2SelfManagedCluster = (status: ClusterStateEnum, isDeployed: boolean) => {
+    mockUseFeatureFlagEnabled.mockReturnValue(true)
+    mockUseClusterPlatformConfiguration.mockReturnValue({
+      data: { platform: { templateKey: 'qovery-cluster-v0', templateVersion: '0.1.0' } },
+    })
+    const selfManagedCluster = {
+      ...mockCluster,
+      kubernetes: KubernetesEnum.SELF_MANAGED,
     }
-  )
+    const clusterStatus: ClusterStatus = {
+      cluster_id: selfManagedCluster.id,
+      status,
+      is_deployed: isDeployed,
+    }
+    const rendered = renderWithProviders(
+      <ClusterActions cluster={selfManagedCluster} clusterStatus={clusterStatus} />,
+      { container: document.body }
+    )
+
+    expect(mockUseClusterPlatformConfiguration).toHaveBeenCalledWith({
+      clusterId: selfManagedCluster.id,
+      enabled: true,
+    })
+    expect(screen.getByLabelText('Installation guide')).toBeInTheDocument()
+
+    return { ...rendered, selfManagedCluster }
+  }
+
+  it('should deploy a never deployed Engine v2 self-managed cluster when the feature flag is enabled', async () => {
+    const { userEvent, selfManagedCluster } = renderEngineV2SelfManagedCluster(ClusterStateEnum.READY, false)
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Deploy' }))
+
+    expect(mockDeployCluster).toHaveBeenCalledWith({
+      organizationId: selfManagedCluster.organization.id,
+      clusterId: selfManagedCluster.id,
+    })
+  })
+
+  it('should open the update modal, with its dry run option, to redeploy an Engine v2 self-managed cluster', async () => {
+    const { userEvent } = renderEngineV2SelfManagedCluster(ClusterStateEnum.DEPLOYED, true)
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Deploy' }))
+
+    expect(mockDeployCluster).not.toHaveBeenCalled()
+    expect(mockOpenModal.mock.calls[0][0].content.type).toBe(ClusterUpdateModal)
+  })
 
   it('should not show deployment actions for a self-managed cluster when the feature flag is disabled', () => {
     mockUseClusterPlatformConfiguration.mockReturnValue({
