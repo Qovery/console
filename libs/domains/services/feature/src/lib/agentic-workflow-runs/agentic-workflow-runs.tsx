@@ -1,7 +1,9 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import * as Dialog from '@radix-ui/react-dialog'
 import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-typescript-axios'
 import { type KeyboardEvent, useRef, useState } from 'react'
 import {
+  Badge,
   Button,
   CopyToClipboardButtonIcon,
   EmptyState,
@@ -25,18 +27,28 @@ type RunWithLifecycle = AgenticWorkflowRun & {
   payload?: string | null
 }
 
-const RUN_STATUS_LABELS: Record<RunStatus, string> = {
-  QUEUED: 'Queued',
-  RUNNING: 'Running',
-  COMPLETED: 'Completed',
-  FAILED: 'Failed',
-  CANCELLED: 'Cancelled',
+const RUN_STATUS_CONFIG: Record<
+  RunStatus,
+  { label: string; color: 'neutral' | 'sky' | 'green' | 'red'; icon: IconName }
+> = {
+  QUEUED: { label: 'Queued', color: 'neutral', icon: 'clock' },
+  RUNNING: { label: 'Running', color: 'sky', icon: 'circle-play' },
+  COMPLETED: { label: 'Completed', color: 'green', icon: 'circle-check' },
+  FAILED: { label: 'Failed', color: 'red', icon: 'circle-xmark' },
+  CANCELLED: { label: 'Cancelled', color: 'neutral', icon: 'ban' },
 }
 
 function runStatus(status?: RunStatus) {
   if (!status) return '—'
 
-  return <span>{RUN_STATUS_LABELS[status]}</span>
+  const { label, color, icon } = RUN_STATUS_CONFIG[status]
+
+  return (
+    <Badge color={color} variant="surface" className="gap-1 whitespace-nowrap">
+      <Icon iconName={icon} iconStyle="regular" className="text-xs" />
+      {label}
+    </Badge>
+  )
 }
 
 function runDuration(duration?: number | null) {

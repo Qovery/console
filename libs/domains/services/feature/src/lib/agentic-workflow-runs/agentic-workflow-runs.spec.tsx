@@ -53,9 +53,28 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
     expect(screen.getByText('Completed')).toBeInTheDocument()
+    expect(screen.getByText('Completed').closest('[data-accent-color]')).toHaveAttribute('data-accent-color', 'green')
     expect(screen.getByText('1m 5s')).toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Recorded' })).not.toBeInTheDocument()
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: undefined })
+  })
+
+  it.each([
+    ['QUEUED', 'Queued', 'neutral'],
+    ['RUNNING', 'Running', 'sky'],
+    ['COMPLETED', 'Completed', 'green'],
+    ['FAILED', 'Failed', 'red'],
+    ['CANCELLED', 'Cancelled', 'neutral'],
+  ])('renders %s as a %s status badge', (status, label, color) => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status }],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText(label).closest('[data-accent-color]')).toHaveAttribute('data-accent-color', color)
   })
 
   it('shows empty lifecycle values when the API has not updated a run yet', async () => {
