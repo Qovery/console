@@ -255,15 +255,15 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1400px] table-fixed overflow-x-scroll text-ssm">
+      <Table.Root className="w-full min-w-[1420px] table-fixed text-ssm">
         <Table.Header>
           <Table.Row className="divide-x divide-neutral">
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[128px] font-medium">Status</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="font-medium">Payload</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[112px] font-medium">Duration</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[272px] font-medium">Prompt</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[180px] font-medium">Payload</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[160px] font-medium">Duration</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[320px] font-medium">Prompt</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -319,7 +319,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
               <Table.Cell className="w-[196px]">
                 <RunTrigger trigger={run.trigger} />
               </Table.Cell>
-              <Table.Cell>
+              <Table.Cell className="w-[180px]">
                 {run.payload === null || run.payload === undefined ? (
                   '—'
                 ) : run.payload === '' ? (
@@ -329,32 +329,34 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                     color="neutral"
                     variant="plain"
                     size="md"
+                    className="max-w-full justify-start"
                     aria-label="See the full payload"
                     onClick={(event) => {
                       event.stopPropagation()
                       setSelectedRun(run)
                     }}
                   >
-                    {promptPreview(run.payload) || 'Whitespace-only payload'}
+                    <span className="min-w-0 truncate">{promptPreview(run.payload) || 'Whitespace-only payload'}</span>
                   </Button>
                 )}
               </Table.Cell>
-              <Table.Cell className="w-[112px]">
+              <Table.Cell className="w-[160px] whitespace-nowrap">
                 <RunDuration duration={run.duration_ms} />
               </Table.Cell>
-              <Table.Cell className="w-[272px]">
+              <Table.Cell className="w-[320px]">
                 {run.prompt?.trim() ? (
                   <Button
                     color="neutral"
                     variant="plain"
                     size="md"
+                    className="max-w-full justify-start"
                     aria-label="See the full prompt"
                     onClick={(event) => {
                       event.stopPropagation()
                       setSelectedRun(run)
                     }}
                   >
-                    {promptPreview(run.prompt)}
+                    <span className="min-w-0 truncate">{promptPreview(run.prompt)}</span>
                   </Button>
                 ) : (
                   '—'
