@@ -12,6 +12,7 @@ import {
   Skeleton,
   StatusChip,
   TablePrimitives,
+  Tooltip,
 } from '@qovery/shared/ui'
 import { dateFullFormat, formatDuration, timeAgo } from '@qovery/shared/util-dates'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
@@ -108,6 +109,10 @@ function RunTrigger({ trigger }: { trigger: AgenticWorkflowRun['trigger'] }) {
 
 function runDate(value: string | null) {
   return value ? dateFullFormat(value, 'UTC', 'dd MMM, HH:mm') : '—'
+}
+
+function runTooltipDate(value?: string | null) {
+  return value ? dateFullFormat(value, 'UTC', 'dd MMM yyyy, HH:mm') : '—'
 }
 
 function runEndDate(startedAt: string, finishedAt: string) {
@@ -273,17 +278,26 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             >
               <Table.Cell className="w-[420px]">
                 <div className="flex flex-col gap-0.5">
-                  <span className="flex items-center gap-1 text-sm font-medium text-neutral">
-                    <span title={run.started_at ? 'Started (UTC)' : 'Requested (UTC)'}>
-                      {runDate(run.started_at ?? run.created_at)}
+                  <Tooltip
+                    open={selectedRun ? false : undefined}
+                    content={
+                      <div>
+                        <div>Start: {runTooltipDate(run.started_at)}</div>
+                        <div>End: {runTooltipDate(run.finished_at)}</div>
+                        {!run.started_at && <div>Requested: {runTooltipDate(run.created_at)}</div>}
+                      </div>
+                    }
+                  >
+                    <span className="flex items-center gap-1 text-sm font-medium text-neutral">
+                      <span>{runDate(run.started_at ?? run.created_at)}</span>
+                      {run.started_at && run.finished_at && (
+                        <>
+                          <Icon iconName="arrow-right" className="text-xs text-neutral-subtle" />
+                          <span>{runEndDate(run.started_at, run.finished_at)}</span>
+                        </>
+                      )}
                     </span>
-                    {run.started_at && run.finished_at && (
-                      <>
-                        <Icon iconName="arrow-right" className="text-xs text-neutral-subtle" />
-                        <span title="Finished (UTC)">{runEndDate(run.started_at, run.finished_at)}</span>
-                      </>
-                    )}
-                  </span>
+                  </Tooltip>
                   <span className="group flex min-w-0 items-center gap-0.5 text-ssm text-neutral-subtle">
                     <span className="truncate" title={run.id}>
                       {run.id}

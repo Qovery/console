@@ -30,7 +30,7 @@ describe('AgenticWorkflowRuns', () => {
     })
   })
 
-  it('shows run status and duration from the API without deployment metadata', () => {
+  it('shows run status, duration, and full dates on hover', async () => {
     mockUseRunHistory.mockReturnValue({
       data: [
         {
@@ -44,15 +44,19 @@ describe('AgenticWorkflowRuns', () => {
       isLoading: false,
       isError: false,
     })
-    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
     expect(screen.getByText('Webhook')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'See the full prompt' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Copy run ID' })).toBeInTheDocument()
     expect(screen.getByText('run-123')).toBeInTheDocument()
-    expect(screen.getByTitle('Started (UTC)')).toHaveTextContent('23 Sep, 12:01')
-    expect(screen.getByTitle('Finished (UTC)')).toHaveTextContent('12:02')
-    expect(screen.getByTitle('Started (UTC)').parentElement?.querySelector('i')).toHaveClass('fa-arrow-right')
+    expect(screen.getByText('23 Sep, 12:01')).toBeInTheDocument()
+    expect(screen.getByText('12:02')).toBeInTheDocument()
+    expect(screen.getByText('23 Sep, 12:01').parentElement?.querySelector('i')).toHaveClass('fa-arrow-right')
+    await userEvent.hover(screen.getByText('23 Sep, 12:01'))
+    const tooltip = within(await screen.findByRole('tooltip'))
+    expect(tooltip.getByText('Start: 23 Sep 2026, 12:01')).toBeInTheDocument()
+    expect(tooltip.getByText('End: 23 Sep 2026, 12:02')).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Payload' })).toBeInTheDocument()
@@ -83,8 +87,8 @@ describe('AgenticWorkflowRuns', () => {
 
     renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    expect(screen.getByTitle('Started (UTC)')).toHaveTextContent('23 Sep, 23:59')
-    expect(screen.getByTitle('Finished (UTC)')).toHaveTextContent('24 Sep, 00:01')
+    expect(screen.getByText('23 Sep, 23:59')).toBeInTheDocument()
+    expect(screen.getByText('24 Sep, 00:01')).toBeInTheDocument()
   })
 
   it.each([
@@ -116,8 +120,12 @@ describe('AgenticWorkflowRuns', () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
     expect(screen.getByText('Queued')).toBeInTheDocument()
-    expect(screen.getByTitle('Requested (UTC)')).toHaveTextContent('23 Sep, 12:00')
-    expect(screen.queryByTitle('Finished (UTC)')).not.toBeInTheDocument()
+    expect(screen.getByText('23 Sep, 12:00')).toBeInTheDocument()
+    await userEvent.hover(screen.getByText('23 Sep, 12:00'))
+    const tooltip = within(await screen.findByRole('tooltip'))
+    expect(tooltip.getByText('Start: —')).toBeInTheDocument()
+    expect(tooltip.getByText('End: —')).toBeInTheDocument()
+    expect(tooltip.getByText('Requested: 23 Sep 2026, 12:00')).toBeInTheDocument()
     const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
     expect(cells[3]).toHaveTextContent('—')
     expect(cells[4]).toHaveTextContent('—')
