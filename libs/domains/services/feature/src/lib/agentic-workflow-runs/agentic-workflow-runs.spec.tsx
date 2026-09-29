@@ -67,12 +67,13 @@ describe('AgenticWorkflowRuns', () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
     expect(screen.getByText('Queued')).toBeInTheDocument()
+    expect(within(screen.getByRole('button', { name: /run-123/i })).getByText('—')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
 
     const details = within(screen.getByRole('dialog'))
-    expect(details.getByText('Started (UTC)')).toBeInTheDocument()
-    expect(details.getByText('Finished (UTC)')).toBeInTheDocument()
-    expect(details.getByText('Duration')).toBeInTheDocument()
+    expect(details.getByText('Started (UTC)').nextElementSibling).toHaveTextContent('—')
+    expect(details.getByText('Finished (UTC)').nextElementSibling).toHaveTextContent('—')
+    expect(details.getByText('Duration').nextElementSibling).toHaveTextContent('—')
   })
 
   it('opens the run details in a sheet and closes it', async () => {
