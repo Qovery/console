@@ -44,9 +44,9 @@ RUN --mount=type=cache,target=/root/.yarn \
 # Copy source files (use .dockerignore to exclude unnecessary files)
 COPY . .
 
-# Build console with NX cache mount for faster rebuilds
-RUN --mount=type=cache,target=/app/node_modules/.cache/nx \
-    yarn nx build console --configuration=production --skip-nx-cache
+# Call Vite directly: `nx build` adds ~9 min of cold Nx daemon/executor overhead on the builder
+RUN QOVERY_CHANGELOG_SYNC_STRICT=true node scripts/sync-changelog.mjs \
+    && yarn vite build --config apps/console/vite.config.ts --mode production
 
 # Bundle static assets with nginx
 FROM nginx:1.25-alpine
