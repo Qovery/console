@@ -137,16 +137,20 @@ describe('AgenticWorkflowRuns', () => {
     expect(details.getByText('Duration').nextElementSibling).toHaveTextContent('—')
   })
 
-  it('keeps fractional seconds for a short run', () => {
+  it('rounds run durations to the nearest second', () => {
     mockUseRunHistory.mockReturnValue({
-      data: [{ ...run, duration_ms: 1500 }],
+      data: [
+        { ...run, duration_ms: 1500 },
+        { ...run, id: 'run-456', duration_ms: 59999 },
+      ],
       isLoading: false,
       isError: false,
     })
 
     renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    expect(screen.getByText('00:00:01.5')).toBeInTheDocument()
+    expect(screen.getByText('00:00:02')).toBeInTheDocument()
+    expect(screen.getByText('00:01:00')).toBeInTheDocument()
   })
 
   it('opens the run details in a sheet and closes it', async () => {

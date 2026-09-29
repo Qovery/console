@@ -65,18 +65,12 @@ function runStatus(status?: RunStatus, spaceBetween = false) {
 
 function runDuration(duration?: number | null) {
   if (duration == null) return '—'
-  if (duration < 1000) return `${duration}ms`
 
-  const totalSeconds = Math.floor(duration / 1000)
+  const totalSeconds = Math.round(duration / 1000)
   const hours = Math.floor(totalSeconds / 3600)
   const minutes = Math.floor((totalSeconds % 3600) / 60)
   const seconds = totalSeconds % 60
-  const formattedDuration = formatDuration(`PT${hours}H${minutes}M${seconds}S`)
-  const milliseconds = duration % 1000
-
-  return milliseconds
-    ? `${formattedDuration}.${String(milliseconds).padStart(3, '0').replace(/0+$/, '')}`
-    : formattedDuration
+  return formatDuration(`PT${hours}H${minutes}M${seconds}S`)
 }
 
 function RunDuration({ duration }: { duration?: number | null }) {
