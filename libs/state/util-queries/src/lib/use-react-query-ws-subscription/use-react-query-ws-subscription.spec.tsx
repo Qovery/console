@@ -159,6 +159,18 @@ describe('useReactQueryWsSubscription', () => {
     expect([WebSocket.CLOSED, WebSocket.CLOSING]).toContain(connection.readyState)
   })
 
+  it('should ignore messages delivered after its subscription is aborted', async () => {
+    const onMessage = jest.fn()
+    const { unmount } = renderHook(() => useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage }))
+    const connection = await server.connected
+    const handleMessage = connection.onmessage
+
+    unmount()
+    handleMessage?.call(connection, new MessageEvent('message', { data: JSON.stringify({ message: 'stale log' }) }))
+
+    expect(onMessage).not.toHaveBeenCalled()
+  })
+
   it('should not call onClose when the component cleans up its own socket', async () => {
     const onClose = jest.fn()
     const { unmount } = renderHook(() => useReactQueryWsSubscription({ url: 'ws://localhost:1234', onClose }))

@@ -230,7 +230,16 @@ export function useServiceLiveLogs({ clusterId, serviceId, serviceType, enabled 
     setBufferedLogsCount(0)
     setIsFetched(false)
     setIsLoading(false)
-  }, [dynamicQuery, dynamicQueryNginx, dynamicQueryEnvoy, clusterId, serviceType, enabled])
+  }, [
+    dynamicQuery,
+    dynamicQueryNginx,
+    dynamicQueryEnvoy,
+    queryParams.nginx,
+    queryParams.envoy,
+    clusterId,
+    serviceType,
+    enabled,
+  ])
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/service/logs',
