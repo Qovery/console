@@ -53,6 +53,14 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Payload' })).toBeInTheDocument()
+    expect(screen.getAllByRole('columnheader').map((header) => header.textContent)).toEqual([
+      'Date',
+      'Status',
+      'Trigger',
+      'Payload',
+      'Duration',
+      'Prompt',
+    ])
     expect(screen.getByText('Completed')).toBeInTheDocument()
     expect(screen.getByText('Completed').closest('[data-accent-color]')).not.toBeInTheDocument()
     expect(screen.getByText('Completed').closest('td')?.firstElementChild).toHaveClass('justify-between')
@@ -94,7 +102,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByText('Queued')).toBeInTheDocument()
     const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
     expect(cells[3]).toHaveTextContent('—')
-    expect(cells[5]).toHaveTextContent('—')
+    expect(cells[4]).toHaveTextContent('—')
     await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
 
     const details = within(screen.getByRole('dialog'))

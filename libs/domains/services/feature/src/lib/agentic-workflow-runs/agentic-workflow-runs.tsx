@@ -251,9 +251,9 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[128px] font-medium">Status</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="font-medium">Payload</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[112px] font-medium">Duration</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[272px] font-medium">Prompt</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="font-medium">Payload</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -290,6 +290,26 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
               <Table.Cell className="w-[196px]">
                 <RunTrigger trigger={run.trigger} />
               </Table.Cell>
+              <Table.Cell>
+                {run.payload === null || run.payload === undefined ? (
+                  '—'
+                ) : run.payload === '' ? (
+                  'Empty payload'
+                ) : (
+                  <Button
+                    color="neutral"
+                    variant="plain"
+                    size="md"
+                    aria-label="See the full payload"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setSelectedRun(run)
+                    }}
+                  >
+                    {promptPreview(run.payload) || 'Whitespace-only payload'}
+                  </Button>
+                )}
+              </Table.Cell>
               <Table.Cell className="w-[112px]">
                 <RunDuration duration={run.duration_ms} />
               </Table.Cell>
@@ -309,26 +329,6 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                   </Button>
                 ) : (
                   '—'
-                )}
-              </Table.Cell>
-              <Table.Cell>
-                {run.payload === null || run.payload === undefined ? (
-                  '—'
-                ) : run.payload === '' ? (
-                  'Empty payload'
-                ) : (
-                  <Button
-                    color="neutral"
-                    variant="plain"
-                    size="md"
-                    aria-label="See the full payload"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      setSelectedRun(run)
-                    }}
-                  >
-                    {promptPreview(run.payload) || 'Whitespace-only payload'}
-                  </Button>
                 )}
               </Table.Cell>
             </Table.Row>
