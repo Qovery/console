@@ -50,6 +50,9 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByRole('button', { name: 'See the full prompt' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Copy run ID' })).toBeInTheDocument()
     expect(screen.getByText('run-123')).toBeInTheDocument()
+    expect(screen.getByTitle('Started (UTC)')).toHaveTextContent('23 Sep, 12:01')
+    expect(screen.getByTitle('Finished (UTC)')).toHaveTextContent('23 Sep, 12:02')
+    expect(screen.getByTitle('Started (UTC)').parentElement?.querySelector('i')).toHaveClass('fa-arrow-right')
     expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Payload' })).toBeInTheDocument()
@@ -100,6 +103,8 @@ describe('AgenticWorkflowRuns', () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
     expect(screen.getByText('Queued')).toBeInTheDocument()
+    expect(screen.getByTitle('Requested (UTC)')).toHaveTextContent('23 Sep, 12:00')
+    expect(screen.queryByTitle('Finished (UTC)')).not.toBeInTheDocument()
     const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
     expect(cells[3]).toHaveTextContent('—')
     expect(cells[4]).toHaveTextContent('—')

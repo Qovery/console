@@ -268,7 +268,17 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             >
               <Table.Cell className="w-[420px]">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-sm font-medium text-neutral">{runDate(run.created_at)}</span>
+                  <span className="flex items-center gap-2 text-sm font-medium text-neutral">
+                    <span title={run.started_at ? 'Started (UTC)' : 'Requested (UTC)'}>
+                      {runDate(run.started_at ?? run.created_at)}
+                    </span>
+                    {run.started_at && run.finished_at && (
+                      <>
+                        <Icon iconName="arrow-right" className="text-xs text-neutral-subtle" />
+                        <span title="Finished (UTC)">{runDate(run.finished_at)}</span>
+                      </>
+                    )}
+                  </span>
                   <span className="group flex min-w-0 items-center gap-0.5 text-ssm text-neutral-subtle">
                     <span className="truncate" title={run.id}>
                       {run.id}
