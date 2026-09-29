@@ -46,8 +46,9 @@ export function useServiceLiveLogs({ clusterId, serviceId, serviceType, enabled 
 
   const flushBufferedLogs = useCallback(() => {
     if (serviceLogsBuffer.current.length > 0) {
-      setDebouncedLogs((prev) => [...prev, ...serviceLogsBuffer.current])
+      const bufferedLogs = serviceLogsBuffer.current
       serviceLogsBuffer.current = []
+      setDebouncedLogs((prev) => [...prev, ...bufferedLogs])
       setIsFetched(true)
       setIsLoading(false)
     }
@@ -218,6 +219,18 @@ export function useServiceLiveLogs({ clusterId, serviceId, serviceType, enabled 
     queryParams.search,
     queryParams.version,
   ])
+
+  useEffect(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current)
+      debounceTimeoutRef.current = null
+    }
+    serviceLogsBuffer.current = []
+    setDebouncedLogs([])
+    setBufferedLogsCount(0)
+    setIsFetched(false)
+    setIsLoading(false)
+  }, [dynamicQuery, dynamicQueryNginx, dynamicQueryEnvoy, clusterId, serviceType, enabled])
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/service/logs',
