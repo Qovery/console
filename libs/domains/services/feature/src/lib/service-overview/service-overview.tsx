@@ -253,6 +253,9 @@ function ServiceOverviewContent({
               ) : (
                 <AgenticWorkflowWebhookSection webhookUrl={service.webhook.url} />
               ))}
+            {(isEditableService(service) || isAgenticWorkflow(service)) && (
+              <ServiceLastDeploymentSection environment={environment} service={service} />
+            )}
             {isAgenticWorkflow(service) && (
               <Section className="gap-3">
                 <div className="flex items-center justify-between gap-2">
@@ -274,9 +277,6 @@ function ServiceOverviewContent({
                 </div>
                 <AgenticWorkflowLastRun key={service.id} serviceId={service.id} />
               </Section>
-            )}
-            {(isEditableService(service) || isAgenticWorkflow(service)) && (
-              <ServiceLastDeploymentSection environment={environment} service={service} />
             )}
             {!isTerraformService && (isEditableService(service) || isAgenticWorkflow(service)) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />
