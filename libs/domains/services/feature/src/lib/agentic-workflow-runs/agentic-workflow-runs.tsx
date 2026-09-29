@@ -153,8 +153,6 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                   <dd>
                     <RunTrigger trigger={run.trigger} />
                   </dd>
-                  <dt className="text-neutral-subtle">Requested (UTC)</dt>
-                  <dd>{runDate(run.created_at)}</dd>
                   <dt className="text-neutral-subtle">Status</dt>
                   <dd>{runStatus(run.status)}</dd>
                   <dt className="text-neutral-subtle">Started (UTC)</dt>
@@ -278,7 +276,6 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                       <div>
                         <div>Started (UTC): {runTooltipDate(run.started_at)}</div>
                         <div>Finished (UTC): {runTooltipDate(run.finished_at)}</div>
-                        {!run.started_at && <div>Requested (UTC): {runTooltipDate(run.created_at)}</div>}
                       </div>
                     }
                   >
