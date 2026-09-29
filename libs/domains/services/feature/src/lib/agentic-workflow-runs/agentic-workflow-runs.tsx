@@ -16,6 +16,38 @@ import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-
 
 const { Table } = TablePrimitives
 
+type RunStatus = 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
+type RunWithLifecycle = AgenticWorkflowRun & {
+  status?: RunStatus
+  started_at?: string | null
+  finished_at?: string | null
+  duration_ms?: number | null
+}
+
+const RUN_STATUS_LABELS: Record<RunStatus, string> = {
+  QUEUED: 'Queued',
+  RUNNING: 'Running',
+  COMPLETED: 'Completed',
+  FAILED: 'Failed',
+  CANCELLED: 'Cancelled',
+}
+
+function runStatus(status?: RunStatus) {
+  if (!status) return '—'
+
+  return <span>{RUN_STATUS_LABELS[status]}</span>
+}
+
+function runDuration(duration?: number | null) {
+  if (duration == null) return '—'
+  if (duration < 1000) return `${duration}ms`
+
+  const totalSeconds = Math.floor(duration / 1000)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return minutes ? `${minutes}m ${seconds}s` : `${(duration / 1000).toFixed(1).replace(/\.0$/, '')}s`
+}
+
 function triggerLabel(trigger: AgenticWorkflowRun['trigger']) {
   return {
     [AgenticWorkflowRunTrigger.MANUAL]: 'Manual',
@@ -33,7 +65,7 @@ function promptPreview(prompt: string) {
   return normalized.length > 30 ? `${normalized.slice(0, 30)}…` : normalized
 }
 
-function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => void }) {
+function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   return (
@@ -67,6 +99,14 @@ function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => 
                   <dd>{triggerLabel(run.trigger)}</dd>
                   <dt className="text-neutral-subtle">Requested (UTC)</dt>
                   <dd>{runDate(run.created_at)}</dd>
+                  <dt className="text-neutral-subtle">Status</dt>
+                  <dd>{runStatus(run.status)}</dd>
+                  <dt className="text-neutral-subtle">Started (UTC)</dt>
+                  <dd>{runDate(run.started_at ?? null)}</dd>
+                  <dt className="text-neutral-subtle">Finished (UTC)</dt>
+                  <dd>{runDate(run.finished_at ?? null)}</dd>
+                  <dt className="text-neutral-subtle">Duration</dt>
+                  <dd>{runDuration(run.duration_ms)}</dd>
                 </dl>
                 <section className="flex flex-col gap-2">
                   <Heading level={3}>Prompt</Heading>
@@ -94,8 +134,9 @@ function RunDetails({ run, onClose }: { run: AgenticWorkflowRun; onClose: () => 
 }
 
 export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
-  const [selectedRun, setSelectedRun] = useState<AgenticWorkflowRun | null>(null)
+  const [selectedRun, setSelectedRun] = useState<RunWithLifecycle | null>(null)
   const { data: runs = [], isLoading, isError, refetch } = useAgenticWorkflowRunHistory({ serviceId })
+  const runsWithLifecycle: RunWithLifecycle[] = runs
 
   if (isLoading) {
     return (
@@ -146,12 +187,14 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
         <Table.Header>
           <Table.Row className="divide-x divide-neutral">
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[128px] font-medium">Status</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[112px] font-medium">Duration</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="font-medium">Prompt</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {runs.map((run) => (
+          {runsWithLifecycle.map((run) => (
             <Table.Row
               key={run.id}
               role="button"
@@ -180,7 +223,9 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                   </span>
                 </div>
               </Table.Cell>
+              <Table.Cell className="w-[128px]">{runStatus(run.status)}</Table.Cell>
               <Table.Cell className="w-[196px]">{triggerLabel(run.trigger)}</Table.Cell>
+              <Table.Cell className="w-[112px]">{runDuration(run.duration_ms)}</Table.Cell>
               <Table.Cell>
                 {run.prompt?.trim() ? (
                   <Button
@@ -209,9 +254,9 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
 }
 
 export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
-  const [selectedRun, setSelectedRun] = useState<AgenticWorkflowRun | null>(null)
+  const [selectedRun, setSelectedRun] = useState<RunWithLifecycle | null>(null)
   const { data: runs = [], isLoading, isError, refetch } = useAgenticWorkflowRunHistory({ serviceId, limit: 1 })
-  const lastRun = runs[0]
+  const lastRun: RunWithLifecycle | undefined = runs[0]
 
   if (isLoading) {
     return (
@@ -258,6 +303,12 @@ export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
           <span className="font-medium">{triggerLabel(lastRun.trigger)} run</span>
           <span className="h-[3px] w-[3px] rounded-full bg-neutral-disabled" aria-hidden="true" />
           <span className="text-neutral-subtle">{timeAgo(new Date(lastRun.created_at))} ago</span>
+          {lastRun.status && (
+            <>
+              <span className="h-[3px] w-[3px] rounded-full bg-neutral-disabled" aria-hidden="true" />
+              <span className="text-neutral-subtle">{runStatus(lastRun.status)}</span>
+            </>
+          )}
           {lastRun.prompt?.trim() && (
             <>
               <span className="h-[3px] w-[3px] rounded-full bg-neutral-disabled" aria-hidden="true" />

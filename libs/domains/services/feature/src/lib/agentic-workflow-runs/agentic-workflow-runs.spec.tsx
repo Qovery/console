@@ -30,17 +30,49 @@ describe('AgenticWorkflowRuns', () => {
     })
   })
 
-  it('shows the API run fields without deployment status or duration', () => {
+  it('shows run status and duration from the API without deployment metadata', () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [
+        {
+          ...run,
+          status: 'COMPLETED',
+          started_at: '2026-09-23T12:01:00Z',
+          finished_at: '2026-09-23T12:02:05Z',
+          duration_ms: 65000,
+        },
+      ],
+      isLoading: false,
+      isError: false,
+    })
     renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
     expect(screen.getByText('Webhook')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'See the full prompt' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Copy run ID' })).toBeInTheDocument()
     expect(screen.getByText('run-123')).toBeInTheDocument()
-    expect(screen.queryByRole('columnheader', { name: 'Status' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('columnheader', { name: 'Duration' })).not.toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
+    expect(screen.getByText('Completed')).toBeInTheDocument()
+    expect(screen.getByText('1m 5s')).toBeInTheDocument()
     expect(screen.queryByRole('columnheader', { name: 'Recorded' })).not.toBeInTheDocument()
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: undefined })
+  })
+
+  it('shows empty lifecycle values when the API has not updated a run yet', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status: 'QUEUED', started_at: null, finished_at: null, duration_ms: null }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('Queued')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    const details = within(screen.getByRole('dialog'))
+    expect(details.getByText('Started (UTC)')).toBeInTheDocument()
+    expect(details.getByText('Finished (UTC)')).toBeInTheDocument()
+    expect(details.getByText('Duration')).toBeInTheDocument()
   })
 
   it('opens the run details in a sheet and closes it', async () => {
