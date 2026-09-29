@@ -282,7 +282,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                       </div>
                     }
                   >
-                    <span className="flex items-center gap-1 text-sm font-medium text-neutral">
+                    <span className="flex w-fit items-center gap-1 self-start text-sm font-medium text-neutral">
                       <span>{runDate(run.started_at ?? run.created_at)}</span>
                       {run.started_at && run.finished_at && (
                         <>
