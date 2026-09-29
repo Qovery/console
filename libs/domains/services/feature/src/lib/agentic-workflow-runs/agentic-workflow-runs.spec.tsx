@@ -86,10 +86,39 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.queryByText('Recorded in history (UTC)')).not.toBeInTheDocument()
     expect(within(screen.getByRole('dialog')).getByText('Check the latest deployment')).toBeInTheDocument()
     expect(screen.queryByText('No prompt recorded.')).not.toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText('No payload recorded.')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Close run details' }))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('shows the webhook event body in the run details', async () => {
+    const payload = '{"message":"deploy completed"}'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    expect(within(screen.getByRole('dialog')).getByText(payload)).toBeInTheDocument()
+  })
+
+  it('shows a manual run with an empty payload', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, trigger: 'MANUAL', payload: '' }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('Manual')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    expect(within(screen.getByRole('dialog')).getByText('Empty payload.')).toBeInTheDocument()
   })
 
   it('opens the full prompt from the row button without pagination', async () => {
