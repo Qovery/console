@@ -446,12 +446,6 @@ export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
               <span className="text-neutral-subtle">{runStatus(lastRun.status)}</span>
             </>
           )}
-          {lastRun.prompt?.trim() && (
-            <>
-              <span className="h-[3px] w-[3px] rounded-full bg-neutral-disabled" aria-hidden="true" />
-              <span className="max-w-full truncate text-neutral-subtle">{promptPreview(lastRun.prompt)}</span>
-            </>
-          )}
         </span>
       </button>
       {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}

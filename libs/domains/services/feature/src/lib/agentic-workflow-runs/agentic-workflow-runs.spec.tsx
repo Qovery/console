@@ -297,12 +297,14 @@ describe('AgenticWorkflowRuns', () => {
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
     expect(screen.queryByText('Older prompt')).not.toBeInTheDocument()
+    expect(screen.queryByText(run.prompt)).not.toBeInTheDocument()
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', pageSize: 1 })
     const overviewRun = screen.getByRole('button', { name: /Webhook run/i })
     expect(overviewRun).toHaveTextContent('Webhook run')
     await userEvent.click(overviewRun)
 
     expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText(run.prompt)).toBeInTheDocument()
   })
 
   it('allows retrying after an API error', async () => {
