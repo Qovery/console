@@ -3,7 +3,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-typescript-axios'
 import { type KeyboardEvent, useRef, useState } from 'react'
 import {
-  Badge,
   Button,
   CopyToClipboardButtonIcon,
   EmptyState,
@@ -32,15 +31,14 @@ const RUN_STATUS_CONFIG: Record<
   RunStatus,
   {
     label: string
-    color: 'neutral' | 'sky' | 'green' | 'red'
     iconStatus: 'QUEUED' | 'ONGOING' | 'COMPLETED' | 'ERROR' | 'CANCELED'
   }
 > = {
-  QUEUED: { label: 'Queued', color: 'neutral', iconStatus: 'QUEUED' },
-  RUNNING: { label: 'Running', color: 'sky', iconStatus: 'ONGOING' },
-  COMPLETED: { label: 'Completed', color: 'green', iconStatus: 'COMPLETED' },
-  FAILED: { label: 'Failed', color: 'red', iconStatus: 'ERROR' },
-  CANCELLED: { label: 'Cancelled', color: 'neutral', iconStatus: 'CANCELED' },
+  QUEUED: { label: 'Queued', iconStatus: 'QUEUED' },
+  RUNNING: { label: 'Running', iconStatus: 'ONGOING' },
+  COMPLETED: { label: 'Completed', iconStatus: 'COMPLETED' },
+  FAILED: { label: 'Failed', iconStatus: 'ERROR' },
+  CANCELLED: { label: 'Cancelled', iconStatus: 'CANCELED' },
 }
 
 const RUN_TRIGGER_ICONS: Record<AgenticWorkflowRun['trigger'], IconName> = {
@@ -49,16 +47,16 @@ const RUN_TRIGGER_ICONS: Record<AgenticWorkflowRun['trigger'], IconName> = {
   [AgenticWorkflowRunTrigger.WEBHOOK]: 'webhook',
 }
 
-function runStatus(status?: RunStatus) {
+function runStatus(status?: RunStatus, spaceBetween = false) {
   if (!status) return '—'
 
-  const { label, color, iconStatus } = RUN_STATUS_CONFIG[status]
+  const { label, iconStatus } = RUN_STATUS_CONFIG[status]
 
   return (
-    <span className="inline-flex items-center gap-2">
-      <Badge color={color} variant="surface" className="whitespace-nowrap">
-        {label}
-      </Badge>
+    <span
+      className={spaceBetween ? 'flex w-full items-center justify-between gap-2' : 'inline-flex items-center gap-2'}
+    >
+      <span className="text-neutral">{label}</span>
       <StatusChip status={iconStatus} disabledTooltip />
     </span>
   )
@@ -242,14 +240,15 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
+      <Table.Root className="w-full min-w-[1400px] table-fixed overflow-x-scroll text-ssm">
         <Table.Header>
           <Table.Row className="divide-x divide-neutral">
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[128px] font-medium">Status</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[112px] font-medium">Duration</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="font-medium">Prompt</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[272px] font-medium">Prompt</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="font-medium">Payload</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -282,14 +281,14 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                   </span>
                 </div>
               </Table.Cell>
-              <Table.Cell className="w-[128px]">{runStatus(run.status)}</Table.Cell>
+              <Table.Cell className="w-[128px]">{runStatus(run.status, true)}</Table.Cell>
               <Table.Cell className="w-[196px]">
                 <RunTrigger trigger={run.trigger} />
               </Table.Cell>
               <Table.Cell className="w-[112px]">
                 <RunDuration duration={run.duration_ms} />
               </Table.Cell>
-              <Table.Cell>
+              <Table.Cell className="w-[272px]">
                 {run.prompt?.trim() ? (
                   <Button
                     color="neutral"
@@ -305,6 +304,26 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                   </Button>
                 ) : (
                   '—'
+                )}
+              </Table.Cell>
+              <Table.Cell>
+                {run.payload === null || run.payload === undefined ? (
+                  '—'
+                ) : run.payload === '' ? (
+                  'Empty payload'
+                ) : (
+                  <Button
+                    color="neutral"
+                    variant="plain"
+                    size="md"
+                    aria-label="See the full payload"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setSelectedRun(run)
+                    }}
+                  >
+                    {promptPreview(run.payload) || 'Whitespace-only payload'}
+                  </Button>
                 )}
               </Table.Cell>
             </Table.Row>

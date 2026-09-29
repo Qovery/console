@@ -52,8 +52,10 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByText('run-123')).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Payload' })).toBeInTheDocument()
     expect(screen.getByText('Completed')).toBeInTheDocument()
-    expect(screen.getByText('Completed').closest('[data-accent-color]')).toHaveAttribute('data-accent-color', 'green')
+    expect(screen.getByText('Completed').closest('[data-accent-color]')).not.toBeInTheDocument()
+    expect(screen.getByText('Completed').closest('td')?.firstElementChild).toHaveClass('justify-between')
     expect(screen.getByText('Completed').closest('td')?.querySelector('svg')).toBeInTheDocument()
     expect(screen.getByText('00:01:05').querySelector('i')).toHaveClass('fa-clock-eight')
     expect(screen.getByText('Webhook').querySelector('i')).toHaveClass('fa-webhook')
@@ -62,12 +64,12 @@ describe('AgenticWorkflowRuns', () => {
   })
 
   it.each([
-    ['QUEUED', 'Queued', 'neutral'],
-    ['RUNNING', 'Running', 'sky'],
-    ['COMPLETED', 'Completed', 'green'],
-    ['FAILED', 'Failed', 'red'],
-    ['CANCELLED', 'Cancelled', 'neutral'],
-  ])('renders %s as a %s status badge', (status, label, color) => {
+    ['QUEUED', 'Queued'],
+    ['RUNNING', 'Running'],
+    ['COMPLETED', 'Completed'],
+    ['FAILED', 'Failed'],
+    ['CANCELLED', 'Cancelled'],
+  ])('renders %s as text and a status icon', (status, label) => {
     mockUseRunHistory.mockReturnValue({
       data: [{ ...run, status }],
       isLoading: false,
@@ -76,7 +78,9 @@ describe('AgenticWorkflowRuns', () => {
 
     renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    expect(screen.getByText(label).closest('[data-accent-color]')).toHaveAttribute('data-accent-color', color)
+    const statusCell = screen.getByText(label).closest('td')
+    expect(statusCell?.querySelector('[data-accent-color]')).not.toBeInTheDocument()
+    expect(statusCell?.querySelector('svg')).toBeInTheDocument()
   })
 
   it('shows empty lifecycle values when the API has not updated a run yet', async () => {
@@ -88,7 +92,9 @@ describe('AgenticWorkflowRuns', () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
     expect(screen.getByText('Queued')).toBeInTheDocument()
-    expect(within(screen.getByRole('button', { name: /run-123/i })).getByText('—')).toBeInTheDocument()
+    const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
+    expect(cells[3]).toHaveTextContent('—')
+    expect(cells[5]).toHaveTextContent('—')
     await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
 
     const details = within(screen.getByRole('dialog'))
@@ -123,7 +129,8 @@ describe('AgenticWorkflowRuns', () => {
     })
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+    expect(screen.getByRole('button', { name: 'See the full payload' })).toHaveTextContent(payload)
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
     expect(within(screen.getByRole('dialog')).getByText(payload)).toBeInTheDocument()
   })
