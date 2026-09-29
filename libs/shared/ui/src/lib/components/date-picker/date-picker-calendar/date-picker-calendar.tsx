@@ -12,7 +12,13 @@ import {
   validateDate,
   validateTime,
 } from '../date-picker.utils'
-import { areSameDates, getDateRangeKey, getTimeInputValue, mergeDateWithTimeText } from './date-picker-calendar.utils'
+import {
+  areSameDates,
+  getDateRangeKey,
+  getTimeInputValue,
+  mergeDateWithTimeText,
+  toCalendarDate,
+} from './date-picker-calendar.utils'
 import DatePickerDateTimeInputs, { type DateTimeInputType } from './date-picker-date-time-inputs'
 import DatePickerTimezoneSelect from './date-picker-timezone-select'
 
@@ -185,18 +191,27 @@ export function DatePickerCalendar({
     onClickOutside?.()
   }
 
+  const calendarStartDate = toCalendarDate(startDate, useLocalTime)
+  const calendarEndDate = toCalendarDate(endDate, useLocalTime)
+  const calendarMinDate = toCalendarDate(minDate, useLocalTime)
+  const calendarMaxDate = toCalendarDate(maxDate, useLocalTime)
+
   const getDayClassName = (date: Date): string => {
-    if (!startDate || !maxRangeInDays) return ''
+    if (!calendarStartDate || !maxRangeInDays) return ''
 
-    if (minDate && date < minDate) {
+    if (calendarMinDate && date < calendarMinDate) {
       return ''
     }
 
-    if (maxDate && date > maxDate) {
+    if (calendarMaxDate && date > calendarMaxDate) {
       return ''
     }
 
-    const normalizedStartDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+    const normalizedStartDate = new Date(
+      calendarStartDate.getFullYear(),
+      calendarStartDate.getMonth(),
+      calendarStartDate.getDate()
+    )
     const normalizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
     if (normalizedDate >= normalizedStartDate) {
@@ -337,13 +352,13 @@ export function DatePickerCalendar({
   return (
     <div>
       <DatePickerLib
-        selected={startDate}
+        selected={calendarStartDate}
         onChange={handleChange}
-        startDate={startDate}
-        endDate={endDate}
+        startDate={calendarStartDate}
+        endDate={calendarEndDate}
         renderCustomHeader={(params: ReactDatePickerCustomHeaderProps) => <DatePickerHeader {...params} />}
-        maxDate={maxDate}
-        minDate={minDate}
+        maxDate={calendarMaxDate}
+        minDate={calendarMinDate}
         dayClassName={getDayClassName}
         showDisabledMonthNavigation
         selectsRange
