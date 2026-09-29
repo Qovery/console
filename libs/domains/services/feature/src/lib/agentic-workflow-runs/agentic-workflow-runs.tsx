@@ -282,9 +282,9 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                     open={selectedRun ? false : undefined}
                     content={
                       <div>
-                        <div>Start: {runTooltipDate(run.started_at)}</div>
-                        <div>End: {runTooltipDate(run.finished_at)}</div>
-                        {!run.started_at && <div>Requested: {runTooltipDate(run.created_at)}</div>}
+                        <div>Started (UTC): {runTooltipDate(run.started_at)}</div>
+                        <div>Finished (UTC): {runTooltipDate(run.finished_at)}</div>
+                        {!run.started_at && <div>Requested (UTC): {runTooltipDate(run.created_at)}</div>}
                       </div>
                     }
                   >
