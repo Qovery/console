@@ -1,7 +1,6 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type AgenticWorkflowRequest,
-  type AgenticWorkflowRun,
   AgenticWorkflowsApi,
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
@@ -629,23 +628,9 @@ export const services = createQueryKeys('services', {
     },
   }),
   agenticWorkflowRunHistory: ({ serviceId, limit }: { serviceId: string; limit?: number }) => ({
-    queryKey: [serviceId, limit ?? 'all'],
+    queryKey: [serviceId, limit ?? 100],
     async queryFn() {
-      if (limit) {
-        return (await agenticWorkflowsApi.listAgenticWorkflowRunHistory(serviceId, 1, limit)).data.results ?? []
-      }
-      const pageSize = 100
-      const runs: AgenticWorkflowRun[] = []
-      let page = 1
-      let hasMore = true
-      while (hasMore) {
-        const response = (await agenticWorkflowsApi.listAgenticWorkflowRunHistory(serviceId, page, pageSize)).data
-        const results = response.results ?? []
-        runs.push(...results)
-        hasMore = results.length === pageSize
-        page += 1
-      }
-      return runs
+      return (await agenticWorkflowsApi.listAgenticWorkflowRunHistory(serviceId, 1, limit ?? 100)).data.results ?? []
     },
   }),
   deploymentQueue: ({ serviceId }: { serviceId: string }) => ({
