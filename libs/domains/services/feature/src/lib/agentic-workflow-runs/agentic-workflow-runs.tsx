@@ -273,7 +273,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             >
               <Table.Cell className="w-[420px]">
                 <div className="flex flex-col gap-0.5">
-                  <span className="flex items-center gap-2 text-sm font-medium text-neutral">
+                  <span className="flex items-center gap-1 text-sm font-medium text-neutral">
                     <span title={run.started_at ? 'Started (UTC)' : 'Requested (UTC)'}>
                       {runDate(run.started_at ?? run.created_at)}
                     </span>
