@@ -57,16 +57,4 @@ describe('CopyToClipboardButtonIcon', () => {
     expect(icon).toHaveClass('fa-copy')
     jest.useRealTimers()
   })
-
-  it('should allow copying with the keyboard', async () => {
-    const { userEvent } = renderWithProviders(
-      <CopyToClipboardButtonIcon {...props} tooltipContent="Copy run ID" asButton />
-    )
-
-    await userEvent.tab()
-    expect(screen.getByRole('button', { name: 'Copy run ID' })).toHaveFocus()
-
-    await userEvent.keyboard('{Enter}')
-    expect(mockCopyToClipboard).toHaveBeenCalledWith(props.content)
-  })
 })

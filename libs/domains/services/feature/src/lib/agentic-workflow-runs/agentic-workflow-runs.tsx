@@ -4,7 +4,6 @@ import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-types
 import { type KeyboardEvent, useRef, useState } from 'react'
 import {
   Button,
-  CopyToClipboardButtonIcon,
   EmptyState,
   Heading,
   Icon,
@@ -15,6 +14,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateFullFormat, formatDuration, timeAgo } from '@qovery/shared/util-dates'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
 
 const { Table } = TablePrimitives
@@ -119,6 +119,41 @@ function promptPreview(prompt: string) {
   return normalized.length > 30 ? `${normalized.slice(0, 30)}…` : normalized
 }
 
+function CopyRunIdButton({
+  runId,
+  tooltipOpen,
+  compact = false,
+}: {
+  runId: string
+  tooltipOpen?: boolean
+  compact?: boolean
+}) {
+  const [icon, setIcon] = useState<IconName>('copy')
+  const [, copyToClipboard] = useCopyToClipboard()
+
+  return (
+    <Tooltip content="Copy run ID" open={tooltipOpen}>
+      <button
+        type="button"
+        aria-label="Copy run ID"
+        className={
+          compact
+            ? 'shrink-0 cursor-pointer opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100'
+            : 'cursor-pointer'
+        }
+        onClick={(event) => {
+          event.stopPropagation()
+          copyToClipboard(runId)
+          setIcon('check')
+          setTimeout(() => setIcon('copy'), 1000)
+        }}
+      >
+        <Icon iconName={icon} className={compact ? 'text-xs' : undefined} />
+      </button>
+    </Tooltip>
+  )
+}
+
 function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -147,7 +182,7 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                   <dt className="text-neutral-subtle">Run ID</dt>
                   <dd className="flex min-w-0 items-center gap-2">
                     <span className="break-all font-mono text-xs">{run.id}</span>
-                    <CopyToClipboardButtonIcon content={run.id} tooltipContent="Copy run ID" asButton />
+                    <CopyRunIdButton runId={run.id} />
                   </dd>
                   <dt className="text-neutral-subtle">Trigger</dt>
                   <dd>
@@ -293,16 +328,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                     <span className="truncate" title={run.id}>
                       {run.id}
                     </span>
-                    <span onClick={(event) => event.stopPropagation()}>
-                      <CopyToClipboardButtonIcon
-                        content={run.id}
-                        tooltipContent="Copy run ID"
-                        tooltipOpen={selectedRun ? false : undefined}
-                        asButton
-                        className="shrink-0 opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100"
-                        iconClassName="text-xs"
-                      />
-                    </span>
+                    <CopyRunIdButton runId={run.id} tooltipOpen={selectedRun ? false : undefined} compact />
                   </span>
                 </div>
               </Table.Cell>

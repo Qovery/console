@@ -4,9 +4,14 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowLastRun, AgenticWorkflowRuns } from './agentic-workflow-runs'
 
 const mockUseRunHistory = jest.fn()
+const mockCopyToClipboard = jest.fn()
 
 jest.mock('../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history', () => ({
   useAgenticWorkflowRunHistory: (args: unknown) => mockUseRunHistory(args),
+}))
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useCopyToClipboard: () => [jest.fn(), mockCopyToClipboard],
 }))
 
 const run: AgenticWorkflowRun = {
@@ -255,6 +260,18 @@ describe('AgenticWorkflowRuns', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
     await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument())
+  })
+
+  it('copies the run ID from the keyboard', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.tab()
+    await userEvent.tab()
+    expect(screen.getByRole('button', { name: 'Copy run ID' })).toHaveFocus()
+
+    await userEvent.keyboard('{Enter}')
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(run.id)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
   it('shows an empty state when no runs exist', () => {

@@ -10,12 +10,10 @@ export interface CopyToClipboardButtonIconProps {
   className?: string
   iconClassName?: string
   tooltipContent?: string
-  tooltipOpen?: boolean
-  asButton?: boolean
 }
 
 export function CopyToClipboardButtonIcon(props: CopyToClipboardButtonIconProps) {
-  const { content, className = '', iconClassName = '', tooltipContent = 'Copy', tooltipOpen, asButton = false } = props
+  const { content, className = '', iconClassName = '', tooltipContent = 'Copy' } = props
 
   const [icon, setIcon] = useState<IconName>('copy')
   const [, copyToClipboard] = useCopyToClipboard()
@@ -26,29 +24,18 @@ export function CopyToClipboardButtonIcon(props: CopyToClipboardButtonIconProps)
     setTimeout(() => setIcon('copy'), 1000)
   }
 
-  const iconContent = <Icon iconName={icon} className={iconClassName} />
-  const controlClassName = twMerge(
-    "relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-['']",
-    className
-  )
-
   return (
-    <Tooltip content={tooltipContent} open={tooltipOpen}>
-      {asButton ? (
-        <button
-          type="button"
-          aria-label={tooltipContent}
-          onClick={onClickCopyToClipboard}
-          className={controlClassName}
-          data-testid="copy-container"
-        >
-          {iconContent}
-        </button>
-      ) : (
-        <span onClick={onClickCopyToClipboard} className={controlClassName} data-testid="copy-container">
-          {iconContent}
-        </span>
-      )}
+    <Tooltip content={tooltipContent}>
+      <span
+        onClick={onClickCopyToClipboard}
+        className={twMerge(
+          "relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-['']",
+          className
+        )}
+        data-testid="copy-container"
+      >
+        <Icon iconName={icon} className={iconClassName} />
+      </span>
     </Tooltip>
   )
 }
