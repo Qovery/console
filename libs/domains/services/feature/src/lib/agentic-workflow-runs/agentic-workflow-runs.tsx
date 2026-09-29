@@ -390,7 +390,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
 
 export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
   const [selectedRun, setSelectedRun] = useState<RunWithLifecycle | null>(null)
-  const { data: runs = [], isLoading, isError, refetch } = useAgenticWorkflowRunHistory({ serviceId, limit: 1 })
+  const { data: runs = [], isLoading, isError, refetch } = useAgenticWorkflowRunHistory({ serviceId, pageSize: 1 })
   const lastRun: RunWithLifecycle | undefined = runs[0]
 
   if (isLoading) {

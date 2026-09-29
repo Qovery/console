@@ -17,9 +17,9 @@ jest.mock('@qovery/shared/ui', () => ({
 
 describe('useDeployAgenticWorkflow', () => {
   it('invalidates run history for the triggered service', () => {
-    const runHistory = queries.services.agenticWorkflowRunHistory({ serviceId: 'workflow-1' }).queryKey
-    const recentRuns = queries.services.agenticWorkflowRunHistory({ serviceId: 'workflow-1', limit: 1 }).queryKey
-    const otherService = queries.services.agenticWorkflowRunHistory({ serviceId: 'workflow-2' }).queryKey
+    const runHistory = queries.services.agenticWorkflowRunHistory({ serviceId: 'workflow-1', pageSize: 100 }).queryKey
+    const recentRuns = queries.services.agenticWorkflowRunHistory({ serviceId: 'workflow-1', pageSize: 1 }).queryKey
+    const otherService = queries.services.agenticWorkflowRunHistory({ serviceId: 'workflow-2', pageSize: 100 }).queryKey
     mockQueryClient.setQueryData(runHistory, [])
     mockQueryClient.setQueryData(recentRuns, [])
     mockQueryClient.setQueryData(otherService, [])

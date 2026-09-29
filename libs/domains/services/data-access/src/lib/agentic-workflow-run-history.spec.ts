@@ -11,7 +11,7 @@ describe('agentic workflow run history', () => {
     const listRuns = jest.spyOn(AgenticWorkflowsApi.prototype, 'listAgenticWorkflowRunHistory')
     listRuns.mockResolvedValueOnce({ data: { results: firstPage } } as never)
 
-    const query = services.agenticWorkflowRunHistory({ serviceId: 'workflow-1' })
+    const query = services.agenticWorkflowRunHistory({ serviceId: 'workflow-1', pageSize: 100 })
     const runs = await query.queryFn({} as Parameters<typeof query.queryFn>[0])
 
     expect(listRuns).toHaveBeenCalledTimes(1)
@@ -24,7 +24,7 @@ describe('agentic workflow run history', () => {
     const listRuns = jest.spyOn(AgenticWorkflowsApi.prototype, 'listAgenticWorkflowRunHistory')
     listRuns.mockResolvedValueOnce({ data: { results: recentRuns } } as never)
 
-    const query = services.agenticWorkflowRunHistory({ serviceId: 'workflow-1', limit: 1 })
+    const query = services.agenticWorkflowRunHistory({ serviceId: 'workflow-1', pageSize: 1 })
     const runs = await query.queryFn({} as Parameters<typeof query.queryFn>[0])
 
     expect(listRuns).toHaveBeenCalledTimes(1)

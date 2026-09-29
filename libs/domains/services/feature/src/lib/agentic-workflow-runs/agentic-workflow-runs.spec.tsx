@@ -80,7 +80,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByText('00:01:05').querySelector('i')).toHaveClass('fa-clock-eight')
     expect(screen.getByText('Webhook').querySelector('i')).toHaveClass('fa-webhook')
     expect(screen.queryByRole('columnheader', { name: 'Recorded' })).not.toBeInTheDocument()
-    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: undefined })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123' })
   })
 
   it('keeps the finish date when a run crosses a UTC day boundary', () => {
@@ -284,7 +284,7 @@ describe('AgenticWorkflowRuns', () => {
     renderWithProviders(<AgenticWorkflowLastRun serviceId="workflow-123" />)
 
     expect(screen.getByText('No runs yet')).toBeInTheDocument()
-    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: 1 })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', pageSize: 1 })
   })
 
   it('shows only the latest run in the overview card and opens its details', async () => {
@@ -297,7 +297,7 @@ describe('AgenticWorkflowRuns', () => {
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
     expect(screen.queryByText('Older prompt')).not.toBeInTheDocument()
-    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: 1 })
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', pageSize: 1 })
     const overviewRun = screen.getByRole('button', { name: /Webhook run/i })
     expect(overviewRun).toHaveTextContent('Webhook run')
     await userEvent.click(overviewRun)
