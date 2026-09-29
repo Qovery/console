@@ -70,7 +70,12 @@ function runDuration(duration?: number | null) {
   const hours = Math.floor(totalSeconds / 3600)
   const minutes = Math.floor((totalSeconds % 3600) / 60)
   const seconds = totalSeconds % 60
-  return formatDuration(`PT${hours}H${minutes}M${seconds}S`)
+  const formattedDuration = formatDuration(`PT${hours}H${minutes}M${seconds}S`)
+  const milliseconds = duration % 1000
+
+  return milliseconds
+    ? `${formattedDuration}.${String(milliseconds).padStart(3, '0').replace(/0+$/, '')}`
+    : formattedDuration
 }
 
 function RunDuration({ duration }: { duration?: number | null }) {
@@ -383,8 +388,7 @@ export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
       >
         <span className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
           <span className="flex items-center gap-1 font-medium">
-            <RunTrigger trigger={lastRun.trigger} />
-            run
+            <RunTrigger trigger={lastRun.trigger} /> run
           </span>
           <span className="h-[3px] w-[3px] rounded-full bg-neutral-disabled" aria-hidden="true" />
           <span className="text-neutral-subtle">{timeAgo(new Date(lastRun.created_at))} ago</span>

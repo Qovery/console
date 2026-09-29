@@ -103,6 +103,18 @@ describe('AgenticWorkflowRuns', () => {
     expect(details.getByText('Duration').nextElementSibling).toHaveTextContent('—')
   })
 
+  it('keeps fractional seconds for a short run', () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, duration_ms: 1500 }],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('00:00:01.5')).toBeInTheDocument()
+  })
+
   it('opens the run details in a sheet and closes it', async () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
@@ -230,7 +242,9 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
     expect(screen.queryByText('Older prompt')).not.toBeInTheDocument()
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', limit: 1 })
-    await userEvent.click(screen.getByRole('button', { name: /Webhook run/i }))
+    const overviewRun = screen.getByRole('button', { name: /Webhook run/i })
+    expect(overviewRun).toHaveTextContent('Webhook run')
+    await userEvent.click(overviewRun)
 
     expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
   })
