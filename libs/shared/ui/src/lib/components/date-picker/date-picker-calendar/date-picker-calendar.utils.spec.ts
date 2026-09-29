@@ -1,8 +1,12 @@
+/**
+ * @jest-environment ./src/lib/components/date-picker/date-picker-calendar/timezone-test-environment.js
+ * @jest-environment-options {"timezone": "Australia/Brisbane"}
+ */
 import { mergeDateWithTimeText, toCalendarDate } from './date-picker-calendar.utils'
 
 describe('date-picker-calendar utils', () => {
   it('runs in a timezone ahead of UTC', () => {
-    // Set by jest.global-setup.js; without an offset the UTC and local expectations below would coincide
+    // Australia/Brisbane (UTC+10, no DST) is set above; with no offset, the UTC and local expectations below would coincide
     expect(new Date(2026, 0, 10).getTimezoneOffset()).toBe(-600)
   })
 
