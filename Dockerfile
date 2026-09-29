@@ -45,8 +45,7 @@ RUN --mount=type=cache,target=/root/.yarn \
 COPY . .
 
 # Call Vite directly: `nx build` adds ~9 min of cold Nx daemon/executor overhead on the builder
-RUN QOVERY_CHANGELOG_SYNC_STRICT=true node scripts/sync-changelog.mjs \
-    && yarn vite build --config apps/console/vite.config.ts --mode production
+RUN sh scripts/build-console-direct.sh
 
 # Bundle static assets with nginx
 FROM nginx:1.25-alpine
