@@ -1,7 +1,12 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { NodepoolsResourcesSettings, formatTimeRange, formatWeekdays, shortenDay } from './nodepools-resources-settings'
+
+jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
+
+const mockUseFeatureFlagEnabled = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
 
 const mockCluster = {
   features: [
@@ -84,6 +89,35 @@ describe('NodepoolsResourcesSettings', () => {
   })
 
   describe('Component', () => {
+    beforeEach(() => {
+      mockUseFeatureFlagEnabled.mockReturnValue(true)
+    })
+
+    it('hides drift blocking in the summary when the feature flag is off', () => {
+      mockUseFeatureFlagEnabled.mockReturnValue(false)
+      renderWithProviders(
+        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
+          defaultValues: {
+            karpenter: {
+              qovery_node_pools: {
+                stable_override: {
+                  drift_blocking: {
+                    enabled: true,
+                    days: Object.values(WeekdayEnum),
+                    start_time: 'PT21:00',
+                    duration: 'PT2H',
+                  },
+                },
+              },
+            },
+          },
+        })
+      )
+
+      expect(screen.queryByText('Drift blocking')).not.toBeInTheDocument()
+      expect(screen.queryByText('Every day, 9:00 pm to 11:00 pm (UTC)')).not.toBeInTheDocument()
+    })
+
     it('shows disabled drift blocking without parsing its inactive schedule', () => {
       renderWithProviders(
         wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {

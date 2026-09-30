@@ -120,6 +120,7 @@ export interface NodepoolModalProps {
   type: 'stable' | 'default' | 'gpu' | 'cronjob'
   cluster: Cluster
   onChange: (data: NodepoolOverrides) => void
+  showDriftBlocking: boolean
   defaultValues?:
     | KarpenterNodePools['stable_override']
     | KarpenterNodePools['default_override']
@@ -149,7 +150,7 @@ function validateDriftBlockingDuration(value: string): true | string {
   return true
 }
 
-export function NodepoolModal({ type, cluster, onChange, defaultValues }: NodepoolModalProps) {
+export function NodepoolModal({ type, cluster, onChange, defaultValues, showDriftBlocking }: NodepoolModalProps) {
   const { closeModal } = useModal()
   const initialDriftBlocking =
     defaultValues && 'drift_blocking' in defaultValues ? defaultValues.drift_blocking : undefined
@@ -290,6 +291,22 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
     .exhaustive()
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    const driftBlocking =
+      showDriftBlocking && data.stable_override?.drift_blocking?.enabled
+        ? {
+            enabled: true,
+            days: ALL_WEEKDAYS,
+            start_time: data.stable_override.drift_blocking.start_time
+              ? `PT${data.stable_override.drift_blocking.start_time}`
+              : '',
+            duration: data.stable_override.drift_blocking.duration
+              ? `PT${data.stable_override.drift_blocking.duration.toUpperCase()}`
+              : '',
+          }
+        : initialDriftBlocking
+          ? { ...initialDriftBlocking, enabled: showDriftBlocking ? false : initialDriftBlocking.enabled }
+          : undefined
+
     const payload: NodepoolOverrides = match(type)
       .with('default', () => ({
         default_override: {
@@ -321,22 +338,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               ? `PT${data.stable_override.consolidation.duration.toUpperCase()}`
               : '',
           },
-          ...(data.stable_override?.drift_blocking?.enabled
-            ? {
-                drift_blocking: {
-                  enabled: true,
-                  days: ALL_WEEKDAYS,
-                  start_time: data.stable_override.drift_blocking.start_time
-                    ? `PT${data.stable_override.drift_blocking.start_time}`
-                    : '',
-                  duration: data.stable_override.drift_blocking.duration
-                    ? `PT${data.stable_override.drift_blocking.duration.toUpperCase()}`
-                    : '',
-                },
-              }
-            : initialDriftBlocking
-              ? { drift_blocking: { ...initialDriftBlocking, enabled: false } }
-              : {}),
+          ...(driftBlocking ? { drift_blocking: driftBlocking } : {}),
           consolidate_after: data.stable_override?.consolidate_after,
           spot_enabled: data.stable_override?.spot_enabled ?? false,
         },
@@ -622,7 +624,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             </div>
           ))
           .exhaustive()}
-        {prefix === 'stable_override' && (
+        {prefix === 'stable_override' && showDriftBlocking && (
           <div className="mt-6 flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
             <Controller
               name="stable_override.drift_blocking.enabled"

@@ -11,6 +11,7 @@ const defaultProps: NodepoolModalProps = {
   type: 'stable' as const,
   cluster: mockCluster as Cluster,
   onChange: jest.fn(),
+  showDriftBlocking: true,
   defaultValues: {
     limits: {
       enabled: true,
@@ -167,6 +168,33 @@ describe('NodepoolModal', () => {
         stable_override: expect.objectContaining({
           drift_blocking: { enabled: false, days: [], start_time: '', duration: '' },
         }),
+      })
+    })
+  })
+
+  it('hides drift blocking and preserves its existing configuration when the flag is off', async () => {
+    const onChangeMock = jest.fn()
+    const driftBlocking = {
+      enabled: true,
+      days: Object.values(WeekdayEnum),
+      start_time: 'PT04:30',
+      duration: 'PT2H',
+    }
+    const { userEvent } = renderWithProviders(
+      <NodepoolModal
+        {...defaultProps}
+        showDriftBlocking={false}
+        onChange={onChangeMock}
+        defaultValues={{ ...defaultProps.defaultValues, drift_blocking: driftBlocking }}
+      />
+    )
+
+    expect(screen.queryByRole('switch', { name: 'Block node drift' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByText('Confirm'))
+
+    await waitFor(() => {
+      expect(onChangeMock).toHaveBeenCalledWith({
+        stable_override: expect.objectContaining({ drift_blocking: driftBlocking }),
       })
     })
   })

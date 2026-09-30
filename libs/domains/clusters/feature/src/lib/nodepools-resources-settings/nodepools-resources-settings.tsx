@@ -1,4 +1,5 @@
 import { add, format, parse } from 'date-fns'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -257,6 +258,7 @@ function NodepoolSummaryCard({
 export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourcesSettingsProps) {
   const { openModal } = useModal()
   const { watch, setValue } = useFormContext<ClusterResourcesData>()
+  const showDriftBlocking = useFeatureFlagEnabled('stable-nodepool-drift-blocking') === true
 
   const watchStable = watch('karpenter.qovery_node_pools.stable_override')
   const watchDefault = watch('karpenter.qovery_node_pools.default_override')
@@ -282,7 +284,15 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
     onChange,
   }: Pick<NodepoolCardConfig, 'type' | 'defaultValues' | 'onChange'>) =>
     openModal({
-      content: <NodepoolModal type={type} cluster={cluster} defaultValues={defaultValues} onChange={onChange} />,
+      content: (
+        <NodepoolModal
+          type={type}
+          cluster={cluster}
+          defaultValues={defaultValues}
+          onChange={onChange}
+          showDriftBlocking={showDriftBlocking}
+        />
+      ),
     })
 
   const cards = match(filter)
@@ -294,7 +304,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
           'Used for single instances and internal Qovery applications, such as containerized databases, to maintain stability.',
         defaultValues: watchStable,
         nodepool: watchStable,
-        showDriftBlocking: true,
+        showDriftBlocking,
         start: startStable,
         end: endStable,
         onChange: (data) => {
