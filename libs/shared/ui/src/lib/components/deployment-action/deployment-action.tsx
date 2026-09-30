@@ -137,8 +137,14 @@ export const getDeploymentAction = (
     .exhaustive()
 }
 
-export const getTriggerAction = (statusDetails?: { action?: ServiceActionEnum; sub_action?: ServiceSubActionEnum }) =>
-  statusDetails?.sub_action && statusDetails.sub_action !== 'NONE' ? statusDetails.sub_action : statusDetails?.action
+export const getTriggerAction = (statusDetails?: {
+  action?: ServiceActionEnum
+  sub_action?: ServiceSubActionEnum
+}): ServiceActionEnum | ServiceSubActionEnum | undefined => {
+  if (!statusDetails) return undefined
+  if (statusDetails.sub_action && statusDetails.sub_action !== 'NONE') return statusDetails.sub_action
+  return statusDetails.action ?? 'UNKNOWN'
+}
 
 export const DeploymentAction = ({
   status,

@@ -213,7 +213,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
       </span>
     ) : null
 
-  const triggerAction = getTriggerAction(lastDeployment.status_details) ?? 'UNKNOWN'
+  const triggerAction = getTriggerAction(lastDeployment.status_details)
 
   const handleLaunchDiagnostic = () => {
     posthog.capture('ai-copilot-troubleshoot-triggered', {
