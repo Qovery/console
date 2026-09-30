@@ -1,5 +1,10 @@
 import { type BlueprintDetailsResponse, type BlueprintItem } from 'qovery-typescript-axios'
-import { type AnyService, isBlueprintService, isTerraform } from '@qovery/domains/services/data-access'
+import {
+  type AnyService,
+  BLUEPRINT_CATALOG_GIT_REPOSITORY,
+  isBlueprintService,
+  isTerraform,
+} from '@qovery/domains/services/data-access'
 
 const BLUEPRINT_NAME_PARTS: Record<string, string> = {
   aws: 'AWS',
@@ -29,7 +34,7 @@ export function getRdsBlueprintEngine(
     blueprint?.id !== service.blueprint_id ||
     blueprint.service_id !== service.id ||
     blueprint.service_type !== 'TERRAFORM' ||
-    blueprint.catalog_url.replace(/\.git$/, '') !== 'https://github.com/Qovery/service-catalog'
+    blueprint.catalog_url.replace(/\.git$/, '') !== BLUEPRINT_CATALOG_GIT_REPOSITORY.url.replace(/\.git$/, '')
   ) {
     return undefined
   }
