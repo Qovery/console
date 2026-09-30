@@ -110,6 +110,11 @@ it('offers only template and scratch creation in the dropdown', async () => {
   })
   expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'from-scratch' })
   const item = screen.getByRole('link', { name: /Sentry Incident Analyzer/i })
+  expect(item).toHaveAttribute(
+    'href',
+    '/organization/org/project/project/environment/env/service/create/agentic-workflow?template=sentry-incident-analyzer'
+  )
+  expect(item.querySelector('img')).toHaveClass('dark:brightness-0', 'dark:invert')
   await userEvent.click(item)
   expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'sentry-incident-analyzer' })
   expect(mockCloseModal).toHaveBeenCalledTimes(2)

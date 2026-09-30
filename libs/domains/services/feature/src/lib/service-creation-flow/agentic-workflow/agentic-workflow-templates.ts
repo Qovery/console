@@ -21,6 +21,7 @@ export interface AgenticWorkflowTemplate {
   iconName?: IconName
   logoIcon?: IconEnum
   logoPath?: string
+  invertLogoInDarkMode?: boolean
   darkLogoPath?: string
   docLink?: string
   requiresQoveryMcp?: boolean
@@ -251,6 +252,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     category: 'Incident Analyzer',
     title: 'Sentry Incident Analyzer',
     logoPath: Sentry,
+    invertLogoInDarkMode: true,
     description: 'Investigate Sentry errors with deployment, code, logs, and metrics context.',
     iconName: 'bug',
     requiresQoveryMcp: true,

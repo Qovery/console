@@ -31,7 +31,7 @@ function TemplateIcon({ template }: { template: AgenticWorkflowTemplate }) {
       <img
         src={template.logoPath}
         alt=""
-        className={`size-full object-contain ${template.darkLogoPath ? 'dark:hidden' : ''}`}
+        className={`size-full object-contain ${template.darkLogoPath ? 'dark:hidden' : ''} ${template.invertLogoInDarkMode ? 'dark:brightness-0 dark:invert' : ''}`}
       />
       {template.darkLogoPath && (
         <img src={template.darkLogoPath} alt="" className="hidden size-full object-contain dark:block" />
