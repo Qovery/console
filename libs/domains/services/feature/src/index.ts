@@ -156,3 +156,5 @@ export * from './lib/service-variables-tabs/service-variables-built-in-tab'
 export * from './lib/service-variables-tabs/service-variables-custom-tab'
 export * from './lib/service-variables-tabs/service-variables-utils'
 export * from './lib/agentic-workflow-execution-mode-selector/agentic-workflow-execution-mode-selector'
+
+export * from './lib/agentic-workflow-service-list/environment-automation'

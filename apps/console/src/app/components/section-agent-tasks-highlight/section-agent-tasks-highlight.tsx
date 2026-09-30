@@ -152,7 +152,7 @@ export function SectionAgentTasksHighlight() {
             {firstEnvironment ? (
               <Link
                 as="button"
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/automation"
                 params={{ organizationId, projectId: firstProject.id, environmentId: firstEnvironment.id }}
                 color="brand"
                 variant="solid"

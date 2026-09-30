@@ -104,3 +104,50 @@ describe('AgenticWorkflowServiceList', () => {
     )
   })
 })
+
+it.each([false, true])('separates clone agents from other tasks (cloneTasks=%s)', (cloneTasks) => {
+  mockUseServices.mockReturnValue({
+    data: [
+      {
+        id: 'standard',
+        name: 'Standard agent',
+        service_type: 'AGENTIC_WORKFLOW',
+        project_repositories: [],
+        serviceType: 'AGENTIC_WORKFLOW',
+        enabled: true,
+        webhook: { url: 'https://example.com' },
+      },
+      {
+        id: 'clone',
+        name: 'Clone agent',
+        service_type: 'AGENTIC_WORKFLOW',
+        project_repositories: [],
+        serviceType: 'AGENTIC_WORKFLOW',
+        enabled: true,
+        execution_mode: 'CLONE_ENVIRONMENT',
+        webhook: { url: 'https://example.com' },
+      },
+    ],
+  })
+  renderWithProviders(<AgenticWorkflowServiceList environment={environment} cloneTasks={cloneTasks} />)
+  expect(screen.getByText(cloneTasks ? 'Clone agent' : 'Standard agent')).toBeInTheDocument()
+  expect(screen.queryByText(cloneTasks ? 'Standard agent' : 'Clone agent')).not.toBeInTheDocument()
+})
+
+it.each([false, true])('hides a table with no matching execution mode (cloneTasks=%s)', (cloneTasks) => {
+  mockUseServices.mockReturnValue({
+    data: [
+      {
+        id: 'agent',
+        name: 'Agent',
+        service_type: 'AGENTIC_WORKFLOW',
+        serviceType: 'AGENTIC_WORKFLOW',
+        execution_mode: cloneTasks ? 'IN_PLACE' : 'CLONE_ENVIRONMENT',
+      },
+    ],
+  })
+  const { container } = renderWithProviders(
+    <AgenticWorkflowServiceList environment={environment} cloneTasks={cloneTasks} />
+  )
+  expect(container).toBeEmptyDOMElement()
+})

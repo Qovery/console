@@ -12,12 +12,13 @@ import { useRecentServices, useServiceSummary } from '@qovery/domains/services/f
 import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
-import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
+import { Badge, ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
 import { NotFoundPage } from '../../../app/components/not-found-page/not-found-page'
 import { OrganizationBanners } from '../../../app/components/organization-banners/organization-banners'
 import { type FileRouteTypes } from '../../../routeTree.gen'
+import { getEnvironmentTabs } from '../../../utils/environment-navigation'
 
 export const Route = createFileRoute('/_authenticated/organization')({
   component: OrganizationRoute,
@@ -41,6 +42,7 @@ type NavigationContext = {
 type NavigationTab = {
   id: string
   label: string
+  isNew?: boolean
   iconName: IconName
   routeId: string
 }
@@ -129,33 +131,6 @@ const PROJECT_TABS: NavigationTab[] = [
     label: 'Settings',
     iconName: 'gear-complex',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/settings',
-  },
-]
-
-const ENVIRONMENT_TABS: NavigationTab[] = [
-  {
-    id: 'overview',
-    label: 'Overview',
-    iconName: 'table-layout',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
-  },
-  {
-    id: 'deployments',
-    label: 'Deployments',
-    iconName: 'rocket',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
-  },
-  {
-    id: 'variables',
-    label: 'Variables',
-    iconName: 'key',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables',
-  },
-  {
-    id: 'settings',
-    label: 'Settings',
-    iconName: 'gear-complex',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
   },
 ]
 
@@ -314,7 +289,7 @@ const NAVIGATION_CONTEXTS: Array<{
   {
     type: 'environment',
     routeIdPattern: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId',
-    tabs: ENVIRONMENT_TABS,
+    tabs: getEnvironmentTabs(true),
     paramNames: ['organizationId', 'projectId', 'environmentId'],
   },
   {
@@ -382,7 +357,9 @@ function useNavigationContext(): NavigationContext | null {
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled)
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
-              : context.tabs
+              : context.type === 'environment'
+                ? getEnvironmentTabs(isAgenticWorkflowEnabled)
+                : context.tabs
 
         return {
           type: context.type,
@@ -468,6 +445,11 @@ function NavigationBar({ context }: { context: NavigationContext }) {
           <Navbar.Item key={tab.id} id={tab.id} to={path}>
             <Icon iconName={tab.iconName} />
             {tab.label}
+            {tab.isNew && (
+              <Badge color="brand" size="sm">
+                New
+              </Badge>
+            )}
           </Navbar.Item>
         )
       })}
