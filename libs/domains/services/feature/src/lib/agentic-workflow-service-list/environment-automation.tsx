@@ -87,7 +87,7 @@ export function EnvironmentAutomation({ environment }: { environment: Environmen
                   <DropdownMenu.Item
                     onSelect={() =>
                       openModal({
-                        options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false, fakeModal: true },
+                        options: { width: 'min(1440px, calc(100vw - 48px))', buttonClose: false, fakeModal: true },
                         content: (
                           <AgentTemplateCatalogModal onClose={closeModal} onCreateFromScratch={createFromScratch} />
                         ),
@@ -111,7 +111,7 @@ export function EnvironmentAutomation({ environment }: { environment: Environmen
   )
 }
 
-function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
+function AgentTemplateCatalog({ onSelect, expanded = false }: { onSelect?: () => void; expanded?: boolean }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const selectTemplate = (id: string) => {
     posthog.capture('select-agent-use-case', { agentUseCase: id })
@@ -122,7 +122,13 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
       {AGENT_TEMPLATE_CATEGORIES.map((category) => (
         <Section key={category} className="gap-4">
           <Heading level={3}>{category}</Heading>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,320px))]">
+          <div
+            className={
+              expanded
+                ? 'grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4'
+                : 'grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,320px))]'
+            }
+          >
             {AGENTIC_WORKFLOW_TEMPLATES.filter((template) => template.category === category).map((template) => (
               <Link
                 key={template.id}
@@ -137,9 +143,11 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
                   <span className="flex size-5 shrink-0 items-center justify-center text-brand">
                     <TemplateIcon template={template} />
                   </span>
-                  <span className="truncate text-sm font-medium">{template.title}</span>
+                  <span className={`min-w-0 text-sm font-medium ${expanded ? 'break-words' : 'truncate'}`}>
+                    {template.title}
+                  </span>
                 </span>
-                <span className="line-clamp-2 text-sm font-normal leading-5 text-neutral-subtle">
+                <span className={`text-sm font-normal leading-5 text-neutral-subtle ${expanded ? '' : 'line-clamp-2'}`}>
                   {template.description}
                 </span>
               </Link>
@@ -171,7 +179,7 @@ function AgentTemplateCatalogModal({
           <Icon iconName="xmark" />
         </Button>
       </div>
-      <AgentTemplateCatalog onSelect={onClose} />
+      <AgentTemplateCatalog onSelect={onClose} expanded />
       <div className="flex justify-end">
         <Button
           size="md"

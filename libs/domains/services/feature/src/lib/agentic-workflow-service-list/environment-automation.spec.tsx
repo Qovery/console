@@ -97,7 +97,7 @@ it('offers only template and scratch creation in the dropdown', async () => {
   ])
   await userEvent.click(screen.getByRole('menuitem', { name: 'Create from template' }))
   expect(mockOpenModal).toHaveBeenCalledWith({
-    options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false, fakeModal: true },
+    options: { width: 'min(1440px, calc(100vw - 48px))', buttonClose: false, fakeModal: true },
     content: expect.anything(),
   })
   renderWithProviders(mockOpenModal.mock.calls[0][0].content)
