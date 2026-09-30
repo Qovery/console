@@ -92,7 +92,6 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
   }
   return (
     <div className="flex flex-col gap-8">
-      <p className="text-sm text-neutral-subtle">Create an agent task from a template or start from scratch.</p>
       {AGENT_TEMPLATE_CATEGORIES.map((category) => (
         <Section key={category} className="gap-4">
           <Heading level={3}>{category}</Heading>
