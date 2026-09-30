@@ -2,8 +2,8 @@ import { useParams } from '@tanstack/react-router'
 import equal from 'fast-deep-equal'
 import {
   type Cluster,
-  type ClusterPlatformBindingRequest,
-  type ClusterPlatformBindingResponse,
+  type ClusterPlatformConfigurationRequest,
+  type ClusterPlatformConfigurationResponse,
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useContext, useMemo, useState } from 'react'
@@ -12,8 +12,8 @@ import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shar
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformBinding } from '../platform-configuration/hooks/use-platform-binding'
-import { useUpdatePlatformBinding } from '../platform-configuration/hooks/use-update-platform-binding'
+import { usePlatformConfiguration } from '../platform-configuration/hooks/use-platform-configuration'
+import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/use-update-platform-configuration'
 import {
   type PlatformFieldDescriptor,
   type PlatformScalarField,
@@ -37,7 +37,7 @@ function getDisplayedScalarValue(field: PlatformScalarField, value: unknown) {
 // Local edits differing from the saved (or default) value; edits reverted by hand do not count.
 function countProfileChanges(
   profileTree: ProfileTreeItem[],
-  binding: ClusterPlatformBindingResponse | null | undefined,
+  configuration: ClusterPlatformConfigurationResponse | null | undefined,
   profileValues: ProfileValues,
   clusterInputs: ClusterInputValues
 ) {
@@ -46,7 +46,10 @@ function countProfileChanges(
   )
   const profileChanges = Object.entries(profileValues).flatMap(([componentKey, values]) => {
     const fields = fieldsByComponent.get(componentKey) ?? []
-    const savedValues = applyPlatformConfigurationDefaults(fields, binding?.managedConfig?.[componentKey] ?? {})
+    const savedValues = applyPlatformConfigurationDefaults(
+      fields,
+      configuration?.platform.managedConfig?.[componentKey] ?? {}
+    )
     return Object.entries(values).filter(([fieldKey, value]) => {
       const field = fields.find(({ key }) => key === fieldKey)
       return field && isPlatformScalarField(field)
@@ -56,34 +59,38 @@ function countProfileChanges(
   })
   const clusterInputChanges = Object.entries(clusterInputs).flatMap(([componentKey, values]) =>
     Object.entries(values).filter(
-      ([inputKey, value]) => value !== (binding?.customerProvidedInputs?.[componentKey]?.[inputKey] ?? '')
+      ([inputKey, value]) => value !== (configuration?.clusterInputs[componentKey]?.[inputKey] ?? '')
     )
   )
 
   return profileChanges.length + clusterInputChanges.length
 }
 
-function getBindingRequest(
+// PUT replaces the whole configuration: unedited components and inputs are sent back as saved.
+function getConfigurationRequest(
   template: PlatformTemplateSummaryResponse,
-  binding: ClusterPlatformBindingResponse | null | undefined,
+  configuration: ClusterPlatformConfigurationResponse | null | undefined,
   profileValues: ProfileValues,
   clusterInputs: ClusterInputValues
-): ClusterPlatformBindingRequest {
-  const managedConfig = { ...binding?.managedConfig }
+): ClusterPlatformConfigurationRequest {
+  const savedManagedConfig = configuration?.platform.managedConfig
+  const managedConfig = { ...savedManagedConfig }
   for (const [componentKey, values] of Object.entries(profileValues)) {
-    managedConfig[componentKey] = omitEmptyValues({ ...binding?.managedConfig?.[componentKey], ...values })
+    managedConfig[componentKey] = omitEmptyValues({ ...savedManagedConfig?.[componentKey], ...values })
   }
-  const customerProvidedInputs = { ...binding?.customerProvidedInputs }
+  const nextClusterInputs = { ...configuration?.clusterInputs }
   for (const [componentKey, values] of Object.entries(clusterInputs)) {
-    customerProvidedInputs[componentKey] = { ...binding?.customerProvidedInputs?.[componentKey], ...values }
+    nextClusterInputs[componentKey] = { ...configuration?.clusterInputs[componentKey], ...values }
   }
 
   return {
-    templateKey: binding?.templateKey ?? template.key,
-    templateVersion: binding?.templateVersion ?? template.version,
-    layerSelections: binding?.layerSelections,
-    managedConfig,
-    customerProvidedInputs,
+    platform: {
+      templateKey: configuration?.platform.templateKey ?? template.key,
+      templateVersion: configuration?.platform.templateVersion ?? template.version,
+      layerSelections: configuration?.platform.layerSelections,
+      managedConfig,
+    },
+    clusterInputs: nextClusterInputs,
   }
 }
 
@@ -92,7 +99,7 @@ interface ClusterProfileContextValue {
   clusterId: string
   cluster?: Cluster
   templates?: PlatformTemplateSummaryResponse[]
-  binding?: ClusterPlatformBindingResponse | null
+  configuration?: ClusterPlatformConfigurationResponse | null
   profileTree: ProfileTreeItem[]
   isLoading: boolean
   isError: boolean
@@ -119,7 +126,8 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
   const [clusterInputs, setClusterInputs] = useState<ClusterInputValues>({})
   const [formKey, setFormKey] = useState(0)
   const [isSaveAndDeployPending, setIsSaveAndDeployPending] = useState(false)
-  const { mutateAsync: updatePlatformBinding, isLoading: isSavingBinding } = useUpdatePlatformBinding()
+  const { mutateAsync: updatePlatformConfiguration, isLoading: isSavingConfiguration } =
+    useUpdatePlatformConfiguration()
   const { mutateAsync: deployCluster } = useDeployCluster()
   const {
     data: cluster,
@@ -142,16 +150,18 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
     enabled: Boolean(clusterMode && cloudProvider),
   })
   const {
-    data: binding,
-    isError: isBindingError,
-    isLoading: isBindingLoading,
-  } = usePlatformBinding({ organizationId, clusterId })
+    data: configuration,
+    isError: isConfigurationError,
+    isLoading: isConfigurationLoading,
+  } = usePlatformConfiguration({ clusterId })
   const selectedTemplate = useMemo(
     () =>
       templates?.find(
-        (template) => template.key === binding?.templateKey && template.version === binding?.templateVersion
+        (template) =>
+          template.key === configuration?.platform.templateKey &&
+          template.version === configuration?.platform.templateVersion
       ) ?? templates?.[0],
-    [binding?.templateKey, binding?.templateVersion, templates]
+    [configuration?.platform.templateKey, configuration?.platform.templateVersion, templates]
   )
   const profileTree = useMemo(() => getProfileTree(selectedTemplate), [selectedTemplate])
 
@@ -169,21 +179,20 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
     setFormKey((key) => key + 1)
   }
 
-  const saveBinding = async () => {
+  const saveConfiguration = async () => {
     if (!selectedTemplate) return
-    await updatePlatformBinding({
-      organizationId,
+    await updatePlatformConfiguration({
       clusterId,
-      bindingRequest: getBindingRequest(selectedTemplate, binding, profileValues, clusterInputs),
+      configurationRequest: getConfigurationRequest(selectedTemplate, configuration, profileValues, clusterInputs),
     })
-    // The saved binding now carries the edits, so the local copies can go.
+    // The saved configuration now carries the edits, so the local copies can go.
     setProfileValues({})
     setClusterInputs({})
   }
 
   const saveChanges = async () => {
     try {
-      await saveBinding()
+      await saveConfiguration()
       toast('success', 'Profile saved', 'Deploy the cluster to apply the changes.')
     } catch {
       // Errors are notified by the mutation.
@@ -193,7 +202,7 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
   const saveAndDeployChanges = async () => {
     setIsSaveAndDeployPending(true)
     try {
-      await saveBinding()
+      await saveConfiguration()
       await deployCluster({ organizationId, clusterId })
     } catch {
       // Errors are notified by the mutations.
@@ -207,15 +216,15 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
     clusterId,
     cluster,
     templates,
-    binding,
+    configuration,
     profileTree,
-    isLoading: isClusterLoading || isTemplateLoading || isBindingLoading,
-    isError: isClusterError || isTemplateError || isBindingError,
+    isLoading: isClusterLoading || isTemplateLoading || isConfigurationLoading,
+    isError: isClusterError || isTemplateError || isConfigurationError,
     profileValues,
     clusterInputs,
     formKey,
-    changeCount: countProfileChanges(profileTree, binding, profileValues, clusterInputs),
-    isSaving: isSavingBinding && !isSaveAndDeployPending,
+    changeCount: countProfileChanges(profileTree, configuration, profileValues, clusterInputs),
+    isSaving: isSavingConfiguration && !isSaveAndDeployPending,
     isDeploying: isSaveAndDeployPending,
     updateProfileConfig,
     updateClusterInput,

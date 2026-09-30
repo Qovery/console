@@ -3,14 +3,12 @@ import { type PlatformComponentConfigurationPreviewRequest } from 'qovery-typesc
 import { queries } from '@qovery/state/util-queries'
 
 interface UsePlatformComponentConfigurationsProps {
-  organizationId: string
   clusterId: string
   requests: Record<string, PlatformComponentConfigurationPreviewRequest>
   enabled?: boolean
 }
 
 export function usePlatformComponentConfigurations({
-  organizationId,
   clusterId,
   requests,
   enabled = true,
@@ -20,12 +18,11 @@ export function usePlatformComponentConfigurations({
   return useQueries({
     queries: componentKeys.map((componentKey) => ({
       ...queries.platformConfiguration.componentConfiguration({
-        organizationId,
         clusterId,
         componentKey,
         request: requests[componentKey],
       }),
-      enabled: enabled && Boolean(organizationId) && Boolean(clusterId) && Boolean(componentKey),
+      enabled: enabled && Boolean(clusterId) && Boolean(componentKey),
       keepPreviousData: true,
     })),
   })

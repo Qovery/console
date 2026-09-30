@@ -3,7 +3,6 @@ import { type PlatformComponentConfigurationPreviewRequest } from 'qovery-typesc
 import { queries } from '@qovery/state/util-queries'
 
 interface UsePlatformComponentConfigurationProps {
-  organizationId: string
   clusterId: string
   componentKey?: string
   request: PlatformComponentConfigurationPreviewRequest
@@ -11,7 +10,6 @@ interface UsePlatformComponentConfigurationProps {
 }
 
 export function usePlatformComponentConfiguration({
-  organizationId,
   clusterId,
   componentKey,
   request,
@@ -19,12 +17,11 @@ export function usePlatformComponentConfiguration({
 }: UsePlatformComponentConfigurationProps) {
   return useQuery({
     ...queries.platformConfiguration.componentConfiguration({
-      organizationId,
       clusterId,
       componentKey: componentKey ?? '',
       request,
     }),
-    enabled: enabled && Boolean(organizationId) && Boolean(clusterId) && Boolean(componentKey),
+    enabled: enabled && Boolean(clusterId) && Boolean(componentKey),
     keepPreviousData: true,
   })
 }

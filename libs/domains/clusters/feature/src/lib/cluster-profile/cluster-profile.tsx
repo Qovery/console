@@ -275,11 +275,10 @@ function ClusterProfileView({
   onSearchChange,
 }: ClusterProfileFeatureProps) {
   const {
-    organizationId,
     clusterId,
     cluster,
     templates,
-    binding,
+    configuration,
     profileTree,
     isLoading,
     isError,
@@ -330,7 +329,7 @@ function ClusterProfileView({
     () =>
       Object.fromEntries(
         profileSections.map((section) => {
-          const persistedValues = binding?.managedConfig?.[section.component.key] ?? {}
+          const persistedValues = configuration?.platform.managedConfig?.[section.component.key] ?? {}
           const localValues = profileValues[section.component.key] ?? {}
           return [
             section.component.key,
@@ -338,17 +337,17 @@ function ClusterProfileView({
           ]
         })
       ),
-    [binding?.managedConfig, profileSections, profileValues]
+    [configuration?.platform.managedConfig, profileSections, profileValues]
   )
   const resolvedClusterInputs = useMemo(
     () =>
       Object.fromEntries(
         profileSections.map((section) => [
           section.component.key,
-          { ...binding?.customerProvidedInputs?.[section.component.key], ...clusterInputs[section.component.key] },
+          { ...configuration?.clusterInputs[section.component.key], ...clusterInputs[section.component.key] },
         ])
       ),
-    [binding?.customerProvidedInputs, clusterInputs, profileSections]
+    [configuration?.clusterInputs, clusterInputs, profileSections]
   )
   const previewRequests = useMemo(
     () =>
@@ -366,7 +365,6 @@ function ClusterProfileView({
   )
   const debouncedPreviewRequests = useDebounce(previewRequests, 300)
   const componentQueries = usePlatformComponentConfigurations({
-    organizationId,
     clusterId,
     requests: debouncedPreviewRequests,
     enabled: Boolean(profileSections.length),

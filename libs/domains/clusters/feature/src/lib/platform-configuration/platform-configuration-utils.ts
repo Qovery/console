@@ -1,7 +1,6 @@
 import {
   type CloudProviderEnum,
   type CloudVendorEnum,
-  type ClusterPlatformBindingResponse,
   type FieldSchemaConstraintsResponse,
   type FieldSchemaResponse,
   type KubernetesEnum,
@@ -14,14 +13,6 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type CatalogVariableField, type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
-
-export interface PlatformConfigurationDraft {
-  templateKey: string
-  templateVersion: string
-  layerSelections: Record<string, boolean>
-  managedConfig: Record<string, Record<string, unknown>>
-  customerProvidedInputs: Record<string, Record<string, string>>
-}
 
 export function toPlatformCloudVendor(
   cloudProvider: CloudProviderEnum | CloudVendorEnum | undefined
@@ -139,43 +130,6 @@ export function getPlatformFieldPaths(
 
 export function getTemplateId(template: Pick<PlatformTemplateSummaryResponse, 'key' | 'version'>) {
   return `${template.key}@${template.version}`
-}
-
-export function createPlatformConfigurationDraft(
-  template: PlatformTemplateSummaryResponse,
-  binding: ClusterPlatformBindingResponse | null | undefined
-): PlatformConfigurationDraft {
-  const defaultLayerSelections = Object.fromEntries(
-    template.layers.flatMap((layer) => (layer.mandatory ? [] : [[layer.key, layer.enabledByDefault]]))
-  )
-  const resolvedLayerSelections = Object.fromEntries(
-    template.layers.flatMap((layer) => {
-      if (layer.mandatory) return []
-
-      const status = binding?.layers.find((candidate) => candidate.key === layer.key)?.status
-      if (status === 'ENABLED') return [[layer.key, true]]
-      if (status === 'DISABLED') return [[layer.key, false]]
-      return []
-    })
-  )
-
-  if (binding && binding.templateKey === template.key && binding.templateVersion === template.version) {
-    return {
-      templateKey: binding.templateKey,
-      templateVersion: binding.templateVersion,
-      layerSelections: { ...defaultLayerSelections, ...binding.layerSelections, ...resolvedLayerSelections },
-      managedConfig: binding.managedConfig,
-      customerProvidedInputs: binding.customerProvidedInputs,
-    }
-  }
-
-  return {
-    templateKey: template.key,
-    templateVersion: template.version,
-    layerSelections: { ...defaultLayerSelections, ...resolvedLayerSelections },
-    managedConfig: {},
-    customerProvidedInputs: {},
-  }
 }
 
 export function findPlatformComponent(template: PlatformTemplateSummaryResponse, componentKey?: string) {

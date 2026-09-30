@@ -1,6 +1,6 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
-  type ClusterPlatformBindingRequest,
+  type ClusterPlatformConfigurationRequest,
   type PlatformCloudVendor,
   type PlatformClusterMode,
   type PlatformComponentConfigurationPreviewRequest,
@@ -26,11 +26,43 @@ export const platformConfiguration = createQueryKeys('platformConfiguration', {
       return response.data.results
     },
   }),
-  binding: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
-    queryKey: [organizationId, clusterId],
+  // Resolves a component draft against a template release, before the cluster exists.
+  templateComponentConfiguration: ({
+    organizationId,
+    templateKey,
+    templateVersion,
+    componentKey,
+    clusterMode,
+    cloudProvider,
+    request,
+  }: {
+    organizationId: string
+    templateKey: string
+    templateVersion: string
+    componentKey: string
+    clusterMode: PlatformClusterMode
+    cloudProvider: PlatformCloudVendor
+    request: PlatformComponentConfigurationPreviewRequest
+  }) => ({
+    queryKey: [organizationId, templateKey, templateVersion, componentKey, clusterMode, cloudProvider, request],
+    async queryFn() {
+      const response = await platformConfigurationApi.resolvePlatformTemplateComponentConfiguration(
+        organizationId,
+        templateKey,
+        templateVersion,
+        componentKey,
+        clusterMode,
+        cloudProvider,
+        request
+      )
+      return response.data
+    },
+  }),
+  configuration: ({ clusterId }: { clusterId: string }) => ({
+    queryKey: [clusterId],
     async queryFn() {
       try {
-        const response = await platformConfigurationApi.getClusterPlatformBinding(organizationId, clusterId)
+        const response = await platformConfigurationApi.getClusterPlatformConfiguration(clusterId)
         return response.data
       } catch (error) {
         if (isHttpStatus(error, 404)) return null
@@ -39,20 +71,17 @@ export const platformConfiguration = createQueryKeys('platformConfiguration', {
     },
   }),
   componentConfiguration: ({
-    organizationId,
     clusterId,
     componentKey,
     request,
   }: {
-    organizationId: string
     clusterId: string
     componentKey: string
     request: PlatformComponentConfigurationPreviewRequest
   }) => ({
-    queryKey: [organizationId, clusterId, componentKey, request],
+    queryKey: [clusterId, componentKey, request],
     async queryFn() {
-      const response = await platformConfigurationApi.resolvePlatformComponentConfiguration(
-        organizationId,
+      const response = await platformConfigurationApi.resolveClusterPlatformComponentConfiguration(
         clusterId,
         componentKey,
         request
@@ -63,20 +92,14 @@ export const platformConfiguration = createQueryKeys('platformConfiguration', {
 })
 
 export const platformConfigurationMutations = {
-  async updateBinding({
-    organizationId,
+  async updateConfiguration({
     clusterId,
-    bindingRequest,
+    configurationRequest,
   }: {
-    organizationId: string
     clusterId: string
-    bindingRequest: ClusterPlatformBindingRequest
+    configurationRequest: ClusterPlatformConfigurationRequest
   }) {
-    const response = await platformConfigurationApi.updateClusterPlatformBinding(
-      organizationId,
-      clusterId,
-      bindingRequest
-    )
+    const response = await platformConfigurationApi.updateClusterPlatformConfiguration(clusterId, configurationRequest)
     return response.data
   },
 }

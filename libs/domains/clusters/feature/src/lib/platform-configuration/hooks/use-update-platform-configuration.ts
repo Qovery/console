@@ -2,12 +2,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { platformConfigurationMutations } from '@qovery/domains/clusters/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useUpdatePlatformBinding() {
+export function useUpdatePlatformConfiguration() {
   const queryClient = useQueryClient()
 
-  return useMutation(platformConfigurationMutations.updateBinding, {
-    onSuccess(binding, { organizationId, clusterId }) {
-      queryClient.setQueryData(queries.platformConfiguration.binding({ organizationId, clusterId }).queryKey, binding)
+  return useMutation(platformConfigurationMutations.updateConfiguration, {
+    onSuccess(configuration, { clusterId }) {
+      queryClient.setQueryData(queries.platformConfiguration.configuration({ clusterId }).queryKey, configuration)
     },
     meta: {
       notifyOnError: true,

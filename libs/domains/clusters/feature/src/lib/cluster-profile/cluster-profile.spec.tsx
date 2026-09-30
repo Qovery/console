@@ -8,9 +8,9 @@ import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/uti
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformBinding } from '../platform-configuration/hooks/use-platform-binding'
 import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
-import { useUpdatePlatformBinding } from '../platform-configuration/hooks/use-update-platform-binding'
+import { usePlatformConfiguration } from '../platform-configuration/hooks/use-platform-configuration'
+import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/use-update-platform-configuration'
 import { ClusterProfileFeature } from './cluster-profile'
 
 jest.mock('@tanstack/react-router', () => ({ useParams: jest.fn() }))
@@ -20,19 +20,19 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 }))
 jest.mock('../hooks/use-cluster/use-cluster')
 jest.mock('../hooks/use-deploy-cluster/use-deploy-cluster')
-jest.mock('../platform-configuration/hooks/use-update-platform-binding')
+jest.mock('../platform-configuration/hooks/use-update-platform-configuration')
 jest.mock('../hooks/use-platform-templates/use-platform-templates')
-jest.mock('../platform-configuration/hooks/use-platform-binding')
+jest.mock('../platform-configuration/hooks/use-platform-configuration')
 jest.mock('../platform-configuration/hooks/use-platform-component-configurations')
 
 const mockUseParams = useParams as jest.Mock
 const mockUseCluster = useCluster as jest.MockedFunction<typeof useCluster>
 const mockUsePlatformTemplates = usePlatformTemplates as jest.MockedFunction<typeof usePlatformTemplates>
-const mockUsePlatformBinding = usePlatformBinding as jest.MockedFunction<typeof usePlatformBinding>
+const mockUsePlatformBinding = usePlatformConfiguration as jest.MockedFunction<typeof usePlatformConfiguration>
 const mockUseDeployCluster = useDeployCluster as jest.Mock
-const mockUseUpdatePlatformBinding = useUpdatePlatformBinding as jest.Mock
+const mockUseUpdatePlatformBinding = useUpdatePlatformConfiguration as jest.Mock
 const mockDeployCluster = jest.fn()
-const mockUpdatePlatformBinding = jest.fn()
+const mockUpdatePlatformConfiguration = jest.fn()
 const mockUsePlatformComponentConfigurations = usePlatformComponentConfigurations as jest.MockedFunction<
   typeof usePlatformComponentConfigurations
 >
@@ -219,11 +219,11 @@ describe('ClusterProfileFeature', () => {
       data: null,
       isError: false,
       isLoading: false,
-    } as ReturnType<typeof usePlatformBinding>)
+    } as ReturnType<typeof usePlatformConfiguration>)
     mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki', 'alloy']))
-    mockUpdatePlatformBinding.mockResolvedValue({})
+    mockUpdatePlatformConfiguration.mockResolvedValue({})
     mockDeployCluster.mockResolvedValue({})
-    mockUseUpdatePlatformBinding.mockReturnValue({ mutateAsync: mockUpdatePlatformBinding, isLoading: false })
+    mockUseUpdatePlatformBinding.mockReturnValue({ mutateAsync: mockUpdatePlatformConfiguration, isLoading: false })
     mockUseDeployCluster.mockReturnValue({ mutateAsync: mockDeployCluster, isLoading: false })
   })
 
@@ -389,18 +389,23 @@ describe('ClusterProfileFeature', () => {
     it('disables the add button once the item limit is reached', () => {
       mockUsePlatformBinding.mockReturnValue({
         data: {
-          managedConfig: {
-            envoy: {
-              'envoy.client_validation.ca_certificates': [
-                { name: 'first', ca_crt: 'pem' },
-                { name: 'second', ca_crt: 'pem' },
-              ],
+          clusterInputs: {},
+          platform: {
+            templateKey: 'qovery-cluster-v0',
+            templateVersion: '1.0.0',
+            managedConfig: {
+              envoy: {
+                'envoy.client_validation.ca_certificates': [
+                  { name: 'first', ca_crt: 'pem' },
+                  { name: 'second', ca_crt: 'pem' },
+                ],
+              },
             },
           },
         },
         isError: false,
         isLoading: false,
-      } as unknown as ReturnType<typeof usePlatformBinding>)
+      } as unknown as ReturnType<typeof usePlatformConfiguration>)
 
       renderWithProviders(<ClusterProfileFeature activeComponentKey="envoy" />)
 
@@ -426,13 +431,18 @@ describe('ClusterProfileFeature', () => {
     it('shows violations on array items and unmapped violations', () => {
       mockUsePlatformBinding.mockReturnValue({
         data: {
-          managedConfig: {
-            envoy: { 'envoy.client_validation.ca_certificates': [{ name: 'INVALID', ca_crt: 'pem' }] },
+          clusterInputs: {},
+          platform: {
+            templateKey: 'qovery-cluster-v0',
+            templateVersion: '1.0.0',
+            managedConfig: {
+              envoy: { 'envoy.client_validation.ca_certificates': [{ name: 'INVALID', ca_crt: 'pem' }] },
+            },
           },
         },
         isError: false,
         isLoading: false,
-      } as unknown as ReturnType<typeof usePlatformBinding>)
+      } as unknown as ReturnType<typeof usePlatformConfiguration>)
       mockUsePlatformComponentConfigurations.mockReturnValue([
         {
           data: {
@@ -538,20 +548,22 @@ describe('ClusterProfileFeature', () => {
       )
     })
 
-    it('saves the changes into the cluster binding', async () => {
+    it('saves the changes into the cluster platform configuration', async () => {
       const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
       await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
       await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-      expect(mockUpdatePlatformBinding).toHaveBeenCalledWith({
-        organizationId: 'organization-id',
+      expect(mockUpdatePlatformConfiguration).toHaveBeenCalledWith({
         clusterId: 'cluster-id',
-        bindingRequest: expect.objectContaining({
-          templateKey: 'qovery-cluster-v0',
-          templateVersion: '1.0.0',
-          managedConfig: { loki: { 'high-availability': true } },
-        }),
+        configurationRequest: {
+          platform: expect.objectContaining({
+            templateKey: 'qovery-cluster-v0',
+            templateVersion: '1.0.0',
+            managedConfig: { loki: { 'high-availability': true } },
+          }),
+          clusterInputs: {},
+        },
       })
       expect(mockDeployCluster).not.toHaveBeenCalled()
     })
@@ -562,12 +574,12 @@ describe('ClusterProfileFeature', () => {
       await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
       await userEvent.click(screen.getByRole('button', { name: 'Save and deploy' }))
 
-      expect(mockUpdatePlatformBinding).toHaveBeenCalled()
+      expect(mockUpdatePlatformConfiguration).toHaveBeenCalled()
       expect(mockDeployCluster).toHaveBeenCalledWith({ organizationId: 'organization-id', clusterId: 'cluster-id' })
     })
 
     it('does not deploy when saving fails', async () => {
-      mockUpdatePlatformBinding.mockRejectedValue(new Error('Invalid profile'))
+      mockUpdatePlatformConfiguration.mockRejectedValue(new Error('Invalid profile'))
       const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
       await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
