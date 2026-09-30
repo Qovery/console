@@ -16,7 +16,6 @@ const { Table } = TablePrimitives
 
 export const environmentTableGridLayoutClassName =
   'grid w-full grid-cols-[44px_minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
-
 export const environmentSelectionCellClassName = 'flex h-full items-center pl-4'
 export const environmentNameCellContentClassName =
   'flex h-full min-w-0 flex-col justify-center gap-1 py-2 pl-0 pr-4 xl:flex-row xl:items-center xl:justify-between xl:gap-2'
@@ -91,7 +90,6 @@ function EnvRow({
           />
         </div>
       </Table.Cell>
-
       <Table.Cell className={twMerge(environmentTableCellClassName, 'border-none p-0')}>
         <div className={environmentNameCellContentClassName}>
           <div className="flex min-w-0 items-center gap-1.5">
@@ -275,7 +273,6 @@ function SortableColumnHeader({
 
 export function EnvironmentSection({
   type,
-  title: titleOverride,
   items,
   onCreateEnvClicked,
   selectedEnvironmentIds = [],
@@ -283,21 +280,18 @@ export function EnvironmentSection({
   onSectionSelectionChange,
 }: {
   type: EnvironmentModeEnum
-  title?: string
   items: EnvironmentOverviewResponse[]
   onCreateEnvClicked?: () => void
   selectedEnvironmentIds?: string[]
   onEnvironmentSelectionChange?: (environmentId: string, checked: boolean) => void
   onSectionSelectionChange?: (environmentIds: string[], checked: boolean) => void
 }) {
-  const title =
-    titleOverride ??
-    match(type)
-      .with('PRODUCTION', () => 'Production')
-      .with('STAGING', () => 'Staging')
-      .with('DEVELOPMENT', () => 'Development')
-      .with('PREVIEW', () => 'Ephemeral')
-      .exhaustive()
+  const title = match(type)
+    .with('PRODUCTION', () => 'Production')
+    .with('STAGING', () => 'Staging')
+    .with('DEVELOPMENT', () => 'Development')
+    .with('PREVIEW', () => 'Ephemeral')
+    .exhaustive()
 
   // Ephemeral environments default to the most recent operation first, every other
   // section keeps the historical alphabetical order. Clicking a header overrides this.
@@ -393,7 +387,6 @@ export function EnvironmentSection({
                   />
                 </div>
               </Table.ColumnHeaderCell>
-
               <SortableColumnHeader
                 label="Environment"
                 column="name"
