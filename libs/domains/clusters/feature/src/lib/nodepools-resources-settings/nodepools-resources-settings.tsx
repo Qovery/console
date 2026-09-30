@@ -83,11 +83,14 @@ interface NodepoolLimits {
 interface NodepoolConsolidation {
   enabled?: boolean
   days?: string[]
+  start_time?: string
+  duration?: string
 }
 
 interface NodepoolSummaryData {
   limits?: NodepoolLimits
   consolidation?: NodepoolConsolidation
+  drift_blocking?: NodepoolConsolidation
   consolidate_after?: string
   spot_enabled?: boolean | null
 }
@@ -102,6 +105,7 @@ interface NodepoolCardConfig {
   end?: string
   alwaysOn?: boolean
   showGpuLimit?: boolean
+  showDriftBlocking?: boolean
   onChange: NodepoolModalProps['onChange']
 }
 
@@ -189,6 +193,7 @@ interface NodepoolSummaryCardProps {
   end?: string
   alwaysOn?: boolean
   showGpuLimit?: boolean
+  showDriftBlocking?: boolean
   onEdit: () => void
 }
 
@@ -201,8 +206,13 @@ function NodepoolSummaryCard({
   end,
   alwaysOn = false,
   showGpuLimit = false,
+  showDriftBlocking = false,
   onEdit,
 }: NodepoolSummaryCardProps) {
+  const driftBlockingRange = nodepool?.drift_blocking?.enabled
+    ? formatTimeRange(nodepool.drift_blocking.start_time, nodepool.drift_blocking.duration)
+    : undefined
+
   return (
     <div className={CARD_CLASSNAME}>
       <div className="flex justify-between gap-10">
@@ -230,6 +240,16 @@ function NodepoolSummaryCard({
           <span>{nodepool?.spot_enabled ? 'Enabled' : 'Disabled'}</span>
         </div>
       </div>
+      {showDriftBlocking && (
+        <div className="flex flex-col gap-1 border-t border-neutral pt-4">
+          <span className={SECTION_TITLE_CLASSNAME}>Drift blocking</span>
+          <span>
+            {nodepool?.drift_blocking?.enabled
+              ? `Every day, ${driftBlockingRange?.start} to ${driftBlockingRange?.end} (UTC)`
+              : 'Disabled'}
+          </span>
+        </div>
+      )}
     </div>
   )
 }
@@ -274,6 +294,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
           'Used for single instances and internal Qovery applications, such as containerized databases, to maintain stability.',
         defaultValues: watchStable,
         nodepool: watchStable,
+        showDriftBlocking: true,
         start: startStable,
         end: endStable,
         onChange: (data) => {
@@ -367,6 +388,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
             end={card.end}
             alwaysOn={card.alwaysOn}
             showGpuLimit={card.showGpuLimit}
+            showDriftBlocking={card.showDriftBlocking}
             onEdit={() => openNodepoolModal(card)}
           />
         ))}

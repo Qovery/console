@@ -130,9 +130,29 @@ export interface NodepoolModalProps {
 const CPU_MIN = 6
 const MEMORY_MIN = 10
 const GPU_MIN = 0
+const ALL_WEEKDAYS = Object.values(WeekdayEnum)
+
+function validateDriftBlockingDuration(value: string): true | string {
+  const duration = value.toUpperCase()
+  const match = /^(?:(\d{1,2})H(?:([0-5]?\d)M)?|(\d{1,4})M)$/.exec(duration)
+
+  if (!match) {
+    return 'Please enter a duration in hours and minutes (e.g., 2H10M, 1H, or 10M).'
+  }
+
+  const totalMinutes = Number(match[1] ?? 0) * 60 + Number(match[2] ?? match[3] ?? 0)
+
+  if (totalMinutes < 1 || totalMinutes > 23 * 60) {
+    return 'Duration must be between 1 minute and 23 hours to allow drift every day.'
+  }
+
+  return true
+}
 
 export function NodepoolModal({ type, cluster, onChange, defaultValues }: NodepoolModalProps) {
   const { closeModal } = useModal()
+  const initialDriftBlocking =
+    defaultValues && 'drift_blocking' in defaultValues ? defaultValues.drift_blocking : undefined
 
   const methods = useForm<NodepoolOverrides>({
     mode: 'onChange',
@@ -145,6 +165,13 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
       stable_override: {
         ...defaultValues,
         spot_enabled: defaultValues?.spot_enabled ?? false,
+        drift_blocking: initialDriftBlocking
+          ? {
+              ...initialDriftBlocking,
+              start_time: initialDriftBlocking.start_time.replace('PT', ''),
+              duration: initialDriftBlocking.duration.replace('PT', ''),
+            }
+          : { enabled: false, days: ALL_WEEKDAYS, start_time: '', duration: '' },
         ...{
           consolidation: match(defaultValues)
             .with({ consolidation: P.not(P.nullish) }, ({ consolidation }) => ({
@@ -191,6 +218,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
   const watchConsolidation = methods.watch(
     `${prefix === 'default_override' ? 'stable_override' : prefix}.consolidation.enabled`
   )
+  const watchDriftBlocking = methods.watch('stable_override.drift_blocking.enabled')
 
   const spotDescription = match(prefix)
     .with(
@@ -293,6 +321,22 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               ? `PT${data.stable_override.consolidation.duration.toUpperCase()}`
               : '',
           },
+          ...(data.stable_override?.drift_blocking?.enabled
+            ? {
+                drift_blocking: {
+                  enabled: true,
+                  days: ALL_WEEKDAYS,
+                  start_time: data.stable_override.drift_blocking.start_time
+                    ? `PT${data.stable_override.drift_blocking.start_time}`
+                    : '',
+                  duration: data.stable_override.drift_blocking.duration
+                    ? `PT${data.stable_override.drift_blocking.duration.toUpperCase()}`
+                    : '',
+                },
+              }
+            : initialDriftBlocking
+              ? { drift_blocking: { ...initialDriftBlocking, enabled: false } }
+              : {}),
           consolidate_after: data.stable_override?.consolidate_after,
           spot_enabled: data.stable_override?.spot_enabled ?? false,
         },
@@ -578,6 +622,61 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             </div>
           ))
           .exhaustive()}
+        {prefix === 'stable_override' && (
+          <div className="mt-6 flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
+            <Controller
+              name="stable_override.drift_blocking.enabled"
+              control={methods.control}
+              render={({ field }) => (
+                <InputToggle
+                  value={field.value ?? false}
+                  onChange={field.onChange}
+                  title="Block node drift"
+                  description="Prevent Karpenter from replacing stable nodes due to drift during one daily UTC window. Drift remains allowed for at least one hour each day."
+                  align="top"
+                  small
+                />
+              )}
+            />
+            {watchDriftBlocking && (
+              <div className="ml-11 flex flex-col gap-4">
+                <Controller
+                  name="stable_override.drift_blocking.start_time"
+                  control={methods.control}
+                  rules={{ required: 'Please enter a start time.' }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      label="Drift blocking start time (UTC)"
+                      name={field.name}
+                      type="time"
+                      onChange={field.onChange}
+                      value={field.value}
+                      error={error?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  name="stable_override.drift_blocking.duration"
+                  control={methods.control}
+                  rules={{
+                    required: 'Please enter a duration.',
+                    validate: validateDriftBlockingDuration,
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      name={field.name}
+                      label="Drift blocking duration"
+                      value={field.value}
+                      onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                      hint="Use 'H' for hours and 'M' for minutes (e.g., 2H10M). Maximum: 23H. Applies every day."
+                      error={error?.message}
+                    />
+                  )}
+                />
+              </div>
+            )}
+          </div>
+        )}
         <div className="mt-6 flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
           <Controller
             name={`${prefix}.spot_enabled`}
