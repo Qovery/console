@@ -2,6 +2,7 @@ import posthog from 'posthog-js'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { AGENTIC_WORKFLOW_TEMPLATES } from '../service-creation-flow/agentic-workflow/agentic-workflow-templates'
 import { EnvironmentAutomation } from './environment-automation'
 
 const mockServices = jest.fn()
@@ -129,4 +130,10 @@ it('places cloned environment previews after the agent table', () => {
     screen.getByText('Agent table').compareDocumentPosition(screen.getByText('Environment previews')) &
       Node.DOCUMENT_POSITION_FOLLOWING
   ).toBeTruthy()
+})
+
+it.each(AGENTIC_WORKFLOW_TEMPLATES)('tracks clicks on the $id template card', async (template) => {
+  const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
+  await userEvent.click(screen.getByRole('link', { name: `${template.title} ${template.description}` }))
+  expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: template.id })
 })

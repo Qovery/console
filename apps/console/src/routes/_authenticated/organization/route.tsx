@@ -442,7 +442,20 @@ function NavigationBar({ context }: { context: NavigationContext }) {
       {context.tabs.map((tab) => {
         const path = buildRoutePath(tab.routeId, context.params)
         return (
-          <Navbar.Item key={tab.id} id={tab.id} to={path}>
+          <Navbar.Item
+            key={tab.id}
+            id={tab.id}
+            to={path}
+            onClick={() => {
+              if (context.type === 'environment' && tab.id === 'automation') {
+                posthog.capture('click-environment-automation', {
+                  organization_id: context.params.organizationId,
+                  project_id: context.params.projectId,
+                  environment_id: context.params.environmentId,
+                })
+              }
+            }}
+          >
             <Icon iconName={tab.iconName} />
             {tab.label}
             {tab.isNew && (
