@@ -70,7 +70,11 @@ it('shows categorized templates and scratch creation when no agent exists', asyn
   expect(screen.getByRole('link', { name: /Sentry Incident Analyzer/i })).toBeInTheDocument()
   expect(screen.queryByText('Agent table')).not.toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Start from scratch' }))
-  expect(mockNavigate).toHaveBeenCalledWith(expect.objectContaining({ search: {} }))
+  expect(mockNavigate).toHaveBeenCalledWith({
+    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+    params: { organizationId: 'org', projectId: 'project', environmentId: 'env' },
+    search: {},
+  })
   expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'from-scratch' })
 })
 

@@ -13,7 +13,6 @@ function RouteComponent() {
   useDocumentTitle('Automation')
   const params = Route.useParams()
   const enabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
-  const { data: environment } = useEnvironment({ environmentId: params.environmentId, suspense: true })
   if (!enabled)
     return (
       <Navigate
@@ -22,13 +21,21 @@ function RouteComponent() {
         replace
       />
     )
-  if (!environment) return null
   return (
     <Suspense fallback={<ServiceListSkeleton />}>
-      <EnvironmentAutomation
-        environment={environment}
-        previews={<AgentTaskPreviewEnvironments sourceEnvironmentName={environment.name} />}
-      />
+      <AutomationContent />
     </Suspense>
+  )
+}
+
+function AutomationContent() {
+  const { environmentId } = Route.useParams()
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  if (!environment) return null
+  return (
+    <EnvironmentAutomation
+      environment={environment}
+      previews={<AgentTaskPreviewEnvironments sourceEnvironmentName={environment.name} />}
+    />
   )
 }

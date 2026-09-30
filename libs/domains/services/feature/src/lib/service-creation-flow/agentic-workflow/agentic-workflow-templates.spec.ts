@@ -147,6 +147,20 @@ describe('agentic-workflow-templates', () => {
     expect(template?.seed.automations?.[0].triggers).toEqual([expect.objectContaining({ type: 'webhook' })])
   })
 
+  it('allows Sentry to inspect repositories and open pull requests on supported Git providers', () => {
+    expect(getAgenticWorkflowTemplate('sentry-incident-analyzer')?.seed.whitelistHosts?.split(',')).toEqual(
+      expect.arrayContaining([
+        'sentry.io',
+        '*.sentry.io',
+        'github.com',
+        'api.github.com',
+        'gitlab.com',
+        'bitbucket.org',
+        'api.bitbucket.org',
+      ])
+    )
+  })
+
   it.each(['coding-agent', 'incident-analyzer'])('requires no provider secret for %s', (id) => {
     expect(getAgenticWorkflowTemplate(id)?.variables).toBeUndefined()
     expect(getAgenticWorkflowTemplate(id)?.seed.automations?.[0].triggers).toEqual([

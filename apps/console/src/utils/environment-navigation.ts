@@ -8,7 +8,7 @@ export interface EnvironmentNavigationTab {
   isNew?: boolean
 }
 
-const ENVIRONMENT_TABS: EnvironmentNavigationTab[] = [
+export const ENVIRONMENT_TABS: EnvironmentNavigationTab[] = [
   {
     id: 'overview',
     label: 'Overview',
@@ -42,6 +42,6 @@ const ENVIRONMENT_TABS: EnvironmentNavigationTab[] = [
   },
 ]
 
-export function getEnvironmentTabs(agentTasksEnabled: boolean) {
-  return ENVIRONMENT_TABS.filter((tab) => agentTasksEnabled || tab.id !== 'automation')
+export function getEnvironmentTabs(agentTasksEnabled: boolean, tabs: EnvironmentNavigationTab[] = ENVIRONMENT_TABS) {
+  return tabs.filter((tab) => agentTasksEnabled || tab.id !== 'automation')
 }

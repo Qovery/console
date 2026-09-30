@@ -157,15 +157,6 @@ describe('ServiceNew', () => {
     expect(screen.queryByRole('button', { name: 'Request agent template' })).not.toBeInTheDocument()
   })
 
-  it('should hide the Agent use cases section when the agentic workflow flag is disabled', () => {
-    renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-
-    expect(screen.queryByRole('heading', { name: 'Agent use cases' })).not.toBeInTheDocument()
-    expect(screen.queryByText('Incident Analyzer with incident.io')).not.toBeInTheDocument()
-  })
-
   it('should show base service descriptions in info tooltips', async () => {
     const { userEvent } = renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />

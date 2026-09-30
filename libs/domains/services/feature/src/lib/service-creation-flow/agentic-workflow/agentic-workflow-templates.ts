@@ -257,7 +257,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
       memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
-      whitelistHosts: 'sentry.io,*.sentry.io',
+      whitelistHosts: 'sentry.io,*.sentry.io,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
       automations: webhookAutomation('sentry-incident-analyzer'),
     },
     variables: [secretVariable('SENTRY_AUTH_TOKEN', 'Token used to retrieve missing context.')],

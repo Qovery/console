@@ -15,3 +15,8 @@ it('places Automation second after Overview with a New badge', () => {
 it('hides Automation when Agent Tasks are disabled', () => {
   expect(getEnvironmentTabs(false).map(({ id }) => id)).toEqual(['overview', 'deployments', 'variables', 'settings'])
 })
+
+it('filters the declared context tabs without replacing them with defaults', () => {
+  const tabs = [{ id: 'custom', label: 'Custom', iconName: 'timer' as const, routeId: '/custom' }]
+  expect(getEnvironmentTabs(false, tabs)).toEqual(tabs)
+})

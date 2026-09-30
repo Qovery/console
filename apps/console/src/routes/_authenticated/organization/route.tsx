@@ -18,7 +18,7 @@ import Header from '../../../app/components/header/header'
 import { NotFoundPage } from '../../../app/components/not-found-page/not-found-page'
 import { OrganizationBanners } from '../../../app/components/organization-banners/organization-banners'
 import { type FileRouteTypes } from '../../../routeTree.gen'
-import { getEnvironmentTabs } from '../../../utils/environment-navigation'
+import { ENVIRONMENT_TABS, getEnvironmentTabs } from '../../../utils/environment-navigation'
 
 export const Route = createFileRoute('/_authenticated/organization')({
   component: OrganizationRoute,
@@ -289,7 +289,7 @@ const NAVIGATION_CONTEXTS: Array<{
   {
     type: 'environment',
     routeIdPattern: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId',
-    tabs: getEnvironmentTabs(true),
+    tabs: ENVIRONMENT_TABS,
     paramNames: ['organizationId', 'projectId', 'environmentId'],
   },
   {
@@ -358,7 +358,7 @@ function useNavigationContext(): NavigationContext | null {
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
               : context.type === 'environment'
-                ? getEnvironmentTabs(isAgenticWorkflowEnabled)
+                ? getEnvironmentTabs(isAgenticWorkflowEnabled, context.tabs)
                 : context.tabs
 
         return {
