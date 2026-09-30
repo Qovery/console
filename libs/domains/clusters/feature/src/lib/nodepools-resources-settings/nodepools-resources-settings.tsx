@@ -213,6 +213,14 @@ function NodepoolSummaryCard({
   const driftBlockingRange = nodepool?.drift_blocking?.enabled
     ? formatTimeRange(nodepool.drift_blocking.start_time, nodepool.drift_blocking.duration)
     : undefined
+  const driftBlockingDays = formatWeekdays(nodepool?.drift_blocking?.days ?? []).replace(
+    /^Operates every day$/,
+    'Every day'
+  )
+  const driftBlockingLabel =
+    driftBlockingDays && driftBlockingRange?.start && driftBlockingRange.end
+      ? `${driftBlockingDays}, ${driftBlockingRange.start} to ${driftBlockingRange.end} (UTC)`
+      : 'Enabled, schedule unavailable'
 
   return (
     <div className={CARD_CLASSNAME}>
@@ -243,11 +251,7 @@ function NodepoolSummaryCard({
         {showDriftBlocking && (
           <div className="flex min-w-0 flex-col gap-1">
             <span className={SECTION_TITLE_CLASSNAME}>Drift blocking</span>
-            <span>
-              {nodepool?.drift_blocking?.enabled
-                ? `Every day, ${driftBlockingRange?.start} to ${driftBlockingRange?.end} (UTC)`
-                : 'Disabled'}
-            </span>
+            <span>{nodepool?.drift_blocking?.enabled ? driftBlockingLabel : 'Disabled'}</span>
           </div>
         )}
       </div>

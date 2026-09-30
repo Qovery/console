@@ -62,6 +62,7 @@ describe('NodepoolModal', () => {
     const onChangeMock = jest.fn()
     const { userEvent } = renderWithProviders(<NodepoolModal {...defaultProps} onChange={onChangeMock} />)
 
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
     await userEvent.click(screen.getByText('Confirm'))
 
     await waitFor(() => expect(onChangeMock).toHaveBeenCalledTimes(1))
@@ -78,6 +79,7 @@ describe('NodepoolModal', () => {
     // XXX: userEvent.type does not work with this time input because showPicker() throws in jsdom.
     fireEvent.change(screen.getByLabelText('Drift blocking start time (UTC)'), { target: { value: '21:00' } })
     await userEvent.type(screen.getByLabelText('Drift blocking duration'), '23h')
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
     await userEvent.click(screen.getByText('Confirm'))
 
     await waitFor(() => {
@@ -132,6 +134,7 @@ describe('NodepoolModal', () => {
     expect(screen.getByLabelText('Drift blocking duration')).toHaveValue('2H')
 
     await userEvent.click(screen.getByRole('switch', { name: 'Block node drift' }))
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
     await userEvent.click(screen.getByText('Confirm'))
 
     await waitFor(() => {
@@ -161,6 +164,7 @@ describe('NodepoolModal', () => {
       />
     )
 
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
     await userEvent.click(screen.getByText('Confirm'))
 
     await waitFor(() => {
@@ -190,6 +194,7 @@ describe('NodepoolModal', () => {
     )
 
     expect(screen.queryByRole('switch', { name: 'Block node drift' })).not.toBeInTheDocument()
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
     await userEvent.click(screen.getByText('Confirm'))
 
     await waitFor(() => {
