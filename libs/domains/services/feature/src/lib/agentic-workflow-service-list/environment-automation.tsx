@@ -157,16 +157,19 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-2">
           <Heading level={2} className="text-xl font-medium">
-            Create New Agent Task
+            Create Agent Task
           </Heading>
           <p className="text-sm text-neutral-subtle">Choose a template to create an agent task for this environment.</p>
+          <div className="pt-2">
+            <StartFromScratch onSelect={onClose} size="lg" />
+          </div>
         </div>
         <Button variant="plain" color="neutral" aria-label="Close" onClick={onClose}>
           <Icon iconName="xmark" />
         </Button>
       </div>
       <AgentTemplateCatalog onSelect={onClose} />
-      <div className="flex flex-wrap justify-end gap-2">
+      <div className="flex justify-start">
         <Button
           size="lg"
           variant="outline"
@@ -179,7 +182,6 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
         >
           Request agent template
         </Button>
-        <StartFromScratch onSelect={onClose} size="lg" />
       </div>
     </div>
   )
