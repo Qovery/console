@@ -37,7 +37,7 @@ export function getRdsBlueprintEngine(
   const segments = blueprint.tag.split('/')
   if (segments.length !== 4) return undefined
   const [provider, family, major, version] = segments
-  if (provider !== 'AWS' || !major || !version) return undefined
+  if (provider.toUpperCase() !== 'AWS' || !major || !version) return undefined
 
   if (family === 'mysql') return 'MYSQL'
   if (family === 'postgres') return 'POSTGRESQL'

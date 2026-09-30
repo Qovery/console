@@ -43,10 +43,6 @@ function RouteComponent() {
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { data: blueprint } = useBlueprint({
-    blueprintId: service && 'blueprint_id' in service ? service.blueprint_id ?? '' : '',
-    enabled: service?.service_type === 'TERRAFORM',
-  })
 
   const { data: clusterStatus } = useClusterStatus({
     organizationId: environment?.organization.id ?? '',
@@ -57,6 +53,10 @@ function RouteComponent() {
     organizationId: environment?.organization.id ?? '',
     clusterId: environment?.cluster_id ?? '',
     suspense: true,
+  })
+  const { data: blueprint } = useBlueprint({
+    blueprintId: service && 'blueprint_id' in service ? service.blueprint_id ?? '' : '',
+    enabled: service?.service_type === 'TERRAFORM' && cluster?.cloud_provider === 'AWS',
   })
   const managedDatabaseEngine =
     isManagedDatabase(service) &&
@@ -183,11 +183,20 @@ function RdsBlueprintDashboard({ databaseEngine }: { databaseEngine: RdsBlueprin
     data: variables = [],
     isLoading,
     isError,
+    refetch,
   } = useVariables({
     parentId: serviceId,
     scope: 'TERRAFORM',
     isSecret: false,
   })
+
+  const dbInstance = getBlueprintDbInstance(serviceId, variables)
+  useEffect(() => {
+    if (dbInstance) return
+
+    const interval = window.setInterval(() => void refetch(), 15_000)
+    return () => window.clearInterval(interval)
+  }, [dbInstance, refetch])
 
   if (isLoading) {
     return (
@@ -197,7 +206,6 @@ function RdsBlueprintDashboard({ databaseEngine }: { databaseEngine: RdsBlueprin
     )
   }
 
-  const dbInstance = getBlueprintDbInstance(serviceId, variables)
   if (!dbInstance) {
     return (
       <div className="px-10 py-7">

@@ -11,4 +11,12 @@ describe('getStorageAvailable', () => {
     expect(getStorageAvailable(freeBytes)).toBe(25)
     expect(getStorageAvailable(freeBytes, 0)).toBe(25)
   })
+
+  it.each(['NaN', '+Inf', '-Inf', 'Infinity', 'not-a-number'])(
+    'ignores non-finite Prometheus samples such as %s',
+    (sample) => {
+      expect(getStorageAvailable(sample)).toBeUndefined()
+      expect(getStorageAvailable(sample, 100)).toBeUndefined()
+    }
+  )
 })

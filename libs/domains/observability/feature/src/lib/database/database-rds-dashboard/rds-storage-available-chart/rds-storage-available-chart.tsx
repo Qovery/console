@@ -68,17 +68,22 @@ export function RdsStorageAvailableChart({
 
     const values = metrics.data.result[0].values
 
-    return values.map(([timestamp, value]: [number, string]) => {
+    return values.flatMap(([timestamp, value]: [number, string]) => {
+      const storageAvailable = getStorageAvailable(value, storageCapacity)
+      if (storageAvailable === undefined) return []
+
       const timestampMs = timestamp * 1000 // Convert seconds to milliseconds
       const date = new Date(timestampMs)
       const timeStr = useLocalTime ? date.toLocaleTimeString() : date.toUTCString().split(' ')[4] // HH:MM:SS in UTC
 
-      return {
-        timestamp: timestampMs,
-        time: timeStr,
-        fullTime: useLocalTime ? date.toLocaleString() : date.toUTCString(),
-        'Storage Available': getStorageAvailable(value, storageCapacity),
-      }
+      return [
+        {
+          timestamp: timestampMs,
+          time: timeStr,
+          fullTime: useLocalTime ? date.toLocaleString() : date.toUTCString(),
+          'Storage Available': storageAvailable,
+        },
+      ]
     })
   }, [metrics, storageCapacity, useLocalTime])
 
@@ -87,7 +92,7 @@ export function RdsStorageAvailableChart({
     if (!value?.[1]) return '--'
 
     const numValue = getStorageAvailable(value[1], storageCapacity)
-    return Number.isFinite(numValue) ? numValue.toFixed(2) : '--'
+    return numValue === undefined ? '--' : numValue.toFixed(2)
   }, [metricsAvg, storageCapacity])
 
   return (

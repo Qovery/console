@@ -368,10 +368,6 @@ function useNavigationContext(): NavigationContext | null {
     serviceId: params.serviceId,
     enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
   })
-  const { data: blueprint } = useBlueprint({
-    blueprintId: service && 'blueprint_id' in service ? service.blueprint_id ?? '' : '',
-    enabled: service?.service_type === 'TERRAFORM',
-  })
   const { data: environment } = useEnvironment({
     environmentId: params.environmentId,
   })
@@ -381,6 +377,10 @@ function useNavigationContext(): NavigationContext | null {
   })
   const hasAlerting = clusters.some((cluster) => cluster.metrics_parameters?.configuration?.alerting?.enabled)
   const currentCluster = clusters.find((cluster) => cluster.id === environment?.cluster_id)
+  const { data: blueprint } = useBlueprint({
+    blueprintId: service && 'blueprint_id' in service ? service.blueprint_id ?? '' : '',
+    enabled: service?.service_type === 'TERRAFORM' && currentCluster?.cloud_provider === 'AWS',
+  })
 
   for (const context of NAVIGATION_CONTEXTS) {
     const patternRegex = createRoutePatternRegex(context.routeIdPattern)

@@ -30,7 +30,7 @@ describe('getRdsBlueprintEngine', () => {
     service_id: 'service-1',
     service_type: 'TERRAFORM',
     catalog_url: 'https://github.com/Qovery/service-catalog.git',
-    tag: 'AWS/mysql/8/3.2.0',
+    tag: 'aws/mysql/8/3.2.0',
   } as BlueprintDetailsResponse
 
   it('recognizes MySQL and PostgreSQL RDS catalog blueprints', () => {
@@ -42,6 +42,7 @@ describe('getRdsBlueprintEngine', () => {
     expect(getRdsBlueprintEngine(service, { ...blueprint, tag: 'AWS/s3/1/3.2.0' })).toBeUndefined()
     expect(getRdsBlueprintEngine(service, { ...blueprint, tag: 'GCP/mysql/8/3.2.0' })).toBeUndefined()
     expect(getRdsBlueprintEngine(service, { ...blueprint, tag: 'AWS/mysql/8' })).toBeUndefined()
+    expect(getRdsBlueprintEngine(service, { ...blueprint, tag: 'aws/mysql//3.2.0' })).toBeUndefined()
   })
 
   it('rejects unrelated services and catalogs', () => {
@@ -50,6 +51,11 @@ describe('getRdsBlueprintEngine', () => {
       getRdsBlueprintEngine(service, { ...blueprint, catalog_url: 'https://github.com/other/catalog' })
     ).toBeUndefined()
     expect(getRdsBlueprintEngine({ ...service, service_type: 'HELM' } as AnyService, blueprint)).toBeUndefined()
+    expect(
+      getRdsBlueprintEngine({ id: service.id, service_type: 'TERRAFORM' } as AnyService, blueprint)
+    ).toBeUndefined()
+    expect(getRdsBlueprintEngine(undefined, blueprint)).toBeUndefined()
+    expect(getRdsBlueprintEngine(service, undefined)).toBeUndefined()
   })
 })
 
