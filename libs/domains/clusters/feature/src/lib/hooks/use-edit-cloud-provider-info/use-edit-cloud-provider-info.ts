@@ -3,7 +3,7 @@ import { mutations } from '@qovery/domains/clusters/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useDeployCluster } from '../use-deploy-cluster/use-deploy-cluster'
 
-export function useEditCloudProviderInfo({ silently = false } = {}) {
+export function useEditCloudProviderInfo({ silently = false, redeployOnSuccess = false } = {}) {
   const queryClient = useQueryClient()
   const { mutate: deployCluster } = useDeployCluster()
 
@@ -12,12 +12,19 @@ export function useEditCloudProviderInfo({ silently = false } = {}) {
       queryClient.invalidateQueries({
         queryKey: queries.clusters.cloudProviderInfo({ organizationId, clusterId }).queryKey,
       })
+      if (redeployOnSuccess) {
+        deployCluster({ organizationId, clusterId })
+      }
     },
     ...(silently
       ? {}
       : {
           meta: {
             notifyOnSuccess(_: unknown, variables: unknown) {
+              if (redeployOnSuccess) {
+                return { title: 'Credentials updated' }
+              }
+
               const { organizationId, clusterId } = variables as Parameters<typeof mutations.editCloudProviderInfo>[0]
               return {
                 title: 'Credentials updated',

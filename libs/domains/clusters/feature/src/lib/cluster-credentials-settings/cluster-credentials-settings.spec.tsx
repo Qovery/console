@@ -108,6 +108,25 @@ describe('ClusterCredentialsSettings', () => {
     })
   })
 
+  it('should display the EKS credentials change warning in cluster settings for EKS clusters', () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting isEks />))
+
+    expect(screen.getByTestId('eks-credentials-change-warning')).toBeInTheDocument()
+    expect(screen.getByText('Changing credentials triggers a cluster redeployment')).toBeInTheDocument()
+  })
+
+  it('should not display the EKS credentials change warning for non EKS clusters', () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting isEks={false} />))
+
+    expect(screen.queryByTestId('eks-credentials-change-warning')).not.toBeInTheDocument()
+  })
+
+  it('should not display the EKS credentials change warning outside cluster settings', () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isEks />))
+
+    expect(screen.queryByTestId('eks-credentials-change-warning')).not.toBeInTheDocument()
+  })
+
   it('should filter non EKS Anywhere credentials in EKS Anywhere flow', () => {
     const credentials = [
       { id: '1', name: 'AWS role credential', object_type: 'AWS_ROLE' },

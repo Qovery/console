@@ -12,6 +12,7 @@ import {
 export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
+  isEks?: boolean
 }
 
 export const filterCredentialsByCloudProvider = (
@@ -25,7 +26,7 @@ export const filterCredentialsByCloudProvider = (
   return credentials.filter((credential) => credential.object_type === 'EKS_ANYWHERE_VSPHERE')
 }
 
-export function ClusterCredentialsSettings({ cloudProvider, isSetting }: ClusterCredentialsSettingsProps) {
+export function ClusterCredentialsSettings({ cloudProvider, isSetting, isEks }: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control, formState } = useFormContext()
   const { openModal, closeModal } = useModal()
@@ -79,6 +80,21 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting }: Cluster
         </div>
       ) : (
         <>
+          {isSetting && isEks && (
+            <Callout.Root color="red" className="mb-4" data-testid="eks-credentials-change-warning">
+              <Callout.Icon>
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Changing credentials triggers a cluster redeployment</Callout.TextHeading>
+                <Callout.TextDescription>
+                  Saving new credentials will automatically redeploy the cluster to keep your services' deployments
+                  working.
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          )}
+
           <Controller
             name="credentials"
             control={control}
