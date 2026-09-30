@@ -51,6 +51,6 @@ it('renders Automation after the environment has loaded', () => {
   jest.mocked(useEnvironment).mockReturnValue({ data: { name: 'Environment' } } as ReturnType<typeof useEnvironment>)
   render(<RouteComponent />)
   expect(screen.getByText('Automation content for Environment')).toBeInTheDocument()
-  expect(screen.getByText('Previews for Environment')).toBeInTheDocument()
+  expect(screen.queryByText('Previews for Environment')).not.toBeInTheDocument()
   expect(screen.queryByText('Loading automation')).not.toBeInTheDocument()
 })

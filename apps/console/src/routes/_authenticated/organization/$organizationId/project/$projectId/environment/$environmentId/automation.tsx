@@ -1,9 +1,8 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense } from 'react'
-import { AgentTaskPreviewEnvironments, useEnvironment } from '@qovery/domains/environments/feature'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { EnvironmentAutomation, EnvironmentAutomationSkeleton } from '@qovery/domains/services/feature'
-import { LoaderSpinner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -33,25 +32,5 @@ function AutomationContent() {
   const { environmentId } = Route.useParams()
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   if (!environment) return null
-  return (
-    <EnvironmentAutomation
-      environment={environment}
-      previews={
-        <Suspense
-          fallback={
-            <div
-              role="status"
-              aria-label="Loading clone environment previews"
-              aria-busy="true"
-              className="flex justify-center py-8"
-            >
-              <LoaderSpinner />
-            </div>
-          }
-        >
-          <AgentTaskPreviewEnvironments sourceEnvironmentName={environment.name} />
-        </Suspense>
-      }
-    />
-  )
+  return <EnvironmentAutomation environment={environment} />
 }
