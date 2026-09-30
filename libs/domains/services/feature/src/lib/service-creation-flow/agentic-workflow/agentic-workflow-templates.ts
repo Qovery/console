@@ -9,7 +9,7 @@ import { AGENTIC_WORKFLOW_MIN_CPU_MILLI, AGENTIC_WORKFLOW_MIN_RAM_MIB } from './
 // template (e.g. "Start from scratch").
 export const AGENT_TASKS_DOC_LINK = 'https://www.qovery.com/docs/configuration/agent-tasks/overview'
 
-export const AGENT_TEMPLATE_CATEGORIES = ['Coding Agent', 'Incident Analyzer', 'Optimization'] as const
+export const AGENT_TEMPLATE_CATEGORIES = ['Incident Analyzer', 'Coding Agent', 'Optimization'] as const
 export type AgentTemplateCategory = (typeof AGENT_TEMPLATE_CATEGORIES)[number]
 
 export interface AgenticWorkflowTemplate {
