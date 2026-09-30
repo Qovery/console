@@ -32,13 +32,6 @@ const SECTION_TITLES: Record<EnvironmentModeEnum, string> = {
 }
 const BODY_TEXT_SKELETON_HEIGHT = 20
 const ACTION_BUTTON_SKELETON_HEIGHT = 32
-const AGENT_TASK_PREVIEW_SUFFIX =
-  / - agentic-workflow-run-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
-function isAgentTaskPreview(environment: Pick<EnvironmentOverviewResponse, 'name' | 'mode'>) {
-  return environment.mode === EnvironmentModeEnum.PREVIEW && AGENT_TASK_PREVIEW_SUFFIX.test(environment.name)
-}
-
 function EnvironmentsTableSkeleton() {
   return (
     <div className="container mx-auto mt-6 pb-10">
@@ -141,11 +134,10 @@ function EnvironmentsTableContent() {
       return undefined
     }
 
-    const sortedEnvironments = environmentsOverview
-      .filter((environment) => !isAgentTaskPreview(environment))
-      .sort((environmentA: EnvironmentOverviewResponse, environmentB: EnvironmentOverviewResponse) =>
+    const sortedEnvironments = [...environmentsOverview].sort(
+      (environmentA: EnvironmentOverviewResponse, environmentB: EnvironmentOverviewResponse) =>
         (environmentA.name ?? '').localeCompare(environmentB.name ?? '')
-      )
+    )
 
     return sortedEnvironments.reduce<Map<EnvironmentModeEnum, EnvironmentOverviewResponse[]>>(
       (acc, env: EnvironmentOverviewResponse) => {
@@ -205,9 +197,7 @@ function EnvironmentsTableContent() {
     }
 
     const selectedEnvironmentIdsSet = new Set(selectedEnvironmentIds)
-    return environmentsOverview.filter(
-      (environment) => !isAgentTaskPreview(environment) && selectedEnvironmentIdsSet.has(environment.id)
-    )
+    return environmentsOverview.filter(({ id }) => selectedEnvironmentIdsSet.has(id))
   }, [environmentsOverview, selectedEnvironmentIds])
 
   const filledSections = SECTIONS.filter((section) => groupedEnvs?.has(section))

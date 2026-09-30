@@ -100,27 +100,6 @@ describe('EnvironmentsTable', () => {
     ])
   })
 
-  it('removes only Agent Task run previews from project Overview', () => {
-    mockUseProject.mockReturnValue({ data: { name: 'Project' } })
-    const cloneName = 'Production - agentic-workflow-run-9ec8d862-6970-4f99-bc36-0e398203968e'
-    const nonPreviewName = 'Other - agentic-workflow-run-9ec8d862-6970-4f99-bc36-0e398203968e'
-    mockUseEnvironmentsOverview.mockReturnValue({
-      data: [
-        environmentOverview('source', EnvironmentModeEnum.PRODUCTION, 'Production'),
-        environmentOverview('clone', EnvironmentModeEnum.PREVIEW, cloneName),
-        environmentOverview('preview', EnvironmentModeEnum.PREVIEW, 'Pull request preview'),
-        environmentOverview('non-preview', EnvironmentModeEnum.PRODUCTION, nonPreviewName),
-        environmentOverview('malformed', EnvironmentModeEnum.PREVIEW, 'Production - agentic-workflow-run-invalid'),
-      ],
-    })
-    renderWithProviders(<EnvironmentsTable />)
-    expect(screen.queryByRole('link', { name: cloneName })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Pull request preview' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Production' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: nonPreviewName })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Production - agentic-workflow-run-invalid' })).toBeInTheDocument()
-  })
-
   it('should sort ephemeral environments by last operation with newer environments first', () => {
     mockUseProject.mockReturnValue({ data: { name: 'Project Alpha' } })
     mockUseEnvironmentsOverview.mockReturnValue({
