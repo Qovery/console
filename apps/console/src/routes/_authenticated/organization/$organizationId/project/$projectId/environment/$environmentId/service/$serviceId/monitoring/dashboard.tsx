@@ -161,7 +161,13 @@ function RouteComponent() {
   }
 
   if (rdsBlueprintEngine && hasMetrics) {
-    return <RdsBlueprintDashboard databaseEngine={rdsBlueprintEngine} />
+    return (
+      <RdsBlueprintDashboard
+        databaseEngine={rdsBlueprintEngine}
+        deploymentFinished={serviceStatus?.state === 'DEPLOYED'}
+        deploymentExecutionId={serviceStatus?.execution_id}
+      />
+    )
   }
 
   return noMetricsAvailable ? (
@@ -177,7 +183,15 @@ function RouteComponent() {
   )
 }
 
-function RdsBlueprintDashboard({ databaseEngine }: { databaseEngine: RdsBlueprintEngine }) {
+function RdsBlueprintDashboard({
+  databaseEngine,
+  deploymentFinished,
+  deploymentExecutionId,
+}: {
+  databaseEngine: RdsBlueprintEngine
+  deploymentFinished: boolean
+  deploymentExecutionId?: string
+}) {
   const { serviceId = '' } = useParams({ strict: false })
   const {
     data: variables = [],
@@ -192,11 +206,10 @@ function RdsBlueprintDashboard({ databaseEngine }: { databaseEngine: RdsBlueprin
 
   const dbInstance = getBlueprintDbInstance(serviceId, variables)
   useEffect(() => {
-    if (dbInstance) return
-
-    const interval = window.setInterval(() => void refetch(), 15_000)
-    return () => window.clearInterval(interval)
-  }, [dbInstance, refetch])
+    if (deploymentFinished && !dbInstance && !isLoading && !isError) {
+      void refetch()
+    }
+  }, [dbInstance, deploymentExecutionId, deploymentFinished, isError, isLoading, refetch])
 
   if (isLoading) {
     return (
