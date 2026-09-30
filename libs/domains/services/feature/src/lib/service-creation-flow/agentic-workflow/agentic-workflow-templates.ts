@@ -1,5 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { APIVariableScopeEnum, AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
+import { IconEnum } from '@qovery/shared/enums'
 import { type VariableData } from '@qovery/shared/interfaces'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 import { AGENTIC_WORKFLOW_MIN_CPU_MILLI, AGENTIC_WORKFLOW_MIN_RAM_MIB } from './agentic-workflow-resources'
@@ -17,6 +18,7 @@ export interface AgenticWorkflowTemplate {
   title: string
   description: string
   iconName?: IconName
+  logoIcon?: IconEnum
   logoPath?: string
   darkLogoPath?: string
   docLink?: string
@@ -226,6 +228,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     id: 'slack-coding-agent',
     category: 'Coding Agent',
     title: 'Slack Coding Agent',
+    logoIcon: IconEnum.SLACK,
     description: 'Turn a Slack request into an implementation and a ready-to-review pull request.',
     iconName: 'comments',
     requiresQoveryMcp: true,
@@ -246,6 +249,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     id: 'sentry-incident-analyzer',
     category: 'Incident Analyzer',
     title: 'Sentry Incident Analyzer',
+    logoIcon: IconEnum.SENTRY,
     description: 'Investigate Sentry errors with deployment, code, logs, and metrics context.',
     iconName: 'bug',
     requiresQoveryMcp: true,

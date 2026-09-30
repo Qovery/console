@@ -15,6 +15,7 @@ import { AgentTemplateRequestModal } from '../service-new/agent-template-request
 import { AgenticWorkflowServiceList } from './agentic-workflow-service-list'
 
 function TemplateIcon({ template }: { template: AgenticWorkflowTemplate }) {
+  if (template.logoIcon) return <Icon name={template.logoIcon} className="size-5" />
   if (!template.logoPath) return <Icon iconName={template.iconName} iconStyle="regular" className="text-base" />
   return (
     <>
@@ -103,7 +104,7 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
       {AGENT_TEMPLATE_CATEGORIES.map((category) => (
         <Section key={category} className="gap-4">
           <Heading level={3}>{category}</Heading>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[repeat(3,minmax(0,320px))]">
             {AGENTIC_WORKFLOW_TEMPLATES.filter((template) => template.category === category).map((template) => (
               <Link
                 key={template.id}

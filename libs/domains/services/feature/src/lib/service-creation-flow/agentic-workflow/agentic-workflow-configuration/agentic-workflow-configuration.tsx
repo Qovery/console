@@ -17,6 +17,7 @@ import {
   useMcpServers,
 } from '@qovery/domains/organizations/feature'
 import { VariableRow, useImportVariables } from '@qovery/domains/variables/feature'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type VariableData } from '@qovery/shared/interfaces'
 import {
@@ -897,6 +898,7 @@ export function AgenticWorkflowConfiguration() {
           <Icon iconName="arrow-left" />
         </Button>
         <div className="flex items-center gap-4">
+          <NeedHelp />
           <ExternalLink href={selectedTemplate?.docLink ?? AGENT_TASKS_DOC_LINK} size="xs">
             Documentation
           </ExternalLink>
