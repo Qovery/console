@@ -4,7 +4,17 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { Button, Heading, Icon, Link, LoaderSpinner, Section, Skeleton, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  DropdownMenu,
+  Heading,
+  Icon,
+  Link,
+  LoaderSpinner,
+  Section,
+  Skeleton,
+  useModal,
+} from '@qovery/shared/ui'
 import { useServices } from '../hooks/use-services/use-services'
 import {
   AGENTIC_WORKFLOW_TEMPLATES,
@@ -32,7 +42,8 @@ function TemplateIcon({ template }: { template: AgenticWorkflowTemplate }) {
 }
 
 export function EnvironmentAutomation({ environment, previews }: { environment: Environment; previews?: ReactNode }) {
-  const { organizationId = '', environmentId = '' } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const enabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
   const { data: services = [] } = useServices({ environmentId, suspense: true })
@@ -47,34 +58,49 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
           <div className="flex items-center justify-between gap-4">
             <Heading>Automations</Heading>
             <div className="flex items-center gap-2">
-              {!hasAgents && (
-                <Button
-                  size="md"
-                  variant="outline"
-                  color="neutral"
-                  onClick={() =>
-                    openModal({
-                      content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} />,
-                    })
-                  }
-                >
-                  Request agent template
-                </Button>
-              )}
-              {!hasAgents && <StartFromScratch size="md" />}
-              {hasAgents && (
-                <Button
-                  size="md"
-                  onClick={() =>
-                    openModal({
-                      options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false },
-                      content: <AgentTemplateCatalogModal onClose={closeModal} />,
-                    })
-                  }
-                >
-                  Create agent task
-                </Button>
-              )}
+              <Button
+                size="md"
+                variant="outline"
+                color="neutral"
+                onClick={() =>
+                  openModal({
+                    content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} />,
+                  })
+                }
+              >
+                Request agent template
+              </Button>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <Button size="md">
+                    Create agent task <Icon iconName="chevron-down" />
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content align="end">
+                  <DropdownMenu.Item
+                    onSelect={() =>
+                      openModal({
+                        options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false, fakeModal: true },
+                        content: <AgentTemplateCatalogModal onClose={closeModal} />,
+                      })
+                    }
+                  >
+                    Create from template
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item
+                    onSelect={() => {
+                      posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' })
+                      navigate({
+                        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+                        params: { organizationId, projectId, environmentId },
+                        search: {},
+                      })
+                    }}
+                  >
+                    Create from scratch
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
             </div>
           </div>
           <hr className="w-full border-neutral" />
@@ -128,30 +154,7 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
   )
 }
 
-function StartFromScratch({ onSelect, size }: { onSelect?: () => void; size?: 'md' | 'lg' }) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  const navigate = useNavigate()
-  return (
-    <Button
-      size={size}
-      onClick={() => {
-        posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' })
-        onSelect?.()
-        navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-          params: { organizationId, projectId, environmentId },
-          search: {},
-        })
-      }}
-    >
-      Start from scratch
-    </Button>
-  )
-}
-
 function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
-  const { organizationId = '' } = useParams({ strict: false })
-  const { openModal, closeModal } = useModal()
   return (
     <div className="flex flex-col gap-8 p-6">
       <div className="flex items-start justify-between gap-4">
@@ -160,29 +163,12 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
             Create Agent Task
           </Heading>
           <p className="text-sm text-neutral-subtle">Choose a template to create an agent task for this environment.</p>
-          <div className="pt-2">
-            <StartFromScratch onSelect={onClose} size="lg" />
-          </div>
         </div>
         <Button variant="plain" color="neutral" aria-label="Close" onClick={onClose}>
           <Icon iconName="xmark" />
         </Button>
       </div>
       <AgentTemplateCatalog onSelect={onClose} />
-      <div className="flex justify-start">
-        <Button
-          size="lg"
-          variant="outline"
-          color="neutral"
-          onClick={() =>
-            openModal({
-              content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} />,
-            })
-          }
-        >
-          Request agent template
-        </Button>
-      </div>
     </div>
   )
 }

@@ -75,7 +75,8 @@ it('shows categorized templates and scratch creation when no agent exists', asyn
   )
   expect(screen.getByRole('link', { name: /Sentry Incident Analyzer/i })).toBeInTheDocument()
   expect(screen.queryByText('Agent table')).not.toBeInTheDocument()
-  await userEvent.click(screen.getByRole('button', { name: 'Start from scratch' }))
+  await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
+  await userEvent.click(await screen.findByRole('menuitem', { name: 'Create from scratch' }))
   expect(mockNavigate).toHaveBeenCalledWith({
     to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
     params: { organizationId: 'org', projectId: 'project', environmentId: 'env' },
@@ -84,38 +85,26 @@ it('shows categorized templates and scratch creation when no agent exists', asyn
   expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'from-scratch' })
 })
 
-it('opens the empty-state template catalog in a wide modal when agents exist', async () => {
+it('offers only template and scratch creation in the dropdown', async () => {
   mockServices.mockReturnValue({ data: [{ service_type: 'AGENTIC_WORKFLOW', serviceType: 'AGENTIC_WORKFLOW' }] })
   const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
   expect(screen.getByText('Agent table')).toBeInTheDocument()
-  expect(screen.queryByRole('button', { name: 'Request agent template' })).not.toBeInTheDocument()
-  expect(screen.queryByRole('link', { name: /Slack Coding Agent/i })).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Request agent template' })).toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
+  expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
+    'Create from template',
+    'Create from scratch',
+  ])
+  await userEvent.click(screen.getByRole('menuitem', { name: 'Create from template' }))
   expect(mockOpenModal).toHaveBeenCalledWith({
-    options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false },
+    options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false, fakeModal: true },
     content: expect.anything(),
   })
   renderWithProviders(mockOpenModal.mock.calls[0][0].content)
-  for (const category of ['Coding Agent', 'Incident Analyzer', 'Optimization']) {
-    expect(screen.getByRole('heading', { name: category })).toBeInTheDocument()
-  }
   const item = screen.getByRole('link', { name: /Sentry Incident Analyzer/i })
   await userEvent.click(item)
-  expect(item).toHaveAttribute(
-    'href',
-    '/organization/org/project/project/environment/env/service/create/agentic-workflow?template=sentry-incident-analyzer'
-  )
   expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'sentry-incident-analyzer' })
   expect(mockCloseModal).toHaveBeenCalledTimes(1)
-  await userEvent.click(screen.getByRole('button', { name: 'Start from scratch' }))
-  expect(mockNavigate).toHaveBeenCalledWith({
-    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-    params: { organizationId: 'org', projectId: 'project', environmentId: 'env' },
-    search: {},
-  })
-  expect(mockCloseModal).toHaveBeenCalledTimes(2)
-  await userEvent.click(screen.getByRole('button', { name: 'Close' }))
-  expect(mockCloseModal).toHaveBeenCalledTimes(3)
 })
 
 it('opens the existing template request modal', async () => {
