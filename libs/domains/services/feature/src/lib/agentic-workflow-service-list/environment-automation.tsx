@@ -2,7 +2,6 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Environment } from 'qovery-typescript-axios'
-import { type ReactNode } from 'react'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   Button,
@@ -41,7 +40,7 @@ function TemplateIcon({ template }: { template: AgenticWorkflowTemplate }) {
   )
 }
 
-export function EnvironmentAutomation({ environment, previews }: { environment: Environment; previews?: ReactNode }) {
+export function EnvironmentAutomation({ environment }: { environment: Environment }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
@@ -106,7 +105,6 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
         </div>
         <div className="flex min-h-0 flex-1 flex-col gap-8 pb-20">
           {hasAgents ? <AgenticWorkflowServiceList environment={environment} /> : <AgentTemplateCatalog />}
-          {previews}
         </div>
       </Section>
     </div>

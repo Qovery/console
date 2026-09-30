@@ -127,15 +127,6 @@ it('hides Automation when the feature flag is disabled', () => {
   expect(screen.queryByRole('heading', { name: 'Automations' })).not.toBeInTheDocument()
 })
 
-it('places cloned environment previews after the agent table', () => {
-  mockServices.mockReturnValue({ data: [{ service_type: 'AGENTIC_WORKFLOW', serviceType: 'AGENTIC_WORKFLOW' }] })
-  renderWithProviders(<EnvironmentAutomation environment={environment} previews={<div>Environment previews</div>} />)
-  expect(
-    screen.getByText('Agent table').compareDocumentPosition(screen.getByText('Environment previews')) &
-      Node.DOCUMENT_POSITION_FOLLOWING
-  ).toBeTruthy()
-})
-
 it.each(AGENTIC_WORKFLOW_TEMPLATES)('tracks clicks on the $id template card', async (template) => {
   const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
   await userEvent.click(screen.getByRole('link', { name: `${template.title} ${template.description}` }))

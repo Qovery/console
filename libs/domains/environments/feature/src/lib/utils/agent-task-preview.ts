@@ -6,10 +6,3 @@ const AGENT_TASK_PREVIEW_SUFFIX =
 export function isAgentTaskPreview(environment: Pick<EnvironmentOverviewResponse, 'name' | 'mode'>) {
   return environment.mode === 'PREVIEW' && AGENT_TASK_PREVIEW_SUFFIX.test(environment.name)
 }
-
-export function isAgentTaskPreviewOf(
-  environment: Pick<EnvironmentOverviewResponse, 'name' | 'mode'>,
-  sourceName: string
-) {
-  return isAgentTaskPreview(environment) && environment.name.replace(AGENT_TASK_PREVIEW_SUFFIX, '') === sourceName
-}
