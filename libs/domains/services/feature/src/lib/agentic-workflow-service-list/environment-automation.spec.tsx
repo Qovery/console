@@ -7,6 +7,7 @@ import { EnvironmentAutomation } from './environment-automation'
 const mockServices = jest.fn()
 const mockNavigate = jest.fn()
 const mockOpenModal = jest.fn()
+const mockCloseModal = jest.fn()
 let mockEnabled = true
 const environment = { id: 'env', cloud_provider: { provider: 'AWS' } } as Environment
 jest.mock('@tanstack/react-router', () => ({
@@ -43,7 +44,7 @@ jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: () => mockEnabled 
 jest.mock('posthog-js', () => ({ capture: jest.fn() }))
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
-  useModal: () => ({ openModal: mockOpenModal, closeModal: jest.fn() }),
+  useModal: () => ({ openModal: mockOpenModal, closeModal: mockCloseModal }),
 }))
 jest.mock('../hooks/use-services/use-services', () => ({ useServices: () => mockServices() }))
 jest.mock('./agentic-workflow-service-list', () => ({
@@ -78,20 +79,38 @@ it('shows categorized templates and scratch creation when no agent exists', asyn
   expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'from-scratch' })
 })
 
-it('shows tables and categorized creation dropdown when agents exist', async () => {
+it('opens the empty-state template catalog in a wide modal when agents exist', async () => {
   mockServices.mockReturnValue({ data: [{ service_type: 'AGENTIC_WORKFLOW', serviceType: 'AGENTIC_WORKFLOW' }] })
   const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
   expect(screen.getByText('Agent table')).toBeInTheDocument()
   expect(screen.queryByText('Clone table')).not.toBeInTheDocument()
   expect(screen.queryByRole('link', { name: /Slack Coding Agent/i })).not.toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
-  const item = await screen.findByRole('menuitem', { name: 'Sentry Incident Analyzer' })
+  expect(mockOpenModal).toHaveBeenCalledWith({
+    options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false },
+    content: expect.anything(),
+  })
+  renderWithProviders(mockOpenModal.mock.calls[0][0].content)
+  for (const category of ['Coding Agent', 'Incident Analyzer', 'Optimization']) {
+    expect(screen.getByRole('heading', { name: category })).toBeInTheDocument()
+  }
+  const item = screen.getByRole('link', { name: /Sentry Incident Analyzer/i })
   await userEvent.click(item)
   expect(item).toHaveAttribute(
     'href',
     '/organization/org/project/project/environment/env/service/create/agentic-workflow?template=sentry-incident-analyzer'
   )
   expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'sentry-incident-analyzer' })
+  expect(mockCloseModal).toHaveBeenCalledTimes(1)
+  await userEvent.click(screen.getByRole('button', { name: 'Start from scratch' }))
+  expect(mockNavigate).toHaveBeenCalledWith({
+    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+    params: { organizationId: 'org', projectId: 'project', environmentId: 'env' },
+    search: {},
+  })
+  expect(mockCloseModal).toHaveBeenCalledTimes(2)
+  await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+  expect(mockCloseModal).toHaveBeenCalledTimes(3)
 })
 
 it('opens the existing template request modal', async () => {

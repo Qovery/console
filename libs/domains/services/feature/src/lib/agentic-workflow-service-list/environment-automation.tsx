@@ -4,7 +4,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { Button, DropdownMenu, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
 import { useServices } from '../hooks/use-services/use-services'
 import {
   AGENTIC_WORKFLOW_TEMPLATES,
@@ -31,22 +31,11 @@ function TemplateIcon({ template }: { template: AgenticWorkflowTemplate }) {
 }
 
 export function EnvironmentAutomation({ environment, previews }: { environment: Environment; previews?: ReactNode }) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  const navigate = useNavigate()
+  const { organizationId = '', environmentId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const enabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
   const { data: services = [] } = useServices({ environmentId, suspense: true })
   const hasAgents = services.some(isAgenticWorkflow)
-  const selectTemplate = (id?: string) =>
-    posthog.capture('select-agent-use-case', { agentUseCase: id ?? 'from-scratch' })
-  const createAgent = (id?: string) => {
-    selectTemplate(id)
-    navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-      params: { organizationId, projectId, environmentId },
-      search: id ? { template: id } : {},
-    })
-  }
 
   if (!enabled) return null
 
@@ -69,88 +58,96 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
                 Request agent template
               </Button>
               {hasAgents && (
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger asChild>
-                    <Button>
-                      Create agent task <Icon iconName="chevron-down" />
-                    </Button>
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content align="end" className="max-h-[70vh] overflow-y-auto">
-                    {AGENT_TEMPLATE_CATEGORIES.map((category) => (
-                      <DropdownMenu.Group key={category}>
-                        <div className="px-2 py-1 text-xs font-medium text-neutral-subtle">{category}</div>
-
-                        {AGENTIC_WORKFLOW_TEMPLATES.filter((template) => template.category === category).map(
-                          (template) => (
-                            <DropdownMenu.Item key={template.id} asChild>
-                              <Link
-                                color="neutral"
-                                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow"
-                                params={{ organizationId, projectId, environmentId }}
-                                search={{ template: template.id }}
-                                onClick={() => selectTemplate(template.id)}
-                              >
-                                {template.title}
-                              </Link>
-                            </DropdownMenu.Item>
-                          )
-                        )}
-                      </DropdownMenu.Group>
-                    ))}
-                    <DropdownMenu.Separator />
-                    <DropdownMenu.Item onClick={() => createAgent()}>Start from scratch</DropdownMenu.Item>
-                  </DropdownMenu.Content>
-                </DropdownMenu.Root>
+                <Button
+                  onClick={() =>
+                    openModal({
+                      options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false },
+                      content: <AgentTemplateCatalogModal onClose={closeModal} />,
+                    })
+                  }
+                >
+                  Create agent task
+                </Button>
               )}
             </div>
           </div>
           <hr className="w-full border-neutral" />
         </div>
         <div className="flex min-h-0 flex-1 flex-col gap-8 pb-20">
-          {hasAgents ? (
-            <AgenticWorkflowServiceList environment={environment} />
-          ) : (
-            <>
-              <p className="text-sm text-neutral-subtle">Create an agent task from a template or start from scratch.</p>
-              {AGENT_TEMPLATE_CATEGORIES.map((category) => (
-                <Section key={category} className="gap-4">
-                  <Heading level={3}>{category}</Heading>
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-                    {AGENTIC_WORKFLOW_TEMPLATES.filter((template) => template.category === category).map((template) => (
-                      <Link
-                        key={template.id}
-                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow"
-                        params={{ organizationId, projectId, environmentId }}
-                        search={{ template: template.id }}
-                        onClick={() => selectTemplate(template.id)}
-                        color="neutral"
-                        className="flex min-w-0 flex-col items-start gap-2 rounded-lg border border-neutral bg-surface-neutral p-4 hover:bg-surface-neutral-subtle"
-                      >
-                        <span className="flex w-full min-w-0 items-center gap-2">
-                          <span className="flex size-5 shrink-0 items-center justify-center text-brand">
-                            <TemplateIcon template={template} />
-                          </span>
-                          <span className="truncate text-sm font-medium">{template.title}</span>
-                        </span>
-                        <span className="line-clamp-2 text-sm font-normal leading-5 text-neutral-subtle">
-                          {template.description}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </Section>
-              ))}
-              <div>
-                <Button variant="outline" color="neutral" onClick={() => createAgent()}>
-                  <Icon iconName="circle-plus" />
-                  Start from scratch
-                </Button>
-              </div>
-            </>
-          )}
+          {hasAgents ? <AgenticWorkflowServiceList environment={environment} /> : <AgentTemplateCatalog />}
           {previews}
         </div>
       </Section>
+    </div>
+  )
+}
+
+function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
+  const selectTemplate = (id?: string) => {
+    posthog.capture('select-agent-use-case', { agentUseCase: id ?? 'from-scratch' })
+    onSelect?.()
+  }
+  const createAgent = () => {
+    selectTemplate()
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+      params: { organizationId, projectId, environmentId },
+      search: {},
+    })
+  }
+  return (
+    <div className="flex flex-col gap-8">
+      <p className="text-sm text-neutral-subtle">Create an agent task from a template or start from scratch.</p>
+      {AGENT_TEMPLATE_CATEGORIES.map((category) => (
+        <Section key={category} className="gap-4">
+          <Heading level={3}>{category}</Heading>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {AGENTIC_WORKFLOW_TEMPLATES.filter((template) => template.category === category).map((template) => (
+              <Link
+                key={template.id}
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow"
+                params={{ organizationId, projectId, environmentId }}
+                search={{ template: template.id }}
+                onClick={() => selectTemplate(template.id)}
+                color="neutral"
+                className="flex min-w-0 flex-col items-start gap-2 rounded-lg border border-neutral bg-surface-neutral p-4 hover:bg-surface-neutral-subtle"
+              >
+                <span className="flex w-full min-w-0 items-center gap-2">
+                  <span className="flex size-5 shrink-0 items-center justify-center text-brand">
+                    <TemplateIcon template={template} />
+                  </span>
+                  <span className="truncate text-sm font-medium">{template.title}</span>
+                </span>
+                <span className="line-clamp-2 text-sm font-normal leading-5 text-neutral-subtle">
+                  {template.description}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </Section>
+      ))}
+      <div>
+        <Button variant="outline" color="neutral" onClick={() => createAgent()}>
+          <Icon iconName="circle-plus" />
+          Start from scratch
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="flex flex-col gap-8 p-6">
+      <div className="flex items-center justify-between gap-4">
+        <Heading level={2}>Create agent task</Heading>
+        <Button variant="plain" color="neutral" aria-label="Close" onClick={onClose}>
+          <Icon iconName="xmark" />
+        </Button>
+      </div>
+      <AgentTemplateCatalog onSelect={onClose} />
     </div>
   )
 }
