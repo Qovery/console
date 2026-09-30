@@ -115,6 +115,19 @@ Bug reports and improvements are welcome through [GitHub issues](https://github.
 3. Format your changes, run the relevant tests, review any snapshot changes, and lint the affected projects.
 4. Open a pull request targeting `staging`, using the [PR template](./pull_request_template.md). Use a Conventional Commit title such as `fix(service): correct deployment status`.
 
+### Production promotion protection
+
+PRs targeting `main` must come from `staging` in this repository. The `Enforce production PR source` workflow checks the source when a PR is opened, updated, reopened, or edited, including when its target branch changes to `main`. It only reads PR metadata and does not check out or execute PR code.
+
+After merging the workflow into `staging` (the default branch):
+
+1. Open or update a `staging` to `main` PR so `check-source-branch` runs.
+2. Make `check-source-branch` a required status check on `main`, with GitHub Actions as its expected source. Keep PRs required, direct pushes and force pushes blocked, and bypasses disabled.
+3. Verify that a feature branch and a fork branch named `staging` cannot merge into `main`.
+4. Only then remove the approval requirement on `main` if approval on `staging` is sufficient for production promotion. Keep approval required on `staging`, with direct pushes and bypasses blocked.
+
+Hotfixes also pass through `staging`; promoting them includes any other changes waiting on that branch. These branch protection settings must be configured in GitHub; adding the workflow alone does not enforce the policy.
+
 ## Community and support
 
 - [GitHub issues](https://github.com/Qovery/console/issues) — bug reports and feature requests.
