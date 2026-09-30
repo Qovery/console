@@ -1,4 +1,5 @@
 import { differenceInMinutes, isValid } from 'date-fns'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { P, match } from 'ts-pattern'
@@ -120,7 +121,6 @@ export interface NodepoolModalProps {
   type: 'stable' | 'default' | 'gpu' | 'cronjob'
   cluster: Cluster
   onChange: (data: NodepoolOverrides) => void
-  showDriftBlocking: boolean
   defaultValues?:
     | KarpenterNodePools['stable_override']
     | KarpenterNodePools['default_override']
@@ -150,8 +150,9 @@ function validateDriftBlockingDuration(value: string): true | string {
   return true
 }
 
-export function NodepoolModal({ type, cluster, onChange, defaultValues, showDriftBlocking }: NodepoolModalProps) {
+export function NodepoolModal({ type, cluster, onChange, defaultValues }: NodepoolModalProps) {
   const { closeModal } = useModal()
+  const showDriftBlocking = useFeatureFlagEnabled('stable-nodepool-drift-blocking') === true
   const initialDriftBlocking =
     defaultValues && 'drift_blocking' in defaultValues ? defaultValues.drift_blocking : undefined
 

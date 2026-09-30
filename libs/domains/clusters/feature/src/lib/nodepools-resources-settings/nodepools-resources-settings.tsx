@@ -286,15 +286,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
     onChange,
   }: Pick<NodepoolCardConfig, 'type' | 'defaultValues' | 'onChange'>) =>
     openModal({
-      content: (
-        <NodepoolModal
-          type={type}
-          cluster={cluster}
-          defaultValues={defaultValues}
-          onChange={onChange}
-          showDriftBlocking={showDriftBlocking}
-        />
-      ),
+      content: <NodepoolModal type={type} cluster={cluster} defaultValues={defaultValues} onChange={onChange} />,
     })
 
   const cards = match(filter)

@@ -1,7 +1,12 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { NodepoolModal, type NodepoolModalProps } from './nodepool-modal'
+
+jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
+
+const mockUseFeatureFlagEnabled = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
 
 const mockCluster = {
   region: 'us-east-1',
@@ -11,7 +16,6 @@ const defaultProps: NodepoolModalProps = {
   type: 'stable' as const,
   cluster: mockCluster as Cluster,
   onChange: jest.fn(),
-  showDriftBlocking: true,
   defaultValues: {
     limits: {
       enabled: true,
@@ -25,6 +29,7 @@ const defaultProps: NodepoolModalProps = {
 describe('NodepoolModal', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseFeatureFlagEnabled.mockReturnValue(true)
   })
 
   it('should render correctly for stable type', () => {
@@ -177,6 +182,7 @@ describe('NodepoolModal', () => {
   })
 
   it('hides drift blocking and preserves its existing configuration when the flag is off', async () => {
+    mockUseFeatureFlagEnabled.mockReturnValue(false)
     const onChangeMock = jest.fn()
     const driftBlocking = {
       enabled: true,
@@ -187,7 +193,6 @@ describe('NodepoolModal', () => {
     const { userEvent } = renderWithProviders(
       <NodepoolModal
         {...defaultProps}
-        showDriftBlocking={false}
         onChange={onChangeMock}
         defaultValues={{ ...defaultProps.defaultValues, drift_blocking: driftBlocking }}
       />
