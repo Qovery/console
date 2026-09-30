@@ -8,7 +8,12 @@ import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { type AnyService, isAgenticWorkflow, isArgoCd, isManagedDatabase } from '@qovery/domains/services/data-access'
-import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
+import {
+  getRdsBlueprintEngine,
+  useBlueprint,
+  useRecentServices,
+  useServiceSummary,
+} from '@qovery/domains/services/feature'
 import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
@@ -236,8 +241,10 @@ const SERVICE_TABS: NavigationTab[] = [
 const ARGOCD_SERVICE_TAB_IDS = ['overview', 'service-logs', 'cloud-shell', 'manifest']
 const AGENTIC_WORKFLOW_SERVICE_TAB_IDS = ['overview', 'runs', 'deployments', 'service-logs', 'variables', 'settings']
 
-function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
+function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster, isRdsBlueprint = false) {
   if (!service) return false
+
+  if (isRdsBlueprint) return cluster?.cloud_provider === 'AWS'
 
   if (service.serviceType === 'APPLICATION' || service.serviceType === 'CONTAINER') {
     return (
@@ -268,7 +275,12 @@ function createRoutePatternRegex(routeIdPattern: string): RegExp {
   return new RegExp('^' + patternPath.replace(/\$(\w+)/g, '[^/]+') + '(/.*)?$')
 }
 
-function getServiceTabs(service?: AnyService, cluster?: Cluster, isAgenticWorkflowEnabled = false) {
+function getServiceTabs(
+  service?: AnyService,
+  cluster?: Cluster,
+  isAgenticWorkflowEnabled = false,
+  isRdsBlueprint = false
+) {
   if (isArgoCd(service)) {
     return SERVICE_TABS.filter((tab) => ARGOCD_SERVICE_TAB_IDS.includes(tab.id))
   }
@@ -281,7 +293,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster, isAgenticWorkfl
 
   const isDatabase = service?.serviceType === 'DATABASE'
   const isManagedDatabaseService = isManagedDatabase(service)
-  const hasMonitoring = hasServiceMonitoringTab(service, cluster)
+  const hasMonitoring = hasServiceMonitoringTab(service, cluster, isRdsBlueprint)
 
   // Managed databases should not have cloud shell access.
   // Databases should not expose the variables tab.
@@ -356,6 +368,10 @@ function useNavigationContext(): NavigationContext | null {
     serviceId: params.serviceId,
     enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
   })
+  const { data: blueprint } = useBlueprint({
+    blueprintId: service && 'blueprint_id' in service ? service.blueprint_id ?? '' : '',
+    enabled: service?.service_type === 'TERRAFORM',
+  })
   const { data: environment } = useEnvironment({
     environmentId: params.environmentId,
   })
@@ -387,7 +403,12 @@ function useNavigationContext(): NavigationContext | null {
       if (hasAllParams) {
         const tabs =
           context.type === 'service'
-            ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled)
+            ? getServiceTabs(
+                service,
+                currentCluster,
+                isAgenticWorkflowEnabled,
+                Boolean(getRdsBlueprintEngine(service, blueprint))
+              )
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
               : context.type === 'environment'

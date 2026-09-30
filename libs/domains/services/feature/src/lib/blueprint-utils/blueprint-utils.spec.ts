@@ -1,9 +1,11 @@
-import type { BlueprintItem } from 'qovery-typescript-axios'
+import { type BlueprintDetailsResponse, type BlueprintItem } from 'qovery-typescript-axios'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   OTHER_BLUEPRINT_CATEGORY,
   formatBlueprintName,
   getBlueprintDisplayName,
   getBlueprintPrimaryCategory,
+  getRdsBlueprintEngine,
   isBlueprintCompatibleWithCluster,
 } from './blueprint-utils'
 
@@ -14,6 +16,40 @@ describe('formatBlueprintName', () => {
     ['AWS S3 Bucket', 'AWS S3 Bucket'],
   ])('formats %s as %s', (name, expectedName) => {
     expect(formatBlueprintName(name)).toBe(expectedName)
+  })
+})
+
+describe('getRdsBlueprintEngine', () => {
+  const service = {
+    id: 'service-1',
+    service_type: 'TERRAFORM',
+    blueprint_id: 'blueprint-1',
+  } as AnyService
+  const blueprint = {
+    id: 'blueprint-1',
+    service_id: 'service-1',
+    service_type: 'TERRAFORM',
+    catalog_url: 'https://github.com/Qovery/service-catalog.git',
+    tag: 'AWS/mysql/8/3.2.0',
+  } as BlueprintDetailsResponse
+
+  it('recognizes MySQL and PostgreSQL RDS catalog blueprints', () => {
+    expect(getRdsBlueprintEngine(service, blueprint)).toBe('MYSQL')
+    expect(getRdsBlueprintEngine(service, { ...blueprint, tag: 'AWS/postgres/17/3.2.0' })).toBe('POSTGRESQL')
+  })
+
+  it('rejects other blueprint families and providers', () => {
+    expect(getRdsBlueprintEngine(service, { ...blueprint, tag: 'AWS/s3/1/3.2.0' })).toBeUndefined()
+    expect(getRdsBlueprintEngine(service, { ...blueprint, tag: 'GCP/mysql/8/3.2.0' })).toBeUndefined()
+    expect(getRdsBlueprintEngine(service, { ...blueprint, tag: 'AWS/mysql/8' })).toBeUndefined()
+  })
+
+  it('rejects unrelated services and catalogs', () => {
+    expect(getRdsBlueprintEngine(service, { ...blueprint, service_id: 'another-service' })).toBeUndefined()
+    expect(
+      getRdsBlueprintEngine(service, { ...blueprint, catalog_url: 'https://github.com/other/catalog' })
+    ).toBeUndefined()
+    expect(getRdsBlueprintEngine({ ...service, service_type: 'HELM' } as AnyService, blueprint)).toBeUndefined()
   })
 })
 

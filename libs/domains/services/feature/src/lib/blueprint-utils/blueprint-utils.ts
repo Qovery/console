@@ -1,4 +1,5 @@
-import { type BlueprintItem } from 'qovery-typescript-axios'
+import { type BlueprintDetailsResponse, type BlueprintItem } from 'qovery-typescript-axios'
+import { type AnyService, isBlueprintService } from '@qovery/domains/services/data-access'
 
 const BLUEPRINT_NAME_PARTS: Record<string, string> = {
   aws: 'AWS',
@@ -13,6 +14,35 @@ const BLUEPRINT_NAME_PARTS: Record<string, string> = {
 const CLUSTER_AGNOSTIC_BLUEPRINT_PROVIDERS = new Set(['EXTERNAL', 'HELM'])
 
 export const OTHER_BLUEPRINT_CATEGORY = 'Other'
+
+export type RdsBlueprintEngine = 'MYSQL' | 'POSTGRESQL'
+
+/** Only catalog RDS blueprints backed by Terraform can use the RDS CloudWatch dashboard. */
+export function getRdsBlueprintEngine(
+  service?: AnyService,
+  blueprint?: BlueprintDetailsResponse
+): RdsBlueprintEngine | undefined {
+  if (
+    !service ||
+    !isBlueprintService(service) ||
+    service.service_type !== 'TERRAFORM' ||
+    blueprint?.id !== service.blueprint_id ||
+    blueprint.service_id !== service.id ||
+    blueprint.service_type !== 'TERRAFORM' ||
+    blueprint.catalog_url.replace(/\.git$/, '') !== 'https://github.com/Qovery/service-catalog'
+  ) {
+    return undefined
+  }
+
+  const segments = blueprint.tag.split('/')
+  if (segments.length !== 4) return undefined
+  const [provider, family, major, version] = segments
+  if (provider !== 'AWS' || !major || !version) return undefined
+
+  if (family === 'mysql') return 'MYSQL'
+  if (family === 'postgres') return 'POSTGRESQL'
+  return undefined
+}
 
 export function formatBlueprintName(name: string): string {
   return name

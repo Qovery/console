@@ -1,5 +1,7 @@
 export * from './lib/service/service-dashboard/service-dashboard'
 export * from './lib/database/database-rds-dashboard/database-rds-dashboard'
+export * from './lib/database/database-rds-dashboard/util/get-blueprint-db-instance'
+export * from './lib/database/database-rds-dashboard/util/generate-db-instance'
 export * from './lib/enable-observability-modal/enable-observability-modal'
 export * from './lib/activation-toast/activation-toast'
 export * from './lib/service/service-alerting/service-alerting'
