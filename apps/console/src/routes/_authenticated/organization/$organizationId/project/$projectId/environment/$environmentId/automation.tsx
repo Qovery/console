@@ -39,7 +39,12 @@ function AutomationContent() {
       previews={
         <Suspense
           fallback={
-            <div className="flex justify-center py-8">
+            <div
+              role="status"
+              aria-label="Loading clone environment previews"
+              aria-busy="true"
+              className="flex justify-center py-8"
+            >
               <LoaderSpinner />
             </div>
           }
