@@ -49,9 +49,10 @@ const RUN_TRIGGER_ICONS: Record<AgenticWorkflowRun['trigger'], IconName> = {
 }
 
 function runStatus(status?: RunStatus, spaceBetween = false) {
-  if (!status) return '—'
+  const config = status ? RUN_STATUS_CONFIG[status] : undefined
+  if (!config) return '—'
 
-  const { label, iconStatus } = RUN_STATUS_CONFIG[status]
+  const { label, iconStatus } = config
 
   return (
     <span

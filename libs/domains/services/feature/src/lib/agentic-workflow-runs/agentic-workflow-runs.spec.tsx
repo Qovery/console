@@ -116,6 +116,20 @@ describe('AgenticWorkflowRuns', () => {
     expect(statusCell?.querySelector('svg')).toBeInTheDocument()
   })
 
+  it('shows a placeholder for an unknown run status', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status: 'UNKNOWN' }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
+    expect(cells[1]).toHaveTextContent('—')
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+    expect(within(screen.getByRole('dialog')).getByText('Status').nextElementSibling).toHaveTextContent('—')
+  })
+
   it('shows empty lifecycle values when the API has not updated a run yet', async () => {
     mockUseRunHistory.mockReturnValue({
       data: [{ ...run, status: 'QUEUED', started_at: null, finished_at: null, duration_ms: null }],
