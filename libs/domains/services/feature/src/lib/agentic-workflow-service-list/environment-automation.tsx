@@ -126,11 +126,12 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
   )
 }
 
-function StartFromScratch({ onSelect }: { onSelect?: () => void }) {
+function StartFromScratch({ onSelect, size }: { onSelect?: () => void; size?: 'lg' }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   return (
     <Button
+      size={size}
       onClick={() => {
         posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' })
         onSelect?.()
@@ -152,9 +153,12 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="flex flex-col gap-8 p-6">
       <div className="flex items-center justify-between gap-4">
-        <Heading level={2}>Create agent task</Heading>
+        <Heading level={2} className="text-xl font-medium">
+          Create agent task
+        </Heading>
         <div className="flex flex-wrap items-center justify-end gap-2">
           <Button
+            size="lg"
             variant="outline"
             color="neutral"
             onClick={() =>
@@ -163,12 +167,13 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
           >
             Request agent template
           </Button>
-          <StartFromScratch onSelect={onClose} />
-          <Button variant="plain" color="neutral" aria-label="Close" onClick={onClose}>
+          <StartFromScratch onSelect={onClose} size="lg" />
+          <Button size="lg" variant="plain" color="neutral" aria-label="Close" onClick={onClose}>
             <Icon iconName="xmark" />
           </Button>
         </div>
       </div>
+      <hr className="w-full border-neutral" />
       <AgentTemplateCatalog onSelect={onClose} />
     </div>
   )
