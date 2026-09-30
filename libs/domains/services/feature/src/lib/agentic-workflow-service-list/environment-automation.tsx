@@ -153,36 +153,33 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
   const { openModal, closeModal } = useModal()
   return (
     <div className="flex flex-col gap-8 p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-2">
           <Heading level={2} className="text-xl font-medium">
             Create agent task
           </Heading>
           <p className="text-sm text-neutral-subtle">Choose a template to create an agent task for this environment.</p>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <Button size="lg" variant="plain" color="neutral" aria-label="Close" onClick={onClose}>
-            <Icon iconName="xmark" />
-          </Button>
-          <div className="flex flex-wrap items-center justify-end gap-2">
-            <Button
-              size="lg"
-              variant="outline"
-              color="neutral"
-              onClick={() =>
-                openModal({
-                  content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} />,
-                })
-              }
-            >
-              Request agent template
-            </Button>
-            <StartFromScratch onSelect={onClose} size="lg" />
-          </div>
-        </div>
+        <Button variant="plain" color="neutral" aria-label="Close" onClick={onClose}>
+          <Icon iconName="xmark" />
+        </Button>
       </div>
       <hr className="w-full border-neutral" />
       <AgentTemplateCatalog onSelect={onClose} />
+      <div className="flex flex-wrap justify-end gap-2">
+        <Button
+          variant="outline"
+          color="neutral"
+          onClick={() =>
+            openModal({
+              content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} />,
+            })
+          }
+        >
+          Request agent template
+        </Button>
+        <StartFromScratch onSelect={onClose} />
+      </div>
     </div>
   )
 }
