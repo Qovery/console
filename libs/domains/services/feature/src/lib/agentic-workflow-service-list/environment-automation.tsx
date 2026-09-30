@@ -99,9 +99,9 @@ export function EnvironmentAutomation({ environment }: { environment: Environmen
                       })
                     }
                   >
-                    Template
+                    Create from template
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item onSelect={createFromScratch}>From scratch</DropdownMenu.Item>
+                  <DropdownMenu.Item onSelect={createFromScratch}>Create from scratch</DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
             </div>
