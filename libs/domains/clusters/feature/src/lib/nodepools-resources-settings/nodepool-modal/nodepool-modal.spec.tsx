@@ -1,7 +1,12 @@
-import { type Cluster } from 'qovery-typescript-axios'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { NodepoolModal, type NodepoolModalProps } from './nodepool-modal'
+
+jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
+
+const mockUseFeatureFlagEnabled = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
 
 const mockCluster = {
   region: 'us-east-1',
@@ -24,6 +29,7 @@ const defaultProps: NodepoolModalProps = {
 describe('NodepoolModal', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseFeatureFlagEnabled.mockReturnValue(true)
   })
 
   it('should render correctly for stable type', () => {
@@ -33,6 +39,8 @@ describe('NodepoolModal', () => {
     expect(screen.getByLabelText('vCPU')).toBeInTheDocument()
     expect(screen.getByLabelText('Memory (GiB)')).toBeInTheDocument()
     expect(screen.getByText('Consolidation schedule')).toBeInTheDocument()
+    expect(screen.getByRole('switch', { name: 'Block node drift' })).not.toBeChecked()
+    expect(screen.queryByLabelText('Drift blocking start time (UTC)')).not.toBeInTheDocument()
   })
 
   it('should render correctly for default type', () => {
@@ -42,6 +50,7 @@ describe('NodepoolModal', () => {
     expect(screen.getByLabelText('vCPU')).toBeInTheDocument()
     expect(screen.getByLabelText('Memory (GiB)')).toBeInTheDocument()
     expect(screen.getByText('Operates every day, 24 hours a day')).toBeInTheDocument()
+    expect(screen.queryByRole('switch', { name: 'Block node drift' })).not.toBeInTheDocument()
   })
 
   it('should render correctly for cronjob type', () => {
@@ -51,6 +60,153 @@ describe('NodepoolModal', () => {
     expect(screen.getByLabelText('vCPU')).toBeInTheDocument()
     expect(screen.getByLabelText('Memory (GiB)')).toBeInTheDocument()
     expect(screen.getByText('Consolidation schedule')).toBeInTheDocument()
+    expect(screen.queryByRole('switch', { name: 'Block node drift' })).not.toBeInTheDocument()
+  })
+
+  it('omits drift blocking when saving an unconfigured stable nodepool', async () => {
+    const onChangeMock = jest.fn()
+    const { userEvent } = renderWithProviders(<NodepoolModal {...defaultProps} onChange={onChangeMock} />)
+
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
+    await userEvent.click(screen.getByText('Confirm'))
+
+    await waitFor(() => expect(onChangeMock).toHaveBeenCalledTimes(1))
+    expect(onChangeMock.mock.calls[0][0].stable_override).not.toHaveProperty('drift_blocking')
+  })
+
+  it('saves one daily drift blocking window with all seven weekdays', async () => {
+    const onChangeMock = jest.fn()
+    const { userEvent } = renderWithProviders(<NodepoolModal {...defaultProps} onChange={onChangeMock} />)
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Block node drift' }))
+    expect(screen.queryByLabelText('Days')).not.toBeInTheDocument()
+
+    // XXX: userEvent.type does not work with this time input because showPicker() throws in jsdom.
+    fireEvent.change(screen.getByLabelText('Drift blocking start time (UTC)'), { target: { value: '21:00' } })
+    await userEvent.type(screen.getByLabelText('Drift blocking duration'), '23h')
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
+    await userEvent.click(screen.getByText('Confirm'))
+
+    await waitFor(() => {
+      expect(onChangeMock).toHaveBeenCalledWith({
+        stable_override: expect.objectContaining({
+          drift_blocking: {
+            enabled: true,
+            days: Object.values(WeekdayEnum),
+            start_time: 'PT21:00',
+            duration: 'PT23H',
+          },
+        }),
+      })
+    })
+  })
+
+  it('rejects a drift blocking window longer than 23 hours', async () => {
+    const onChangeMock = jest.fn()
+    const { userEvent } = renderWithProviders(<NodepoolModal {...defaultProps} onChange={onChangeMock} />)
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Block node drift' }))
+    fireEvent.change(screen.getByLabelText('Drift blocking start time (UTC)'), { target: { value: '21:00' } })
+    await userEvent.type(screen.getByLabelText('Drift blocking duration'), '23h1m')
+    await userEvent.click(screen.getByText('Confirm'))
+
+    expect(
+      screen.getByText('Duration must be between 1 minute and 23 hours to allow drift every day.')
+    ).toBeInTheDocument()
+    expect(onChangeMock).not.toHaveBeenCalled()
+  })
+
+  it('loads an existing drift window and sends enabled false when turned off', async () => {
+    const onChangeMock = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <NodepoolModal
+        {...defaultProps}
+        onChange={onChangeMock}
+        defaultValues={{
+          ...defaultProps.defaultValues,
+          drift_blocking: {
+            enabled: true,
+            days: Object.values(WeekdayEnum),
+            start_time: 'PT04:30',
+            duration: 'PT2H',
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByRole('switch', { name: 'Block node drift' })).toBeChecked()
+    expect(screen.getByLabelText('Drift blocking start time (UTC)')).toHaveValue('04:30')
+    expect(screen.getByLabelText('Drift blocking duration')).toHaveValue('2H')
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Block node drift' }))
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
+    await userEvent.click(screen.getByText('Confirm'))
+
+    await waitFor(() => {
+      expect(onChangeMock).toHaveBeenCalledWith({
+        stable_override: expect.objectContaining({
+          drift_blocking: {
+            enabled: false,
+            days: Object.values(WeekdayEnum),
+            start_time: 'PT04:30',
+            duration: 'PT2H',
+          },
+        }),
+      })
+    })
+  })
+
+  it('preserves an existing disabled drift configuration when saving other stable settings', async () => {
+    const onChangeMock = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <NodepoolModal
+        {...defaultProps}
+        onChange={onChangeMock}
+        defaultValues={{
+          ...defaultProps.defaultValues,
+          drift_blocking: { enabled: false, days: [], start_time: '', duration: '' },
+        }}
+      />
+    )
+
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
+    await userEvent.click(screen.getByText('Confirm'))
+
+    await waitFor(() => {
+      expect(onChangeMock).toHaveBeenCalledWith({
+        stable_override: expect.objectContaining({
+          drift_blocking: { enabled: false, days: [], start_time: '', duration: '' },
+        }),
+      })
+    })
+  })
+
+  it('hides drift blocking and preserves its existing configuration when the flag is off', async () => {
+    mockUseFeatureFlagEnabled.mockReturnValue(false)
+    const onChangeMock = jest.fn()
+    const driftBlocking = {
+      enabled: true,
+      days: Object.values(WeekdayEnum),
+      start_time: 'PT04:30',
+      duration: 'PT2H',
+    }
+    const { userEvent } = renderWithProviders(
+      <NodepoolModal
+        {...defaultProps}
+        onChange={onChangeMock}
+        defaultValues={{ ...defaultProps.defaultValues, drift_blocking: driftBlocking }}
+      />
+    )
+
+    expect(screen.queryByRole('switch', { name: 'Block node drift' })).not.toBeInTheDocument()
+    await waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
+    await userEvent.click(screen.getByText('Confirm'))
+
+    await waitFor(() => {
+      expect(onChangeMock).toHaveBeenCalledWith({
+        stable_override: expect.objectContaining({ drift_blocking: driftBlocking }),
+      })
+    })
   })
 
   it('should validate minimum values for CPU and Memory', async () => {
