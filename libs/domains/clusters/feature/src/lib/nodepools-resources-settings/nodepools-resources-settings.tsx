@@ -224,32 +224,32 @@ function NodepoolSummaryCard({
           <Icon iconName="pen" iconStyle="solid" />
         </Button>
       </div>
-      <div className="flex justify-between gap-4">
-        <div className="flex w-1/3 flex-col gap-1">
+      <div className={showDriftBlocking ? 'grid grid-cols-4 gap-4' : 'grid grid-cols-3 gap-4'}>
+        <div className="flex min-w-0 flex-col gap-1">
           <span className={SECTION_TITLE_CLASSNAME}>Consolidation</span>
           <div className="flex flex-col justify-between gap-4 text-sm text-neutral">
             <ConsolidationSummary region={region} nodepool={nodepool} start={start} end={end} alwaysOn={alwaysOn} />
           </div>
         </div>
-        <div className="flex w-1/3 flex-col gap-1">
+        <div className="flex min-w-0 flex-col gap-1">
           <span className={SECTION_TITLE_CLASSNAME}>Resources limit</span>
           <ResourceLimitsSummary limits={nodepool?.limits} showGpuLimit={showGpuLimit} />
         </div>
-        <div className="flex w-1/3 flex-col gap-1">
+        <div className="flex min-w-0 flex-col gap-1">
           <span className={SECTION_TITLE_CLASSNAME}>Spot instances</span>
           <span>{nodepool?.spot_enabled ? 'Enabled' : 'Disabled'}</span>
         </div>
+        {showDriftBlocking && (
+          <div className="flex min-w-0 flex-col gap-1">
+            <span className={SECTION_TITLE_CLASSNAME}>Drift blocking</span>
+            <span>
+              {nodepool?.drift_blocking?.enabled
+                ? `Every day, ${driftBlockingRange?.start} to ${driftBlockingRange?.end} (UTC)`
+                : 'Disabled'}
+            </span>
+          </div>
+        )}
       </div>
-      {showDriftBlocking && (
-        <div className="flex flex-col gap-1 border-t border-neutral pt-4">
-          <span className={SECTION_TITLE_CLASSNAME}>Drift blocking</span>
-          <span>
-            {nodepool?.drift_blocking?.enabled
-              ? `Every day, ${driftBlockingRange?.start} to ${driftBlockingRange?.end} (UTC)`
-              : 'Disabled'}
-          </span>
-        </div>
-      )}
     </div>
   )
 }
