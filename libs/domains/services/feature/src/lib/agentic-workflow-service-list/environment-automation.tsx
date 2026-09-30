@@ -125,7 +125,7 @@ function AgentTemplateCatalog({ onSelect, expanded = false }: { onSelect?: () =>
           <div
             className={
               expanded
-                ? 'grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4'
+                ? 'grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3'
                 : 'grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,320px))]'
             }
           >
