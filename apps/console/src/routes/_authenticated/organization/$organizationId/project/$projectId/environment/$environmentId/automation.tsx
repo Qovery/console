@@ -2,7 +2,8 @@ import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense } from 'react'
 import { AgentTaskPreviewEnvironments, useEnvironment } from '@qovery/domains/environments/feature'
-import { EnvironmentAutomation, ServiceListSkeleton } from '@qovery/domains/services/feature'
+import { EnvironmentAutomation, EnvironmentAutomationSkeleton } from '@qovery/domains/services/feature'
+import { LoaderSpinner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -22,7 +23,7 @@ function RouteComponent() {
       />
     )
   return (
-    <Suspense fallback={<ServiceListSkeleton />}>
+    <Suspense fallback={<EnvironmentAutomationSkeleton />}>
       <AutomationContent />
     </Suspense>
   )
@@ -35,7 +36,17 @@ function AutomationContent() {
   return (
     <EnvironmentAutomation
       environment={environment}
-      previews={<AgentTaskPreviewEnvironments sourceEnvironmentName={environment.name} />}
+      previews={
+        <Suspense
+          fallback={
+            <div className="flex justify-center py-8">
+              <LoaderSpinner />
+            </div>
+          }
+        >
+          <AgentTaskPreviewEnvironments sourceEnvironmentName={environment.name} />
+        </Suspense>
+      }
     />
   )
 }

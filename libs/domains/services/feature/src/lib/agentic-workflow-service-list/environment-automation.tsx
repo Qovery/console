@@ -4,7 +4,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { Button, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Link, LoaderSpinner, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useServices } from '../hooks/use-services/use-services'
 import {
   AGENTIC_WORKFLOW_TEMPLATES,
@@ -168,6 +168,32 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
         </Button>
         <StartFromScratch onSelect={onClose} />
       </div>
+    </div>
+  )
+}
+
+export function EnvironmentAutomationSkeleton() {
+  return (
+    <div
+      className="container mx-auto flex min-h-page-container flex-col pt-6"
+      aria-busy="true"
+      aria-label="Loading automation"
+    >
+      <Section className="min-h-0 flex-1 gap-8">
+        <div className="flex shrink-0 flex-col gap-6">
+          <div className="flex items-center justify-between gap-4">
+            <Heading>Automation</Heading>
+            <div className="flex items-center gap-2" aria-hidden="true">
+              <Skeleton width={170} height={32} />
+              <Skeleton width={150} height={32} />
+            </div>
+          </div>
+          <hr className="w-full border-neutral" />
+        </div>
+        <div className="flex min-h-40 items-center justify-center">
+          <LoaderSpinner />
+        </div>
+      </Section>
     </div>
   )
 }

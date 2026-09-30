@@ -24,7 +24,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
       {previews}
     </div>
   ),
-  ServiceListSkeleton: () => <div>Loading automation</div>,
+  EnvironmentAutomationSkeleton: () => <div>Loading automation</div>,
 }))
 jest.mock('@qovery/shared/util-hooks', () => ({ useDocumentTitle: jest.fn() }))
 
