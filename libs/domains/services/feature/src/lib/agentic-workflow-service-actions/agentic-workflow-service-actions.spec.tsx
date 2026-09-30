@@ -117,6 +117,7 @@ describe('AgenticWorkflowServiceActions', () => {
     renderWithProviders(<AgenticWorkflowServiceActions environment={environment} service={service} variant="header" />)
 
     expect(screen.getByRole('button', { name: 'Trigger' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Other actions for Review pull requests' })).toBeInTheDocument()
   })
 
   it('disables the trigger button while a request is pending', () => {

@@ -168,6 +168,13 @@ const SERVICE_TABS: NavigationTab[] = [
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
   },
   {
+    id: 'runs',
+    label: 'Runs',
+    iconName: 'list-check',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/runs',
+  },
+  {
     id: 'deployments',
     label: 'Deployments',
     iconName: 'rocket',
@@ -219,7 +226,7 @@ const SERVICE_TABS: NavigationTab[] = [
 ]
 
 const ARGOCD_SERVICE_TAB_IDS = ['overview', 'service-logs', 'cloud-shell', 'manifest']
-const AGENTIC_WORKFLOW_SERVICE_TAB_IDS = ['overview', 'deployments', 'service-logs', 'variables', 'settings']
+const AGENTIC_WORKFLOW_SERVICE_TAB_IDS = ['overview', 'runs', 'deployments', 'service-logs', 'variables', 'settings']
 
 function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
   if (!service) return false
@@ -272,6 +279,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster, isAgenticWorkfl
   // Databases should not expose the variables tab.
   return SERVICE_TABS.filter(
     (tab) =>
+      tab.id !== 'runs' &&
       !(isDatabase && tab.id === 'variables') &&
       !(isManagedDatabaseService && tab.id === 'cloud-shell') &&
       tab.id !== 'manifest' &&

@@ -18,6 +18,9 @@ export function useDeployAgenticWorkflow({ environmentId, serviceId }: { environ
         queryKey: queries.services.deploymentHistory({ serviceId, serviceType: 'AGENTIC_WORKFLOW' }).queryKey,
       })
       queryClient.invalidateQueries({
+        queryKey: [...queries.services.agenticWorkflowRunHistory._def, serviceId],
+      })
+      queryClient.invalidateQueries({
         queryKey: queries.environments.deploymentHistoryV2({ environmentId }).queryKey,
       })
 
