@@ -101,10 +101,18 @@ it('offers only template and scratch creation in the dropdown', async () => {
     content: expect.anything(),
   })
   renderWithProviders(mockOpenModal.mock.calls[0][0].content)
+  await userEvent.click(screen.getByRole('button', { name: 'Create from scratch' }))
+  expect(mockCloseModal).toHaveBeenCalledTimes(1)
+  expect(mockNavigate).toHaveBeenCalledWith({
+    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+    params: { organizationId: 'org', projectId: 'project', environmentId: 'env' },
+    search: {},
+  })
+  expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'from-scratch' })
   const item = screen.getByRole('link', { name: /Sentry Incident Analyzer/i })
   await userEvent.click(item)
   expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'sentry-incident-analyzer' })
-  expect(mockCloseModal).toHaveBeenCalledTimes(1)
+  expect(mockCloseModal).toHaveBeenCalledTimes(2)
 })
 
 it('opens the existing template request modal', async () => {

@@ -48,6 +48,14 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
   const enabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
   const { data: services = [] } = useServices({ environmentId, suspense: true })
   const hasAgents = services.some(isAgenticWorkflow)
+  const createFromScratch = () => {
+    posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' })
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+      params: { organizationId, projectId, environmentId },
+      search: {},
+    })
+  }
 
   if (!enabled) return null
 
@@ -81,24 +89,15 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
                     onSelect={() =>
                       openModal({
                         options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false, fakeModal: true },
-                        content: <AgentTemplateCatalogModal onClose={closeModal} />,
+                        content: (
+                          <AgentTemplateCatalogModal onClose={closeModal} onCreateFromScratch={createFromScratch} />
+                        ),
                       })
                     }
                   >
                     Create from template
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    onSelect={() => {
-                      posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' })
-                      navigate({
-                        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-                        params: { organizationId, projectId, environmentId },
-                        search: {},
-                      })
-                    }}
-                  >
-                    Create from scratch
-                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onSelect={createFromScratch}>Create from scratch</DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
             </div>
@@ -154,7 +153,13 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
   )
 }
 
-function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
+function AgentTemplateCatalogModal({
+  onClose,
+  onCreateFromScratch,
+}: {
+  onClose: () => void
+  onCreateFromScratch: () => void
+}) {
   return (
     <div className="flex flex-col gap-8 p-6">
       <div className="flex items-start justify-between gap-4">
@@ -169,6 +174,16 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
         </Button>
       </div>
       <AgentTemplateCatalog onSelect={onClose} />
+      <div className="flex justify-end">
+        <Button
+          onClick={() => {
+            onClose()
+            onCreateFromScratch()
+          }}
+        >
+          Create from scratch
+        </Button>
+      </div>
     </div>
   )
 }
