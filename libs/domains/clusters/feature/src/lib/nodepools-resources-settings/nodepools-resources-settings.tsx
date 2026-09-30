@@ -213,13 +213,11 @@ function NodepoolSummaryCard({
   const driftBlockingRange = nodepool?.drift_blocking?.enabled
     ? formatTimeRange(nodepool.drift_blocking.start_time, nodepool.drift_blocking.duration)
     : undefined
-  const driftBlockingDays = formatWeekdays(nodepool?.drift_blocking?.days ?? []).replace(
-    /^Operates every day$/,
-    'Every day'
-  )
+  const driftBlockingDays = nodepool?.drift_blocking?.days ?? []
+  const driftBlockingDayLabel = driftBlockingDays.length === 7 ? 'Every day' : formatWeekdays(driftBlockingDays)
   const driftBlockingLabel =
-    driftBlockingDays && driftBlockingRange?.start && driftBlockingRange.end
-      ? `${driftBlockingDays}, ${driftBlockingRange.start} to ${driftBlockingRange.end} (UTC)`
+    driftBlockingDayLabel && driftBlockingRange?.start && driftBlockingRange.end
+      ? `${driftBlockingDayLabel}, ${driftBlockingRange.start} to ${driftBlockingRange.end} (UTC)`
       : 'Enabled, schedule unavailable'
 
   return (

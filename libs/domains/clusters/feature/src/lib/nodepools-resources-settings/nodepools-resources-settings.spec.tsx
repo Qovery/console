@@ -167,6 +167,30 @@ describe('NodepoolsResourcesSettings', () => {
       expect(within(driftSection).getByText('Enabled, schedule unavailable')).toBeInTheDocument()
     })
 
+    it('shows a daily drift window for all seven weekdays', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
+          defaultValues: {
+            karpenter: {
+              qovery_node_pools: {
+                stable_override: {
+                  drift_blocking: {
+                    enabled: true,
+                    days: Object.values(WeekdayEnum),
+                    start_time: 'PT21:00',
+                    duration: 'PT2H',
+                  },
+                },
+              },
+            },
+          },
+        })
+      )
+
+      const driftSection = screen.getByText('Drift blocking').parentElement as HTMLElement
+      expect(within(driftSection).getByText('Every day, 9:00 pm to 11:00 pm (UTC)')).toBeInTheDocument()
+    })
+
     it('shows the configured weekdays for a drift window in existing cluster data', () => {
       renderWithProviders(
         wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
