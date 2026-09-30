@@ -49,6 +49,7 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
             <div className="flex items-center gap-2">
               {!hasAgents && (
                 <Button
+                  size="md"
                   variant="outline"
                   color="neutral"
                   onClick={() =>
@@ -60,7 +61,7 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
                   Request agent template
                 </Button>
               )}
-              {!hasAgents && <StartFromScratch />}
+              {!hasAgents && <StartFromScratch size="md" />}
               {hasAgents && (
                 <Button
                   size="md"
@@ -127,7 +128,7 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
   )
 }
 
-function StartFromScratch({ onSelect, size }: { onSelect?: () => void; size?: 'lg' }) {
+function StartFromScratch({ onSelect, size }: { onSelect?: () => void; size?: 'md' | 'lg' }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   return (
