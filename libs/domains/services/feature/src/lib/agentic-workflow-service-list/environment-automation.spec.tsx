@@ -76,7 +76,7 @@ it('shows categorized templates and scratch creation when no agent exists', asyn
   expect(screen.getByRole('link', { name: /Sentry Incident Analyzer/i })).toBeInTheDocument()
   expect(screen.queryByText('Agent table')).not.toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
-  await userEvent.click(await screen.findByRole('menuitem', { name: 'Create from scratch' }))
+  await userEvent.click(await screen.findByRole('menuitem', { name: 'From scratch' }))
   expect(mockNavigate).toHaveBeenCalledWith({
     to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
     params: { organizationId: 'org', projectId: 'project', environmentId: 'env' },
@@ -91,11 +91,8 @@ it('offers only template and scratch creation in the dropdown', async () => {
   expect(screen.getByText('Agent table')).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Request agent template' })).toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
-  expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
-    'Create from template',
-    'Create from scratch',
-  ])
-  await userEvent.click(screen.getByRole('menuitem', { name: 'Create from template' }))
+  expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual(['Template', 'From scratch'])
+  await userEvent.click(screen.getByRole('menuitem', { name: 'Template' }))
   expect(mockOpenModal).toHaveBeenCalledWith({
     options: {
       width: 'min(1440px, calc(100vw - 48px))',
