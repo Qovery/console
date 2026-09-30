@@ -32,7 +32,6 @@ const SECTION_TITLES: Record<EnvironmentModeEnum, string> = {
 }
 const BODY_TEXT_SKELETON_HEIGHT = 20
 const ACTION_BUTTON_SKELETON_HEIGHT = 32
-
 function EnvironmentsTableSkeleton() {
   return (
     <div className="container mx-auto mt-6 pb-10">

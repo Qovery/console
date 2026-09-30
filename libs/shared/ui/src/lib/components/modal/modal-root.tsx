@@ -2,7 +2,10 @@ import { type Dispatch, type ReactNode, type SetStateAction, createContext, useS
 import ModalAlert from '../modal-alert/modal-alert'
 import Modal, { type ModalProps } from './modal'
 
-export type ModalOptions = Pick<ModalProps, 'buttonClose' | 'dismissible' | 'fullScreen' | 'height' | 'width'> & {
+export type ModalOptions = Pick<
+  ModalProps,
+  'buttonClose' | 'className' | 'dismissible' | 'fullScreen' | 'height' | 'width'
+> & {
   /**
    * This is a workaround to avoid radix dialog restriction.
    * Radix use [react-remove-scroll](https://www.npmjs.com/package/react-remove-scroll) to prevent wheel / scroll event directly on `<html>` node

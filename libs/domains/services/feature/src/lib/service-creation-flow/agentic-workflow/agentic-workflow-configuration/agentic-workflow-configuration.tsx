@@ -625,7 +625,7 @@ export function AgenticWorkflowConfiguration() {
       posthog.capture('agent-task-form-submitted', { success: true })
       posthog.capture('create-service', { selectedServiceType: 'agentic-workflow' })
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
         params: { organizationId, projectId, environmentId },
       })
     } catch {

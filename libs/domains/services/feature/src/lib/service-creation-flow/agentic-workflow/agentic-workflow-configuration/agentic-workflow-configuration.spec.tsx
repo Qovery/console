@@ -859,6 +859,11 @@ describe('AgenticWorkflowConfiguration', () => {
       })
     )
     expect(posthog.capture).toHaveBeenCalledWith('agent-task-form-submitted', { success: true })
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
+      })
+    )
   })
 
   it('should track a failed agent task creation', async () => {

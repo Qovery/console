@@ -104,3 +104,23 @@ describe('AgenticWorkflowServiceList', () => {
     )
   })
 })
+
+it('keeps agents in clone mode in the Agent tasks table', () => {
+  mockUseServices.mockReturnValue({
+    data: [
+      {
+        id: 'clone-agent',
+        name: 'Clone agent',
+        service_type: 'AGENTIC_WORKFLOW',
+        serviceType: 'AGENTIC_WORKFLOW',
+        enabled: true,
+        execution_mode: 'CLONE_ENVIRONMENT',
+        webhook: { url: 'https://example.com' },
+        project_repositories: [],
+      },
+    ],
+  })
+  renderWithProviders(<AgenticWorkflowServiceList environment={environment} />)
+  expect(screen.getByText('Clone agent')).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'Agent tasks' })).toBeInTheDocument()
+})
