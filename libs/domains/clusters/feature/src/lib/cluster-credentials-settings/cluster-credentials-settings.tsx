@@ -1,8 +1,9 @@
 import { useParams } from '@tanstack/react-router'
-import { type ClusterCredentials } from 'qovery-typescript-axios'
+import { Cluster, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
+import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
 import { Callout, ExternalLink, Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import {
   ClusterCredentialsModal,
@@ -12,7 +13,7 @@ import {
 export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
-  isEks?: boolean
+  cluster?: Cluster
 }
 
 export const filterCredentialsByCloudProvider = (
@@ -26,12 +27,17 @@ export const filterCredentialsByCloudProvider = (
   return credentials.filter((credential) => credential.object_type === 'EKS_ANYWHERE_VSPHERE')
 }
 
-export function ClusterCredentialsSettings({ cloudProvider, isSetting, isEks }: ClusterCredentialsSettingsProps) {
+export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control } = useFormContext()
   const { openModal, closeModal } = useModal()
 
   const queryCloudProvider = cloudProvider === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProvider
+
+  let isEksManaged = false
+  if (cluster !== undefined && isClusterEksManaged(cluster)) {
+    isEksManaged = true
+  }
 
   const { data: credentials = [], isLoading } = useCloudProviderCredentials({
     organizationId,
@@ -80,7 +86,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, isEks }: 
         </div>
       ) : (
         <>
-          {isSetting && isEks && (
+          {isSetting && isEksManaged && (
             <Callout.Root color="red" className="mb-4" data-testid="eks-credentials-change-warning">
               <Callout.Icon>
                 <Icon iconName="triangle-exclamation" iconStyle="regular" />

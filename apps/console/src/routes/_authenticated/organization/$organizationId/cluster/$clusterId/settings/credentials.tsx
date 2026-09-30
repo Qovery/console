@@ -7,6 +7,7 @@ import {
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
+import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
 import {
   ClusterCredentialsSettings,
   useCluster,
@@ -48,7 +49,6 @@ function ClusterCredentialsSettingsForm() {
   })
 
   const { data: cluster } = useCluster({ organizationId, clusterId })
-  const isEks = cluster?.cloud_provider === 'AWS' && cluster?.kubernetes === 'MANAGED'
 
   const { data: clusterCloudProviderInfo } = useClusterCloudProviderInfo({
     organizationId,
@@ -58,7 +58,7 @@ function ClusterCredentialsSettingsForm() {
     organizationId,
     cloudProvider: clusterCloudProviderInfo?.cloud_provider,
   })
-  const { mutateAsync: editCloudProviderInfo, isLoading: isEditCloudProviderInfoLoading } = useEditCloudProviderInfo()
+  const { mutate: editCloudProviderInfo, isLoading: isEditCloudProviderInfoLoading } = useEditCloudProviderInfo()
   const { mutateAsync: editCloudProviderInfoBeforeRedeploy } = useEditCloudProviderInfo({ withClusterRedeploy: true })
   const { mutateAsync: deployCluster } = useDeployCluster()
   const { openModalConfirmation } = useModalConfirmation()
@@ -69,6 +69,8 @@ function ClusterCredentialsSettingsForm() {
     // The cluster is required to know if the credentials change needs a redeploy
     if (!cluster) return
 
+    const isEksManaged = isClusterEksManaged(cluster)
+
     if (data && clusterCloudProviderInfo && findCredentials) {
       const variables = {
         organizationId,
@@ -78,14 +80,13 @@ function ClusterCredentialsSettingsForm() {
 
       // Changing the credentials of a managed EKS cluster requires a cluster redeploy, triggered once they are saved
       const hasCredentialsChanged = findCredentials.id !== clusterCloudProviderInfo.credentials?.id
-      if (isEks && hasCredentialsChanged) {
+      if (isEksManaged && hasCredentialsChanged) {
         openModalConfirmation({
           title: 'Confirm credentials change',
           description:
             'Changing the credentials will trigger a cluster redeployment. To confirm, please type the name:',
           warning: 'Your cluster will be redeployed automatically once the new credentials are saved.',
           name: cluster.name,
-          // Awaited sequentially so the modal stays open for a retry if the redeploy fails
           action: async () => {
             await editCloudProviderInfoBeforeRedeploy(variables)
             await deployCluster({ organizationId, clusterId })
@@ -116,7 +117,7 @@ function ClusterCredentialsSettingsForm() {
                 <ClusterCredentialsSettings
                   cloudProvider={clusterCloudProviderInfo?.cloud_provider}
                   isSetting={true}
-                  isEks={isEks}
+                  cluster={cluster}
                 />
               </BlockContent>
               <div className="flex justify-end">
