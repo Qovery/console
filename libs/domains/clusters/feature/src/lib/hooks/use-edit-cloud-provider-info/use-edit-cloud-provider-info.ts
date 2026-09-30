@@ -3,7 +3,8 @@ import { mutations } from '@qovery/domains/clusters/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useDeployCluster } from '../use-deploy-cluster/use-deploy-cluster'
 
-export function useEditCloudProviderInfo({ silently = false, redeployOnSuccess = false } = {}) {
+// `withClusterRedeploy`: the caller redeploys the cluster itself, so the notification doesn't prompt for an update
+export function useEditCloudProviderInfo({ silently = false, withClusterRedeploy = false } = {}) {
   const queryClient = useQueryClient()
   const { mutate: deployCluster } = useDeployCluster()
 
@@ -12,16 +13,13 @@ export function useEditCloudProviderInfo({ silently = false, redeployOnSuccess =
       queryClient.invalidateQueries({
         queryKey: queries.clusters.cloudProviderInfo({ organizationId, clusterId }).queryKey,
       })
-      if (redeployOnSuccess) {
-        deployCluster({ organizationId, clusterId })
-      }
     },
     ...(silently
       ? {}
       : {
           meta: {
             notifyOnSuccess(_: unknown, variables: unknown) {
-              if (redeployOnSuccess) {
+              if (withClusterRedeploy) {
                 return { title: 'Credentials updated' }
               }
 

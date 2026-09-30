@@ -11,6 +11,7 @@ import {
   ClusterCredentialsSettings,
   useCluster,
   useClusterCloudProviderInfo,
+  useDeployCluster,
   useEditCloudProviderInfo,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -58,11 +59,15 @@ function ClusterCredentialsSettingsForm() {
     cloudProvider: clusterCloudProviderInfo?.cloud_provider,
   })
   const { mutateAsync: editCloudProviderInfo, isLoading: isEditCloudProviderInfoLoading } = useEditCloudProviderInfo()
-  const { mutateAsync: editCloudProviderInfoAndRedeploy } = useEditCloudProviderInfo({ redeployOnSuccess: true })
+  const { mutateAsync: editCloudProviderInfoBeforeRedeploy } = useEditCloudProviderInfo({ withClusterRedeploy: true })
+  const { mutateAsync: deployCluster } = useDeployCluster()
   const { openModalConfirmation } = useModalConfirmation()
 
   const onSubmit = methods.handleSubmit((data) => {
     const findCredentials = credentials.find((credential) => credential.id === data['credentials'])
+
+    // The cluster is required to know if the credentials change needs a redeploy
+    if (!cluster) return
 
     if (data && clusterCloudProviderInfo && findCredentials) {
       const variables = {
@@ -79,9 +84,11 @@ function ClusterCredentialsSettingsForm() {
           description:
             'Changing the credentials will trigger a cluster redeployment. To confirm, please type the name:',
           warning: 'Your cluster will be redeployed automatically once the new credentials are saved.',
-          name: cluster?.name,
+          name: cluster.name,
+          // Awaited sequentially so the modal stays open for a retry if the redeploy fails
           action: async () => {
-            await editCloudProviderInfoAndRedeploy(variables)
+            await editCloudProviderInfoBeforeRedeploy(variables)
+            await deployCluster({ organizationId, clusterId })
           },
         })
       } else {
@@ -118,7 +125,7 @@ function ClusterCredentialsSettingsForm() {
                   type="submit"
                   size="lg"
                   loading={isEditCloudProviderInfoLoading}
-                  disabled={!methods.formState.isValid}
+                  disabled={!methods.formState.isValid || !cluster}
                 >
                   Save
                 </Button>
