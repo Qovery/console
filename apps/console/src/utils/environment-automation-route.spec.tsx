@@ -13,10 +13,17 @@ jest.mock('@tanstack/react-router', () => ({
 jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
 jest.mock('@qovery/domains/environments/feature', () => ({
   useEnvironment: jest.fn(),
-  AgentTaskPreviewEnvironments: () => <div>Previews</div>,
+  AgentTaskPreviewEnvironments: ({ sourceEnvironmentName }: { sourceEnvironmentName: string }) => (
+    <div>Previews for {sourceEnvironmentName}</div>
+  ),
 }))
 jest.mock('@qovery/domains/services/feature', () => ({
-  EnvironmentAutomation: () => <div>Automation content</div>,
+  EnvironmentAutomation: ({ environment, previews }: { environment: { name: string }; previews: React.ReactNode }) => (
+    <div>
+      Automation content for {environment.name}
+      {previews}
+    </div>
+  ),
   ServiceListSkeleton: () => <div>Loading automation</div>,
 }))
 jest.mock('@qovery/shared/util-hooks', () => ({ useDocumentTitle: jest.fn() }))
@@ -43,6 +50,7 @@ it('renders Automation after the environment has loaded', () => {
   jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
   jest.mocked(useEnvironment).mockReturnValue({ data: { name: 'Environment' } } as ReturnType<typeof useEnvironment>)
   render(<RouteComponent />)
-  expect(screen.getByText('Automation content')).toBeInTheDocument()
+  expect(screen.getByText('Automation content for Environment')).toBeInTheDocument()
+  expect(screen.getByText('Previews for Environment')).toBeInTheDocument()
   expect(screen.queryByText('Loading automation')).not.toBeInTheDocument()
 })

@@ -415,7 +415,7 @@ export function EnvironmentSection({
                 sort={sort}
                 effectiveSort={effectiveSort}
                 onSort={handleSort}
-                buttonClassName="pl-0 pr-4"
+                buttonClassName={selectable ? 'pl-0 pr-4' : 'px-4'}
               />
               <SortableColumnHeader
                 label="Last operation"

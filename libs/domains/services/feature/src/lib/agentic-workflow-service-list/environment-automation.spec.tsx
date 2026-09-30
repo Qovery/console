@@ -48,9 +48,7 @@ jest.mock('@qovery/shared/ui', () => ({
 }))
 jest.mock('../hooks/use-services/use-services', () => ({ useServices: () => mockServices() }))
 jest.mock('./agentic-workflow-service-list', () => ({
-  AgenticWorkflowServiceList: ({ cloneTasks }: { cloneTasks?: boolean }) => (
-    <div>{cloneTasks ? 'Clone table' : 'Agent table'}</div>
-  ),
+  AgenticWorkflowServiceList: () => <div>Agent table</div>,
 }))
 
 beforeEach(() => {
@@ -83,7 +81,6 @@ it('opens the empty-state template catalog in a wide modal when agents exist', a
   mockServices.mockReturnValue({ data: [{ service_type: 'AGENTIC_WORKFLOW', serviceType: 'AGENTIC_WORKFLOW' }] })
   const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
   expect(screen.getByText('Agent table')).toBeInTheDocument()
-  expect(screen.queryByText('Clone table')).not.toBeInTheDocument()
   expect(screen.queryByRole('link', { name: /Slack Coding Agent/i })).not.toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
   expect(mockOpenModal).toHaveBeenCalledWith({
