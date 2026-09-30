@@ -174,6 +174,7 @@ function AgentTemplateCatalogModal({
       <AgentTemplateCatalog onSelect={onClose} />
       <div className="flex justify-end">
         <Button
+          size="md"
           onClick={() => {
             onClose()
             onCreateFromScratch()
