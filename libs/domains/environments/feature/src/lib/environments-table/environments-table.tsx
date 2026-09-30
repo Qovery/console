@@ -6,7 +6,6 @@ import { Button, Heading, Icon, Section, Skeleton, TablePrimitives, useModal } f
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import CreateCloneEnvironmentModal from '../create-clone-environment-modal/create-clone-environment-modal'
 import EnvironmentMode from '../environment-mode/environment-mode'
-import { isAgentTaskPreview } from '../utils/agent-task-preview'
 import {
   EnvironmentSection,
   environmentNameCellContentClassName,
@@ -33,6 +32,12 @@ const SECTION_TITLES: Record<EnvironmentModeEnum, string> = {
 }
 const BODY_TEXT_SKELETON_HEIGHT = 20
 const ACTION_BUTTON_SKELETON_HEIGHT = 32
+const AGENT_TASK_PREVIEW_SUFFIX =
+  / - agentic-workflow-run-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+function isAgentTaskPreview(environment: Pick<EnvironmentOverviewResponse, 'name' | 'mode'>) {
+  return environment.mode === EnvironmentModeEnum.PREVIEW && AGENT_TASK_PREVIEW_SUFFIX.test(environment.name)
+}
 
 function EnvironmentsTableSkeleton() {
   return (
