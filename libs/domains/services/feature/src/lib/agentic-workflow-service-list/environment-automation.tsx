@@ -87,7 +87,12 @@ export function EnvironmentAutomation({ environment }: { environment: Environmen
                   <DropdownMenu.Item
                     onSelect={() =>
                       openModal({
-                        options: { width: 'min(1440px, calc(100vw - 48px))', buttonClose: false, fakeModal: true },
+                        options: {
+                          width: 'min(1440px, calc(100vw - 48px))',
+                          className: '!top-6 [&>div]:!max-h-[calc(100dvh-48px)]',
+                          buttonClose: false,
+                          fakeModal: true,
+                        },
                         content: (
                           <AgentTemplateCatalogModal onClose={closeModal} onCreateFromScratch={createFromScratch} />
                         ),
