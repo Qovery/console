@@ -134,7 +134,7 @@ export function SectionAgentTasksHighlight() {
                 </div>
               </div>
             ) : (
-              <div className="relative left-1/2 flex w-max animate-scroll-horizontal motion-reduce:animate-none">
+              <div className="relative ml-[calc(50%_-_156px)] flex w-max animate-scroll-horizontal motion-reduce:animate-none">
                 {[0, 1].map((copy) => (
                   <div key={copy} className="flex shrink-0 gap-3 pr-3" aria-hidden={copy === 1}>
                     {cardTemplates.map((template) => (
@@ -174,7 +174,7 @@ export function SectionAgentTasksHighlight() {
                   openCreateEnvironmentModal()
                 }}
               >
-                {buttonLabel}
+                Create an environment
               </Button>
             )}
           </div>

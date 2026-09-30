@@ -465,8 +465,8 @@ module.exports = {
           to: { transform: 'translateY(0)' },
         },
         scrollHorizontal: {
-          from: { transform: 'translateX(-156px)' },
-          to: { transform: 'translateX(calc(-156px - 50%))' },
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
         },
         shake: {
           '0%': { transform: 'rotate(0deg)' },
