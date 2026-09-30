@@ -151,23 +151,23 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
     <div className="flex flex-col gap-8 p-6">
       <div className="flex items-center justify-between gap-4">
         <Heading level={2}>Create agent task</Heading>
-        <Button variant="plain" color="neutral" aria-label="Close" onClick={onClose}>
-          <Icon iconName="xmark" />
-        </Button>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Button
+            variant="outline"
+            color="neutral"
+            onClick={() =>
+              openModal({ content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} /> })
+            }
+          >
+            Request agent template
+          </Button>
+          <StartFromScratch onSelect={onClose} />
+          <Button variant="plain" color="neutral" aria-label="Close" onClick={onClose}>
+            <Icon iconName="xmark" />
+          </Button>
+        </div>
       </div>
       <AgentTemplateCatalog onSelect={onClose} />
-      <div className="flex justify-end gap-2">
-        <Button
-          variant="outline"
-          color="neutral"
-          onClick={() =>
-            openModal({ content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} /> })
-          }
-        >
-          Request agent template
-        </Button>
-        <StartFromScratch onSelect={onClose} />
-      </div>
     </div>
   )
 }
