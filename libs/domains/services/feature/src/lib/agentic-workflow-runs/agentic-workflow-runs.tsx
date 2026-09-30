@@ -267,6 +267,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
     return (
       <EmptyState
         icon="play"
+        iconStyle="solid"
         title="No runs yet"
         description="Run the agent task by using the “Play” button in the header above"
         className="mt-2 pt-10"
@@ -422,6 +423,7 @@ export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
       <EmptyState
         size="sm"
         icon="play"
+        iconStyle="solid"
         title="No runs yet"
         description="Trigger this agent task to see its latest run."
       />
