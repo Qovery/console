@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import Sentry from 'devicon/icons/sentry/sentry-original.svg'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled, useFeatureFlagVariantKey } from 'posthog-js/react'
 import { CreateCloneEnvironmentModal, useEnvironments } from '@qovery/domains/environments/feature'
@@ -15,7 +16,7 @@ const SENTRY_TEMPLATE: AgentTaskCard = {
   id: 'sentry-incident-analyzer',
   title: 'Incident Analyzer with Sentry',
   description: 'Analyze Sentry incidents with deployment, code, logs, and metrics context.',
-  logoPath: '/assets/agent-templates/sentry.svg',
+  logoPath: Sentry,
 }
 
 // Reuses the agent tasks templates (service-new) — sized to the design spec:
