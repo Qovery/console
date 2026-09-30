@@ -1,6 +1,7 @@
 import {
   type ClusterStateEnum,
   type DeploymentHistoryTriggerAction,
+  type ServiceActionEnum,
   ServiceActionStatusEnum,
   type ServiceSubActionEnum,
   type StageStatusEnum,
@@ -135,6 +136,9 @@ export const getDeploymentAction = (
     }))
     .exhaustive()
 }
+
+export const getTriggerAction = (statusDetails?: { action?: ServiceActionEnum; sub_action?: ServiceSubActionEnum }) =>
+  statusDetails?.sub_action && statusDetails.sub_action !== 'NONE' ? statusDetails.sub_action : statusDetails?.action
 
 export const DeploymentAction = ({
   status,

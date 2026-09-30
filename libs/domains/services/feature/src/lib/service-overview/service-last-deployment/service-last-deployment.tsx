@@ -16,6 +16,7 @@ import {
   Skeleton,
   StatusChip,
   Tooltip,
+  getTriggerAction,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
@@ -212,8 +213,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
       </span>
     ) : null
 
-  const subAction = lastDeployment.status_details?.sub_action
-  const triggerAction = subAction && subAction !== 'NONE' ? subAction : lastDeployment.status_details?.action
+  const triggerAction = getTriggerAction(lastDeployment.status_details) ?? 'UNKNOWN'
 
   const handleLaunchDiagnostic = () => {
     posthog.capture('ai-copilot-troubleshoot-triggered', {
