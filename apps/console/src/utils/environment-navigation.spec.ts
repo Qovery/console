@@ -5,7 +5,7 @@ it('places Automation second after Overview with a New badge', () => {
   expect(tabs.map(({ id }) => id)).toEqual(['overview', 'automation', 'deployments', 'variables', 'settings'])
   expect(tabs[1]).toEqual(
     expect.objectContaining({
-      label: 'Automation',
+      label: 'Automations',
       isNew: true,
       routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
     })

@@ -17,7 +17,7 @@ export const ENVIRONMENT_TABS: EnvironmentNavigationTab[] = [
   },
   {
     id: 'automation',
-    label: 'Automation',
+    label: 'Automations',
     isNew: true,
     iconName: 'timer',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automation',

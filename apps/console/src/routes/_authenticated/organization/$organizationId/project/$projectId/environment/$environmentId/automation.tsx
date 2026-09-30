@@ -11,7 +11,7 @@ export const Route = createFileRoute(
 )({ component: RouteComponent })
 
 function RouteComponent() {
-  useDocumentTitle('Automation')
+  useDocumentTitle('Automations')
   const params = Route.useParams()
   const enabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
   if (!enabled)

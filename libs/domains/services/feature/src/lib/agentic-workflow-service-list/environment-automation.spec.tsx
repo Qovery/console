@@ -60,6 +60,12 @@ beforeEach(() => {
 
 it('shows categorized templates and scratch creation when no agent exists', async () => {
   const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
+  expect(
+    screen
+      .getAllByRole('heading')
+      .slice(1)
+      .map((heading) => heading.textContent)
+  ).toEqual(['Optimization', 'Incident Analyzer', 'Coding Agent'])
   for (const category of ['Coding Agent', 'Incident Analyzer', 'Optimization']) {
     expect(screen.getByRole('heading', { name: category })).toBeInTheDocument()
   }
@@ -82,6 +88,7 @@ it('opens the empty-state template catalog in a wide modal when agents exist', a
   mockServices.mockReturnValue({ data: [{ service_type: 'AGENTIC_WORKFLOW', serviceType: 'AGENTIC_WORKFLOW' }] })
   const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
   expect(screen.getByText('Agent table')).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Request agent template' })).not.toBeInTheDocument()
   expect(screen.queryByRole('link', { name: /Slack Coding Agent/i })).not.toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
   expect(mockOpenModal).toHaveBeenCalledWith({
@@ -120,7 +127,7 @@ it('opens the existing template request modal', async () => {
 it('hides Automation when the feature flag is disabled', () => {
   mockEnabled = false
   renderWithProviders(<EnvironmentAutomation environment={environment} />)
-  expect(screen.queryByRole('heading', { name: 'Automation' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Automations' })).not.toBeInTheDocument()
 })
 
 it('places cloned environment previews after the agent table', () => {

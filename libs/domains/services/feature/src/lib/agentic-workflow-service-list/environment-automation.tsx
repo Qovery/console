@@ -45,19 +45,21 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
       <Section className="min-h-0 flex-1 gap-8">
         <div className="flex shrink-0 flex-col gap-6">
           <div className="flex items-center justify-between gap-4">
-            <Heading>Automation</Heading>
+            <Heading>Automations</Heading>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                color="neutral"
-                onClick={() =>
-                  openModal({
-                    content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} />,
-                  })
-                }
-              >
-                Request agent template
-              </Button>
+              {!hasAgents && (
+                <Button
+                  variant="outline"
+                  color="neutral"
+                  onClick={() =>
+                    openModal({
+                      content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} />,
+                    })
+                  }
+                >
+                  Request agent template
+                </Button>
+              )}
               {!hasAgents && <StartFromScratch />}
               {hasAgents && (
                 <Button
@@ -104,7 +106,7 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
                 search={{ template: template.id }}
                 onClick={() => selectTemplate(template.id)}
                 color="neutral"
-                className="flex min-w-0 flex-col items-start gap-2 rounded-lg border border-neutral bg-surface-neutral p-4 hover:bg-surface-neutral-subtle"
+                className="flex min-w-0 flex-col items-start gap-2 rounded-lg border border-neutral bg-surface-neutral p-4 hover:bg-surface-neutral-subtle hover:text-neutral"
               >
                 <span className="flex w-full min-w-0 items-center gap-2">
                   <span className="flex size-5 shrink-0 items-center justify-center text-brand">
@@ -177,12 +179,12 @@ export function EnvironmentAutomationSkeleton() {
     <div
       className="container mx-auto flex min-h-page-container flex-col pt-6"
       aria-busy="true"
-      aria-label="Loading automation"
+      aria-label="Loading automations"
     >
       <Section className="min-h-0 flex-1 gap-8">
         <div className="flex shrink-0 flex-col gap-6">
           <div className="flex items-center justify-between gap-4">
-            <Heading>Automation</Heading>
+            <Heading>Automations</Heading>
             <div className="flex items-center gap-2" aria-hidden="true">
               <Skeleton width={170} height={32} />
               <Skeleton width={150} height={32} />
