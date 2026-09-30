@@ -14,7 +14,13 @@ import {
   generateDbInstance,
   getBlueprintDbInstance,
 } from '@qovery/domains/observability/feature'
-import { isManagedDatabase } from '@qovery/domains/services/data-access'
+import {
+  isBlueprintService,
+  isManagedDatabase,
+  isServiceMYSQL,
+  isServicePostgreSQL,
+  isTerraform,
+} from '@qovery/domains/services/data-access'
 import {
   type RdsBlueprintEngine,
   getRdsBlueprintEngine,
@@ -54,14 +60,15 @@ function RouteComponent() {
     clusterId: environment?.cluster_id ?? '',
     suspense: true,
   })
+  const blueprintId = service && isBlueprintService(service) && isTerraform(service) ? service.blueprint_id : ''
   const { data: blueprint } = useBlueprint({
-    blueprintId: service && 'blueprint_id' in service ? service.blueprint_id ?? '' : '',
-    enabled: service?.service_type === 'TERRAFORM' && cluster?.cloud_provider === 'AWS',
+    blueprintId,
+    enabled: Boolean(blueprintId) && cluster?.cloud_provider === 'AWS',
   })
   const managedDatabaseEngine =
     isManagedDatabase(service) &&
     cluster?.cloud_provider === 'AWS' &&
-    (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
+    (isServicePostgreSQL(service) || isServiceMYSQL(service))
       ? service.type
       : undefined
   const rdsBlueprintEngine = cluster?.cloud_provider === 'AWS' ? getRdsBlueprintEngine(service, blueprint) : undefined
@@ -205,6 +212,8 @@ function RdsBlueprintDashboard({
   })
 
   const dbInstance = getBlueprintDbInstance(serviceId, variables)
+  // Deployment status updates do not invalidate the Terraform output variables query.
+  // Refresh it after each completed deployment to pick up the new db_identifier.
   useEffect(() => {
     if (deploymentFinished && !dbInstance && !isLoading && !isError) {
       void refetch()

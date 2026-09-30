@@ -1,5 +1,5 @@
 import { type BlueprintDetailsResponse, type BlueprintItem } from 'qovery-typescript-axios'
-import { type AnyService, isBlueprintService } from '@qovery/domains/services/data-access'
+import { type AnyService, isBlueprintService, isTerraform } from '@qovery/domains/services/data-access'
 
 const BLUEPRINT_NAME_PARTS: Record<string, string> = {
   aws: 'AWS',
@@ -25,7 +25,7 @@ export function getRdsBlueprintEngine(
   if (
     !service ||
     !isBlueprintService(service) ||
-    service.service_type !== 'TERRAFORM' ||
+    !isTerraform(service) ||
     blueprint?.id !== service.blueprint_id ||
     blueprint.service_id !== service.id ||
     blueprint.service_type !== 'TERRAFORM' ||

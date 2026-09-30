@@ -244,6 +244,18 @@ export function isHelm(service: AnyService): service is Helm {
   return service.service_type === 'HELM'
 }
 
+export function isTerraform(service: AnyService): service is Terraform {
+  return service.service_type === 'TERRAFORM'
+}
+
+export function isServicePostgreSQL(service: AnyService): service is Database & { type: 'POSTGRESQL' } {
+  return isDatabase(service) && service.type === 'POSTGRESQL'
+}
+
+export function isServiceMYSQL(service: AnyService): service is Database & { type: 'MYSQL' } {
+  return isDatabase(service) && service.type === 'MYSQL'
+}
+
 export function isBlueprintService(service: AnyService): service is BlueprintService {
   return 'blueprint_id' in service && Boolean(service.blueprint_id)
 }
