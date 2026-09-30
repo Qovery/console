@@ -628,18 +628,35 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               name="stable_override.drift_blocking.enabled"
               control={methods.control}
               render={({ field }) => (
-                <InputToggle
-                  value={field.value ?? false}
-                  onChange={field.onChange}
-                  title="Block node drift"
-                  description="Prevent Karpenter from replacing stable nodes due to drift during one daily UTC window. Drift remains allowed for at least one hour each day."
-                  align="top"
-                  small
-                />
+                <div className="flex gap-2">
+                  <InputToggle
+                    value={field.value ?? false}
+                    onChange={field.onChange}
+                    title="Block node drift"
+                    description="Set one daily UTC window when Karpenter pauses drift-based replacement of stable nodes. At least one hour remains available for drift each day."
+                    align="top"
+                    small
+                  />
+                  <Tooltip
+                    classNameContent="w-80"
+                    content="Changes to node configuration can mark existing nodes as drifted: instance type requirements, AMI updates (including security fixes), and Kubernetes upgrades are examples. During this window, Karpenter pauses voluntary replacement of stable nodes for drift. Changes can still be saved, and new nodes may use the updated settings. This option does not control consolidation, expiration, Spot interruptions, repair, or manual deletion."
+                  >
+                    <span className="text-neutral-subtle">
+                      <Icon iconName="circle-info" iconStyle="regular" />
+                    </span>
+                  </Tooltip>
+                </div>
               )}
             />
             {watchDriftBlocking && (
               <div className="ml-11 flex flex-col gap-4">
+                <p className="text-sm font-medium text-neutral">Repeats every day (UTC)</p>
+                <Callout.Root className="items-center" color="yellow">
+                  <Callout.Text>
+                    Replacements caused by drift after instance type changes, Kubernetes upgrades, or AMI security
+                    updates wait until outside this window. New nodes may use the updated settings sooner.
+                  </Callout.Text>
+                </Callout.Root>
                 <Controller
                   name="stable_override.drift_blocking.start_time"
                   control={methods.control}
