@@ -50,7 +50,6 @@ import QoveryIcon from './icons/qovery'
 import RedisIcon from './icons/redis'
 import ScalewayIcon from './icons/scaleway'
 import ScalewayGrayIcon from './icons/scaleway-gray'
-import SentryIcon from './icons/sentry'
 import ServicesIcon from './icons/services'
 import SlackIcon from './icons/slack'
 import TerraformIcon from './icons/terraform'
@@ -89,8 +88,6 @@ export const Icon = forwardRef<HTMLElement, IconProps | FontAwesomeIconProps>(fu
   formattedProps.className = 'shrink-0 ' + (formattedProps.className || '')
 
   switch (props.name) {
-    case IconEnum.SENTRY:
-      return <SentryIcon {...formattedProps} />
     case IconEnum.GITHUB:
       return <GithubIcon {...formattedProps} />
     case IconEnum.GITHUB_WHITE:

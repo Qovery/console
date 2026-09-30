@@ -1,4 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import Sentry from 'devicon/icons/sentry/sentry-original.svg'
 import { APIVariableScopeEnum, AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
 import { type VariableData } from '@qovery/shared/interfaces'
@@ -249,7 +250,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     id: 'sentry-incident-analyzer',
     category: 'Incident Analyzer',
     title: 'Sentry Incident Analyzer',
-    logoIcon: IconEnum.SENTRY,
+    logoPath: Sentry,
     description: 'Investigate Sentry errors with deployment, code, logs, and metrics context.',
     iconName: 'bug',
     requiresQoveryMcp: true,
