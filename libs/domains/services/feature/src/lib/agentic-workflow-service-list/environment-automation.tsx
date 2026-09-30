@@ -63,6 +63,7 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
               {!hasAgents && <StartFromScratch />}
               {hasAgents && (
                 <Button
+                  size="md"
                   onClick={() =>
                     openModal({
                       options: { width: 'min(1100px, calc(100vw - 48px))', buttonClose: false },
