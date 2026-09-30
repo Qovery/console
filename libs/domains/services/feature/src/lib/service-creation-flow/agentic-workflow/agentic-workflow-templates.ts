@@ -206,25 +206,6 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     variables: [secretVariable('LINEAR_API_KEY', 'API key used to read the Linear issue.')],
   },
   {
-    id: 'coding-agent',
-    category: 'Coding Agent',
-    title: 'Coding Agent',
-    description: 'Turn a coding request into an implementation and a ready-to-review pull request.',
-    iconName: 'code',
-    requiresQoveryMcp: true,
-    seed: {
-      name: 'Coding Agent',
-      description: 'Turn a coding request into an implementation and a ready-to-review pull request.',
-      agentPrompt:
-        'Use the coding request supplied by the webhook. Inspect the repository and its conventions, implement the smallest complete change, run focused tests, and open a pull request explaining the change and verification. Never merge or deploy without human approval.',
-      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
-      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
-      executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
-      whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
-      automations: webhookAutomation('coding-agent'),
-    },
-  },
-  {
     id: 'slack-coding-agent',
     category: 'Coding Agent',
     title: 'Slack Coding Agent',
@@ -244,6 +225,25 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       automations: webhookAutomation('slack-coding-agent'),
     },
     variables: [secretVariable('SLACK_BOT_TOKEN', 'Token used to retrieve missing context.')],
+  },
+  {
+    id: 'coding-agent',
+    category: 'Coding Agent',
+    title: 'Coding Agent',
+    description: 'Turn a coding request into an implementation and a ready-to-review pull request.',
+    iconName: 'code',
+    requiresQoveryMcp: true,
+    seed: {
+      name: 'Coding Agent',
+      description: 'Turn a coding request into an implementation and a ready-to-review pull request.',
+      agentPrompt:
+        'Use the coding request supplied by the webhook. Inspect the repository and its conventions, implement the smallest complete change, run focused tests, and open a pull request explaining the change and verification. Never merge or deploy without human approval.',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
+      executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
+      whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
+      automations: webhookAutomation('coding-agent'),
+    },
   },
   {
     id: 'sentry-incident-analyzer',

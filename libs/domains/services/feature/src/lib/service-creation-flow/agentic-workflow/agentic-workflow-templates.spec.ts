@@ -125,7 +125,7 @@ describe('agentic-workflow-templates', () => {
   it('categorizes all templates and preserves existing identifiers', () => {
     expect(
       AGENTIC_WORKFLOW_TEMPLATES.filter((template) => template.category === 'Coding Agent').map(({ id }) => id)
-    ).toEqual(['jira-coding-agent', 'linear-coding-agent', 'coding-agent', 'slack-coding-agent'])
+    ).toEqual(['jira-coding-agent', 'linear-coding-agent', 'slack-coding-agent', 'coding-agent'])
     expect(
       AGENTIC_WORKFLOW_TEMPLATES.filter((template) => template.category === 'Incident Analyzer').map(({ id }) => id)
     ).toEqual([

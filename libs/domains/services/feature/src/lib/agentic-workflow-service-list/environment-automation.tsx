@@ -58,6 +58,7 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
               >
                 Request agent template
               </Button>
+              {!hasAgents && <StartFromScratch />}
               {hasAgents && (
                 <Button
                   onClick={() =>
@@ -85,18 +86,9 @@ export function EnvironmentAutomation({ environment, previews }: { environment: 
 
 function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  const navigate = useNavigate()
-  const selectTemplate = (id?: string) => {
-    posthog.capture('select-agent-use-case', { agentUseCase: id ?? 'from-scratch' })
+  const selectTemplate = (id: string) => {
+    posthog.capture('select-agent-use-case', { agentUseCase: id })
     onSelect?.()
-  }
-  const createAgent = () => {
-    selectTemplate()
-    navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-      params: { organizationId, projectId, environmentId },
-      search: {},
-    })
   }
   return (
     <div className="flex flex-col gap-8">
@@ -129,17 +121,33 @@ function AgentTemplateCatalog({ onSelect }: { onSelect?: () => void }) {
           </div>
         </Section>
       ))}
-      <div>
-        <Button variant="outline" color="neutral" onClick={() => createAgent()}>
-          <Icon iconName="circle-plus" />
-          Start from scratch
-        </Button>
-      </div>
     </div>
   )
 }
 
+function StartFromScratch({ onSelect }: { onSelect?: () => void }) {
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
+  return (
+    <Button
+      onClick={() => {
+        posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' })
+        onSelect?.()
+        navigate({
+          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+          params: { organizationId, projectId, environmentId },
+          search: {},
+        })
+      }}
+    >
+      Start from scratch
+    </Button>
+  )
+}
+
 function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
+  const { organizationId = '' } = useParams({ strict: false })
+  const { openModal, closeModal } = useModal()
   return (
     <div className="flex flex-col gap-8 p-6">
       <div className="flex items-center justify-between gap-4">
@@ -149,6 +157,18 @@ function AgentTemplateCatalogModal({ onClose }: { onClose: () => void }) {
         </Button>
       </div>
       <AgentTemplateCatalog onSelect={onClose} />
+      <div className="flex justify-end gap-2">
+        <Button
+          variant="outline"
+          color="neutral"
+          onClick={() =>
+            openModal({ content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} /> })
+          }
+        >
+          Request agent template
+        </Button>
+        <StartFromScratch onSelect={onClose} />
+      </div>
     </div>
   )
 }
