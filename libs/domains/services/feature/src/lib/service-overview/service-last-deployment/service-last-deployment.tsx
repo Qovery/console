@@ -212,6 +212,9 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
       </span>
     ) : null
 
+  const subAction = lastDeployment.status_details?.sub_action
+  const triggerAction = subAction && subAction !== 'NONE' ? subAction : lastDeployment.status_details?.action
+
   const handleLaunchDiagnostic = () => {
     posthog.capture('ai-copilot-troubleshoot-triggered', {
       source: 'service-last-deployment',
@@ -235,7 +238,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
       >
         <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
           <span className="font-medium">
-            <DeploymentAction status={lastDeployment.status_details.status} />
+            <DeploymentAction status={triggerAction} />
           </span>
           <StatusChip status={lastDeployment.status_details.status} />
           {showGitCommit ? (
