@@ -127,6 +127,18 @@ describe('ClusterCredentialsSettings', () => {
     expect(screen.queryByTestId('eks-credentials-change-warning')).not.toBeInTheDocument()
   })
 
+  it('should display the mirroring registry warning by default in cluster settings', () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting />))
+
+    expect(screen.getByTestId('mirroring-registry-credentials-warning')).toBeInTheDocument()
+  })
+
+  it('should not display the mirroring registry warning outside cluster settings', () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
+
+    expect(screen.queryByTestId('mirroring-registry-credentials-warning')).not.toBeInTheDocument()
+  })
+
   it('should filter non EKS Anywhere credentials in EKS Anywhere flow', () => {
     const credentials = [
       { id: '1', name: 'AWS role credential', object_type: 'AWS_ROLE' },

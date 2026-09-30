@@ -28,7 +28,7 @@ export const filterCredentialsByCloudProvider = (
 
 export function ClusterCredentialsSettings({ cloudProvider, isSetting, isEks }: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
-  const { control, formState } = useFormContext()
+  const { control } = useFormContext()
   const { openModal, closeModal } = useModal()
 
   const queryCloudProvider = cloudProvider === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProvider
@@ -131,8 +131,8 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, isEks }: 
             <Icon iconName="key" iconStyle="regular" />
           </Link>
 
-          {isSetting && formState.isDirty && (
-            <Callout.Root color="yellow" className="mt-4">
+          {isSetting && (
+            <Callout.Root color="yellow" className="mt-4" data-testid="mirroring-registry-credentials-warning">
               <Callout.Icon>
                 <Icon iconName="circle-exclamation" iconStyle="regular" />
               </Callout.Icon>
