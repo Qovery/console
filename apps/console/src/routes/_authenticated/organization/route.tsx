@@ -18,7 +18,6 @@ import Header from '../../../app/components/header/header'
 import { NotFoundPage } from '../../../app/components/not-found-page/not-found-page'
 import { OrganizationBanners } from '../../../app/components/organization-banners/organization-banners'
 import { type FileRouteTypes } from '../../../routeTree.gen'
-import { ENVIRONMENT_TABS, getEnvironmentTabs } from '../../../utils/environment-navigation'
 
 export const Route = createFileRoute('/_authenticated/organization')({
   component: OrganizationRoute,
@@ -131,6 +130,40 @@ const PROJECT_TABS: NavigationTab[] = [
     label: 'Settings',
     iconName: 'gear-complex',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/settings',
+  },
+]
+
+const ENVIRONMENT_TABS: NavigationTab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    iconName: 'table-layout',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+  },
+  {
+    id: 'automation',
+    label: 'Automations',
+    isNew: true,
+    iconName: 'clock-nine',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
+  },
+  {
+    id: 'deployments',
+    label: 'Deployments',
+    iconName: 'rocket',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
+  },
+  {
+    id: 'variables',
+    label: 'Variables',
+    iconName: 'key',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables',
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    iconName: 'gear-complex',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
   },
 ]
 
@@ -358,7 +391,7 @@ function useNavigationContext(): NavigationContext | null {
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
               : context.type === 'environment'
-                ? getEnvironmentTabs(isAgenticWorkflowEnabled, context.tabs)
+                ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automation')
                 : context.tabs
 
         return {
