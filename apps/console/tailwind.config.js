@@ -7,7 +7,7 @@ module.exports = {
     join(__dirname, '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'),
     // Explicit globs instead of createGlobPatternsForDependencies: that helper needs the Nx project graph,
     // which is not available when vite is run directly (Dockerfile) and silently yields no lib classes.
-    join(__dirname, '../../libs/**/*!(*.stories|*.spec).{ts,tsx,html}'),
+    join(__dirname, '../../libs/**/*!(*.stories|*.spec).{ts,tsx,js,jsx,html}'),
   ],
   theme: {
     extend: {},
