@@ -6,6 +6,7 @@ import { Button, Heading, Icon, Section, Skeleton, TablePrimitives, useModal } f
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import CreateCloneEnvironmentModal from '../create-clone-environment-modal/create-clone-environment-modal'
 import EnvironmentMode from '../environment-mode/environment-mode'
+import { isAgentTaskPreview } from '../utils/agent-task-preview'
 import {
   EnvironmentSection,
   environmentNameCellContentClassName,
@@ -135,10 +136,11 @@ function EnvironmentsTableContent() {
       return undefined
     }
 
-    const sortedEnvironments = [...environmentsOverview].sort(
-      (environmentA: EnvironmentOverviewResponse, environmentB: EnvironmentOverviewResponse) =>
+    const sortedEnvironments = environmentsOverview
+      .filter((environment) => !isAgentTaskPreview(environment))
+      .sort((environmentA: EnvironmentOverviewResponse, environmentB: EnvironmentOverviewResponse) =>
         (environmentA.name ?? '').localeCompare(environmentB.name ?? '')
-    )
+      )
 
     return sortedEnvironments.reduce<Map<EnvironmentModeEnum, EnvironmentOverviewResponse[]>>(
       (acc, env: EnvironmentOverviewResponse) => {
@@ -198,7 +200,9 @@ function EnvironmentsTableContent() {
     }
 
     const selectedEnvironmentIdsSet = new Set(selectedEnvironmentIds)
-    return environmentsOverview.filter(({ id }) => selectedEnvironmentIdsSet.has(id))
+    return environmentsOverview.filter(
+      (environment) => !isAgentTaskPreview(environment) && selectedEnvironmentIdsSet.has(environment.id)
+    )
   }, [environmentsOverview, selectedEnvironmentIds])
 
   const filledSections = SECTIONS.filter((section) => groupedEnvs?.has(section))

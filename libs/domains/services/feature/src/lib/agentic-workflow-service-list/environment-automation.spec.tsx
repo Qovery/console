@@ -78,7 +78,7 @@ it('shows tables and categorized creation dropdown when agents exist', async () 
   mockServices.mockReturnValue({ data: [{ service_type: 'AGENTIC_WORKFLOW', serviceType: 'AGENTIC_WORKFLOW' }] })
   const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
   expect(screen.getByText('Agent table')).toBeInTheDocument()
-  expect(screen.getByText('Clone table')).toBeInTheDocument()
+  expect(screen.queryByText('Clone table')).not.toBeInTheDocument()
   expect(screen.queryByRole('link', { name: /Slack Coding Agent/i })).not.toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
   const item = await screen.findByRole('menuitem', { name: 'Sentry Incident Analyzer' })
@@ -100,4 +100,13 @@ it('hides Automation when the feature flag is disabled', () => {
   mockEnabled = false
   renderWithProviders(<EnvironmentAutomation environment={environment} />)
   expect(screen.queryByRole('heading', { name: 'Automation' })).not.toBeInTheDocument()
+})
+
+it('places cloned environment previews after the agent table', () => {
+  mockServices.mockReturnValue({ data: [{ service_type: 'AGENTIC_WORKFLOW', serviceType: 'AGENTIC_WORKFLOW' }] })
+  renderWithProviders(<EnvironmentAutomation environment={environment} previews={<div>Environment previews</div>} />)
+  expect(
+    screen.getByText('Agent table').compareDocumentPosition(screen.getByText('Environment previews')) &
+      Node.DOCUMENT_POSITION_FOLLOWING
+  ).toBeTruthy()
 })

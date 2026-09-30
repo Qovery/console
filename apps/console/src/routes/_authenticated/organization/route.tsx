@@ -446,7 +446,12 @@ function NavigationBar({ context }: { context: NavigationContext }) {
             <Icon iconName={tab.iconName} />
             {tab.label}
             {tab.isNew && (
-              <Badge color="brand" size="sm">
+              <Badge
+                color="brand"
+                variant="surface"
+                size="sm"
+                className="h-4 border-transparent bg-surface-brand-solid px-1 pt-[1px] text-[8px] font-semibold text-neutralInvert"
+              >
                 New
               </Badge>
             )}

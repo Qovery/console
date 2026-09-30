@@ -16,6 +16,9 @@ const { Table } = TablePrimitives
 
 export const environmentTableGridLayoutClassName =
   'grid w-full grid-cols-[44px_minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
+const environmentTableWithoutSelectionClassName =
+  'grid w-full grid-cols-[minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
+
 export const environmentSelectionCellClassName = 'flex h-full items-center pl-4'
 export const environmentNameCellContentClassName =
   'flex h-full min-w-0 flex-col justify-center gap-1 py-2 pl-0 pr-4 xl:flex-row xl:items-center xl:justify-between xl:gap-2'
@@ -37,10 +40,12 @@ function DisabledManageDeploymentButton({ tooltip }: { tooltip: string }) {
 
 function EnvRow({
   overview,
+  selectable,
   checked,
   onCheckedChange,
 }: {
   overview: EnvironmentOverviewResponse
+  selectable: boolean
   checked: boolean
   onCheckedChange: (checked: boolean) => void
 }) {
@@ -68,29 +73,32 @@ function EnvRow({
       role="link"
       className={twMerge(
         'w-full hover:cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle',
-        environmentTableGridLayoutClassName
+        selectable ? environmentTableGridLayoutClassName : environmentTableWithoutSelectionClassName
       )}
       onClick={handleNavigate}
       onKeyDown={(e) => {
         if (e.key === 'Enter') handleNavigate()
       }}
     >
-      <Table.Cell className="h-auto border-none p-0">
-        <div className={environmentSelectionCellClassName} onClick={stopRowNavigation} onKeyDown={stopRowNavigation}>
-          <Checkbox
-            aria-label={`Select ${overview.name}`}
-            checked={checked}
-            onClick={(e) => e.stopPropagation()}
-            onCheckedChange={(checked) => {
-              if (checked === 'indeterminate') {
-                return
-              }
-              onCheckedChange(checked)
-            }}
-          />
-        </div>
-      </Table.Cell>
-      <Table.Cell className={twMerge(environmentTableCellClassName, 'border-none p-0')}>
+      {selectable && (
+        <Table.Cell className="h-auto border-none p-0">
+          <div className={environmentSelectionCellClassName} onClick={stopRowNavigation} onKeyDown={stopRowNavigation}>
+            <Checkbox
+              aria-label={`Select ${overview.name}`}
+              checked={checked}
+              onClick={(e) => e.stopPropagation()}
+              onCheckedChange={(checked) => {
+                if (checked === 'indeterminate') {
+                  return
+                }
+                onCheckedChange(checked)
+              }}
+            />
+          </div>
+        </Table.Cell>
+      )}
+
+      <Table.Cell className={twMerge(environmentTableCellClassName, 'border-none p-0', !selectable && 'pl-4')}>
         <div className={environmentNameCellContentClassName}>
           <div className="flex min-w-0 items-center gap-1.5">
             <Link
@@ -273,6 +281,8 @@ function SortableColumnHeader({
 
 export function EnvironmentSection({
   type,
+  title: titleOverride,
+  selectable = true,
   items,
   onCreateEnvClicked,
   selectedEnvironmentIds = [],
@@ -280,18 +290,22 @@ export function EnvironmentSection({
   onSectionSelectionChange,
 }: {
   type: EnvironmentModeEnum
+  title?: string
+  selectable?: boolean
   items: EnvironmentOverviewResponse[]
   onCreateEnvClicked?: () => void
   selectedEnvironmentIds?: string[]
   onEnvironmentSelectionChange?: (environmentId: string, checked: boolean) => void
   onSectionSelectionChange?: (environmentIds: string[], checked: boolean) => void
 }) {
-  const title = match(type)
-    .with('PRODUCTION', () => 'Production')
-    .with('STAGING', () => 'Staging')
-    .with('DEVELOPMENT', () => 'Development')
-    .with('PREVIEW', () => 'Ephemeral')
-    .exhaustive()
+  const title =
+    titleOverride ??
+    match(type)
+      .with('PRODUCTION', () => 'Production')
+      .with('STAGING', () => 'Staging')
+      .with('DEVELOPMENT', () => 'Development')
+      .with('PREVIEW', () => 'Ephemeral')
+      .exhaustive()
 
   // Ephemeral environments default to the most recent operation first, every other
   // section keeps the historical alphabetical order. Clicking a header overrides this.
@@ -363,30 +377,38 @@ export function EnvironmentSection({
       ) : (
         <Table.Root className="w-full min-w-[1080px]" containerClassName="no-scrollbar overflow-x-auto">
           <Table.Header>
-            <Table.Row className={twMerge('w-full items-center text-xs', environmentTableGridLayoutClassName)}>
-              <Table.ColumnHeaderCell className="h-9 p-0 text-neutral-subtle">
-                <div
-                  className={environmentSelectionCellClassName}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                  }}
-                >
-                  <Checkbox
-                    aria-label={`Select all ${title.toLowerCase()} environments`}
-                    checked={sectionChecked}
-                    onClick={(e) => e.stopPropagation()}
-                    onCheckedChange={(checked) => {
-                      if (checked === 'indeterminate') {
-                        return
-                      }
-                      onSectionSelectionChange?.(
-                        items.map(({ id }) => id),
-                        checked
-                      )
+            <Table.Row
+              className={twMerge(
+                'w-full items-center text-xs',
+                selectable ? environmentTableGridLayoutClassName : environmentTableWithoutSelectionClassName
+              )}
+            >
+              {selectable && (
+                <Table.ColumnHeaderCell className="h-9 p-0 text-neutral-subtle">
+                  <div
+                    className={environmentSelectionCellClassName}
+                    onClick={(e) => {
+                      e.stopPropagation()
                     }}
-                  />
-                </div>
-              </Table.ColumnHeaderCell>
+                  >
+                    <Checkbox
+                      aria-label={`Select all ${title.toLowerCase()} environments`}
+                      checked={sectionChecked}
+                      onClick={(e) => e.stopPropagation()}
+                      onCheckedChange={(checked) => {
+                        if (checked === 'indeterminate') {
+                          return
+                        }
+                        onSectionSelectionChange?.(
+                          items.map(({ id }) => id),
+                          checked
+                        )
+                      }}
+                    />
+                  </div>
+                </Table.ColumnHeaderCell>
+              )}
+
               <SortableColumnHeader
                 label="Environment"
                 column="name"
@@ -432,6 +454,7 @@ export function EnvironmentSection({
             {sortedItems.map((environmentOverview) => (
               <EnvRow
                 key={environmentOverview.id}
+                selectable={selectable}
                 overview={environmentOverview}
                 checked={selectedEnvironmentIdsSet.has(environmentOverview.id)}
                 onCheckedChange={(checked) => onEnvironmentSelectionChange?.(environmentOverview.id, checked)}

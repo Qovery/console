@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { AgenticWorkflowExecutionMode, type Environment } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { Badge, Heading, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
@@ -14,7 +14,6 @@ const { Table } = TablePrimitives
 
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
-  cloneTasks?: boolean
 }
 
 function TriggerCell({
@@ -42,15 +41,13 @@ function TriggerCell({
   )
 }
 
-export function AgenticWorkflowServiceList({ environment, cloneTasks = false }: AgenticWorkflowServiceListProps) {
+export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServiceListProps) {
   const environmentId = environment.id
   const organizationId = environment.organization.id
   const projectId = environment.project.id
   const navigate = useNavigate()
   const { data: allServices = [] } = useServices({ environmentId, suspense: true })
-  const services = (allServices.filter(isAgenticWorkflow) as AgenticWorkflow[]).filter(
-    (service) => (service.execution_mode === AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT) === cloneTasks
-  )
+  const services = allServices.filter(isAgenticWorkflow) as AgenticWorkflow[]
 
   if (services.length === 0) return null
 
@@ -71,7 +68,7 @@ export function AgenticWorkflowServiceList({ environment, cloneTasks = false }: 
     <Section className="flex flex-col gap-3.5">
       <div className="flex flex-col gap-1">
         <Heading level={3} className="font-medium text-neutral-subtle">
-          {cloneTasks ? 'Clone environment tasks' : 'Agent tasks'}
+          Agent tasks
         </Heading>
         <p className="text-sm text-neutral-subtle">One-time tasks delegated to AI agents.</p>
       </div>

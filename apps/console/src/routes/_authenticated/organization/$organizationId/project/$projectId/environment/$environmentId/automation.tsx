@@ -1,7 +1,7 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense } from 'react'
-import { useEnvironment } from '@qovery/domains/environments/feature'
+import { AgentTaskPreviewEnvironments, useEnvironment } from '@qovery/domains/environments/feature'
 import { EnvironmentAutomation, ServiceListSkeleton } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -25,7 +25,10 @@ function RouteComponent() {
   if (!environment) return null
   return (
     <Suspense fallback={<ServiceListSkeleton />}>
-      <EnvironmentAutomation environment={environment} />
+      <EnvironmentAutomation
+        environment={environment}
+        previews={<AgentTaskPreviewEnvironments sourceEnvironmentName={environment.name} />}
+      />
     </Suspense>
   )
 }
