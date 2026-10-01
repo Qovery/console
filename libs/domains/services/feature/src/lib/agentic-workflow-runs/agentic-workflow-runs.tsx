@@ -155,12 +155,57 @@ function CopyRunIdButton({
   )
 }
 
+// JSON.parse + JSON.stringify would change numbers such as 12345678901234567890 or 1e400.
+// JSON.parse only validates here. The text is then re-indented without touching any token.
 function formatPayload(payload: string) {
   try {
-    return JSON.stringify(JSON.parse(payload), null, 2)
+    JSON.parse(payload)
   } catch {
     return payload
   }
+
+  const indent = '  '
+  const text = payload.trim()
+  let result = ''
+  let depth = 0
+  let inString = false
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i]
+
+    if (inString) {
+      result += char
+      if (char === '\\') result += text[++i]
+      else if (char === '"') inString = false
+      continue
+    }
+
+    if (char === '"') {
+      inString = true
+      result += char
+    } else if (char === '{' || char === '[') {
+      const closing = char === '{' ? '}' : ']'
+      const next = text.slice(i + 1).trimStart()[0]
+      if (next === closing) {
+        result += char + closing
+        i = text.indexOf(closing, i + 1)
+      } else {
+        depth++
+        result += `${char}\n${indent.repeat(depth)}`
+      }
+    } else if (char === '}' || char === ']') {
+      depth--
+      result += `\n${indent.repeat(depth)}${char}`
+    } else if (char === ',') {
+      result += `,\n${indent.repeat(depth)}`
+    } else if (char === ':') {
+      result += ': '
+    } else if (!/\s/.test(char)) {
+      result += char
+    }
+  }
+
+  return result
 }
 
 function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {

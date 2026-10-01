@@ -211,6 +211,33 @@ describe('AgenticWorkflowRuns', () => {
     expect(payloadElement).toHaveTextContent('\n  "message": "deploy completed"', { normalizeWhitespace: false })
   })
 
+  it.each([
+    [
+      'large integers, exponents and number spellings',
+      '{"id":12345678901234567890,"big":1e400,"price":1.10,"neg":-0.0}',
+      '{\n  "id": 12345678901234567890,\n  "big": 1e400,\n  "price": 1.10,\n  "neg": -0.0\n}',
+    ],
+    [
+      'duplicate keys, escapes and structural characters inside strings',
+      '{ "a" : 1, "a" : "x\\"{,}[:]\\\\\\u00e9", "e": {}, "l": [ ] }',
+      '{\n  "a": 1,\n  "a": "x\\"{,}[:]\\\\\\u00e9",\n  "e": {},\n  "l": []\n}',
+    ],
+    ['nested arrays', '[1,[2,{"k":[]}]]', '[\n  1,\n  [\n    2,\n    {\n      "k": []\n    }\n  ]\n]'],
+  ])('pretty-prints JSON without altering tokens: %s', async (_name, payload, expected) => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    const payloadSection = within(screen.getByRole('dialog')).getByRole('heading', { name: 'Payload' }).parentElement
+    expect(payloadSection?.querySelector('p')).toHaveTextContent(expected, { normalizeWhitespace: false })
+    expect(payloadSection?.querySelector('p')?.textContent).toBe(expected)
+  })
+
   it('shows an invalid JSON payload unchanged in the run details', async () => {
     const payload = '{"message": "deploy completed",}'
     mockUseRunHistory.mockReturnValue({
