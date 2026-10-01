@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
@@ -212,13 +212,16 @@ function RdsBlueprintDashboard({
   })
 
   const dbInstance = getBlueprintDbInstance(serviceId, variables)
+  const lastRefreshedDeployment = useRef<string>()
   // Deployment status updates do not invalidate the Terraform output variables query.
-  // Refresh it after each completed deployment to pick up the new db_identifier.
+  // Refresh it once after each completed deployment, including replacements with an existing identifier.
   useEffect(() => {
-    if (deploymentFinished && !dbInstance && !isLoading && !isError) {
-      void refetch()
-    }
-  }, [dbInstance, deploymentExecutionId, deploymentFinished, isError, isLoading, refetch])
+    if (!deploymentFinished || isLoading) return
+    const deploymentKey = `${serviceId}:${deploymentExecutionId ?? 'deployed'}`
+    if (lastRefreshedDeployment.current === deploymentKey) return
+    lastRefreshedDeployment.current = deploymentKey
+    void refetch()
+  }, [deploymentExecutionId, deploymentFinished, isLoading, refetch, serviceId])
 
   if (isLoading) {
     return (
