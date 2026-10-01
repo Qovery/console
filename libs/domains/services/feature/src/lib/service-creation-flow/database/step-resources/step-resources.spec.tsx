@@ -1,4 +1,4 @@
-import { CloudProviderEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -46,7 +46,6 @@ function TestProvider({ children, generalValues, resourcesValues }: TestProvider
       accessibility: 'PRIVATE',
       icon_uri: 'app://qovery-console/postgresql',
       type: DatabaseTypeEnum.POSTGRESQL,
-      mode: DatabaseModeEnum.CONTAINER,
       version: '16',
       labels_groups: [],
       annotations_groups: [],
@@ -82,12 +81,7 @@ function renderComponent({
 } = {}) {
   return renderWithProviders(
     <TestProvider generalValues={generalValues} resourcesValues={resourcesValues}>
-      <DatabaseStepResources
-        onBack={mockOnBack}
-        onSubmit={mockOnSubmit}
-        cloudProvider={CloudProviderEnum.AWS}
-        instanceTypeOptions={[{ label: 'db.t3.small', value: 'db.t3.small' }]}
-      />
+      <DatabaseStepResources onBack={mockOnBack} onSubmit={mockOnSubmit} cloudProvider={CloudProviderEnum.AWS} />
     </TestProvider>
   )
 }
@@ -98,15 +92,12 @@ describe('DatabaseStepResources', () => {
   })
 
   it('renders container resource inputs and submits default values', async () => {
-    renderComponent({
-      generalValues: {
-        mode: DatabaseModeEnum.CONTAINER,
-      },
-    })
+    renderComponent()
 
     expect(screen.getByRole('heading', { name: 'Resources' })).toBeInTheDocument()
     expect(screen.getByLabelText('vCPU (milli)')).toBeInTheDocument()
     expect(screen.getByLabelText('Memory (MiB)')).toBeInTheDocument()
+    expect(screen.getByLabelText('Storage (GiB)')).toBeInTheDocument()
     ;(document.querySelector('form') as HTMLFormElement).requestSubmit()
 
     await waitFor(() => {
@@ -118,16 +109,5 @@ describe('DatabaseStepResources', () => {
         })
       )
     })
-  })
-
-  it('renders managed database instance type input', () => {
-    renderComponent({
-      generalValues: {
-        mode: DatabaseModeEnum.MANAGED,
-      },
-    })
-
-    expect(screen.getByLabelText('Instance type')).toBeInTheDocument()
-    expect(screen.getByLabelText('Storage (GiB)')).toBeInTheDocument()
   })
 })

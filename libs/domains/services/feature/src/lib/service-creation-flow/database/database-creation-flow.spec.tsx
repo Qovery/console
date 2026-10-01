@@ -4,7 +4,7 @@ import { DatabaseCreationFlow, useDatabaseCreateContext } from './database-creat
 const mockNavigate = jest.fn()
 const mockSearch = {
   template: 'postgresql',
-  option: 'managed',
+  option: 'container',
 }
 
 jest.mock('@qovery/shared/assistant/feature', () => ({
@@ -27,8 +27,8 @@ function ContextConsumer() {
 
   return (
     <div data-testid="context-consumer">
-      step={currentStep} url={creationFlowUrl} type={generalForm.getValues('type')} mode={generalForm.getValues('mode')}{' '}
-      storage={resourcesForm.getValues('storage')}
+      step={currentStep} url={creationFlowUrl} type={generalForm.getValues('type')} storage=
+      {resourcesForm.getValues('storage')}
     </div>
   )
 }
@@ -45,7 +45,6 @@ describe('DatabaseCreationFlow', () => {
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('step=1')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('url=/create/database')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('type=POSTGRESQL')
-    expect(screen.getByTestId('context-consumer')).toHaveTextContent('mode=MANAGED')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('storage=20')
   })
 })

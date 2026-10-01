@@ -1,4 +1,4 @@
-import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { DatabaseAccessibilityEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DatabaseSummaryView } from './database-summary-view'
 
@@ -6,7 +6,6 @@ const defaultProps = {
   generalData: {
     name: 'postgres',
     accessibility: DatabaseAccessibilityEnum.PRIVATE,
-    mode: DatabaseModeEnum.CONTAINER,
     type: DatabaseTypeEnum.POSTGRESQL,
     version: '16',
   },
@@ -36,26 +35,6 @@ describe('DatabaseSummaryView', () => {
     expect(screen.getByTestId('button-create')).toBeInTheDocument()
     expect(screen.getByTestId('button-create-deploy')).toBeInTheDocument()
     expect(screen.getByText('PostgreSQL')).toBeInTheDocument()
-  })
-
-  it('shows the managed callout and instance type for managed databases', () => {
-    renderWithProviders(
-      <DatabaseSummaryView
-        {...defaultProps}
-        generalData={{
-          ...defaultProps.generalData,
-          mode: DatabaseModeEnum.MANAGED,
-          type: DatabaseTypeEnum.REDIS,
-        }}
-        resourcesData={{
-          ...defaultProps.resourcesData,
-          instance_type: 'cache.t3.small',
-        }}
-      />
-    )
-
-    expect(screen.getByText('Qovery manages this resource for you')).toBeInTheDocument()
-    expect(screen.getByText(/cache.t3.small/)).toBeInTheDocument()
   })
 
   it('keeps MYSQL and DB acronyms uppercase in database type labels', () => {
