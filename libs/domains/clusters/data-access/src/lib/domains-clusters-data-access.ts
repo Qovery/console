@@ -3,7 +3,7 @@ import {
   ArgoCDApi,
   type ArgoCdCredentialsRequest,
   CloudVendorEnum,
-  Cluster,
+  type Cluster,
   type ClusterAdvancedSettings,
   type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,

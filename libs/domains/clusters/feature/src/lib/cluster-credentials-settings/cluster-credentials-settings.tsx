@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { Cluster, type ClusterCredentials } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
@@ -34,10 +34,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
 
   const queryCloudProvider = cloudProvider === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProvider
 
-  let isEksManaged = false
-  if (cluster !== undefined && isClusterEksManaged(cluster)) {
-    isEksManaged = true
-  }
+  const isEksManaged = cluster !== undefined && isClusterEksManaged(cluster)
 
   const { data: credentials = [], isLoading } = useCloudProviderCredentials({
     organizationId,
