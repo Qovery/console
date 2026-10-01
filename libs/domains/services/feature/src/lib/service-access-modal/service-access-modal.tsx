@@ -60,12 +60,16 @@ export function getDatabaseConnectionUri(service: Pick<Database, 'type' | 'mode'
   return `${connectionURI}${sslQuery}`
 }
 
-function SectionDatabaseConnectionUri({ service }: { service: Database }) {
+function SectionDatabaseConnectionUri({ service, isPortForward }: { service: Database; isPortForward?: boolean }) {
   const [, copyToClipboard] = useCopyToClipboard()
   const { data: masterCredentials } = useMasterCredentials({ serviceId: service.id, serviceType: 'DATABASE' })
 
   const handleCopyCredentials = (credentials: Credentials) => {
-    const connectionURI = getDatabaseConnectionUri(service, credentials)
+    // `qovery port-forward -p <port>` listens on localhost:<port>, whatever host the database has
+    const target = isPortForward
+      ? { ...credentials, host: 'localhost', port: service.port ?? credentials.port }
+      : credentials
+    const connectionURI = getDatabaseConnectionUri(service, target)
     copyToClipboard(connectionURI)
     toast('success', 'Credentials copied to clipboard')
   }
@@ -90,6 +94,12 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
         Copy connection URI
         <Icon className="text-sm" iconName="key" iconStyle="regular" />
       </Button>
+      {isPortForward && service.type === 'REDIS' && (
+        <p className="mt-1.5 text-neutral-subtle">
+          The TLS certificate does not match localhost: disable hostname verification in your client (e.g.{' '}
+          <code>redis-cli --tls --insecure</code>).
+        </p>
+      )}
     </div>
   )
 }
@@ -317,7 +327,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
               </div>
             </div>
             {isDatabaseService ? (
-              <SectionDatabaseConnectionUri service={service} />
+              <SectionDatabaseConnectionUri service={service} isPortForward />
             ) : (
               <div className="flex flex-col gap-2 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
                 <span className="font-medium">3. Connect via shell</span>
