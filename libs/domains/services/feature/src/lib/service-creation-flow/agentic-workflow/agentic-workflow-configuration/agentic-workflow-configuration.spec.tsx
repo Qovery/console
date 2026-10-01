@@ -208,6 +208,27 @@ describe('AgenticWorkflowConfiguration validation', () => {
       attachable: true,
     })
   })
+  it('should summarize the last non-secret MAX_TURNS row and track its edits', async () => {
+    const { userEvent } = renderConfiguration({
+      variablesSeed: [
+        { variable: 'MAX_TURNS', value: '350', isSecret: false, scope: 'AGENTIC_WORKFLOW' },
+        { variable: 'MAX_TURNS', value: 'private-turn-limit', isSecret: true, scope: 'AGENTIC_WORKFLOW' },
+      ],
+    })
+    const variablesTrigger = screen.getByRole('button', { name: /Environment variables/ })
+    expect(variablesTrigger).toHaveAttribute('data-state', 'closed')
+    expect(variablesTrigger).toHaveTextContent('MAX_TURNS=350')
+    expect(variablesTrigger).not.toHaveTextContent('private-turn-limit')
+
+    await userEvent.click(variablesTrigger)
+    await userEvent.clear(screen.getAllByTestId('value')[1])
+    await userEvent.type(screen.getAllByTestId('value')[1], '450')
+    await userEvent.click(variablesTrigger)
+
+    expect(variablesTrigger).toHaveTextContent('MAX_TURNS=450')
+    expect(variablesTrigger).not.toHaveTextContent('MAX_TURNS=200')
+  })
+
   it('should hide a secret MAX_TURNS value in the collapsed summary', async () => {
     const { userEvent } = renderConfiguration({
       variablesSeed: [{ variable: 'MAX_TURNS', value: 'private-turn-limit', isSecret: true }],
