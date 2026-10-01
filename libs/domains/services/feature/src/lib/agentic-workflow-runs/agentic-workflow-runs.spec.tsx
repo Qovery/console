@@ -190,8 +190,8 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('shows the webhook event body in the run details', async () => {
-    const payload = '{"message":"deploy completed"}'
+  it('pretty-prints a valid JSON payload in the run details and keeps the table preview condensed', async () => {
+    const payload = '{"message":"deploy completed","tags":["a","b"],"meta":{"attempt":1}}'
     mockUseRunHistory.mockReturnValue({
       data: [{ ...run, payload }],
       isLoading: false,
@@ -199,10 +199,32 @@ describe('AgenticWorkflowRuns', () => {
     })
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    expect(screen.getByRole('button', { name: 'See the full payload' })).toHaveTextContent(payload)
+    expect(screen.getByRole('button', { name: 'See the full payload' })).toHaveTextContent(`${payload.slice(0, 30)}…`, {
+      normalizeWhitespace: false,
+    })
     await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
-    expect(within(screen.getByRole('dialog')).getByText(payload)).toBeInTheDocument()
+    const payloadElement = within(screen.getByRole('dialog')).getByText(/deploy completed/)
+    expect(payloadElement).toHaveTextContent(JSON.stringify(JSON.parse(payload), null, 2), {
+      normalizeWhitespace: false,
+    })
+    expect(payloadElement).toHaveTextContent('\n  "message": "deploy completed"', { normalizeWhitespace: false })
+  })
+
+  it('shows an invalid JSON payload unchanged in the run details', async () => {
+    const payload = '{"message": "deploy completed",}'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    expect(within(screen.getByRole('dialog')).getByText(/deploy completed/)).toHaveTextContent(payload, {
+      normalizeWhitespace: false,
+    })
   })
 
   it('shows a manual run with an empty payload', async () => {

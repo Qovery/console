@@ -155,6 +155,14 @@ function CopyRunIdButton({
   )
 }
 
+function formatPayload(payload: string) {
+  try {
+    return JSON.stringify(JSON.parse(payload), null, 2)
+  } catch {
+    return payload
+  }
+}
+
 function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -205,7 +213,9 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                   <p className="whitespace-pre-wrap break-words rounded border border-neutral p-4">
                     {run.payload === null || run.payload === undefined
                       ? 'No payload recorded.'
-                      : run.payload || 'Empty payload.'}
+                      : run.payload
+                        ? formatPayload(run.payload)
+                        : 'Empty payload.'}
                   </p>
                 </section>
                 <section className="flex flex-col gap-2">
