@@ -122,11 +122,13 @@ export interface ChargebeeTokenResult {
 export const fieldCardStyles = () => {
   const styles = getComputedStyle(document.documentElement)
   const getColor = (color: string) => Color(styles.getPropertyValue(color)).rgb().string()
+  const isDarkTheme = document.documentElement.matches("[data-theme='dark'], .dark")
+  const getThemeColor = (color: string, invertedColor: string) => getColor(isDarkTheme ? invertedColor : color)
 
   return {
     base: {
-      color: getColor('--neutral-12'),
-      iconColor: getColor('--neutral-10'),
+      color: getThemeColor('--neutral-12', '--neutral-invert-12'),
+      iconColor: getThemeColor('--neutral-10', '--neutral-invert-11'),
       fontWeight: '400',
       fontFamily: 'Roboto, Helvetica, sans-serif',
       fontSize: '14px',
@@ -134,20 +136,20 @@ export const fieldCardStyles = () => {
       letterSpacing: '0.0025em',
       fontSmoothing: 'antialiased',
       '::placeholder': {
-        color: getColor('--neutral-10'),
+        color: getThemeColor('--neutral-10', '--neutral-invert-11'),
       },
       ':focus': {
-        color: getColor('--neutral-12'),
+        color: getThemeColor('--neutral-12', '--neutral-invert-12'),
       },
       ':hover': {
-        color: getColor('--neutral-12'),
+        color: getThemeColor('--neutral-12', '--neutral-invert-12'),
       },
     },
     invalid: {
-      color: getColor('--negative-11'),
-      iconColor: getColor('--negative-11'),
+      color: getThemeColor('--negative-11', '--negative-invert-11'),
+      iconColor: getThemeColor('--negative-11', '--negative-invert-11'),
       ':focus': {
-        color: getColor('--negative-11'),
+        color: getThemeColor('--negative-11', '--negative-invert-11'),
       },
     },
   }

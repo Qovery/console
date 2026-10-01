@@ -1,18 +1,27 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import Sentry from 'devicon/icons/sentry/sentry-original.svg'
 import { APIVariableScopeEnum, AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
+import { IconEnum } from '@qovery/shared/enums'
 import { type VariableData } from '@qovery/shared/interfaces'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
+import { AGENTIC_WORKFLOW_MIN_CPU_MILLI, AGENTIC_WORKFLOW_MIN_RAM_MIB } from './agentic-workflow-resources'
 
 // Fallback documentation shown when the flow is not seeded from a specific
 // template (e.g. "Start from scratch").
 export const AGENT_TASKS_DOC_LINK = 'https://www.qovery.com/docs/configuration/agent-tasks/overview'
 
+export const AGENT_TEMPLATE_CATEGORIES = ['Optimization', 'Incident Analyzer', 'Coding Agent'] as const
+export type AgentTemplateCategory = (typeof AGENT_TEMPLATE_CATEGORIES)[number]
+
 export interface AgenticWorkflowTemplate {
   id: string
+  category: AgentTemplateCategory
   title: string
   description: string
   iconName?: IconName
+  logoIcon?: IconEnum
   logoPath?: string
+  invertLogoInDarkMode?: boolean
   darkLogoPath?: string
   docLink?: string
   requiresQoveryMcp?: boolean
@@ -40,13 +49,17 @@ When receiving a Linear webhook, first check the current issue status and whethe
 
 Understand the acceptance criteria, inspect the relevant repository and existing conventions, implement the smallest complete change, and run focused tests and linting. Open a pull request that links the Linear issue and summarizes the change and verification. Never merge the pull request or deploy without human approval.`
 
-const BUILD_OPTIMIZER_PROMPT = `You are a build and deployment optimizer. Find concrete ways to make builds and deployments faster and cheaper, and propose them.
+const BUILD_OPTIMIZER_PROMPT = `Use the qovery-speedup skill to analyze build/deployment speed for the current service/environment.
 
-1. Inspect the service's build setup: Dockerfile, dependency installation, layer caching, image size, and the build/deploy configuration in Qovery.
-2. Identify optimization levers (e.g. better layer ordering and caching, multi-stage builds, smaller base images, pruning unused dependencies, parallelisable steps).
-3. For each lever, estimate the expected gain (build time, image size, or cost) and the risk.
-4. Open a PR with the proposed changes to the build configuration, and/or update the build configuration in Qovery.
-5. Summarise what you changed, the expected gain, and anything that needs a human decision. Never merge — leave the human as the gate.`
+The skill lives at: https://github.com/Qovery/qovery-skills/tree/main/qovery-speedup
+Start from SKILL.md and follow its reference/ files as needed.
+
+Execution context — read-only + propose, nothing applied live:
+- Do NOT apply any change directly — not even the ones the skill marks as "auto-fix allowed" (health check timing, deployment stage, resource requests, etc.). Treat every finding as a proposal only.
+- Inspect, identify the bottlenecks, and diagnose root causes (including whether a slow build is actually an avoidable image-mirroring miss).
+- For every proposed change to a file (Dockerfile, build config, IaC/Terraform config, etc.), open a PR on the relevant repo: branch, commit, push, PR description with before/after and expected gain. Never merge it yourself.
+- For anything that can only be changed via the Qovery Console/API directly (no corresponding file in a repo), do not call the mutating endpoint — just document it clearly as a recommendation in the summary, with the exact change needed and expected gain.
+- Finish with a summary: what was found, what's proposed in which PR(s), and what needs a human decision (including any config-only change with no PR).`
 
 const webhookAutomation = (id: string) => [
   {
@@ -82,6 +95,7 @@ const secretVariable = (variable: string, description: string): VariableData => 
 export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
   {
     id: 'incident-io-analyzer',
+    category: 'Incident Analyzer',
     title: 'Incident Analyzer with incident.io',
     description: 'Analyze incident.io incidents with deployment, code, logs, and metrics context.',
     logoPath: '/assets/agent-templates/incident-io.svg',
@@ -91,8 +105,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Incident Analyzer with incident.io',
       description: 'Analyze incident.io incidents with deployment, code, logs, and metrics context.',
       agentPrompt: INCIDENT_IO_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       whitelistHosts: 'api.incident.io',
       automations: webhookAutomation('incident-io'),
@@ -101,6 +115,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
   },
   {
     id: 'honeybadger-incident-analyzer',
+    category: 'Incident Analyzer',
     title: 'Incident Analyzer with Honeybadger',
     description: 'Analyze Honeybadger incidents with deployment, code, logs, and metrics context.',
     logoPath: '/assets/agent-templates/honeybadger.svg',
@@ -110,8 +125,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Incident Analyzer with Honeybadger',
       description: 'Analyze Honeybadger incidents with deployment, code, logs, and metrics context.',
       agentPrompt: HONEYBADGER_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       whitelistHosts: 'app.honeybadger.io,api.honeybadger.io',
       automations: webhookAutomation('honeybadger'),
@@ -120,6 +135,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
   },
   {
     id: 'build-optimizer',
+    category: 'Optimization',
     title: 'Build & deployment optimizer',
     description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
     iconName: 'gauge-high',
@@ -129,14 +145,15 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Build & deployment optimizer',
       description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
       agentPrompt: BUILD_OPTIMIZER_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       automations: weeklyScheduleAutomation('build-optimizer'),
-      whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
+      whitelistHosts: 'github.com,api.github.com,raw.githubusercontent.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
   },
   {
     id: 'jira-coding-agent',
+    category: 'Coding Agent',
     title: 'Jira Coding Agent',
     description: 'Turn a Jira issue into an implementation and a ready-to-review pull request.',
     logoPath: '/assets/agent-templates/jira.svg',
@@ -145,8 +162,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Jira Coding Agent',
       description: 'Turn a Jira issue into an implementation and a ready-to-review pull request.',
       agentPrompt: JIRA_CODING_AGENT_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       automations: webhookAutomation('jira'),
       whitelistHosts:
@@ -172,6 +189,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
   },
   {
     id: 'linear-coding-agent',
+    category: 'Coding Agent',
     title: 'Linear Coding Agent',
     description: 'Turn a Linear issue into an implementation and a ready-to-review pull request.',
     logoPath: '/assets/agent-templates/linear-dark.svg',
@@ -181,13 +199,94 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Linear Coding Agent',
       description: 'Turn a Linear issue into an implementation and a ready-to-review pull request.',
       agentPrompt: LINEAR_CODING_AGENT_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       automations: webhookAutomation('linear'),
       whitelistHosts: 'api.linear.app,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
     variables: [secretVariable('LINEAR_API_KEY', 'API key used to read the Linear issue.')],
+  },
+  {
+    id: 'slack-coding-agent',
+    category: 'Coding Agent',
+    title: 'Slack Coding Agent',
+    logoIcon: IconEnum.SLACK,
+    description: 'Turn a Slack request into an implementation and a ready-to-review pull request.',
+    iconName: 'comments',
+    requiresQoveryMcp: true,
+    seed: {
+      name: 'Slack Coding Agent',
+      description: 'Turn a Slack request into an implementation and a ready-to-review pull request.',
+      agentPrompt:
+        'Use the Slack thread supplied by the webhook and SLACK_BOT_TOKEN to retrieve missing context. Check whether this request has already been processed. Inspect the repository, implement the smallest complete change, run focused tests, and open a pull request linking the thread. Never merge or deploy without human approval.',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
+      executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
+      whitelistHosts: 'slack.com,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
+      automations: webhookAutomation('slack-coding-agent'),
+    },
+    variables: [secretVariable('SLACK_BOT_TOKEN', 'Token used to retrieve missing context.')],
+  },
+  {
+    id: 'coding-agent',
+    category: 'Coding Agent',
+    title: 'Coding Agent',
+    description: 'Turn a coding request into an implementation and a ready-to-review pull request.',
+    iconName: 'code',
+    requiresQoveryMcp: true,
+    seed: {
+      name: 'Coding Agent',
+      description: 'Turn a coding request into an implementation and a ready-to-review pull request.',
+      agentPrompt:
+        'Use the coding request supplied by the webhook. Inspect the repository and its conventions, implement the smallest complete change, run focused tests, and open a pull request explaining the change and verification. Never merge or deploy without human approval.',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
+      executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
+      whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
+      automations: webhookAutomation('coding-agent'),
+    },
+  },
+  {
+    id: 'sentry-incident-analyzer',
+    category: 'Incident Analyzer',
+    title: 'Sentry Incident Analyzer',
+    logoPath: Sentry,
+    invertLogoInDarkMode: true,
+    description: 'Investigate Sentry errors with deployment, code, logs, and metrics context.',
+    iconName: 'bug',
+    requiresQoveryMcp: true,
+    seed: {
+      name: 'Sentry Incident Analyzer',
+      description: 'Investigate Sentry errors with deployment, code, logs, and metrics context.',
+      agentPrompt:
+        'Use the Sentry event supplied by the webhook and SENTRY_AUTH_TOKEN to retrieve missing issue and event details from Sentry. Correlate errors with deployments, code, logs and metrics. Report the likely root cause, blast radius, confidence and safest next action. Open a pull request for a small well-understood fix, but never merge it.',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
+      executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
+      whitelistHosts: 'sentry.io,*.sentry.io,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
+      automations: webhookAutomation('sentry-incident-analyzer'),
+    },
+    variables: [secretVariable('SENTRY_AUTH_TOKEN', 'Token used to retrieve missing context.')],
+  },
+  {
+    id: 'incident-analyzer',
+    category: 'Incident Analyzer',
+    title: 'Incident Analyzer',
+    description: 'Investigate incidents with deployment, code, logs, and metrics context.',
+    iconName: 'magnifying-glass',
+    requiresQoveryMcp: true,
+    seed: {
+      name: 'Incident Analyzer',
+      description: 'Investigate incidents with deployment, code, logs, and metrics context.',
+      agentPrompt:
+        'Investigate the incident supplied by the webhook. Correlate it with recent deployments, configuration changes, code, logs, metrics and runbooks. Report the likely root cause, blast radius, confidence, missing evidence and safest next action. Open a pull request for a small well-understood fix, but never merge it.',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
+      executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
+      whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
+      automations: webhookAutomation('incident-analyzer'),
+    },
   },
 ]
 

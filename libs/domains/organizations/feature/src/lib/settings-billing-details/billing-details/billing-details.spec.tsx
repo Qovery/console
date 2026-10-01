@@ -1,16 +1,12 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type BillingInfoRequest } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import BillingDetails, { type BillingDetailsProps } from './billing-details'
 
 const props: BillingDetailsProps = {
   onSubmit: jest.fn(),
   editInProcess: false,
-  countryValues: [
-    { label: 'France', value: 'FR' },
-    { label: 'United States', value: 'US' },
-    { label: 'Japan', value: 'JP' },
-  ],
 }
 
 const defaultValues: BillingInfoRequest = {
@@ -58,33 +54,37 @@ describe('BillingDetails', () => {
     expect(screen.getByTestId('spinner')).toBeInTheDocument()
   })
 
-  it('should show "VAT number" label for EU country', () => {
-    const { getByText, queryByText } = renderWithProviders(
+  it('should require a VAT number for an EU country', () => {
+    renderWithProviders(
       wrapWithReactHookForm<BillingInfoRequest>(<BillingDetails {...props} />, {
         defaultValues: { ...defaultValues, country_code: 'FR' },
       })
     )
-    expect(getByText('VAT number')).toBeInTheDocument()
-    expect(queryByText('VAT number (optional)')).not.toBeInTheDocument()
+    expect(screen.getByText('VAT number')).toBeInTheDocument()
+    expect(screen.queryByText('VAT number (optional)')).not.toBeInTheDocument()
   })
 
-  it('should show "VAT number" label for US', () => {
-    const { getByText, queryByText } = renderWithProviders(
+  it('should make the VAT number optional for a non-EU country', () => {
+    renderWithProviders(
       wrapWithReactHookForm<BillingInfoRequest>(<BillingDetails {...props} />, {
         defaultValues: { ...defaultValues, country_code: 'US' },
       })
     )
-    expect(getByText('VAT number')).toBeInTheDocument()
-    expect(queryByText('EIN (optional)')).not.toBeInTheDocument()
+    expect(screen.getByText('VAT number (optional)')).toBeInTheDocument()
   })
 
-  it('should show "VAT number" label for non-EU, non-US country', () => {
-    const { getByText, queryByText } = renderWithProviders(
+  it('should update the VAT requirement when the country changes', async () => {
+    renderWithProviders(
       wrapWithReactHookForm<BillingInfoRequest>(<BillingDetails {...props} />, {
         defaultValues: { ...defaultValues, country_code: 'JP' },
       })
     )
-    expect(getByText('VAT number')).toBeInTheDocument()
-    expect(queryByText('VAT number (optional)')).not.toBeInTheDocument()
+
+    expect(screen.getByText('VAT number (optional)')).toBeInTheDocument()
+
+    await selectEvent.select(screen.getByLabelText('Country'), 'France')
+
+    expect(screen.getByText('VAT number')).toBeInTheDocument()
+    expect(screen.queryByText('VAT number (optional)')).not.toBeInTheDocument()
   })
 })

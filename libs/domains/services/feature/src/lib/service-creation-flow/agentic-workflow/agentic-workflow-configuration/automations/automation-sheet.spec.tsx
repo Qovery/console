@@ -11,7 +11,7 @@ describe('AutomationSheet', () => {
       <AutomationSheet automation={emptyAutomation} onClose={jest.fn()} onSave={onSave} />
     )
 
-    const save = screen.getByRole('button', { name: 'Apply changes' })
+    const save = screen.getByRole('button', { name: 'Save' })
     expect(save).toBeDisabled()
 
     // The Triggers section "Add" is the first one (Outputs also has an "Add").
@@ -49,9 +49,9 @@ describe('AutomationSheet', () => {
 
     expect(screen.getByRole('heading', { name: 'Configure output' })).toBeInTheDocument()
     expect(screen.queryByText('Triggers')).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled()
 
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
     expect(onSave).toHaveBeenCalledWith(emptyAutomation)
   })
 
@@ -86,11 +86,40 @@ describe('AutomationSheet', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'On a schedule' }))
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(onSave).toHaveBeenCalledWith({
       ...emptyAutomation,
       triggers: [expect.objectContaining({ type: 'schedule' })],
     })
+  })
+
+  it('prevents dismissal while saving', async () => {
+    const onClose = jest.fn()
+    const onSave = jest.fn(() => new Promise<void>(() => undefined))
+    const { userEvent } = renderWithProviders(
+      <AutomationSheet automation={emptyAutomation} section="outputs" onClose={onClose} onSave={onSave} />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    await userEvent.keyboard('{Escape}')
+
+    expect(screen.getByRole('button', { name: 'Close' })).toBeDisabled()
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it('announces save failures', async () => {
+    const { userEvent } = renderWithProviders(
+      <AutomationSheet
+        automation={emptyAutomation}
+        section="outputs"
+        onClose={jest.fn()}
+        onSave={jest.fn().mockRejectedValue(new Error('Unable to save'))}
+      />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to save these settings. Try again.')
   })
 })

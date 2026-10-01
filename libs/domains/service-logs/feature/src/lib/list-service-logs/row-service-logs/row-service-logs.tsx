@@ -1,6 +1,6 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { useCallback, useState } from 'react'
+import { type MouseEvent, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ServiceLogsParams } from '@qovery/shared/router'
@@ -25,11 +25,102 @@ import {
 } from '@qovery/shared/util-js'
 import { mergeServiceLogsParams } from '../../search-service-logs/search-service-logs-utils'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
+import { type HighlightRange, findHighlightRanges, formatObjectLogMessage } from './format-object-log-message'
 import './style.scss'
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 const { Table } = TablePrimitives
+
+const URL_REGEX = /https?:\/\/[^\s"'<>]+/gi
+const TRAILING_URL_PUNCTUATION_REGEX = /[),.;!?]+$/
+
+function renderHighlightedText(
+  text: string,
+  textStart: number,
+  highlightRanges: HighlightRange[],
+  keyRanges: HighlightRange[],
+  key: string,
+  renderAnsi = true
+): ReactNode {
+  const textEnd = textStart + text.length
+  const visibleHighlightRanges = highlightRanges.filter(({ start, end }) => start < textEnd && end > textStart)
+  const visibleKeyRanges = keyRanges.filter(({ start, end }) => start < textEnd && end > textStart)
+  const ranges = [...visibleHighlightRanges, ...visibleKeyRanges]
+
+  if (ranges.length === 0) {
+    if (!renderAnsi) return text
+
+    return (
+      <Ansi key={key} linkify={false}>
+        {text}
+      </Ansi>
+    )
+  }
+
+  const boundaries = new Set([0, text.length])
+  for (const { start, end } of ranges) {
+    boundaries.add(Math.max(start, textStart) - textStart)
+    boundaries.add(Math.min(end, textEnd) - textStart)
+  }
+
+  const sortedBoundaries = Array.from(boundaries).sort((a, b) => a - b)
+  let highlightRangeIndex = 0
+  let keyRangeIndex = 0
+  const parts = sortedBoundaries.slice(0, -1).map((start, index) => {
+    const end = sortedBoundaries[index + 1] ?? start
+    const globalStart = textStart + start
+    const globalEnd = textStart + end
+
+    while ((visibleHighlightRanges[highlightRangeIndex]?.end ?? Infinity) <= globalStart) {
+      highlightRangeIndex++
+    }
+    while ((visibleKeyRanges[keyRangeIndex]?.end ?? Infinity) <= globalStart) {
+      keyRangeIndex++
+    }
+
+    const highlightRange = visibleHighlightRanges[highlightRangeIndex]
+    const keyRange = visibleKeyRanges[keyRangeIndex]
+
+    return {
+      text: text.slice(start, end),
+      highlighted: Boolean(highlightRange && highlightRange.start < globalEnd),
+      isKey: Boolean(keyRange && keyRange.start < globalEnd),
+    }
+  })
+
+  return parts.map((part, index) => {
+    if (part.highlighted) {
+      return (
+        <mark
+          key={`${key}-${index}`}
+          style={{
+            color: '#000',
+            background: 'rgb(255, 153, 0)',
+          }}
+        >
+          {part.text}
+        </mark>
+      )
+    }
+
+    if (part.isKey) {
+      return (
+        <span key={`${key}-${index}`} className="text-accent1">
+          {part.text}
+        </span>
+      )
+    }
+
+    if (!renderAnsi) return part.text
+
+    return (
+      <Ansi key={`${key}-${index}`} linkify={false}>
+        {part.text}
+      </Ansi>
+    )
+  })
+}
 
 export interface RowServiceLogsProps {
   log: NormalizedServiceLog
@@ -72,52 +163,93 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
     [navigate, organizationId, projectId, environmentId, serviceId, queryParams]
   )
 
-  const toggleExpanded = () => {
+  const toggleExpanded = (e?: MouseEvent<HTMLElement>) => {
+    // Keep URLs inside log messages clickable: clicking a link must open it, not toggle the row
+    if (e?.target instanceof Element && e.target.closest('a')) return
     if (window.getSelection()?.type === 'Range') return
     if (!isNginx && !isEnvoy) setIsExpanded(!isExpanded)
   }
 
-  const renderHighlightedMessage = (message: string, searchTerm: string | null | undefined) => {
-    if (!searchTerm || !message.includes(searchTerm)) {
-      return (
-        <span
-          className="relative w-full whitespace-pre-wrap break-all pr-6 text-neutral"
-          {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}
+  const renderHighlightedMessage = (message: string, highlightRanges: HighlightRange[]) => {
+    const keyRanges = formattedLogMessage.keyRanges ?? []
+    const content: ReactNode[] = []
+    let currentIndex = 0
+
+    for (const match of message.matchAll(URL_REGEX)) {
+      const matchedUrl = match[0]
+      const url = matchedUrl.replace(TRAILING_URL_PUNCTUATION_REGEX, '')
+      const startIndex = match.index ?? 0
+
+      if (startIndex > currentIndex) {
+        content.push(
+          renderHighlightedText(
+            message.slice(currentIndex, startIndex),
+            currentIndex,
+            highlightRanges,
+            keyRanges,
+            `text-${currentIndex}`
+          )
+        )
+      }
+
+      content.push(
+        <a
+          key={`url-${startIndex}`}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={url}
+          className="underline"
         >
-          <Ansi>{message}</Ansi>
-        </span>
+          {renderHighlightedText(url, startIndex, highlightRanges, keyRanges, `url-text-${startIndex}`, false)}
+        </a>
+      )
+
+      const trailingPunctuation = matchedUrl.slice(url.length)
+      if (trailingPunctuation) {
+        content.push(
+          renderHighlightedText(
+            trailingPunctuation,
+            startIndex + url.length,
+            highlightRanges,
+            keyRanges,
+            `trailing-punctuation-${startIndex + url.length}`
+          )
+        )
+      }
+
+      currentIndex = startIndex + matchedUrl.length
+    }
+
+    if (currentIndex < message.length) {
+      content.push(
+        renderHighlightedText(
+          message.slice(currentIndex),
+          currentIndex,
+          highlightRanges,
+          keyRanges,
+          `text-${currentIndex}`
+        )
       )
     }
 
-    const parts = message.split(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'))
-
     return (
       <span
-        className="relative w-full whitespace-pre-wrap break-all pr-6 text-neutral"
+        className="code-ansi relative w-full whitespace-pre-wrap break-all pr-6 text-neutral"
         {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}
       >
-        {parts.map((part, index) => {
-          if (part.toLowerCase() === searchTerm.toLowerCase()) {
-            return (
-              <mark
-                key={index}
-                style={{
-                  color: '#000',
-                  background: 'rgb(255, 153, 0)',
-                }}
-              >
-                {part}
-              </mark>
-            )
-          }
-          return <Ansi key={index}>{part}</Ansi>
-        })}
+        {content}
       </span>
     )
   }
 
   const levelLowercase = log.level?.toLowerCase()
   const isErrorOrCritical = levelLowercase === 'error' || levelLowercase === 'critical'
+  const formattedLogMessage = useMemo(() => formatObjectLogMessage(log.message), [log.message])
+  const highlightRanges = useMemo(
+    () => findHighlightRanges(log.message, formattedLogMessage, highlightedText),
+    [formattedLogMessage, highlightedText, log.message]
+  )
 
   return (
     <>
@@ -209,7 +341,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           </Table.Cell>
         )}
         <Table.Cell className="h-min min-h-7 w-full pb-1 pl-1.5 pr-4 pt-[0.4rem] align-top font-code font-bold">
-          {renderHighlightedMessage(log.message, highlightedText)}
+          {renderHighlightedMessage(formattedLogMessage.message, highlightRanges)}
         </Table.Cell>
       </Table.Row>
       {isExpanded && (

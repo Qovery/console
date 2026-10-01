@@ -5,6 +5,7 @@ import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/uti
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
 import { type AgenticWorkflowTemplate } from '../agentic-workflow-templates'
 import {
+  AgenticWorkflowCodeEditorField,
   AgenticWorkflowConfiguration,
   areVariablesValid,
   getInvalidVariableField,
@@ -97,6 +98,12 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
     mutateAsync: mockCreateQoveryMcpServer,
   }),
   useLlmProviders: () => ({ data: mockLlmProviders, isLoading: false }),
+  useLlmProviderModels: () => ({
+    data: [{ id: 'claude-opus', display_name: 'Claude Opus', created_at: null }],
+    isError: false,
+    isLoading: false,
+    refetch: jest.fn(),
+  }),
   useMcpServers: () => ({
     data: mockMcpServers,
     isError: mockMcpServersError,
@@ -170,6 +177,25 @@ const validSeed: Partial<AgenticWorkflowFormData> = {
   llmProviderId: 'provider-1',
   automations: [{ id: 'automation-1', triggers: [{ id: 'webhook-1', type: 'webhook' }], outputs: [] }],
 }
+
+describe('AgenticWorkflowCodeEditorField', () => {
+  it('preserves line breaks in JSON placeholders', () => {
+    const placeholder = '{\n  "model": "eu.anthropic.claude-opus-5"\n}'
+
+    const { container } = renderWithProviders(
+      <AgenticWorkflowCodeEditorField
+        label="Cloud settings JSON"
+        language="json"
+        name="modelSettingsJson"
+        value=""
+        placeholder={placeholder}
+        onChange={jest.fn()}
+      />
+    )
+
+    expect(container.querySelector('.whitespace-pre')).toHaveTextContent('"model": "eu.anthropic.claude-opus-5"')
+  })
+})
 
 describe('AgenticWorkflowConfiguration validation', () => {
   beforeEach(() => {
@@ -331,8 +357,14 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Select stored token' })).toBeInTheDocument()
     expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
-    expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
+    expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
+    expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save provider' })).toBeDisabled()
+    await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
+    expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    const saveProviderButton = screen.getByRole('button', { name: 'Save provider' })
+    await waitFor(() => expect(saveProviderButton).toBeEnabled())
+    await userEvent.click(saveProviderButton)
 
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
     expect(screen.getByRole('heading', { name: 'Configure triggers' })).toBeInTheDocument()
@@ -342,7 +374,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Add' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(screen.getByRole('button', { name: 'Webhook' })).toBeInTheDocument()
 
@@ -681,9 +713,11 @@ describe('AgenticWorkflowConfiguration', () => {
 
     expect(createButton).toBeEnabled()
     expect(screen.queryByRole('button', { name: 'Create and deploy' })).not.toBeInTheDocument()
+    expect(screen.getByText('Provider required')).toHaveClass('text-neutral-subtle')
 
     await userEvent.click(createButton)
     expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
+    expect(screen.getByText('Provider required')).toHaveClass('text-negative')
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
     await userEvent.type(screen.getByRole('textbox', { name: /Instructions/ }), 'Review incoming payloads.')
@@ -693,12 +727,41 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     expect(createButton).toBeEnabled()
+    expect(screen.queryByText('Provider required')).not.toBeInTheDocument()
 
     await userEvent.click(createButton)
 
     expect(screen.getByText('Trigger required')).toHaveClass('text-negative')
     expect(screen.queryByRole('heading', { name: 'Configure triggers' })).not.toBeInTheDocument()
     expect(screen.queryByText('At least one trigger is required.')).not.toBeInTheDocument()
+    expect(mockCreateService).not.toHaveBeenCalled()
+  })
+
+  it('should prevent resources below the Agent Task minimums', async () => {
+    const { userEvent } = renderConfiguration({ seed: validSeed })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Resources' }))
+    const cpuInput = screen.getByRole('spinbutton', { name: 'CPU (mCPU)' })
+    const memoryInput = screen.getByRole('spinbutton', { name: 'Memory (MiB)' })
+    await userEvent.clear(cpuInput)
+    await userEvent.type(cpuInput, '999')
+    await userEvent.clear(memoryInput)
+    await userEvent.type(memoryInput, '2045')
+
+    expect(screen.getByText('CPU must be at least 1000 mCPU.')).toBeInTheDocument()
+    expect(screen.getByText('Memory must be at least 2048 MiB.')).toBeInTheDocument()
+
+    await userEvent.clear(cpuInput)
+    await userEvent.clear(memoryInput)
+
+    expect(screen.getByText('CPU is required.')).toBeInTheDocument()
+    expect(screen.getByText('Memory is required.')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    const resourcesTrigger = screen.getByRole('button', { name: /Resources/ })
+    expect(resourcesTrigger).toHaveAttribute('data-state', 'open')
+    expect(resourcesTrigger).toHaveClass('bg-surface-negative-subtle')
     expect(mockCreateService).not.toHaveBeenCalled()
   })
 
@@ -786,7 +849,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
     await userEvent.click(screen.getByRole('button', { name: 'Add' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
     await waitFor(() => expect(mockCreateService).toHaveBeenCalledTimes(1))
@@ -796,6 +859,11 @@ describe('AgenticWorkflowConfiguration', () => {
       })
     )
     expect(posthog.capture).toHaveBeenCalledWith('agent-task-form-submitted', { success: true })
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
+      })
+    )
   })
 
   it('should track a failed agent task creation', async () => {

@@ -1,5 +1,6 @@
 import {
   type ChangeEventHandler,
+  type FocusEventHandler,
   type ReactNode,
   forwardRef,
   useEffect,
@@ -17,6 +18,7 @@ export interface InputTextProps {
   type?: 'text' | 'number' | 'password' | 'email' | 'date' | 'datetime' | 'time'
   className?: string
   onChange?: ChangeEventHandler<HTMLInputElement>
+  onBlur?: FocusEventHandler<HTMLInputElement>
   hint?: ReactNode
   error?: string
   disabled?: boolean
@@ -34,6 +36,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
     label,
     value = '',
     onChange,
+    onBlur,
     type = 'text',
     hint,
     error,
@@ -141,7 +144,10 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
                 setCurrentValue(e.currentTarget.value)
               }}
               onFocus={() => setFocused(true)}
-              onBlur={() => setFocused(false)}
+              onBlur={(event) => {
+                setFocused(false)
+                onBlur?.(event)
+              }}
             />
             {isInputDate && (
               <div className="absolute right-4 top-1/2 -translate-y-1/2">

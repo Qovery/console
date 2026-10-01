@@ -17,6 +17,8 @@ const mockDeleteCreditCard = jest.fn().mockResolvedValue(undefined)
 const mockEditBillingInfo = jest.fn().mockResolvedValue(undefined)
 const mockAddCreditCard = jest.fn().mockResolvedValue(undefined)
 const mockShowPylonForm = jest.fn()
+const mockTokenizeCard = jest.fn()
+const mockToastError = jest.fn()
 
 const defaultBillingInfo: BillingInfoRequest = {
   first_name: 'John',
@@ -53,6 +55,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
+  toastError: (...args: unknown[]) => mockToastError(...args),
   useModalConfirmation: () => ({
     openModalConfirmation: mockOpenModalConfirmation,
   }),
@@ -63,16 +66,17 @@ jest.mock('@chargebee/chargebee-js-react-wrapper', () => {
 
   return {
     Provider: ({ children }: { children: ReactNode }) => children,
-    CardComponent: React.forwardRef<HTMLDivElement, { onReady?: () => void; children: ReactNode }>(
-      ({ onReady, children }, ref) => {
-        setTimeout(() => onReady?.(), 0)
-        return (
-          <div ref={ref} data-testid="chargebee-card-component">
-            {children}
-          </div>
-        )
-      }
-    ),
+    CardComponent: React.forwardRef<
+      HTMLDivElement,
+      { onChange?: (event: { complete: boolean }) => void; onReady?: () => void; children: ReactNode }
+    >(({ onChange, onReady, children }, ref) => {
+      React.useImperativeHandle(ref, () => ({ tokenize: mockTokenizeCard }))
+      setTimeout(() => {
+        onReady?.()
+        onChange?.({ complete: true })
+      }, 0)
+      return <div data-testid="chargebee-card-component">{children}</div>
+    }),
     CardNumber: () => <div data-testid="card-number-field" />,
     CardExpiry: () => <div data-testid="card-expiry-field" />,
     CardCVV: () => <div data-testid="card-cvv-field" />,
@@ -90,15 +94,22 @@ describe('SettingsBillingDetails', () => {
     useBillingInfoMock.mockReturnValue({ data: defaultBillingInfo })
     useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 0 } })
     useDeleteCreditCardMock.mockReturnValue({ mutateAsync: mockDeleteCreditCard })
+    mockEditBillingInfo.mockResolvedValue(defaultBillingInfo)
     useEditBillingInfoMock.mockReturnValue({ mutateAsync: mockEditBillingInfo })
     useAddCreditCardMock.mockReturnValue({ mutateAsync: mockAddCreditCard })
     fieldCardStylesSpy.mockReturnValue({})
     loadChargebeeSpy.mockResolvedValue(mockChargebeeInstance as CbInstance)
+    mockTokenizeCard.mockResolvedValue({
+      token: 'card-token',
+      card: { last4: '4242', expiry_year: 2030, expiry_month: 12 },
+    })
   })
 
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<SettingsBillingDetails />)
     expect(baseElement).toBeTruthy()
+    expect(useAddCreditCardMock).toHaveBeenCalledWith({ notifyOnError: false })
+    expect(useDeleteCreditCardMock).toHaveBeenCalledWith({ notifyOnError: false })
   })
 
   it('should have 3 credit card rows', () => {
@@ -151,6 +162,92 @@ describe('SettingsBillingDetails', () => {
     })
 
     expect(await screen.findByTestId('chargebee-card-component')).toBeInTheDocument()
+  })
+
+  it('should require billing details before adding a card', async () => {
+    useCreditCardsMock.mockReturnValue({ data: [] })
+    useBillingInfoMock.mockReturnValue({ data: { ...defaultBillingInfo, address: '   ' } })
+    const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+    await userEvent.click(screen.getByTestId('add-new-card-button'))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Add card' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Add card' }))
+    expect(await screen.findByText('Please provide an address')).toBeInTheDocument()
+    expect(mockEditBillingInfo).not.toHaveBeenCalled()
+    expect(mockAddCreditCard).not.toHaveBeenCalled()
+  })
+
+  it('should highlight every missing required billing field on save', async () => {
+    useBillingInfoMock.mockReturnValue({
+      data: {
+        ...defaultBillingInfo,
+        first_name: null,
+        last_name: null,
+        email: null,
+        address: null,
+        city: null,
+        zip: null,
+      },
+    })
+    const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(await screen.findByText('Please provide a first name')).toBeInTheDocument()
+    expect(screen.getByText('Please provide a last name')).toBeInTheDocument()
+    expect(screen.getByText('Please provide a billing email')).toBeInTheDocument()
+    expect(screen.getByText('Please provide an address')).toBeInTheDocument()
+    expect(screen.getByText('Please provide a city')).toBeInTheDocument()
+    expect(screen.getByText('Please provide a postal code')).toBeInTheDocument()
+    expect(
+      screen.getAllByLabelText('input-container').filter((field) => field.classList.contains('input--error'))
+    ).toHaveLength(6)
+    expect(mockEditBillingInfo).not.toHaveBeenCalled()
+  })
+
+  it('should save billing details before adding a card', async () => {
+    useCreditCardsMock.mockReturnValue({ data: [] })
+    useBillingInfoMock.mockReturnValue({
+      data: {
+        ...defaultBillingInfo,
+        address: '  1 rue de la paix  ',
+        zip: '  75000  ',
+        vat_number: '  FR123456789  ',
+      },
+    })
+    const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+    await userEvent.click(screen.getByTestId('add-new-card-button'))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Add card' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Add card' }))
+
+    await waitFor(() => expect(mockAddCreditCard).toHaveBeenCalledTimes(1))
+    expect(mockEditBillingInfo).toHaveBeenCalledWith({
+      organizationId: 'org-1',
+      billingInfoRequest: defaultBillingInfo,
+    })
+    expect(mockEditBillingInfo.mock.invocationCallOrder[0]).toBeLessThan(mockAddCreditCard.mock.invocationCallOrder[0])
+  })
+
+  it('should show a rejected VAT number on the field without duplicating the error toast', async () => {
+    useCreditCardsMock.mockReturnValue({ data: [] })
+    mockEditBillingInfo.mockRejectedValueOnce({
+      message: 'vat_number : You need to enter a valid VAT number.',
+    })
+    const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+    await userEvent.click(screen.getByTestId('add-new-card-button'))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Add card' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Add card' }))
+
+    expect(await screen.findByText('You need to enter a valid VAT number.')).toBeInTheDocument()
+    expect(mockToastError).toHaveBeenCalledTimes(1)
+    expect(mockToastError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'vat_number : You need to enter a valid VAT number.' }),
+      'Unable to add card',
+      'You need to enter a valid VAT number.'
+    )
+    expect(mockAddCreditCard).not.toHaveBeenCalled()
   })
 
   it('should initialize Chargebee when editing a card', async () => {

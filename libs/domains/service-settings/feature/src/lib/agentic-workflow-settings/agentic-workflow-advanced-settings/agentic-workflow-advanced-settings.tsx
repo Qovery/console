@@ -1,25 +1,29 @@
 import { useState } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
 import { Button, CodeEditor, Heading, Icon, Modal, Section } from '@qovery/shared/ui'
-import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
+import { type AgenticWorkflowSettingsFormValues, type SaveAgenticWorkflowSettings } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
 function CodeConfigurationModal({
   description,
   language,
   onSave,
+  setModalDismissible,
   setOpen,
   title,
   value,
 }: {
   description: string
   language: string
-  onSave: (value: string) => void
+  onSave: (value: string) => Promise<void>
+  setModalDismissible?: (dismissible: boolean) => void
   setOpen: (open: boolean) => void
   title: string
   value: string
 }) {
   const [draft, setDraft] = useState(value)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState(false)
   return (
     <Section className="gap-5 p-5">
       <div className="flex flex-col gap-1 pr-8">
@@ -37,27 +41,53 @@ function CodeConfigurationModal({
           options={{ scrollBeyondLastLine: false, wordWrap: 'on' }}
         />
       </div>
+      {saveError ? <p className="text-sm text-negative">Unable to save the Dockerfile fragment. Try again.</p> : null}
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="plain" color="neutral" onClick={() => setOpen(false)}>
+        <Button type="button" variant="plain" color="neutral" disabled={isSaving} onClick={() => setOpen(false)}>
           Cancel
         </Button>
         <Button
           type="button"
-          onClick={() => {
-            onSave(draft)
-            setOpen(false)
+          loading={isSaving}
+          onClick={async () => {
+            setSaveError(false)
+            setIsSaving(true)
+            setModalDismissible?.(false)
+            try {
+              await onSave(draft)
+              setOpen(false)
+            } catch {
+              setSaveError(true)
+            } finally {
+              setIsSaving(false)
+              setModalDismissible?.(true)
+            }
           }}
         >
-          Apply changes
+          Save
         </Button>
       </div>
     </Section>
   )
 }
 
-export function AgenticWorkflowAdvancedSettings({ form }: { form: UseFormReturn<AgenticWorkflowSettingsFormValues> }) {
+export function AgenticWorkflowAdvancedSettings({
+  form,
+  isSaving,
+  onSave,
+}: {
+  form: UseFormReturn<AgenticWorkflowSettingsFormValues>
+  isSaving?: boolean
+  onSave?: SaveAgenticWorkflowSettings
+}) {
   const [codeModalOpen, setCodeModalOpen] = useState(false)
+  const [deleteError, setDeleteError] = useState(false)
   const dockerFragment = form.watch('dockerFragment')
+  const saveSettings: SaveAgenticWorkflowSettings =
+    onSave ??
+    (async (values) => {
+      form.reset({ ...form.getValues(), ...values })
+    })
 
   return (
     <>
@@ -79,13 +109,27 @@ export function AgenticWorkflowAdvancedSettings({ form }: { form: UseFormReturn<
               color="neutral"
               size="xs"
               iconOnly
+              loading={isSaving}
+              disabled={isSaving}
               aria-label="Delete Dockerfile fragment"
-              onClick={() => form.setValue('dockerFragment', '', { shouldDirty: true })}
+              onClick={async () => {
+                setDeleteError(false)
+                try {
+                  await saveSettings({ dockerFragment: '' })
+                } catch {
+                  setDeleteError(true)
+                }
+              }}
             >
               <Icon iconName="trash-can" iconStyle="regular" />
             </Button>
           ) : null}
         </div>
+        {deleteError ? (
+          <p role="alert" className="text-sm text-negative">
+            Unable to delete the Dockerfile fragment. Try again.
+          </p>
+        ) : null}
       </AgenticWorkflowSettingsCard>
       {codeModalOpen ? (
         <Modal externalOpen setExternalOpen={setCodeModalOpen} width={720} className="max-w-[calc(100vw-2rem)]">
@@ -95,7 +139,7 @@ export function AgenticWorkflowAdvancedSettings({ form }: { form: UseFormReturn<
             language="dockerfile"
             value={dockerFragment}
             setOpen={setCodeModalOpen}
-            onSave={(value) => form.setValue('dockerFragment', value, { shouldDirty: true })}
+            onSave={(value) => saveSettings({ dockerFragment: value })}
           />
         </Modal>
       ) : null}

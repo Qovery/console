@@ -117,6 +117,7 @@ describe('AgenticWorkflowServiceActions', () => {
     renderWithProviders(<AgenticWorkflowServiceActions environment={environment} service={service} variant="header" />)
 
     expect(screen.getByRole('button', { name: 'Trigger' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Other actions for Review pull requests' })).toBeInTheDocument()
   })
 
   it('disables the trigger button while a request is pending', () => {
@@ -146,7 +147,7 @@ describe('AgenticWorkflowServiceActions', () => {
     expect(mockCopyToClipboard).toHaveBeenCalledWith('cluster-1')
   })
 
-  it('deletes the workflow and redirects to the environment overview', async () => {
+  it('deletes the workflow and redirects to environment Automation', async () => {
     const { userEvent } = renderWithProviders(
       <AgenticWorkflowServiceActions environment={environment} service={service} />
     )
@@ -165,7 +166,7 @@ describe('AgenticWorkflowServiceActions', () => {
       serviceType: 'AGENTIC_WORKFLOW',
     })
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
       params: {
         organizationId: 'organization-1',
         projectId: 'project-1',

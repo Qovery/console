@@ -65,6 +65,7 @@ export function useServices({ environmentId, suspense = false }: UseServicesProp
     JSON.stringify([
       ...runningStatusResults.map(({ data }) => data?.state),
       ...deploymentStatusResults.map(({ data }) => data?.state),
+      ...deploymentStatusResults.map(({ data }) => data?.last_deployment_date),
     ]),
   ])
 

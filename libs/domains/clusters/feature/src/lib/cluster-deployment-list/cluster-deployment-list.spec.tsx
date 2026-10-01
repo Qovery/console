@@ -19,6 +19,7 @@ const defaultDeploymentHistory: ClusterDeploymentHistory[] = [
     status: 'DEPLOYED',
     action_status: 'SUCCESS',
     trigger_action: 'DEPLOY',
+    is_dry_run: false,
     reason: 'MAINTENANCE',
     total_duration: 'PT16.503S',
   },
@@ -57,12 +58,26 @@ describe('ClusterDeploymentList', () => {
     expect(screen.getByText('exec-123')).toBeInTheDocument()
     expect(screen.getByText('John Doe')).toBeInTheDocument()
     expect(screen.getByText('Console')).toBeInTheDocument()
+    expect(screen.queryByText('Dry run')).not.toBeInTheDocument()
   })
 
   it('should render a maintenance badge when reason is MAINTENANCE', () => {
     renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
 
     expect(screen.getByText('Maintenance')).toBeInTheDocument()
+  })
+
+  it('should render a dry run badge when the deployment is a dry run', () => {
+    mockDeploymentHistory = [
+      {
+        ...defaultDeploymentHistory[0],
+        is_dry_run: true,
+      },
+    ]
+
+    renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
+
+    expect(screen.getByText('Dry run')).toBeInTheDocument()
   })
 
   it('should display trigger filters in title case', async () => {

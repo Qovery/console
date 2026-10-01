@@ -6,12 +6,14 @@ export function QoveryServiceContextModal({
   isLoading,
   onSave,
   services,
+  setModalDismissible,
   setOpen,
   value,
 }: {
   isLoading: boolean
   onSave: (services: AgenticWorkflowContextService[]) => Promise<void> | void
   services: AgenticWorkflowContextService[]
+  setModalDismissible?: (dismissible: boolean) => void
   setOpen?: (open: boolean) => void
   value: AgenticWorkflowContextService[]
 }) {
@@ -75,7 +77,11 @@ export function QoveryServiceContextModal({
           )}
         </div>
       </div>
-      {saveError ? <p className="text-sm text-negative">{saveError}</p> : null}
+      {saveError ? (
+        <p role="alert" className="text-sm text-negative">
+          {saveError}
+        </p>
+      ) : null}
       <div className="flex justify-end gap-2">
         <div className="flex gap-2">
           <Button
@@ -96,6 +102,7 @@ export function QoveryServiceContextModal({
             onClick={async () => {
               setSaveError(undefined)
               setIsSaving(true)
+              setModalDismissible?.(false)
               try {
                 await onSave(services.filter(({ id }) => selectedIds.includes(id)))
                 setOpen?.(false)
@@ -103,6 +110,7 @@ export function QoveryServiceContextModal({
                 setSaveError('Unable to add the selected services. Try again.')
               } finally {
                 setIsSaving(false)
+                setModalDismissible?.(true)
               }
             }}
           >

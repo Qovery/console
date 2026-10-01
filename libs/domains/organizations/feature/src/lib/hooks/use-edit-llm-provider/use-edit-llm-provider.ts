@@ -6,8 +6,9 @@ export function useEditLlmProvider() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.editLlmProvider, {
-    onSuccess(_, { organizationId }) {
+    onSuccess(_, { organizationId, llmProviderId }) {
       queryClient.invalidateQueries({ queryKey: queries.organizations.llmProviders({ organizationId }).queryKey })
+      queryClient.invalidateQueries({ queryKey: queries.organizations.llmProviderModels({ llmProviderId }).queryKey })
     },
     meta: {
       notifyOnSuccess: { title: 'Your token has been updated' },

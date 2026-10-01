@@ -98,6 +98,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
     toSettingsPath(pathSettings, '/deployment-restrictions'),
     'cart-flatbed'
   )
+  const buildSettingsLink = linkItem('Build settings', toSettingsPath(pathSettings, '/build-settings'), 'wrench')
   const advancedSettingsLink = linkItem(
     'Advanced settings',
     toSettingsPath(pathSettings, '/advanced-settings'),
@@ -150,6 +151,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
             portLink,
             healthchecksLink,
             deploymentRestrictionsLink,
+            buildSettingsLink,
             advancedSettingsLink,
             dangerZoneLink,
           ])
@@ -185,6 +187,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
                   terraformArgumentsLink,
                   resourcesLink,
                   deploymentRestrictionsLink,
+                  buildSettingsLink,
                   advancedSettingsLink,
                   dangerZoneLink,
                 ]
@@ -195,6 +198,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
             configureJobLink,
             resourcesLink,
             deploymentRestrictionsLink,
+            buildSettingsLink,
             advancedSettingsLink,
             dangerZoneLink,
           ])

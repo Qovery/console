@@ -1,4 +1,6 @@
 import { LlmProviderScope, LlmProviderType } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useCreateLlmProviderHook from '../hooks/use-create-llm-provider/use-create-llm-provider'
 import * as useEditLlmProviderHook from '../hooks/use-edit-llm-provider/use-edit-llm-provider'
@@ -6,6 +8,7 @@ import { LlmProviderCreateEditModal } from './llm-provider-create-edit-modal'
 
 const useCreateLlmProviderMock = jest.spyOn(useCreateLlmProviderHook, 'useCreateLlmProvider') as jest.Mock
 const useEditLlmProviderMock = jest.spyOn(useEditLlmProviderHook, 'useEditLlmProvider') as jest.Mock
+const useCloudProvidersMock = jest.spyOn(cloudProvidersDomain, 'useCloudProviders') as jest.Mock
 const createLlmProvider = jest.fn()
 const editLlmProvider = jest.fn()
 
@@ -22,6 +25,25 @@ describe('LlmProviderCreateEditModal', () => {
     editLlmProvider.mockResolvedValue({ id: 'provider-1' })
     useCreateLlmProviderMock.mockReturnValue({ mutateAsync: createLlmProvider, isLoading: false })
     useEditLlmProviderMock.mockReturnValue({ mutateAsync: editLlmProvider, isLoading: false })
+    useCloudProvidersMock.mockReturnValue({
+      data: [
+        {
+          short_name: 'AWS',
+          regions: [
+            { name: 'eu-west-1', city: 'Dublin', country_code: 'IE' },
+            { name: 'eu-west-2', city: 'London', country_code: 'GB' },
+            { name: 'us-east-2', city: 'Ohio', country_code: 'US' },
+            { name: 'af-south-1', city: 'Cape Town', country_code: 'ZA' },
+            { name: 'ap-east-1', city: 'Hong Kong', country_code: 'HK' },
+            { name: 'ap-south-1', city: 'Mumbai', country_code: 'IN' },
+            { name: 'ap-northeast-1', city: 'Tokyo', country_code: 'JP' },
+          ],
+        },
+        { short_name: 'GCP', regions: [{ name: 'europe-west1', city: 'Belgium' }] },
+      ],
+      isError: false,
+      isLoading: false,
+    })
   })
 
   afterEach(() => {
@@ -108,11 +130,122 @@ describe('LlmProviderCreateEditModal', () => {
     expect(screen.getByText('Anthropic Claude')).toBeInTheDocument()
   })
 
-  it('should let the user pick Amazon Bedrock', async () => {
+  it('should create an Amazon Bedrock token with its region', async () => {
     const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
 
-    await userEvent.click(screen.getByLabelText('Provider'))
+    await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
+    expect(document.querySelector('[data-testid="selected-icon"] img[src*="/ie.svg"]')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Name'), 'EU Bedrock')
+    await userEvent.type(screen.getByLabelText('Token'), 'aws-credentials')
+    await selectEvent.select(screen.getByLabelText('AWS region'), 'London (eu-west-2)', {
+      container: document.body,
+    })
+    await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
 
-    expect(await screen.findByText('Amazon Bedrock')).toBeInTheDocument()
+    await waitFor(() =>
+      expect(createLlmProvider).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        llmProviderRequest: {
+          name: 'EU Bedrock',
+          description: undefined,
+          type: LlmProviderType.BEDROCK,
+          credential: 'aws-credentials',
+          region: 'eu-west-2',
+          scope: LlmProviderScope.USER,
+        },
+      })
+    )
+  })
+
+  it('shows the country flag for every AWS region option', async () => {
+    renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+    await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
+    await selectEvent.openMenu(screen.getByLabelText('AWS region'))
+
+    for (const code of ['ie', 'gb', 'us', 'za', 'hk', 'in', 'jp']) {
+      expect(document.querySelector(`img[src$="/${code}.svg"]`)).toBeInTheDocument()
+    }
+  })
+
+  it('should select eu-west-1 as the default AWS region', async () => {
+    const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+    await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
+    expect(screen.getByText('Dublin (eu-west-1)')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Name'), 'Default Bedrock')
+    await userEvent.type(screen.getByLabelText('Token'), 'aws-credentials')
+    await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
+
+    await waitFor(() =>
+      expect(createLlmProvider).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        llmProviderRequest: {
+          name: 'Default Bedrock',
+          description: undefined,
+          type: LlmProviderType.BEDROCK,
+          credential: 'aws-credentials',
+          region: 'eu-west-1',
+          scope: LlmProviderScope.USER,
+        },
+      })
+    )
+  })
+
+  it('keeps an existing Bedrock region visible when it is absent from the cluster region list', () => {
+    renderWithProviders(
+      <LlmProviderCreateEditModal
+        onClose={jest.fn()}
+        llmProvider={{
+          id: 'provider-1',
+          name: 'Bedrock',
+          type: LlmProviderType.BEDROCK,
+          region: 'us-east-1',
+          has_credential: true,
+          scope: LlmProviderScope.USER,
+          created_at: '2026-09-15T10:00:00Z',
+          updated_at: '2026-09-15T10:00:00Z',
+        }}
+      />
+    )
+
+    expect(screen.getByText('us-east-1')).toBeInTheDocument()
+  })
+
+  it('preserves an empty region when saving an existing Bedrock token', async () => {
+    const { userEvent } = renderWithProviders(
+      <LlmProviderCreateEditModal
+        onClose={jest.fn()}
+        llmProvider={{
+          id: 'provider-1',
+          name: 'Bedrock',
+          type: LlmProviderType.BEDROCK,
+          region: null,
+          has_credential: true,
+          scope: LlmProviderScope.USER,
+          created_at: '2026-09-15T10:00:00Z',
+          updated_at: '2026-09-15T10:00:00Z',
+        }}
+      />
+    )
+
+    expect(screen.getByLabelText('AWS region')).toHaveValue('')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+
+    await waitFor(() =>
+      expect(editLlmProvider).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        llmProviderId: 'provider-1',
+        llmProviderRequest: {
+          name: 'Bedrock',
+          description: undefined,
+          type: LlmProviderType.BEDROCK,
+          credential: undefined,
+          region: null,
+          scope: undefined,
+        },
+      })
+    )
   })
 })

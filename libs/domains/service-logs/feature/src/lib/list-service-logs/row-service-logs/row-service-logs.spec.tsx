@@ -67,6 +67,70 @@ describe('RowServiceLogs', () => {
     expect(screen.getByText('Test log message')).toBeInTheDocument()
   })
 
+  it('renders JSON object messages with two-space indentation', () => {
+    const message = '{"message":"Started","context":{"attempt":2},"ports":[80,443]}'
+    const formattedMessage = `{
+  "message": "Started",
+  "context": {
+    "attempt": 2
+  },
+  "ports": [
+    80,
+    443
+  ]
+}`
+
+    const { container } = renderRowServiceLogs({ ...mockLog, message })
+
+    expect(container.querySelector('[data-log-message="true"]')?.textContent).toBe(formattedMessage)
+  })
+
+  it('renders JSON object keys with the accent color', () => {
+    const { container } = renderRowServiceLogs({
+      ...mockLog,
+      message: '{"message":"Started","context":{"attempt":2}}',
+    })
+
+    expect(Array.from(container.querySelectorAll('.text-accent1')).map((element) => element.textContent)).toEqual([
+      '"message"',
+      '"context"',
+      '"attempt"',
+    ])
+    expect(container.querySelector('[data-log-message="true"]')).toHaveTextContent('"message": "Started"')
+  })
+
+  it('highlights search text in a formatted JSON object message', () => {
+    renderRowServiceLogs({ ...mockLog, message: '{"message":"Started"}' }, false, 'Started')
+
+    expect(screen.getByText('Started').closest('mark')).toBeInTheDocument()
+    expect(screen.getByText('Started').closest('[data-log-message="true"]')).toHaveTextContent(
+      '{ "message": "Started" }'
+    )
+  })
+
+  it('highlights a compact raw JSON match after formatting', () => {
+    const { container } = renderRowServiceLogs(
+      { ...mockLog, message: '{"message":"Started","attempt":2}' },
+      false,
+      '"message":"Started"'
+    )
+
+    expect(
+      Array.from(container.querySelectorAll('mark'))
+        .map((element) => element.textContent)
+        .join('')
+    ).toBe('"message": "Started"')
+  })
+
+  it.each(['["Started"]', '"Started"', '42', 'true', 'null', '{"message":"Started"', 'Started successfully'])(
+    'keeps non-object message %s unchanged',
+    (message) => {
+      const { container } = renderRowServiceLogs({ ...mockLog, message })
+
+      expect(container.querySelector('[data-log-message="true"]')?.textContent).toBe(message)
+    }
+  )
+
   it('toggles expanded state on click', async () => {
     const { userEvent } = renderRowServiceLogs()
 
@@ -188,6 +252,49 @@ describe('RowServiceLogs', () => {
       expect(screen.getAllByText('test-container')).toHaveLength(1)
       expect(screen.queryByText('NGINX')).not.toBeInTheDocument()
       expect(screen.queryByText('ENVOY')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('clickable URLs', () => {
+    const urlLog = {
+      ...mockLog,
+      message: 'Server ready at https://app.qovery.com now',
+    }
+
+    it('renders URLs in the message as links opening in a new tab', () => {
+      renderRowServiceLogs(urlLog)
+
+      const link = screen.getByRole('link', { name: 'https://app.qovery.com' })
+      expect(link).toHaveAttribute('href', 'https://app.qovery.com')
+      expect(link).toHaveAttribute('target', '_blank')
+    })
+
+    it('renders a URL preceded by a plus sign as a link while preserving punctuation and highlighting', () => {
+      renderRowServiceLogs(
+        {
+          ...mockLog,
+          message: '"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"',
+        },
+        false,
+        'http'
+      )
+
+      const link = screen.getByRole('link', { name: 'http://www.google.com/bot.html' })
+      expect(link).toHaveAttribute('href', 'http://www.google.com/bot.html')
+      expect(link).toHaveTextContent('http://www.google.com/bot.html')
+      expect(link).not.toHaveTextContent(')')
+      expect(link.querySelector('mark')).toHaveTextContent('http')
+      expect(link.closest('.code-ansi')).toBeInTheDocument()
+      expect(link).toHaveClass('underline')
+    })
+
+    it('does not toggle the row when a link is clicked', async () => {
+      const { userEvent } = renderRowServiceLogs(urlLog)
+
+      await userEvent.click(screen.getByRole('link', { name: 'https://app.qovery.com' }))
+
+      expect(screen.queryByText('Instance')).not.toBeInTheDocument()
+      expect(screen.queryByText('Container')).not.toBeInTheDocument()
     })
   })
 })

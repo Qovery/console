@@ -168,4 +168,44 @@ describe('McpSheet', () => {
 
     expect(onClose).toHaveBeenCalled()
   })
+
+  it('locks picker and dismissal actions while saving', () => {
+    renderWithProviders(
+      <McpSheet
+        createdMcpServers={[]}
+        isLoading={false}
+        isSaving
+        mcpServers={mcpServers}
+        value={[]}
+        onChange={jest.fn()}
+        onClose={jest.fn()}
+        onMcpServerCreated={jest.fn()}
+        onSave={jest.fn()}
+      />
+    )
+
+    expect(screen.getByRole('button', { name: 'Add MCP Qovery' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'New MCP' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Close' })).toBeDisabled()
+  })
+
+  it('announces save failures', async () => {
+    const { userEvent } = renderWithProviders(
+      <McpSheet
+        createdMcpServers={[]}
+        isLoading={false}
+        mcpServers={mcpServers}
+        value={[]}
+        onChange={jest.fn()}
+        onClose={jest.fn()}
+        onMcpServerCreated={jest.fn()}
+        onSave={jest.fn().mockRejectedValue(new Error('Unable to save'))}
+      />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to save the MCP selection. Try again.')
+  })
 })

@@ -19,7 +19,7 @@ export function useEditBillingInfo({ silently = false } = {}) {
               title: 'Billing information updated',
             },
           }),
-      notifyOnError: true,
+      notifyOnError: false,
     },
   })
 }

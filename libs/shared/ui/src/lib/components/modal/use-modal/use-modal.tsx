@@ -12,6 +12,10 @@ export function useModal() {
   const closeModal = useCallback(() => {
     setOpenModal(false)
   }, [setOpenModal])
+  const setModalDismissible = useCallback(
+    (dismissible: boolean) => setOptionsModal((options) => ({ ...options, dismissible })),
+    [setOptionsModal]
+  )
 
   useEffect(() => {
     if (modal) {
@@ -40,7 +44,7 @@ export function useModal() {
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 
-  return { openModal, closeModal, enableAlertClickOutside }
+  return { openModal, closeModal, enableAlertClickOutside, setModalDismissible }
 }
 
 export default useModal

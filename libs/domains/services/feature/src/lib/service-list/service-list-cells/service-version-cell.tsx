@@ -13,6 +13,7 @@ import {
   type Helm,
   type Job,
   type Terraform,
+  getBlueprintGitRepository,
   isBlueprintService,
 } from '@qovery/domains/services/data-access'
 import {
@@ -269,27 +270,48 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
       </div>
     )
 
-  const helmInfo = (helmRepository?: HelmSourceRepositoryResponse) =>
-    helmRepository && (
+  const helmInfo = (helmRepository?: HelmSourceRepositoryResponse) => {
+    if (!helmRepository) return null
+    const blueprintRepository = isBlueprintService(service) ? getBlueprintGitRepository(service) : undefined
+
+    return (
       <div className="flex w-full min-w-0 items-center gap-1" onClick={(e) => e.stopPropagation()}>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-ssm">
-          <span className="flex min-w-0 items-center gap-2 text-neutral">
-            <Icon className="shrink-0" width={12} name={IconEnum.HELM_OFFICIAL} />
-            <Tooltip
-              classNameTrigger="min-w-0 flex-1 overflow-hidden"
-              content={
-                <span className="text-center">
-                  {helmRepository.repository?.name}
-                  <br />
-                  {helmRepository.repository?.url}
+          {blueprintRepository ? (
+            <span className="flex min-w-0 items-center gap-2 text-neutral">
+              <Icon className="h-3 w-3 shrink-0 text-inherit" name={blueprintRepository.provider} />
+              <ExternalLink
+                href={blueprintRepository.url}
+                underline
+                color="neutral"
+                size="ssm"
+                withIcon={false}
+                className="min-w-0 max-w-full font-normal"
+              >
+                <span className="min-w-0 truncate" title={blueprintRepository.name}>
+                  {blueprintRepository.name}
                 </span>
-              }
-            >
-              <span className="truncate text-neutral" title={helmRepository.repository?.name}>
-                {helmRepository.repository?.name?.toLowerCase()}
-              </span>
-            </Tooltip>
-          </span>
+              </ExternalLink>
+            </span>
+          ) : (
+            <span className="flex min-w-0 items-center gap-2 text-neutral">
+              <Icon className="shrink-0" width={12} name={IconEnum.HELM_OFFICIAL} />
+              <Tooltip
+                classNameTrigger="min-w-0 flex-1 overflow-hidden"
+                content={
+                  <span className="text-center">
+                    {helmRepository.repository?.name}
+                    <br />
+                    {helmRepository.repository?.url}
+                  </span>
+                }
+              >
+                <span className="truncate text-neutral" title={helmRepository.repository?.name}>
+                  {helmRepository.repository?.name?.toLowerCase()}
+                </span>
+              </Tooltip>
+            </span>
+          )}
           <span className="flex min-w-0 items-center gap-2 text-neutral">
             <Icon className="shrink-0" width={12} name={IconEnum.HELM_OFFICIAL} />
             <span className="min-w-0 flex-1 truncate" title={helmRepository.chart_name}>
@@ -318,6 +340,7 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
         )}
       </div>
     )
+  }
 
   const cell = match({ service })
     .with({ service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobGitSource) }) }, ({ service }) => {

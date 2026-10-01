@@ -82,8 +82,8 @@ describe('agentic-workflow-templates', () => {
     expect(template).toBeDefined()
     expect(template?.title).toBe('Build & deployment optimizer')
     expect(template?.seed.agentPrompt).toBeTruthy()
-    expect(template?.seed.cpu).toBe('200')
-    expect(template?.seed.memory).toBe('256')
+    expect(template?.seed.cpu).toBe('1000')
+    expect(template?.seed.memory).toBe('2048')
     expect(template?.seed.automations).toEqual([
       expect.objectContaining({
         triggers: [
@@ -115,13 +115,56 @@ describe('agentic-workflow-templates', () => {
     })
   })
 
-  it('places the build optimizer before coding agents', () => {
-    expect(AGENTIC_WORKFLOW_TEMPLATES.map((template) => template.id)).toEqual([
+  it('allocates at least 1000 mCPU and 2048 MiB of memory to every template', () => {
+    AGENTIC_WORKFLOW_TEMPLATES.forEach((template) => {
+      expect(Number(template.seed.cpu)).toBeGreaterThanOrEqual(1000)
+      expect(Number(template.seed.memory)).toBeGreaterThanOrEqual(2048)
+    })
+  })
+
+  it('categorizes all templates and preserves existing identifiers', () => {
+    expect(
+      AGENTIC_WORKFLOW_TEMPLATES.filter((template) => template.category === 'Coding Agent').map(({ id }) => id)
+    ).toEqual(['jira-coding-agent', 'linear-coding-agent', 'slack-coding-agent', 'coding-agent'])
+    expect(
+      AGENTIC_WORKFLOW_TEMPLATES.filter((template) => template.category === 'Incident Analyzer').map(({ id }) => id)
+    ).toEqual([
       'incident-io-analyzer',
       'honeybadger-incident-analyzer',
-      'build-optimizer',
-      'jira-coding-agent',
-      'linear-coding-agent',
+      'sentry-incident-analyzer',
+      'incident-analyzer',
+    ])
+  })
+
+  it.each([
+    ['slack-coding-agent', 'SLACK_BOT_TOKEN', 'slack.com'],
+    ['sentry-incident-analyzer', 'SENTRY_AUTH_TOKEN', 'sentry.io'],
+  ])('seeds %s credentials and host access', (id, credential, host) => {
+    const template = getAgenticWorkflowTemplate(id)
+    expect(template?.seed.agentPrompt).toContain(credential)
+    expect(template?.variables).toEqual([expect.objectContaining({ variable: credential, isSecret: true, value: '' })])
+    expect(template?.seed.whitelistHosts?.split(',')).toContain(host)
+    expect(template?.seed.automations?.[0].triggers).toEqual([expect.objectContaining({ type: 'webhook' })])
+  })
+
+  it('allows Sentry to inspect repositories and open pull requests on supported Git providers', () => {
+    expect(getAgenticWorkflowTemplate('sentry-incident-analyzer')?.seed.whitelistHosts?.split(',')).toEqual(
+      expect.arrayContaining([
+        'sentry.io',
+        '*.sentry.io',
+        'github.com',
+        'api.github.com',
+        'gitlab.com',
+        'bitbucket.org',
+        'api.bitbucket.org',
+      ])
+    )
+  })
+
+  it.each(['coding-agent', 'incident-analyzer'])('requires no provider secret for %s', (id) => {
+    expect(getAgenticWorkflowTemplate(id)?.variables).toBeUndefined()
+    expect(getAgenticWorkflowTemplate(id)?.seed.automations?.[0].triggers).toEqual([
+      expect.objectContaining({ type: 'webhook' }),
     ])
   })
 })

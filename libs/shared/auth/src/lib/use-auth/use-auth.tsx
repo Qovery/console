@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useCallback } from 'react'
+import { clearLegacyJwtTokenCookie } from '../utils/clear-legacy-jwt-token-cookie'
 
 export function useAuth() {
   const { loginWithRedirect, logout, user, getAccessTokenSilently, isLoading } = useAuth0()
@@ -9,6 +10,7 @@ export function useAuth() {
    * Gitlab uppercase is needed
    */
   const authLogin = async (provider?: string, returnTo?: string) => {
+    clearLegacyJwtTokenCookie()
     await loginWithRedirect({
       authorizationParams: {
         connection: provider,

@@ -3,7 +3,7 @@ import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings
 import { AgenticWorkflowAdvancedSettings } from './agentic-workflow-advanced-settings'
 
 describe('AgenticWorkflowAdvancedSettings', () => {
-  it('renders the Dockerfile configuration with an apply action', async () => {
+  it('renders the Dockerfile configuration with a save action', async () => {
     const { userEvent } = renderWithProviders(
       <AgenticWorkflowSettingsFormHarness values={{ mcp: '{"mcpServers":{}}', dockerFragment: 'RUN apt-get update' }}>
         {(form) => <AgenticWorkflowAdvancedSettings form={form} />}
@@ -14,7 +14,7 @@ describe('AgenticWorkflowAdvancedSettings', () => {
     expect(screen.queryByText('Advanced MCP configuration')).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
-    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
     expect(screen.getByRole('dialog')).toHaveClass('max-w-[calc(100vw-2rem)]')
   })
 })

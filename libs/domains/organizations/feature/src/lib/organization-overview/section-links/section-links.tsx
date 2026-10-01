@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { useCallback } from 'react'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
+import { QOVERY_DOCS_URL } from '@qovery/shared/util-const'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -14,7 +15,7 @@ const LINKS: {
 }[] = [
   {
     title: 'Documentation',
-    url: 'https://www.qovery.com/docs',
+    url: QOVERY_DOCS_URL,
     color: 'blue',
     icon: 'book',
   },

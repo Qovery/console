@@ -41,4 +41,17 @@ describe('OverlaySheet', () => {
 
     expect(onClose).toHaveBeenCalled()
   })
+
+  it('ignores Escape while dismissal is disabled', async () => {
+    const onClose = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <OverlaySheet dismissible={false} onClose={onClose}>
+        <p>Sheet body</p>
+      </OverlaySheet>
+    )
+
+    await userEvent.keyboard('{Escape}')
+
+    expect(onClose).not.toHaveBeenCalled()
+  })
 })

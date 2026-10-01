@@ -55,6 +55,7 @@ const CloudFormation = '/assets/devicon/cloudformation.svg'
 const Scaleway = '/assets/devicon/scaleway.svg'
 const Clickhouse = '/assets/devicon/clickhouse.svg'
 const Airbyte = '/assets/devicon/airbyte.svg'
+const AmazonMq = '/assets/devicon/amazon-mq.svg'
 const AmazonMsk = '/assets/devicon/amazon-msk.svg'
 const Aiven = '/assets/devicon/aiven.svg'
 const Confluent = '/assets/devicon/confluent.svg'
@@ -66,6 +67,7 @@ const Bedrock = '/assets/devicon/bedrock.svg'
 const BigQuery = '/assets/devicon/bigquery.svg'
 const Neon = '/assets/devicon/neon.svg'
 const NewRelic = '/assets/devicon/newrelic.svg'
+const SigNoz = '/assets/devicon/signoz.svg'
 const PlanetScale = '/assets/devicon/planetscale.svg'
 const Snowflake = '/assets/devicon/snowflake.svg'
 const Timescale = '/assets/devicon/timescale.svg'
@@ -129,6 +131,7 @@ const serviceIcons = {
 
   // Others
   'app://qovery-console/airbyte': { icon: Airbyte, title: 'Airbyte' },
+  'app://qovery-console/amazon-mq': { icon: AmazonMq, title: 'Amazon MQ' },
   'app://qovery-console/amazon-msk': { icon: AmazonMsk, title: 'Amazon MSK' },
   'app://qovery-console/aiven': { icon: Aiven, title: 'Aiven' },
   'app://qovery-console/bedrock': { icon: Bedrock, title: 'AWS Bedrock' },
@@ -147,6 +150,7 @@ const serviceIcons = {
   'app://qovery-console/qovery': { icon: Qovery, title: 'Qovery' },
   'app://qovery-console/redpanda': { icon: Redpanda, title: 'Redpanda' },
   'app://qovery-console/scaleway': { icon: Scaleway, title: 'Scaleway' },
+  'app://qovery-console/signoz': { icon: SigNoz, title: 'SigNoz' },
   'app://qovery-console/snowflake': { icon: Snowflake, title: 'Snowflake' },
   'app://qovery-console/temporal': { icon: Temporal, title: 'Temporal', className: 'dark:invert' },
   'app://qovery-console/timescaledb': { icon: Timescale, title: 'Timescale' },

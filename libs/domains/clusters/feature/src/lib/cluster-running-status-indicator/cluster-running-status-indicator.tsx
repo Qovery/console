@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { getClusterQuotaWarning } from '../cluster-quota-warning/cluster-quota-warning'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 
 function ClusterRunningStatusDot({ className, status }: { className: string; status: string }) {
@@ -39,6 +40,8 @@ export function ClusterRunningStatusIndicator({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })
+
+  const quotaWarning = getClusterQuotaWarning(runningStatus)
 
   useEffect(() => {
     if (runningStatus === undefined) {
@@ -125,15 +128,22 @@ export function ClusterRunningStatusIndicator({
         </Badge>
       )
     )
-    .with({ global_status: 'WARNING' }, (s) =>
-      type === 'dot' ? (
-        <ClusterRunningStatusDot status="Warning" className="border-warning-subtle bg-surface-warning-solid" />
+    .with({ global_status: 'WARNING' }, (s) => {
+      const nodeWarnings = Object.entries(s.node_warnings)
+      const warningCount = nodeWarnings.length + (quotaWarning ? 1 : 0)
+      const shouldDisplayWarning = Boolean(isFeatureFlag || quotaWarning)
+
+      return type === 'dot' ? (
+        <ClusterRunningStatusDot
+          status={quotaWarning ? `Quota issue${quotaWarning.resource ? `: ${quotaWarning.resource}` : ''}` : 'Warning'}
+          className="border-warning-subtle bg-surface-warning-solid"
+        />
       ) : (
         <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-          <Popover.Trigger disabled={!isFeatureFlag}>
+          <Popover.Trigger disabled={!shouldDisplayWarning}>
             <Badge
               variant="surface"
-              color={isFeatureFlag ? 'yellow' : 'green'}
+              color={shouldDisplayWarning ? 'yellow' : 'green'}
               className="items-center gap-1.5 pr-2 capitalize"
               onClick={(e) => {
                 // XXX: To avoid link redirection from the parent, we need to manage onOpenChange
@@ -142,30 +152,38 @@ export function ClusterRunningStatusIndicator({
                 setIsPopoverOpen((prev) => !prev)
               }}
             >
-              {isFeatureFlag && (
-                <span className="flex h-4 w-4 items-center justify-center rounded bg-surface-warning-solid text-xs font-semibold text-neutralInvert">
-                  {Object.keys(s.node_warnings).length}
+              {shouldDisplayWarning && (
+                <span className="flex h-4 w-4 items-center justify-center rounded bg-surface-warning-solidHover text-xs font-semibold text-neutralInvert">
+                  {warningCount}
                 </span>
               )}
-              {isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}
-              {Object.entries(s.node_warnings).length === 0 ? (
+              {shouldDisplayWarning ? s.global_status.toLowerCase() : 'Running'}
+              {warningCount === 0 ? (
                 <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
-              ) : isFeatureFlag ? (
-                <Icon iconName="chevron-down" className="text-surface-warning-solid" />
+              ) : shouldDisplayWarning ? (
+                <Icon iconName="chevron-down" className="text-warning" />
               ) : (
                 <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
               )}
             </Badge>
           </Popover.Trigger>
           <Popover.Content className="w-full max-w-96 border border-neutral bg-surface-neutralInvert-component p-0 text-sm text-neutralInvert">
-            {Object.entries(s.node_warnings).map(([key, message]) => (
+            {quotaWarning && (
+              <div className="flex items-center gap-[9px] border-b border-neutral p-1 before:block before:w-[3px] before:self-stretch before:bg-surface-warning-solid last:border-0">
+                <span className="py-1 pr-1">
+                  {quotaWarning.provider} quota issue
+                  {quotaWarning.resource ? `: ${quotaWarning.resource}` : ''}. {quotaWarning.message}
+                </span>
+              </div>
+            )}
+            {nodeWarnings.map(([key, message]) => (
               <div
                 key={key}
                 className={twMerge(
                   clsx(
-                    'flex items-center gap-[9px] border-b border-neutral p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-surface-warning-solid last:border-0',
+                    'flex items-center gap-[9px] border-b border-neutral p-1 before:block before:w-[3px] before:self-stretch before:bg-surface-warning-solid last:border-0',
                     {
-                      'before:bg-surface-positive-solid': !isFeatureFlag,
+                      'before:bg-surface-positive-solid': !shouldDisplayWarning,
                     }
                   )
                 )}
@@ -182,7 +200,7 @@ export function ClusterRunningStatusIndicator({
           </Popover.Content>
         </Popover.Root>
       )
-    )
+    })
     .with({ global_status: 'ERROR' }, (s) =>
       type === 'dot' ? (
         <ClusterRunningStatusDot status="Error" className="border-negative-subtle bg-surface-negative-solid" />

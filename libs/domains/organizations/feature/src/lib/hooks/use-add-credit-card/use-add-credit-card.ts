@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useAddCreditCard() {
+export function useAddCreditCard({ notifyOnError = true } = {}) {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.addCreditCard, {
@@ -18,9 +18,7 @@ export function useAddCreditCard() {
       notifyOnSuccess: {
         title: 'Credit card successfully added',
       },
-      notifyOnError: {
-        title: 'Error while adding credit card',
-      },
+      notifyOnError: notifyOnError ? { title: 'Error while adding credit card' } : false,
     },
   })
 }

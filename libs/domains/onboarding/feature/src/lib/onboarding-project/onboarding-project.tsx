@@ -1,10 +1,9 @@
-import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type SignUpRequest } from 'qovery-typescript-axios'
 import { useContext, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCreateOrganization, useEditBillingInfo, useOrganizations } from '@qovery/domains/organizations/feature'
+import { useCreateOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -13,43 +12,26 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type SerializedError } from '@qovery/shared/utils'
 import { ContextOnboarding } from '../container/container'
 import { StepProject } from '../step-project/step-project'
+import { pushToDataLayer } from '../utils/data-layer'
 
 export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   useDocumentTitle('Onboarding Organization - Qovery')
 
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = useAuth()
-  const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [] } = useOrganizations()
   const { organization_name, project_name, admin_email, selectedPlan, phone } = useContext(ContextOnboarding)
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject({ silently: true })
-  const { mutateAsync: editBillingInfo } = useEditBillingInfo({ silently: true })
+  const { data: userSignUp } = useUserSignUp()
   const methods = useForm<{ project_name: string; organization_name: string }>({
     defaultValues: {
       organization_name,
       project_name: project_name || 'main',
     },
   })
-  const { data: userSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const updateBillingInfo = async (organizationId: string) => {
-    await editBillingInfo({
-      organizationId,
-      billingInfoRequest: {
-        first_name: userSignUp?.first_name ?? '',
-        last_name: userSignUp?.last_name ?? '',
-        company: userSignUp?.company_name ?? '',
-        email: admin_email.length > 0 ? admin_email : user?.email ?? '',
-        address: '',
-        city: 'NEW YORK CITY',
-        zip: '10001',
-        country_code: 'US',
-      },
-    })
-  }
 
   const updateSignUpStep = async () => {
     const hasRequiredSignUpFields = !!userSignUp?.first_name && !!userSignUp?.last_name && !!userSignUp?.user_email
@@ -105,8 +87,6 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
       // Note: Refresh tokens do not work in private browsers without our Auth0 domain and Safari (private and normal mode)
       await getAccessTokenSilently({ cacheMode: 'off' })
 
-      await updateBillingInfo(organization.id)
-
       await createProject({
         organizationId: organization.id,
         projectRequest: {
@@ -124,7 +104,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         phone,
         use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
       })
-      await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
+      pushToDataLayer({ event: 'onboarding-organization-created', plan: selectedPlan })
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
       toast('success', 'Your organization and project have been created')
     } catch (error) {

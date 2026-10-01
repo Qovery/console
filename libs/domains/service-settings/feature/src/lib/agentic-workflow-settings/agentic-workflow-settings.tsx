@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import equal from 'fast-deep-equal'
 import {
   AgenticWorkflowExecutionMode,
   type AgenticWorkflowModelType,
@@ -11,6 +12,7 @@ import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
+  areAgenticWorkflowResourcesValid,
   createAgenticWorkflowAutomation,
   formatAgenticWorkflowAutomationOutputs,
   isGitRepositoryComplete,
@@ -36,6 +38,7 @@ export interface AgenticWorkflowSettingsFormValues {
   enabled: boolean
   executionMode: AgenticWorkflowExecutionMode
   llmProviderId: string
+  modelType: AgenticWorkflowModelType
   modelSettings: string
   agentPrompt: string
   repositories: AgenticWorkflowGitRepository[]
@@ -51,6 +54,17 @@ export interface AgenticWorkflowSettingsFormValues {
   ram: string
   gpu: string
   storage: string
+}
+
+export type SaveAgenticWorkflowSettings = (values: Partial<AgenticWorkflowSettingsFormValues>) => Promise<void>
+
+export function hasAgenticWorkflowSettingsChanges(
+  currentValues: AgenticWorkflowSettingsFormValues,
+  updatedValues: Partial<AgenticWorkflowSettingsFormValues>
+) {
+  return Object.entries(updatedValues).some(
+    ([key, value]) => !equal(currentValues[key as keyof AgenticWorkflowSettingsFormValues], value)
+  )
 }
 
 type SettingsPage =
@@ -121,15 +135,6 @@ export function formatAgenticWorkflowRepositories(repositories: AgenticWorkflowG
   }))
 }
 
-export function agenticWorkflowJsonValidation(value: string) {
-  try {
-    JSON.parse(value)
-    return true
-  } catch {
-    return 'Invalid JSON format.'
-  }
-}
-
 export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
@@ -138,7 +143,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
     isError: contextServicesError,
     isLoading: contextServicesLoading,
   } = useAgenticWorkflowContextServices(environmentId)
-  const { mutate: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
+  const { mutateAsync: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
   const { data: llmProviders = [] } = useLlmProviders({ organizationId, enabled: page === 'ai-configuration' })
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
@@ -156,6 +161,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           enabled: workflow.enabled,
           executionMode: workflow.execution_mode ?? AgenticWorkflowExecutionMode.IN_PLACE,
           llmProviderId: workflow.model.llm_provider_id ?? '',
+          modelType: workflow.model.type,
           modelSettings: workflow.model.settings,
           agentPrompt: workflow.agent_prompt,
           repositories: workflow.project_repositories.map(({ url, branch, git_token_id }) => {
@@ -191,25 +197,30 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   if (!workflow) return null
 
   const values = form.watch()
-  const schedule = values.automation.triggers.find((trigger) => trigger.type === 'schedule')
   const pageValid =
     Boolean(values.name.trim()) &&
-    (page !== 'ai-configuration' ||
-      (Boolean(values.llmProviderId) &&
-        Boolean(values.agentPrompt.trim()) &&
-        agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
+    (page !== 'general' || areAgenticWorkflowResourcesValid(values.cpu, values.ram)) &&
+    (page !== 'ai-configuration' || (Boolean(values.llmProviderId) && Boolean(values.agentPrompt.trim()))) &&
     (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
-  const submit = form.handleSubmit((data) => {
-    const selectedProvider = llmProviders.find(({ id }) => id === data.llmProviderId)
+  const persistSettings: SaveAgenticWorkflowSettings = async (updatedValues) => {
+    const data = { ...form.getValues(), ...updatedValues }
+    const schedule = data.automation.triggers.find((trigger) => trigger.type === 'schedule')
     const model: AgenticWorkflowRequest['model'] = {
       // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
-      type: (selectedProvider?.type as AgenticWorkflowModelType) ?? workflow.model.type,
+      type: data.modelType,
       settings: data.modelSettings,
       llm_provider_id: data.llmProviderId,
     }
     const selectedContextServices = contextServices.filter(({ id }) => data.contextServiceIds.includes(id))
+    const preserveContextServices = contextServicesError || contextServicesLoading
+    const contextServiceIds = preserveContextServices
+      ? data.contextServiceIds
+      : selectedContextServices.map(({ id }) => id)
+    const agentPrompt = preserveContextServices
+      ? data.agentPrompt
+      : replaceContextServicesInPrompt(data.agentPrompt, selectedContextServices)
 
-    editService({
+    await editService({
       serviceId,
       payload: {
         serviceType: 'AGENTIC_WORKFLOW',
@@ -221,15 +232,11 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           ? { cron_expression: schedule.cronExpression ?? '', timezone: schedule.timezone ?? 'Etc/UTC' }
           : null,
         model,
-        agent_prompt: contextServicesError
-          ? data.agentPrompt
-          : replaceContextServicesInPrompt(data.agentPrompt, selectedContextServices),
+        agent_prompt: agentPrompt,
         project_repositories: formatAgenticWorkflowRepositories(data.repositories),
         mcp: data.mcp,
         mcp_servers: data.mcpServerIds.map((id) => ({ id, required: data.requiredMcpServerIds.includes(id) })),
-        context_service_ids: contextServicesError
-          ? data.contextServiceIds
-          : selectedContextServices.map(({ id }) => id),
+        context_service_ids: contextServiceIds,
         docker_fragment: data.dockerFragment,
         outputs: formatAgenticWorkflowAutomationOutputs(data.automation.outputs),
         governance: {
@@ -250,7 +257,14 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         },
       },
     })
-  })
+    form.reset({ ...data, agentPrompt, contextServiceIds })
+  }
+  const saveSettings: SaveAgenticWorkflowSettings = async (updatedValues) => {
+    if (!hasAgenticWorkflowSettingsChanges(form.getValues(), updatedValues)) return
+    await persistSettings(updatedValues)
+  }
+  const submit = form.handleSubmit(persistSettings)
+  const hasOverlaySave = ['connections', 'automations', 'outputs', 'advanced-settings'].includes(page)
 
   return (
     <Section className="px-8 pb-8 pt-6">
@@ -261,6 +275,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           <AgenticWorkflowAiConfigurationSettings
             form={form}
             llmProviders={llmProviders.filter(({ has_credential }) => has_credential)}
+            modelType={workflow.model.type}
           />
         ) : null}
         {page === 'connections' ? (
@@ -268,24 +283,34 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
             environmentId={environmentId}
             form={form}
             gitTokensLoading={gitTokensLoading}
+            isSaving={isLoading}
+            onSave={saveSettings}
           />
         ) : null}
-        {page === 'automations' ? <AgenticWorkflowAutomationsSettings form={form} section="triggers" /> : null}
-        {page === 'outputs' ? <AgenticWorkflowAutomationsSettings form={form} section="outputs" /> : null}
+        {page === 'automations' ? (
+          <AgenticWorkflowAutomationsSettings form={form} section="triggers" onSave={saveSettings} />
+        ) : null}
+        {page === 'outputs' ? (
+          <AgenticWorkflowAutomationsSettings form={form} section="outputs" onSave={saveSettings} />
+        ) : null}
         {page === 'governance' ? <AgenticWorkflowGovernanceSettings form={form} /> : null}
-        {page === 'advanced-settings' ? <AgenticWorkflowAdvancedSettings form={form} /> : null}
-        <div className="flex justify-end pt-2">
-          <Button
-            type="submit"
-            size="lg"
-            loading={isLoading}
-            disabled={
-              !form.formState.isDirty || !pageValid || (values.contextServiceIds.length > 0 && contextServicesLoading)
-            }
-          >
-            Save
-          </Button>
-        </div>
+        {page === 'advanced-settings' ? (
+          <AgenticWorkflowAdvancedSettings form={form} isSaving={isLoading} onSave={saveSettings} />
+        ) : null}
+        {!hasOverlaySave ? (
+          <div className="flex justify-end pt-2">
+            <Button
+              type="submit"
+              size="lg"
+              loading={isLoading}
+              disabled={
+                !form.formState.isDirty || !pageValid || (values.contextServiceIds.length > 0 && contextServicesLoading)
+              }
+            >
+              Save
+            </Button>
+          </div>
+        ) : null}
       </form>
     </Section>
   )

@@ -169,6 +169,32 @@ describe('ServiceVersionCell', () => {
     expect(screen.queryByText('RC test')).not.toBeInTheDocument()
   })
 
+  it('shows the service catalog as the target of a helm blueprint, not its chart repository', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: { is_up_to_date: true, current_tag: 'HELM/redis/8/1.1.0' },
+      isLoading: false,
+      isError: false,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={helmBlueprintService} />)
+
+    expect(screen.getByRole('link', { name: 'Qovery/service-catalog' })).toHaveAttribute(
+      'href',
+      'https://github.com/Qovery/service-catalog.git'
+    )
+    expect(screen.queryByText('bitnami')).not.toBeInTheDocument()
+    expect(screen.getByText('redis')).toBeInTheDocument()
+  })
+
+  it('keeps the chart repository of a helm service that no blueprint created', () => {
+    const { blueprint_id: _, ...helmService } = helmBlueprintService
+
+    renderWithProviders(<ServiceVersionCell service={helmService as Helm} />)
+
+    expect(screen.getByText('bitnami')).toBeInTheDocument()
+    expect(screen.queryByText('Qovery/service-catalog')).not.toBeInTheDocument()
+  })
+
   it('shows a helm blueprint chart version read-only when the update check cannot answer', () => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({
       data: undefined,

@@ -11,6 +11,7 @@ import {
   ApplicationDeploymentRestrictionApi,
   type ApplicationDeploymentRestrictionRequest,
   type ApplicationEditRequest,
+  type ApplicationGitRepository,
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
@@ -167,6 +168,8 @@ export type TerraformType = Extract<ServiceType, 'TERRAFORM'>
 export type ArgoCdType = Extract<ServiceType, 'ARGOCD_APP'>
 export type AgenticWorkflowType = Extract<ServiceType, 'AGENTIC_WORKFLOW'>
 
+export const BUILD_SETTINGS_SERVICE_TYPES: readonly ServiceType[] = ['APPLICATION', 'JOB', 'TERRAFORM'] as const
+
 // XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
 // Waiting to have this implementation available in the edition interfaces.
 export type Application = _Application & {
@@ -241,17 +244,37 @@ export function isHelm(service: AnyService): service is Helm {
   return service.service_type === 'HELM'
 }
 
+export function isTerraform(service: AnyService): service is Terraform {
+  return service.service_type === 'TERRAFORM'
+}
+
+export function isServicePostgreSQL(service: AnyService): service is Database & { type: 'POSTGRESQL' } {
+  return isDatabase(service) && service.type === 'POSTGRESQL'
+}
+
+export function isServiceMYSQL(service: AnyService): service is Database & { type: 'MYSQL' } {
+  return isDatabase(service) && service.type === 'MYSQL'
+}
+
 export function isBlueprintService(service: AnyService): service is BlueprintService {
   return 'blueprint_id' in service && Boolean(service.blueprint_id)
 }
 
-export function getBlueprintGitRepository(service: BlueprintService) {
+// Helm blueprints pull their chart from the manifest's upstream repository, but come from the catalog
+export const BLUEPRINT_CATALOG_GIT_REPOSITORY: ApplicationGitRepository = {
+  provider: 'GITHUB',
+  owner: 'Qovery',
+  name: 'Qovery/service-catalog',
+  url: 'https://github.com/Qovery/service-catalog.git',
+}
+
+export function getBlueprintGitRepository(service: BlueprintService): ApplicationGitRepository | undefined {
   if (service.serviceType === 'TERRAFORM') {
     return service.terraform_files_source?.git?.git_repository
   }
 
-  if (service.serviceType === 'HELM' && isHelmGitSource(service.source)) {
-    return service.source.git?.git_repository
+  if (service.serviceType === 'HELM') {
+    return isHelmGitSource(service.source) ? service.source.git?.git_repository : BLUEPRINT_CATALOG_GIT_REPOSITORY
   }
 
   return undefined
@@ -614,6 +637,12 @@ export const services = createQueryKeys('services', {
             (await agenticWorkflowsApi.listAgenticWorkflowDeploymentHistoryV2(serviceId, pageSize)).data.results
         )
         .exhaustive()
+    },
+  }),
+  agenticWorkflowRunHistory: ({ serviceId, pageSize }: { serviceId: string; pageSize: number }) => ({
+    queryKey: [serviceId, pageSize],
+    async queryFn() {
+      return (await agenticWorkflowsApi.listAgenticWorkflowRunHistory(serviceId, 1, pageSize)).data.results ?? []
     },
   }),
   deploymentQueue: ({ serviceId }: { serviceId: string }) => ({
