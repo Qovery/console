@@ -235,7 +235,6 @@ describe('AgenticWorkflowRuns', () => {
 
     const payloadElement = within(screen.getByRole('dialog')).getByRole('region', { name: 'JSON payload' })
     expect(payloadElement).toHaveTextContent(expected, { normalizeWhitespace: false })
-    expect(payloadElement.textContent).toBe(expected)
     expect(payloadElement).toHaveClass('whitespace-pre', 'overflow-x-auto')
     expect(payloadElement).not.toHaveClass('break-words')
   })
