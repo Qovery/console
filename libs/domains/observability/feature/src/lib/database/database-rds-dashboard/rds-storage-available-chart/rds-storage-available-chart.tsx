@@ -5,6 +5,7 @@ import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instan
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
+import { getStorageAvailable } from './get-storage-available'
 
 const queryFreeStorageSpace = (dbInstance: string) => `
   sum by (dimension_DBInstanceIdentifier) (
@@ -56,6 +57,9 @@ export function RdsStorageAvailableChart({
   })
 
   const isLoading = isLoadingMetric || isLoadingAvg
+  const storageCapacity =
+    storageResourceInGiB !== undefined && storageResourceInGiB > 0 ? storageResourceInGiB : undefined
+  const storageUnit = storageCapacity === undefined ? 'GiB' : '%'
 
   const chartData = useMemo(() => {
     if (!metrics?.data?.result?.[0]?.values) {
@@ -64,30 +68,32 @@ export function RdsStorageAvailableChart({
 
     const values = metrics.data.result[0].values
 
-    return values.map(([timestamp, value]: [number, string]) => {
+    return values.flatMap(([timestamp, value]: [number, string]) => {
+      const storageAvailable = getStorageAvailable(value, storageCapacity)
+      if (storageAvailable === undefined) return []
+
       const timestampMs = timestamp * 1000 // Convert seconds to milliseconds
       const date = new Date(timestampMs)
       const timeStr = useLocalTime ? date.toLocaleTimeString() : date.toUTCString().split(' ')[4] // HH:MM:SS in UTC
 
-      return {
-        timestamp: timestampMs,
-        time: timeStr,
-        fullTime: useLocalTime ? date.toLocaleString() : date.toUTCString(),
-        'Storage Available':
-          storageResourceInGiB !== undefined
-            ? (parseFloat(value) / (storageResourceInGiB * 1024 * 1024 * 1024)) * 100
-            : 0,
-      }
+      return [
+        {
+          timestamp: timestampMs,
+          time: timeStr,
+          fullTime: useLocalTime ? date.toLocaleString() : date.toUTCString(),
+          'Storage Available': storageAvailable,
+        },
+      ]
     })
-  }, [metrics, storageResourceInGiB, useLocalTime])
+  }, [metrics, storageCapacity, useLocalTime])
 
   const avgFreeStorage = useMemo(() => {
     const value = metricsAvg?.data?.result?.[0]?.value as [number, string] | undefined
-    if (!value?.[1] || !storageResourceInGiB) return '--'
+    if (!value?.[1]) return '--'
 
-    const numValue = (parseFloat(value[1]) / (storageResourceInGiB * 1024 * 1024 * 1024)) * 100
-    return Number.isFinite(numValue) ? numValue.toFixed(2) : '--'
-  }, [metricsAvg, storageResourceInGiB])
+    const numValue = getStorageAvailable(value[1], storageCapacity)
+    return numValue === undefined ? '--' : numValue.toFixed(2)
+  }, [metricsAvg, storageCapacity])
 
   return (
     <LocalChart
@@ -98,11 +104,15 @@ export function RdsStorageAvailableChart({
       description="Storage Available over time"
       descriptionRight={
         <>
-          Average: <span className="font-medium">{avgFreeStorage}%</span>
+          Average:{' '}
+          <span className="font-medium">
+            {avgFreeStorage}
+            {storageUnit}
+          </span>
         </>
       }
       tooltipLabel="Storage Available"
-      unit="%"
+      unit={storageUnit}
       serviceId={serviceId}
     >
       <Line

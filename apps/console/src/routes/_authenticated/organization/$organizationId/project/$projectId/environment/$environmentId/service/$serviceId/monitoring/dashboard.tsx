@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
@@ -11,11 +11,26 @@ import {
   EnableObservabilityContent,
   EnableObservabilityVideo,
   ServiceDashboard,
+  generateDbInstance,
+  getBlueprintDbInstance,
 } from '@qovery/domains/observability/feature'
-import { isManagedDatabase } from '@qovery/domains/services/data-access'
-import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import {
+  isBlueprintService,
+  isManagedDatabase,
+  isServiceMYSQL,
+  isServicePostgreSQL,
+  isTerraform,
+} from '@qovery/domains/services/data-access'
+import {
+  type RdsBlueprintEngine,
+  getRdsBlueprintEngine,
+  useBlueprint,
+  useDeploymentStatus,
+  useService,
+} from '@qovery/domains/services/feature'
+import { useVariables } from '@qovery/domains/variables/feature'
 import { monitoringDashboardSearchParamsSchema } from '@qovery/shared/router'
-import { Badge, Button, EmptyState, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, EmptyState, Heading, Icon, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -45,13 +60,22 @@ function RouteComponent() {
     clusterId: environment?.cluster_id ?? '',
     suspense: true,
   })
-  const managedDatabase = isManagedDatabase(service)
-  const isSupportedManagedDatabase =
-    managedDatabase && cluster?.cloud_provider === 'AWS' && (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
+  const blueprintId = service && isBlueprintService(service) && isTerraform(service) ? service.blueprint_id : ''
+  const { data: blueprint } = useBlueprint({
+    blueprintId,
+    enabled: Boolean(blueprintId) && cluster?.cloud_provider === 'AWS',
+  })
+  const managedDatabaseEngine =
+    isManagedDatabase(service) &&
+    cluster?.cloud_provider === 'AWS' &&
+    (isServicePostgreSQL(service) || isServiceMYSQL(service))
+      ? service.type
+      : undefined
+  const rdsBlueprintEngine = cluster?.cloud_provider === 'AWS' ? getRdsBlueprintEngine(service, blueprint) : undefined
 
   const hasMetrics = useMemo(
     () =>
-      (isSupportedManagedDatabase &&
+      ((managedDatabaseEngine !== undefined || rdsBlueprintEngine !== undefined) &&
         cluster?.metrics_parameters?.enabled === true &&
         cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled === true) ||
       ((cluster?.cloud_provider === 'AWS' ||
@@ -66,7 +90,8 @@ function RouteComponent() {
     [
       cluster?.metrics_parameters?.enabled,
       cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled,
-      isSupportedManagedDatabase,
+      managedDatabaseEngine,
+      rdsBlueprintEngine,
       service?.serviceType,
       cluster?.cloud_provider,
     ]
@@ -132,8 +157,24 @@ function RouteComponent() {
       </div>
     )
 
-  if (isSupportedManagedDatabase && hasMetrics) {
-    return <DatabaseRdsDashboard />
+  if (managedDatabaseEngine && hasMetrics && isManagedDatabase(service)) {
+    return (
+      <DatabaseRdsDashboard
+        dbInstance={generateDbInstance(service)}
+        databaseEngine={managedDatabaseEngine}
+        storageResourceInGiB={service.storage}
+      />
+    )
+  }
+
+  if (rdsBlueprintEngine && hasMetrics) {
+    return (
+      <RdsBlueprintDashboard
+        databaseEngine={rdsBlueprintEngine}
+        deploymentFinished={serviceStatus?.state === 'DEPLOYED'}
+        deploymentExecutionId={serviceStatus?.execution_id}
+      />
+    )
   }
 
   return noMetricsAvailable ? (
@@ -147,6 +188,66 @@ function RouteComponent() {
   ) : (
     <ServiceDashboard queryParams={search} setQueryParams={setDashboardQueryParams} />
   )
+}
+
+function RdsBlueprintDashboard({
+  databaseEngine,
+  deploymentFinished,
+  deploymentExecutionId,
+}: {
+  databaseEngine: RdsBlueprintEngine
+  deploymentFinished: boolean
+  deploymentExecutionId?: string
+}) {
+  const { serviceId = '' } = useParams({ strict: false })
+  const {
+    data: variables = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useVariables({
+    parentId: serviceId,
+    scope: 'TERRAFORM',
+    isSecret: false,
+  })
+
+  const dbInstance = getBlueprintDbInstance(serviceId, variables)
+  const lastRefreshedDeployment = useRef<string>()
+  // Deployment status updates do not invalidate the Terraform output variables query.
+  // Refresh it once after each completed deployment, including replacements with an existing identifier.
+  useEffect(() => {
+    if (!deploymentFinished || isLoading) return
+    const deploymentKey = `${serviceId}:${deploymentExecutionId ?? 'deployed'}`
+    if (lastRefreshedDeployment.current === deploymentKey) return
+    lastRefreshedDeployment.current = deploymentKey
+    void refetch()
+  }, [deploymentExecutionId, deploymentFinished, isLoading, refetch, serviceId])
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-page-container items-center justify-center">
+        <LoaderSpinner />
+      </div>
+    )
+  }
+
+  if (!dbInstance) {
+    return (
+      <div className="px-10 py-7">
+        <EmptyState
+          title="RDS instance identifier unavailable"
+          description={
+            isError
+              ? 'Unable to load Terraform output variables. Try again later.'
+              : 'Deploy this database to expose the db_identifier Terraform output for monitoring.'
+          }
+          icon="circle-question"
+        />
+      </div>
+    )
+  }
+
+  return <DatabaseRdsDashboard dbInstance={dbInstance} databaseEngine={databaseEngine} />
 }
 
 function PlaceholderCard({

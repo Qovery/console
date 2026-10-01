@@ -1,7 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { type Database } from '@qovery/domains/services/data-access'
-import { useService } from '@qovery/domains/services/feature'
+import { type RdsBlueprintEngine } from '@qovery/domains/services/feature'
 import { Button, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'
 import { DashboardProvider, useDashboardContext } from '../../util-filter/dashboard-context'
@@ -20,12 +19,16 @@ import RdsStorageAvailableChart from './rds-storage-available-chart/rds-storage-
 import RdsWriteIopChart from './rds-write-iop-chart/rds-write-iop-chart'
 import RdsWriteLatencyChart from './rds-write-latency-chart/rds-write-latency-chart'
 import { SelectTimeRange } from './select-time-range/select-time-range'
-import { generateDbInstance } from './util/generate-db-instance'
 
-function DatabaseRdsDashboardContent() {
+interface DatabaseRdsDashboardProps {
+  dbInstance: string
+  databaseEngine: RdsBlueprintEngine
+  storageResourceInGiB?: number
+}
+
+function DatabaseRdsDashboardContent({ dbInstance, databaseEngine, storageResourceInGiB }: DatabaseRdsDashboardProps) {
   const { environmentId = '', serviceId = '' } = useParams({ strict: false })
 
-  const { data: service } = useService({ serviceId })
   const { data: environment } = useEnvironment({ environmentId })
   const {
     expandCharts,
@@ -40,15 +43,12 @@ function DatabaseRdsDashboardContent() {
     timeRange,
   } = useDashboardContext()
 
-  if (!environment || !service)
+  if (!environment)
     return (
       <div className="flex min-h-page-container w-full items-center justify-center p-5">
         <Chart.Loader />
       </div>
     )
-
-  // Generate the RDS database instance identifier
-  const dbInstance = generateDbInstance(service as Database)
 
   return (
     <div className="isolate">
@@ -117,7 +117,9 @@ function DatabaseRdsDashboardContent() {
             Health overview
           </Heading>
           <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3')}>
-            <CardUnvacuumedTransactions clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            {databaseEngine === 'POSTGRESQL' && (
+              <CardUnvacuumedTransactions clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            )}
             <CardAvgDbConnections clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgCpuUtilization clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvailableRam clusterId={environment.cluster_id} dbInstance={dbInstance} />
@@ -179,7 +181,7 @@ function DatabaseRdsDashboardContent() {
                 serviceId={serviceId}
                 clusterId={environment.cluster_id}
                 dbInstance={dbInstance}
-                storageResourceInGiB={(service as Database).storage}
+                storageResourceInGiB={storageResourceInGiB}
               />
             </div>
           </div>
@@ -189,12 +191,16 @@ function DatabaseRdsDashboardContent() {
   )
 }
 
-export function DatabaseRdsDashboard() {
+export function DatabaseRdsDashboard({ dbInstance, databaseEngine, storageResourceInGiB }: DatabaseRdsDashboardProps) {
   const { organizationId = '' } = useParams({ strict: false })
 
   return (
     <DashboardProvider organizationId={organizationId}>
-      <DatabaseRdsDashboardContent />
+      <DatabaseRdsDashboardContent
+        dbInstance={dbInstance}
+        databaseEngine={databaseEngine}
+        storageResourceInGiB={storageResourceInGiB}
+      />
     </DashboardProvider>
   )
 }
