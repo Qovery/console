@@ -234,6 +234,8 @@ export function ClusterAdd() {
         externalOpen={isCreationFlowOpen}
         setExternalOpen={setIsCreationFlowOpen}
         width={SELF_MANAGED_CLUSTER_CREATION_MODAL_WIDTH[creationStep]}
+        // Once the cluster exists, the modal only closes itself when its Operator connects.
+        dismissible={creationStep !== 'install'}
       >
         {/* The dialog unmounts its content once closed, so each opening starts a fresh flow. */}
         <SelfManagedClusterCreationFlow
