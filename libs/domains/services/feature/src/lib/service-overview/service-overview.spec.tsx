@@ -59,6 +59,10 @@ jest.mock('./service-last-deployment/service-last-deployment', () => ({
   ServiceLastDeployment: () => <div>service-last-deployment</div>,
 }))
 
+jest.mock('../agentic-workflow-runs/agentic-workflow-runs', () => ({
+  AgenticWorkflowLastRun: () => <div>agentic-workflow-last-run</div>,
+}))
+
 jest.mock('../keda/scaled-object-status/scaled-object-status', () => ({
   ScaledObjectStatus: () => <div>scaled-object-status</div>,
 }))
@@ -187,9 +191,16 @@ describe('ServiceOverview', () => {
     expect(screen.getByText('service-instance')).toBeInTheDocument()
     expect(screen.getByText('Webhook')).toBeInTheDocument()
     expect(screen.getByLabelText('Webhook URL')).toHaveValue('https://api.qovery.com/agentic-workflow/webhook-1')
-    expect(screen.getByRole('heading', { name: 'Last execution' })).toBeInTheDocument()
-    expect(screen.getByText('See all executions')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Last run' })).toBeInTheDocument()
+    expect(screen.getByText('See all runs')).toBeInTheDocument()
+    expect(screen.getByText('agentic-workflow-last-run')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Last deployment' })).toBeInTheDocument()
     expect(screen.getByText('service-last-deployment')).toBeInTheDocument()
+    expect(
+      screen
+        .getByRole('heading', { name: 'Last deployment' })
+        .compareDocumentPosition(screen.getByRole('heading', { name: 'Last run' })) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy()
   })
 
   it('renders the schedule instead of the webhook for a scheduled agentic workflow', () => {

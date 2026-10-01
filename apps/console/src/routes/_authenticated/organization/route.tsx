@@ -12,7 +12,7 @@ import { useRecentServices, useServiceSummary } from '@qovery/domains/services/f
 import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
-import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
+import { Badge, ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
 import { NotFoundPage } from '../../../app/components/not-found-page/not-found-page'
@@ -41,6 +41,7 @@ type NavigationContext = {
 type NavigationTab = {
   id: string
   label: string
+  isNew?: boolean
   iconName: IconName
   routeId: string
 }
@@ -140,6 +141,13 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
   },
   {
+    id: 'automation',
+    label: 'Automations',
+    isNew: true,
+    iconName: 'clock-nine',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
+  },
+  {
     id: 'deployments',
     label: 'Deployments',
     iconName: 'rocket',
@@ -166,6 +174,13 @@ const SERVICE_TABS: NavigationTab[] = [
     iconName: 'table-layout',
     routeId:
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+  },
+  {
+    id: 'runs',
+    label: 'Runs',
+    iconName: 'list-check',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/runs',
   },
   {
     id: 'deployments',
@@ -219,7 +234,7 @@ const SERVICE_TABS: NavigationTab[] = [
 ]
 
 const ARGOCD_SERVICE_TAB_IDS = ['overview', 'service-logs', 'cloud-shell', 'manifest']
-const AGENTIC_WORKFLOW_SERVICE_TAB_IDS = ['overview', 'deployments', 'service-logs', 'variables', 'settings']
+const AGENTIC_WORKFLOW_SERVICE_TAB_IDS = ['overview', 'runs', 'deployments', 'service-logs', 'variables', 'settings']
 
 function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
   if (!service) return false
@@ -272,6 +287,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster, isAgenticWorkfl
   // Databases should not expose the variables tab.
   return SERVICE_TABS.filter(
     (tab) =>
+      tab.id !== 'runs' &&
       !(isDatabase && tab.id === 'variables') &&
       !(isManagedDatabaseService && tab.id === 'cloud-shell') &&
       tab.id !== 'manifest' &&
@@ -374,7 +390,9 @@ function useNavigationContext(): NavigationContext | null {
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled)
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
-              : context.tabs
+              : context.type === 'environment'
+                ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automation')
+                : context.tabs
 
         return {
           type: context.type,
@@ -457,9 +475,32 @@ function NavigationBar({ context }: { context: NavigationContext }) {
       {context.tabs.map((tab) => {
         const path = buildRoutePath(tab.routeId, context.params)
         return (
-          <Navbar.Item key={tab.id} id={tab.id} to={path}>
+          <Navbar.Item
+            key={tab.id}
+            id={tab.id}
+            to={path}
+            onClick={() => {
+              if (context.type === 'environment' && tab.id === 'automation') {
+                posthog.capture('click-environment-automation', {
+                  organization_id: context.params.organizationId,
+                  project_id: context.params.projectId,
+                  environment_id: context.params.environmentId,
+                })
+              }
+            }}
+          >
             <Icon iconName={tab.iconName} />
             {tab.label}
+            {tab.isNew && (
+              <Badge
+                color="brand"
+                variant="surface"
+                size="sm"
+                className="h-4 border-transparent bg-surface-brand-solid px-1 pt-[1px] text-[8px] font-semibold text-neutralInvert"
+              >
+                NEW
+              </Badge>
+            )}
           </Navbar.Item>
         )
       })}
