@@ -19,6 +19,9 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   useDebounce: <T,>(value: T) => value,
 }))
 jest.mock('../hooks/use-cluster/use-cluster')
+jest.mock('../hooks/use-cluster-operator-status/use-cluster-operator-status', () => ({
+  useClusterOperatorStatus: () => ({ data: null, isLoading: false }),
+}))
 jest.mock('../hooks/use-deploy-cluster/use-deploy-cluster')
 jest.mock('../platform-configuration/hooks/use-update-platform-configuration')
 jest.mock('../hooks/use-platform-templates/use-platform-templates')

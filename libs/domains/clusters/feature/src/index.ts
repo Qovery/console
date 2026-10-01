@@ -101,3 +101,4 @@ export * from './lib/hooks/use-cluster-operator-status/use-cluster-operator-stat
 export * from './lib/platform-configuration/hooks/use-update-platform-configuration'
 export * from './lib/hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
 export * from './lib/hooks/use-is-engine-v2-cluster/use-is-engine-v2-cluster'
+export * from './lib/hooks/use-update-cluster-operator/use-update-cluster-operator'

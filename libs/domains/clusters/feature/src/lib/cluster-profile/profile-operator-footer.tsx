@@ -1,0 +1,55 @@
+import { Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import {
+  ClusterOperatorStatus,
+  getClusterOperatorStatusDisplay,
+} from '../cluster-operator-status/cluster-operator-status'
+import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
+
+const OPERATOR_STATUS_REFRESH_INTERVAL = 30_000
+
+export function ProfileOperatorFooter({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+  const { data: operatorStatus, isLoading } = useClusterOperatorStatus({
+    organizationId,
+    clusterId,
+    refetchInterval: OPERATOR_STATUS_REFRESH_INTERVAL,
+  })
+
+  // Clusters without Operator state (q-core answers 404) have no Operator to describe.
+  if (!isLoading && !operatorStatus) return null
+
+  const display = operatorStatus ? getClusterOperatorStatusDisplay(operatorStatus.status) : undefined
+
+  const trigger = (
+    <button
+      type="button"
+      aria-label={`Qovery operator: ${display?.label ?? 'loading'}`}
+      className="focus-visible:ring-brand flex w-full shrink-0 items-center gap-2 bg-background-secondary p-3 text-left text-sm font-medium text-neutral outline-none focus-visible:ring-2 focus-visible:ring-inset"
+    >
+      Qovery operator
+      {display ? (
+        <Icon iconName={display.icon.name} iconStyle="regular" className={`text-sm ${display.icon.className}`} />
+      ) : (
+        <LoaderSpinner className="w-3" />
+      )}
+    </button>
+  )
+
+  return operatorStatus ? (
+    <Tooltip
+      side="right"
+      align="end"
+      collisionPadding={8}
+      classNameContent="w-[480px] rounded-lg border border-neutral bg-surface-neutral p-4 text-neutral shadow-lg"
+      classNameArrow="fill-surface-neutral"
+      content={
+        <ClusterOperatorStatus organizationId={organizationId} clusterId={clusterId} operatorStatus={operatorStatus} />
+      }
+    >
+      {trigger}
+    </Tooltip>
+  ) : (
+    trigger
+  )
+}
+
+export default ProfileOperatorFooter

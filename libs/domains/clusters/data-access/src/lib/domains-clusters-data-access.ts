@@ -8,6 +8,7 @@ import {
   ClusterDeploymentHistoryApi,
   type ClusterDnsProviderRequest,
   ClusterOperatorApi,
+  type ClusterOperatorUpdateRequest,
   type ClusterRequest,
   type ClusterRoutingTableRequest,
   ClustersApi,
@@ -220,6 +221,23 @@ export const clusters = createQueryKeys('clusters', {
 })
 
 export const mutations = {
+  async updateClusterOperator({
+    organizationId,
+    clusterId,
+    chartVersion,
+    imageVersion,
+  }: {
+    organizationId: string
+    clusterId: string
+    chartVersion: ClusterOperatorUpdateRequest['chart_version']
+    imageVersion?: ClusterOperatorUpdateRequest['image_version']
+  }) {
+    const response = await clusterOperatorApi.updateClusterOperator(organizationId, clusterId, {
+      chart_version: chartVersion,
+      image_version: imageVersion,
+    })
+    return response.data
+  },
   async createSelfManagedCluster({
     organizationId,
     clusterRequest,

@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon, InputSearch, Tooltip } from '@qovery/shared/ui'
 
@@ -155,6 +156,8 @@ export interface ClusterProfileSidebarProps {
   onSearchChange: (search: string) => void
   onSelectSection: (sectionId: string) => void
   onSelectItem: (itemId: string) => void
+  // Pinned below the layers.
+  footer?: ReactNode
 }
 
 export function ClusterProfileSidebar({
@@ -167,6 +170,7 @@ export function ClusterProfileSidebar({
   onSearchChange,
   onSelectSection,
   onSelectItem,
+  footer,
 }: ClusterProfileSidebarProps) {
   const showEmptyState = !isLoading && !isError && layers.length === 0
 
@@ -208,6 +212,7 @@ export function ClusterProfileSidebar({
           </ul>
         </nav>
       </div>
+      {footer}
     </aside>
   )
 }
