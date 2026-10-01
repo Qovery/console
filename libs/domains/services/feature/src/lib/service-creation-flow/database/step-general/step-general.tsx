@@ -1,36 +1,14 @@
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { useParams, useSearch } from '@tanstack/react-router'
-import {
-  type Cluster,
-  type ClusterFeatureAwsExistingVpc,
-  type DatabaseConfiguration,
-  DatabaseModeEnum,
-  DatabaseTypeEnum,
-} from 'qovery-typescript-axios'
+import { type DatabaseConfiguration, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler, type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider } from 'react-hook-form'
-import { match } from 'ts-pattern'
-import {
-  BlockContent,
-  Button,
-  Callout,
-  FunnelFlowBody,
-  Heading,
-  Icon,
-  InputRadio,
-  InputSelect,
-  Link,
-  Section,
-  SegmentedControl,
-} from '@qovery/shared/ui'
-import { toShortQoveryId } from '@qovery/shared/util-js'
+import { Button, FunnelFlowBody, Heading, Icon, InputSelect, Link, Section, SegmentedControl } from '@qovery/shared/ui'
 import { GeneralSetting } from '../../../general-setting/general-setting'
 import {
   type DatabaseCreateGeneralData,
-  canSelectManagedDatabaseMode,
   findDatabaseTemplateMatch,
   generateDatabaseTypeAndVersionOptions,
-  getDefaultDatabaseMode,
 } from '../database-create-utils/database-create-utils'
 import { useDatabaseCreateContext } from '../database-creation-flow'
 
@@ -38,9 +16,6 @@ export interface DatabaseStepGeneralProps {
   onSubmit: (data: DatabaseCreateGeneralData) => void
   labelSetting: ReactNode
   annotationSetting: ReactNode
-  cloudProvider?: string
-  cluster?: Cluster
-  clusterVpc?: ClusterFeatureAwsExistingVpc
   databaseConfigurations?: DatabaseConfiguration[]
 }
 
@@ -48,9 +23,6 @@ export function DatabaseStepGeneral({
   onSubmit,
   labelSetting,
   annotationSetting,
-  cloudProvider,
-  cluster,
-  clusterVpc,
   databaseConfigurations,
 }: DatabaseStepGeneralProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
@@ -60,35 +32,13 @@ export function DatabaseStepGeneral({
 
   const methods = generalForm
   const watchType = methods.watch('type')
-  const watchMode = methods.watch('mode')
   const watchAccessibility = methods.watch('accessibility')
 
-  const databaseOptions = useMemo(() => {
-    const options = generateDatabaseTypeAndVersionOptions(
-      databaseConfigurations,
-      watchMode === DatabaseModeEnum.MANAGED ? clusterVpc : undefined
-    )
+  const databaseOptions = useMemo(
+    () => generateDatabaseTypeAndVersionOptions(databaseConfigurations),
+    [databaseConfigurations]
+  )
 
-    // Filter out MongoDB option for managed mode (not supported)
-    // @see https://qovery.atlassian.net/browse/QOV-1898
-    if (watchMode === DatabaseModeEnum.MANAGED) {
-      return {
-        ...options,
-        databaseTypeOptions: options.databaseTypeOptions.filter(({ value }) => value !== DatabaseTypeEnum.MONGODB),
-      }
-    }
-
-    return options
-  }, [clusterVpc, databaseConfigurations, watchMode])
-
-  const showManagedWithVpcOptions =
-    generateDatabaseTypeAndVersionOptions(databaseConfigurations, clusterVpc).databaseTypeOptions.length > 0
-
-  const canSelectManagedMode = canSelectManagedDatabaseMode({
-    cloudProvider,
-    cluster,
-    showManagedWithVpcOptions,
-  })
   const templateMatch = findDatabaseTemplateMatch(template, option)
   const headerTitle = templateMatch.templateTitle
     ? `${templateMatch.templateTitle}${templateMatch.optionTitle ? ` - ${templateMatch.optionTitle}` : ''}`
@@ -97,26 +47,6 @@ export function DatabaseStepGeneral({
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])
-
-  useEffect(() => {
-    const currentMode = methods.getValues('mode')
-    const defaultMode = getDefaultDatabaseMode({
-      currentMode,
-      cloudProvider,
-      showManagedWithVpcOptions,
-    })
-
-    if (!currentMode) {
-      methods.setValue('mode', defaultMode, { shouldValidate: true })
-    }
-  }, [cloudProvider, methods, showManagedWithVpcOptions])
-
-  // Keep the form state valid when managed mode becomes unavailable after async data loads.
-  useEffect(() => {
-    if (methods.getValues('mode') === DatabaseModeEnum.MANAGED && !canSelectManagedMode) {
-      methods.setValue('mode', DatabaseModeEnum.CONTAINER, { shouldValidate: true })
-    }
-  }, [canSelectManagedMode, methods])
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = methods.handleSubmit((data) => {
     methods.reset(data)
@@ -144,60 +74,13 @@ export function DatabaseStepGeneral({
                   version: '',
                   icon_uri: methods.watch('icon_uri') ?? 'app://qovery-console/database',
                   type: watchType ?? DatabaseTypeEnum.POSTGRESQL,
-                  mode: watchMode ?? DatabaseModeEnum.CONTAINER,
+                  mode: DatabaseModeEnum.CONTAINER,
                   service_type: 'DATABASE',
                   serviceType: 'DATABASE',
                   environment: { id: '' },
                 }}
               />
             </Section>
-
-            <BlockContent title="Database mode" className="mb-0" classNameContent="p-5">
-              <Controller
-                name="mode"
-                control={methods.control}
-                rules={{ required: 'Please select a database mode' }}
-                render={({ field }) => (
-                  <div className="flex gap-4">
-                    <InputRadio
-                      value={DatabaseModeEnum.CONTAINER}
-                      name={field.name}
-                      description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor snapshots."
-                      onChange={field.onChange}
-                      formValue={field.value}
-                      label="Container mode"
-                    />
-                    {canSelectManagedMode ? (
-                      <InputRadio
-                        value={DatabaseModeEnum.MANAGED}
-                        name={field.name}
-                        description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
-                        onChange={(value) => {
-                          field.onChange(value)
-                          methods.resetField('type', { keepDirty: false, keepTouched: false })
-                          methods.resetField('version')
-                        }}
-                        formValue={field.value}
-                        label="Managed mode"
-                      />
-                    ) : null}
-                  </div>
-                )}
-              />
-            </BlockContent>
-
-            {watchMode === DatabaseModeEnum.MANAGED && cluster && clusterVpc ? (
-              <Callout.Root color="yellow">
-                <Callout.Icon>
-                  <Icon iconName="circle-info" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <Callout.TextHeading>Action needed</Callout.TextHeading>
-                  Add the following tag on your VPC ({clusterVpc.aws_vpc_eks_id}) in AWS: <br />
-                  Key: <strong>ClusterId</strong> Value: <strong>{toShortQoveryId(cluster.id)}</strong>
-                </Callout.Text>
-              </Callout.Root>
-            ) : null}
 
             <Section className="gap-4">
               <Heading>Database configuration</Heading>
@@ -225,9 +108,9 @@ export function DatabaseStepGeneral({
                 rules={{ required: 'Please select a database version' }}
                 render={({ field, fieldState: { error } }) => (
                   <InputSelect
-                    className={watchType && watchMode ? '' : 'hidden'}
+                    className={watchType ? '' : 'hidden'}
                     label="Version"
-                    options={databaseOptions.databaseVersionOptions[`${watchType}-${watchMode}`] ?? []}
+                    options={databaseOptions.databaseVersionOptions[`${watchType}-${DatabaseModeEnum.CONTAINER}`] ?? []}
                     onChange={field.onChange}
                     value={field.value}
                     error={error?.message}
@@ -251,43 +134,19 @@ export function DatabaseStepGeneral({
                       <SegmentedControl.Item value="PUBLIC">Public access</SegmentedControl.Item>
                     </SegmentedControl.Root>
                     <p className="mt-2 text-sm text-neutral-subtle">
-                      {match({ watchMode, watchAccessibility })
-                        .with(
-                          { watchMode: 'CONTAINER', watchAccessibility: 'PRIVATE' },
-                          { watchMode: 'CONTAINER', watchAccessibility: undefined },
-                          () => (
-                            <>
-                              <strong>Private access to your database is ensured</strong>, as it is only accessible from
-                              within your cluster or via our port-forward feature. This setup is recommended for
-                              security reasons.
-                            </>
-                          )
-                        )
-                        .with(
-                          { watchMode: 'MANAGED', watchAccessibility: 'PRIVATE' },
-                          { watchMode: 'MANAGED', watchAccessibility: undefined },
-                          () => (
-                            <>
-                              <strong>Private access to your database is ensured</strong>, as it is only accessible from
-                              within your cloud network. This configuration is recommended for security reasons.
-                            </>
-                          )
-                        )
-                        .with({ watchMode: 'CONTAINER', watchAccessibility: 'PUBLIC' }, () => (
-                          <>
-                            <strong>Public access to your database is enabled</strong>, making it accessible to
-                            authorized users from anywhere, both inside and outside your cluster, allowing for broad
-                            access, collaboration, or testing purposes.
-                          </>
-                        ))
-                        .with({ watchMode: 'MANAGED', watchAccessibility: 'PUBLIC' }, () => (
-                          <>
-                            <strong>Public access to your database is enabled</strong>, making it accessible to
-                            authorized users from anywhere, both inside and outside your cloud network, allowing for
-                            broad access, collaboration, or testing purposes.
-                          </>
-                        ))
-                        .otherwise(() => null)}
+                      {watchAccessibility === 'PUBLIC' ? (
+                        <>
+                          <strong>Public access to your database is enabled</strong>, making it accessible to authorized
+                          users from anywhere, both inside and outside your cluster, allowing for broad access,
+                          collaboration, or testing purposes.
+                        </>
+                      ) : (
+                        <>
+                          <strong>Private access to your database is ensured</strong>, as it is only accessible from
+                          within your cluster or via our port-forward feature. This setup is recommended for security
+                          reasons.
+                        </>
+                      )}
                     </p>
                   </div>
                 )}
@@ -297,9 +156,7 @@ export function DatabaseStepGeneral({
             <Collapsible.Root open={openExtraAttributes} onOpenChange={setOpenExtraAttributes} asChild>
               <Section className="gap-4">
                 <div className="flex justify-between">
-                  <Heading>
-                    {watchMode === DatabaseModeEnum.MANAGED ? 'Extra labels' : 'Extra labels/annotations'}
-                  </Heading>
+                  <Heading>Extra labels/annotations</Heading>
                   <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium text-neutral">
                     {openExtraAttributes ? (
                       <>
@@ -314,7 +171,7 @@ export function DatabaseStepGeneral({
                 </div>
                 <Collapsible.Content className="flex flex-col gap-4">
                   {labelSetting}
-                  {watchMode === DatabaseModeEnum.CONTAINER ? annotationSetting : null}
+                  {annotationSetting}
                 </Collapsible.Content>
               </Section>
             </Collapsible.Root>

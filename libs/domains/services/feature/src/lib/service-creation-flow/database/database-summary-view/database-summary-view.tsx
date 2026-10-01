@@ -1,9 +1,8 @@
 import {
-  DatabaseModeEnum,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
-import { Button, Callout, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
 import {
   type DatabaseCreateGeneralData,
   type DatabaseCreateResourcesData,
@@ -52,8 +51,6 @@ export function DatabaseSummaryView({
   isLoadingCreate,
   isLoadingCreateAndDeploy,
 }: DatabaseSummaryViewProps) {
-  const isManaged = generalData.mode === DatabaseModeEnum.MANAGED
-
   return (
     <Section className="space-y-10">
       <div className="flex flex-col gap-2">
@@ -62,23 +59,6 @@ export function DatabaseSummaryView({
           The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
         </p>
       </div>
-
-      {isManaged ? (
-        <Callout.Root color="yellow">
-          <Callout.Icon>
-            <Icon iconName="triangle-exclamation" iconStyle="regular" />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
-            <Callout.TextDescription>
-              Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
-              <br />
-              Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a drift in
-              the configuration.
-            </Callout.TextDescription>
-          </Callout.Text>
-        </Callout.Root>
-      ) : null}
 
       <div className="flex flex-col gap-6">
         <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
@@ -98,10 +78,7 @@ export function DatabaseSummaryView({
             <li className="py-2">
               <hr className="border-t border-dashed border-neutral" />
             </li>
-            <SummaryValue
-              label="Mode"
-              value={generalData.mode === DatabaseModeEnum.MANAGED ? 'Managed' : 'Container'}
-            />
+            <SummaryValue label="Mode" value="Container" />
             <SummaryValue
               label="Database type"
               value={generalData.type ? formatDatabaseTypeLabel(generalData.type) : ''}
@@ -135,17 +112,9 @@ export function DatabaseSummaryView({
             <EditSectionButton onClick={onEditResources} label="Edit resources" testId="edit-resources-button" />
           </div>
           <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-            {isManaged ? (
-              <SummaryValue label="Instance type" value={resourcesData.instance_type} />
-            ) : (
-              <>
-                <SummaryValue label="CPU" value={resourcesData.cpu} />
-                <SummaryValue label="Memory" value={`${resourcesData.memory} MB`} />
-              </>
-            )}
-            {!(isManaged && generalData.type === 'REDIS') ? (
-              <SummaryValue label="Storage" value={`${resourcesData.storage} GB`} />
-            ) : null}
+            <SummaryValue label="CPU" value={resourcesData.cpu} />
+            <SummaryValue label="Memory" value={`${resourcesData.memory} MB`} />
+            <SummaryValue label="Storage" value={`${resourcesData.storage} GB`} />
           </ul>
         </Section>
       </div>
