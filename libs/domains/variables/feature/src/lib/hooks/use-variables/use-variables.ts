@@ -8,9 +8,10 @@ export interface UseVariablesProps {
   scope?: VariableScope
   isSecret?: boolean
   suspense?: boolean
+  enabled?: boolean
 }
 
-export function useVariables({ parentId, scope, isSecret, suspense = false }: UseVariablesProps) {
+export function useVariables({ parentId, scope, isSecret, suspense = false, enabled = true }: UseVariablesProps) {
   return useQuery({
     ...queries.variables.list({
       parentId,
@@ -35,7 +36,7 @@ export function useVariables({ parentId, scope, isSecret, suspense = false }: Us
           return true
         })
     },
-    enabled: Boolean(scope),
+    enabled: Boolean(scope) && enabled,
     suspense,
   })
 }

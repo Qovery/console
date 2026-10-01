@@ -1,11 +1,14 @@
 import { Navigate, createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { AlertRuleConditionOperator } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
+import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
   type AlertConfiguration,
   AlertingCreationFlow,
   type MetricCategory,
+  fromRdsMetricThreshold,
+  isRdsMetricCategory,
   useAlertRules,
 } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
@@ -48,8 +51,10 @@ function RouteComponent() {
     }
 
     const rawThreshold = alertRule.condition.threshold ?? 0
-    const threshold =
-      alertRule.tag === 'http_latency' ? rawThreshold : alertRule.condition.threshold != null ? rawThreshold * 100 : 80
+    const threshold = match(alertRule.tag)
+      .when(isRdsMetricCategory, (category) => fromRdsMetricThreshold(category, rawThreshold))
+      .with('http_latency', () => rawThreshold)
+      .otherwise(() => (alertRule.condition.threshold != null ? rawThreshold * 100 : 80))
     const isMissingInstance = alertRule.tag === 'missing_instance'
 
     return [

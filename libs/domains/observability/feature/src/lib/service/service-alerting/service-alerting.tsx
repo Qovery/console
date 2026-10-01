@@ -3,6 +3,7 @@ import { type PropsWithChildren, useMemo } from 'react'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { Button, Heading, Icon, Section, Tooltip, useModal } from '@qovery/shared/ui'
 import { AlertRulesOverview } from '../../alerting/alert-rules-overview/alert-rules-overview'
+import { isLegacyRdsDatabase } from '../../alerting/alerting-creation-flow/metric-availability'
 import { CreateKeyAlertsModal } from '../../alerting/create-key-alerts-modal/create-key-alerts-modal'
 
 export function ServiceAlerting({ children }: PropsWithChildren) {
@@ -37,28 +38,36 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
     )
   }, [deploymentStatus])
 
+  const isLegacyRds = isLegacyRdsDatabase(service)
+
   return (
     <Section className="w-full px-8 py-6 pb-20">
       <div className="mb-8 border-b border-neutral">
         <div className="flex w-full items-center justify-between pb-5">
           <Heading level={1}>Alert rules</Heading>
-          <Tooltip content="You need to deploy your service to create alerts" disabled={canCreateAlerts}>
-            <div>
-              <Button
-                variant="outline"
-                color="neutral"
-                size="md"
-                onClick={createKeyAlertsModal}
-                disabled={!canCreateAlerts}
-              >
-                <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
-                New alert
-              </Button>
-            </div>
-          </Tooltip>
+          {!isLegacyRds && (
+            <Tooltip content="You need to deploy your service to create alerts" disabled={canCreateAlerts}>
+              <div>
+                <Button
+                  variant="outline"
+                  color="neutral"
+                  size="md"
+                  onClick={createKeyAlertsModal}
+                  disabled={!canCreateAlerts}
+                >
+                  <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
+                  New alert
+                </Button>
+              </div>
+            </Tooltip>
+          )}
         </div>
       </div>
-      <AlertRulesOverview organizationId={organizationId} service={service} onCreateKeyAlerts={createKeyAlertsModal}>
+      <AlertRulesOverview
+        organizationId={organizationId}
+        service={service}
+        onCreateKeyAlerts={isLegacyRds ? undefined : createKeyAlertsModal}
+      >
         {children}
       </AlertRulesOverview>
     </Section>

@@ -1,6 +1,7 @@
 export * from './lib/service/service-dashboard/service-dashboard'
 export * from './lib/database/database-rds-dashboard/database-rds-dashboard'
 export * from './lib/database/database-rds-dashboard/util/get-blueprint-db-instance'
+export * from './lib/database/database-rds-dashboard/util/use-blueprint-db-instance'
 export * from './lib/database/database-rds-dashboard/util/generate-db-instance'
 export * from './lib/enable-observability-modal/enable-observability-modal'
 export * from './lib/activation-toast/activation-toast'
@@ -10,6 +11,8 @@ export * from './lib/alerting/create-key-alerts-modal/create-key-alerts-modal'
 export * from './lib/alerting/alerting-creation-flow/alerting-creation-flow'
 export * from './lib/alerting/alerting-creation-flow/metric-configuration-step/metric-configuration-step'
 export * from './lib/alerting/alerting-creation-flow/alerting-creation-flow.types'
+export * from './lib/alerting/alerting-creation-flow/rds-alert-metrics'
+export * from './lib/alerting/use-rds-alert-target/use-rds-alert-target'
 export * from './lib/alerting/alerting-creation-flow/summary-step/alert-queries'
 export * from './lib/alerting/notification-channel-overview/notification-channel-overview'
 export * from './lib/alerting/issue-overview/issue-overview'
@@ -27,4 +30,5 @@ export * from './lib/hooks/use-alerts/use-alerts'
 export {
   canCreateCertificateRenewalAlert,
   getSelectedAlertMetrics,
+  isLegacyRdsDatabase,
 } from './lib/alerting/alerting-creation-flow/metric-availability'

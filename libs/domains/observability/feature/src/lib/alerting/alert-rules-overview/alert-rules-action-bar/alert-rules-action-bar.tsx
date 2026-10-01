@@ -1,7 +1,8 @@
 import { type AlertRuleResponse } from 'qovery-typescript-axios'
-import { Button, Icon, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, Icon, Tooltip, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useDeleteAlertRule } from '../../../hooks/use-delete-alert-rule/use-delete-alert-rule'
+import { canCloneAlertRule } from '../../../util-alerting/alert-type-guards'
 import { AlertRulesCloneModal } from '../../alert-rules-clone-modal/alert-rules-clone-modal'
 
 export interface AlertRulesActionBarProps {
@@ -16,6 +17,7 @@ export function AlertRulesActionBar({
   organizationId,
 }: AlertRulesActionBarProps) {
   const hasSelection = Boolean(selectedAlertRules.length)
+  const hasUncloneableSelection = selectedAlertRules.some((alertRule) => !canCloneAlertRule(alertRule))
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteAlertRule } = useDeleteAlertRule({ organizationId })
@@ -43,7 +45,7 @@ export function AlertRulesActionBar({
     })
 
   const handleCloneAlertRules = () => {
-    if (selectedAlertRules.length === 0) return
+    if (selectedAlertRules.length === 0 || hasUncloneableSelection) return
 
     openModal({
       content: (
@@ -85,10 +87,20 @@ export function AlertRulesActionBar({
                 Unselect
               </button>
               <div className="flex gap-3">
-                <Button size="md" variant="outline" className="items-center" onClick={handleCloneAlertRules}>
-                  <Icon iconName="clone" />
-                  Clone
-                </Button>
+                <Tooltip content="RDS and cluster alerts cannot be cloned" disabled={!hasUncloneableSelection}>
+                  <span>
+                    <Button
+                      size="md"
+                      variant="outline"
+                      className="items-center"
+                      onClick={handleCloneAlertRules}
+                      disabled={hasUncloneableSelection}
+                    >
+                      <Icon iconName="clone" />
+                      Clone
+                    </Button>
+                  </span>
+                </Tooltip>
                 <Button
                   size="md"
                   variant="outline"

@@ -7,6 +7,8 @@ import { Icon, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { type MetricCategory } from '../alerting-creation-flow/alerting-creation-flow.types'
 import { canCreateCertificateRenewalAlert } from '../alerting-creation-flow/metric-availability'
+import { RDS_METRICS, RDS_METRIC_CATEGORIES } from '../alerting-creation-flow/rds-alert-metrics'
+import { useRdsAlertTarget } from '../use-rds-alert-target/use-rds-alert-target'
 
 interface CreateKeyAlertsModalProps {
   onClose: () => void
@@ -37,9 +39,16 @@ const METRICS: Metric[] = [
   { id: 'certificate_renewal_failed', label: 'Certificate renewal failed', iconName: 'file-signature' },
 ]
 
+const RDS_METRIC_OPTIONS: Metric[] = RDS_METRIC_CATEGORIES.map((id) => ({
+  id,
+  label: RDS_METRICS[id].label,
+  iconName: 'database',
+}))
+
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
   const navigate = useNavigate()
   const isCertificateRenewalAlertEnabled = useFeatureFlagEnabled('certificate-renewal-alert') === true
+  const rdsAlertTarget = useRdsAlertTarget({ organizationId, service })
 
   const hasPublicPort =
     (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
@@ -50,7 +59,13 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
     (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
     service?.min_running_instances !== service?.max_running_instances
 
-  const availableMetrics = METRICS.filter((metric) => {
+  const availableMetrics = (
+    rdsAlertTarget.isResolving || rdsAlertTarget.isMetadataUnavailable
+      ? []
+      : rdsAlertTarget.isRds
+        ? RDS_METRIC_OPTIONS
+        : METRICS
+  ).filter((metric) => {
     if (!hasPublicPort && (metric.id === 'http_error' || metric.id === 'http_latency')) {
       return false
     }
@@ -93,6 +108,11 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
     const metrics = data.metrics.filter((metric) => availableMetrics.some((available) => available.id === metric))
     const firstMetric = metrics[0]
     if (!environmentId || !serviceId || !firstMetric) return
+    if (
+      rdsAlertTarget.isMetadataUnavailable ||
+      (rdsAlertTarget.isRds && (!rdsAlertTarget.dbInstance || !rdsAlertTarget.hasCloudWatchMetrics))
+    )
+      return
 
     const templatesParam = metrics.join(',')
 
@@ -131,7 +151,27 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
         onClose={onClose}
         onSubmit={onSubmit}
         submitLabel="Configure alerts"
+        submitDisabled={
+          rdsAlertTarget.isResolving ||
+          rdsAlertTarget.isMetadataUnavailable ||
+          (rdsAlertTarget.isRds && (!rdsAlertTarget.dbInstance || !rdsAlertTarget.hasCloudWatchMetrics))
+        }
       >
+        {rdsAlertTarget.isMetadataUnavailable && (
+          <p role="alert" className="mb-4 text-sm text-negative">
+            Unable to load this database's alert target. Try again later.
+          </p>
+        )}
+        {rdsAlertTarget.isRds && !rdsAlertTarget.hasCloudWatchMetrics && (
+          <p role="alert" className="mb-4 text-sm text-negative">
+            Enable CloudWatch metrics on this cluster to create RDS alerts.
+          </p>
+        )}
+        {rdsAlertTarget.isRds && rdsAlertTarget.hasCloudWatchMetrics && !rdsAlertTarget.dbInstance && (
+          <p role="alert" className="mb-4 text-sm text-negative">
+            Deploy this database to make its RDS instance identifier available before creating alerts.
+          </p>
+        )}
         <div className="-mt-1 flex flex-col gap-5">
           <div className="relative">
             <Controller

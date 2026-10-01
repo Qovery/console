@@ -24,6 +24,7 @@ import { formatMetricLabel } from '../../../util-alerting/generate-condition-des
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
+import { RDS_METRICS, type RdsMetricCategory, isRdsMetricCategory } from '../rds-alert-metrics'
 
 const VALUES_OPTIONS = [
   { label: 'Maximum', value: AlertRuleConditionFunction.MAX },
@@ -42,6 +43,10 @@ const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertR
   instance_restart: VALUES_OPTIONS,
   hpa_limit: COUNT_VALUES_OPTIONS,
   certificate_renewal_failed: VALUES_OPTIONS,
+  rds_cpu: [],
+  rds_connections: [],
+  rds_freeable_memory: [],
+  rds_free_storage_space: [],
 }
 
 const OPERATOR_OPTIONS: Value[] = Object.values(AlertRuleConditionOperator).map((operator) => ({
@@ -75,6 +80,17 @@ type MetricFieldConfig = {
     duration: string
   }>
 }
+
+const rdsMetricFieldConfig = (category: RdsMetricCategory): MetricFieldConfig => ({
+  unit: RDS_METRICS[category].unit,
+  hiddenFields: ['function'],
+  defaults: {
+    function: 'NONE',
+    operator: RDS_METRICS[category].operator,
+    threshold: RDS_METRICS[category].defaultThreshold,
+    duration: 'PT5M',
+  },
+})
 
 const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
   cpu: {
@@ -150,6 +166,10 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
       duration: 'PT15M',
     },
   },
+  rds_cpu: rdsMetricFieldConfig('rds_cpu'),
+  rds_connections: rdsMetricFieldConfig('rds_connections'),
+  rds_freeable_memory: rdsMetricFieldConfig('rds_freeable_memory'),
+  rds_free_storage_space: rdsMetricFieldConfig('rds_free_storage_space'),
 }
 
 const shouldHideField = (category: MetricCategory, field: ConditionField): boolean => {
@@ -197,6 +217,7 @@ export function MetricConfigurationStep({
     onNavigateToMetric,
     onComplete,
     isLoading,
+    submissionUnavailableReason,
   } = useAlertingCreationFlowContext()
 
   const { data: alertReceivers = [] } = useAlertReceivers({ organizationId })
@@ -521,7 +542,20 @@ export function MetricConfigurationStep({
                               if (value === '') {
                                 return 'Threshold is required'
                               }
-                              if (watchTag !== 'http_latency' && (Number(value) < 0 || Number(value) > 100)) {
+                              if (!Number.isFinite(Number(value))) {
+                                return 'Threshold must be a number'
+                              }
+                              if (Number(value) < 0) {
+                                return 'Threshold cannot be negative'
+                              }
+                              if (
+                                watchTag !== 'http_latency' &&
+                                !isRdsMetricCategory(watchTag) &&
+                                Number(value) > 100
+                              ) {
+                                return 'Threshold must be between 0 and 100'
+                              }
+                              if (watchTag === 'rds_cpu' && Number(value) > 100) {
                                 return 'Threshold must be between 0 and 100'
                               }
                               return true
@@ -723,6 +757,11 @@ export function MetricConfigurationStep({
             </div>
           </Section>
 
+          {isRdsMetricCategory(metricCategory) && submissionUnavailableReason && (
+            <p role="alert" className="text-sm text-negative">
+              {submissionUnavailableReason}
+            </p>
+          )}
           <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between gap-4 border-t border-neutral bg-background py-4">
             {!isEdit && (
               <div className="flex items-center gap-2">
@@ -747,7 +786,10 @@ export function MetricConfigurationStep({
               <Button
                 size="lg"
                 onClick={onSubmit}
-                disabled={!methods.formState.isValid}
+                disabled={
+                  !methods.formState.isValid ||
+                  (isRdsMetricCategory(metricCategory) && Boolean(submissionUnavailableReason))
+                }
                 className={isEdit ? 'ml-auto' : ''}
                 loading={isLoading}
               >

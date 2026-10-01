@@ -17,6 +17,10 @@ describe('formatMetricLabel', () => {
     expect(formatMetricLabel('instance_restart')).toBe('Instance restart')
     expect(formatMetricLabel('hpa_limit')).toBe('Auto-scaling limit')
     expect(formatMetricLabel('certificate_renewal_failed')).toBe('Certificate renewal failed')
+    expect(formatMetricLabel('rds_cpu')).toBe('RDS CPU utilization')
+    expect(formatMetricLabel('rds_connections')).toBe('RDS connections')
+    expect(formatMetricLabel('rds_freeable_memory')).toBe('RDS freeable memory')
+    expect(formatMetricLabel('rds_free_storage_space')).toBe('RDS free storage space')
   })
 })
 
@@ -36,6 +40,11 @@ describe('formatThreshold', () => {
     expect(formatThreshold(undefined, 80)).toBe('80%')
     expect(formatThreshold(undefined, 0.855)).toBe('85.5%')
     expect(formatThreshold(undefined, 0.85)).toBe('85%')
+  })
+
+  it('should preserve RDS CPU percentages below 1%', () => {
+    expect(formatThreshold('rds_cpu', 0.5)).toBe('0.5%')
+    expect(generateConditionDescription('NONE', 'ABOVE', 0.5, '%', 'PT5M', 'rds_cpu')).toBe('Above 0.5% for 5 minutes')
   })
 
   it('should format threshold as milliseconds for http_latency', () => {
