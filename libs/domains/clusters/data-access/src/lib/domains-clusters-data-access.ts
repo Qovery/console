@@ -2,6 +2,8 @@ import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   ArgoCDApi,
   type ArgoCdCredentialsRequest,
+  CloudVendorEnum,
+  type Cluster,
   type ClusterAdvancedSettings,
   type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,
@@ -10,6 +12,7 @@ import {
   type ClusterRequest,
   type ClusterRoutingTableRequest,
   ClustersApi,
+  KubernetesEnum,
   OrganizationMainCallsApi,
   SecretManagerAccessApi,
 } from 'qovery-typescript-axios'
@@ -20,6 +23,10 @@ const clusterDeploymentHistoryApi = new ClusterDeploymentHistoryApi()
 const argoCdApi = new ArgoCDApi()
 const secretManagerApi = new SecretManagerAccessApi()
 const organizationApi = new OrganizationMainCallsApi()
+
+export function isClusterEksManaged(cluster: Cluster): boolean {
+  return cluster.cloud_provider === CloudVendorEnum.AWS && cluster.kubernetes === KubernetesEnum.MANAGED
+}
 
 export const clusters = createQueryKeys('clusters', {
   list: ({ organizationId }: { organizationId: string }) => ({
