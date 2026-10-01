@@ -348,7 +348,7 @@ export function AgenticWorkflowConfiguration() {
   const { dirtyFields } = form.formState
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
   const variableValues = variablesForm.watch('variables')
-  const maxTurns = variableValues.find(({ variable }) => variable === 'MAX_TURNS')?.value
+  const maxTurns = variableValues.find(({ variable, isSecret }) => variable === 'MAX_TURNS' && !isSecret)?.value
   const variablesValid = areVariablesValid(variableValues)
   const resourcesValid = areAgenticWorkflowResourcesValid(values.cpu, values.memory)
   const showNameError = (showValidationErrors || Boolean(dirtyFields.name)) && !values.name.trim()
@@ -746,7 +746,11 @@ export function AgenticWorkflowConfiguration() {
         value="variables"
         title="Environment variables"
         summary={
-          maxTurns ? `MAX_TURNS=${maxTurns}` : variables.length > 0 ? `${variables.length} configured` : undefined
+          maxTurns !== undefined
+            ? `MAX_TURNS=${maxTurns}`
+            : variables.length > 0
+              ? `${variables.length} configured`
+              : undefined
         }
         invalid={showValidationErrors && settingsGroupsInvalid.variables}
       >
