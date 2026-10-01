@@ -233,9 +233,11 @@ describe('AgenticWorkflowRuns', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
-    const payloadSection = within(screen.getByRole('dialog')).getByRole('heading', { name: 'Payload' }).parentElement
-    expect(payloadSection?.querySelector('p')).toHaveTextContent(expected, { normalizeWhitespace: false })
-    expect(payloadSection?.querySelector('p')?.textContent).toBe(expected)
+    const payloadElement = within(screen.getByRole('dialog')).getByRole('region', { name: 'JSON payload' })
+    expect(payloadElement).toHaveTextContent(expected, { normalizeWhitespace: false })
+    expect(payloadElement.textContent).toBe(expected)
+    expect(payloadElement).toHaveClass('whitespace-pre', 'overflow-x-auto')
+    expect(payloadElement).not.toHaveClass('break-words')
   })
 
   it('shows an invalid JSON payload unchanged in the run details', async () => {
@@ -249,9 +251,10 @@ describe('AgenticWorkflowRuns', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
-    expect(within(screen.getByRole('dialog')).getByText(/deploy completed/)).toHaveTextContent(payload, {
-      normalizeWhitespace: false,
-    })
+    const payloadElement = within(screen.getByRole('dialog')).getByText(/deploy completed/)
+    expect(payloadElement).toHaveTextContent(payload, { normalizeWhitespace: false })
+    expect(payloadElement).toHaveClass('whitespace-pre-wrap', 'break-words')
+    expect(screen.queryByRole('region', { name: 'JSON payload' })).not.toBeInTheDocument()
   })
 
   it('shows a manual run with an empty payload', async () => {

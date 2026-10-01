@@ -156,12 +156,12 @@ function CopyRunIdButton({
 }
 
 // JSON.parse + JSON.stringify would change numbers such as 12345678901234567890 or 1e400.
-// JSON.parse only validates here. The text is then re-indented without touching any token.
-function formatPayload(payload: string) {
+// JSON.parse only validates here (null means not valid JSON). The text is then re-indented without touching any token.
+function formatJsonPayload(payload: string): string | null {
   try {
     JSON.parse(payload)
   } catch {
-    return payload
+    return null
   }
 
   const indent = '  '
@@ -210,6 +210,7 @@ function formatPayload(payload: string) {
 
 function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const formattedJson = run.payload ? formatJsonPayload(run.payload) : null
 
   return (
     <Dialog.Root open onOpenChange={(open) => !open && onClose()}>
@@ -255,13 +256,23 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                 </dl>
                 <section className="flex flex-col gap-2">
                   <Heading level={3}>Payload</Heading>
-                  <p className="whitespace-pre-wrap break-words rounded border border-neutral p-4">
-                    {run.payload === null || run.payload === undefined
-                      ? 'No payload recorded.'
-                      : run.payload
-                        ? formatPayload(run.payload)
-                        : 'Empty payload.'}
-                  </p>
+                  {formattedJson !== null ? (
+                    // Focusable so keyboard users can scroll long lines. Lines never wrap, to keep the indentation aligned.
+                    <pre
+                      role="region"
+                      aria-label="JSON payload"
+                      tabIndex={0}
+                      className="max-w-full overflow-x-auto whitespace-pre rounded border border-neutral p-4 font-mono text-xs"
+                    >
+                      {formattedJson}
+                    </pre>
+                  ) : (
+                    <p className="whitespace-pre-wrap break-words rounded border border-neutral p-4">
+                      {run.payload === null || run.payload === undefined
+                        ? 'No payload recorded.'
+                        : run.payload || 'Empty payload.'}
+                    </p>
+                  )}
                 </section>
                 <section className="flex flex-col gap-2">
                   <Heading level={3}>Prompt</Heading>
