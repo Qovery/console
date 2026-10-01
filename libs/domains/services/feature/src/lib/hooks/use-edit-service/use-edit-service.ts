@@ -6,16 +6,25 @@ import { toast } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import { useDeployService } from '../use-deploy-service/use-deploy-service'
 
-const warningTitle = (code: ServiceEditWarning['code']) =>
+const warningToast = ({ code, message }: ServiceEditWarning) =>
   match(code)
-    .with(
-      ServiceEditWarningCodeEnum.WEBHOOK_PERMISSION_DENIED,
-      ServiceEditWarningCodeEnum.WEBHOOK_SETUP_FAILED,
-      () => 'Auto-deploy webhook not created'
-    )
-    .with(ServiceEditWarningCodeEnum.REPOSITORY_OWNER_CHANGED, () => 'Git account changed')
-    // The API may add codes before this client is bumped
-    .otherwise(() => 'Service updated with a warning')
+    .with(ServiceEditWarningCodeEnum.WEBHOOK_PERMISSION_DENIED, () => ({
+      title: 'Auto-deploy webhook not created',
+      description:
+        'The git account used by this service needs admin rights on the repository to create the webhook. Ask a repository admin to save this change, or use a git token with admin rights. Until then, pushes will not trigger deployments.',
+    }))
+    .with(ServiceEditWarningCodeEnum.WEBHOOK_SETUP_FAILED, () => ({
+      title: 'Auto-deploy webhook not created',
+      description:
+        'Qovery could not create the webhook on the repository, so pushes will not trigger deployments. Check the webhook status in the auto-deploy settings.',
+    }))
+    .with(ServiceEditWarningCodeEnum.REPOSITORY_OWNER_CHANGED, () => ({
+      title: 'Git account changed',
+      description:
+        'The previous git account can no longer access the repository, so your git account is now used for this service.',
+    }))
+    // The API may add codes before this client is bumped: show its own message
+    .otherwise(() => ({ title: 'Service updated with a warning', description: message }))
 
 export function useEditService({
   organizationId,
@@ -40,7 +49,7 @@ export function useEditService({
         queryKey: queries.services.details({ serviceType: payload.serviceType, serviceId }).queryKey,
       })
       const warnings = 'warnings' in response ? response.warnings : undefined
-      warnings?.forEach(({ code, message }) => toast('warning', warningTitle(code), message))
+      warnings?.map(warningToast).forEach(({ title, description }) => toast('warning', title, description))
     },
     ...(silently
       ? {}

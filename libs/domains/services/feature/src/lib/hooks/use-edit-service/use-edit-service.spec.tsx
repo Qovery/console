@@ -61,7 +61,7 @@ describe('useEditService', () => {
       expect(toast).toHaveBeenCalledWith(
         'warning',
         'Auto-deploy webhook not created',
-        "the git account of 'colin' needs admin rights on the repository"
+        expect.stringContaining('Ask a repository admin')
       )
     )
   })
