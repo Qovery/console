@@ -21,6 +21,9 @@ describe('formatMetricLabel', () => {
     expect(formatMetricLabel('rds_connections')).toBe('RDS connections')
     expect(formatMetricLabel('rds_freeable_memory')).toBe('RDS freeable memory')
     expect(formatMetricLabel('rds_free_storage_space')).toBe('RDS free storage space')
+    expect(formatMetricLabel('rds_read_latency')).toBe('RDS read latency')
+    expect(formatMetricLabel('rds_write_latency')).toBe('RDS write latency')
+    expect(formatMetricLabel('rds_disk_queue_depth')).toBe('RDS disk queue depth')
   })
 })
 

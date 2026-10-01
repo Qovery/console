@@ -16,7 +16,13 @@ import { useRdsAlertTarget } from '../use-rds-alert-target/use-rds-alert-target'
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
 import { CONTAINER_METRICS, HTTP_METRICS, canCreateCertificateRenewalAlert } from './metric-availability'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
-import { RDS_METRICS, getRdsAlertQuery, isRdsMetricCategory, toRdsMetricThreshold } from './rds-alert-metrics'
+import {
+  RDS_METRICS,
+  getRdsAlertQuery,
+  isRdsMetricCategory,
+  mapRdsMetrics,
+  toRdsMetricThreshold,
+} from './rds-alert-metrics'
 import {
   QUERY_CERTIFICATE_RENEWAL_FAILED,
   QUERY_CPU,
@@ -37,10 +43,7 @@ const METRIC_LABELS: Record<MetricCategory, string> = {
   missing_instance: 'Missing instance',
   hpa_limit: 'Auto-scaling limit',
   certificate_renewal_failed: 'Certificate renewal failed',
-  rds_cpu: RDS_METRICS.rds_cpu.label,
-  rds_connections: RDS_METRICS.rds_connections.label,
-  rds_freeable_memory: RDS_METRICS.rds_freeable_memory.label,
-  rds_free_storage_space: RDS_METRICS.rds_free_storage_space.label,
+  ...mapRdsMetrics((category) => RDS_METRICS[category].label),
 }
 
 interface AlertingCreationFlowContextInterface {
@@ -241,7 +244,7 @@ export function AlertingCreationFlow({
           .otherwise(() => formThreshold / 100)
 
         const unit = match(alert.tag)
-          .when(isRdsMetricCategory, (category) => RDS_METRICS[category].unit)
+          .when(isRdsMetricCategory, (category) => RDS_METRICS[category].descriptionUnit)
           .with('http_latency', () => 'secs')
           .with('certificate_renewal_failed', () => '')
           .otherwise(() => '%')
@@ -258,7 +261,7 @@ export function AlertingCreationFlow({
               func,
               operator,
               isRdsMetric ? formThreshold : threshold,
-              unit === 'connections' ? ' connections' : unit,
+              unit,
               alert.for_duration,
               isRdsMetric ? (alert.tag as MetricCategory) : undefined
             )

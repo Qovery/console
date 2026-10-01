@@ -93,7 +93,7 @@ describe('CreateKeyAlertsModal', () => {
     expect(screen.getByText('Configure alerts')).toBeInTheDocument()
   })
 
-  it('offers only the four RDS metrics for an RDS blueprint service', () => {
+  it('offers only the RDS metrics for an RDS blueprint service', () => {
     mockUseRdsAlertTarget.mockReturnValue({
       isRds: true,
       isResolving: false,
@@ -106,6 +106,9 @@ describe('CreateKeyAlertsModal', () => {
     expect(screen.getByRole('button', { name: 'RDS connections' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'RDS freeable memory' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'RDS free storage space' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'RDS read latency' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'RDS write latency' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'RDS disk queue depth' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Missing instance' })).not.toBeInTheDocument()
   })
 

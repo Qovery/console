@@ -24,7 +24,7 @@ import { formatMetricLabel } from '../../../util-alerting/generate-condition-des
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
-import { RDS_METRICS, type RdsMetricCategory, isRdsMetricCategory } from '../rds-alert-metrics'
+import { RDS_METRICS, type RdsMetricCategory, isRdsMetricCategory, mapRdsMetrics } from '../rds-alert-metrics'
 
 const VALUES_OPTIONS = [
   { label: 'Maximum', value: AlertRuleConditionFunction.MAX },
@@ -43,10 +43,7 @@ const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertR
   instance_restart: VALUES_OPTIONS,
   hpa_limit: COUNT_VALUES_OPTIONS,
   certificate_renewal_failed: VALUES_OPTIONS,
-  rds_cpu: [],
-  rds_connections: [],
-  rds_freeable_memory: [],
-  rds_free_storage_space: [],
+  ...mapRdsMetrics(() => []),
 }
 
 const OPERATOR_OPTIONS: Value[] = Object.values(AlertRuleConditionOperator).map((operator) => ({
@@ -166,10 +163,7 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
       duration: 'PT15M',
     },
   },
-  rds_cpu: rdsMetricFieldConfig('rds_cpu'),
-  rds_connections: rdsMetricFieldConfig('rds_connections'),
-  rds_freeable_memory: rdsMetricFieldConfig('rds_freeable_memory'),
-  rds_free_storage_space: rdsMetricFieldConfig('rds_free_storage_space'),
+  ...mapRdsMetrics(rdsMetricFieldConfig),
 }
 
 const shouldHideField = (category: MetricCategory, field: ConditionField): boolean => {

@@ -1,7 +1,7 @@
 import { type AlertRuleConditionFunction, type AlertRuleConditionOperator } from 'qovery-typescript-axios'
 import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type MetricCategory } from '../alerting/alerting-creation-flow/alerting-creation-flow.types'
-import { RDS_METRICS, RDS_METRIC_CATEGORIES } from '../alerting/alerting-creation-flow/rds-alert-metrics'
+import { RDS_METRICS, mapRdsMetrics } from '../alerting/alerting-creation-flow/rds-alert-metrics'
 
 const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   cpu: 'CPU',
@@ -12,7 +12,7 @@ const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   instance_restart: 'Instance restart',
   hpa_limit: 'Auto-scaling limit',
   certificate_renewal_failed: 'Certificate renewal failed',
-  ...Object.fromEntries(RDS_METRIC_CATEGORIES.map((category) => [category, RDS_METRICS[category].label])),
+  ...mapRdsMetrics((category) => RDS_METRICS[category].label),
 }
 
 const OPERATOR_SYMBOLS: Record<AlertRuleConditionOperator, string> = {
