@@ -416,6 +416,7 @@ function ClusterProfileView({
         id: item.id,
         label: item.label,
         status: item.status,
+        disabledReason: item.disabledReason,
         configurable: item.configurable,
         items: item.children.map((child) => ({
           id: child.key,

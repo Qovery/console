@@ -17,6 +17,7 @@ export interface ClusterProfileSidebarLayer {
   id: string
   label: string
   status: LayerStatus
+  disabledReason?: string
   configurable: boolean
   items: readonly ClusterProfileSidebarItem[]
 }
@@ -51,14 +52,7 @@ function LayerSectionRow({
 }: LayerSectionRowProps) {
   const isDisabled = section.status === 'disabled' || !section.configurable
   const isSelected = !isDisabled && section.id === selectedSectionId
-  const disabledReason =
-    section.id === 'infrastructure'
-      ? 'This layer is currently skipped'
-      : section.id === 'qovery-stack'
-        ? 'These values are currently managed by Qovery'
-        : !section.configurable
-          ? NOT_CONFIGURABLE_LAYER_REASON
-          : undefined
+  const disabledReason = section.disabledReason ?? (section.configurable ? undefined : NOT_CONFIGURABLE_LAYER_REASON)
 
   return (
     <Tooltip content={disabledReason ?? ''} disabled={!disabledReason} side="right">

@@ -28,7 +28,7 @@ jest.mock('../platform-configuration/hooks/use-platform-component-configurations
 const mockUseParams = useParams as jest.Mock
 const mockUseCluster = useCluster as jest.MockedFunction<typeof useCluster>
 const mockUsePlatformTemplates = usePlatformTemplates as jest.MockedFunction<typeof usePlatformTemplates>
-const mockUsePlatformBinding = usePlatformConfiguration as jest.MockedFunction<typeof usePlatformConfiguration>
+const mockUsePlatformConfiguration = usePlatformConfiguration as jest.MockedFunction<typeof usePlatformConfiguration>
 const mockUseDeployCluster = useDeployCluster as jest.Mock
 const mockUseUpdatePlatformBinding = useUpdatePlatformConfiguration as jest.Mock
 const mockDeployCluster = jest.fn()
@@ -239,7 +239,7 @@ describe('ClusterProfileFeature', () => {
       isError: false,
       isLoading: false,
     } as ReturnType<typeof usePlatformTemplates>)
-    mockUsePlatformBinding.mockReturnValue({
+    mockUsePlatformConfiguration.mockReturnValue({
       data: null,
       isError: false,
       isLoading: false,
@@ -262,7 +262,8 @@ describe('ClusterProfileFeature', () => {
     })
     expect(screen.getByRole('banner')).not.toHaveClass('border-b')
     expect(container.querySelectorAll('.fa-circle-check')).toHaveLength(0)
-    expect(container.querySelectorAll('.fa-circle-minus')).toHaveLength(2)
+    // No layer status without a cluster configuration: no layer is skipped or managed by Qovery.
+    expect(container.querySelectorAll('.fa-circle-minus')).toHaveLength(0)
     expect(screen.getByRole('heading', { name: 'Log infra' })).toBeInTheDocument()
     expect(
       screen.getByText('Collects logs from everything running on this cluster and makes them searchable in Qovery')
@@ -411,7 +412,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('disables the add button once the item limit is reached', () => {
-      mockUsePlatformBinding.mockReturnValue({
+      mockUsePlatformConfiguration.mockReturnValue({
         data: {
           clusterInputs: {},
           platform: {
@@ -453,7 +454,7 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('shows violations on array items and unmapped violations', () => {
-      mockUsePlatformBinding.mockReturnValue({
+      mockUsePlatformConfiguration.mockReturnValue({
         data: {
           clusterInputs: {},
           platform: {
@@ -612,6 +613,62 @@ describe('ClusterProfileFeature', () => {
       expect(mockDeployCluster).not.toHaveBeenCalled()
       expect(screen.getByRole('region', { name: 'Unsaved profile changes' })).toBeInTheDocument()
     })
+  })
+
+  it('greys out the layers skipped or disabled in the cluster configuration', async () => {
+    mockUsePlatformConfiguration.mockReturnValue({
+      data: {
+        clusterId: 'cluster-id',
+        organizationId: 'organization-id',
+        clusterInputs: {},
+        platform: { templateKey: 'qovery-cluster-v0', templateVersion: '1.0.0' },
+        layers: [
+          {
+            key: 'network',
+            status: 'SKIPPED',
+            reason: 'not applicable to CUSTOMER_MANAGED/AWS cluster',
+            componentKeys: [],
+          },
+          { key: 'qovery-stack', status: 'DISABLED', reason: 'optional layer disabled', componentKeys: [] },
+          { key: 'log-infra', status: 'ENABLED', reason: 'mandatory layer', componentKeys: ['loki', 'alloy'] },
+        ],
+      },
+      isError: false,
+      isLoading: false,
+    } as unknown as ReturnType<typeof usePlatformConfiguration>)
+    const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+    const network = screen.getByRole('button', { name: 'Network' })
+    expect(network).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Envoy' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Log infra' })).toBeEnabled()
+
+    await userEvent.hover(network.closest('li') as HTMLElement)
+
+    expect((await screen.findAllByText('This layer does not apply to this cluster'))[0]).toBeInTheDocument()
+
+    expect(screen.getByRole('button', { name: 'Qovery stack' })).toBeDisabled()
+  })
+
+  it('explains that a disabled layer is managed by Qovery', async () => {
+    mockUsePlatformConfiguration.mockReturnValue({
+      data: {
+        clusterId: 'cluster-id',
+        organizationId: 'organization-id',
+        clusterInputs: {},
+        platform: { templateKey: 'qovery-cluster-v0', templateVersion: '1.0.0' },
+        layers: [{ key: 'network', status: 'DISABLED', reason: 'optional layer disabled', componentKeys: [] }],
+      },
+      isError: false,
+      isLoading: false,
+    } as unknown as ReturnType<typeof usePlatformConfiguration>)
+    const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+    const network = screen.getByRole('button', { name: 'Network' })
+    expect(network).toBeDisabled()
+    await userEvent.hover(network.closest('li') as HTMLElement)
+
+    expect((await screen.findAllByText('These values are currently managed by Qovery'))[0]).toBeInTheDocument()
   })
 
   describe('components without configuration', () => {

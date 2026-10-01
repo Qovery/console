@@ -163,7 +163,10 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
       ) ?? templates?.[0],
     [configuration?.platform.templateKey, configuration?.platform.templateVersion, templates]
   )
-  const profileTree = useMemo(() => getProfileTree(selectedTemplate), [selectedTemplate])
+  const profileTree = useMemo(
+    () => getProfileTree(selectedTemplate, configuration?.layers),
+    [configuration?.layers, selectedTemplate]
+  )
 
   const updateProfileConfig = (componentKey: string, fieldKey: string, value: unknown) => {
     setProfileValues((currentValues) => updateComponentValue(currentValues, componentKey, fieldKey, value))
