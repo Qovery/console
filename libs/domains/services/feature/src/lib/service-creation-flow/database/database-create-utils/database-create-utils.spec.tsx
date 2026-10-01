@@ -56,6 +56,21 @@ describe('database-create-utils', () => {
     })
   })
 
+  it('only offers database types that have a container version', () => {
+    const options = generateDatabaseTypeAndVersionOptions([
+      {
+        database_type: 'POSTGRESQL',
+        version: [{ name: '16', supported_mode: DatabaseModeEnum.CONTAINER }],
+      },
+      {
+        database_type: 'MYSQL',
+        version: [{ name: '8.0', supported_mode: DatabaseModeEnum.MANAGED }],
+      },
+    ])
+
+    expect(options.databaseTypeOptions.map(({ value }) => value)).toEqual(['POSTGRESQL'])
+  })
+
   it('sorts database versions from latest to oldest', () => {
     expect(
       sortDatabaseVersionValues([

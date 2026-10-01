@@ -121,7 +121,9 @@ export function generateDatabaseTypeAndVersionOptions(
   )
 
   return {
-    databaseTypeOptions,
+    databaseTypeOptions: databaseTypeOptions.filter(
+      ({ value }) => sortedDatabaseVersionOptions[`${value}-${DatabaseModeEnum.CONTAINER}`]?.length
+    ),
     databaseVersionOptions: sortedDatabaseVersionOptions,
   }
 }

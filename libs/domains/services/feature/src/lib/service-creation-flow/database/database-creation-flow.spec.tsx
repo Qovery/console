@@ -2,7 +2,7 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DatabaseCreationFlow, useDatabaseCreateContext } from './database-creation-flow'
 
 const mockNavigate = jest.fn()
-const mockSearch = {
+const mockSearch: { template: string; option: string } = {
   template: 'postgresql',
   option: 'container',
 }
@@ -34,6 +34,10 @@ function ContextConsumer() {
 }
 
 describe('DatabaseCreationFlow', () => {
+  afterEach(() => {
+    mockSearch.option = 'container'
+  })
+
   it('renders and provides database creation context', () => {
     renderWithProviders(
       <DatabaseCreationFlow creationFlowUrl="/create/database">
@@ -46,5 +50,18 @@ describe('DatabaseCreationFlow', () => {
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('url=/create/database')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('type=POSTGRESQL')
     expect(screen.getByTestId('context-consumer')).toHaveTextContent('storage=20')
+  })
+
+  it('falls back to the container flow for legacy managed links', () => {
+    mockSearch.option = 'managed'
+
+    renderWithProviders(
+      <DatabaseCreationFlow creationFlowUrl="/create/database">
+        <ContextConsumer />
+      </DatabaseCreationFlow>
+    )
+
+    expect(screen.getByText('Create new database')).toBeInTheDocument()
+    expect(screen.getByTestId('context-consumer')).toHaveTextContent('type=POSTGRESQL')
   })
 })
