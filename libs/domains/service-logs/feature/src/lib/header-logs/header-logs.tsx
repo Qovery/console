@@ -9,7 +9,15 @@ import {
   useLinks,
   useService,
 } from '@qovery/domains/services/feature'
-import { Button, CopyToClipboardButtonIcon, DeploymentAction, Icon, StatusChip, Tooltip, getTriggerAction } from '@qovery/shared/ui'
+import {
+  Button,
+  CopyToClipboardButtonIcon,
+  DeploymentAction,
+  Icon,
+  StatusChip,
+  Tooltip,
+  getTriggerAction,
+} from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { pluralize, trimId } from '@qovery/shared/util-js'
