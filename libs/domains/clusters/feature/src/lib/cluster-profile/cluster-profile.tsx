@@ -37,8 +37,6 @@ import {
   getFirstConfigurableComponent,
 } from './profile-tree'
 
-export const ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG = 'engine-v2-platform-configuration'
-
 type ProfileTab = {
   id: string
   label: string

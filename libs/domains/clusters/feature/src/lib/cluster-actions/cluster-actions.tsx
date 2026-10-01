@@ -25,6 +25,7 @@ import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useEksAnywhereClusterJwt } from '../hooks/use-eks-anywhere-cluster-jwt/use-eks-anywhere-cluster-jwt'
+import { useIsEngineV2Cluster } from '../hooks/use-is-engine-v2-cluster/use-is-engine-v2-cluster'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 import { useUpdateEksAnywhereCommit } from '../hooks/use-update-eks-anywhere-commit/use-update-eks-anywhere-commit'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
@@ -36,10 +37,13 @@ function MenuManageDeployment({
   cluster,
   clusterStatus,
   variant = 'default',
+  isEngineV2Cluster = false,
 }: {
   cluster: Cluster
   clusterStatus: ClusterStatus
   variant?: ActionToolbarVariant
+  // The customer runs an Engine v2 cluster: Qovery only deploys its platform profile, it cannot stop or upgrade it.
+  isEngineV2Cluster?: boolean
 }) {
   const { openModalConfirmation } = useModalConfirmation()
   const { openModal, closeModal } = useModal()
@@ -63,7 +67,8 @@ function MenuManageDeployment({
     clusterStatus.next_k8s_available_version &&
     clusterStatus.next_k8s_available_version !== null &&
     clusterStatus.status === 'DEPLOYED' &&
-    cluster.kubernetes !== 'PARTIALLY_MANAGED'
+    cluster.kubernetes !== 'PARTIALLY_MANAGED' &&
+    !isEngineV2Cluster
   const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
   const isEksAnywhereCluster = cluster.kubernetes === 'PARTIALLY_MANAGED'
   const hasEksAnywhereGitRepository = Boolean(
@@ -202,7 +207,8 @@ function MenuManageDeployment({
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
-    cluster.cloud_provider !== 'GCP' &&
+    !isEngineV2Cluster &&
+      cluster.cloud_provider !== 'GCP' &&
       cluster.cloud_provider !== 'AZURE' &&
       isStopAvailable(clusterStatus.status) &&
       cluster.kubernetes !== 'PARTIALLY_MANAGED' && (
@@ -422,6 +428,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })
+  const isEngineV2Cluster = useIsEngineV2Cluster(cluster)
 
   const searchParams = useMemo(() => {
     // @ts-expect-error TODO needs to be fixed
@@ -471,6 +478,10 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
   }, [searchParams, location.search, location.pathname, cluster.kubernetes, closeModal, openInstallationGuideModal])
 
   const primaryActionButton = match(cluster)
+    .when(
+      () => isEngineV2Cluster,
+      () => <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} isEngineV2Cluster />
+    )
     .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => (
       <Tooltip content="Installation guide">
         <Button onClick={() => openInstallationGuideModal()} iconOnly size={variant === 'default' ? 'sm' : 'md'}>
@@ -493,7 +504,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
     ))
     .otherwise(() => <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />)
   const logsButton =
-    variant === 'card' && cluster.kubernetes !== 'SELF_MANAGED' ? (
+    variant === 'card' && (cluster.kubernetes !== 'SELF_MANAGED' || isEngineV2Cluster) ? (
       <Tooltip content="Deployments">
         <Button
           aria-label="Deployments"

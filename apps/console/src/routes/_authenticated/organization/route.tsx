@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type BlueprintDetailsResponse, type Cluster } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG, useClusters } from '@qovery/domains/clusters/feature'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import {
@@ -379,9 +379,7 @@ function useNavigationContext(): NavigationContext | null {
   const pathname = location.pathname
   const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
-  const isEngineV2PlatformConfigurationEnabled = Boolean(
-    useFeatureFlagEnabled(ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG)
-  )
+  const isEngineV2PlatformConfigurationEnabled = Boolean(useFeatureFlagEnabled('engine-v2-platform-configuration'))
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,

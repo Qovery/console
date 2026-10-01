@@ -1,6 +1,6 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { ClusterAdd, ClusterNew, ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG } from '@qovery/domains/clusters/feature'
+import { ClusterAdd, ClusterNew } from '@qovery/domains/clusters/feature'
 import { Heading, Icon, Link, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -10,7 +10,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function RouteComponent() {
   const { organizationId = '' } = useParams({ strict: false })
-  const isEngineV2Enabled = Boolean(useFeatureFlagEnabled(ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG))
+  const isEngineV2Enabled = Boolean(useFeatureFlagEnabled('engine-v2-platform-configuration'))
   useDocumentTitle(isEngineV2Enabled ? 'Add cluster' : 'Create new cluster')
 
   return (

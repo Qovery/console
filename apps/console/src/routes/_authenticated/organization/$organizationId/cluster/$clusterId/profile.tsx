@@ -1,7 +1,7 @@
 import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { z } from 'zod'
-import { ClusterProfileFeature, ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG } from '@qovery/domains/clusters/feature'
+import { ClusterProfileFeature } from '@qovery/domains/clusters/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/profile')({
@@ -17,7 +17,7 @@ function RouteComponent() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { component, search } = Route.useSearch()
   const navigate = Route.useNavigate()
-  const isProfileEnabled = Boolean(useFeatureFlagEnabled(ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG))
+  const isProfileEnabled = Boolean(useFeatureFlagEnabled('engine-v2-platform-configuration'))
 
   if (!isProfileEnabled && organizationId && clusterId) {
     return (

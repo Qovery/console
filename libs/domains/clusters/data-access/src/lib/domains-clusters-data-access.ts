@@ -16,6 +16,7 @@ import {
   type SelfManagedClusterRequest,
 } from 'qovery-typescript-axios'
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
+import { isHttpStatus } from './http/is-http-status'
 
 const clusterApi = new ClustersApi()
 const clusterDeploymentHistoryApi = new ClusterDeploymentHistoryApi()
@@ -49,8 +50,14 @@ export const clusters = createQueryKeys('clusters', {
   operatorStatus: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
     queryKey: [organizationId, clusterId],
     async queryFn() {
-      const response = await clusterOperatorApi.getClusterOperatorStatus(organizationId, clusterId)
-      return response.data
+      try {
+        const response = await clusterOperatorApi.getClusterOperatorStatus(organizationId, clusterId)
+        return response.data
+      } catch (error) {
+        // No Operator state: the cluster is not enrolled in the Engine v2 Operator path.
+        if (isHttpStatus(error, 404)) return null
+        throw error
+      }
     },
   }),
   operatorBootstrap: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({

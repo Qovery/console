@@ -7,6 +7,7 @@ export interface UseClusterOperatorStatusProps {
   enabled?: boolean
   // Poll interval in milliseconds, disabled when unset.
   refetchInterval?: number
+  staleTime?: number
 }
 
 export function useClusterOperatorStatus({
@@ -14,11 +15,13 @@ export function useClusterOperatorStatus({
   clusterId,
   enabled = true,
   refetchInterval,
+  staleTime,
 }: UseClusterOperatorStatusProps) {
   return useQuery({
     ...queries.clusters.operatorStatus({ organizationId, clusterId }),
     enabled: enabled && Boolean(organizationId) && Boolean(clusterId),
     refetchInterval,
+    staleTime,
   })
 }
 
