@@ -348,6 +348,7 @@ export function AgenticWorkflowConfiguration() {
   const { dirtyFields } = form.formState
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
   const variableValues = variablesForm.watch('variables')
+  const maxTurns = variableValues.find(({ variable }) => variable === 'MAX_TURNS')?.value
   const variablesValid = areVariablesValid(variableValues)
   const resourcesValid = areAgenticWorkflowResourcesValid(values.cpu, values.memory)
   const showNameError = (showValidationErrors || Boolean(dirtyFields.name)) && !values.name.trim()
@@ -744,7 +745,9 @@ export function AgenticWorkflowConfiguration() {
       <SettingsAccordionItem
         value="variables"
         title="Environment variables"
-        summary={variables.length > 0 ? `${variables.length} configured` : undefined}
+        summary={
+          maxTurns ? `MAX_TURNS=${maxTurns}` : variables.length > 0 ? `${variables.length} configured` : undefined
+        }
         invalid={showValidationErrors && settingsGroupsInvalid.variables}
       >
         <div className="flex flex-wrap gap-2">

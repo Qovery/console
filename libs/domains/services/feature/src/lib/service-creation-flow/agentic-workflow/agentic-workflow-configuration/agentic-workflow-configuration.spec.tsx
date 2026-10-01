@@ -788,8 +788,8 @@ describe('AgenticWorkflowConfiguration', () => {
       expect(screen.queryByText('Complete every environment variable name and value.')).not.toBeInTheDocument()
       expect(screen.getByText('Environment variables').closest('button')).toHaveClass('bg-surface-negative-subtle')
       expect(screen.queryByText('Please enter a value.')).not.toBeInTheDocument()
-      expect(screen.getByTestId('value').closest('[data-testid="input"]')).toHaveClass('input--error')
-      expect(screen.getByTestId('value')).toHaveFocus()
+      expect(screen.getAllByTestId('value')[1].closest('[data-testid="input"]')).toHaveClass('input--error')
+      expect(screen.getAllByTestId('value')[1]).toHaveFocus()
     })
     expect(mockCreateService).not.toHaveBeenCalled()
   })
@@ -814,7 +814,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await waitFor(() => {
       expect(variablesTrigger).toHaveAttribute('data-state', 'open')
-      expect(screen.getByTestId('value').closest('[data-testid="input"]')).toHaveClass('input--error')
+      expect(screen.getAllByTestId('value')[1].closest('[data-testid="input"]')).toHaveClass('input--error')
     })
     expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
   })
@@ -835,7 +835,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-    await waitFor(() => expect(screen.getByTestId('variable-row')).toHaveFocus())
+    await waitFor(() => expect(screen.getAllByTestId('variable-row')[1]).toHaveFocus())
   })
 
   it('should create the agent task when Create is clicked', async () => {
