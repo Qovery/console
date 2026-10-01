@@ -257,15 +257,26 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                 <section className="flex flex-col gap-2">
                   <Heading level={3}>Payload</Heading>
                   {formattedJson !== null ? (
-                    // Focusable so keyboard users can scroll long lines. Lines never wrap, to keep the indentation aligned.
-                    <pre
-                      role="region"
+                    <div
+                      role="group"
                       aria-label="JSON payload"
-                      tabIndex={0}
-                      className="max-w-full overflow-x-auto whitespace-pre rounded border border-neutral p-4 font-mono text-xs"
+                      className="rounded border border-neutral p-4 font-mono text-xs"
                     >
-                      {formattedJson}
-                    </pre>
+                      {formattedJson.split('\n').map((line, index) => {
+                        // Hanging indent: wrapped parts line up with the start of their own line, inside the braces.
+                        const indent = line.length - line.trimStart().length
+                        return (
+                          <div
+                            // eslint-disable-next-line react/no-array-index-key
+                            key={index}
+                            className="whitespace-pre-wrap break-words"
+                            style={{ paddingLeft: `${indent}ch`, textIndent: `-${indent}ch` }}
+                          >
+                            {line}
+                          </div>
+                        )
+                      })}
+                    </div>
                   ) : (
                     <p className="whitespace-pre-wrap break-words rounded border border-neutral p-4">
                       {run.payload === null || run.payload === undefined

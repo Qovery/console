@@ -204,11 +204,8 @@ describe('AgenticWorkflowRuns', () => {
     })
     await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
-    const payloadElement = within(screen.getByRole('dialog')).getByText(/deploy completed/)
-    expect(payloadElement).toHaveTextContent(JSON.stringify(JSON.parse(payload), null, 2), {
-      normalizeWhitespace: false,
-    })
-    expect(payloadElement).toHaveTextContent('\n  "message": "deploy completed"', { normalizeWhitespace: false })
+    const lines = Array.from(within(screen.getByRole('dialog')).getByRole('group', { name: 'JSON payload' }).children)
+    expect(lines.map((line) => line.textContent)).toEqual(JSON.stringify(JSON.parse(payload), null, 2).split('\n'))
   })
 
   it.each([
@@ -233,10 +230,28 @@ describe('AgenticWorkflowRuns', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
-    const payloadElement = within(screen.getByRole('dialog')).getByRole('region', { name: 'JSON payload' })
-    expect(payloadElement).toHaveTextContent(expected, { normalizeWhitespace: false })
-    expect(payloadElement).toHaveClass('whitespace-pre', 'overflow-x-auto')
-    expect(payloadElement).not.toHaveClass('break-words')
+    const payloadElement = within(screen.getByRole('dialog')).getByRole('group', { name: 'JSON payload' })
+    const lines = Array.from(payloadElement.children)
+    expect(lines.map((line) => line.textContent)).toEqual(expected.split('\n'))
+    lines.forEach((line) => expect(line).toHaveClass('whitespace-pre-wrap', 'break-words'))
+    expect(payloadElement).not.toHaveClass('overflow-x-auto')
+  })
+
+  it('aligns wrapped lines with the indentation of their own line', async () => {
+    const payload = '{"a":{"b":"x"}}'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    const lines = Array.from(within(screen.getByRole('dialog')).getByRole('group', { name: 'JSON payload' }).children)
+    expect(lines[0]).toHaveStyle({ paddingLeft: '0ch', textIndent: '-0ch' })
+    expect(lines[1]).toHaveStyle({ paddingLeft: '2ch', textIndent: '-2ch' })
+    expect(lines[2]).toHaveStyle({ paddingLeft: '4ch', textIndent: '-4ch' })
   })
 
   it('shows an invalid JSON payload unchanged in the run details', async () => {
@@ -253,7 +268,7 @@ describe('AgenticWorkflowRuns', () => {
     const payloadElement = within(screen.getByRole('dialog')).getByText(/deploy completed/)
     expect(payloadElement).toHaveTextContent(payload, { normalizeWhitespace: false })
     expect(payloadElement).toHaveClass('whitespace-pre-wrap', 'break-words')
-    expect(screen.queryByRole('region', { name: 'JSON payload' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: 'JSON payload' })).not.toBeInTheDocument()
   })
 
   it('shows a manual run with an empty payload', async () => {
