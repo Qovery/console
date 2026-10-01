@@ -177,6 +177,30 @@ const mockTemplates = [
           ]),
         ],
       },
+      {
+        key: 'karpenter',
+        mandatory: false,
+        enabledByDefault: true,
+        components: [
+          createComponent('karpenter-crd'),
+          createComponent('karpenter-configuration', [
+            {
+              key: 'node-pool',
+              label: 'Node pool',
+              type: 'string',
+              required: false,
+              sensitive: false,
+              constraints: {},
+            },
+          ]),
+        ],
+      },
+      {
+        key: 'crds',
+        mandatory: false,
+        enabledByDefault: true,
+        components: [createComponent('gateway-crd')],
+      },
     ],
   },
 ] as unknown as PlatformTemplateSummaryResponse[]
@@ -587,6 +611,37 @@ describe('ClusterProfileFeature', () => {
 
       expect(mockDeployCluster).not.toHaveBeenCalled()
       expect(screen.getByRole('region', { name: 'Unsaved profile changes' })).toBeInTheDocument()
+    })
+  })
+
+  describe('components without configuration', () => {
+    it('greys out components and layers that have no field to configure', () => {
+      renderWithProviders(<ClusterProfileFeature />)
+
+      expect(screen.getByRole('button', { name: 'Karpenter crd' })).toBeDisabled()
+      expect(screen.getByRole('button', { name: 'Karpenter configuration' })).toBeEnabled()
+      expect(screen.getByRole('button', { name: 'Crds' })).toBeDisabled()
+      expect(screen.getByRole('button', { name: 'Gateway crd' })).toBeDisabled()
+    })
+
+    it('opens a layer on its first configurable component', async () => {
+      const onActiveComponentChange = jest.fn()
+      const { userEvent } = renderWithProviders(
+        <ClusterProfileFeature onActiveComponentChange={onActiveComponentChange} />
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: 'Karpenter' }))
+
+      expect(onActiveComponentChange).toHaveBeenCalledWith('karpenter-configuration')
+    })
+
+    it('does not open a component without configuration from the URL', () => {
+      mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['karpenter-configuration']))
+      renderWithProviders(<ClusterProfileFeature activeComponentKey="karpenter-crd" />)
+
+      expect(screen.getByRole('tab', { name: 'Karpenter configuration' })).toHaveAttribute('aria-selected', 'true')
+      expect(screen.queryByRole('tab', { name: 'Karpenter crd' })).not.toBeInTheDocument()
+      expect(screen.getByLabelText('Node pool')).toBeInTheDocument()
     })
   })
 })

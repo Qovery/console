@@ -30,7 +30,12 @@ import {
   matchesProfileSearch,
   normalizeProfileSearch,
 } from './profile-search'
-import { type ProfileComponent, type ProfileTreeItem, formatProfileLabel } from './profile-tree'
+import {
+  type ProfileComponent,
+  type ProfileTreeItem,
+  formatProfileLabel,
+  getFirstConfigurableComponent,
+} from './profile-tree'
 
 export const ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG = 'engine-v2-platform-configuration'
 
@@ -63,10 +68,13 @@ function findProfileLayer(profileTree: ProfileTreeItem[], requestedKey?: string)
 }
 
 function getDefaultProfileComponent(profileTree: ProfileTreeItem[]) {
-  return (
-    profileTree.find((item) => item.label.toLowerCase() === 'log infra')?.children?.[0] ??
-    profileTree.find((item) => item.status !== 'disabled' && item.children?.length)?.children?.[0] ??
-    profileTree.find((item) => item.children?.length)?.children?.[0]
+  const isOpenable = (item: ProfileTreeItem) => item.status !== 'disabled' && item.configurable
+  return getFirstConfigurableComponent(
+    (
+      profileTree.find((item) => item.label.toLowerCase() === 'log infra' && isOpenable(item)) ??
+      profileTree.find(isOpenable) ??
+      profileTree.find((item) => item.children?.length)
+    )?.children
   )
 }
 
@@ -91,13 +99,15 @@ function filterProfileTree(profileTree: ProfileTreeItem[], query: string): Profi
 function resolveActiveProfileSelection(profileTree: ProfileTreeItem[], requestedKey?: string) {
   const requestedComponent = findProfileComponent(profileTree, requestedKey)
   const requestedLayer = findProfileLayer(profileTree, requestedKey)
+  // A component with nothing to configure is not opened, even from the URL: its layer opens instead.
+  const openableComponent = requestedComponent?.configurable ? requestedComponent : undefined
   const defaultComponent = getDefaultProfileComponent(profileTree)
   const layer =
     requestedLayer ??
     profileTree.find((item) => item.children?.some((child) => child.id === requestedComponent?.id)) ??
     profileTree.find((item) => item.children?.some((child) => child.id === defaultComponent?.id))
 
-  return { layer, component: requestedComponent ?? layer?.children?.[0] ?? defaultComponent }
+  return { layer, component: openableComponent ?? getFirstConfigurableComponent(layer?.children) ?? defaultComponent }
 }
 
 function getProfileSections(
@@ -310,11 +320,14 @@ function ClusterProfileView({
     !matchesProfileSearch(activeComponent, searchQuery)
       ? searchQuery
       : undefined
+  // Components with nothing to configure get no tab.
   const profileTabs: ProfileTab[] =
-    activeLayer?.children?.map((component) => ({
-      id: component.key,
-      label: component.label,
-    })) ?? []
+    activeLayer?.children
+      ?.filter((component) => component.configurable)
+      .map((component) => ({
+        id: component.key,
+        label: component.label,
+      })) ?? []
   const profileSections = useMemo(
     () =>
       getProfileSections(
@@ -403,10 +416,12 @@ function ClusterProfileView({
         id: item.id,
         label: item.label,
         status: item.status,
+        configurable: item.configurable,
         items: item.children.map((child) => ({
           id: child.key,
           key: child.key,
           label: child.label,
+          configurable: child.configurable,
         })),
       })),
     [visibleProfileTree]
@@ -427,7 +442,7 @@ function ClusterProfileView({
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
 
   const handleSelectSection = (sectionId: string) => {
-    const firstItem = visibleProfileTree.find((item) => item.id === sectionId)?.children[0]
+    const firstItem = getFirstConfigurableComponent(visibleProfileTree.find((item) => item.id === sectionId)?.children)
     onActiveComponentChange?.(firstItem?.key ?? sectionId)
   }
 

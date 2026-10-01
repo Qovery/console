@@ -3,6 +3,8 @@ import { type PlatformTemplateComponentResponse, type PlatformTemplateSummaryRes
 export type ProfileComponent = PlatformTemplateComponentResponse & {
   id: string
   label: string
+  // Without fields of its own or sourced from another component, there is nothing to configure.
+  configurable: boolean
 }
 
 export type ProfileTreeItem = {
@@ -10,7 +12,17 @@ export type ProfileTreeItem = {
   label: string
   description?: string | null
   status: 'disabled' | 'success' | 'warning'
+  configurable: boolean
   children: readonly ProfileComponent[]
+}
+
+export function isProfileComponentConfigurable(component: PlatformTemplateComponentResponse) {
+  return component.fields.length > 0 || Boolean(component.configurationSections?.length)
+}
+
+// The component a layer opens on: its first configurable one, if any.
+export function getFirstConfigurableComponent(components: readonly ProfileComponent[] | undefined) {
+  return components?.find((component) => component.configurable) ?? components?.[0]
 }
 
 export function formatProfileLabel(value: string) {
@@ -24,18 +36,21 @@ export function getProfileTree(template: PlatformTemplateSummaryResponse | undef
       const label = formatProfileLabel(layer.key)
       const normalizedLabel = label.toLowerCase()
       const isDisabled = normalizedLabel === 'infrastructure' || normalizedLabel === 'qovery stack'
+      const children = layer.components.map((component) => ({
+        ...component,
+        id: `${layer.key}/${component.key}`,
+        key: component.key,
+        label: formatProfileLabel(component.key),
+        configurable: isProfileComponentConfigurable(component),
+      }))
 
       return {
         id: layer.key,
         label,
         description: layer.description,
         status: isDisabled ? 'disabled' : normalizedLabel === 'gateway api' ? 'warning' : 'success',
-        children: layer.components.map((component) => ({
-          ...component,
-          id: `${layer.key}/${component.key}`,
-          key: component.key,
-          label: formatProfileLabel(component.key),
-        })),
+        configurable: children.some((component) => component.configurable),
+        children,
       }
     }) ?? []
   )

@@ -3,16 +3,21 @@ import { Icon, InputSearch, Tooltip } from '@qovery/shared/ui'
 
 type LayerStatus = 'disabled' | 'success' | 'warning'
 
+export const NOT_CONFIGURABLE_COMPONENT_REASON = 'No configuration needed for this component'
+export const NOT_CONFIGURABLE_LAYER_REASON = 'No configuration needed for this layer'
+
 export interface ClusterProfileSidebarItem {
   id: string
   key: string
   label: string
+  configurable: boolean
 }
 
 export interface ClusterProfileSidebarLayer {
   id: string
   label: string
   status: LayerStatus
+  configurable: boolean
   items: readonly ClusterProfileSidebarItem[]
 }
 
@@ -44,14 +49,16 @@ function LayerSectionRow({
   onSelectSection,
   onSelectItem,
 }: LayerSectionRowProps) {
-  const isDisabled = section.status === 'disabled'
+  const isDisabled = section.status === 'disabled' || !section.configurable
   const isSelected = !isDisabled && section.id === selectedSectionId
   const disabledReason =
     section.id === 'infrastructure'
       ? 'This layer is currently skipped'
       : section.id === 'qovery-stack'
         ? 'These values are currently managed by Qovery'
-        : undefined
+        : !section.configurable
+          ? NOT_CONFIGURABLE_LAYER_REASON
+          : undefined
 
   return (
     <Tooltip content={disabledReason ?? ''} disabled={!disabledReason} side="right">
@@ -66,7 +73,7 @@ function LayerSectionRow({
               : `${isSelected ? 'text-neutral' : 'text-neutral-subtle'} hover:bg-surface-neutral-component hover:text-neutral`
           }`}
           onClick={() => {
-            const firstItem = section.items[0]
+            const firstItem = section.items.find((item) => item.configurable) ?? section.items[0]
             if (firstItem) {
               onSelectItem(firstItem.id)
             } else {
@@ -87,22 +94,23 @@ function LayerSectionRow({
               </span>
             </Tooltip>
           ) : null}
-          {isDisabled ? (
+          {section.status === 'disabled' ? (
             <Icon iconName="circle-minus" iconStyle="regular" className="ml-auto shrink-0 text-sm" />
           ) : null}
         </button>
 
         {section.items.map((item) => {
           const isItemSelected = isSelected && item.id === selectedItemId
+          const isItemDisabled = isDisabled || !item.configurable
 
-          return (
+          const itemButton = (
             <button
               key={item.id}
               type="button"
-              disabled={isDisabled}
+              disabled={isItemDisabled}
               aria-current={isItemSelected ? 'page' : undefined}
               className={`focus-visible:ring-brand group flex h-7 w-full items-center gap-1.5 px-3 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:cursor-not-allowed disabled:text-neutral-disabled ${
-                isDisabled
+                isItemDisabled
                   ? ''
                   : isItemSelected
                     ? 'text-neutral'
@@ -113,7 +121,7 @@ function LayerSectionRow({
               <span aria-hidden="true" className="relative h-7 w-3.5 shrink-0">
                 <span
                   className={`absolute inset-y-0 left-1/2 -translate-x-1/2 border-l ${
-                    isDisabled
+                    isItemDisabled
                       ? 'border-neutral'
                       : isItemSelected
                         ? 'border-neutralInvert'
@@ -126,6 +134,15 @@ function LayerSectionRow({
                 <span className="truncate">{item.label}</span>
               </span>
             </button>
+          )
+
+          // The layer tooltip already explains a disabled layer; disabled buttons fire no pointer events.
+          return isDisabled || item.configurable ? (
+            itemButton
+          ) : (
+            <Tooltip key={item.id} content={NOT_CONFIGURABLE_COMPONENT_REASON} side="right">
+              <div>{itemButton}</div>
+            </Tooltip>
           )
         })}
       </li>
