@@ -59,7 +59,9 @@ function ClusterCredentialsSettingsForm() {
     cloudProvider: clusterCloudProviderInfo?.cloud_provider,
   })
   const { mutate: editCloudProviderInfo, isLoading: isEditCloudProviderInfoLoading } = useEditCloudProviderInfo()
-  const { mutateAsync: editCloudProviderInfoBeforeRedeploy } = useEditCloudProviderInfo({ withClusterRedeploy: true })
+  const { mutateAsync: editCloudProviderInfoBeforeRedeploy } = useEditCloudProviderInfo({
+    showClusterUpdateAction: false,
+  })
   const { mutateAsync: deployCluster } = useDeployCluster()
   const { openModalConfirmation } = useModalConfirmation()
 
