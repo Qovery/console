@@ -56,7 +56,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
       <select
         data-testid={dataTestId || 'input-select-small'}
         name={name}
-        aria-label={ariaLabel ?? (!label ? name : undefined)}
+        aria-label={ariaLabel}
         value={value}
         disabled={disabled}
         className={twMerge(

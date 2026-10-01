@@ -62,7 +62,8 @@ export function InputSearch(props: InputSearchProps) {
           )}
           type="text"
           aria-label={ariaLabel}
-          defaultValue={defaultValue}
+          // A defaultValue prop, even undefined, makes React render an empty value attribute.
+          {...(defaultValue !== undefined ? { defaultValue } : {})}
           placeholder={placeholder}
           disabled={false}
           onChange={(e) => getValue(e.currentTarget.value)}
