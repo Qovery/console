@@ -260,7 +260,7 @@ function OperatorStep({
               Back
             </Button>
             <div className="flex gap-2">
-              <Button type="button" variant="plain" color="neutral" size="lg" onClick={onCancel}>
+              <Button type="button" variant="plain" color="neutral" size="lg" disabled={isCreating} onClick={onCancel}>
                 Cancel
               </Button>
               <Button type="submit" size="lg" loading={isCreating} disabled={!canContinue}>

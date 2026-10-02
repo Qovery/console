@@ -302,6 +302,18 @@ describe('SelfManagedClusterCreationFlow', () => {
     expect(mockCreateSelfManagedCluster).not.toHaveBeenCalled()
   })
 
+  it('cannot be cancelled or left while the cluster is being created', async () => {
+    mockUseCreateSelfManagedCluster.mockReturnValue({ mutateAsync: mockCreateSelfManagedCluster, isLoading: true })
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Back' })).toBeDisabled()
+  })
+
   it('stays on the Operator step when the creation fails', async () => {
     mockCreateSelfManagedCluster.mockRejectedValue(new Error('Invalid credentials'))
     const { userEvent } = renderWithProviders(
