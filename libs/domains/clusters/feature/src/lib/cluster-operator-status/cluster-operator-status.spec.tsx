@@ -49,4 +49,28 @@ describe('ClusterOperatorStatus', () => {
 
     expect(mockUpdateOperator).not.toHaveBeenCalled()
   })
+
+  it('hides the update action while the Operator is not connected', () => {
+    renderWithProviders(
+      <ClusterOperatorStatus
+        organizationId="organization-id"
+        clusterId="cluster-id"
+        operatorStatus={{ ...operatorStatus, operator_connected: false }}
+      />
+    )
+
+    expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
+  })
+
+  it('disables the update action without a target chart version', () => {
+    renderWithProviders(
+      <ClusterOperatorStatus
+        organizationId="organization-id"
+        clusterId="cluster-id"
+        operatorStatus={{ ...operatorStatus, desired_chart_version: null }}
+      />
+    )
+
+    expect(screen.getByRole('button', { name: 'Update Operator' })).toBeDisabled()
+  })
 })
