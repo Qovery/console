@@ -31,13 +31,8 @@ interface LayerSectionRowProps {
   onSelectItem: (itemId: string) => void
 }
 
-function LayerIcon({ className = '' }: { className?: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`size-3.5 shrink-0 bg-current [mask-image:url('/assets/sidebar-test/layer.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] ${className}`}
-    />
-  )
+function LayerIcon() {
+  return <Icon iconName="layer-group" iconStyle="regular" aria-hidden="true" className="shrink-0 text-sm" />
 }
 
 export function ClusterProfileItemIcon() {
