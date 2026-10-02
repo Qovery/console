@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { observability } from '@qovery/domains/observability/data-access'
-import { isManagedAlertRule } from '../../util-alerting/alert-type-guards'
+import { isManagedAlertRule } from '../../alerting/util/alert-type-guards'
 
 export function useAlerts({
   organizationId,

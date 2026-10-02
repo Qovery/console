@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid'
 import { type Value } from '@qovery/shared/interfaces'
 import {
   Button,
+  Callout,
   ExternalLink,
   FunnelFlowBody,
   Heading,
@@ -20,8 +21,8 @@ import {
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useAlertReceivers } from '../../../hooks/use-alert-receivers/use-alert-receivers'
-import { formatMetricLabel } from '../../../util-alerting/generate-condition-description'
 import { NotificationChannelModal } from '../../notification-channel-modal/notification-channel-modal'
+import { formatMetricLabel } from '../../util/generate-condition-description'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration, type MetricCategory } from '../alerting-creation-flow.types'
 import { RDS_METRICS, type RdsMetricCategory, isRdsMetricCategory } from '../rds-alert-metrics'
@@ -758,9 +759,12 @@ export function MetricConfigurationStep({
           </Section>
 
           {isRdsMetricCategory(metricCategory) && submissionUnavailableReason && (
-            <p role="alert" className="text-sm text-negative">
-              {submissionUnavailableReason}
-            </p>
+            <Callout.Root role="alert" color="red">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>{submissionUnavailableReason}</Callout.Text>
+            </Callout.Root>
           )}
           <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between gap-4 border-t border-neutral bg-background py-4">
             {!isEdit && (

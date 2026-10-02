@@ -21,10 +21,10 @@ import {
 import { useAlertRulesGhosted } from '../../hooks/use-alert-rules-ghosted/use-alert-rules-ghosted'
 import { useAlertRules } from '../../hooks/use-alert-rules/use-alert-rules'
 import { useDeleteAlertRule } from '../../hooks/use-delete-alert-rule/use-delete-alert-rule'
-import { canCloneAlertRule } from '../../util-alerting/alert-type-guards'
 import { AlertRulesCloneModal } from '../alert-rules-clone-modal/alert-rules-clone-modal'
 import { isLegacyRdsDatabase } from '../alerting-creation-flow/metric-availability'
 import { SeverityIndicator } from '../severity-indicator/severity-indicator'
+import { canCloneAlertRule } from '../util/alert-type-guards'
 import { AlertRulesActionBar } from './alert-rules-action-bar/alert-rules-action-bar'
 
 const { Table } = TablePrimitives

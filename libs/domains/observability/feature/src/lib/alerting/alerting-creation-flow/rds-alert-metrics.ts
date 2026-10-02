@@ -1,4 +1,4 @@
-import { RDS_INSTANCE_IDENTIFIER } from '../../database/database-rds-dashboard/util/get-blueprint-db-instance'
+import { RDS_INSTANCE_IDENTIFIER } from '../../util/get-blueprint-db-instance'
 
 export const RDS_METRIC_CATEGORIES = [
   'rds_cpu',

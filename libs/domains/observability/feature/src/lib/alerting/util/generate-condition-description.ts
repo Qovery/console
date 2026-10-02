@@ -1,7 +1,7 @@
 import { type AlertRuleConditionFunction, type AlertRuleConditionOperator } from 'qovery-typescript-axios'
 import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { type MetricCategory } from '../alerting/alerting-creation-flow/alerting-creation-flow.types'
-import { RDS_METRICS, RDS_METRIC_CATEGORIES } from '../alerting/alerting-creation-flow/rds-alert-metrics'
+import { type MetricCategory } from '../alerting-creation-flow/alerting-creation-flow.types'
+import { RDS_METRICS, RDS_METRIC_CATEGORIES } from '../alerting-creation-flow/rds-alert-metrics'
 
 const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   cpu: 'CPU',

@@ -11,7 +11,7 @@ const mockUseFeatureFlagEnabled = jest.mocked(useFeatureFlagEnabled)
 const mockOnClose = jest.fn()
 const mockUseRdsAlertTarget = jest.fn()
 
-jest.mock('../use-rds-alert-target/use-rds-alert-target', () => ({
+jest.mock('../../hooks/use-rds-alert-target/use-rds-alert-target', () => ({
   useRdsAlertTarget: () => mockUseRdsAlertTarget(),
 }))
 

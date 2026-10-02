@@ -20,7 +20,7 @@ jest.mock('../../hooks/use-hpa-name/use-hpa-name', () => ({ useHpaName: () => ({
 jest.mock('../../hooks/use-alert-receivers/use-alert-receivers', () => ({
   useAlertReceivers: () => ({ data: [{ id: 'receiver-1', name: 'Slack', type: 'SLACK' }] }),
 }))
-jest.mock('../use-rds-alert-target/use-rds-alert-target', () => ({
+jest.mock('../../hooks/use-rds-alert-target/use-rds-alert-target', () => ({
   useRdsAlertTarget: () => ({ isRds: false }),
 }))
 

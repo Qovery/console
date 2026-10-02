@@ -7,12 +7,21 @@ const rule = (tag: string, targetType: string) =>
 describe('alert rule guards', () => {
   it.each([
     ['APPLICATION', true],
+    ['CONTAINER', true],
+    ['JOB', true],
+    ['CRONJOB', true],
+    ['HELM', true],
     ['TERRAFORM', true],
     ['CLUSTER', false],
     [' CLUSTER', false],
     ['ENVIRONMENT', false],
+    ['UNKNOWN', false],
   ])('treats a %s target as a service: %s', (targetType, expected) => {
     expect(isServiceAlertRule(rule('cpu', targetType))).toBe(expected)
+  })
+
+  it('rejects an alert without a target', () => {
+    expect(isServiceAlertRule({ target: undefined })).toBe(false)
   })
 
   it('only clones service rules that are not tied to an RDS instance', () => {

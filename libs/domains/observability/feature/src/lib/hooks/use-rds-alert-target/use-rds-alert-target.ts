@@ -2,8 +2,8 @@ import { AlertTargetType } from 'qovery-typescript-axios'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { type AnyService, isBlueprintService, isTerraform } from '@qovery/domains/services/data-access'
 import { getRdsBlueprintEngine, useBlueprint } from '@qovery/domains/services/feature'
-import { useBlueprintDbInstance } from '../../database/database-rds-dashboard/util/use-blueprint-db-instance'
-import { useEnvironment } from '../../hooks/use-environment/use-environment'
+import { useBlueprintDbInstance } from '../use-blueprint-db-instance/use-blueprint-db-instance'
+import { useEnvironment } from '../use-environment/use-environment'
 
 interface UseRdsAlertTargetProps {
   organizationId: string
@@ -53,22 +53,23 @@ export function useRdsAlertTarget({ organizationId, service, enabled = true }: U
     enabled: isRds,
   })
 
+  const isResolvingEnvironment = isEnvironmentLoading
+  const isResolvingCluster = Boolean(clusterId) && isClusterLoading
+  const isResolvingBlueprint = Boolean(blueprintId) && isAws && isBlueprintLoading
+  const isResolvingVariables = isRds && isVariablesLoading
+  const isEnvironmentUnavailable = isEnvironmentError || (!isEnvironmentLoading && !environment)
+  const isClusterUnavailable = isClusterError || (Boolean(clusterId) && !isClusterLoading && !cluster)
+  const isBlueprintUnavailable = isAws && (!blueprintId || isBlueprintError || (!isBlueprintLoading && !blueprint))
+  const isVariablesUnavailable = isRds && isVariablesError
+
   return {
     isRds,
     isResolving:
       isBlueprintCandidate &&
-      (isEnvironmentLoading ||
-        (Boolean(clusterId) && isClusterLoading) ||
-        (Boolean(blueprintId) && isAws && isBlueprintLoading) ||
-        (isRds && isVariablesLoading)),
+      (isResolvingEnvironment || isResolvingCluster || isResolvingBlueprint || isResolvingVariables),
     isMetadataUnavailable:
       isBlueprintCandidate &&
-      (isEnvironmentError ||
-        (!isEnvironmentLoading && !environment) ||
-        isClusterError ||
-        (Boolean(clusterId) && !isClusterLoading && !cluster) ||
-        (isAws && (!blueprintId || isBlueprintError || (!isBlueprintLoading && !blueprint))) ||
-        (isRds && isVariablesError)),
+      (isEnvironmentUnavailable || isClusterUnavailable || isBlueprintUnavailable || isVariablesUnavailable),
     dbInstance: isRds ? dbInstance : undefined,
     target: isRds && service ? { target_id: service.id, target_type: AlertTargetType.TERRAFORM } : undefined,
     hasCloudWatchMetrics:

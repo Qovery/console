@@ -25,7 +25,7 @@ jest.mock('../../hooks/use-container-name/use-container-name', () => ({ useConta
 jest.mock('../../hooks/use-ingress-name/use-ingress-name', () => ({ useIngressName: () => ({}) }))
 jest.mock('../../hooks/use-http-route-name/use-http-route-name', () => ({ useHttpRouteName: () => ({}) }))
 jest.mock('../../hooks/use-hpa-name/use-hpa-name', () => ({ useHpaName: () => ({ data: mockHpaName }) }))
-jest.mock('../use-rds-alert-target/use-rds-alert-target', () => ({
+jest.mock('../../hooks/use-rds-alert-target/use-rds-alert-target', () => ({
   useRdsAlertTarget: (params: unknown) => mockUseRdsAlertTarget(params),
 }))
 jest.mock('./metric-configuration-step/metric-configuration-step', () => ({

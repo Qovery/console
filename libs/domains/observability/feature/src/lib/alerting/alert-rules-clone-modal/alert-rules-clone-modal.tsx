@@ -18,7 +18,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import { useClusters } from '../../hooks/use-clusters/use-clusters'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { useServicesSearch } from '../../hooks/use-services-search/use-services-search'
-import { canCloneAlertRule } from '../../util-alerting/alert-type-guards'
+import { canCloneAlertRule } from '../util/alert-type-guards'
 
 export interface AlertRulesCloneModalProps {
   organizationId: string
@@ -181,11 +181,6 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
         submitLabel="Clone alerts"
         submitDisabled={hasUncloneableRule}
       >
-        {hasUncloneableRule && (
-          <p role="alert" className="mb-4 text-sm text-negative">
-            RDS and cluster alerts cannot be cloned because their query is tied to a specific database or resource.
-          </p>
-        )}
         <div className="flex flex-col gap-4">
           {/* This is a workaround to prevent the input from being focused when the user opens the modal */}
           <button

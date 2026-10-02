@@ -8,7 +8,7 @@ const mockUseBlueprint = jest.fn()
 const mockGetRdsBlueprintEngine = jest.fn()
 const mockUseBlueprintDbInstance = jest.fn()
 
-jest.mock('../../hooks/use-environment/use-environment', () => ({
+jest.mock('../use-environment/use-environment', () => ({
   useEnvironment: (params: unknown) => mockUseEnvironment(params),
 }))
 jest.mock('@qovery/domains/clusters/feature', () => ({
@@ -18,7 +18,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useBlueprint: (params: unknown) => mockUseBlueprint(params),
   getRdsBlueprintEngine: (...params: unknown[]) => mockGetRdsBlueprintEngine(...params),
 }))
-jest.mock('../../database/database-rds-dashboard/util/use-blueprint-db-instance', () => ({
+jest.mock('../use-blueprint-db-instance/use-blueprint-db-instance', () => ({
   useBlueprintDbInstance: (params: unknown) => mockUseBlueprintDbInstance(params),
 }))
 

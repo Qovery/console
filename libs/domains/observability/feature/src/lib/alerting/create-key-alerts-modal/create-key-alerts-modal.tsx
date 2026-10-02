@@ -3,12 +3,12 @@ import { useNavigate } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { Icon, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
+import { Callout, Icon, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { useRdsAlertTarget } from '../../hooks/use-rds-alert-target/use-rds-alert-target'
 import { type MetricCategory } from '../alerting-creation-flow/alerting-creation-flow.types'
 import { canCreateCertificateRenewalAlert } from '../alerting-creation-flow/metric-availability'
 import { RDS_METRICS, RDS_METRIC_CATEGORIES } from '../alerting-creation-flow/rds-alert-metrics'
-import { useRdsAlertTarget } from '../use-rds-alert-target/use-rds-alert-target'
 
 interface CreateKeyAlertsModalProps {
   onClose: () => void
@@ -158,19 +158,30 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
         }
       >
         {rdsAlertTarget.isMetadataUnavailable && (
-          <p role="alert" className="mb-4 text-sm text-negative">
-            Unable to load this database's alert target. Try again later.
-          </p>
+          <Callout.Root role="alert" color="red" className="mb-4">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>Unable to load this database's alert target. Try again later.</Callout.Text>
+          </Callout.Root>
         )}
         {rdsAlertTarget.isRds && !rdsAlertTarget.hasCloudWatchMetrics && (
-          <p role="alert" className="mb-4 text-sm text-negative">
-            Enable CloudWatch metrics on this cluster to create RDS alerts.
-          </p>
+          <Callout.Root role="alert" color="red" className="mb-4">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>Enable CloudWatch metrics on this cluster to create RDS alerts.</Callout.Text>
+          </Callout.Root>
         )}
         {rdsAlertTarget.isRds && rdsAlertTarget.hasCloudWatchMetrics && !rdsAlertTarget.dbInstance && (
-          <p role="alert" className="mb-4 text-sm text-negative">
-            Deploy this database to make its RDS instance identifier available before creating alerts.
-          </p>
+          <Callout.Root role="alert" color="red" className="mb-4">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              Deploy this database to make its RDS instance identifier available before creating alerts.
+            </Callout.Text>
+          </Callout.Root>
         )}
         <div className="-mt-1 flex flex-col gap-5">
           <div className="relative">

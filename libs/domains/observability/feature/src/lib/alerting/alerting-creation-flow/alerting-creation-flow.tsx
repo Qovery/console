@@ -11,8 +11,8 @@ import { useEditAlertRule } from '../../hooks/use-edit-alert-rule/use-edit-alert
 import { useHpaName } from '../../hooks/use-hpa-name/use-hpa-name'
 import { useHttpRouteName } from '../../hooks/use-http-route-name/use-http-route-name'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
-import { generateConditionDescription } from '../../util-alerting/generate-condition-description'
-import { useRdsAlertTarget } from '../use-rds-alert-target/use-rds-alert-target'
+import { useRdsAlertTarget } from '../../hooks/use-rds-alert-target/use-rds-alert-target'
+import { generateConditionDescription } from '../util/generate-condition-description'
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
 import { CONTAINER_METRICS, HTTP_METRICS, canCreateCertificateRenewalAlert } from './metric-availability'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
@@ -265,11 +265,11 @@ export function AlertingCreationFlow({
           )
 
         const promql = match(alert.tag)
-          .when(isRdsMetricCategory, (category) =>
-            isEditMode
-              ? alert.condition.promql ?? ''
-              : getRdsAlertQuery(category, rdsAlertTarget.dbInstance ?? '') ?? ''
-          )
+          .when(isRdsMetricCategory, (category) => {
+            if (isEditMode) return alert.condition.promql ?? ''
+
+            return getRdsAlertQuery(category, rdsAlertTarget.dbInstance ?? '') ?? ''
+          })
           .with('cpu', () => (containerName ? QUERY_CPU(containerName) : ''))
           .with('memory', () => (containerName ? QUERY_MEMORY(containerName) : ''))
           .with('missing_instance', () => (containerName ? QUERY_MISSING_INSTANCE(containerName) : ''))
