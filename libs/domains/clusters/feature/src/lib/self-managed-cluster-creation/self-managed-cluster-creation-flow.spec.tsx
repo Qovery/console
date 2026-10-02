@@ -212,8 +212,6 @@ describe('SelfManagedClusterCreationFlow', () => {
         region: 'eu-west-3',
         credentials: { id: 'credential-id' },
         platform: {
-          templateKey: 'qovery-cluster-v0',
-          templateVersion: '1.0.0',
           managedConfig: {
             'qovery-operator': { nodeSelectorKey: 'eks.amazonaws.com/nodegroup', nodeSelectorValue: 'stable' },
           },
@@ -221,6 +219,48 @@ describe('SelfManagedClusterCreationFlow', () => {
       },
     })
     expect(await screen.findByRole('heading', { name: 'Install Qovery operator' })).toBeInTheDocument()
+  })
+
+  it('sends no Operator configuration when it is left untouched', async () => {
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(mockCreateSelfManagedCluster).toHaveBeenCalledWith({
+      organizationId: 'org-123',
+      clusterRequest: expect.objectContaining({ platform: {} }),
+    })
+  })
+
+  it('creates the cluster with the default platform template when none is listed', async () => {
+    mockUsePlatformTemplates.mockReturnValue({ data: [], isLoading: false })
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+
+    expect(screen.getByText('Qovery installs the Operator with its default configuration.')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(mockCreateSelfManagedCluster).toHaveBeenCalledWith({
+      organizationId: 'org-123',
+      clusterRequest: expect.objectContaining({ platform: {} }),
+    })
+  })
+
+  it('waits for the platform templates before creating the cluster', async () => {
+    mockUsePlatformTemplates.mockReturnValue({ data: undefined, isLoading: true })
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
   })
 
   it('stays on the Operator step when the creation fails', async () => {

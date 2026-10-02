@@ -4,6 +4,7 @@ import {
   type ClusterRegion,
   type PlatformComponentConfigurationResolutionResponse,
   type PlatformTemplateComponentResponse,
+  type SelfManagedClusterPlatformSelection,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -291,7 +292,9 @@ function OperatorStep({
             </div>
           </StepSection>
         ) : (
-          <p className="px-5 text-sm text-neutral-subtle">The Operator needs no configuration for this template.</p>
+          <p className="px-5 text-sm text-neutral-subtle">
+            Qovery installs the Operator with its default configuration.
+          </p>
         )}
       </StepLayout>
     </form>
@@ -325,11 +328,8 @@ function InstallStep({
 
   return (
     <div className="flex flex-col gap-4 p-5">
-      <div className="flex flex-col gap-1">
+      <div>
         <h2 className="h4 text-neutral">Install Qovery operator</h2>
-        <p className="text-sm text-neutral-subtle">
-          You'll be redirected to the cluster profile settings once the operator is installed. Don't close this tab.
-        </p>
       </div>
       {isBootstrapLoading ? (
         <div className="flex justify-center py-6">
@@ -393,7 +393,10 @@ function InstallStep({
         <Callout.Icon>
           <Icon iconName="circle-info" iconStyle="regular" />
         </Callout.Icon>
-        <Callout.Text>The Operator connects to Qovery shortly after its installation completes</Callout.Text>
+        <Callout.Text>
+          Do not close this tab. The Operator will connect to Qovery shortly once its installation completes. You'll be
+          redirected to the cluster profile settings once the operator is installed.
+        </Callout.Text>
       </Callout.Root>
       <p className="text-ssm text-neutral-subtle">
         Having trouble installing? Check our{' '}
@@ -457,8 +460,14 @@ export function SelfManagedClusterCreationFlow({
     onStepChange?.(nextStep)
   }
 
+  // q-core selects the self-managed platform template release: only the edited Operator values are sent.
+  const getPlatformSelection = (): SelfManagedClusterPlatformSelection =>
+    operatorComponent && operatorValues !== undefined && Object.keys(operatorConfig).length
+      ? { managedConfig: { [operatorComponent.key]: operatorConfig } }
+      : {}
+
   const createCluster = async () => {
-    if (!generalValues || !template) return
+    if (!generalValues) return
 
     try {
       const cluster = await createSelfManagedCluster({
@@ -469,13 +478,7 @@ export function SelfManagedClusterCreationFlow({
           provider: 'AWS',
           region: generalValues.region,
           credentials: { id: generalValues.credentials },
-          platform: {
-            templateKey: template.key,
-            templateVersion: template.version,
-            ...(operatorComponent && Object.keys(operatorConfig).length
-              ? { managedConfig: { [operatorComponent.key]: operatorConfig } }
-              : {}),
-          },
+          platform: getPlatformSelection(),
         },
       })
       setClusterId(cluster.id)
@@ -503,27 +506,17 @@ export function SelfManagedClusterCreationFlow({
 
   if (step === 'operator') {
     return (
-      <>
-        {!isTemplatesLoading && !template ? (
-          <Callout.Root color="red" className="mx-5 mt-5">
-            <Callout.Icon>
-              <Icon iconName="circle-exclamation" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>No platform template is available for self-managed AWS clusters.</Callout.Text>
-          </Callout.Root>
-        ) : null}
-        <OperatorStep
-          component={operatorComponent}
-          preview={operatorPreview}
-          values={resolvedOperatorValues}
-          isCreating={isCreating}
-          canContinue={Boolean(template) && !hasOperatorViolations}
-          onChange={setOperatorValues}
-          onBack={() => goToStep('general')}
-          onCancel={onClose}
-          onContinue={createCluster}
-        />
-      </>
+      <OperatorStep
+        component={operatorComponent}
+        preview={operatorPreview}
+        values={resolvedOperatorValues}
+        isCreating={isCreating}
+        canContinue={!isTemplatesLoading && !hasOperatorViolations}
+        onChange={setOperatorValues}
+        onBack={() => goToStep('general')}
+        onCancel={onClose}
+        onContinue={createCluster}
+      />
     )
   }
 
