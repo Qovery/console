@@ -1,7 +1,9 @@
 import equal from 'fast-deep-equal'
-import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
+import { type CloudVendorEnum, type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useRef } from 'react'
+import { match } from 'ts-pattern'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
+import { IconEnum } from '@qovery/shared/enums'
 import { EmptyState, Heading, Icon, Navbar, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
@@ -70,6 +72,14 @@ function filterProfileTree(profileTree: ProfileTreeItem[], query: string): Profi
     )
     return children.length ? [{ ...layer, children }] : []
   })
+}
+
+function getCloudProviderIconName(cloudProvider: CloudVendorEnum) {
+  return match(cloudProvider)
+    .with('OVH', () => IconEnum.OVH_CLOUD)
+    .with('ORACLE', () => IconEnum.ORACLE_CLOUD)
+    .with('IBM', () => IconEnum.IBM_CLOUD)
+    .otherwise((provider) => provider)
 }
 
 function getProfileSections(
@@ -433,7 +443,9 @@ function ClusterProfileView({
     <div className="flex h-page-container min-h-0 flex-col overflow-hidden bg-background-secondary text-sm">
       <header className="flex min-h-11 items-center justify-between gap-4 px-4 py-2">
         <div className="flex min-w-0 items-center gap-2">
-          {cluster?.cloud_provider ? <Icon name={cluster.cloud_provider} width={20} height={20} /> : null}
+          {cluster?.cloud_provider ? (
+            <Icon name={getCloudProviderIconName(cluster.cloud_provider)} width={20} height={20} />
+          ) : null}
           <p className="truncate font-medium text-neutral">{cluster?.name ?? 'Cluster'}</p>
         </div>
       </header>
