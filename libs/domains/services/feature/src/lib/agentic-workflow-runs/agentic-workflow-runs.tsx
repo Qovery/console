@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import * as Dialog from '@radix-ui/react-dialog'
 import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-typescript-axios'
-import { type KeyboardEvent, useRef, useState } from 'react'
+import { type KeyboardEvent, useEffect, useRef, useState } from 'react'
 import {
   Button,
   CodeEditor,
@@ -172,6 +172,45 @@ function formatJsonPayload(payload: string): string | null {
   }
 }
 
+function PayloadEditor({ value }: { value: string }) {
+  const [measuredHeight, setMeasuredHeight] = useState<number>()
+  const listenerRef = useRef<{ dispose: () => void }>()
+
+  useEffect(() => () => listenerRef.current?.dispose(), [])
+
+  // Wrapped lines make the newline count too small, so use the height Monaco measured once it has mounted.
+  const height = Math.min(
+    measuredHeight ?? value.split('\n').length * PAYLOAD_EDITOR_LINE_HEIGHT,
+    PAYLOAD_EDITOR_MAX_HEIGHT
+  )
+
+  return (
+    <CodeEditor
+      value={value}
+      language="json"
+      height={`${height}px`}
+      readOnly
+      onMount={(editor) => {
+        listenerRef.current?.dispose()
+        setMeasuredHeight(editor.getContentHeight())
+        listenerRef.current = editor.onDidContentSizeChange((event) => {
+          if (event.contentHeightChanged) setMeasuredHeight(event.contentHeight)
+        })
+      }}
+      options={{
+        wordWrap: 'on',
+        wrappingIndent: 'indent',
+        scrollBeyondLastLine: false,
+        automaticLayout: true,
+        renderLineHighlight: 'none',
+        overviewRulerLanes: 0,
+        guides: { indentation: false },
+        stickyScroll: { enabled: false },
+      }}
+    />
+  )
+}
+
 function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const formattedJson = run.payload ? formatJsonPayload(run.payload) : null
@@ -226,22 +265,7 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                       aria-label="JSON payload"
                       role="group"
                     >
-                      <CodeEditor
-                        value={formattedJson}
-                        language="json"
-                        height={`${Math.min(formattedJson.split('\n').length * PAYLOAD_EDITOR_LINE_HEIGHT, PAYLOAD_EDITOR_MAX_HEIGHT)}px`}
-                        readOnly
-                        options={{
-                          wordWrap: 'on',
-                          wrappingIndent: 'indent',
-                          scrollBeyondLastLine: false,
-                          automaticLayout: true,
-                          renderLineHighlight: 'none',
-                          overviewRulerLanes: 0,
-                          guides: { indentation: false },
-                          stickyScroll: { enabled: false },
-                        }}
-                      />
+                      <PayloadEditor value={formattedJson} />
                     </div>
                   ) : (
                     <p className="whitespace-pre-wrap break-words rounded border border-neutral p-4">
