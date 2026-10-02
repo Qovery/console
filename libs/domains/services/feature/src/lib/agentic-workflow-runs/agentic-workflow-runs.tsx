@@ -90,9 +90,10 @@ function RunDuration({ duration }: { duration?: number | null }) {
 const costFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
+  roundingMode: 'ceil',
   minimumFractionDigits: 2,
-  maximumFractionDigits: 6,
-})
+  maximumFractionDigits: 2,
+} as Intl.NumberFormatOptions & { roundingMode: 'ceil' })
 
 function RunCost({ cost }: { cost?: number | null }) {
   if (cost == null) return <span className="text-neutral-subtle">—</span>

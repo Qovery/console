@@ -107,9 +107,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByText('Completed').closest('td')?.firstElementChild).toHaveClass('justify-between')
     expect(screen.getByText('Completed').closest('td')?.querySelector('svg')).toBeInTheDocument()
     expect(screen.getByText('00:01:05').querySelector('i')).toHaveClass('fa-clock-eight')
-    expect(screen.getByText('$0.0123').closest('td')).toBe(
-      screen.getByText('00:01:05').closest('td')?.nextElementSibling
-    )
+    expect(screen.getByText('$0.02').closest('td')).toBe(screen.getByText('00:01:05').closest('td')?.nextElementSibling)
     expect(screen.getByText('Webhook').querySelector('i')).toHaveClass('fa-webhook')
     expect(screen.queryByRole('columnheader', { name: 'Recorded' })).not.toBeInTheDocument()
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123' })
@@ -412,10 +410,11 @@ describe('AgenticWorkflowRuns', () => {
   })
 
   it.each([
-    [0.0123, '$0.0123'],
+    [0.0123, '$0.02'],
     [1.5, '$1.50'],
     [0, '$0.00'],
-    [0.000123, '$0.000123'],
+    [0.000123, '$0.01'],
+    [0.07, '$0.07'],
     [1234.5, '$1,234.50'],
   ])('shows a cost of %s as %s in the table and the run details', async (cost, label) => {
     mockUseRunHistory.mockReturnValue({
