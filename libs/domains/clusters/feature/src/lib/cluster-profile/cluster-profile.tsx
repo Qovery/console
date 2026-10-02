@@ -294,49 +294,58 @@ function ClusterProfileView({
       ),
     [activeComponent, activeLayer?.id, fieldSearch, profileTree]
   )
+  const resolvedComponents = useMemo(() => {
+    const components = new Map(profileSections.map((section) => [section.component.key, section.component]))
+    for (const component of profileTree.flatMap((item) => item.children)) {
+      if (!components.has(component.key) && (profileValues[component.key] || clusterInputs[component.key])) {
+        components.set(component.key, component)
+      }
+    }
+    return [...components.values()]
+  }, [clusterInputs, profileSections, profileTree, profileValues])
   const profileConfigs = useMemo(
     () =>
       Object.fromEntries(
-        profileSections.map((section) => {
-          const persistedValues = configuration?.platform.managedConfig?.[section.component.key] ?? {}
-          const localValues = profileValues[section.component.key] ?? {}
+        resolvedComponents.map((component) => {
+          const persistedValues = configuration?.platform.managedConfig?.[component.key] ?? {}
+          const localValues = profileValues[component.key] ?? {}
           return [
-            section.component.key,
-            applyPlatformConfigurationDefaults(section.component.fields, { ...persistedValues, ...localValues }),
+            component.key,
+            applyPlatformConfigurationDefaults(component.fields, { ...persistedValues, ...localValues }),
           ]
         })
       ),
-    [configuration?.platform.managedConfig, profileSections, profileValues]
+    [configuration?.platform.managedConfig, profileValues, resolvedComponents]
   )
   const resolvedClusterInputs = useMemo(
     () =>
       Object.fromEntries(
-        profileSections.map((section) => [
-          section.component.key,
-          { ...configuration?.clusterInputs[section.component.key], ...clusterInputs[section.component.key] },
+        resolvedComponents.map((component) => [
+          component.key,
+          { ...configuration?.clusterInputs[component.key], ...clusterInputs[component.key] },
         ])
       ),
-    [configuration?.clusterInputs, clusterInputs, profileSections]
+    [configuration?.clusterInputs, clusterInputs, resolvedComponents]
   )
   const previewRequests = useMemo(
     () =>
       Object.fromEntries(
-        profileSections.map((section) => [
-          section.component.key,
+        resolvedComponents.map((component) => [
+          component.key,
           {
-            profileConfig: omitEmptyValues(profileConfigs[section.component.key] ?? {}),
-            clusterInputs: resolvedClusterInputs[section.component.key] ?? {},
+            profileConfig: omitEmptyValues(profileConfigs[component.key] ?? {}),
+            clusterInputs: resolvedClusterInputs[component.key] ?? {},
             componentOutputs: {},
           },
         ])
       ),
-    [profileConfigs, profileSections, resolvedClusterInputs]
+    [profileConfigs, resolvedClusterInputs, resolvedComponents]
   )
   const debouncedPreviewRequests = useDebounce(previewRequests, 300)
   const componentQueries = usePlatformComponentConfigurations({
     clusterId,
     requests: debouncedPreviewRequests,
-    enabled: Boolean(profileSections.length),
+    enabled: Boolean(resolvedComponents.length),
   })
   const requestedComponentKeys = Object.keys(debouncedPreviewRequests)
   const componentQueriesByKey = Object.fromEntries(
@@ -397,10 +406,10 @@ function ClusterProfileView({
   const isConfigurationLoading = Boolean(activeComponent) && !hasResolvedConfiguration
   const isInitialResolverError = hasResolverError && !hasResolvedConfiguration
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
-  // Saving needs every displayed component resolved for the latest edits, without violations or missing inputs.
+  // Saving needs every displayed or edited component resolved for the latest edits, with no violation or missing input.
   const isConfigurationReady =
     equal(debouncedPreviewRequests, previewRequests) &&
-    displayedComponentKeys.every((componentKey) => {
+    Object.keys(previewRequests).every((componentKey) => {
       const query = componentQueriesByKey[componentKey]
       const preview = query?.data
       return (

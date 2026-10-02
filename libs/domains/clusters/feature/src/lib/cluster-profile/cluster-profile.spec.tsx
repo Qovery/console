@@ -4,6 +4,7 @@ import {
   type PlatformTemplateComponentResponse,
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
@@ -594,6 +595,35 @@ describe('ClusterProfileFeature', () => {
 
       const bar = await editProfile(userEvent)
 
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
+      expect(within(bar).getByRole('button', { name: 'Save and deploy' })).toBeDisabled()
+    })
+
+    it('keeps blocking saving once the invalid component is out of view', async () => {
+      mockUsePlatformComponentConfigurations.mockImplementation(
+        ({ requests }) =>
+          Object.keys(requests).map((componentKey) => ({
+            data: {
+              ...createResolution(componentKey),
+              violations:
+                componentKey === 'loki'
+                  ? [{ fieldPath: 'storage', code: 'REQUIRED', message: 'Storage is required.' }]
+                  : [],
+            },
+            isError: false,
+            isFetching: false,
+          })) as ReturnType<typeof usePlatformComponentConfigurations>
+      )
+      function ClusterProfileWithNavigation() {
+        const [componentKey, setComponentKey] = useState<string>()
+        return <ClusterProfileFeature activeComponentKey={componentKey} onActiveComponentChange={setComponentKey} />
+      }
+      const { userEvent } = renderWithProviders(<ClusterProfileWithNavigation />)
+
+      const bar = await editProfile(userEvent)
+      await userEvent.click(screen.getByRole('button', { name: 'Envoy' }))
+
+      expect(screen.getByRole('link', { name: 'Envoy' })).toHaveAttribute('aria-current', 'page')
       expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
       expect(within(bar).getByRole('button', { name: 'Save and deploy' })).toBeDisabled()
     })
