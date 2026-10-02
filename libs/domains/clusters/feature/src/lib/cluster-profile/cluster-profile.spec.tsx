@@ -767,6 +767,26 @@ describe('ClusterProfileFeature', () => {
       expect(mockDeployCluster).not.toHaveBeenCalled()
     })
 
+    it('keeps the edits made while saving', async () => {
+      let resolveSave = () => undefined as unknown
+      mockUpdatePlatformConfiguration.mockReturnValue(new Promise((resolve) => (resolveSave = resolve)))
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+      await userEvent.clear(screen.getByRole('spinbutton', { name: 'Retention period' }))
+      await userEvent.type(screen.getByRole('spinbutton', { name: 'Retention period' }), '24')
+      await act(async () => {
+        resolveSave()
+      })
+
+      expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toHaveValue(24)
+      expect(screen.getByRole('switch', { name: 'High availability' })).not.toBeChecked()
+      expect(
+        within(screen.getByRole('region', { name: 'Unsaved profile changes' })).getByText(/1 change/)
+      ).toBeInTheDocument()
+    })
+
     it('deploys the cluster once the changes are saved', async () => {
       const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
