@@ -2,7 +2,7 @@ import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-ty
 import { useEffect, useMemo, useRef } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, Button, EmptyState, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
+import { Button, EmptyState, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
@@ -147,14 +147,6 @@ function getSectionFields(section: ProfileSection, preview?: PlatformComponentCo
   )
 
   return section.fieldSearch ? filterFieldsByProfileSearch(fields, section.fieldSearch) : fields
-}
-
-function RequirementStatus({ status }: { status: 'MISSING' | 'READY' }) {
-  return status === 'MISSING' ? (
-    <Badge size="sm" variant="surface" color="yellow">
-      Action required
-    </Badge>
-  ) : null
 }
 
 function ProfileConfigurationSkeleton() {
