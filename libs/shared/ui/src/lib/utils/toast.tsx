@@ -2,7 +2,7 @@ import { toast as sonnerToast } from 'sonner'
 import { CustomToast } from '../components/toast/toast'
 
 export type ToastStatus = 'success' | 'error' | 'warning'
-export type ToastActionCallback = () => void | Promise<void>
+export type ToastActionCallback = () => unknown
 
 export const toast = (
   status: ToastStatus,
