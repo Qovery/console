@@ -7,7 +7,7 @@ import {
   type PlatformTemplateComponentResponse,
   type SelfManagedClusterPlatformSelection,
 } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
@@ -357,14 +357,18 @@ function InstallStep({
     refetchInterval: OPERATOR_STATUS_POLL_INTERVAL,
   })
 
+  const hasNotifiedInstallRef = useRef(false)
+
   useEffect(() => {
-    if (operatorStatus?.operator_connected) onInstalled()
+    if (!operatorStatus?.operator_connected || hasNotifiedInstallRef.current) return
+    hasNotifiedInstallRef.current = true
+    onInstalled()
   }, [onInstalled, operatorStatus?.operator_connected])
 
   return (
     <div className="flex flex-col gap-4 p-5">
       <div>
-        <h2 className="h4 text-neutral">Install Qovery operator</h2>
+        <h2 className="h4 text-neutral">Install Qovery Operator</h2>
       </div>
       {isBootstrapLoading ? (
         <div className="flex justify-center py-6">
@@ -430,7 +434,7 @@ function InstallStep({
         </Callout.Icon>
         <Callout.Text>
           Do not close this tab. The Operator will connect to Qovery shortly once its installation completes. You'll be
-          redirected to the cluster profile settings once the operator is installed.
+          redirected to the cluster profile settings once the Operator is installed.
         </Callout.Text>
       </Callout.Root>
       <p className="text-ssm text-neutral-subtle">

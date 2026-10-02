@@ -1,8 +1,9 @@
 import download from 'downloadjs'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
-import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
@@ -266,7 +267,7 @@ describe('SelfManagedClusterCreationFlow', () => {
         },
       },
     })
-    expect(await screen.findByRole('heading', { name: 'Install Qovery operator' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Install Qovery Operator' })).toBeInTheDocument()
   })
 
   it('sends no Operator configuration when it is left untouched', async () => {
@@ -406,7 +407,7 @@ describe('SelfManagedClusterCreationFlow', () => {
 
     await goToOperatorStep(userEvent)
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-    await screen.findByRole('heading', { name: 'Install Qovery operator' })
+    await screen.findByRole('heading', { name: 'Install Qovery Operator' })
 
     expect(mockUseClusterOperatorBootstrap).toHaveBeenLastCalledWith({
       organizationId: 'org-123',
@@ -435,6 +436,30 @@ describe('SelfManagedClusterCreationFlow', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Try again' }))
 
     expect(refetch).toHaveBeenCalled()
+  })
+
+  it('redirects only once while the parent keeps re-rendering', async () => {
+    function ClusterCreationWithParentState() {
+      const [, setCloseCount] = useState(0)
+      return (
+        <SelfManagedClusterCreationFlow
+          organizationId="org-123"
+          onClose={() => {
+            mockOnClose()
+            setCloseCount((count) => count + 1)
+          }}
+        />
+      )
+    }
+    const { userEvent } = renderWithProviders(<ClusterCreationWithParentState />)
+
+    await goToOperatorStep(userEvent)
+    mockUseClusterOperatorStatus.mockReturnValue({ data: { operator_connected: true } })
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalled())
+    expect(mockOnClose).toHaveBeenCalledTimes(1)
+    expect(mockNavigate).toHaveBeenCalledTimes(1)
   })
 
   it('redirects to the cluster profile once the Operator is connected', async () => {
