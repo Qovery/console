@@ -19,6 +19,11 @@ jest.mock('posthog-js', () => ({
   default: { capture: jest.fn() },
 }))
 jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: () => false }))
+const mockShowPylonForm = jest.fn()
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useSupportChat: () => ({ showPylonForm: mockShowPylonForm }),
+}))
 jest.mock('../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction', () => ({
   useClusterCreationRestriction: () => ({ isClusterCreationRestricted: false }),
 }))
@@ -42,6 +47,14 @@ describe('ClusterAdd', () => {
     await userEvent.click(screen.getByRole('button', { name: 'AWS' }))
     expect(await screen.findByText('Creation flow')).toBeInTheDocument()
   }
+
+  it('asks for EKS Anywhere access when it is not enabled', async () => {
+    const { userEvent } = renderWithProviders(<ClusterAdd />)
+
+    await userEvent.click(screen.getByRole('button', { name: /Amazon Web Services EKS Anywhere\s*Request access/ }))
+
+    expect(mockShowPylonForm).toHaveBeenCalledWith('request-access-eks-anywhere')
+  })
 
   it('lets the creation flow be dismissed before the cluster is created', async () => {
     const { userEvent } = renderWithProviders(<ClusterAdd />)
