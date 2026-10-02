@@ -34,8 +34,7 @@ export function InputSearch(props: InputSearchProps) {
     const input = ref.current
     if (!input || document.activeElement === input) return
     const nextValue = defaultValue ?? ''
-    if (input.value === nextValue) return
-    input.value = nextValue
+    if (input.value !== nextValue) input.value = nextValue
     setToggleDelete(nextValue !== '')
   }, [defaultValue])
 
