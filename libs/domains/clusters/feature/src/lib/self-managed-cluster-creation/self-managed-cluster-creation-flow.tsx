@@ -33,6 +33,7 @@ import { usePlatformTemplateComponentConfiguration } from '../platform-configura
 import {
   applyPlatformConfigurationDefaults,
   getUnmappedViolations,
+  isPlatformConfigurationReady,
   isSupportedPlatformField,
   omitEmptyValues,
 } from '../platform-configuration/platform-configuration-utils'
@@ -493,7 +494,7 @@ export function SelfManagedClusterCreationFlow({
       !isOperatorPreviewFetching &&
       !isOperatorPreviewError &&
       operatorPreview?.componentKey === operatorComponent.key &&
-      operatorPreview.violations.length === 0)
+      isPlatformConfigurationReady(operatorPreview.violations, operatorPreview.requirements))
 
   const goToStep = (nextStep: SelfManagedClusterCreationStep) => {
     setStep(nextStep)

@@ -211,6 +211,18 @@ describe('SelfManagedClusterCreationFlow', () => {
     ['has not been checked yet', { data: undefined, isFetching: true, isError: false }],
     ['is being checked again', { data: { componentKey: 'qovery-operator', violations: [] }, isFetching: true }],
     ['could not be checked', { data: undefined, isFetching: false, isError: true }],
+    [
+      'misses a required input',
+      {
+        data: {
+          componentKey: 'qovery-operator',
+          violations: [],
+          requirements: [{ key: 'clusterName', source: 'CLUSTER_INPUT', status: 'MISSING' }],
+        },
+        isFetching: false,
+        isError: false,
+      },
+    ],
   ])('cannot continue while the Operator configuration %s', async (_, preview) => {
     mockUsePlatformTemplateComponentConfiguration.mockReturnValue(preview)
     const { userEvent } = renderWithProviders(
