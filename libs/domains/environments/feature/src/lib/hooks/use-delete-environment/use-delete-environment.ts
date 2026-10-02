@@ -1,11 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeleteEnvironment({ projectId, logsLink }: { projectId: string; logsLink?: string }) {
+export function useDeleteEnvironment({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
 
   return useMutation(mutations.deleteEnvironment, {
     onSuccess() {
@@ -22,12 +20,6 @@ export function useDeleteEnvironment({ projectId, logsLink }: { projectId: strin
     meta: {
       notifyOnSuccess: {
         title: 'Your environment is being deleted',
-        ...(logsLink
-          ? {
-              labelAction: 'See deployment logs',
-              callback: () => navigate({ to: logsLink }),
-            }
-          : {}),
       },
       notifyOnError: true,
     },

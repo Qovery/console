@@ -4,7 +4,6 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { ExternalSecretsTab, SecretManagerFeatureFlagEntryPoint } from '@qovery/domains/variables/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -29,8 +28,9 @@ function RouteComponent() {
   }, [organizationId, projectId, environmentId])
 
   const { mutate: deployEnvironment } = useDeployEnvironment({
+    organizationId,
     projectId,
-    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
+    environmentId,
   })
 
   const redeployEnvironmentAction = () => {
