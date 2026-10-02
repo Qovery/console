@@ -181,7 +181,6 @@ function ProfileArrayField({
       ? getPlatformArrayItemFields(field, index ?? items.length).filter(isPlatformScalarField)
       : [toPlatformArrayItemDescriptor(field)]
 
-    isItemModalOpenRef.current = true
     openModal({
       content: (
         <ProfileArrayItemModal
@@ -191,8 +190,8 @@ function ProfileArrayField({
           values={itemValues}
           isEdit={isEdit}
           onClose={closeModal}
-          onUnmount={() => {
-            isItemModalOpenRef.current = false
+          onMountedChange={(isMounted) => {
+            isItemModalOpenRef.current = isMounted
           }}
           onSubmit={(submittedValues) => {
             // Keep keys the modal does not edit (non-scalar or unevaluated fields) on existing object items.

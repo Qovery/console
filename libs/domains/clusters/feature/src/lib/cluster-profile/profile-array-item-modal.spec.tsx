@@ -1,3 +1,4 @@
+import { StrictMode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { type PlatformFieldDescriptor } from '../platform-configuration/platform-configuration-utils'
 import { ProfileArrayItemModal } from './profile-array-item-modal'
@@ -33,5 +34,28 @@ describe('ProfileArrayItemModal', () => {
     await userEvent.click(addButton)
 
     expect(onSubmit).toHaveBeenCalledWith(submittedValues)
+  })
+
+  it('reports being mounted until it unmounts, including under StrictMode', () => {
+    const onMountedChange = jest.fn()
+    const { unmount } = renderWithProviders(
+      <StrictMode>
+        <ProfileArrayItemModal
+          title="Trusted CIDRs"
+          fields={[cidrField]}
+          values={{}}
+          isEdit={false}
+          onClose={jest.fn()}
+          onMountedChange={onMountedChange}
+          onSubmit={jest.fn()}
+        />
+      </StrictMode>
+    )
+
+    expect(onMountedChange).toHaveBeenLastCalledWith(true)
+
+    unmount()
+
+    expect(onMountedChange).toHaveBeenLastCalledWith(false)
   })
 })

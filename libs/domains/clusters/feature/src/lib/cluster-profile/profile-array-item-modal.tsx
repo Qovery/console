@@ -21,7 +21,7 @@ export interface ProfileArrayItemModalProps {
   values: Record<string, unknown>
   isEdit: boolean
   onClose: () => void
-  onUnmount?: () => void
+  onMountedChange?: (isMounted: boolean) => void
   onSubmit: (values: Record<string, unknown>) => void
 }
 
@@ -35,10 +35,13 @@ export function ProfileArrayItemModal({
   values,
   isEdit,
   onClose,
-  onUnmount,
+  onMountedChange,
   onSubmit,
 }: ProfileArrayItemModalProps) {
-  useEffect(() => onUnmount, [onUnmount])
+  useEffect(() => {
+    onMountedChange?.(true)
+    return () => onMountedChange?.(false)
+  }, [onMountedChange])
 
   const methods = useForm<Record<string, CatalogVariableValue | undefined>>({
     mode: 'onChange',
