@@ -102,7 +102,6 @@ export function ClusterOperatorStatus({ organizationId, clusterId, operatorStatu
               size="sm"
               variant="outline"
               color="neutral"
-              // Loading only blocks the pointer: the keyboard could still start a second update.
               disabled={isUpdating || !operatorStatus.desired_chart_version}
               loading={isUpdating}
               onClick={() => {
