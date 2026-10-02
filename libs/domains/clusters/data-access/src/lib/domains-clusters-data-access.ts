@@ -9,17 +9,22 @@ import {
   type ClusterDeleteMode,
   ClusterDeploymentHistoryApi,
   type ClusterDnsProviderRequest,
+  ClusterOperatorApi,
+  type ClusterOperatorUpdateRequest,
   type ClusterRequest,
   type ClusterRoutingTableRequest,
   ClustersApi,
   KubernetesEnum,
   OrganizationMainCallsApi,
   SecretManagerAccessApi,
+  type SelfManagedClusterRequest,
 } from 'qovery-typescript-axios'
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
+import { isHttpStatus } from './http/is-http-status'
 
 const clusterApi = new ClustersApi()
 const clusterDeploymentHistoryApi = new ClusterDeploymentHistoryApi()
+const clusterOperatorApi = new ClusterOperatorApi()
 const argoCdApi = new ArgoCDApi()
 const secretManagerApi = new SecretManagerAccessApi()
 const organizationApi = new OrganizationMainCallsApi()
@@ -47,6 +52,26 @@ export const clusters = createQueryKeys('clusters', {
     queryKey: [organizationId, clusterId],
     async queryFn() {
       const response = await clusterApi.getClusterStatus(organizationId, clusterId)
+      return response.data
+    },
+  }),
+  operatorStatus: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      try {
+        const response = await clusterOperatorApi.getClusterOperatorStatus(organizationId, clusterId)
+        return response.data
+      } catch (error) {
+        // No Operator state: the cluster is not enrolled in the Engine v2 Operator path.
+        if (isHttpStatus(error, 404)) return null
+        throw error
+      }
+    },
+  }),
+  operatorBootstrap: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await clusterOperatorApi.getClusterOperatorBootstrap(organizationId, clusterId)
       return response.data
     },
   }),
@@ -203,6 +228,33 @@ export const clusters = createQueryKeys('clusters', {
 })
 
 export const mutations = {
+  async updateClusterOperator({
+    organizationId,
+    clusterId,
+    chartVersion,
+    imageVersion,
+  }: {
+    organizationId: string
+    clusterId: string
+    chartVersion: ClusterOperatorUpdateRequest['chart_version']
+    imageVersion?: ClusterOperatorUpdateRequest['image_version']
+  }) {
+    const response = await clusterOperatorApi.updateClusterOperator(organizationId, clusterId, {
+      chart_version: chartVersion,
+      image_version: imageVersion,
+    })
+    return response.data
+  },
+  async createSelfManagedCluster({
+    organizationId,
+    clusterRequest,
+  }: {
+    organizationId: string
+    clusterRequest: SelfManagedClusterRequest
+  }) {
+    const response = await clusterApi.createSelfManagedCluster(organizationId, clusterRequest)
+    return response.data
+  },
   async createCluster({ organizationId, clusterRequest }: { organizationId: string; clusterRequest: ClusterRequest }) {
     const response = await clusterApi.createCluster(organizationId, clusterRequest)
     return response.data

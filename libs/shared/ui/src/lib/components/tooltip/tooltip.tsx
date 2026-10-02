@@ -9,6 +9,10 @@ export interface TooltipProps extends TooltipPrimitive.TooltipProps {
   align?: 'center' | 'start' | 'end'
   classNameTrigger?: string
   classNameContent?: string
+  // Matches the arrow to a content whose background is overridden.
+  classNameArrow?: string
+  // Space kept between the content and the viewport edges.
+  collisionPadding?: ComponentProps<typeof TooltipPrimitive.Content>['collisionPadding']
   disabled?: boolean
 }
 
@@ -25,6 +29,8 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
     delayDuration = 200,
     classNameTrigger = '',
     classNameContent = '',
+    classNameArrow = '',
+    collisionPadding,
     disabled = false,
   },
   forwardedRef
@@ -50,9 +56,15 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
           side={side}
           sideOffset={6}
           align={align}
+          collisionPadding={collisionPadding}
         >
           {content}
-          <TooltipPrimitive.Arrow className="fill-surface-neutralInvert-component" offset={10} width={11} height={5} />
+          <TooltipPrimitive.Arrow
+            className={twMerge('fill-surface-neutralInvert-component', classNameArrow)}
+            offset={10}
+            width={11}
+            height={5}
+          />
         </TooltipPrimitive.Content>
       </TooltipPrimitive.Portal>
     </TooltipPrimitive.Root>

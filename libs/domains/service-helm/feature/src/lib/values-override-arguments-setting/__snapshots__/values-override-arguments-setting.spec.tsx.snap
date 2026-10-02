@@ -112,7 +112,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 </select>
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-chevron-down pointer-events-none absolute right-3 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
+                  class="fa-regular fa-chevron-down pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                 />
               </div>
               <div
@@ -186,7 +186,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 </select>
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-chevron-down pointer-events-none absolute right-3 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
+                  class="fa-regular fa-chevron-down pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                 />
               </div>
               <div
@@ -269,7 +269,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 </select>
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-chevron-down pointer-events-none absolute right-3 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
+                  class="fa-regular fa-chevron-down pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                 />
               </div>
               <div
@@ -430,7 +430,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot for the v5-compati
                 </select>
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-chevron-down pointer-events-none absolute right-3 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
+                  class="fa-regular fa-chevron-down pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
                 />
               </div>
               <div

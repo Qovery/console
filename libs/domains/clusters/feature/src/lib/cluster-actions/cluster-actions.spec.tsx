@@ -8,7 +8,11 @@ import {
 import type { ReactNode } from 'react'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useIsEngineV2Cluster } from '../hooks/use-is-engine-v2-cluster/use-is-engine-v2-cluster'
 import { ClusterActions } from './cluster-actions'
+
+jest.mock('../hooks/use-is-engine-v2-cluster/use-is-engine-v2-cluster')
+const mockUseIsEngineV2Cluster = useIsEngineV2Cluster as jest.Mock
 
 const mockCluster = clusterFactoryMock(1)[0]
 const mockOpenModal = jest.fn()
@@ -54,6 +58,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 describe('ClusterActions', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseIsEngineV2Cluster.mockReturnValue(false)
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     mockClusterStatus = {
       cluster_id: mockCluster.id,
@@ -309,5 +314,66 @@ describe('ClusterActions', () => {
 
     expect(screen.getByRole('button', { name: 'Deployments' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Logs' })).not.toBeInTheDocument()
+  })
+
+  describe('Engine v2 clusters', () => {
+    const selfManagedCluster = {
+      ...mockCluster,
+      kubernetes: KubernetesEnum.SELF_MANAGED,
+      cloud_provider: 'AWS' as const,
+    }
+
+    it('keeps the installation guide for self-managed clusters outside Engine v2', () => {
+      const { container } = renderWithProviders(
+        <ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} />
+      )
+
+      // The installation guide button is only named by its tooltip.
+      expect(container.querySelector('.fa-circle-info')).toBeInTheDocument()
+      expect(screen.queryByLabelText(/manage deployment/i)).not.toBeInTheDocument()
+    })
+
+    it('offers to deploy an Engine v2 cluster, without stopping it', async () => {
+      mockUseIsEngineV2Cluster.mockReturnValue(true)
+      const { userEvent } = renderWithProviders(
+        <ClusterActions
+          cluster={selfManagedCluster}
+          clusterStatus={{ ...mockClusterStatus, status: ClusterStateEnum.READY }}
+        />,
+        { container: document.body }
+      )
+
+      expect(document.body.querySelector('.fa-circle-info')).not.toBeInTheDocument()
+      await userEvent.click(screen.getByLabelText(/manage deployment/i))
+
+      expect(screen.getByRole('menuitem', { name: 'Deploy' })).toBeInTheDocument()
+      expect(screen.queryByRole('menuitem', { name: /stop/i })).not.toBeInTheDocument()
+    })
+
+    it('offers to redeploy a deployed Engine v2 cluster, without upgrading Kubernetes', async () => {
+      mockUseIsEngineV2Cluster.mockReturnValue(true)
+      const { userEvent } = renderWithProviders(
+        <ClusterActions
+          cluster={selfManagedCluster}
+          clusterStatus={{ ...mockClusterStatus, next_k8s_available_version: '1.29' }}
+        />,
+        { container: document.body }
+      )
+
+      await userEvent.click(screen.getByLabelText(/manage deployment/i))
+
+      expect(screen.getByRole('menuitem', { name: 'Update' })).toBeInTheDocument()
+      expect(screen.queryByRole('menuitem', { name: /upgrade k8s/i })).not.toBeInTheDocument()
+      expect(screen.queryByRole('menuitem', { name: /stop/i })).not.toBeInTheDocument()
+    })
+
+    it('shows the deployments card action for Engine v2 clusters', () => {
+      mockUseIsEngineV2Cluster.mockReturnValue(true)
+      renderWithProviders(
+        <ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} variant="card" />
+      )
+
+      expect(screen.getByRole('button', { name: 'Deployments' })).toBeInTheDocument()
+    })
   })
 })
