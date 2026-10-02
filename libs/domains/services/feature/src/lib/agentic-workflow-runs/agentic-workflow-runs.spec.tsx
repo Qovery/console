@@ -70,6 +70,7 @@ describe('AgenticWorkflowRuns', () => {
           started_at: '2026-09-23T12:01:00Z',
           finished_at: '2026-09-23T12:02:05Z',
           duration_ms: 65000,
+          cost: 0.0123,
         },
       ],
       isLoading: false,
@@ -78,7 +79,7 @@ describe('AgenticWorkflowRuns', () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
     expect(screen.getByText('Webhook')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'See the full prompt' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'See the full prompt' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Copy run ID' })).toBeInTheDocument()
     expect(screen.getByText('run-123')).toBeInTheDocument()
     expect(screen.getByText('23 Sep, 12:01')).toBeInTheDocument()
@@ -91,19 +92,24 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Payload' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Cost' })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Prompt' })).not.toBeInTheDocument()
     expect(screen.getAllByRole('columnheader').map((header) => header.textContent)).toEqual([
       'Date',
       'Status',
       'Trigger',
       'Payload',
       'Duration',
-      'Prompt',
+      'Cost',
     ])
     expect(screen.getByText('Completed')).toBeInTheDocument()
     expect(screen.getByText('Completed').closest('[data-accent-color]')).not.toBeInTheDocument()
     expect(screen.getByText('Completed').closest('td')?.firstElementChild).toHaveClass('justify-between')
     expect(screen.getByText('Completed').closest('td')?.querySelector('svg')).toBeInTheDocument()
     expect(screen.getByText('00:01:05').querySelector('i')).toHaveClass('fa-clock-eight')
+    expect(screen.getByText('$0.0123').closest('td')).toBe(
+      screen.getByText('00:01:05').closest('td')?.nextElementSibling
+    )
     expect(screen.getByText('Webhook').querySelector('i')).toHaveClass('fa-webhook')
     expect(screen.queryByRole('columnheader', { name: 'Recorded' })).not.toBeInTheDocument()
     expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123' })
@@ -158,7 +164,7 @@ describe('AgenticWorkflowRuns', () => {
 
   it('shows empty lifecycle values when the API has not updated a run yet', async () => {
     mockUseRunHistory.mockReturnValue({
-      data: [{ ...run, status: 'QUEUED', started_at: null, finished_at: null, duration_ms: null }],
+      data: [{ ...run, status: 'QUEUED', started_at: null, finished_at: null, duration_ms: null, cost: null }],
       isLoading: false,
       isError: false,
     })
@@ -174,6 +180,7 @@ describe('AgenticWorkflowRuns', () => {
     const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
     expect(cells[3]).toHaveTextContent('—')
     expect(cells[4]).toHaveTextContent('—')
+    expect(cells[5]).toHaveTextContent('—')
     await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
 
     const details = within(screen.getByRole('dialog'))
@@ -181,6 +188,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(details.getByText('Started (UTC)').nextElementSibling).toHaveTextContent('—')
     expect(details.getByText('Finished (UTC)').nextElementSibling).toHaveTextContent('—')
     expect(details.getByText('Duration').nextElementSibling).toHaveTextContent('—')
+    expect(details.getByText('Cost').nextElementSibling).toHaveTextContent('—')
   })
 
   it('rounds run durations to the nearest second', () => {
@@ -383,7 +391,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.getByText('Schedule').querySelector('i')).toHaveClass('fa-calendar-day')
   })
 
-  it('opens the full prompt from the row button without pagination', async () => {
+  it('keeps the prompt out of the table and shows it in full in the run details', async () => {
     const fullPrompt = '123456789012345678901234567890 more details'
     mockUseRunHistory.mockReturnValue({
       data: [{ ...run, prompt: fullPrompt }],
@@ -392,15 +400,53 @@ describe('AgenticWorkflowRuns', () => {
     })
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    const promptButton = screen.getByRole('button', { name: 'See the full prompt' })
-    expect(promptButton).toHaveTextContent('123456789012345678901234567890…')
-    expect(screen.queryByText(fullPrompt)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'See the full prompt' })).not.toBeInTheDocument()
+    expect(within(screen.getByRole('table')).queryByText(/123456789012345678901234567890/)).not.toBeInTheDocument()
 
-    await userEvent.click(promptButton)
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
 
     expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
-    expect(screen.getByText(fullPrompt)).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByRole('heading', { name: 'Prompt' })).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText(fullPrompt)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument()
+  })
+
+  it.each([
+    [0.0123, '$0.0123'],
+    [1.5, '$1.50'],
+    [0, '$0.00'],
+    [0.000123, '$0.000123'],
+    [1234.5, '$1,234.50'],
+  ])('shows a cost of %s as %s in the table and the run details', async (cost, label) => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status: 'COMPLETED', cost }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
+    expect(cells[5]).toHaveTextContent(label)
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    expect(within(screen.getByRole('dialog')).getByText('Cost').nextElementSibling).toHaveTextContent(label)
+  })
+
+  it.each([
+    ['null', { cost: null }],
+    ['missing', {}],
+  ])('shows a dash when the cost is %s', (_name, overrides) => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status: 'RUNNING', ...overrides }],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
+    expect(cells[5]).toHaveTextContent('—')
+    expect(cells[5]).not.toHaveTextContent('$')
   })
 
   it('treats whitespace-only prompts as missing in the table and sheet', async () => {
