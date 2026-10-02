@@ -4,6 +4,7 @@ import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-types
 import { type KeyboardEvent, useRef, useState } from 'react'
 import {
   Button,
+  CodeEditor,
   EmptyState,
   Heading,
   Icon,
@@ -155,57 +156,20 @@ function CopyRunIdButton({
   )
 }
 
-// JSON.parse + JSON.stringify would change numbers such as 12345678901234567890 or 1e400.
-// JSON.parse only validates here (null means not valid JSON). The text is then re-indented without touching any token.
+const PAYLOAD_EDITOR_MAX_HEIGHT = 400
+const PAYLOAD_EDITOR_LINE_HEIGHT = 19
+
+// Returns the 2-space indented JSON, or null when the payload is not JSON or when re-serializing it would alter it
+// (large integers, exponents, duplicate keys, \u escapes...). Callers then show the payload as received.
 function formatJsonPayload(payload: string): string | null {
   try {
-    JSON.parse(payload)
+    const parsed = JSON.parse(payload)
+    // Strings are matched first so that only whitespace outside of them is stripped.
+    const compact = payload.replace(/"(?:[^"\\]|\\.)*"|\s+/g, (match) => (match.startsWith('"') ? match : ''))
+    return compact === JSON.stringify(parsed) ? JSON.stringify(parsed, null, 2) : null
   } catch {
     return null
   }
-
-  const indent = '  '
-  const text = payload.trim()
-  let result = ''
-  let depth = 0
-  let inString = false
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i]
-
-    if (inString) {
-      result += char
-      if (char === '\\') result += text[++i]
-      else if (char === '"') inString = false
-      continue
-    }
-
-    if (char === '"') {
-      inString = true
-      result += char
-    } else if (char === '{' || char === '[') {
-      const closing = char === '{' ? '}' : ']'
-      const next = text.slice(i + 1).trimStart()[0]
-      if (next === closing) {
-        result += char + closing
-        i = text.indexOf(closing, i + 1)
-      } else {
-        depth++
-        result += `${char}\n${indent.repeat(depth)}`
-      }
-    } else if (char === '}' || char === ']') {
-      depth--
-      result += `\n${indent.repeat(depth)}${char}`
-    } else if (char === ',') {
-      result += `,\n${indent.repeat(depth)}`
-    } else if (char === ':') {
-      result += ': '
-    } else if (!/\s/.test(char)) {
-      result += char
-    }
-  }
-
-  return result
 }
 
 function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
@@ -258,24 +222,26 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                   <Heading level={3}>Payload</Heading>
                   {formattedJson !== null ? (
                     <div
-                      role="group"
+                      className="overflow-hidden rounded border border-neutral"
                       aria-label="JSON payload"
-                      className="rounded border border-neutral p-4 font-mono text-xs"
+                      role="group"
                     >
-                      {formattedJson.split('\n').map((line, index) => {
-                        // Hanging indent: wrapped parts line up with the start of their own line, inside the braces.
-                        const indent = line.length - line.trimStart().length
-                        return (
-                          <div
-                            // eslint-disable-next-line react/no-array-index-key
-                            key={index}
-                            className="whitespace-pre-wrap break-words"
-                            style={{ paddingLeft: `${indent}ch`, textIndent: `-${indent}ch` }}
-                          >
-                            {line}
-                          </div>
-                        )
-                      })}
+                      <CodeEditor
+                        value={formattedJson}
+                        language="json"
+                        height={`${Math.min(formattedJson.split('\n').length * PAYLOAD_EDITOR_LINE_HEIGHT, PAYLOAD_EDITOR_MAX_HEIGHT)}px`}
+                        readOnly
+                        options={{
+                          wordWrap: 'on',
+                          wrappingIndent: 'indent',
+                          scrollBeyondLastLine: false,
+                          automaticLayout: true,
+                          renderLineHighlight: 'none',
+                          overviewRulerLanes: 0,
+                          guides: { indentation: false },
+                          stickyScroll: { enabled: false },
+                        }}
+                      />
                     </div>
                   ) : (
                     <p className="whitespace-pre-wrap break-words rounded border border-neutral p-4">

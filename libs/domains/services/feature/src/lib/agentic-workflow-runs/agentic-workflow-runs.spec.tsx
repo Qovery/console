@@ -5,6 +5,14 @@ import { AgenticWorkflowLastRun, AgenticWorkflowRuns } from './agentic-workflow-
 
 const mockUseRunHistory = jest.fn()
 const mockCopyToClipboard = jest.fn()
+const mockMonacoEditor = jest.fn()
+
+jest.mock('@monaco-editor/react', () => ({
+  Editor: (props: { value?: string }) => {
+    mockMonacoEditor(props)
+    return <pre data-testid="monaco-editor">{props.value}</pre>
+  },
+}))
 
 jest.mock('../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history', () => ({
   useAgenticWorkflowRunHistory: (args: unknown) => mockUseRunHistory(args),
@@ -190,7 +198,7 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('pretty-prints a valid JSON payload in the run details and keeps the table preview condensed', async () => {
+  it('shows a valid JSON payload in a read-only JSON editor and keeps the table preview condensed', async () => {
     const payload = '{"message":"deploy completed","tags":["a","b"],"meta":{"attempt":1}}'
     mockUseRunHistory.mockReturnValue({
       data: [{ ...run, payload }],
@@ -204,23 +212,23 @@ describe('AgenticWorkflowRuns', () => {
     })
     await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
-    const lines = Array.from(within(screen.getByRole('dialog')).getByRole('group', { name: 'JSON payload' }).children)
-    expect(lines.map((line) => line.textContent)).toEqual(JSON.stringify(JSON.parse(payload), null, 2).split('\n'))
+    const editor = within(screen.getByRole('dialog')).getByTestId('monaco-editor')
+    expect(editor).toHaveTextContent(JSON.stringify(JSON.parse(payload), null, 2), { normalizeWhitespace: false })
+    expect(mockMonacoEditor).toHaveBeenCalledWith(
+      expect.objectContaining({
+        language: 'json',
+        options: expect.objectContaining({ readOnly: true, wordWrap: 'on', wrappingIndent: 'indent' }),
+      })
+    )
   })
 
   it.each([
-    [
-      'large integers, exponents and number spellings',
-      '{"id":12345678901234567890,"big":1e400,"price":1.10,"neg":-0.0}',
-      '{\n  "id": 12345678901234567890,\n  "big": 1e400,\n  "price": 1.10,\n  "neg": -0.0\n}',
-    ],
-    [
-      'duplicate keys, escapes and structural characters inside strings',
-      '{ "a" : 1, "a" : "x\\"{,}[:]\\\\\\u00e9", "e": {}, "l": [ ] }',
-      '{\n  "a": 1,\n  "a": "x\\"{,}[:]\\\\\\u00e9",\n  "e": {},\n  "l": []\n}',
-    ],
-    ['nested arrays', '[1,[2,{"k":[]}]]', '[\n  1,\n  [\n    2,\n    {\n      "k": []\n    }\n  ]\n]'],
-  ])('pretty-prints JSON without altering tokens: %s', async (_name, payload, expected) => {
+    ['large integers', '{"id":12345678901234567890}'],
+    ['exponents', '{"big":1e400}'],
+    ['number spellings', '{"price":1.10,"neg":-0.0}'],
+    ['duplicate keys', '{"a":1,"a":2}'],
+    ['unicode escapes', '{"a":"\\u00e9"}'],
+  ])('shows JSON as received when re-serializing would alter it: %s', async (_name, payload) => {
     mockUseRunHistory.mockReturnValue({
       data: [{ ...run, payload }],
       isLoading: false,
@@ -230,15 +238,13 @@ describe('AgenticWorkflowRuns', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
-    const payloadElement = within(screen.getByRole('dialog')).getByRole('group', { name: 'JSON payload' })
-    const lines = Array.from(payloadElement.children)
-    expect(lines.map((line) => line.textContent)).toEqual(expected.split('\n'))
-    lines.forEach((line) => expect(line).toHaveClass('whitespace-pre-wrap', 'break-words'))
-    expect(payloadElement).not.toHaveClass('overflow-x-auto')
+    const payloadElement = within(screen.getByRole('dialog')).getByText(payload)
+    expect(payloadElement).toHaveTextContent(payload, { normalizeWhitespace: false })
+    expect(screen.queryByTestId('monaco-editor')).not.toBeInTheDocument()
   })
 
-  it('aligns wrapped lines with the indentation of their own line', async () => {
-    const payload = '{"a":{"b":"x"}}'
+  it('formats JSON with structural characters inside strings and empty containers', async () => {
+    const payload = '{ "a" : "x\\"{,}[:]", "e": {}, "l": [ ] }'
     mockUseRunHistory.mockReturnValue({
       data: [{ ...run, payload }],
       isLoading: false,
@@ -248,10 +254,10 @@ describe('AgenticWorkflowRuns', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
-    const lines = Array.from(within(screen.getByRole('dialog')).getByRole('group', { name: 'JSON payload' }).children)
-    expect(lines[0]).toHaveStyle({ paddingLeft: '0ch', textIndent: '-0ch' })
-    expect(lines[1]).toHaveStyle({ paddingLeft: '2ch', textIndent: '-2ch' })
-    expect(lines[2]).toHaveStyle({ paddingLeft: '4ch', textIndent: '-4ch' })
+    expect(within(screen.getByRole('dialog')).getByTestId('monaco-editor')).toHaveTextContent(
+      '{\n  "a": "x\\"{,}[:]",\n  "e": {},\n  "l": []\n}',
+      { normalizeWhitespace: false }
+    )
   })
 
   it('shows an invalid JSON payload unchanged in the run details', async () => {
@@ -268,7 +274,7 @@ describe('AgenticWorkflowRuns', () => {
     const payloadElement = within(screen.getByRole('dialog')).getByText(/deploy completed/)
     expect(payloadElement).toHaveTextContent(payload, { normalizeWhitespace: false })
     expect(payloadElement).toHaveClass('whitespace-pre-wrap', 'break-words')
-    expect(screen.queryByRole('group', { name: 'JSON payload' })).not.toBeInTheDocument()
+    expect(screen.queryByTestId('monaco-editor')).not.toBeInTheDocument()
   })
 
   it('shows a manual run with an empty payload', async () => {
