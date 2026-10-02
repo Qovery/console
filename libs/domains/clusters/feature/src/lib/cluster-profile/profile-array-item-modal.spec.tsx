@@ -13,9 +13,9 @@ const cidrField = {
 
 describe('ProfileArrayItemModal', () => {
   it.each([
-    ['optional fields', cidrField],
-    ['prefilled required fields', { ...cidrField, required: true, defaultValue: '10.0.0.0/8' }],
-  ])('lets an item made of %s be added without editing it', async (_, field) => {
+    ['optional fields', cidrField, {}],
+    ['prefilled required fields', { ...cidrField, required: true, defaultValue: '10.0.0.0/8' }, { cidr: '10.0.0.0/8' }],
+  ])('lets an item made of %s be added without editing it', async (_, field, submittedValues) => {
     const onSubmit = jest.fn()
     const { userEvent } = renderWithProviders(
       <ProfileArrayItemModal
@@ -32,6 +32,6 @@ describe('ProfileArrayItemModal', () => {
     await waitFor(() => expect(addButton).toBeEnabled())
     await userEvent.click(addButton)
 
-    expect(onSubmit).toHaveBeenCalled()
+    expect(onSubmit).toHaveBeenCalledWith(submittedValues)
   })
 })
