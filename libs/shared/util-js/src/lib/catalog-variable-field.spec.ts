@@ -90,6 +90,15 @@ describe('catalog field validation', () => {
     expect(getCatalogFieldValidationError({ type: 'string', pattern: '^[a-z]+$' }, 'value')).toBeUndefined()
   })
 
+  it('rejects values outside the allowed values', () => {
+    const field = { type: 'string' as const, allowedValues: ['pvc', 's3'] }
+
+    expect(getCatalogFieldValidationError(field, 'gcs')).toBe('Please select one of the allowed values.')
+    expect(getCatalogFieldValidationError(field, 's3')).toBeUndefined()
+    expect(getCatalogFieldValidationError(field, '')).toBeUndefined()
+    expect(getCatalogFieldValidationError({ type: 'bool', allowedValues: ['true'] }, false)).toBeUndefined()
+  })
+
   it('validates required state and constraints together', () => {
     expect(isCatalogFieldValid({ type: 'string', required: true }, undefined)).toBe(false)
     expect(isCatalogFieldValid({ type: 'string', required: true }, 'value')).toBe(true)

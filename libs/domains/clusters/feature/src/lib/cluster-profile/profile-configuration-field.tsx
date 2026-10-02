@@ -158,7 +158,10 @@ function ProfileArrayField({
   const isItemModalOpenRef = useRef(false)
   const items: unknown[] = Array.isArray(value) ? value : []
   const { minItems, maxItems } = field.constraints
-  const canAdd = typeof maxItems !== 'number' || items.length < maxItems
+  const isUnderLimit = typeof maxItems !== 'number' || items.length < maxItems
+  const hasNestedItemFields =
+    field.items.type === 'object' && field.items.fields.some((itemField) => !isPlatformScalarField(itemField))
+  const canAdd = isUnderLimit && !hasNestedItemFields
   const canRemove = typeof minItems !== 'number' || items.length > minItems
   const error = getFieldViolation(violations, path)
 
@@ -239,7 +242,9 @@ function ProfileArrayField({
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add item
           </Button>
-          {typeof maxItems === 'number' && !canAdd ? (
+          {hasNestedItemFields ? (
+            <p className="text-xs text-neutral-subtle">Items with nested settings cannot be added here yet.</p>
+          ) : typeof maxItems === 'number' && !isUnderLimit ? (
             <p className="text-xs text-neutral-subtle">Limit of {maxItems} reached.</p>
           ) : null}
         </div>
