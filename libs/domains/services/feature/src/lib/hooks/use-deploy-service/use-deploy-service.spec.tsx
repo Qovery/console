@@ -15,11 +15,27 @@ jest.mock('@qovery/shared/ui', () => ({
   toast: jest.fn(),
 }))
 
-const mockAxiosRequest = jest.spyOn(axios, 'request')
-
 describe('useDeployService', () => {
+  let queryClient: QueryClient
+  let mockAxiosRequest: jest.SpiedFunction<typeof axios.request>
+  let unmount: (() => void) | undefined
+
+  beforeEach(() => {
+    queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
+    mockAxiosRequest = jest.spyOn(axios, 'request')
+    unmount = undefined
+  })
+
+  afterEach(() => {
+    try {
+      unmount?.()
+    } finally {
+      queryClient.clear()
+      mockAxiosRequest.mockRestore()
+    }
+  })
+
   it('invalidates all service and environment history pages after deployment without affecting unrelated histories', async () => {
-    const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
     const service = { serviceId: 'service', serviceType: 'APPLICATION' as const }
     const histories = [undefined, 10, 100].flatMap((pageSize) => [
       queries.services.deploymentHistory({ ...service, pageSize }),
@@ -37,13 +53,15 @@ describe('useDeployService', () => {
     const wrapper = ({ children }: PropsWithChildren) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     )
-    const { result, unmount } = renderHook(
+    const hook = renderHook(
       () => useDeployService({ organizationId: 'organization', projectId: 'project', environmentId: 'environment' }),
       { wrapper }
     )
 
+    unmount = hook.unmount
+
     await act(async () => {
-      await result.current.mutateAsync(service)
+      await hook.result.current.mutateAsync(service)
     })
 
     expect(mockAxiosRequest).toHaveBeenCalledWith(
@@ -55,8 +73,5 @@ describe('useDeployService', () => {
     for (const history of unrelated) {
       expect(queryClient.getQueryState(history.queryKey)?.isInvalidated).toBe(false)
     }
-    unmount()
-    queryClient.clear()
-    mockAxiosRequest.mockReset()
   })
 })
