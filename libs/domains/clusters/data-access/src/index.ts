@@ -1,5 +1,4 @@
 export * from './lib/domains-clusters-data-access'
-export * from './lib/http/is-http-status'
 export * from './lib/platform-configuration/platform-configuration'
 export { isGcpCluster } from './lib/cluster-checks/is-gcp-cluster'
 export { isAwsCluster } from './lib/cluster-checks/is-aws-cluster'
