@@ -5,7 +5,7 @@ import {
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
@@ -429,6 +429,23 @@ describe('ClusterProfileFeature', () => {
 
       await userEvent.click(screen.getByRole('button', { name: 'Remove renamed-ca' }))
       expect(screen.queryByText('renamed-ca')).not.toBeInTheDocument()
+    })
+
+    it('closes the item modal when the profile unmounts', async () => {
+      let hideProfile: () => void = () => undefined
+      function ClusterProfileUntilHidden() {
+        const [isShown, setIsShown] = useState(true)
+        hideProfile = () => setIsShown(false)
+        return isShown ? <ClusterProfileFeature activeComponentKey="envoy" /> : null
+      }
+      const { userEvent } = renderWithProviders(<ClusterProfileUntilHidden />)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Add item to Client-validation CA certificates' }))
+      expect(await screen.findByRole('dialog')).toBeInTheDocument()
+
+      act(() => hideProfile())
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
     })
 
     it('disables the add button once the item limit is reached', () => {

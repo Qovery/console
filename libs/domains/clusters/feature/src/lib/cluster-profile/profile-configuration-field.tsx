@@ -1,5 +1,5 @@
 import { type FieldSchemaResponse, type PlatformComponentConfigurationViolationResponse } from 'qovery-typescript-axios'
-import { type ReactNode } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 import { CatalogVariableDescription, CatalogVariableInput } from '@qovery/shared/console-shared'
 import { Button, HighlightText, Icon, useModal } from '@qovery/shared/ui'
 import { getCatalogSummaryFieldValue, getCatalogVariableValue } from '@qovery/shared/util-js'
@@ -155,11 +155,24 @@ function ProfileArrayField({
   onChange,
 }: Omit<ProfileConfigurationFieldProps, 'field'> & { field: PlatformArrayField }) {
   const { openModal, closeModal } = useModal()
+  const isItemModalOpenRef = useRef(false)
   const items: unknown[] = Array.isArray(value) ? value : []
   const { minItems, maxItems } = field.constraints
   const canAdd = typeof maxItems !== 'number' || items.length < maxItems
   const canRemove = typeof minItems !== 'number' || items.length > minItems
   const error = getFieldViolation(violations, path)
+
+  const closeItemModal = () => {
+    isItemModalOpenRef.current = false
+    closeModal()
+  }
+
+  useEffect(
+    () => () => {
+      if (isItemModalOpenRef.current) closeModal()
+    },
+    [closeModal]
+  )
 
   const openItemModal = (index?: number) => {
     const isEdit = index !== undefined
@@ -170,6 +183,7 @@ function ProfileArrayField({
       ? getPlatformArrayItemFields(field, index ?? items.length).filter(isPlatformScalarField)
       : [toPlatformArrayItemDescriptor(field)]
 
+    isItemModalOpenRef.current = true
     openModal({
       content: (
         <ProfileArrayItemModal
@@ -178,7 +192,7 @@ function ProfileArrayField({
           fields={itemFields}
           values={itemValues}
           isEdit={isEdit}
-          onClose={closeModal}
+          onClose={closeItemModal}
           onSubmit={(submittedValues) => {
             // Keep keys the modal does not edit (non-scalar or unevaluated fields) on existing object items.
             const nextItem = isObjectItem
