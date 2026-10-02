@@ -94,7 +94,7 @@ export function useService({ serviceId, suspense = false, ...props }: UseService
   return useQuery({
     // `details` needs a concrete service type to select the right endpoint, so we keep the
     // query disabled until that type is available
-    queryKey: query?.queryKey ?? ['services', 'details', serviceId ?? ''],
+    queryKey: query?.queryKey ?? ['services', 'details', serviceId ?? '', resolvedServiceType ?? 'APPLICATION'],
     queryFn: query?.queryFn ?? (async () => undefined as never),
     suspense: Boolean(resolvedServiceType) && suspense,
     enabled: Boolean(serviceId) && Boolean(resolvedServiceType),

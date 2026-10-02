@@ -75,11 +75,6 @@
       ],
       "cache": true
     },
-    "@nx/vite:build": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
-    },
     "@nx/vitest:test": {
       "cache": true,
       "inputs": ["default", "^production"]
@@ -169,6 +164,16 @@
         "serveStorybookTargetName": "storybook",
         "staticStorybookTargetName": "static-storybook",
         "testStorybookTargetName": "test-storybook"
+      }
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "devTargetName": "serve",
+        "typecheckTargetName": "typecheck",
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static"
       }
     }
   ]
