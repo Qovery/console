@@ -4,7 +4,7 @@ import {
   type PlatformComponentInputRequirementResponse,
   type PlatformTemplateComponentResponse,
 } from 'qovery-typescript-axios'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import {
   Badge,
@@ -14,10 +14,12 @@ import {
   CatalogVariableInput,
   Heading,
   Icon,
+  Skeleton,
 } from '@qovery/shared/ui'
 import { type CatalogVariableValue, formatCatalogKey, getCatalogVariableValue } from '@qovery/shared/util-js'
 import {
   getFieldViolation,
+  getMissingResolvedValueViolations,
   getUnmappedViolations,
   isPlatformConfigurationReady,
   toCatalogVariableField,
@@ -68,31 +70,21 @@ export function PlatformComponentConfiguration({
   redactedComponentKeys = [],
   redactedFieldKeys = [],
 }: PlatformComponentConfigurationProps) {
-  // The preview is undefined while a new resolution is debounced/fetched. Keep the
-  // last known requirements for the same component so their inputs (including the
-  // one being typed into) don't unmount and lose focus on every keystroke.
-  const lastRequirementsRef = useRef<{
-    componentKey: string
-    requirements: PlatformComponentInputRequirementResponse[]
-    fields: FieldSchemaResponse[]
-  }>()
-  if (preview) {
-    lastRequirementsRef.current = {
-      componentKey: component.key,
-      requirements: preview.requirements,
-      fields: preview.fields,
-    }
-  }
-  const allFields =
-    preview?.fields ??
-    (lastRequirementsRef.current?.componentKey === component.key
-      ? lastRequirementsRef.current.fields
-      : component.fields)
+  // While a new resolution is debounced, fetched or failed, keep showing the last one of this
+  // component: its fields and resolved values belong together, and the input being typed into
+  // stays mounted. Every other input stays locked until the resolution is current.
+  const lastPreviewRef = useRef<{ componentKey: string; preview: PlatformComponentConfigurationResolutionResponse }>()
+  const [changedKey, setChangedKey] = useState<string>()
+  if (preview) lastPreviewRef.current = { componentKey: component.key, preview }
+  const resolution =
+    preview ?? (lastPreviewRef.current?.componentKey === component.key ? lastPreviewRef.current.preview : undefined)
+  const isLocked = (key: string) => (!preview || isFetching) && key !== changedKey
+
+  const allFields = resolution?.fields ?? []
   const fields = isFieldVisible ? allFields.filter(isFieldVisible) : allFields
-  const requirements =
-    preview?.requirements ??
-    (lastRequirementsRef.current?.componentKey === component.key ? lastRequirementsRef.current.requirements : [])
-  const violations = preview?.violations ?? []
+  const requirements = resolution?.requirements ?? []
+  const resolvedValues = resolution?.resolvedValues ?? {}
+  const violations = [...(preview?.violations ?? []), ...getMissingResolvedValueViolations(resolution)]
   const unmappedViolations = getUnmappedViolations(violations, fields, requirements, profileConfig)
   const ready = preview ? isPlatformConfigurationReady(violations, requirements) : false
 
@@ -116,11 +108,17 @@ export function PlatformComponentConfiguration({
 
       <RedactedValuesCallout className="mb-4" componentKeys={redactedComponentKeys} />
 
-      {!isFetching &&
-      !hasPreviewError &&
-      fields.length === 0 &&
-      requirements.length === 0 &&
-      violations.length === 0 ? (
+      {!resolution && !hasPreviewError ? (
+        <div role="status" aria-label="Checking configuration" className="flex flex-col gap-3">
+          <Skeleton height={20} width={120} />
+          <Skeleton height={52} width="100%" />
+          <Skeleton height={52} width="100%" />
+        </div>
+      ) : !isFetching &&
+        !hasPreviewError &&
+        fields.length === 0 &&
+        requirements.length === 0 &&
+        violations.length === 0 ? (
         <Callout.Root color="neutral">
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
@@ -149,9 +147,14 @@ export function PlatformComponentConfiguration({
                   key={field.key}
                   field={field}
                   value={profileConfig[field.key]}
+                  resolvedValue={resolvedValues[field.key]}
+                  disabled={isLocked(field.key)}
                   getError={(path) => getFieldViolation(violations, path)}
                   placeholder={redactedFieldKeys.includes(field.key) ? 'Hidden value' : undefined}
-                  onChange={(value) => onProfileConfigChange(field.key, value)}
+                  onChange={(value) => {
+                    setChangedKey(field.key)
+                    onProfileConfigChange(field.key, value)
+                  }}
                 />
               ))}
             </section>
@@ -192,7 +195,11 @@ export function PlatformComponentConfiguration({
                     field={toCatalogVariableField(requirement)}
                     value={getCatalogVariableValue(requirement, clusterInputs[requirement.key])}
                     error={getFieldViolation(violations, requirement.key, 'clusterInputs')}
-                    onChange={(value) => onClusterInputChange(requirement.key, value)}
+                    disabled={isLocked(`clusterInputs.${requirement.key}`)}
+                    onChange={(value) => {
+                      setChangedKey(`clusterInputs.${requirement.key}`)
+                      onClusterInputChange(requirement.key, value)
+                    }}
                   />
                 </div>
               ))}

@@ -11,6 +11,7 @@ interface CatalogYamlInputProps {
   onChange: (value: string) => void
   error?: string
   path: string
+  disabled?: boolean
 }
 
 interface CatalogYamlEditorProps {
@@ -86,7 +87,7 @@ export function CatalogYamlEditor({ field, value, onApply, onClose }: CatalogYam
   )
 }
 
-export function CatalogYamlInput({ field, value, onChange, error, path }: CatalogYamlInputProps) {
+export function CatalogYamlInput({ field, value, onChange, error, path, disabled }: CatalogYamlInputProps) {
   const { openModal, closeModal } = useModal()
 
   return (
@@ -101,6 +102,7 @@ export function CatalogYamlInput({ field, value, onChange, error, path }: Catalo
           variant="outline"
           aria-label={`Edit ${field.label} YAML`}
           aria-describedby={error ? `${path}-error` : undefined}
+          disabled={disabled}
           onClick={() =>
             openModal({
               options: { width: Math.min(900, window.innerWidth - 48) },

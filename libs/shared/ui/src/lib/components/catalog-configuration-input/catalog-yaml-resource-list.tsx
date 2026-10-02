@@ -29,6 +29,7 @@ export function CatalogYamlResourceList({
   onChange,
   path = field.key,
   getError,
+  disabled,
 }: CatalogConfigurationInputProps & { field: ArrayFieldSchemaResponse; manifestField: ScalarFieldSchemaResponse }) {
   const { openModal, closeModal } = useModal()
   const rows = useMemo(() => (Array.isArray(value) ? value : []), [value])
@@ -56,7 +57,7 @@ export function CatalogYamlResourceList({
       ),
     }))
   }, [rows, manifestField])
-  const addDisabled = field.constraints.maxItems != null && rows.length >= field.constraints.maxItems
+  const addDisabled = disabled || (field.constraints.maxItems != null && rows.length >= field.constraints.maxItems)
 
   const edit = (manifest: string, index?: number) => {
     const rowField =
@@ -125,6 +126,7 @@ export function CatalogYamlResourceList({
                         variant="outline"
                         aria-label={`Edit ${name}`}
                         aria-describedby={error ? `${path}-${index}-error` : undefined}
+                        disabled={disabled}
                         onClick={() => edit(manifest, index)}
                       >
                         Edit
@@ -134,7 +136,7 @@ export function CatalogYamlResourceList({
                         size="sm"
                         variant="plain"
                         aria-label={`Remove ${name}`}
-                        disabled={rows.length <= (field.constraints.minItems ?? 0)}
+                        disabled={disabled || rows.length <= (field.constraints.minItems ?? 0)}
                         onClick={() => onChange(rows.filter((_, candidate) => candidate !== index))}
                       >
                         Remove

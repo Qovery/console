@@ -1,6 +1,6 @@
 import { type ArrayFieldSchemaResponse, type FieldSchemaResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useRef, useState } from 'react'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import {
   applyCatalogConfigurationDefaults,
   getCatalogVariableValue,
@@ -11,6 +11,7 @@ import {
 import { Accordion } from '../accordion/accordion'
 import { Button } from '../button/button'
 import { CatalogVariableInput } from '../catalog-variable-input/catalog-variable-input'
+import { CatalogReadOnlyInput } from './catalog-read-only-input'
 import { CatalogYamlInput } from './catalog-yaml-input'
 import { CatalogYamlResourceList } from './catalog-yaml-resource-list'
 
@@ -21,6 +22,8 @@ export interface CatalogConfigurationInputProps {
   path?: string
   getError?: (path: string) => string | undefined
   placeholder?: string
+  disabled?: boolean
+  resolvedValue?: string | null
 }
 
 function ObjectInputs({
@@ -29,6 +32,7 @@ function ObjectInputs({
   onChange,
   path,
   getError,
+  disabled,
 }: Omit<CatalogConfigurationInputProps, 'field'> & { fields: FieldSchemaResponse[]; path: string }) {
   const values = applyCatalogConfigurationDefaults(fields, isCatalogObject(value) ? value : {})
   return (
@@ -40,6 +44,7 @@ function ObjectInputs({
           path={`${path}.${field.key}`}
           value={values[field.key]}
           getError={getError}
+          disabled={disabled}
           onChange={(next) => onChange({ ...values, [field.key]: next })}
         />
       ))}
@@ -81,6 +86,7 @@ function ObjectArrayItem({
   onChange,
   path,
   getError,
+  disabled,
   label,
   sensitive,
   initiallyOpen,
@@ -119,7 +125,14 @@ function ObjectArrayItem({
         </div>
         <Accordion.Content className="bg-transparent pb-3">
           {getError?.(path) ? <p className="mb-2 text-xs text-negative">{getError(path)}</p> : null}
-          <ObjectInputs fields={fields} path={path} value={value} onChange={onChange} getError={getError} />
+          <ObjectInputs
+            fields={fields}
+            path={path}
+            value={value}
+            onChange={onChange}
+            getError={getError}
+            disabled={disabled}
+          />
         </Accordion.Content>
       </Accordion.Item>
     </Accordion.Root>
@@ -132,6 +145,7 @@ function ArrayInput({
   onChange,
   path = field.key,
   getError,
+  disabled,
 }: CatalogConfigurationInputProps & { field: ArrayFieldSchemaResponse }) {
   const rows = Array.isArray(value) ? value : []
   const keys = useRef<number[]>([])
@@ -144,7 +158,7 @@ function ArrayInput({
   const max = field.constraints.maxItems
 
   return (
-    <fieldset className="min-w-0 border-l border-neutral pl-4">
+    <fieldset disabled={disabled} className="min-w-0 border-l border-neutral pl-4">
       <legend className="mb-3 text-sm font-medium">{field.label}</legend>
       {field.description ? <p className="mb-3 text-ssm text-neutral-subtle">{field.description}</p> : null}
       {rows.length === 0 ? <p className="mb-3 text-sm text-neutral-subtle">No items yet.</p> : null}
@@ -178,6 +192,7 @@ function ArrayInput({
                 onChange={update}
                 path={rowPath}
                 getError={getError}
+                disabled={disabled}
                 label={`${field.label} ${index + 1}`}
                 sensitive={field.sensitive}
                 initiallyOpen={addedKeys.current.has(keys.current[index])}
@@ -201,6 +216,7 @@ function ArrayInput({
                 value={row}
                 onChange={update}
                 getError={getError}
+                disabled={disabled}
               />
             </fieldset>
           )
@@ -241,8 +257,13 @@ export function CatalogConfigurationInput({
   path = field.key,
   getError,
   placeholder,
+  disabled,
+  resolvedValue,
 }: CatalogConfigurationInputProps) {
   return match(field)
+    .with({ type: P.union('string', 'number', 'bool'), readOnly: true }, (scalar) => (
+      <CatalogReadOnlyInput field={scalar} value={resolvedValue} path={path} error={getError?.(path)} />
+    ))
     .with({ type: 'array' }, (array) => {
       const manifestField =
         array.items.type === 'object' && array.items.fields.length === 1 ? array.items.fields[0] : undefined
@@ -266,16 +287,33 @@ export function CatalogConfigurationInput({
             onChange={onChange}
             path={path}
             getError={getError}
+            disabled={disabled}
           />
         )
       }
-      return <ArrayInput field={array} value={value} onChange={onChange} path={path} getError={getError} />
+      return (
+        <ArrayInput
+          field={array}
+          value={value}
+          onChange={onChange}
+          path={path}
+          getError={getError}
+          disabled={disabled}
+        />
+      )
     })
     .with({ type: 'object' }, (object) => (
-      <fieldset className="min-w-0 border-l border-neutral pl-4">
+      <fieldset disabled={disabled} className="min-w-0 border-l border-neutral pl-4">
         <legend className="mb-3 text-sm font-medium">{object.label}</legend>
         {object.description ? <p className="mb-3 text-ssm text-neutral-subtle">{object.description}</p> : null}
-        <ObjectInputs fields={object.fields} value={value} onChange={onChange} path={path} getError={getError} />
+        <ObjectInputs
+          fields={object.fields}
+          value={value}
+          onChange={onChange}
+          path={path}
+          getError={getError}
+          disabled={disabled}
+        />
         {getError?.(path) ? <p className="mt-2 text-xs text-negative">{getError(path)}</p> : null}
       </fieldset>
     ))
@@ -285,6 +323,7 @@ export function CatalogConfigurationInput({
         value={String(getCatalogVariableValue(scalar, value) ?? '')}
         error={getError?.(path)}
         path={path}
+        disabled={disabled}
         onChange={onChange}
       />
     ))
@@ -296,6 +335,7 @@ export function CatalogConfigurationInput({
         value={getCatalogVariableValue(scalar, value)}
         error={getError?.(path)}
         placeholder={placeholder}
+        disabled={disabled}
         onChange={(next) => onChange(toCatalogConfigurationValue(scalar, next))}
       />
     ))

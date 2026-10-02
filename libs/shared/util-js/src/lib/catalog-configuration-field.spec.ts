@@ -1,5 +1,10 @@
 import { type FieldSchemaResponse } from 'qovery-typescript-axios'
-import { applyCatalogConfigurationDefaults, omitEmptyCatalogValues } from './catalog-configuration-field'
+import {
+  applyCatalogConfigurationDefaults,
+  isReadOnlyCatalogField,
+  omitEmptyCatalogValues,
+  toCatalogScalarField,
+} from './catalog-configuration-field'
 
 const number: FieldSchemaResponse = {
   key: 'size',
@@ -88,6 +93,26 @@ describe('structured catalog values', () => {
         { pools: [{}] }
       )
     ).toEqual({ pools: [{ size: 8 }] })
+  })
+  it('maps a read-only descriptor and recognizes only read-only scalar fields', () => {
+    const readOnly = { ...number, defaultValue: undefined, readOnly: true }
+    expect(toCatalogScalarField(readOnly)).toEqual({
+      key: 'size',
+      label: 'Size',
+      type: 'number',
+      required: false,
+      sensitive: false,
+      readOnly: true,
+    })
+    expect(isReadOnlyCatalogField(readOnly)).toBe(true)
+    expect(isReadOnlyCatalogField(number)).toBe(false)
+    expect(isReadOnlyCatalogField({ ...number, readOnly: false })).toBe(false)
+    expect(isReadOnlyCatalogField(fields[0])).toBe(false)
+  })
+  it('never fills a read-only key with a default', () => {
+    expect(
+      applyCatalogConfigurationDefaults([number, { ...number, key: 'preset', readOnly: true, defaultValue: '1' }], {})
+    ).toEqual({ size: 3 })
   })
   it('cleans nested empty properties but retains array indices for validation', () => {
     expect(

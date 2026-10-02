@@ -7,6 +7,7 @@ export interface CatalogVariableField {
   description?: string
   required?: boolean
   sensitive?: boolean
+  readOnly?: boolean
   defaultValue?: string
   allowedValues?: string[]
   pattern?: string

@@ -8,6 +8,7 @@ export interface CatalogVariableInputProps {
   inputId?: string
   autoFocus?: boolean
   booleanControl?: 'checkbox' | 'toggle'
+  disabled?: boolean
   error?: string
   field: CatalogVariableField
   onChange: (value: CatalogVariableValue) => void
@@ -19,12 +20,14 @@ export function CatalogVariableInput({
   autoFocus,
   inputId,
   booleanControl = 'toggle',
+  disabled = false,
   error,
   field,
   onChange,
   placeholder,
   value,
 }: CatalogVariableInputProps) {
+  const isDisabled = disabled || field.readOnly === true
   // Bool fields take precedence over allowedValues: a bool field carrying allowed
   // values must keep emitting booleans, not the allowed-value strings.
   if (field.type === 'bool') {
@@ -40,6 +43,7 @@ export function CatalogVariableInput({
             description={field.description}
             ariaLabel={field.label}
             autoFocus={autoFocus}
+            disabled={isDisabled}
             onChange={onChange}
           />
           {error ? <p className="mt-1 pl-11 text-xs text-negative">{error}</p> : null}
@@ -54,6 +58,7 @@ export function CatalogVariableInput({
             name={field.key}
             id={field.key}
             autoFocus={autoFocus}
+            disabled={isDisabled}
             checked={typeof value === 'boolean' ? value : false}
             onCheckedChange={(checked) => {
               if (checked === 'indeterminate') return
@@ -84,6 +89,7 @@ export function CatalogVariableInput({
         hint={field.description}
         error={error}
         autoFocus={autoFocus}
+        disabled={isDisabled}
         placeholder={placeholder}
         onChange={(value) => {
           if (Array.isArray(value)) return
@@ -103,6 +109,7 @@ export function CatalogVariableInput({
       error={error}
       hint={field.description}
       autoFocus={autoFocus}
+      disabled={isDisabled}
       placeholder={placeholder}
       onChange={(event) => onChange(event.currentTarget.value)}
     />

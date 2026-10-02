@@ -20,6 +20,15 @@ const field: ArrayFieldSchemaResponse = {
   constraints: { minItems: 1, maxItems: 2, uniqueItems: false },
   items: { type: 'object', fields: [name, { ...name, key: 'size', label: 'Size', type: 'number', defaultValue: '2' }] },
 }
+const cpuRequest: ScalarFieldSchemaResponse = {
+  key: 'resources.singleBinary.requests.cpuMilli',
+  label: 'CPU request',
+  type: 'number',
+  required: false,
+  sensitive: false,
+  readOnly: true,
+  constraints: { min: 1 },
+}
 
 function Editor({
   schema = field,
@@ -177,6 +186,90 @@ describe('CatalogConfigurationInput', () => {
     expect(JSON.parse(screen.getByRole('status').textContent ?? 'null')).toEqual([
       { key: 'node.qovery.com/infrastructure', value: 'true', effect: 'NoSchedule' },
     ])
+  })
+
+  it('shows a read-only field from its resolved value in a disabled input, never from the draft', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <>
+        <CatalogConfigurationInput field={cpuRequest} value={300} resolvedValue="100" onChange={onChange} />
+        <CatalogConfigurationInput
+          field={{ ...cpuRequest, key: 'resources.singleBinary.limits.cpuMilli', label: 'CPU limit' }}
+          value={600}
+          resolvedValue={null}
+          onChange={onChange}
+        />
+        <CatalogConfigurationInput
+          field={{ ...cpuRequest, key: 'highAvailability', label: 'High availability', type: 'bool' }}
+          value={false}
+          resolvedValue="true"
+          onChange={onChange}
+        />
+      </>
+    )
+    expect(screen.getByRole('textbox', { name: 'CPU request' })).toHaveValue('100')
+    expect(screen.getByRole('textbox', { name: 'CPU limit' })).toHaveValue('No limit')
+    expect(screen.getByRole('checkbox', { name: 'High availability' })).toBeChecked()
+    expect(screen.getByRole('textbox', { name: 'CPU request' })).toBeDisabled()
+    expect(screen.getByRole('textbox', { name: 'CPU limit' })).toBeDisabled()
+    expect(screen.getByRole('checkbox', { name: 'High availability' })).toBeDisabled()
+    await userEvent.type(screen.getByRole('textbox', { name: 'CPU request' }), '5')
+    await userEvent.click(screen.getByRole('checkbox', { name: 'High availability' }))
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('shows an error state, and no draft value, for a read-only field without resolved value', () => {
+    renderWithProviders(<CatalogConfigurationInput field={cpuRequest} value={300} onChange={jest.fn()} />)
+    expect(screen.getByRole('textbox', { name: 'CPU request' })).toHaveValue('')
+    expect(screen.getByText('The resolved value is missing. Refresh the page and try again.')).toBeInTheDocument()
+  })
+
+  it('disables every control of a field locked while its configuration is checked', () => {
+    const manifest: ScalarFieldSchemaResponse = {
+      ...name,
+      key: 'manifest',
+      label: 'Manifest',
+      format: 'kubernetes-resource-yaml',
+    }
+    const list: ArrayFieldSchemaResponse = { ...field, constraints: { uniqueItems: false } }
+    renderWithProviders(
+      <>
+        <CatalogConfigurationInput disabled field={list} value={[{ name: 'first' }]} onChange={jest.fn()} />
+        <CatalogConfigurationInput
+          disabled
+          field={{ ...list, key: 'sizes', label: 'Sizes', items: { type: 'number', constraints: {} } }}
+          value={[3]}
+          onChange={jest.fn()}
+        />
+        <CatalogConfigurationInput
+          disabled
+          field={{ ...name, key: 'effect', label: 'Effect', constraints: { allowedValues: ['NoSchedule'] } }}
+          value="NoSchedule"
+          onChange={jest.fn()}
+        />
+        <CatalogConfigurationInput
+          disabled
+          field={{ ...list, key: 'resources', label: 'Resources', items: { type: 'object', fields: [manifest] } }}
+          value={[{ manifest: 'kind: NodePool' }]}
+          onChange={jest.fn()}
+        />
+        <CatalogConfigurationInput disabled field={manifest} value="kind: NodePool" onChange={jest.fn()} />
+      </>
+    )
+    expect(screen.getAllByRole('button').map((button) => button.textContent)).toEqual([
+      'first',
+      'Remove',
+      'Add item',
+      'Remove',
+      'Add item',
+      'Edit',
+      'Remove',
+      'Add resource',
+      'Edit YAML',
+    ])
+    for (const button of screen.getAllByRole('button')) expect(button).toBeDisabled()
+    expect(screen.getByRole('spinbutton', { name: 'Sizes 1' })).toBeDisabled()
+    expect(screen.getByLabelText('Effect')).toBeDisabled()
   })
 
   it('searches catalog choices in array rows without preselecting or replacing existing instances', async () => {

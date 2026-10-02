@@ -18,6 +18,7 @@ import {
   applyCatalogConfigurationDefaults,
   formatCatalogKey,
   isCatalogObject,
+  isReadOnlyCatalogField,
   omitEmptyCatalogValues,
   toCatalogConfigurationValue,
   toCatalogScalarField,
@@ -221,6 +222,23 @@ export function getUnmappedViolations(
   }
   collect(fields, values)
   return violations.filter((violation) => !mappedPaths.has(violation.fieldPath))
+}
+
+export function getMissingResolvedValueViolations(
+  preview: Pick<PlatformComponentConfigurationResolutionResponse, 'fields' | 'resolvedValues'> | undefined
+): PlatformComponentConfigurationViolationResponse[] {
+  const resolvedValues = preview?.resolvedValues ?? {}
+  return (preview?.fields ?? []).flatMap((field) =>
+    isReadOnlyCatalogField(field) && resolvedValues[field.key] === undefined
+      ? [
+          {
+            code: 'MISSING_RESOLVED_VALUE',
+            fieldPath: field.key,
+            message: `${field.label} has no resolved value. Refresh the page and try again.`,
+          },
+        ]
+      : []
+  )
 }
 
 export function isPlatformConfigurationReady(

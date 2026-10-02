@@ -6,6 +6,12 @@ export function isCatalogObject(value: unknown): value is Record<string, unknown
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+export function isReadOnlyCatalogField(
+  field: FieldSchemaResponse
+): field is Extract<FieldSchemaResponse, ScalarFieldSchemaResponse> {
+  return field.type !== 'object' && field.type !== 'array' && field.readOnly === true
+}
+
 export function toCatalogScalarField(field: ScalarFieldSchemaResponse, key = field.key): CatalogVariableField {
   return {
     key,
@@ -14,6 +20,7 @@ export function toCatalogScalarField(field: ScalarFieldSchemaResponse, key = fie
     description: field.description ?? undefined,
     required: field.required,
     sensitive: field.sensitive,
+    readOnly: field.readOnly,
     defaultValue: field.defaultValue ?? undefined,
     allowedValues: field.constraints.allowedValues ?? undefined,
     pattern: field.constraints.pattern ?? undefined,
@@ -59,7 +66,9 @@ export function applyCatalogConfigurationDefaults(
         )
       })
       .otherwise((scalar) =>
-        value === undefined ? toCatalogConfigurationValue(scalar, getCatalogVariableValue(scalar, undefined)) : value
+        value === undefined && !scalar.readOnly
+          ? toCatalogConfigurationValue(scalar, getCatalogVariableValue(scalar, undefined))
+          : value
       )
     if (resolved !== undefined) result[field.key] = resolved
   })

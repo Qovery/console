@@ -9,6 +9,7 @@ import {
   createPlatformConfigurationDraft,
   filterPlatformLayerSelections,
   getCurrentPlatformConfigurationPreview,
+  getMissingResolvedValueViolations,
   getPlatformComponentEditor,
   getRedactedComponentKeys,
   getRedactedFieldKeys,
@@ -288,11 +289,27 @@ describe('platform configuration utils', () => {
       requirements: [],
       componentBindings: [],
       violations: [],
+      resolvedValues: {},
     }
 
     expect(getCurrentPlatformConfigurationPreview(preview, 'loki', false)).toBe(preview)
     expect(getCurrentPlatformConfigurationPreview(preview, 'loki', true)).toBeUndefined()
     expect(getCurrentPlatformConfigurationPreview(preview, 'prometheus', false)).toBeUndefined()
+  })
+
+  it('reports each read-only field of a preview without resolved value', () => {
+    const readOnly = { ...field, key: 'cpu', label: 'CPU', required: false, defaultValue: undefined, readOnly: true }
+    const fields = [field, readOnly, { ...readOnly, key: 'limit', label: 'Limit' }, { ...readOnly, key: 'size' }]
+
+    expect(getMissingResolvedValueViolations({ fields, resolvedValues: { limit: null, size: '2' } })).toEqual([
+      {
+        code: 'MISSING_RESOLVED_VALUE',
+        fieldPath: 'cpu',
+        message: 'CPU has no resolved value. Refresh the page and try again.',
+      },
+    ])
+    expect(getMissingResolvedValueViolations({ fields: [field], resolvedValues: {} })).toEqual([])
+    expect(getMissingResolvedValueViolations(undefined)).toEqual([])
   })
 
   it('is ready only when requirements are ready and there are no violations', () => {

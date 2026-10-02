@@ -1,6 +1,7 @@
 import {
   type PlatformComponentConfigurationPreviewResponse,
   type PlatformTemplateComponentResponse,
+  type ScalarFieldSchemaResponse,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import selectEvent from 'react-select-event'
@@ -31,6 +32,22 @@ const preview: PlatformComponentConfigurationPreviewResponse = {
   requirements: [],
   componentBindings: [],
   violations: [],
+  resolvedValues: {},
+}
+
+const cpuRequest: ScalarFieldSchemaResponse = {
+  key: 'resources.singleBinary.requests.cpuMilli',
+  label: 'CPU request',
+  type: 'number',
+  required: false,
+  sensitive: false,
+  readOnly: true,
+  constraints: {},
+}
+const cpuLimit: ScalarFieldSchemaResponse = {
+  ...cpuRequest,
+  key: 'resources.singleBinary.limits.cpuMilli',
+  label: 'CPU limit',
 }
 
 const defaultProps = {
@@ -118,10 +135,50 @@ describe('PlatformComponentConfiguration', () => {
     expect(screen.queryByRole('option', { name: 'object-storage' })).not.toBeInTheDocument()
   })
 
-  it('keeps saving disabled until a resolver preview is available', () => {
-    renderWithProviders(<PlatformComponentConfiguration {...defaultProps} preview={undefined} />)
+  it('shows a skeleton instead of the catalog fields until the first preview, and keeps saving disabled', () => {
+    renderWithProviders(<PlatformComponentConfiguration {...defaultProps} preview={undefined} isFetching={true} />)
 
-    expect(screen.getByText('persistent-volume')).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Checking configuration' })).toBeInTheDocument()
+    expect(screen.queryByText('persistent-volume')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Storage')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save configuration' })).toBeDisabled()
+  })
+
+  it('shows read-only fields from the resolved values of their preview, never from the draft', () => {
+    renderWithProviders(
+      <PlatformComponentConfiguration
+        {...defaultProps}
+        profileConfig={{ [cpuRequest.key]: 300, [cpuLimit.key]: 600 }}
+        preview={{
+          ...preview,
+          fields: [cpuRequest, cpuLimit],
+          resolvedValues: { [cpuRequest.key]: '100', [cpuLimit.key]: null },
+        }}
+      />
+    )
+
+    expect(screen.getByRole('textbox', { name: 'CPU request' })).toHaveValue('100')
+    expect(screen.getByRole('textbox', { name: 'CPU limit' })).toHaveValue('No limit')
+    expect(screen.getByRole('textbox', { name: 'CPU request' })).toBeDisabled()
+    expect(screen.getByRole('textbox', { name: 'CPU limit' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Save configuration' })).toBeEnabled()
+  })
+
+  it('reports a read-only field without resolved value and blocks saving', () => {
+    const missing = { ...preview, fields: [cpuRequest], resolvedValues: { [cpuLimit.key]: null } }
+    const { unmount } = renderWithProviders(
+      <PlatformComponentConfiguration {...defaultProps} profileConfig={{ [cpuRequest.key]: 300 }} preview={missing} />
+    )
+
+    expect(screen.getByRole('textbox', { name: 'CPU request' })).toHaveValue('')
+    expect(screen.getByText('CPU request has no resolved value. Refresh the page and try again.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save configuration' })).toBeDisabled()
+    unmount()
+
+    renderWithProviders(
+      <PlatformComponentConfiguration {...defaultProps} isFieldVisible={() => false} preview={missing} />
+    )
+    expect(screen.getByText('CPU request has no resolved value. Refresh the page and try again.')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Save configuration' })).toBeDisabled()
   })
 
@@ -150,6 +207,32 @@ describe('PlatformComponentConfiguration', () => {
     expect(screen.getByText('Cluster inputs')).toBeInTheDocument()
     expect(screen.queryByText('Ready')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Save configuration' })).toBeEnabled()
+  })
+
+  it('locks the cluster inputs while the preview is checked', () => {
+    renderWithProviders(
+      <PlatformComponentConfiguration
+        {...defaultProps}
+        isFetching={true}
+        preview={{
+          ...preview,
+          requirements: [
+            {
+              key: 'endpoint',
+              type: 'string',
+              scope: 'CLUSTER',
+              label: 'Endpoint',
+              required: true,
+              sensitive: false,
+              constraints: {},
+              status: 'READY',
+            },
+          ],
+        }}
+      />
+    )
+
+    expect(screen.getByRole('textbox', { name: 'Endpoint' })).toBeDisabled()
   })
 
   it('renders resolver requirements for a component without catalog fields', () => {

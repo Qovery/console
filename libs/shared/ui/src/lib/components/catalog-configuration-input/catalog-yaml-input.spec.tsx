@@ -88,6 +88,25 @@ describe('Catalog YAML editor', () => {
     expect(JSON.parse(screen.getByRole('status', { hidden: true }).textContent ?? 'null')).toBe('')
   })
 
+  it('shows a read-only YAML field as plain text from its resolved value, without any way to edit the draft', () => {
+    const onChange = jest.fn()
+    renderWithProviders(
+      <CatalogConfigurationInput
+        field={{ ...yaml, required: false, readOnly: true }}
+        value={'kind: Draft\n'}
+        resolvedValue={'apiVersion: example.io/v1\nkind: Resolved\n'}
+        onChange={onChange}
+      />
+    )
+    const field = screen.getByRole('region', { name: 'Manifest' })
+    expect(field).toHaveTextContent('apiVersion: example.io/v1 kind: Resolved')
+    expect(field).not.toHaveTextContent('Draft')
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(screen.queryByText('Example resource')).not.toBeInTheDocument()
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
   it('keeps unknown formats on the ordinary string editor', () => {
     renderWithProviders(<Editor field={{ ...yaml, format: 'future-editor' }} initial="existing" />)
     expect(screen.getByRole('textbox', { name: 'Manifest' })).toHaveValue('existing')
