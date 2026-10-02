@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import download from 'downloadjs'
+import equal from 'fast-deep-equal'
 import {
   type ClusterRegion,
   type PlatformComponentConfigurationResolutionResponse,
@@ -472,7 +473,11 @@ export function SelfManagedClusterCreationFlow({
   const operatorConfig = useMemo(() => omitEmptyValues(resolvedOperatorValues), [resolvedOperatorValues])
   const { mutateAsync: createSelfManagedCluster, isLoading: isCreating } = useCreateSelfManagedCluster()
   const debouncedOperatorConfig = useDebounce(operatorConfig, 300)
-  const { data: operatorPreview } = usePlatformTemplateComponentConfiguration({
+  const {
+    data: operatorPreview,
+    isFetching: isOperatorPreviewFetching,
+    isError: isOperatorPreviewError,
+  } = usePlatformTemplateComponentConfiguration({
     organizationId,
     templateKey: template?.key,
     templateVersion: template?.version,
@@ -482,7 +487,13 @@ export function SelfManagedClusterCreationFlow({
     request: { profileConfig: debouncedOperatorConfig, clusterInputs: {}, componentOutputs: {} },
     enabled: step === 'operator',
   })
-  const hasOperatorViolations = Boolean(operatorPreview?.violations.length)
+  const isOperatorConfigurationValid =
+    !operatorComponent ||
+    (equal(debouncedOperatorConfig, operatorConfig) &&
+      !isOperatorPreviewFetching &&
+      !isOperatorPreviewError &&
+      operatorPreview?.componentKey === operatorComponent.key &&
+      operatorPreview.violations.length === 0)
 
   const goToStep = (nextStep: SelfManagedClusterCreationStep) => {
     setStep(nextStep)
@@ -541,7 +552,7 @@ export function SelfManagedClusterCreationFlow({
         values={resolvedOperatorValues}
         isCreating={isCreating}
         // An empty template list lets q-core pick the default; a failed request must not create the cluster blindly.
-        canContinue={isTemplatesSuccess && !hasOperatorViolations}
+        canContinue={isTemplatesSuccess && isOperatorConfigurationValid}
         isTemplatesError={isTemplatesError}
         onRetryTemplates={() => refetchTemplates()}
         onChange={setOperatorValues}

@@ -116,7 +116,17 @@ describe('SelfManagedClusterCreationFlow', () => {
       isError: false,
       refetch: jest.fn(),
     })
-    mockUsePlatformTemplateComponentConfiguration.mockReturnValue({ data: undefined })
+    mockUsePlatformTemplateComponentConfiguration.mockReturnValue({
+      data: {
+        componentKey: 'qovery-operator',
+        fields: operatorComponent.fields,
+        requirements: [],
+        componentBindings: [],
+        violations: [],
+      },
+      isFetching: false,
+      isError: false,
+    })
     mockCreateSelfManagedCluster.mockResolvedValue({ id: 'cluster-id' })
     mockUseCreateSelfManagedCluster.mockReturnValue({ mutateAsync: mockCreateSelfManagedCluster, isLoading: false })
     mockUseClusterOperatorStatus.mockReturnValue({ data: { operator_connected: false } })
@@ -197,6 +207,21 @@ describe('SelfManagedClusterCreationFlow', () => {
     )
   })
 
+  it.each([
+    ['has not been checked yet', { data: undefined, isFetching: true, isError: false }],
+    ['is being checked again', { data: { componentKey: 'qovery-operator', violations: [] }, isFetching: true }],
+    ['could not be checked', { data: undefined, isFetching: false, isError: true }],
+  ])('cannot continue while the Operator configuration %s', async (_, preview) => {
+    mockUsePlatformTemplateComponentConfiguration.mockReturnValue(preview)
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+  })
+
   it('creates the cluster with the Operator configuration', async () => {
     const { userEvent } = renderWithProviders(
       <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
@@ -245,6 +270,11 @@ describe('SelfManagedClusterCreationFlow', () => {
       isSuccess: true,
       isError: false,
       refetch: jest.fn(),
+    })
+    mockUsePlatformTemplateComponentConfiguration.mockReturnValue({
+      data: undefined,
+      isFetching: false,
+      isError: false,
     })
     const { userEvent } = renderWithProviders(
       <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
@@ -323,6 +353,7 @@ describe('SelfManagedClusterCreationFlow', () => {
     await goToOperatorStep(userEvent)
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
 
+    expect(mockCreateSelfManagedCluster).toHaveBeenCalled()
     expect(screen.getByRole('heading', { name: 'Configure Qovery Operator' })).toBeInTheDocument()
   })
 
