@@ -22,6 +22,7 @@ export function useClusterProfileTree({ organizationId, clusterId }: UseClusterP
   })
   const clusterMode = toPlatformClusterMode(cluster?.kubernetes)
   const cloudProvider = toPlatformCloudVendor(cluster?.cloud_provider)
+  const isTemplateQueryEnabled = Boolean(clusterMode && cloudProvider)
   const {
     data: templates,
     isError: isTemplateError,
@@ -30,7 +31,7 @@ export function useClusterProfileTree({ organizationId, clusterId }: UseClusterP
     organizationId,
     clusterMode,
     cloudProvider,
-    enabled: Boolean(clusterMode && cloudProvider),
+    enabled: isTemplateQueryEnabled,
   })
   const {
     data: configuration,
@@ -57,7 +58,7 @@ export function useClusterProfileTree({ organizationId, clusterId }: UseClusterP
     configuration,
     selectedTemplate,
     profileTree,
-    isLoading: isClusterLoading || isTemplateLoading || isConfigurationLoading,
+    isLoading: isClusterLoading || (isTemplateQueryEnabled && isTemplateLoading) || isConfigurationLoading,
     isError: isClusterError || isTemplateError || isConfigurationError,
   }
 }
