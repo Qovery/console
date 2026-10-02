@@ -91,11 +91,11 @@ export function useService({ serviceId, suspense = false, ...props }: UseService
   const query =
     serviceId && resolvedServiceType ? queries.services.details({ serviceId, serviceType: resolvedServiceType }) : null
 
-  return useQuery({
+  return useQuery<Awaited<ReturnType<NonNullable<typeof query>['queryFn']>>>({
     // `details` needs a concrete service type to select the right endpoint, so we keep the
     // query disabled until that type is available
-    queryKey: query?.queryKey ?? ['services', 'details', serviceId ?? '', resolvedServiceType ?? 'APPLICATION'],
-    queryFn: query?.queryFn ?? (async () => undefined as never),
+    queryKey: query?.queryKey ?? ['unresolved-service-details', serviceId ?? ''],
+    queryFn: query ? (context) => query.queryFn({ ...context, queryKey: query.queryKey }) : undefined,
     suspense: Boolean(resolvedServiceType) && suspense,
     enabled: Boolean(serviceId) && Boolean(resolvedServiceType),
   })
