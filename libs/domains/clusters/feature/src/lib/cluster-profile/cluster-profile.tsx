@@ -1,11 +1,10 @@
 import equal from 'fast-deep-equal'
 import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { EmptyState, Heading, Navbar, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
-import { NODE_ENV } from '@qovery/shared/util-node-env'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
 import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
 import {
@@ -242,7 +241,6 @@ function ClusterProfileView({
   const {
     clusterId,
     cluster,
-    templates,
     configuration,
     profileTree,
     isLoading,
@@ -362,24 +360,6 @@ function ClusterProfileView({
       return query ? [[componentKey, query]] : []
     })
   )
-  const loggedSchemaResponses = useRef(new WeakSet<object>())
-
-  useEffect(() => {
-    if (NODE_ENV !== 'development') return
-
-    if (templates && !loggedSchemaResponses.current.has(templates)) {
-      loggedSchemaResponses.current.add(templates)
-      console.log('[Cluster profile] Platform template catalog API response', templates)
-    }
-
-    componentQueries.forEach(({ data }) => {
-      if (!data || loggedSchemaResponses.current.has(data)) return
-
-      loggedSchemaResponses.current.add(data)
-      console.log(`[Cluster profile] Component configuration API response (${data.componentKey})`, data)
-    })
-  }, [componentQueries, templates])
-
   const previewsByComponent = Object.fromEntries(
     componentQueries.flatMap((query) => (query.data ? [[query.data.componentKey, query.data]] : []))
   )
