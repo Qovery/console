@@ -164,7 +164,7 @@ export function ClusterProfileSidebar({
   const showEmptyState = !isLoading && !isError && layers.length === 0
 
   return (
-    <aside aria-label="Cluster layers" className="hidden w-[272px] shrink-0 flex-col bg-background-secondary lg:flex">
+    <aside aria-label="Cluster layers" className="flex w-56 shrink-0 flex-col bg-background-secondary lg:w-[272px]">
       <div className="p-3">
         <InputSearch
           ariaLabel="Search layers"

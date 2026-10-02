@@ -331,6 +331,8 @@ describe('ClusterProfileFeature', () => {
   it('keeps the form visible while a field edit triggers a resolver refetch', async () => {
     const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
     const highAvailability = screen.getByRole('switch', { name: 'High availability' })
+    // Queries keep their previous data while refetching.
+    mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki', 'alloy'], true))
 
     await userEvent.click(highAvailability)
 

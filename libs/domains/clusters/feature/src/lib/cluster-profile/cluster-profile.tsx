@@ -2,7 +2,6 @@ import equal from 'fast-deep-equal'
 import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useRef } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
-import { IconEnum } from '@qovery/shared/enums'
 import { EmptyState, Heading, Icon, Navbar, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
@@ -434,7 +433,7 @@ function ClusterProfileView({
     <div className="flex h-page-container min-h-0 flex-col overflow-hidden bg-background-secondary text-sm">
       <header className="flex min-h-11 items-center justify-between gap-4 px-4 py-2">
         <div className="flex min-w-0 items-center gap-2">
-          <Icon name={IconEnum.AWS} width={20} height={20} />
+          {cluster?.cloud_provider ? <Icon name={cluster.cloud_provider} width={20} height={20} /> : null}
           <p className="truncate font-medium text-neutral">{cluster?.name ?? 'Cluster'}</p>
         </div>
       </header>
