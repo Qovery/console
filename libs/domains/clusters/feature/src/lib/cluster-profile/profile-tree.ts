@@ -15,7 +15,7 @@ export type ProfileTreeItem = {
   id: string
   label: string
   description?: string | null
-  status: 'disabled' | 'success' | 'warning'
+  status: 'disabled' | 'success'
   // Why a disabled layer cannot be opened.
   disabledReason?: string
   configurable: boolean
@@ -54,7 +54,6 @@ export function getProfileTree(
   return (
     template?.layers.map((layer) => {
       const label = formatProfileLabel(layer.key)
-      const normalizedLabel = label.toLowerCase()
       const disabledReason = getLayerDisabledReason(resolvedLayers.find(({ key }) => key === layer.key))
       const isDisabled = Boolean(disabledReason)
       const children = layer.components.map((component) => ({
@@ -69,7 +68,7 @@ export function getProfileTree(
         id: layer.key,
         label,
         description: layer.description,
-        status: isDisabled ? 'disabled' : normalizedLabel === 'gateway api' ? 'warning' : 'success',
+        status: isDisabled ? 'disabled' : 'success',
         disabledReason,
         configurable: children.some((component) => component.configurable),
         children,

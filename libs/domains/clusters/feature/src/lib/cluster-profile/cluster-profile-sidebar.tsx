@@ -2,7 +2,7 @@ import { type ReactNode } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon, InputSearch, Tooltip } from '@qovery/shared/ui'
 
-type LayerStatus = 'disabled' | 'success' | 'warning'
+type LayerStatus = 'disabled' | 'success'
 
 export const NOT_CONFIGURABLE_COMPONENT_REASON = 'No configuration needed for this component'
 export const NOT_CONFIGURABLE_LAYER_REASON = 'No configuration needed for this layer'
@@ -78,17 +78,6 @@ function LayerSectionRow({
         >
           <LayerIcon />
           <span className="truncate">{section.label}</span>
-          {section.status === 'warning' ? (
-            <Tooltip content="Complete the required information before deploying">
-              <span
-                role="img"
-                aria-label="Complete the required information before deploying"
-                className="ml-auto flex size-3.5 shrink-0 items-center justify-center"
-              >
-                <span aria-hidden="true" className="size-2 rounded-full bg-surface-brand-solid" />
-              </span>
-            </Tooltip>
-          ) : null}
           {section.status === 'disabled' ? (
             <Icon iconName="circle-minus" iconStyle="regular" className="ml-auto shrink-0 text-sm" />
           ) : null}
