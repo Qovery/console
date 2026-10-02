@@ -1,5 +1,6 @@
 import download from 'downloadjs'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
@@ -435,6 +436,30 @@ describe('SelfManagedClusterCreationFlow', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Try again' }))
 
     expect(refetch).toHaveBeenCalled()
+  })
+
+  it('redirects only once while the parent keeps re-rendering', async () => {
+    function ClusterCreationWithParentState() {
+      const [, setCloseCount] = useState(0)
+      return (
+        <SelfManagedClusterCreationFlow
+          organizationId="org-123"
+          onClose={() => {
+            mockOnClose()
+            setCloseCount((count) => count + 1)
+          }}
+        />
+      )
+    }
+    const { userEvent } = renderWithProviders(<ClusterCreationWithParentState />)
+
+    await goToOperatorStep(userEvent)
+    mockUseClusterOperatorStatus.mockReturnValue({ data: { operator_connected: true } })
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalled())
+    expect(mockOnClose).toHaveBeenCalledTimes(1)
+    expect(mockNavigate).toHaveBeenCalledTimes(1)
   })
 
   it('redirects to the cluster profile once the Operator is connected', async () => {

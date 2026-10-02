@@ -7,7 +7,7 @@ import {
   type PlatformTemplateComponentResponse,
   type SelfManagedClusterPlatformSelection,
 } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
@@ -357,8 +357,12 @@ function InstallStep({
     refetchInterval: OPERATOR_STATUS_POLL_INTERVAL,
   })
 
+  const hasNotifiedInstallRef = useRef(false)
+
   useEffect(() => {
-    if (operatorStatus?.operator_connected) onInstalled()
+    if (!operatorStatus?.operator_connected || hasNotifiedInstallRef.current) return
+    hasNotifiedInstallRef.current = true
+    onInstalled()
   }, [onInstalled, operatorStatus?.operator_connected])
 
   return (
