@@ -31,6 +31,8 @@ function RouteComponent() {
 
   return (
     <ClusterProfileFeature
+      // The route is reused across clusters: remount so unsaved edits never carry over to another cluster.
+      key={clusterId}
       activeComponentKey={component}
       search={search}
       onActiveComponentChange={(nextComponent) =>
