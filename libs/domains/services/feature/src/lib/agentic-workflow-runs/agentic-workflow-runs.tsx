@@ -26,6 +26,7 @@ type RunWithLifecycle = AgenticWorkflowRun & {
   started_at?: string | null
   finished_at?: string | null
   duration_ms?: number | null
+  cost?: number | null
   payload?: string | null
 }
 
@@ -84,6 +85,20 @@ function RunDuration({ duration }: { duration?: number | null }) {
       {runDuration(duration)}
     </span>
   )
+}
+
+const costFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  roundingMode: 'ceil',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+} as Intl.NumberFormatOptions & { roundingMode: 'ceil' })
+
+function RunCost({ cost }: { cost?: number | null }) {
+  if (cost == null) return <span className="text-neutral-subtle">—</span>
+
+  return <span className="text-neutral">{costFormatter.format(cost)}</span>
 }
 
 function triggerLabel(trigger: AgenticWorkflowRun['trigger']) {
@@ -256,6 +271,10 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                   <dd>
                     <RunDuration duration={run.duration_ms} />
                   </dd>
+                  <dt className="text-neutral-subtle">Cost</dt>
+                  <dd>
+                    <RunCost cost={run.cost} />
+                  </dd>
                 </dl>
                 <section className="flex flex-col gap-2">
                   <Heading level={3}>Payload</Heading>
@@ -351,7 +370,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1420px] table-fixed text-ssm">
+      <Table.Root className="w-full min-w-[1204px] table-fixed text-ssm">
         <Table.Header>
           <Table.Row className="divide-x divide-neutral">
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
@@ -359,7 +378,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[180px] font-medium">Payload</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[160px] font-medium">Duration</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[320px] font-medium">Prompt</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[120px] font-medium">Cost</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -429,24 +448,8 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
               <Table.Cell className="w-[160px] whitespace-nowrap">
                 <RunDuration duration={run.duration_ms} />
               </Table.Cell>
-              <Table.Cell className="w-[320px]">
-                {run.prompt?.trim() ? (
-                  <Button
-                    color="neutral"
-                    variant="plain"
-                    size="md"
-                    className="max-w-full justify-start"
-                    aria-label="See the full prompt"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      setSelectedRun(run)
-                    }}
-                  >
-                    <span className="min-w-0 truncate">{promptPreview(run.prompt)}</span>
-                  </Button>
-                ) : (
-                  '—'
-                )}
+              <Table.Cell className="w-[120px] whitespace-nowrap font-mono">
+                <RunCost cost={run.cost} />
               </Table.Cell>
             </Table.Row>
           ))}
