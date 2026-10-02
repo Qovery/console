@@ -107,8 +107,6 @@ describe('InstanceMetrics', () => {
       isError: false,
     })
 
-    // Pods built from metrics only have no `state` (running status is optional),
-    // so sorting the Status column must not call localeCompare on undefined.
     jest.spyOn(useMetricsImport, 'useMetrics').mockReturnValue({
       data: [
         { pod_name: 'pod-a', storages: [] },
@@ -127,7 +125,6 @@ describe('InstanceMetrics', () => {
 
       expect(screen.getByText('pod-a')).toBeInTheDocument()
       expect(screen.getByText('pod-b')).toBeInTheDocument()
-      // React can recover from a render error, so visible rows alone do not prove sorting succeeded.
       expect(consoleErrorSpy).not.toHaveBeenCalled()
     } finally {
       jest.useRealTimers()
