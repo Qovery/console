@@ -903,6 +903,18 @@ describe('ClusterProfileFeature', () => {
     })
   })
 
+  it('tells when the profile has no layers', () => {
+    mockUsePlatformTemplates.mockReturnValue({
+      data: [{ ...mockTemplates[0], layers: [] }],
+      isError: false,
+      isLoading: false,
+    } as unknown as ReturnType<typeof usePlatformTemplates>)
+    renderWithProviders(<ClusterProfileFeature />)
+
+    expect(screen.getByText('No layers available')).toBeInTheDocument()
+    expect(screen.queryByText('No layers match your search')).not.toBeInTheDocument()
+  })
+
   it('greys out the layers skipped or disabled in the cluster configuration', async () => {
     mockUsePlatformConfiguration.mockReturnValue({
       data: {

@@ -181,7 +181,9 @@ export function ClusterProfileSidebar({
               </li>
             ) : null}
             {showEmptyState ? (
-              <li className="px-3 py-1 text-ssm text-neutral-subtle">No layers match your search</li>
+              <li className="px-3 py-1 text-ssm text-neutral-subtle">
+                {search.trim() ? 'No layers match your search' : 'No layers available'}
+              </li>
             ) : null}
             {!isLoading && !isError
               ? layers.map((section) => (
