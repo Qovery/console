@@ -48,6 +48,8 @@ const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertR
   rds_connections: [],
   rds_freeable_memory: [],
   rds_free_storage_space: [],
+  rds_read_latency: [],
+  rds_write_latency: [],
 }
 
 const OPERATOR_OPTIONS: Value[] = Object.values(AlertRuleConditionOperator).map((operator) => ({
@@ -171,6 +173,8 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
   rds_connections: rdsMetricFieldConfig('rds_connections'),
   rds_freeable_memory: rdsMetricFieldConfig('rds_freeable_memory'),
   rds_free_storage_space: rdsMetricFieldConfig('rds_free_storage_space'),
+  rds_read_latency: rdsMetricFieldConfig('rds_read_latency'),
+  rds_write_latency: rdsMetricFieldConfig('rds_write_latency'),
 }
 
 const shouldHideField = (category: MetricCategory, field: ConditionField): boolean => {

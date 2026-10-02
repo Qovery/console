@@ -5,6 +5,8 @@ export const RDS_METRIC_CATEGORIES = [
   'rds_connections',
   'rds_freeable_memory',
   'rds_free_storage_space',
+  'rds_read_latency',
+  'rds_write_latency',
 ] as const
 
 export type RdsMetricCategory = (typeof RDS_METRIC_CATEGORIES)[number]
@@ -12,7 +14,7 @@ export type RdsMetricCategory = (typeof RDS_METRIC_CATEGORIES)[number]
 type RdsMetricDefinition = {
   label: string
   metric: string
-  unit: '%' | 'connections' | 'MiB' | 'GiB'
+  unit: '%' | 'connections' | 'MiB' | 'GiB' | 'ms'
   defaultThreshold: number
   operator: 'ABOVE' | 'BELOW'
   multiplier: number
@@ -53,6 +55,22 @@ export const RDS_METRICS: Record<RdsMetricCategory, RdsMetricDefinition> = {
     defaultThreshold: 10,
     operator: 'BELOW',
     multiplier: GIBIBYTE,
+  },
+  rds_read_latency: {
+    label: 'RDS read latency',
+    metric: 'aws_rds_read_latency_average',
+    unit: 'ms',
+    defaultThreshold: 100,
+    operator: 'ABOVE',
+    multiplier: 1 / 1000,
+  },
+  rds_write_latency: {
+    label: 'RDS write latency',
+    metric: 'aws_rds_write_latency_average',
+    unit: 'ms',
+    defaultThreshold: 100,
+    operator: 'ABOVE',
+    multiplier: 1 / 1000,
   },
 }
 

@@ -225,6 +225,47 @@ describe('alert creation and editing guards', () => {
     )
   })
 
+  it.each([
+    ['rds_read_latency', 'aws_rds_read_latency_average'],
+    ['rds_write_latency', 'aws_rds_write_latency_average'],
+  ] as const)('creates a catalog %s alert with a millisecond threshold', async (category, metric) => {
+    mockUseRdsAlertTarget.mockReturnValue({
+      isRds: true,
+      dbInstance: 'my-blueprint-db',
+      target: { target_id: 'service-1', target_type: 'TERRAFORM' },
+      hasCloudWatchMetrics: true,
+    })
+    const { userEvent } = renderFlow(
+      'create',
+      {
+        ...existingAlert,
+        tag: category,
+        condition: { kind: 'BUILT', function: 'NONE', operator: 'ABOVE', threshold: 250, promql: '' },
+      },
+      'TERRAFORM'
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save test alert' }))
+
+    await waitFor(() =>
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            tag: category,
+            target: { target_id: 'service-1', target_type: 'TERRAFORM' },
+            description: 'Above 250ms for 5 minutes',
+            condition: expect.objectContaining({
+              function: 'NONE',
+              operator: 'ABOVE',
+              threshold: 0.25,
+              promql: `last_over_time(${metric}{dimension_DBInstanceIdentifier="my-blueprint-db"}[10m])`,
+            }),
+          }),
+        })
+      )
+    )
+  })
+
   it('does not create an RDS alert before the database identifier is available', async () => {
     mockUseRdsAlertTarget.mockReturnValue({
       isRds: true,

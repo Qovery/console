@@ -42,15 +42,22 @@ describe('certificate alert availability', () => {
 })
 
 describe('RDS alert availability', () => {
-  it('keeps RDS URLs scoped to the four supported CloudWatch metrics', () => {
+  it('keeps RDS URLs scoped to the six supported CloudWatch metrics', () => {
     expect(
       getSelectedAlertMetrics(
         'rds_cpu',
-        'rds_cpu,rds_connections,rds_freeable_memory,rds_free_storage_space',
+        'rds_cpu,rds_connections,rds_freeable_memory,rds_free_storage_space,rds_read_latency,rds_write_latency',
         false,
         true
       )
-    ).toEqual(['rds_cpu', 'rds_connections', 'rds_freeable_memory', 'rds_free_storage_space'])
+    ).toEqual([
+      'rds_cpu',
+      'rds_connections',
+      'rds_freeable_memory',
+      'rds_free_storage_space',
+      'rds_read_latency',
+      'rds_write_latency',
+    ])
     expect(getSelectedAlertMetrics('cpu', 'cpu,memory,rds_connections', false, true)).toEqual(['rds_connections'])
     expect(getSelectedAlertMetrics('rds_cpu', 'rds_cpu', false, false)).toEqual(['cpu'])
   })
