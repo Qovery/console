@@ -58,7 +58,6 @@ export function DatabaseCreationFlow({ children, creationFlowUrl }: DatabaseCrea
       description: '',
       accessibility: 'PRIVATE',
       icon_uri: templateMatch.iconUri ?? 'app://qovery-console/database',
-      mode: templateMatch.mode,
       type: templateMatch.type,
       version: '',
       labels_groups: [],

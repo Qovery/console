@@ -445,13 +445,11 @@ describe('ServiceNew', () => {
         )
       ).toBeInTheDocument()
     })
-    await waitFor(() => {
-      expect(
-        container.querySelector(
-          'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=managed"]'
-        )
-      ).toBeInTheDocument()
-    })
+    expect(
+      container.querySelector(
+        'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=managed"]'
+      )
+    ).not.toBeInTheDocument()
   })
 
   it('should keep default service links valid', () => {

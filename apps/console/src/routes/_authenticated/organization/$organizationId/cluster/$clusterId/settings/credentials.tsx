@@ -7,13 +7,16 @@ import {
 import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
+import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
 import {
   ClusterCredentialsSettings,
+  useCluster,
   useClusterCloudProviderInfo,
+  useDeployCluster,
   useEditCloudProviderInfo,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, Section, toast } from '@qovery/shared/ui'
+import { BlockContent, Button, Section, toast, useModalConfirmation } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
@@ -45,6 +48,8 @@ function ClusterCredentialsSettingsForm() {
     mode: 'onChange',
   })
 
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+
   const { data: clusterCloudProviderInfo } = useClusterCloudProviderInfo({
     organizationId,
     clusterId,
@@ -53,19 +58,45 @@ function ClusterCredentialsSettingsForm() {
     organizationId,
     cloudProvider: clusterCloudProviderInfo?.cloud_provider,
   })
-  const { mutateAsync: editCloudProviderInfo, isLoading: isEditCloudProviderInfoLoading } = useEditCloudProviderInfo()
+  const { mutate: editCloudProviderInfo, isLoading: isEditCloudProviderInfoLoading } = useEditCloudProviderInfo()
+  const { mutateAsync: editCloudProviderInfoBeforeRedeploy } = useEditCloudProviderInfo({
+    showClusterUpdateAction: false,
+  })
+  const { mutateAsync: deployCluster } = useDeployCluster()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const onSubmit = methods.handleSubmit((data) => {
     const findCredentials = credentials.find((credential) => credential.id === data['credentials'])
 
-    if (data && clusterCloudProviderInfo && findCredentials) {
-      const clusterCloudProviderInfoRequest = handleSubmit(data, credentials, clusterCloudProviderInfo)
+    // The cluster is required to know if the credentials change needs a redeploy
+    if (!cluster) return
 
-      editCloudProviderInfo({
+    const isEksManaged = isClusterEksManaged(cluster)
+
+    if (data && clusterCloudProviderInfo && findCredentials) {
+      const variables = {
         organizationId,
         clusterId,
-        cloudProviderInfoRequest: clusterCloudProviderInfoRequest,
-      })
+        cloudProviderInfoRequest: handleSubmit(data, credentials, clusterCloudProviderInfo),
+      }
+
+      // Changing the credentials of a managed EKS cluster requires a cluster redeploy, triggered once they are saved
+      const hasCredentialsChanged = findCredentials.id !== clusterCloudProviderInfo.credentials?.id
+      if (isEksManaged && hasCredentialsChanged) {
+        openModalConfirmation({
+          title: 'Confirm credentials change',
+          description:
+            'Changing the credentials will trigger a cluster redeployment. To confirm, please type the name:',
+          warning: 'Your cluster will be redeployed automatically once the new credentials are saved.',
+          name: cluster.name,
+          action: async () => {
+            await editCloudProviderInfoBeforeRedeploy(variables)
+            await deployCluster({ organizationId, clusterId })
+          },
+        })
+      } else {
+        editCloudProviderInfo(variables)
+      }
     } else {
       toast('error', 'Please select a credential')
     }
@@ -85,7 +116,11 @@ function ClusterCredentialsSettingsForm() {
           <div className="max-w-content-with-navigation-left">
             <form onSubmit={onSubmit}>
               <BlockContent title="Configured credentials">
-                <ClusterCredentialsSettings cloudProvider={clusterCloudProviderInfo?.cloud_provider} isSetting={true} />
+                <ClusterCredentialsSettings
+                  cloudProvider={clusterCloudProviderInfo?.cloud_provider}
+                  isSetting={true}
+                  cluster={cluster}
+                />
               </BlockContent>
               <div className="flex justify-end">
                 <Button
@@ -93,7 +128,7 @@ function ClusterCredentialsSettingsForm() {
                   type="submit"
                   size="lg"
                   loading={isEditCloudProviderInfoLoading}
-                  disabled={!methods.formState.isValid}
+                  disabled={!methods.formState.isValid || !cluster}
                 >
                   Save
                 </Button>

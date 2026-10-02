@@ -62,6 +62,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRou
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents/mcps'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/overview'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/workloads'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/overview'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell'
@@ -582,6 +583,14 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute =
     {
       id: '/project/$projectId/overview',
       path: '/project/$projectId/overview',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRouteImport.update(
+    {
+      id: '/cluster/$clusterId/workloads',
+      path: '/cluster/$clusterId/workloads',
       getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
     } as any,
   )
@@ -1964,6 +1973,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/cluster/$clusterId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute
   '/organization/$organizationId/cluster/$clusterId/cluster-logs': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
   '/organization/$organizationId/cluster/$clusterId/overview': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
+  '/organization/$organizationId/cluster/$clusterId/workloads': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute
   '/organization/$organizationId/project/$projectId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute
   '/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
@@ -2162,6 +2172,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/cluster/$clusterId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute
   '/organization/$organizationId/cluster/$clusterId/cluster-logs': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
   '/organization/$organizationId/cluster/$clusterId/overview': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
+  '/organization/$organizationId/cluster/$clusterId/workloads': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute
   '/organization/$organizationId/project/$projectId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute
   '/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
@@ -2355,6 +2366,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/overview': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/workloads': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute
   '/_authenticated/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/_authenticated/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
@@ -2563,6 +2575,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId/cloud-shell'
     | '/organization/$organizationId/cluster/$clusterId/cluster-logs'
     | '/organization/$organizationId/cluster/$clusterId/overview'
+    | '/organization/$organizationId/cluster/$clusterId/workloads'
     | '/organization/$organizationId/project/$projectId/overview'
     | '/organization/$organizationId/project/$projectId/variables'
     | '/organization/$organizationId/settings/agents/mcps'
@@ -2761,6 +2774,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId/cloud-shell'
     | '/organization/$organizationId/cluster/$clusterId/cluster-logs'
     | '/organization/$organizationId/cluster/$clusterId/overview'
+    | '/organization/$organizationId/cluster/$clusterId/workloads'
     | '/organization/$organizationId/project/$projectId/overview'
     | '/organization/$organizationId/project/$projectId/variables'
     | '/organization/$organizationId/settings/agents/mcps'
@@ -2953,6 +2967,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/overview'
+    | '/_authenticated/organization/$organizationId/cluster/$clusterId/workloads'
     | '/_authenticated/organization/$organizationId/project/$projectId/overview'
     | '/_authenticated/organization/$organizationId/project/$projectId/variables'
     | '/_authenticated/organization/$organizationId/settings/agents/mcps'
@@ -3487,6 +3502,13 @@ declare module '@tanstack/react-router' {
       path: '/project/$projectId/overview'
       fullPath: '/organization/$organizationId/project/$projectId/overview'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/cluster/$clusterId/workloads': {
+      id: '/_authenticated/organization/$organizationId/cluster/$clusterId/workloads'
+      path: '/cluster/$clusterId/workloads'
+      fullPath: '/organization/$organizationId/cluster/$clusterId/workloads'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/overview': {
@@ -5249,6 +5271,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
@@ -5320,6 +5343,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute:
       AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute:
