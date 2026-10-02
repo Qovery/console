@@ -145,6 +145,7 @@ export function ApplicationContainerStorageSettings() {
     openModalConfirmation({
       title: 'Delete storage',
       name: storage.mount_point,
+      warning: 'Deleting this storage will permanently delete all data stored on it. This action cannot be undone.',
       confirmationMethod: 'action',
       action: () => {
         editService({
