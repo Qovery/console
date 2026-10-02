@@ -128,7 +128,9 @@ function InstanceMetricsTable({
         } else if (stateA !== 'WARNING' && stateB === 'WARNING') {
           return 1
         } else {
-          return stateA.localeCompare(stateB)
+          // `state` is optional on a Pod (it may come from metrics only, with no
+          // running status), so guard against undefined before comparing.
+          return (stateA ?? '').localeCompare(stateB ?? '')
         }
       },
     })
