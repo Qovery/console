@@ -16,9 +16,10 @@ import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/
 import { ClusterProfileFeature } from './cluster-profile'
 
 jest.mock('@tanstack/react-router', () => ({ useParams: jest.fn() }))
+const mockUseDebounce = jest.fn(<T,>(value: T) => value)
 jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
-  useDebounce: <T,>(value: T) => value,
+  useDebounce: <T,>(value: T) => mockUseDebounce(value),
 }))
 jest.mock('@qovery/shared/ui', () => {
   const React = jest.requireActual('react')
@@ -242,6 +243,7 @@ function createComponentQueries(componentKeys: string[], isFetching = false, isE
 describe('ClusterProfileFeature', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseDebounce.mockImplementation(<T,>(value: T) => value)
     mockUseParams.mockReturnValue({ organizationId: 'organization-id', clusterId: 'cluster-id' })
     mockUseCluster.mockReturnValue({
       data: { cloud_provider: 'AWS', kubernetes: 'SELF_MANAGED' },
@@ -406,6 +408,26 @@ describe('ClusterProfileFeature', () => {
     await userEvent.click(screen.getByRole('link', { name: 'Loki' }))
 
     expect(onActiveComponentChange).toHaveBeenCalledWith('loki')
+  })
+
+  it('resolves another component without waiting for the edit debounce', async () => {
+    // A debounce that never settles: only edits may wait for it.
+    mockUseDebounce.mockImplementation(<T,>(value: T) => jest.requireActual('react').useRef(value).current)
+    mockUsePlatformComponentConfigurations.mockImplementation(({ requests }) =>
+      createComponentQueries(Object.keys(requests))
+    )
+    function ClusterProfileWithNavigation() {
+      const [componentKey, setComponentKey] = useState<string>()
+      return <ClusterProfileFeature activeComponentKey={componentKey} onActiveComponentChange={setComponentKey} />
+    }
+    const { userEvent } = renderWithProviders(<ClusterProfileWithNavigation />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Envoy' }))
+
+    expect(mockUsePlatformComponentConfigurations).toHaveBeenLastCalledWith(
+      expect.objectContaining({ requests: { envoy: expect.anything() } })
+    )
+    expect(screen.queryByRole('status', { name: 'Loading configuration' })).not.toBeInTheDocument()
   })
 
   it('moves between the component tabs with the arrow keys', async () => {

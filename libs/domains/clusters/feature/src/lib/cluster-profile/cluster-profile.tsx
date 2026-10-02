@@ -351,12 +351,15 @@ function ClusterProfileView({
     [profileConfigs, resolvedClusterInputs, resolvedComponents]
   )
   const debouncedPreviewRequests = useDebounce(previewRequests, 300)
+  const settledPreviewRequests = equal(Object.keys(debouncedPreviewRequests), Object.keys(previewRequests))
+    ? debouncedPreviewRequests
+    : previewRequests
   const componentQueries = usePlatformComponentConfigurations({
     clusterId,
-    requests: debouncedPreviewRequests,
+    requests: settledPreviewRequests,
     enabled: Boolean(resolvedComponents.length),
   })
-  const requestedComponentKeys = Object.keys(debouncedPreviewRequests)
+  const requestedComponentKeys = Object.keys(settledPreviewRequests)
   const componentQueriesByKey = Object.fromEntries(
     requestedComponentKeys.flatMap((componentKey, index) => {
       const query = componentQueries[index]
@@ -417,7 +420,7 @@ function ClusterProfileView({
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
   // Saving needs every displayed or edited component resolved for the latest edits, with no violation or missing input.
   const isConfigurationReady =
-    equal(debouncedPreviewRequests, previewRequests) &&
+    equal(settledPreviewRequests, previewRequests) &&
     Object.keys(previewRequests).every((componentKey) => {
       const query = componentQueriesByKey[componentKey]
       const preview = query?.data
