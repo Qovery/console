@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'util-icons',
   preset: '../../../jest.preset.js',
   transform: {

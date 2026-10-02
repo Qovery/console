@@ -128,7 +128,7 @@ export const environments = createQueryKeys('environments', {
     },
   }),
   deploymentHistoryV2: ({ environmentId, pageSize }: { environmentId: string; pageSize?: number }) => ({
-    queryKey: [environmentId],
+    queryKey: [environmentId, pageSize],
     async queryFn() {
       const result = await environmentDeploymentsApi.listEnvironmentDeploymentHistoryV2(environmentId, pageSize)
       return result.data.results

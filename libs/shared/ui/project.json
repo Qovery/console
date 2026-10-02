@@ -22,27 +22,25 @@
       }
     },
     "storybook": {
-      "executor": "@nx/storybook:storybook",
       "options": {
         "port": 4400,
-        "configDir": "libs/shared/ui/.storybook"
+        "config-dir": ".storybook"
       },
       "configurations": {
         "ci": {
-          "quiet": true
+          "args": ["--quiet"]
         }
       }
     },
     "build-storybook": {
-      "executor": "@nx/storybook:build",
-      "outputs": ["{options.outputDir}"],
+      "outputs": ["{workspaceRoot}/dist/storybook/design-system"],
       "options": {
-        "configDir": "libs/shared/ui/.storybook",
-        "outputDir": "dist/storybook/design-system"
+        "config-dir": ".storybook",
+        "output-dir": "../../../dist/storybook/design-system"
       },
       "configurations": {
         "ci": {
-          "quiet": true
+          "args": ["--quiet"]
         }
       }
     }

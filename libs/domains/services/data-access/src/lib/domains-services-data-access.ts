@@ -451,7 +451,7 @@ export const services = createQueryKeys('services', {
     },
   }),
   status: ({ id: serviceId, serviceType }: { id: string; serviceType: EditableServiceType }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType],
     async queryFn() {
       const fn = match(serviceType)
         .with('APPLICATION', () => applicationMainCallsApi.getApplicationStatus.bind(applicationMainCallsApi))
@@ -473,7 +473,7 @@ export const services = createQueryKeys('services', {
     },
   }),
   deploymentRestrictions: ({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType],
     async queryFn() {
       const fn = match(serviceType)
         .with('APPLICATION', () =>
@@ -507,7 +507,7 @@ export const services = createQueryKeys('services', {
     },
   }),
   details: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType],
     async queryFn() {
       const service = await match(serviceType)
         .with('APPLICATION', async () => ({
@@ -559,39 +559,31 @@ export const services = createQueryKeys('services', {
           serviceType: Extract<ServiceType, 'HELM'>
           of?: 'values' | 'chart'
         }
-  ) => ({
-    queryKey: [props.serviceId, props.serviceType === 'HELM' ? props.of ?? 'chart' : undefined],
-    async queryFn() {
-      const { results: commits } = await match(props)
-        .with({ serviceType: 'APPLICATION' }, async ({ serviceId, serviceType }) => ({
-          results: (await applicationMainCallsApi.listApplicationCommit(serviceId)).data.results,
-          serviceType,
-        }))
-        .with(
-          { serviceType: 'JOB' },
-          { serviceType: 'CRON_JOB' },
-          { serviceType: 'LIFECYCLE_JOB' },
-          async ({ serviceId, serviceType }) => ({
-            results: (await jobMainCallsApi.listJobCommit(serviceId)).data.results,
-            serviceType,
-          })
-        )
-        .with({ serviceType: 'HELM' }, async ({ serviceId, serviceType, of }) => {
-          return {
-            results: (await helmMainCallsApi.listHelmCommit(serviceId, of)).data.results,
-            serviceType,
-          }
-        })
-        .with({ serviceType: 'TERRAFORM' }, async ({ serviceId, serviceType }) => {
-          return {
-            results: (await terraformMainCallsApi.listTerraformCommit(serviceId)).data.results,
-            serviceType,
-          }
-        })
-        .exhaustive()
-      return commits
-    },
-  }),
+  ) => {
+    const { serviceId, serviceType } = props
+    const of = props.serviceType === 'HELM' ? props.of ?? 'chart' : undefined
+
+    return {
+      queryKey: [serviceId, serviceType, of],
+      async queryFn() {
+        const commits = await match(serviceType)
+          .with(
+            'APPLICATION',
+            async () => (await applicationMainCallsApi.listApplicationCommit(serviceId)).data.results
+          )
+          .with(
+            'JOB',
+            'CRON_JOB',
+            'LIFECYCLE_JOB',
+            async () => (await jobMainCallsApi.listJobCommit(serviceId)).data.results
+          )
+          .with('HELM', async () => (await helmMainCallsApi.listHelmCommit(serviceId, of)).data.results)
+          .with('TERRAFORM', async () => (await terraformMainCallsApi.listTerraformCommit(serviceId)).data.results)
+          .exhaustive()
+        return commits
+      },
+    }
+  },
   deploymentHistory: ({
     serviceId,
     serviceType,
@@ -601,7 +593,7 @@ export const services = createQueryKeys('services', {
     serviceType: EditableServiceType
     pageSize?: number
   }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType, pageSize],
     async queryFn() {
       return await match(serviceType)
         .with(
@@ -659,7 +651,7 @@ export const services = createQueryKeys('services', {
     serviceId: string
     serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
   }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType],
     async queryFn() {
       const { query } = match(serviceType)
         .with('APPLICATION', (serviceType) => ({
@@ -683,7 +675,7 @@ export const services = createQueryKeys('services', {
     serviceId: string
     serviceType: Extract<ServiceType, 'DATABASE'>
   }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType],
     async queryFn() {
       return match(serviceType)
         .with('DATABASE', async () => {
@@ -719,7 +711,7 @@ export const services = createQueryKeys('services', {
     },
   }),
   advancedSettings: ({ serviceId, serviceType }: { serviceId: string; serviceType: AdvancedSettingsServiceType }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType],
     async queryFn() {
       const { query } = match(serviceType)
         .with('APPLICATION', (serviceType) => ({
@@ -754,7 +746,7 @@ export const services = createQueryKeys('services', {
     serviceId: string
     serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
   }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType],
     async queryFn() {
       const { query } = match(serviceType)
         .with('APPLICATION', (serviceType) => ({
@@ -781,7 +773,7 @@ export const services = createQueryKeys('services', {
     serviceId: string
     serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
   }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType],
     async queryFn() {
       const { query } = match(serviceType)
         .with('APPLICATION', (serviceType) => ({

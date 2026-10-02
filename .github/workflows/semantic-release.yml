@@ -14,14 +14,16 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: cache-node-${{ hashFiles('yarn.lock') }}
+          key: node-${{ hashFiles('.nvmrc') }}-cache-node-${{ hashFiles('yarn.lock') }}
       - name: Setup Node
-        uses: actions/setup-node@v1
-        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Enable Corepack
+        run: corepack enable
       - name: yarn install
-        run: yarn
+        run: yarn install --immutable
 
   semantic-release:
     runs-on: ubuntu-latest
@@ -36,8 +38,17 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: cache-node-${{ hashFiles('yarn.lock') }}
+          key: node-${{ hashFiles('.nvmrc') }}-cache-node-${{ hashFiles('yarn.lock') }}
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Install dependencies
+        run: yarn install --immutable
       - name: Launch Semantic release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: npx semantic-release
+        run: yarn semantic-release
