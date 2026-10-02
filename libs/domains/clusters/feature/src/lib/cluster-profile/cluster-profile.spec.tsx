@@ -562,6 +562,78 @@ describe('ClusterProfileFeature', () => {
   })
 
   describe('changes bar', () => {
+    async function editProfile(userEvent: ReturnType<typeof renderWithProviders>['userEvent']) {
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      return screen.getByRole('region', { name: 'Unsaved profile changes' })
+    }
+
+    it('blocks saving while the edits have violations', async () => {
+      const [loki, alloy] = createComponentQueries(['loki', 'alloy'])
+      mockUsePlatformComponentConfigurations.mockReturnValue([
+        {
+          ...loki,
+          data: {
+            ...createResolution('loki'),
+            violations: [{ fieldPath: 'storage', code: 'REQUIRED', message: 'Storage is required.' }],
+          },
+        },
+        alloy,
+      ] as ReturnType<typeof usePlatformComponentConfigurations>)
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      const bar = await editProfile(userEvent)
+
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
+      expect(within(bar).getByRole('button', { name: 'Save and deploy' })).toBeDisabled()
+    })
+
+    it('blocks saving while a required input is missing', async () => {
+      const [loki, alloy] = createComponentQueries(['loki', 'alloy'])
+      mockUsePlatformComponentConfigurations.mockReturnValue([
+        {
+          ...loki,
+          data: {
+            ...createResolution('loki'),
+            requirements: [
+              {
+                key: 'infra.s3BucketName',
+                label: 'S3 bucket name',
+                type: 'string',
+                required: true,
+                sensitive: false,
+                constraints: {},
+                status: 'MISSING',
+              },
+            ],
+          },
+        },
+        alloy,
+      ] as ReturnType<typeof usePlatformComponentConfigurations>)
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      const bar = await editProfile(userEvent)
+
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
+    })
+
+    it('blocks saving while the edits are being checked', async () => {
+      mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki', 'alloy'], true))
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      const bar = await editProfile(userEvent)
+
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
+    })
+
+    it('blocks saving when the edits could not be checked', async () => {
+      mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki', 'alloy'], false, true))
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      const bar = await editProfile(userEvent)
+
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
+    })
+
     it('appears once a value differs from the saved one', async () => {
       const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 

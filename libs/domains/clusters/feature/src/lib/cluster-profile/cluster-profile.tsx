@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal'
 import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useRef } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
@@ -12,6 +13,7 @@ import {
   applyPlatformConfigurationDefaults,
   getFieldViolation,
   getUnmappedViolations,
+  isPlatformConfigurationReady,
   isSupportedPlatformField,
   omitEmptyValues,
   toCatalogVariableField,
@@ -433,6 +435,20 @@ function ClusterProfileView({
   const isConfigurationLoading = Boolean(activeComponent) && !hasResolvedConfiguration
   const isInitialResolverError = hasResolverError && !hasResolvedConfiguration
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
+  // Saving needs every displayed component resolved for the latest edits, without violations or missing inputs.
+  const isConfigurationReady =
+    equal(debouncedPreviewRequests, previewRequests) &&
+    displayedComponentKeys.every((componentKey) => {
+      const query = componentQueriesByKey[componentKey]
+      const preview = query?.data
+      return (
+        query &&
+        !query.isFetching &&
+        !query.isError &&
+        preview?.componentKey === componentKey &&
+        isPlatformConfigurationReady(preview.violations, preview.requirements)
+      )
+    })
 
   const handleSelectSection = (sectionId: string) => {
     const firstItem = getFirstConfigurableComponent(visibleProfileTree.find((item) => item.id === sectionId)?.children)
@@ -553,6 +569,7 @@ function ClusterProfileView({
               changeCount={changeCount}
               isSaving={isSaving}
               isDeploying={isDeploying}
+              canSubmit={isConfigurationReady}
               onReset={resetChanges}
               onSave={saveChanges}
               onSaveAndDeploy={saveAndDeployChanges}

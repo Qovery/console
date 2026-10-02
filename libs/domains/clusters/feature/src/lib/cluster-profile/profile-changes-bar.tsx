@@ -6,6 +6,8 @@ interface ProfileChangesBarProps {
   changeCount: number
   isSaving: boolean
   isDeploying: boolean
+  // False while the edits are being checked or do not pass the checks shown in the form.
+  canSubmit: boolean
   onReset: () => void
   onSave: () => void
   onSaveAndDeploy: () => void
@@ -15,6 +17,7 @@ export function ProfileChangesBar({
   changeCount,
   isSaving,
   isDeploying,
+  canSubmit,
   onReset,
   onSave,
   onSaveAndDeploy,
@@ -55,7 +58,7 @@ export function ProfileChangesBar({
                 size="md"
                 className="gap-1.5"
                 loading={isSaving}
-                disabled={isDeploying}
+                disabled={isDeploying || !canSubmit}
                 onClick={onSave}
               >
                 <Icon iconName="floppy-disk" iconStyle="regular" />
@@ -68,7 +71,7 @@ export function ProfileChangesBar({
                 size="md"
                 className="gap-1.5"
                 loading={isDeploying}
-                disabled={isSaving}
+                disabled={isSaving || !canSubmit}
                 onClick={onSaveAndDeploy}
               >
                 <Icon iconName="rocket" iconStyle="regular" />
