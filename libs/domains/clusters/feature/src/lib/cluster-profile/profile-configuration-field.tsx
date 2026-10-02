@@ -165,11 +165,6 @@ function ProfileArrayField({
   const canRemove = typeof minItems !== 'number' || items.length > minItems
   const error = getFieldViolation(violations, path)
 
-  const closeItemModal = () => {
-    isItemModalOpenRef.current = false
-    closeModal()
-  }
-
   useEffect(
     () => () => {
       if (isItemModalOpenRef.current) closeModal()
@@ -195,7 +190,10 @@ function ProfileArrayField({
           fields={itemFields}
           values={itemValues}
           isEdit={isEdit}
-          onClose={closeItemModal}
+          onClose={closeModal}
+          onUnmount={() => {
+            isItemModalOpenRef.current = false
+          }}
           onSubmit={(submittedValues) => {
             // Keep keys the modal does not edit (non-scalar or unevaluated fields) on existing object items.
             const nextItem = isObjectItem

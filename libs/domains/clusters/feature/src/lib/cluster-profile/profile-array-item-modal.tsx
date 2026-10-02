@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { ModalCrud } from '@qovery/shared/ui'
@@ -20,6 +21,7 @@ export interface ProfileArrayItemModalProps {
   values: Record<string, unknown>
   isEdit: boolean
   onClose: () => void
+  onUnmount?: () => void
   onSubmit: (values: Record<string, unknown>) => void
 }
 
@@ -33,8 +35,11 @@ export function ProfileArrayItemModal({
   values,
   isEdit,
   onClose,
+  onUnmount,
   onSubmit,
 }: ProfileArrayItemModalProps) {
+  useEffect(() => onUnmount, [onUnmount])
+
   const methods = useForm<Record<string, CatalogVariableValue | undefined>>({
     mode: 'onChange',
     defaultValues: Object.fromEntries(

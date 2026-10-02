@@ -5,6 +5,7 @@ import {
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
+import { useModal } from '@qovery/shared/ui'
 import { act, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
@@ -474,6 +475,35 @@ describe('ClusterProfileFeature', () => {
       act(() => hideProfile())
 
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    })
+
+    it('does not close another modal after the item modal was dismissed', async () => {
+      let hideProfile: () => void = () => undefined
+      function ClusterProfileWithOtherModal() {
+        const [isShown, setIsShown] = useState(true)
+        const { openModal } = useModal()
+        hideProfile = () => setIsShown(false)
+        return (
+          <>
+            <button type="button" onClick={() => openModal({ content: <p>Other modal</p> })}>
+              Open other modal
+            </button>
+            {isShown ? <ClusterProfileFeature activeComponentKey="envoy" /> : null}
+          </>
+        )
+      }
+      const { userEvent } = renderWithProviders(<ClusterProfileWithOtherModal />)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Add item to Client-validation CA certificates' }))
+      expect(await screen.findByRole('dialog')).toBeInTheDocument()
+      await userEvent.keyboard('{Escape}')
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+
+      await userEvent.click(screen.getByRole('button', { name: 'Open other modal' }))
+      expect(await screen.findByText('Other modal')).toBeInTheDocument()
+      act(() => hideProfile())
+
+      expect(screen.getByText('Other modal')).toBeInTheDocument()
     })
 
     it('disables the add button once the item limit is reached', () => {
