@@ -271,11 +271,11 @@ describe('ClusterProfileFeature', () => {
     expect(
       screen.getByText('Collects logs from everything running on this cluster and makes them searchable in Qovery')
     ).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: 'Loki' })).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('tab', { name: 'Loki' }).querySelector('svg')?.outerHTML).toBe(
+    expect(screen.getByRole('link', { name: 'Loki' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: 'Loki' }).querySelector('svg')?.outerHTML).toBe(
       screen.getByRole('button', { name: 'Loki' }).querySelector('svg')?.outerHTML
     )
-    expect(screen.getByRole('tab', { name: 'Alloy' }).querySelector('svg')?.outerHTML).toBe(
+    expect(screen.getByRole('link', { name: 'Alloy' }).querySelector('svg')?.outerHTML).toBe(
       screen.getByRole('button', { name: 'Alloy' }).querySelector('svg')?.outerHTML
     )
     expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toHaveValue(12)
@@ -289,7 +289,7 @@ describe('ClusterProfileFeature', () => {
   it('allows the UI controls to be previewed locally', async () => {
     const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
-    expect(screen.getByRole('tab', { name: 'Loki' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('link', { name: 'Loki' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toHaveValue(12)
 
     const highAvailability = screen.getByRole('switch', { name: 'High availability' })
@@ -370,12 +370,28 @@ describe('ClusterProfileFeature', () => {
 
     expect(screen.getByRole('button', { name: 'Log infra' }).closest('li')).toHaveClass('bg-surface-neutral-component')
     expect(screen.getByRole('button', { name: 'Alloy' })).toHaveAttribute('aria-current', 'page')
-    expect(screen.getByRole('tab', { name: 'Alloy' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('link', { name: 'Alloy' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('button', { name: 'Loki' })).not.toHaveAttribute('aria-current', 'page')
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Loki' }))
+    await userEvent.click(screen.getByRole('link', { name: 'Loki' }))
 
     expect(onActiveComponentChange).toHaveBeenCalledWith('loki')
+  })
+
+  it('moves between the component tabs with the arrow keys', async () => {
+    const onActiveComponentChange = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <ClusterProfileFeature activeComponentKey="loki" onActiveComponentChange={onActiveComponentChange} />
+    )
+    screen.getByRole('link', { name: 'Loki' }).focus()
+    await userEvent.keyboard('{ArrowRight}')
+
+    expect(screen.getByRole('link', { name: 'Alloy' })).toHaveFocus()
+    expect(onActiveComponentChange).not.toHaveBeenCalled()
+
+    await userEvent.keyboard('{Enter}')
+
+    expect(onActiveComponentChange).toHaveBeenCalledWith('alloy')
   })
 
   describe('array fields', () => {
@@ -531,8 +547,8 @@ describe('ClusterProfileFeature', () => {
       renderWithProviders(<ClusterProfileFeature activeComponentKey="loki" search="certificate name" />)
 
       expect(screen.getByRole('button', { name: 'Envoy' })).toHaveAttribute('aria-current', 'page')
-      expect(screen.getByRole('tab', { name: 'Envoy' })).toHaveAttribute('aria-selected', 'true')
-      expect(screen.queryByRole('tab', { name: 'Loki' })).not.toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Envoy' })).toHaveAttribute('aria-current', 'page')
+      expect(screen.queryByRole('link', { name: 'Loki' })).not.toBeInTheDocument()
     })
 
     it('shows empty states when nothing matches', () => {
@@ -541,7 +557,7 @@ describe('ClusterProfileFeature', () => {
       expect(screen.getByText('No results found. Review your search or applied filters.')).toBeInTheDocument()
       expect(screen.getByText('No settings found matching your search and filters.')).toBeInTheDocument()
       expect(screen.getByRole('heading', { name: 'Log infra' })).toBeInTheDocument()
-      expect(screen.queryByRole('tab')).not.toBeInTheDocument()
+      expect(screen.queryByRole('link')).not.toBeInTheDocument()
     })
   })
 
@@ -699,8 +715,8 @@ describe('ClusterProfileFeature', () => {
       mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['karpenter-configuration']))
       renderWithProviders(<ClusterProfileFeature activeComponentKey="karpenter-crd" />)
 
-      expect(screen.getByRole('tab', { name: 'Karpenter configuration' })).toHaveAttribute('aria-selected', 'true')
-      expect(screen.queryByRole('tab', { name: 'Karpenter crd' })).not.toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Karpenter configuration' })).toHaveAttribute('aria-current', 'page')
+      expect(screen.queryByRole('link', { name: 'Karpenter crd' })).not.toBeInTheDocument()
       expect(screen.getByLabelText('Node pool')).toBeInTheDocument()
     })
   })

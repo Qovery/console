@@ -2,7 +2,7 @@ import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-ty
 import { useEffect, useMemo, useRef } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, EmptyState, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
+import { Button, EmptyState, Heading, Icon, InputToggle, Navbar, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
@@ -485,39 +485,26 @@ function ClusterProfileView({
             </div>
           </div>
 
-          <div
-            role="tablist"
-            aria-label={`${headerLayer?.label ?? 'Profile'} configuration`}
-            className="flex items-center gap-4 border-b border-neutral bg-surface-neutral px-4"
-          >
-            {profileTabs.map((tab) => {
-              const isActive = tab.id === activeComponent?.key
-              return (
-                <button
+          <div className="border-b border-neutral bg-surface-neutral px-4">
+            <Navbar.Root activeId={activeComponent?.key} ariaLabel={`${headerLayer?.label ?? 'Profile'} configuration`}>
+              {profileTabs.map((tab) => (
+                <Navbar.Item
                   key={tab.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  aria-controls={`${tab.id}-configuration`}
-                  onClick={() => onActiveComponentChange?.(tab.id)}
-                  className={`focus-visible:ring-brand-strong relative flex items-center gap-1.5 py-3 font-medium outline-none focus-visible:ring-2 focus-visible:ring-inset ${
-                    isActive
-                      ? 'text-brand after:absolute after:inset-x-0 after:-bottom-px after:h-px after:bg-surface-brand-solid'
-                      : 'text-neutral-subtle hover:text-neutral'
-                  }`}
+                  id={tab.id}
+                  href="#"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    onActiveComponentChange?.(tab.id)
+                  }}
                 >
                   <ClusterProfileItemIcon />
                   {tab.label}
-                </button>
-              )
-            })}
+                </Navbar.Item>
+              ))}
+            </Navbar.Root>
           </div>
 
-          <div
-            id={`${activeComponent?.key ?? 'profile'}-configuration`}
-            role="tabpanel"
-            className="min-h-0 flex-1 overflow-y-auto"
-          >
+          <div className="min-h-0 flex-1 overflow-y-auto">
             <div key={formKey} className="flex min-h-full flex-col">
               {searchQuery && !isLoading && !activeComponent ? (
                 <div className="p-4">
