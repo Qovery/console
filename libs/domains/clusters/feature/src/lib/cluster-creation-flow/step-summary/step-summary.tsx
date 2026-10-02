@@ -21,7 +21,7 @@ import { useEditClusterKubeconfig } from '../../hooks/use-edit-cluster-kubeconfi
 import { useAttachClusterOperator } from '../../platform-configuration/hooks/use-cluster-operator'
 import { useUpdateClusterPlatformConfiguration } from '../../platform-configuration/hooks/use-update-cluster-platform-configuration'
 import { mapCreationSpotToNodePools } from '../../utils/map-creation-spot-to-node-pools'
-import { steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
+import { isEngineV2SelfManagedAwsCreation, steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 import { getValueByKey } from './get-value-by-key'
 import { StepSummaryPresentation } from './step-summary-presentation'
 
@@ -72,6 +72,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   const { mutateAsync: attachClusterOperator, isLoading: isOperatorAttachLoading } = useAttachClusterOperator()
   // Survives failed submit attempts so retries reuse the already-created cluster.
   const createdClusterRef = useRef<Cluster>()
+  const isAwsSelfManagedCreation = isEngineV2SelfManagedAwsCreation(generalData, isEngineV2SelfManaged)
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(generalData)
@@ -111,7 +112,9 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
 
   const onBack = () => {
     if (generalData?.installation_type === 'SELF_MANAGED') {
-      if (isEngineV2SelfManaged) {
+      if (isAwsSelfManagedCreation) {
+        goToGeneral()
+      } else if (isEngineV2SelfManaged) {
         goToPlatform()
       } else {
         goToKubeconfig()
@@ -172,7 +175,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
         : {}
 
     if (generalData.installation_type === 'SELF_MANAGED' && (isEngineV2SelfManaged || kubeconfigData)) {
-      if (isEngineV2SelfManaged && !platformConfigurationData) {
+      if (isEngineV2SelfManaged && !isAwsSelfManagedCreation && !platformConfigurationData) {
         // The platform step was skipped (deep link / legacy kubeconfig route): send the
         // user there instead of failing silently.
         navigate({ to: `${creationFlowUrl}/platform` })
@@ -185,7 +188,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           search: { 'show-self-managed-guide': true },
         })
       try {
-        if (isEngineV2SelfManaged && platformConfigurationData && generalData.cloud_provider === 'AWS') {
+        if (isAwsSelfManagedCreation) {
           const cluster = await createSelfManagedCluster({
             organizationId,
             selfManagedClusterRequest: {
@@ -194,7 +197,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
               provider: 'AWS',
               region: generalData.region,
               credentials: { id: generalData.credentials },
-              ...platformConfigurationData,
+              platform: {},
             },
           })
           goToClusterOverview(cluster.id)

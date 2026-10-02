@@ -22,7 +22,7 @@ import {
   type Subnets,
 } from '@qovery/shared/interfaces'
 import { Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
-import { type ClusterAddonsData } from '../cluster-creation-flow'
+import { type ClusterAddonsData, isEngineV2SelfManagedAwsCreation } from '../cluster-creation-flow'
 import { getValueByKey } from './get-value-by-key'
 
 export interface StepSummaryPresentationProps {
@@ -304,7 +304,20 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
             )
           )
           .with({ installation_type: 'SELF_MANAGED' }, () =>
-            props.isEngineV2SelfManaged ? (
+            isEngineV2SelfManagedAwsCreation(props.generalData, props.isEngineV2SelfManaged) ? (
+              <Section
+                data-testid="summary-platform-layers"
+                className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4"
+              >
+                <div className="mr-2 flex-grow">
+                  <Heading className="mb-3">Platform layers</Heading>
+                  <p className="text-sm text-neutral-subtle">
+                    Qovery applies its self-managed platform template. You can configure its layers from the cluster
+                    settings after creation.
+                  </p>
+                </div>
+              </Section>
+            ) : props.isEngineV2SelfManaged ? (
               <Section
                 data-testid="summary-platform-layers"
                 className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4"

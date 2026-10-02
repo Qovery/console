@@ -178,7 +178,7 @@ describe('StepSummary', () => {
     })
   })
 
-  it('should create an Engine v2 self-managed AWS cluster with its platform configuration in one call', async () => {
+  it('should create an Engine v2 self-managed AWS cluster in one call and let Qovery choose its template', async () => {
     mockContextValue.generalData = {
       name: 'self-managed-cluster',
       description: 'description',
@@ -190,15 +190,7 @@ describe('StepSummary', () => {
       credentials_name: 'cred-name',
     } as ClusterGeneralData
     mockContextValue.isEngineV2SelfManaged = true
-    mockContextValue.platformConfigurationData = {
-      platform: {
-        templateKey: 'qovery-cluster-v0',
-        templateVersion: '0.1.0',
-        layerSelections: { logs: true },
-        managedConfig: { loki: { storage: 's3' } },
-      },
-      clusterInputs: { loki: { 'infra.s3BucketName': 'logs' } },
-    }
+    mockContextValue.platformConfigurationData = undefined
     mockCreateSelfManagedCluster.mockResolvedValue({ id: 'cluster-123' })
 
     const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
@@ -213,13 +205,7 @@ describe('StepSummary', () => {
           provider: 'AWS',
           region: 'eu-west-3',
           credentials: { id: 'cred-id' },
-          platform: {
-            templateKey: 'qovery-cluster-v0',
-            templateVersion: '0.1.0',
-            layerSelections: { logs: true },
-            managedConfig: { loki: { storage: 's3' } },
-          },
-          clusterInputs: { loki: { 'infra.s3BucketName': 'logs' } },
+          platform: {},
         },
       })
       expect(mockNavigate).toHaveBeenCalledWith({
@@ -245,10 +231,7 @@ describe('StepSummary', () => {
       credentials_name: 'cred-name',
     }
     mockContextValue.isEngineV2SelfManaged = true
-    mockContextValue.platformConfigurationData = {
-      platform: { templateKey: 'qovery-cluster-v0', templateVersion: '0.1.0', layerSelections: {}, managedConfig: {} },
-      clusterInputs: {},
-    }
+    mockContextValue.platformConfigurationData = undefined
     mockCreateSelfManagedCluster.mockRejectedValue(new Error('A cluster with this name already exists'))
 
     const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })

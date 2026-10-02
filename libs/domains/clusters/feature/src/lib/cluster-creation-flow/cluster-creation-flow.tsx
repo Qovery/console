@@ -68,8 +68,14 @@ export const steps = (clusterGeneralData?: ClusterGeneralData, isEngineV2SelfMan
       { title: 'EKS configuration', key: 'eks' },
       { title: 'Ready to install', key: 'summary' },
     ])
-    .with({ installation_type: 'SELF_MANAGED' }, () =>
-      isEngineV2SelfManaged
+    .with({ installation_type: 'SELF_MANAGED' }, () => {
+      if (isEngineV2SelfManagedAwsCreation(clusterGeneralData, isEngineV2SelfManaged)) {
+        return [
+          { title: 'Create new cluster', key: 'general' },
+          { title: 'Ready to install', key: 'summary' },
+        ]
+      }
+      return isEngineV2SelfManaged
         ? [
             { title: 'Create new cluster', key: 'general' },
             { title: 'Platform layers', key: 'platform' },
@@ -80,7 +86,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData, isEngineV2SelfMan
             { title: 'Kubeconfig', key: 'kubeconfig' },
             { title: 'Ready to install', key: 'summary' },
           ]
-    )
+    })
     .with({ installation_type: 'MANAGED', cloud_provider: 'SCW' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Resources', key: 'resources' },
@@ -110,6 +116,17 @@ export const steps = (clusterGeneralData?: ClusterGeneralData, isEngineV2SelfMan
 
 export function isEngineV2SelfManagedFlow(slug: string | undefined, featureEnabled: boolean) {
   return featureEnabled && Boolean(slug?.endsWith('-self-managed'))
+}
+
+export function isEngineV2SelfManagedAwsCreation(
+  generalData: ClusterGeneralData | undefined,
+  isEngineV2SelfManaged = false
+) {
+  return (
+    isEngineV2SelfManaged &&
+    generalData?.installation_type === 'SELF_MANAGED' &&
+    generalData.cloud_provider === CloudProviderEnum.AWS
+  )
 }
 
 export const defaultResourcesData: ClusterResourcesData = {

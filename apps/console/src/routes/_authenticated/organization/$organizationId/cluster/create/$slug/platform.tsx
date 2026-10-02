@@ -3,6 +3,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   PLATFORM_CONFIGURATION_FEATURE_FLAG,
   StepPlatform,
+  isEngineV2SelfManagedAwsCreation,
   useClusterContainerCreateContext,
 } from '@qovery/domains/clusters/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -15,7 +16,7 @@ function Platform() {
   useDocumentTitle('Platform layers - Create Cluster')
   const { organizationId = '', slug = '' } = useParams({ strict: false })
   const navigate = useNavigate()
-  const { isEngineV2SelfManaged } = useClusterContainerCreateContext()
+  const { isEngineV2SelfManaged, generalData } = useClusterContainerCreateContext()
   const isPlatformConfigurationEnabled = useFeatureFlagEnabled(PLATFORM_CONFIGURATION_FEATURE_FLAG)
   const creationFlowUrl = `/organization/${organizationId}/cluster/create/${slug}`
 
@@ -27,6 +28,16 @@ function Platform() {
     return (
       <Navigate
         to="/organization/$organizationId/cluster/create/$slug/general"
+        params={{ organizationId, slug }}
+        replace
+      />
+    )
+  }
+
+  if (isEngineV2SelfManagedAwsCreation(generalData, isEngineV2SelfManaged)) {
+    return (
+      <Navigate
+        to="/organization/$organizationId/cluster/create/$slug/summary"
         params={{ organizationId, slug }}
         replace
       />
