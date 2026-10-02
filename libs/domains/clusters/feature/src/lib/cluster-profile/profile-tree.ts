@@ -77,3 +77,50 @@ export function getProfileTree(
     }) ?? []
   )
 }
+
+function findProfileComponent(profileTree: ProfileTreeItem[], requestedKey?: string) {
+  if (!requestedKey) return undefined
+
+  return profileTree
+    .flatMap((item) => item.children ?? [])
+    .find((component) => component.key === requestedKey || component.id === requestedKey)
+}
+
+function findProfileLayer(profileTree: ProfileTreeItem[], requestedKey?: string) {
+  if (!requestedKey) return undefined
+
+  return profileTree.find((item) => item.id === requestedKey)
+}
+
+// Skipped or Qovery-managed layers, and layers with nothing to configure, cannot be opened.
+const isOpenableLayer = (item: ProfileTreeItem) => item.status !== 'disabled' && item.configurable
+
+function getDefaultProfileComponent(profileTree: ProfileTreeItem[]) {
+  return getFirstConfigurableComponent(
+    (
+      profileTree.find((item) => item.label.toLowerCase() === 'log infra' && isOpenableLayer(item)) ??
+      profileTree.find(isOpenableLayer) ??
+      profileTree.find((item) => item.children?.length)
+    )?.children
+  )
+}
+
+export function resolveProfileSelection(profileTree: ProfileTreeItem[], requestedKey?: string) {
+  const requestedComponent = findProfileComponent(profileTree, requestedKey)
+  const requestedLayer =
+    findProfileLayer(profileTree, requestedKey) ??
+    profileTree.find((item) => item.children?.some((child) => child.id === requestedComponent?.id))
+  // The URL cannot open what the sidebar disables: a disabled layer falls back to the default selection, and a
+  // component with nothing to configure to the first configurable component of its layer.
+  const openableLayer = requestedLayer && isOpenableLayer(requestedLayer) ? requestedLayer : undefined
+  const openableComponent = openableLayer && requestedComponent?.configurable ? requestedComponent : undefined
+  const defaultComponent = getDefaultProfileComponent(profileTree)
+  const layer =
+    openableLayer ?? profileTree.find((item) => item.children?.some((child) => child.id === defaultComponent?.id))
+
+  return {
+    layer,
+    component:
+      openableComponent ?? (openableLayer ? getFirstConfigurableComponent(openableLayer.children) : defaultComponent),
+  }
+}

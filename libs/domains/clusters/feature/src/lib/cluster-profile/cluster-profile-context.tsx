@@ -6,13 +6,10 @@ import {
   type ClusterPlatformConfigurationResponse,
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
-import { type PropsWithChildren, createContext, useContext, useMemo, useState } from 'react'
+import { type PropsWithChildren, createContext, useContext, useState } from 'react'
 import { toast } from '@qovery/shared/ui'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
-import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
-import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformConfiguration } from '../platform-configuration/hooks/use-platform-configuration'
 import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/use-update-platform-configuration'
 import {
   type PlatformFieldDescriptor,
@@ -20,11 +17,10 @@ import {
   applyPlatformConfigurationDefaults,
   isPlatformScalarField,
   omitEmptyValues,
-  toPlatformCloudVendor,
-  toPlatformClusterMode,
   updateComponentValue,
 } from '../platform-configuration/platform-configuration-utils'
-import { type ProfileTreeItem, getProfileTree } from './profile-tree'
+import { type ProfileTreeItem } from './profile-tree'
+import { useClusterProfileTree } from './use-cluster-profile-tree'
 
 export type ProfileValues = Record<string, Record<string, unknown>>
 export type ClusterInputValues = Record<string, Record<string, string>>
@@ -129,44 +125,8 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
   const { mutateAsync: updatePlatformConfiguration, isLoading: isSavingConfiguration } =
     useUpdatePlatformConfiguration()
   const { mutateAsync: deployCluster } = useDeployCluster()
-  const {
-    data: cluster,
-    isError: isClusterError,
-    isLoading: isClusterLoading,
-  } = useCluster({
-    organizationId,
-    clusterId,
-  })
-  const clusterMode = toPlatformClusterMode(cluster?.kubernetes)
-  const cloudProvider = toPlatformCloudVendor(cluster?.cloud_provider)
-  const {
-    data: templates,
-    isError: isTemplateError,
-    isLoading: isTemplateLoading,
-  } = usePlatformTemplates({
-    organizationId,
-    clusterMode,
-    cloudProvider,
-    enabled: Boolean(clusterMode && cloudProvider),
-  })
-  const {
-    data: configuration,
-    isError: isConfigurationError,
-    isLoading: isConfigurationLoading,
-  } = usePlatformConfiguration({ clusterId })
-  const selectedTemplate = useMemo(
-    () =>
-      templates?.find(
-        (template) =>
-          template.key === configuration?.platform.templateKey &&
-          template.version === configuration?.platform.templateVersion
-      ) ?? templates?.[0],
-    [configuration?.platform.templateKey, configuration?.platform.templateVersion, templates]
-  )
-  const profileTree = useMemo(
-    () => getProfileTree(selectedTemplate, configuration?.layers),
-    [configuration?.layers, selectedTemplate]
-  )
+  const { cluster, templates, configuration, selectedTemplate, profileTree, isLoading, isError } =
+    useClusterProfileTree({ organizationId, clusterId })
 
   const updateProfileConfig = (componentKey: string, fieldKey: string, value: unknown) => {
     setProfileValues((currentValues) => updateComponentValue(currentValues, componentKey, fieldKey, value))
@@ -221,8 +181,8 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
     templates,
     configuration,
     profileTree,
-    isLoading: isClusterLoading || isTemplateLoading || isConfigurationLoading,
-    isError: isClusterError || isTemplateError || isConfigurationError,
+    isLoading,
+    isError,
     profileValues,
     clusterInputs,
     formKey,

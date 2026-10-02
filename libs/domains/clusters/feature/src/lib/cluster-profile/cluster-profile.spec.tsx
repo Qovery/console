@@ -544,11 +544,19 @@ describe('ClusterProfileFeature', () => {
     })
 
     it('selects the first matching component when the URL one does not match', () => {
-      renderWithProviders(<ClusterProfileFeature activeComponentKey="loki" search="certificate name" />)
+      const onActiveComponentChange = jest.fn()
+      renderWithProviders(
+        <ClusterProfileFeature
+          activeComponentKey="loki"
+          search="certificate name"
+          onActiveComponentChange={onActiveComponentChange}
+        />
+      )
 
       expect(screen.getByRole('button', { name: 'Envoy' })).toHaveAttribute('aria-current', 'page')
       expect(screen.getByRole('link', { name: 'Envoy' })).toHaveAttribute('aria-current', 'page')
       expect(screen.queryByRole('link', { name: 'Loki' })).not.toBeInTheDocument()
+      expect(onActiveComponentChange).not.toHaveBeenCalled()
     })
 
     it('shows empty states when nothing matches', () => {
@@ -739,6 +747,32 @@ describe('ClusterProfileFeature', () => {
     expect((await screen.findAllByText('This layer does not apply to this cluster'))[0]).toBeInTheDocument()
 
     expect(screen.getByRole('button', { name: 'Qovery stack' })).toBeDisabled()
+  })
+
+  it.each(['envoy', 'network'])('does not open a disabled layer from the URL (%s)', (requestedKey) => {
+    mockUsePlatformConfiguration.mockReturnValue({
+      data: {
+        clusterId: 'cluster-id',
+        organizationId: 'organization-id',
+        clusterInputs: {},
+        platform: { templateKey: 'qovery-cluster-v0', templateVersion: '1.0.0' },
+        layers: [
+          {
+            key: 'network',
+            status: 'SKIPPED',
+            reason: 'not applicable to CUSTOMER_MANAGED/AWS cluster',
+            componentKeys: [],
+          },
+        ],
+      },
+      isError: false,
+      isLoading: false,
+    } as unknown as ReturnType<typeof usePlatformConfiguration>)
+    renderWithProviders(<ClusterProfileFeature activeComponentKey={requestedKey} />)
+
+    expect(screen.getByRole('heading', { name: 'Log infra' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Loki' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.queryByRole('link', { name: 'Envoy' })).not.toBeInTheDocument()
   })
 
   it('explains that a disabled layer is managed by Qovery', async () => {

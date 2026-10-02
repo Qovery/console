@@ -38,6 +38,7 @@ import {
   type ProfileTreeItem,
   formatProfileLabel,
   getFirstConfigurableComponent,
+  resolveProfileSelection,
 } from './profile-tree'
 
 type ProfileTab = {
@@ -52,31 +53,6 @@ type ProfileSection = {
   fieldKeys?: readonly string[]
   // Search restricting the displayed fields; unset when the whole component matched.
   fieldSearch?: string
-}
-
-function findProfileComponent(profileTree: ProfileTreeItem[], requestedKey?: string) {
-  if (!requestedKey) return undefined
-
-  return profileTree
-    .flatMap((item) => item.children ?? [])
-    .find((component) => component.key === requestedKey || component.id === requestedKey)
-}
-
-function findProfileLayer(profileTree: ProfileTreeItem[], requestedKey?: string) {
-  if (!requestedKey) return undefined
-
-  return profileTree.find((item) => item.id === requestedKey)
-}
-
-function getDefaultProfileComponent(profileTree: ProfileTreeItem[]) {
-  const isOpenable = (item: ProfileTreeItem) => item.status !== 'disabled' && item.configurable
-  return getFirstConfigurableComponent(
-    (
-      profileTree.find((item) => item.label.toLowerCase() === 'log infra' && isOpenable(item)) ??
-      profileTree.find(isOpenable) ??
-      profileTree.find((item) => item.children?.length)
-    )?.children
-  )
 }
 
 // Layers and components matching the search, directly or through one of their fields.
@@ -95,20 +71,6 @@ function filterProfileTree(profileTree: ProfileTreeItem[], query: string): Profi
     )
     return children.length ? [{ ...layer, children }] : []
   })
-}
-
-function resolveActiveProfileSelection(profileTree: ProfileTreeItem[], requestedKey?: string) {
-  const requestedComponent = findProfileComponent(profileTree, requestedKey)
-  const requestedLayer = findProfileLayer(profileTree, requestedKey)
-  // A component with nothing to configure is not opened, even from the URL: its layer opens instead.
-  const openableComponent = requestedComponent?.configurable ? requestedComponent : undefined
-  const defaultComponent = getDefaultProfileComponent(profileTree)
-  const layer =
-    requestedLayer ??
-    profileTree.find((item) => item.children?.some((child) => child.id === requestedComponent?.id)) ??
-    profileTree.find((item) => item.children?.some((child) => child.id === defaultComponent?.id))
-
-  return { layer, component: openableComponent ?? getFirstConfigurableComponent(layer?.children) ?? defaultComponent }
 }
 
 function getProfileSections(
@@ -301,11 +263,11 @@ function ClusterProfileView({
   const searchQuery = normalizeProfileSearch(search)
   const visibleProfileTree = useMemo(() => filterProfileTree(profileTree, searchQuery), [profileTree, searchQuery])
   // The header keeps showing a layer when nothing matches the search.
-  const { layer: activeLayer, component: activeComponent } = resolveActiveProfileSelection(
+  const { layer: activeLayer, component: activeComponent } = resolveProfileSelection(
     visibleProfileTree,
     requestedComponentKey
   )
-  const headerLayer = activeLayer ?? resolveActiveProfileSelection(profileTree, requestedComponentKey).layer
+  const headerLayer = activeLayer ?? resolveProfileSelection(profileTree, requestedComponentKey).layer
   // Fields are only filtered when the match comes from them, not from the layer or component itself.
   const fieldSearch =
     activeLayer &&
