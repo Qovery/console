@@ -1,9 +1,10 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import * as Dialog from '@radix-ui/react-dialog'
 import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-typescript-axios'
-import { type KeyboardEvent, useRef, useState } from 'react'
+import { type KeyboardEvent, useEffect, useRef, useState } from 'react'
 import {
   Button,
+  CodeEditor,
   EmptyState,
   Heading,
   Icon,
@@ -155,8 +156,64 @@ function CopyRunIdButton({
   )
 }
 
+const PAYLOAD_EDITOR_MAX_HEIGHT = 400
+const PAYLOAD_EDITOR_LINE_HEIGHT = 19
+
+// Returns the 2-space indented JSON, or null when the payload is not JSON or when re-serializing it would alter it
+// (large integers, exponents, duplicate keys, \u escapes...). Callers then show the payload as received.
+function formatJsonPayload(payload: string): string | null {
+  try {
+    const parsed = JSON.parse(payload)
+    // Strings are matched first so that only whitespace outside of them is stripped.
+    const compact = payload.replace(/"(?:[^"\\]|\\.)*"|\s+/g, (match) => (match.startsWith('"') ? match : ''))
+    return compact === JSON.stringify(parsed) ? JSON.stringify(parsed, null, 2) : null
+  } catch {
+    return null
+  }
+}
+
+function PayloadEditor({ value }: { value: string }) {
+  const [measuredHeight, setMeasuredHeight] = useState<number>()
+  const listenerRef = useRef<{ dispose: () => void }>()
+
+  useEffect(() => () => listenerRef.current?.dispose(), [])
+
+  // Wrapped lines make the newline count too small, so use the height Monaco measured once it has mounted.
+  const height = Math.min(
+    measuredHeight ?? value.split('\n').length * PAYLOAD_EDITOR_LINE_HEIGHT,
+    PAYLOAD_EDITOR_MAX_HEIGHT
+  )
+
+  return (
+    <CodeEditor
+      value={value}
+      language="json"
+      height={`${height}px`}
+      readOnly
+      onMount={(editor) => {
+        listenerRef.current?.dispose()
+        setMeasuredHeight(editor.getContentHeight())
+        listenerRef.current = editor.onDidContentSizeChange((event) => {
+          if (event.contentHeightChanged) setMeasuredHeight(event.contentHeight)
+        })
+      }}
+      options={{
+        wordWrap: 'on',
+        wrappingIndent: 'indent',
+        scrollBeyondLastLine: false,
+        automaticLayout: true,
+        renderLineHighlight: 'none',
+        overviewRulerLanes: 0,
+        guides: { indentation: false },
+        stickyScroll: { enabled: false },
+      }}
+    />
+  )
+}
+
 function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const formattedJson = run.payload ? formatJsonPayload(run.payload) : null
 
   return (
     <Dialog.Root open onOpenChange={(open) => !open && onClose()}>
@@ -202,11 +259,21 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                 </dl>
                 <section className="flex flex-col gap-2">
                   <Heading level={3}>Payload</Heading>
-                  <p className="whitespace-pre-wrap break-words rounded border border-neutral p-4">
-                    {run.payload === null || run.payload === undefined
-                      ? 'No payload recorded.'
-                      : run.payload || 'Empty payload.'}
-                  </p>
+                  {formattedJson !== null ? (
+                    <div
+                      className="overflow-hidden rounded border border-neutral"
+                      aria-label="JSON payload"
+                      role="group"
+                    >
+                      <PayloadEditor value={formattedJson} />
+                    </div>
+                  ) : (
+                    <p className="whitespace-pre-wrap break-words rounded border border-neutral p-4">
+                      {run.payload === null || run.payload === undefined
+                        ? 'No payload recorded.'
+                        : run.payload || 'Empty payload.'}
+                    </p>
+                  )}
                 </section>
                 <section className="flex flex-col gap-2">
                   <Heading level={3}>Prompt</Heading>
