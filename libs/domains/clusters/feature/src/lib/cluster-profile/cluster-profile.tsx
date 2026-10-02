@@ -464,7 +464,11 @@ function ClusterProfileView({
           </div>
 
           <div className="border-b border-neutral bg-surface-neutral px-4">
-            <Navbar.Root activeId={activeComponent?.key} ariaLabel={`${headerLayer?.label ?? 'Profile'} configuration`}>
+            <Navbar.Root
+              activeId={activeComponent?.key}
+              role="navigation"
+              ariaLabel={`${headerLayer?.label ?? 'Profile'} configuration`}
+            >
               {profileTabs.map((tab) => (
                 <Navbar.Item
                   key={tab.id}

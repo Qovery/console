@@ -372,6 +372,9 @@ describe('ClusterProfileFeature', () => {
     expect(screen.getByRole('button', { name: 'Alloy' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('link', { name: 'Alloy' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('button', { name: 'Loki' })).not.toHaveAttribute('aria-current', 'page')
+    expect(
+      within(screen.getByRole('navigation', { name: 'Log infra configuration' })).getByRole('link', { name: 'Alloy' })
+    ).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('link', { name: 'Loki' }))
 
