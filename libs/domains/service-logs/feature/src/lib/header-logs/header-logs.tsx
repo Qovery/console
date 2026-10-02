@@ -9,7 +9,15 @@ import {
   useLinks,
   useService,
 } from '@qovery/domains/services/feature'
-import { Button, CopyToClipboardButtonIcon, DeploymentAction, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import {
+  Button,
+  CopyToClipboardButtonIcon,
+  DeploymentAction,
+  Icon,
+  StatusChip,
+  Tooltip,
+  getTriggerAction,
+} from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { pluralize, trimId } from '@qovery/shared/util-js'
@@ -81,8 +89,7 @@ export function HeaderLogs({
         <div className="flex h-full items-center gap-3 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral">
           {match(type)
             .with('DEPLOYMENT', () => {
-              const subAction = serviceStatus?.status_details?.sub_action
-              const triggerAction = subAction !== 'NONE' ? subAction : serviceStatus?.status_details?.action
+              const triggerAction = getTriggerAction(serviceStatus?.status_details)
               const actionStatus = serviceStatus?.status_details?.status
 
               return (

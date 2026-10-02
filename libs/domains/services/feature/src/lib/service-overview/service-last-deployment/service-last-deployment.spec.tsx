@@ -309,4 +309,37 @@ describe('ServiceLastDeployment', () => {
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /launch diagnostic/i })).toBeInTheDocument()
   })
+
+  it.each([
+    { action: 'DEPLOY', subAction: 'NONE', label: 'Deploy' },
+    { action: 'STOP', subAction: 'NONE', label: 'Stop' },
+    { action: 'RESTART', subAction: 'NONE', label: 'Restart' },
+    { action: 'DELETE', subAction: 'NONE', label: 'Delete' },
+    { action: 'DEPLOY', subAction: 'TERRAFORM_DESTROY', label: 'Destroy' },
+  ])('renders "$label" for action $action and sub action $subAction', ({ action, subAction, label }) => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [
+        {
+          ...baseDeployment,
+          status_details: { ...baseDeployment.status_details, action, sub_action: subAction },
+        },
+      ],
+      isFetched: true,
+    })
+
+    renderWithProviders(<ServiceLastDeployment serviceId="service-123" serviceType="APPLICATION" />)
+
+    expect(screen.getByText(label)).toBeInTheDocument()
+  })
+
+  it('falls back to "Deploy" when the deployment has no action', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [{ ...baseDeployment, status_details: { status: 'SUCCESS' } }],
+      isFetched: true,
+    })
+
+    renderWithProviders(<ServiceLastDeployment serviceId="service-123" serviceType="APPLICATION" />)
+
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
+  })
 })
