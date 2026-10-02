@@ -62,7 +62,7 @@ function LayerSectionRow({
           type="button"
           disabled={isDisabled}
           aria-current={isSelected && !selectedItemId ? 'page' : undefined}
-          className={`focus-visible:ring-brand flex h-8 w-full items-center gap-1.5 rounded px-3 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:cursor-not-allowed disabled:text-neutral-disabled ${
+          className={`flex h-8 w-full items-center gap-1.5 rounded px-3 text-left text-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong disabled:cursor-not-allowed disabled:text-neutral-disabled ${
             isDisabled
               ? ''
               : `${isSelected ? 'text-neutral' : 'text-neutral-subtle'} hover:bg-surface-neutral-component hover:text-neutral`
@@ -93,7 +93,7 @@ function LayerSectionRow({
               type="button"
               disabled={isItemDisabled}
               aria-current={isItemSelected ? 'page' : undefined}
-              className={`focus-visible:ring-brand group flex h-7 w-full items-center gap-1.5 px-3 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:cursor-not-allowed disabled:text-neutral-disabled ${
+              className={`group flex h-7 w-full items-center gap-1.5 px-3 text-left text-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong disabled:cursor-not-allowed disabled:text-neutral-disabled ${
                 isItemDisabled
                   ? ''
                   : isItemSelected

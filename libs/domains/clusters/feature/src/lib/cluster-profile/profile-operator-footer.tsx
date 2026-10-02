@@ -27,7 +27,7 @@ export function ProfileOperatorFooter({ organizationId, clusterId }: { organizat
     <button
       type="button"
       aria-label={`Qovery operator: ${display?.label ?? (isError ? 'status unavailable' : 'loading')}`}
-      className="focus-visible:ring-brand flex w-full shrink-0 items-center gap-2 bg-background-secondary p-3 text-left text-sm font-medium text-neutral outline-none focus-visible:ring-2 focus-visible:ring-inset"
+      className="flex w-full shrink-0 items-center gap-2 bg-background-secondary p-3 text-left text-sm font-medium text-neutral outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong"
     >
       Qovery operator
       {display ? (
