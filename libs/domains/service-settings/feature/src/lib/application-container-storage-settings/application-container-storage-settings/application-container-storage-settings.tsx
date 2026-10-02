@@ -1,5 +1,4 @@
 import { useParams } from '@tanstack/react-router'
-import clsx from 'clsx'
 import { type ServiceStorageStorageInner } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { match } from 'ts-pattern'
@@ -11,10 +10,8 @@ import {
   Button,
   EmptyState,
   Icon,
-  InputText,
   LoaderSpinner,
   Section,
-  Tooltip,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -109,7 +106,6 @@ export function ApplicationContainerStorageSettings() {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId, suspense: true })
   const { mutate: editService } = useEditService({
     organizationId,
     projectId,
@@ -119,8 +115,6 @@ export function ApplicationContainerStorageSettings() {
   if (service && !isSupportedService(service)) {
     return null
   }
-
-  const disableAdd = !isSupportedService(service) || deploymentStatus?.state !== 'READY'
 
   const openStorageModal = (storage?: ServiceStorageStorageInner) => {
     if (!isSupportedService(service)) {
@@ -182,22 +176,10 @@ export function ApplicationContainerStorageSettings() {
     <Section className="px-8 pb-8 pt-6">
       <div className="space-y-6">
         <SettingsHeading title="Storage" description="Add persistent local storage for your application.">
-          <Tooltip
-            disabled={!disableAdd}
-            content="Storage can be added only to services that have never been deployed before"
-          >
-            <Button
-              size="md"
-              variant="solid"
-              color="brand"
-              type="button"
-              onClick={() => openStorageModal()}
-              disabled={disableAdd}
-            >
-              Add Storage
-              <Icon iconName="circle-plus" iconStyle="regular" />
-            </Button>
-          </Tooltip>
+          <Button size="md" variant="solid" color="brand" type="button" onClick={() => openStorageModal()}>
+            Add Storage
+            <Icon iconName="circle-plus" iconStyle="regular" />
+          </Button>
         </SettingsHeading>
 
         <div className="max-w-content-with-navigation-left">

@@ -1,5 +1,4 @@
 import { StorageTypeEnum } from 'qovery-typescript-axios'
-import { type ReactNode } from 'react'
 import { type Database } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock, containerFactoryMock, databaseFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -68,7 +67,6 @@ jest.mock('../application-container-storage-modal/application-container-storage-
 
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
-  Tooltip: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   useModal: () => ({
     openModal: mockOpenModal,
     closeModal: jest.fn(),
@@ -154,11 +152,17 @@ describe('ApplicationContainerStorageSettings', () => {
     })
   })
 
-  it('disables add storage when deployment is not ready', () => {
+  it.each([
+    ['application', buildApplication],
+    ['container', buildContainer],
+  ])('opens the add modal when a deployed %s is selected', async (_, buildService) => {
+    mockService = buildService()
     mockDeploymentStatus = { state: 'DEPLOYED' }
 
-    renderWithProviders(<ApplicationContainerStorageSettings />)
+    const { userEvent } = renderWithProviders(<ApplicationContainerStorageSettings />)
 
-    expect(screen.getByRole('button', { name: /add storage/i })).toBeDisabled()
+    await userEvent.click(screen.getByRole('button', { name: /add storage/i }))
+
+    expect(mockOpenModal).toHaveBeenCalledTimes(1)
   })
 })
