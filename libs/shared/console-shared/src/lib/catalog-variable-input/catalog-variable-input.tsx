@@ -29,7 +29,7 @@ export function CatalogVariableDescription({ description, highlight }: { descrip
   const formattedDescription = formatDescription(description)
 
   return (
-    <p className="line-clamp-3 whitespace-pre-line text-sm text-neutral-subtle">
+    <p className={`${highlight?.trim() ? '' : 'line-clamp-3 '}whitespace-pre-line text-sm text-neutral-subtle`}>
       {highlight?.trim() ? (
         // Truncating could hide the match, so the full description is shown while searching.
         <HighlightText text={formattedDescription} highlight={highlight} />
@@ -59,6 +59,7 @@ function CatalogVariableControl({
         <Checkbox
           name={field.key}
           id={field.key}
+          aria-label={field.label}
           autoFocus={autoFocus}
           checked={typeof value === 'boolean' ? value : false}
           onCheckedChange={(checked) => {

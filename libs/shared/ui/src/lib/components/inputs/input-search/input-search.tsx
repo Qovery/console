@@ -1,4 +1,4 @@
-import { type ReactElement, useRef, useState } from 'react'
+import { type ReactElement, useEffect, useRef, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
@@ -29,6 +29,15 @@ export function InputSearch(props: InputSearchProps) {
 
   const ref = useRef<HTMLInputElement>(null)
   const [toggleDelete, setToggleDelete] = useState(Boolean(defaultValue))
+
+  useEffect(() => {
+    const input = ref.current
+    if (!input || document.activeElement === input) return
+    const nextValue = defaultValue ?? ''
+    if (input.value === nextValue) return
+    input.value = nextValue
+    setToggleDelete(nextValue !== '')
+  }, [defaultValue])
 
   const getValue = (value: string) => {
     if (onChange) onChange(value)
