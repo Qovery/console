@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { type SelfManagedClusterCreationFlowProps } from '../self-managed-cluster-creation/self-managed-cluster-creation-flow'
 import { ClusterAdd } from './cluster-add'
@@ -13,6 +14,10 @@ jest.mock('@tanstack/react-router', () => {
     ),
   }
 })
+jest.mock('posthog-js', () => ({
+  __esModule: true,
+  default: { capture: jest.fn() },
+}))
 jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: () => false }))
 jest.mock('../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction', () => ({
   useClusterCreationRestriction: () => ({ isClusterCreationRestricted: false }),
@@ -42,6 +47,10 @@ describe('ClusterAdd', () => {
     const { userEvent } = renderWithProviders(<ClusterAdd />)
 
     await openCreationFlow(userEvent)
+    expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
+      selectedCloudProvider: 'AWS',
+      selectedInstallationType: 'self-managed',
+    })
     await userEvent.keyboard('{Escape}')
 
     await waitFor(() => expect(screen.queryByText('Creation flow')).not.toBeInTheDocument())
