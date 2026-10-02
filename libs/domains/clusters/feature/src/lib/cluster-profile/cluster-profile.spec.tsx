@@ -282,7 +282,6 @@ describe('ClusterProfileFeature', () => {
     expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toHaveValue(12)
     expect(screen.getByRole('combobox', { name: 'Resource profile' })).toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: 'Storage' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Restore all' })).toBeDisabled()
     expect(screen.getAllByText('Loki').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Alloy').length).toBeGreaterThan(0)
   })
@@ -297,8 +296,6 @@ describe('ClusterProfileFeature', () => {
     expect(highAvailability).not.toBeChecked()
     await userEvent.click(highAvailability)
     expect(highAvailability).toBeChecked()
-
-    expect(screen.getByRole('switch', { name: 'Enable log infrastructure' })).toBeDisabled()
   })
 
   it('renders configuration sections from their source component', () => {

@@ -3,7 +3,7 @@ import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-ty
 import { useEffect, useMemo, useRef } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, EmptyState, Heading, Icon, InputToggle, Navbar, Skeleton } from '@qovery/shared/ui'
+import { EmptyState, Heading, Icon, Navbar, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
@@ -462,13 +462,6 @@ function ClusterProfileView({
               {headerLayer?.description ? (
                 <p className="mt-0.5 text-xs text-neutral-subtle">{headerLayer.description}</p>
               ) : null}
-            </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <InputToggle small value disabled ariaLabel="Enable log infrastructure" className="mt-0.5" />
-              <Button variant="outline" color="neutral" size="sm" disabled>
-                <Icon iconName="arrow-rotate-left" />
-                Restore all
-              </Button>
             </div>
           </div>
 
