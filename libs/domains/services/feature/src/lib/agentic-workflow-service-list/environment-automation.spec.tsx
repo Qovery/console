@@ -58,32 +58,36 @@ beforeEach(() => {
   mockServices.mockReturnValue({ data: [] })
 })
 
-it('shows categorized templates and scratch creation when no agent exists', async () => {
-  const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
-  expect(
-    screen
-      .getAllByRole('heading')
-      .slice(1)
-      .map((heading) => heading.textContent)
-  ).toEqual(['Optimization', 'Incident Analyzer', 'Coding Agent'])
-  for (const category of ['Coding Agent', 'Incident Analyzer', 'Optimization']) {
-    expect(screen.getByRole('heading', { name: category })).toBeInTheDocument()
+it.each([{ services: [] }, { services: [{ service_type: 'APPLICATION', serviceType: 'APPLICATION' }] }])(
+  'shows categorized templates and direct scratch creation without agent tasks (%j)',
+  async ({ services }) => {
+    mockServices.mockReturnValue({ data: services })
+    const { userEvent } = renderWithProviders(<EnvironmentAutomation environment={environment} />)
+    expect(
+      screen
+        .getAllByRole('heading')
+        .slice(1)
+        .map((heading) => heading.textContent)
+    ).toEqual(['Optimization', 'Incident Analyzer', 'Coding Agent'])
+    for (const category of ['Coding Agent', 'Incident Analyzer', 'Optimization']) {
+      expect(screen.getByRole('heading', { name: category })).toBeInTheDocument()
+    }
+    expect(screen.getByRole('link', { name: /Slack Coding Agent/i })).toHaveAttribute(
+      'href',
+      '/organization/org/project/project/environment/env/service/create/agentic-workflow?template=slack-coding-agent'
+    )
+    expect(screen.getByRole('link', { name: /Sentry Incident Analyzer/i })).toBeInTheDocument()
+    expect(screen.queryByText('Agent table')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Create agent task' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Create from scratch' }))
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+      params: { organizationId: 'org', projectId: 'project', environmentId: 'env' },
+      search: {},
+    })
+    expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'from-scratch' })
   }
-  expect(screen.getByRole('link', { name: /Slack Coding Agent/i })).toHaveAttribute(
-    'href',
-    '/organization/org/project/project/environment/env/service/create/agentic-workflow?template=slack-coding-agent'
-  )
-  expect(screen.getByRole('link', { name: /Sentry Incident Analyzer/i })).toBeInTheDocument()
-  expect(screen.queryByText('Agent table')).not.toBeInTheDocument()
-  await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
-  await userEvent.click(await screen.findByRole('menuitem', { name: 'Create from scratch' }))
-  expect(mockNavigate).toHaveBeenCalledWith({
-    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-    params: { organizationId: 'org', projectId: 'project', environmentId: 'env' },
-    search: {},
-  })
-  expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'from-scratch' })
-})
+)
 
 it('offers only template and scratch creation in the dropdown', async () => {
   mockServices.mockReturnValue({ data: [{ service_type: 'AGENTIC_WORKFLOW', serviceType: 'AGENTIC_WORKFLOW' }] })
