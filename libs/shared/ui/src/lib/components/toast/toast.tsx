@@ -52,6 +52,8 @@ export function CustomToast({ id, status, title, description, action }: CustomTo
     setIsActionLoading(true)
     try {
       await action?.onClick?.()
+    } catch (error) {
+      console.error('Toast action failed:', error)
     } finally {
       sonnerToast.dismiss(id)
     }
