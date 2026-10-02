@@ -212,6 +212,8 @@ function OperatorStep({
   values,
   isCreating,
   canContinue,
+  isTemplatesError,
+  onRetryTemplates,
   onChange,
   onBack,
   onCancel,
@@ -222,6 +224,8 @@ function OperatorStep({
   values: OperatorValues
   isCreating: boolean
   canContinue: boolean
+  isTemplatesError: boolean
+  onRetryTemplates: () => void
   onChange: (values: OperatorValues) => void
   onBack: () => void
   onCancel: () => void
@@ -266,6 +270,26 @@ function OperatorStep({
           </>
         }
       >
+        {isTemplatesError ? (
+          <Callout.Root color="red" className="mx-5">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextDescription>The Operator configuration could not be loaded.</Callout.TextDescription>
+              <Button
+                type="button"
+                variant="outline"
+                color="neutral"
+                size="sm"
+                className="mt-2"
+                onClick={onRetryTemplates}
+              >
+                Try again
+              </Button>
+            </Callout.Text>
+          </Callout.Root>
+        ) : null}
         {unmappedViolations.length ? (
           <ul role="alert" className="mx-5 flex flex-col gap-1 text-sm text-negative">
             {unmappedViolations.map((violation) => (
@@ -429,7 +453,12 @@ export function SelfManagedClusterCreationFlow({
   // Unset until edited, so the defaults of the template loaded meanwhile still apply.
   const [operatorValues, setOperatorValues] = useState<OperatorValues>()
   const [clusterId, setClusterId] = useState<string>()
-  const { data: templates, isLoading: isTemplatesLoading } = usePlatformTemplates({
+  const {
+    data: templates,
+    isSuccess: isTemplatesSuccess,
+    isError: isTemplatesError,
+    refetch: refetchTemplates,
+  } = usePlatformTemplates({
     organizationId,
     clusterMode: 'CUSTOMER_MANAGED',
     cloudProvider: 'AWS',
@@ -511,7 +540,10 @@ export function SelfManagedClusterCreationFlow({
         preview={operatorPreview}
         values={resolvedOperatorValues}
         isCreating={isCreating}
-        canContinue={!isTemplatesLoading && !hasOperatorViolations}
+        // An empty template list lets q-core pick the default; a failed request must not create the cluster blindly.
+        canContinue={isTemplatesSuccess && !hasOperatorViolations}
+        isTemplatesError={isTemplatesError}
+        onRetryTemplates={() => refetchTemplates()}
         onChange={setOperatorValues}
         onBack={() => goToStep('general')}
         onCancel={onClose}
