@@ -26,7 +26,7 @@ export function useRestartService({
         queryKey: queries.services.status({ id: serviceId, serviceType }).queryKey,
       })
       queryClient.invalidateQueries({
-        queryKey: queries.environments.deploymentHistoryV2({ environmentId }).queryKey,
+        queryKey: [...queries.environments.deploymentHistoryV2._def, environmentId],
       })
 
       if (data.deployment_request_id) {

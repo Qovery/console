@@ -9,7 +9,7 @@ launch-templates:
       - name: Install Node.js
         uses: 'nrwl/nx-cloud-workflows/v6/workflow-steps/install-node/main.yaml'
         inputs:
-          node_version: '24'
+          node_version: '24.14.0'
 
       - name: Enable Corepack
         script: corepack enable

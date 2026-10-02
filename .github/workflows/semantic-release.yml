@@ -14,11 +14,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node24-cache-node-${{ hashFiles('yarn.lock') }}
+          key: node-${{ hashFiles('.nvmrc') }}-cache-node-${{ hashFiles('yarn.lock') }}
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
+          cache: 'yarn'
       - name: Enable Corepack
         run: corepack enable
       - name: yarn install
@@ -37,13 +38,16 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: node24-cache-node-${{ hashFiles('yarn.lock') }}
+          key: node-${{ hashFiles('.nvmrc') }}-cache-node-${{ hashFiles('yarn.lock') }}
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
+          cache: 'yarn'
       - name: Enable Corepack
         run: corepack enable
+      - name: Install dependencies
+        run: yarn install --immutable
       - name: Launch Semantic release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}

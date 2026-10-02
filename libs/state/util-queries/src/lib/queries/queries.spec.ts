@@ -38,6 +38,72 @@ describe('query cache isolation', () => {
     expectSeparateCacheEntries(first.queryKey, second.queryKey)
   })
 
+  it('shares HELM chart commits between implicit and explicit chart requests', () => {
+    const queryClient = new QueryClient()
+    const implicit = queries.services.listCommits({ serviceId: 'helm', serviceType: 'HELM' })
+    const explicit = queries.services.listCommits({ serviceType: 'HELM', serviceId: 'helm', of: 'chart' })
+    const values = queries.services.listCommits({ serviceId: 'helm', serviceType: 'HELM', of: 'values' })
+
+    queryClient.setQueryData(implicit.queryKey, ['chart commit'])
+    queryClient.setQueryData(values.queryKey, ['values commit'])
+
+    expect(queryClient.getQueryData(explicit.queryKey)).toEqual(['chart commit'])
+    expect(queryClient.getQueryData(values.queryKey)).toEqual(['values commit'])
+    queryClient.clear()
+  })
+
+  it('keeps commit lists for different service types separate', () => {
+    const application = queries.services.listCommits({ serviceId: 'service', serviceType: 'APPLICATION' })
+    const job = queries.services.listCommits({ serviceId: 'service', serviceType: 'JOB' })
+
+    expectSeparateCacheEntries(application.queryKey, job.queryKey)
+  })
+
+  it('invalidates every deployment history page for only the requested service and type', async () => {
+    const queryClient = new QueryClient()
+    const params = { serviceId: 'service', serviceType: 'APPLICATION' as const }
+    const histories = [undefined, 10, 100].map((pageSize) =>
+      queries.services.deploymentHistory({ ...params, pageSize })
+    )
+    const otherService = queries.services.deploymentHistory({ ...params, serviceId: 'other', pageSize: 100 })
+    const otherType = queries.services.deploymentHistory({ ...params, serviceType: 'JOB', pageSize: 100 })
+    for (const history of [...histories, otherService, otherType]) {
+      queryClient.setQueryData(history.queryKey, [])
+    }
+
+    await queryClient.invalidateQueries({
+      queryKey: [...queries.services.deploymentHistory._def, params.serviceId, params.serviceType],
+    })
+
+    for (const history of histories) {
+      expect(queryClient.getQueryState(history.queryKey)?.isInvalidated).toBe(true)
+    }
+    expect(queryClient.getQueryState(otherService.queryKey)?.isInvalidated).toBe(false)
+    expect(queryClient.getQueryState(otherType.queryKey)?.isInvalidated).toBe(false)
+    queryClient.clear()
+  })
+
+  it('invalidates every environment deployment history page for only the requested environment', async () => {
+    const queryClient = new QueryClient()
+    const histories = [undefined, 10, 100].map((pageSize) =>
+      queries.environments.deploymentHistoryV2({ environmentId: 'environment', pageSize })
+    )
+    const otherEnvironment = queries.environments.deploymentHistoryV2({ environmentId: 'other', pageSize: 100 })
+    for (const history of [...histories, otherEnvironment]) {
+      queryClient.setQueryData(history.queryKey, [])
+    }
+
+    await queryClient.invalidateQueries({
+      queryKey: [...queries.environments.deploymentHistoryV2._def, 'environment'],
+    })
+
+    for (const history of histories) {
+      expect(queryClient.getQueryState(history.queryKey)?.isInvalidated).toBe(true)
+    }
+    expect(queryClient.getQueryState(otherEnvironment.queryKey)?.isInvalidated).toBe(false)
+    queryClient.clear()
+  })
+
   it('keeps environment deployment history pages of different sizes separate', () => {
     const first = queries.environments.deploymentHistoryV2({ environmentId: 'environment', pageSize: 10 })
     const second = queries.environments.deploymentHistoryV2({ environmentId: 'environment', pageSize: 20 })
