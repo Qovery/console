@@ -430,6 +430,48 @@ describe('ClusterProfileFeature', () => {
     expect(screen.queryByRole('status', { name: 'Loading configuration' })).not.toBeInTheDocument()
   })
 
+  describe('edits debounce across component switches', () => {
+    function ClusterProfileWithNavigation() {
+      const [componentKey, setComponentKey] = useState<string>()
+      return <ClusterProfileFeature activeComponentKey={componentKey} onActiveComponentChange={setComponentKey} />
+    }
+    const getLastLokiRequest = () =>
+      mockUsePlatformComponentConfigurations.mock.calls.at(-1)?.[0].requests['loki']?.profileConfig
+
+    beforeEach(() => {
+      mockUsePlatformComponentConfigurations.mockImplementation(({ requests }) =>
+        createComponentQueries(Object.keys(requests))
+      )
+    })
+
+    it('keeps an edit debounced after switching to another component', async () => {
+      // A debounce that never settles.
+      mockUseDebounce.mockImplementation(<T,>(value: T) => jest.requireActual('react').useRef(value).current)
+      const { userEvent } = renderWithProviders(<ClusterProfileWithNavigation />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      const bar = screen.getByRole('region', { name: 'Unsaved profile changes' })
+      await userEvent.click(screen.getByRole('button', { name: 'Envoy' }))
+
+      expect(getLastLokiRequest()).not.toHaveProperty('high-availability', true)
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
+    })
+
+    it('checks the latest edit when coming back to its component', async () => {
+      const { userEvent } = renderWithProviders(<ClusterProfileWithNavigation />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Envoy' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Log infra' }))
+
+      expect(screen.getByRole('switch', { name: 'High availability' })).toBeChecked()
+      expect(getLastLokiRequest()).toHaveProperty('high-availability', true)
+      expect(
+        within(screen.getByRole('region', { name: 'Unsaved profile changes' })).getByRole('button', { name: 'Save' })
+      ).toBeEnabled()
+    })
+  })
+
   it('moves between the component tabs with the arrow keys', async () => {
     const onActiveComponentChange = jest.fn()
     const { userEvent } = renderWithProviders(

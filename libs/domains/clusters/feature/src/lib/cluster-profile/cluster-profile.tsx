@@ -326,30 +326,36 @@ function ClusterProfileView({
       ),
     [configuration?.clusterInputs, clusterInputs, resolvedComponents]
   )
+  const edits = useMemo(() => ({ profileValues, clusterInputs }), [clusterInputs, profileValues])
+  const debouncedEdits = useDebounce(edits, 300)
   const previewRequests = useMemo(
     () =>
       Object.fromEntries(
         resolvedComponents.map((component) => [
           component.key,
           {
-            profileConfig: omitEmptyValues(profileConfigs[component.key] ?? {}),
-            clusterInputs: resolvedClusterInputs[component.key] ?? {},
+            profileConfig: omitEmptyValues(
+              applyPlatformConfigurationDefaults(component.fields, {
+                ...configuration?.platform.managedConfig?.[component.key],
+                ...debouncedEdits.profileValues[component.key],
+              })
+            ),
+            clusterInputs: {
+              ...configuration?.clusterInputs[component.key],
+              ...debouncedEdits.clusterInputs[component.key],
+            },
             componentOutputs: {},
           },
         ])
       ),
-    [profileConfigs, resolvedClusterInputs, resolvedComponents]
+    [configuration, debouncedEdits, resolvedComponents]
   )
-  const debouncedPreviewRequests = useDebounce(previewRequests, 300)
-  const settledPreviewRequests = equal(Object.keys(debouncedPreviewRequests), Object.keys(previewRequests))
-    ? debouncedPreviewRequests
-    : previewRequests
   const componentQueries = usePlatformComponentConfigurations({
     clusterId,
-    requests: settledPreviewRequests,
+    requests: previewRequests,
     enabled: Boolean(resolvedComponents.length),
   })
-  const requestedComponentKeys = Object.keys(settledPreviewRequests)
+  const requestedComponentKeys = Object.keys(previewRequests)
   const componentQueriesByKey = Object.fromEntries(
     requestedComponentKeys.flatMap((componentKey, index) => {
       const query = componentQueries[index]
@@ -410,7 +416,7 @@ function ClusterProfileView({
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
   // Saving needs every displayed or edited component resolved for the latest edits, with no violation or missing input.
   const isConfigurationReady =
-    equal(settledPreviewRequests, previewRequests) &&
+    equal(debouncedEdits, edits) &&
     Object.keys(previewRequests).every((componentKey) => {
       const query = componentQueriesByKey[componentKey]
       const preview = query?.data
