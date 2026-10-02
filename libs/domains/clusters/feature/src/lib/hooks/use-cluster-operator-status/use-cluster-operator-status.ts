@@ -20,7 +20,7 @@ export function useClusterOperatorStatus({
   return useQuery({
     ...queries.clusters.operatorStatus({ organizationId, clusterId }),
     enabled: enabled && Boolean(organizationId) && Boolean(clusterId),
-    refetchInterval,
+    refetchInterval: refetchInterval ? (data) => (data === null ? false : refetchInterval) : undefined,
     staleTime,
   })
 }
