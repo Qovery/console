@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import {
   ClusterOperatorStatus,
@@ -7,7 +8,8 @@ import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/u
 
 const OPERATOR_STATUS_REFRESH_INTERVAL = 30_000
 
-export function ProfileOperatorFooter({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+export function ProfileOperatorFooter() {
+  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const {
     data: operatorStatus,
     isLoading,
@@ -55,9 +57,7 @@ export function ProfileOperatorFooter({ organizationId, clusterId }: { organizat
       collisionPadding={8}
       classNameContent="w-[480px] rounded-lg border border-neutral bg-surface-neutral p-4 text-neutral shadow-lg"
       classNameArrow="fill-surface-neutral"
-      content={
-        <ClusterOperatorStatus organizationId={organizationId} clusterId={clusterId} operatorStatus={operatorStatus} />
-      }
+      content={<ClusterOperatorStatus operatorStatus={operatorStatus} />}
     >
       {trigger}
     </Tooltip>

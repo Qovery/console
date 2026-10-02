@@ -4,6 +4,10 @@ import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/u
 import { useUpdateClusterOperator } from '../hooks/use-update-cluster-operator/use-update-cluster-operator'
 import { ProfileOperatorFooter } from './profile-operator-footer'
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: 'org-123', clusterId: 'cluster-123' }),
+}))
 jest.mock('../hooks/use-cluster-operator-status/use-cluster-operator-status')
 jest.mock('../hooks/use-update-cluster-operator/use-update-cluster-operator')
 
@@ -31,16 +35,14 @@ describe('ProfileOperatorFooter', () => {
 
   it('renders nothing for a cluster without Operator', () => {
     mockUseClusterOperatorStatus.mockReturnValue({ data: null, isLoading: false })
-    const { container } = renderWithProviders(
-      <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
-    )
+    const { container } = renderWithProviders(<ProfileOperatorFooter />)
 
     expect(container).toBeEmptyDOMElement()
   })
 
   it('configures polling for the Operator status', () => {
     mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false })
-    renderWithProviders(<ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />)
+    renderWithProviders(<ProfileOperatorFooter />)
 
     expect(mockUseClusterOperatorStatus).toHaveBeenCalledWith({
       organizationId: 'org-123',
@@ -52,9 +54,7 @@ describe('ProfileOperatorFooter', () => {
 
   it('tells when the Operator status cannot be retrieved', async () => {
     mockUseClusterOperatorStatus.mockReturnValue({ data: undefined, isLoading: false, isError: true })
-    const { userEvent } = renderWithProviders(
-      <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
-    )
+    const { userEvent } = renderWithProviders(<ProfileOperatorFooter />)
 
     await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: status unavailable' }))
 
@@ -63,9 +63,7 @@ describe('ProfileOperatorFooter', () => {
 
   it('does not keep showing a stale status once a refresh fails', async () => {
     mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false, isError: true })
-    const { userEvent } = renderWithProviders(
-      <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
-    )
+    const { userEvent } = renderWithProviders(<ProfileOperatorFooter />)
 
     await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: status unavailable' }))
 
@@ -75,9 +73,7 @@ describe('ProfileOperatorFooter', () => {
 
   it('shows the Operator versions in a tooltip and starts an update', async () => {
     mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false })
-    const { userEvent } = renderWithProviders(
-      <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
-    )
+    const { userEvent } = renderWithProviders(<ProfileOperatorFooter />)
 
     await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: Update available' }))
 
@@ -103,9 +99,7 @@ describe('ProfileOperatorFooter', () => {
       data: { ...operatorStatus, operator_connected: false, status: 'DISCONNECTED' },
       isLoading: false,
     })
-    const { userEvent } = renderWithProviders(
-      <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
-    )
+    const { userEvent } = renderWithProviders(<ProfileOperatorFooter />)
 
     await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: Disconnected' }))
 

@@ -240,7 +240,6 @@ function ClusterProfileView({
   onSearchChange,
 }: ClusterProfileFeatureProps) {
   const {
-    organizationId,
     clusterId,
     cluster,
     templates,
@@ -453,7 +452,7 @@ function ClusterProfileView({
           onSearchChange={(nextSearch) => onSearchChange?.(nextSearch)}
           onSelectSection={handleSelectSection}
           onSelectItem={handleSelectItem}
-          footer={<ProfileOperatorFooter organizationId={organizationId} clusterId={clusterId} />}
+          footer={<ProfileOperatorFooter />}
         />
 
         <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
