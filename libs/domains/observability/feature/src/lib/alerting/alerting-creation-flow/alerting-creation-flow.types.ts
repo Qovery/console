@@ -1,6 +1,8 @@
 import type { AlertRuleCreationRequest } from 'qovery-typescript-axios'
+import { type RdsMetricCategory } from './rds-alert-metrics'
 
 export type MetricCategory =
+  | RdsMetricCategory
   | 'cpu'
   | 'memory'
   | 'http_error'

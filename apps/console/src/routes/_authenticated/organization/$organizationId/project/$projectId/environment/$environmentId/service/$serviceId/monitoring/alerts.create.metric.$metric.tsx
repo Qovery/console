@@ -5,9 +5,11 @@ import {
   AlertingCreationFlow,
   canCreateCertificateRenewalAlert,
   getSelectedAlertMetrics,
+  isLegacyRdsDatabase,
+  useRdsAlertTarget,
 } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
-import { LoaderSpinner } from '@qovery/shared/ui'
+import { Button, EmptyState, LoaderSpinner } from '@qovery/shared/ui'
 
 interface AlertsCreateSearch {
   templates?: string
@@ -35,14 +37,23 @@ function RouteComponent() {
 
   const { data: environment, isFetched: isEnvironmentFetched } = useEnvironment({ environmentId })
   const { data: service, isFetched: isServiceFetched } = useService({ environmentId, serviceId })
+  // Waiting for the RDS instance here keeps the flow from rendering before its identifier is known.
+  const rdsAlertTarget = useRdsAlertTarget({ organizationId, service })
 
   const certificateEnabled = canCreateCertificateRenewalAlert(
     useFeatureFlagEnabled('certificate-renewal-alert'),
     service
   )
-  const selectedMetrics = getSelectedAlertMetrics(metric, search.templates, certificateEnabled)
+  const selectedMetrics = getSelectedAlertMetrics(metric, search.templates, certificateEnabled, rdsAlertTarget.isRds)
 
-  if (!isEnvironmentFetched || !isServiceFetched) {
+  const goToAlertsList = () => {
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts',
+      params: { organizationId, projectId, environmentId, serviceId },
+    })
+  }
+
+  if (!isEnvironmentFetched || !isServiceFetched || rdsAlertTarget.isResolving) {
     return (
       <div className="flex min-h-page-container items-center justify-center">
         <LoaderSpinner />
@@ -50,7 +61,22 @@ function RouteComponent() {
     )
   }
 
-  if (!environment || !service || selectedMetrics.length === 0) {
+  if (rdsAlertTarget.isMetadataUnavailable) {
+    return (
+      <div className="px-10 py-7">
+        <EmptyState
+          title="Alert target unavailable"
+          description="Unable to load this database's alert target. Try again later."
+        >
+          <Button size="md" variant="outline" color="neutral" onClick={goToAlertsList}>
+            Back to alerts
+          </Button>
+        </EmptyState>
+      </div>
+    )
+  }
+
+  if (!environment || !service || isLegacyRdsDatabase(service) || selectedMetrics.length === 0) {
     return (
       <Navigate
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
@@ -66,18 +92,8 @@ function RouteComponent() {
       environment={environment}
       service={service}
       selectedMetrics={selectedMetrics}
-      onComplete={() => {
-        navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts',
-          params: { organizationId, projectId, environmentId, serviceId },
-        })
-      }}
-      onClose={() => {
-        navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts',
-          params: { organizationId, projectId, environmentId, serviceId },
-        })
-      }}
+      onComplete={goToAlertsList}
+      onClose={goToAlertsList}
     />
   )
 }

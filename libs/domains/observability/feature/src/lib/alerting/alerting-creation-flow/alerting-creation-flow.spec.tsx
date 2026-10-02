@@ -6,12 +6,13 @@ import {
   AlertingCreationFlow,
   useAlertingCreationFlowContext as mockUseAlertingCreationFlowContext,
 } from './alerting-creation-flow'
-import { type AlertConfiguration } from './alerting-creation-flow.types'
+import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
 
 const mockCreate = jest.fn()
 const mockEdit = jest.fn()
 const mockComplete = jest.fn()
 let mockHpaName: string | undefined
+const mockUseRdsAlertTarget = jest.fn()
 
 jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
 jest.mock('../../hooks/use-create-alert-rule/use-create-alert-rule', () => ({
@@ -24,6 +25,9 @@ jest.mock('../../hooks/use-container-name/use-container-name', () => ({ useConta
 jest.mock('../../hooks/use-ingress-name/use-ingress-name', () => ({ useIngressName: () => ({}) }))
 jest.mock('../../hooks/use-http-route-name/use-http-route-name', () => ({ useHttpRouteName: () => ({}) }))
 jest.mock('../../hooks/use-hpa-name/use-hpa-name', () => ({ useHpaName: () => ({ data: mockHpaName }) }))
+jest.mock('../../hooks/use-rds-alert-target/use-rds-alert-target', () => ({
+  useRdsAlertTarget: (params: unknown) => mockUseRdsAlertTarget(params),
+}))
 jest.mock('./metric-configuration-step/metric-configuration-step', () => ({
   MetricConfigurationStep: () => {
     const { alerts, onComplete } = mockUseAlertingCreationFlowContext()
@@ -59,7 +63,7 @@ function renderFlow(
           max_running_instances: 1,
         } as AnyService
       }
-      selectedMetrics={['hpa_limit']}
+      selectedMetrics={[alert.tag as MetricCategory]}
       mode={mode}
       initialAlerts={[alert]}
       alertRuleId="alert-1"
@@ -74,6 +78,7 @@ describe('alert creation and editing guards', () => {
     jest.useFakeTimers()
     jest.clearAllMocks()
     mockHpaName = undefined
+    mockUseRdsAlertTarget.mockReturnValue({ isRds: false })
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
   })
 
@@ -146,5 +151,141 @@ describe('alert creation and editing guards', () => {
     const { userEvent } = renderFlow('edit', { ...existingAlert, tag: 'certificate_renewal_failed' })
     await userEvent.click(screen.getByRole('button', { name: 'Save test alert' }))
     await waitFor(() => expect(mockEdit).toHaveBeenCalled())
+  })
+
+  it('creates a catalog RDS storage alert with a byte threshold', async () => {
+    mockUseRdsAlertTarget.mockReturnValue({
+      isRds: true,
+      dbInstance: 'z04d06b19-postgresql',
+      target: { target_id: 'service-1', target_type: 'TERRAFORM' },
+      hasCloudWatchMetrics: true,
+    })
+    const { userEvent } = renderFlow(
+      'create',
+      {
+        ...existingAlert,
+        tag: 'rds_free_storage_space',
+        condition: { kind: 'BUILT', function: 'NONE', operator: 'BELOW', threshold: 10, promql: '' },
+      },
+      'TERRAFORM'
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save test alert' }))
+
+    await waitFor(() =>
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            target: { target_id: 'service-1', target_type: 'TERRAFORM' },
+            condition: expect.objectContaining({
+              function: 'NONE',
+              operator: 'BELOW',
+              threshold: 10737418240,
+              promql:
+                'last_over_time(aws_rds_free_storage_space_average{dimension_DBInstanceIdentifier="z04d06b19-postgresql"}[10m])',
+            }),
+          }),
+        })
+      )
+    )
+  })
+
+  it('creates a catalog RDS connections alert on the Terraform service', async () => {
+    mockUseRdsAlertTarget.mockReturnValue({
+      isRds: true,
+      dbInstance: 'my-blueprint-db',
+      target: { target_id: 'service-1', target_type: 'TERRAFORM' },
+      hasCloudWatchMetrics: true,
+    })
+    const { userEvent } = renderFlow(
+      'create',
+      {
+        ...existingAlert,
+        tag: 'rds_connections',
+        condition: { kind: 'BUILT', function: 'NONE', operator: 'ABOVE', threshold: 300, promql: '' },
+      },
+      'TERRAFORM'
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save test alert' }))
+
+    await waitFor(() =>
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            target: { target_id: 'service-1', target_type: 'TERRAFORM' },
+            condition: expect.objectContaining({
+              threshold: 300,
+              promql:
+                'last_over_time(aws_rds_database_connections_average{dimension_DBInstanceIdentifier="my-blueprint-db"}[10m])',
+            }),
+          }),
+        })
+      )
+    )
+  })
+
+  it('does not create an RDS alert before the database identifier is available', async () => {
+    mockUseRdsAlertTarget.mockReturnValue({
+      isRds: true,
+      target: { target_id: 'service-1', target_type: 'TERRAFORM' },
+      hasCloudWatchMetrics: true,
+    })
+    const { userEvent } = renderFlow('create', { ...existingAlert, tag: 'rds_cpu' }, 'TERRAFORM')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save test alert' }))
+
+    expect(mockCreate).not.toHaveBeenCalled()
+  })
+
+  it('edits a saved RDS alert with its saved query, without loading RDS metadata', async () => {
+    mockUseRdsAlertTarget.mockReturnValue({ isRds: false, hasCloudWatchMetrics: false, isMetadataUnavailable: true })
+    const { userEvent } = renderFlow(
+      'edit',
+      {
+        ...existingAlert,
+        tag: 'rds_cpu',
+        condition: {
+          kind: 'BUILT',
+          function: 'NONE',
+          operator: 'ABOVE',
+          threshold: 0.5,
+          promql: 'aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="z04d06b19-postgresql"}',
+        },
+      },
+      'TERRAFORM'
+    )
+
+    expect(mockUseRdsAlertTarget).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save test alert' }))
+
+    await waitFor(() =>
+      expect(mockEdit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            description: 'Above 0.5% for 5 minutes',
+            condition: expect.objectContaining({
+              promql: 'aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="z04d06b19-postgresql"}',
+              threshold: 0.5,
+            }),
+          }),
+        })
+      )
+    )
+  })
+
+  it('does not create an RDS alert when CloudWatch metrics are disabled', async () => {
+    mockUseRdsAlertTarget.mockReturnValue({
+      isRds: true,
+      dbInstance: 'z04d06b19-postgresql',
+      target: { target_id: 'service-1', target_type: 'TERRAFORM' },
+      hasCloudWatchMetrics: false,
+    })
+    const { userEvent } = renderFlow('create', { ...existingAlert, tag: 'rds_cpu' }, 'TERRAFORM')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save test alert' }))
+
+    expect(mockCreate).not.toHaveBeenCalled()
   })
 })

@@ -11,10 +11,12 @@ import { useEditAlertRule } from '../../hooks/use-edit-alert-rule/use-edit-alert
 import { useHpaName } from '../../hooks/use-hpa-name/use-hpa-name'
 import { useHttpRouteName } from '../../hooks/use-http-route-name/use-http-route-name'
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
-import { generateConditionDescription } from '../../util-alerting/generate-condition-description'
+import { useRdsAlertTarget } from '../../hooks/use-rds-alert-target/use-rds-alert-target'
+import { generateConditionDescription } from '../util/generate-condition-description'
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
 import { CONTAINER_METRICS, HTTP_METRICS, canCreateCertificateRenewalAlert } from './metric-availability'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
+import { RDS_METRICS, getRdsAlertQuery, isRdsMetricCategory, toRdsMetricThreshold } from './rds-alert-metrics'
 import {
   QUERY_CERTIFICATE_RENEWAL_FAILED,
   QUERY_CPU,
@@ -35,6 +37,10 @@ const METRIC_LABELS: Record<MetricCategory, string> = {
   missing_instance: 'Missing instance',
   hpa_limit: 'Auto-scaling limit',
   certificate_renewal_failed: 'Certificate renewal failed',
+  rds_cpu: RDS_METRICS.rds_cpu.label,
+  rds_connections: RDS_METRICS.rds_connections.label,
+  rds_freeable_memory: RDS_METRICS.rds_freeable_memory.label,
+  rds_free_storage_space: RDS_METRICS.rds_free_storage_space.label,
 }
 
 interface AlertingCreationFlowContextInterface {
@@ -53,6 +59,7 @@ interface AlertingCreationFlowContextInterface {
   onNavigateToMetric: (index: number) => void
   onComplete: (alerts: AlertConfiguration[]) => Promise<void>
   isLoading: boolean
+  submissionUnavailableReason?: string
 }
 
 export const AlertingCreationFlowContext = createContext<AlertingCreationFlowContextInterface | undefined>(undefined)
@@ -95,6 +102,9 @@ export function AlertingCreationFlow({
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [alerts, setAlerts] = useState<AlertConfiguration[]>(initialAlerts ?? [])
   const [isLoading, setIsLoading] = useState(false)
+  const isEditMode = mode === 'edit'
+  // Edit mode keeps the saved query and target, so it does not need any RDS metadata.
+  const rdsAlertTarget = useRdsAlertTarget({ organizationId, service, enabled: !isEditMode })
 
   const { mutateAsync: createAlertRule } = useCreateAlertRule({ organizationId })
   const { mutateAsync: editAlertRule } = useEditAlertRule({ organizationId })
@@ -151,8 +161,27 @@ export function AlertingCreationFlow({
   const serviceId = service.id
   const serviceName = service.name
 
-  const isEditMode = mode === 'edit'
   const totalSteps = isEditMode ? 1 : selectedMetrics.length
+  const hasRdsMetric = selectedMetrics.some(isRdsMetricCategory)
+  const submissionUnavailableReason = !hasRdsMetric
+    ? undefined
+    : match({ isEditMode, ...rdsAlertTarget })
+        .with({ isEditMode: true }, () =>
+          initialAlerts?.some((alert) => isRdsMetricCategory(alert.tag) && !alert.condition.promql)
+            ? 'The saved RDS query is missing. This alert cannot be edited here.'
+            : undefined
+        )
+        .with({ isMetadataUnavailable: true }, () => "Unable to load this database's alert target. Try again later.")
+        .when(
+          ({ isRds, target }) => !isRds || !target,
+          () => 'The RDS alert target is unavailable. Try again later.'
+        )
+        .with({ hasCloudWatchMetrics: false }, () => 'Enable CloudWatch metrics on this cluster to create RDS alerts.')
+        .when(
+          ({ dbInstance }) => !dbInstance,
+          () => 'Deploy this database to make its RDS instance identifier available before creating alerts.'
+        )
+        .otherwise(() => undefined)
 
   const getCurrentTitle = () => {
     if (isEditMode) {
@@ -181,6 +210,7 @@ export function AlertingCreationFlow({
     const hasContainerMetric = activeAlerts.some((alert) => CONTAINER_METRICS.includes(alert.tag as MetricCategory))
     const hasHttpMetric = activeAlerts.some((alert) => HTTP_METRICS.includes(alert.tag as MetricCategory))
     const hasHpaMetric = activeAlerts.some((alert) => alert.tag === 'hpa_limit')
+    const hasActiveRdsMetric = activeAlerts.some((alert) => isRdsMetricCategory(alert.tag))
 
     if (hasContainerMetric && !containerName) return
     if (hasHttpMetric && !(ingressName || httpRouteName)) return
@@ -192,34 +222,54 @@ export function AlertingCreationFlow({
       return
     if (!isEditMode && !certificateEnabled && activeAlerts.some((alert) => alert.tag === 'certificate_renewal_failed'))
       return
+    if (hasActiveRdsMetric && submissionUnavailableReason) return
 
     try {
       setIsLoading(true)
       for (const alert of activeAlerts) {
         const isMissingInstance = alert.tag === 'missing_instance'
+        const isRdsMetric = isRdsMetricCategory(alert.tag)
+        // The threshold input hands its value back as a string.
+        const formThreshold = Number(alert.condition.threshold ?? 0)
         const threshold = match(alert.tag)
-          .with('http_latency', () => alert.condition.threshold ?? 0)
+          .when(isRdsMetricCategory, (category) => toRdsMetricThreshold(category, formThreshold))
+          .with('http_latency', () => formThreshold)
           .with('instance_restart', () => 1)
           .with('missing_instance', () => 1)
           .with('hpa_limit', () => 1)
           .with('certificate_renewal_failed', () => 0)
-          .otherwise(() => (alert.condition.threshold ?? 0) / 100)
+          .otherwise(() => formThreshold / 100)
 
         const unit = match(alert.tag)
+          .when(isRdsMetricCategory, (category) => RDS_METRICS[category].unit)
           .with('http_latency', () => 'secs')
           .with('certificate_renewal_failed', () => '')
           .otherwise(() => '%')
 
         const operator = isMissingInstance && isEditMode ? 'BELOW' : alert.condition.operator ?? 'ABOVE'
-        const func = alert.condition.function ?? 'NONE'
+        const func = isRdsMetric ? 'NONE' : alert.condition.function ?? 'NONE'
         const description = match(alert.tag)
           .with('instance_restart', () => 'One or more instances restarted unexpectedly')
           .with('missing_instance', () => 'Missing one or more running instances for this service')
           .with('hpa_limit', () => 'Auto-scaling reached the maximum number of instances')
           .with('certificate_renewal_failed', () => 'TLS certificate renewal failed or is overdue for this service')
-          .otherwise(() => generateConditionDescription(func, operator, threshold, unit, alert.for_duration))
+          .otherwise(() =>
+            generateConditionDescription(
+              func,
+              operator,
+              isRdsMetric ? formThreshold : threshold,
+              unit === 'connections' ? ' connections' : unit,
+              alert.for_duration,
+              isRdsMetric ? (alert.tag as MetricCategory) : undefined
+            )
+          )
 
         const promql = match(alert.tag)
+          .when(isRdsMetricCategory, (category) => {
+            if (isEditMode) return alert.condition.promql ?? ''
+
+            return getRdsAlertQuery(category, rdsAlertTarget.dbInstance ?? '') ?? ''
+          })
           .with('cpu', () => (containerName ? QUERY_CPU(containerName) : ''))
           .with('memory', () => (containerName ? QUERY_MEMORY(containerName) : ''))
           .with('missing_instance', () => (containerName ? QUERY_MISSING_INSTANCE(containerName) : ''))
@@ -229,6 +279,10 @@ export function AlertingCreationFlow({
           .with('hpa_limit', () => (hpaName ? QUERY_HPA_ISSUE(hpaName) : alert.condition.promql || ''))
           .with('certificate_renewal_failed', () => QUERY_CERTIFICATE_RENEWAL_FAILED(service.id))
           .otherwise(() => '')
+
+        const target = isRdsMetric
+          ? rdsAlertTarget.target
+          : { target_id: service.id, target_type: service.serviceType as AlertTargetType }
 
         if (isEditMode) {
           if (!alertRuleId) {
@@ -258,14 +312,12 @@ export function AlertingCreationFlow({
             },
           })
         } else {
+          if (!target) throw new Error('RDS alert target is unavailable')
           await createAlertRule({
             payload: {
               organization_id: organizationId,
               cluster_id: environment.cluster_id,
-              target: {
-                target_id: service.id,
-                target_type: service.serviceType as AlertTargetType,
-              },
+              target,
               name: alert.name,
               tag: alert.tag,
               description,
@@ -313,6 +365,7 @@ export function AlertingCreationFlow({
         onNavigateToMetric: handleNavigateToMetric,
         onComplete: handleComplete,
         isLoading,
+        submissionUnavailableReason,
       }}
     >
       <FunnelFlow
