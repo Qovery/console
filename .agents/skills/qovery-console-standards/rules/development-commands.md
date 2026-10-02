@@ -54,6 +54,6 @@ npx nx graph
 
 ## Environment Setup
 
-- Node.js 23: `nvm use 23`
+- Node.js 24 LTS: `nvm use`
 - Use `nvm use` to switch to correct Node version
 - IDE configurations for ESLint and Prettier are included

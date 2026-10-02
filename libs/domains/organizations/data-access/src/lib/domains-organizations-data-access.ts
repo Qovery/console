@@ -290,7 +290,7 @@ export const organizations = createQueryKeys('organizations', {
     name: string
     gitToken?: string
   }) => ({
-    queryKey: [organizationId, gitProvider, name],
+    queryKey: [organizationId, gitProvider, name, gitToken],
     async queryFn() {
       const branches = await match(gitProvider)
         .with('GITHUB', async () => {
