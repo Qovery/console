@@ -24,9 +24,11 @@ const SegmentedControlRoot = forwardRef<ElementRef<typeof ToggleGroupPrimitive.R
     },
     forwardedRef
   ) {
-    const [value, setValue] = useControllableState({
+    const [value, setValue] = useControllableState<string | undefined>({
       prop: valueProp,
-      onChange: onValueChangeProp,
+      onChange: (nextValue) => {
+        if (nextValue !== undefined) onValueChangeProp?.(nextValue)
+      },
       defaultProp: defaultValueProp,
     })
 

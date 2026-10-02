@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type ReactNode, useEffect, useId, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import Select, {
   type GroupBase,
   type MenuListProps,
@@ -158,7 +158,6 @@ export function InputSelect({
   )
 
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => {
-    const id = useId()
     const optionContent = (
       <components.Option {...props}>
         {isMulti ? (
@@ -172,7 +171,7 @@ export function InputSelect({
         ) : (
           <Icon iconName="check" className="w-4 opacity-0" />
         )}
-        <label id={id} className="ml-1 flex flex-col gap-0.5 truncate text-sm">
+        <label className="ml-1 flex flex-col gap-0.5 truncate text-sm">
           {props.label}
           {props.data.description && <span className="font-normal">{props.data.description}</span>}
         </label>
@@ -180,7 +179,7 @@ export function InputSelect({
     )
 
     return (
-      <div role="option" aria-labelledby={id} aria-selected={props.isSelected} aria-disabled={props.data.isDisabled}>
+      <div>
         {props.data.isDisabled && props.data.disabledTooltip ? (
           <Tooltip content={props.data.disabledTooltip} classNameTrigger="block">
             <div>{optionContent}</div>
@@ -269,18 +268,28 @@ export function InputSelect({
           ? 'input--error'
           : ''
 
+  // The custom components above close over the current props/state, so they get a new identity on each render.
+  // Hand react-select stable wrappers that delegate to the latest renderers: otherwise every re-render remounts the
+  // whole menu, which detaches the option under the pointer and swallows in-flight clicks.
+  const latestComponents = useRef({ Option, MultiValue, SingleValue, NoOptionsMessage, MenuList, LoadingMessage })
+  latestComponents.current = { Option, MultiValue, SingleValue, NoOptionsMessage, MenuList, LoadingMessage }
+  const stableComponents = useMemo(
+    () => ({
+      Option: (props: OptionProps<Value, true, GroupBase<Value>>) => latestComponents.current.Option(props),
+      MultiValue: (props: MultiValueProps<Value, true, GroupBase<Value>>) => latestComponents.current.MultiValue(props),
+      SingleValue: (props: SingleValueProps<Value>) => latestComponents.current.SingleValue(props),
+      NoOptionsMessage: (props: NoticeProps<Value>) => latestComponents.current.NoOptionsMessage(props),
+      MenuList: (props: MenuListProps<Value, true, GroupBase<Value>>) => latestComponents.current.MenuList(props),
+      LoadingMessage: (props: NoticeProps<Value>) => latestComponents.current.LoadingMessage(props),
+    }),
+    []
+  )
+
   const selectProps: SelectProps<Value, true, GroupBase<Value>> = {
     autoFocus,
     options,
     isMulti,
-    components: {
-      Option,
-      MultiValue,
-      SingleValue,
-      NoOptionsMessage,
-      MenuList,
-      LoadingMessage,
-    },
+    components: stableComponents,
     name: label,
     isLoading,
     inputId: label,
@@ -360,7 +369,7 @@ export function InputSelect({
             className={twMerge(
               'input__label',
               hasFocus ? 'text-xs' : 'translate-y-[7px] text-sm',
-              hasIcon && 'ml-8',
+              !!hasIcon && 'ml-8',
               disabled && '!text-neutral-subtle'
             )}
           >

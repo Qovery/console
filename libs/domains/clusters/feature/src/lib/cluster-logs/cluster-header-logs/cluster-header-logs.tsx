@@ -26,7 +26,7 @@ function getOriginLabel(origin?: OrganizationEventOrigin | null) {
 export interface ClusterHeaderLogsProps {
   cluster: Cluster
   clusterStatus: ClusterStatus
-  refScrollSection: RefObject<HTMLDivElement>
+  refScrollSection: RefObject<HTMLDivElement | null>
   data: ClusterLogs[]
   executionId?: string
   onBack?: () => void
