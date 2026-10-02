@@ -26,10 +26,10 @@ export function ProfileOperatorFooter({ organizationId, clusterId }: { organizat
   const trigger = (
     <button
       type="button"
-      aria-label={`Qovery operator: ${display?.label ?? (isError ? 'status unavailable' : 'loading')}`}
+      aria-label={`Qovery Operator: ${display?.label ?? (isError ? 'status unavailable' : 'loading')}`}
       className="flex w-full shrink-0 items-center gap-2 bg-background-secondary p-3 text-left text-sm font-medium text-neutral outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong"
     >
-      Qovery operator
+      Qovery Operator
       {display ? (
         <Icon iconName={display.icon.name} iconStyle="regular" className={`text-sm ${display.icon.className}`} />
       ) : isError ? (
@@ -42,7 +42,7 @@ export function ProfileOperatorFooter({ organizationId, clusterId }: { organizat
 
   if (isError) {
     return (
-      <Tooltip side="right" content="The Operator status could not be retrieved.">
+      <Tooltip side="right" content="The Operator status could not be retrieved">
         {trigger}
       </Tooltip>
     )

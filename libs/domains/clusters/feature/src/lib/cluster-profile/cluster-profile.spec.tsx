@@ -660,8 +660,8 @@ describe('ClusterProfileFeature', () => {
     it('shows empty states when nothing matches', () => {
       renderWithProviders(<ClusterProfileFeature search="CPUza" />)
 
-      expect(screen.getByText('No results found. Review your search or applied filters.')).toBeInTheDocument()
-      expect(screen.getByText('No settings found matching your search and filters.')).toBeInTheDocument()
+      expect(screen.getByText('No layers match your search')).toBeInTheDocument()
+      expect(screen.getByText('No settings match your search')).toBeInTheDocument()
       expect(screen.getByRole('heading', { name: 'Log infra' })).toBeInTheDocument()
       expect(screen.queryByRole('link')).not.toBeInTheDocument()
     })

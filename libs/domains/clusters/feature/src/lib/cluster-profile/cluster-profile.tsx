@@ -497,9 +497,7 @@ function ClusterProfileView({
                 <div className="p-4">
                   <EmptyState
                     icon="wave-pulse"
-                    title={
-                      <span className="font-normal leading-5">No settings found matching your search and filters.</span>
-                    }
+                    title={<span className="font-normal leading-5">No settings match your search</span>}
                     className="h-auto w-full p-8 shadow-sm"
                   />
                 </div>

@@ -267,7 +267,7 @@ describe('SelfManagedClusterCreationFlow', () => {
         },
       },
     })
-    expect(await screen.findByRole('heading', { name: 'Install Qovery operator' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Install Qovery Operator' })).toBeInTheDocument()
   })
 
   it('sends no Operator configuration when it is left untouched', async () => {
@@ -407,7 +407,7 @@ describe('SelfManagedClusterCreationFlow', () => {
 
     await goToOperatorStep(userEvent)
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-    await screen.findByRole('heading', { name: 'Install Qovery operator' })
+    await screen.findByRole('heading', { name: 'Install Qovery Operator' })
 
     expect(mockUseClusterOperatorBootstrap).toHaveBeenLastCalledWith({
       organizationId: 'org-123',

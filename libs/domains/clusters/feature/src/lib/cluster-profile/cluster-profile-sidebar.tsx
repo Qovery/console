@@ -179,12 +179,14 @@ export function ClusterProfileSidebar({
         <h2 className="flex h-8 shrink-0 items-center px-3 text-sm font-medium">Layers</h2>
         <nav aria-label="Layers" className="min-h-0 flex-1 overflow-y-auto">
           <ul>
-            {isLoading ? <li className="px-3 py-1 text-xs text-neutral-subtle">Loading layers...</li> : null}
-            {isError ? <li className="px-3 py-1 text-xs text-negative">Unable to load layers.</li> : null}
-            {showEmptyState ? (
-              <li className="px-3 py-1 text-ssm text-neutral-subtle">
-                No results found. Review your search or applied filters.
+            {isLoading ? <li className="px-3 py-1 text-xs text-neutral-subtle">Loading layers…</li> : null}
+            {isError ? (
+              <li className="px-3 py-1 text-xs text-negative">
+                Layers could not be loaded. Refresh the page to try again.
               </li>
+            ) : null}
+            {showEmptyState ? (
+              <li className="px-3 py-1 text-ssm text-neutral-subtle">No layers match your search</li>
             ) : null}
             {!isLoading && !isError
               ? layers.map((section) => (

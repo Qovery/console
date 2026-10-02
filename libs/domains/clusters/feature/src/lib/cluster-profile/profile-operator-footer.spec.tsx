@@ -47,7 +47,7 @@ describe('ProfileOperatorFooter', () => {
       clusterId: 'cluster-123',
       refetchInterval: 30_000,
     })
-    expect(screen.getByRole('button', { name: 'Qovery operator: Update available' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Qovery Operator: Update available' })).toBeInTheDocument()
   })
 
   it('tells when the Operator status cannot be retrieved', async () => {
@@ -56,9 +56,9 @@ describe('ProfileOperatorFooter', () => {
       <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
     )
 
-    await userEvent.hover(screen.getByRole('button', { name: 'Qovery operator: status unavailable' }))
+    await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: status unavailable' }))
 
-    expect((await screen.findAllByText('The Operator status could not be retrieved.'))[0]).toBeInTheDocument()
+    expect((await screen.findAllByText('The Operator status could not be retrieved'))[0]).toBeInTheDocument()
   })
 
   it('does not keep showing a stale status once a refresh fails', async () => {
@@ -67,9 +67,9 @@ describe('ProfileOperatorFooter', () => {
       <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
     )
 
-    await userEvent.hover(screen.getByRole('button', { name: 'Qovery operator: status unavailable' }))
+    await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: status unavailable' }))
 
-    expect((await screen.findAllByText('The Operator status could not be retrieved.'))[0]).toBeInTheDocument()
+    expect((await screen.findAllByText('The Operator status could not be retrieved'))[0]).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
   })
 
@@ -79,7 +79,7 @@ describe('ProfileOperatorFooter', () => {
       <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
     )
 
-    await userEvent.hover(screen.getByRole('button', { name: 'Qovery operator: Update available' }))
+    await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: Update available' }))
 
     const status = (await screen.findAllByRole('region', { name: 'Qovery Operator status' }))[0]
     expect(status).toHaveTextContent('Update available')
@@ -107,7 +107,7 @@ describe('ProfileOperatorFooter', () => {
       <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
     )
 
-    await userEvent.hover(screen.getByRole('button', { name: 'Qovery operator: Disconnected' }))
+    await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: Disconnected' }))
 
     expect((await screen.findAllByText('No recent heartbeat was received from the Operator.'))[0]).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()

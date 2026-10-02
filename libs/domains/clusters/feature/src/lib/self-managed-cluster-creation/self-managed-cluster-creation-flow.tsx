@@ -368,7 +368,7 @@ function InstallStep({
   return (
     <div className="flex flex-col gap-4 p-5">
       <div>
-        <h2 className="h4 text-neutral">Install Qovery operator</h2>
+        <h2 className="h4 text-neutral">Install Qovery Operator</h2>
       </div>
       {isBootstrapLoading ? (
         <div className="flex justify-center py-6">
@@ -434,7 +434,7 @@ function InstallStep({
         </Callout.Icon>
         <Callout.Text>
           Do not close this tab. The Operator will connect to Qovery shortly once its installation completes. You'll be
-          redirected to the cluster profile settings once the operator is installed.
+          redirected to the cluster profile settings once the Operator is installed.
         </Callout.Text>
       </Callout.Root>
       <p className="text-ssm text-neutral-subtle">
