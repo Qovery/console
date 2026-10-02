@@ -18,6 +18,9 @@ export async function getLatestEnvironmentDeploymentId(
   environmentId: string,
   deploymentId?: string | null
 ) {
+  const usableDeploymentId = getUsableEnvironmentExecutionId(deploymentId)
+  if (usableDeploymentId) return usableDeploymentId
+
   try {
     const deployments = await queryClient.fetchQuery({
       ...queries.environments.deploymentHistoryV2({ environmentId, pageSize: 100 }),
@@ -30,8 +33,8 @@ export async function getLatestEnvironmentDeploymentId(
 
     if (latestDeploymentId) return getUsableEnvironmentExecutionId(latestDeploymentId)
   } catch {
-    // Use the mutation response if deployment history is temporarily unavailable.
+    // Deployment history may be temporarily unavailable.
   }
 
-  return getUsableEnvironmentExecutionId(deploymentId)
+  return undefined
 }

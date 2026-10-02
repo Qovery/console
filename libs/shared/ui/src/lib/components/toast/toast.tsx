@@ -1,7 +1,7 @@
-import { type MouseEvent } from 'react'
+import { type MouseEvent, useState } from 'react'
 import { Toaster, toast as sonnerToast } from 'sonner'
 import { twMerge } from '@qovery/shared/util-js'
-import { type ToastStatus } from '../../utils/toast'
+import { type ToastActionCallback, type ToastStatus } from '../../utils/toast'
 import Button from '../button/button'
 import { Icon } from '../icon/icon'
 
@@ -9,13 +9,13 @@ export interface ToastProps {
   status: ToastStatus
   title?: string
   description?: string
-  callback?: () => void
+  callback?: ToastActionCallback
   actionLabel?: string
 }
 
 export interface ToastActionProps {
   label: string
-  onClick?: () => void
+  onClick?: ToastActionCallback
 }
 
 export interface CustomToastProps {
@@ -44,9 +44,17 @@ const statusIcon: Record<
 }
 
 export function CustomToast({ id, status, title, description, action }: CustomToastProps) {
-  const onActionClick = () => {
-    sonnerToast.dismiss(id)
-    action?.onClick?.()
+  const [isActionLoading, setIsActionLoading] = useState(false)
+
+  const onActionClick = async () => {
+    if (isActionLoading) return
+
+    setIsActionLoading(true)
+    try {
+      await action?.onClick?.()
+    } finally {
+      sonnerToast.dismiss(id)
+    }
   }
 
   return (
@@ -79,7 +87,16 @@ export function CustomToast({ id, status, title, description, action }: CustomTo
         </p>
         {description && <p className="mt-0.5 text-ssm text-neutral-subtle">{description}</p>}
         {action?.label && (
-          <Button type="button" size="sm" variant="surface" color="neutral" className="mt-2.5" onClick={onActionClick}>
+          <Button
+            type="button"
+            size="sm"
+            variant="surface"
+            color="neutral"
+            className="mt-2.5"
+            onClick={onActionClick}
+            loading={isActionLoading}
+            disabled={isActionLoading}
+          >
             {action.label}
           </Button>
         )}
