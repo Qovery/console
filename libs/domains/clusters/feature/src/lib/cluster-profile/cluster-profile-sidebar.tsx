@@ -36,7 +36,7 @@ function LayerIcon() {
 }
 
 export function ClusterProfileItemIcon() {
-  return <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="14" className="shrink-0" aria-hidden="true" />
+  return <Icon name={IconEnum.HELM_OFFICIAL} width="15" height="15" className="shrink-0" aria-hidden="true" />
 }
 
 function LayerSectionRow({
