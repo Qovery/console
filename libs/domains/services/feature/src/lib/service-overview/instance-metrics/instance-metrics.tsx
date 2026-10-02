@@ -128,7 +128,7 @@ function InstanceMetricsTable({
         } else if (stateA !== 'WARNING' && stateB === 'WARNING') {
           return 1
         } else {
-          return stateA.localeCompare(stateB)
+          return (stateA ?? '').localeCompare(stateB ?? '')
         }
       },
     })
