@@ -215,7 +215,9 @@ function OperatorStep({
   isCreating,
   canContinue,
   isTemplatesError,
+  isPreviewError,
   onRetryTemplates,
+  onRetryPreview,
   onChange,
   onBack,
   onCancel,
@@ -227,7 +229,9 @@ function OperatorStep({
   isCreating: boolean
   canContinue: boolean
   isTemplatesError: boolean
+  isPreviewError: boolean
   onRetryTemplates: () => void
+  onRetryPreview: () => void
   onChange: (values: OperatorValues) => void
   onBack: () => void
   onCancel: () => void
@@ -236,6 +240,11 @@ function OperatorStep({
   const fields = getOperatorFields(component, preview)
   const violations = preview?.violations ?? []
   const unmappedViolations = getUnmappedViolations(violations, fields, values, preview?.requirements ?? [])
+  const loadingError = isTemplatesError
+    ? { message: 'The Operator configuration could not be loaded.', onRetry: onRetryTemplates }
+    : isPreviewError
+      ? { message: 'The Operator configuration could not be checked.', onRetry: onRetryPreview }
+      : undefined
 
   return (
     <form
@@ -272,20 +281,20 @@ function OperatorStep({
           </>
         }
       >
-        {isTemplatesError ? (
+        {loadingError ? (
           <Callout.Root color="red" className="mx-5">
             <Callout.Icon>
               <Icon iconName="circle-exclamation" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
-              <Callout.TextDescription>The Operator configuration could not be loaded.</Callout.TextDescription>
+              <Callout.TextDescription>{loadingError.message}</Callout.TextDescription>
               <Button
                 type="button"
                 variant="outline"
                 color="neutral"
                 size="sm"
                 className="mt-2"
-                onClick={onRetryTemplates}
+                onClick={loadingError.onRetry}
               >
                 Try again
               </Button>
@@ -480,6 +489,7 @@ export function SelfManagedClusterCreationFlow({
     isPaused: isOperatorPreviewPaused,
     isPreviousData: isOperatorPreviewOutdated,
     isError: isOperatorPreviewError,
+    refetch: refetchOperatorPreview,
   } = usePlatformTemplateComponentConfiguration({
     organizationId,
     templateKey: template?.key,
@@ -559,7 +569,9 @@ export function SelfManagedClusterCreationFlow({
         // An empty template list lets q-core pick the default; a failed request must not create the cluster blindly.
         canContinue={isTemplatesSuccess && isOperatorConfigurationValid}
         isTemplatesError={isTemplatesError}
+        isPreviewError={isOperatorPreviewError}
         onRetryTemplates={() => refetchTemplates()}
+        onRetryPreview={() => refetchOperatorPreview()}
         onChange={setOperatorValues}
         onBack={() => goToStep('general')}
         onCancel={onClose}

@@ -328,6 +328,28 @@ describe('SelfManagedClusterCreationFlow', () => {
     expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
   })
 
+  it('lets a failed Operator configuration check be retried', async () => {
+    const refetchPreview = jest.fn()
+    mockUsePlatformTemplateComponentConfiguration.mockReturnValue({
+      data: undefined,
+      isFetching: false,
+      isError: true,
+      refetch: refetchPreview,
+    })
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+
+    expect(screen.getByText('The Operator configuration could not be checked.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
+
+    expect(refetchPreview).toHaveBeenCalled()
+  })
+
   it('does not create the cluster when the platform templates cannot be loaded', async () => {
     const refetchTemplates = jest.fn()
     mockUsePlatformTemplates.mockReturnValue({
