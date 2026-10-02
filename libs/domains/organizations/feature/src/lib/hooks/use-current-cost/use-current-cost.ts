@@ -11,7 +11,8 @@ export interface UseCurrentCostProps {
 export function useCurrentCost({ organizationId, enabled = true, suspense = false }: UseCurrentCostProps) {
   const queryClient = useQueryClient()
   const currentCostQuery = queries.organizations.currentCost({ organizationId })
-  // `retryOnMount` only accepts a boolean, so it is resolved from the cached error when the observer mounts
+  // `retryOnMount` only accepts a boolean, so it is resolved from the cached error when the observer mounts.
+  // It only applies when there is no cached data: `refetchOnMount` covers a 403 following a successful load.
   const isForbidden = isForbiddenError(queryClient.getQueryState(currentCostQuery.queryKey)?.error)
 
   return useQuery({
@@ -22,6 +23,7 @@ export function useCurrentCost({ organizationId, enabled = true, suspense = fals
     // and this query is mounted on every organization page (free trial banner), so never refetch it.
     retry: (failureCount, error) => !isForbiddenError(error) && failureCount < 2,
     retryOnMount: !isForbidden,
+    refetchOnMount: (query) => !isForbiddenError(query.state.error),
     refetchOnWindowFocus: (query) => !isForbiddenError(query.state.error),
     refetchOnReconnect: (query) => !isForbiddenError(query.state.error),
   })

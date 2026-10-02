@@ -48,6 +48,29 @@ describe('useCurrentCost', () => {
     expect(mockAxiosRequest).toHaveBeenCalledTimes(1)
   })
 
+  it('does not refetch on remount when a refetch is forbidden after a successful load', async () => {
+    mockAxiosRequest.mockResolvedValueOnce({ data: { plan: 'TEAM' } })
+
+    const { result, unmount } = renderHook(() => useCurrentCost({ organizationId: 'org-1' }), { wrapper })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+    mockAxiosRequest.mockRejectedValue(serializedErrorWithStatus(403))
+    act(() => {
+      result.current.refetch()
+    })
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(mockAxiosRequest).toHaveBeenCalledTimes(2)
+
+    unmount()
+    const { result: remounted } = renderHook(() => useCurrentCost({ organizationId: 'org-1' }), { wrapper })
+
+    expect(remounted.current.data).toEqual({ plan: 'TEAM' })
+    expect(remounted.current.isFetching).toBe(false)
+    expect(mockAxiosRequest).toHaveBeenCalledTimes(2)
+  })
+
   it('retries then refetches other errors on window focus', async () => {
     mockAxiosRequest.mockRejectedValue(serializedErrorWithStatus(500))
     queryClient = new QueryClient({ defaultOptions: { queries: { retryDelay: 0 } } })
