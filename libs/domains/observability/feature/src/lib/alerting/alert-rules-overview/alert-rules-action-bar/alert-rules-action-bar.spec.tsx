@@ -88,7 +88,14 @@ describe('AlertRulesActionBar', () => {
   })
 
   it('should call openModal when clone button is clicked', async () => {
-    const selectedRules = [{ id: 'rule-1', name: 'Rule 1', source: 'MANAGED' }] as unknown as AlertRuleResponse[]
+    const selectedRules = [
+      {
+        id: 'rule-1',
+        name: 'Rule 1',
+        source: 'MANAGED',
+        target: { target_id: 'service-1', target_type: 'APPLICATION' },
+      },
+    ] as unknown as AlertRuleResponse[]
 
     const { userEvent } = renderWithProviders(
       <AlertRulesActionBar {...defaultProps} selectedAlertRules={selectedRules} />

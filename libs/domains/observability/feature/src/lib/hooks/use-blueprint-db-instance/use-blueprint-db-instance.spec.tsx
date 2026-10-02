@@ -49,7 +49,7 @@ async function flushQueries() {
 describe('useBlueprintDbInstance', () => {
   beforeEach(() => {
     jest.useFakeTimers()
-    jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
   afterEach(() => {
@@ -95,8 +95,9 @@ describe('useBlueprintDbInstance', () => {
     expect(mockFetchVariables).toHaveBeenCalledTimes(2)
 
     await act(async () => {
-      await jest.advanceTimersByTimeAsync(15_000)
+      await jest.advanceTimersByTimeAsync(90_000)
     })
+    await flushQueries()
     expect(result.current.dbInstance).toBe('my-rds-instance')
     expect(mockFetchVariables).toHaveBeenCalledTimes(3)
 

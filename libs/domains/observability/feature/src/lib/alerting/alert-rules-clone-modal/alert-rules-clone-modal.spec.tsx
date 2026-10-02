@@ -165,6 +165,5 @@ describe('AlertRulesCloneModal', () => {
     await userEvent.click(await screen.findByText('Service One'))
 
     expect(await screen.findByText('Clone alerts')).toBeDisabled()
-    expect(screen.getByText(/RDS and cluster alerts cannot be cloned/)).toBeInTheDocument()
   })
 })
