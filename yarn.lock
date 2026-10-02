@@ -6428,7 +6428,7 @@ __metadata:
     prettier: 3.2.5
     prettier-plugin-tailwindcss: 0.5.14
     pretty-quick: 4.0.0
-    qovery-typescript-axios: 1.1.996
+    qovery-typescript-axios: 1.1.999
     qovery-ws-typescript-axios: 0.1.666
     react: 18.3.1
     react-country-flag: 3.0.2
@@ -6474,6 +6474,7 @@ __metadata:
     webpack-cli: 5.1.4
     webpack-dev-server: 5.2.2
     webpack-merge: 5.10.0
+    yaml: 2.8.1
     zod: 4.3.6
   languageName: unknown
   linkType: soft
@@ -25954,12 +25955,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:1.1.996":
-  version: 1.1.996
-  resolution: "qovery-typescript-axios@npm:1.1.996"
+"qovery-typescript-axios@npm:1.1.999":
+  version: 1.1.999
+  resolution: "qovery-typescript-axios@npm:1.1.999"
   dependencies:
     axios: 1.18.1
-  checksum: 8178819d32c797ae41d453ac2a8b66e1059b1a57e275c3f624c2b536fd92126589246ce4bff672c7ca49ea483d7c6f86821b4a9f8c1a7cbd465ddfeca11cbb33
+  checksum: 64ac42547593f7216ae3c6ee2730b90738b85a1964916f5374d284513d6a64e628e50b1d6b7860c4f753e86e19ad9773e019c66b3152a005ad8f91322d868f91
   languageName: node
   linkType: hard
 
@@ -31767,19 +31768,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^1.10.0, yaml@npm:^1.10.2, yaml@npm:^1.7.2":
-  version: 1.10.2
-  resolution: "yaml@npm:1.10.2"
-  checksum: ce4ada136e8a78a0b08dc10b4b900936912d15de59905b2bf415b4d33c63df1d555d23acb2a41b23cf9fb5da41c256441afca3d6509de7247daa062fd2c5ea5f
-  languageName: node
-  linkType: hard
-
-"yaml@npm:^2.1.1, yaml@npm:^2.1.3, yaml@npm:^2.6.0":
+"yaml@npm:2.8.1, yaml@npm:^2.1.1, yaml@npm:^2.1.3, yaml@npm:^2.6.0":
   version: 2.8.1
   resolution: "yaml@npm:2.8.1"
   bin:
     yaml: bin.mjs
   checksum: 35b46150d48bc1da2fd5b1521a48a4fa36d68deaabe496f3c3fa9646d5796b6b974f3930a02c4b5aee6c85c860d7d7f79009416724465e835f40b87898c36de4
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^1.10.0, yaml@npm:^1.10.2, yaml@npm:^1.7.2":
+  version: 1.10.2
+  resolution: "yaml@npm:1.10.2"
+  checksum: ce4ada136e8a78a0b08dc10b4b900936912d15de59905b2bf415b4d33c63df1d555d23acb2a41b23cf9fb5da41c256441afca3d6509de7247daa062fd2c5ea5f
   languageName: node
   linkType: hard
 

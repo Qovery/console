@@ -14,6 +14,7 @@ export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
   cluster?: Cluster
+  requiresEcrAccess?: boolean
 }
 
 export const filterCredentialsByCloudProvider = (
@@ -27,7 +28,15 @@ export const filterCredentialsByCloudProvider = (
   return credentials.filter((credential) => credential.object_type === 'EKS_ANYWHERE_VSPHERE')
 }
 
-export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }: ClusterCredentialsSettingsProps) {
+export const filterEcrCompatibleCredentials = (credentials: ClusterCredentials[]) =>
+  credentials.filter((credential) => credential.object_type === 'AWS' || credential.object_type === 'AWS_ROLE')
+
+export function ClusterCredentialsSettings({
+  cloudProvider,
+  isSetting,
+  cluster,
+  requiresEcrAccess,
+}: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control } = useFormContext()
   const { openModal, closeModal } = useModal()
@@ -40,9 +49,11 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
     organizationId,
     cloudProvider: queryCloudProvider,
   })
-  const sortedCredentials = [...filterCredentialsByCloudProvider(credentials, cloudProvider)].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  )
+  const sortedCredentials = [
+    ...(requiresEcrAccess
+      ? filterEcrCompatibleCredentials(credentials)
+      : filterCredentialsByCloudProvider(credentials, cloudProvider)),
+  ].sort((a, b) => a.name.localeCompare(b.name))
 
   const openCredentialsModal = useCallback(
     (id?: string, onChange?: (e: string | string[]) => void) => {
@@ -113,6 +124,11 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
                 onChange={field.onChange}
                 value={field.value}
                 error={error?.message}
+                hint={
+                  requiresEcrAccess
+                    ? 'The credential needs ECR permissions: Qovery uses it to create and access the ECR registry of this cluster.'
+                    : undefined
+                }
                 isSearchable
                 menuListButton={{
                   title: 'Select credential',

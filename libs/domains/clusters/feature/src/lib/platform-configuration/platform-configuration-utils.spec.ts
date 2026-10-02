@@ -1,0 +1,409 @@
+import {
+  type ClusterPlatformConfigurationResponse,
+  type FieldSchemaResponse,
+  type PlatformTemplateSummaryResponse,
+} from 'qovery-typescript-axios'
+import {
+  applyPlatformConfigurationDefaults,
+  clearRedactedValues,
+  createPlatformConfigurationDraft,
+  filterPlatformLayerSelections,
+  getCurrentPlatformConfigurationPreview,
+  getMissingResolvedValueViolations,
+  getPlatformComponentEditor,
+  getRedactedComponentKeys,
+  getRedactedFieldKeys,
+  isPlatformConfigurationReady,
+  omitEmptyValues,
+  toCatalogVariableField,
+  toPlatformCloudVendor,
+  toPlatformClusterMode,
+  toPlatformConfigurationValue,
+  updateComponentValue,
+} from './platform-configuration-utils'
+
+const field: FieldSchemaResponse = {
+  key: 'retention',
+  type: 'number',
+  required: true,
+  defaultValue: '12',
+  label: 'Retention',
+  sensitive: false,
+  constraints: {},
+}
+
+describe('platform configuration utils', () => {
+  it('opens the bootstrap component through the same editor as layer components', () => {
+    const bootstrapComponent = { key: 'bootstrap-controller', kind: 'HELM' as const, fields: [field] }
+    const template: PlatformTemplateSummaryResponse = {
+      key: 'generic',
+      version: '1',
+      status: 'PUBLISHED',
+      layers: [],
+      bootstrapComponent,
+    }
+    const editor = getPlatformComponentEditor(template, bootstrapComponent.key)
+    expect(editor.configurationComponent).toEqual(bootstrapComponent)
+    expect(editor.sections).toHaveLength(1)
+    expect(editor.isFieldVisible?.(field)).toBe(true)
+    expect(getPlatformComponentEditor({ ...template, bootstrapComponent: null }).component).toBeUndefined()
+  })
+  it('drops retired layer selections without losing enabled or disabled choices', () => {
+    const selections = { karpenter: true, 'dns-certificates': false, 'karpenter-custom-configuration': true }
+    expect(filterPlatformLayerSelections([{ key: 'karpenter' }, { key: 'dns-certificates' }], selections)).toEqual({
+      karpenter: true,
+      'dns-certificates': false,
+    })
+    expect(selections).toEqual({ karpenter: true, 'dns-certificates': false, 'karpenter-custom-configuration': true })
+  })
+
+  it('does not invent layer selections that were not in the draft', () => {
+    expect(filterPlatformLayerSelections([{ key: 'karpenter' }], {})).toEqual({})
+  })
+
+  it('maps cluster API context to the platform catalog context', () => {
+    expect(toPlatformClusterMode('MANAGED')).toBe('QOVERY_MANAGED')
+    expect(toPlatformClusterMode('SELF_MANAGED')).toBe('CUSTOMER_MANAGED')
+    expect(toPlatformClusterMode('PARTIALLY_MANAGED')).toBeUndefined()
+    expect(toPlatformCloudVendor('GCP')).toBe('GCP')
+    expect(toPlatformCloudVendor('ON_PREMISE')).toBe('UNKNOWN')
+  })
+
+  it('converts number inputs at the API boundary without losing their type', () => {
+    expect(toPlatformConfigurationValue(field, '24')).toBe(24)
+    // '' marks a field the user explicitly cleared so defaults are not resurrected.
+    expect(toPlatformConfigurationValue(field, '')).toBe('')
+  })
+
+  it('omits cleared markers from API payloads', () => {
+    expect(omitEmptyValues({ retention: 24, bucket: '', region: undefined, enabled: false })).toEqual({
+      retention: 24,
+      enabled: false,
+    })
+  })
+
+  it('maps the full field vocabulary to the catalog variable contract', () => {
+    expect(
+      toCatalogVariableField({
+        ...field,
+        description: 'Retention period in weeks.',
+        constraints: { allowedValues: ['12', '24'], pattern: '^\\d+$', minLength: 1, maxLength: 3, min: 1, max: 104 },
+      })
+    ).toEqual({
+      key: 'retention',
+      label: 'Retention',
+      type: 'number',
+      description: 'Retention period in weeks.',
+      required: true,
+      sensitive: false,
+      defaultValue: '12',
+      allowedValues: ['12', '24'],
+      pattern: '^\\d+$',
+      minLength: 1,
+      maxLength: 3,
+      min: 1,
+      max: 104,
+    })
+  })
+
+  it('applies catalog defaults before resolving a component configuration', () => {
+    expect(
+      applyPlatformConfigurationDefaults(
+        [
+          field,
+          { ...field, key: 'highAvailability', type: 'bool', defaultValue: 'false' },
+          { ...field, key: 'storage', type: 'string', defaultValue: 'pvc' },
+        ],
+        { retention: 24 }
+      )
+    ).toEqual({
+      retention: 24,
+      highAvailability: false,
+      storage: 'pvc',
+    })
+  })
+
+  it('keeps values from inactive fields and other components when one value changes', () => {
+    const values = {
+      logs: { storage: 'object', inactiveEndpoint: 'https://example.com' },
+      metrics: { retention: '7d' },
+    }
+
+    expect(updateComponentValue(values, 'logs', 'storage', 'persistent-volume')).toEqual({
+      logs: { storage: 'persistent-volume', inactiveEndpoint: 'https://example.com' },
+      metrics: { retention: '7d' },
+    })
+  })
+
+  it('copies an existing configuration into a new draft', () => {
+    const template = {
+      key: 'default',
+      version: '1.0.0',
+      status: 'PUBLISHED',
+      layers: [],
+    } satisfies PlatformTemplateSummaryResponse
+    const configuration = {
+      clusterId: 'cluster-id',
+      organizationId: 'organization-id',
+      platform: {
+        templateKey: 'default',
+        templateVersion: '1.0.0',
+        layerSelections: { observability: true },
+        managedConfig: { logs: { storage: 'object' } },
+      },
+      clusterInputs: { logs: { endpoint: 'https://example.com' } },
+      layers: [],
+    } satisfies ClusterPlatformConfigurationResponse
+
+    expect(createPlatformConfigurationDraft(template, configuration)).toEqual({
+      platform: {
+        templateKey: 'default',
+        templateVersion: '1.0.0',
+        layerSelections: { observability: true },
+        managedConfig: { logs: { storage: 'object' } },
+      },
+      clusterInputs: { logs: { endpoint: 'https://example.com' } },
+    })
+  })
+
+  it('hydrates optional selections from the resolved configuration status', () => {
+    const template = {
+      key: 'default',
+      version: '1.0.0',
+      status: 'PUBLISHED',
+      layers: [
+        {
+          key: 'logs',
+          mandatory: false,
+          enabledByDefault: false,
+          modes: ['CUSTOMER_MANAGED'],
+          componentKeys: [],
+          components: [],
+        },
+      ],
+    } satisfies PlatformTemplateSummaryResponse
+    const configuration = {
+      clusterId: 'cluster-id',
+      organizationId: 'organization-id',
+      platform: {
+        templateKey: 'previous-template',
+        templateVersion: '0.1.0',
+        layerSelections: {},
+        managedConfig: {},
+      },
+      clusterInputs: {},
+      layers: [
+        {
+          key: 'logs',
+          status: 'ENABLED',
+          reason: 'optional layer enabled',
+          componentKeys: [],
+        },
+      ],
+    } satisfies ClusterPlatformConfigurationResponse
+
+    expect(createPlatformConfigurationDraft(template, configuration).platform.layerSelections).toEqual({ logs: true })
+  })
+
+  it('seeds optional layer defaults when creating a configuration draft', () => {
+    const template = {
+      key: 'default',
+      version: '1.0.0',
+      status: 'PUBLISHED',
+      layers: [
+        {
+          key: 'logs',
+          mandatory: false,
+          enabledByDefault: true,
+          modes: ['CUSTOMER_MANAGED'],
+          componentKeys: [],
+          components: [],
+        },
+      ],
+    } satisfies PlatformTemplateSummaryResponse
+
+    expect(createPlatformConfigurationDraft(template, null).platform.layerSelections).toEqual({ logs: true })
+  })
+
+  it('normalizes a configuration without layer selections or managed config to empty objects', () => {
+    const template = {
+      key: 'default',
+      version: '1.0.0',
+      status: 'PUBLISHED',
+      layers: [],
+    } satisfies PlatformTemplateSummaryResponse
+    const configuration = {
+      clusterId: 'cluster-id',
+      organizationId: 'organization-id',
+      platform: { templateKey: 'default', templateVersion: '1.0.0' },
+      clusterInputs: {},
+      layers: [],
+    } satisfies ClusterPlatformConfigurationResponse
+
+    expect(createPlatformConfigurationDraft(template, configuration)).toEqual({
+      platform: { templateKey: 'default', templateVersion: '1.0.0', layerSelections: {}, managedConfig: {} },
+      clusterInputs: {},
+    })
+  })
+
+  it('keeps redacted values in the draft and detects them per component', () => {
+    const template = {
+      key: 'default',
+      version: '1.0.0',
+      status: 'PUBLISHED',
+      layers: [],
+    } satisfies PlatformTemplateSummaryResponse
+    const configuration = {
+      clusterId: 'cluster-id',
+      organizationId: 'organization-id',
+      platform: {
+        templateKey: 'default',
+        templateVersion: '1.0.0',
+        managedConfig: {
+          loki: { storage: 's3', accessKey: '<redacted>' },
+          grafana: { adminPassword: '<redacted>' },
+          tempo: { retention: 12 },
+        },
+      },
+      clusterInputs: {},
+      layers: [],
+    } satisfies ClusterPlatformConfigurationResponse
+
+    const { managedConfig } = createPlatformConfigurationDraft(template, configuration).platform
+
+    expect(managedConfig).toEqual(configuration.platform.managedConfig)
+    expect(getRedactedComponentKeys(managedConfig)).toEqual(['loki', 'grafana'])
+    expect(getRedactedFieldKeys(managedConfig.loki)).toEqual(['accessKey'])
+    expect(getRedactedFieldKeys(managedConfig.tempo)).toEqual([])
+  })
+
+  it('shows redacted values as empty fields', () => {
+    expect(clearRedactedValues({ storage: 's3', accessKey: '<redacted>' })).toEqual({ storage: 's3', accessKey: '' })
+  })
+
+  it('only accepts a preview for the current settled component request', () => {
+    const preview = {
+      clusterId: 'cluster-id',
+      componentKey: 'loki',
+      fields: [],
+      requirements: [],
+      componentBindings: [],
+      violations: [],
+      resolvedValues: {},
+    }
+
+    expect(getCurrentPlatformConfigurationPreview(preview, 'loki', false)).toBe(preview)
+    expect(getCurrentPlatformConfigurationPreview(preview, 'loki', true)).toBeUndefined()
+    expect(getCurrentPlatformConfigurationPreview(preview, 'prometheus', false)).toBeUndefined()
+  })
+
+  it('reports each read-only field of a preview without resolved value', () => {
+    const readOnly = { ...field, key: 'cpu', label: 'CPU', required: false, defaultValue: undefined, readOnly: true }
+    const fields = [field, readOnly, { ...readOnly, key: 'limit', label: 'Limit' }, { ...readOnly, key: 'size' }]
+
+    expect(getMissingResolvedValueViolations({ fields, resolvedValues: { limit: null, size: '2' } })).toEqual([
+      {
+        code: 'MISSING_RESOLVED_VALUE',
+        fieldPath: 'cpu',
+        message: 'CPU has no resolved value. Refresh the page and try again.',
+      },
+    ])
+    expect(getMissingResolvedValueViolations({ fields: [field], resolvedValues: {} })).toEqual([])
+    expect(getMissingResolvedValueViolations(undefined)).toEqual([])
+  })
+
+  it('is ready only when requirements are ready and there are no violations', () => {
+    expect(
+      isPlatformConfigurationReady(
+        [],
+        [
+          {
+            key: 'endpoint',
+            type: 'string',
+            scope: 'CLUSTER',
+            label: 'Endpoint',
+            required: true,
+            sensitive: false,
+            constraints: {},
+            status: 'READY',
+          },
+        ]
+      )
+    ).toBe(true)
+
+    expect(
+      isPlatformConfigurationReady(
+        [],
+        [
+          {
+            key: 'endpoint',
+            type: 'string',
+            scope: 'CLUSTER',
+            label: 'Endpoint',
+            required: true,
+            sensitive: false,
+            constraints: {},
+            status: 'MISSING',
+          },
+        ]
+      )
+    ).toBe(false)
+  })
+})
+
+describe('catalog-declared configuration sections', () => {
+  const source = { key: 'storage-settings', kind: 'HELM' as const, fields: [field, { ...field, key: 'size' }] }
+  const destination = {
+    key: 'storage-controller',
+    kind: 'HELM' as const,
+    fields: [{ ...field, key: 'replicas' }],
+    configurationSections: [{ sourceComponentKey: source.key, fieldKeys: ['retention'] }],
+  }
+  const template: PlatformTemplateSummaryResponse = {
+    key: 'generic',
+    version: '1',
+    status: 'PUBLISHED',
+    layers: [
+      {
+        key: 'storage',
+        mandatory: false,
+        enabledByDefault: false,
+        modes: ['CUSTOMER_MANAGED'],
+        components: [source, destination],
+      },
+    ],
+  }
+
+  it('selects the declared owner without product names or YAML formats', () => {
+    const editor = getPlatformComponentEditor(template, destination.key, source.key)
+    expect(editor.component).toEqual(destination)
+    expect(editor.configurationComponent).toEqual(source)
+    expect(source.fields.filter(editor.isFieldVisible)).toEqual([field])
+  })
+
+  it('retains native configuration alongside external sections', () => {
+    const editor = getPlatformComponentEditor(template, destination.key)
+    expect(editor.configurationComponent).toEqual(destination)
+    expect(editor.sections.map((section) => section.configurationComponent.key)).toEqual([destination.key, source.key])
+  })
+
+  it('hides the moved fields only from their native editor', () => {
+    const editor = getPlatformComponentEditor(template, source.key)
+    expect(source.fields.filter(editor.isFieldVisible).map((field) => field.key)).toEqual(['size'])
+  })
+
+  it('does not move fields in catalogs without presentation metadata', () => {
+    const oldTemplate = {
+      ...template,
+      layers: [{ ...template.layers[0], components: [source, { ...destination, configurationSections: undefined }] }],
+    }
+    const editor = getPlatformComponentEditor(oldTemplate, source.key)
+    expect(source.fields.filter(editor.isFieldVisible)).toEqual(source.fields)
+    expect(getPlatformComponentEditor(oldTemplate, destination.key).configurationComponent?.key).toBe(destination.key)
+  })
+
+  it('ignores a missing owner without breaking the native editor', () => {
+    const invalid = { ...template, layers: [{ ...template.layers[0], components: [destination] }] }
+    expect(getPlatformComponentEditor(invalid, destination.key).configurationComponent).toEqual(destination)
+  })
+})

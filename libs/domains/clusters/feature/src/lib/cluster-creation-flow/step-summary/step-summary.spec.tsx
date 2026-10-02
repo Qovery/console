@@ -1,6 +1,7 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   ClusterContainerCreateContext,
@@ -12,9 +13,12 @@ import StepSummary, { type StepSummaryProps } from './step-summary'
 const mockSetCurrentStep = jest.fn()
 const mockNavigate = jest.fn()
 const mockCreateCluster = jest.fn()
+const mockCreateSelfManagedCluster = jest.fn()
 const mockEditCloudProviderInfo = jest.fn()
 const mockEditClusterKubeconfig = jest.fn()
 const mockDeployCluster = jest.fn()
+const mockUpdatePlatformConfiguration = jest.fn()
+const mockAttachClusterOperator = jest.fn()
 
 jest.mock('posthog-js/react', () => ({
   useFeatureFlagEnabled: jest.fn(() => true),
@@ -55,6 +59,13 @@ jest.mock('../../hooks/use-create-cluster/use-create-cluster', () => ({
   }),
 }))
 
+jest.mock('../../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster', () => ({
+  useCreateSelfManagedCluster: () => ({
+    mutateAsync: mockCreateSelfManagedCluster,
+    isLoading: false,
+  }),
+}))
+
 jest.mock('../../hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info', () => ({
   useEditCloudProviderInfo: () => ({
     mutateAsync: mockEditCloudProviderInfo,
@@ -70,6 +81,20 @@ jest.mock('../../hooks/use-edit-cluster-kubeconfig/use-edit-cluster-kubeconfig',
 jest.mock('../../hooks/use-deploy-cluster/use-deploy-cluster', () => ({
   useDeployCluster: () => ({
     mutateAsync: mockDeployCluster,
+    isLoading: false,
+  }),
+}))
+
+jest.mock('../../platform-configuration/hooks/use-update-cluster-platform-configuration', () => ({
+  useUpdateClusterPlatformConfiguration: () => ({
+    mutateAsync: mockUpdatePlatformConfiguration,
+    isLoading: false,
+  }),
+}))
+
+jest.mock('../../platform-configuration/hooks/use-cluster-operator', () => ({
+  useAttachClusterOperator: () => ({
+    mutateAsync: mockAttachClusterOperator,
     isLoading: false,
   }),
 }))
@@ -100,6 +125,8 @@ describe('StepSummary', () => {
     }
     mockContextValue.kubeconfigData = undefined
     mockContextValue.resourcesData = defaultResourcesData
+    mockContextValue.platformConfigurationData = undefined
+    mockContextValue.isEngineV2SelfManaged = false
     useCloudProviderInstanceTypesMockSpy.mockReturnValue({
       data: [],
     })
@@ -149,6 +176,142 @@ describe('StepSummary', () => {
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith({ to: '/organization/org-123/clusters' })
     })
+  })
+
+  it('should create an Engine v2 self-managed AWS cluster in one call and let Qovery choose its template', async () => {
+    mockContextValue.generalData = {
+      name: 'self-managed-cluster',
+      description: 'description',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'eu-west-3',
+      installation_type: 'SELF_MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    } as ClusterGeneralData
+    mockContextValue.isEngineV2SelfManaged = true
+    mockContextValue.platformConfigurationData = undefined
+    mockCreateSelfManagedCluster.mockResolvedValue({ id: 'cluster-123' })
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+    await userEvent.click(screen.getByTestId('button-create-deploy'))
+
+    await waitFor(() => {
+      expect(mockCreateSelfManagedCluster).toHaveBeenCalledWith({
+        organizationId: 'org-123',
+        selfManagedClusterRequest: {
+          name: 'self-managed-cluster',
+          production: false,
+          provider: 'AWS',
+          region: 'eu-west-3',
+          credentials: { id: 'cred-id' },
+          platform: {},
+        },
+      })
+      expect(mockNavigate).toHaveBeenCalledWith({
+        to: '/organization/$organizationId/cluster/$clusterId/overview',
+        params: { organizationId: 'org-123', clusterId: 'cluster-123' },
+        search: { 'show-self-managed-guide': true },
+      })
+    })
+    expect(mockCreateCluster).not.toHaveBeenCalled()
+    expect(mockEditCloudProviderInfo).not.toHaveBeenCalled()
+    expect(mockUpdatePlatformConfiguration).not.toHaveBeenCalled()
+    expect(mockAttachClusterOperator).not.toHaveBeenCalled()
+  })
+
+  it('should stay on the summary when the Engine v2 self-managed AWS creation fails', async () => {
+    mockContextValue.generalData = {
+      name: 'self-managed-cluster',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'eu-west-3',
+      installation_type: 'SELF_MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.isEngineV2SelfManaged = true
+    mockContextValue.platformConfigurationData = undefined
+    mockCreateSelfManagedCluster.mockRejectedValue(new Error('A cluster with this name already exists'))
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+    await userEvent.click(screen.getByTestId('button-create-deploy'))
+
+    await waitFor(() => expect(mockCreateSelfManagedCluster).toHaveBeenCalledTimes(1))
+    expect(mockNavigate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ to: '/organization/$organizationId/cluster/$clusterId/overview' })
+    )
+    expect(mockCreateCluster).not.toHaveBeenCalled()
+    expect(mockEditCloudProviderInfo).not.toHaveBeenCalled()
+    expect(mockUpdatePlatformConfiguration).not.toHaveBeenCalled()
+    expect(mockAttachClusterOperator).not.toHaveBeenCalled()
+  })
+
+  it('should create, configure and attach an Engine v2 self-managed cluster on another provider', async () => {
+    mockContextValue.generalData = {
+      name: 'self-managed-cluster',
+      description: 'description',
+      cloud_provider: CloudProviderEnum.GCP,
+      region: 'europe-west1',
+      installation_type: 'SELF_MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.isEngineV2SelfManaged = true
+    mockContextValue.platformConfigurationData = {
+      platform: {
+        templateKey: 'qovery-cluster-v0',
+        templateVersion: '0.1.0',
+        layerSelections: { logs: true },
+        managedConfig: {},
+      },
+      clusterInputs: {},
+    }
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+    await userEvent.click(screen.getByTestId('button-create-deploy'))
+
+    await waitFor(() => {
+      expect(mockCreateCluster).toHaveBeenCalledWith({
+        organizationId: 'org-123',
+        clusterRequest: expect.objectContaining({
+          kubernetes: 'SELF_MANAGED',
+          cloud_provider_credentials: {
+            cloud_provider: CloudProviderEnum.GCP,
+            credentials: { id: 'cred-id', name: 'cred-name' },
+            region: 'europe-west1',
+          },
+        }),
+      })
+      expect(mockEditCloudProviderInfo).toHaveBeenCalledWith({
+        organizationId: 'org-123',
+        clusterId: 'cluster-123',
+        cloudProviderInfoRequest: {
+          cloud_provider: CloudProviderEnum.GCP,
+          credentials: { id: 'cred-id', name: 'cred-name' },
+          region: 'europe-west1',
+        },
+      })
+      expect(mockUpdatePlatformConfiguration).toHaveBeenCalledWith({
+        clusterId: 'cluster-123',
+        request: mockContextValue.platformConfigurationData,
+      })
+      expect(mockAttachClusterOperator).toHaveBeenCalledWith({
+        organizationId: 'org-123',
+        clusterId: 'cluster-123',
+      })
+      expect(mockNavigate).toHaveBeenCalledWith({
+        to: '/organization/$organizationId/cluster/$clusterId/overview',
+        params: { organizationId: 'org-123', clusterId: 'cluster-123' },
+        search: { 'show-self-managed-guide': true },
+      })
+    })
+    expect(mockCreateSelfManagedCluster).not.toHaveBeenCalled()
+    expect(mockUpdatePlatformConfiguration.mock.invocationCallOrder[0]).toBeLessThan(
+      mockAttachClusterOperator.mock.invocationCallOrder[0]
+    )
   })
 
   it('should send GCP NAT_GATEWAY using nat_gateway_type format on create', async () => {

@@ -85,6 +85,26 @@ describe('steps', () => {
     expect(result.map((s) => s.key)).toEqual(['general', 'kubeconfig', 'summary'])
   })
 
+  it('should replace kubeconfig with platform layers for Engine v2 self-managed clusters', () => {
+    const data: ClusterGeneralData = {
+      installation_type: 'SELF_MANAGED',
+    } as ClusterGeneralData
+
+    const result = steps(data, true)
+
+    expect(result.map((step) => step.key)).toEqual(['general', 'platform', 'summary'])
+  })
+
+  it('should skip platform layers for Engine v2 self-managed AWS clusters', () => {
+    const data: ClusterGeneralData = {
+      installation_type: 'SELF_MANAGED',
+      cloud_provider: CloudProviderEnum.AWS,
+    } as ClusterGeneralData
+
+    expect(steps(data, true).map((step) => step.key)).toEqual(['general', 'summary'])
+    expect(steps(data).map((step) => step.key)).toEqual(['general', 'kubeconfig', 'summary'])
+  })
+
   it('should return partially-managed steps', () => {
     const data: ClusterGeneralData = {
       installation_type: 'PARTIALLY_MANAGED',

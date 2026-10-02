@@ -1,0 +1,237 @@
+import { type EditorProps } from '@monaco-editor/react'
+import {
+  type ArrayFieldSchemaResponse,
+  type FieldSchemaResponse,
+  type ScalarFieldSchemaResponse,
+} from 'qovery-typescript-axios'
+import { useState } from 'react'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { CatalogConfigurationInput } from './catalog-configuration-input'
+
+// Monaco requires browser layout and workers. Keep its controlled value/onChange boundary real.
+jest.mock('@monaco-editor/react', () => ({
+  Editor: ({ value, onChange, options }: EditorProps) => (
+    <textarea
+      aria-label={options?.ariaLabel}
+      value={value}
+      onChange={(event) => onChange?.(event.target.value, {} as Parameters<NonNullable<EditorProps['onChange']>>[1])}
+    />
+  ),
+}))
+
+const yaml: ScalarFieldSchemaResponse = {
+  key: 'manifest',
+  label: 'Manifest',
+  type: 'string',
+  required: true,
+  sensitive: false,
+  constraints: {},
+  format: 'kubernetes-resource-yaml',
+  templates: [
+    { id: 'example', label: 'Example resource', value: 'apiVersion: example.io/v1\nkind: Example\nspec: {}\n' },
+  ],
+}
+
+function Editor({ field = yaml, initial }: { field?: FieldSchemaResponse; initial?: unknown }) {
+  const [value, setValue] = useState(initial)
+  return (
+    <>
+      <CatalogConfigurationInput field={field} value={value} onChange={setValue} />
+      <output>{JSON.stringify(value)}</output>
+    </>
+  )
+}
+
+describe('Catalog YAML editor', () => {
+  beforeEach(() => jest.useFakeTimers())
+  afterEach(() => jest.useRealTimers())
+
+  it('requires explicit template selection and only applies the draft on confirmation', async () => {
+    const { userEvent } = renderWithProviders(<Editor />)
+    expect(screen.getByRole('status', { hidden: true })).toBeEmptyDOMElement()
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Manifest YAML' }))
+    expect(screen.getByRole('textbox', { name: 'Manifest YAML' })).toHaveValue('')
+    await userEvent.click(screen.getByRole('button', { name: 'Example resource' }))
+    expect(screen.getByRole('textbox', { name: 'Manifest YAML' })).toHaveValue(yaml.templates?.[0].value)
+    expect(screen.getByRole('status', { hidden: true })).toBeEmptyDOMElement()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Apply' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+    expect(JSON.parse(screen.getByRole('status', { hidden: true }).textContent ?? 'null')).toBe(
+      yaml.templates?.[0].value
+    )
+  })
+
+  it('preserves saved comments and formatting, prevents template replacement, and cancels edits', async () => {
+    const saved = '# my comment\nspec:\n  message: "{{ untouched }}"\n'
+    const { userEvent } = renderWithProviders(<Editor initial={saved} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Manifest YAML' }))
+    const input = screen.getByRole('textbox', { name: 'Manifest YAML' })
+    expect(input).toHaveValue(saved)
+    expect(screen.getByRole('button', { name: 'Example resource' })).toBeDisabled()
+    await userEvent.clear(input)
+    await userEvent.type(input, 'changed')
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(JSON.parse(screen.getByRole('status', { hidden: true }).textContent ?? 'null')).toBe(saved)
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Manifest YAML' }))
+    expect(screen.getByRole('textbox', { name: 'Manifest YAML' })).toHaveValue(saved)
+  })
+
+  it('selects the YAML editor without templates and allows clearing an optional value', async () => {
+    const { userEvent } = renderWithProviders(
+      <Editor field={{ ...yaml, required: false, templates: undefined }} initial="spec: {}" />
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Manifest YAML' }))
+    expect(screen.queryByText('Start from a template')).not.toBeInTheDocument()
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Manifest YAML' }))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Apply' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+    expect(JSON.parse(screen.getByRole('status', { hidden: true }).textContent ?? 'null')).toBe('')
+  })
+
+  it('shows a read-only YAML field as plain text from its resolved value, without any way to edit the draft', () => {
+    const onChange = jest.fn()
+    renderWithProviders(
+      <CatalogConfigurationInput
+        field={{ ...yaml, required: false, readOnly: true }}
+        value={'kind: Draft\n'}
+        resolvedValue={'apiVersion: example.io/v1\nkind: Resolved\n'}
+        onChange={onChange}
+      />
+    )
+    const field = screen.getByRole('region', { name: 'Manifest' })
+    expect(field).toHaveTextContent('apiVersion: example.io/v1 kind: Resolved')
+    expect(field).not.toHaveTextContent('Draft')
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(screen.queryByText('Example resource')).not.toBeInTheDocument()
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('keeps unknown formats on the ordinary string editor', () => {
+    renderWithProviders(<Editor field={{ ...yaml, format: 'future-editor' }} initial="existing" />)
+    expect(screen.getByRole('textbox', { name: 'Manifest' })).toHaveValue('existing')
+    expect(screen.queryByRole('button', { name: 'Edit Manifest YAML' })).not.toBeInTheDocument()
+  })
+
+  it('edits and removes array rows without losing sibling manifests', async () => {
+    const resources: ArrayFieldSchemaResponse = {
+      key: 'resources',
+      label: 'Resources',
+      type: 'array',
+      required: false,
+      sensitive: false,
+      constraints: {},
+      items: { type: 'object', fields: [yaml] },
+    }
+    const saved = '# preserve me\nspec: {}\n'
+    const { userEvent } = renderWithProviders(<Editor field={resources} initial={[{ manifest: saved }]} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Add resource' }))
+    const input = screen.getByRole('textbox', { name: 'Manifest YAML' })
+    await userEvent.click(input)
+    await userEvent.paste('# second\nspec: [broken')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Apply' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+    expect(JSON.parse(screen.getByRole('status', { hidden: true }).textContent ?? 'null')).toEqual([
+      { manifest: saved },
+      { manifest: '# second\nspec: [broken' },
+    ])
+    await userEvent.click(screen.getByRole('button', { name: 'Remove Unnamed resource 1' }))
+    expect(JSON.parse(screen.getByRole('status', { hidden: true }).textContent ?? 'null')).toEqual([
+      { manifest: '# second\nspec: [broken' },
+    ])
+  })
+
+  it('groups resources by type and name, keeping YAML hidden until editing and preserving order', async () => {
+    const nodePool = 'apiVersion: karpenter.sh/v1\nkind: NodePool\nmetadata: {name: test-yaml}\nspec: {}\n'
+    const nodeClass = 'apiVersion: karpenter.k8s.aws/v1\nkind: EC2NodeClass\nmetadata: {name: default}\nspec: {}\n'
+    const secondPool = nodePool.replace('test-yaml', 'second')
+    const resources: ArrayFieldSchemaResponse = {
+      key: 'resources',
+      label: 'Resources',
+      type: 'array',
+      required: false,
+      sensitive: false,
+      constraints: { maxItems: 3 },
+      items: { type: 'object', fields: [yaml] },
+      itemFields: [[yaml], [yaml], [yaml]],
+    }
+    const { userEvent } = renderWithProviders(
+      <Editor field={resources} initial={[{ manifest: nodePool }, { manifest: nodeClass }, { manifest: secondPool }]} />
+    )
+    expect(
+      within(screen.getByRole('region', { name: 'NodePool karpenter.sh/v1' })).getByText('test-yaml')
+    ).toBeInTheDocument()
+    expect(
+      within(screen.getByRole('region', { name: 'EC2NodeClass karpenter.k8s.aws/v1' })).getByText('default')
+    ).toBeInTheDocument()
+    expect(screen.queryByText(nodePool)).not.toBeInTheDocument()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Add resource' })).toBeDisabled()
+    await userEvent.click(screen.getByRole('button', { name: 'Edit second' }))
+    expect(screen.getByRole('textbox', { name: 'Manifest YAML' })).toHaveValue(secondPool)
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Manifest YAML' }))
+    await userEvent.paste(secondPool.replace('second', 'renamed'))
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+    expect(screen.getByText('renamed')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Remove default' }))
+    expect(JSON.parse(screen.getByRole('status').textContent ?? 'null')).toEqual([
+      { manifest: nodePool },
+      { manifest: secondPool.replace('second', 'renamed') },
+    ])
+  })
+
+  it('adds a template resource only on Apply and keeps malformed YAML editable with its indexed error', async () => {
+    const template = 'apiVersion: example.io/v1\nkind: Example\nmetadata: {name: ""}\nspec: {}\n'
+    const resources: ArrayFieldSchemaResponse = {
+      key: 'resources',
+      label: 'Resources',
+      type: 'array',
+      required: false,
+      sensitive: false,
+      constraints: {},
+      items: {
+        type: 'object',
+        fields: [{ ...yaml, templates: [{ id: 'example', label: 'Example', value: template }] }],
+      },
+    }
+    const onChange = jest.fn()
+    const malformed = 'spec: [broken'
+    const { userEvent } = renderWithProviders(
+      <CatalogConfigurationInput
+        field={resources}
+        value={[{ manifest: malformed }]}
+        onChange={onChange}
+        getError={(path) => (path === 'resources[0].manifest' ? 'Invalid resource' : undefined)}
+      />
+    )
+    expect(screen.getByRole('button', { name: 'Edit Unnamed resource 1' })).toHaveAccessibleDescription(
+      'Invalid resource'
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Add Example' }))
+    expect(screen.getByRole('textbox', { name: 'Manifest YAML' })).toHaveValue(template)
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(onChange).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Unnamed resource 1' }))
+    expect(screen.getByRole('textbox', { name: 'Manifest YAML' })).toHaveValue(malformed)
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add Example' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+    expect(onChange).toHaveBeenCalledWith([{ manifest: malformed }, { manifest: template }])
+  })
+
+  it('shows indexed resolver errors beside the corresponding YAML field', () => {
+    renderWithProviders(
+      <CatalogConfigurationInput
+        field={yaml}
+        path="resources[1].manifest"
+        value="spec: [broken"
+        onChange={jest.fn()}
+        getError={(path) => (path === 'resources[1].manifest' ? 'Supply one YAML object' : undefined)}
+      />
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent('Supply one YAML object')
+    expect(screen.getByRole('button', { name: 'Edit Manifest YAML' })).toHaveAccessibleDescription(
+      'Supply one YAML object'
+    )
+  })
+})

@@ -7,6 +7,7 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterCredentialsSettings, {
   type ClusterCredentialsSettingsProps,
   filterCredentialsByCloudProvider,
+  filterEcrCompatibleCredentials,
 } from './cluster-credentials-settings'
 
 const mockOpenModal = jest.fn()
@@ -158,6 +159,19 @@ describe('ClusterCredentialsSettings', () => {
 
     expect(filterCredentialsByCloudProvider(credentials, 'AWS_EKS_ANYWHERE')).toEqual([
       { id: '2', name: 'EKS Anywhere credential', object_type: 'EKS_ANYWHERE_VSPHERE' },
+    ])
+  })
+
+  it('should keep only AWS static and role credentials when the credential needs ECR access', () => {
+    const credentials = [
+      { id: '1', name: 'AWS static credential', object_type: 'AWS' },
+      { id: '2', name: 'AWS role credential', object_type: 'AWS_ROLE' },
+      { id: '3', name: 'EKS Anywhere credential', object_type: 'EKS_ANYWHERE_VSPHERE' },
+    ] as ClusterCredentials[]
+
+    expect(filterEcrCompatibleCredentials(credentials)).toEqual([
+      { id: '1', name: 'AWS static credential', object_type: 'AWS' },
+      { id: '2', name: 'AWS role credential', object_type: 'AWS_ROLE' },
     ])
   })
 })

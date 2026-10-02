@@ -83,6 +83,8 @@ const defaultProps: StepGeneralProps = {
 describe('StepGeneral', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockContextValue.generalData = undefined
+    mockContextValue.isEngineV2SelfManaged = false
     useCloudProvidersMockSpy.mockReturnValue({
       data: [
         {
@@ -101,6 +103,7 @@ describe('StepGeneral', () => {
     expect(screen.getByTestId('input-name')).toBeInTheDocument()
     expect(screen.getByTestId('input-description')).toBeInTheDocument()
     expect(screen.getByTestId('input-cloud-provider')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Provider credentials' })).toBeInTheDocument()
   })
 
   it('should show loader when cloud providers are not loaded', () => {
@@ -115,6 +118,78 @@ describe('StepGeneral', () => {
     renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
 
     expect(screen.getByTestId('button-submit')).toBeDisabled()
+  })
+
+  it('should require cloud credentials for an Engine v2 self-managed cluster', () => {
+    mockContextValue.generalData = {
+      installation_type: 'SELF_MANAGED',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'us-east-1',
+      production: false,
+    }
+    mockContextValue.isEngineV2SelfManaged = true
+
+    renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
+
+    expect(screen.getByTestId('input-credentials')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Provider details' })).toBeInTheDocument()
+    expect(screen.queryByText(/A fully managed Kubernetes cluster will be deployed/)).not.toBeInTheDocument()
+  })
+
+  it('should only ask what the one-call creation of an Engine v2 self-managed AWS cluster uses', async () => {
+    mockContextValue.generalData = {
+      name: 'cluster',
+      installation_type: 'SELF_MANAGED',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'us-east-1',
+      production: false,
+      credentials: '',
+      credentials_name: '',
+    }
+    mockContextValue.isEngineV2SelfManaged = true
+    useCloudProviderCredentialsMockSpy.mockReturnValue({
+      data: [
+        { id: '1', name: 'static-credential', object_type: 'AWS' },
+        { id: '2', name: 'role-credential', object_type: 'AWS_ROLE' },
+        { id: '3', name: 'vsphere-credential', object_type: 'EKS_ANYWHERE_VSPHERE' },
+      ],
+    })
+
+    renderWithProviders(<StepGeneral {...defaultProps} labelsSetting={<p>Labels</p>} />, { wrapper: Wrapper })
+
+    expect(screen.queryByTestId('input-description')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Extra tags' })).not.toBeInTheDocument()
+    expect(screen.getByText(/The credential needs ECR permissions/)).toBeInTheDocument()
+    selectEvent.openMenu(screen.getByLabelText('Credentials'))
+    expect(await screen.findByText('static-credential')).toBeInTheDocument()
+    expect(screen.getByText('role-credential')).toBeInTheDocument()
+    expect(screen.queryByText('vsphere-credential')).not.toBeInTheDocument()
+  })
+
+  it('should keep the description, extra tags and every credential for other AWS clusters', async () => {
+    mockContextValue.generalData = {
+      name: 'cluster',
+      installation_type: 'MANAGED',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'us-east-1',
+      production: false,
+      credentials: '',
+      credentials_name: '',
+    }
+    useCloudProviderCredentialsMockSpy.mockReturnValue({
+      data: [
+        { id: '1', name: 'static-credential', object_type: 'AWS' },
+        { id: '3', name: 'vsphere-credential', object_type: 'EKS_ANYWHERE_VSPHERE' },
+      ],
+    })
+
+    renderWithProviders(<StepGeneral {...defaultProps} labelsSetting={<p>Labels</p>} />, { wrapper: Wrapper })
+
+    expect(screen.getByTestId('input-description')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Extra tags' })).toBeInTheDocument()
+    expect(screen.queryByText(/The credential needs ECR permissions/)).not.toBeInTheDocument()
+    selectEvent.openMenu(screen.getByLabelText('Credentials'))
+    expect(await screen.findByText('vsphere-credential')).toBeInTheDocument()
   })
 
   it('should display an ARM badge for GCP regions with ARM support', async () => {

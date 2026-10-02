@@ -1,0 +1,257 @@
+import {
+  type FieldSchemaResponse,
+  type PlatformComponentConfigurationResolutionResponse,
+  type PlatformComponentInputRequirementResponse,
+  type PlatformTemplateComponentResponse,
+} from 'qovery-typescript-axios'
+import { useRef, useState } from 'react'
+import { match } from 'ts-pattern'
+import {
+  Badge,
+  Button,
+  Callout,
+  CatalogConfigurationInput,
+  CatalogVariableInput,
+  Heading,
+  Icon,
+  Skeleton,
+} from '@qovery/shared/ui'
+import { type CatalogVariableValue, formatCatalogKey, getCatalogVariableValue } from '@qovery/shared/util-js'
+import {
+  getFieldViolation,
+  getMissingResolvedValueViolations,
+  getUnmappedViolations,
+  isPlatformConfigurationReady,
+  toCatalogVariableField,
+} from './platform-configuration-utils'
+import { RedactedValuesCallout } from './redacted-values-callout'
+
+interface PlatformComponentConfigurationProps {
+  clusterInputsLocation?: string
+  isFieldVisible?: (field: FieldSchemaResponse) => boolean
+  clusterInputs: Record<string, string>
+  component: PlatformTemplateComponentResponse
+  isFetching: boolean
+  isSaving: boolean
+  hasPreviewError: boolean
+  onClusterInputChange: (key: string, value: CatalogVariableValue) => void
+  onProfileConfigChange: (key: string, value: unknown) => void
+  onSave: () => void
+  preview?: PlatformComponentConfigurationResolutionResponse
+  profileConfig: Record<string, unknown>
+  redactedComponentKeys?: string[]
+  redactedFieldKeys?: string[]
+}
+
+function RequirementStatus({ status }: { status: PlatformComponentInputRequirementResponse['status'] }) {
+  return match(status)
+    .with('READY', () => null)
+    .with('MISSING', () => (
+      <Badge size="sm" variant="surface" color="yellow">
+        Action required
+      </Badge>
+    ))
+    .exhaustive()
+}
+
+export function PlatformComponentConfiguration({
+  clusterInputsLocation,
+  isFieldVisible,
+  clusterInputs,
+  component,
+  hasPreviewError,
+  isFetching,
+  isSaving,
+  onClusterInputChange,
+  onProfileConfigChange,
+  onSave,
+  preview,
+  profileConfig,
+  redactedComponentKeys = [],
+  redactedFieldKeys = [],
+}: PlatformComponentConfigurationProps) {
+  // While a new resolution is debounced, fetched or failed, keep showing the last one of this
+  // component: its fields and resolved values belong together, and the input being typed into
+  // stays mounted. Every other input stays locked until the resolution is current.
+  const lastPreviewRef = useRef<{ componentKey: string; preview: PlatformComponentConfigurationResolutionResponse }>()
+  const [changedKey, setChangedKey] = useState<string>()
+  if (preview) lastPreviewRef.current = { componentKey: component.key, preview }
+  const resolution =
+    preview ?? (lastPreviewRef.current?.componentKey === component.key ? lastPreviewRef.current.preview : undefined)
+  const isLocked = (key: string) => (!preview || isFetching) && key !== changedKey
+
+  const allFields = resolution?.fields ?? []
+  const fields = isFieldVisible ? allFields.filter(isFieldVisible) : allFields
+  const requirements = resolution?.requirements ?? []
+  const resolvedValues = resolution?.resolvedValues ?? {}
+  const violations = [...(preview?.violations ?? []), ...getMissingResolvedValueViolations(resolution)]
+  const unmappedViolations = getUnmappedViolations(violations, fields, requirements, profileConfig)
+  const ready = preview ? isPlatformConfigurationReady(violations, requirements) : false
+
+  return (
+    <div className="rounded-lg border border-neutral bg-surface-neutral p-5">
+      <div className="mb-5 flex items-start justify-between gap-3">
+        <div>
+          <Heading level={2}>{formatCatalogKey(component.key)}</Heading>
+          {component.description ? <p className="mt-1 text-sm text-neutral-subtle">{component.description}</p> : null}
+        </div>
+        {isFetching ? (
+          <Badge size="sm" variant="surface" color="neutral">
+            Checking…
+          </Badge>
+        ) : preview && !ready ? (
+          <Badge size="sm" variant="surface" color="yellow">
+            Action required
+          </Badge>
+        ) : null}
+      </div>
+
+      <RedactedValuesCallout className="mb-4" componentKeys={redactedComponentKeys} />
+
+      {!resolution && !hasPreviewError ? (
+        <div role="status" aria-label="Checking configuration" className="flex flex-col gap-3">
+          <Skeleton height={20} width={120} />
+          <Skeleton height={52} width="100%" />
+          <Skeleton height={52} width="100%" />
+        </div>
+      ) : !isFetching &&
+        !hasPreviewError &&
+        fields.length === 0 &&
+        requirements.length === 0 &&
+        violations.length === 0 ? (
+        <Callout.Root color="neutral">
+          <Callout.Icon>
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>This component does not require any configuration.</Callout.Text>
+        </Callout.Root>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {hasPreviewError ? (
+            <Callout.Root color="red">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Configuration could not be checked</Callout.TextHeading>
+                <Callout.TextDescription>Refresh the page and try again.</Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          ) : null}
+
+          {fields.length > 0 ? (
+            <section className="flex flex-col gap-3">
+              <Heading level={3}>Configuration</Heading>
+              {fields.map((field) => (
+                <CatalogConfigurationInput
+                  key={field.key}
+                  field={field}
+                  value={profileConfig[field.key]}
+                  resolvedValue={resolvedValues[field.key]}
+                  disabled={isLocked(field.key)}
+                  getError={(path) => getFieldViolation(violations, path)}
+                  placeholder={redactedFieldKeys.includes(field.key) ? 'Hidden value' : undefined}
+                  onChange={(value) => {
+                    setChangedKey(field.key)
+                    onProfileConfigChange(field.key, value)
+                  }}
+                />
+              ))}
+            </section>
+          ) : null}
+
+          {clusterInputsLocation &&
+          requirements.some(
+            (requirement) =>
+              requirement.status === 'MISSING' || getFieldViolation(violations, requirement.key, 'clusterInputs')
+          ) ? (
+            <Callout.Root color="yellow">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                Complete the required cluster inputs in {clusterInputsLocation} before saving.
+              </Callout.Text>
+            </Callout.Root>
+          ) : null}
+
+          {!clusterInputsLocation && requirements.length > 0 ? (
+            <section className="flex flex-col gap-3 border-t border-neutral pt-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <Heading level={3}>Cluster inputs</Heading>
+                  <p className="mt-1 text-ssm text-neutral-subtle">
+                    Values required from this cluster for the selected configuration.
+                  </p>
+                </div>
+              </div>
+              {requirements.map((requirement) => (
+                <div key={requirement.key} className="flex flex-col gap-2">
+                  <div className="flex justify-end">
+                    <RequirementStatus status={requirement.status} />
+                  </div>
+                  <CatalogVariableInput
+                    booleanControl="checkbox"
+                    field={toCatalogVariableField(requirement)}
+                    value={getCatalogVariableValue(requirement, clusterInputs[requirement.key])}
+                    error={getFieldViolation(violations, requirement.key, 'clusterInputs')}
+                    disabled={isLocked(`clusterInputs.${requirement.key}`)}
+                    onChange={(value) => {
+                      setChangedKey(`clusterInputs.${requirement.key}`)
+                      onClusterInputChange(requirement.key, value)
+                    }}
+                  />
+                </div>
+              ))}
+            </section>
+          ) : null}
+
+          {preview?.componentBindings.length ? (
+            <Callout.Root color="sky">
+              <Callout.Icon>
+                <Icon iconName="link" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Managed component bindings</Callout.TextHeading>
+                <Callout.TextDescription>
+                  <ul className="mt-1 list-inside list-disc">
+                    {preview.componentBindings.map((binding) => (
+                      <li key={`${binding.input}-${binding.fromComponent}-${binding.output}`}>
+                        {formatCatalogKey(binding.input)} from {formatCatalogKey(binding.fromComponent)} (
+                        {formatCatalogKey(binding.output)})
+                      </li>
+                    ))}
+                  </ul>
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          ) : null}
+
+          {unmappedViolations.map((violation) => (
+            <Callout.Root key={`${violation.code}-${violation.fieldPath}`} color="red">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>{formatCatalogKey(violation.code)}</Callout.TextHeading>
+                <Callout.TextDescription>{violation.message}</Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-6 flex justify-end border-t border-neutral pt-4">
+        <Button
+          type="button"
+          size="lg"
+          loading={isSaving}
+          disabled={!preview || isFetching || hasPreviewError || !ready || redactedComponentKeys.length > 0}
+          onClick={onSave}
+        >
+          Save configuration
+        </Button>
+      </div>
+    </div>
+  )
+}
