@@ -447,7 +447,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
               <Table.Cell className="w-[160px] whitespace-nowrap">
                 <RunDuration duration={run.duration_ms} />
               </Table.Cell>
-              <Table.Cell className="w-[120px] whitespace-nowrap">
+              <Table.Cell className="w-[120px] whitespace-nowrap font-mono">
                 <RunCost cost={run.cost} />
               </Table.Cell>
             </Table.Row>

@@ -427,9 +427,11 @@ describe('AgenticWorkflowRuns', () => {
 
     const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
     expect(cells[5]).toHaveTextContent(label)
+    expect(cells[5]).toHaveClass('font-mono')
     await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
 
     expect(within(screen.getByRole('dialog')).getByText('Cost').nextElementSibling).toHaveTextContent(label)
+    expect(within(screen.getByRole('dialog')).getByText(label)).not.toHaveClass('font-mono')
   })
 
   it.each([
