@@ -212,6 +212,14 @@ describe('SelfManagedClusterCreationFlow', () => {
     ['is being checked again', { data: { componentKey: 'qovery-operator', violations: [] }, isFetching: true }],
     ['could not be checked', { data: undefined, isFetching: false, isError: true }],
     [
+      'is waiting for the network',
+      { data: { componentKey: 'qovery-operator', violations: [], requirements: [] }, isPaused: true },
+    ],
+    [
+      'only has the result of previous values',
+      { data: { componentKey: 'qovery-operator', violations: [], requirements: [] }, isPreviousData: true },
+    ],
+    [
       'misses a required input',
       {
         data: {

@@ -477,6 +477,8 @@ export function SelfManagedClusterCreationFlow({
   const {
     data: operatorPreview,
     isFetching: isOperatorPreviewFetching,
+    isPaused: isOperatorPreviewPaused,
+    isPreviousData: isOperatorPreviewOutdated,
     isError: isOperatorPreviewError,
   } = usePlatformTemplateComponentConfiguration({
     organizationId,
@@ -492,6 +494,8 @@ export function SelfManagedClusterCreationFlow({
     !operatorComponent ||
     (equal(debouncedOperatorConfig, operatorConfig) &&
       !isOperatorPreviewFetching &&
+      !isOperatorPreviewPaused &&
+      !isOperatorPreviewOutdated &&
       !isOperatorPreviewError &&
       operatorPreview?.componentKey === operatorComponent.key &&
       isPlatformConfigurationReady(operatorPreview.violations, operatorPreview.requirements))
