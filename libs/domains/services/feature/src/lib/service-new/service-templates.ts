@@ -112,15 +112,6 @@ export const serviceTemplates: ServiceTemplateType[] = [
         type: 'DATABASE',
       },
       {
-        slug: 'managed',
-        title: 'Managed',
-        description: 'Create a PostgreSQL database using a managed service.',
-        icon: AWS,
-        icon_uri: 'app://qovery-console/postgresql',
-        type: 'DATABASE',
-        cloud_provider: 'AWS',
-      },
-      {
         slug: 'terraform',
         template_id: TemplateIds.TERRAFORM,
         badge: 'NEW',
@@ -198,15 +189,6 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a Redis database using a container.',
         icon: Docker,
         icon_uri: 'app://qovery-console/redis',
-        type: 'DATABASE',
-      },
-      {
-        slug: 'managed',
-        title: 'Managed',
-        description: 'Create a Redis database using a managed service.',
-        icon: AWS,
-        icon_uri: 'app://qovery-console/redis',
-        cloud_provider: 'AWS',
         type: 'DATABASE',
       },
       {
@@ -426,15 +408,6 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a MySQL database using a container.',
         icon: Docker,
         icon_uri: 'app://qovery-console/mysql',
-        type: 'DATABASE',
-      },
-      {
-        slug: 'managed',
-        title: 'Managed',
-        description: 'Create a MySQL database using a managed service.',
-        icon: AWS,
-        icon_uri: 'app://qovery-console/mysql',
-        cloud_provider: 'AWS',
         type: 'DATABASE',
       },
       {
@@ -1132,15 +1105,6 @@ export const serviceTemplates: ServiceTemplateType[] = [
         icon: Docker,
         icon_uri: 'app://qovery-console/elasticsearch',
         type: 'CONTAINER',
-      },
-      {
-        slug: 'managed',
-        title: 'Managed',
-        description: 'Create an Elasticsearch database using a managed service.',
-        icon: AWS,
-        icon_uri: 'app://qovery-console/elasticsearch',
-        cloud_provider: 'AWS',
-        type: 'DATABASE',
       },
       {
         slug: 'managed-aws-terraform',

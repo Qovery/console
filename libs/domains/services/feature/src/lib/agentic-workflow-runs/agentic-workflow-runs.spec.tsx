@@ -1,10 +1,34 @@
-import { waitFor, within } from '@testing-library/react'
+import { act, waitFor, within } from '@testing-library/react'
 import { type AgenticWorkflowRun } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowLastRun, AgenticWorkflowRuns } from './agentic-workflow-runs'
 
 const mockUseRunHistory = jest.fn()
 const mockCopyToClipboard = jest.fn()
+const mockMonacoEditor = jest.fn()
+const mockDisposeContentSizeListener = jest.fn()
+const mockGetContentHeight = jest.fn()
+let contentSizeListener: ((event: { contentHeight: number; contentHeightChanged: boolean }) => void) | undefined
+
+jest.mock('@monaco-editor/react', () => {
+  const { useEffect } = jest.requireActual('react')
+  return {
+    Editor: (props: { value?: string; onMount?: (editor: unknown) => void }) => {
+      mockMonacoEditor(props)
+      useEffect(() => {
+        props.onMount?.({
+          getContentHeight: mockGetContentHeight,
+          onDidContentSizeChange: (listener: typeof contentSizeListener) => {
+            contentSizeListener = listener
+            return { dispose: mockDisposeContentSizeListener }
+          },
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [])
+      return <pre data-testid="monaco-editor">{props.value}</pre>
+    },
+  }
+})
 
 jest.mock('../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history', () => ({
   useAgenticWorkflowRunHistory: (args: unknown) => mockUseRunHistory(args),
@@ -26,6 +50,8 @@ const run: AgenticWorkflowRun = {
 describe('AgenticWorkflowRuns', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    contentSizeListener = undefined
+    mockGetContentHeight.mockReturnValue(0)
     mockUseRunHistory.mockReturnValue({
       data: [run],
       isLoading: false,
@@ -190,8 +216,8 @@ describe('AgenticWorkflowRuns', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('shows the webhook event body in the run details', async () => {
-    const payload = '{"message":"deploy completed"}'
+  it('shows a valid JSON payload in a read-only JSON editor and keeps the table preview condensed', async () => {
+    const payload = '{"message":"deploy completed","tags":["a","b"],"meta":{"attempt":1}}'
     mockUseRunHistory.mockReturnValue({
       data: [{ ...run, payload }],
       isLoading: false,
@@ -199,10 +225,135 @@ describe('AgenticWorkflowRuns', () => {
     })
     const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
 
-    expect(screen.getByRole('button', { name: 'See the full payload' })).toHaveTextContent(payload)
+    expect(screen.getByRole('button', { name: 'See the full payload' })).toHaveTextContent(`${payload.slice(0, 30)}…`, {
+      normalizeWhitespace: false,
+    })
     await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
 
-    expect(within(screen.getByRole('dialog')).getByText(payload)).toBeInTheDocument()
+    const editor = within(screen.getByRole('dialog')).getByTestId('monaco-editor')
+    expect(editor).toHaveTextContent(JSON.stringify(JSON.parse(payload), null, 2), { normalizeWhitespace: false })
+    expect(mockMonacoEditor).toHaveBeenCalledWith(
+      expect.objectContaining({
+        language: 'json',
+        options: expect.objectContaining({ readOnly: true, wordWrap: 'on', wrappingIndent: 'indent' }),
+      })
+    )
+  })
+
+  describe('payload editor height', () => {
+    const payload = '{"a":1,"b":[1,2]}'
+    const lastEditorHeight = () => mockMonacoEditor.mock.calls.at(-1)?.[0].height
+
+    async function openPayload(currentPayload = payload) {
+      mockUseRunHistory.mockReturnValue({
+        data: [{ ...run, payload: currentPayload }],
+        isLoading: false,
+        isError: false,
+      })
+      const view = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+      await view.userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+      return view
+    }
+
+    it('uses the measured content height instead of the newline count', async () => {
+      mockGetContentHeight.mockReturnValue(250)
+      await openPayload()
+
+      expect(lastEditorHeight()).toBe('250px')
+    })
+
+    it('starts from the line count height before Monaco reports a size', async () => {
+      await openPayload()
+
+      expect(mockMonacoEditor.mock.calls[0][0].height).toBe(
+        `${JSON.stringify(JSON.parse(payload), null, 2).split('\n').length * 19}px`
+      )
+    })
+
+    it('caps the measured height at 400px', async () => {
+      mockGetContentHeight.mockReturnValue(1200)
+      await openPayload()
+
+      expect(lastEditorHeight()).toBe('400px')
+    })
+
+    it('follows content size changes caused by resizing or wrapping', async () => {
+      mockGetContentHeight.mockReturnValue(100)
+      await openPayload()
+
+      act(() => contentSizeListener?.({ contentHeight: 180, contentHeightChanged: true }))
+      expect(lastEditorHeight()).toBe('180px')
+
+      act(() => contentSizeListener?.({ contentHeight: 900, contentHeightChanged: true }))
+      expect(lastEditorHeight()).toBe('400px')
+
+      act(() => contentSizeListener?.({ contentHeight: 50, contentHeightChanged: false }))
+      expect(lastEditorHeight()).toBe('400px')
+    })
+
+    it('disposes the content size listener when the details close', async () => {
+      const { userEvent } = await openPayload()
+      expect(mockDisposeContentSizeListener).not.toHaveBeenCalled()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Close run details' }))
+
+      expect(mockDisposeContentSizeListener).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it.each([
+    ['large integers', '{"id":12345678901234567890}'],
+    ['exponents', '{"big":1e400}'],
+    ['number spellings', '{"price":1.10,"neg":-0.0}'],
+    ['duplicate keys', '{"a":1,"a":2}'],
+    ['unicode escapes', '{"a":"\\u00e9"}'],
+  ])('shows JSON as received when re-serializing would alter it: %s', async (_name, payload) => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    const payloadElement = within(screen.getByRole('dialog')).getByText(payload)
+    expect(payloadElement).toHaveTextContent(payload, { normalizeWhitespace: false })
+    expect(screen.queryByTestId('monaco-editor')).not.toBeInTheDocument()
+  })
+
+  it('formats JSON with structural characters inside strings and empty containers', async () => {
+    const payload = '{ "a" : "x\\"{,}[:]", "e": {}, "l": [ ] }'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    expect(within(screen.getByRole('dialog')).getByTestId('monaco-editor')).toHaveTextContent(
+      '{\n  "a": "x\\"{,}[:]",\n  "e": {},\n  "l": []\n}',
+      { normalizeWhitespace: false }
+    )
+  })
+
+  it('shows an invalid JSON payload unchanged in the run details', async () => {
+    const payload = '{"message": "deploy completed",}'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    const payloadElement = within(screen.getByRole('dialog')).getByText(/deploy completed/)
+    expect(payloadElement).toHaveTextContent(payload, { normalizeWhitespace: false })
+    expect(payloadElement).toHaveClass('whitespace-pre-wrap', 'break-words')
+    expect(screen.queryByTestId('monaco-editor')).not.toBeInTheDocument()
   })
 
   it('shows a manual run with an empty payload', async () => {

@@ -57,6 +57,7 @@ export * from './lib/hooks/use-cluster-deployment-history/use-cluster-deployment
 export * from './lib/hooks/use-cluster-deployment-logs/use-cluster-deployment-logs'
 export * from './lib/hooks/use-cluster-logs/use-cluster-logs'
 export * from './lib/hooks/use-cluster-status/use-cluster-status'
+export * from './lib/hooks/use-services-cluster/use-services-cluster'
 export * from './lib/hooks/use-cluster-statuses/use-cluster-statuses'
 export * from './lib/hooks/use-cluster/use-cluster'
 export * from './lib/hooks/use-platform-templates/use-platform-templates'

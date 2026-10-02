@@ -1,8 +1,9 @@
 import { useParams } from '@tanstack/react-router'
-import { type ClusterCredentials } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
+import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
 import { Callout, ExternalLink, Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import {
   ClusterCredentialsModal,
@@ -12,6 +13,7 @@ import {
 export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
+  cluster?: Cluster
 }
 
 export const filterCredentialsByCloudProvider = (
@@ -25,12 +27,14 @@ export const filterCredentialsByCloudProvider = (
   return credentials.filter((credential) => credential.object_type === 'EKS_ANYWHERE_VSPHERE')
 }
 
-export function ClusterCredentialsSettings({ cloudProvider, isSetting }: ClusterCredentialsSettingsProps) {
+export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
-  const { control, formState } = useFormContext()
+  const { control } = useFormContext()
   const { openModal, closeModal } = useModal()
 
   const queryCloudProvider = cloudProvider === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProvider
+
+  const isEksManaged = cluster !== undefined && isClusterEksManaged(cluster)
 
   const { data: credentials = [], isLoading } = useCloudProviderCredentials({
     organizationId,
@@ -79,6 +83,21 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting }: Cluster
         </div>
       ) : (
         <>
+          {isSetting && isEksManaged && (
+            <Callout.Root color="red" className="mb-4" data-testid="eks-credentials-change-warning">
+              <Callout.Icon>
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Changing credentials triggers a cluster redeployment</Callout.TextHeading>
+                <Callout.TextDescription>
+                  Saving new credentials will automatically redeploy the cluster to keep your services' deployments
+                  working.
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          )}
+
           <Controller
             name="credentials"
             control={control}
@@ -115,8 +134,8 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting }: Cluster
             <Icon iconName="key" iconStyle="regular" />
           </Link>
 
-          {isSetting && formState.isDirty && (
-            <Callout.Root color="yellow" className="mt-4">
+          {isSetting && (
+            <Callout.Root color="yellow" className="mt-4" data-testid="mirroring-registry-credentials-warning">
               <Callout.Icon>
                 <Icon iconName="circle-exclamation" iconStyle="regular" />
               </Callout.Icon>

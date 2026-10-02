@@ -1,4 +1,4 @@
-import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowCreationFlow, useAgenticWorkflowCreateContext } from './agentic-workflow-context'
 
@@ -17,7 +17,7 @@ function FormDefaults() {
       <span data-testid="whitelist-hosts">{values.whitelistHosts}</span>
       <span data-testid="execution-mode">{values.executionMode}</span>
       <span data-testid="model-settings">{values.modelSettingsJson}</span>
-      <span data-testid="variables">{variables.map((variable) => variable.variable).join(',')}</span>
+      <span data-testid="variables">{JSON.stringify(variables)}</span>
     </>
   )
 }
@@ -36,6 +36,14 @@ describe('AgenticWorkflowCreationFlow', () => {
     expect(screen.getByTestId('whitelist-hosts')).toHaveTextContent('*')
     expect(screen.getByTestId('execution-mode')).toHaveTextContent(AgenticWorkflowExecutionMode.IN_PLACE)
     expect(screen.getByTestId('model-settings')).toBeEmptyDOMElement()
+    expect(JSON.parse(screen.getByTestId('variables').textContent ?? '[]')).toEqual([
+      expect.objectContaining({
+        variable: 'MAX_TURNS',
+        value: '200',
+        isSecret: false,
+        scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
+      }),
+    ])
   })
 
   it('should merge a template seed over the defaults', () => {
@@ -62,7 +70,10 @@ describe('AgenticWorkflowCreationFlow', () => {
     expect(screen.getByTestId('name')).toHaveTextContent('Incident Analyser')
     expect(screen.getByTestId('agent-prompt')).toHaveTextContent('Investigate the incident')
     expect(screen.getByTestId('whitelist-hosts')).toHaveTextContent('api.incident.io')
-    expect(screen.getByTestId('variables')).toHaveTextContent('INCIDENT_IO_API_KEY')
+    expect(JSON.parse(screen.getByTestId('variables').textContent ?? '[]')).toEqual([
+      expect.objectContaining({ variable: 'MAX_TURNS', value: '200', isSecret: false }),
+      { variable: 'INCIDENT_IO_API_KEY', value: '', isSecret: true },
+    ])
     // …while untouched fields keep their defaults.
     expect(screen.getByTestId('cpu')).toHaveTextContent('2000')
   })

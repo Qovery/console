@@ -1,7 +1,8 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type ClusterCredentials, KubernetesEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterCredentialsSettings, {
   type ClusterCredentialsSettingsProps,
@@ -49,6 +50,12 @@ const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'use
 const props: ClusterCredentialsSettingsProps = {
   cloudProvider: CloudProviderEnum.AWS,
 }
+
+const eksManagedCluster = {
+  ...clusterFactoryMock(1, CloudProviderEnum.AWS)[0],
+  kubernetes: KubernetesEnum.MANAGED,
+}
+const eksSelfManagedCluster = { ...eksManagedCluster, kubernetes: KubernetesEnum.SELF_MANAGED }
 
 describe('ClusterCredentialsSettings', () => {
   beforeEach(() => {
@@ -106,6 +113,41 @@ describe('ClusterCredentialsSettings', () => {
       organizationId: 'org-123',
       cloudProvider: 'AWS',
     })
+  })
+
+  it('should display the EKS credentials change warning in cluster settings for EKS clusters', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting cluster={eksManagedCluster} />)
+    )
+
+    expect(screen.getByTestId('eks-credentials-change-warning')).toBeInTheDocument()
+    expect(screen.getByText('Changing credentials triggers a cluster redeployment')).toBeInTheDocument()
+  })
+
+  it('should not display the EKS credentials change warning for non EKS clusters', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting cluster={eksSelfManagedCluster} />)
+    )
+
+    expect(screen.queryByTestId('eks-credentials-change-warning')).not.toBeInTheDocument()
+  })
+
+  it('should not display the EKS credentials change warning outside cluster settings', () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} cluster={eksManagedCluster} />))
+
+    expect(screen.queryByTestId('eks-credentials-change-warning')).not.toBeInTheDocument()
+  })
+
+  it('should display the mirroring registry warning by default in cluster settings', () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting />))
+
+    expect(screen.getByTestId('mirroring-registry-credentials-warning')).toBeInTheDocument()
+  })
+
+  it('should not display the mirroring registry warning outside cluster settings', () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
+
+    expect(screen.queryByTestId('mirroring-registry-credentials-warning')).not.toBeInTheDocument()
   })
 
   it('should filter non EKS Anywhere credentials in EKS Anywhere flow', () => {
