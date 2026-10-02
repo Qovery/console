@@ -41,6 +41,8 @@ const METRIC_LABELS: Record<MetricCategory, string> = {
   rds_connections: RDS_METRICS.rds_connections.label,
   rds_freeable_memory: RDS_METRICS.rds_freeable_memory.label,
   rds_free_storage_space: RDS_METRICS.rds_free_storage_space.label,
+  rds_read_latency: RDS_METRICS.rds_read_latency.label,
+  rds_write_latency: RDS_METRICS.rds_write_latency.label,
 }
 
 interface AlertingCreationFlowContextInterface {
