@@ -21,19 +21,18 @@ export function ProfileOperatorFooter({ organizationId, clusterId }: { organizat
   // Clusters without Operator state (q-core answers 404) have no Operator to describe.
   if (!isLoading && !isError && !operatorStatus) return null
 
-  const display = operatorStatus ? getClusterOperatorStatusDisplay(operatorStatus.status) : undefined
-  const isUnavailable = !operatorStatus && isError
+  const display = operatorStatus && !isError ? getClusterOperatorStatusDisplay(operatorStatus.status) : undefined
 
   const trigger = (
     <button
       type="button"
-      aria-label={`Qovery operator: ${display?.label ?? (isUnavailable ? 'status unavailable' : 'loading')}`}
+      aria-label={`Qovery operator: ${display?.label ?? (isError ? 'status unavailable' : 'loading')}`}
       className="focus-visible:ring-brand flex w-full shrink-0 items-center gap-2 bg-background-secondary p-3 text-left text-sm font-medium text-neutral outline-none focus-visible:ring-2 focus-visible:ring-inset"
     >
       Qovery operator
       {display ? (
         <Icon iconName={display.icon.name} iconStyle="regular" className={`text-sm ${display.icon.className}`} />
-      ) : isUnavailable ? (
+      ) : isError ? (
         <Icon iconName="circle-exclamation" iconStyle="regular" className="text-sm text-warning" />
       ) : (
         <LoaderSpinner className="w-3" />
@@ -41,7 +40,7 @@ export function ProfileOperatorFooter({ organizationId, clusterId }: { organizat
     </button>
   )
 
-  if (isUnavailable) {
+  if (isError) {
     return (
       <Tooltip side="right" content="The Operator status could not be retrieved.">
         {trigger}

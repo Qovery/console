@@ -61,6 +61,18 @@ describe('ProfileOperatorFooter', () => {
     expect((await screen.findAllByText('The Operator status could not be retrieved.'))[0]).toBeInTheDocument()
   })
 
+  it('does not keep showing a stale status once a refresh fails', async () => {
+    mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false, isError: true })
+    const { userEvent } = renderWithProviders(
+      <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
+    )
+
+    await userEvent.hover(screen.getByRole('button', { name: 'Qovery operator: status unavailable' }))
+
+    expect((await screen.findAllByText('The Operator status could not be retrieved.'))[0]).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
+  })
+
   it('shows the Operator versions in a tooltip and starts an update', async () => {
     mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false })
     const { userEvent } = renderWithProviders(
