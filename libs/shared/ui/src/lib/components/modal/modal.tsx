@@ -6,7 +6,7 @@ import { isToastInteraction } from '../toast/toast'
 import { ModalContext } from './modal-root'
 
 export interface ModalProps {
-  children: ReactElement
+  children: ReactElement<ModalContentProps>
   trigger?: ReactNode
   defaultOpen?: boolean
   buttonClose?: boolean

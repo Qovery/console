@@ -1,5 +1,5 @@
 import { ControlledMenu, type MenuCloseEvent } from '@szhsin/react-menu'
-import { type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { type MouseEvent, type ReactNode, type RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import Tooltip from '../tooltip/tooltip'
 import MenuGroup from './menu-group/menu-group'
 import { type MenuItemProps } from './menu-item/menu-item'
@@ -91,7 +91,7 @@ export function Menu(props: MenuProps) {
     emptyResultText,
   } = props
 
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement>(null)
   const [isOpen, setOpen] = useState<boolean | undefined>(open)
   // XXX: https://github.com/szhsin/react-menu/blob/d7c4df8a4324847403990174d9298038e11ac0c2/src/hooks/useClick.js
   const [skipOpen] = useState<{ v?: boolean }>({})
@@ -198,7 +198,7 @@ export function Menu(props: MenuProps) {
         offsetY={offsetY}
         direction={direction}
         onClose={(e) => handleClick(e)}
-        anchorRef={ref}
+        anchorRef={ref as RefObject<HTMLDivElement>}
         align={arrowAlign}
         className="menu"
         menuClassName={`rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] p-0 menu__container menu__container--${direction} ${

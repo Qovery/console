@@ -240,7 +240,6 @@ exports[`ServiceList should match snapshot 1`] = `
                       class="shrink-0"
                     >
                       <button
-                        aria-controls="radix-:r1g:"
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
@@ -627,7 +626,6 @@ exports[`ServiceList should match snapshot 1`] = `
                       class="shrink-0"
                     >
                       <button
-                        aria-controls="radix-:r1n:"
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
@@ -1305,7 +1303,6 @@ exports[`ServiceList should match snapshot 1`] = `
                       class="shrink-0"
                     >
                       <button
-                        aria-controls="radix-:r1v:"
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
@@ -1796,7 +1793,6 @@ exports[`ServiceList should match snapshot 1`] = `
                       class="shrink-0"
                     >
                       <button
-                        aria-controls="radix-:r28:"
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
@@ -2083,7 +2079,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 aria-haspopup="menu"
                 class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center"
                 data-state="closed"
-                id="radix-:r2g:"
+                id="radix-_r_2g_"
                 type="button"
               >
                 More 
