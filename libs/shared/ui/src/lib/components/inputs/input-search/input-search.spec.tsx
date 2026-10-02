@@ -18,4 +18,35 @@ describe('InputSearch', () => {
 
     expect(input as HTMLInputElement).toHaveValue('some new text value')
   })
+
+  it('follows default value changes', () => {
+    const { rerender } = render(<InputSearch defaultValue="loki" />)
+
+    rerender(<InputSearch defaultValue="envoy" />)
+    expect(screen.getByRole('textbox')).toHaveValue('envoy')
+
+    rerender(<InputSearch />)
+    expect(screen.getByRole('textbox')).toHaveValue('')
+    expect(screen.queryByRole('button', { name: 'Clear search' })).not.toBeInTheDocument()
+  })
+
+  it('shows the clear button when an empty search receives a default value', () => {
+    const { rerender } = render(<InputSearch defaultValue="" />)
+
+    rerender(<InputSearch defaultValue="loki" />)
+
+    expect(screen.getByRole('textbox')).toHaveValue('loki')
+    expect(screen.getByRole('button', { name: 'Clear search' })).toBeInTheDocument()
+  })
+
+  it('keeps the typed value while focused', () => {
+    const { rerender } = render(<InputSearch defaultValue="lo" />)
+    const input = screen.getByRole('textbox')
+
+    input.focus()
+    fireEvent.change(input, { target: { value: 'loki' } })
+    rerender(<InputSearch defaultValue="lok" />)
+
+    expect(input).toHaveValue('loki')
+  })
 })

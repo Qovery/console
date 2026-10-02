@@ -108,9 +108,19 @@ export function getCatalogFieldNumberValidationError(
 }
 
 export function getCatalogFieldValidationError(
-  field: Pick<CatalogVariableField, 'type' | 'pattern' | 'minLength' | 'maxLength' | 'min' | 'max'>,
+  field: Pick<CatalogVariableField, 'type' | 'allowedValues' | 'pattern' | 'minLength' | 'maxLength' | 'min' | 'max'>,
   value: CatalogVariableValue | undefined
 ) {
+  if (
+    field.type !== 'bool' &&
+    field.allowedValues?.length &&
+    typeof value === 'string' &&
+    value !== '' &&
+    !field.allowedValues.includes(value)
+  ) {
+    return 'Please select one of the allowed values.'
+  }
+
   const numberValidationError = getCatalogFieldNumberValidationError(field, value)
   if (numberValidationError) return numberValidationError
 
@@ -122,7 +132,10 @@ export function getCatalogFieldValidationError(
 }
 
 export function isCatalogFieldValid(
-  field: Pick<CatalogVariableField, 'required' | 'type' | 'pattern' | 'minLength' | 'maxLength' | 'min' | 'max'>,
+  field: Pick<
+    CatalogVariableField,
+    'required' | 'type' | 'allowedValues' | 'pattern' | 'minLength' | 'maxLength' | 'min' | 'max'
+  >,
   value: CatalogVariableValue | undefined
 ) {
   if (field.required && !isCatalogFieldValueFulfilled(value)) return false

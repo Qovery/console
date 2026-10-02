@@ -58,7 +58,7 @@ export function ProfileChangesBar({
                 size="md"
                 className="gap-1.5"
                 loading={isSaving}
-                disabled={isDeploying || !canSubmit}
+                disabled={isPending || !canSubmit}
                 onClick={onSave}
               >
                 <Icon iconName="floppy-disk" iconStyle="regular" />
@@ -71,7 +71,7 @@ export function ProfileChangesBar({
                 size="md"
                 className="gap-1.5"
                 loading={isDeploying}
-                disabled={isSaving || !canSubmit}
+                disabled={isPending || !canSubmit}
                 onClick={onSaveAndDeploy}
               >
                 <Icon iconName="rocket" iconStyle="regular" />

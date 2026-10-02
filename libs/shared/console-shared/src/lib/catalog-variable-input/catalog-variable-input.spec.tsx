@@ -21,7 +21,7 @@ describe('CatalogVariableInput', () => {
     jest.useRealTimers()
   })
 
-  it('renders a number field with its description and validation error', () => {
+  it('renders a number field with its validation error in place of the description', () => {
     renderWithProviders(<CatalogVariableInput {...defaultProps} error="Retention is invalid." />)
 
     expect(screen.getByRole('spinbutton', { name: 'Retention' })).toHaveValue(12)
@@ -57,6 +57,31 @@ describe('CatalogVariableInput', () => {
     await userEvent.hover(descriptionElement)
 
     expect(await screen.findByRole('tooltip')).toHaveTextContent(description)
+  })
+
+  it('shows the whole row description while searching', () => {
+    renderWithProviders(<CatalogVariableInput {...defaultProps} layout="row" highlight="weeks" />)
+
+    const match = screen.getByText('weeks', { selector: 'mark' })
+    expect(match.closest('p')).not.toHaveClass('line-clamp-3')
+  })
+
+  it('names the row checkbox after its field', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <CatalogVariableInput
+        {...defaultProps}
+        booleanControl="checkbox"
+        field={{ key: 'enabled', label: 'Enabled', type: 'bool' }}
+        layout="row"
+        value={false}
+        onChange={onChange}
+      />
+    )
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Enabled' }))
+
+    expect(onChange).toHaveBeenCalledWith(true)
   })
 
   it('keeps a boolean control aligned to the right when showing an error', () => {

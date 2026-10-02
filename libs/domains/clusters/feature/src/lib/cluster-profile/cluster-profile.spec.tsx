@@ -19,6 +19,15 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
   useDebounce: <T,>(value: T) => value,
 }))
+jest.mock('@qovery/shared/ui', () => {
+  const React = jest.requireActual('react')
+  const ui = jest.requireActual('@qovery/shared/ui')
+  return {
+    ...ui,
+    Icon: (props: { name?: string }) =>
+      React.createElement('span', { 'data-icon-name': props.name }, React.createElement(ui.Icon, props)),
+  }
+})
 jest.mock('../hooks/use-cluster/use-cluster')
 jest.mock('../hooks/use-cluster-operator-status/use-cluster-operator-status', () => ({
   useClusterOperatorStatus: () => ({ data: null, isLoading: false }),
@@ -255,6 +264,23 @@ describe('ClusterProfileFeature', () => {
     mockUseDeployCluster.mockReturnValue({ mutateAsync: mockDeployCluster, isLoading: false })
   })
 
+  it.each([
+    ['AWS', 'AWS'],
+    ['GCP', 'GCP'],
+    ['OVH', 'OVH_CLOUD'],
+    ['ORACLE', 'ORACLE_CLOUD'],
+    ['IBM', 'IBM_CLOUD'],
+  ])('shows the %s provider icon in the header', (cloudProvider, iconName) => {
+    mockUseCluster.mockReturnValue({
+      data: { name: 'my-cluster', cloud_provider: cloudProvider, kubernetes: 'SELF_MANAGED' },
+      isError: false,
+      isLoading: false,
+    } as ReturnType<typeof useCluster>)
+    renderWithProviders(<ClusterProfileFeature />)
+
+    expect(screen.getByRole('banner').querySelector(`[data-icon-name="${iconName}"]`)).toBeInTheDocument()
+  })
+
   it('renders API-defined configuration fields', () => {
     const { container } = renderWithProviders(<ClusterProfileFeature />)
 
@@ -331,6 +357,8 @@ describe('ClusterProfileFeature', () => {
   it('keeps the form visible while a field edit triggers a resolver refetch', async () => {
     const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
     const highAvailability = screen.getByRole('switch', { name: 'High availability' })
+    // Queries keep their previous data while refetching.
+    mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki', 'alloy'], true))
 
     await userEvent.click(highAvailability)
 

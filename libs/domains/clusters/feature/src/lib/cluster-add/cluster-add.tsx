@@ -21,6 +21,7 @@ type ProviderCardProps = {
   title: string
   icon: string | ReactElement
   disabled?: boolean
+  actionLabel?: string
   analytics: { selectedCloudProvider: string; selectedInstallationType: string }
 } & ({ slug: string } | { onClick: () => void })
 
@@ -32,7 +33,7 @@ function ProviderIcon({ icon, title }: { icon: string | ReactElement; title: str
   )
 }
 
-function ProviderCard({ title, icon, disabled = false, analytics, ...props }: ProviderCardProps) {
+function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, ...props }: ProviderCardProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const className = twMerge(
     'flex h-[52px] items-center gap-2 rounded-md border border-neutral bg-surface-neutral px-4 text-left text-sm font-medium text-neutral transition-colors',
@@ -42,7 +43,11 @@ function ProviderCard({ title, icon, disabled = false, analytics, ...props }: Pr
     <>
       <ProviderIcon icon={icon} title={title} />
       <span className="min-w-0 flex-1 truncate">{title}</span>
-      <Icon iconName="angle-right" iconStyle="regular" className="text-neutral-subtle" />
+      {actionLabel ? (
+        <span className="shrink-0 text-ssm font-normal text-neutral-subtle">{actionLabel}</span>
+      ) : (
+        <Icon iconName="angle-right" iconStyle="regular" className="text-neutral-subtle" />
+      )}
     </>
   )
   const capture = () => posthog.capture('select-cluster', analytics)
@@ -165,6 +170,7 @@ export function ClusterAdd() {
           <ProviderCard
             title="Amazon Web Services EKS Anywhere"
             icon={<Icon name="AWS" />}
+            actionLabel="Request access"
             onClick={() => showPylonForm('request-access-eks-anywhere')}
             analytics={{ selectedCloudProvider: 'AWS', selectedInstallationType: 'partially-managed' }}
           />

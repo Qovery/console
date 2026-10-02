@@ -38,7 +38,7 @@ describe('ProfileOperatorFooter', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('refreshes the Operator status while displayed', () => {
+  it('configures polling for the Operator status', () => {
     mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false })
     renderWithProviders(<ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />)
 
@@ -48,6 +48,29 @@ describe('ProfileOperatorFooter', () => {
       refetchInterval: 30_000,
     })
     expect(screen.getByRole('button', { name: 'Qovery operator: Update available' })).toBeInTheDocument()
+  })
+
+  it('tells when the Operator status cannot be retrieved', async () => {
+    mockUseClusterOperatorStatus.mockReturnValue({ data: undefined, isLoading: false, isError: true })
+    const { userEvent } = renderWithProviders(
+      <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
+    )
+
+    await userEvent.hover(screen.getByRole('button', { name: 'Qovery operator: status unavailable' }))
+
+    expect((await screen.findAllByText('The Operator status could not be retrieved.'))[0]).toBeInTheDocument()
+  })
+
+  it('does not keep showing a stale status once a refresh fails', async () => {
+    mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false, isError: true })
+    const { userEvent } = renderWithProviders(
+      <ProfileOperatorFooter organizationId="org-123" clusterId="cluster-123" />
+    )
+
+    await userEvent.hover(screen.getByRole('button', { name: 'Qovery operator: status unavailable' }))
+
+    expect((await screen.findAllByText('The Operator status could not be retrieved.'))[0]).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
   })
 
   it('shows the Operator versions in a tooltip and starts an update', async () => {
