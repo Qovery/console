@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'domains-custom-domains-feature',
   preset: '../../../../jest.preset.js',
   transform: {

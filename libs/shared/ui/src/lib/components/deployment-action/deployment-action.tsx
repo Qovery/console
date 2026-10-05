@@ -1,6 +1,7 @@
 import {
   type ClusterStateEnum,
   type DeploymentHistoryTriggerAction,
+  type ServiceActionEnum,
   ServiceActionStatusEnum,
   type ServiceSubActionEnum,
   type StageStatusEnum,
@@ -134,6 +135,15 @@ export const getDeploymentAction = (
       icon: <Icon iconStyle="regular" iconName="circle-exclamation" />,
     }))
     .exhaustive()
+}
+
+export const getTriggerAction = (statusDetails?: {
+  action?: ServiceActionEnum
+  sub_action?: ServiceSubActionEnum
+}): ServiceActionEnum | ServiceSubActionEnum | undefined => {
+  if (!statusDetails) return undefined
+  if (statusDetails.sub_action && statusDetails.sub_action !== 'NONE') return statusDetails.sub_action
+  return statusDetails.action ?? 'UNKNOWN'
 }
 
 export const DeploymentAction = ({

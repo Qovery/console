@@ -1,19 +1,14 @@
+import { useParams } from '@tanstack/react-router'
 import { AlertRuleState } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { ServiceAlerting } from './service-alerting'
 
-const mockUseParams = jest.fn()
 const mockUseAlertRules = jest.fn()
 const mockUseAlertRulesGhosted = jest.fn()
 const mockUseDeleteAlertRule = jest.fn()
 const mockUseEnvironment = jest.fn()
 const mockUseService = jest.fn()
 const mockUseDeploymentStatus = jest.fn()
-
-jest.mock('@tanstack/react-router', () => ({
-  ...jest.requireActual('@tanstack/react-router'),
-  useParams: () => mockUseParams(),
-}))
 
 jest.mock('../../hooks/use-alert-rules/use-alert-rules', () => ({
   useAlertRules: (params: unknown) => mockUseAlertRules(params),
@@ -72,7 +67,7 @@ describe('ServiceAlerting', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseParams.mockReturnValue({
+    jest.mocked(useParams).mockReturnValue({
       organizationId: 'org-123',
       projectId: 'project-123',
       environmentId: 'env-123',
@@ -131,6 +126,30 @@ describe('ServiceAlerting', () => {
     renderWithProviders(<ServiceAlerting />)
 
     expect(screen.getByText('No alerts created for this service')).toBeInTheDocument()
+  })
+
+  it('should hide alert creation and explain where cluster alerts live for a legacy managed RDS database', () => {
+    mockUseService.mockReturnValue({
+      data: {
+        id: 'app-123',
+        name: 'Legacy DB',
+        environment: { id: 'env-123' },
+        service_type: 'DATABASE',
+        serviceType: 'DATABASE',
+        mode: 'MANAGED',
+        type: 'POSTGRESQL',
+      },
+    })
+
+    renderWithProviders(<ServiceAlerting />)
+
+    expect(screen.queryByRole('button', { name: /new alert/i })).not.toBeInTheDocument()
+    expect(screen.getByText('No alerts are linked to this service')).toBeInTheDocument()
+    expect(screen.getByText(/Alerts created on the cluster remain visible in the/)).toBeInTheDocument()
+    expect(screen.getByText('organization alerts').closest('a')).toHaveAttribute(
+      'to',
+      '/organization/$organizationId/alerts/alert-rules'
+    )
   })
 
   it('should render table with alert rules when they exist', () => {

@@ -2,7 +2,7 @@ import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useCallback } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
-import { DeploymentAction, Link, StatusChip } from '@qovery/shared/ui'
+import { DeploymentAction, Link, StatusChip, getTriggerAction } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useServiceDeploymentAndRunningStatuses } from '../../hooks/use-service-deployment-and-running-statuses/use-service-deployment-and-running-statuses'
 
@@ -16,8 +16,7 @@ export function ServiceLastDeploymentCell({ service, environment, isSkipped = fa
   const {
     data: { deploymentStatus },
   } = useServiceDeploymentAndRunningStatuses({ environmentId: environment.id, service })
-  const subAction = deploymentStatus?.status_details?.sub_action
-  const triggerAction = subAction !== 'NONE' ? subAction : deploymentStatus?.status_details?.action
+  const triggerAction = getTriggerAction(deploymentStatus?.status_details)
   const hasDeploymentError = deploymentStatus?.status_details?.status === 'ERROR'
   const hasPreviousDeployment = Boolean(deploymentStatus?.last_deployment_date || deploymentStatus?.execution_id)
 

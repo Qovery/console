@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
@@ -12,7 +12,7 @@ import {
   EnableObservabilityVideo,
   ServiceDashboard,
   generateDbInstance,
-  getBlueprintDbInstance,
+  useBlueprintDbInstance,
 } from '@qovery/domains/observability/feature'
 import {
   isBlueprintService,
@@ -28,7 +28,6 @@ import {
   useDeploymentStatus,
   useService,
 } from '@qovery/domains/services/feature'
-import { useVariables } from '@qovery/domains/variables/feature'
 import { monitoringDashboardSearchParamsSchema } from '@qovery/shared/router'
 import { Badge, Button, EmptyState, Heading, Icon, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -200,28 +199,12 @@ function RdsBlueprintDashboard({
   deploymentExecutionId?: string
 }) {
   const { serviceId = '' } = useParams({ strict: false })
-  const {
-    data: variables = [],
-    isLoading,
-    isError,
-    refetch,
-  } = useVariables({
-    parentId: serviceId,
-    scope: 'TERRAFORM',
-    isSecret: false,
+  const { dbInstance, isLoading, isError } = useBlueprintDbInstance({
+    serviceId,
+    enabled: true,
+    deploymentFinished,
+    deploymentExecutionId,
   })
-
-  const dbInstance = getBlueprintDbInstance(serviceId, variables)
-  const lastRefreshedDeployment = useRef<string>()
-  // Deployment status updates do not invalidate the Terraform output variables query.
-  // Refresh it once after each completed deployment, including replacements with an existing identifier.
-  useEffect(() => {
-    if (!deploymentFinished || isLoading) return
-    const deploymentKey = `${serviceId}:${deploymentExecutionId ?? 'deployed'}`
-    if (lastRefreshedDeployment.current === deploymentKey) return
-    lastRefreshedDeployment.current = deploymentKey
-    void refetch()
-  }, [deploymentExecutionId, deploymentFinished, isLoading, refetch, serviceId])
 
   if (isLoading) {
     return (

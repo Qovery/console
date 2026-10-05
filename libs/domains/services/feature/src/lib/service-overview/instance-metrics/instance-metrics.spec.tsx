@@ -92,6 +92,45 @@ describe('InstanceMetrics', () => {
     expect(container).toMatchSnapshot()
   })
 
+  it('sorts by status without crashing when pods have no running state', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
+    jest.spyOn(useRunningStatusImport, 'useRunningStatus').mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
+
+    jest.spyOn(useMetricsImport, 'useMetrics').mockReturnValue({
+      data: [
+        { pod_name: 'pod-a', storages: [] },
+        { pod_name: 'pod-b', storages: [] },
+      ],
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
+
+    const { userEvent } = renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" service={service} />)
+
+    jest.useFakeTimers()
+    try {
+      await userEvent.click(screen.getByRole('button', { name: /Status/i }))
+
+      expect(screen.getByText('pod-a')).toBeInTheDocument()
+      expect(screen.getByText('pod-b')).toBeInTheDocument()
+      expect(consoleErrorSpy).not.toHaveBeenCalled()
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
   it('shows the deploy empty state instead of the technical error when the service was never deployed', () => {
     const databaseService = {
       ...service,

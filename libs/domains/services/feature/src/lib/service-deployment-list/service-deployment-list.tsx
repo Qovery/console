@@ -31,6 +31,7 @@ import {
   TablePrimitives,
   Tooltip,
   Truncate,
+  getTriggerAction,
   truncateText,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -247,8 +248,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         },
         cell: (info) => {
           const data = info.row.original
-          const subAction = data.status_details?.sub_action
-          const triggerAction = subAction !== 'NONE' ? subAction : data.status_details?.action
+          const triggerAction = getTriggerAction(data.status_details)
 
           return match(data)
             .with(P.when(isDeploymentHistory), (d) => {

@@ -68,7 +68,7 @@ Reference these guidelines when:
 
 ### Workflow
 
-- Yarn Berry only (never npm), `nvm use 23`
+- Yarn Berry only (never npm), `nvm use`
 - Conventional commits: `feat|fix|chore(scope): message`
 - Pre-commit: format -> test -> snapshot review -> lint
 

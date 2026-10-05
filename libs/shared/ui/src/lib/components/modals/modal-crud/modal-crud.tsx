@@ -15,6 +15,7 @@ export interface ModalCrudProps {
   loading?: boolean
   description?: ReactNode
   submitLabel?: string
+  submitDisabled?: boolean
   forServiceName?: string
   onDelete?: () => void
   deleteButtonLabel?: string
@@ -36,6 +37,7 @@ export function ModalCrud(props: ModalCrudProps) {
     forServiceName,
     onDelete,
     submitLabel,
+    submitDisabled,
     deleteButtonLabel,
     howItWorks = null,
     customLoader = null,
@@ -114,7 +116,7 @@ export function ModalCrud(props: ModalCrudProps) {
             type="submit"
             color="brand"
             size="lg"
-            disabled={!formState.isValid || (!!customLoader && loading)}
+            disabled={!formState.isValid || submitDisabled || (!!customLoader && loading)}
             loading={loading && !customLoader}
           >
             {customLoader && loading ? (

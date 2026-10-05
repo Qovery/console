@@ -88,7 +88,14 @@ describe('AlertRulesActionBar', () => {
   })
 
   it('should call openModal when clone button is clicked', async () => {
-    const selectedRules = [{ id: 'rule-1', name: 'Rule 1', source: 'MANAGED' }] as unknown as AlertRuleResponse[]
+    const selectedRules = [
+      {
+        id: 'rule-1',
+        name: 'Rule 1',
+        source: 'MANAGED',
+        target: { target_id: 'service-1', target_type: 'APPLICATION' },
+      },
+    ] as unknown as AlertRuleResponse[]
 
     const { userEvent } = renderWithProviders(
       <AlertRulesActionBar {...defaultProps} selectedAlertRules={selectedRules} />
@@ -98,6 +105,38 @@ describe('AlertRulesActionBar', () => {
     await userEvent.click(cloneButton)
 
     expect(mockOpenModal).toHaveBeenCalled()
+  })
+
+  it('should disable cloning an RDS alert', () => {
+    const selectedRules = [
+      {
+        id: 'rds-rule',
+        tag: 'rds_cpu',
+        source: 'MANAGED',
+        condition: {
+          promql: 'aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="z04d06b19-postgresql"}',
+        },
+      },
+    ] as unknown as AlertRuleResponse[]
+
+    renderWithProviders(<AlertRulesActionBar {...defaultProps} selectedAlertRules={selectedRules} />)
+
+    expect(screen.getByText('Clone')).toBeDisabled()
+  })
+
+  it('should disable cloning a cluster alert', () => {
+    const selectedRules = [
+      {
+        id: 'cluster-rule',
+        tag: 'cpu',
+        source: 'MANAGED',
+        target: { target_id: 'cluster-1', target_type: 'CLUSTER' },
+      },
+    ] as unknown as AlertRuleResponse[]
+
+    renderWithProviders(<AlertRulesActionBar {...defaultProps} selectedAlertRules={selectedRules} />)
+
+    expect(screen.getByText('Clone')).toBeDisabled()
   })
 
   it('should call openModalConfirmation when delete button is clicked', async () => {

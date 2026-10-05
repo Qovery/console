@@ -20,10 +20,11 @@
             ]
           }
         ],
-        "@typescript-eslint/no-empty-interface": [
+        "@typescript-eslint/no-empty-object-type": [
           "error",
           {
-            "allowSingleExtends": true
+            "allowInterfaces": "with-single-extends",
+            "allowObjectTypes": "always"
           }
         ],
         "no-unused-vars": "off",
@@ -34,7 +35,7 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nx/typescript", "plugin:@tanstack/eslint-plugin-query/recommended"],
+      "extends": ["plugin:@nx/typescript"],
       "rules": {
         "@typescript-eslint/consistent-type-imports": [
           "error",
@@ -111,9 +112,13 @@
             ]
           }
         ],
-        "@typescript-eslint/no-extra-semi": "error",
-        "no-extra-semi": "off"
-      }
+        "no-extra-semi": "error",
+        "@typescript-eslint/no-empty-interface": "off",
+        "@tanstack/query/exhaustive-deps": "error",
+        "@tanstack/query/stable-query-client": "error",
+        "@tanstack/query/no-rest-destructuring": "warn"
+      },
+      "plugins": ["@tanstack/query"]
     },
     {
       "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
@@ -127,8 +132,7 @@
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
       "rules": {
-        "@typescript-eslint/no-extra-semi": "error",
-        "no-extra-semi": "off"
+        "no-extra-semi": "error"
       }
     },
     {

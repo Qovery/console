@@ -25,7 +25,7 @@ export function useStopService({
         queryKey: queries.services.status({ id: serviceId, serviceType }).queryKey,
       })
       queryClient.invalidateQueries({
-        queryKey: queries.services.deploymentHistory({ serviceId, serviceType }).queryKey,
+        queryKey: [...queries.services.deploymentHistory._def, serviceId, serviceType],
       })
 
       toast(

@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'domains-environments-feature',
   preset: '../../../../jest.preset.js',
   transform: {
