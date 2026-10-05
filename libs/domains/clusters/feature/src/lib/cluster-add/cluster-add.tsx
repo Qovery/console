@@ -25,9 +25,10 @@ type ProviderCardProps = {
   analytics: { selectedCloudProvider: string; selectedInstallationType: string }
 } & ({ slug: string } | { onClick: () => void })
 
-function ProviderIcon({ icon, title }: { icon: string | ReactElement; title: string }) {
+// Decorative: the card title already names the provider.
+function ProviderIcon({ icon }: { icon: string | ReactElement }) {
   return typeof icon === 'string' ? (
-    <img className="size-5 select-none" src={icon} alt={title} />
+    <img className="size-5 select-none" src={icon} alt="" />
   ) : (
     cloneElement(icon, { className: 'size-5 select-none' })
   )
@@ -41,7 +42,7 @@ function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, .
   )
   const content = (
     <>
-      <ProviderIcon icon={icon} title={title} />
+      <ProviderIcon icon={icon} />
       <span className="min-w-0 flex-1 truncate">{title}</span>
       {actionLabel ? (
         <span className="shrink-0 text-ssm font-normal text-neutral-subtle">{actionLabel}</span>

@@ -56,6 +56,13 @@ describe('ClusterAdd', () => {
     expect(mockShowPylonForm).toHaveBeenCalledWith('request-access-eks-anywhere')
   })
 
+  it('names each provider card once for assistive technologies', () => {
+    renderWithProviders(<ClusterAdd />)
+
+    expect(screen.getByRole('button', { name: 'AWS' })).toBeInTheDocument()
+    expect(screen.queryAllByRole('img')).toHaveLength(0)
+  })
+
   it('lets the creation flow be dismissed before the cluster is created', async () => {
     const { userEvent } = renderWithProviders(<ClusterAdd />)
 
