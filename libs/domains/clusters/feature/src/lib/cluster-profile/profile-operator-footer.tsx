@@ -55,7 +55,7 @@ export function ProfileOperatorFooter() {
   return operatorStatus ? (
     <Popover.Root>
       <Popover.Trigger>{trigger}</Popover.Trigger>
-      <Popover.Content side="right" align="end" className="w-[480px] rounded-lg">
+      <Popover.Content side="right" align="end" aria-label="Qovery Operator status" className="w-[480px] rounded-lg">
         <ClusterOperatorStatus operatorStatus={operatorStatus} />
       </Popover.Content>
     </Popover.Root>

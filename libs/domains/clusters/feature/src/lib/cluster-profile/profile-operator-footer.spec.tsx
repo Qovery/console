@@ -78,6 +78,7 @@ describe('ProfileOperatorFooter', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Qovery Operator: Update available' }))
 
+    expect(await screen.findByRole('dialog', { name: 'Qovery Operator status' })).toBeInTheDocument()
     const status = await screen.findByRole('region', { name: 'Qovery Operator status' })
     expect(status).toHaveTextContent('Update available')
     expect(status).toHaveTextContent('v1.202.0')
