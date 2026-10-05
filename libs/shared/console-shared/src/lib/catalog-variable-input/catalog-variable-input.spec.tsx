@@ -102,6 +102,43 @@ describe('CatalogVariableInput', () => {
     expect(screen.getByTestId('input-toggle').parentElement).toHaveClass('items-end')
   })
 
+  it.each([
+    ['a toggle in the row layout', { type: 'bool' }, 'row', 'switch', undefined],
+    ['a select in the row layout', { type: 'string', allowedValues: ['small', 'large'] }, 'row', 'combobox', undefined],
+    ['a toggle in the card layout', { type: 'bool' }, 'card', 'switch', undefined],
+    ['a checkbox in the card layout', { type: 'bool' }, 'card', 'checkbox', 'checkbox'],
+  ] as const)('ties the error to %s', (_, fieldType, layout, role, booleanControl) => {
+    renderWithProviders(
+      <CatalogVariableInput
+        {...defaultProps}
+        error="This value is not allowed."
+        field={{ key: 'profile', label: 'Profile', ...fieldType }}
+        layout={layout}
+        booleanControl={booleanControl}
+        value={fieldType.type === 'bool' ? false : 'small'}
+      />
+    )
+
+    const control = screen.getByRole(role, { name: 'Profile' })
+    expect(control).toHaveAttribute('aria-invalid', 'true')
+    expect(control).toHaveAccessibleDescription('This value is not allowed.')
+  })
+
+  it('does not flag a control without error', () => {
+    renderWithProviders(
+      <CatalogVariableInput
+        {...defaultProps}
+        field={{ key: 'high-availability', label: 'High availability', type: 'bool' }}
+        layout="row"
+        value={false}
+      />
+    )
+
+    const control = screen.getByRole('switch', { name: 'High availability' })
+    expect(control).not.toHaveAttribute('aria-invalid')
+    expect(control).not.toHaveAttribute('aria-describedby')
+  })
+
   it('renders sensitive values as passwords', () => {
     renderWithProviders(
       <CatalogVariableInput

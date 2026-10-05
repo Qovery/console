@@ -7,6 +7,8 @@ export interface InputSelectSmallProps {
   name: string
   label?: string
   ariaLabel?: string
+  ariaDescribedBy?: string
+  ariaInvalid?: boolean
   items: Value[]
   getValue?: (name: string, value: Value | null) => void
   className?: string
@@ -22,6 +24,8 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
     name,
     label,
     ariaLabel,
+    ariaDescribedBy,
+    ariaInvalid,
     items,
     defaultValue,
     className = '',
@@ -57,6 +61,8 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         data-testid={dataTestId || 'input-select-small'}
         name={name}
         aria-label={ariaLabel ?? label}
+        aria-describedby={ariaDescribedBy}
+        aria-invalid={ariaInvalid}
         value={value}
         disabled={disabled}
         className={twMerge(

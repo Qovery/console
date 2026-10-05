@@ -45,6 +45,8 @@ export function CatalogVariableDescription({ description, highlight }: { descrip
   )
 }
 
+const getErrorId = (field: CatalogVariableField) => `${field.key}-error`
+
 function CatalogVariableControl({
   autoFocus,
   booleanControl = 'toggle',
@@ -53,6 +55,11 @@ function CatalogVariableControl({
   onChange,
   value,
 }: Omit<CatalogVariableInputProps, 'layout'>) {
+  const errorProps = {
+    'aria-describedby': error ? getErrorId(field) : undefined,
+    'aria-invalid': error ? true : undefined,
+  }
+
   if (field.type === 'bool') {
     if (booleanControl === 'checkbox') {
       return (
@@ -60,6 +67,7 @@ function CatalogVariableControl({
           name={field.key}
           id={field.key}
           aria-label={field.label}
+          {...errorProps}
           autoFocus={autoFocus}
           checked={typeof value === 'boolean' ? value : false}
           onCheckedChange={(checked) => {
@@ -75,6 +83,8 @@ function CatalogVariableControl({
         small
         value={typeof value === 'boolean' ? value : false}
         ariaLabel={field.label}
+        ariaDescribedBy={errorProps['aria-describedby']}
+        ariaInvalid={errorProps['aria-invalid']}
         autoFocus={autoFocus}
         onChange={onChange}
       />
@@ -86,6 +96,8 @@ function CatalogVariableControl({
       <InputSelectSmall
         name={field.key}
         ariaLabel={field.label}
+        ariaDescribedBy={errorProps['aria-describedby']}
+        ariaInvalid={errorProps['aria-invalid']}
         inputClassName="h-10"
         defaultValue={typeof value === 'string' ? value : ''}
         items={field.allowedValues.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
@@ -141,7 +153,9 @@ function CatalogVariableInputRow({
           value={value}
         />
         {error && (field.type === 'bool' || field.allowedValues?.length) ? (
-          <p className="mt-1 text-xs font-medium text-negative">{error}</p>
+          <p id={getErrorId(field)} className="mt-1 text-xs font-medium text-negative">
+            {error}
+          </p>
         ) : null}
       </div>
     </div>
@@ -186,10 +200,16 @@ export function CatalogVariableInput({
             title={field.label}
             description={field.description}
             ariaLabel={field.label}
+            ariaDescribedBy={error ? getErrorId(field) : undefined}
+            ariaInvalid={error ? true : undefined}
             autoFocus={autoFocus}
             onChange={onChange}
           />
-          {error ? <p className="mt-1 pl-11 text-xs text-negative">{error}</p> : null}
+          {error ? (
+            <p id={getErrorId(field)} className="mt-1 pl-11 text-xs text-negative">
+              {error}
+            </p>
+          ) : null}
         </div>
       )
     }
@@ -200,6 +220,8 @@ export function CatalogVariableInput({
           <Checkbox
             name={field.key}
             id={field.key}
+            aria-describedby={error ? getErrorId(field) : undefined}
+            aria-invalid={error ? true : undefined}
             autoFocus={autoFocus}
             checked={typeof value === 'boolean' ? value : false}
             onCheckedChange={(checked) => {
@@ -214,7 +236,11 @@ export function CatalogVariableInput({
         {field.description ? (
           <p className="mt-1 pl-6 text-ssm leading-[18px] text-neutral-subtle">{field.description}</p>
         ) : null}
-        {error ? <p className="mt-1 pl-6 text-xs text-negative">{error}</p> : null}
+        {error ? (
+          <p id={getErrorId(field)} className="mt-1 pl-6 text-xs text-negative">
+            {error}
+          </p>
+        ) : null}
       </div>
     )
   }
