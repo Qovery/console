@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import {
   ClusterOperatorStatus,
@@ -7,7 +8,8 @@ import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/u
 
 const OPERATOR_STATUS_REFRESH_INTERVAL = 30_000
 
-export function ProfileOperatorFooter({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+export function ProfileOperatorFooter() {
+  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const {
     data: operatorStatus,
     isLoading,
@@ -26,10 +28,10 @@ export function ProfileOperatorFooter({ organizationId, clusterId }: { organizat
   const trigger = (
     <button
       type="button"
-      aria-label={`Qovery operator: ${display?.label ?? (isError ? 'status unavailable' : 'loading')}`}
-      className="focus-visible:ring-brand flex w-full shrink-0 items-center gap-2 bg-background-secondary p-3 text-left text-sm font-medium text-neutral outline-none focus-visible:ring-2 focus-visible:ring-inset"
+      aria-label={`Qovery Operator: ${display?.label ?? (isError ? 'status unavailable' : 'loading')}`}
+      className="flex w-full shrink-0 items-center gap-2 bg-background-secondary p-3 text-left text-sm font-medium text-neutral outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong"
     >
-      Qovery operator
+      Qovery Operator
       {display ? (
         <Icon iconName={display.icon.name} iconStyle="regular" className={`text-sm ${display.icon.className}`} />
       ) : isError ? (
@@ -42,7 +44,7 @@ export function ProfileOperatorFooter({ organizationId, clusterId }: { organizat
 
   if (isError) {
     return (
-      <Tooltip side="right" content="The Operator status could not be retrieved.">
+      <Tooltip side="right" content="The Operator status could not be retrieved">
         {trigger}
       </Tooltip>
     )
@@ -55,9 +57,7 @@ export function ProfileOperatorFooter({ organizationId, clusterId }: { organizat
       collisionPadding={8}
       classNameContent="w-[480px] rounded-lg border border-neutral bg-surface-neutral p-4 text-neutral shadow-lg"
       classNameArrow="fill-surface-neutral"
-      content={
-        <ClusterOperatorStatus organizationId={organizationId} clusterId={clusterId} operatorStatus={operatorStatus} />
-      }
+      content={<ClusterOperatorStatus operatorStatus={operatorStatus} />}
     >
       {trigger}
     </Tooltip>

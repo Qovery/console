@@ -1,13 +1,11 @@
 import equal from 'fast-deep-equal'
-import { type CloudVendorEnum, type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
-import { useEffect, useMemo, useRef } from 'react'
-import { match } from 'ts-pattern'
+import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
+import { useMemo } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
-import { IconEnum } from '@qovery/shared/enums'
-import { EmptyState, Heading, Icon, Navbar, Skeleton } from '@qovery/shared/ui'
+import { EmptyState, Heading, Navbar, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
-import { NODE_ENV } from '@qovery/shared/util-node-env'
+import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
 import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
 import {
   type PlatformFieldDescriptor,
@@ -72,14 +70,6 @@ function filterProfileTree(profileTree: ProfileTreeItem[], query: string): Profi
     )
     return children.length ? [{ ...layer, children }] : []
   })
-}
-
-function getCloudProviderIconName(cloudProvider: CloudVendorEnum) {
-  return match(cloudProvider)
-    .with('OVH', () => IconEnum.OVH_CLOUD)
-    .with('ORACLE', () => IconEnum.ORACLE_CLOUD)
-    .with('IBM', () => IconEnum.IBM_CLOUD)
-    .otherwise((provider) => provider)
 }
 
 function getProfileSections(
@@ -249,10 +239,8 @@ function ClusterProfileView({
   onSearchChange,
 }: ClusterProfileFeatureProps) {
   const {
-    organizationId,
     clusterId,
     cluster,
-    templates,
     configuration,
     profileTree,
     isLoading,
@@ -336,51 +324,42 @@ function ClusterProfileView({
       ),
     [configuration?.clusterInputs, clusterInputs, resolvedComponents]
   )
+  const edits = useMemo(() => ({ profileValues, clusterInputs }), [clusterInputs, profileValues])
+  const debouncedEdits = useDebounce(edits, 300)
   const previewRequests = useMemo(
     () =>
       Object.fromEntries(
         resolvedComponents.map((component) => [
           component.key,
           {
-            profileConfig: omitEmptyValues(profileConfigs[component.key] ?? {}),
-            clusterInputs: resolvedClusterInputs[component.key] ?? {},
+            profileConfig: omitEmptyValues(
+              applyPlatformConfigurationDefaults(component.fields, {
+                ...configuration?.platform.managedConfig?.[component.key],
+                ...debouncedEdits.profileValues[component.key],
+              })
+            ),
+            clusterInputs: {
+              ...configuration?.clusterInputs[component.key],
+              ...debouncedEdits.clusterInputs[component.key],
+            },
             componentOutputs: {},
           },
         ])
       ),
-    [profileConfigs, resolvedClusterInputs, resolvedComponents]
+    [configuration, debouncedEdits, resolvedComponents]
   )
-  const debouncedPreviewRequests = useDebounce(previewRequests, 300)
   const componentQueries = usePlatformComponentConfigurations({
     clusterId,
-    requests: debouncedPreviewRequests,
+    requests: previewRequests,
     enabled: Boolean(resolvedComponents.length),
   })
-  const requestedComponentKeys = Object.keys(debouncedPreviewRequests)
+  const requestedComponentKeys = Object.keys(previewRequests)
   const componentQueriesByKey = Object.fromEntries(
     requestedComponentKeys.flatMap((componentKey, index) => {
       const query = componentQueries[index]
       return query ? [[componentKey, query]] : []
     })
   )
-  const loggedSchemaResponses = useRef(new WeakSet<object>())
-
-  useEffect(() => {
-    if (NODE_ENV !== 'development') return
-
-    if (templates && !loggedSchemaResponses.current.has(templates)) {
-      loggedSchemaResponses.current.add(templates)
-      console.log('[Cluster profile] Platform template catalog API response', templates)
-    }
-
-    componentQueries.forEach(({ data }) => {
-      if (!data || loggedSchemaResponses.current.has(data)) return
-
-      loggedSchemaResponses.current.add(data)
-      console.log(`[Cluster profile] Component configuration API response (${data.componentKey})`, data)
-    })
-  }, [componentQueries, templates])
-
   const previewsByComponent = Object.fromEntries(
     componentQueries.flatMap((query) => (query.data ? [[query.data.componentKey, query.data]] : []))
   )
@@ -417,7 +396,7 @@ function ClusterProfileView({
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
   // Saving needs every displayed or edited component resolved for the latest edits, with no violation or missing input.
   const isConfigurationReady =
-    equal(debouncedPreviewRequests, previewRequests) &&
+    equal(debouncedEdits, edits) &&
     Object.keys(previewRequests).every((componentKey) => {
       const query = componentQueriesByKey[componentKey]
       const preview = query?.data
@@ -443,9 +422,7 @@ function ClusterProfileView({
     <div className="flex h-page-container min-h-0 flex-col overflow-hidden bg-background-secondary text-sm">
       <header className="flex min-h-11 items-center justify-between gap-4 px-4 py-2">
         <div className="flex min-w-0 items-center gap-2">
-          {cluster?.cloud_provider ? (
-            <Icon name={getCloudProviderIconName(cluster.cloud_provider)} width={20} height={20} />
-          ) : null}
+          {cluster ? <ClusterAvatar cluster={cluster} size="sm" /> : null}
           <p className="truncate font-medium text-neutral">{cluster?.name ?? 'Cluster'}</p>
         </div>
       </header>
@@ -461,7 +438,7 @@ function ClusterProfileView({
           onSearchChange={(nextSearch) => onSearchChange?.(nextSearch)}
           onSelectSection={handleSelectSection}
           onSelectItem={handleSelectItem}
-          footer={<ProfileOperatorFooter organizationId={organizationId} clusterId={clusterId} />}
+          footer={<ProfileOperatorFooter />}
         />
 
         <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
@@ -505,9 +482,7 @@ function ClusterProfileView({
                 <div className="p-4">
                   <EmptyState
                     icon="wave-pulse"
-                    title={
-                      <span className="font-normal leading-5">No settings found matching your search and filters.</span>
-                    }
+                    title={<span className="font-normal leading-5">No settings match your search</span>}
                     className="h-auto w-full p-8 shadow-sm"
                   />
                 </div>

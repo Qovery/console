@@ -31,17 +31,12 @@ interface LayerSectionRowProps {
   onSelectItem: (itemId: string) => void
 }
 
-function LayerIcon({ className = '' }: { className?: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`size-3.5 shrink-0 bg-current [mask-image:url('/assets/sidebar-test/layer.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] ${className}`}
-    />
-  )
+function LayerIcon() {
+  return <Icon iconName="layer-group" iconStyle="regular" aria-hidden="true" className="shrink-0 text-sm" />
 }
 
 export function ClusterProfileItemIcon() {
-  return <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="14" className="shrink-0" aria-hidden="true" />
+  return <Icon name={IconEnum.HELM_OFFICIAL} width="15" height="15" className="shrink-0" aria-hidden="true" />
 }
 
 function LayerSectionRow({
@@ -62,7 +57,7 @@ function LayerSectionRow({
           type="button"
           disabled={isDisabled}
           aria-current={isSelected && !selectedItemId ? 'page' : undefined}
-          className={`focus-visible:ring-brand flex h-8 w-full items-center gap-1.5 rounded px-3 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:cursor-not-allowed disabled:text-neutral-disabled ${
+          className={`flex h-8 w-full items-center gap-1.5 rounded px-3 text-left text-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong disabled:cursor-not-allowed disabled:text-neutral-disabled ${
             isDisabled
               ? ''
               : `${isSelected ? 'text-neutral' : 'text-neutral-subtle'} hover:bg-surface-neutral-component hover:text-neutral`
@@ -93,7 +88,7 @@ function LayerSectionRow({
               type="button"
               disabled={isItemDisabled}
               aria-current={isItemSelected ? 'page' : undefined}
-              className={`focus-visible:ring-brand group flex h-7 w-full items-center gap-1.5 px-3 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:cursor-not-allowed disabled:text-neutral-disabled ${
+              className={`group flex h-7 w-full items-center gap-1.5 px-3 text-left text-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong disabled:cursor-not-allowed disabled:text-neutral-disabled ${
                 isItemDisabled
                   ? ''
                   : isItemSelected
@@ -179,11 +174,15 @@ export function ClusterProfileSidebar({
         <h2 className="flex h-8 shrink-0 items-center px-3 text-sm font-medium">Layers</h2>
         <nav aria-label="Layers" className="min-h-0 flex-1 overflow-y-auto">
           <ul>
-            {isLoading ? <li className="px-3 py-1 text-xs text-neutral-subtle">Loading layers...</li> : null}
-            {isError ? <li className="px-3 py-1 text-xs text-negative">Unable to load layers.</li> : null}
+            {isLoading ? <li className="px-3 py-1 text-xs text-neutral-subtle">Loading layers…</li> : null}
+            {isError ? (
+              <li className="px-3 py-1 text-xs text-negative">
+                Layers could not be loaded. Refresh the page to try again.
+              </li>
+            ) : null}
             {showEmptyState ? (
               <li className="px-3 py-1 text-ssm text-neutral-subtle">
-                No results found. Review your search or applied filters.
+                {search.trim() ? 'No layers match your search' : 'No layers available'}
               </li>
             ) : null}
             {!isLoading && !isError

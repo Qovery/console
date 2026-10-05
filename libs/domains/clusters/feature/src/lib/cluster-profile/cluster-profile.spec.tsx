@@ -5,6 +5,7 @@ import {
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
+import { useModal } from '@qovery/shared/ui'
 import { act, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
@@ -15,9 +16,10 @@ import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/
 import { ClusterProfileFeature } from './cluster-profile'
 
 jest.mock('@tanstack/react-router', () => ({ useParams: jest.fn() }))
+const mockUseDebounce = jest.fn(<T,>(value: T) => value)
 jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
-  useDebounce: <T,>(value: T) => value,
+  useDebounce: <T,>(value: T) => mockUseDebounce(value),
 }))
 jest.mock('@qovery/shared/ui', () => {
   const React = jest.requireActual('react')
@@ -241,6 +243,7 @@ function createComponentQueries(componentKeys: string[], isFetching = false, isE
 describe('ClusterProfileFeature', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseDebounce.mockImplementation(<T,>(value: T) => value)
     mockUseParams.mockReturnValue({ organizationId: 'organization-id', clusterId: 'cluster-id' })
     mockUseCluster.mockReturnValue({
       data: { cloud_provider: 'AWS', kubernetes: 'SELF_MANAGED' },
@@ -407,6 +410,68 @@ describe('ClusterProfileFeature', () => {
     expect(onActiveComponentChange).toHaveBeenCalledWith('loki')
   })
 
+  it('resolves another component without waiting for the edit debounce', async () => {
+    // A debounce that never settles: only edits may wait for it.
+    mockUseDebounce.mockImplementation(<T,>(value: T) => jest.requireActual('react').useRef(value).current)
+    mockUsePlatformComponentConfigurations.mockImplementation(({ requests }) =>
+      createComponentQueries(Object.keys(requests))
+    )
+    function ClusterProfileWithNavigation() {
+      const [componentKey, setComponentKey] = useState<string>()
+      return <ClusterProfileFeature activeComponentKey={componentKey} onActiveComponentChange={setComponentKey} />
+    }
+    const { userEvent } = renderWithProviders(<ClusterProfileWithNavigation />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Envoy' }))
+
+    expect(mockUsePlatformComponentConfigurations).toHaveBeenLastCalledWith(
+      expect.objectContaining({ requests: { envoy: expect.anything() } })
+    )
+    expect(screen.queryByRole('status', { name: 'Loading configuration' })).not.toBeInTheDocument()
+  })
+
+  describe('edits debounce across component switches', () => {
+    function ClusterProfileWithNavigation() {
+      const [componentKey, setComponentKey] = useState<string>()
+      return <ClusterProfileFeature activeComponentKey={componentKey} onActiveComponentChange={setComponentKey} />
+    }
+    const getLastLokiRequest = () =>
+      mockUsePlatformComponentConfigurations.mock.calls.at(-1)?.[0].requests['loki']?.profileConfig
+
+    beforeEach(() => {
+      mockUsePlatformComponentConfigurations.mockImplementation(({ requests }) =>
+        createComponentQueries(Object.keys(requests))
+      )
+    })
+
+    it('keeps an edit debounced after switching to another component', async () => {
+      // A debounce that never settles.
+      mockUseDebounce.mockImplementation(<T,>(value: T) => jest.requireActual('react').useRef(value).current)
+      const { userEvent } = renderWithProviders(<ClusterProfileWithNavigation />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      const bar = screen.getByRole('region', { name: 'Unsaved profile changes' })
+      await userEvent.click(screen.getByRole('button', { name: 'Envoy' }))
+
+      expect(getLastLokiRequest()).not.toHaveProperty('high-availability', true)
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
+    })
+
+    it('checks the latest edit when coming back to its component', async () => {
+      const { userEvent } = renderWithProviders(<ClusterProfileWithNavigation />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Envoy' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Log infra' }))
+
+      expect(screen.getByRole('switch', { name: 'High availability' })).toBeChecked()
+      expect(getLastLokiRequest()).toHaveProperty('high-availability', true)
+      expect(
+        within(screen.getByRole('region', { name: 'Unsaved profile changes' })).getByRole('button', { name: 'Save' })
+      ).toBeEnabled()
+    })
+  })
+
   it('moves between the component tabs with the arrow keys', async () => {
     const onActiveComponentChange = jest.fn()
     const { userEvent } = renderWithProviders(
@@ -474,6 +539,35 @@ describe('ClusterProfileFeature', () => {
       act(() => hideProfile())
 
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    })
+
+    it('does not close another modal after the item modal was dismissed', async () => {
+      let hideProfile: () => void = () => undefined
+      function ClusterProfileWithOtherModal() {
+        const [isShown, setIsShown] = useState(true)
+        const { openModal } = useModal()
+        hideProfile = () => setIsShown(false)
+        return (
+          <>
+            <button type="button" onClick={() => openModal({ content: <p>Other modal</p> })}>
+              Open other modal
+            </button>
+            {isShown ? <ClusterProfileFeature activeComponentKey="envoy" /> : null}
+          </>
+        )
+      }
+      const { userEvent } = renderWithProviders(<ClusterProfileWithOtherModal />)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Add item to Client-validation CA certificates' }))
+      expect(await screen.findByRole('dialog')).toBeInTheDocument()
+      await userEvent.keyboard('{Escape}')
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+
+      await userEvent.click(screen.getByRole('button', { name: 'Open other modal' }))
+      expect(await screen.findByText('Other modal')).toBeInTheDocument()
+      act(() => hideProfile())
+
+      expect(screen.getByText('Other modal')).toBeInTheDocument()
     })
 
     it('disables the add button once the item limit is reached', () => {
@@ -608,8 +702,8 @@ describe('ClusterProfileFeature', () => {
     it('shows empty states when nothing matches', () => {
       renderWithProviders(<ClusterProfileFeature search="CPUza" />)
 
-      expect(screen.getByText('No results found. Review your search or applied filters.')).toBeInTheDocument()
-      expect(screen.getByText('No settings found matching your search and filters.')).toBeInTheDocument()
+      expect(screen.getByText('No layers match your search')).toBeInTheDocument()
+      expect(screen.getByText('No settings match your search')).toBeInTheDocument()
       expect(screen.getByRole('heading', { name: 'Log infra' })).toBeInTheDocument()
       expect(screen.queryByRole('link')).not.toBeInTheDocument()
     })
@@ -767,6 +861,26 @@ describe('ClusterProfileFeature', () => {
       expect(mockDeployCluster).not.toHaveBeenCalled()
     })
 
+    it('keeps the edits made while saving', async () => {
+      let resolveSave = () => undefined as unknown
+      mockUpdatePlatformConfiguration.mockReturnValue(new Promise((resolve) => (resolveSave = resolve)))
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+      await userEvent.clear(screen.getByRole('spinbutton', { name: 'Retention period' }))
+      await userEvent.type(screen.getByRole('spinbutton', { name: 'Retention period' }), '24')
+      await act(async () => {
+        resolveSave()
+      })
+
+      expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toHaveValue(24)
+      expect(screen.getByRole('switch', { name: 'High availability' })).not.toBeChecked()
+      expect(
+        within(screen.getByRole('region', { name: 'Unsaved profile changes' })).getByText(/1 change/)
+      ).toBeInTheDocument()
+    })
+
     it('deploys the cluster once the changes are saved', async () => {
       const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
@@ -787,6 +901,18 @@ describe('ClusterProfileFeature', () => {
       expect(mockDeployCluster).not.toHaveBeenCalled()
       expect(screen.getByRole('region', { name: 'Unsaved profile changes' })).toBeInTheDocument()
     })
+  })
+
+  it('tells when the profile has no layers', () => {
+    mockUsePlatformTemplates.mockReturnValue({
+      data: [{ ...mockTemplates[0], layers: [] }],
+      isError: false,
+      isLoading: false,
+    } as unknown as ReturnType<typeof usePlatformTemplates>)
+    renderWithProviders(<ClusterProfileFeature />)
+
+    expect(screen.getByText('No layers available')).toBeInTheDocument()
+    expect(screen.queryByText('No layers match your search')).not.toBeInTheDocument()
   })
 
   it('greys out the layers skipped or disabled in the cluster configuration', async () => {

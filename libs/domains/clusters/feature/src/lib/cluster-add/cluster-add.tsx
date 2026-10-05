@@ -200,7 +200,7 @@ export function ClusterAdd() {
 
       <ProviderSection
         title="Connect existing cluster (BYOK)"
-        description="Install the Qovery operator on a cluster you already run"
+        description="Install the Qovery Operator on a cluster you already run"
       >
         <ProviderCard
           title="Local machine (Demo)"

@@ -3,6 +3,10 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useUpdateClusterOperator } from '../hooks/use-update-cluster-operator/use-update-cluster-operator'
 import { ClusterOperatorStatus } from './cluster-operator-status'
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: 'organization-id', clusterId: 'cluster-id' }),
+}))
 jest.mock('../hooks/use-update-cluster-operator/use-update-cluster-operator')
 
 const mockUseUpdateClusterOperator = useUpdateClusterOperator as jest.Mock
@@ -22,9 +26,7 @@ describe('ClusterOperatorStatus', () => {
   })
 
   it('updates the Operator to the target versions', async () => {
-    const { userEvent } = renderWithProviders(
-      <ClusterOperatorStatus organizationId="organization-id" clusterId="cluster-id" operatorStatus={operatorStatus} />
-    )
+    const { userEvent } = renderWithProviders(<ClusterOperatorStatus operatorStatus={operatorStatus} />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Update Operator' }))
 
@@ -38,9 +40,7 @@ describe('ClusterOperatorStatus', () => {
 
   it('does not start another update while one is in progress', async () => {
     mockUseUpdateClusterOperator.mockReturnValue({ mutate: mockUpdateOperator, isLoading: true })
-    const { userEvent } = renderWithProviders(
-      <ClusterOperatorStatus organizationId="organization-id" clusterId="cluster-id" operatorStatus={operatorStatus} />
-    )
+    const { userEvent } = renderWithProviders(<ClusterOperatorStatus operatorStatus={operatorStatus} />)
 
     const button = screen.getByRole('button', { name: 'Update Operator' })
     expect(button).toBeDisabled()
@@ -51,25 +51,13 @@ describe('ClusterOperatorStatus', () => {
   })
 
   it('hides the update action while the Operator is not connected', () => {
-    renderWithProviders(
-      <ClusterOperatorStatus
-        organizationId="organization-id"
-        clusterId="cluster-id"
-        operatorStatus={{ ...operatorStatus, operator_connected: false }}
-      />
-    )
+    renderWithProviders(<ClusterOperatorStatus operatorStatus={{ ...operatorStatus, operator_connected: false }} />)
 
     expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
   })
 
   it('disables the update action without a target chart version', () => {
-    renderWithProviders(
-      <ClusterOperatorStatus
-        organizationId="organization-id"
-        clusterId="cluster-id"
-        operatorStatus={{ ...operatorStatus, desired_chart_version: null }}
-      />
-    )
+    renderWithProviders(<ClusterOperatorStatus operatorStatus={{ ...operatorStatus, desired_chart_version: null }} />)
 
     expect(screen.getByRole('button', { name: 'Update Operator' })).toBeDisabled()
   })

@@ -62,6 +62,17 @@ function countProfileChanges(
   return profileChanges.length + clusterInputChanges.length
 }
 
+function omitSubmittedValues<T extends Record<string, Record<string, unknown>>>(currentValues: T, submittedValues: T) {
+  return Object.fromEntries(
+    Object.entries(currentValues).flatMap(([componentKey, values]) => {
+      const remainingValues = Object.fromEntries(
+        Object.entries(values).filter(([key, value]) => !equal(value, submittedValues[componentKey]?.[key]))
+      )
+      return Object.keys(remainingValues).length ? [[componentKey, remainingValues]] : []
+    })
+  ) as T
+}
+
 // PUT replaces the whole configuration: unedited components and inputs are sent back as saved.
 function getConfigurationRequest(
   template: PlatformTemplateSummaryResponse,
@@ -148,9 +159,9 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
       clusterId,
       configurationRequest: getConfigurationRequest(selectedTemplate, configuration, profileValues, clusterInputs),
     })
-    // The saved configuration now carries the edits, so the local copies can go.
-    setProfileValues({})
-    setClusterInputs({})
+    // The saved configuration now carries the submitted edits, so their local copies can go.
+    setProfileValues((currentValues) => omitSubmittedValues(currentValues, profileValues))
+    setClusterInputs((currentValues) => omitSubmittedValues(currentValues, clusterInputs))
   }
 
   const saveChanges = async () => {

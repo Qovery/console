@@ -1,4 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useParams } from '@tanstack/react-router'
 import { type ClusterOperatorFleetStatus, type ClusterOperatorStatusResponse } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { Badge, Button, StatusChip } from '@qovery/shared/ui'
@@ -76,12 +77,11 @@ function Version({ installed, target }: { installed?: string | null; target?: st
 }
 
 export interface ClusterOperatorStatusProps {
-  organizationId: string
-  clusterId: string
   operatorStatus: ClusterOperatorStatusResponse
 }
 
-export function ClusterOperatorStatus({ organizationId, clusterId, operatorStatus }: ClusterOperatorStatusProps) {
+export function ClusterOperatorStatus({ operatorStatus }: ClusterOperatorStatusProps) {
+  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { mutate: updateOperator, isLoading: isUpdating } = useUpdateClusterOperator()
   const display = getClusterOperatorStatusDisplay(operatorStatus.status)
 
