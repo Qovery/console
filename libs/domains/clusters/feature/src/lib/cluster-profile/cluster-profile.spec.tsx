@@ -906,6 +906,41 @@ describe('ClusterProfileFeature', () => {
       )
     })
 
+    it('does not count a toggle cluster input switched back off as a change', async () => {
+      const [loki, alloy] = createComponentQueries(['loki', 'alloy'])
+      mockUsePlatformComponentConfigurations.mockReturnValue([
+        {
+          ...loki,
+          data: {
+            ...createResolution('loki'),
+            requirements: [
+              {
+                key: 'infra.useSpot',
+                label: 'Use spot instances',
+                type: 'bool',
+                required: false,
+                sensitive: false,
+                constraints: {},
+                status: 'READY',
+              },
+            ],
+          },
+        },
+        alloy,
+      ] as ReturnType<typeof usePlatformComponentConfigurations>)
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+      const useSpot = screen.getByRole('switch', { name: 'Use spot instances' })
+
+      await userEvent.click(useSpot)
+      expect(screen.getByRole('region', { name: 'Unsaved profile changes' })).toHaveTextContent('1 change ongoing')
+
+      await userEvent.click(useSpot)
+
+      await waitFor(() =>
+        expect(screen.queryByRole('region', { name: 'Unsaved profile changes' })).not.toBeInTheDocument()
+      )
+    })
+
     it('does not save edits that were reverted by hand', async () => {
       const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 

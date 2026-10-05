@@ -26,7 +26,7 @@ export type ProfileValues = Record<string, Record<string, unknown>>
 export type ClusterInputValues = Record<string, Record<string, string>>
 
 // Scalars are compared as the inputs display them: an unset toggle shows as off, an unset text as empty.
-function getDisplayedScalarValue(field: PlatformScalarField, value: unknown) {
+function getDisplayedScalarValue(field: Pick<PlatformFieldDescriptor, 'type' | 'defaultValue'>, value: unknown) {
   return getCatalogVariableValue(field, value) ?? (field.type === 'bool' ? false : '')
 }
 
@@ -165,10 +165,12 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
 
   const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
     // The input shows its default while unsaved: setting it back to what is displayed is no edit.
-    const displayedValue = configuration?.clusterInputs[componentKey]?.[field.key] ?? field.defaultValue ?? ''
     const nextValue = String(value)
+    const isDisplayedValue =
+      getDisplayedScalarValue(field, nextValue) ===
+      getDisplayedScalarValue(field, configuration?.clusterInputs[componentKey]?.[field.key])
     setClusterInputs((currentValues) =>
-      updateComponentValue(currentValues, componentKey, field.key, nextValue === displayedValue ? undefined : nextValue)
+      updateComponentValue(currentValues, componentKey, field.key, isDisplayedValue ? undefined : nextValue)
     )
   }
 
