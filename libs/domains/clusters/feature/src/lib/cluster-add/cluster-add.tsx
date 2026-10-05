@@ -1,11 +1,11 @@
-import { Link, useParams } from '@tanstack/react-router'
+import { Link, useBlocker, useParams } from '@tanstack/react-router'
 import Azure from 'devicon/icons/azure/azure-original.svg'
 import DigitalOcean from 'devicon/icons/digitalocean/digitalocean-original.svg'
 import GCP from 'devicon/icons/googlecloud/googlecloud-original.svg'
 import Kubernetes from 'devicon/icons/kubernetes/kubernetes-original.svg'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { type ReactElement, type ReactNode, cloneElement, useState } from 'react'
+import { type ReactElement, type ReactNode, cloneElement, useRef, useState } from 'react'
 import { Callout, Heading, Icon, Modal, Section, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
@@ -16,6 +16,9 @@ import {
   SelfManagedClusterCreationFlow,
   type SelfManagedClusterCreationStep,
 } from '../self-managed-cluster-creation/self-managed-cluster-creation-flow'
+
+const LEAVE_INSTALL_STEP_MESSAGE =
+  'The Operator installation instructions will be lost if you leave this page. Leave anyway?'
 
 type ProviderCardProps = {
   title: string
@@ -113,6 +116,17 @@ export function ClusterAdd() {
   const [isCreationFlowOpen, setIsCreationFlowOpen] = useState(false)
   const [creationStep, setCreationStep] = useState<SelfManagedClusterCreationStep>('general')
 
+  // The flow closes itself before navigating once the Operator connects: that navigation must not be blocked.
+  const isFlowClosingRef = useRef(false)
+  // Once the cluster exists, leaving the page would lose the Operator installation instructions.
+  const isInstalling = isCreationFlowOpen && creationStep === 'install'
+
+  useBlocker({
+    disabled: !isInstalling,
+    shouldBlockFn: () => !isFlowClosingRef.current && !window.confirm(LEAVE_INSTALL_STEP_MESSAGE),
+    enableBeforeUnload: isInstalling,
+  })
+
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
       options: { width: 500 },
@@ -120,6 +134,7 @@ export function ClusterAdd() {
     })
 
   const openCreationFlow = () => {
+    isFlowClosingRef.current = false
     setCreationStep('general')
     setIsCreationFlowOpen(true)
   }
@@ -250,7 +265,10 @@ export function ClusterAdd() {
         <SelfManagedClusterCreationFlow
           organizationId={organizationId}
           onStepChange={setCreationStep}
-          onClose={() => setIsCreationFlowOpen(false)}
+          onClose={() => {
+            isFlowClosingRef.current = true
+            setIsCreationFlowOpen(false)
+          }}
         />
       </Modal>
     </div>
