@@ -31,28 +31,43 @@ function getDisplayedScalarValue(field: PlatformScalarField, value: unknown) {
 }
 
 // Local edits differing from the saved (or default) value; edits reverted by hand do not count.
+function getChangedProfileValues(
+  profileTree: ProfileTreeItem[],
+  configuration: ClusterPlatformConfigurationResponse | null | undefined,
+  profileValues: ProfileValues
+): ProfileValues {
+  const fieldsByComponent = new Map(
+    profileTree.flatMap((layer) => layer.children).map((component) => [component.key, component.fields])
+  )
+  return Object.fromEntries(
+    Object.entries(profileValues).flatMap(([componentKey, values]) => {
+      const fields = fieldsByComponent.get(componentKey) ?? []
+      const savedValues = applyPlatformConfigurationDefaults(
+        fields,
+        configuration?.platform.managedConfig?.[componentKey] ?? {}
+      )
+      const changedValues = Object.fromEntries(
+        Object.entries(values).filter(([fieldKey, value]) => {
+          const field = fields.find(({ key }) => key === fieldKey)
+          return field && isPlatformScalarField(field)
+            ? getDisplayedScalarValue(field, value) !== getDisplayedScalarValue(field, savedValues[fieldKey])
+            : !equal(value, savedValues[fieldKey])
+        })
+      )
+      return Object.keys(changedValues).length ? [[componentKey, changedValues]] : []
+    })
+  )
+}
+
 function countProfileChanges(
   profileTree: ProfileTreeItem[],
   configuration: ClusterPlatformConfigurationResponse | null | undefined,
   profileValues: ProfileValues,
   clusterInputs: ClusterInputValues
 ) {
-  const fieldsByComponent = new Map(
-    profileTree.flatMap((layer) => layer.children).map((component) => [component.key, component.fields])
+  const profileChanges = Object.values(getChangedProfileValues(profileTree, configuration, profileValues)).flatMap(
+    (values) => Object.keys(values)
   )
-  const profileChanges = Object.entries(profileValues).flatMap(([componentKey, values]) => {
-    const fields = fieldsByComponent.get(componentKey) ?? []
-    const savedValues = applyPlatformConfigurationDefaults(
-      fields,
-      configuration?.platform.managedConfig?.[componentKey] ?? {}
-    )
-    return Object.entries(values).filter(([fieldKey, value]) => {
-      const field = fields.find(({ key }) => key === fieldKey)
-      return field && isPlatformScalarField(field)
-        ? getDisplayedScalarValue(field, value) !== getDisplayedScalarValue(field, savedValues[fieldKey])
-        : !equal(value, savedValues[fieldKey])
-    })
-  })
   const clusterInputChanges = Object.entries(clusterInputs).flatMap(([componentKey, values]) =>
     Object.entries(values).filter(
       ([inputKey, value]) => value !== (configuration?.clusterInputs[componentKey]?.[inputKey] ?? '')
@@ -73,16 +88,20 @@ function omitSubmittedValues<T extends Record<string, Record<string, unknown>>>(
   ) as T
 }
 
-// PUT replaces the whole configuration: unedited components and inputs are sent back as saved.
+// PUT replaces the whole configuration: unedited components and inputs are sent back as saved, and edits reverted
+// by hand are left out so the field keeps following the schema default.
 function getConfigurationRequest(
   template: PlatformTemplateSummaryResponse,
+  profileTree: ProfileTreeItem[],
   configuration: ClusterPlatformConfigurationResponse | null | undefined,
   profileValues: ProfileValues,
   clusterInputs: ClusterInputValues
 ): ClusterPlatformConfigurationRequest {
   const savedManagedConfig = configuration?.platform.managedConfig
   const managedConfig = { ...savedManagedConfig }
-  for (const [componentKey, values] of Object.entries(profileValues)) {
+  for (const [componentKey, values] of Object.entries(
+    getChangedProfileValues(profileTree, configuration, profileValues)
+  )) {
     managedConfig[componentKey] = omitEmptyValues({ ...savedManagedConfig?.[componentKey], ...values })
   }
   const nextClusterInputs = { ...configuration?.clusterInputs }
@@ -157,7 +176,13 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
     if (!selectedTemplate) return
     await updatePlatformConfiguration({
       clusterId,
-      configurationRequest: getConfigurationRequest(selectedTemplate, configuration, profileValues, clusterInputs),
+      configurationRequest: getConfigurationRequest(
+        selectedTemplate,
+        profileTree,
+        configuration,
+        profileValues,
+        clusterInputs
+      ),
     })
     // The saved configuration now carries the submitted edits, so their local copies can go.
     setProfileValues((currentValues) => omitSubmittedValues(currentValues, profileValues))

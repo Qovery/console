@@ -869,6 +869,24 @@ describe('ClusterProfileFeature', () => {
       expect(mockDeployCluster).not.toHaveBeenCalled()
     })
 
+    it('does not save edits that were reverted by hand', async () => {
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.clear(screen.getByRole('spinbutton', { name: 'Retention period' }))
+      await userEvent.type(screen.getByRole('spinbutton', { name: 'Retention period' }), '24')
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+      expect(mockUpdatePlatformConfiguration).toHaveBeenCalledWith({
+        clusterId: 'cluster-id',
+        configurationRequest: {
+          platform: expect.objectContaining({ managedConfig: { loki: { 'retention-period': 24 } } }),
+          clusterInputs: {},
+        },
+      })
+    })
+
     it('keeps the edits made while saving', async () => {
       let resolveSave = () => undefined as unknown
       mockUpdatePlatformConfiguration.mockReturnValue(new Promise((resolve) => (resolveSave = resolve)))
