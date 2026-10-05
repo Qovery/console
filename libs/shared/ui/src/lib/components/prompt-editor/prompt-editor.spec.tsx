@@ -118,4 +118,36 @@ describe('PromptEditor', () => {
     expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveTextContent('ab')
     expect(onChange).toHaveBeenCalledTimes(2)
   })
+
+  it('should apply a later controlled update after the parent echoes the latest of repeated values', async () => {
+    const onChange = jest.fn()
+
+    function EchoPromptEditor() {
+      const [value, setValue] = useState('')
+
+      return (
+        <>
+          <PromptEditor label="Prompt" name="prompt" value={value} onChange={onChange} />
+          <button type="button" onClick={() => setValue('a')}>
+            Echo a
+          </button>
+          <button type="button" onClick={() => setValue('ab')}>
+            Reset to ab
+          </button>
+        </>
+      )
+    }
+
+    const { userEvent } = renderWithProviders(<EchoPromptEditor />)
+
+    // Emits "a", "ab", then "a" again.
+    await userEvent.type(screen.getByRole('textbox', { name: 'Prompt' }), 'ab{Backspace}')
+    expect(onChange).toHaveBeenCalledTimes(3)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Echo a' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Reset to ab' }))
+
+    expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveTextContent('ab')
+    expect(onChange).toHaveBeenCalledTimes(3)
+  })
 })
