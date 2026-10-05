@@ -26,7 +26,7 @@ export type ProfileValues = Record<string, Record<string, unknown>>
 export type ClusterInputValues = Record<string, Record<string, string>>
 
 // Scalars are compared as the inputs display them: an unset toggle shows as off, an unset text as empty.
-function getDisplayedScalarValue(field: PlatformScalarField, value: unknown) {
+function getDisplayedScalarValue(field: Pick<PlatformFieldDescriptor, 'type' | 'defaultValue'>, value: unknown) {
   return getCatalogVariableValue(field, value) ?? (field.type === 'bool' ? false : '')
 }
 
@@ -106,6 +106,7 @@ function getConfigurationRequest(
   }
   const nextClusterInputs = { ...configuration?.clusterInputs }
   for (const [componentKey, values] of Object.entries(clusterInputs)) {
+    if (!Object.keys(values).length) continue
     nextClusterInputs[componentKey] = { ...configuration?.clusterInputs[componentKey], ...values }
   }
 
@@ -163,7 +164,14 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
   }
 
   const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
-    setClusterInputs((currentValues) => updateComponentValue(currentValues, componentKey, field.key, String(value)))
+    // The input shows its default while unsaved: setting it back to what is displayed is no edit.
+    const nextValue = String(value)
+    const isDisplayedValue =
+      getDisplayedScalarValue(field, nextValue) ===
+      getDisplayedScalarValue(field, configuration?.clusterInputs[componentKey]?.[field.key])
+    setClusterInputs((currentValues) =>
+      updateComponentValue(currentValues, componentKey, field.key, isDisplayedValue ? undefined : nextValue)
+    )
   }
 
   const resetChanges = () => {

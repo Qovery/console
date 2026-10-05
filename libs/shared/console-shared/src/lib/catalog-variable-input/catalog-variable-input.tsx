@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import {
   Checkbox,
   HighlightText,
@@ -45,14 +46,22 @@ export function CatalogVariableDescription({ description, highlight }: { descrip
   )
 }
 
+type CatalogVariableControlProps = Omit<CatalogVariableInputProps, 'layout'> & { errorId: string }
+
 function CatalogVariableControl({
   autoFocus,
   booleanControl = 'toggle',
   error,
+  errorId,
   field,
   onChange,
   value,
-}: Omit<CatalogVariableInputProps, 'layout'>) {
+}: CatalogVariableControlProps) {
+  const errorProps = {
+    'aria-describedby': error ? errorId : undefined,
+    'aria-invalid': error ? true : undefined,
+  }
+
   if (field.type === 'bool') {
     if (booleanControl === 'checkbox') {
       return (
@@ -60,6 +69,7 @@ function CatalogVariableControl({
           name={field.key}
           id={field.key}
           aria-label={field.label}
+          {...errorProps}
           autoFocus={autoFocus}
           checked={typeof value === 'boolean' ? value : false}
           onCheckedChange={(checked) => {
@@ -75,6 +85,8 @@ function CatalogVariableControl({
         small
         value={typeof value === 'boolean' ? value : false}
         ariaLabel={field.label}
+        ariaDescribedBy={errorProps['aria-describedby']}
+        ariaInvalid={errorProps['aria-invalid']}
         autoFocus={autoFocus}
         onChange={onChange}
       />
@@ -84,8 +96,12 @@ function CatalogVariableControl({
   if (field.allowedValues?.length) {
     return (
       <InputSelectSmall
+        // InputSelectSmall ignores an emptied defaultValue: remount so a cleared value does not keep its old option.
+        key={value ? 'selected' : 'empty'}
         name={field.key}
         ariaLabel={field.label}
+        ariaDescribedBy={errorProps['aria-describedby']}
+        ariaInvalid={errorProps['aria-invalid']}
         inputClassName="h-10"
         defaultValue={typeof value === 'string' ? value : ''}
         items={field.allowedValues.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
@@ -116,11 +132,12 @@ function CatalogVariableInputRow({
   autoFocus,
   booleanControl,
   error,
+  errorId,
   field,
   highlight,
   onChange,
   value,
-}: Omit<CatalogVariableInputProps, 'layout'>) {
+}: CatalogVariableControlProps) {
   return (
     <div className="flex flex-col gap-4 border-b border-neutral p-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0 flex-1">
@@ -136,12 +153,15 @@ function CatalogVariableInputRow({
           autoFocus={autoFocus}
           booleanControl={booleanControl}
           error={error}
+          errorId={errorId}
           field={field}
           onChange={onChange}
           value={value}
         />
         {error && (field.type === 'bool' || field.allowedValues?.length) ? (
-          <p className="mt-1 text-xs font-medium text-negative">{error}</p>
+          <p id={errorId} className="mt-1 text-xs font-medium text-negative">
+            {error}
+          </p>
         ) : null}
       </div>
     </div>
@@ -158,12 +178,16 @@ export function CatalogVariableInput({
   onChange,
   value,
 }: CatalogVariableInputProps) {
+  // Field keys can repeat on a page (nested fields, requirements): the error id must be unique per instance.
+  const errorId = useId()
+
   if (layout === 'row') {
     return (
       <CatalogVariableInputRow
         autoFocus={autoFocus}
         booleanControl={booleanControl}
         error={error}
+        errorId={errorId}
         field={field}
         highlight={highlight}
         onChange={onChange}
@@ -186,10 +210,16 @@ export function CatalogVariableInput({
             title={field.label}
             description={field.description}
             ariaLabel={field.label}
+            ariaDescribedBy={error ? errorId : undefined}
+            ariaInvalid={error ? true : undefined}
             autoFocus={autoFocus}
             onChange={onChange}
           />
-          {error ? <p className="mt-1 pl-11 text-xs text-negative">{error}</p> : null}
+          {error ? (
+            <p id={errorId} className="mt-1 pl-11 text-xs text-negative">
+              {error}
+            </p>
+          ) : null}
         </div>
       )
     }
@@ -200,6 +230,8 @@ export function CatalogVariableInput({
           <Checkbox
             name={field.key}
             id={field.key}
+            aria-describedby={error ? errorId : undefined}
+            aria-invalid={error ? true : undefined}
             autoFocus={autoFocus}
             checked={typeof value === 'boolean' ? value : false}
             onCheckedChange={(checked) => {
@@ -214,7 +246,11 @@ export function CatalogVariableInput({
         {field.description ? (
           <p className="mt-1 pl-6 text-ssm leading-[18px] text-neutral-subtle">{field.description}</p>
         ) : null}
-        {error ? <p className="mt-1 pl-6 text-xs text-negative">{error}</p> : null}
+        {error ? (
+          <p id={errorId} className="mt-1 pl-6 text-xs text-negative">
+            {error}
+          </p>
+        ) : null}
       </div>
     )
   }

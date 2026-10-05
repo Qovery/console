@@ -11,6 +11,8 @@ export interface InputToggleProps {
   className?: string
   dataTestId?: string
   ariaLabel?: string
+  ariaDescribedBy?: string
+  ariaInvalid?: boolean
   align?: 'center' | 'top'
   disabled?: boolean
   name?: string
@@ -29,6 +31,8 @@ export function InputToggle(props: InputToggleProps) {
     disabled = false,
     name,
     ariaLabel,
+    ariaDescribedBy,
+    ariaInvalid,
     autoFocus,
   } = props
 
@@ -75,6 +79,8 @@ export function InputToggle(props: InputToggleProps) {
         type="button"
         data-testid={props.dataTestId || 'input-toggle-button'}
         aria-label={accessibleName}
+        aria-describedby={ariaDescribedBy}
+        aria-invalid={ariaInvalid}
         checked={isChecked}
         disabled={disabled}
         name={name}

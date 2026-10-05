@@ -181,6 +181,7 @@ export const Modal = (props: ModalProps) => {
               <Dialog.Close className="absolute right-4 top-4" asChild>
                 <button
                   type="button"
+                  aria-label="Close"
                   className="flex h-7 w-7 items-center justify-center rounded-full bg-background text-neutral-disabled transition-colors hover:bg-surface-neutral-componentHover hover:text-neutral"
                 >
                   <Icon iconName="xmark" iconStyle="solid" />

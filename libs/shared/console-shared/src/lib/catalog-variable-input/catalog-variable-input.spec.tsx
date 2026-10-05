@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { CatalogVariableInput, type CatalogVariableInputProps } from './catalog-variable-input'
 
@@ -100,6 +101,82 @@ describe('CatalogVariableInput', () => {
     expect(screen.getByRole('switch', { name: 'High availability' })).toBeInTheDocument()
     expect(screen.getByText(error)).toBeInTheDocument()
     expect(screen.getByTestId('input-toggle').parentElement).toHaveClass('items-end')
+  })
+
+  it.each([
+    ['a toggle in the row layout', { type: 'bool' }, 'row', 'switch', undefined],
+    ['a select in the row layout', { type: 'string', allowedValues: ['small', 'large'] }, 'row', 'combobox', undefined],
+    ['a toggle in the card layout', { type: 'bool' }, 'card', 'switch', undefined],
+    ['a checkbox in the card layout', { type: 'bool' }, 'card', 'checkbox', 'checkbox'],
+  ] as const)('ties the error to %s', (_, fieldType, layout, role, booleanControl) => {
+    renderWithProviders(
+      <CatalogVariableInput
+        {...defaultProps}
+        error="This value is not allowed."
+        field={{ key: 'profile', label: 'Profile', ...fieldType }}
+        layout={layout}
+        booleanControl={booleanControl}
+        value={fieldType.type === 'bool' ? false : 'small'}
+      />
+    )
+
+    const control = screen.getByRole(role, { name: 'Profile' })
+    expect(control).toHaveAttribute('aria-invalid', 'true')
+    expect(control).toHaveAccessibleDescription('This value is not allowed.')
+  })
+
+  it('does not keep a stale option once the value is cleared', async () => {
+    const field = { key: 'profile', label: 'Profile', type: 'string', allowedValues: ['small', 'large'] } as const
+    function ClearableSelect() {
+      const [value, setValue] = useState('large')
+      return (
+        <>
+          <CatalogVariableInput {...defaultProps} field={field} layout="row" value={value} />
+          <button type="button" onClick={() => setValue('')}>
+            Clear
+          </button>
+        </>
+      )
+    }
+    const { userEvent } = renderWithProviders(<ClearableSelect />)
+    expect(screen.getByRole('combobox', { name: 'Profile' })).toHaveValue('large')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Clear' }))
+
+    expect(screen.getByRole('combobox', { name: 'Profile' })).not.toHaveValue('large')
+  })
+
+  it('keeps error ids unique when two inputs share a field key', () => {
+    const field = { key: 'enabled', label: 'Enabled', type: 'bool' } as const
+    renderWithProviders(
+      <>
+        <CatalogVariableInput {...defaultProps} field={{ ...field, label: 'First' }} layout="row" error="First error" />
+        <CatalogVariableInput
+          {...defaultProps}
+          field={{ ...field, label: 'Second' }}
+          layout="row"
+          error="Second error"
+        />
+      </>
+    )
+
+    expect(screen.getByRole('switch', { name: 'First' })).toHaveAccessibleDescription('First error')
+    expect(screen.getByRole('switch', { name: 'Second' })).toHaveAccessibleDescription('Second error')
+  })
+
+  it('does not flag a control without error', () => {
+    renderWithProviders(
+      <CatalogVariableInput
+        {...defaultProps}
+        field={{ key: 'high-availability', label: 'High availability', type: 'bool' }}
+        layout="row"
+        value={false}
+      />
+    )
+
+    const control = screen.getByRole('switch', { name: 'High availability' })
+    expect(control).not.toHaveAttribute('aria-invalid')
+    expect(control).not.toHaveAttribute('aria-describedby')
   })
 
   it('renders sensitive values as passwords', () => {
