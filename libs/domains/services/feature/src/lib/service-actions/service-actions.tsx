@@ -844,6 +844,7 @@ function MenuOtherActions({
           organizationId={organizationId}
           projectId={projectId}
           serviceId={service.id}
+          serviceType={service.serviceType}
         />
       ),
       options: {
