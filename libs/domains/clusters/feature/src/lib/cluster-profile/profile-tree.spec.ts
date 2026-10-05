@@ -44,7 +44,18 @@ describe('resolveProfileSelection', () => {
     }
   )
 
-  it('selects nothing when every layer is skipped, managed by Qovery or has nothing to configure', () => {
+  it('selects nothing when the only enabled layer has nothing to configure', () => {
+    const emptyTree = getProfileTree({
+      ...template,
+      layers: [{ key: 'crds', components: [{ key: 'karpenter-crd', fields: [] }] }],
+    } as unknown as PlatformTemplateSummaryResponse)
+
+    expect(emptyTree[0]).toMatchObject({ status: 'success', configurable: false })
+    expect(resolveProfileSelection(emptyTree, undefined)).toEqual({ layer: undefined, component: undefined })
+    expect(resolveProfileSelection(emptyTree, 'karpenter-crd')).toEqual({ layer: undefined, component: undefined })
+  })
+
+  it('selects nothing when every layer is skipped or managed by Qovery', () => {
     const lockedTree = getProfileTree(template, [
       { key: 'network', status: 'SKIPPED', reason: '', componentKeys: [] },
       { key: 'log-infra', status: 'DISABLED', reason: '', componentKeys: [] },
