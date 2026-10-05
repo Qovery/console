@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { CatalogVariableInput, type CatalogVariableInputProps } from './catalog-variable-input'
 
@@ -122,6 +123,27 @@ describe('CatalogVariableInput', () => {
     const control = screen.getByRole(role, { name: 'Profile' })
     expect(control).toHaveAttribute('aria-invalid', 'true')
     expect(control).toHaveAccessibleDescription('This value is not allowed.')
+  })
+
+  it('does not keep a stale option once the value is cleared', async () => {
+    const field = { key: 'profile', label: 'Profile', type: 'string', allowedValues: ['small', 'large'] } as const
+    function ClearableSelect() {
+      const [value, setValue] = useState('large')
+      return (
+        <>
+          <CatalogVariableInput {...defaultProps} field={field} layout="row" value={value} />
+          <button type="button" onClick={() => setValue('')}>
+            Clear
+          </button>
+        </>
+      )
+    }
+    const { userEvent } = renderWithProviders(<ClearableSelect />)
+    expect(screen.getByRole('combobox', { name: 'Profile' })).toHaveValue('large')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Clear' }))
+
+    expect(screen.getByRole('combobox', { name: 'Profile' })).not.toHaveValue('large')
   })
 
   it('does not flag a control without error', () => {

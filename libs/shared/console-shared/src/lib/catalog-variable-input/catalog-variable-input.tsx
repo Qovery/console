@@ -94,6 +94,8 @@ function CatalogVariableControl({
   if (field.allowedValues?.length) {
     return (
       <InputSelectSmall
+        // InputSelectSmall ignores an emptied defaultValue: remount so a cleared value does not keep its old option.
+        key={value ? 'selected' : 'empty'}
         name={field.key}
         ariaLabel={field.label}
         ariaDescribedBy={errorProps['aria-describedby']}
