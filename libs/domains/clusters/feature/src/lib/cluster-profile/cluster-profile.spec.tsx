@@ -699,6 +699,14 @@ describe('ClusterProfileFeature', () => {
       expect(onActiveComponentChange).not.toHaveBeenCalled()
     })
 
+    it('does not open a component without configuration matching the search', () => {
+      renderWithProviders(<ClusterProfileFeature search="karpenter crd" />)
+
+      expect(screen.getByRole('button', { name: 'Karpenter crd' })).toBeDisabled()
+      expect(screen.getByText('No settings match your search')).toBeInTheDocument()
+      expect(screen.queryByText('No configuration needed for this component')).not.toBeInTheDocument()
+    })
+
     it('shows empty states when nothing matches', () => {
       renderWithProviders(<ClusterProfileFeature search="CPUza" />)
 

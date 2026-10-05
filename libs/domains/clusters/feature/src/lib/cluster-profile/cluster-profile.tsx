@@ -68,7 +68,10 @@ function filterProfileTree(profileTree: ProfileTreeItem[], query: string): Profi
           getSectionFields(section).some((field) => fieldMatchesProfileSearch(field, query))
         )
     )
-    return children.length ? [{ ...layer, children }] : []
+    // A layer matched through components with nothing to configure has nothing left to open.
+    return children.length
+      ? [{ ...layer, children, configurable: children.some(({ configurable }) => configurable) }]
+      : []
   })
 }
 
