@@ -115,7 +115,7 @@ describe('ClusterAdd', () => {
       expect(getBlocker().disabled).toBe(true)
     })
 
-    it('asks for confirmation before leaving, and warns before the page unloads', async () => {
+    it('asks for confirmation before leaving, and enables the before-unload warning', async () => {
       const confirm = jest.spyOn(window, 'confirm')
       const { userEvent } = renderWithProviders(<ClusterAdd />)
 
