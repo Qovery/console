@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
+import { isAxiosError } from 'axios'
 import { queries } from '@qovery/state/util-queries'
 
 const ENDPOINT_POLL_INTERVAL_MS = 10_000
+const MAX_RETRIES = 2
 
 export interface UseBlueprintDatabaseProps {
   blueprintId: string
@@ -12,8 +14,9 @@ export function useBlueprintDatabase({ blueprintId, enabled = true }: UseBluepri
   return useQuery({
     ...queries.services.blueprintDatabase({ blueprintId }),
     enabled: enabled && Boolean(blueprintId),
-    // 404 means the blueprint is not a database: an answer, not a failure to retry
-    retry: false,
+    // A 4xx is an answer (404: not a database), only a server or network failure is worth retrying
+    retry: (failureCount, error) =>
+      isAxiosError(error) && error.response && error.response.status < 500 ? false : failureCount < MAX_RETRIES,
     // A database deployed while the page is open reports its endpoint only once its deploy ends
     refetchInterval: (data) => (data && !data.endpoint ? ENDPOINT_POLL_INTERVAL_MS : false),
   })
