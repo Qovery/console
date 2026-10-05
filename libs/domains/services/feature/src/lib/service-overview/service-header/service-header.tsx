@@ -336,23 +336,17 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
         </>
       )}
       {blueprintDatabase && blueprintDatabaseCredentials && (
-        <>
-          <Badge variant="surface" className="items-center gap-1">
-            <Icon name={blueprintDatabase.kind} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
-            {blueprintDatabase.kind.toLowerCase()}
-          </Badge>
-          <Button
-            color="neutral"
-            variant="outline"
-            size="xs"
-            onClick={() =>
-              handleCopyCredentials({ type: blueprintDatabase.kind, mode: 'MANAGED' }, blueprintDatabaseCredentials)
-            }
-          >
-            <Icon iconName="key" iconStyle="regular" />
-            Connection URI
-          </Button>
-        </>
+        <Button
+          color="neutral"
+          variant="outline"
+          size="xs"
+          onClick={() =>
+            handleCopyCredentials({ type: blueprintDatabase.kind, mode: 'MANAGED' }, blueprintDatabaseCredentials)
+          }
+        >
+          <Icon iconName="key" iconStyle="regular" />
+          Connection URI
+        </Button>
       )}
       {isAgenticWorkflowService && (
         <>
