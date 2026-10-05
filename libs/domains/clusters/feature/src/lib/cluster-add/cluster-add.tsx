@@ -38,7 +38,9 @@ function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, .
   const { organizationId = '' } = useParams({ strict: false })
   const className = twMerge(
     'flex h-[52px] items-center gap-2 rounded-md border border-neutral bg-surface-neutral px-4 text-left text-sm font-medium text-neutral transition-colors',
-    disabled ? 'cursor-not-allowed bg-surface-neutral-component text-neutral-subtle' : 'hover:border-brand-strong'
+    disabled ? 'cursor-not-allowed bg-surface-neutral-component text-neutral-subtle' : 'hover:border-brand-strong',
+    // Not available to the organization yet: it opens an access request, not the creation flow.
+    actionLabel && 'border-dashed text-neutral-subtle'
   )
   const content = (
     <>
