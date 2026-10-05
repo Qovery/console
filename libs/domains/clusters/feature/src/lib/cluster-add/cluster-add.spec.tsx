@@ -54,6 +54,10 @@ describe('ClusterAdd', () => {
     await userEvent.click(screen.getByRole('button', { name: /Amazon Web Services EKS Anywhere\s*Request access/ }))
 
     expect(mockShowPylonForm).toHaveBeenCalledWith('request-access-eks-anywhere')
+    expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
+      selectedCloudProvider: 'AWS',
+      selectedInstallationType: 'partially-managed',
+    })
   })
 
   it('names each provider card once for assistive technologies', () => {
