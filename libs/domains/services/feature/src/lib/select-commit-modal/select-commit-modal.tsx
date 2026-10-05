@@ -84,7 +84,7 @@ export function SelectCommitModal({
       <InputSearch placeholder="Search by commit message or commit id" onChange={setSearch} />
 
       {isLoading || Object.keys(filterCommits).length > 0 ? (
-        <RadioGroup.Root onValueChange={setTargetCommitId}>
+        <RadioGroup.Root value={targetCommitId ?? data.deployedCommit.git_commit_id} onValueChange={setTargetCommitId}>
           <ScrollShadowWrapper className="max-h-[50vh] pb-[60px]">
             {Object.entries(filterCommits).map(([date, commits]) => (
               <div key={date} className="pl-2">
@@ -118,7 +118,7 @@ export function SelectCommitModal({
                             {!isCurrentDeployedCommit ? (
                               <RadioGroup.Item value={git_commit_id} />
                             ) : (
-                              <RadioGroup.Item value={git_commit_id} disabled checked variant="check" />
+                              <RadioGroup.Item value={git_commit_id} disabled variant="check" />
                             )}
                           </div>
                           <div className="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm">
