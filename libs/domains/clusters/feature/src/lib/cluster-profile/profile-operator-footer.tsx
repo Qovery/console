@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { Icon, LoaderSpinner, Popover, Tooltip } from '@qovery/shared/ui'
 import {
   ClusterOperatorStatus,
   getClusterOperatorStatusDisplay,
@@ -51,17 +51,14 @@ export function ProfileOperatorFooter() {
     )
   }
 
+  // The panel holds an action: a popover keeps it reachable by keyboard, unlike a tooltip.
   return operatorStatus ? (
-    <Tooltip
-      side="right"
-      align="end"
-      collisionPadding={8}
-      classNameContent="w-[480px] rounded-lg border border-neutral bg-surface-neutral p-4 text-neutral shadow-lg"
-      classNameArrow="fill-surface-neutral"
-      content={<ClusterOperatorStatus operatorStatus={operatorStatus} />}
-    >
-      {trigger}
-    </Tooltip>
+    <Popover.Root>
+      <Popover.Trigger>{trigger}</Popover.Trigger>
+      <Popover.Content side="right" align="end" className="w-[480px] rounded-lg">
+        <ClusterOperatorStatus operatorStatus={operatorStatus} />
+      </Popover.Content>
+    </Popover.Root>
   ) : (
     trigger
   )
