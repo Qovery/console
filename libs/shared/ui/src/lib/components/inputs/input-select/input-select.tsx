@@ -57,16 +57,13 @@ export interface InputSelectProps {
 // react-select forwards unknown props through `selectProps`, which lets the renderers below stay at module level.
 // Their identity must remain stable: a new component type on each render remounts the whole menu, which detaches the
 // option under the pointer and swallows in-flight clicks.
-declare module 'react-select/base' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  export interface Props<Option, IsMulti extends boolean, Group extends GroupBase<Option>> {
-    menuListButton?: InputSelectProps['menuListButton']
-    minInputLength?: number
-  }
-}
+type InputSelectCustomProps = Pick<InputSelectProps, 'menuListButton' | 'minInputLength'>
+
+// Read the custom props forwarded by `InputSelect` back from react-select's `selectProps`.
+const getCustomProps = ({ selectProps }: { selectProps: unknown }) => selectProps as InputSelectCustomProps
 
 const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => {
-  const { menuListButton } = props.selectProps
+  const { menuListButton } = getCustomProps(props)
 
   return (
     <div role="listbox">
@@ -163,13 +160,13 @@ const SingleValueLabel = (props: SingleValueProps<Value>) => (
 const NoOptionsMessage = (props: NoticeProps<Value>) => {
   const value = props.selectProps.inputValue
 
-  if (value.length <= (props.selectProps.minInputLength ?? 0)) {
+  const { minInputLength = 0 } = getCustomProps(props)
+
+  if (value.length <= minInputLength) {
     return (
       <components.NoOptionsMessage {...props}>
         <div className="px-3 py-1 text-center">
-          <p className="text-xs font-medium text-neutral">
-            Search input must be at least {props.selectProps.minInputLength ?? 0} characters.
-          </p>
+          <p className="text-xs font-medium text-neutral">Search input must be at least {minInputLength} characters.</p>
         </div>{' '}
       </components.NoOptionsMessage>
     )
@@ -292,7 +289,7 @@ export function InputSelect({
           ? 'input--error'
           : ''
 
-  const selectProps: SelectProps<Value, true, GroupBase<Value>> = {
+  const selectProps: SelectProps<Value, true, GroupBase<Value>> & InputSelectCustomProps = {
     autoFocus,
     options,
     isMulti,
