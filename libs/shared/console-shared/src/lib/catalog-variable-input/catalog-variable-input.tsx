@@ -102,7 +102,7 @@ function CatalogVariableControl({
       id={field.key}
       label={field.label}
       className="w-full [&>div[data-testid=input]]:!h-10 [&>div[data-testid=input]]:!min-h-10"
-      type={field.type === 'number' ? 'number' : field.sensitive ? 'password' : 'text'}
+      type={field.sensitive ? 'password' : field.type === 'number' ? 'number' : 'text'}
       value={typeof value === 'string' ? value : ''}
       error={error}
       hasShowPasswordButton={field.sensitive}
@@ -240,7 +240,7 @@ export function CatalogVariableInput({
     <InputText
       name={field.key}
       label={field.label}
-      type={field.type === 'number' ? 'number' : field.sensitive ? 'password' : 'text'}
+      type={field.sensitive ? 'password' : field.type === 'number' ? 'number' : 'text'}
       value={typeof value === 'string' ? value : ''}
       error={error}
       hint={field.description}

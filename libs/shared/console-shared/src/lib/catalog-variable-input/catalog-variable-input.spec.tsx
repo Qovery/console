@@ -114,6 +114,19 @@ describe('CatalogVariableInput', () => {
     expect(screen.getByLabelText('Token')).toHaveAttribute('type', 'password')
   })
 
+  it.each(['card', 'row'] as const)('masks sensitive number values in the %s layout', (layout) => {
+    renderWithProviders(
+      <CatalogVariableInput
+        {...defaultProps}
+        field={{ key: 'pin', label: 'Pin', type: 'number', sensitive: true }}
+        layout={layout}
+        value="1234"
+      />
+    )
+
+    expect(screen.getByLabelText('Pin')).toHaveAttribute('type', 'password')
+  })
+
   it('keeps the toggle presentation as the default for boolean fields', async () => {
     const onChange = jest.fn()
     const { userEvent } = renderWithProviders(
