@@ -106,6 +106,7 @@ function getConfigurationRequest(
   }
   const nextClusterInputs = { ...configuration?.clusterInputs }
   for (const [componentKey, values] of Object.entries(clusterInputs)) {
+    if (!Object.keys(values).length) continue
     nextClusterInputs[componentKey] = { ...configuration?.clusterInputs[componentKey], ...values }
   }
 
@@ -163,7 +164,12 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
   }
 
   const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
-    setClusterInputs((currentValues) => updateComponentValue(currentValues, componentKey, field.key, String(value)))
+    // The input shows its default while unsaved: setting it back to what is displayed is no edit.
+    const displayedValue = configuration?.clusterInputs[componentKey]?.[field.key] ?? field.defaultValue ?? ''
+    const nextValue = String(value)
+    setClusterInputs((currentValues) =>
+      updateComponentValue(currentValues, componentKey, field.key, nextValue === displayedValue ? undefined : nextValue)
+    )
   }
 
   const resetChanges = () => {

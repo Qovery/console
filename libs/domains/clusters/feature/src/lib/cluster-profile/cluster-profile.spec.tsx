@@ -869,6 +869,43 @@ describe('ClusterProfileFeature', () => {
       expect(mockDeployCluster).not.toHaveBeenCalled()
     })
 
+    it('does not count a cluster input set back to its default as a change', async () => {
+      const [loki, alloy] = createComponentQueries(['loki', 'alloy'])
+      mockUsePlatformComponentConfigurations.mockReturnValue([
+        {
+          ...loki,
+          data: {
+            ...createResolution('loki'),
+            requirements: [
+              {
+                key: 'infra.region',
+                label: 'Region',
+                type: 'string',
+                required: false,
+                sensitive: false,
+                constraints: {},
+                defaultValue: 'eu-west-1',
+                status: 'READY',
+              },
+            ],
+          },
+        },
+        alloy,
+      ] as ReturnType<typeof usePlatformComponentConfigurations>)
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+      const region = screen.getByRole('textbox', { name: 'Region' })
+      expect(region).toHaveValue('eu-west-1')
+
+      await userEvent.type(region, '2')
+      expect(screen.getByRole('region', { name: 'Unsaved profile changes' })).toHaveTextContent('1 change ongoing')
+
+      await userEvent.type(region, '{Backspace}')
+
+      await waitFor(() =>
+        expect(screen.queryByRole('region', { name: 'Unsaved profile changes' })).not.toBeInTheDocument()
+      )
+    })
+
     it('does not save edits that were reverted by hand', async () => {
       const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
