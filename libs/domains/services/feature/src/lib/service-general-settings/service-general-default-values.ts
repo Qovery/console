@@ -69,7 +69,7 @@ export function getServiceGeneralDefaultValues(service: EditableService): Partia
         docker_target_build_stage: isJobGitSource(job.source)
           ? job.source.docker?.docker_target_build_stage
           : undefined,
-        registry: jobContainerSource?.registry_id,
+        registry: jobContainerSource?.registry.id,
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,
         labels_groups: job.labels_groups?.map((group) => group.id),
