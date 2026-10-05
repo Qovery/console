@@ -10,9 +10,23 @@ jest.mock('@tanstack/react-query', () => ({
 const mockUseQuery = useQuery as jest.Mock
 
 describe('useClusterOperatorStatus', () => {
-  it('stops polling once the cluster is known to have no Operator', () => {
+  it('keeps polling while the Operator state is missing by default', () => {
     renderHook(() =>
-      useClusterOperatorStatus({ organizationId: 'org-123', clusterId: 'cluster-123', refetchInterval: 30_000 })
+      useClusterOperatorStatus({ organizationId: 'org-123', clusterId: 'cluster-123', refetchInterval: 5_000 })
+    )
+
+    const { refetchInterval } = mockUseQuery.mock.calls[0][0]
+    expect(refetchInterval(null)).toBe(5_000)
+  })
+
+  it('stops polling once the cluster is known to have no Operator when asked to', () => {
+    renderHook(() =>
+      useClusterOperatorStatus({
+        organizationId: 'org-123',
+        clusterId: 'cluster-123',
+        refetchInterval: 30_000,
+        stopPollingWhenMissing: true,
+      })
     )
 
     const { refetchInterval } = mockUseQuery.mock.calls[0][0]

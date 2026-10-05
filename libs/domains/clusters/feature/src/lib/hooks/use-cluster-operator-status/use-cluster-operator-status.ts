@@ -7,6 +7,8 @@ export interface UseClusterOperatorStatusProps {
   enabled?: boolean
   // Poll interval in milliseconds, disabled when unset.
   refetchInterval?: number
+  // Stop polling once the cluster is known to have no Operator state (404), instead of waiting for it to appear.
+  stopPollingWhenMissing?: boolean
   staleTime?: number
 }
 
@@ -15,12 +17,15 @@ export function useClusterOperatorStatus({
   clusterId,
   enabled = true,
   refetchInterval,
+  stopPollingWhenMissing = false,
   staleTime,
 }: UseClusterOperatorStatusProps) {
   return useQuery({
     ...queries.clusters.operatorStatus({ organizationId, clusterId }),
     enabled: enabled && Boolean(organizationId) && Boolean(clusterId),
-    refetchInterval: refetchInterval ? (data) => (data === null ? false : refetchInterval) : undefined,
+    refetchInterval: refetchInterval
+      ? (data) => (stopPollingWhenMissing && data === null ? false : refetchInterval)
+      : undefined,
     staleTime,
   })
 }

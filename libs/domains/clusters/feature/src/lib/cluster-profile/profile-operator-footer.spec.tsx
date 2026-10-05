@@ -48,6 +48,7 @@ describe('ProfileOperatorFooter', () => {
       organizationId: 'org-123',
       clusterId: 'cluster-123',
       refetchInterval: 30_000,
+      stopPollingWhenMissing: true,
     })
     expect(screen.getByRole('button', { name: 'Qovery Operator: Update available' })).toBeInTheDocument()
   })

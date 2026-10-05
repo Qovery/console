@@ -18,6 +18,7 @@ export function ProfileOperatorFooter() {
     organizationId,
     clusterId,
     refetchInterval: OPERATOR_STATUS_REFRESH_INTERVAL,
+    stopPollingWhenMissing: true,
   })
 
   // Clusters without Operator state (q-core answers 404) have no Operator to describe.
