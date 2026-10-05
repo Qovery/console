@@ -10,6 +10,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import {
   type AnyService,
+  type Database,
   getBlueprintGitRepository,
   isAgenticWorkflow,
   isArgoCd,
@@ -40,6 +41,8 @@ import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/share
 import { AgenticWorkflowServiceActions } from '../../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-service-actions'
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
+import { useBlueprintDatabaseMasterCredentials } from '../../hooks/use-blueprint-database-master-credentials/use-blueprint-database-master-credentials'
+import { useBlueprintDatabase } from '../../hooks/use-blueprint-database/use-blueprint-database'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
@@ -226,14 +229,21 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
     }))
     .otherwise(() => undefined)
 
+  // A blueprint database is a terraform service: kind and credentials come from its blueprint
+  const { data: blueprintDatabase } = useBlueprintDatabase({
+    blueprintId: blueprintId ?? '',
+    enabled: service.serviceType === ServiceTypeEnum.TERRAFORM,
+  })
+  const { data: blueprintDatabaseCredentials } = useBlueprintDatabaseMasterCredentials({
+    blueprintId: blueprintId ?? '',
+    enabled: Boolean(blueprintDatabase?.endpoint),
+  })
+
   const isArgoCdService = isArgoCd(service)
   const isAgenticWorkflowService = isAgenticWorkflow(service)
 
-  const handleCopyCredentials = (credentials: Credentials) => {
-    if (!databaseSource) {
-      return
-    }
-    const connectionURI = getDatabaseConnectionUri(databaseSource, credentials)
+  const handleCopyCredentials = (source: Pick<Database, 'type' | 'mode'>, credentials: Credentials) => {
+    const connectionURI = getDatabaseConnectionUri(source, credentials)
     copyToClipboard(connectionURI)
     toast('success', 'Credentials copied to clipboard')
   }
@@ -316,13 +326,32 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
                 if (!databaseSource.masterCredentials) {
                   return
                 }
-                handleCopyCredentials(databaseSource.masterCredentials)
+                handleCopyCredentials(databaseSource, databaseSource.masterCredentials)
               }}
             >
               <Icon iconName="key" iconStyle="regular" />
               Connection URI
             </Button>
           )}
+        </>
+      )}
+      {blueprintDatabase && blueprintDatabaseCredentials && (
+        <>
+          <Badge variant="surface" className="items-center gap-1">
+            <Icon name={blueprintDatabase.kind} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
+            {blueprintDatabase.kind.toLowerCase()}
+          </Badge>
+          <Button
+            color="neutral"
+            variant="outline"
+            size="xs"
+            onClick={() =>
+              handleCopyCredentials({ type: blueprintDatabase.kind, mode: 'MANAGED' }, blueprintDatabaseCredentials)
+            }
+          >
+            <Icon iconName="key" iconStyle="regular" />
+            Connection URI
+          </Button>
         </>
       )}
       {isAgenticWorkflowService && (

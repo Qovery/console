@@ -6,7 +6,9 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceHeader } from './service-header'
 
 const mockCopyToClipboard = jest.fn()
-const mockGetDatabaseConnectionUri = jest.fn(() => 'postgres://copied-uri')
+const mockGetDatabaseConnectionUri = jest.fn((..._args: unknown[]) => 'postgres://copied-uri')
+const mockUseBlueprintDatabase = jest.fn()
+const mockUseBlueprintDatabaseMasterCredentials = jest.fn()
 const mockUseBlueprintUpdate = jest.fn()
 const mockNavigate = jest.fn()
 const services = {
@@ -347,12 +349,20 @@ jest.mock('../../hooks/use-master-credentials/use-master-credentials', () => ({
   }),
 }))
 
+jest.mock('../../hooks/use-blueprint-database/use-blueprint-database', () => ({
+  useBlueprintDatabase: (props: unknown) => mockUseBlueprintDatabase(props),
+}))
+
+jest.mock('../../hooks/use-blueprint-database-master-credentials/use-blueprint-database-master-credentials', () => ({
+  useBlueprintDatabaseMasterCredentials: (props: unknown) => mockUseBlueprintDatabaseMasterCredentials(props),
+}))
+
 jest.mock('../../hooks/use-blueprint-update/use-blueprint-update', () => ({
   useBlueprintUpdate: (props: unknown) => mockUseBlueprintUpdate(props),
 }))
 
 jest.mock('../../service-access-modal/service-access-modal', () => ({
-  getDatabaseConnectionUri: () => mockGetDatabaseConnectionUri(),
+  getDatabaseConnectionUri: (...args: unknown[]) => mockGetDatabaseConnectionUri(...args),
 }))
 
 jest.mock('../../service-actions/service-actions', () => ({
@@ -390,6 +400,8 @@ describe('ServiceHeader', () => {
     jest.clearAllMocks()
     mockGetDatabaseConnectionUri.mockReturnValue('postgres://copied-uri')
     mockUseBlueprintUpdate.mockReturnValue({ data: undefined })
+    mockUseBlueprintDatabase.mockReturnValue({ data: undefined })
+    mockUseBlueprintDatabaseMasterCredentials.mockReturnValue({ data: undefined })
   })
 
   const renderServiceHeader = (
@@ -429,6 +441,38 @@ describe('ServiceHeader', () => {
     expect(mockGetDatabaseConnectionUri).toHaveBeenCalled()
     expect(mockCopyToClipboard).toHaveBeenCalledWith('postgres://copied-uri')
     expect(toast).toHaveBeenCalledWith('success', 'Credentials copied to clipboard')
+  })
+
+  it('copies the connection URI of a blueprint database', async () => {
+    const credentials = {
+      host: 'db.eu-west-3.rds.amazonaws.com',
+      port: 5432,
+      login: 'test-login',
+      password: 'test-password',
+    }
+    mockUseBlueprintDatabase.mockReturnValue({
+      data: { kind: 'POSTGRESQL', service_id: 'terraform-mock', endpoint: { host: credentials.host, port: 5432 } },
+    })
+    mockUseBlueprintDatabaseMasterCredentials.mockReturnValue({ data: credentials })
+    const { userEvent } = renderServiceHeader('terraform-mock')
+
+    expect(mockUseBlueprintDatabase).toHaveBeenCalledWith({ blueprintId: 'blueprint-id', enabled: true })
+    await userEvent.click(screen.getByRole('button', { name: /Connection URI/ }))
+
+    expect(mockGetDatabaseConnectionUri).toHaveBeenCalledWith({ type: 'POSTGRESQL', mode: 'MANAGED' }, credentials)
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('postgres://copied-uri')
+  })
+
+  it('does not offer a connection URI for a blueprint that is not a database', () => {
+    renderServiceHeader('terraform-mock')
+
+    expect(screen.queryByRole('button', { name: /Connection URI/ })).not.toBeInTheDocument()
+  })
+
+  it('does not look up a blueprint database for a non terraform service', () => {
+    renderServiceHeader('helm-blueprint-mock')
+
+    expect(mockUseBlueprintDatabase).toHaveBeenCalledWith({ blueprintId: 'blueprint-id', enabled: false })
   })
 
   it('does not show auto deploy badge for non auto-deploy job', () => {
