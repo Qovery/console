@@ -76,6 +76,7 @@ describe('ClusterAdd', () => {
       selectedCloudProvider: 'AWS',
       selectedInstallationType: 'self-managed',
     })
+    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument()
     await userEvent.keyboard('{Escape}')
 
     await waitFor(() => expect(screen.queryByText('Creation flow')).not.toBeInTheDocument())
@@ -89,7 +90,7 @@ describe('ClusterAdd', () => {
     await userEvent.keyboard('{Escape}')
 
     expect(screen.getByText('Creation flow')).toBeInTheDocument()
-    expect(document.querySelector('.fa-xmark')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Operator connected' }))
 
