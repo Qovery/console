@@ -65,6 +65,7 @@ describe('ClusterAdd', () => {
 
     expect(screen.getByRole('button', { name: 'AWS' })).toBeInTheDocument()
     expect(screen.queryAllByRole('img')).toHaveLength(0)
+    expect(document.querySelectorAll('svg:not([aria-hidden="true"])')).toHaveLength(0)
   })
 
   it('lets the creation flow be dismissed before the cluster is created', async () => {

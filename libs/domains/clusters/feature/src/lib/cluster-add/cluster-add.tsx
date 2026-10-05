@@ -30,7 +30,7 @@ function ProviderIcon({ icon }: { icon: string | ReactElement }) {
   return typeof icon === 'string' ? (
     <img className="size-5 select-none" src={icon} alt="" />
   ) : (
-    cloneElement(icon, { className: 'size-5 select-none' })
+    cloneElement(icon, { className: 'size-5 select-none', 'aria-hidden': true })
   )
 }
 
