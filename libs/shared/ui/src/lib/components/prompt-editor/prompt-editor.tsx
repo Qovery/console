@@ -251,7 +251,7 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
 
     const currentValue = editor.state.doc.toString()
     const pendingEmittedValues = pendingEmittedValuesRef.current
-    const echoIndex = pendingEmittedValues.indexOf(value)
+    const echoIndex = pendingEmittedValues.lastIndexOf(value)
     if (echoIndex !== -1 && echoIndex < pendingEmittedValues.length - 1) {
       // The parent echoed an edit that has since been superseded by further typing: keep the newer editor state.
       pendingEmittedValuesRef.current = pendingEmittedValues.slice(echoIndex + 1)

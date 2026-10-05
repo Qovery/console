@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import Select, {
   type GroupBase,
   type MenuListProps,
@@ -52,6 +52,153 @@ export interface InputSelectProps {
   minInputLength?: number
   formatCreateLabel?: ((inputValue: string) => ReactNode) | undefined
   isValidNewOption?: (inputValue: string) => boolean
+}
+
+// react-select forwards unknown props through `selectProps`, which lets the renderers below stay at module level.
+// Their identity must remain stable: a new component type on each render remounts the whole menu, which detaches the
+// option under the pointer and swallows in-flight clicks.
+type InputSelectCustomProps = Pick<InputSelectProps, 'menuListButton' | 'minInputLength'>
+
+// Read the custom props forwarded by `InputSelect` back from react-select's `selectProps`.
+const getCustomProps = ({ selectProps }: { selectProps: unknown }) => selectProps as InputSelectCustomProps
+
+const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => {
+  const { menuListButton } = getCustomProps(props)
+
+  return (
+    <div role="listbox">
+      <components.MenuList {...props}>
+        {menuListButton && (
+          <div
+            className={twMerge(
+              clsx('flex h-9 items-start p-1', {
+                'justify-between': menuListButton.title,
+                'justify-end': !menuListButton.title,
+              })
+            )}
+          >
+            {menuListButton.title && <span className="text-sm font-medium text-neutral">{menuListButton.title}</span>}
+            <button
+              type="button"
+              data-testid="input-menu-list-button"
+              className="inline-flex items-center gap-1 text-sm font-medium text-brand transition duration-100 hover:text-brand-hover"
+              onClick={menuListButton.onClick}
+            >
+              {menuListButton.label}
+              <Icon iconName="circle-plus" iconStyle="regular" className="text-xs leading-5" />
+            </button>
+          </div>
+        )}
+        {props.children}
+      </components.MenuList>
+    </div>
+  )
+}
+
+const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => {
+  const optionContent = (
+    <components.Option {...props}>
+      {props.isMulti ? (
+        <span className="input-select__checkbox">
+          {props.isSelected && <Icon iconName="check" className="text-xs" />}
+        </span>
+      ) : props.isSelected ? (
+        <Icon iconName="check" className="w-4 text-brand" />
+      ) : props.data.icon ? (
+        <div className="flex h-full w-4 items-center justify-center">{props.data.icon}</div>
+      ) : (
+        <Icon iconName="check" className="w-4 opacity-0" />
+      )}
+      <label className="ml-1 flex flex-col gap-0.5 truncate text-sm">
+        {props.label}
+        {props.data.description && <span className="font-normal">{props.data.description}</span>}
+      </label>
+    </components.Option>
+  )
+
+  return (
+    <div>
+      {props.data.isDisabled && props.data.disabledTooltip ? (
+        <Tooltip content={props.data.disabledTooltip} classNameTrigger="block">
+          <div>{optionContent}</div>
+        </Tooltip>
+      ) : (
+        optionContent
+      )}
+    </div>
+  )
+}
+
+const MultiValueLabel = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
+  <span
+    className={twMerge(
+      clsx('mr-1 flex text-sm', {
+        'text-neutral-subtle': props.selectProps.isDisabled,
+        'text-neutral': !props.selectProps.isDisabled,
+      })
+    )}
+  >
+    {props.data.label}
+    {props.index + 1 !== (props.selectProps.value as MultiValue<Value>).length && ', '}
+  </span>
+)
+
+const SingleValueLabel = (props: SingleValueProps<Value>) => (
+  <span
+    className={twMerge(
+      clsx('mr-1 text-sm', {
+        'text-neutral-subtle': props.selectProps.isDisabled,
+        'text-neutral': !props.selectProps.isDisabled,
+      })
+    )}
+  >
+    {props.data.label}
+    {props.data.description ? `: ${props.data.description}` : ''}
+  </span>
+)
+
+const NoOptionsMessage = (props: NoticeProps<Value>) => {
+  const value = props.selectProps.inputValue
+
+  const { minInputLength = 0 } = getCustomProps(props)
+
+  if (value.length <= minInputLength) {
+    return (
+      <components.NoOptionsMessage {...props}>
+        <div className="px-3 py-1 text-center">
+          <p className="text-xs font-medium text-neutral">Search input must be at least {minInputLength} characters.</p>
+        </div>{' '}
+      </components.NoOptionsMessage>
+    )
+  }
+
+  return (
+    <components.NoOptionsMessage {...props}>
+      <div className="px-3 py-6 text-center">
+        <Icon iconName="wave-pulse" className="text-neutral" />
+        <p className="mt-1 text-xs font-medium text-neutral">No result for this search</p>
+      </div>
+    </components.NoOptionsMessage>
+  )
+}
+
+const LoadingMessage = (props: NoticeProps<Value>) => {
+  return (
+    <components.LoadingMessage {...props}>
+      <div className="flex justify-center">
+        <LoaderSpinner className="w-4" />
+      </div>
+    </components.LoadingMessage>
+  )
+}
+
+const selectComponents = {
+  Option,
+  MultiValue: MultiValueLabel,
+  SingleValue: SingleValueLabel,
+  NoOptionsMessage,
+  MenuList,
+  LoadingMessage,
 }
 
 export function InputSelect({
@@ -128,132 +275,6 @@ export function InputSelect({
     }
   }, [value, isMulti, options])
 
-  const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => (
-    <div role="listbox">
-      <components.MenuList {...props}>
-        {menuListButton && (
-          <div
-            className={twMerge(
-              clsx('flex h-9 items-start p-1', {
-                'justify-between': menuListButton.title,
-                'justify-end': !menuListButton.title,
-              })
-            )}
-          >
-            {menuListButton.title && <span className="text-sm font-medium text-neutral">{menuListButton.title}</span>}
-            <button
-              type="button"
-              data-testid="input-menu-list-button"
-              className="inline-flex items-center gap-1 text-sm font-medium text-brand transition duration-100 hover:text-brand-hover"
-              onClick={menuListButton.onClick}
-            >
-              {menuListButton.label}
-              <Icon iconName="circle-plus" iconStyle="regular" className="text-xs leading-5" />
-            </button>
-          </div>
-        )}
-        {props.children}
-      </components.MenuList>
-    </div>
-  )
-
-  const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => {
-    const optionContent = (
-      <components.Option {...props}>
-        {isMulti ? (
-          <span className="input-select__checkbox">
-            {props.isSelected && <Icon iconName="check" className="text-xs" />}
-          </span>
-        ) : props.isSelected ? (
-          <Icon iconName="check" className="w-4 text-brand" />
-        ) : props.data.icon ? (
-          <div className="flex h-full w-4 items-center justify-center">{props.data.icon}</div>
-        ) : (
-          <Icon iconName="check" className="w-4 opacity-0" />
-        )}
-        <label className="ml-1 flex flex-col gap-0.5 truncate text-sm">
-          {props.label}
-          {props.data.description && <span className="font-normal">{props.data.description}</span>}
-        </label>
-      </components.Option>
-    )
-
-    return (
-      <div>
-        {props.data.isDisabled && props.data.disabledTooltip ? (
-          <Tooltip content={props.data.disabledTooltip} classNameTrigger="block">
-            <div>{optionContent}</div>
-          </Tooltip>
-        ) : (
-          optionContent
-        )}
-      </div>
-    )
-  }
-
-  const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
-    <span
-      className={twMerge(
-        clsx('mr-1 flex text-sm', {
-          'text-neutral-subtle': disabled,
-          'text-neutral': !disabled,
-        })
-      )}
-    >
-      {props.data.label}
-      {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
-    </span>
-  )
-
-  const SingleValue = (props: SingleValueProps<Value>) => (
-    <span
-      className={twMerge(
-        clsx('mr-1 text-sm', {
-          'text-neutral-subtle': disabled,
-          'text-neutral': !disabled,
-        })
-      )}
-    >
-      {props.data.label}
-      {props.data.description ? `: ${props.data.description}` : ''}
-    </span>
-  )
-
-  const NoOptionsMessage = (props: NoticeProps<Value>) => {
-    const value = props.selectProps.inputValue
-
-    if (value.length <= minInputLength) {
-      return (
-        <components.NoOptionsMessage {...props}>
-          <div className="px-3 py-1 text-center">
-            <p className="text-xs font-medium text-neutral">
-              Search input must be at least {minInputLength} characters.
-            </p>
-          </div>{' '}
-        </components.NoOptionsMessage>
-      )
-    }
-
-    return (
-      <components.NoOptionsMessage {...props}>
-        <div className="px-3 py-6 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral" />
-          <p className="mt-1 text-xs font-medium text-neutral">No result for this search</p>
-        </div>
-      </components.NoOptionsMessage>
-    )
-  }
-
-  const LoadingMessage = (props: NoticeProps<Value>) => {
-    return (
-      <components.LoadingMessage {...props}>
-        <div className="flex justify-center">
-          <LoaderSpinner className="w-4" />
-        </div>
-      </components.LoadingMessage>
-    )
-  }
-
   const currentIcon = options.find((option) => option.value === selectedValue)
   const hasIcon = !isMulti && currentIcon?.icon
   const hasSelectedValue = Array.isArray(selectedValue) ? selectedValue.length > 0 : selectedValue.length > 0
@@ -268,28 +289,13 @@ export function InputSelect({
           ? 'input--error'
           : ''
 
-  // The custom components above close over the current props/state, so they get a new identity on each render.
-  // Hand react-select stable wrappers that delegate to the latest renderers: otherwise every re-render remounts the
-  // whole menu, which detaches the option under the pointer and swallows in-flight clicks.
-  const latestComponents = useRef({ Option, MultiValue, SingleValue, NoOptionsMessage, MenuList, LoadingMessage })
-  latestComponents.current = { Option, MultiValue, SingleValue, NoOptionsMessage, MenuList, LoadingMessage }
-  const stableComponents = useMemo(
-    () => ({
-      Option: (props: OptionProps<Value, true, GroupBase<Value>>) => latestComponents.current.Option(props),
-      MultiValue: (props: MultiValueProps<Value, true, GroupBase<Value>>) => latestComponents.current.MultiValue(props),
-      SingleValue: (props: SingleValueProps<Value>) => latestComponents.current.SingleValue(props),
-      NoOptionsMessage: (props: NoticeProps<Value>) => latestComponents.current.NoOptionsMessage(props),
-      MenuList: (props: MenuListProps<Value, true, GroupBase<Value>>) => latestComponents.current.MenuList(props),
-      LoadingMessage: (props: NoticeProps<Value>) => latestComponents.current.LoadingMessage(props),
-    }),
-    []
-  )
-
-  const selectProps: SelectProps<Value, true, GroupBase<Value>> = {
+  const selectProps: SelectProps<Value, true, GroupBase<Value>> & InputSelectCustomProps = {
     autoFocus,
     options,
     isMulti,
-    components: stableComponents,
+    components: selectComponents,
+    menuListButton,
+    minInputLength,
     name: label,
     isLoading,
     inputId: label,
