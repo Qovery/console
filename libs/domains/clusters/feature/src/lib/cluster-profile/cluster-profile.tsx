@@ -478,11 +478,15 @@ function ClusterProfileView({
 
           <div className="min-h-0 flex-1 overflow-y-auto">
             <div key={formKey} className="flex min-h-full flex-col">
-              {searchQuery && !isLoading && !activeComponent ? (
+              {!isLoading && !isError && !activeComponent ? (
                 <div className="p-4">
                   <EmptyState
                     icon="wave-pulse"
-                    title={<span className="font-normal leading-5">No settings match your search</span>}
+                    title={
+                      <span className="font-normal leading-5">
+                        {searchQuery ? 'No settings match your search' : 'Nothing to configure for this cluster'}
+                      </span>
+                    }
                     className="h-auto w-full p-8 shadow-sm"
                   />
                 </div>

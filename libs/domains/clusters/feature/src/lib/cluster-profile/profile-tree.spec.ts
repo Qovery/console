@@ -43,4 +43,15 @@ describe('resolveProfileSelection', () => {
       expect(resolveProfileSelection(profileTree, requestedKey).component?.key).toBe('karpenter-configuration')
     }
   )
+
+  it('selects nothing when every layer is skipped, managed by Qovery or has nothing to configure', () => {
+    const lockedTree = getProfileTree(template, [
+      { key: 'network', status: 'SKIPPED', reason: '', componentKeys: [] },
+      { key: 'log-infra', status: 'DISABLED', reason: '', componentKeys: [] },
+      { key: 'karpenter', status: 'DISABLED', reason: '', componentKeys: [] },
+    ])
+
+    expect(resolveProfileSelection(lockedTree, undefined)).toEqual({ layer: undefined, component: undefined })
+    expect(resolveProfileSelection(lockedTree, 'loki')).toEqual({ layer: undefined, component: undefined })
+  })
 })

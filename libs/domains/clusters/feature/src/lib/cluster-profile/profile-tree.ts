@@ -94,12 +94,12 @@ function findProfileLayer(profileTree: ProfileTreeItem[], requestedKey?: string)
 // Skipped or Qovery-managed layers, and layers with nothing to configure, cannot be opened.
 const isOpenableLayer = (item: ProfileTreeItem) => item.status !== 'disabled' && item.configurable
 
+// Nothing is selected when no layer can be opened.
 function getDefaultProfileComponent(profileTree: ProfileTreeItem[]) {
   return getFirstConfigurableComponent(
     (
       profileTree.find((item) => item.label.toLowerCase() === 'log infra' && isOpenableLayer(item)) ??
-      profileTree.find(isOpenableLayer) ??
-      profileTree.find((item) => item.children?.length)
+      profileTree.find(isOpenableLayer)
     )?.children
   )
 }
