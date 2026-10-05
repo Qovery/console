@@ -3,7 +3,7 @@ import { type Environment } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { isEditableService } from '@qovery/domains/services/data-access'
+import { type ServiceType, isEditableService } from '@qovery/domains/services/data-access'
 import {
   Callout,
   ExternalLink,
@@ -23,11 +23,18 @@ export interface ServiceCloneModalProps {
   organizationId: string
   projectId: string
   serviceId: string
+  serviceType: ServiceType
 }
 
-export function ServiceCloneModal({ onClose, organizationId, projectId, serviceId }: ServiceCloneModalProps) {
+export function ServiceCloneModal({
+  onClose,
+  organizationId,
+  projectId,
+  serviceId,
+  serviceType,
+}: ServiceCloneModalProps) {
   const { enableAlertClickOutside } = useModal()
-  const { data: service } = useService({ serviceId })
+  const { data: service } = useService({ serviceId, serviceType })
   const { mutateAsync: cloneService, isLoading: isCloneServiceLoading } = useCloneService()
   const { data: projects = [] } = useProjects({ organizationId })
 
