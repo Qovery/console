@@ -146,6 +146,24 @@ describe('CatalogVariableInput', () => {
     expect(screen.getByRole('combobox', { name: 'Profile' })).not.toHaveValue('large')
   })
 
+  it('keeps error ids unique when two inputs share a field key', () => {
+    const field = { key: 'enabled', label: 'Enabled', type: 'bool' } as const
+    renderWithProviders(
+      <>
+        <CatalogVariableInput {...defaultProps} field={{ ...field, label: 'First' }} layout="row" error="First error" />
+        <CatalogVariableInput
+          {...defaultProps}
+          field={{ ...field, label: 'Second' }}
+          layout="row"
+          error="Second error"
+        />
+      </>
+    )
+
+    expect(screen.getByRole('switch', { name: 'First' })).toHaveAccessibleDescription('First error')
+    expect(screen.getByRole('switch', { name: 'Second' })).toHaveAccessibleDescription('Second error')
+  })
+
   it('does not flag a control without error', () => {
     renderWithProviders(
       <CatalogVariableInput
