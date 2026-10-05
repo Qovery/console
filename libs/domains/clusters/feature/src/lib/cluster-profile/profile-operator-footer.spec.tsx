@@ -48,6 +48,7 @@ describe('ProfileOperatorFooter', () => {
       organizationId: 'org-123',
       clusterId: 'cluster-123',
       refetchInterval: 30_000,
+      stopPollingWhenMissing: true,
     })
     expect(screen.getByRole('button', { name: 'Qovery Operator: Update available' })).toBeInTheDocument()
   })
@@ -71,20 +72,21 @@ describe('ProfileOperatorFooter', () => {
     expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
   })
 
-  it('shows the Operator versions in a tooltip and starts an update', async () => {
+  it('shows the Operator versions in a popover and starts an update', async () => {
     mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false })
     const { userEvent } = renderWithProviders(<ProfileOperatorFooter />)
 
-    await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: Update available' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Qovery Operator: Update available' }))
 
-    const status = (await screen.findAllByRole('region', { name: 'Qovery Operator status' }))[0]
+    expect(await screen.findByRole('dialog', { name: 'Qovery Operator status' })).toBeInTheDocument()
+    const status = await screen.findByRole('region', { name: 'Qovery Operator status' })
     expect(status).toHaveTextContent('Update available')
     expect(status).toHaveTextContent('v1.202.0')
     expect(status).toHaveTextContent('Target: v1.203.0')
     expect(status).toHaveTextContent('0.2.0')
     expect(status).toHaveTextContent('Target: 0.2.1')
 
-    await userEvent.click(screen.getAllByRole('button', { name: 'Update Operator' })[0])
+    await userEvent.click(screen.getByRole('button', { name: 'Update Operator' }))
 
     expect(mockUpdateOperator).toHaveBeenCalledWith({
       organizationId: 'org-123',
@@ -94,6 +96,17 @@ describe('ProfileOperatorFooter', () => {
     })
   })
 
+  it('reaches the update action from the keyboard', async () => {
+    mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false })
+    const { userEvent } = renderWithProviders(<ProfileOperatorFooter />)
+
+    screen.getByRole('button', { name: 'Qovery Operator: Update available' }).focus()
+    await userEvent.keyboard('{Enter}')
+    await userEvent.tab()
+
+    expect(screen.getByRole('button', { name: 'Update Operator' })).toHaveFocus()
+  })
+
   it('hides the update action while the Operator is disconnected', async () => {
     mockUseClusterOperatorStatus.mockReturnValue({
       data: { ...operatorStatus, operator_connected: false, status: 'DISCONNECTED' },
@@ -101,9 +114,9 @@ describe('ProfileOperatorFooter', () => {
     })
     const { userEvent } = renderWithProviders(<ProfileOperatorFooter />)
 
-    await userEvent.hover(screen.getByRole('button', { name: 'Qovery Operator: Disconnected' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Qovery Operator: Disconnected' }))
 
-    expect((await screen.findAllByText('No recent heartbeat was received from the Operator.'))[0]).toBeInTheDocument()
+    expect(await screen.findByText('No recent heartbeat was received from the Operator.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
   })
 })

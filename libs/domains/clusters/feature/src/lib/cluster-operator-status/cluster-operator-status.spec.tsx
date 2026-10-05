@@ -44,8 +44,7 @@ describe('ClusterOperatorStatus', () => {
 
     const button = screen.getByRole('button', { name: 'Update Operator' })
     expect(button).toBeDisabled()
-    button.focus()
-    await userEvent.keyboard('{Enter}')
+    await userEvent.click(button)
 
     expect(mockUpdateOperator).not.toHaveBeenCalled()
   })

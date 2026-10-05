@@ -699,6 +699,14 @@ describe('ClusterProfileFeature', () => {
       expect(onActiveComponentChange).not.toHaveBeenCalled()
     })
 
+    it('does not open a component without configuration matching the search', () => {
+      renderWithProviders(<ClusterProfileFeature search="karpenter crd" />)
+
+      expect(screen.getByRole('button', { name: 'Karpenter crd' })).toBeDisabled()
+      expect(screen.getByText('No settings match your search')).toBeInTheDocument()
+      expect(screen.queryByText('No configuration needed for this component')).not.toBeInTheDocument()
+    })
+
     it('shows empty states when nothing matches', () => {
       renderWithProviders(<ClusterProfileFeature search="CPUza" />)
 
@@ -859,6 +867,24 @@ describe('ClusterProfileFeature', () => {
         },
       })
       expect(mockDeployCluster).not.toHaveBeenCalled()
+    })
+
+    it('does not save edits that were reverted by hand', async () => {
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+      await userEvent.clear(screen.getByRole('spinbutton', { name: 'Retention period' }))
+      await userEvent.type(screen.getByRole('spinbutton', { name: 'Retention period' }), '24')
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+      expect(mockUpdatePlatformConfiguration).toHaveBeenCalledWith({
+        clusterId: 'cluster-id',
+        configurationRequest: {
+          platform: expect.objectContaining({ managedConfig: { loki: { 'retention-period': 24 } } }),
+          clusterInputs: {},
+        },
+      })
     })
 
     it('keeps the edits made while saving', async () => {
