@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { type ReactNode } from 'react'
-import { inviteMembersMock, membersMock } from '@qovery/shared/factories'
+import { inviteMembersMock, membersMock, organizationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useAvailableRolesHook from '../hooks/use-available-roles/use-available-roles'
 import * as useCreateInviteMemberHook from '../hooks/use-create-invite-member/use-create-invite-member'
@@ -9,6 +9,7 @@ import * as useDeleteMemberHook from '../hooks/use-delete-member/use-delete-memb
 import * as useEditMemberRoleHook from '../hooks/use-edit-member-role/use-edit-member-role'
 import * as useInviteMembersHook from '../hooks/use-invite-members/use-invite-members'
 import * as useMembersHook from '../hooks/use-members/use-members'
+import * as useOrganizationsHook from '../hooks/use-organizations/use-organizations'
 import * as useTransferOwnershipMemberRoleHook from '../hooks/use-transfer-ownership-member-role/use-transfer-ownership-member-role'
 import CreateModal from './create-modal/create-modal'
 import { SettingsMembers } from './settings-members'
@@ -55,6 +56,9 @@ const useTransferOwnershipMemberRoleMock = jest.spyOn(
   'useTransferOwnershipMemberRole'
 ) as jest.Mock
 const useCreateInviteMemberMock = jest.spyOn(useCreateInviteMemberHook, 'useCreateInviteMember') as jest.Mock
+const useOrganizationsMock = jest.spyOn(useOrganizationsHook, 'useOrganizations') as jest.Mock
+
+const organization = { ...organizationFactoryMock(1)[0], id: 'org-1', has_enterprise_connection: false }
 
 const availableRoles = [
   { id: 'role-owner', name: 'Owner' },
@@ -106,6 +110,7 @@ describe('SettingsMembers', () => {
     useDeleteInviteMemberMock.mockReturnValue({ mutateAsync: deleteInviteMemberMock })
     useTransferOwnershipMemberRoleMock.mockReturnValue({ mutateAsync: transferOwnershipMemberRoleMock })
     useCreateInviteMemberMock.mockReturnValue({ mutateAsync: createInviteMemberMock })
+    useOrganizationsMock.mockReturnValue({ data: [organization] })
   })
 
   it('should render successfully', () => {
@@ -123,6 +128,34 @@ describe('SettingsMembers', () => {
     const [{ content, options }] = mockOpenModal.mock.calls[0]
     expect(options).toEqual(expect.objectContaining({ fakeModal: true }))
     expect(content.type).toBe(CreateModal)
+  })
+
+  it('should not display add member button when organization has an enterprise connection', () => {
+    useOrganizationsMock.mockReturnValue({ data: [{ ...organization, has_enterprise_connection: true }] })
+
+    renderWithProviders(<SettingsMembers />)
+
+    expect(screen.queryByRole('button', { name: /add member/i })).not.toBeInTheDocument()
+    expect(
+      screen.getByText(/members are added automatically from your identity provider at first login/i)
+    ).toBeInTheDocument()
+  })
+
+  it('should display add member button when enterprise connection flag is missing', () => {
+    useOrganizationsMock.mockReturnValue({ data: [{ ...organization, has_enterprise_connection: undefined }] })
+
+    renderWithProviders(<SettingsMembers />)
+
+    expect(screen.getByRole('button', { name: /add member/i })).toBeInTheDocument()
+    expect(screen.getByText(/invite someone to join your organization via email/i)).toBeInTheDocument()
+  })
+
+  it('should not display add member button while organization is loading', () => {
+    useOrganizationsMock.mockReturnValue({ data: undefined })
+
+    renderWithProviders(<SettingsMembers />)
+
+    expect(screen.queryByRole('button', { name: /add member/i })).not.toBeInTheDocument()
   })
 
   it('should update member role when selecting a new role', async () => {
