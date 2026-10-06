@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { match } from 'ts-pattern'
@@ -14,7 +15,8 @@ export interface UseChartEventsProps {
 export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEventsProps) {
   const { organizationId, startTimestamp, endTimestamp } = useDashboardContext()
 
-  const { data: service } = useService({ serviceId })
+  const { environmentId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId })
 
   const targetType = useMemo(() => {
     return match(service?.serviceType)

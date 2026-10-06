@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { Line } from 'recharts'
 import { match } from 'ts-pattern'
@@ -28,7 +29,8 @@ const queryVolumeUsage = (serviceId: string): string => `
 `
 
 export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { data: service } = useService({ serviceId })
+  const { environmentId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId })
   const getColorByVolume = usePodColor()
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useDashboardContext()
 
