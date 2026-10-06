@@ -119,6 +119,12 @@ const CLUSTER_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
   },
   {
+    id: 'profile',
+    label: 'Profile',
+    iconName: 'layer-group',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/profile',
+  },
+  {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
@@ -379,6 +385,7 @@ function useNavigationContext(): NavigationContext | null {
   const pathname = location.pathname
   const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
+  const isEngineV2PlatformConfigurationEnabled = Boolean(useFeatureFlagEnabled('engine-v2-platform-configuration'))
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
@@ -423,9 +430,11 @@ function useNavigationContext(): NavigationContext | null {
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled, blueprint)
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
-              : context.type === 'environment'
-                ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automation')
-                : context.tabs
+              : context.type === 'cluster'
+                ? context.tabs.filter((tab) => isEngineV2PlatformConfigurationEnabled || tab.id !== 'profile')
+                : context.type === 'environment'
+                  ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automation')
+                  : context.tabs
 
         return {
           type: context.type,
@@ -546,6 +555,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/profile',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',

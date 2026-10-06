@@ -13,6 +13,7 @@ import Tooltip from '../../tooltip/tooltip'
 
 export interface InputTextSmallProps {
   name: string
+  id?: string
   type?: string
   onChange?: ChangeEventHandler<HTMLInputElement>
   onKeyDown?: KeyboardEventHandler<HTMLInputElement>
@@ -39,6 +40,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
 ) {
   const {
     name,
+    id,
     value,
     placeholder,
     error,
@@ -59,6 +61,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
     autoFocus = false,
   } = props
 
+  const inputId = id ?? label
   const [focused, setFocused] = useState(false)
   const [currentType, setCurrentType] = useState(type)
 
@@ -90,7 +93,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
           'input--disabled': disabled,
         })}
       >
-        <label className="hidden" htmlFor={label}>
+        <label className="hidden" htmlFor={inputId}>
           {label}
         </label>
         <input
@@ -110,7 +113,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
           value={value}
           onInput={onChange}
           disabled={disabled}
-          id={label}
+          id={inputId}
           onFocus={() => setFocused(true)}
           onBlur={(e) => {
             setFocused(false)

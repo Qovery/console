@@ -9,6 +9,7 @@ export interface EmptyStateProps extends PropsWithChildren {
   iconStyle?: IconStyle
   description?: ReactNode
   size?: 'sm' | 'base'
+  variant?: 'neutral' | 'positive'
   className?: string
 }
 
@@ -19,8 +20,12 @@ export function EmptyState({
   icon,
   iconStyle,
   size = 'base',
+  variant = 'neutral',
   children,
 }: EmptyStateProps) {
+  const isPositive = variant === 'positive'
+  const iconColorClass = isPositive ? 'text-positive' : 'text-neutral-disabled'
+
   const emptyStateIcon =
     icon &&
     (typeof icon === 'string' ? (
@@ -28,7 +33,7 @@ export function EmptyState({
         <Icon
           iconName={icon as IconName}
           iconStyle={iconStyle}
-          className="absolute top-2 text-base text-neutral-disabled"
+          className={`absolute top-2 text-base ${iconColorClass}`}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -39,12 +44,12 @@ export function EmptyState({
           className="h-10 w-10"
         >
           <path
-            className="fill-surface-neutral-component"
+            className={isPositive ? 'fill-surface-positive-component' : 'fill-surface-neutral-component'}
             fill="currentColor"
             d="M0 6a6 6 0 0 1 6-6h28a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6z"
           ></path>
           <path
-            className="text-neutral-disabled"
+            className={iconColorClass}
             stroke="currentColor"
             d="M.5 7V4.5a4 4 0 0 1 4-4H7M39.5 33v2.5a4 4 0 0 1-4 4H33M.5 33v2.5a4 4 0 0 0 4 4H7M39.5 7V4.5a4 4 0 0 0-4-4H33"
           ></path>
@@ -59,6 +64,7 @@ export function EmptyState({
       <div
         className={twMerge(
           'flex items-center justify-between gap-4 rounded-lg border border-neutral bg-surface-neutral-subtle px-4 py-4 text-sm text-neutral-subtle',
+          isPositive && 'border-positive-subtle bg-surface-positive-subtle text-positive',
           className
         )}
       >
@@ -78,6 +84,7 @@ export function EmptyState({
     <div
       className={twMerge(
         'flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral bg-surface-neutral-subtle p-10 text-center text-sm text-neutral-subtle',
+        isPositive && 'border-positive-subtle bg-surface-positive-subtle text-positive',
         className
       )}
     >
