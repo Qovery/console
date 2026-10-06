@@ -10,6 +10,11 @@ import { Badge, Button, Icon, InputTextSmall, Link } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
 const LAST_USED_LOGIN_STORAGE_KEY = 'lastUsedLogin'
+const LAST_USED_SSO_DOMAIN_STORAGE_KEY = 'lastUsedSsoDomain'
+const SAML_SSO_LOGIN = 'saml_sso'
+// Set by the Auth0 callback when the domain has no matching enterprise connection
+const INVALID_SSO_DOMAIN_ERROR = 'Invalid Enterprise SSO Domain Name'
+const SSO_DOMAIN_PATTERN = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/
 
 const CUBIC_BEZIER_EASE = [0.65, 0.05, 0.36, 1] as const
 const SCREEN_STACK_MOVE_DURATION_S = 0.6
@@ -166,6 +171,11 @@ function useAuth0Error() {
     const errorDescription = sessionStorage.getItem('auth0_error_description')
 
     if (error) {
+      // Keep the domain pre-filled for this visit so it can be fixed, but don't suggest it again next time
+      if (error === INVALID_SSO_DOMAIN_ERROR) {
+        localStorage.removeItem(LAST_USED_SSO_DOMAIN_STORAGE_KEY)
+      }
+
       setAuth0Error({
         error,
         error_description: errorDescription || 'NO_DESCRIPTION',
@@ -202,11 +212,19 @@ export const Route = createFileRoute('/login/')({
 function RouteComponent() {
   const { authLogin } = useAuth()
   const search = Route.useSearch()
-  const [ssoFormVisible, setSsoFormVisible] = useState(false)
   const { auth0Error, setAuth0Error } = useAuth0Error()
   const [loading, setLoading] = useState<{ provider: string; active: boolean } | undefined>()
   const [lastUsedLogin, setLastUsedLogin] = useLocalStorage<string | undefined>(LAST_USED_LOGIN_STORAGE_KEY, undefined)
   const [lastUsedLoginAtPageLoad] = useState(lastUsedLogin)
+  const [lastUsedSsoDomain, setLastUsedSsoDomain] = useLocalStorage<string | undefined>(
+    LAST_USED_SSO_DOMAIN_STORAGE_KEY,
+    undefined
+  )
+  const [lastUsedSsoDomainAtPageLoad] = useState(lastUsedSsoDomain)
+  // Bring back users who last connected with SAML SSO straight to the pre-filled SSO form
+  const [ssoFormVisible, setSsoFormVisible] = useState(
+    lastUsedLoginAtPageLoad === SAML_SSO_LOGIN && Boolean(lastUsedSsoDomainAtPageLoad)
+  )
 
   const [testimonialIndex, setTestimonialIndex] = useState(0)
   const [isTestimonialExiting, setIsTestimonialExiting] = useState(true)
@@ -220,10 +238,10 @@ function RouteComponent() {
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      ssoDomain: '',
+      ssoDomain: lastUsedSsoDomainAtPageLoad ?? '',
     },
   })
-  const ssoDomain = methods.watch('ssoDomain', '')
+  const ssoDomain = methods.watch('ssoDomain')
 
   const handleTestimonialAnimationComplete = () => {
     if (isTestimonialExiting) {
@@ -258,7 +276,9 @@ function RouteComponent() {
   }
 
   const validateAndConnect = () => {
-    onClickAuthLogin(getSsoConnectionName(methods.getValues('ssoDomain')), 'saml_sso')
+    const domain = methods.getValues('ssoDomain')
+    setLastUsedSsoDomain(domain)
+    onClickAuthLogin(getSsoConnectionName(domain), SAML_SSO_LOGIN)
   }
 
   return (
@@ -323,8 +343,7 @@ function RouteComponent() {
                           rules={{
                             required: 'Please enter a domain.',
                             pattern: {
-                              value:
-                                /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/,
+                              value: SSO_DOMAIN_PATTERN,
                               message: 'Invalid domain format',
                             },
                           }}
@@ -350,7 +369,8 @@ function RouteComponent() {
                             size="lg"
                             className="relative w-full justify-center"
                             onClick={methods.handleSubmit(validateAndConnect)}
-                            disabled={ssoDomain.trim().length === 0 || !methods.formState.isValid}
+                            // Derived from the value rather than `formState.isValid`, which isn't computed for a pre-filled domain
+                            disabled={!SSO_DOMAIN_PATTERN.test(ssoDomain)}
                           >
                             Connect
                           </Button>
@@ -425,14 +445,13 @@ function RouteComponent() {
                         size="lg"
                         className="relative w-full justify-center"
                         onClick={() => {
-                          setLastUsedLogin('saml_sso')
                           setSsoFormVisible(true)
                           setAuth0Error(null)
                         }}
                       >
                         <Icon iconName="lock" className="text-sm text-neutral-subtle" />
                         Continue with SAML SSO
-                        <LastUsedBadge visible={lastUsedLoginAtPageLoad === 'saml_sso'} />
+                        <LastUsedBadge visible={lastUsedLoginAtPageLoad === SAML_SSO_LOGIN} />
                       </Button>
 
                       <div className="my-2 flex items-center gap-4">
