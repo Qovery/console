@@ -469,6 +469,13 @@ describe('ServiceHeader', () => {
     expect(screen.queryByRole('button', { name: /Connection URI/ })).not.toBeInTheDocument()
   })
 
+  it('does not look up a blueprint database for a terraform service not created by a blueprint', () => {
+    const { blueprint_id: _blueprintId, ...terraformWithoutBlueprint } = services['terraform-mock']
+    renderWithProviders(<ServiceHeader environment={environment} service={terraformWithoutBlueprint as AnyService} />)
+
+    expect(mockUseBlueprintDatabase).toHaveBeenCalledWith({ blueprintId: '', enabled: false })
+  })
+
   it('does not look up a blueprint database for a non terraform service', () => {
     renderServiceHeader('helm-blueprint-mock')
 

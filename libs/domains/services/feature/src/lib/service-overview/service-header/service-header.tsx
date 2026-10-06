@@ -232,7 +232,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
   // A blueprint database is a terraform service: kind and credentials come from its blueprint
   const { data: blueprintDatabase } = useBlueprintDatabase({
     blueprintId: blueprintId ?? '',
-    enabled: service.serviceType === ServiceTypeEnum.TERRAFORM,
+    enabled: isBlueprintService(service) && service.serviceType === ServiceTypeEnum.TERRAFORM,
   })
   const { data: blueprintDatabaseCredentials } = useBlueprintDatabaseMasterCredentials({
     blueprintId: blueprintId ?? '',
