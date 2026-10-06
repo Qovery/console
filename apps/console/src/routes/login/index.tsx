@@ -12,8 +12,6 @@ import { useLocalStorage } from '@qovery/shared/util-hooks'
 const LAST_USED_LOGIN_STORAGE_KEY = 'lastUsedLogin'
 const LAST_USED_SSO_DOMAIN_STORAGE_KEY = 'lastUsedSsoDomain'
 const SAML_SSO_LOGIN = 'saml_sso'
-// Set by the Auth0 callback when the domain has no matching enterprise connection
-const INVALID_SSO_DOMAIN_ERROR = 'Invalid Enterprise SSO Domain Name'
 const SSO_DOMAIN_PATTERN = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/
 
 const CUBIC_BEZIER_EASE = [0.65, 0.05, 0.36, 1] as const
@@ -172,9 +170,7 @@ function useAuth0Error() {
 
     if (error) {
       // Keep the domain pre-filled for this visit so it can be fixed, but don't suggest it again next time
-      if (error === INVALID_SSO_DOMAIN_ERROR) {
-        localStorage.removeItem(LAST_USED_SSO_DOMAIN_STORAGE_KEY)
-      }
+      localStorage.removeItem(LAST_USED_SSO_DOMAIN_STORAGE_KEY)
 
       setAuth0Error({
         error,

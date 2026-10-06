@@ -80,7 +80,7 @@ describe('Login', () => {
     expect(screen.getByRole('button', { name: 'Connect' })).toBeEnabled()
   })
 
-  it('keeps the invalid domain pre-filled but forgets it for the next visit', () => {
+  it('keeps the domain pre-filled after a login error but forgets it for the next visit', () => {
     localStorage.setItem('lastUsedLogin', 'saml_sso')
     localStorage.setItem('lastUsedSsoDomain', 'typo.com')
     sessionStorage.setItem('auth0_error', 'Invalid Enterprise SSO Domain Name')
