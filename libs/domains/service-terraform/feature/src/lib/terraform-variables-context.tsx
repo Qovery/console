@@ -89,8 +89,8 @@ export const TerraformVariablesContext = createContext<TerraformVariablesContext
 export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   // Initial data fetching...
   const { getValues } = useFormContext<TerraformGeneralData>()
-  const { organizationId = '', serviceId = '' } = useParams({ strict: false })
-  const { data: serviceResponse } = useService({ serviceId, suspense: true })
+  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: serviceResponse } = useService({ environmentId, serviceId, suspense: true })
   const service = match(serviceResponse)
     .with({ serviceType: 'TERRAFORM' }, (s) => s)
     .otherwise(() => null)

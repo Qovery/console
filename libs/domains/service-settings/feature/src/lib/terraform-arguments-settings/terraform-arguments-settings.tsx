@@ -190,8 +190,8 @@ const TerraformArgumentsSettingsContent = ({ service }: { service: Terraform }) 
 }
 
 export function TerraformArgumentsSettings() {
-  const { serviceId = '' } = useParams({ strict: false })
-  const { data: service } = useService({ serviceId, suspense: true })
+  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
 
   if (service?.serviceType !== 'TERRAFORM') return null
 
