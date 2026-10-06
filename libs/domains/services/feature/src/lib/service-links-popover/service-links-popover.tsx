@@ -31,7 +31,7 @@ export function ServiceLinksPopover({
   align = 'end',
   side = 'bottom',
 }: ServiceLinksPopoverProps) {
-  const { data: serviceType } = useServiceType({ environmentId, serviceId })
+  const { data: serviceType } = useServiceType({ environmentId, serviceId, enabled: Boolean(serviceId) })
   const { data: links = [] } = useEnvironmentLinks({ environmentId })
 
   // Remove default Qovery links
