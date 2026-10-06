@@ -141,6 +141,11 @@ describe('ApplicationContainerStorageSettings', () => {
     await userEvent.click(screen.getByTestId('delete-button'))
 
     expect(mockOpenModalConfirmation).toHaveBeenCalledTimes(1)
+    expect(mockOpenModalConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        warning: 'Deleting this storage will permanently delete all data stored on it. This action cannot be undone.',
+      })
+    )
 
     mockOpenModalConfirmation.mock.calls[0][0].action()
 
