@@ -18,6 +18,7 @@ import {
   type TerraformGeneralData,
 } from '../terraform-general-data/terraform-general-data'
 import { DockerfileFragmentInlineSetting } from '../terraform-variables-settings/dockerfile-fragment-inline-setting/dockerfile-fragment-inline-setting'
+import { isKubernetesBackend } from '../utils/is-kubernetes-backend'
 import { TERRAFORM_ENGINES } from '../utils/terraform-engines'
 
 export const TerraformConfigurationSettings = ({
@@ -85,11 +86,13 @@ export const TerraformConfigurationSettings = ({
             <Controller
               name="backend"
               control={methods.control}
-              defaultValue={'kubernetes' in methods.getValues('backend') ? { kubernetes: {} } : { user_provided: {} }}
+              defaultValue={
+                isKubernetesBackend(methods.getValues('backend')) ? { kubernetes: {} } : { user_provided: {} }
+              }
               render={({ field }) => (
                 <RadioGroup.Root
                   className="flex flex-col gap-5"
-                  defaultValue={'kubernetes' in field.value ? 'kubernetes' : 'user_provided'}
+                  defaultValue={isKubernetesBackend(field.value) ? 'kubernetes' : 'user_provided'}
                   onValueChange={(value) =>
                     field.onChange(value === 'kubernetes' ? { kubernetes: {} } : { user_provided: {} })
                   }
@@ -122,7 +125,7 @@ export const TerraformConfigurationSettings = ({
               )}
             />
 
-            {'kubernetes' in backend && (
+            {isKubernetesBackend(backend) && (
               <div className="mt-4 flex w-full flex-col gap-2 rounded border border-neutral px-4 py-3 text-sm">
                 <span className="font-medium">Access Terraform state from your local machine</span>
                 <p className="text-neutral-subtle">

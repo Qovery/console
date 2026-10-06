@@ -6238,7 +6238,7 @@ __metadata:
     "@xterm/xterm": 5.5.0
     ansi-to-react: 6.2.6
     autoprefixer: 10.4.13
-    axios: 1.18.1
+    axios: 1.20.0
     babel-jest: 30.0.5
     babel-loader: 8.3.0
     chance: 1.1.10
@@ -6285,7 +6285,7 @@ __metadata:
     prettier: 3.2.5
     prettier-plugin-tailwindcss: 0.5.14
     pretty-quick: 4.0.0
-    qovery-typescript-axios: 1.1.996
+    qovery-typescript-axios: 1.1.1004
     qovery-ws-typescript-axios: 0.1.666
     react: 19.3.0
     react-country-flag: 3.0.2
@@ -11674,6 +11674,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:1.20.0":
+  version: 1.20.0
+  resolution: "axios@npm:1.20.0"
+  dependencies:
+    follow-redirects: ^1.16.0
+    form-data: ^4.0.6
+    https-proxy-agent: ^5.0.1
+    proxy-from-env: ^2.1.0
+  checksum: 58ff916938e317352e0c3483496a4609fd528da4823a8580969821748284bea2add069a39f2285a161020ce0886f33a982a162ebb49b5403c51a6977a1d50627
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:^4.1.0":
   version: 4.1.0
   resolution: "axobject-query@npm:4.1.0"
@@ -16720,7 +16732,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:4.0.6":
+"form-data@npm:4.0.6, form-data@npm:^4.0.6":
   version: 4.0.6
   resolution: "form-data@npm:4.0.6"
   dependencies:
@@ -24644,12 +24656,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:1.1.996":
-  version: 1.1.996
-  resolution: "qovery-typescript-axios@npm:1.1.996"
+"qovery-typescript-axios@npm:1.1.1004":
+  version: 1.1.1004
+  resolution: "qovery-typescript-axios@npm:1.1.1004"
   dependencies:
-    axios: 1.18.1
-  checksum: 8178819d32c797ae41d453ac2a8b66e1059b1a57e275c3f624c2b536fd92126589246ce4bff672c7ca49ea483d7c6f86821b4a9f8c1a7cbd465ddfeca11cbb33
+    axios: 1.20.0
+  checksum: 99fca71abb55689b534cb7c3874deabb11fe6c20a564d7bd4b03d034f5a2a37c4daefbb568b46b468141b7ad7a858daae7e1013516fa8ba272046ba9ba635d73
   languageName: node
   linkType: hard
 

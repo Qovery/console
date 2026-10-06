@@ -61,7 +61,7 @@
     "@xterm/xterm": "5.5.0",
     "ansi-to-react": "6.2.6",
     "autoprefixer": "10.4.13",
-    "axios": "1.18.1",
+    "axios": "1.20.0",
     "class-variance-authority": "0.7.0",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
@@ -78,7 +78,7 @@
     "mermaid": "11.6.0",
     "monaco-editor": "0.53.0",
     "posthog-js": "1.345.1",
-    "qovery-typescript-axios": "1.1.996",
+    "qovery-typescript-axios": "1.1.1004",
     "react": "19.3.0",
     "react-country-flag": "3.0.2",
     "react-datepicker": "4.12.0",
@@ -246,6 +246,7 @@
     ]
   },
   "resolutions": {
+    "qovery-ws-typescript-axios/axios": "1.20.0",
     "@codemirror/state": "6.7.1",
     "@codemirror/view": "6.43.9",
     "posthog-js@1.345.1": "patch:posthog-js@npm%3A1.345.1#./.yarn/patches/posthog-js-npm-1.345.1-3f218a6564.patch"
