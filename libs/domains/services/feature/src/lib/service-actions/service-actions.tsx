@@ -344,6 +344,7 @@ function MenuManageDeployment({
           serviceId={service.id}
           serviceType={service.serviceType}
           gitRepository={gitRepository}
+          of="values"
           onCancel={closeModal}
           onSubmit={(values_override_git_commit_id) => {
             deployService({
