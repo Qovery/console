@@ -27,7 +27,7 @@ const TerraformConfigurationLoader = () => (
 
 const TerraformConfigurationSettingsWrapper = () => {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = Route.useParams()
-  const { data: service } = useService({ serviceId, suspense: true })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     organizationId,
     projectId,
