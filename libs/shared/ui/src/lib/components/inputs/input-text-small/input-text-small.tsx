@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import {
   type ChangeEventHandler,
   type FocusEventHandler,
+  type InputEventHandler,
   type KeyboardEventHandler,
   forwardRef,
   useEffect,
@@ -108,7 +109,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
           type={currentType}
           placeholder={placeholder}
           value={value}
-          onInput={onChange}
+          onInput={onChange as InputEventHandler<HTMLInputElement> | undefined}
           disabled={disabled}
           id={label}
           onFocus={() => setFocused(true)}

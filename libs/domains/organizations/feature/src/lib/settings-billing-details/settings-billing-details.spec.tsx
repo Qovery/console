@@ -118,7 +118,7 @@ describe('SettingsBillingDetails', () => {
   })
 
   it('should display skeletons while loading', () => {
-    useCreditCardsMock.mockImplementationOnce(() => {
+    useCreditCardsMock.mockImplementation(() => {
       throw new Promise(() => undefined)
     })
 

@@ -12,7 +12,6 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
         Set port
       </h2>
       <button
-        aria-controls="radix-:r6:"
         aria-expanded="false"
         aria-haspopup="dialog"
         class="hover:text-brandHover mt-2 cursor-pointer text-sm font-medium text-brand transition"
@@ -89,6 +88,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                   aria-live="polite"
                   aria-relevant="additions text"
                   class="css-1f43avz-a11yText-A11yText"
+                  role="log"
                 />
                 <div
                   class="input-select__control css-13cymwt-control"
@@ -102,6 +102,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                       HTTP
                     </span>
                     <input
+                      aria-activedescendant=""
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
@@ -306,7 +307,6 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
         Edit port
       </h2>
       <button
-        aria-controls="radix-:rd:"
         aria-expanded="false"
         aria-haspopup="dialog"
         class="hover:text-brandHover mt-2 cursor-pointer text-sm font-medium text-brand transition"
@@ -416,6 +416,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   aria-live="polite"
                   aria-relevant="additions text"
                   class="css-1f43avz-a11yText-A11yText"
+                  role="log"
                 />
                 <div
                   class="input-select__control css-13cymwt-control"
@@ -429,6 +430,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                       HTTP
                     </span>
                     <input
+                      aria-activedescendant=""
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"

@@ -52,13 +52,13 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
                 class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
               >
                 <button
-                  aria-controls="radix-:r7:"
+                  aria-controls="radix-_r_7_"
                   aria-expanded="true"
                   class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
                   data-orientation="vertical"
                   data-radix-collection-item=""
                   data-state="open"
-                  id="radix-:r6:"
+                  id="radix-_r_6_"
                   type="button"
                 >
                   <i
@@ -69,11 +69,11 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
                 Project 1
               </div>
               <div
-                aria-labelledby="radix-:r6:"
+                aria-labelledby="radix-_r_6_"
                 class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                 data-orientation="vertical"
                 data-state="open"
-                id="radix-:r7:"
+                id="radix-_r_7_"
                 role="region"
                 style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
               >
@@ -89,13 +89,12 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
                       class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
                     >
                       <button
-                        aria-controls="radix-:rb:"
                         aria-expanded="false"
                         class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
                         data-orientation="vertical"
                         data-radix-collection-item=""
                         data-state="closed"
-                        id="radix-:ra:"
+                        id="radix-_r_a_"
                         type="button"
                       >
                         <i
@@ -112,12 +111,12 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
                       </a>
                     </div>
                     <div
-                      aria-labelledby="radix-:ra:"
+                      aria-labelledby="radix-_r_a_"
                       class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                       data-orientation="vertical"
                       data-state="closed"
                       hidden=""
-                      id="radix-:rb:"
+                      id="radix-_r_b_"
                       role="region"
                       style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
                     />
@@ -134,13 +133,12 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
                 class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
               >
                 <button
-                  aria-controls="radix-:r9:"
                   aria-expanded="false"
                   class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
                   data-orientation="vertical"
                   data-radix-collection-item=""
                   data-state="closed"
-                  id="radix-:r8:"
+                  id="radix-_r_8_"
                   type="button"
                 >
                   <i
@@ -151,12 +149,12 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
                 Project 2
               </div>
               <div
-                aria-labelledby="radix-:r8:"
+                aria-labelledby="radix-_r_8_"
                 class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                 data-orientation="vertical"
                 data-state="closed"
                 hidden=""
-                id="radix-:r9:"
+                id="radix-_r_9_"
                 role="region"
                 style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
               />
@@ -221,13 +219,13 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
                 class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
               >
                 <button
-                  aria-controls="radix-:rj:"
+                  aria-controls="radix-_r_j_"
                   aria-expanded="true"
                   class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
                   data-orientation="vertical"
                   data-radix-collection-item=""
                   data-state="open"
-                  id="radix-:ri:"
+                  id="radix-_r_i_"
                   type="button"
                 >
                   <i
@@ -238,11 +236,11 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
                 Project 1
               </div>
               <div
-                aria-labelledby="radix-:ri:"
+                aria-labelledby="radix-_r_i_"
                 class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                 data-orientation="vertical"
                 data-state="open"
-                id="radix-:rj:"
+                id="radix-_r_j_"
                 role="region"
                 style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
               >
@@ -258,13 +256,12 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
                       class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
                     >
                       <button
-                        aria-controls="radix-:rn:"
                         aria-expanded="false"
                         class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
                         data-orientation="vertical"
                         data-radix-collection-item=""
                         data-state="closed"
-                        id="radix-:rm:"
+                        id="radix-_r_m_"
                         type="button"
                       >
                         <i
@@ -281,12 +278,12 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
                       </a>
                     </div>
                     <div
-                      aria-labelledby="radix-:rm:"
+                      aria-labelledby="radix-_r_m_"
                       class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                       data-orientation="vertical"
                       data-state="closed"
                       hidden=""
-                      id="radix-:rn:"
+                      id="radix-_r_n_"
                       role="region"
                       style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
                     />
@@ -303,13 +300,12 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
                 class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
               >
                 <button
-                  aria-controls="radix-:rl:"
                   aria-expanded="false"
                   class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
                   data-orientation="vertical"
                   data-radix-collection-item=""
                   data-state="closed"
-                  id="radix-:rk:"
+                  id="radix-_r_k_"
                   type="button"
                 >
                   <i
@@ -320,12 +316,12 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
                 Project 2
               </div>
               <div
-                aria-labelledby="radix-:rk:"
+                aria-labelledby="radix-_r_k_"
                 class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                 data-orientation="vertical"
                 data-state="closed"
                 hidden=""
-                id="radix-:rl:"
+                id="radix-_r_l_"
                 role="region"
                 style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
               />

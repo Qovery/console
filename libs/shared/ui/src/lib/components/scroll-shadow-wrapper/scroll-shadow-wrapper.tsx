@@ -22,7 +22,7 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const resetRefSizes = (ref: RefObject<HTMLDivElement>) => {
+    const resetRefSizes = (ref: RefObject<HTMLDivElement | null>) => {
       if (!ref.current) return
 
       setScrollTop(ref.current.scrollTop)
