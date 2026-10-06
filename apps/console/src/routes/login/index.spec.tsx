@@ -83,13 +83,13 @@ describe('Login', () => {
   it('keeps the domain pre-filled after a login error but forgets it for the next visit', () => {
     localStorage.setItem('lastUsedLogin', 'saml_sso')
     localStorage.setItem('lastUsedSsoDomain', 'typo.com')
-    sessionStorage.setItem('auth0_error', 'Invalid Enterprise SSO Domain Name')
-    sessionStorage.setItem('auth0_error_description', 'The domain name provided is not authorized')
+    sessionStorage.setItem('auth0_error', 'access_denied')
+    sessionStorage.setItem('auth0_error_description', 'User is not allowed to access this application')
 
     renderWithProviders(<RouteComponent />)
 
     expect(screen.getByLabelText('Company domain')).toHaveValue('typo.com')
-    expect(screen.getByText('Invalid Enterprise SSO Domain Name')).toBeInTheDocument()
+    expect(screen.getByText('access_denied')).toBeInTheDocument()
     expect(localStorage.getItem('lastUsedSsoDomain')).toBeNull()
   })
 })
