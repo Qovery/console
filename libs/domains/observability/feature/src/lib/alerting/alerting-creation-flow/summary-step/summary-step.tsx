@@ -122,9 +122,9 @@ export function SummaryStep() {
   const navigate = useNavigate()
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const searchStr = useRouterState({ select: (state) => state.location.searchStr })
-  const { organizationId = '', serviceId = '' } = useParams({ strict: false })
+  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
 
-  const { data: service } = useService({ serviceId })
+  const { data: service } = useService({ environmentId, serviceId })
   const certificateEnabled = canCreateCertificateRenewalAlert(
     useFeatureFlagEnabled('certificate-renewal-alert'),
     service

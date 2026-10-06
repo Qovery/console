@@ -72,6 +72,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                   aria-live="polite"
                   aria-relevant="additions text"
                   class="css-1f43avz-a11yText-A11yText"
+                  role="log"
                 />
                 <div
                   class="input-select__control css-13cymwt-control"
@@ -85,6 +86,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                       Default
                     </span>
                     <input
+                      aria-activedescendant=""
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
@@ -184,7 +186,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               <input
                 aria-hidden="true"
                 name="confirm_qovery_config"
-                style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
                 tabindex="-1"
                 type="checkbox"
                 value="on"
@@ -215,7 +217,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               <input
                 aria-hidden="true"
                 name="confirm_cloud_provider"
-                style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
                 tabindex="-1"
                 type="checkbox"
                 value="on"

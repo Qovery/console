@@ -153,7 +153,7 @@ const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-2', 'min-w-5'], {
 interface DropdownMenuItemProps
   extends Omit<VariantProps<typeof dropdownMenuItemVariants>, 'disabled'>,
     Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>, 'color'> {
-  icon?: ReactElement
+  icon?: ReactElement<{ className?: string }>
 }
 
 const DropdownMenuItem = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item>, DropdownMenuItemProps>(
@@ -213,7 +213,7 @@ const DropdownMenuSeparator = forwardRef<
 interface DropdownMenuSubTriggerProps
   extends Omit<VariantProps<typeof dropdownMenuItemVariants>, 'disabled'>,
     Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger>, 'color'> {
-  icon?: ReactElement
+  icon?: ReactElement<{ className?: string }>
 }
 
 const DropdownMenuSubTrigger = forwardRef<

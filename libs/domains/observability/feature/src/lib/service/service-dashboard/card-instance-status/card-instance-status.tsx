@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
@@ -84,7 +85,8 @@ export function CardInstanceStatus({
 
   const selector = useMemo(() => buildPromSelector(containerName, podNames), [containerName, podNames])
 
-  const { data: service } = useService({ serviceId })
+  const { environmentId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId })
   const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useInstantMetrics({
     clusterId,
     query: query(queryTimeRange, selector),

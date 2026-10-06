@@ -15,7 +15,7 @@ export function CopyToClipboard({ text, children, className = '' }: CopyToClipbo
 
   Children.only(children)
 
-  const child = children as ReactElement
+  const child = children as ReactElement<{ className?: string; color?: string; variant?: string }>
 
   return (
     <Slot

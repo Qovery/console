@@ -77,33 +77,39 @@ export function EnvironmentAutomation({ environment }: { environment: Environmen
               >
                 Request agent template
               </Button>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <Button size="md">
-                    Create agent task <Icon iconName="chevron-down" />
-                  </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content align="end">
-                  <DropdownMenu.Item
-                    onSelect={() =>
-                      openModal({
-                        options: {
-                          width: 'min(1440px, calc(100vw - 48px))',
-                          className: '!top-6 [&>div]:!max-h-[calc(100dvh-48px)]',
-                          buttonClose: false,
-                          fakeModal: true,
-                        },
-                        content: (
-                          <AgentTemplateCatalogModal onClose={closeModal} onCreateFromScratch={createFromScratch} />
-                        ),
-                      })
-                    }
-                  >
-                    Create from template
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item onSelect={createFromScratch}>Create from scratch</DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
+              {hasAgents ? (
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild>
+                    <Button size="md">
+                      Create agent task <Icon iconName="chevron-down" />
+                    </Button>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content align="end">
+                    <DropdownMenu.Item
+                      onSelect={() =>
+                        openModal({
+                          options: {
+                            width: 'min(1440px, calc(100vw - 48px))',
+                            className: '!top-6 [&>div]:!max-h-[calc(100dvh-48px)]',
+                            buttonClose: false,
+                            fakeModal: true,
+                          },
+                          content: (
+                            <AgentTemplateCatalogModal onClose={closeModal} onCreateFromScratch={createFromScratch} />
+                          ),
+                        })
+                      }
+                    >
+                      Create from template
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item onSelect={createFromScratch}>Create from scratch</DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              ) : (
+                <Button size="md" onClick={createFromScratch}>
+                  Create from scratch
+                </Button>
+              )}
             </div>
           </div>
           <hr className="w-full border-neutral" />

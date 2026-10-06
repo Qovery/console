@@ -33,7 +33,6 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
         </button>
       </div>
       <span
-        aria-controls="radix-:r6:"
         aria-expanded="false"
         aria-haspopup="dialog"
         class="hover:text-brandHover mb-6 cursor-pointer text-sm font-medium text-brand transition"
@@ -351,7 +350,6 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot for the v5-compati
         </button>
       </div>
       <span
-        aria-controls="radix-:rd:"
         aria-expanded="false"
         aria-haspopup="dialog"
         class="hover:text-brandHover mb-6 cursor-pointer text-sm font-medium text-brand transition"

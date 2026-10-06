@@ -33,7 +33,7 @@ import { PrivateNetworkRequestStatusChart } from './private-network-request-stat
 import { SelectTimeRange } from './select-time-range/select-time-range'
 
 function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: string; serviceId: string }) {
-  const { data: service } = useService({ serviceId })
+  const { data: service } = useService({ environmentId, serviceId })
   const { data: environment } = useEnvironment({ environmentId })
   const {
     expandCharts,
@@ -67,15 +67,17 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
       Array.isArray(service.storage) &&
       service.storage.length > 0)
 
-  const now = new Date()
-  const oneHourAgo = subHours(now, 1)
+  const [{ startDate, endDate }] = useState(() => {
+    const now = new Date()
+    return { startDate: subHours(now, 1).toISOString(), endDate: now.toISOString() }
+  })
 
   const { data: containerName, isFetched: isFetchedContainerName } = useContainerName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: serviceId,
     resourceType: hasStorage ? 'statefulset' : 'deployment',
-    startDate: oneHourAgo.toISOString(),
-    endDate: now.toISOString(),
+    startDate,
+    endDate,
   })
 
   // For container databases, retrieve pod names via kube_pod_owner
@@ -85,8 +87,8 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
   const { data: podNamesData, isFetched: isFetchedPodNames } = usePodNames({
     clusterId: environment?.cluster_id ?? '',
     statefulsetName: containerName ?? '',
-    startDate: oneHourAgo.toISOString(),
-    endDate: now.toISOString(),
+    startDate,
+    endDate,
     enabled: isContainerDatabase,
   })
 
@@ -96,24 +98,24 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
     clusterId: environment?.cluster_id ?? '',
     serviceId: serviceId,
     resourceType: hasStorage ? 'statefulset' : 'deployment',
-    startDate: oneHourAgo.toISOString(),
-    endDate: now.toISOString(),
+    startDate,
+    endDate,
   })
 
   const { data: ingressName = '' } = useIngressName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: serviceId,
     enabled: hasPublicPort,
-    startDate: oneHourAgo.toISOString(),
-    endDate: now.toISOString(),
+    startDate,
+    endDate,
   })
 
   const { data: httpRouteName = '' } = useHttpRouteName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: serviceId,
     enabled: hasPublicPort,
-    startDate: oneHourAgo.toISOString(),
-    endDate: now.toISOString(),
+    startDate,
+    endDate,
   })
 
   const { podCount, isFetched: isFetchedPodCount } = usePodCount({

@@ -129,7 +129,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               id={label}
               className={twMerge(
                 'input__value',
-                rightElement && '!pr-9',
+                !!rightElement && '!pr-9',
                 readOnly && '!cursor-default caret-transparent'
               )}
               type={currentType}

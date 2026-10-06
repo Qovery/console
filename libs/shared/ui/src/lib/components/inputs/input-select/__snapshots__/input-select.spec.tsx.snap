@@ -57,8 +57,10 @@ exports[`InputSelect should apply disabled classes to selected value, label and 
             aria-live="polite"
             aria-relevant="additions text"
             class="css-1f43avz-a11yText-A11yText"
+            role="log"
           />
           <div
+            aria-disabled="true"
             class="input-select__control input-select__control--is-disabled css-16xfy0z-control"
           >
             <div
@@ -70,6 +72,7 @@ exports[`InputSelect should apply disabled classes to selected value, label and 
                 Test 1
               </span>
               <input
+                aria-activedescendant=""
                 aria-autocomplete="list"
                 aria-expanded="false"
                 aria-haspopup="true"

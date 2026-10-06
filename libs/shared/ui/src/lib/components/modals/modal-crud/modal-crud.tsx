@@ -21,7 +21,7 @@ export interface ModalCrudProps {
   deleteButtonLabel?: string
   howItWorks?: ReactNode
   customLoader?: ReactNode
-  forwardRef?: React.RefObject<HTMLDivElement>
+  forwardRef?: React.RefObject<HTMLDivElement | null>
   bottomButtons?: ReactNode
 }
 

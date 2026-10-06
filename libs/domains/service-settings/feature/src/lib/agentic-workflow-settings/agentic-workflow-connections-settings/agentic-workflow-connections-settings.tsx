@@ -51,7 +51,7 @@ export function AgenticWorkflowConnectionsSettings({
   const [mcpSheetOpen, setMcpSheetOpen] = useState(false)
   const [mcpDraft, setMcpDraft] = useState<string[]>([])
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
-  const contextAddedRequiredMcpServerIdRef = useRef<string>()
+  const contextAddedRequiredMcpServerIdRef = useRef<string | undefined>(undefined)
   const saveSettings: SaveAgenticWorkflowSettings =
     onSave ??
     (async (values) => {

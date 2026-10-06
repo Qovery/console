@@ -10,7 +10,7 @@ const AUTO_SCROLL_THRESHOLD = 40
 export interface ClusterLogsListProps {
   logs: ClusterLogs[]
   firstDate?: Date
-  refScrollSection: RefObject<HTMLDivElement>
+  refScrollSection: RefObject<HTMLDivElement | null>
 }
 
 function isNearBottom(section: HTMLDivElement) {

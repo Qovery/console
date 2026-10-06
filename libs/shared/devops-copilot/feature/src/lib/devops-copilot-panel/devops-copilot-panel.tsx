@@ -102,7 +102,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [plan, setPlan] = useState<PlanStep[]>([])
   const [showPlans, setShowPlans] = useState<Record<string, boolean>>({})
 
-  const pendingThreadId = useRef<string>()
+  const pendingThreadId = useRef<string | undefined>(undefined)
 
   const {
     threads = [],

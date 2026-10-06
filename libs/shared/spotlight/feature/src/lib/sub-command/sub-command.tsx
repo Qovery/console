@@ -35,8 +35,8 @@ export function SubCommand({
   resetSelection,
 }: {
   organizationId: string
-  inputRef: React.RefObject<HTMLInputElement>
-  listRef: React.RefObject<HTMLElement>
+  inputRef: React.RefObject<HTMLInputElement | null>
+  listRef: React.RefObject<HTMLElement | null>
   resetSelection: () => void
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   open: boolean
