@@ -34,7 +34,7 @@ jest.mock('@qovery/shared/ui', () => ({
 }))
 
 describe('ServiceSettingsLayout', () => {
-  it('hides Terraform-only settings for blueprint services', () => {
+  it('shows Terraform settings alongside Blueprint settings for Terraform Blueprint services', () => {
     mockService = { ...terraformFactoryMock(1)[0], blueprint_id: 'blueprint-id' }
 
     renderWithProviders(
@@ -43,8 +43,8 @@ describe('ServiceSettingsLayout', () => {
       </ServiceSettingsLayout>
     )
 
-    expect(screen.queryByText('Terraform configuration')).not.toBeInTheDocument()
-    expect(screen.queryByText('Terraform arguments')).not.toBeInTheDocument()
+    expect(screen.getByText('Terraform configuration')).toBeInTheDocument()
+    expect(screen.getByText('Terraform arguments')).toBeInTheDocument()
     expect(screen.getByText('Blueprint configuration')).toBeInTheDocument()
     expect(screen.getByText('Resources')).toBeInTheDocument()
     expect(screen.queryByText('Deployment restrictions')).not.toBeInTheDocument()
@@ -80,6 +80,8 @@ describe('ServiceSettingsLayout', () => {
     expect(screen.queryByText('Networking')).not.toBeInTheDocument()
     expect(screen.queryByText('Domain')).not.toBeInTheDocument()
     expect(screen.queryByText('Deployment restrictions')).not.toBeInTheDocument()
+    expect(screen.queryByText('Terraform configuration')).not.toBeInTheDocument()
+    expect(screen.queryByText('Terraform arguments')).not.toBeInTheDocument()
   })
 
   it('keeps Helm-specific settings for regular Helm services', () => {

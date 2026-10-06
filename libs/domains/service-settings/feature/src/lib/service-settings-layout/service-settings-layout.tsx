@@ -124,6 +124,8 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
   const blueprintTerraformSettingsLinks = [
     generalLink,
     blueprintConfigurationLink,
+    terraformConfigurationLink,
+    terraformArgumentsLink,
     resourcesLink,
     advancedSettingsLink,
     dangerZoneLink,
