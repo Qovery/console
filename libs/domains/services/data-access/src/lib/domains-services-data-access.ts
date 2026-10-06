@@ -380,6 +380,20 @@ export const services = createQueryKeys('services', {
       return response.data
     },
   }),
+  blueprintDatabase: ({ blueprintId }: { blueprintId: string }) => ({
+    queryKey: [blueprintId],
+    async queryFn() {
+      const response = await blueprintApi.getBlueprintDatabase(blueprintId)
+      return response.data
+    },
+  }),
+  blueprintDatabaseMasterCredentials: ({ blueprintId }: { blueprintId: string }) => ({
+    queryKey: [blueprintId],
+    async queryFn() {
+      const response = await blueprintApi.getBlueprintDatabaseMasterCredentials(blueprintId)
+      return response.data
+    },
+  }),
   blueprintUpdate: ({ blueprintId }: { blueprintId: string }) => ({
     queryKey: [blueprintId],
     async queryFn() {
