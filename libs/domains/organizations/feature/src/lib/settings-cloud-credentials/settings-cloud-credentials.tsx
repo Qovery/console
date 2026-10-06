@@ -333,7 +333,7 @@ export function SettingsCloudCredentials() {
     key: string
     label: string
     cloudProvider: ClusterCredentialsModalCloudProvider
-    icon: ReactElement
+    icon: ReactElement<{ className?: string }>
   }
 
   const cloudProviderOptions = useMemo<CloudProviderOption[]>(

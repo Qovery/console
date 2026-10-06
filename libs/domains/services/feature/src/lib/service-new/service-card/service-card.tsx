@@ -361,7 +361,7 @@ export function CardService({
               {typeof icon === 'string' ? (
                 <img className={twMerge('max-h-10 w-14 select-none', iconClassName)} src={icon} alt={title} />
               ) : (
-                cloneElement(icon as ReactElement, {
+                cloneElement(icon as ReactElement<{ className?: string }>, {
                   className: twMerge('w-10', iconClassName),
                 })
               )}
@@ -397,7 +397,7 @@ export function CardService({
         {typeof icon === 'string' ? (
           <img className={twMerge('max-h-10 w-14 select-none', iconClassName)} src={icon} alt={title} />
         ) : (
-          cloneElement(icon as ReactElement, {
+          cloneElement(icon as ReactElement<{ className?: string }>, {
             className: twMerge('w-10', iconClassName),
           })
         )}

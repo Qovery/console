@@ -44,12 +44,12 @@ exports[`ServiceTerminal should match snapshot 1`] = `
                 <input
                   aria-activedescendant=""
                   aria-autocomplete="list"
-                  aria-controls="downshift-:r6:-menu"
+                  aria-controls="downshift-_r_6_-menu"
                   aria-expanded="false"
-                  aria-labelledby="downshift-:r6:-label"
+                  aria-labelledby="downshift-_r_6_-label"
                   autocomplete="off"
                   class="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]"
-                  id="downshift-:r6:-input"
+                  id="downshift-_r_6_-input"
                   placeholder="Select a pod"
                   role="combobox"
                   value="pod-1"
@@ -59,9 +59,9 @@ exports[`ServiceTerminal should match snapshot 1`] = `
                 class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] hidden"
               >
                 <ul
-                  aria-labelledby="downshift-:r6:-label"
+                  aria-labelledby="downshift-_r_6_-label"
                   class="m-0 list-none p-0"
-                  id="downshift-:r6:-menu"
+                  id="downshift-_r_6_-menu"
                   role="listbox"
                 >
                   <p

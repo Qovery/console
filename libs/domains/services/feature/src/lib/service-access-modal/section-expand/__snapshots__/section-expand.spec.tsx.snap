@@ -11,13 +11,12 @@ exports[`SectionExpand should match snapshot 1`] = `
       data-state="closed"
     >
       <button
-        aria-controls="radix-:r7:"
         aria-expanded="false"
         class="group flex min-h-14 items-center gap-5 bg-surface-neutral text-sm outline-none w-full cursor-pointer flex-row-reverse justify-between px-4 py-3"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
-        id="radix-:r6:"
+        id="radix-_r_6_"
         type="button"
       >
         <i
@@ -40,12 +39,12 @@ exports[`SectionExpand should match snapshot 1`] = `
         </div>
       </button>
       <div
-        aria-labelledby="radix-:r6:"
+        aria-labelledby="radix-_r_6_"
         class="data-[state=closed]:slidein-up-sm-faded overflow-hidden bg-surface-neutral data-[state=open]:animate-slidein-down-sm-faded border-t border-neutral p-0 text-sm"
         data-orientation="vertical"
         data-state="closed"
         hidden=""
-        id="radix-:r7:"
+        id="radix-_r_7_"
         role="region"
         style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
       />

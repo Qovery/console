@@ -189,7 +189,7 @@ function formatJsonPayload(payload: string): string | null {
 
 function PayloadEditor({ value }: { value: string }) {
   const [measuredHeight, setMeasuredHeight] = useState<number>()
-  const listenerRef = useRef<{ dispose: () => void }>()
+  const listenerRef = useRef<{ dispose: () => void } | undefined>(undefined)
 
   useEffect(() => () => listenerRef.current?.dispose(), [])
 
