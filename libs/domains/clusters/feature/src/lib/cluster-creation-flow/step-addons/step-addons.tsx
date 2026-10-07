@@ -2,16 +2,7 @@ import posthog from 'posthog-js'
 import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo } from 'react'
 import { isSameSecretManagerAccess } from '@qovery/domains/clusters/data-access'
-import {
-  Button,
-  DropdownMenu,
-  FunnelFlowBody,
-  Heading,
-  Icon,
-  Link,
-  Section,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, DropdownMenu, FunnelFlowBody, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
 import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
