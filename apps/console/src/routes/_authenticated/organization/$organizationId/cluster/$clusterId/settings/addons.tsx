@@ -16,17 +16,7 @@ import {
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import {
-  Badge,
-  Button,
-  Callout,
-  DropdownMenu,
-  Icon,
-  Section,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 
 const SECRET_MANAGER_EARLY_ACCESS_FORM_SLUG = 'request-access-secrets-manager'
@@ -203,11 +193,6 @@ function RouteComponent() {
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                      <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
-                        <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
-                          Beta
-                        </Badge>
-                      </Tooltip>
                     </div>
                     <p className="text-sm text-neutral-subtle">
                       Link any secret manager on your cluster to add external secrets variables to all the services
@@ -273,16 +258,6 @@ function RouteComponent() {
                       onDelete={handleDeleteSecretManager}
                       onViewAssociatedExternalSecrets={openSecretManagerAssociatedExternalSecretsModal}
                     />
-                    <Callout.Root color="sky" className="w-full">
-                      <Callout.Icon>
-                        <Icon iconName="info-circle" iconStyle="regular" />
-                      </Callout.Icon>
-                      <Callout.Text>
-                        <Callout.TextDescription>
-                          This feature is in beta. Behaviour and accessibility may change when released in GA.
-                        </Callout.TextDescription>
-                      </Callout.Text>
-                    </Callout.Root>
                   </div>
                 </div>
               </div>
@@ -294,11 +269,6 @@ function RouteComponent() {
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                      <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
-                        <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
-                          Beta
-                        </Badge>
-                      </Tooltip>
                     </div>
                     <p className="text-sm text-neutral-subtle">
                       Connect your external secret manager to Qovery and expose secrets as variables across the services
