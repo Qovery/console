@@ -16,15 +16,7 @@ import {
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import {
-  Button,
-  Callout,
-  DropdownMenu,
-  Icon,
-  Section,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 
 const SECRET_MANAGER_EARLY_ACCESS_FORM_SLUG = 'request-access-secrets-manager'
@@ -264,16 +256,6 @@ function RouteComponent() {
                       onDelete={handleDeleteSecretManager}
                       onViewAssociatedExternalSecrets={openSecretManagerAssociatedExternalSecretsModal}
                     />
-                    <Callout.Root color="sky" className="w-full">
-                      <Callout.Icon>
-                        <Icon iconName="info-circle" iconStyle="regular" />
-                      </Callout.Icon>
-                      <Callout.Text>
-                        <Callout.TextDescription>
-                          This feature is in beta. Behaviour and accessibility may change when released in GA.
-                        </Callout.TextDescription>
-                      </Callout.Text>
-                    </Callout.Root>
                   </div>
                 </div>
               </div>
