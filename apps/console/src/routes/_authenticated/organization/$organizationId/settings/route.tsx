@@ -94,7 +94,7 @@ function RouteComponent() {
     icon: 'rectangle-api' as const,
     children: [
       { title: 'Token', to: `${pathSettings}/api-token` },
-      { title: 'Policy token (Beta)', to: `${pathSettings}/policy-api-token` },
+      { title: 'Policy token (New)', to: `${pathSettings}/policy-api-token` },
     ],
   }
 
