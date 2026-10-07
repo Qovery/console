@@ -140,11 +140,11 @@ describe('StepAddons', () => {
     jest.useRealTimers()
   })
 
-  it('should display beta badge on secret manager integration', () => {
+  it('should not display a beta badge on secret manager integration', () => {
     renderWithProviders(<StepAddons {...defaultProps} />, { wrapper: getWrapper() })
 
     expect(screen.getByText('Secret manager integration')).toBeInTheDocument()
-    expect(screen.getByText('Beta')).toBeInTheDocument()
+    expect(screen.queryByText('Beta')).not.toBeInTheDocument()
   })
 
   it('should sync KEDA activation to addons data', async () => {
