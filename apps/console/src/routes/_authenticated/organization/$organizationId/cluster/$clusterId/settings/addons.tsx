@@ -17,13 +17,11 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
-  Badge,
   Button,
   Callout,
   DropdownMenu,
   Icon,
   Section,
-  Tooltip,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -201,14 +199,7 @@ function RouteComponent() {
               <div className="p-4">
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                      <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
-                        <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
-                          Beta
-                        </Badge>
-                      </Tooltip>
-                    </div>
+                    <span className="text-sm font-medium text-neutral">Secret manager integration</span>
                     <p className="text-sm text-neutral-subtle">
                       Link any secret manager on your cluster to add external secrets variables to all the services
                       running on your cluster
@@ -292,14 +283,7 @@ function RouteComponent() {
               <div className="p-4">
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                      <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
-                        <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
-                          Beta
-                        </Badge>
-                      </Tooltip>
-                    </div>
+                    <span className="text-sm font-medium text-neutral">Secret manager integration</span>
                     <p className="text-sm text-neutral-subtle">
                       Connect your external secret manager to Qovery and expose secrets as variables across the services
                       running on your cluster.
