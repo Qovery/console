@@ -1,5 +1,4 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useParams } from '@tanstack/react-router'
 import {
   type BlueprintUpdateNewOptionalValue,
   type BlueprintUpdateNewRequiredValue,
@@ -174,7 +173,6 @@ function BlueprintUpdateSectionContent({
   updatedValues: BlueprintUpdateEditableValue[]
   values: BlueprintFieldValues
 }) {
-  const { environmentId } = useParams({ strict: false })
   return (
     <>
       {section === 'required' && (
@@ -184,7 +182,6 @@ function BlueprintUpdateSectionContent({
 
             return (
               <BlueprintManifestVariableInput
-                environmentId={environmentId}
                 key={value.name}
                 field={field}
                 value={values[value.name]}
@@ -204,7 +201,6 @@ function BlueprintUpdateSectionContent({
 
             return (
               <BlueprintManifestVariableInput
-                environmentId={environmentId}
                 key={value.name}
                 field={field}
                 value={values[value.name]}
@@ -248,7 +244,6 @@ function UpdatedValuesList({
   onChange: (name: string, value: BlueprintFieldValue) => void
   values: BlueprintUpdateEditableValue[]
 }) {
-  const { environmentId } = useParams({ strict: false })
   const [editedValueName, setEditedValueName] = useState<string>()
 
   if (values.length === 0) return <p className="text-sm text-neutral-subtle">No modified values.</p>
@@ -337,7 +332,6 @@ function UpdatedValuesList({
             {editing &&
               (field ? (
                 <BlueprintManifestVariableInput
-                  environmentId={environmentId}
                   autoFocus
                   error={getFieldValidationError(field, editedValue)}
                   field={field}

@@ -422,7 +422,6 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
         <BlueprintSection active iconName="chart-bullet" title="Blueprint setup">
           {requiredFields.map((field, index) => (
             <BlueprintManifestVariableInput
-              environmentId={environmentId}
               key={field.name}
               autoFocus={index === 0}
               error={getFieldValidationError(field, values[field.name])}
@@ -439,7 +438,6 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
         >
           {optionalFields.map((field) => (
             <BlueprintManifestVariableInput
-              environmentId={environmentId}
               key={field.name}
               error={getFieldValidationError(field, values[field.name])}
               field={field}

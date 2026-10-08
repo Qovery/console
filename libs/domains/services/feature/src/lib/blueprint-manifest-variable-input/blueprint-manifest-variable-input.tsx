@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { Button, Icon, InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
@@ -13,7 +14,6 @@ const SEARCHABLE_ALLOWED_VALUES_THRESHOLD = 10
 
 export interface BlueprintManifestVariableInputProps {
   autoFocus?: boolean
-  environmentId?: string
   error?: string
   field: BlueprintManifestVariableField
   label?: string
@@ -23,13 +23,13 @@ export interface BlueprintManifestVariableInputProps {
 
 export function BlueprintManifestVariableInput({
   autoFocus,
-  environmentId,
   error,
   field,
   label,
   onChange,
   value,
 }: BlueprintManifestVariableInputProps) {
+  const { environmentId } = useParams({ strict: false })
   const inputLabel = label ?? formatFieldLabel(field.name)
 
   if (field.type.type === 'bool') {
