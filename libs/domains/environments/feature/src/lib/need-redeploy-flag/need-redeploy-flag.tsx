@@ -1,17 +1,17 @@
+import { useParams } from '@tanstack/react-router'
 import { EnvironmentDeploymentStatusEnum } from 'qovery-typescript-axios'
-import { useNavigate, useParams } from 'react-router-dom'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Banner } from '@qovery/shared/ui'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 
 export function NeedRedeployFlag() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const navigate = useNavigate()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
 
   const { data: environmentDeploymentStatus } = useDeploymentStatus({ environmentId })
   const { mutate: deployEnvironment } = useDeployEnvironment({
+    organizationId,
     projectId,
+    environmentId,
   })
 
   if (!environmentDeploymentStatus) return null
@@ -26,7 +26,6 @@ export function NeedRedeployFlag() {
 
   const mutationDeployEnvironment = () => {
     deployEnvironment({ environmentId })
-    navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL())
   }
 
   return (

@@ -1,11 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { type EnvironmentStatus } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
+import { useNavigateToEnvironmentPipeline } from '../use-navigate-to-environment-pipeline'
 
-export function useCancelDeploymentEnvironment({ projectId, logsLink }: { projectId: string; logsLink?: string }) {
+export function useCancelDeploymentEnvironment({
+  organizationId,
+  projectId,
+  environmentId,
+}: {
+  organizationId: string
+  projectId: string
+  environmentId: string
+}) {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const navigateToEnvironmentPipeline = useNavigateToEnvironmentPipeline()
 
   return useMutation(mutations.cancelDeploymentEnvironment, {
     onSuccess(_, { environmentId }) {
@@ -21,14 +30,13 @@ export function useCancelDeploymentEnvironment({ projectId, logsLink }: { projec
       })
     },
     meta: {
-      notifyOnSuccess: {
-        title: 'Your environment deployment is cancelling',
-        ...(logsLink
-          ? {
-              labelAction: 'See deployment logs',
-              callback: () => navigate({ to: logsLink }),
-            }
-          : {}),
+      notifyOnSuccess(data: unknown) {
+        const { last_deployment_id: deploymentId } = data as EnvironmentStatus
+        return {
+          title: 'Your environment deployment is cancelling',
+          labelAction: 'See pipeline',
+          callback: () => navigateToEnvironmentPipeline({ organizationId, projectId, environmentId, deploymentId }),
+        }
       },
       notifyOnError: true,
     },

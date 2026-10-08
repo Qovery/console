@@ -288,6 +288,7 @@ export function EnvironmentPipeline() {
     },
     enabled:
       Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
+    shouldReconnect: true,
     onMessage: messageHandler,
   })
 

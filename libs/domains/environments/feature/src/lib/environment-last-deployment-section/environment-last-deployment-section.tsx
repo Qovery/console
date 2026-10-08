@@ -1,4 +1,4 @@
-import { useLinkProps, useParams } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { Suspense, useContext, useMemo } from 'react'
 import { P, match } from 'ts-pattern'
@@ -88,15 +88,7 @@ const EnvironmentLastDeploymentContent = () => {
     ? ''
     : `${timeAgo(new Date(lastDeployment.auditing_data.created_at))} ago`
 
-  const logsLink = useLinkProps({
-    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
-    params: { organizationId, projectId, environmentId },
-  })
-
-  const { mutate: deployEnvironment } = useDeployEnvironment({
-    projectId,
-    logsLink: logsLink.href,
-  })
+  const { mutate: deployEnvironment } = useDeployEnvironment({ organizationId, projectId, environmentId })
 
   const handleDeploy = () => {
     if (!environment?.id) return

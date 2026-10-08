@@ -149,6 +149,22 @@ describe('EnvironmentActionToolbar', () => {
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
   })
 
+  it('should open deploy by version with the fake-modal option so the dropdown is not scroll-locked', async () => {
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /deploy by version/i }))
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          fakeModal: true,
+          width: 676,
+        }),
+      })
+    )
+  })
+
   it('should disable manage deployment when the environment has no services', async () => {
     mockServices = []
 
