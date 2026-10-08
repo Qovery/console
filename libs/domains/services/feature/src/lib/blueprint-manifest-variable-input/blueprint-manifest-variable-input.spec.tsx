@@ -2,6 +2,30 @@ import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintManifestVariableInput } from './blueprint-manifest-variable-input'
 
+const mockUseParams = jest.fn()
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => mockUseParams(),
+}))
+
+jest.mock('@qovery/domains/variables/feature', () => ({
+  ...jest.requireActual('@qovery/domains/variables/feature'),
+  DropdownVariable: ({
+    children,
+    environmentId,
+    onChange,
+  }: {
+    children: React.ReactNode
+    environmentId: string
+    onChange: (value: string) => void
+  }) => (
+    <div data-testid="dropdown-variable" data-environment-id={environmentId} onClick={() => onChange('RABBIT_PW')}>
+      {children}
+    </div>
+  ),
+}))
+
 function createVariableField(overrides: Partial<BlueprintManifestVariableField> = {}): BlueprintManifestVariableField {
   return {
     kind: 'variable',
@@ -29,6 +53,10 @@ const SHORT_ALLOWED_VALUES = [
 const LONG_ALLOWED_VALUES = [...SHORT_ALLOWED_VALUES, 'db.r5.large']
 
 describe('BlueprintManifestVariableInput', () => {
+  beforeEach(() => {
+    mockUseParams.mockReturnValue({ environmentId: 'env-1' })
+  })
+
   describe('with more than 10 allowed values', () => {
     const field = createVariableField({ allowed_values: LONG_ALLOWED_VALUES })
 
@@ -95,6 +123,43 @@ describe('BlueprintManifestVariableInput', () => {
       await userEvent.click(screen.getByText('db.m5.large'))
 
       expect(onChange).toHaveBeenCalledWith('db.m5.large')
+    })
+  })
+
+  describe('variable picker', () => {
+    const secretField = createVariableField({ name: 'admin_password', is_secret: true, description: undefined })
+
+    it('is shown on secret fields when an environment is known', () => {
+      renderWithProviders(<BlueprintManifestVariableInput field={secretField} value={undefined} onChange={jest.fn()} />)
+
+      expect(screen.getByRole('button', { name: 'Reference a variable' })).toBeInTheDocument()
+      expect(screen.getByTestId('dropdown-variable')).toHaveAttribute('data-environment-id', 'env-1')
+    })
+
+    it('is hidden on non-secret fields', () => {
+      renderWithProviders(
+        <BlueprintManifestVariableInput field={createVariableField()} value={undefined} onChange={jest.fn()} />
+      )
+
+      expect(screen.queryByRole('button', { name: 'Reference a variable' })).not.toBeInTheDocument()
+    })
+
+    it('is hidden without an environment', () => {
+      mockUseParams.mockReturnValue({})
+      renderWithProviders(<BlueprintManifestVariableInput field={secretField} value={undefined} onChange={jest.fn()} />)
+
+      expect(screen.queryByRole('button', { name: 'Reference a variable' })).not.toBeInTheDocument()
+    })
+
+    it('sets the picked variable as a reference', async () => {
+      const onChange = jest.fn()
+      const { userEvent } = renderWithProviders(
+        <BlueprintManifestVariableInput field={secretField} value={undefined} onChange={onChange} />
+      )
+
+      await userEvent.click(screen.getByTestId('dropdown-variable'))
+
+      expect(onChange).toHaveBeenCalledWith('{{RABBIT_PW}}')
     })
   })
 })

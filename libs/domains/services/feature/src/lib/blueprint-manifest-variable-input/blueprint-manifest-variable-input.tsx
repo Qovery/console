@@ -1,5 +1,7 @@
+import { useParams } from '@tanstack/react-router'
 import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
-import { InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
+import { DropdownVariable } from '@qovery/domains/variables/feature'
+import { Button, Icon, InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
 import {
   type BlueprintFieldValue,
   formatFieldLabel,
@@ -27,6 +29,7 @@ export function BlueprintManifestVariableInput({
   onChange,
   value,
 }: BlueprintManifestVariableInputProps) {
+  const { environmentId } = useParams({ strict: false })
   const inputLabel = label ?? formatFieldLabel(field.name)
 
   if (field.type.type === 'bool') {
@@ -63,7 +66,7 @@ export function BlueprintManifestVariableInput({
     )
   }
 
-  return (
+  const textInput = (
     <InputText
       name={field.name}
       label={inputLabel}
@@ -74,5 +77,29 @@ export function BlueprintManifestVariableInput({
       autoFocus={autoFocus}
       onChange={(event) => onChange(event.currentTarget.value)}
     />
+  )
+
+  if (!environmentId || !field.is_secret || field.type.type === 'number') {
+    return textInput
+  }
+
+  // The wand sits outside the input: the password eye already uses the input's right edge
+  return (
+    <div className="flex items-start gap-2">
+      <div className="min-w-0 flex-1">{textInput}</div>
+      <DropdownVariable environmentId={environmentId} onChange={(variableKey) => onChange(`{{${variableKey}}}`)}>
+        <Button
+          type="button"
+          size="lg"
+          color="neutral"
+          variant="surface"
+          iconOnly
+          aria-label="Reference a variable"
+          className="h-[52px] w-[52px] shrink-0 justify-center"
+        >
+          <Icon iconName="wand-magic-sparkles" className="text-sm" />
+        </Button>
+      </DropdownVariable>
+    </div>
   )
 }

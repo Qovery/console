@@ -189,6 +189,17 @@ describe('field validation', () => {
     expect(getFieldValidationError(field, 'value')).toBeUndefined()
   })
 
+  it('skips client-side checks for an exact variable reference', () => {
+    const field = createVariableField({ type: { type: 'string', min_length: 16, pattern: '^[a-z]+$' } })
+
+    expect(getFieldValidationError(field, '{{RABBIT_PW}}')).toBeUndefined()
+    expect(getFieldValidationError(field, '{{ RABBIT_PW }}')).toBeUndefined()
+    expect(getFieldValidationError(field, 'xxxxxxxxxxxxxxxx{{RABBIT_PW}}')).toBe(
+      'Value does not match the expected format.'
+    )
+    expect(getFieldValidationError(field, '{{{{}}')).toBe('Value must be at least 16 characters.')
+  })
+
   it('returns numeric validation errors', () => {
     const field = createVariableField({ type: { type: 'number', min: 20, max: 65536 } })
 
