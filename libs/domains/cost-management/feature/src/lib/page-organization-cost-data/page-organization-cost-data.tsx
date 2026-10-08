@@ -30,17 +30,17 @@ export function PageOrganizationCostData({ organizationId }: PageOrganizationCos
               <div>
                 <p className="text-sm text-neutral">AWS Cost and Usage Report</p>
                 <p className="text-xs text-neutral-subtle">
-                  Split Cost Allocation Data, attributed per namespace. Last synced 18 hours ago.
+                  Split Cost Allocation Data, attributed per namespace. Nothing is collected yet.
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 text-xs text-positive">
-                <Icon iconName="circle-check" iconStyle="regular" />
-                Connected
+              <span className="flex items-center gap-1.5 text-xs text-neutral-subtle">
+                <Icon iconName="circle-dashed" iconStyle="regular" />
+                Not connected
               </span>
               <Button type="button" variant="outline" color="neutral" size="sm">
-                Configure
+                Connect
               </Button>
             </div>
           </div>

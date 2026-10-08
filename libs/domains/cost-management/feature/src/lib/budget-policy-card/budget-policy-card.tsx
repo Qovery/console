@@ -93,8 +93,9 @@ export function BudgetPolicyCard({ policy, inheritingProjects }: BudgetPolicyCar
 
       <p className="flex items-start gap-2 px-4 pb-3 text-xs text-neutral-subtle">
         <Icon iconName="circle-info" iconStyle="regular" className="mt-0.5" />
-        When a project owner requests more budget, {policy.approver} is notified on{' '}
-        {policy.approvalChannel === 'slack' ? 'Slack' : 'email'} and approves or declines it.
+        Proposed flow, not built yet: a budget increase requested by a project owner would reach {
+          policy.approver
+        } on {policy.approvalChannel === 'slack' ? 'Slack' : 'email'} for a decision.
       </p>
     </BlockContent>
   )

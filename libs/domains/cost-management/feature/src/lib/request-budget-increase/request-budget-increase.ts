@@ -8,8 +8,8 @@ import { toast } from '@qovery/shared/ui'
  */
 export function requestBudgetIncrease(projectName?: string) {
   toast(
-    'success',
-    'Budget increase requested',
-    `The platform team has been notified${projectName ? ` about ${projectName}` : ''}. You will be notified once it is reviewed.`
+    'warning',
+    'Prototype — no request was sent',
+    `A budget increase${projectName ? ` for ${projectName}` : ''} would reach the approver here. The request and approval flow is not built yet.`
   )
 }
