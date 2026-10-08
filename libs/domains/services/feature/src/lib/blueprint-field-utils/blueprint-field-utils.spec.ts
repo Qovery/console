@@ -194,7 +194,10 @@ describe('field validation', () => {
 
     expect(getFieldValidationError(field, '{{RABBIT_PW}}')).toBeUndefined()
     expect(getFieldValidationError(field, '{{ RABBIT_PW }}')).toBeUndefined()
-    expect(getFieldValidationError(field, 'x{{RABBIT_PW}}')).toBe('Value must be at least 16 characters.')
+    expect(getFieldValidationError(field, 'xxxxxxxxxxxxxxxx{{RABBIT_PW}}')).toBe(
+      'Value does not match the expected format.'
+    )
+    expect(getFieldValidationError(field, '{{{{}}')).toBe('Value must be at least 16 characters.')
   })
 
   it('returns numeric validation errors', () => {

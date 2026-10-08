@@ -52,8 +52,8 @@ export function getBooleanFieldValue(value: BlueprintFieldValue | undefined) {
   return typeof value === 'boolean' ? value : false
 }
 
-// Same shape as the API's `{{ NAME }}` interpolation
-const VARIABLE_REFERENCE_REGEX = /^\{\{ *[^} ]+? *\}\}$/
+// The API's `{{ NAME }}` interpolation, NAME following its variable name rule
+const VARIABLE_REFERENCE_REGEX = /^\{\{ *[A-Za-z_][A-Za-z0-9_]* *\}\}$/
 
 export function isVariableReference(value: BlueprintFieldValue | undefined): value is string {
   return typeof value === 'string' && VARIABLE_REFERENCE_REGEX.test(value)
