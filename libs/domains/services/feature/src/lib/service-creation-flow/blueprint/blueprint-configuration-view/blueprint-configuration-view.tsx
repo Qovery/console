@@ -175,6 +175,7 @@ function ServiceInformationSectionContent({ onContinue }: ServiceInformationSect
 }
 
 function BlueprintSetupSectionContent() {
+  const { environmentId } = useParams({ strict: false })
   const { form } = useBlueprintCreateContext()
   const { requiredBlueprintFields } = useBlueprintManifestFields()
   const blueprintFieldValues = form.watch('fields')
@@ -186,6 +187,7 @@ function BlueprintSetupSectionContent() {
     <>
       {requiredBlueprintFields.map((field, index) => (
         <BlueprintManifestVariableInput
+          environmentId={environmentId}
           key={field.name}
           autoFocus={index === 0}
           error={getFieldValidationError(field, blueprintFieldValues[field.name])}
@@ -216,6 +218,7 @@ function BlueprintOverridesSection({ currentSection, onClick }: BlueprintOverrid
 }
 
 function OverridesSectionContent() {
+  const { environmentId } = useParams({ strict: false })
   const { form } = useBlueprintCreateContext()
   const { optionalBlueprintFields, overridableContextBlueprintFields } = useBlueprintManifestFields()
   const blueprintFieldValues = form.watch('fields')
@@ -227,6 +230,7 @@ function OverridesSectionContent() {
     <>
       {optionalBlueprintFields.map((field, index) => (
         <BlueprintManifestVariableInput
+          environmentId={environmentId}
           key={field.name}
           autoFocus={index === 0}
           error={getFieldValidationError(field, blueprintFieldValues[field.name])}
