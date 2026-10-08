@@ -79,6 +79,30 @@ describe('evaluateCostPolicy', () => {
     expect(result.monthlyDelta).toBeCloseTo(340)
   })
 
+  it('denies a scale-up past the 90% threshold even when it fits within the budget', () => {
+    const result = evaluateCostPolicy(buildProjectCost(46), {
+      type: 'scale_service',
+      serviceName: 'backend',
+      before: backend(2),
+      after: backend(3),
+    })
+
+    expect(result.projectedForecast).toBeLessThan(BUDGET)
+    expect(result.allowed).toBe(false)
+    expect(result.reason).toBe('project_scale_up_frozen')
+  })
+
+  it('allows a scale-down past the 90% threshold', () => {
+    const result = evaluateCostPolicy(buildProjectCost(46), {
+      type: 'scale_service',
+      serviceName: 'backend',
+      before: backend(3),
+      after: backend(2),
+    })
+
+    expect(result.allowed).toBe(true)
+  })
+
   it('allows a scale-down even when the project is already over budget', () => {
     const result = evaluateCostPolicy(buildProjectCost(58), {
       type: 'scale_service',

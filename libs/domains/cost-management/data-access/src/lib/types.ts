@@ -92,7 +92,10 @@ export type CostOperation =
       resources: ServiceResources[]
     }
 
-export type PolicyDenialReason = 'project_monthly_budget_exceeded' | 'project_monthly_budget_exhausted'
+export type PolicyDenialReason =
+  | 'project_monthly_budget_exceeded'
+  | 'project_monthly_budget_exhausted'
+  | 'project_scale_up_frozen'
 
 export interface PolicyEvaluation {
   allowed: boolean

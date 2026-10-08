@@ -113,6 +113,12 @@ export function CostPolicyCheckModal({ operation, evaluation, projectName, onCon
                     <>This change would take the project over its monthly budget.</>
                   )
                 )
+                .with('project_scale_up_frozen', () => (
+                  <>
+                    The project is at {Math.round((currentForecast / budget) * 100)}% of its monthly budget. Past 90%,
+                    services cannot grow beyond their current size.
+                  </>
+                ))
                 .otherwise(() => (
                   <>
                     The project has spent its monthly budget. No new resources can be created until the budget is raised

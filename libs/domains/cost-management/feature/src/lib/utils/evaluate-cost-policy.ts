@@ -7,6 +7,7 @@ import {
   flatMonthlyCost,
   monthlyCostPerInstance,
 } from '@qovery/domains/cost-management/data-access'
+import { budgetEnforcement } from './budget-enforcement'
 
 /**
  * Decides whether an operation is allowed under the project's budget policy.
@@ -36,7 +37,24 @@ export function evaluateCostPolicy(cost: ProjectCost, operation: CostOperation):
 
       // Freeing resources is always allowed, even from an exhausted budget —
       // blocking it would trap the project above its own limit.
-      if (monthlyDelta <= 0 || projectedForecast <= budget) {
+      if (monthlyDelta <= 0) {
+        return { ...base, allowed: true, operationMonthlyCost, monthlyDelta, projectedForecast }
+      }
+
+      // Past the 90% threshold services are frozen at their current size, even
+      // when the change would still fit under the limit.
+      if (budgetEnforcement(cost) === 'scale_up_blocked') {
+        return {
+          ...base,
+          allowed: false,
+          reason: 'project_scale_up_frozen' as const,
+          operationMonthlyCost,
+          monthlyDelta,
+          projectedForecast,
+        }
+      }
+
+      if (projectedForecast <= budget) {
         return { ...base, allowed: true, operationMonthlyCost, monthlyDelta, projectedForecast }
       }
 
