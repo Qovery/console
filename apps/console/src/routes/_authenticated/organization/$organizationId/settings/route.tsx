@@ -51,6 +51,12 @@ function RouteComponent() {
     ],
   }
 
+  const costDataLink = {
+    title: 'Cost data',
+    to: `${pathSettings}/cost-data`,
+    icon: 'wallet' as const,
+  }
+
   const containerRegistriesLink = {
     title: 'Container registries',
     to: `${pathSettings}/container-registries`,
@@ -128,6 +134,7 @@ function RouteComponent() {
     generalLink,
     teamLink,
     billingPlansLink,
+    costDataLink,
     labelsAnnotationsLink,
     argoCdIntegrationLink,
     containerRegistriesLink,

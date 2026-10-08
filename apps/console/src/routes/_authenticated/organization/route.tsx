@@ -71,6 +71,12 @@ const ORGANIZATION_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/alerts',
   },
   {
+    id: 'cost-control',
+    label: 'Cost control',
+    iconName: 'wallet',
+    routeId: '/_authenticated/organization/$organizationId/cost-control',
+  },
+  {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
