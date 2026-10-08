@@ -38,7 +38,7 @@ export function AuthLegalNotice() {
         {AUTH_PAGE_COPY.shared.termsOfService}
       </Link>{' '}
       {AUTH_PAGE_COPY.shared.legalAnd}{' '}
-      <Link href="https://www.qovery.com/privacy-policy" className="font-normal" color="sky" size="ssm">
+      <Link href="https://www.qovery.com/privacy" className="font-normal" color="sky" size="ssm">
         {AUTH_PAGE_COPY.shared.privacyPolicy}
       </Link>
     </p>

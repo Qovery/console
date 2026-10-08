@@ -1,18 +1,20 @@
 import clsx from 'clsx'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
-import { AuthEnum, getSsoConnectionName } from '@qovery/shared/auth'
+import { useEffect } from 'react'
+import { AuthEnum } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, ExternalLink, Icon, linkVariants } from '@qovery/shared/ui'
-import { useLocalStorage } from '@qovery/shared/util-hooks'
-import { Auth0ErrorMessage, AuthLegalNotice, AuthPageLayout, ComplianceLogos } from './auth-page-layout'
+import { Auth0ErrorMessage, AuthLegalNotice, AuthPageLayout } from './auth-page-layout'
 import { type AuthPageTrackingContext, trackAuthSecondaryCtaClicked } from './auth-page-tracking'
-import { BOOK_DEMO_URL, LAST_USED_SSO_DOMAIN_STORAGE_KEY, SAML_SSO_LOGIN } from './auth-page-utils'
+import { BOOK_DEMO_URL } from './auth-page-utils'
 import { AUTH_PAGE_COPY } from './auth-page.copy'
-import { CustomerQuote, SIGNUP_CUSTOMER_QUOTE } from './customer-quote'
-import { LOGIN_PANEL_CONTENT_TRANSITION, LOGIN_PANEL_LAYOUT_TRANSITION } from './login-screen'
-import { SsoLoginForm } from './sso-login-form'
+import { AnimatedProductShots, SECONDARY_PROVIDER_ICONS } from './login-screen'
 import { useAuth0Error, useAuthProviderLogin } from './use-auth-provider-login'
+
+const SECONDARY_PROVIDERS = [
+  { provider: AuthEnum.BITBUCKET, label: AUTH_PAGE_COPY.signUp.signUpWithBitbucket },
+  { provider: AuthEnum.GITLAB, label: AUTH_PAGE_COPY.signUp.signUpWithGitlab },
+  { provider: AuthEnum.MICROSOFT, label: AUTH_PAGE_COPY.signUp.signUpWithMicrosoft },
+]
 
 const CUSTOMER_LOGOS = [
   { name: 'Alan', src: '/assets/login/testimonials-logo/alan.svg' },
@@ -54,38 +56,6 @@ function useMobileFriendlyBody() {
   }, [])
 }
 
-function StaticProductVisual() {
-  return (
-    <div
-      data-testid="signup-visual"
-      className="pointer-events-none relative hidden lg:block lg:h-screen lg:max-w-[1280px] lg:flex-[2_1_0%]"
-    >
-      <img
-        src="/assets/login/onboarding-background.svg"
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute bottom-0 right-0 h-full w-auto max-w-none select-none"
-      />
-
-      <div className="absolute inset-0 z-10 [-webkit-mask-image:radial-gradient(225.19%_100%_at_50%_0%,#D9D9D9_60%,rgba(217,217,217,0)_76%)] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%] [mask-image:radial-gradient(225.19%_100%_at_50%_0%,#D9D9D9_60%,rgba(217,217,217,0)_76%)] [mask-repeat:no-repeat] [mask-size:100%_100%]">
-        <img
-          src="/assets/login/product-shots/deployed-and-running.jpg"
-          alt={AUTH_PAGE_COPY.signUp.productShotAlt}
-          className="relative top-[10%] ml-32 aspect-[2940/2080] h-[62%] max-h-[720px] select-none rounded-2xl shadow-[0_0_25px_0_rgba(0,0,0,0.04),0_2px_5px_0_rgba(0,0,0,0.02)] xl:ml-44 2xl:ml-52"
-        />
-      </div>
-
-      <div className="absolute bottom-8 left-1/2 z-dropdown flex w-full max-w-2xl -translate-x-1/2 flex-col items-center gap-6 px-8">
-        {SIGNUP_CUSTOMER_QUOTE && <CustomerQuote {...SIGNUP_CUSTOMER_QUOTE} />}
-        <CustomerLogos />
-        <div className="flex items-center gap-6">
-          <ComplianceLogos />
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export interface SignUpScreenProps {
   redirect?: string
   trackingContext: AuthPageTrackingContext
@@ -94,19 +64,8 @@ export interface SignUpScreenProps {
 
 export function SignUpScreen({ redirect, trackingContext, onLogInInstead }: SignUpScreenProps) {
   useMobileFriendlyBody()
-  const { auth0Error, setAuth0Error } = useAuth0Error()
+  const { auth0Error } = useAuth0Error()
   const { login, isLoading } = useAuthProviderLogin({ redirect, trackingContext })
-  const [lastUsedSsoDomain, setLastUsedSsoDomain] = useLocalStorage<string | undefined>(
-    LAST_USED_SSO_DOMAIN_STORAGE_KEY,
-    undefined
-  )
-  const [lastUsedSsoDomainAtPageLoad] = useState(lastUsedSsoDomain)
-  const [ssoFormVisible, setSsoFormVisible] = useState(false)
-
-  const validateAndConnect = (domain: string) => {
-    setLastUsedSsoDomain(domain)
-    login(getSsoConnectionName(domain), SAML_SSO_LOGIN)
-  }
 
   const inlineLinkClassName = linkVariants({ color: 'sky', size: 'sm' })
 
@@ -114,16 +73,8 @@ export function SignUpScreen({ redirect, trackingContext, onLogInInstead }: Sign
     <AuthPageLayout
       card={
         <div className="flex w-full max-w-[480px] flex-col gap-6 py-16 lg:min-w-[480px] lg:py-0">
-          <motion.div
-            layout
-            transition={LOGIN_PANEL_LAYOUT_TRANSITION}
-            className="w-full rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)]"
-          >
-            <motion.div
-              layout
-              transition={LOGIN_PANEL_LAYOUT_TRANSITION}
-              className="relative rounded-2xl bg-background px-4 pb-4 pt-8 outline outline-[1px] outline-neutral sm:px-8 sm:pb-6"
-            >
+          <div className="w-full rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)]">
+            <div className="relative rounded-2xl bg-background px-4 pb-4 pt-8 outline outline-[1px] outline-neutral sm:px-8 sm:pb-6">
               <img
                 className="mx-auto mb-6 h-6 sm:mb-8"
                 src="/assets/logos/logo-black.svg"
@@ -131,101 +82,87 @@ export function SignUpScreen({ redirect, trackingContext, onLogInInstead }: Sign
               />
 
               <h1 className="mb-2 text-center font-brand text-xl font-normal leading-7 text-neutral sm:text-2xl sm:leading-8">
-                {ssoFormVisible ? AUTH_PAGE_COPY.sso.title : AUTH_PAGE_COPY.signUp.title}
+                {AUTH_PAGE_COPY.signUp.title}
               </h1>
 
-              <AnimatePresence initial={false} mode="popLayout">
-                {ssoFormVisible ? (
-                  <motion.div
-                    key="sso-login"
-                    layout
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={LOGIN_PANEL_CONTENT_TRANSITION}
-                    className="overflow-hidden"
-                  >
-                    <p className="mb-6 text-center text-base text-neutral-subtle">{AUTH_PAGE_COPY.sso.description}</p>
-                    <SsoLoginForm
-                      defaultDomain={lastUsedSsoDomainAtPageLoad}
-                      onConnect={validateAndConnect}
-                      onBack={() => setSsoFormVisible(false)}
-                    />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="signup-providers"
-                    layout
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={LOGIN_PANEL_CONTENT_TRANSITION}
-                  >
-                    <ul className="mx-auto mb-6 mt-4 flex w-fit flex-col gap-2">
-                      {AUTH_PAGE_COPY.signUp.reassurances.map((reassurance) => (
-                        <li key={reassurance} className="flex items-start gap-2 text-sm text-neutral">
-                          <Icon iconName="circle-check" iconStyle="solid" className="mt-0.5 text-positive" />
-                          {reassurance}
-                        </li>
-                      ))}
-                    </ul>
+              <ul className="mx-auto mb-6 mt-4 flex w-fit flex-col gap-2">
+                {AUTH_PAGE_COPY.signUp.reassurances.map((reassurance) => (
+                  <li key={reassurance} className="flex items-start gap-2 text-sm text-neutral">
+                    <Icon iconName="circle-check" iconStyle="solid" className="mt-0.5 text-positive" />
+                    {reassurance}
+                  </li>
+                ))}
+              </ul>
 
-                    <div className="flex flex-col gap-2.5">
-                      <Button
-                        variant="outline"
-                        color="neutral"
-                        size="lg"
-                        className="relative w-full justify-center gap-x-2"
-                        onClick={() => login(AuthEnum.GOOGLE_SSO)}
-                        loading={isLoading(AuthEnum.GOOGLE_SSO)}
-                      >
-                        <Icon
-                          width="16"
-                          className={clsx('text-neutral-subtle', isLoading(AuthEnum.GOOGLE_SSO) && 'opacity-0')}
-                          name={IconEnum.GOOGLE}
-                        />
-                        {AUTH_PAGE_COPY.signUp.signUpWithGoogle}
-                      </Button>
+              <div className="flex flex-col gap-2.5">
+                <Button
+                  variant="outline"
+                  color="neutral"
+                  size="lg"
+                  className="relative w-full justify-center gap-x-2"
+                  onClick={() => login(AuthEnum.GOOGLE_SSO)}
+                  loading={isLoading(AuthEnum.GOOGLE_SSO)}
+                >
+                  <Icon
+                    width="16"
+                    className={clsx('text-neutral-subtle', isLoading(AuthEnum.GOOGLE_SSO) && 'opacity-0')}
+                    name={IconEnum.GOOGLE}
+                  />
+                  {AUTH_PAGE_COPY.signUp.signUpWithGoogle}
+                </Button>
 
-                      <Button
-                        variant="solid"
-                        color="neutral"
-                        size="lg"
-                        className="relative w-full justify-center gap-x-2"
-                        onClick={() => login(AuthEnum.GITHUB)}
-                        loading={isLoading(AuthEnum.GITHUB)}
-                      >
-                        <Icon
-                          width="16"
-                          className={clsx('text-neutralInvert', isLoading(AuthEnum.GITHUB) && 'opacity-0')}
-                          fill="currentColor"
-                          name={IconEnum.GITHUB_WHITE}
-                        />
-                        {AUTH_PAGE_COPY.signUp.signUpWithGithub}
-                      </Button>
-                    </div>
+                <Button
+                  variant="solid"
+                  color="neutral"
+                  size="lg"
+                  className="relative w-full justify-center gap-x-2"
+                  onClick={() => login(AuthEnum.GITHUB)}
+                  loading={isLoading(AuthEnum.GITHUB)}
+                >
+                  <Icon
+                    width="16"
+                    className={clsx('text-neutralInvert', isLoading(AuthEnum.GITHUB) && 'opacity-0')}
+                    fill="currentColor"
+                    name={IconEnum.GITHUB_WHITE}
+                  />
+                  {AUTH_PAGE_COPY.signUp.signUpWithGithub}
+                </Button>
 
-                    <p className="mt-4 text-center text-sm text-neutral-subtle">
-                      {AUTH_PAGE_COPY.signUp.ssoPrompt}{' '}
-                      <button
-                        type="button"
-                        className={inlineLinkClassName}
-                        onClick={() => {
-                          setSsoFormVisible(true)
-                          setAuth0Error(null)
-                        }}
-                      >
-                        {AUTH_PAGE_COPY.signUp.ssoLink}
-                      </button>
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                <div className="my-2 flex items-center gap-4">
+                  <div className="h-px flex-1 bg-surface-neutral-component" />
+                  <span className="font-code text-xs uppercase tracking-wide text-neutral-subtle">
+                    {AUTH_PAGE_COPY.login.or}
+                  </span>
+                  <div className="h-px flex-1 bg-surface-neutral-component" />
+                </div>
+
+                <div className="grid grid-cols-3 gap-2.5">
+                  {SECONDARY_PROVIDERS.map(({ provider, label }) => (
+                    <Button
+                      key={provider}
+                      variant="outline"
+                      color="neutral"
+                      size="lg"
+                      className="relative justify-center"
+                      aria-label={label}
+                      onClick={() => login(provider)}
+                      loading={isLoading(provider)}
+                    >
+                      <Icon
+                        width="20"
+                        fill="currentColor"
+                        className={clsx(isLoading(provider) && 'opacity-0')}
+                        name={SECONDARY_PROVIDER_ICONS[provider]}
+                      />
+                    </Button>
+                  ))}
+                </div>
+              </div>
 
               {auth0Error && <Auth0ErrorMessage error={auth0Error.error} description={auth0Error.error_description} />}
 
               <AuthLegalNotice />
-            </motion.div>
+            </div>
 
             <div className="flex flex-col items-center gap-1 px-4 py-4 text-center text-sm text-neutral-subtle">
               <p>
@@ -254,13 +191,13 @@ export function SignUpScreen({ redirect, trackingContext, onLogInInstead }: Sign
                 </ExternalLink>
               </p>
             </div>
-          </motion.div>
+          </div>
 
-          {/* The visual panel is hidden below `lg`: keep the social proof on small screens */}
+          {/* The product shots panel is hidden below `lg`: keep some social proof on small screens */}
           <CustomerLogos className="lg:hidden" />
         </div>
       }
-      visual={<StaticProductVisual />}
+      visual={<AnimatedProductShots />}
     />
   )
 }

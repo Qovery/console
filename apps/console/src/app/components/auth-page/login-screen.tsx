@@ -18,11 +18,11 @@ const SCREEN_STACK_HOLD_DURATION_S = 8
 const SCREEN_STACK_OFFSET_PX = 16
 const SCREEN_STACK_MIDDLE_OPACITY = 0.9
 const SCREEN_STACK_BACK_OPACITY = 0.45
-export const LOGIN_PANEL_LAYOUT_TRANSITION = {
+const LOGIN_PANEL_LAYOUT_TRANSITION = {
   duration: 0.28,
   ease: [0.22, 1, 0.36, 1],
 } as const
-export const LOGIN_PANEL_CONTENT_TRANSITION = {
+const LOGIN_PANEL_CONTENT_TRANSITION = {
   duration: 0.18,
   ease: 'easeOut',
 } as const
@@ -119,7 +119,7 @@ const TESTIMONIALS = [
   </>,
 ]
 
-const SECONDARY_PROVIDER_ICONS: Record<string, IconEnum> = {
+export const SECONDARY_PROVIDER_ICONS: Record<string, IconEnum> = {
   [AuthEnum.BITBUCKET]: IconEnum.BITBUCKET,
   [AuthEnum.GITLAB]: IconEnum.GITLAB,
   [AuthEnum.MICROSOFT]: IconEnum.MICROSOFT,
@@ -146,7 +146,7 @@ function LastUsedBadge({ visible }: { visible: boolean }) {
   )
 }
 
-function AnimatedProductShots() {
+export function AnimatedProductShots() {
   const [frontShotIndex, setFrontShotIndex] = useState(() =>
     PRODUCT_SHOTS.length > 0 ? Math.floor(Math.random() * PRODUCT_SHOTS.length) : 0
   )

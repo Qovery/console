@@ -136,14 +136,20 @@ describe('AuthPage', () => {
       expect(screen.getByText('Your first app live in ~30 min')).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Sign up with Google' })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Sign up with GitHub' })).toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: /SAML SSO/ })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Sign up with Bitbucket' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Sign up with GitLab' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Sign up with Microsoft' })).toBeInTheDocument()
+      expect(screen.queryByText(/SSO/)).not.toBeInTheDocument()
       expect(screen.getByRole('link', { name: 'Book a 20-min demo' })).toHaveAttribute(
         'href',
         'https://www.qovery.com/talk-with-us'
       )
       expect(screen.getByRole('link', { name: 'Book a 20-min demo' })).toHaveAttribute('target', '_blank')
       expect(screen.getByRole('link', { name: 'Terms of Service' })).toBeInTheDocument()
-      expect(screen.getByRole('link', { name: 'Privacy Policy' })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute(
+        'href',
+        'https://www.qovery.com/privacy'
+      )
     })
 
     it('signs up with the same Auth0 connection and keeps the redirect', async () => {
@@ -158,27 +164,20 @@ describe('AuthPage', () => {
       ])
     })
 
-    it('opens the existing SAML flow from the Enterprise SSO link', async () => {
+    it.each([
+      ['Bitbucket', 'bitbucket', 'bitbucket'],
+      ['GitLab', 'Gitlab', 'gitlab'],
+      ['Microsoft', 'windowslive', 'microsoft'],
+    ])('signs up with %s', async (name, connection, provider) => {
       const { userEvent } = renderWithProviders(<AuthPage page="signup" />)
 
-      await userEvent.click(screen.getByRole('button', { name: 'Continue with Enterprise SSO' }))
-      await userEvent.type(screen.getByLabelText('Company domain'), 'acme.com')
-      await userEvent.click(screen.getByRole('button', { name: 'Connect' }))
+      await userEvent.click(screen.getByRole('button', { name: `Sign up with ${name}` }))
 
-      expect(mockAuthLogin).toHaveBeenCalledWith('acme', '/')
-      expect(localStorage.getItem('lastUsedLogin')).toBe('saml_sso')
+      expect(mockAuthLogin).toHaveBeenCalledWith(connection, '/')
+      expect(localStorage.getItem('lastUsedLogin')).toBe(connection)
       expect(getCaptures('auth_provider_clicked')).toEqual([
-        { variant: 'test', flag_variant: 'not_evaluated', provider: 'saml' },
+        { variant: 'test', flag_variant: 'not_evaluated', provider },
       ])
-    })
-
-    it('goes back to the sign-up screen from the SSO form', async () => {
-      const { userEvent } = renderWithProviders(<AuthPage page="signup" />)
-
-      await userEvent.click(screen.getByRole('button', { name: 'Continue with Enterprise SSO' }))
-      await userEvent.click(screen.getByRole('button', { name: 'Change login method' }))
-
-      expect(await screen.findByRole('button', { name: 'Sign up with Google' })).toBeInTheDocument()
     })
 
     it('shows the current login screen with "Log in"', async () => {
