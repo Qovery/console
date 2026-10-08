@@ -7,6 +7,9 @@ import {
   getStringFieldValue,
 } from '../blueprint-field-utils/blueprint-field-utils'
 
+// Above this many allowed values, a plain dropdown means scrolling (e.g. RDS instance classes), so let users search.
+const SEARCHABLE_ALLOWED_VALUES_THRESHOLD = 10
+
 export interface BlueprintManifestVariableInputProps {
   autoFocus?: boolean
   error?: string
@@ -51,6 +54,7 @@ export function BlueprintManifestVariableInput({
         value={getStringFieldValue(value)}
         options={field.allowed_values.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
         autoFocus={autoFocus}
+        isSearchable={field.allowed_values.length > SEARCHABLE_ALLOWED_VALUES_THRESHOLD}
         onChange={(value) => {
           if (Array.isArray(value)) return
           onChange(value)
