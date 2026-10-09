@@ -5,11 +5,19 @@ import { AuthEnum, getSsoConnectionName } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
 import { Badge, Button, Icon } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
-import { Auth0ErrorMessage, AuthLegalNotice, AuthPageLayout, ComplianceLogos } from './auth-page-layout'
+import {
+  AUTH_CARD_BODY_CLASSNAME,
+  AUTH_CARD_CLASSNAME,
+  Auth0ErrorMessage,
+  AuthLegalNotice,
+  AuthPageLayout,
+  ComplianceLogos,
+} from './auth-page-layout'
 import { type AuthPageTrackingContext } from './auth-page-tracking'
 import { LAST_USED_LOGIN_STORAGE_KEY, LAST_USED_SSO_DOMAIN_STORAGE_KEY, SAML_SSO_LOGIN } from './auth-page-utils'
 import { AUTH_PAGE_COPY } from './auth-page.copy'
 import { SsoLoginForm } from './sso-login-form'
+import { TestimonialCarousel } from './testimonial-carousel'
 import { useAuth0Error, useAuthProviderLogin } from './use-auth-provider-login'
 
 const CUBIC_BEZIER_EASE = [0.65, 0.05, 0.36, 1] as const
@@ -33,105 +41,10 @@ const PRODUCT_SHOTS = [
   '/assets/login/product-shots/service-logs.jpg',
 ]
 
-const TESTIMONIALS = [
-  <>
-    <span className="flex h-4 w-4 shrink-0 items-center justify-center overflow-hidden rounded-sm">
-      <img
-        src="/assets/login/testimonials-logo/alan.svg"
-        alt="Alan logo"
-        aria-hidden
-        className="h-full w-full object-contain"
-      />
-    </span>
-    <span className="text-center">
-      <span className="text-neutral">Alan</span> has reduced their deployment time by{' '}
-      <span className="text-neutral">85%</span>
-    </span>
-  </>,
-  <>
-    <span className="flex h-3 w-3 shrink-0 items-center justify-center overflow-hidden rounded-sm">
-      <img
-        src="/assets/login/testimonials-logo/kelvin.png"
-        alt="Kelvin logo"
-        aria-hidden
-        className="h-full w-full object-contain"
-      />
-    </span>
-    <span className="text-center">
-      <span className="text-neutral">kelvin</span> slashed their deployment times by{' '}
-      <span className="text-neutral">80%</span>
-    </span>
-  </>,
-  <>
-    <span className="flex h-3 w-3 shrink-0 items-center justify-center overflow-hidden rounded-sm">
-      <img
-        src="/assets/login/testimonials-logo/charles_co.png"
-        alt="Charles Co logo"
-        aria-hidden
-        className="h-full w-full object-contain"
-      />
-    </span>
-    <span className="text-center">
-      <span className="text-neutral">Charles.co</span> tripled their deployment speed with{' '}
-      <span className="text-neutral">zero</span> downtime
-    </span>
-  </>,
-  <>
-    <span className="flex h-3 w-3 shrink-0 items-center justify-center overflow-hidden rounded-sm">
-      <img
-        src="/assets/login/testimonials-logo/talkspace.svg"
-        alt="Talskpace logo"
-        aria-hidden
-        className="h-full w-full object-contain"
-      />
-    </span>
-    <span className="text-center">
-      <span className="text-neutral">Talskpace</span> has reduced infrastructure time by{' '}
-      <span className="text-neutral">50%</span>
-    </span>
-  </>,
-  <>
-    <span className="flex h-3 w-3 shrink-0 items-center justify-center overflow-hidden rounded-sm">
-      <img
-        src="/assets/login/testimonials-logo/tint.png"
-        alt="Tint logo"
-        aria-hidden
-        className="h-full w-full object-contain"
-      />
-    </span>
-    <span className="text-center">
-      <span className="text-neutral">Tint</span> has accelerated compliance by "weeks, if not months"
-    </span>
-  </>,
-  <>
-    <span className="flex h-4 w-4 shrink-0 items-center justify-center overflow-hidden rounded-sm">
-      <img
-        src="/assets/login/testimonials-logo/spiko.svg"
-        alt="Spiko logo"
-        aria-hidden
-        className="h-full w-full object-contain"
-      />
-    </span>
-    <span className="text-center">
-      <span className="text-neutral">Spiko</span> has reduced their infrastructure setup time by{' '}
-      <span className="text-neutral">70%</span>
-    </span>
-  </>,
-]
-
 export const SECONDARY_PROVIDER_ICONS: Record<string, IconEnum> = {
   [AuthEnum.BITBUCKET]: IconEnum.BITBUCKET,
   [AuthEnum.GITLAB]: IconEnum.GITLAB,
   [AuthEnum.MICROSOFT]: IconEnum.MICROSOFT,
-}
-
-function shuffleArray<T>(values: T[]) {
-  const shuffled = [...values]
-  for (let i = shuffled.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-  }
-  return shuffled
 }
 
 function LastUsedBadge({ visible }: { visible: boolean }) {
@@ -146,7 +59,7 @@ function LastUsedBadge({ visible }: { visible: boolean }) {
   )
 }
 
-export function AnimatedProductShots() {
+function AnimatedProductShots() {
   const [frontShotIndex, setFrontShotIndex] = useState(() =>
     PRODUCT_SHOTS.length > 0 ? Math.floor(Math.random() * PRODUCT_SHOTS.length) : 0
   )
@@ -285,22 +198,6 @@ export function LoginScreen({ redirect, trackingContext }: LoginScreenProps) {
     lastUsedLoginAtPageLoad === SAML_SSO_LOGIN && Boolean(lastUsedSsoDomainAtPageLoad)
   )
 
-  const [testimonialIndex, setTestimonialIndex] = useState(0)
-  const [isTestimonialExiting, setIsTestimonialExiting] = useState(true)
-  const [shuffledTestimonials] = useState(() => shuffleArray(TESTIMONIALS))
-
-  const handleTestimonialAnimationComplete = () => {
-    if (isTestimonialExiting) {
-      setTestimonialIndex((previous) =>
-        shuffledTestimonials.length > 0 ? (previous + 1) % shuffledTestimonials.length : 0
-      )
-      setIsTestimonialExiting(false)
-      return
-    }
-
-    setIsTestimonialExiting(true)
-  }
-
   const validateAndConnect = (domain: string) => {
     setLastUsedSsoDomain(domain)
     login(getSsoConnectionName(domain), SAML_SSO_LOGIN)
@@ -309,16 +206,8 @@ export function LoginScreen({ redirect, trackingContext }: LoginScreenProps) {
   return (
     <AuthPageLayout
       card={
-        <motion.div
-          layout
-          transition={LOGIN_PANEL_LAYOUT_TRANSITION}
-          className="w-full max-w-[480px] rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)] lg:min-w-[480px]"
-        >
-          <motion.div
-            layout
-            transition={LOGIN_PANEL_LAYOUT_TRANSITION}
-            className="relative rounded-2xl bg-background px-4 pb-4 pt-8 outline outline-[1px] outline-neutral sm:px-8 sm:pb-6"
-          >
+        <motion.div layout transition={LOGIN_PANEL_LAYOUT_TRANSITION} className={AUTH_CARD_CLASSNAME}>
+          <motion.div layout transition={LOGIN_PANEL_LAYOUT_TRANSITION} className={AUTH_CARD_BODY_CLASSNAME}>
             <img className="mx-auto mb-8 h-6" src="/assets/logos/logo-black.svg" alt={AUTH_PAGE_COPY.shared.logoAlt} />
 
             <h1
@@ -456,27 +345,7 @@ export function LoginScreen({ redirect, trackingContext }: LoginScreenProps) {
             <AuthLegalNotice />
           </motion.div>
 
-          <motion.div
-            key={testimonialIndex}
-            initial={isTestimonialExiting ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
-            animate={
-              isTestimonialExiting
-                ? {
-                    opacity: 0,
-                    y: -8,
-                    transition: { delay: 5.2, duration: 0.4, ease: [0.55, 0.085, 0.68, 0.53] },
-                  }
-                : {
-                    opacity: 1,
-                    y: 0,
-                    transition: { duration: 0.5, ease: 'easeOut' },
-                  }
-            }
-            onAnimationComplete={handleTestimonialAnimationComplete}
-            className="flex items-center justify-center gap-2 px-4 py-4 text-sm text-neutral-subtle"
-          >
-            {shuffledTestimonials[testimonialIndex]}
-          </motion.div>
+          <TestimonialCarousel />
         </motion.div>
       }
       visual={<AnimatedProductShots />}

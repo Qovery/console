@@ -6,7 +6,6 @@ export const LAST_USED_LOGIN_STORAGE_KEY = 'lastUsedLogin'
 export const LAST_USED_SSO_DOMAIN_STORAGE_KEY = 'lastUsedSsoDomain'
 export const SAML_SSO_LOGIN = 'saml_sso'
 export const SSO_DOMAIN_PATTERN = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/
-export const BOOK_DEMO_URL = 'https://www.qovery.com/talk-with-us'
 
 export const authPageSearchParamsSchema = z.object({
   redirect: z.string().optional(),

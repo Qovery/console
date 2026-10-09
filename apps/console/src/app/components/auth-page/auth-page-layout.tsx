@@ -2,6 +2,11 @@ import { type ReactNode } from 'react'
 import { Icon, Link } from '@qovery/shared/ui'
 import { AUTH_PAGE_COPY } from './auth-page.copy'
 
+export const AUTH_CARD_CLASSNAME =
+  'w-full max-w-[480px] rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)] lg:min-w-[480px]'
+export const AUTH_CARD_BODY_CLASSNAME =
+  'relative rounded-2xl bg-background px-4 pb-4 pt-8 outline outline-[1px] outline-neutral sm:px-8 sm:pb-6'
+
 export interface AuthPageLayoutProps {
   card: ReactNode
   visual: ReactNode
@@ -30,10 +35,10 @@ export function AuthPageLayout({ card, visual }: AuthPageLayoutProps) {
   )
 }
 
-export function AuthLegalNotice() {
+export function AuthLegalNotice({ prefix = AUTH_PAGE_COPY.shared.legalPrefix }: { prefix?: string }) {
   return (
     <p className="mt-6 text-center text-ssm text-neutral-subtle">
-      {AUTH_PAGE_COPY.shared.legalPrefix}{' '}
+      {prefix}{' '}
       <Link href="https://www.qovery.com/terms" className="font-normal" color="sky" size="ssm">
         {AUTH_PAGE_COPY.shared.termsOfService}
       </Link>{' '}
@@ -67,29 +72,5 @@ export function ComplianceLogos() {
       <img src="/assets/login/compliance-logos/dora.png" alt="DORA logo" className="h-12 w-12 object-contain" />
       <img src="/assets/login/compliance-logos/gdpr.png" alt="GDPR logo" className="h-12 w-12 object-contain" />
     </>
-  )
-}
-
-// Empty card shown while the sign-up flag resolves (at most 1s): no spinner to avoid a flash
-export function AuthPageLoadingCard() {
-  return (
-    <div
-      data-testid="auth-page-loading"
-      aria-busy
-      className="h-[420px] w-full max-w-[480px] rounded-2xl border border-neutral bg-background shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)] lg:min-w-[480px]"
-    />
-  )
-}
-
-export function AuthPageLoadingVisual() {
-  return (
-    <div className="pointer-events-none relative hidden lg:block lg:h-screen lg:max-w-[1280px] lg:flex-[2_1_0%]">
-      <img
-        src="/assets/login/onboarding-background.svg"
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute bottom-0 right-0 h-full w-auto max-w-none select-none"
-      />
-    </div>
   )
 }

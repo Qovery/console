@@ -1,4 +1,3 @@
-import posthog from 'posthog-js'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { Route } from './index'
 
@@ -6,8 +5,6 @@ const mockAuthLogin = jest.fn()
 
 jest.mock('posthog-js', () => ({
   capture: jest.fn(),
-  getFeatureFlag: jest.fn(),
-  onFeatureFlags: jest.fn(),
 }))
 
 jest.mock('@tanstack/react-router', () => ({
@@ -31,12 +28,6 @@ describe('Login', () => {
     sessionStorage.clear()
     mockAuthLogin.mockReset()
     mockAuthLogin.mockResolvedValue(undefined)
-    jest.mocked(posthog.getFeatureFlag).mockReturnValue('control')
-    // Flags already loaded: the callback runs synchronously
-    jest.mocked(posthog.onFeatureFlags).mockImplementation((callback) => {
-      callback({}, {})
-      return jest.fn()
-    })
   })
 
   it('opens the SSO form pre-filled with the last used domain', async () => {
@@ -104,23 +95,5 @@ describe('Login', () => {
     expect(screen.getByLabelText('Company domain')).toHaveValue('typo.com')
     expect(screen.getByText('access_denied')).toBeInTheDocument()
     expect(localStorage.getItem('lastUsedSsoDomain')).toBeNull()
-  })
-
-  it('shows the sign-up screen to new visitors in the test group', () => {
-    jest.mocked(posthog.getFeatureFlag).mockReturnValue('test')
-
-    renderWithProviders(<RouteComponent />)
-
-    expect(screen.getByRole('heading', { name: 'Create your free Qovery account' })).toBeInTheDocument()
-  })
-
-  it('keeps the login screen for returning visitors without reading the flag', () => {
-    jest.mocked(posthog.getFeatureFlag).mockReturnValue('test')
-    localStorage.setItem('lastUsedLogin', 'github')
-
-    renderWithProviders(<RouteComponent />)
-
-    expect(screen.getByText('Connect to your workspace')).toBeInTheDocument()
-    expect(posthog.getFeatureFlag).not.toHaveBeenCalled()
   })
 })

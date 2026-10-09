@@ -1,13 +1,22 @@
 import clsx from 'clsx'
-import { useEffect } from 'react'
-import { AuthEnum } from '@qovery/shared/auth'
+import { useEffect, useState } from 'react'
+import { AuthEnum, getSsoConnectionName } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, ExternalLink, Icon, linkVariants } from '@qovery/shared/ui'
-import { Auth0ErrorMessage, AuthLegalNotice, AuthPageLayout } from './auth-page-layout'
+import { Button, Icon, Link } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
+import {
+  AUTH_CARD_BODY_CLASSNAME,
+  AUTH_CARD_CLASSNAME,
+  Auth0ErrorMessage,
+  AuthLegalNotice,
+  ComplianceLogos,
+} from './auth-page-layout'
 import { type AuthPageTrackingContext, trackAuthSecondaryCtaClicked } from './auth-page-tracking'
-import { BOOK_DEMO_URL } from './auth-page-utils'
+import { LAST_USED_SSO_DOMAIN_STORAGE_KEY, SAML_SSO_LOGIN } from './auth-page-utils'
 import { AUTH_PAGE_COPY } from './auth-page.copy'
-import { AnimatedProductShots, SECONDARY_PROVIDER_ICONS } from './login-screen'
+import { SECONDARY_PROVIDER_ICONS } from './login-screen'
+import { SsoLoginForm } from './sso-login-form'
+import { TestimonialCarousel } from './testimonial-carousel'
 import { useAuth0Error, useAuthProviderLogin } from './use-auth-provider-login'
 
 const SECONDARY_PROVIDERS = [
@@ -16,33 +25,6 @@ const SECONDARY_PROVIDERS = [
   { provider: AuthEnum.MICROSOFT, label: AUTH_PAGE_COPY.signUp.signUpWithMicrosoft },
 ]
 
-const CUSTOMER_LOGOS = [
-  { name: 'Alan', src: '/assets/login/testimonials-logo/alan.svg' },
-  { name: 'Spiko', src: '/assets/login/testimonials-logo/spiko.svg' },
-  { name: 'Talkspace', src: '/assets/login/testimonials-logo/talkspace.svg' },
-  { name: 'Charles.co', src: '/assets/login/testimonials-logo/charles_co.png' },
-  { name: 'kelvin', src: '/assets/login/testimonials-logo/kelvin.png' },
-  { name: 'Tint', src: '/assets/login/testimonials-logo/tint.png' },
-]
-
-function CustomerLogos({ className }: { className?: string }) {
-  return (
-    <div className={clsx('flex flex-col items-center gap-3', className)}>
-      <p className="text-sm text-neutral-subtle">{AUTH_PAGE_COPY.signUp.trustedBy}</p>
-      <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-        {CUSTOMER_LOGOS.map(({ name, src }) => (
-          <li key={name} className="flex items-center gap-1.5 text-sm font-medium text-neutral">
-            <img src={src} alt="" aria-hidden className="h-4 w-4 rounded-sm object-contain" />
-            {name}
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-// The console sets a desktop `min-width` and `overflow: hidden` on <body>: lift them while the sign-up screen
-// is displayed so prospects on a phone get a real mobile layout that scrolls
 function useMobileFriendlyBody() {
   useEffect(() => {
     const { minWidth, overflowY } = document.body.style
@@ -64,37 +46,63 @@ export interface SignUpScreenProps {
 
 export function SignUpScreen({ redirect, trackingContext, onLogInInstead }: SignUpScreenProps) {
   useMobileFriendlyBody()
-  const { auth0Error } = useAuth0Error()
+  const { auth0Error, setAuth0Error } = useAuth0Error()
   const { login, isLoading } = useAuthProviderLogin({ redirect, trackingContext })
+  const [lastUsedSsoDomain, setLastUsedSsoDomain] = useLocalStorage<string | undefined>(
+    LAST_USED_SSO_DOMAIN_STORAGE_KEY,
+    undefined
+  )
+  const [lastUsedSsoDomainAtPageLoad] = useState(lastUsedSsoDomain)
+  const [ssoFormVisible, setSsoFormVisible] = useState(false)
 
-  const inlineLinkClassName = linkVariants({ color: 'sky', size: 'sm' })
+  const validateAndConnect = (domain: string) => {
+    setLastUsedSsoDomain(domain)
+    login(getSsoConnectionName(domain), SAML_SSO_LOGIN)
+  }
 
   return (
-    <AuthPageLayout
-      card={
-        <div className="flex w-full max-w-[480px] flex-col gap-6 py-16 lg:min-w-[480px] lg:py-0">
-          <div className="w-full rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)]">
-            <div className="relative rounded-2xl bg-background px-4 pb-4 pt-8 outline outline-[1px] outline-neutral sm:px-8 sm:pb-6">
-              <img
-                className="mx-auto mb-6 h-6 sm:mb-8"
-                src="/assets/logos/logo-black.svg"
-                alt={AUTH_PAGE_COPY.shared.logoAlt}
+    <div data-theme="light" className="flex min-h-screen w-full flex-col bg-background-secondary lg:h-screen">
+      <header className="flex h-16 shrink-0 items-center justify-between gap-4 px-4">
+        <Link href="https://www.qovery.com" color="subtle">
+          <Icon iconName="arrow-left" />
+          {AUTH_PAGE_COPY.shared.backToWebsite}
+        </Link>
+        <div className="flex items-center gap-3">
+          <span className="hidden text-sm text-neutral-subtle sm:inline">{AUTH_PAGE_COPY.signUp.logInPrompt}</span>
+          <Button
+            variant="outline"
+            color="neutral"
+            size="md"
+            onClick={() => {
+              trackAuthSecondaryCtaClicked(trackingContext, 'log_in_instead')
+              onLogInInstead()
+            }}
+          >
+            {AUTH_PAGE_COPY.signUp.logInLink}
+          </Button>
+        </div>
+      </header>
+
+      <main className="flex flex-1 flex-col px-2 py-8 sm:px-4 lg:overflow-y-auto">
+        <div className={clsx(AUTH_CARD_CLASSNAME, 'm-auto')}>
+          <div className={AUTH_CARD_BODY_CLASSNAME}>
+            <img className="mx-auto mb-8 h-6" src="/assets/logos/logo-black.svg" alt={AUTH_PAGE_COPY.shared.logoAlt} />
+
+            <h1 className="text-center font-brand text-2xl font-normal leading-8 text-neutral">
+              {ssoFormVisible ? AUTH_PAGE_COPY.sso.title : AUTH_PAGE_COPY.signUp.title}
+            </h1>
+            <p className="mb-6 mt-2 text-center text-sm text-neutral-subtle">
+              {ssoFormVisible ? AUTH_PAGE_COPY.sso.description : AUTH_PAGE_COPY.signUp.subtitle}
+            </p>
+
+            {ssoFormVisible ? (
+              <SsoLoginForm
+                defaultDomain={lastUsedSsoDomainAtPageLoad}
+                onConnect={validateAndConnect}
+                onBack={() => setSsoFormVisible(false)}
               />
-
-              <h1 className="mb-2 text-center font-brand text-xl font-normal leading-7 text-neutral sm:text-2xl sm:leading-8">
-                {AUTH_PAGE_COPY.signUp.title}
-              </h1>
-
-              <ul className="mx-auto mb-6 mt-4 flex w-fit flex-col gap-2">
-                {AUTH_PAGE_COPY.signUp.reassurances.map((reassurance) => (
-                  <li key={reassurance} className="flex items-start gap-2 text-sm text-neutral">
-                    <Icon iconName="circle-check" iconStyle="solid" className="mt-0.5 text-positive" />
-                    {reassurance}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="flex flex-col gap-2.5">
+            ) : (
+              <div className="flex flex-col gap-2">
                 <Button
                   variant="outline"
                   color="neutral"
@@ -128,15 +136,27 @@ export function SignUpScreen({ redirect, trackingContext, onLogInInstead }: Sign
                   {AUTH_PAGE_COPY.signUp.signUpWithGithub}
                 </Button>
 
+                <Button
+                  variant="outline"
+                  color="neutral"
+                  size="lg"
+                  className="relative w-full justify-center"
+                  onClick={() => {
+                    setSsoFormVisible(true)
+                    setAuth0Error(null)
+                  }}
+                >
+                  <Icon iconName="lock" className="text-sm text-neutral-subtle" />
+                  {AUTH_PAGE_COPY.login.continueWithSamlSso}
+                </Button>
+
                 <div className="my-2 flex items-center gap-4">
                   <div className="h-px flex-1 bg-surface-neutral-component" />
-                  <span className="font-code text-xs uppercase tracking-wide text-neutral-subtle">
-                    {AUTH_PAGE_COPY.login.or}
-                  </span>
+                  <span className="text-ssm text-neutral-subtle">{AUTH_PAGE_COPY.signUp.or}</span>
                   <div className="h-px flex-1 bg-surface-neutral-component" />
                 </div>
 
-                <div className="grid grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-3 gap-2">
                   {SECONDARY_PROVIDERS.map(({ provider, label }) => (
                     <Button
                       key={provider}
@@ -158,46 +178,20 @@ export function SignUpScreen({ redirect, trackingContext, onLogInInstead }: Sign
                   ))}
                 </div>
               </div>
+            )}
 
-              {auth0Error && <Auth0ErrorMessage error={auth0Error.error} description={auth0Error.error_description} />}
+            {auth0Error && <Auth0ErrorMessage error={auth0Error.error} description={auth0Error.error_description} />}
 
-              <AuthLegalNotice />
-            </div>
-
-            <div className="flex flex-col items-center gap-1 px-4 py-4 text-center text-sm text-neutral-subtle">
-              <p>
-                {AUTH_PAGE_COPY.signUp.logInPrompt}{' '}
-                <button
-                  type="button"
-                  className={inlineLinkClassName}
-                  onClick={() => {
-                    trackAuthSecondaryCtaClicked(trackingContext, 'log_in_instead')
-                    onLogInInstead()
-                  }}
-                >
-                  {AUTH_PAGE_COPY.signUp.logInLink}
-                </button>
-              </p>
-              <p>
-                {AUTH_PAGE_COPY.signUp.demoPrompt}{' '}
-                <ExternalLink
-                  href={BOOK_DEMO_URL}
-                  color="sky"
-                  size="sm"
-                  withIcon={false}
-                  onClick={() => trackAuthSecondaryCtaClicked(trackingContext, 'book_demo')}
-                >
-                  {AUTH_PAGE_COPY.signUp.demoLink}
-                </ExternalLink>
-              </p>
-            </div>
+            <AuthLegalNotice prefix={AUTH_PAGE_COPY.signUp.legalPrefix} />
           </div>
 
-          {/* The product shots panel is hidden below `lg`: keep some social proof on small screens */}
-          <CustomerLogos className="lg:hidden" />
+          <TestimonialCarousel />
         </div>
-      }
-      visual={<AnimatedProductShots />}
-    />
+      </main>
+
+      <footer className="flex shrink-0 flex-wrap items-center justify-center gap-6 px-4 pb-6 pt-2">
+        <ComplianceLogos />
+      </footer>
+    </div>
   )
 }
