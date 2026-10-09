@@ -10,7 +10,9 @@ jest.mock('@tanstack/react-router', () => ({
     useSearch: () => mockSearch,
   }),
   useNavigate: () => jest.fn(),
-  Navigate: ({ to }: { to: string }) => <div data-testid="navigate">{to}</div>,
+  Navigate: ({ to, search }: { to: string; search: { redirect: string } }) => (
+    <div data-testid="navigate">{`${to}?redirect=${search.redirect}`}</div>
+  ),
 }))
 jest.mock('@auth0/auth0-react', () => ({
   ...jest.requireActual('@auth0/auth0-react'),
@@ -40,25 +42,26 @@ describe('Auth0 callback', () => {
     mockSearch = { error: 'access_denied', error_description: 'User cancelled' }
   })
 
-  it('sends the visitor back to the sign-up page when the sign-up was cancelled', () => {
-    sessionStorage.setItem('auth_entry_screen', 'signup')
+  it('sends the visitor back to the sign-up page with their redirect when the sign-up was cancelled', () => {
+    sessionStorage.setItem('auth_entry', JSON.stringify({ screen: 'signup', redirect: '/organization/123/overview' }))
 
     renderWithProviders(<RouteComponent />)
 
-    expect(screen.getByTestId('navigate')).toHaveTextContent('/signup')
+    expect(screen.getByTestId('navigate')).toHaveTextContent('/signup?redirect=/organization/123/overview')
+    expect(sessionStorage.getItem('auth_entry')).toBeNull()
   })
 
   it('sends the visitor back to the login page otherwise', () => {
-    sessionStorage.setItem('auth_entry_screen', 'login')
+    sessionStorage.setItem('auth_entry', JSON.stringify({ screen: 'login', redirect: '/' }))
 
     renderWithProviders(<RouteComponent />)
 
-    expect(screen.getByTestId('navigate')).toHaveTextContent('/login')
+    expect(screen.getByTestId('navigate')).toHaveTextContent('/login?redirect=/')
   })
 
   it('defaults to the login page when the entry screen is unknown', () => {
     renderWithProviders(<RouteComponent />)
 
-    expect(screen.getByTestId('navigate')).toHaveTextContent('/login')
+    expect(screen.getByTestId('navigate')).toHaveTextContent('/login?redirect=/')
   })
 })

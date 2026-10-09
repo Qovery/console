@@ -88,7 +88,10 @@ describe('AuthPage', () => {
 
       expect(mockAuthLogin).toHaveBeenCalledWith('github', '/organization/123/overview')
       expect(localStorage.getItem('lastUsedLogin')).toBe('github')
-      expect(sessionStorage.getItem('auth_entry_screen')).toBe('signup')
+      expect(JSON.parse(sessionStorage.getItem('auth_entry') ?? '')).toEqual({
+        screen: 'signup',
+        redirect: '/organization/123/overview',
+      })
       expect(getCaptures('auth_provider_clicked')).toEqual([{ page: 'signup', provider: 'github' }])
     })
 
@@ -173,7 +176,7 @@ describe('AuthPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /Continue with Google/ }))
 
     expect(mockAuthLogin).toHaveBeenCalledWith('google-oauth2', '/')
-    expect(sessionStorage.getItem('auth_entry_screen')).toBe('login')
+    expect(JSON.parse(sessionStorage.getItem('auth_entry') ?? '')).toEqual({ screen: 'login', redirect: '/' })
     expect(getCaptures('auth_provider_clicked')).toEqual([{ page: 'login', provider: 'google' }])
   })
 })

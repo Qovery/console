@@ -1,11 +1,12 @@
 import { redirect } from '@tanstack/react-router'
 import { z } from 'zod'
 import { AuthEnum, getSsoConnectionName } from '@qovery/shared/auth'
+import { type AuthPage } from './auth-page-tracking'
 
 export const LAST_USED_LOGIN_STORAGE_KEY = 'lastUsedLogin'
 export const LAST_USED_SSO_DOMAIN_STORAGE_KEY = 'lastUsedSsoDomain'
 export const SAML_SSO_LOGIN = 'saml_sso'
-export const AUTH_ENTRY_SCREEN_STORAGE_KEY = 'auth_entry_screen'
+const AUTH_ENTRY_STORAGE_KEY = 'auth_entry'
 export const SSO_DOMAIN_PATTERN = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/
 
 export const authPageSearchParamsSchema = z.object({
@@ -20,6 +21,23 @@ export function getSafeRedirect(redirectPath?: string) {
   }
 
   return redirectPath
+}
+
+export function rememberAuthEntry(screen: AuthPage, redirect?: string) {
+  sessionStorage.setItem(AUTH_ENTRY_STORAGE_KEY, JSON.stringify({ screen, redirect: getSafeRedirect(redirect) }))
+}
+
+export function readAuthEntry(): { screen: AuthPage; redirect: string } {
+  try {
+    const entry = JSON.parse(sessionStorage.getItem(AUTH_ENTRY_STORAGE_KEY) ?? '')
+    return { screen: entry.screen === 'signup' ? 'signup' : 'login', redirect: getSafeRedirect(entry.redirect) }
+  } catch {
+    return { screen: 'login', redirect: '/' }
+  }
+}
+
+export function clearAuthEntry() {
+  sessionStorage.removeItem(AUTH_ENTRY_STORAGE_KEY)
 }
 
 export function getStoredLastUsedLogin() {
@@ -46,9 +64,11 @@ export function getTrackedProvider(lastUsedProvider: string): TrackedAuthProvide
 }
 
 export async function authPageBeforeLoad({
+  page,
   auth,
   search,
 }: {
+  page: AuthPage
   auth: { isAuthenticated: boolean; login: (returnTo?: string, connection?: string) => Promise<void> }
   search: z.infer<typeof authPageSearchParamsSchema>
 }) {
@@ -58,6 +78,7 @@ export async function authPageBeforeLoad({
 
   const connection = search.connection && getSsoConnectionName(search.connection)
   if (connection) {
+    rememberAuthEntry(page, search.redirect)
     try {
       await auth.login(getSafeRedirect(search.redirect), connection)
     } catch (error) {

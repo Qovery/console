@@ -3,11 +3,11 @@ import { useAuth } from '@qovery/shared/auth'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { type AuthPage, type AuthPageTrackingContext, trackAuthProviderClicked } from './auth-page-tracking'
 import {
-  AUTH_ENTRY_SCREEN_STORAGE_KEY,
   LAST_USED_LOGIN_STORAGE_KEY,
   LAST_USED_SSO_DOMAIN_STORAGE_KEY,
   getSafeRedirect,
   getTrackedProvider,
+  rememberAuthEntry,
 } from './auth-page-utils'
 
 export function useAuthProviderLogin({
@@ -30,7 +30,7 @@ export function useAuthProviderLogin({
     })
 
     setLastUsedLogin(lastUsedProvider)
-    sessionStorage.setItem(AUTH_ENTRY_SCREEN_STORAGE_KEY, screen)
+    rememberAuthEntry(screen, redirect)
 
     const trackedProvider = getTrackedProvider(lastUsedProvider)
     if (trackedProvider) {

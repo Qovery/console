@@ -4,7 +4,7 @@ import { authPageBeforeLoad, authPageSearchParamsSchema } from '../../app/compon
 
 export const Route = createFileRoute('/login/')({
   validateSearch: authPageSearchParamsSchema,
-  beforeLoad: ({ context, search }) => authPageBeforeLoad({ auth: context.auth, search }),
+  beforeLoad: ({ context, search }) => authPageBeforeLoad({ page: 'login', auth: context.auth, search }),
   component: RouteComponent,
 })
 
