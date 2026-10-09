@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { Navigate, createFileRoute, useNavigate } from '@tanstack/react-router'
 import axios from 'axios'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { getSsoConnectionName, useAuth } from '@qovery/shared/auth'
@@ -9,6 +9,7 @@ import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
+import { clearAuthEntry, readAuthEntry } from '../../app/components/auth-page/auth-page-utils'
 import { consumePendingReturnTo } from '../../auth/auth0'
 
 type Auth0CallbackSearch = {
@@ -81,8 +82,15 @@ function useRedirectIfLogged(connection?: string) {
 
 function PageRedirectLogin() {
   const { connection, error, error_description } = Route.useSearch()
+  const [authEntry] = useState(readAuthEntry)
   useAuthInterceptor(axios, QOVERY_API)
   useRedirectIfLogged(connection)
+
+  useEffect(() => {
+    if (!connection) {
+      clearAuthEntry()
+    }
+  }, [connection])
 
   if (error != null) {
     const errorDescription = error_description || 'No description available'
@@ -93,7 +101,9 @@ function PageRedirectLogin() {
       sessionStorage.setItem('auth0_error_description', 'The domain name provided is not authorized')
     }
 
-    return <Navigate to="/login" search={{ redirect: '/' }} />
+    return (
+      <Navigate to={authEntry.screen === 'signup' ? '/signup' : '/login'} search={{ redirect: authEntry.redirect }} />
+    )
   }
 
   return <LoadingScreen />
