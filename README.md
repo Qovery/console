@@ -130,3 +130,5 @@ Bug reports and improvements are welcome through [GitHub issues](https://github.
 ## License
 
 See [LICENSE](./LICENSE) for the GNU General Public License v3 terms.
+
+<!-- Temporary PR to verify the Qovery preview integration. -->
