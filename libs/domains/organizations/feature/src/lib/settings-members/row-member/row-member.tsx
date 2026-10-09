@@ -106,7 +106,9 @@ export function RowMember(props: RowMemberProps) {
       className="h-9 w-44 justify-between"
       disabled={!canEditRole || loadingUpdateRole}
     >
-      <span className="min-w-0 truncate">{displayedRoleLabel}</span>
+      <span className="min-w-0 truncate" title={displayedRoleLabel}>
+        {displayedRoleLabel}
+      </span>
       {!isOwner && <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />}
     </Button>
   )
