@@ -106,7 +106,7 @@ export function RowMember(props: RowMemberProps) {
       className="h-9 w-44 justify-between"
       disabled={!canEditRole || loadingUpdateRole}
     >
-      <span className="truncate">{displayedRoleLabel}</span>
+      <span className="min-w-0 truncate">{displayedRoleLabel}</span>
       {!isOwner && <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />}
     </Button>
   )
@@ -263,7 +263,10 @@ export function RowMember(props: RowMemberProps) {
                 roleButton
               )}
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content align="start">
+            <DropdownMenu.Content
+              align="start"
+              className="max-h-[min(320px,var(--radix-dropdown-menu-content-available-height))] overflow-y-auto"
+            >
               {roleOptions.map((role) => (
                 <DropdownMenu.Item
                   key={role.value}
@@ -271,7 +274,9 @@ export function RowMember(props: RowMemberProps) {
                   disabled={!canEditRole || loadingUpdateRole}
                   onSelect={() => handleRoleChange(role.value)}
                 >
-                  {role.label}
+                  <span className="min-w-0 truncate" title={role.label}>
+                    {role.label}
+                  </span>
                 </DropdownMenu.Item>
               ))}
             </DropdownMenu.Content>
