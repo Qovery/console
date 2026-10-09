@@ -145,7 +145,7 @@ function RouteComponent() {
           <div className="flex w-1/2 flex-col gap-8">
             <EnableObservabilityContent className="text-sm leading-normal" />
             <div className="flex items-center gap-4">
-              <EnableObservabilityButtonContactUs />
+              <EnableObservabilityButtonContactUs source="monitoring-teaser" />
               <span className="text-sm font-semibold text-neutral-subtle">Starting from $299/month</span>
             </div>
           </div>

@@ -52,6 +52,13 @@ export function getBooleanFieldValue(value: BlueprintFieldValue | undefined) {
   return typeof value === 'boolean' ? value : false
 }
 
+// The API's `{{ NAME }}` interpolation, NAME following its variable name rule
+const VARIABLE_REFERENCE_REGEX = /^\{\{ *[A-Za-z_][A-Za-z0-9_]* *\}\}$/
+
+export function isVariableReference(value: BlueprintFieldValue | undefined): value is string {
+  return typeof value === 'string' && VARIABLE_REFERENCE_REGEX.test(value)
+}
+
 export function isFieldValueFulfilled(value: BlueprintFieldValue | undefined) {
   if (typeof value === 'boolean') return true
   return Boolean(value?.trim())
@@ -114,6 +121,9 @@ export function getFieldNumberValidationError(
 }
 
 export function getFieldValidationError(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
+  // The referenced value is only known server-side, which validates it
+  if (isVariableReference(value)) return undefined
+
   const numberValidationError = getFieldNumberValidationError(field, value)
   if (numberValidationError) return numberValidationError
 

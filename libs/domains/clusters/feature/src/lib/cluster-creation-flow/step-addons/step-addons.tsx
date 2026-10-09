@@ -2,19 +2,7 @@ import posthog from 'posthog-js'
 import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo } from 'react'
 import { isSameSecretManagerAccess } from '@qovery/domains/clusters/data-access'
-import {
-  Badge,
-  Button,
-  Callout,
-  DropdownMenu,
-  FunnelFlowBody,
-  Heading,
-  Icon,
-  Link,
-  Section,
-  Tooltip,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, DropdownMenu, FunnelFlowBody, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
 import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
@@ -138,11 +126,6 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                  <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
-                    <Badge size="sm" radius="full" variant="surface" color="purple" className="text-ssm">
-                      Beta
-                    </Badge>
-                  </Tooltip>
                 </div>
                 <p className="text-sm text-neutral-subtle">
                   Link any secret manager on your cluster to add external secrets variables to all the services running
@@ -207,16 +190,6 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                     )
                   }
                 />
-                <Callout.Root color="sky" className="w-full">
-                  <Callout.Icon>
-                    <Icon iconName="info-circle" iconStyle="regular" />
-                  </Callout.Icon>
-                  <Callout.Text>
-                    <Callout.TextDescription>
-                      This feature is in beta. Behaviour and accessibility may change when released in GA.
-                    </Callout.TextDescription>
-                  </Callout.Text>
-                </Callout.Root>
               </div>
             </div>
           </div>
