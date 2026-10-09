@@ -71,7 +71,10 @@ describe('AuthPage', () => {
       expect(screen.getByRole('button', { name: 'Sign up with Microsoft' })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: /Continue with SAML SSO/ })).toBeInTheDocument()
       expect(screen.queryByText(/demo/i)).not.toBeInTheDocument()
-      expect(screen.getByRole('link', { name: 'Terms of Service' })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Terms of Service' })).toHaveAttribute(
+        'href',
+        'https://www.qovery.com/terms'
+      )
       expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute(
         'href',
         'https://www.qovery.com/privacy'
@@ -85,6 +88,7 @@ describe('AuthPage', () => {
 
       expect(mockAuthLogin).toHaveBeenCalledWith('github', '/organization/123/overview')
       expect(localStorage.getItem('lastUsedLogin')).toBe('github')
+      expect(sessionStorage.getItem('auth_entry_screen')).toBe('signup')
       expect(getCaptures('auth_provider_clicked')).toEqual([{ page: 'signup', provider: 'github' }])
     })
 
@@ -114,6 +118,25 @@ describe('AuthPage', () => {
       expect(getCaptures('auth_provider_clicked')).toEqual([{ page: 'signup', provider: 'saml' }])
     })
 
+    it('submits the SSO form with Enter', async () => {
+      const { userEvent } = renderWithProviders(<AuthPage page="signup" />)
+
+      await userEvent.click(screen.getByRole('button', { name: /Continue with SAML SSO/ }))
+      await userEvent.type(screen.getByLabelText('Company domain'), 'acme.com{Enter}')
+
+      expect(mockAuthLogin).toHaveBeenCalledWith('acme', '/')
+    })
+
+    it('lets the visitor retry when the redirection to Auth0 fails', async () => {
+      mockAuthLogin.mockRejectedValueOnce(new Error('network'))
+      const { userEvent } = renderWithProviders(<AuthPage page="signup" />)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Sign up with Google' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Sign up with Google' }))
+
+      expect(mockAuthLogin).toHaveBeenCalledTimes(2)
+    })
+
     it('goes back to the sign-up screen from the SSO form', async () => {
       const { userEvent } = renderWithProviders(<AuthPage page="signup" />)
 
@@ -135,12 +158,22 @@ describe('AuthPage', () => {
     })
   })
 
+  it('gives an accessible name to the icon-only login providers', () => {
+    renderWithProviders(<AuthPage page="login" />)
+
+    expect(screen.getByRole('button', { name: 'Continue with Bitbucket' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue with GitLab' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue with Microsoft' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Back to website/ })).toHaveAttribute('href', 'https://www.qovery.com')
+  })
+
   it('tracks provider clicks on the login screen', async () => {
     const { userEvent } = renderWithProviders(<AuthPage page="login" />)
 
     await userEvent.click(screen.getByRole('button', { name: /Continue with Google/ }))
 
     expect(mockAuthLogin).toHaveBeenCalledWith('google-oauth2', '/')
+    expect(sessionStorage.getItem('auth_entry_screen')).toBe('login')
     expect(getCaptures('auth_provider_clicked')).toEqual([{ page: 'login', provider: 'google' }])
   })
 })

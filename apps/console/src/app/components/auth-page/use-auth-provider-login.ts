@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@qovery/shared/auth'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
-import { type AuthPageTrackingContext, trackAuthProviderClicked } from './auth-page-tracking'
+import { type AuthPage, type AuthPageTrackingContext, trackAuthProviderClicked } from './auth-page-tracking'
 import {
+  AUTH_ENTRY_SCREEN_STORAGE_KEY,
   LAST_USED_LOGIN_STORAGE_KEY,
   LAST_USED_SSO_DOMAIN_STORAGE_KEY,
   getSafeRedirect,
@@ -10,9 +11,11 @@ import {
 } from './auth-page-utils'
 
 export function useAuthProviderLogin({
+  screen,
   redirect,
   trackingContext,
 }: {
+  screen: AuthPage
   redirect?: string
   trackingContext: AuthPageTrackingContext
 }) {
@@ -27,6 +30,7 @@ export function useAuthProviderLogin({
     })
 
     setLastUsedLogin(lastUsedProvider)
+    sessionStorage.setItem(AUTH_ENTRY_SCREEN_STORAGE_KEY, screen)
 
     const trackedProvider = getTrackedProvider(lastUsedProvider)
     if (trackedProvider) {
@@ -37,6 +41,7 @@ export function useAuthProviderLogin({
       await authLogin(provider, getSafeRedirect(redirect))
     } catch (error) {
       console.error(error)
+      setLoading(undefined)
     }
   }
 

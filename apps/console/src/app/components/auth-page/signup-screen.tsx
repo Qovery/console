@@ -2,13 +2,14 @@ import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { AuthEnum, getSsoConnectionName } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, Icon, Link } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 import {
   AUTH_CARD_BODY_CLASSNAME,
   AUTH_CARD_CLASSNAME,
   Auth0ErrorMessage,
   AuthLegalNotice,
+  BackToWebsiteLink,
   ComplianceLogos,
 } from './auth-page-layout'
 import { type AuthPageTrackingContext, trackAuthSecondaryCtaClicked } from './auth-page-tracking'
@@ -47,7 +48,7 @@ export interface SignUpScreenProps {
 export function SignUpScreen({ redirect, trackingContext, onLogInInstead }: SignUpScreenProps) {
   useMobileFriendlyBody()
   const { auth0Error, setAuth0Error } = useAuth0Error()
-  const { login, isLoading } = useAuthProviderLogin({ redirect, trackingContext })
+  const { login, isLoading } = useAuthProviderLogin({ screen: 'signup', redirect, trackingContext })
   const [lastUsedSsoDomain, setLastUsedSsoDomain] = useLocalStorage<string | undefined>(
     LAST_USED_SSO_DOMAIN_STORAGE_KEY,
     undefined
@@ -63,10 +64,7 @@ export function SignUpScreen({ redirect, trackingContext, onLogInInstead }: Sign
   return (
     <div data-theme="light" className="flex min-h-screen w-full flex-col bg-background-secondary lg:h-screen">
       <header className="flex h-16 shrink-0 items-center justify-between gap-4 px-4">
-        <Link href="https://www.qovery.com" color="subtle">
-          <Icon iconName="arrow-left" />
-          {AUTH_PAGE_COPY.shared.backToWebsite}
-        </Link>
+        <BackToWebsiteLink />
         <div className="flex items-center gap-3">
           <span className="hidden text-sm text-neutral-subtle sm:inline">{AUTH_PAGE_COPY.signUp.logInPrompt}</span>
           <Button

@@ -47,6 +47,12 @@ export const SECONDARY_PROVIDER_ICONS: Record<string, IconEnum> = {
   [AuthEnum.MICROSOFT]: IconEnum.MICROSOFT,
 }
 
+const SECONDARY_PROVIDERS = [
+  { provider: AuthEnum.BITBUCKET, label: AUTH_PAGE_COPY.login.continueWithBitbucket },
+  { provider: AuthEnum.GITLAB, label: AUTH_PAGE_COPY.login.continueWithGitlab },
+  { provider: AuthEnum.MICROSOFT, label: AUTH_PAGE_COPY.login.continueWithMicrosoft },
+]
+
 function LastUsedBadge({ visible }: { visible: boolean }) {
   if (!visible) {
     return null
@@ -185,7 +191,7 @@ export interface LoginScreenProps {
 
 export function LoginScreen({ redirect, trackingContext }: LoginScreenProps) {
   const { auth0Error, setAuth0Error } = useAuth0Error()
-  const { login, isLoading } = useAuthProviderLogin({ redirect, trackingContext })
+  const { login, isLoading } = useAuthProviderLogin({ screen: 'login', redirect, trackingContext })
   const [lastUsedLogin] = useLocalStorage<string | undefined>(LAST_USED_LOGIN_STORAGE_KEY, undefined)
   const [lastUsedLoginAtPageLoad] = useState(lastUsedLogin)
   const [lastUsedSsoDomain, setLastUsedSsoDomain] = useLocalStorage<string | undefined>(
@@ -315,13 +321,14 @@ export function LoginScreen({ redirect, trackingContext }: LoginScreenProps) {
                     </div>
 
                     <div className="grid grid-cols-3 gap-2.5">
-                      {[AuthEnum.BITBUCKET, AuthEnum.GITLAB, AuthEnum.MICROSOFT].map((provider) => (
+                      {SECONDARY_PROVIDERS.map(({ provider, label }) => (
                         <Button
                           key={provider}
                           variant="outline"
                           color="neutral"
                           size="lg"
                           className="relative justify-center"
+                          aria-label={label}
                           onClick={() => login(provider)}
                           loading={isLoading(provider)}
                         >

@@ -48,13 +48,13 @@ const TESTIMONIALS = [
     <span className="flex h-3 w-3 shrink-0 items-center justify-center overflow-hidden rounded-sm">
       <img
         src="/assets/login/testimonials-logo/talkspace.svg"
-        alt="Talskpace logo"
+        alt="Talkspace logo"
         aria-hidden
         className="h-full w-full object-contain"
       />
     </span>
     <span className="text-center">
-      <span className="text-neutral">Talskpace</span> has reduced infrastructure time by{' '}
+      <span className="text-neutral">Talkspace</span> has reduced infrastructure time by{' '}
       <span className="text-neutral">50%</span>
     </span>
   </>,

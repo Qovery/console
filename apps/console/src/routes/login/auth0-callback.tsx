@@ -9,6 +9,7 @@ import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
+import { AUTH_ENTRY_SCREEN_STORAGE_KEY } from '../../app/components/auth-page/auth-page-utils'
 import { consumePendingReturnTo } from '../../auth/auth0'
 
 type Auth0CallbackSearch = {
@@ -93,7 +94,8 @@ function PageRedirectLogin() {
       sessionStorage.setItem('auth0_error_description', 'The domain name provided is not authorized')
     }
 
-    return <Navigate to="/login" search={{ redirect: '/' }} />
+    const entryScreen = sessionStorage.getItem(AUTH_ENTRY_SCREEN_STORAGE_KEY)
+    return <Navigate to={entryScreen === 'signup' ? '/signup' : '/login'} search={{ redirect: '/' }} />
   }
 
   return <LoadingScreen />

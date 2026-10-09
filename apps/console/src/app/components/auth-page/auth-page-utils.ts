@@ -5,6 +5,7 @@ import { AuthEnum, getSsoConnectionName } from '@qovery/shared/auth'
 export const LAST_USED_LOGIN_STORAGE_KEY = 'lastUsedLogin'
 export const LAST_USED_SSO_DOMAIN_STORAGE_KEY = 'lastUsedSsoDomain'
 export const SAML_SSO_LOGIN = 'saml_sso'
+export const AUTH_ENTRY_SCREEN_STORAGE_KEY = 'auth_entry_screen'
 export const SSO_DOMAIN_PATTERN = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/
 
 export const authPageSearchParamsSchema = z.object({

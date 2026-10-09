@@ -1,11 +1,41 @@
 import { type ReactNode } from 'react'
-import { Icon, Link } from '@qovery/shared/ui'
+import { Icon, linkVariants } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { AUTH_PAGE_COPY } from './auth-page.copy'
 
 export const AUTH_CARD_CLASSNAME =
   'w-full max-w-[480px] rounded-2xl border border-neutral bg-surface-neutral-subtle shadow-[0_2px_5px_0_rgba(0,0,0,0.02),0_0_24px_0_rgba(0,0,0,0.04)] lg:min-w-[480px]'
 export const AUTH_CARD_BODY_CLASSNAME =
   'relative rounded-2xl bg-background px-4 pb-4 pt-8 outline outline-[1px] outline-neutral sm:px-8 sm:pb-6'
+
+function ExternalAnchor({
+  href,
+  color,
+  size,
+  className,
+  children,
+}: {
+  href: string
+  color: 'subtle' | 'sky'
+  size?: 'ssm'
+  className?: string
+  children: ReactNode
+}) {
+  return (
+    <a href={href} className={twMerge(linkVariants({ color, size }), className)}>
+      {children}
+    </a>
+  )
+}
+
+export function BackToWebsiteLink({ className }: { className?: string }) {
+  return (
+    <ExternalAnchor href="https://www.qovery.com" color="subtle" className={className}>
+      <Icon iconName="arrow-left" />
+      {AUTH_PAGE_COPY.shared.backToWebsite}
+    </ExternalAnchor>
+  )
+}
 
 export interface AuthPageLayoutProps {
   card: ReactNode
@@ -15,14 +45,7 @@ export interface AuthPageLayoutProps {
 export function AuthPageLayout({ card, visual }: AuthPageLayoutProps) {
   return (
     <div data-theme="light" className="relative min-h-screen w-screen overflow-x-hidden bg-background-secondary">
-      <Link
-        href="https://www.qovery.com"
-        color="subtle"
-        className="pointer-events-auto absolute left-4 top-4 z-tooltip"
-      >
-        <Icon iconName="arrow-left" />
-        {AUTH_PAGE_COPY.shared.backToWebsite}
-      </Link>
+      <BackToWebsiteLink className="pointer-events-auto absolute left-4 top-4 z-tooltip" />
 
       <div className="relative mx-auto flex min-h-screen w-full lg:h-screen">
         <div className="relative z-modal flex w-full items-center justify-center px-2 sm:px-16 lg:flex-[1_1_0%] lg:px-10">
@@ -39,13 +62,13 @@ export function AuthLegalNotice({ prefix = AUTH_PAGE_COPY.shared.legalPrefix }: 
   return (
     <p className="mt-6 text-center text-ssm text-neutral-subtle">
       {prefix}{' '}
-      <Link href="https://www.qovery.com/terms" className="font-normal" color="sky" size="ssm">
+      <ExternalAnchor href="https://www.qovery.com/terms" className="font-normal" color="sky" size="ssm">
         {AUTH_PAGE_COPY.shared.termsOfService}
-      </Link>{' '}
+      </ExternalAnchor>{' '}
       {AUTH_PAGE_COPY.shared.legalAnd}{' '}
-      <Link href="https://www.qovery.com/privacy" className="font-normal" color="sky" size="ssm">
+      <ExternalAnchor href="https://www.qovery.com/privacy" className="font-normal" color="sky" size="ssm">
         {AUTH_PAGE_COPY.shared.privacyPolicy}
-      </Link>
+      </ExternalAnchor>
     </p>
   )
 }

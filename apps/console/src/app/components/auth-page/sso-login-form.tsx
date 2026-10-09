@@ -20,7 +20,7 @@ export function SsoLoginForm({ defaultDomain, onConnect, onBack }: SsoLoginFormP
 
   return (
     <FormProvider {...methods}>
-      <div className="flex flex-col">
+      <form className="flex flex-col" onSubmit={methods.handleSubmit(({ ssoDomain }) => onConnect(ssoDomain))}>
         <Controller
           name="ssoDomain"
           control={methods.control}
@@ -52,17 +52,23 @@ export function SsoLoginForm({ defaultDomain, onConnect, onBack }: SsoLoginFormP
             color="brand"
             size="lg"
             className="relative w-full justify-center"
-            onClick={methods.handleSubmit(({ ssoDomain }) => onConnect(ssoDomain))}
             // Derived from the value rather than `formState.isValid`, which isn't computed for a pre-filled domain
             disabled={!SSO_DOMAIN_PATTERN.test(ssoDomain)}
           >
             {AUTH_PAGE_COPY.sso.connect}
           </Button>
-          <Button onClick={onBack} variant="plain" color="neutral" size="lg" className="w-full justify-center">
+          <Button
+            type="button"
+            onClick={onBack}
+            variant="plain"
+            color="neutral"
+            size="lg"
+            className="w-full justify-center"
+          >
             {AUTH_PAGE_COPY.sso.changeLoginMethod}
           </Button>
         </div>
-      </div>
+      </form>
     </FormProvider>
   )
 }

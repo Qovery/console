@@ -10,7 +10,10 @@ export const AUTH_PAGE_COPY = {
   login: {
     title: 'Connect to your workspace',
     continueWithGoogle: 'Continue with Google',
-    continueWithGithub: 'Continue with Github',
+    continueWithGithub: 'Continue with GitHub',
+    continueWithBitbucket: 'Continue with Bitbucket',
+    continueWithGitlab: 'Continue with GitLab',
+    continueWithMicrosoft: 'Continue with Microsoft',
     continueWithSamlSso: 'Continue with SAML SSO',
     or: 'OR',
     lastUsed: 'Last used',
