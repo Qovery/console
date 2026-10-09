@@ -24,7 +24,11 @@ export function getSafeRedirect(redirectPath?: string) {
 }
 
 export function rememberAuthEntry(screen: AuthPage, redirect?: string) {
-  sessionStorage.setItem(AUTH_ENTRY_STORAGE_KEY, JSON.stringify({ screen, redirect: getSafeRedirect(redirect) }))
+  try {
+    sessionStorage.setItem(AUTH_ENTRY_STORAGE_KEY, JSON.stringify({ screen, redirect: getSafeRedirect(redirect) }))
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 export function readAuthEntry(): { screen: AuthPage; redirect: string } {
@@ -37,7 +41,11 @@ export function readAuthEntry(): { screen: AuthPage; redirect: string } {
 }
 
 export function clearAuthEntry() {
-  sessionStorage.removeItem(AUTH_ENTRY_STORAGE_KEY)
+  try {
+    sessionStorage.removeItem(AUTH_ENTRY_STORAGE_KEY)
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 export function getStoredLastUsedLogin() {

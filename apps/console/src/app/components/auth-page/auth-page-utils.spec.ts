@@ -5,6 +5,10 @@ describe('auth entry', () => {
     sessionStorage.clear()
   })
 
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   it('remembers the screen and redirect of a `?connection=` auto-login', async () => {
     const login = jest.fn().mockResolvedValue(undefined)
 
@@ -32,5 +36,21 @@ describe('auth entry', () => {
     clearAuthEntry()
 
     expect(readAuthEntry()).toEqual({ screen: 'login', redirect: '/' })
+  })
+
+  it('still starts the `?connection=` auto-login when the session storage is unavailable', async () => {
+    const login = jest.fn().mockResolvedValue(undefined)
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
+
+    await authPageBeforeLoad({
+      page: 'signup',
+      auth: { isAuthenticated: false, login },
+      search: { connection: 'acme.com' },
+    })
+
+    expect(login).toHaveBeenCalledWith('/', 'acme')
   })
 })
