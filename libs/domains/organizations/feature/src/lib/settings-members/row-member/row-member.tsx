@@ -273,7 +273,7 @@ export function RowMember(props: RowMemberProps) {
                 <DropdownMenu.Item
                   key={role.value}
                   data-testid="menuItem"
-                  className="shrink-0 py-1"
+                  className="shrink-0 py-1.5"
                   disabled={!canEditRole || loadingUpdateRole}
                   onSelect={() => handleRoleChange(role.value)}
                 >
