@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SignupIndexRouteImport } from './routes/signup/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as LoginAuth0CallbackRouteImport } from './routes/login/auth0-callback'
 import { Route as AuthenticatedPreviewCodeRouteImport } from './routes/_authenticated/preview-code'
@@ -223,6 +224,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupIndexRoute = SignupIndexRouteImport.update({
+  id: '/signup/',
+  path: '/signup/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginIndexRoute = LoginIndexRouteImport.update({
@@ -1929,6 +1935,7 @@ export interface FileRoutesByFullPath {
   '/preview-code': typeof AuthenticatedPreviewCodeRoute
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login': typeof LoginIndexRoute
+  '/signup': typeof SignupIndexRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdRouteRouteWithChildren
   '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
@@ -2135,6 +2142,7 @@ export interface FileRoutesByTo {
   '/preview-code': typeof AuthenticatedPreviewCodeRoute
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login': typeof LoginIndexRoute
+  '/signup': typeof SignupIndexRoute
   '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
@@ -2322,6 +2330,7 @@ export interface FileRoutesById {
   '/_authenticated/preview-code': typeof AuthenticatedPreviewCodeRoute
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login/': typeof LoginIndexRoute
+  '/signup/': typeof SignupIndexRoute
   '/_authenticated/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdRouteRouteWithChildren
   '/_authenticated/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/_authenticated/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
@@ -2531,6 +2540,7 @@ export interface FileRouteTypes {
     | '/preview-code'
     | '/login/auth0-callback'
     | '/login'
+    | '/signup'
     | '/organization/$organizationId'
     | '/onboarding/personalize'
     | '/onboarding/plans'
@@ -2737,6 +2747,7 @@ export interface FileRouteTypes {
     | '/preview-code'
     | '/login/auth0-callback'
     | '/login'
+    | '/signup'
     | '/onboarding/personalize'
     | '/onboarding/plans'
     | '/onboarding/project'
@@ -2923,6 +2934,7 @@ export interface FileRouteTypes {
     | '/_authenticated/preview-code'
     | '/login/auth0-callback'
     | '/login/'
+    | '/signup/'
     | '/_authenticated/organization/$organizationId'
     | '/_authenticated/onboarding/personalize'
     | '/_authenticated/onboarding/plans'
@@ -3129,6 +3141,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginAuth0CallbackRoute: typeof LoginAuth0CallbackRoute
   LoginIndexRoute: typeof LoginIndexRoute
+  SignupIndexRoute: typeof SignupIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -3145,6 +3158,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup/': {
+      id: '/signup/'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login/': {
@@ -5481,6 +5501,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginAuth0CallbackRoute: LoginAuth0CallbackRoute,
   LoginIndexRoute: LoginIndexRoute,
+  SignupIndexRoute: SignupIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

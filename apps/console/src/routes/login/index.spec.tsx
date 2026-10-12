@@ -3,6 +3,10 @@ import { Route } from './index'
 
 const mockAuthLogin = jest.fn()
 
+jest.mock('posthog-js', () => ({
+  capture: jest.fn(),
+}))
+
 jest.mock('@tanstack/react-router', () => ({
   createFileRoute: () => (options: { component: unknown }) => ({
     options,
