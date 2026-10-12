@@ -127,7 +127,8 @@ function CatalogVariableControl({
       type={field.sensitive ? 'password' : field.type === 'number' ? 'number' : 'text'}
       value={typeof value === 'string' ? value : ''}
       error={error}
-      hasShowPasswordButton={field.sensitive}
+      // A disabled field must not reveal its masked value.
+      hasShowPasswordButton={field.sensitive && !disabled}
       autoFocus={autoFocus}
       disabled={disabled}
       onChange={(event) => onChange(event.currentTarget.value)}

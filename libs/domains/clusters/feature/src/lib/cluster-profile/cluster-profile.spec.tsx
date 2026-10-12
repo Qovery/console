@@ -329,6 +329,18 @@ describe('ClusterProfileFeature', () => {
   })
 
   it('shows read-only fields disabled with their resolved value instead of the draft', () => {
+    mockUsePlatformConfiguration.mockReturnValue({
+      data: {
+        clusterInputs: {},
+        platform: {
+          templateKey: 'qovery-cluster-v0',
+          templateVersion: '1.0.0',
+          managedConfig: { loki: { 'cpu-limit': '250m' } },
+        },
+      },
+      isError: false,
+      isLoading: false,
+    } as unknown as ReturnType<typeof usePlatformConfiguration>)
     const [loki, alloy] = createComponentQueries(['loki', 'alloy'])
     const resolution = createResolution('loki')
     mockUsePlatformComponentConfigurations.mockReturnValue([

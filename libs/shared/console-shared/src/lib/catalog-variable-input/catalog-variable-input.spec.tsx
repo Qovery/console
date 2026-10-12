@@ -204,6 +204,21 @@ describe('CatalogVariableInput', () => {
     expect(screen.getByLabelText('Pin')).toHaveAttribute('type', 'password')
   })
 
+  it('does not let a disabled sensitive field reveal its value', () => {
+    renderWithProviders(
+      <CatalogVariableInput
+        {...defaultProps}
+        field={{ key: 'token', label: 'Token', type: 'string', sensitive: true }}
+        layout="row"
+        value="secret"
+        disabled
+      />
+    )
+
+    expect(screen.getByLabelText('Token')).toHaveAttribute('type', 'password')
+    expect(screen.queryByTestId('show-password-button')).not.toBeInTheDocument()
+  })
+
   it('keeps the toggle presentation as the default for boolean fields', async () => {
     const onChange = jest.fn()
     const { userEvent } = renderWithProviders(
