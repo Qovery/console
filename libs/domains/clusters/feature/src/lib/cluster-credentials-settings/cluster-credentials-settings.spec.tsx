@@ -133,11 +133,6 @@ describe('ClusterCredentialsSettings', () => {
     expect(screen.getByLabelText('Cluster region')).toHaveValue('eu-west-3')
     expect(screen.getByTestId('selected-credential')).toHaveTextContent(created ? 'new-credential' : '')
     expect(mockCloseModal).toHaveBeenCalledTimes(1)
-    const event = { preventDefault: jest.fn() }
-    act(() => modal.options.onCloseAutoFocus(event))
-    expect(
-      created ? screen.getByRole('combobox') : screen.getByRole('button', { name: 'Add New Credential' })
-    ).toHaveFocus()
   })
 
   it('keeps the add action for existing credentials and selects the new credential', async () => {

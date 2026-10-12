@@ -1,6 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { type Cluster, type ClusterCredentials } from 'qovery-typescript-axios'
-import { useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
 import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
@@ -43,7 +43,6 @@ export const filterCredentialsByCloudProvider = (
 
 export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
-  const credentialsContainer = useRef<HTMLDivElement>(null)
   const { control } = useFormContext()
   const { openModal, closeModal } = useModal()
 
@@ -78,10 +77,6 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
         ),
         options: {
           width: 680,
-          onCloseAutoFocus: (event) => {
-            event.preventDefault()
-            credentialsContainer.current?.querySelector<HTMLElement>('[role="combobox"], button')?.focus()
-          },
         },
       })
     },
@@ -95,7 +90,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
   }))
 
   return (
-    <div ref={credentialsContainer}>
+    <div>
       {isLoading ? (
         <div className="mt-2 flex justify-center">
           <LoaderSpinner className="w-4" />
