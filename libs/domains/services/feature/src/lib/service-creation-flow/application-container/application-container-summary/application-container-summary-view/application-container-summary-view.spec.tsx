@@ -105,6 +105,41 @@ describe('ApplicationContainerSummaryView', () => {
     expect(screen.getByText('External secret')).toBeInTheDocument()
   })
 
+  it('shows the selected JSON path, reference and variable name before service creation', () => {
+    const keyName = String.raw`accounts.0.database\.password`
+    renderWithProviders(
+      <ApplicationContainerSummaryView
+        {...defaultProps}
+        externalSecretsData={[
+          {
+            name: 'APP_PASSWORD',
+            reference: 'production/config',
+            isJson: true,
+            keyName,
+            scope: 'APPLICATION',
+          },
+        ]}
+      />
+    )
+
+    expect(screen.getByText('APP_PASSWORD = production/config')).toBeInTheDocument()
+    expect(screen.getByText(`JSON path: ${keyName}`)).toBeInTheDocument()
+    expect(screen.getByText('JSON external secret')).toBeInTheDocument()
+  })
+
+  it('keeps file secrets identified as files without showing a JSON path', () => {
+    renderWithProviders(
+      <ApplicationContainerSummaryView
+        {...defaultProps}
+        externalSecretsData={[{ name: 'APP_CONFIG', reference: 'production/config', isFile: true }]}
+      />
+    )
+
+    expect(screen.getByText('External secret file')).toBeInTheDocument()
+    expect(screen.queryByText(/JSON path:/)).not.toBeInTheDocument()
+    expect(screen.queryByText('JSON external secret')).not.toBeInTheDocument()
+  })
+
   it('calls edit and submit actions', async () => {
     const { userEvent } = renderWithProviders(<ApplicationContainerSummaryView {...defaultProps} />)
 
