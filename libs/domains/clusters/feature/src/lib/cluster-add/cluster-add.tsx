@@ -20,16 +20,18 @@ import {
 const LEAVE_INSTALL_STEP_MESSAGE =
   'The Operator installation instructions will be lost if you leave this page. Leave anyway?'
 
+type ProviderIconSource = string | ReactElement<{ className?: string; 'aria-hidden'?: boolean }>
+
 type ProviderCardProps = {
   title: string
-  icon: string | ReactElement
+  icon: ProviderIconSource
   disabled?: boolean
   actionLabel?: string
   analytics: { selectedCloudProvider: string; selectedInstallationType: string }
 } & ({ slug: string } | { onClick: () => void })
 
 // Decorative: the card title already names the provider.
-function ProviderIcon({ icon }: { icon: string | ReactElement }) {
+function ProviderIcon({ icon }: { icon: ProviderIconSource }) {
   return typeof icon === 'string' ? (
     <img className="size-5 select-none" src={icon} alt="" />
   ) : (

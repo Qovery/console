@@ -44,6 +44,7 @@ export default defineConfig(({ mode }) => {
       tanstackRouter({
         target: 'react',
         autoCodeSplitting: true,
+        routeFileIgnorePattern: '\\.(spec|test)\\.tsx?$',
       }),
       viteStaticCopy({
         targets: [

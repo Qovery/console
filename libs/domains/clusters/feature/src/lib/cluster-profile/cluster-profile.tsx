@@ -16,6 +16,7 @@ import {
   isSupportedPlatformField,
   omitEmptyValues,
   toCatalogVariableField,
+  toPlatformFieldDescriptor,
 } from '../platform-configuration/platform-configuration-utils'
 import { ClusterProfileProvider, useClusterProfileContext } from './cluster-profile-context'
 import {
@@ -191,7 +192,7 @@ function ProfileConfigurationSection({
 
       {requirements.length > 0 ? (
         <div className="flex flex-col">
-          {requirements.map((requirement) => (
+          {requirements.map(toPlatformFieldDescriptor).map((requirement) => (
             <CatalogVariableInput
               key={requirement.key}
               booleanControl="toggle"

@@ -43,6 +43,15 @@ export type PlatformFieldDescriptor = {
   defaultValue?: string | null
 }
 
+// The API types requirement `type` as a plain string; unknown types fall back to a text input.
+export function toPlatformFieldDescriptor(
+  requirement: PlatformComponentInputRequirementResponse
+): PlatformFieldDescriptor {
+  return match(requirement.type)
+    .with('string', 'number', 'bool', (type) => ({ ...requirement, type }))
+    .otherwise(() => ({ ...requirement, type: 'string' as const }))
+}
+
 export type PlatformArrayField = Extract<FieldSchemaResponse, { type: 'array' }>
 
 export type PlatformObjectField = Extract<FieldSchemaResponse, { type: 'object' }>
