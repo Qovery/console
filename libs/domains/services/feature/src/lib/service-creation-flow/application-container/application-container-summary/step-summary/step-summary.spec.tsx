@@ -249,6 +249,15 @@ describe('ApplicationContainerStepSummary', () => {
     })
   })
 
+  it('does not send unsupported JSON references to the external variable API', async () => {
+    const { userEvent } = renderComponent({
+      externalSecrets: [{ ...externalSecretsData[0], isJson: true }],
+    })
+    await userEvent.click(screen.getByTestId('button-create'))
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalled())
+    expect(mockCreateVariable).not.toHaveBeenCalled()
+  })
+
   it('continues service creation when external secret creation fails', async () => {
     mockCreateVariable.mockRejectedValueOnce(new Error('External secret creation failed'))
     const { userEvent } = renderComponent()

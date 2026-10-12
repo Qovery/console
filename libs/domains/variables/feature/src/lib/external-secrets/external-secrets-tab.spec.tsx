@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import { type ReactElement, type ReactNode } from 'react'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -7,7 +8,7 @@ import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-varia
 import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
 import { useVariablesSecretManagers } from '../hooks/use-variables-secret-managers/use-variables-secret-managers'
 import { useVariables } from '../hooks/use-variables/use-variables'
-import { type AddSecretModalSubmitData } from './add-secret-modal/add-secret-modal'
+import { AddSecretModal, type AddSecretModalSubmitData } from './add-secret-modal/add-secret-modal'
 import { ExternalSecretsTab } from './external-secrets-tab'
 
 jest.mock('../hooks/use-variables/use-variables', () => ({
@@ -504,5 +505,92 @@ describe('ExternalSecretsTab', () => {
       'href',
       '/organization/organization-id/cluster/cluster-id/settings/addons'
     )
+  })
+  it('opens the standard secret form from the two-option menu', async () => {
+    const capture = jest.spyOn(posthog, 'capture').mockReturnValue(undefined)
+    const openModal = jest.fn()
+    useModalMock.mockReturnValue({ openModal, closeModal: jest.fn() })
+    useVariablesMock.mockReturnValue({ data: [] } as unknown as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+    const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
+      'Add secret as variable',
+      'Add secret as file',
+    ])
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as variable' }))
+    const modal = openModal.mock.calls[0][0].content as ReactElement<{ isFile: boolean }>
+    expect(capture).toHaveBeenCalledWith('external-secret-add-clicked', {
+      scope: 'APPLICATION',
+      is_file: false,
+    })
+    capture.mockRestore()
+    expect(modal.type).toBe(AddSecretModal)
+    expect(modal.props.isFile).toBe(false)
+  })
+  it('adds, edits and deletes user-entered JSON references without using the ordinary variable API', async () => {
+    const createVariable = jest.fn()
+    const editVariable = jest.fn()
+    const deleteVariable = jest.fn()
+    const openModal = jest.fn()
+    const openModalConfirmation = jest.fn()
+    useCreateVariableMock.mockReturnValue({ mutateAsync: createVariable } as unknown as ReturnType<
+      typeof useCreateVariable
+    >)
+    useEditVariableMock.mockReturnValue({ mutateAsync: editVariable } as unknown as ReturnType<typeof useEditVariable>)
+    useDeleteVariableMock.mockReturnValue({ mutateAsync: deleteVariable } as unknown as ReturnType<
+      typeof useDeleteVariable
+    >)
+    useModalMock.mockReturnValue({ openModal, closeModal: jest.fn() })
+    useModalConfirmationMock.mockReturnValue({ openModalConfirmation })
+    useVariablesMock.mockReturnValue({ data: [] } as unknown as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+    const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as variable' }))
+    const modal = openModal.mock.calls[0][0].content as ReactElement<{
+      initialSecret?: { keyName?: string }
+      onSubmit: (data: AddSecretModalSubmitData) => Promise<void>
+    }>
+    const data = {
+      name: 'Application credentials',
+      reference: 'lucis/app',
+      isJson: true,
+      isFile: false,
+      secretManagerAccessId: 'manager-id',
+      keyName: 'password',
+    }
+    await act(async () => modal.props.onSubmit(data))
+    expect(screen.getByText('lucis/app')).toBeInTheDocument()
+    expect(screen.getByText('1 external secret')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+    const editModal = openModal.mock.calls[1][0].content as typeof modal
+    expect(screen.getByText('JSON path: password')).toBeInTheDocument()
+    expect(editModal.props.initialSecret?.keyName).toBe('password')
+    await act(async () =>
+      editModal.props.onSubmit({
+        ...data,
+        name: 'Updated credentials',
+        keyName: 'new_password',
+        reference: 'lucis/updated',
+      })
+    )
+    expect(screen.getByText('lucis/updated')).toBeInTheDocument()
+    expect(screen.getByText('Updated credentials')).toBeInTheDocument()
+    expect(screen.getByText('JSON path: new_password')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    await act(async () => openModalConfirmation.mock.calls[0][0].action())
+    expect(screen.queryByText('lucis/updated')).not.toBeInTheDocument()
+    expect(createVariable).not.toHaveBeenCalled()
+    expect(editVariable).not.toHaveBeenCalled()
+    expect(deleteVariable).not.toHaveBeenCalled()
   })
 })

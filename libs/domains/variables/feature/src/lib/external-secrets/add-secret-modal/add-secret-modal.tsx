@@ -1,13 +1,23 @@
 import posthog from 'posthog-js'
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { getSecretManagerProvider } from '@qovery/domains/clusters/data-access'
 import { useSecretManagerProviderSecrets } from '@qovery/domains/clusters/feature'
 import { type VariableScope } from '@qovery/domains/variables/data-access'
-import { Checkbox, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
+import {
+  Checkbox,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  ModalCrud,
+  useModal,
+} from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
+import { ENVIRONMENT_VARIABLE_NAME_PATTERN } from '@qovery/shared/util-js'
 
 export type SecretSourceOption = {
   value: string
@@ -32,7 +42,9 @@ export type AddSecretModalSubmitData = {
   name: string
   description?: string
   filePath?: string
+  keyName?: string
   isFile: boolean
+  isJson?: boolean
   reference: string
   secretManagerAccessId: string
 }
@@ -42,6 +54,7 @@ export type AddSecretModalInitialSecret = {
   reference: string
   description?: string
   filePath?: string
+  keyName?: string
 }
 
 interface AddSecretModalProps {
@@ -60,7 +73,9 @@ type AddSecretFormValues = {
   reference: string
   path: string
   secretName: string
+  keyName: string
   description: string
+  isJson: boolean
   acknowledgeEnvironmentSecretCost: boolean
 }
 
@@ -82,20 +97,25 @@ export function AddSecretModal({
       reference: initialSecret?.reference ?? '',
       path: initialSecret?.filePath ?? '',
       secretName: initialSecret?.name ?? '',
+      keyName: initialSecret?.keyName ?? '',
       description: initialSecret?.description ?? '',
+      isJson: !isFile && Boolean(initialSecret?.keyName),
       acknowledgeEnvironmentSecretCost: false,
     },
     mode: 'onChange',
   })
+  const jsonSourceId = useId()
+  const isJson = methods.watch('isJson')
   const { enableAlertClickOutside } = useModal()
   const [referenceInput, setReferenceInput] = useState('')
+  const [submitError, setSubmitError] = useState<string>()
+  const [isSecretNameOverridden, setIsSecretNameOverridden] = useState(mode === 'edit')
   const debouncedReferenceInput = useDebounce(referenceInput, 300)
   const isDirty = methods.formState.isDirty
   const shouldDisplayEnvironmentAcknowledgement = scope === 'ENVIRONMENT' && mode === 'create'
 
   const secretNameValue = methods.watch('secretName')
   const selectedSourceId = methods.watch('source')
-
   const {
     data: providerSecrets,
     isError: isProviderSecretsError,
@@ -127,11 +147,7 @@ export function AddSecretModal({
   )
 
   const referenceOptions = useMemo(
-    () =>
-      (providerSecrets?.results ?? []).map((secret) => ({
-        label: secret,
-        value: secret,
-      })),
+    () => (providerSecrets?.results ?? []).map((secret) => ({ label: secret, value: secret })),
     [providerSecrets?.results]
   )
 
@@ -147,29 +163,34 @@ export function AddSecretModal({
     const fallbackFilePath = `/vault/secrets/${finalReference.split('/').pop() || 'secret'}`
     const finalPath = data.path.trim() || fallbackFilePath
 
+    setSubmitError(undefined)
     try {
       await onSubmit({
         name: finalName,
         description: descriptionValue ? descriptionValue : undefined,
         filePath: isFile ? finalPath : undefined,
         isFile,
+        ...(isJson ? { isJson: true, keyName: data.keyName.trim() } : {}),
         reference: finalReference,
         secretManagerAccessId: selectedSource.value,
       })
-      posthog.capture('external-secret-form-submitted', {
-        mode,
-        scope,
-        is_file: isFile,
-        success: true,
-      })
+      if (!isJson)
+        posthog.capture('external-secret-form-submitted', {
+          mode,
+          scope,
+          is_file: isFile,
+          success: true,
+        })
       onClose()
     } catch (error) {
-      posthog.capture('external-secret-form-submitted', {
-        mode,
-        scope,
-        is_file: isFile,
-        success: false,
-      })
+      if (!isJson)
+        posthog.capture('external-secret-form-submitted', {
+          mode,
+          scope,
+          is_file: isFile,
+          success: false,
+        })
+      setSubmitError(error instanceof Error ? error.message : 'Could not save the secret. Please try again.')
       console.error(error)
     }
   })
@@ -181,24 +202,17 @@ export function AddSecretModal({
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title={
-          isFile
-            ? mode === 'edit'
-              ? 'Edit secret as file'
-              : 'Add secret as file'
-            : mode === 'edit'
-              ? 'Edit secret'
-              : 'Add secret'
-        }
-        description={
-          isFile
-            ? mode === 'edit'
-              ? 'Edit an external secret file to use on this service. Qovery will resolve its value at deployment and mount it inside your container.'
-              : 'Add an external secret file to use on this service. Qovery will resolve its value at deployment and mount it inside your container.'
-            : mode === 'edit'
-              ? 'Edit an external secret to use on this service. Qovery will resolve its value at deployment.'
-              : 'Add an external secret to use on this service. Qovery will resolve its value at deployment.'
-        }
+        title={match({ isFile, mode })
+          .with({ isFile: true, mode: 'edit' }, () => 'Edit secret as file')
+          .with({ isFile: true }, () => 'Add secret as file')
+          .with({ mode: 'edit' }, () => 'Edit secret')
+          .otherwise(() => 'Add secret')}
+        description={match({ isFile })
+          .with(
+            { isFile: true },
+            () => 'Qovery will resolve the external secret at deployment and mount it as a file inside your container.'
+          )
+          .otherwise(() => 'Qovery will resolve the external secret at deployment.')}
         onSubmit={handleSubmit}
         onClose={onClose}
         submitLabel={mode === 'edit' ? 'Edit secret' : 'Add secret'}
@@ -250,7 +264,7 @@ export function AddSecretModal({
                     onChange={(value) => {
                       const selected = value as string
                       field.onChange(selected)
-                      if (!secretNameValue) {
+                      if (!isJson && !secretNameValue) {
                         const inferredName = selected.split('/').pop()?.toUpperCase()
                         if (inferredName) {
                           methods.setValue('secretName', inferredName, { shouldValidate: true })
@@ -284,17 +298,94 @@ export function AddSecretModal({
             />
           )}
 
+          {!isFile && (
+            <Controller
+              name="isJson"
+              control={methods.control}
+              render={({ field }) => (
+                <div className="mb-3 flex items-center gap-2">
+                  <Checkbox
+                    id={jsonSourceId}
+                    name={field.name}
+                    checked={field.value}
+                    onCheckedChange={(checked) => {
+                      field.onChange(checked === true)
+                      methods.clearErrors('keyName')
+                      void methods.trigger(methods.getValues('secretName') ? ['keyName', 'secretName'] : 'keyName')
+                    }}
+                  />
+                  <label htmlFor={jsonSourceId} className="text-sm text-neutral">
+                    JSON source
+                  </label>
+                </div>
+              )}
+            />
+          )}
+
+          {isJson && (
+            <Controller
+              name="keyName"
+              control={methods.control}
+              rules={{
+                validate: (value) =>
+                  !methods.getValues('isJson') || !!value.trim() || 'Please enter a JSON property path.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  className="mb-3 w-full"
+                  name={field.name}
+                  label="JSON property path"
+                  value={field.value}
+                  onChange={(event) => {
+                    field.onChange(event)
+                    if (!isSecretNameOverridden) {
+                      const inferredName = event.target.value.replace(/[^a-zA-Z0-9_]/g, '_').replace(/^[0-9]/, '_$&')
+                      methods.setValue('secretName', inferredName, { shouldValidate: true })
+                    }
+                  }}
+                  hint={
+                    <>
+                      Use dots to navigate JSON objects and numeric indexes for arrays. Example: accounts.0.password.{' '}
+                      <ExternalLink
+                        href="https://www.qovery.com/docs/configuration/integrations/secret-managers/secret-manager-access#selecting-a-value-from-a-json-secret"
+                        size="xs"
+                      >
+                        JSON selection syntax
+                      </ExternalLink>
+                    </>
+                  }
+                  error={error?.message}
+                />
+              )}
+            />
+          )}
+
           <Controller
             name="secretName"
             control={methods.control}
-            rules={{ required: 'Please enter a secret name.' }}
+            rules={{
+              validate: (value) => {
+                const name = value.trim()
+                if (!name) {
+                  return 'Please enter a secret name.'
+                }
+                return (
+                  !methods.getValues('isJson') ||
+                  ENVIRONMENT_VARIABLE_NAME_PATTERN.test(name) ||
+                  'Variable name must start with a letter or underscore, and contain only letters, numbers, and underscores.'
+                )
+              },
+            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-3 w-full"
                 name={field.name}
                 label="Secret name"
                 value={field.value}
-                onChange={field.onChange}
+                onChange={(event) => {
+                  field.onChange(event)
+                  setIsSecretNameOverridden(true)
+                }}
                 hint="Name that other Qovery services will use"
                 error={error?.message}
               />
@@ -306,7 +397,7 @@ export function AddSecretModal({
             control={methods.control}
             render={({ field }) => (
               <InputTextArea
-                className="mb-6 w-full"
+                className="mb-5 w-full"
                 label="Description"
                 name={field.name}
                 value={field.value}
@@ -314,6 +405,12 @@ export function AddSecretModal({
               />
             )}
           />
+
+          {submitError && (
+            <p role="alert" className="mb-3 text-sm text-negative">
+              {submitError}
+            </p>
+          )}
 
           {shouldDisplayEnvironmentAcknowledgement && (
             <div className="mb-3 rounded border border-warning-subtle bg-surface-warning-subtle p-4 text-sm text-neutral">

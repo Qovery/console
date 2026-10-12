@@ -16,6 +16,9 @@ export interface ExternalSecretData {
   description?: string
   filePath?: string
   isFile?: boolean
+  // TODO(secret-manager-json): Align these fields with the JSON API contract when available.
+  isJson?: boolean
+  keyName?: string
   source?: string | null
   sourceIcon?: 'aws' | 'gcp'
   secretManagerAccessId?: string
