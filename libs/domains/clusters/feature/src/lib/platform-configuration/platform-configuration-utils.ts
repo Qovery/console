@@ -60,6 +60,11 @@ export function isPlatformScalarField(field: FieldSchemaResponse): field is Plat
   return field.type === 'string' || field.type === 'number' || field.type === 'bool'
 }
 
+// Read-only fields display the value resolved by the API (`resolvedValues`), never the draft's.
+export function isPlatformReadOnlyField(field: FieldSchemaResponse): field is PlatformScalarField {
+  return isPlatformScalarField(field) && Boolean(field.readOnly)
+}
+
 export function isPlatformArrayField(field: FieldSchemaResponse): field is PlatformArrayField {
   return field.type === 'array'
 }

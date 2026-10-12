@@ -14,6 +14,7 @@ import { type CatalogVariableField, type CatalogVariableValue } from '@qovery/sh
 export interface CatalogVariableInputProps {
   autoFocus?: boolean
   booleanControl?: 'checkbox' | 'toggle'
+  disabled?: boolean
   error?: string
   field: CatalogVariableField
   // Search text highlighted in the label and description (row layout only).
@@ -51,6 +52,7 @@ type CatalogVariableControlProps = Omit<CatalogVariableInputProps, 'layout'> & {
 function CatalogVariableControl({
   autoFocus,
   booleanControl = 'toggle',
+  disabled,
   error,
   errorId,
   field,
@@ -71,6 +73,7 @@ function CatalogVariableControl({
           aria-label={field.label}
           {...errorProps}
           autoFocus={autoFocus}
+          disabled={disabled}
           checked={typeof value === 'boolean' ? value : false}
           onCheckedChange={(checked) => {
             if (checked === 'indeterminate') return
@@ -88,6 +91,7 @@ function CatalogVariableControl({
         ariaDescribedBy={errorProps['aria-describedby']}
         ariaInvalid={errorProps['aria-invalid']}
         autoFocus={autoFocus}
+        disabled={disabled}
         onChange={onChange}
       />
     )
@@ -102,7 +106,8 @@ function CatalogVariableControl({
         ariaLabel={field.label}
         ariaDescribedBy={errorProps['aria-describedby']}
         ariaInvalid={errorProps['aria-invalid']}
-        inputClassName="h-10"
+        inputClassName="h-10 disabled:bg-surface-neutral-component disabled:text-neutral-disabled disabled:hover:bg-surface-neutral-component"
+        disabled={disabled}
         defaultValue={typeof value === 'string' ? value : ''}
         items={field.allowedValues.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
         onChange={(nextValue) => {
@@ -117,12 +122,14 @@ function CatalogVariableControl({
       name={field.key}
       id={field.key}
       label={field.label}
-      className="w-full [&>div[data-testid=input]]:!h-10 [&>div[data-testid=input]]:!min-h-10"
+      className="w-full [&>div[data-testid=input].input--disabled]:bg-surface-neutral-component [&>div[data-testid=input]]:!h-10 [&>div[data-testid=input]]:!min-h-10"
+      inputClassName="px-3 disabled:text-neutral-disabled"
       type={field.sensitive ? 'password' : field.type === 'number' ? 'number' : 'text'}
       value={typeof value === 'string' ? value : ''}
       error={error}
       hasShowPasswordButton={field.sensitive}
       autoFocus={autoFocus}
+      disabled={disabled}
       onChange={(event) => onChange(event.currentTarget.value)}
     />
   )
@@ -131,6 +138,7 @@ function CatalogVariableControl({
 function CatalogVariableInputRow({
   autoFocus,
   booleanControl,
+  disabled,
   error,
   errorId,
   field,
@@ -151,6 +159,7 @@ function CatalogVariableInputRow({
       <div className={field.type === 'bool' ? 'flex shrink-0 flex-col items-end' : 'w-full shrink-0 md:w-[400px]'}>
         <CatalogVariableControl
           autoFocus={autoFocus}
+          disabled={disabled}
           booleanControl={booleanControl}
           error={error}
           errorId={errorId}
@@ -171,6 +180,7 @@ function CatalogVariableInputRow({
 export function CatalogVariableInput({
   autoFocus,
   booleanControl = 'toggle',
+  disabled,
   error,
   field,
   highlight,
@@ -185,6 +195,7 @@ export function CatalogVariableInput({
     return (
       <CatalogVariableInputRow
         autoFocus={autoFocus}
+        disabled={disabled}
         booleanControl={booleanControl}
         error={error}
         errorId={errorId}
@@ -213,6 +224,7 @@ export function CatalogVariableInput({
             ariaDescribedBy={error ? errorId : undefined}
             ariaInvalid={error ? true : undefined}
             autoFocus={autoFocus}
+            disabled={disabled}
             onChange={onChange}
           />
           {error ? (
@@ -233,6 +245,7 @@ export function CatalogVariableInput({
             aria-describedby={error ? errorId : undefined}
             aria-invalid={error ? true : undefined}
             autoFocus={autoFocus}
+            disabled={disabled}
             checked={typeof value === 'boolean' ? value : false}
             onCheckedChange={(checked) => {
               if (checked === 'indeterminate') return
@@ -264,6 +277,7 @@ export function CatalogVariableInput({
         hint={field.description}
         error={error}
         autoFocus={autoFocus}
+        disabled={disabled}
         onChange={(value) => {
           if (Array.isArray(value)) return
           onChange(value)
@@ -281,6 +295,7 @@ export function CatalogVariableInput({
       error={error}
       hint={field.description}
       autoFocus={autoFocus}
+      disabled={disabled}
       onChange={(event) => onChange(event.currentTarget.value)}
     />
   )

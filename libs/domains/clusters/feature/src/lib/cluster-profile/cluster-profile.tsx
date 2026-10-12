@@ -13,6 +13,7 @@ import {
   getFieldViolation,
   getUnmappedViolations,
   isPlatformConfigurationReady,
+  isPlatformReadOnlyField,
   isSupportedPlatformField,
   omitEmptyValues,
   toCatalogVariableField,
@@ -183,7 +184,7 @@ function ProfileConfigurationSection({
           key={field.key}
           field={field}
           path={field.key}
-          value={profileConfig[field.key]}
+          value={isPlatformReadOnlyField(field) ? preview?.resolvedValues[field.key] : profileConfig[field.key]}
           violations={violations}
           highlight={highlight}
           onChange={(value) => onProfileConfigChange(section.component.key, field.key, value)}

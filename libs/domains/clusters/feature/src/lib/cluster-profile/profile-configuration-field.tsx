@@ -346,6 +346,7 @@ export function ProfileConfigurationField({
       // Nested fields reuse keys like `name`: the full path keeps input ids unique.
       field={toCatalogVariableField({ ...field, key: path })}
       layout="row"
+      disabled={field.readOnly}
       value={getCatalogVariableValue(field, value)}
       error={getFieldViolation(violations, path)}
       highlight={highlight}

@@ -229,6 +229,7 @@ function createResolution(componentKey: string): PlatformComponentConfigurationR
     requirements: [],
     componentBindings: [],
     violations: [],
+    resolvedValues: {},
   }
 }
 
@@ -325,6 +326,40 @@ describe('ClusterProfileFeature', () => {
     expect(highAvailability).not.toBeChecked()
     await userEvent.click(highAvailability)
     expect(highAvailability).toBeChecked()
+  })
+
+  it('shows read-only fields disabled with their resolved value instead of the draft', () => {
+    const [loki, alloy] = createComponentQueries(['loki', 'alloy'])
+    const resolution = createResolution('loki')
+    mockUsePlatformComponentConfigurations.mockReturnValue([
+      {
+        ...loki,
+        data: {
+          ...resolution,
+          fields: [
+            ...resolution.fields,
+            {
+              key: 'cpu-limit',
+              label: 'CPU limit',
+              type: 'string',
+              required: false,
+              sensitive: false,
+              readOnly: true,
+              defaultValue: null,
+              constraints: {},
+            },
+          ],
+          resolvedValues: { 'cpu-limit': '500m' },
+        },
+      },
+      alloy,
+    ] as ReturnType<typeof usePlatformComponentConfigurations>)
+    renderWithProviders(<ClusterProfileFeature />)
+
+    const cpuLimit = screen.getByRole('textbox', { name: 'CPU limit' })
+    expect(cpuLimit).toBeDisabled()
+    expect(cpuLimit).toHaveValue('500m')
+    expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toBeEnabled()
   })
 
   it('renders configuration sections from their source component', () => {
