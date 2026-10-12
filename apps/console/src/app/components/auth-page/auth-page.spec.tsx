@@ -9,7 +9,21 @@ jest.mock('posthog-js', () => ({
 }))
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  Link: ({ children, href }: { children: React.ReactNode; href?: string }) => <a href={href}>{children}</a>,
+  Link: ({
+    children,
+    to,
+    search,
+    onClick,
+  }: {
+    children: React.ReactNode
+    to: string
+    search?: { redirect?: string }
+    onClick?: () => void
+  }) => (
+    <a href={search?.redirect ? `${to}?redirect=${search.redirect}` : to} onClick={onClick}>
+      {children}
+    </a>
+  ),
 }))
 jest.mock('@qovery/shared/auth', () => ({
   ...jest.requireActual('@qovery/shared/auth'),
@@ -149,15 +163,40 @@ describe('AuthPage', () => {
       expect(screen.getByRole('button', { name: 'Sign up with Google' })).toBeInTheDocument()
     })
 
-    it('shows the current login screen with "Log in"', async () => {
-      const { userEvent } = renderWithProviders(<AuthPage page="signup" />)
+    it('links to the login page and keeps the redirect', async () => {
+      const { userEvent } = renderWithProviders(<AuthPage page="signup" redirect="/organization/123/overview" />)
 
-      await userEvent.click(screen.getByRole('button', { name: 'Log in' }))
+      expect(screen.getByRole('link', { name: 'Log in' })).toHaveAttribute(
+        'href',
+        '/login?redirect=/organization/123/overview'
+      )
 
-      expect(screen.getByText(LOGIN_TITLE)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /Continue with SAML SSO/ })).toBeInTheDocument()
+      await userEvent.click(screen.getByRole('link', { name: 'Log in' }))
+
       expect(getCaptures('auth_secondary_cta_clicked')).toEqual([{ page: 'signup', cta: 'log_in_instead' }])
-      expect(getCaptures('auth_page_viewed')).toHaveLength(1)
+    })
+  })
+
+  describe('login screen', () => {
+    it('mirrors the sign-up page without the terms', async () => {
+      const { userEvent } = renderWithProviders(<AuthPage page="login" />)
+
+      expect(screen.getByAltText('Qovery logo black')).toBeInTheDocument()
+      expect(screen.getByAltText('SOC 2 logo')).toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: 'Terms of Service' })).not.toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Sign up' })).toHaveAttribute('href', '/signup')
+
+      await userEvent.click(screen.getByRole('link', { name: 'Sign up' }))
+
+      expect(getCaptures('auth_secondary_cta_clicked')).toEqual([{ page: 'login', cta: 'sign_up_instead' }])
+    })
+
+    it('does not show "Last used" badges on the sign-up page', () => {
+      localStorage.setItem('lastUsedLogin', 'github')
+
+      renderWithProviders(<AuthPage page="signup" />)
+
+      expect(screen.getByRole('button', { name: 'Sign up with GitHub' })).not.toHaveTextContent('Last used')
     })
   })
 

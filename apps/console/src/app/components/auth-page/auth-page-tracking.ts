@@ -15,6 +15,9 @@ export function trackAuthProviderClicked(context: AuthPageTrackingContext, provi
   posthog.capture('auth_provider_clicked', { ...context, provider }, { send_instantly: true })
 }
 
-export function trackAuthSecondaryCtaClicked(context: AuthPageTrackingContext, cta: 'log_in_instead') {
+export function trackAuthSecondaryCtaClicked(
+  context: AuthPageTrackingContext,
+  cta: 'log_in_instead' | 'sign_up_instead'
+) {
   posthog.capture('auth_secondary_cta_clicked', { ...context, cta })
 }

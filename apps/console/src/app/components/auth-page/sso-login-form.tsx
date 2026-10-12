@@ -1,7 +1,6 @@
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Button, InputTextSmall } from '@qovery/shared/ui'
 import { SSO_DOMAIN_PATTERN } from './auth-page-utils'
-import { AUTH_PAGE_COPY } from './auth-page.copy'
 
 export interface SsoLoginFormProps {
   defaultDomain?: string
@@ -25,16 +24,16 @@ export function SsoLoginForm({ defaultDomain, onConnect, onBack }: SsoLoginFormP
           name="ssoDomain"
           control={methods.control}
           rules={{
-            required: AUTH_PAGE_COPY.sso.domainRequired,
+            required: 'Please enter a domain.',
             pattern: {
               value: SSO_DOMAIN_PATTERN,
-              message: AUTH_PAGE_COPY.sso.domainInvalid,
+              message: 'Invalid domain format',
             },
           }}
           render={({ field, fieldState: { error } }) => (
             <InputTextSmall
-              label={AUTH_PAGE_COPY.sso.domainLabel}
-              placeholder={AUTH_PAGE_COPY.sso.domainPlaceholder}
+              label="Company domain"
+              placeholder="Enter your domain (e.g., company.com)"
               name={field.name}
               value={field.value}
               onChange={field.onChange}
@@ -55,7 +54,7 @@ export function SsoLoginForm({ defaultDomain, onConnect, onBack }: SsoLoginFormP
             // Derived from the value rather than `formState.isValid`, which isn't computed for a pre-filled domain
             disabled={!SSO_DOMAIN_PATTERN.test(ssoDomain)}
           >
-            {AUTH_PAGE_COPY.sso.connect}
+            Connect
           </Button>
           <Button
             type="button"
@@ -65,7 +64,7 @@ export function SsoLoginForm({ defaultDomain, onConnect, onBack }: SsoLoginFormP
             size="lg"
             className="w-full justify-center"
           >
-            {AUTH_PAGE_COPY.sso.changeLoginMethod}
+            Change login method
           </Button>
         </div>
       </form>
