@@ -144,7 +144,7 @@ describe('ClusterCredentialsSettings', () => {
         </>
       )
     )
-    expect(screen.getByText('See and edit all Cloud credentials')).toBeInTheDocument()
+    expect(screen.queryByText('See and edit all Cloud credentials')).not.toBeInTheDocument()
     await userEvent.click(screen.getByLabelText('Credentials'))
     await userEvent.click(await screen.findByText('New credential'))
     act(() => mockOpenModal.mock.calls[0][0].content.props.onClose({ id: 'new-credential' }))
@@ -235,16 +235,6 @@ describe('ClusterCredentialsSettings', () => {
     renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
 
     expect(screen.queryByTestId('mirroring-registry-credentials-warning')).not.toBeInTheDocument()
-  })
-
-  it('does not offer EKS Anywhere credentials to managed AWS clusters', () => {
-    const credentials = [
-      { id: 'eks-anywhere', name: 'vSphere', object_type: 'EKS_ANYWHERE_VSPHERE' },
-    ] as ClusterCredentials[]
-    expect(filterCredentialsByCloudProvider(credentials, 'AWS')).toEqual([])
-    useCloudProviderCredentialsMockSpy.mockReturnValue({ data: credentials, isLoading: false })
-    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
-    expect(screen.getByRole('button', { name: 'Add New Credential' })).toBeInTheDocument()
   })
 
   it('should filter non EKS Anywhere credentials in EKS Anywhere flow', () => {

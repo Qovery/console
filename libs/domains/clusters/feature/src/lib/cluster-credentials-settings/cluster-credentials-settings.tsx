@@ -30,10 +30,6 @@ export const filterCredentialsByCloudProvider = (
   credentials: ClusterCredentials[],
   cloudProvider?: ClusterCredentialsModalCloudProvider
 ) => {
-  if (cloudProvider === 'AWS') {
-    return credentials.filter((credential) => credential.object_type !== 'EKS_ANYWHERE_VSPHERE')
-  }
-
   if (cloudProvider !== 'AWS_EKS_ANYWHERE') {
     return credentials
   }
@@ -159,7 +155,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
             }
           />
 
-          {(isSetting || sortedCredentials.length > 0) && (
+          {isSetting && (
             <Link
               color="brand"
               to="/organization/$organizationId/settings/cloud-credentials"
