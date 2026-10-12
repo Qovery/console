@@ -159,7 +159,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
             }
           />
 
-          {isSetting && (
+          {(isSetting || sortedCredentials.length > 0) && (
             <Link
               color="brand"
               to="/organization/$organizationId/settings/cloud-credentials"

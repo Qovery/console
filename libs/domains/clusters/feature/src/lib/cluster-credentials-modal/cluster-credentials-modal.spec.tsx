@@ -180,19 +180,22 @@ describe('ClusterCredentialsModal', () => {
 
   it('keeps the form open and its values after an API error, then allows retry', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
-    mockCreateCredential
-      .mockRejectedValueOnce(new Error('API unavailable'))
-      .mockResolvedValueOnce({ id: 'retry-credential' })
-    const { userEvent } = renderWithProviders(<ClusterCredentialsModal {...props} />)
-    await userEvent.type(screen.getByLabelText('Name'), 'test-credential')
-    await userEvent.type(screen.getByTestId('input-text'), 'arn:aws:iam::123456789012:role/test-role')
-    await userEvent.click(screen.getByTestId('submit-button'))
-    expect(props.onClose).not.toHaveBeenCalled()
-    expect(screen.getByLabelText('Name')).toHaveValue('test-credential')
-    expect(screen.getByTestId('input-text')).toHaveValue('arn:aws:iam::123456789012:role/test-role')
-    await userEvent.click(screen.getByTestId('submit-button'))
-    expect(props.onClose).toHaveBeenCalledWith({ id: 'retry-credential' })
-    consoleSpy.mockRestore()
+    try {
+      mockCreateCredential
+        .mockRejectedValueOnce(new Error('API unavailable'))
+        .mockResolvedValueOnce({ id: 'retry-credential' })
+      const { userEvent } = renderWithProviders(<ClusterCredentialsModal {...props} />)
+      await userEvent.type(screen.getByLabelText('Name'), 'test-credential')
+      await userEvent.type(screen.getByTestId('input-text'), 'arn:aws:iam::123456789012:role/test-role')
+      await userEvent.click(screen.getByTestId('submit-button'))
+      expect(props.onClose).not.toHaveBeenCalled()
+      expect(screen.getByLabelText('Name')).toHaveValue('test-credential')
+      expect(screen.getByTestId('input-text')).toHaveValue('arn:aws:iam::123456789012:role/test-role')
+      await userEvent.click(screen.getByTestId('submit-button'))
+      expect(props.onClose).toHaveBeenCalledWith({ id: 'retry-credential' })
+    } finally {
+      consoleSpy.mockRestore()
+    }
   })
 
   it('explains insufficient permissions with an administrator recovery action', () => {

@@ -144,6 +144,7 @@ describe('ClusterCredentialsSettings', () => {
         </>
       )
     )
+    expect(screen.getByText('See and edit all Cloud credentials')).toBeInTheDocument()
     await userEvent.click(screen.getByLabelText('Credentials'))
     await userEvent.click(await screen.findByText('New credential'))
     act(() => mockOpenModal.mock.calls[0][0].content.props.onClose({ id: 'new-credential' }))
