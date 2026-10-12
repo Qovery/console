@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, useEffect } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   ApplicationContainerCreationFlow,
@@ -96,6 +96,21 @@ jest.mock('@qovery/domains/variables/feature', () => ({
 function VariablesState() {
   const { variablesForm } = useApplicationContainerCreateContext()
   return <div data-testid="variables-state">{JSON.stringify(variablesForm.watch())}</div>
+}
+
+function JsonSecretStep() {
+  const { variablesForm } = useApplicationContainerCreateContext()
+  useEffect(() => {
+    variablesForm.setValue('externalSecrets', [
+      {
+        name: 'Application credentials',
+        reference: 'lucis/production/application',
+        isJson: true,
+        keys: ['DATABASE_URL'],
+      },
+    ])
+  }, [variablesForm])
+  return <ApplicationContainerStepVariables onBack={jest.fn()} onSubmit={jest.fn()} />
 }
 
 describe('ApplicationContainerStepVariables', () => {
@@ -216,6 +231,32 @@ describe('ApplicationContainerStepVariables', () => {
     expect(screen.queryByText('lucis/production/application: DATABASE_URL') !== null).toBe(
       option === 'Add secret as JSON'
     )
+  })
+
+  it('toggles JSON keys from the name cell using pointer and keyboard', async () => {
+    mockUseVariablesSecretManagers.mockReturnValue({
+      secretManagers: [],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-1',
+    })
+    const { userEvent } = renderWithProviders(
+      <ApplicationContainerCreationFlow
+        creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
+        defaultServiceType="APPLICATION"
+      >
+        <JsonSecretStep />
+      </ApplicationContainerCreationFlow>
+    )
+    expect(screen.getByRole('button', { name: 'Copy DATABASE_URL' })).toBeInTheDocument()
+    await userEvent.click(screen.getByText('Application credentials'))
+    expect(screen.queryByRole('button', { name: 'Copy DATABASE_URL' })).not.toBeInTheDocument()
+    const cell = screen.getByRole('button', { name: 'Expand keys for lucis/production/application' })
+    expect(cell).toHaveAttribute('aria-expanded', 'false')
+    cell.focus()
+    await userEvent.keyboard('{Enter}')
+    expect(screen.getByRole('button', { name: 'Copy DATABASE_URL' })).toBeInTheDocument()
+    await userEvent.keyboard(' ')
+    expect(screen.queryByRole('button', { name: 'Copy DATABASE_URL' })).not.toBeInTheDocument()
   })
 
   it('does not expose external secret creation when no secret manager is linked', () => {
