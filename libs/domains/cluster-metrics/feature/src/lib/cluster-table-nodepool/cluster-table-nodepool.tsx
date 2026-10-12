@@ -3,11 +3,12 @@ import clsx from 'clsx'
 import { type ClusterNodeDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
 import { match } from 'ts-pattern'
-import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
 import { Icon, Link, ProgressBar, Tooltip } from '@qovery/shared/ui'
 import { calculatePercentage, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { getPresentationState } from '@qovery/state/util-queries'
 import { ClusterTableNode } from '../cluster-table-node/cluster-table-node'
-import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useClusterDisplayMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { calculateNodePoolMetrics, calculateUntrackedNodesMetrics } from './calculate-nodepool-metrics'
 
 export interface ClusterTableNodepoolProps {
@@ -276,11 +277,13 @@ function MetricProgressBar({ type, capacity, capacityRaw, limit, limitRaw, unit 
 }
 
 export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTableNodepoolProps) {
-  const { data: runningStatus } = useClusterRunningStatus({
+  const { data: displayStatus } = useClusterRunningDisplayStatus({
     organizationId: organizationId,
     clusterId: clusterId,
   })
-  const { data: metrics } = useClusterMetrics({
+
+  const runningStatus = getPresentationState(displayStatus).data
+  const { data: metrics } = useClusterDisplayMetrics({
     organizationId: organizationId,
     clusterId: clusterId,
   })

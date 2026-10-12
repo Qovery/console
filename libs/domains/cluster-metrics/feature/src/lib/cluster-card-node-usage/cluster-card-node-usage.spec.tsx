@@ -1,16 +1,16 @@
 import { useRouter } from '@tanstack/react-router'
-import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useClusterDisplayMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { ClusterCardNodeUsage } from './cluster-card-node-usage'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   useCluster: jest.fn(),
-  useClusterRunningStatus: jest.fn(),
+  useClusterRunningDisplayStatus: jest.fn(),
 }))
 
 jest.mock('../hooks/use-cluster-metrics/use-cluster-metrics', () => ({
-  useClusterMetrics: jest.fn(),
+  useClusterDisplayMetrics: jest.fn(),
 }))
 
 describe('ClusterCardNodeUsage', () => {
@@ -59,10 +59,10 @@ describe('ClusterCardNodeUsage', () => {
     ;(useCluster as jest.Mock).mockReturnValue({
       data: mockCluster,
     })
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    ;(useClusterRunningDisplayStatus as jest.Mock).mockReturnValue({
       data: runningStatus || defaultRunningStatus,
     })
-    ;(useClusterMetrics as jest.Mock).mockReturnValue({
+    ;(useClusterDisplayMetrics as jest.Mock).mockReturnValue({
       data: metrics || defaultMetrics,
     })
   }

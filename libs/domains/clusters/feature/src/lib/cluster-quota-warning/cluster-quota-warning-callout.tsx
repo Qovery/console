@@ -1,11 +1,11 @@
 import { useParams } from '@tanstack/react-router'
 import { Callout, Icon } from '@qovery/shared/ui'
-import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
+import { useClusterRunningDisplayStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { getClusterQuotaWarning } from './cluster-quota-warning'
 
 export function ClusterQuotaWarningCallout() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
-  const { data: runningStatus } = useClusterRunningStatus({ organizationId, clusterId })
+  const { data: runningStatus } = useClusterRunningDisplayStatus({ organizationId, clusterId })
   const quotaWarning = getClusterQuotaWarning(runningStatus)
 
   if (!quotaWarning) {

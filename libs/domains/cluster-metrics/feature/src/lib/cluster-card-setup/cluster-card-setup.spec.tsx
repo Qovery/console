@@ -1,14 +1,14 @@
-import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterCardSetup } from './cluster-card-setup'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   useCluster: jest.fn(),
-  useClusterRunningStatus: jest.fn(),
+  useClusterRunningDisplayStatus: jest.fn(),
 }))
 
 const mockUseCluster = useCluster as jest.Mock
-const mockUseClusterRunningStatus = useClusterRunningStatus as jest.Mock
+const mockUseClusterRunningStatus = useClusterRunningDisplayStatus as jest.Mock
 
 describe('ClusterCardSetup', () => {
   const mockOrganizationId = 'org-123'

@@ -1,15 +1,15 @@
-import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useClusterDisplayMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { calculateClusterResources } from './calculate-cluster-resources'
 import { ClusterCardResources } from './cluster-card-resources'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
-  useClusterRunningStatus: jest.fn(),
+  useClusterRunningDisplayStatus: jest.fn(),
 }))
 
 jest.mock('../hooks/use-cluster-metrics/use-cluster-metrics', () => ({
-  useClusterMetrics: jest.fn(),
+  useClusterDisplayMetrics: jest.fn(),
 }))
 
 jest.mock('./calculate-cluster-resources', () => ({
@@ -68,10 +68,10 @@ describe('ClusterCardResources', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    ;(useClusterRunningDisplayStatus as jest.Mock).mockReturnValue({
       data: defaultRunningStatus,
     })
-    ;(useClusterMetrics as jest.Mock).mockReturnValue({
+    ;(useClusterDisplayMetrics as jest.Mock).mockReturnValue({
       data: defaultMetrics,
     })
     ;(calculateClusterResources as jest.Mock).mockReturnValue(mockClusterResources)

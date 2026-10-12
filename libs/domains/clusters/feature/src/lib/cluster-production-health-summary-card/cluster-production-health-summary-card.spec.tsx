@@ -1,5 +1,4 @@
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
-import { act } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterProductionHealthSummaryCard } from './cluster-production-health-summary-card'
 
@@ -115,7 +114,18 @@ describe('ClusterProductionHealthSummaryCard', () => {
     expect(screen.queryByText(/cluster with ongoing issue/i)).not.toBeInTheDocument()
   })
 
-  it('resets the skeleton timeout when the cluster scope changes', () => {
+  it('does not wait for live health on a stopped cluster', () => {
+    mockUseQueries.mockReturnValue([{ data: undefined }])
+    renderWithProviders(
+      <ClusterProductionHealthSummaryCard
+        clusters={[baseCluster]}
+        clusterStatuses={[{ ...deployedStatus, status: 'STOPPED' }]}
+      />
+    )
+    expect(screen.getByText('All clusters healthy')).toBeInTheDocument()
+  })
+
+  it('waits for the shared status deadline and stays pending for a new cluster', () => {
     mockUseQueries.mockReturnValue([{ data: undefined }])
 
     const { rerender, container } = renderWithProviders(
@@ -124,9 +134,8 @@ describe('ClusterProductionHealthSummaryCard', () => {
 
     expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
 
-    act(() => {
-      jest.advanceTimersByTime(8_000)
-    })
+    mockUseQueries.mockReturnValue([{ data: 'NotFound' }])
+    rerender(<ClusterProductionHealthSummaryCard clusters={[baseCluster]} clusterStatuses={[deployedStatus]} />)
 
     expect(screen.getByText('1 cluster needs attention')).toBeInTheDocument()
 
@@ -137,6 +146,7 @@ describe('ClusterProductionHealthSummaryCard', () => {
       name: 'prod-cluster-2',
     } as Cluster
 
+    mockUseQueries.mockReturnValue([{ data: undefined }])
     rerender(<ClusterProductionHealthSummaryCard clusters={[nextCluster]} clusterStatuses={[deployedStatus]} />)
 
     expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()

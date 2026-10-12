@@ -4,7 +4,7 @@ import {
   ClusterCardNodeUsage,
   ClusterTableNode,
   ClusterTableNodepool,
-  useClusterMetrics,
+  useClusterDisplayMetrics,
   useClusterMetricsSocket,
 } from '@qovery/domains/cluster-metrics/feature'
 import { ClusterCardResources } from '@qovery/domains/cluster-metrics/feature'
@@ -19,7 +19,7 @@ import {
   ClusterType,
   hasGpuInstance,
   useCluster,
-  useClusterRunningStatus,
+  useClusterRunningDisplayStatus,
   useClusterRunningStatusSocket,
   useClusterStatus,
   useDeployCluster,
@@ -102,8 +102,8 @@ function TableLegend() {
 function ClusterOverview({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
   const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { mutate: deployCluster } = useDeployCluster()
-  const { data: runningStatus } = useClusterRunningStatus({ organizationId, clusterId })
-  const { data: clusterMetrics } = useClusterMetrics({ organizationId, clusterId })
+  const { data: runningStatus } = useClusterRunningDisplayStatus({ organizationId, clusterId })
+  const { data: clusterMetrics } = useClusterDisplayMetrics({ organizationId, clusterId })
   const { data: clusterStatus, isLoading: isClusterStatusLoading } = useClusterStatus({
     organizationId,
     clusterId,
@@ -151,7 +151,9 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {cluster && <ClusterRunningStatusIndicator cluster={cluster} />}
+              {cluster && (
+                <ClusterRunningStatusIndicator cluster={cluster} clusterDeploymentStatus={clusterStatus?.status} />
+              )}
               {cluster?.production && (
                 <Badge variant="surface" color="red">
                   Production
@@ -233,13 +235,15 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4">
             <Heading className="text-base font-medium text-neutral">Cluster information</Heading>
-            {typeof runningStatus !== 'string' && <TableLegend />}
+            {runningStatus !== 'NotFound' && clusterMetrics !== null && <TableLegend />}
           </div>
-          {typeof runningStatus === 'string' ? (
+          {runningStatus === 'NotFound' || clusterMetrics === null ? (
             <div className="h-64">
               <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
                 <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
-                <span className="font-medium">No metrics available because the running status is unavailable.</span>
+                <span className="font-medium">
+                  Cluster information is temporarily unavailable. Retrying automatically.
+                </span>
               </div>
             </div>
           ) : (

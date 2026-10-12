@@ -36,3 +36,11 @@ export function useClusterRunningStatuses({ clusters }: { clusters: Cluster[] })
 }
 
 export default useClusterRunningStatus
+
+// Presentation-only status: raw runningStatus remains available to operational consumers.
+export function useClusterRunningDisplayStatus({ organizationId, clusterId }: UseClusterStatusWSProps) {
+  return useQuery({
+    ...queries.clusters.runningDisplayStatus({ organizationId, clusterId }),
+    ...CLUSTER_RUNNING_STATUS_QUERY_OPTIONS,
+  })
+}

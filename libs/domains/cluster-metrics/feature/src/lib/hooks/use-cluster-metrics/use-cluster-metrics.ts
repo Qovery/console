@@ -19,3 +19,13 @@ export function useClusterMetrics({ organizationId, clusterId }: UseClusterMetri
 }
 
 export default useClusterMetrics
+
+export function useClusterDisplayMetrics({ organizationId, clusterId }: UseClusterMetricsWSProps) {
+  return useQuery({
+    ...queries.clusters.displayMetrics({ organizationId, clusterId }),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+  })
+}

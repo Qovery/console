@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { match } from 'ts-pattern'
-import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
 import { Icon, Link, ProgressBar, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { calculatePercentage, pluralize } from '@qovery/shared/util-js'
-import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { getPresentationState } from '@qovery/state/util-queries'
+import { useClusterDisplayMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 
 const MAX_INT_32 = 2 ** 31 - 1
 
@@ -13,16 +14,18 @@ export interface ClusterCardNodeUsageProps {
 }
 
 export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardNodeUsageProps) {
-  const { data: runningStatus } = useClusterRunningStatus({
+  const { data: displayStatus } = useClusterRunningDisplayStatus({
     organizationId: organizationId,
     clusterId: clusterId,
   })
-  const { data: metrics } = useClusterMetrics({
+
+  const runningStatus = getPresentationState(displayStatus).data
+  const { data: metrics } = useClusterDisplayMetrics({
     organizationId: organizationId,
     clusterId: clusterId,
   })
   const isMaxNodesSizeReached = runningStatus?.computed_status.is_max_nodes_size_reached
-  const metricsNotAvailable = typeof metrics !== 'object'
+  const metricsNotAvailable = getPresentationState(metrics).status !== 'available'
 
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const isEksAnywhereCluster = cluster?.cloud_provider === 'AWS' && cluster?.kubernetes === 'PARTIALLY_MANAGED'
