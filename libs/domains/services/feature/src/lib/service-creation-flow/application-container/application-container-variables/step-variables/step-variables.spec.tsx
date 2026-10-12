@@ -36,7 +36,10 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
-  AddSecretModal: () => null,
+  AddSecretDropdown: jest.requireActual('@qovery/domains/variables/feature').AddSecretDropdown,
+  AddSecretModal: ({ isFile, isJson }: { isFile?: boolean; isJson?: boolean }) => (
+    <div>{isJson ? 'JSON secret modal' : isFile ? 'File secret modal' : 'Variable secret modal'}</div>
+  ),
   VariableFormModal: ({
     onSubmit,
     scope,
@@ -162,6 +165,36 @@ describe('ApplicationContainerStepVariables', () => {
     await userEvent.click(screen.getByRole('button', { name: /^continue$/i }))
 
     expect(onSubmit).toHaveBeenCalled()
+  })
+
+  it.each([
+    ['Add secret as variable', 'Variable secret modal'],
+    ['Add secret as file', 'File secret modal'],
+    ['Add secret as JSON', 'JSON secret modal'],
+  ])('opens %s from the external secret dropdown', async (option, modal) => {
+    mockUseVariablesSecretManagers.mockReturnValue({
+      secretManagers: [],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-1',
+    })
+    const { userEvent } = renderWithProviders(
+      <ApplicationContainerCreationFlow
+        creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
+        defaultServiceType="APPLICATION"
+      >
+        <ApplicationContainerStepVariables onBack={onBack} onSubmit={onSubmit} />
+      </ApplicationContainerCreationFlow>
+    )
+    expect(screen.queryByRole('button', { name: 'Add secret as file' })).not.toBeInTheDocument()
+    const addButtons = screen.getAllByRole('button', { name: 'Add secret' })
+    await userEvent.click(addButtons[addButtons.length - 1])
+    expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
+      'Add secret as variable',
+      'Add secret as file',
+      'Add secret as JSON',
+    ])
+    await userEvent.click(screen.getByRole('menuitem', { name: option }))
+    expect(screen.getByText(modal)).toBeInTheDocument()
   })
 
   it('does not expose external secret creation when no secret manager is linked', () => {
