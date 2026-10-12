@@ -85,7 +85,7 @@ export function toVersionedService(service: AnyService): VersionedService | unde
   }
 
   if (isContainer(service)) {
-    const containerRegistryId = service.registry_id ?? service.registry.id
+    const containerRegistryId = service.registry.id
     if (!containerRegistryId) return undefined
 
     return {
@@ -109,7 +109,7 @@ export function toVersionedService(service: AnyService): VersionedService | unde
     }
 
     if (isJobContainerSource(service.source)) {
-      const containerRegistryId = service.source.image.registry_id ?? service.source.image.registry.id
+      const containerRegistryId = service.source.image.registry.id
       if (!containerRegistryId) return undefined
 
       return {
