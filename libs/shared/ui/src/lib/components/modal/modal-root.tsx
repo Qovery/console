@@ -4,7 +4,7 @@ import Modal, { type ModalProps } from './modal'
 
 export type ModalOptions = Pick<
   ModalProps,
-  'buttonClose' | 'className' | 'dismissible' | 'fullScreen' | 'height' | 'width'
+  'onCloseAutoFocus' | 'buttonClose' | 'className' | 'dismissible' | 'fullScreen' | 'height' | 'width'
 > & {
   /**
    * This is a workaround to avoid radix dialog restriction.

@@ -1,3 +1,4 @@
+import { act } from '@testing-library/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import selectEvent from 'react-select-event'
@@ -11,6 +12,7 @@ import {
 import StepGeneral, { type StepGeneralProps } from './step-general'
 
 const mockOnSubmit = jest.fn()
+const mockOpenModal = jest.fn()
 
 const mockContextValue: ClusterContainerCreateContextInterface = {
   currentStep: 1,
@@ -52,7 +54,7 @@ jest.mock('@qovery/shared/iam/feature', () => ({
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
   useModal: () => ({
-    openModal: jest.fn(),
+    openModal: mockOpenModal,
     closeModal: jest.fn(),
   }),
 }))
@@ -83,6 +85,7 @@ const defaultProps: StepGeneralProps = {
 describe('StepGeneral', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockContextValue.generalData = undefined
     useCloudProvidersMockSpy.mockReturnValue({
       data: [
         {
@@ -93,6 +96,39 @@ describe('StepGeneral', () => {
       ],
     })
     useCloudProviderCredentialsMockSpy.mockReturnValue({ data: [{ id: '1', name: 'creds' }] })
+  })
+
+  it('continues with the created credential and preserves edited cluster fields', async () => {
+    mockContextValue.generalData = {
+      name: '',
+      credentials: '',
+      credentials_name: '',
+      cloud_provider: 'AWS',
+      installation_type: 'MANAGED',
+      region: 'us-east-1',
+    }
+    useCloudProviderCredentialsMockSpy.mockReturnValue({ data: [], isLoading: false })
+    const { userEvent } = renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
+    await userEvent.type(screen.getByTestId('input-name'), 'production-cluster')
+    await userEvent.type(screen.getByTestId('input-description'), 'Preserve this description')
+    expect(screen.getByTestId('button-submit')).toBeDisabled()
+    await userEvent.click(screen.getByRole('button', { name: 'Add New Credential' }))
+    const credential = { id: 'new-credential', name: 'New AWS credential' }
+    useCloudProviderCredentialsMockSpy.mockReturnValue({ data: [credential], isLoading: false })
+    act(() => mockOpenModal.mock.calls[0][0].content.props.onClose(credential))
+    await userEvent.click(screen.getByTestId('button-submit'))
+    expect(mockOnSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'production-cluster',
+        description: 'Preserve this description',
+        production: true,
+        region: 'us-east-1',
+        cloud_provider: 'AWS',
+        credentials: 'new-credential',
+        credentials_name: 'New AWS credential',
+      })
+    )
+    mockContextValue.generalData = undefined
   })
 
   it('should render general settings form', () => {

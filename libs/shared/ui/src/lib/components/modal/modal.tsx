@@ -6,6 +6,7 @@ import { isToastInteraction } from '../toast/toast'
 import { ModalContext } from './modal-root'
 
 export interface ModalProps {
+  onCloseAutoFocus?: (event: Event) => void
   children: ReactElement<ModalContentProps>
   trigger?: ReactNode
   defaultOpen?: boolean
@@ -147,6 +148,7 @@ export const Modal = (props: ModalProps) => {
           />
         )}
         <Dialog.Content
+          onCloseAutoFocus={props.onCloseAutoFocus}
           onPointerDownOutside={(event) => {
             event.preventDefault()
             if (isToastInteraction(event.detail.originalEvent)) {

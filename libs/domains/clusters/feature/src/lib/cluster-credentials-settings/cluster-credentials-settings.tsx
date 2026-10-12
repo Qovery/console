@@ -1,10 +1,20 @@
 import { useParams } from '@tanstack/react-router'
 import { type Cluster, type ClusterCredentials } from 'qovery-typescript-axios'
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
 import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
-import { Callout, ExternalLink, Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  EmptyState,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  Link,
+  LoaderSpinner,
+  useModal,
+} from '@qovery/shared/ui'
 import {
   ClusterCredentialsModal,
   type ClusterCredentialsModalCloudProvider,
@@ -20,6 +30,10 @@ export const filterCredentialsByCloudProvider = (
   credentials: ClusterCredentials[],
   cloudProvider?: ClusterCredentialsModalCloudProvider
 ) => {
+  if (cloudProvider === 'AWS') {
+    return credentials.filter((credential) => credential.object_type !== 'EKS_ANYWHERE_VSPHERE')
+  }
+
   if (cloudProvider !== 'AWS_EKS_ANYWHERE') {
     return credentials
   }
@@ -29,6 +43,7 @@ export const filterCredentialsByCloudProvider = (
 
 export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
+  const credentialsContainer = useRef<HTMLDivElement>(null)
   const { control } = useFormContext()
   const { openModal, closeModal } = useModal()
 
@@ -63,6 +78,10 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
         ),
         options: {
           width: 680,
+          onCloseAutoFocus: (event) => {
+            event.preventDefault()
+            credentialsContainer.current?.querySelector<HTMLElement>('[role="combobox"], button')?.focus()
+          },
         },
       })
     },
@@ -76,7 +95,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
   }))
 
   return (
-    <div>
+    <div ref={credentialsContainer}>
       {isLoading ? (
         <div className="mt-2 flex justify-center">
           <LoaderSpinner className="w-4" />
@@ -104,35 +123,58 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
             rules={{
               required: 'Please select a credential.',
             }}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                dataTestId="input-credentials"
-                label="Credentials"
-                className="mb-3"
-                options={buildCredentials}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-                isSearchable
-                menuListButton={{
-                  title: 'Select credential',
-                  label: 'New credential',
-                  icon: <Icon iconName="circle-plus" className="text-brand" />,
-                  onClick: () => openCredentialsModal(undefined, field.onChange),
-                }}
-              />
-            )}
+            render={({ field, fieldState: { error } }) =>
+              !isSetting && sortedCredentials.length === 0 ? (
+                <EmptyState
+                  size="sm"
+                  icon="key"
+                  iconStyle="regular"
+                  title="No cloud credentials"
+                  description="Connect your cloud account to continue."
+                  className="mb-3 border-dashed"
+                >
+                  <Button
+                    type="button"
+                    color="neutral"
+                    variant="outline"
+                    onClick={() => openCredentialsModal(undefined, field.onChange)}
+                  >
+                    <Icon iconName="circle-plus" iconStyle="regular" />
+                    Add New Credential
+                  </Button>
+                </EmptyState>
+              ) : (
+                <InputSelect
+                  dataTestId="input-credentials"
+                  label="Credentials"
+                  className="mb-3"
+                  options={buildCredentials}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  isSearchable
+                  menuListButton={{
+                    title: 'Select credential',
+                    label: 'New credential',
+                    icon: <Icon iconName="circle-plus" className="text-brand" />,
+                    onClick: () => openCredentialsModal(undefined, field.onChange),
+                  }}
+                />
+              )
+            }
           />
 
-          <Link
-            color="brand"
-            to="/organization/$organizationId/settings/cloud-credentials"
-            params={{ organizationId }}
-            className="flex gap-1"
-          >
-            See and edit all Cloud credentials
-            <Icon iconName="key" iconStyle="regular" />
-          </Link>
+          {isSetting && (
+            <Link
+              color="brand"
+              to="/organization/$organizationId/settings/cloud-credentials"
+              params={{ organizationId }}
+              className="flex gap-1"
+            >
+              See and edit all Cloud credentials
+              <Icon iconName="key" iconStyle="regular" />
+            </Link>
+          )}
 
           {isSetting && (
             <Callout.Root color="yellow" className="mt-4" data-testid="mirroring-registry-credentials-warning">
