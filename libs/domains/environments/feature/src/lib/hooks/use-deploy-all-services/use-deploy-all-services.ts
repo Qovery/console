@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type EnvironmentStatus } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
-import { useNavigateToEnvironmentPipeline } from '../use-navigate-to-environment-pipeline'
+import { useNavigateToEnvironmentPipeline } from '../use-navigate-to-environment-pipeline/use-navigate-to-environment-pipeline'
 
 // XXX: Duplicate with the one in the Services domain
 // Necessary to avoid circular dependencies

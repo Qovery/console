@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type EnvironmentStatus } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
-import { useNavigateToEnvironmentPipeline } from '../use-navigate-to-environment-pipeline'
+import { useNavigateToEnvironmentPipeline } from '../use-navigate-to-environment-pipeline/use-navigate-to-environment-pipeline'
 
 export function useStopEnvironment({
   organizationId,
