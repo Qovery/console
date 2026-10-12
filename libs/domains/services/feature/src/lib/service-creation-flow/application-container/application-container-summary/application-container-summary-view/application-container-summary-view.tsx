@@ -355,16 +355,24 @@ export function ApplicationContainerSummaryView({
                 ))}
                 {externalSecretsData.map((secret, index) => (
                   <li className="grid grid-cols-1 gap-2 md:grid-cols-[2fr_1fr_1fr]" key={`${secret.name}-${index}`}>
-                    <Tooltip content={`${secret.name} = ${secret.reference}`} align="start">
-                      <strong className="truncate font-medium text-neutral">
-                        {secret.name} = {secret.reference}
-                      </strong>
-                    </Tooltip>
+                    <div className="flex min-w-0 flex-col gap-1">
+                      <Tooltip content={`${secret.name} = ${secret.reference}`} align="start">
+                        <strong className="truncate font-medium text-neutral">
+                          {secret.name} = {secret.reference}
+                        </strong>
+                      </Tooltip>
+                      {secret.isJson && <span className="break-all text-xs">JSON path: {secret.keyName}</span>}
+                    </div>
                     <span>
                       <strong className="font-medium text-neutral">Scope:</strong>{' '}
                       {secret.scope ? generateScopeLabel(secret.scope) : '-'}
                     </span>
-                    <span>{secret.isFile ? 'External secret file' : 'External secret'}</span>
+                    <span>
+                      {match(secret)
+                        .with({ isJson: true }, () => 'JSON external secret')
+                        .with({ isFile: true }, () => 'External secret file')
+                        .otherwise(() => 'External secret')}
+                    </span>
                   </li>
                 ))}
               </>

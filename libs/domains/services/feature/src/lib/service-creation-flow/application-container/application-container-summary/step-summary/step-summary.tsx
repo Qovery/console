@@ -115,6 +115,9 @@ export function ApplicationContainerStepSummary({
       // External secret creation errors are surfaced by the mutation notifications but should not block the service creation flow.
       await Promise.allSettled(
         externalSecretsData.map(async (externalSecret) => {
+          // TODO(secret-manager-json): Persist the form’s JSON drafts here when the real API handler is available.
+          // Until then they are local only; never send JSON references through the single-variable API.
+          if (externalSecret.isJson) return
           const scope = externalSecret.scope ?? createPayload.serviceType
           return createVariable({
             variableRequest: {

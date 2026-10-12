@@ -3,6 +3,7 @@ import { APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-ax
 import { useEffect, useMemo } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import {
+  AddSecretDropdown,
   AddSecretModal,
   type AddSecretModalSubmitData,
   type CreateUpdateVariableModalSubmitData,
@@ -17,74 +18,6 @@ import { useApplicationContainerCreateContext } from '../../application-containe
 export interface ApplicationContainerStepVariablesProps {
   onBack: () => void
   onSubmit: () => void | Promise<void>
-}
-
-function cardHeaderActions({
-  onAddDefault,
-  onAddAsFile,
-  defaultLabel,
-  asFileLabel,
-}: {
-  onAddDefault: () => void
-  onAddAsFile: () => void
-  defaultLabel: string
-  asFileLabel: string
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <Button
-        type="button"
-        color="neutral"
-        variant="outline"
-        size="sm"
-        className="gap-1.5 text-ssm"
-        onClick={onAddAsFile}
-      >
-        <Icon iconName="file-lines" iconStyle="regular" className="text-ssm" />
-        {asFileLabel}
-      </Button>
-      <Button
-        type="button"
-        color="neutral"
-        variant="solid"
-        size="sm"
-        className="gap-1.5 text-ssm"
-        onClick={onAddDefault}
-      >
-        <Icon iconName="circle-plus" iconStyle="regular" className="text-ssm" />
-        {defaultLabel}
-      </Button>
-    </div>
-  )
-}
-
-function emptyState({
-  title,
-  onAddDefault,
-  onAddAsFile,
-  defaultLabel,
-  asFileLabel,
-}: {
-  title: string
-  onAddDefault: () => void
-  onAddAsFile: () => void
-  defaultLabel: string
-  asFileLabel: string
-}) {
-  return (
-    <EmptyState title={title} icon="lock-keyhole" className="h-auto rounded-none border-0 bg-transparent px-8 py-8">
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <Button type="button" color="neutral" variant="solid" size="md" className="gap-1.5" onClick={onAddDefault}>
-          <Icon iconName="circle-plus" iconStyle="regular" />
-          {defaultLabel}
-        </Button>
-        <Button type="button" color="neutral" variant="outline" size="md" className="gap-1.5" onClick={onAddAsFile}>
-          <Icon iconName="file-lines" iconStyle="regular" />
-          {asFileLabel}
-        </Button>
-      </div>
-    </EmptyState>
-  )
 }
 
 function mapModalDataToVariable(data: CreateUpdateVariableModalSubmitData, current?: VariableData): VariableData {
@@ -133,6 +66,7 @@ function mapSecretForForm(
     description: secret.description,
     filePath: secret.filePath,
     isFile: secret.isFile,
+    ...(secret.isJson ? { isJson: true, keyName: secret.keyName } : {}),
     reference: secret.reference,
     secretManagerAccessId: secret.secretManagerAccessId,
     source: source?.tableLabel ?? null,
@@ -216,7 +150,15 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
     })
   }
 
-  const openSecretModal = ({ isFile, index }: { isFile: boolean; index?: number }) => {
+  const openSecretModal = ({
+    isFile = false,
+    isJson = false,
+    index,
+  }: {
+    isFile?: boolean
+    isJson?: boolean
+    index?: number
+  }) => {
     const currentSecret = typeof index === 'number' ? externalSecrets[index] : undefined
     const defaultSource =
       secretSources.find((source) => source.value === currentSecret?.secretManagerAccessId) ??
@@ -230,9 +172,11 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
           secretSources={secretSources}
           defaultSource={defaultSource}
           isFile={isFile}
+          isJson={isJson}
           initialSecret={currentSecret}
           onClose={closeModal}
           onSubmit={(secret) => {
+            // TODO(secret-manager-json): Persist JSON references with the real API in the final creation step.
             const mapped = mapSecretForForm(secret, sourceById, serviceScope)
             if (typeof index === 'number') {
               updateExternalSecret(index, mapped)
@@ -307,10 +251,9 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                         color="neutral"
                         variant="solid"
                         size="md"
-                        className="text-ssm"
                         onClick={() => openVariableModal()}
                       >
-                        <Icon iconName="key" className="text-ssm" />
+                        <Icon iconName="key" />
                         Add variable
                       </Button>
                       <Button
@@ -318,10 +261,9 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                         color="neutral"
                         variant="outline"
                         size="md"
-                        className="text-ssm"
                         onClick={() => openVariableModal({ isSecret: true })}
                       >
-                        <Icon iconName="lock-keyhole" iconStyle="regular" className="text-ssm" />
+                        <Icon iconName="lock-keyhole" iconStyle="regular" />
                         Add secret
                       </Button>
                     </div>
@@ -419,14 +361,13 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
             <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
               <div className="flex min-h-[52px] items-center justify-between px-4 pb-5 pt-3">
                 <p className="text-sm font-medium text-neutral">External secrets</p>
-                {hasClusterSecretManagerConfigured &&
-                  externalSecrets.length > 0 &&
-                  cardHeaderActions({
-                    onAddDefault: () => openSecretModal({ isFile: false }),
-                    onAddAsFile: () => openSecretModal({ isFile: true }),
-                    defaultLabel: 'Add secret',
-                    asFileLabel: 'Add secret as file',
-                  })}
+                {hasClusterSecretManagerConfigured && externalSecrets.length > 0 && (
+                  <AddSecretDropdown
+                    color="neutral"
+                    size="sm"
+                    onSelect={(format) => openSecretModal({ isFile: format === 'file', isJson: format === 'json' })}
+                  />
+                )}
               </div>
             </div>
 
@@ -440,13 +381,16 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                     className="h-auto rounded-none border-0 bg-transparent px-8 py-8"
                   />
                 ) : externalSecrets.length === 0 ? (
-                  emptyState({
-                    title: 'No external secrets added yet',
-                    onAddDefault: () => openSecretModal({ isFile: false }),
-                    onAddAsFile: () => openSecretModal({ isFile: true }),
-                    defaultLabel: 'Add secret',
-                    asFileLabel: 'Add secret as file',
-                  })
+                  <EmptyState
+                    title="No external secrets added yet"
+                    icon="lock-keyhole"
+                    className="h-auto rounded-none border-0 bg-transparent px-8 py-8"
+                  >
+                    <AddSecretDropdown
+                      color="neutral"
+                      onSelect={(format) => openSecretModal({ isFile: format === 'file', isJson: format === 'json' })}
+                    />
+                  </EmptyState>
                 ) : (
                   <>
                     <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_88px] border-b border-neutral text-xs">
@@ -475,6 +419,12 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                               </Tooltip>
                             )}
                           </div>
+                          {secret.isJson && (
+                            <div className="flex min-w-0 items-center gap-1 text-ssm text-neutral-subtle">
+                              <Icon iconName="brackets-curly" />
+                              <span className="truncate">{`Key: ${secret.keyName}`}</span>
+                            </div>
+                          )}
                           {secret.filePath && (
                             <div className="flex items-center gap-1 text-xs text-neutral-subtle">
                               <Icon iconName="file-lock" iconStyle="regular" className="text-xs" />
@@ -495,7 +445,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                             variant="outline"
                             size="xs"
                             iconOnly
-                            onClick={() => openSecretModal({ isFile: !!secret.isFile, index })}
+                            onClick={() => openSecretModal({ isFile: !!secret.isFile, isJson: !!secret.isJson, index })}
                           >
                             <Icon iconName="pen" />
                           </Button>
