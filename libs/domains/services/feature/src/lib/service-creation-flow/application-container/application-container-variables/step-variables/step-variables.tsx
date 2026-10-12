@@ -7,7 +7,9 @@ import {
   AddSecretModal,
   type AddSecretModalSubmitData,
   type CreateUpdateVariableModalSubmitData,
+  JsonSecretKeys,
   VariableFormModal,
+  createJsonSecretPreview,
   mapSecretManagersToSources,
   useVariablesSecretManagers,
 } from '@qovery/domains/variables/feature'
@@ -66,6 +68,7 @@ function mapSecretForForm(
     description: secret.description,
     filePath: secret.filePath,
     isFile: secret.isFile,
+    ...(secret.isJson ? { isJson: true, keys: secret.keys } : {}),
     reference: secret.reference,
     secretManagerAccessId: secret.secretManagerAccessId,
     source: source?.tableLabel ?? null,
@@ -82,6 +85,11 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
 
   const serviceScope = generalForm.getValues('serviceType') === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER'
   const secretSources = useMemo(() => mapSecretManagersToSources(secretManagers), [secretManagers])
+  // TODO(secret-manager-json): Remove fixture metadata before production and load key-only metadata from the API.
+  const jsonSecrets = useMemo(
+    () => createJsonSecretPreview(environmentId, serviceScope, secretManagers[0]),
+    [environmentId, serviceScope, secretManagers]
+  )
   const sourceById = useMemo(() => new Map(secretSources.map((source) => [source.value, source])), [secretSources])
 
   const {
@@ -169,6 +177,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
         <AddSecretModal
           mode={typeof index === 'number' ? 'edit' : 'create'}
           secretSources={secretSources}
+          jsonSecrets={jsonSecrets}
           defaultSource={defaultSource}
           isFile={isFile}
           isJson={isJson}
@@ -419,6 +428,11 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                               </Tooltip>
                             )}
                           </div>
+                          {secret.isJson && (
+                            <span className="text-ssm text-neutral-subtle">
+                              {secret.keys?.length ?? 0} secrets imported
+                            </span>
+                          )}
                           {secret.filePath && (
                             <div className="flex items-center gap-1 text-xs text-neutral-subtle">
                               <Icon iconName="file-lock" iconStyle="regular" className="text-xs" />
@@ -439,7 +453,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                             variant="outline"
                             size="xs"
                             iconOnly
-                            onClick={() => openSecretModal({ isFile: !!secret.isFile, index })}
+                            onClick={() => openSecretModal({ isFile: !!secret.isFile, isJson: !!secret.isJson, index })}
                           >
                             <Icon iconName="pen" />
                           </Button>
@@ -455,6 +469,11 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                             <Icon iconName="trash" />
                           </Button>
                         </div>
+                        {secret.isJson && secret.keys && (
+                          <div className="col-span-3 border-t border-neutral bg-surface-neutral-subtle px-4 py-3">
+                            <JsonSecretKeys keys={secret.keys} label={`JSON keys for ${secret.reference}`} />
+                          </div>
+                        )}
                       </div>
                     ))}
                   </>

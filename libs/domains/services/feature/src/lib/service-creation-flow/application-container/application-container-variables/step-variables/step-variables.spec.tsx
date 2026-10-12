@@ -36,9 +36,27 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
+  createJsonSecretPreview: () => [{ reference: 'lucis/production/application', keys: ['DATABASE_URL'] }],
+  JsonSecretKeys: jest.requireActual('@qovery/domains/variables/feature').JsonSecretKeys,
   AddSecretDropdown: jest.requireActual('@qovery/domains/variables/feature').AddSecretDropdown,
-  AddSecretModal: ({ isFile, isJson }: { isFile?: boolean; isJson?: boolean }) => (
-    <div>{isJson ? 'JSON secret modal' : isFile ? 'File secret modal' : 'Variable secret modal'}</div>
+  AddSecretModal: ({
+    isFile,
+    isJson,
+    jsonSecrets,
+  }: {
+    isFile?: boolean
+    isJson?: boolean
+    jsonSecrets?: { reference: string; keys?: string[] }[]
+  }) => (
+    <div>
+      <span>{isJson ? 'JSON secret modal' : isFile ? 'File secret modal' : 'Variable secret modal'}</span>
+      {isJson &&
+        jsonSecrets?.map((secret) => (
+          <span key={secret.reference}>
+            {secret.reference}: {secret.keys?.join(', ')}
+          </span>
+        ))}
+    </div>
   ),
   VariableFormModal: ({
     onSubmit,
@@ -195,6 +213,9 @@ describe('ApplicationContainerStepVariables', () => {
     ])
     await userEvent.click(screen.getByRole('menuitem', { name: option }))
     expect(screen.getByText(modal)).toBeInTheDocument()
+    if (option === 'Add secret as JSON') {
+      expect(screen.getByText('lucis/production/application: DATABASE_URL')).toBeInTheDocument()
+    }
   })
 
   it('does not expose external secret creation when no secret manager is linked', () => {

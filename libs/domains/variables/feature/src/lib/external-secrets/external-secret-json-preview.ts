@@ -19,7 +19,7 @@ export interface ExternalSecretJSON {
   previewParentId: string
 }
 
-// TODO(secret-manager-json): Remove this temporary example after design review, before shipping.
+// TODO(secret-manager-json): REMOVE BEFORE PRODUCTION: this entire fixture, its export, and its usages in the variables tab and service creation.
 export function createJsonSecretPreview(
   parentId: string,
   scope: VariableScope,

@@ -16,6 +16,9 @@ export interface ExternalSecretData {
   description?: string
   filePath?: string
   isFile?: boolean
+  // TODO(secret-manager-json): Replace these preview fields with the API model before production.
+  isJson?: boolean
+  keys?: string[]
   source?: string | null
   sourceIcon?: 'aws' | 'gcp'
   secretManagerAccessId?: string
