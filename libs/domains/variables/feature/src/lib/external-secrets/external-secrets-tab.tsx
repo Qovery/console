@@ -13,7 +13,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import posthog from 'posthog-js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Fragment, type KeyboardEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { getSecretManagerProvider } from '@qovery/domains/clusters/data-access'
 import { type VariableScope } from '@qovery/domains/variables/data-access'
@@ -43,8 +43,12 @@ import {
   type SecretSourceOption,
   mapSecretManagersToSources,
 } from './add-secret-modal/add-secret-modal'
+import { type ExternalSecretJSON, createJsonSecretPreview } from './external-secret-json-preview'
+import { JsonSecretKeys } from './json-secret-keys'
 
 const { Table } = TablePrimitives
+
+type SecretFormat = 'variable' | 'file' | 'json'
 
 const ADD_SECRET_OPTIONS = [
   {
@@ -57,7 +61,12 @@ const ADD_SECRET_OPTIONS = [
     label: 'Add secret as file',
     icon: 'file-lines' as const,
   },
-]
+  {
+    value: 'json',
+    label: 'Add secret as JSON',
+    icon: 'brackets-curly' as const,
+  },
+] satisfies { value: SecretFormat; label: string; icon: 'key' | 'file-lines' | 'brackets-curly' }[]
 
 const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220px_140px_104px]'
 
@@ -67,6 +76,10 @@ type ExternalSecretRow = {
   description?: string
   filePath?: string
   isFile?: boolean
+  isJson?: boolean
+  keys?: string[]
+  previewParentId?: string
+  secretManagerAccessId?: string
   reference: string
   source: string | null
   sourceIcon?: 'AWS' | 'GCP'
@@ -77,7 +90,7 @@ const columnHelper = createColumnHelper<ExternalSecretRow>()
 
 type AddSecretDropdownProps = {
   color?: 'brand' | 'neutral'
-  onSelect: (isFile: boolean) => void
+  onSelect: (format: SecretFormat) => void
 }
 
 function AddSecretDropdown({ color = 'brand', onSelect }: AddSecretDropdownProps) {
@@ -95,7 +108,7 @@ function AddSecretDropdown({ color = 'brand', onSelect }: AddSecretDropdownProps
           <DropdownMenu.Item
             key={option.value}
             icon={<Icon iconName={option.icon} />}
-            onSelect={() => onSelect(option.value === 'file')}
+            onSelect={() => onSelect(option.value)}
           >
             {option.label}
           </DropdownMenu.Item>
@@ -129,9 +142,16 @@ export function ExternalSecretsTab({
     suspense: true,
   })
 
-  const secrets = useMemo(
-    () =>
-      variables.filter(isExternalSecretVariable).map((variable) => {
+  // TODO(secret-manager-json): Replace local create/edit/delete state with the API when its contract is available.
+  // The seeded example and all JSON changes currently reset when this component remounts.
+  const [jsonSecrets, setJsonSecrets] = useState<ExternalSecretJSON[]>(() =>
+    createJsonSecretPreview(parentId, scope, secretManagers[0])
+  )
+  const [collapsedJsonSecrets, setCollapsedJsonSecrets] = useState<Record<string, boolean>>({})
+
+  const secrets = useMemo<ExternalSecretRow[]>(
+    () => [
+      ...variables.filter(isExternalSecretVariable).map((variable) => {
         const secretManager = secretManagers.find((manager) => manager.id === variable.secret_manager_access_id)
 
         return {
@@ -146,9 +166,12 @@ export function ExternalSecretsTab({
           scope: generateScopeLabel(variable.scope),
         }
       }),
-    [secretManagers, variables]
+      ...jsonSecrets.filter((secret) => secret.previewParentId === parentId),
+    ],
+    [secretManagers, variables, jsonSecrets, parentId]
   )
   const [search, setSearch] = useState('')
+  const searchQuery = search.trim().toLowerCase()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -165,7 +188,11 @@ export function ExternalSecretsTab({
       if (!secret?.source) {
         return secretSources[0]
       }
-      return secretSources.find((option) => option.tableLabel === secret.source) ?? secretSources[0]
+      return (
+        secretSources.find(
+          (option) => option.value === secret.secretManagerAccessId || option.tableLabel === secret.source
+        ) ?? secretSources[0]
+      )
     },
     [secretSources]
   )
@@ -176,16 +203,31 @@ export function ExternalSecretsTab({
       description,
       filePath,
       isFile,
+      isJson,
+      keys,
       reference,
       secretManagerAccessId,
-    }: {
-      name: string
-      description?: string
-      filePath?: string
-      isFile: boolean
-      reference: string
-      secretManagerAccessId: string
-    }) => {
+    }: AddSecretModalSubmitData) => {
+      if (isJson) {
+        const manager = secretManagers.find((item) => item.id === secretManagerAccessId)
+        setJsonSecrets((current) => [
+          ...current,
+          {
+            id: `local-json-${crypto.randomUUID()}`,
+            name,
+            reference,
+            description,
+            isJson: true,
+            keys,
+            source: manager?.name ?? null,
+            sourceIcon: getSecretManagerProvider(manager),
+            secretManagerAccessId,
+            scope: generateScopeLabel(scope),
+            previewParentId: parentId,
+          },
+        ])
+        return
+      }
       await createVariable({
         variableRequest: {
           key: name,
@@ -200,14 +242,34 @@ export function ExternalSecretsTab({
       })
       onCreateSecret?.()
     },
-    [createVariable, onCreateSecret, parentId, scope]
+    [createVariable, onCreateSecret, parentId, scope, secretManagers]
   )
 
   const handleEditSecret = useCallback(
     async (
       secretId: string,
-      { name, description, filePath, isFile, reference, secretManagerAccessId }: AddSecretModalSubmitData
+      { name, description, filePath, isFile, isJson, keys, reference, secretManagerAccessId }: AddSecretModalSubmitData
     ) => {
+      if (isJson) {
+        const manager = secretManagers.find((item) => item.id === secretManagerAccessId)
+        setJsonSecrets((current) =>
+          current.map((secret) =>
+            secret.id === secretId
+              ? {
+                  ...secret,
+                  name,
+                  reference,
+                  description,
+                  secretManagerAccessId,
+                  source: manager?.name ?? null,
+                  sourceIcon: getSecretManagerProvider(manager),
+                  keys,
+                }
+              : secret
+          )
+        )
+        return
+      }
       const variableEditRequest = {
         key: name,
         value: reference,
@@ -222,11 +284,12 @@ export function ExternalSecretsTab({
       })
       onEditSecret?.()
     },
-    [editVariable, onEditSecret]
+    [editVariable, onEditSecret, secretManagers]
   )
 
   const handleOpenAddSecret = useCallback(
-    (isFile: boolean) => {
+    (format: SecretFormat) => {
+      const isFile = format === 'file'
       posthog.capture('external-secret-add-clicked', {
         scope,
         is_file: isFile,
@@ -235,8 +298,10 @@ export function ExternalSecretsTab({
         content: (
           <AddSecretModal
             secretSources={secretSources}
+            jsonSecrets={jsonSecrets}
             defaultSource={secretSources[0]}
             isFile={isFile}
+            isJson={format === 'json'}
             scope={scope}
             onClose={closeModal}
             onSubmit={handleCreateSecret}
@@ -248,7 +313,7 @@ export function ExternalSecretsTab({
         },
       })
     },
-    [closeModal, handleCreateSecret, openModal, scope, secretSources]
+    [closeModal, handleCreateSecret, openModal, scope, secretSources, jsonSecrets]
   )
 
   const handleOpenEditSecret = useCallback(
@@ -258,8 +323,10 @@ export function ExternalSecretsTab({
           <AddSecretModal
             mode="edit"
             secretSources={secretSources}
+            jsonSecrets={jsonSecrets}
             defaultSource={getSourceOption(secret)}
             isFile={secret.isFile ?? false}
+            isJson={secret.isJson}
             initialSecret={secret}
             onClose={closeModal}
             onSubmit={(updated) => handleEditSecret(secret.id, updated)}
@@ -271,7 +338,7 @@ export function ExternalSecretsTab({
         },
       })
     },
-    [closeModal, getSourceOption, handleEditSecret, openModal, secretSources]
+    [closeModal, getSourceOption, handleEditSecret, openModal, secretSources, jsonSecrets]
   )
 
   useEffect(() => {
@@ -284,8 +351,11 @@ export function ExternalSecretsTab({
   const handleDeleteSecrets = useCallback(
     async (secretIds: string[]) => {
       const idsToDelete = new Set(secretIds)
-      await Promise.all([...idsToDelete].map((variableId) => deleteVariable({ variableId })))
-      onDeleteSecret?.()
+      const localIds = new Set(jsonSecrets.map((secret) => secret.id))
+      const remoteIds = [...idsToDelete].filter((id) => !localIds.has(id))
+      await Promise.all(remoteIds.map((variableId) => deleteVariable({ variableId })))
+      setJsonSecrets((current) => current.filter((secret) => !idsToDelete.has(secret.id)))
+      if (remoteIds.length > 0) onDeleteSecret?.()
       setRowSelection((prev) => {
         const next = { ...prev }
         for (const secretId of secretIds) {
@@ -294,7 +364,7 @@ export function ExternalSecretsTab({
         return next
       })
     },
-    [deleteVariable, onDeleteSecret]
+    [deleteVariable, onDeleteSecret, jsonSecrets]
   )
 
   const handleConfirmDeleteSecrets = useCallback(
@@ -388,6 +458,27 @@ export function ExternalSecretsTab({
         enableSorting: true,
         cell: (info) => {
           const secret = info.row.original
+          if (secret.isJson) {
+            const expanded = !collapsedJsonSecrets[secret.id]
+            return (
+              <div className="flex w-full items-center justify-between gap-2">
+                <span className="flex min-w-0 flex-col justify-center gap-1">
+                  <Tooltip align="start" content={secret.name}>
+                    <span className="truncate text-sm font-medium">{secret.name}</span>
+                  </Tooltip>
+                  <span className="flex items-center gap-1 text-ssm text-neutral-subtle">
+                    <Icon iconName="brackets-curly" />
+                    {secret.keys
+                      ? `${secret.keys.length} ${pluralize(secret.keys.length, 'secret')} imported`
+                      : 'Keys unavailable'}
+                  </span>
+                </span>
+                <span className="flex w-6 shrink-0 justify-center">
+                  <Icon iconName={expanded ? 'chevron-up' : 'chevron-down'} className="text-neutral-subtle" />
+                </span>
+              </div>
+            )
+          }
           const showFilePath = secret.isFile && secret.filePath
           return (
             <div className="flex flex-col justify-center gap-1">
@@ -494,7 +585,7 @@ export function ExternalSecretsTab({
         },
       }),
     ],
-    [handleConfirmDeleteSecrets, handleOpenEditSecret]
+    [handleConfirmDeleteSecrets, handleOpenEditSecret, collapsedJsonSecrets]
   )
 
   const table = useReactTable({
@@ -505,6 +596,14 @@ export function ExternalSecretsTab({
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setSearch,
     onColumnFiltersChange: setColumnFilters,
+    globalFilterFn: (row, columnId, value: string) => {
+      const query = value.trim().toLowerCase()
+      return (
+        String(row.getValue(columnId) ?? '')
+          .toLowerCase()
+          .includes(query) || Boolean(row.original.keys?.some((key) => key.toLowerCase().includes(query)))
+      )
+    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -514,11 +613,22 @@ export function ExternalSecretsTab({
   })
 
   const shouldShowEmptyState = secrets.length === 0 && Boolean(emptyStateConfig)
-  const totalRows = table.getPreFilteredRowModel().rows.length
-  const isSearching = table.getRowCount() !== totalRows
-  const countText = isSearching
-    ? `${table.getRowCount()}/${totalRows} external ${pluralize(table.getRowCount(), 'secret')}`
-    : `${totalRows} external ${pluralize(totalRows, 'secret')}`
+  const countSecrets = (rows: ExternalSecretRow[], query = '') =>
+    rows.reduce(
+      (count, secret) =>
+        count + (secret.isJson ? secret.keys?.filter((key) => key.toLowerCase().includes(query)).length ?? 0 : 1),
+      0
+    )
+  const totalSecrets = countSecrets(secrets)
+  const visibleSecrets = table.getRowModel().rows.map(({ original }) => original)
+  const visibleCount = countSecrets(visibleSecrets, searchQuery)
+  const unknownCount = visibleSecrets.filter((secret) => secret.isJson && !secret.keys).length
+  const isSearching = visibleCount !== totalSecrets || table.getRowCount() !== secrets.length
+  const countText =
+    (isSearching
+      ? `${visibleCount}/${totalSecrets} external ${totalSecrets === 1 ? 'secret' : 'secrets'}`
+      : `${totalSecrets} external ${totalSecrets === 1 ? 'secret' : 'secrets'}`) +
+    (unknownCount > 0 ? ` · ${unknownCount} JSON ${pluralize(unknownCount, 'count')} unavailable` : '')
   const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
   const selectedIds = selectedRows.map((secret) => secret.id)
   const hasSelection = selectedIds.length > 0
@@ -529,7 +639,7 @@ export function ExternalSecretsTab({
         <div className="flex items-center justify-between border-b border-neutral bg-surface-neutral px-4 py-2">
           <div className="flex items-center gap-1.5 text-sm font-medium text-neutral">
             <span>{countText}</span>
-            <Tooltip content="Number of external secrets linked to this service">
+            <Tooltip content="Each imported JSON key counts as one external secret. JSON secrets with unavailable keys are excluded.">
               <span>
                 <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
               </span>
@@ -540,7 +650,22 @@ export function ExternalSecretsTab({
               className="h-8 w-[180px]"
               placeholder="Search secrets"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value
+                setSearch(value)
+                const query = value.trim().toLowerCase()
+                if (query) {
+                  setCollapsedJsonSecrets((current) => {
+                    const next = { ...current }
+                    for (const secret of secrets) {
+                      if (secret.keys?.some((key) => key.toLowerCase().includes(query))) {
+                        delete next[secret.id]
+                      }
+                    }
+                    return next
+                  })
+                }
+              }}
             />
             <AddSecretDropdown onSelect={handleOpenAddSecret} />
           </div>
@@ -601,25 +726,70 @@ export function ExternalSecretsTab({
             ))}
           </Table.Header>
           <Table.Body>
-            {table.getRowModel().rows.map((row) => (
-              <Table.Row
-                key={row.id}
-                className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', gridLayoutClassName)}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <Table.Cell
-                    key={cell.id}
-                    className={twMerge(
-                      'flex h-full items-center first:relative',
-                      cell.column.id === 'actions' && 'justify-end',
-                      cell.column.id === 'name' && 'border-r border-neutral'
-                    )}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Table.Cell>
-                ))}
+            {table.getRowModel().rows.length === 0 && (
+              <Table.Row>
+                <Table.Cell colSpan={6} className="text-center text-sm text-neutral-subtle">
+                  No secrets match your search or filters.
+                </Table.Cell>
               </Table.Row>
-            ))}
+            )}
+            {table.getRowModel().rows.map((row) => {
+              const matchingKeys = row.original.keys?.filter((key) => key.toLowerCase().includes(searchQuery))
+              return (
+                <Fragment key={row.id}>
+                  <Table.Row
+                    className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', gridLayoutClassName)}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <Table.Cell
+                        key={cell.id}
+                        {...(cell.column.id === 'name' && row.original.isJson
+                          ? {
+                              tabIndex: 0,
+                              'aria-label': `${collapsedJsonSecrets[row.id] ? 'Expand' : 'Collapse'} keys for ${row.original.reference}`,
+                              'aria-expanded': !collapsedJsonSecrets[row.id],
+                              'aria-controls': `json-keys-${row.id}`,
+                              onClick: () =>
+                                setCollapsedJsonSecrets((current) => ({ ...current, [row.id]: !current[row.id] })),
+                              onKeyDown: (event: KeyboardEvent<HTMLTableCellElement>) => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                  event.preventDefault()
+                                  setCollapsedJsonSecrets((current) => ({ ...current, [row.id]: !current[row.id] }))
+                                }
+                              },
+                            }
+                          : {})}
+                        className={twMerge(
+                          'flex h-full items-center first:relative',
+                          cell.column.id === 'actions' && 'justify-end',
+                          cell.column.id === 'name' && 'border-r border-neutral',
+                          cell.column.id === 'name' &&
+                            row.original.isJson &&
+                            'cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong'
+                        )}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Table.Cell>
+                    ))}
+                  </Table.Row>
+                  {row.original.isJson && !collapsedJsonSecrets[row.id] && (
+                    <Table.Row id={`json-keys-${row.id}`}>
+                      <Table.Cell colSpan={6} className="h-auto bg-surface-neutral-subtle py-3">
+                        {matchingKeys ? (
+                          matchingKeys.length > 0 ? (
+                            <JsonSecretKeys keys={matchingKeys} label={`JSON keys for ${row.original.reference}`} />
+                          ) : (
+                            <p className="text-sm text-neutral-subtle">No keys match your search.</p>
+                          )
+                        ) : (
+                          <p className="text-sm text-neutral-subtle">Keys are not available yet.</p>
+                        )}
+                      </Table.Cell>
+                    </Table.Row>
+                  )}
+                </Fragment>
+              )
+            })}
           </Table.Body>
         </Table.Root>
       )}

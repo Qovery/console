@@ -88,4 +88,91 @@ describe('AddSecretModal', () => {
       )
     })
   })
+  it('submits a JSON display name separately from its reference', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal
+        isJson
+        jsonSecrets={[
+          {
+            reference: 'lucis/production/application',
+            secretManagerAccessId: 'secret-manager-access-id',
+            keys: ['DATABASE_URL', 'API_KEY'],
+          },
+        ]}
+        secretSources={secretSources}
+        onClose={jest.fn()}
+        onSubmit={onSubmit}
+      />
+    )
+    expect(screen.getByText('Add secret as JSON')).toBeInTheDocument()
+    expect(screen.getByText('Display name only. Use the JSON keys in your code.')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Path')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+    await userEvent.type(screen.getByLabelText('Reference'), 'lucis/production/application')
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+    await userEvent.type(screen.getByLabelText('Display name'), 'Application credentials')
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'Application credentials',
+          reference: 'lucis/production/application',
+          isJson: true,
+          keys: ['DATABASE_URL', 'API_KEY'],
+          isFile: false,
+          filePath: undefined,
+        })
+      )
+    )
+  })
+
+  it('keeps the JSON edit form open if saving fails', async () => {
+    const onClose = jest.fn()
+    const onSubmit = jest.fn().mockRejectedValue(new Error('Could not save'))
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal
+        isJson
+        jsonSecrets={[
+          { reference: 'lucis/app-updated', secretManagerAccessId: 'secret-manager-access-id', keys: ['API_KEY'] },
+        ]}
+        mode="edit"
+        initialSecret={{ name: 'lucis/app', reference: 'lucis/app' }}
+        secretSources={secretSources}
+        onClose={onClose}
+        onSubmit={onSubmit}
+      />
+    )
+    await userEvent.type(screen.getByLabelText('Reference'), '-updated')
+    await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
+    await waitFor(() => expect(onSubmit).toHaveBeenCalled())
+    expect(onClose).not.toHaveBeenCalled()
+    consoleError.mockRestore()
+  })
+  it('blocks submission without JSON keys and clears the preview when the reference changes', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal
+        isJson
+        secretSources={secretSources}
+        jsonSecrets={[{ reference: 'valid', secretManagerAccessId: 'secret-manager-access-id', keys: ['API_KEY'] }]}
+        onClose={jest.fn()}
+        onSubmit={onSubmit}
+      />
+    )
+    await userEvent.type(screen.getByLabelText('Display name'), 'My credentials')
+    await userEvent.type(screen.getByLabelText('Reference'), 'not-json')
+    expect(screen.getByText('No JSON detected')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+    await userEvent.keyboard('{Enter}')
+    expect(onSubmit).not.toHaveBeenCalled()
+    await userEvent.clear(screen.getByLabelText('Reference'))
+    await userEvent.type(screen.getByLabelText('Reference'), 'valid')
+    expect(screen.getByRole('button', { name: 'Copy API_KEY' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeEnabled()
+    await userEvent.type(screen.getByLabelText('Reference'), '-unknown')
+    expect(screen.queryByRole('button', { name: 'Copy API_KEY' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+  })
 })
