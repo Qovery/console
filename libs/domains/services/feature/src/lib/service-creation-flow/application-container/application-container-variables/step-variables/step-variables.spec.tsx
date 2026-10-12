@@ -213,9 +213,9 @@ describe('ApplicationContainerStepVariables', () => {
     ])
     await userEvent.click(screen.getByRole('menuitem', { name: option }))
     expect(screen.getByText(modal)).toBeInTheDocument()
-    if (option === 'Add secret as JSON') {
-      expect(screen.getByText('lucis/production/application: DATABASE_URL')).toBeInTheDocument()
-    }
+    expect(screen.queryByText('lucis/production/application: DATABASE_URL') !== null).toBe(
+      option === 'Add secret as JSON'
+    )
   })
 
   it('does not expose external secret creation when no secret manager is linked', () => {
