@@ -191,7 +191,7 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     memory: container.memory,
     max_running_instances: container.max_running_instances,
     min_running_instances: container.min_running_instances,
-    registry_id: container.registry_id || container.registry?.id || '',
+    registry_id: container.registry?.id || '',
     image_name: container.image_name || '',
     tag: container.tag || '',
     arguments: container.arguments,
@@ -244,7 +244,7 @@ function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
   } else {
     jobRequest.source = {
       image: {
-        registry_id: job.source?.image?.registry_id,
+        registry_id: job.source?.image?.registry.id,
         image_name: job.source?.image?.image_name,
         tag: job.source?.image?.tag,
       },

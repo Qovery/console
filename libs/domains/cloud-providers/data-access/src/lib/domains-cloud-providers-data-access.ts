@@ -96,7 +96,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
         }
   ) => ({
-    queryKey: [args.cloudProvider, args.clusterType],
+    queryKey: [args.cloudProvider, args.clusterType, args],
     async queryFn() {
       const response = await match(args)
         .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
@@ -202,7 +202,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           databaseType: string
         }
   ) => ({
-    queryKey: [args.cloudProvider, args.databaseType],
+    queryKey: [args.cloudProvider, args.databaseType, args],
     async queryFn() {
       return match(args)
         .with(

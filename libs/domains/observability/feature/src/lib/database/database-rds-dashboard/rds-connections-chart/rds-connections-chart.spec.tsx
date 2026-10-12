@@ -4,6 +4,11 @@ import { RdsConnectionsChart } from './rds-connections-chart'
 const mockUseDashboardContext = jest.fn()
 const mockUseMetrics = jest.fn()
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({}),
+}))
+
 jest.mock('../../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
 }))

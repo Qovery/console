@@ -48,7 +48,7 @@ export function Header({
           delayDuration={400}
         >
           <Badge color="purple" variant="surface" size="sm">
-            Beta
+            New
           </Badge>
         </Tooltip>
       </div>

@@ -15,13 +15,13 @@ export function useDeployAgenticWorkflow({ environmentId, serviceId }: { environ
         queryKey: queries.services.status({ id: serviceId, serviceType: 'AGENTIC_WORKFLOW' }).queryKey,
       })
       queryClient.invalidateQueries({
-        queryKey: queries.services.deploymentHistory({ serviceId, serviceType: 'AGENTIC_WORKFLOW' }).queryKey,
+        queryKey: [...queries.services.deploymentHistory._def, serviceId, 'AGENTIC_WORKFLOW'],
       })
       queryClient.invalidateQueries({
         queryKey: [...queries.services.agenticWorkflowRunHistory._def, serviceId],
       })
       queryClient.invalidateQueries({
-        queryKey: queries.environments.deploymentHistoryV2({ environmentId }).queryKey,
+        queryKey: [...queries.environments.deploymentHistoryV2._def, environmentId],
       })
 
       toast('success', 'Agent task triggered')

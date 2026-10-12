@@ -4,13 +4,13 @@ import { Suspense, useState } from 'react'
 import {
   ClusterDnsProviderSettings,
   canEditDnsProvider,
-  isForbiddenError,
   useClusterDnsProvider,
   useEditClusterDnsProvider,
 } from '@qovery/domains/clusters/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { LoaderSpinner, toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { isForbiddenError } from '@qovery/shared/util-js'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/dns-provider'

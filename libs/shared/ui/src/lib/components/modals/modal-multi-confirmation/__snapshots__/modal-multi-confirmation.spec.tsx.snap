@@ -7,13 +7,13 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
   >
     <h1
       class="font-medium mb-2 max-w-sm text-2xl text-neutral"
-      id="radix-:r1b:"
+      id="radix-_r_1b_"
     >
       my title
     </h1>
     <p
       class="mb-6 text-sm text-neutral-subtle"
-      id="radix-:r1c:"
+      id="radix-_r_1c_"
     />
     <form>
       <div
@@ -61,7 +61,7 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
                 <input
                   aria-hidden="true"
                   name="one"
-                  style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                  style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
                   tabindex="-1"
                   type="checkbox"
                   value="on"
@@ -93,7 +93,7 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
                 <input
                   aria-hidden="true"
                   name="two"
-                  style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                  style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
                   tabindex="-1"
                   type="checkbox"
                   value="on"

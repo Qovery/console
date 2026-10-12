@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'webflow-feature',
   preset: '../../../../jest.preset.js',
   transform: {

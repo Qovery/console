@@ -42,6 +42,7 @@ import { useDeleteMember } from '../hooks/use-delete-member/use-delete-member'
 import { useEditMemberRole } from '../hooks/use-edit-member-role/use-edit-member-role'
 import { useInviteMembers } from '../hooks/use-invite-members/use-invite-members'
 import { useMembers } from '../hooks/use-members/use-members'
+import { useOrganizations } from '../hooks/use-organizations/use-organizations'
 import { useTransferOwnershipMemberRole } from '../hooks/use-transfer-ownership-member-role/use-transfer-ownership-member-role'
 import CreateModal from './create-modal/create-modal'
 import RowMember from './row-member/row-member'
@@ -372,6 +373,12 @@ export function SettingsMembers() {
 
   const { error: membersError, isSuccess: isSuccessMembers } = useMembers({ organizationId })
   const { data: availableRoles = [] } = useAvailableRoles({ organizationId })
+  const { data: organizations } = useOrganizations()
+  const organization = organizations?.find(({ id }) => id === organizationId)
+
+  // Members of organizations with an enterprise connection are provisioned through SSO
+  const hasEnterpriseConnection = organization?.has_enterprise_connection ?? false
+  const canAddMember = organization !== undefined && !hasEnterpriseConnection
 
   const hasPermissionError = (membersError as SerializedError)?.response?.status === 403
   const shouldShowPermissionError = hasPermissionError || hasPreviousRequestFailed.current
@@ -465,14 +472,19 @@ export function SettingsMembers() {
         <div className="relative">
           <SettingsHeading
             title="Manage your team"
-            description="This section allows you to manage the members of your organization (add / remove) and as well assign a
-              role to each of them. You can invite someone to join your organization via email."
+            description={
+              hasEnterpriseConnection
+                ? 'This section allows you to manage the members of your organization and assign a role to each of them. Members are added automatically from your Identity Provider at first login. Deleted members from your Identity Provider must be manually removed here.'
+                : 'This section allows you to manage the members of your organization (add / remove) and assign a role to each of them. You can invite someone to join your organization via email.'
+            }
           />
 
-          <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
-            <Icon iconName="circle-plus" iconStyle="regular" />
-            Add member
-          </Button>
+          {canAddMember && (
+            <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
+              <Icon iconName="circle-plus" iconStyle="regular" />
+              Add member
+            </Button>
+          )}
         </div>
         {shouldShowPermissionError && (
           <Callout.Root color="yellow" className="mb-8">

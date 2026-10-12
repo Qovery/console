@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import posthog from 'posthog-js'
 import { useEffect, useState } from 'react'
 import { Button, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
@@ -69,10 +70,14 @@ export function EnableObservabilityVideo() {
   )
 }
 
+export type EnableObservabilityContactUsSource = 'monitoring-teaser' | 'logs-placeholder' | 'overview-modal'
+
 export function EnableObservabilityButtonContactUs({
+  source,
   callback,
   text = 'Contact us',
 }: {
+  source: EnableObservabilityContactUsSource
   callback?: () => void
   text?: string
 }) {
@@ -86,6 +91,7 @@ export function EnableObservabilityButtonContactUs({
       size="md"
       onClick={() => {
         callback?.()
+        posthog.capture('observe-contact-us-clicked', { source })
         showPylonForm('request-access-observability')
       }}
     >
@@ -108,7 +114,7 @@ export function EnableObservabilityModal() {
       </div>
       <div className="fixed bottom-0 left-0 right-0 flex items-center justify-end gap-4 rounded-b border-t border-neutral bg-surface-neutral p-4 text-sm font-medium text-neutral shadow-[0_-6px_12px_-6px_rgba(16,30,54,0.06)]">
         <span>Starting from $299/month</span>
-        <EnableObservabilityButtonContactUs callback={() => closeModal()} />
+        <EnableObservabilityButtonContactUs source="overview-modal" callback={() => closeModal()} />
       </div>
     </div>
   )

@@ -147,4 +147,23 @@ describe('AlertRulesCloneModal', () => {
     renderWithProviders(<AlertRulesCloneModal {...defaultProps} />)
     expect(await screen.findByText('Clone alerts')).toBeDisabled()
   })
+
+  it('should prevent cloning an RDS alert to a different database', async () => {
+    const rdsRule = {
+      ...defaultAlertRule,
+      tag: 'rds_cpu',
+      condition: {
+        ...defaultAlertRule.condition,
+        promql: 'aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="z04d06b19-postgresql"}',
+      },
+    } as AlertRuleResponse
+
+    const { userEvent } = renderWithProviders(<AlertRulesCloneModal {...defaultProps} alertRule={rdsRule} />)
+
+    const input = await screen.findByPlaceholderText('Search for services to clone alerts on')
+    await userEvent.click(input)
+    await userEvent.click(await screen.findByText('Service One'))
+
+    expect(await screen.findByText('Clone alerts')).toBeDisabled()
+  })
 })

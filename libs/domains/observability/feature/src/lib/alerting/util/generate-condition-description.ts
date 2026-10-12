@@ -1,6 +1,7 @@
 import { type AlertRuleConditionFunction, type AlertRuleConditionOperator } from 'qovery-typescript-axios'
 import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { type MetricCategory } from '../alerting/alerting-creation-flow/alerting-creation-flow.types'
+import { type MetricCategory } from '../alerting-creation-flow/alerting-creation-flow.types'
+import { RDS_METRICS, RDS_METRIC_CATEGORIES } from '../alerting-creation-flow/rds-alert-metrics'
 
 const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   cpu: 'CPU',
@@ -11,6 +12,7 @@ const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   instance_restart: 'Instance restart',
   hpa_limit: 'Auto-scaling limit',
   certificate_renewal_failed: 'Certificate renewal failed',
+  ...Object.fromEntries(RDS_METRIC_CATEGORIES.map((category) => [category, RDS_METRICS[category].label])),
 }
 
 const OPERATOR_SYMBOLS: Record<AlertRuleConditionOperator, string> = {
@@ -63,7 +65,7 @@ export function formatThreshold(metric?: MetricCategory, threshold?: number, uni
   if (unit !== '%') {
     return `${threshold}${unit}`
   }
-  const normalized = threshold <= 1 ? threshold * 100 : threshold
+  const normalized = metric === 'rds_cpu' ? threshold : threshold <= 1 ? threshold * 100 : threshold
   const formatted = Number.isInteger(normalized) ? normalized.toString() : normalized.toFixed(1).replace(/\.0$/, '')
   return `${formatted}${unit}`
 }
@@ -100,12 +102,13 @@ export function generateConditionDescription(
   operator?: AlertRuleConditionOperator,
   threshold?: number,
   unit = '%',
-  duration?: string
+  duration?: string,
+  metric?: MetricCategory
 ): string {
   const functionLabel = formatFunction(func)
   const operatorSymbol = formatOperator(operator)
   const operatorLabel = formatOperatorLabel(operator)
-  const thresholdFormatted = formatThreshold(undefined, threshold, unit)
+  const thresholdFormatted = formatThreshold(metric, threshold, unit)
   const durationFormatted = formatDuration(duration)
 
   const shouldIncludeFunction = functionLabel && functionLabel !== 'None'

@@ -1,8 +1,8 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import type { AlertRuleResponse, AlertRuleSource, AlertRuleState } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useMemo, useState } from 'react'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import {
@@ -22,7 +22,9 @@ import { useAlertRulesGhosted } from '../../hooks/use-alert-rules-ghosted/use-al
 import { useAlertRules } from '../../hooks/use-alert-rules/use-alert-rules'
 import { useDeleteAlertRule } from '../../hooks/use-delete-alert-rule/use-delete-alert-rule'
 import { AlertRulesCloneModal } from '../alert-rules-clone-modal/alert-rules-clone-modal'
+import { isLegacyRdsDatabase } from '../alerting-creation-flow/metric-availability'
 import { SeverityIndicator } from '../severity-indicator/severity-indicator'
+import { canCloneAlertRule } from '../util/alert-type-guards'
 import { AlertRulesActionBar } from './alert-rules-action-bar/alert-rules-action-bar'
 
 const { Table } = TablePrimitives
@@ -96,6 +98,7 @@ export function AlertRulesOverview({
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
+  const { projectId = '' } = useParams({ strict: false })
   const { data: deploymentStatus } = useDeploymentStatus({
     environmentId: service?.environment?.id,
     serviceId: service?.id,
@@ -112,7 +115,6 @@ export function AlertRulesOverview({
     organizationId,
     serviceId: service?.id,
   })
-
   const allAlertRules = [...alertRulesGhosted, ...alertRules]
 
   const filteredAlertRules = filter
@@ -161,6 +163,8 @@ export function AlertRulesOverview({
       deploymentStatus?.service_deployment_status !== 'NEVER_DEPLOYED'
     )
   }, [deploymentStatus])
+
+  const isLegacyRds = isLegacyRdsDatabase(service)
 
   const toggleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -240,17 +244,29 @@ export function AlertRulesOverview({
     <div className="flex flex-col items-center justify-center overflow-hidden rounded-md border border-neutral bg-surface-neutral p-10 text-center">
       <Icon iconName="light-emergency" iconStyle="regular" className="mb-2.5 text-xl text-neutral-subtle" />
       <p className="font-medium text-neutral">
-        {service ? 'No alerts created for this service' : 'No alerts created for this organization'}
+        {match({ service, isLegacyRds })
+          .with({ isLegacyRds: true }, () => 'No alerts are linked to this service')
+          .with({ service: undefined }, () => 'No alerts created for this organization')
+          .otherwise(() => 'No alerts created for this service')}
       </p>
       <p className="mb-3 text-sm text-neutral-subtle">
-        {service ? (
-          <>
-            Define baseline alerts for key metrics like CPU, memory, latency, <br /> and error rate that will help you
-            keep your service under control.
-          </>
-        ) : (
-          'Create alerts at the service level to monitor your infrastructure.'
-        )}
+        {match({ service, isLegacyRds })
+          .with({ isLegacyRds: true }, () => (
+            <>
+              Alerts created on the cluster remain visible in the{' '}
+              <Link color="brand" to="/organization/$organizationId/alerts/alert-rules" params={{ organizationId }}>
+                organization alerts
+              </Link>
+              .
+            </>
+          ))
+          .with({ service: undefined }, () => 'Create alerts at the service level to monitor your infrastructure.')
+          .otherwise(() => (
+            <>
+              Define baseline alerts for key metrics like CPU, memory, latency, <br /> and error rate that will help you
+              keep your service under control.
+            </>
+          ))}
       </p>
       {onCreateKeyAlerts && (
         <Tooltip content="You need to deploy your service to create alerts" disabled={canCreateAlerts}>
@@ -310,6 +326,20 @@ export function AlertRulesOverview({
               .otherwise(() => '')
             const isSelectable = alertRule.source === 'MANAGED'
             const isSelected = selectedAlertRuleIds.has(alertRuleId)
+            const targetService = alertRule.target?.service
+            // The API may omit the nested service; on a service page the rule then targets the current service.
+            const editParams = match({ targetService, isCurrentService: alertRule.target?.target_id === service?.id })
+              .with({ targetService: P.not(P.nullish) }, ({ targetService }) => ({
+                projectId: targetService.project_id,
+                environmentId: targetService.environment_id,
+                serviceId: targetService.id,
+              }))
+              .with({ isCurrentService: true }, () => ({
+                projectId,
+                environmentId: service?.environment?.id ?? '',
+                serviceId: service?.id ?? '',
+              }))
+              .otherwise(() => undefined)
 
             return (
               <Table.Row
@@ -387,32 +417,41 @@ export function AlertRulesOverview({
                 </Table.Cell>
                 {!service && (
                   <Table.Cell className="h-16">
-                    <Link
-                      as="button"
-                      radius="full"
-                      variant="surface"
-                      color="neutral"
-                      size="xs"
-                      className="justify-center pl-0.5"
-                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
-                      params={{
-                        organizationId,
-                        projectId: alertRule.target?.service?.project_id ?? '',
-                        environmentId: alertRule.target?.service?.environment_id ?? '',
-                        serviceId: alertRule.target?.service?.id ?? '',
-                      }}
-                    >
-                      <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-surface-neutral-subtle">
-                        <Icon
-                          name={match(alertRule.target?.target_type)
-                            .with('CONTAINER', () => 'APPLICATION')
-                            .otherwise((s) => s)}
-                          iconStyle="regular"
-                          width={13}
-                        />
+                    {targetService ? (
+                      <Link
+                        as="button"
+                        radius="full"
+                        variant="surface"
+                        color="neutral"
+                        size="xs"
+                        className="justify-center pl-0.5"
+                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
+                        params={{
+                          organizationId,
+                          projectId: targetService.project_id,
+                          environmentId: targetService.environment_id,
+                          serviceId: targetService.id,
+                        }}
+                      >
+                        <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-surface-neutral-subtle">
+                          <Icon
+                            name={match(targetService.service_type)
+                              .with('CONTAINER', () => 'APPLICATION')
+                              .otherwise((s) => s)}
+                            iconStyle="regular"
+                            width={13}
+                          />
+                        </span>
+                        {targetService.name}
+                      </Link>
+                    ) : (
+                      <span className="text-sm text-neutral-subtle">
+                        {match(alertRule.target?.target_type?.trim())
+                          .with('CLUSTER', () => 'Cluster')
+                          .with('ENVIRONMENT', () => 'Environment')
+                          .otherwise(() => '-')}
                       </span>
-                      {alertRule.target?.service?.name}
-                    </Link>
+                    )}
                   </Table.Cell>
                 )}
                 <Table.Cell className="h-16">
@@ -427,24 +466,26 @@ export function AlertRulesOverview({
                   {match(alertRule)
                     .with({ source: 'MANAGED' }, (alertRule) => (
                       <div className="flex items-center justify-end gap-2">
-                        <Tooltip content="Edit">
-                          <Button
-                            variant="outline"
-                            color="neutral"
-                            size="xs"
-                            className="w-6 justify-center"
-                            onClick={() =>
-                              editAlertRule(
-                                alertRule.target.service?.project_id ?? '',
-                                alertRule.target.service?.environment_id ?? '',
-                                alertRule.target.service?.id ?? '',
-                                alertRule
-                              )
-                            }
-                          >
-                            <Icon iconName="pen" iconStyle="regular" className="text-xs" />
-                          </Button>
-                        </Tooltip>
+                        {editParams && (
+                          <Tooltip content="Edit">
+                            <Button
+                              variant="outline"
+                              color="neutral"
+                              size="xs"
+                              className="w-6 justify-center"
+                              onClick={() =>
+                                editAlertRule(
+                                  editParams.projectId,
+                                  editParams.environmentId,
+                                  editParams.serviceId,
+                                  alertRule
+                                )
+                              }
+                            >
+                              <Icon iconName="pen" iconStyle="regular" className="text-xs" />
+                            </Button>
+                          </Tooltip>
+                        )}
                         <Tooltip content="Delete alert rule">
                           <DropdownMenu.Root>
                             <DropdownMenu.Trigger asChild>
@@ -453,12 +494,14 @@ export function AlertRulesOverview({
                               </Button>
                             </DropdownMenu.Trigger>
                             <DropdownMenu.Content className="mr-14 w-40">
-                              <DropdownMenu.Item
-                                icon={<Icon iconName="clone" />}
-                                onSelect={() => cloneAlertRule(alertRule)}
-                              >
-                                Clone
-                              </DropdownMenu.Item>
+                              {canCloneAlertRule(alertRule) && (
+                                <DropdownMenu.Item
+                                  icon={<Icon iconName="clone" />}
+                                  onSelect={() => cloneAlertRule(alertRule)}
+                                >
+                                  Clone
+                                </DropdownMenu.Item>
+                              )}
                               <DropdownMenu.Item
                                 color="red"
                                 icon={<Icon iconName="trash-can" iconStyle="regular" />}

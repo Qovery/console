@@ -57,18 +57,6 @@ export function canEditDnsProvider(plan?: string): boolean {
   )
 }
 
-export function isForbiddenError(error: unknown): boolean {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'response' in error &&
-    typeof error.response === 'object' &&
-    error.response !== null &&
-    'status' in error.response &&
-    error.response.status === 403
-  )
-}
-
 export function createClusterDnsProviderFormValues(
   clusterDnsProvider?: ClusterDnsProviderResponse
 ): ClusterDnsProviderFormValues {

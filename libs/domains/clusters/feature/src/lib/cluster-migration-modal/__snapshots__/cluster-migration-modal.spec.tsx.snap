@@ -32,7 +32,7 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
             <input
               aria-hidden="true"
               name="activation"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -68,7 +68,7 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
             <input
               aria-hidden="true"
               name="downtime"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -104,7 +104,7 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
             <input
               aria-hidden="true"
               name="environments"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -140,7 +140,7 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
             <input
               aria-hidden="true"
               name="compatibility"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"

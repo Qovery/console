@@ -9,6 +9,11 @@ jest.mock('posthog-js/react', () => ({
 
 const mockUseFeatureFlagEnabled = jest.mocked(useFeatureFlagEnabled)
 const mockOnClose = jest.fn()
+const mockUseRdsAlertTarget = jest.fn()
+
+jest.mock('../../hooks/use-rds-alert-target/use-rds-alert-target', () => ({
+  useRdsAlertTarget: () => mockUseRdsAlertTarget(),
+}))
 
 describe('CreateKeyAlertsModal', () => {
   const defaultProps = {
@@ -26,6 +31,7 @@ describe('CreateKeyAlertsModal', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseFeatureFlagEnabled.mockReturnValue(false)
+    mockUseRdsAlertTarget.mockReturnValue({ isRds: false, isResolving: false })
   })
 
   it('should render all metric categories when certificate renewal alerts are enabled', () => {
@@ -85,5 +91,47 @@ describe('CreateKeyAlertsModal', () => {
     renderWithProviders(<CreateKeyAlertsModal {...defaultProps} />)
 
     expect(screen.getByText('Configure alerts')).toBeInTheDocument()
+  })
+
+  it('offers only the four RDS metrics for an RDS blueprint service', () => {
+    mockUseRdsAlertTarget.mockReturnValue({
+      isRds: true,
+      isResolving: false,
+      dbInstance: 'z04d06b19-postgresql',
+      hasCloudWatchMetrics: true,
+    })
+    renderWithProviders(<CreateKeyAlertsModal {...defaultProps} service={defaultService as AnyService} />)
+
+    expect(screen.getByRole('button', { name: 'RDS CPU utilization' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'RDS connections' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'RDS freeable memory' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'RDS free storage space' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Missing instance' })).not.toBeInTheDocument()
+  })
+
+  it('requires CloudWatch metrics before configuring RDS alerts', async () => {
+    mockUseRdsAlertTarget.mockReturnValue({
+      isRds: true,
+      isResolving: false,
+      dbInstance: 'db-1',
+      hasCloudWatchMetrics: false,
+    })
+    const { userEvent } = renderWithProviders(
+      <CreateKeyAlertsModal {...defaultProps} service={defaultService as AnyService} />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'RDS CPU utilization' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Enable CloudWatch metrics')
+    expect(screen.getByTestId('submit-button')).toBeDisabled()
+  })
+
+  it('does not offer generic alerts when RDS metadata fails to load', () => {
+    mockUseRdsAlertTarget.mockReturnValue({ isRds: false, isResolving: false, isMetadataUnavailable: true })
+    renderWithProviders(<CreateKeyAlertsModal {...defaultProps} service={defaultService as AnyService} />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent("Unable to load this database's alert target")
+    expect(screen.queryByRole('button', { name: 'CPU', exact: true })).not.toBeInTheDocument()
+    expect(screen.getByTestId('submit-button')).toBeDisabled()
   })
 })

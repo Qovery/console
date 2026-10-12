@@ -2,7 +2,7 @@ import { type VariableResponse } from 'qovery-typescript-axios'
 
 // RDS identifiers contain only letters, digits and hyphens. Validate the output before it is
 // interpolated into PromQL selectors by the dashboard charts.
-const RDS_INSTANCE_IDENTIFIER = /^[A-Za-z][A-Za-z0-9-]{0,62}$/
+export const RDS_INSTANCE_IDENTIFIER = /^[A-Za-z][A-Za-z0-9-]{0,62}$/
 
 export function getBlueprintDbInstance(
   serviceId: string,

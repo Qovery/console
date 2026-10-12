@@ -24,7 +24,7 @@ export function SettingsPolicyApiToken() {
       <Section className="px-8 pb-8 pt-6">
         <div className="relative">
           <SettingsHeading
-            title="Policy API Token (Beta)"
+            title="Policy API Token (New)"
             description={
               <>
                 Policy API tokens are for autonomous agents. Authorization is two gates, and both must open: the Open

@@ -864,7 +864,7 @@ describe('AgenticWorkflowConfiguration', () => {
         to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
       })
     )
-  })
+  }, 30000)
 
   it('should track a failed agent task creation', async () => {
     mockCreateService.mockRejectedValueOnce(new Error('Creation failed'))

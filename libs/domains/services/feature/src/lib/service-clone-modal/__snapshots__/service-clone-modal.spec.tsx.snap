@@ -16,7 +16,6 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
       Clone the service on the same or different target environment.
     </p>
     <button
-      aria-controls="radix-:r6:"
       aria-expanded="false"
       aria-haspopup="dialog"
       class="hover:text-brandHover mt-2 cursor-pointer text-sm font-medium text-brand transition"
@@ -124,6 +123,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
               aria-live="polite"
               aria-relevant="additions text"
               class="css-1f43avz-a11yText-A11yText"
+              role="log"
             />
             <div
               class="input-select__control css-13cymwt-control"
@@ -142,6 +142,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
                   data-value=""
                 >
                   <input
+                    aria-activedescendant=""
                     aria-autocomplete="list"
                     aria-describedby="react-select-2-placeholder"
                     aria-expanded="false"
@@ -231,6 +232,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
               aria-live="polite"
               aria-relevant="additions text"
               class="css-1f43avz-a11yText-A11yText"
+              role="log"
             />
             <div
               class="input-select__control css-13cymwt-control"
@@ -249,6 +251,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
                   data-value=""
                 >
                   <input
+                    aria-activedescendant=""
                     aria-autocomplete="list"
                     aria-describedby="react-select-3-placeholder"
                     aria-expanded="false"

@@ -21,7 +21,8 @@ const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfigur
 const renderWithContext = async (
   alerts: AlertConfiguration[] = [],
   selectedMetrics: string[] = ['cpu'],
-  props: { isEdit?: boolean } = {}
+  props: { isEdit?: boolean } = {},
+  contextOverrides: { submissionUnavailableReason?: string } = {}
 ) => {
   const mockSetCurrentStepIndex = jest.fn()
   const mockSetAlerts = jest.fn()
@@ -45,6 +46,7 @@ const renderWithContext = async (
         onNavigateToMetric: mockOnNavigateToMetric,
         onComplete: mockOnComplete,
         isLoading: false,
+        ...contextOverrides,
       }}
     >
       {children}
@@ -166,6 +168,64 @@ describe('MetricConfigurationStep', () => {
     await waitFor(() => {
       const thresholdInput = screen.getByDisplayValue('50')
       expect(thresholdInput).toBeInTheDocument()
+    })
+  })
+
+  describe('RDS metrics', () => {
+    const rdsAlert = (tag: AlertConfiguration['tag'], threshold: number) =>
+      createAlert({
+        tag,
+        condition: { kind: 'BUILT', function: 'NONE', operator: 'ABOVE', threshold, promql: '' },
+      })
+
+    it('limits the CPU threshold to 100%', async () => {
+      const { userEvent } = await renderWithContext([rdsAlert('rds_cpu', 80)], ['rds_cpu'], { isEdit: true })
+
+      const thresholdInput = screen.getByDisplayValue('80')
+      await userEvent.clear(thresholdInput)
+      await userEvent.type(thresholdInput, '150')
+
+      await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeDisabled())
+    })
+
+    it('accepts a connection threshold above 100', async () => {
+      const { userEvent } = await renderWithContext([rdsAlert('rds_connections', 300)], ['rds_connections'], {
+        isEdit: true,
+      })
+
+      const thresholdInput = screen.getByDisplayValue('300')
+      await userEvent.clear(thresholdInput)
+      await userEvent.type(thresholdInput, '500')
+
+      await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
+    })
+
+    it('rejects a negative threshold', async () => {
+      const { userEvent } = await renderWithContext([rdsAlert('rds_connections', 300)], ['rds_connections'], {
+        isEdit: true,
+      })
+
+      const thresholdInput = screen.getByDisplayValue('300')
+      await userEvent.clear(thresholdInput)
+      await userEvent.type(thresholdInput, '-1')
+
+      await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeDisabled())
+    })
+
+    it('explains why the alert cannot be created and disables the submit button', async () => {
+      await renderWithContext(
+        [rdsAlert('rds_cpu', 80)],
+        ['rds_cpu'],
+        {},
+        {
+          submissionUnavailableReason: 'Enable CloudWatch metrics on this cluster to create RDS alerts.',
+        }
+      )
+
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'Enable CloudWatch metrics on this cluster to create RDS alerts.'
+      )
+      expect(screen.getByRole('button', { name: /create/i })).toBeDisabled()
     })
   })
 })

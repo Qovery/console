@@ -1,7 +1,7 @@
 import { type CSSProperties, type RefObject, useEffect, useState } from 'react'
 
 export interface UsePanelResizeProps {
-  panelRef: RefObject<HTMLDivElement>
+  panelRef: RefObject<HTMLDivElement | null>
   expand: boolean
   storageKey: string
   style?: CSSProperties

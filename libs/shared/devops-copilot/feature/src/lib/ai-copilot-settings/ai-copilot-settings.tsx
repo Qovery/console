@@ -58,10 +58,10 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
               <Icon iconName="flask" />
             </Callout.Icon>
             <Callout.Text>
-              <Callout.TextHeading>Beta Feature</Callout.TextHeading>
+              <Callout.TextHeading>New Feature</Callout.TextHeading>
               <Callout.TextDescription>
-                Copilot is currently in beta. This is an experimental feature and functionality may change. Billing
-                terms are not final and will be communicated before any charges apply.
+                Copilot is a new feature. This is an experimental feature and functionality may change. Billing terms
+                are not final and will be communicated before any charges apply.
               </Callout.TextDescription>
             </Callout.Text>
           </Callout.Root>

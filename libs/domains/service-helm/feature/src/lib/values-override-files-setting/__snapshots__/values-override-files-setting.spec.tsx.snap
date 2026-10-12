@@ -21,7 +21,6 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
             Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
           </p>
           <span
-            aria-controls="radix-:rk:"
             aria-expanded="false"
             aria-haspopup="dialog"
             class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
@@ -63,6 +62,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
                   aria-live="polite"
                   aria-relevant="additions text"
                   class="css-1f43avz-a11yText-A11yText"
+                  role="log"
                 />
                 <div
                   class="input-select__control css-13cymwt-control"
@@ -76,6 +76,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
                       None
                     </span>
                     <input
+                      aria-activedescendant=""
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
@@ -183,7 +184,6 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
             Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
           </p>
           <span
-            aria-controls="radix-:r6:"
             aria-expanded="false"
             aria-haspopup="dialog"
             class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
@@ -225,6 +225,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
                   aria-live="polite"
                   aria-relevant="additions text"
                   class="css-1f43avz-a11yText-A11yText"
+                  role="log"
                 />
                 <div
                   class="input-select__control css-13cymwt-control"
@@ -238,6 +239,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
                       None
                     </span>
                     <input
+                      aria-activedescendant=""
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"
@@ -324,7 +326,6 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
             Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
           </p>
           <span
-            aria-controls="radix-:rd:"
             aria-expanded="false"
             aria-haspopup="dialog"
             class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
@@ -366,6 +367,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                   aria-live="polite"
                   aria-relevant="additions text"
                   class="css-1f43avz-a11yText-A11yText"
+                  role="log"
                 />
                 <div
                   class="input-select__control css-13cymwt-control"
@@ -379,6 +381,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                       None
                     </span>
                     <input
+                      aria-activedescendant=""
                       aria-autocomplete="list"
                       aria-expanded="false"
                       aria-haspopup="true"

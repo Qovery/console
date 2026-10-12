@@ -9,7 +9,7 @@ jest.mock('downloadjs', () => jest.fn())
 
 window.HTMLElement.prototype.scroll = jest.fn()
 
-const refScrollSection: RefObject<HTMLDivElement> = {
+const refScrollSection: RefObject<HTMLDivElement | null> = {
   current: document.createElement('div'),
 }
 

@@ -85,4 +85,69 @@ describe('PromptEditor', () => {
     expect(onChange).not.toHaveBeenCalled()
     expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveTextContent('Updated')
   })
+
+  it('should keep newer editor text when the parent echoes a superseded edit', async () => {
+    const onChange = jest.fn()
+
+    // The parent only echoes values when asked to, so the test controls the order in which edits come back.
+    function EchoPromptEditor() {
+      const [value, setValue] = useState('')
+
+      return (
+        <>
+          <PromptEditor label="Prompt" name="prompt" value={value} onChange={onChange} />
+          <button type="button" onClick={() => setValue('a')}>
+            Echo first edit
+          </button>
+          <button type="button" onClick={() => setValue('ab')}>
+            Echo latest edit
+          </button>
+        </>
+      )
+    }
+
+    const { userEvent } = renderWithProviders(<EchoPromptEditor />)
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Prompt' }), 'ab')
+    expect(onChange).toHaveBeenCalledTimes(2)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Echo first edit' }))
+    expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveTextContent('ab')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Echo latest edit' }))
+    expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveTextContent('ab')
+    expect(onChange).toHaveBeenCalledTimes(2)
+  })
+
+  it('should apply a later controlled update after the parent echoes the latest of repeated values', async () => {
+    const onChange = jest.fn()
+
+    function EchoPromptEditor() {
+      const [value, setValue] = useState('')
+
+      return (
+        <>
+          <PromptEditor label="Prompt" name="prompt" value={value} onChange={onChange} />
+          <button type="button" onClick={() => setValue('a')}>
+            Echo a
+          </button>
+          <button type="button" onClick={() => setValue('ab')}>
+            Reset to ab
+          </button>
+        </>
+      )
+    }
+
+    const { userEvent } = renderWithProviders(<EchoPromptEditor />)
+
+    // Emits "a", "ab", then "a" again.
+    await userEvent.type(screen.getByRole('textbox', { name: 'Prompt' }), 'ab{Backspace}')
+    expect(onChange).toHaveBeenCalledTimes(3)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Echo a' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Reset to ab' }))
+
+    expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveTextContent('ab')
+    expect(onChange).toHaveBeenCalledTimes(3)
+  })
 })

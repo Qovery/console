@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'shared-interfaces',
   preset: '../../../jest.preset.js',
   transform: {

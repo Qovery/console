@@ -57,7 +57,9 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
     return typeof icon === 'string' ? (
       <img className={twMerge('mt-1 select-none', className)} width={32} height={32} src={icon} alt={title} />
     ) : (
-      cloneElement(icon as ReactElement, { className: twMerge('mt-1 w-[32px] select-none', className) })
+      cloneElement(icon as ReactElement<{ className?: string }>, {
+        className: twMerge('mt-1 w-[32px] select-none', className),
+      })
     )
   }
 
@@ -283,7 +285,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
               {typeof icon === 'string' ? (
                 <img className="select-none" width={32} height={32} src={icon} alt={title} />
               ) : (
-                cloneElement(icon as ReactElement, { className: 'w-[32px] h-[32px]' })
+                cloneElement(icon as ReactElement<{ className?: string }>, { className: 'w-[32px] h-[32px]' })
               )}
             </div>
             <p className="text-base font-semibold text-neutral">{title}</p>
@@ -311,7 +313,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
                     {typeof icon === 'string' ? (
                       <img className="select-none" width={24} height={24} src={icon} alt={title} />
                     ) : (
-                      cloneElement(icon as ReactElement, { className: 'w-[24px] h-[24px]' })
+                      cloneElement(icon as ReactElement<{ className?: string }>, { className: 'w-[24px] h-[24px]' })
                     )}
                   </div>
                   <span className="text-base text-neutral">{title}</span>
@@ -376,7 +378,9 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
                 alt={title}
               />
             ) : (
-              cloneElement(icon as ReactElement, { className: twMerge('h-[32px] w-[32px]', disabled && 'opacity-60') })
+              cloneElement(icon as ReactElement<{ className?: string }>, {
+                className: twMerge('h-[32px] w-[32px]', disabled && 'opacity-60'),
+              })
             )}
           </div>
           <p className={twMerge('truncate text-base font-semibold', disabled ? 'text-neutral-subtle' : 'text-neutral')}>

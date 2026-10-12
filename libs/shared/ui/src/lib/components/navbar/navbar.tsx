@@ -56,7 +56,7 @@ interface NavbarContextValue {
   activeId?: string
   registerItem: (id: string, element: HTMLElement, contentElement: HTMLElement) => void
   unregisterItem: (id: string) => void
-  listRef: React.RefObject<HTMLDivElement>
+  listRef: React.RefObject<HTMLDivElement | null>
 }
 
 const NavbarContext = createContext<NavbarContextValue | undefined>(undefined)

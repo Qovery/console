@@ -14,7 +14,7 @@ export function useDeleteService({ organizationId, environmentId }: { organizati
         queryKey: queries.services.listStatuses(environmentId).queryKey,
       })
       queryClient.invalidateQueries({
-        queryKey: queries.environments.deploymentHistoryV2({ environmentId }).queryKey,
+        queryKey: [...queries.environments.deploymentHistoryV2._def, environmentId],
       })
       // gitTokens requests
       queryClient.invalidateQueries({

@@ -2,6 +2,8 @@ const { join } = require('path')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  // Build configuration shares the workspace preset outside the application source graph.
+  // eslint-disable-next-line @nx/enforce-module-boundaries
   presets: [require('../../tailwind-workspace-preset.js')],
   content: [
     join(__dirname, '{src,pages,components,app}/**/*!(*.stories|*.spec).{ts,tsx,html}'),

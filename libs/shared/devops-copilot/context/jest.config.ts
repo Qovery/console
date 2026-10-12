@@ -1,5 +1,5 @@
 /* eslint-disable */
-export default {
+module.exports = {
   displayName: 'shared-devops-copilot-context',
   preset: '../../../../jest.preset.js',
   transform: {

@@ -50,7 +50,7 @@ function Placeholder({
           <p className="text-sm text-neutral-subtle">Want to search on a larger time period? Try it with Observe</p>
         </div>
         <div className="max-w-max">
-          <EnableObservabilityButtonContactUs text="Unlock with Observe plan" />
+          <EnableObservabilityButtonContactUs source="logs-placeholder" text="Unlock with Observe plan" />
         </div>
       </div>
     )

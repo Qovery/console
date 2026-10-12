@@ -340,9 +340,9 @@ export function AgenticWorkflowConfiguration() {
   const [showValidationErrors, setShowValidationErrors] = useState(false)
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
-  const createdServiceIdRef = useRef<string>()
+  const createdServiceIdRef = useRef<string | undefined>(undefined)
   const qoveryMcpInitializationStartedRef = useRef(false)
-  const qoveryMcpInitializationPromiseRef = useRef<Promise<McpServerResponse>>()
+  const qoveryMcpInitializationPromiseRef = useRef<Promise<McpServerResponse> | undefined>(undefined)
   const submissionInFlightRef = useRef(false)
   const values = form.watch()
   const { dirtyFields } = form.formState

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'util-payment',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

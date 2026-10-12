@@ -1,4 +1,6 @@
+import { useParams } from '@tanstack/react-router'
 import { type AlertRuleResponse } from 'qovery-typescript-axios'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useAlertRulesGhosted from '../../hooks/use-alert-rules-ghosted/use-alert-rules-ghosted'
 import * as useAlertRules from '../../hooks/use-alert-rules/use-alert-rules'
@@ -14,6 +16,7 @@ describe('AlertRulesOverview', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.mocked(useParams).mockReturnValue({ organizationId: 'org-123', projectId: 'project-1' })
     mockUseDeleteAlertRule.mockReturnValue({
       mutate: mockDeleteAlertRule,
     })
@@ -143,5 +146,90 @@ describe('AlertRulesOverview', () => {
 
     expect(screen.getByText('High CPU Alert')).toBeInTheDocument()
     expect(screen.queryByText('Memory Alert')).not.toBeInTheDocument()
+  })
+
+  it('shows a cluster alert without a service link or an edit action', () => {
+    const dbInstance = 'z04d06b19-postgresql'
+    mockUseAlertRules.mockReturnValue({
+      data: [
+        {
+          id: 'rule-1',
+          name: 'High CPU Alert',
+          state: 'MONITORING',
+          severity: 'MEDIUM',
+          enabled: true,
+          is_up_to_date: true,
+          source: 'MANAGED',
+          cluster_id: 'cluster-1',
+          target: { target_id: 'cluster-1', target_type: 'CLUSTER', service: null },
+          condition: {
+            kind: 'CUSTOM',
+            promql: `aws_rds_cpuutilization_average{dimension_DBInstanceIdentifier="${dbInstance}"} > 80`,
+          },
+        },
+        {
+          id: 'rule-2',
+          name: 'Backend CPU Alert',
+          state: 'MONITORING',
+          severity: 'MEDIUM',
+          enabled: true,
+          is_up_to_date: true,
+          source: 'MANAGED',
+          cluster_id: 'cluster-1',
+          target: {
+            target_id: 'app-1',
+            target_type: 'APPLICATION',
+            service: {
+              id: 'app-1',
+              name: 'backend',
+              service_type: 'APPLICATION',
+              project_id: 'project-1',
+              environment_id: 'env-1',
+            },
+          },
+          condition: { kind: 'BUILT', promql: 'container_cpu' },
+        },
+      ] as AlertRuleResponse[],
+      isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({ data: [], isFetched: true })
+
+    renderWithProviders(<AlertRulesOverview organizationId="org-123" />)
+
+    expect(screen.getByText('High CPU Alert')).toBeInTheDocument()
+    expect(screen.getByText('Cluster')).toBeInTheDocument()
+    // Only the service-targeted rule has the route parameters needed to open the edit page.
+    expect(document.querySelectorAll('.fa-pen')).toHaveLength(1)
+  })
+
+  it('keeps the edit action on a service page when the API omits the nested service', () => {
+    mockUseAlertRules.mockReturnValue({
+      data: [
+        {
+          id: 'rule-1',
+          name: 'RDS CPU Alert',
+          state: 'MONITORING',
+          severity: 'MEDIUM',
+          enabled: true,
+          is_up_to_date: true,
+          source: 'MANAGED',
+          cluster_id: 'cluster-1',
+          target: { target_id: 'service-1', target_type: 'TERRAFORM' },
+          condition: { kind: 'BUILT', promql: 'rds_query' },
+        },
+      ] as AlertRuleResponse[],
+      isFetched: true,
+    })
+    mockUseAlertRulesGhosted.mockReturnValue({ data: [], isFetched: true })
+
+    renderWithProviders(
+      <AlertRulesOverview
+        organizationId="org-123"
+        service={{ id: 'service-1', environment: { id: 'env-1' } } as AnyService}
+      />
+    )
+
+    expect(screen.getByText('RDS CPU Alert')).toBeInTheDocument()
+    expect(document.querySelectorAll('.fa-pen')).toHaveLength(1)
   })
 })
