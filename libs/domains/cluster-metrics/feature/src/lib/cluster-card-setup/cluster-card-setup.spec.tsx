@@ -52,6 +52,41 @@ describe('ClusterCardSetup', () => {
     expect(screen.queryByText('Unavailable')).not.toBeInTheDocument()
   })
 
+  it.each(['PARTIALLY_MANAGED', 'MANAGED'])(
+    'waits for cluster metadata before interpreting drift for %s',
+    (kubernetes) => {
+      mockUseCluster.mockReturnValue({ data: undefined })
+      mockUseClusterRunningStatus.mockReturnValue({
+        data: {
+          computed_status: {
+            kube_version_status: {
+              type: 'DRIFT',
+              kube_version: 'v1.34',
+              expected_kube_version: 'v1.33',
+            },
+          },
+        },
+      })
+      const { container, rerender } = renderWithProviders(
+        <ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />
+      )
+      expect(container.querySelectorAll('[aria-busy="true"]')).toHaveLength(3)
+      expect(screen.queryByText('Upgrade Kubernetes')).not.toBeInTheDocument()
+      expect(screen.queryByText('v1.34 → v1.33')).not.toBeInTheDocument()
+
+      mockUseCluster.mockReturnValue({ data: { ...mockCluster, kubernetes } })
+      rerender(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+      expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+      if (kubernetes === 'PARTIALLY_MANAGED') {
+        expect(screen.getByText('Kubernetes version')).toBeInTheDocument()
+        expect(screen.getByText('v1.34')).toBeInTheDocument()
+        expect(screen.queryByText('Upgrade Kubernetes')).not.toBeInTheDocument()
+      } else {
+        expect(screen.getByText('Upgrade Kubernetes')).toBeInTheDocument()
+      }
+    }
+  )
+
   it('should render Kubernetes up to date status', () => {
     const mockRunningStatus = {
       computed_status: {

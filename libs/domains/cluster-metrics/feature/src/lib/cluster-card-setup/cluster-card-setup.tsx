@@ -25,7 +25,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
   const isEksAnywhereCluster = cluster?.kubernetes === 'PARTIALLY_MANAGED'
 
   const isLoading = !cluster?.created_at
-  const isVersionLoading = presentation.status === 'loading'
+  const isVersionLoading = !cluster || presentation.status === 'loading'
   const skeletonClassName = isLoading ? 'my-2 ml-1.5' : undefined
 
   return (
