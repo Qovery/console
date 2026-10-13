@@ -751,6 +751,27 @@ describe('ClusterProfileFeature', () => {
       expect(screen.queryByText('No configuration needed for this component')).not.toBeInTheDocument()
     })
 
+    it('tells when the selected component only matches through settings hidden by the current values', () => {
+      mockUsePlatformComponentConfigurations.mockImplementation(
+        ({ requests }) =>
+          Object.keys(requests).map((componentKey) => {
+            const resolution = createResolution(componentKey)
+            return {
+              data:
+                componentKey === 'loki'
+                  ? { ...resolution, fields: resolution.fields.filter(({ key }) => key !== 'retention-period') }
+                  : resolution,
+              isError: false,
+              isFetching: false,
+            }
+          }) as ReturnType<typeof usePlatformComponentConfigurations>
+      )
+      renderWithProviders(<ClusterProfileFeature activeComponentKey="loki" search="retention" />)
+
+      expect(screen.getByRole('button', { name: 'Loki' })).toHaveAttribute('aria-current', 'page')
+      expect(screen.getByText('No settings match your search')).toBeInTheDocument()
+    })
+
     it('shows empty states when nothing matches', () => {
       renderWithProviders(<ClusterProfileFeature search="CPUza" />)
 

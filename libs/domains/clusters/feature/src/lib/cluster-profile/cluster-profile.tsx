@@ -119,6 +119,18 @@ function getSectionFields(section: ProfileSection, preview?: PlatformComponentCo
   return section.fieldSearch ? filterFieldsByProfileSearch(fields, section.fieldSearch) : fields
 }
 
+// What a section displays once resolved: its fields and the cluster inputs it requires, narrowed by the search.
+function getSectionContent(section: ProfileSection, preview?: PlatformComponentConfigurationResolutionResponse) {
+  const allRequirements = preview?.requirements ?? []
+  return {
+    fields: getSectionFields(section, preview),
+    allRequirements,
+    requirements: section.fieldSearch
+      ? allRequirements.filter((requirement) => matchesProfileSearch(requirement, section.fieldSearch ?? ''))
+      : allRequirements,
+  }
+}
+
 function ProfileConfigurationSkeleton() {
   return (
     <div role="status" aria-label="Loading configuration" className="flex flex-col">
@@ -159,11 +171,7 @@ function ProfileConfigurationSection({
   onProfileConfigChange: (componentKey: string, fieldKey: string, value: unknown) => void
   onClusterInputChange: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
 }) {
-  const fields = getSectionFields(section, preview)
-  const allRequirements = preview?.requirements ?? []
-  const requirements = section.fieldSearch
-    ? allRequirements.filter((requirement) => matchesProfileSearch(requirement, section.fieldSearch ?? ''))
-    : allRequirements
+  const { fields, allRequirements, requirements } = getSectionContent(section, preview)
   const violations = preview?.violations ?? []
   // Sections showing a subset of a source component's fields would surface that component's other violations.
   const unmappedViolations = section.fieldKeys
@@ -398,6 +406,14 @@ function ClusterProfileView({
       (query) => query.isError && query.data && displayedComponentKeySet.has(query.data.componentKey)
     )
   const isConfigurationLoading = Boolean(activeComponent) && !hasResolvedConfiguration
+  // The sidebar searches the template fields, which include fields the current values hide: the active component can
+  // match the search while none of its displayed settings do.
+  const hasNoMatchingSetting =
+    Boolean(fieldSearch) &&
+    profileSections.every((section) => {
+      const { fields, requirements } = getSectionContent(section, previewsByComponent[section.component.key])
+      return !fields.length && !requirements.length
+    })
   const isInitialResolverError = hasResolverError && !hasResolvedConfiguration
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
   // Saving needs every displayed or edited component resolved for the latest edits, with no violation or missing input.
@@ -423,6 +439,20 @@ function ClusterProfileView({
   const handleSelectItem = (itemId: string) => {
     onActiveComponentChange?.(itemId)
   }
+
+  const noSettingsState = (
+    <div className="p-4">
+      <EmptyState
+        icon="wave-pulse"
+        title={
+          <span className="font-normal leading-5">
+            {searchQuery ? 'No settings match your search' : 'Nothing to configure for this cluster'}
+          </span>
+        }
+        className="h-auto w-full p-8 shadow-sm"
+      />
+    </div>
+  )
 
   return (
     <div className="flex h-page-container min-h-0 items-stretch overflow-hidden text-sm">
@@ -477,23 +507,15 @@ function ClusterProfileView({
         <div className="min-h-0 flex-1 overflow-y-auto">
           <div key={formKey} className="flex min-h-full flex-col">
             {!isLoading && !isError && !activeComponent ? (
-              <div className="p-4">
-                <EmptyState
-                  icon="wave-pulse"
-                  title={
-                    <span className="font-normal leading-5">
-                      {searchQuery ? 'No settings match your search' : 'Nothing to configure for this cluster'}
-                    </span>
-                  }
-                  className="h-auto w-full p-8 shadow-sm"
-                />
-              </div>
+              noSettingsState
             ) : isInitialResolverError ? (
               <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
                 Configuration could not be checked. Refresh the page and try again.
               </div>
             ) : isConfigurationLoading ? (
               <ProfileConfigurationSkeleton />
+            ) : hasNoMatchingSetting ? (
+              noSettingsState
             ) : (
               <>
                 {isBackgroundResolverError ? (
