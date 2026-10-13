@@ -317,6 +317,26 @@ describe('ClusterCredentialsSettings', () => {
       )
     })
 
+    const isBefore = (element: HTMLElement, other: HTMLElement) =>
+      Boolean(element.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING)
+
+    it('should display the credentials link and mirroring registry warning between restrictive and extended credentials', () => {
+      renderSettings({ credentials: 'static-1', using_restrictive_permissions: true })
+
+      const link = screen.getByText('See and edit all Cloud credentials')
+      const warning = screen.getByTestId('mirroring-registry-credentials-warning')
+      expect(isBefore(screen.getByTestId('input-credentials'), link)).toBe(true)
+      expect(isBefore(link, warning)).toBe(true)
+      expect(isBefore(warning, screen.getByTestId('input-wide-permission-credentials'))).toBe(true)
+    })
+
+    it('should display the mirroring registry warning last when restrictive permissions are off', () => {
+      renderSettings({ credentials: 'static-1', using_restrictive_permissions: false })
+
+      const warning = screen.getByTestId('mirroring-registry-credentials-warning')
+      expect(isBefore(screen.getByText('See and edit all Cloud credentials'), warning)).toBe(true)
+    })
+
     it('should not display the restrictive permissions toggle when wide credentials are disabled', () => {
       renderSettings({ credentials: 'static-1' }, { isWideCredentialsEnabled: false })
 
