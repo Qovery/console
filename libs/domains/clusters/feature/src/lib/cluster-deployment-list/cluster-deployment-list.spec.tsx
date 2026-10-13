@@ -68,24 +68,23 @@ describe('ClusterDeploymentList', () => {
     expect(screen.getByText('Maintenance')).toBeInTheDocument()
   })
 
-  it('should render the Operator action with its maintenance badge when operation is OPERATOR_UPDATE', async () => {
+  it('should render the Operator action with its maintenance badge when operation is OPERATOR_UPDATE', () => {
     mockDeploymentHistory = [
       {
         ...defaultDeploymentHistory[0],
         operation: ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE,
       },
     ]
-    const { userEvent } = renderWithProviders(
-      <ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />
-    )
 
-    await userEvent.hover(screen.getByText('Operator'))
+    renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
 
-    expect(screen.getByText('Operator')).toBeInTheDocument()
+    const action = screen.getByText('Operator').parentElement
     expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
     expect(screen.getByText('Maintenance')).toBeInTheDocument()
-    expect(screen.getByText('Operator').closest('[tabindex]')?.tagName).toBe('TR')
-    expect(await screen.findByRole('tooltip')).toHaveTextContent('Operator update')
+    expect(screen.getByRole('link', { name: /Operator update/ }).tagName).toBe('TR')
+    expect(action?.querySelector('.fa-rotate-right')).toBeInTheDocument()
+    expect(action?.querySelector('[tabindex]')).toBeNull()
+    expect(action?.closest('[tabindex]')?.tagName).toBe('TR')
   })
 
   it('should render the Deploy action when operation is CLUSTER', () => {

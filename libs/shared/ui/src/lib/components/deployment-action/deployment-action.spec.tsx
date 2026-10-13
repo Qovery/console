@@ -1,3 +1,4 @@
+import { ClusterDeploymentHistoryOperationEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DeploymentAction, getTriggerAction } from './deployment-action'
 
@@ -27,10 +28,26 @@ describe('DeploymentAction', () => {
     expect(screen.getByText('Deploy')).toBeInTheDocument()
   })
 
-  it('renders the label override instead of the derived action label', () => {
-    renderWithProviders(<DeploymentAction status="DEPLOY" label="Operator" />)
+  it('renders the Operator action with a screen-reader description for an Operator update', () => {
+    const { container } = renderWithProviders(
+      <DeploymentAction status="DEPLOY" operation={ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE} />
+    )
 
-    expect(screen.getByText('Operator')).toBeInTheDocument()
+    expect(screen.getByText('Operator')).toHaveAttribute('aria-hidden', 'true')
+    expect(screen.getByText('Operator update')).toHaveClass('sr-only')
     expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
+    expect(container.querySelector('.fa-rotate-right')).toBeInTheDocument()
+    expect(container.querySelector('.fa-rocket')).not.toBeInTheDocument()
+    expect(container.querySelector('[tabindex]')).toBeNull()
+  })
+
+  it('renders the status action without a description for a cluster operation', () => {
+    const { container } = renderWithProviders(
+      <DeploymentAction status="DEPLOY" operation={ClusterDeploymentHistoryOperationEnum.CLUSTER} />
+    )
+
+    expect(screen.getByText('Deploy')).not.toHaveAttribute('aria-hidden')
+    expect(screen.queryByText('Operator update')).not.toBeInTheDocument()
+    expect(container.querySelector('.fa-rocket')).toBeInTheDocument()
   })
 })

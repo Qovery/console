@@ -8,11 +8,21 @@ import {
 import { useContext } from 'react'
 import { match } from 'ts-pattern'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
-import { Badge, EmptyState, Heading, Icon, Link, Section, Skeleton, StatusChip, Tooltip } from '@qovery/shared/ui'
+import {
+  Badge,
+  DeploymentAction,
+  EmptyState,
+  Heading,
+  Icon,
+  Link,
+  Section,
+  Skeleton,
+  StatusChip,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { ClusterDeploymentAction } from '../cluster-deployment-list/cluster-deployment-action'
 import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
 
 const DotSeparator = () => (
@@ -165,7 +175,7 @@ export function ClusterLastDeploymentSection({
           >
             <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
               <span className="font-medium">
-                <ClusterDeploymentAction
+                <DeploymentAction
                   status={getClusterDeploymentAction(clusterStatus)}
                   operation={lastDeploymentOperation}
                 />

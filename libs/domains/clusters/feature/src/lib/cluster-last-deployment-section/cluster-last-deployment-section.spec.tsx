@@ -208,6 +208,10 @@ describe('ClusterLastDeploymentSection', () => {
     expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
     expect(screen.getByText('Maintenance')).toBeInTheDocument()
     expect(screen.getByText('Operator').closest('a')?.querySelector('[tabindex]')).toBeNull()
+    expect(screen.getByRole('link', { name: /Operator update/ })).toHaveAttribute(
+      'href',
+      '/organization/org-1/cluster/cluster-1/deployments/logs/deployment-1'
+    )
   })
 
   it('renders the Deploy action when the cluster status has no last execution id', () => {

@@ -1,7 +1,6 @@
 import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import {
-  ClusterDeploymentHistoryOperationEnum,
   type OrganizationEventResponse,
   OrganizationEventTargetType,
   OrganizationEventType,
@@ -26,22 +25,6 @@ export interface RowEventProps {
 
 const formatEventName = (eventName: string) => {
   return eventName.split('_').map(upperCaseFirstLetter).join(' ')
-}
-
-const isOperatorUpdateEvent = ({ target_type, change }: OrganizationEventResponse) => {
-  if (target_type !== OrganizationEventTargetType.CLUSTER || !change) return false
-
-  try {
-    const parsedChange: unknown = JSON.parse(change)
-    return (
-      typeof parsedChange === 'object' &&
-      parsedChange !== null &&
-      'operation' in parsedChange &&
-      parsedChange.operation === ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE
-    )
-  } catch {
-    return false
-  }
 }
 
 const serviceOverviewUrl = (organizationId: string, projectId: string, environmentId: string, serviceId: string) =>
@@ -144,9 +127,6 @@ export function RowEvent(props: RowEventProps) {
 
     return <span className="truncate">{target_name}</span>
   }
-
-  const eventName = formatEventName(event.event_type ?? '')
-  const isOperatorUpdate = isOperatorUpdateEvent(event)
 
   const isEventTypeFailed =
     event.event_type === OrganizationEventType.ACCESS_DENIED || event.event_type?.toLowerCase().includes('fail')
@@ -253,21 +233,17 @@ export function RowEvent(props: RowEventProps) {
         </div>
         <div className="min-w-0 px-5" data-testid="tag">
           <Skeleton height={10} width={80} show={isPlaceholder}>
-            <Tooltip content={`${eventName} · Operator update`} disabled={!isOperatorUpdate}>
-              <span
-                className="block truncate whitespace-nowrap rounded focus-visible:outline-2 focus-visible:outline-brand-strong"
-                tabIndex={isOperatorUpdate ? 0 : undefined}
-              >
-                <span className={isEventTypeFailed ? 'text-negative' : 'text-brand'}>{eventName}</span>
-                {event.sub_target_type && (
-                  <span className="text-neutral">
-                    {' '}
-                    : {upperCaseFirstLetter(event.sub_target_type)?.replace(/_/g, ' ')}
-                  </span>
-                )}
-                {isOperatorUpdate && <span className="text-neutral"> · Operator update</span>}
+            <span className="block truncate whitespace-nowrap">
+              <span className={isEventTypeFailed ? 'text-negative' : 'text-brand'}>
+                {formatEventName(event.event_type ?? '')}
               </span>
-            </Tooltip>
+              {event.sub_target_type && (
+                <span className="text-neutral">
+                  {' '}
+                  : {upperCaseFirstLetter(event.sub_target_type)?.replace(/_/g, ' ')}
+                </span>
+              )}
+            </span>
           </Skeleton>
         </div>
         <div className="min-w-0 px-4">
