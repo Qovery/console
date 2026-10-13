@@ -127,6 +127,28 @@ describe('RowEvent', () => {
     }
   )
 
+  it.each([
+    [OrganizationEventType.OPERATOR_UPDATE, 'Operator Update', 'fa-rocket-launch'],
+    [OrganizationEventType.MAINTENANCE_OPERATOR, 'Maintenance · Operator Update', 'fa-wrench'],
+    [OrganizationEventType.TRIGGER_DEPLOY, 'Trigger Deploy', 'fa-rocket-launch'],
+    [OrganizationEventType.MAINTENANCE, 'Maintenance', 'fa-wrench'],
+  ])('should render %s with its label and icon', (eventType, label, iconClass) => {
+    renderWithProviders(
+      <RowEvent
+        {...props}
+        event={{
+          ...props.event,
+          event_type: eventType,
+          target_type: OrganizationEventTargetType.CLUSTER,
+          sub_target_type: null,
+        }}
+      />
+    )
+
+    expect(screen.getByTestId('tag')).toHaveTextContent(new RegExp(`^${label}$`))
+    expect(screen.getByTestId('row-event').querySelector(`.${iconClass}`)).toBeInTheDocument()
+  })
+
   it('should render Agent task for the agentic workflow target type', () => {
     renderWithProviders(
       <RowEvent
