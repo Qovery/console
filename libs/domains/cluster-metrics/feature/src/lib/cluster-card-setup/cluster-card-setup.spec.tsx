@@ -77,13 +77,10 @@ describe('ClusterCardSetup', () => {
       mockUseCluster.mockReturnValue({ data: { ...mockCluster, kubernetes } })
       rerender(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
       expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
-      if (kubernetes === 'PARTIALLY_MANAGED') {
-        expect(screen.getByText('Kubernetes version')).toBeInTheDocument()
-        expect(screen.getByText('v1.34')).toBeInTheDocument()
-        expect(screen.queryByText('Upgrade Kubernetes')).not.toBeInTheDocument()
-      } else {
-        expect(screen.getByText('Upgrade Kubernetes')).toBeInTheDocument()
-      }
+      const isEksAnywhere = kubernetes === 'PARTIALLY_MANAGED'
+      expect(screen.getByText(isEksAnywhere ? 'Kubernetes version' : 'Upgrade Kubernetes')).toBeInTheDocument()
+      expect(screen.getByText(isEksAnywhere ? 'v1.34' : 'v1.34 → v1.33')).toBeInTheDocument()
+      expect(screen.queryAllByText('Upgrade Kubernetes')).toHaveLength(isEksAnywhere ? 0 : 1)
     }
   )
 
