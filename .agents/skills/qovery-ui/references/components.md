@@ -2,6 +2,23 @@
 
 All shared components live in `libs/shared/ui/src/lib/components/`. Check here before building anything new.
 
+## Reuse and Extend Shared UI
+
+- Check `shared/ui` and its existing callers first. Reuse a component when its **behavior** fits; visual similarity alone does not justify swapping in a component with different interaction semantics.
+- Nothing new in `shared/console-shared` (legacy). Generic presentation goes to `shared/ui`, business UI stays in its domain. Do not move business logic into the design system just to avoid `console-shared`.
+- Extend a shared component only for a concrete need its API cannot cover. Keep the extension generic and existing callers working.
+- Multiple styling variants: follow the existing CVA pattern. Simple conditions do not need a variant.
+- Classes: `clsx` for conditional composition, `twMerge` (`@qovery/shared/util-js`) when defaults can conflict with a caller's `className`. No nested template strings.
+- Add or update Storybook stories for new shared components and new visual states or variants.
+
+## Verify the Interaction
+
+- Loading, failure, validation, and saving states give clear feedback.
+- Clickable controls look clickable. "Draft being checked" is distinguishable from "changes ready to save".
+- Read-only fields stay read-only in nested editors and dialogs.
+- Leaving with unsaved changes has deliberate behavior; leave-page protection must not block navigation within the draft.
+- Test tooltips and popovers from their actual keyboard focus target, including controls nested in clickable rows or links. A focusable parent does not make a hover tooltip keyboard-accessible.
+
 ---
 
 ## Decision Guide

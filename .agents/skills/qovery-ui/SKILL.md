@@ -38,13 +38,15 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 
 ## /audit
 
-**Load:** `references/colors.md`, `references/spacing-layout.md`, `references/anti-patterns.md`, `references/accessibility.md`
+**Load:** `references/colors.md`, `references/spacing-layout.md`, `references/anti-patterns.md`, `references/accessibility.md`, `references/components.md`
 
 Four-phase review. Label every finding:
 
 - `[blocking]` — ships broken, violates semantic rules, or breaks accessibility
 - `[important]` — degrades experience, likely to cause design review rejection
 - `[nit]` — minor inconsistency, low impact
+
+A component substitution or refactor is not `[blocking]` just because it is preferred: state the user impact and check that the proposed shared component fits the interaction.
 
 **Phase 1 — Token hygiene:** hardcoded values, legacy tokens, raw Tailwind palette classes used semantically.
 **Phase 2 — Semantic color:** status colors used decoratively, color-only state, brand as page wash.
@@ -80,6 +82,8 @@ Fix without changing functionality. Output a Before / After / Why table, one row
 ## /component
 
 **Load:** `references/components.md`
+
+Also use this reference when extending shared components or reviewing a new interactive flow. Follow its reuse, compatibility, Storybook, and interaction checks for the states affected by the change.
 
 1. Identify if a shared component already exists — always prefer it
 2. Return the import path and correct usage with props
