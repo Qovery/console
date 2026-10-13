@@ -533,6 +533,7 @@ describe('ExternalSecretsTab', () => {
     } as unknown as ReturnType<typeof useVariables>)
     const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="ENVIRONMENT" parentId="environment-id" />)
     expect(screen.getByText('2 external secrets')).toBeInTheDocument()
+    expect(screen.getByText('No prefix')).toBeInTheDocument()
     await userEvent.click(screen.getByText('Application credentials'))
     expect(screen.queryByLabelText(/Collapse keys|Expand keys/)).not.toBeInTheDocument()
     expect(screen.queryByText(/secrets imported/)).not.toBeInTheDocument()
@@ -596,6 +597,7 @@ describe('ExternalSecretsTab', () => {
     const editModal = openModal.mock.calls[1][0].content as typeof modal
     expect(editModal.props.isJson).toBe(true)
     expect(editModal.props.initialSecret?.keyPrefix).toBe('APP_')
+    expect(screen.getByText('APP_')).toBeInTheDocument()
     await act(async () =>
       editModal.props.onSubmit({ ...data, name: 'Updated credentials', reference: 'lucis/updated' })
     )

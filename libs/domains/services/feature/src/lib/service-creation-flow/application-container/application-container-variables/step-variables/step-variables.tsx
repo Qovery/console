@@ -427,6 +427,12 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                               </Tooltip>
                             )}
                           </div>
+                          {secret.isJson && (
+                            <div className="flex min-w-0 items-center gap-1 text-ssm text-neutral-subtle">
+                              <Icon iconName="brackets-curly" />
+                              <span className="truncate">{secret.keyPrefix || 'No prefix'}</span>
+                            </div>
+                          )}
                           {secret.filePath && (
                             <div className="flex items-center gap-1 text-xs text-neutral-subtle">
                               <Icon iconName="file-lock" iconStyle="regular" className="text-xs" />
