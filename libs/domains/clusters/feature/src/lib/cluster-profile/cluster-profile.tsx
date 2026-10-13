@@ -18,7 +18,7 @@ import {
   omitEmptyValues,
   toCatalogVariableField,
   toPlatformFieldDescriptor,
-} from '../platform-configuration/platform-configuration-utils'
+} from '../utils/platform-configuration-utils'
 import { ClusterProfileProvider, useClusterProfileContext } from './cluster-profile-context'
 import {
   ClusterProfileItemIcon,

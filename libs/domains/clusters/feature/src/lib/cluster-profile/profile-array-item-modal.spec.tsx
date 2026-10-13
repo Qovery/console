@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { type PlatformFieldDescriptor } from '../platform-configuration/platform-configuration-utils'
+import { type PlatformFieldDescriptor } from '../utils/platform-configuration-utils'
 import { ProfileArrayItemModal } from './profile-array-item-modal'
 
 const cidrField = {

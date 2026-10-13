@@ -17,7 +17,7 @@ import {
   toCatalogVariableField,
   toPlatformArrayItemDescriptor,
   toPlatformConfigurationValue,
-} from '../platform-configuration/platform-configuration-utils'
+} from '../utils/platform-configuration-utils'
 import { ProfileArrayItemModal } from './profile-array-item-modal'
 
 type Violations = PlatformComponentConfigurationViolationResponse[]

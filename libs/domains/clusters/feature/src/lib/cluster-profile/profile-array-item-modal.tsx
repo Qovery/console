@@ -12,7 +12,7 @@ import {
   type PlatformFieldDescriptor,
   toCatalogVariableField,
   toPlatformConfigurationValue,
-} from '../platform-configuration/platform-configuration-utils'
+} from '../utils/platform-configuration-utils'
 
 export interface ProfileArrayItemModalProps {
   title: string

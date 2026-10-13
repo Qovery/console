@@ -36,7 +36,7 @@ import {
   isPlatformConfigurationReady,
   isSupportedPlatformField,
   omitEmptyValues,
-} from '../platform-configuration/platform-configuration-utils'
+} from '../utils/platform-configuration-utils'
 
 const OPERATOR_STATUS_POLL_INTERVAL = 5000
 const INSTALLATION_DOCUMENTATION_URL = 'https://www.qovery.com/docs/getting-started/installation/kubernetes'

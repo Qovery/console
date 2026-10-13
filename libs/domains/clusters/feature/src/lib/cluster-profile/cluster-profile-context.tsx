@@ -18,7 +18,7 @@ import {
   isPlatformScalarField,
   omitEmptyValues,
   updateComponentValue,
-} from '../platform-configuration/platform-configuration-utils'
+} from '../utils/platform-configuration-utils'
 import { type ProfileTreeItem } from './profile-tree'
 import { useClusterProfileTree } from './use-cluster-profile-tree'
 
