@@ -103,5 +103,5 @@ export * from './lib/hooks/use-create-self-managed-cluster/use-create-self-manag
 export * from './lib/hooks/use-cluster-operator-status/use-cluster-operator-status'
 export * from './lib/hooks/use-update-platform-configuration/use-update-platform-configuration'
 export * from './lib/hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
-export * from './lib/hooks/use-is-operator-managed-cluster/use-is-operator-managed-cluster'
+export * from './lib/hooks/use-is-operator-attached/use-is-operator-attached'
 export * from './lib/hooks/use-update-cluster-operator/use-update-cluster-operator'

@@ -8,11 +8,11 @@ import {
 import type { ReactNode } from 'react'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useIsOperatorManagedCluster } from '../hooks/use-is-operator-managed-cluster/use-is-operator-managed-cluster'
+import { useIsOperatorAttached } from '../hooks/use-is-operator-attached/use-is-operator-attached'
 import { ClusterActions } from './cluster-actions'
 
-jest.mock('../hooks/use-is-operator-managed-cluster/use-is-operator-managed-cluster')
-const mockUseIsOperatorManagedCluster = useIsOperatorManagedCluster as jest.Mock
+jest.mock('../hooks/use-is-operator-attached/use-is-operator-attached')
+const mockUseIsOperatorAttached = useIsOperatorAttached as jest.Mock
 
 const mockCluster = clusterFactoryMock(1)[0]
 const mockOpenModal = jest.fn()
@@ -58,7 +58,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 describe('ClusterActions', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseIsOperatorManagedCluster.mockReturnValue(false)
+    mockUseIsOperatorAttached.mockReturnValue(false)
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     mockClusterStatus = {
       cluster_id: mockCluster.id,
@@ -316,14 +316,14 @@ describe('ClusterActions', () => {
     expect(screen.queryByRole('button', { name: 'Logs' })).not.toBeInTheDocument()
   })
 
-  describe('Operator-managed clusters', () => {
+  describe('clusters with an attached Operator', () => {
     const selfManagedCluster = {
       ...mockCluster,
       kubernetes: KubernetesEnum.SELF_MANAGED,
       cloud_provider: 'AWS' as const,
     }
 
-    it('keeps the installation guide for self-managed clusters not managed by the Operator', () => {
+    it('keeps the installation guide for self-managed clusters without an attached Operator', () => {
       const { container } = renderWithProviders(
         <ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} />
       )
@@ -333,8 +333,8 @@ describe('ClusterActions', () => {
       expect(screen.queryByLabelText(/manage deployment/i)).not.toBeInTheDocument()
     })
 
-    it('offers to deploy an Operator-managed cluster, without stopping it', async () => {
-      mockUseIsOperatorManagedCluster.mockReturnValue(true)
+    it('offers to deploy a cluster with an attached Operator, without stopping it', async () => {
+      mockUseIsOperatorAttached.mockReturnValue(true)
       const { userEvent } = renderWithProviders(
         <ClusterActions
           cluster={selfManagedCluster}
@@ -350,8 +350,8 @@ describe('ClusterActions', () => {
       expect(screen.queryByRole('menuitem', { name: /stop/i })).not.toBeInTheDocument()
     })
 
-    it('offers to redeploy a deployed Operator-managed cluster, without upgrading Kubernetes', async () => {
-      mockUseIsOperatorManagedCluster.mockReturnValue(true)
+    it('offers to redeploy a deployed cluster with an attached Operator, without upgrading Kubernetes', async () => {
+      mockUseIsOperatorAttached.mockReturnValue(true)
       const { userEvent } = renderWithProviders(
         <ClusterActions
           cluster={selfManagedCluster}
@@ -367,8 +367,8 @@ describe('ClusterActions', () => {
       expect(screen.queryByRole('menuitem', { name: /stop/i })).not.toBeInTheDocument()
     })
 
-    it('shows the deployments card action for Operator-managed clusters', () => {
-      mockUseIsOperatorManagedCluster.mockReturnValue(true)
+    it('shows the deployments card action for clusters with an attached Operator', () => {
+      mockUseIsOperatorAttached.mockReturnValue(true)
       renderWithProviders(
         <ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} variant="card" />
       )
