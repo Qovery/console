@@ -53,15 +53,20 @@ describe('ProfileOperatorFooter', () => {
     expect(screen.getByRole('button', { name: 'Qovery Operator: Update available' })).toBeInTheDocument()
   })
 
-  it.each([
-    ['opens the status panel', { data: operatorStatus, isLoading: false }, 'Update available', true],
-    ['cannot open the status panel', { data: undefined, isLoading: false, isError: true }, 'status unavailable', false],
-  ])('only looks clickable when the row %s', (_, query, statusLabel, isClickable) => {
-    mockUseClusterOperatorStatus.mockReturnValue(query)
+  it('looks clickable when the row opens the status panel', () => {
+    mockUseClusterOperatorStatus.mockReturnValue({ data: operatorStatus, isLoading: false })
     renderWithProviders(<ProfileOperatorFooter />)
 
-    const row = screen.getByRole('button', { name: `Qovery Operator: ${statusLabel}` })
-    expect(row.classList.contains('cursor-pointer')).toBe(isClickable)
+    expect(screen.getByRole('button', { name: 'Qovery Operator: Update available' })).toHaveClass('cursor-pointer')
+  })
+
+  it('does not look clickable when the status cannot be retrieved', () => {
+    mockUseClusterOperatorStatus.mockReturnValue({ data: undefined, isLoading: false, isError: true })
+    renderWithProviders(<ProfileOperatorFooter />)
+
+    expect(screen.getByRole('button', { name: 'Qovery Operator: status unavailable' })).not.toHaveClass(
+      'cursor-pointer'
+    )
   })
 
   it('tells when the Operator status cannot be retrieved', async () => {
