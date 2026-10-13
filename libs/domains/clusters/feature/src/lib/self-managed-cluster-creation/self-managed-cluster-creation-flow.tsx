@@ -7,7 +7,7 @@ import {
   type PlatformTemplateComponentResponse,
   type SelfManagedClusterPlatformSelection,
 } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { type PropsWithChildren, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
@@ -82,12 +82,11 @@ function StepLayout({
   description,
   children,
   footer,
-}: {
+}: PropsWithChildren<{
   title: string
   description: ReactNode
-  children: ReactNode
   footer?: ReactNode
-}) {
+}>) {
   return (
     <Section className="gap-6 pt-5">
       <div className="flex flex-col gap-1 px-5">
@@ -104,7 +103,7 @@ function StepLayout({
   )
 }
 
-function StepSection({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
+function StepSection({ title, action, children }: PropsWithChildren<{ title: string; action?: ReactNode }>) {
   return (
     <Section className="gap-3 px-5">
       <div className="flex items-center justify-between gap-2">
