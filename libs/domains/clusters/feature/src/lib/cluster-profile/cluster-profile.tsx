@@ -509,8 +509,6 @@ function ClusterProfileView({
               </div>
             ) : isConfigurationLoading ? (
               <ProfileConfigurationSkeleton />
-            ) : hasNoMatchingSetting ? (
-              noSettingsState
             ) : (
               <>
                 {isBackgroundResolverError ? (
@@ -518,18 +516,20 @@ function ClusterProfileView({
                     Configuration could not be refreshed. The last resolved fields are still shown.
                   </div>
                 ) : null}
-                {profileSections.map((section) => (
-                  <ProfileConfigurationSection
-                    key={section.id}
-                    section={section}
-                    highlight={searchQuery}
-                    preview={previewsByComponent[section.component.key]}
-                    profileConfig={profileConfigs[section.component.key] ?? {}}
-                    clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
-                    onProfileConfigChange={updateProfileConfig}
-                    onClusterInputChange={updateClusterInput}
-                  />
-                ))}
+                {hasNoMatchingSetting
+                  ? noSettingsState
+                  : profileSections.map((section) => (
+                      <ProfileConfigurationSection
+                        key={section.id}
+                        section={section}
+                        highlight={searchQuery}
+                        preview={previewsByComponent[section.component.key]}
+                        profileConfig={profileConfigs[section.component.key] ?? {}}
+                        clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
+                        onProfileConfigChange={updateProfileConfig}
+                        onClusterInputChange={updateClusterInput}
+                      />
+                    ))}
               </>
             )}
             {/* Keeps the last settings reachable above the floating changes bar. */}

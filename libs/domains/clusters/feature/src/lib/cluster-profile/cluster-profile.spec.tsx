@@ -773,6 +773,26 @@ describe('ClusterProfileFeature', () => {
       expect(screen.getByText('No settings match your search')).toBeInTheDocument()
     })
 
+    it('still reports a failed refresh when no displayed setting matches the search', () => {
+      mockUsePlatformComponentConfigurations.mockImplementation(
+        ({ requests }) =>
+          Object.keys(requests).map((componentKey) => {
+            const resolution = createResolution(componentKey)
+            return componentKey === 'loki'
+              ? {
+                  data: { ...resolution, fields: resolution.fields.filter(({ key }) => key !== 'retention-period') },
+                  isError: true,
+                  isFetching: false,
+                }
+              : { data: resolution, isError: false, isFetching: false }
+          }) as ReturnType<typeof usePlatformComponentConfigurations>
+      )
+      renderWithProviders(<ClusterProfileFeature activeComponentKey="loki" search="retention" />)
+
+      expect(screen.getByRole('alert')).toHaveTextContent('Configuration could not be refreshed')
+      expect(screen.getByText('No settings match your search')).toBeInTheDocument()
+    })
+
     it('shows empty states when nothing matches', () => {
       renderWithProviders(<ClusterProfileFeature search="CPUza" />)
 
