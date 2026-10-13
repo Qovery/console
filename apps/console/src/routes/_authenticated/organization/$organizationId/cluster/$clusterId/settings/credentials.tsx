@@ -43,15 +43,17 @@ function ClusterCredentialsSettingsForm() {
     organizationId,
     cloudProvider: clusterCloudProviderInfo?.cloud_provider,
   })
+  const { mutate: editCloudProviderInfo, isLoading: isEditCloudProviderInfoLoading } = useEditCloudProviderInfo()
   const {
-    mutate: editCloudProviderInfo,
-    mutateAsync: editCloudProviderInfoAsync,
-    isLoading: isEditCloudProviderInfoLoading,
-  } = useEditCloudProviderInfo()
-  const { mutateAsync: editCloudProviderInfoBeforeRedeploy } = useEditCloudProviderInfo({
+    mutateAsync: editCloudProviderInfoWithoutUpdateAction,
+    isLoading: isEditCloudProviderInfoWithoutUpdateActionLoading,
+  } = useEditCloudProviderInfo({
     showClusterUpdateAction: false,
   })
-  const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
+  // Toggling restrictive permissions doesn't require a cluster update
+  const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster({
+    showClusterUpdateAction: false,
+  })
   const { mutateAsync: editClusterSilently, isLoading: isEditClusterSilentlyLoading } = useEditCluster({
     silently: true,
   })
@@ -94,7 +96,7 @@ function ClusterCredentialsSettingsForm() {
       const hasCredentialsChanged = data.credentials !== clusterCloudProviderInfo.credentials?.id
       if (isClusterEksManaged(cluster) && hasCredentialsChanged) {
         openRedeployConfirmation(async () => {
-          await editCloudProviderInfoBeforeRedeploy(variables)
+          await editCloudProviderInfoWithoutUpdateAction(variables)
           await deployCluster({ organizationId, clusterId })
         })
       } else {
@@ -126,8 +128,9 @@ function ClusterCredentialsSettingsForm() {
                 wide_permissions: { using_restrictive_permissions: Boolean(formValues.using_restrictive_permissions) },
               },
             }),
-          editCloudProviderInfo: () =>
-            (plan.shouldRedeploy ? editCloudProviderInfoBeforeRedeploy : editCloudProviderInfoAsync)(variables),
+          // Either the cluster is redeployed right after, or the change (toggle, extended credentials) doesn't require
+          // a cluster update: no update to offer
+          editCloudProviderInfo: () => editCloudProviderInfoWithoutUpdateAction(variables),
           deployCluster: () => deployCluster({ organizationId, clusterId }),
         })
         const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
@@ -185,7 +188,12 @@ function ClusterCredentialsSettingsForm() {
                   data-testid="submit-button"
                   type="submit"
                   size="lg"
-                  loading={isEditCloudProviderInfoLoading || isEditClusterLoading || isEditClusterSilentlyLoading}
+                  loading={
+                    isEditCloudProviderInfoLoading ||
+                    isEditCloudProviderInfoWithoutUpdateActionLoading ||
+                    isEditClusterLoading ||
+                    isEditClusterSilentlyLoading
+                  }
                   disabled={!methods.formState.isValid || !cluster}
                 >
                   Save
