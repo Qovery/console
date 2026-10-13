@@ -336,7 +336,7 @@ export function AddSecretModal({
                   label="Key prefix (optional)"
                   value={field.value}
                   onChange={field.onChange}
-                  hint="Avoid conflicts with a prefix. We automatically add _ after it: APP becomes APP_KEY."
+                  hint="Prefix each key to avoid name conflicts. An underscore is added automatically."
                 />
               )}
             />
