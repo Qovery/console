@@ -15,12 +15,14 @@ import {
   Callout,
   CopyButton,
   ExternalLink,
+  Heading,
   Icon,
   IconFlag,
   InputSelect,
   InputText,
   InputToggle,
   LoaderSpinner,
+  Section,
 } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { ClusterCredentialsSettings } from '../cluster-credentials-settings/cluster-credentials-settings'
@@ -28,8 +30,8 @@ import { ProfileConfigurationField } from '../cluster-profile/profile-configurat
 import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
-import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
 import { usePlatformTemplateComponentConfiguration } from '../hooks/use-platform-template-component-configuration/use-platform-template-component-configuration'
+import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
 import {
   applyPlatformConfigurationDefaults,
   getUnmappedViolations,
@@ -87,9 +89,9 @@ function StepLayout({
   footer?: ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-6 pt-5">
+    <Section className="gap-6 pt-5">
       <div className="flex flex-col gap-1 px-5">
-        <h2 className="h4 text-neutral">{title}</h2>
+        <Heading className="text-2xl">{title}</Heading>
         <p className="text-sm text-neutral-subtle">{description}</p>
       </div>
       {children}
@@ -98,19 +100,19 @@ function StepLayout({
           {footer}
         </div>
       ) : null}
-    </div>
+    </Section>
   )
 }
 
 function StepSection({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-3 px-5">
+    <Section className="gap-3 px-5">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-sm font-medium text-neutral">{title}</h3>
+        <Heading className="text-sm">{title}</Heading>
         {action}
       </div>
       {children}
-    </section>
+    </Section>
   )
 }
 
@@ -366,10 +368,8 @@ function InstallStep({
   }, [onInstalled, operatorStatus?.operator_connected])
 
   return (
-    <div className="flex flex-col gap-4 p-5">
-      <div>
-        <h2 className="h4 text-neutral">Install Qovery Operator</h2>
-      </div>
+    <Section className="gap-4 p-5">
+      <Heading className="text-2xl">Install Qovery Operator</Heading>
       {isBootstrapLoading ? (
         <div className="flex justify-center py-6">
           <LoaderSpinner />
@@ -447,7 +447,7 @@ function InstallStep({
           contact support
         </ExternalLink>
       </p>
-    </div>
+    </Section>
   )
 }
 
