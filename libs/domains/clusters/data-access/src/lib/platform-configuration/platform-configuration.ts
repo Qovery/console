@@ -6,7 +6,7 @@ import {
   type PlatformComponentConfigurationPreviewRequest,
   PlatformConfigurationApi,
 } from 'qovery-typescript-axios'
-import { isHttpStatus } from '../http/is-http-status'
+import { isHttpStatus } from '@qovery/shared/utils'
 
 const platformConfigurationApi = new PlatformConfigurationApi()
 
