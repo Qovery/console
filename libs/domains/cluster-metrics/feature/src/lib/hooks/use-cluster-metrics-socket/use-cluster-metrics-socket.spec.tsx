@@ -10,6 +10,10 @@ jest.mock('@qovery/state/util-queries', () => ({
   useReactQueryWsSubscription: jest.fn(),
 }))
 
+jest.mock('@auth0/auth0-react', () => ({
+  useAuth0: () => ({ getAccessTokenSilently: () => Promise.reject({ error: 'login_required' }) }),
+}))
+
 const identity = { organizationId: 'org', clusterId: 'cluster' }
 const metrics = {
   nodes: [{ name: 'worker', instance_type: 't3.medium' }, { name: 'fargate' }],
@@ -83,5 +87,21 @@ describe('cluster metrics connection grace period', () => {
     act(() => jest.advanceTimersByTime(1))
     expect(displayed()).toBeNull()
     unmount()
+  })
+  it('expires retained metrics when authentication fails before a socket can open', async () => {
+    client.setQueryData(queries.clusters.displayMetrics(identity).queryKey, filtered)
+    jest
+      .mocked(useReactQueryWsSubscription)
+      .mockImplementation(jest.requireActual('@qovery/state/util-queries').useReactQueryWsSubscription)
+    const { unmount } = renderHook(() => useClusterMetricsSocket(identity), { wrapper })
+    await act(async () => {
+      await Promise.resolve()
+    })
+    act(() => jest.advanceTimersByTime(89_999))
+    expect(displayed()).toEqual(filtered)
+    act(() => jest.advanceTimersByTime(1))
+    expect(displayed()).toBeNull()
+    unmount()
+    jest.mocked(useReactQueryWsSubscription).mockReset()
   })
 })

@@ -4,6 +4,7 @@ import {
   ClusterCardNodeUsage,
   ClusterTableNode,
   ClusterTableNodepool,
+  getClusterInformationState,
   useClusterDisplayMetrics,
   useClusterMetricsSocket,
 } from '@qovery/domains/cluster-metrics/feature'
@@ -111,7 +112,8 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
     enabled: Boolean(organizationId) && Boolean(clusterId),
   })
 
-  const isLoading = isClusterLoading || isClusterStatusLoading || !runningStatus || !clusterMetrics
+  const informationState = getClusterInformationState(clusterStatus?.status, runningStatus, clusterMetrics)
+  const isLoading = isClusterLoading || isClusterStatusLoading || informationState === 'loading'
 
   const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
 
@@ -235,14 +237,16 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4">
             <Heading className="text-base font-medium text-neutral">Cluster information</Heading>
-            {runningStatus !== 'NotFound' && clusterMetrics !== null && <TableLegend />}
+            {informationState === 'available' && <TableLegend />}
           </div>
-          {runningStatus === 'NotFound' || clusterMetrics === null ? (
+          {informationState === 'unavailable' || informationState === 'stopped' ? (
             <div className="h-64">
               <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
                 <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
                 <span className="font-medium">
-                  Cluster information is temporarily unavailable. Retrying automatically.
+                  {informationState === 'stopped'
+                    ? 'Cluster information is unavailable while the cluster is stopped.'
+                    : 'Cluster information is temporarily unavailable. Retrying automatically.'}
                 </span>
               </div>
             </div>

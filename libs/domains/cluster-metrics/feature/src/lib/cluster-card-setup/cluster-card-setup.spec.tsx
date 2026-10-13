@@ -28,6 +28,30 @@ describe('ClusterCardSetup', () => {
     })
   })
 
+  it('keeps static setup details visible while the live version loads, expires, and recovers', () => {
+    mockUseClusterRunningStatus.mockReturnValue({ data: undefined })
+    const { container, rerender } = renderWithProviders(
+      <ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />
+    )
+    expect(container.querySelectorAll('[aria-busy="true"]')).toHaveLength(1)
+    expect(screen.getByRole('link', { name: /Maintenance every Monday/ })).toBeInTheDocument()
+    expect(screen.getByText(/Created .* ago/)).toBeInTheDocument()
+
+    mockUseClusterRunningStatus.mockReturnValue({ data: 'NotFound' })
+    rerender(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+    expect(screen.getByText('Unavailable')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Maintenance every Monday/ })).toBeInTheDocument()
+    expect(screen.getByText(/Created .* ago/)).toBeInTheDocument()
+
+    mockUseClusterRunningStatus.mockReturnValue({
+      data: { computed_status: { kube_version_status: { type: 'OK', kube_version: 'v1.28.1' } } },
+    })
+    rerender(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    expect(screen.getByText('v1.28.1')).toBeInTheDocument()
+    expect(screen.queryByText('Unavailable')).not.toBeInTheDocument()
+  })
+
   it('should render Kubernetes up to date status', () => {
     const mockRunningStatus = {
       computed_status: {

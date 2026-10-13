@@ -107,6 +107,46 @@ describe('websocket reconnection', () => {
     unmount()
   })
 
+  it('preserves the finite retry budget when flapping connections deliver messages', async () => {
+    const onClose = jest.fn()
+    const { unmount } = renderHook(() =>
+      useReactQueryWsSubscription({ url: 'ws://localhost/status', shouldReconnect: 2, onClose })
+    )
+    await advance(0)
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const socket = sockets[attempt]
+      socket.onmessage?.call(socket, new MessageEvent('message', { data: '{}' }))
+      socket.onclose?.call(socket, new CloseEvent('close'))
+      await advance(5_000)
+    }
+
+    await advance(100_000)
+    expect(sockets).toHaveLength(3)
+    expect(mockGetToken).toHaveBeenCalledTimes(3)
+    expect(onClose).toHaveBeenCalledTimes(1)
+    unmount()
+  })
+
+  it('reports socket constructor failures without retrying', async () => {
+    const error = new DOMException('Invalid WebSocket URL', 'SyntaxError')
+    const onConnectionError = jest.fn()
+    global.WebSocket = jest.fn(() => {
+      throw error
+    }) as unknown as typeof WebSocket
+    const { unmount } = renderHook(() =>
+      useReactQueryWsSubscription({ url: 'invalid-url', shouldReconnect: true, onConnectionError })
+    )
+    await advance(0)
+    await advance(100_000)
+
+    expect(onConnectionError).toHaveBeenCalledWith(error)
+    expect(onConnectionError).toHaveBeenCalledTimes(1)
+    expect(global.WebSocket).toHaveBeenCalledTimes(1)
+    expect(mockGetToken).toHaveBeenCalledTimes(1)
+    unmount()
+  })
+
   it('does not retry authentication errors requiring user interaction', async () => {
     mockGetToken.mockRejectedValue({ error: 'login_required' })
     const { unmount } = renderHook(() =>

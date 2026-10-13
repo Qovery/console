@@ -18,22 +18,29 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
     clusterId: clusterId,
   })
 
-  const runningStatus = getPresentationState(displayStatus).data
+  const presentation = getPresentationState(displayStatus)
+  const runningStatus = presentation.data
 
   const kubeVersion = runningStatus?.computed_status?.kube_version_status
   const isEksAnywhereCluster = cluster?.kubernetes === 'PARTIALLY_MANAGED'
 
-  const isLoading = !cluster?.created_at || !kubeVersion
+  const isLoading = !cluster?.created_at
+  const isVersionLoading = presentation.status === 'loading'
   const skeletonClassName = isLoading ? 'my-2 ml-1.5' : undefined
 
   return (
     <div className="flex flex-col gap-2.5 rounded border border-neutral bg-surface-neutral p-4">
       <p className="text-sm text-neutral-subtle">Cluster setup</p>
       <div className="flex flex-col text-sm text-neutral">
-        <Skeleton width="65%" height={16} show={isLoading} className={skeletonClassName}>
+        <Skeleton
+          width="65%"
+          height={16}
+          show={isVersionLoading}
+          className={isVersionLoading ? 'my-2 ml-1.5' : undefined}
+        >
           <div className="flex h-8 items-center p-1.5">
             <span className="flex items-center gap-2.5">
-              {kubeVersion &&
+              {kubeVersion ? (
                 match(kubeVersion)
                   .with({ type: 'OK' }, (status) => (
                     <>
@@ -82,7 +89,18 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                       </Badge>
                     </>
                   ))
-                  .exhaustive()}
+                  .exhaustive()
+              ) : (
+                <>
+                  <span className="flex w-5 shrink-0 justify-center">
+                    <Icon className="text-base text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
+                  </span>
+                  Kubernetes version
+                  <Badge variant="surface" size="sm">
+                    Unavailable
+                  </Badge>
+                </>
+              )}
             </span>
           </div>
         </Skeleton>

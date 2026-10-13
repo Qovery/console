@@ -1,5 +1,8 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { act } from '@testing-library/react'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import useClusterRunningStatusSocket from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 import { ClusterProductionHealthSummaryCard } from './cluster-production-health-summary-card'
 
 const mockOpenModal = jest.fn()
@@ -22,6 +25,11 @@ jest.mock('../hooks/use-cluster-running-status-socket/use-cluster-running-status
   __esModule: true,
   default: jest.fn(),
   useClusterRunningStatusSocket: jest.fn(),
+}))
+
+jest.mock('@qovery/state/util-queries', () => ({
+  ...jest.requireActual('@qovery/state/util-queries'),
+  useReactQueryWsSubscription: jest.fn(),
 }))
 
 const mockUseQueries = jest.fn<{ data: unknown }[], unknown[]>(() => [])
@@ -53,6 +61,8 @@ describe('ClusterProductionHealthSummaryCard', () => {
   beforeEach(() => {
     jest.useFakeTimers()
     jest.clearAllMocks()
+    mockUseQueries.mockReset()
+    jest.mocked(useClusterRunningStatusSocket).mockReset()
     mockUseFeatureFlagVariantKey.mockReturnValue(true)
     mockUseQueries.mockReturnValue([{ data: { computed_status: { global_status: 'RUNNING' } } }])
   })
@@ -125,30 +135,61 @@ describe('ClusterProductionHealthSummaryCard', () => {
     expect(screen.getByText('All clusters healthy')).toBeInTheDocument()
   })
 
-  it('waits for the shared status deadline and stays pending for a new cluster', () => {
-    mockUseQueries.mockReturnValue([{ data: undefined }])
-
-    const { rerender, container } = renderWithProviders(
-      <ClusterProductionHealthSummaryCard clusters={[baseCluster]} clusterStatuses={[deployedStatus]} />
+  it('waits for the shared status deadline and gives a new cluster its own loading deadline', async () => {
+    mockUseQueries.mockImplementation(jest.requireActual('@tanstack/react-query').useQueries)
+    jest
+      .mocked(useClusterRunningStatusSocket)
+      .mockImplementation(
+        jest.requireActual('../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket').default
+      )
+    const client = new QueryClient()
+    const renderCard = (cluster: Cluster) => (
+      <QueryClientProvider client={client}>
+        <ClusterProductionHealthSummaryCard
+          clusters={[cluster]}
+          clusterStatuses={[{ ...deployedStatus, cluster_id: cluster.id }]}
+        />
+      </QueryClientProvider>
     )
+    const { rerender, container, unmount } = renderWithProviders(renderCard(baseCluster))
+    const advance = async (ms: number) => {
+      await act(async () => {
+        jest.advanceTimersByTime(ms)
+      })
+    }
 
-    expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
+    try {
+      expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
+      await advance(2_999)
+      expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
+      expect(screen.queryByText('1 cluster needs attention')).not.toBeInTheDocument()
 
-    mockUseQueries.mockReturnValue([{ data: 'NotFound' }])
-    rerender(<ClusterProductionHealthSummaryCard clusters={[baseCluster]} clusterStatuses={[deployedStatus]} />)
+      await advance(1)
+      // React Query batches observer notifications on a separate timer.
+      await advance(1)
+      expect(screen.getByText('1 cluster needs attention')).toBeInTheDocument()
+      expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
 
-    expect(screen.getByText('1 cluster needs attention')).toBeInTheDocument()
+      const nextCluster = {
+        ...baseCluster,
+        id: 'cluster-id-2',
+        organization: { id: 'org-id-2' },
+        name: 'prod-cluster-2',
+      } as Cluster
+      rerender(renderCard(nextCluster))
 
-    const nextCluster = {
-      ...baseCluster,
-      id: 'cluster-id-2',
-      organization: { id: 'org-id-2' },
-      name: 'prod-cluster-2',
-    } as Cluster
+      expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
+      await advance(2_999)
+      expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
+      expect(screen.queryByText('1 cluster needs attention')).not.toBeInTheDocument()
 
-    mockUseQueries.mockReturnValue([{ data: undefined }])
-    rerender(<ClusterProductionHealthSummaryCard clusters={[nextCluster]} clusterStatuses={[deployedStatus]} />)
-
-    expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
+      await advance(1)
+      await advance(1)
+      expect(screen.getByText('1 cluster needs attention')).toBeInTheDocument()
+      expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+    } finally {
+      unmount()
+      client.clear()
+    }
   })
 })

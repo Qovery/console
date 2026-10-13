@@ -22,7 +22,7 @@ export interface UseReactQueryWsSubscriptionProps {
   maxReconnectDelay?: number
   onConnectionError?: (error: unknown) => void
   enabled?: boolean
-  /* `boolean` to enable or disable reconnection or `number` to set the maximum number of attempts */
+  /** `boolean` enables/disables reconnection; `number` caps total retries for this subscription, even after messages arrive. */
   shouldReconnect?: boolean | number
 }
 
@@ -110,6 +110,7 @@ export function useReactQueryWsSubscription({
     const controller = new AbortController()
     const canReconnect = shouldReconnect
     let websocket: WebSocket | undefined
+    let backoffCount = 0
     reconnectCount.current = 0
 
     function scheduleReconnect() {
@@ -118,20 +119,18 @@ export function useReactQueryWsSubscription({
         () => {
           timeout = undefined
           reconnectCount.current++
+          backoffCount++
           void connect({ signal: controller.signal })
         },
-        Math.min(Math.pow(2, reconnectCount.current) * 5000, maxReconnectDelay)
+        Math.min(Math.pow(2, backoffCount) * 5000, maxReconnectDelay)
       )
       return true
     }
 
     async function connect({ signal }: { signal: AbortSignal }) {
-      let socket: WebSocket
+      let token: string
       try {
-        const token = await getAccessTokenSilentlyRef.current()
-        if (signal.aborted) return
-        socket = new WebSocket(`${url}?${searchParamsString}`, ['v1', 'auth.bearer.' + token])
-        websocket = socket
+        token = await getAccessTokenSilentlyRef.current()
       } catch (error) {
         if (signal.aborted) return
         callbacksRef.current.onConnectionError?.(error)
@@ -147,6 +146,17 @@ export function useReactQueryWsSubscription({
         return
       }
 
+      if (signal.aborted) return
+      let socket: WebSocket
+      try {
+        socket = new WebSocket(`${url}?${searchParamsString}`, ['v1', 'auth.bearer.' + token])
+        websocket = socket
+      } catch (error) {
+        // Invalid URLs/protocols and browser security restrictions cannot recover by retrying.
+        callbacksRef.current.onConnectionError?.(error)
+        return
+      }
+
       socket.onopen = async (event) => {
         if (signal.aborted) return
         callbacksRef.current.onOpen?.(queryClientRef.current, event)
@@ -156,7 +166,8 @@ export function useReactQueryWsSubscription({
           return
         }
 
-        reconnectCount.current = 0
+        // Recovery resets the delay, but does not replenish a finite retry budget.
+        backoffCount = 0
         const data = parseWebSocketMessageData(event.data)
 
         if (isInvalidateOperation(data)) {

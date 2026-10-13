@@ -16,6 +16,7 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
     clusterId,
   })
 
+  const presentation = getPresentationState(metrics)
   const clusterResources = useMemo(() => calculateClusterResources(metrics?.nodes), [metrics?.nodes])
 
   const resources: {
@@ -55,17 +56,21 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
                 <Icon className="shrink-0 text-base text-neutral-subtle" iconName={icon} iconStyle="regular" />
                 <span className="truncate whitespace-nowrap">{label}</span>
               </span>
-              <Skeleton width={160} height={20} show={getPresentationState(metrics).status !== 'available'}>
-                <p className="flex items-center gap-1 text-right text-neutral">
-                  <span className="font-medium">{value.used}</span>
-                  <span className="flex items-center gap-1.5 text-neutral-subtle">
-                    <span>
-                      /{value.total} {value.unit}
+              <Skeleton width={160} height={20} show={presentation.status === 'loading'}>
+                {presentation.status === 'unavailable' ? (
+                  <span className="text-neutral-subtle">Unavailable</span>
+                ) : (
+                  <p className="flex items-center gap-1 text-right text-neutral">
+                    <span className="font-medium">{value.used}</span>
+                    <span className="flex items-center gap-1.5 text-neutral-subtle">
+                      <span>
+                        /{value.total} {value.unit}
+                      </span>
+                      <span className="block h-[3px] w-[3px] rounded-full bg-surface-neutral-solid" />
+                      {value.percent}%
                     </span>
-                    <span className="block h-[3px] w-[3px] rounded-full bg-surface-neutral-solid" />
-                    {value.percent}%
-                  </span>
-                </p>
+                  </p>
+                )}
               </Skeleton>
             </li>
           ) : (
@@ -74,11 +79,15 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
                 <Icon className="shrink-0 text-base text-neutral-subtle" iconName={icon} iconStyle="regular" />
                 <span className="truncate whitespace-nowrap">{label}</span>
               </span>
-              <Skeleton width={160} height={20} show={getPresentationState(metrics).status !== 'available'}>
-                <p className="flex items-center gap-1 text-right text-neutral">
-                  <span className="font-medium">{value.total}</span>
-                  <span className="text-neutral-subtle">{value.unit}</span>
-                </p>
+              <Skeleton width={160} height={20} show={presentation.status === 'loading'}>
+                {presentation.status === 'unavailable' ? (
+                  <span className="text-neutral-subtle">Unavailable</span>
+                ) : (
+                  <p className="flex items-center gap-1 text-right text-neutral">
+                    <span className="font-medium">{value.total}</span>
+                    <span className="text-neutral-subtle">{value.unit}</span>
+                  </p>
+                )}
               </Skeleton>
             </li>
           )
