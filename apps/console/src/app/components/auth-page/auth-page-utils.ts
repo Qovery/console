@@ -56,6 +56,14 @@ export function getStoredLastUsedLogin() {
   }
 }
 
+function storeLastUsedLogin(lastUsedLogin: string) {
+  try {
+    window.localStorage.setItem(LAST_USED_LOGIN_STORAGE_KEY, lastUsedLogin)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export type TrackedAuthProvider = 'google' | 'github' | 'saml' | 'bitbucket' | 'gitlab' | 'microsoft'
 
 const TRACKED_PROVIDERS: Record<string, TrackedAuthProvider> = {
@@ -87,6 +95,7 @@ export async function authPageBeforeLoad({
   const connection = search.connection && getSsoConnectionName(search.connection)
   if (connection) {
     rememberAuthEntry(page, search.redirect)
+    storeLastUsedLogin(SAML_SSO_LOGIN)
     try {
       await auth.login(getSafeRedirect(search.redirect), connection)
     } catch (error) {
