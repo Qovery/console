@@ -91,6 +91,7 @@ export function ProfileArrayItemModal({
                   <CatalogVariableInput
                     autoFocus={index === 0}
                     field={catalogField}
+                    disabled={field.readOnly}
                     value={value}
                     error={error?.message}
                     onChange={onChange}

@@ -39,6 +39,7 @@ export type PlatformFieldDescriptor = {
   description?: string | null
   sensitive: boolean
   required: boolean
+  readOnly?: boolean
   constraints: FieldSchemaConstraintsResponse
   defaultValue?: string | null
 }
