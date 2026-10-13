@@ -25,15 +25,6 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
   useDebounce: <T,>(value: T) => mockUseDebounce(value),
 }))
-jest.mock('@qovery/shared/ui', () => {
-  const React = jest.requireActual('react')
-  const ui = jest.requireActual('@qovery/shared/ui')
-  return {
-    ...ui,
-    Icon: (props: { name?: string }) =>
-      React.createElement('span', { 'data-icon-name': props.name }, React.createElement(ui.Icon, props)),
-  }
-})
 jest.mock('../hooks/use-cluster/use-cluster')
 jest.mock('../hooks/use-cluster-operator-status/use-cluster-operator-status', () => ({
   useClusterOperatorStatus: () => ({ data: null, isLoading: false }),
@@ -272,23 +263,6 @@ describe('ClusterProfileFeature', () => {
     mockUseDeployCluster.mockReturnValue({ mutateAsync: mockDeployCluster, isLoading: false })
   })
 
-  it.each([
-    ['AWS', 'AWS'],
-    ['GCP', 'GCP'],
-    ['OVH', 'OVH_CLOUD'],
-    ['ORACLE', 'ORACLE_CLOUD'],
-    ['IBM', 'IBM_CLOUD'],
-  ])('shows the %s provider icon in the header', (cloudProvider, iconName) => {
-    mockUseCluster.mockReturnValue({
-      data: { name: 'my-cluster', cloud_provider: cloudProvider, kubernetes: 'SELF_MANAGED' },
-      isError: false,
-      isLoading: false,
-    } as ReturnType<typeof useCluster>)
-    renderWithProviders(<ClusterProfileFeature />)
-
-    expect(screen.getByRole('banner').querySelector(`[data-icon-name="${iconName}"]`)).toBeInTheDocument()
-  })
-
   it('renders API-defined configuration fields', () => {
     const { container } = renderWithProviders(<ClusterProfileFeature />)
 
@@ -298,7 +272,7 @@ describe('ClusterProfileFeature', () => {
       cloudProvider: 'AWS',
       enabled: true,
     })
-    expect(screen.getByRole('banner')).not.toHaveClass('border-b')
+    expect(screen.queryByRole('banner')).not.toBeInTheDocument()
     expect(container.querySelectorAll('.fa-circle-check')).toHaveLength(0)
     // No layer status without a cluster configuration: no layer is skipped or managed by Qovery.
     expect(container.querySelectorAll('.fa-circle-minus')).toHaveLength(0)

@@ -1,7 +1,6 @@
 import { useBlocker, useParams } from '@tanstack/react-router'
 import equal from 'fast-deep-equal'
 import {
-  type Cluster,
   type ClusterPlatformConfigurationRequest,
   type ClusterPlatformConfigurationResponse,
   type PlatformTemplateSummaryResponse,
@@ -127,7 +126,6 @@ function getConfigurationRequest(
 interface ClusterProfileContextValue {
   organizationId: string
   clusterId: string
-  cluster?: Cluster
   templates?: PlatformTemplateSummaryResponse[]
   configuration?: ClusterPlatformConfigurationResponse | null
   profileTree: ProfileTreeItem[]
@@ -159,8 +157,10 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
   const { mutateAsync: updatePlatformConfiguration, isLoading: isSavingConfiguration } =
     useUpdatePlatformConfiguration()
   const { mutateAsync: deployCluster } = useDeployCluster()
-  const { cluster, templates, configuration, selectedTemplate, profileTree, isLoading, isError } =
-    useClusterProfileTree({ organizationId, clusterId })
+  const { templates, configuration, selectedTemplate, profileTree, isLoading, isError } = useClusterProfileTree({
+    organizationId,
+    clusterId,
+  })
 
   const updateProfileConfig = (componentKey: string, fieldKey: string, value: unknown) => {
     setProfileValues((currentValues) => updateComponentValue(currentValues, componentKey, fieldKey, value))
@@ -239,7 +239,6 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
   const value: ClusterProfileContextValue = {
     organizationId,
     clusterId,
-    cluster,
     templates,
     configuration,
     profileTree,

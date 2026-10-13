@@ -166,7 +166,10 @@ export function ClusterProfileSidebar({
   }
 
   return (
-    <aside aria-label="Cluster layers" className="flex w-56 shrink-0 flex-col bg-background-secondary lg:w-[272px]">
+    <aside
+      aria-label="Cluster layers"
+      className="flex w-56 shrink-0 flex-col border-r border-neutral bg-background-secondary lg:w-[272px]"
+    >
       <div className="p-3">
         <InputSearch
           ariaLabel="Search layers"
