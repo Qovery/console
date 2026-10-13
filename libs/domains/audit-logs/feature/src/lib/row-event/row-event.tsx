@@ -23,9 +23,10 @@ export interface RowEventProps {
   validTargetIds?: ValidTargetIds
 }
 
-const formatEventName = (eventName: string) => {
-  return eventName.split('_').map(upperCaseFirstLetter).join(' ')
-}
+const formatEventName = (eventType?: OrganizationEventType) =>
+  match(eventType)
+    .with(OrganizationEventType.MAINTENANCE_OPERATOR, () => 'Maintenance · Operator Update')
+    .otherwise((type) => (type ?? '').split('_').map(upperCaseFirstLetter).join(' '))
 
 const serviceOverviewUrl = (organizationId: string, projectId: string, environmentId: string, serviceId: string) =>
   `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}/overview`
@@ -174,6 +175,7 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.TRIGGER_STOP,
       OrganizationEventType.TRIGGER_TERRAFORM_FORCE_UNLOCK,
       OrganizationEventType.TRIGGER_TERRAFORM_MIGRATE_STATE,
+      OrganizationEventType.OPERATOR_UPDATE,
       () => <Icon iconName="rocket-launch" className="text-neutral-subtle" />
     )
     .with(OrganizationEventType.DELETE, OrganizationEventType.DELETED, () => (
@@ -181,7 +183,9 @@ export function RowEvent(props: RowEventProps) {
     ))
     .with(OrganizationEventType.CLONE, () => <Icon iconName="copy" className="text-neutral-subtle" />)
     .with(OrganizationEventType.DRY_RUN, () => <Icon iconName="rotate-right" className="text-neutral-subtle" />)
-    .with(OrganizationEventType.MAINTENANCE, () => <Icon iconName="wrench" className="text-neutral-subtle" />)
+    .with(OrganizationEventType.MAINTENANCE, OrganizationEventType.MAINTENANCE_OPERATOR, () => (
+      <Icon iconName="wrench" className="text-neutral-subtle" />
+    ))
     .with(OrganizationEventType.FORCE_RUN_SUCCEEDED, () => (
       <Icon iconName="circle-check" className="text-neutral-subtle" />
     ))
@@ -235,7 +239,7 @@ export function RowEvent(props: RowEventProps) {
           <Skeleton height={10} width={80} show={isPlaceholder}>
             <span className="block truncate whitespace-nowrap">
               <span className={isEventTypeFailed ? 'text-negative' : 'text-brand'}>
-                {formatEventName(event.event_type ?? '')}
+                {formatEventName(event.event_type)}
               </span>
               {event.sub_target_type && (
                 <span className="text-neutral">
