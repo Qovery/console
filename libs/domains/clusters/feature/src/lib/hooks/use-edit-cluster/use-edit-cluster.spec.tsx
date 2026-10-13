@@ -83,11 +83,11 @@ describe('useEditCluster', () => {
   it.each([
     [undefined, expect.objectContaining({ title: 'Cluster updated', labelAction: 'Update' })],
     [{ showClusterUpdateAction: false }, { title: 'Cluster updated' }],
-  ])('notifies the success with options %p', (options, expectedNotification) => {
+  ])('notifies the success with options %p', async (options, expectedNotification) => {
     const { queryClient, mutation } = setup(cluster, options)
 
-    act(() => {
-      mutation.current.mutate({ organizationId, clusterId, clusterRequest: cluster as ClusterRequest })
+    await act(async () => {
+      await mutation.current.mutateAsync({ organizationId, clusterId, clusterRequest: cluster as ClusterRequest })
     })
 
     const notifyOnSuccess = queryClient.getMutationCache().getAll()[0].options.meta?.['notifyOnSuccess'] as (
