@@ -4,23 +4,20 @@ All shared components live in `libs/shared/ui/src/lib/components/`. Check here b
 
 ## Reuse and Extend Shared UI
 
-Before creating a component or custom markup, inspect `shared/ui` and existing callers for a suitable component. Reuse it when its behavior fits the need; visual similarity alone does not justify substituting a component with different interaction semantics.
-
-Do not place new UI in `shared/console-shared`, which is being phased out. Keep generic presentation in `shared/ui`, business UI with its owning domain, or consider a dedicated library for a cohesive concept reused across domains. Choose the owner from dependencies and responsibilities rather than moving business logic into the design system just to avoid `console-shared`.
-
-Extend shared components only for a concrete need their current API cannot cover. Keep extensions generic, preserve existing callers, and verify relevant behavior in other flows. Avoid adding unused props or styling tokens in anticipation of future needs.
-
-For components with multiple styling variants, follow the existing CVA and `twMerge` patterns when they clarify the implementation; simple conditions do not automatically need a variant abstraction. Add or update Storybook stories for new shared components and meaningful visual states or variants.
-
-Use `clsx` to compose conditional classes rather than nested template strings or manual string concatenation. Use `twMerge` from `@qovery/shared/util-js` when combining Tailwind classes that may conflict, such as defaults and a caller's `className`. These solve different needs; use both together only when conditional composition and conflict resolution are needed.
+- Check `shared/ui` and its existing callers first. Reuse a component when its **behavior** fits; visual similarity alone does not justify swapping in a component with different interaction semantics.
+- Nothing new in `shared/console-shared` (legacy). Generic presentation goes to `shared/ui`, business UI stays in its domain. Do not move business logic into the design system just to avoid `console-shared`.
+- Extend a shared component only for a concrete need its API cannot cover. Keep the extension generic and existing callers working.
+- Multiple styling variants: follow the existing CVA pattern. Simple conditions do not need a variant.
+- Classes: `clsx` for conditional composition, `twMerge` (`@qovery/shared/util-js`) when defaults can conflict with a caller's `className`. No nested template strings.
+- Add or update Storybook stories for new shared components and new visual states or variants.
 
 ## Verify the Interaction
 
-Check the states affected by the change: loading, failure, validation, and saving should give clear feedback. Make clickable controls recognizable and distinguish checking a draft from having changes ready to save.
-
-For editable flows, verify that read-only fields remain read-only in nested editors and dialogs, and that leaving with unsaved changes has deliberate behavior. Preserve navigation within a draft when adding leave-page protection.
-
-Exercise the actual keyboard focus target for tooltips and popovers, including controls nested in clickable rows or links. A hover tooltip does not become keyboard-accessible just because its parent is focusable.
+- Loading, failure, validation, and saving states give clear feedback.
+- Clickable controls look clickable. "Draft being checked" is distinguishable from "changes ready to save".
+- Read-only fields stay read-only in nested editors and dialogs.
+- Leaving with unsaved changes has deliberate behavior; leave-page protection must not block navigation within the draft.
+- Test tooltips and popovers from their actual keyboard focus target, including controls nested in clickable rows or links. A focusable parent does not make a hover tooltip keyboard-accessible.
 
 ---
 

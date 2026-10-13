@@ -42,11 +42,11 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 
 Four-phase review. Label every finding:
 
-Distinguish demonstrated behavior problems from repository conventions and optional design suggestions. Do not assign blocking severity to a component substitution or refactor solely because it is preferred; explain the user impact and verify that the proposed shared component fits the interaction.
-
 - `[blocking]` — ships broken, violates semantic rules, or breaks accessibility
 - `[important]` — degrades experience, likely to cause design review rejection
 - `[nit]` — minor inconsistency, low impact
+
+A component substitution or refactor is not `[blocking]` just because it is preferred: state the user impact and check that the proposed shared component fits the interaction.
 
 **Phase 1 — Token hygiene:** hardcoded values, legacy tokens, raw Tailwind palette classes used semantically.
 **Phase 2 — Semantic color:** status colors used decoratively, color-only state, brand as page wash.

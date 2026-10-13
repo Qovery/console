@@ -6,41 +6,33 @@ tags: [architecture, review, api, state]
 
 # Implementation and Review Decisions
 
-## Follow the Domain's Existing Structure
-
-Before adding a folder or abstraction, inspect comparable code in the same domain. Place hooks and utilities alongside their existing equivalents. Keep domain-specific helpers in the domain; move genuinely reusable helpers to the appropriate shared library. A generic name alone does not establish shared ownership.
-
-- In domain feature libraries, place hooks in `src/lib/hooks/use-<name>/`, alongside the domain's other hooks, rather than creating a second hooks directory inside a feature folder.
-- Place domain-specific pure helpers in `src/lib/utils/`. Put generic helpers in the shared library that owns their concern, or `@qovery/shared/util-js` when appropriate.
-- Consider a dedicated library when a concept has cohesive types, behavior, or UI reused across domains and does not fit an existing owner. Choose its boundary and Nx layer from actual dependencies and callers; a new folder or a single reusable function does not automatically justify a library.
-- Do not add new components, helpers, or exports to `@qovery/shared/console-shared`: this library is being phased out. Find an appropriate existing owner or consider a dedicated library. Existing usages can remain outside the change's scope; do not turn this rule into an unrelated migration.
+Code placement and library ownership are covered in [project-architecture.md](project-architecture.md#code-placement).
 
 ## Keep Shared Changes Necessary
 
-Each new prop, abstraction, or shared-component change should have a concrete caller or behavior it enables. Prefer the existing API when it covers the need. When an extension is necessary, preserve existing callers and check that the behavior makes sense across flows rather than only for the new screen.
+- Every new prop, abstraction, or shared-component change needs a concrete caller or behavior today. No props or tokens for hypothetical future needs.
+- Prefer the existing API when it covers the need. When extending, keep existing callers working and check the behavior in their flows, not only in the new screen.
 
 ## Separate Business Rules from Rendering
 
-Keep substantial payload construction, API parsing, and business transformations in domain helpers or hooks that can be tested independently. Prefer typed API fields over interpreting opaque payloads in rendering components; if the contract cannot change, isolate and validate the parsing at the domain boundary. When introducing a new operation, ensure its label, icon, and description communicate the same operation. Flag contradictions, such as an update label paired with a delete icon or description; a neutral icon shared by several operations is not a mismatch by itself.
-
-Name business helpers after the resource or capability they identify, rather than a version or rollout label. Distinguish resource identity from access controlled by a feature flag.
+- Keep payload construction, API parsing, and business transformations in domain hooks or helpers that can be tested on their own, not in rendering components.
+- Prefer typed API fields over parsing opaque payloads. If the contract cannot change, parse and validate once at the domain boundary.
+- An action's label, icon, and description must describe the same operation. A neutral icon shared by several operations is fine.
+- Name helpers after the resource or capability they identify, not after a version, rollout, or feature flag.
 
 ## Choose State Ownership Explicitly
 
-Derive values from existing props or state when possible. Prefer controlled inputs when the caller owns the current value; use default values for initialization. Avoid effects that copy props into state or write input values into the DOM when React can express the same behavior. Reserve effects for necessary synchronization with external systems.
+- Derive values from props or state instead of copying them into state.
+- Use controlled inputs when the caller owns the value; use default values only for initialization.
+- Reserve effects for synchronization with external systems. See the `react-useeffect` skill for alternatives.
 
 ## Validate and Review Proportionally
 
-Test meaningful behavior and boundaries affected by the change, including invalid or legacy API data where relevant. Extract complex pure logic for direct tests when that makes failures easier to explain; do not require an extraction for every small expression.
-
-Distinguish confirmed bugs, departures from repository conventions, and optional maintainability suggestions. Ground bugs in a concrete trigger and consequence. Verify current callers and comparable implementations before recommending a new abstraction or shared change; do not present personal preferences as blocking requirements.
+- Test the behavior and boundaries the change affects, including invalid or legacy API data when relevant. Extract complex pure logic for direct tests; small expressions do not need extraction.
+- Classify each finding as a **bug** (give the concrete trigger and consequence), a **convention** departure (cite the rule or comparable code), or an optional **suggestion**. Only bugs are blocking by default.
+- Check current callers and comparable implementations before recommending a new abstraction or shared change.
+- Treat automated review findings and "resolved" labels as leads, not proof: check the fix against the current diff before closing a finding.
 
 ## Write Actionable Review Rules
 
-When adding or refining a rule, state its applicable scope, the behavior to flag, why it matters, and legitimate exceptions. Include a small example only when it helps disambiguate the rule. Prefer checks about behavior, API contracts, and repository conventions that existing lint rules do not already enforce.
-
-## Verify Automated Review Outcomes
-
-Treat automated findings and resolution labels as evidence to investigate, not as proof. Before declaring a finding fixed, inspect the current diff and the associated fix commit, then verify the reported scenario with an appropriate test or code trace. Explain false positives and exceptions concretely rather than broadening a rule from a single case.
-
-These review principles also follow cubic's guidance on [custom agents](https://docs.cubic.dev/ai-review/custom-agents), [learning exceptions](https://docs.cubic.dev/ai-review/memory-and-learning), and [checking fix commits](https://docs.cubic.dev/analytics/ai-review). They do not require installing a tool or changing review automation.
+When adding a rule, state its scope, the behavior to flag, why it matters, and legitimate exceptions. Prefer checks lint does not already enforce, and avoid generalizing a rule from a single PR.
