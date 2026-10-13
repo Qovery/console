@@ -6,6 +6,8 @@ All shared components live in `libs/shared/ui/src/lib/components/`. Check here b
 
 Before creating a component or custom markup, inspect `shared/ui` and existing callers for a suitable component. Reuse it when its behavior fits the need; visual similarity alone does not justify substituting a component with different interaction semantics.
 
+Do not place new UI in `shared/console-shared`, which is being phased out. Keep generic presentation in `shared/ui`, business UI with its owning domain, or consider a dedicated library for a cohesive concept reused across domains. Choose the owner from dependencies and responsibilities rather than moving business logic into the design system just to avoid `console-shared`.
+
 Extend shared components only for a concrete need their current API cannot cover. Keep extensions generic, preserve existing callers, and verify relevant behavior in other flows. Avoid adding unused props or styling tokens in anticipation of future needs.
 
 For components with multiple styling variants, follow the existing CVA and `twMerge` patterns when they clarify the implementation; simple conditions do not automatically need a variant abstraction. Add or update Storybook stories for new shared components and meaningful visual states or variants.

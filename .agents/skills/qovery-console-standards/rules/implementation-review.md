@@ -10,6 +10,11 @@ tags: [architecture, review, api, state]
 
 Before adding a folder or abstraction, inspect comparable code in the same domain. Place hooks and utilities alongside their existing equivalents. Keep domain-specific helpers in the domain; move genuinely reusable helpers to the appropriate shared library. A generic name alone does not establish shared ownership.
 
+- In domain feature libraries, place hooks in `src/lib/hooks/use-<name>/`, alongside the domain's other hooks, rather than creating a second hooks directory inside a feature folder.
+- Place domain-specific pure helpers in `src/lib/utils/`. Put generic helpers in the shared library that owns their concern, or `@qovery/shared/util-js` when appropriate.
+- Consider a dedicated library when a concept has cohesive types, behavior, or UI reused across domains and does not fit an existing owner. Choose its boundary and Nx layer from actual dependencies and callers; a new folder or a single reusable function does not automatically justify a library.
+- Do not add new components, helpers, or exports to `@qovery/shared/console-shared`: this library is being phased out. Find an appropriate existing owner or consider a dedicated library. Existing usages can remain outside the change's scope; do not turn this rule into an unrelated migration.
+
 ## Keep Shared Changes Necessary
 
 Each new prop, abstraction, or shared-component change should have a concrete caller or behavior it enables. Prefer the existing API when it covers the need. When an extension is necessary, preserve existing callers and check that the behavior makes sense across flows rather than only for the new screen.
