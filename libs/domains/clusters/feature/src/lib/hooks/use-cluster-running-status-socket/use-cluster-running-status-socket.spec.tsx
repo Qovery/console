@@ -47,6 +47,7 @@ describe('cluster status subscription', () => {
 
     act(() => jest.advanceTimersByTime(90_000))
     expect(client.getQueryData(queries.clusters.runningDisplayStatus(identity).queryKey)).toBe('NotFound')
+    expect(client.getQueryData(queries.clusters.runningStatus(identity).queryKey)).toBe('NotFound')
     act(() => subscription.onMessage?.(client, running))
     expect(client.getQueryData(queries.clusters.runningDisplayStatus(identity).queryKey)).toEqual(running)
     unmount()

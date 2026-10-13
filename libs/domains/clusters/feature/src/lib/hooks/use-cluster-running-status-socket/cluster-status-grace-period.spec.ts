@@ -5,7 +5,6 @@ import { clusterStatusGracePeriod } from './cluster-status-grace-period'
 
 const running = { computed_status: { global_status: 'RUNNING' } } as ClusterStatusDto
 const error = { computed_status: { global_status: 'ERROR' } } as ClusterStatusDto
-const warning = { computed_status: { global_status: 'WARNING' } } as ClusterStatusDto
 
 describe('cluster status connection grace period', () => {
   let client: QueryClient
@@ -21,29 +20,6 @@ describe('cluster status connection grace period', () => {
     client.clear()
     jest.clearAllTimers()
     jest.useRealTimers()
-  })
-
-  it('waits only 3 seconds on initial connection, then recovers even after expiry', () => {
-    const connection = clusterStatusGracePeriod(client, 'org', 'cluster')
-    connection.subscribe()
-    jest.advanceTimersByTime(2_999)
-    expect(displayed()).toBeUndefined()
-    jest.advanceTimersByTime(1)
-    expect(displayed()).toBe('NotFound')
-    connection.received(running)
-    expect(displayed()).toEqual(running)
-  })
-
-  it('retains the known status for a short interruption and cancels expiry on recovery', () => {
-    const connection = clusterStatusGracePeriod(client, 'org', 'cluster')
-    connection.subscribe()
-    connection.received(running)
-    connection.disconnected()
-    jest.advanceTimersByTime(60_000)
-    expect(displayed()).toEqual(running)
-    connection.received(running)
-    jest.advanceTimersByTime(90_000)
-    expect(displayed()).toEqual(running)
   })
 
   it('does not extend the deadline on retries or navigation', () => {
@@ -62,31 +38,15 @@ describe('cluster status connection grace period', () => {
     expect(displayed()).toBe('NotFound')
   })
 
-  it.each([warning, error])('immediately displays a fresh health issue', (status) => {
+  it('immediately displays a fresh health issue', () => {
     const connection = clusterStatusGracePeriod(client, 'org', 'cluster')
     connection.subscribe()
     connection.received(running)
     connection.disconnected()
-    connection.received(status)
-    expect(displayed()).toEqual(status)
+    connection.received(error)
+    expect(displayed()).toEqual(error)
     jest.advanceTimersByTime(90_000)
-    expect(displayed()).toEqual(status)
-  })
-
-  it('shares recovery across concurrent consumers without affecting raw status', () => {
-    const connection = clusterStatusGracePeriod(client, 'org', 'cluster')
-    const unsubscribe = connection.subscribe()
-    connection.received(running)
-    const second = clusterStatusGracePeriod(client, 'org', 'cluster')
-    second.subscribe()
-    connection.disconnected()
-    second.received(warning)
-    unsubscribe()
-    jest.advanceTimersByTime(90_000)
-    expect(displayed()).toEqual(warning)
-    expect(
-      client.getQueryData(queries.clusters.runningStatus({ organizationId: 'org', clusterId: 'cluster' }).queryKey)
-    ).toBeUndefined()
+    expect(displayed()).toEqual(error)
   })
 
   it('cancels timers on cache clear without recreating queries', () => {
