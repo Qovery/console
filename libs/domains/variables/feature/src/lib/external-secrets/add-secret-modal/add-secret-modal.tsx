@@ -258,7 +258,7 @@ export function AddSecretModal({
                     onChange={(value) => {
                       const selected = value as string
                       field.onChange(selected)
-                      if (!isJson && !secretNameValue) {
+                      if (!secretNameValue) {
                         const inferredName = selected.split('/').pop()?.toUpperCase()
                         if (inferredName) {
                           methods.setValue('secretName', inferredName, { shouldValidate: true })

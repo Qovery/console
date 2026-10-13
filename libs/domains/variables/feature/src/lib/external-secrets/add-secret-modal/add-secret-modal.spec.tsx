@@ -214,4 +214,22 @@ describe('AddSecretModal', () => {
     await userEvent.keyboard('{Enter}')
     expect(onSubmit).not.toHaveBeenCalled()
   })
+  it('infers the JSON display name from the reference without overwriting a custom name', async () => {
+    useSecretManagerProviderSecretsMock.mockReturnValue({
+      data: { results: ['production/app', 'production/database'] },
+      isError: false,
+      isFetching: false,
+    } as ReturnType<typeof useSecretManagerProviderSecrets>)
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={jest.fn()} />
+    )
+    await userEvent.click(screen.getByLabelText('Reference'))
+    await userEvent.click(screen.getByText('production/app'))
+    expect(screen.getByLabelText('Display name')).toHaveValue('APP')
+    await userEvent.clear(screen.getByLabelText('Display name'))
+    await userEvent.paste('My credentials')
+    await userEvent.click(screen.getByLabelText('Reference'))
+    await userEvent.click(screen.getByText('production/database'))
+    expect(screen.getByLabelText('Display name')).toHaveValue('My credentials')
+  })
 })
