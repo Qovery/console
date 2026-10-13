@@ -8,11 +8,11 @@ import {
 import type { ReactNode } from 'react'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useIsEngineV2Cluster } from '../hooks/use-is-engine-v2-cluster/use-is-engine-v2-cluster'
+import { useIsOperatorManagedCluster } from '../hooks/use-is-operator-managed-cluster/use-is-operator-managed-cluster'
 import { ClusterActions } from './cluster-actions'
 
-jest.mock('../hooks/use-is-engine-v2-cluster/use-is-engine-v2-cluster')
-const mockUseIsEngineV2Cluster = useIsEngineV2Cluster as jest.Mock
+jest.mock('../hooks/use-is-operator-managed-cluster/use-is-operator-managed-cluster')
+const mockUseIsOperatorManagedCluster = useIsOperatorManagedCluster as jest.Mock
 
 const mockCluster = clusterFactoryMock(1)[0]
 const mockOpenModal = jest.fn()
@@ -58,7 +58,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 describe('ClusterActions', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseIsEngineV2Cluster.mockReturnValue(false)
+    mockUseIsOperatorManagedCluster.mockReturnValue(false)
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     mockClusterStatus = {
       cluster_id: mockCluster.id,
@@ -316,14 +316,14 @@ describe('ClusterActions', () => {
     expect(screen.queryByRole('button', { name: 'Logs' })).not.toBeInTheDocument()
   })
 
-  describe('Engine v2 clusters', () => {
+  describe('Operator-managed clusters', () => {
     const selfManagedCluster = {
       ...mockCluster,
       kubernetes: KubernetesEnum.SELF_MANAGED,
       cloud_provider: 'AWS' as const,
     }
 
-    it('keeps the installation guide for self-managed clusters outside Engine v2', () => {
+    it('keeps the installation guide for self-managed clusters not managed by the Operator', () => {
       const { container } = renderWithProviders(
         <ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} />
       )
@@ -333,8 +333,8 @@ describe('ClusterActions', () => {
       expect(screen.queryByLabelText(/manage deployment/i)).not.toBeInTheDocument()
     })
 
-    it('offers to deploy an Engine v2 cluster, without stopping it', async () => {
-      mockUseIsEngineV2Cluster.mockReturnValue(true)
+    it('offers to deploy an Operator-managed cluster, without stopping it', async () => {
+      mockUseIsOperatorManagedCluster.mockReturnValue(true)
       const { userEvent } = renderWithProviders(
         <ClusterActions
           cluster={selfManagedCluster}
@@ -350,8 +350,8 @@ describe('ClusterActions', () => {
       expect(screen.queryByRole('menuitem', { name: /stop/i })).not.toBeInTheDocument()
     })
 
-    it('offers to redeploy a deployed Engine v2 cluster, without upgrading Kubernetes', async () => {
-      mockUseIsEngineV2Cluster.mockReturnValue(true)
+    it('offers to redeploy a deployed Operator-managed cluster, without upgrading Kubernetes', async () => {
+      mockUseIsOperatorManagedCluster.mockReturnValue(true)
       const { userEvent } = renderWithProviders(
         <ClusterActions
           cluster={selfManagedCluster}
@@ -367,8 +367,8 @@ describe('ClusterActions', () => {
       expect(screen.queryByRole('menuitem', { name: /stop/i })).not.toBeInTheDocument()
     })
 
-    it('shows the deployments card action for Engine v2 clusters', () => {
-      mockUseIsEngineV2Cluster.mockReturnValue(true)
+    it('shows the deployments card action for Operator-managed clusters', () => {
+      mockUseIsOperatorManagedCluster.mockReturnValue(true)
       renderWithProviders(
         <ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} variant="card" />
       )

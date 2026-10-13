@@ -2,9 +2,9 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { useClusterOperatorStatus } from '../use-cluster-operator-status/use-cluster-operator-status'
 
-// Engine v2 clusters are self-managed clusters attached to the Qovery Operator: the Cluster model does not say it,
+// Operator-managed clusters are self-managed clusters attached to the Qovery Operator: the Cluster model does not say it,
 // only the Operator status does (q-core answers 404 for clusters without Operator state).
-export function useIsEngineV2Cluster(cluster: Pick<Cluster, 'id' | 'organization' | 'kubernetes'>) {
+export function useIsOperatorManagedCluster(cluster: Pick<Cluster, 'id' | 'organization' | 'kubernetes'>) {
   const isEngineV2Enabled = Boolean(useFeatureFlagEnabled('engine-v2-platform-configuration'))
   const enabled = isEngineV2Enabled && cluster.kubernetes === 'SELF_MANAGED'
   const { data: operatorStatus } = useClusterOperatorStatus({
@@ -18,4 +18,4 @@ export function useIsEngineV2Cluster(cluster: Pick<Cluster, 'id' | 'organization
   return enabled && Boolean(operatorStatus && operatorStatus.status !== 'NOT_ATTACHED')
 }
 
-export default useIsEngineV2Cluster
+export default useIsOperatorManagedCluster
