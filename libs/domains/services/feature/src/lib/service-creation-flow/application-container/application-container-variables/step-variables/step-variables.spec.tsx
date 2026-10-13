@@ -227,26 +227,29 @@ describe('ApplicationContainerStepVariables', () => {
     expect(screen.queryAllByText('lucis/production/application')).toHaveLength(option === 'Add secret as JSON' ? 2 : 0)
   })
 
-  it.each([undefined, 'APP_'])('renders JSON references with prefix %s without expandable key details', (keyPrefix) => {
-    mockUseVariablesSecretManagers.mockReturnValue({
-      secretManagers: [],
-      hasClusterSecretManagerConfigured: true,
-      clusterId: 'cluster-1',
-    })
-    renderWithProviders(
-      <ApplicationContainerCreationFlow
-        creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
-        defaultServiceType="APPLICATION"
-      >
-        <JsonSecretStep keyPrefix={keyPrefix} />
-      </ApplicationContainerCreationFlow>
-    )
-    expect(screen.getByText('Application credentials')).toBeInTheDocument()
-    expect(screen.getByText('lucis/production/application')).toBeInTheDocument()
-    expect(screen.getByText(keyPrefix || 'No prefix')).toBeInTheDocument()
-    expect(screen.queryByLabelText(/Expand keys|Collapse keys|Copy DATABASE_URL/)).not.toBeInTheDocument()
-    expect(screen.queryByText(/secrets imported/)).not.toBeInTheDocument()
-  })
+  it.each([undefined, 'APP', 'APP_'])(
+    'renders JSON references with prefix %s without expandable key details',
+    (keyPrefix) => {
+      mockUseVariablesSecretManagers.mockReturnValue({
+        secretManagers: [],
+        hasClusterSecretManagerConfigured: true,
+        clusterId: 'cluster-1',
+      })
+      renderWithProviders(
+        <ApplicationContainerCreationFlow
+          creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
+          defaultServiceType="APPLICATION"
+        >
+          <JsonSecretStep keyPrefix={keyPrefix} />
+        </ApplicationContainerCreationFlow>
+      )
+      expect(screen.getByText('Application credentials')).toBeInTheDocument()
+      expect(screen.getByText('lucis/production/application')).toBeInTheDocument()
+      expect(screen.getByText(keyPrefix ? 'APP_' : 'No prefix')).toBeInTheDocument()
+      expect(screen.queryByLabelText(/Expand keys|Collapse keys|Copy DATABASE_URL/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/secrets imported/)).not.toBeInTheDocument()
+    }
+  )
 
   it('does not expose external secret creation when no secret manager is linked', () => {
     renderWithProviders(

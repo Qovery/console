@@ -169,7 +169,7 @@ describe('AddSecretModal', () => {
     )
     expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('keys')
   })
-  it.each(['', 'APP_'])('submits a JSON reference with optional prefix "%s"', async (prefix) => {
+  it.each(['', 'APP'])('submits a JSON reference with optional prefix "%s"', async (prefix) => {
     const onSubmit = jest.fn()
     const { userEvent } = renderWithProviders(
       <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
@@ -198,13 +198,13 @@ describe('AddSecretModal', () => {
       <AddSecretModal
         isJson
         mode="edit"
-        initialSecret={{ name: 'Credentials', reference: 'lucis/app', keyPrefix: 'APP_' }}
+        initialSecret={{ name: 'Credentials', reference: 'lucis/app', keyPrefix: 'APP' }}
         secretSources={secretSources}
         onClose={jest.fn()}
         onSubmit={onSubmit}
       />
     )
-    expect(screen.getByLabelText('Key prefix (optional)')).toHaveValue('APP_')
+    expect(screen.getByLabelText('Key prefix (optional)')).toHaveValue('APP')
     await userEvent.clear(screen.getByLabelText('Key prefix (optional)'))
     await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
     await waitFor(() => expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ keyPrefix: undefined })))
