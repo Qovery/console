@@ -10,6 +10,8 @@ Extend shared components only for a concrete need their current API cannot cover
 
 For components with multiple styling variants, follow the existing CVA and `twMerge` patterns when they clarify the implementation; simple conditions do not automatically need a variant abstraction. Add or update Storybook stories for new shared components and meaningful visual states or variants.
 
+Use `clsx` to compose conditional classes rather than nested template strings or manual string concatenation. Use `twMerge` from `@qovery/shared/util-js` when combining Tailwind classes that may conflict, such as defaults and a caller's `className`. These solve different needs; use both together only when conditional composition and conflict resolution are needed.
+
 ## Verify the Interaction
 
 Check the states affected by the change: loading, failure, validation, and saving should give clear feedback. Make clickable controls recognizable and distinguish checking a draft from having changes ready to save.
