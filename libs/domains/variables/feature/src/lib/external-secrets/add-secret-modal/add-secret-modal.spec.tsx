@@ -105,7 +105,7 @@ describe('AddSecretModal', () => {
       />
     )
     expect(screen.getByText('Add secret as JSON')).toBeInTheDocument()
-    expect(screen.getByText('Display name only. Use the JSON keys in your code.')).toBeInTheDocument()
+    expect(screen.getByText('For identification only. Not used in your code.')).toBeInTheDocument()
     expect(screen.queryByLabelText('Path')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
     await userEvent.type(screen.getByLabelText('Reference'), 'lucis/production/application')
@@ -168,5 +168,45 @@ describe('AddSecretModal', () => {
       )
     )
     expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('keys')
+  })
+  it.each(['', 'APP_'])('submits a JSON reference with optional prefix "%s"', async (prefix) => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
+    )
+    expect(screen.getByLabelText('Key prefix (optional)')).toHaveValue('')
+    await userEvent.click(screen.getByLabelText('Display name'))
+    await userEvent.paste('Application credentials')
+    await userEvent.click(screen.getByLabelText('Reference'))
+    await userEvent.paste('lucis/app')
+    await userEvent.click(screen.getByLabelText('Key prefix (optional)'))
+    await userEvent.paste(prefix)
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isJson: true,
+          keyPrefix: prefix || undefined,
+        })
+      )
+    )
+  })
+
+  it('restores and clears the JSON prefix when editing', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal
+        isJson
+        mode="edit"
+        initialSecret={{ name: 'Credentials', reference: 'lucis/app', keyPrefix: 'APP_' }}
+        secretSources={secretSources}
+        onClose={jest.fn()}
+        onSubmit={onSubmit}
+      />
+    )
+    expect(screen.getByLabelText('Key prefix (optional)')).toHaveValue('APP_')
+    await userEvent.clear(screen.getByLabelText('Key prefix (optional)'))
+    await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ keyPrefix: undefined })))
   })
 })

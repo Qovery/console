@@ -56,6 +56,7 @@ type ExternalSecretRow = {
   filePath?: string
   isFile?: boolean
   isJson?: boolean
+  keyPrefix?: string
   previewParentId?: string
   secretManagerAccessId?: string
   reference: string
@@ -150,6 +151,7 @@ export function ExternalSecretsTab({
       filePath,
       isFile,
       isJson,
+      keyPrefix,
       reference,
       secretManagerAccessId,
     }: AddSecretModalSubmitData) => {
@@ -163,6 +165,7 @@ export function ExternalSecretsTab({
             reference,
             description,
             isJson: true,
+            keyPrefix,
             source: manager?.name ?? null,
             sourceIcon: getSecretManagerProvider(manager),
             secretManagerAccessId,
@@ -192,7 +195,16 @@ export function ExternalSecretsTab({
   const handleEditSecret = useCallback(
     async (
       secretId: string,
-      { name, description, filePath, isFile, isJson, reference, secretManagerAccessId }: AddSecretModalSubmitData
+      {
+        name,
+        description,
+        filePath,
+        isFile,
+        isJson,
+        keyPrefix,
+        reference,
+        secretManagerAccessId,
+      }: AddSecretModalSubmitData
     ) => {
       if (isJson) {
         const manager = secretManagers.find((item) => item.id === secretManagerAccessId)
@@ -204,6 +216,7 @@ export function ExternalSecretsTab({
                   name,
                   reference,
                   description,
+                  keyPrefix,
                   secretManagerAccessId,
                   source: manager?.name ?? null,
                   sourceIcon: getSecretManagerProvider(manager),

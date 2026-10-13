@@ -11,6 +11,7 @@ export interface ExternalSecretJSON {
   reference: string
   description?: string
   isJson: true
+  keyPrefix?: string
   source: string | null
   sourceIcon?: 'AWS' | 'GCP'
   secretManagerAccessId?: string

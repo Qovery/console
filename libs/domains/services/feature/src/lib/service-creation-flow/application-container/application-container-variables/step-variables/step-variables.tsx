@@ -67,7 +67,7 @@ function mapSecretForForm(
     description: secret.description,
     filePath: secret.filePath,
     isFile: secret.isFile,
-    ...(secret.isJson ? { isJson: true } : {}),
+    ...(secret.isJson ? { isJson: true, keyPrefix: secret.keyPrefix } : {}),
     reference: secret.reference,
     secretManagerAccessId: secret.secretManagerAccessId,
     source: source?.tableLabel ?? null,

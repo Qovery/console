@@ -32,6 +32,7 @@ export type AddSecretModalSubmitData = {
   name: string
   description?: string
   filePath?: string
+  keyPrefix?: string
   isFile: boolean
   isJson?: boolean
   reference: string
@@ -43,6 +44,7 @@ export type AddSecretModalInitialSecret = {
   reference: string
   description?: string
   filePath?: string
+  keyPrefix?: string
 }
 
 interface AddSecretModalProps {
@@ -63,6 +65,7 @@ type AddSecretFormValues = {
   reference: string
   path: string
   secretName: string
+  keyPrefix: string
   description: string
   acknowledgeEnvironmentSecretCost: boolean
 }
@@ -87,6 +90,7 @@ export function AddSecretModal({
       reference: initialSecret?.reference ?? '',
       path: initialSecret?.filePath ?? '',
       secretName: initialSecret?.name ?? '',
+      keyPrefix: initialSecret?.keyPrefix ?? '',
       description: initialSecret?.description ?? '',
       acknowledgeEnvironmentSecretCost: false,
     },
@@ -166,7 +170,7 @@ export function AddSecretModal({
         description: descriptionValue ? descriptionValue : undefined,
         filePath: isFile ? finalPath : undefined,
         isFile,
-        ...(isJson ? { isJson: true } : {}),
+        ...(isJson ? { isJson: true, keyPrefix: data.keyPrefix.trim() || undefined } : {}),
         reference: finalReference,
         secretManagerAccessId: selectedSource.value,
       })
@@ -313,13 +317,30 @@ export function AddSecretModal({
                 onChange={field.onChange}
                 hint={
                   isJson
-                    ? 'Display name only. Use the JSON keys in your code.'
+                    ? 'For identification only. Not used in your code.'
                     : 'Name that other Qovery services will use'
                 }
                 error={error?.message}
               />
             )}
           />
+
+          {isJson && (
+            <Controller
+              name="keyPrefix"
+              control={methods.control}
+              render={({ field }) => (
+                <InputText
+                  className="mb-3 w-full"
+                  name={field.name}
+                  label="Key prefix (optional)"
+                  value={field.value}
+                  onChange={field.onChange}
+                  hint="Prepended to every JSON key to avoid conflicts (e.g. APP_)."
+                />
+              )}
+            />
+          )}
 
           <Controller
             name="description"
