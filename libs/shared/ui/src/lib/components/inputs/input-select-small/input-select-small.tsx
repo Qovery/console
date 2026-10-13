@@ -60,7 +60,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
       <select
         data-testid={dataTestId || 'input-select-small'}
         name={name}
-        aria-label={ariaLabel ?? label}
+        aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}
         aria-invalid={ariaInvalid}
         value={value}
