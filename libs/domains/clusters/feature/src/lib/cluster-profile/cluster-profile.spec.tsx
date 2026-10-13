@@ -9,10 +9,10 @@ import { useModal } from '@qovery/shared/ui'
 import { act, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
+import { usePlatformComponentConfigurations } from '../hooks/use-platform-component-configurations/use-platform-component-configurations'
+import { usePlatformConfiguration } from '../hooks/use-platform-configuration/use-platform-configuration'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
-import { usePlatformConfiguration } from '../platform-configuration/hooks/use-platform-configuration'
-import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/use-update-platform-configuration'
+import { useUpdatePlatformConfiguration } from '../hooks/use-update-platform-configuration/use-update-platform-configuration'
 import { ClusterProfileFeature } from './cluster-profile'
 
 const mockUseBlocker = jest.fn()
@@ -39,10 +39,10 @@ jest.mock('../hooks/use-cluster-operator-status/use-cluster-operator-status', ()
   useClusterOperatorStatus: () => ({ data: null, isLoading: false }),
 }))
 jest.mock('../hooks/use-deploy-cluster/use-deploy-cluster')
-jest.mock('../platform-configuration/hooks/use-update-platform-configuration')
+jest.mock('../hooks/use-update-platform-configuration/use-update-platform-configuration')
 jest.mock('../hooks/use-platform-templates/use-platform-templates')
-jest.mock('../platform-configuration/hooks/use-platform-configuration')
-jest.mock('../platform-configuration/hooks/use-platform-component-configurations')
+jest.mock('../hooks/use-platform-configuration/use-platform-configuration')
+jest.mock('../hooks/use-platform-component-configurations/use-platform-component-configurations')
 
 const mockUseParams = useParams as jest.Mock
 const mockUseCluster = useCluster as jest.MockedFunction<typeof useCluster>

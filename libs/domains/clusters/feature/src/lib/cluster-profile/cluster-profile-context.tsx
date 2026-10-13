@@ -10,7 +10,7 @@ import { type PropsWithChildren, createContext, useContext, useState } from 'rea
 import { toast } from '@qovery/shared/ui'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
-import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/use-update-platform-configuration'
+import { useUpdatePlatformConfiguration } from '../hooks/use-update-platform-configuration/use-update-platform-configuration'
 import {
   type PlatformFieldDescriptor,
   type PlatformScalarField,

@@ -29,7 +29,7 @@ import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-boots
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformTemplateComponentConfiguration } from '../platform-configuration/hooks/use-platform-template-component-configuration'
+import { usePlatformTemplateComponentConfiguration } from '../hooks/use-platform-template-component-configuration/use-platform-template-component-configuration'
 import {
   applyPlatformConfigurationDefaults,
   getUnmappedViolations,

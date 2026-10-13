@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
+import { usePlatformConfiguration } from '../hooks/use-platform-configuration/use-platform-configuration'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformConfiguration } from '../platform-configuration/hooks/use-platform-configuration'
 import { toPlatformCloudVendor, toPlatformClusterMode } from '../platform-configuration/platform-configuration-utils'
 import { getProfileTree } from './profile-tree'
 

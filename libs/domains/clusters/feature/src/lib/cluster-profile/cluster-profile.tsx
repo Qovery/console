@@ -6,7 +6,7 @@ import { EmptyState, Heading, Navbar, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
-import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
+import { usePlatformComponentConfigurations } from '../hooks/use-platform-component-configurations/use-platform-component-configurations'
 import {
   type PlatformFieldDescriptor,
   applyPlatformConfigurationDefaults,

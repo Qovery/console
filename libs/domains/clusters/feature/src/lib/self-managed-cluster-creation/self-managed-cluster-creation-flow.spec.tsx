@@ -8,7 +8,7 @@ import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-boots
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformTemplateComponentConfiguration } from '../platform-configuration/hooks/use-platform-template-component-configuration'
+import { usePlatformTemplateComponentConfiguration } from '../hooks/use-platform-template-component-configuration/use-platform-template-component-configuration'
 import { SelfManagedClusterCreationFlow } from './self-managed-cluster-creation-flow'
 
 const mockNavigate = jest.fn()
@@ -34,7 +34,7 @@ jest.mock('../hooks/use-platform-templates/use-platform-templates')
 jest.mock('../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster')
 jest.mock('../hooks/use-cluster-operator-status/use-cluster-operator-status')
 jest.mock('../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap')
-jest.mock('../platform-configuration/hooks/use-platform-template-component-configuration')
+jest.mock('../hooks/use-platform-template-component-configuration/use-platform-template-component-configuration')
 
 const useCloudProvidersMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviders') as jest.Mock
 const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
