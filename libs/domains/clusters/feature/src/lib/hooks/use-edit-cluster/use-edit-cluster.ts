@@ -5,7 +5,7 @@ import { mutations } from '@qovery/domains/clusters/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useDeployCluster } from '../use-deploy-cluster/use-deploy-cluster'
 
-export function useEditCluster({ silently = false } = {}) {
+export function useEditCluster({ silently = false, showClusterUpdateAction = true } = {}) {
   const queryClient = useQueryClient()
   const { mutateAsync: deployCluster } = useDeployCluster()
 
@@ -46,6 +46,10 @@ export function useEditCluster({ silently = false } = {}) {
       notifyOnSuccess: silently
         ? false
         : (_: unknown, variables: unknown) => {
+            if (!showClusterUpdateAction) {
+              return { title: 'Cluster updated' }
+            }
+
             const { organizationId, clusterId } = variables as Parameters<typeof mutations.editCluster>[0]
             return {
               title: 'Cluster updated',

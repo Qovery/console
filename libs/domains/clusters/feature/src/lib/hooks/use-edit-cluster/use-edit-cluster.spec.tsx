@@ -18,7 +18,7 @@ const cluster = {
 } as Cluster
 const otherCluster = { ...cluster, id: 'other-cluster' } as Cluster
 
-const setup = (editedCluster: Cluster) => {
+const setup = (editedCluster: Cluster, options?: Parameters<typeof useEditCluster>[0]) => {
   const requestSpy = jest.spyOn(axios, 'request').mockImplementation(async (config) => {
     // Keep refetches pending to observe the cache before they complete
     if (config?.method?.toUpperCase() === 'GET') return new Promise(() => undefined)
@@ -31,7 +31,7 @@ const setup = (editedCluster: Cluster) => {
   const wrapper = ({ children }: PropsWithChildren) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
-  const { result: mutation } = renderHook(() => useEditCluster(), { wrapper })
+  const { result: mutation } = renderHook(() => useEditCluster(options), { wrapper })
   const { result: list } = renderHook(() => useQuery(clustersQuery), { wrapper })
 
   return { requestSpy, queryClient, invalidateSpy, mutation, list, clustersQuery }
@@ -77,6 +77,24 @@ describe('useEditCluster', () => {
     expect(invalidateSpy).not.toHaveBeenCalledWith({
       queryKey: queries.clusters.cloudProviderInfo({ organizationId, clusterId }).queryKey,
     })
+    queryClient.clear()
+  })
+
+  it.each([
+    [undefined, expect.objectContaining({ title: 'Cluster updated', labelAction: 'Update' })],
+    [{ showClusterUpdateAction: false }, { title: 'Cluster updated' }],
+  ])('notifies the success with options %p', (options, expectedNotification) => {
+    const { queryClient, mutation } = setup(cluster, options)
+
+    act(() => {
+      mutation.current.mutate({ organizationId, clusterId, clusterRequest: cluster as ClusterRequest })
+    })
+
+    const notifyOnSuccess = queryClient.getMutationCache().getAll()[0].options.meta?.['notifyOnSuccess'] as (
+      data: unknown,
+      variables: unknown
+    ) => unknown
+    expect(notifyOnSuccess(cluster, { organizationId, clusterId })).toEqual(expectedNotification)
     queryClient.clear()
   })
 })
