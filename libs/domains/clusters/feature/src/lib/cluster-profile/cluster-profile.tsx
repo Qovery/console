@@ -1,4 +1,3 @@
-import equal from 'fast-deep-equal'
 import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import {
@@ -416,20 +415,16 @@ function ClusterProfileView({
     })
   const isInitialResolverError = hasResolverError && !hasResolvedConfiguration
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
-  // Saving needs every displayed or edited component resolved for the latest edits, with no violation or missing input.
-  const isConfigurationReady =
-    equal(debouncedEdits, edits) &&
-    Object.keys(previewRequests).every((componentKey) => {
-      const query = componentQueriesByKey[componentKey]
-      const preview = query?.data
-      return (
-        query &&
-        !query.isFetching &&
-        !query.isError &&
-        preview?.componentKey === componentKey &&
-        isPlatformConfigurationReady(preview.violations, preview.requirements)
-      )
-    })
+  // Saving is optimistic, as the API validates it too: only a failed check or one reporting violations or missing inputs
+  // blocks it. While edits are checked again, the last verdict holds so the buttons do not flicker.
+  const canSaveConfiguration = Object.keys(previewRequests).every((componentKey) => {
+    const query = componentQueriesByKey[componentKey]
+    if (query?.isError) return false
+    const preview = query?.data
+    return (
+      preview?.componentKey !== componentKey || isPlatformConfigurationReady(preview.violations, preview.requirements)
+    )
+  })
 
   const handleSelectSection = (sectionId: string) => {
     const firstItem = getFirstConfigurableComponent(visibleProfileTree.find((item) => item.id === sectionId)?.children)
@@ -547,7 +542,7 @@ function ClusterProfileView({
             changeCount={changeCount}
             isSaving={isSaving}
             isDeploying={isDeploying}
-            canSubmit={isConfigurationReady}
+            canSubmit={canSaveConfiguration}
             onReset={resetChanges}
             onSave={saveChanges}
             onSaveAndDeploy={saveAndDeployChanges}

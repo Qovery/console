@@ -479,7 +479,8 @@ describe('ClusterProfileFeature', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Envoy' }))
 
       expect(getLastLokiRequest()).not.toHaveProperty('high-availability', true)
-      expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
+      // Saving stays available while the edit waits to be checked: the API validates it too.
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeEnabled()
     })
 
     it('checks the latest edit when coming back to its component', async () => {
@@ -866,8 +867,29 @@ describe('ClusterProfileFeature', () => {
       expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
     })
 
-    it('blocks saving while the edits are being checked', async () => {
+    it('keeps saving available while the edits are being checked', async () => {
       mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki', 'alloy'], true))
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      const bar = await editProfile(userEvent)
+
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeEnabled()
+      expect(within(bar).getByRole('button', { name: 'Save and deploy' })).toBeEnabled()
+    })
+
+    it('keeps saving blocked while edits with violations are checked again', async () => {
+      const [loki, alloy] = createComponentQueries(['loki', 'alloy'])
+      mockUsePlatformComponentConfigurations.mockReturnValue([
+        {
+          ...loki,
+          isFetching: true,
+          data: {
+            ...createResolution('loki'),
+            violations: [{ fieldPath: 'storage', code: 'REQUIRED', message: 'Storage is required.' }],
+          },
+        },
+        alloy,
+      ] as ReturnType<typeof usePlatformComponentConfigurations>)
       const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
       const bar = await editProfile(userEvent)
