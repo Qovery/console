@@ -68,8 +68,8 @@ describe('EnableCopilotScreen', () => {
     render(<EnableCopilotScreen {...defaultProps} />)
 
     expect(screen.getByTestId('icon-robot')).toBeInTheDocument()
-    expect(screen.getByText('AI Copilot not activated yet')).toBeInTheDocument()
-    expect(screen.getByText(/Our DevOps AI Copilot can help you fix your deployments/i)).toBeInTheDocument()
+    expect(screen.getByText('Copilot is disabled')).toBeInTheDocument()
+    expect(screen.getByText(/Copilot can help you understand your deployments/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Enable AI Copilot' })).toBeInTheDocument()
     expect(screen.getByTestId('icon-sparkles')).toBeInTheDocument()
   })

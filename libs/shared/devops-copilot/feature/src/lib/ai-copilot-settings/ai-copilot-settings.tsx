@@ -1,8 +1,8 @@
 import { type Organization } from 'qovery-typescript-axios'
 import { useAuth } from '@qovery/shared/auth'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { useUserAccount } from '@qovery/shared/iam/feature'
-import { Callout, Icon, Section } from '@qovery/shared/ui'
+import { useUserAccount, useUserRole } from '@qovery/shared/iam/feature'
+import { Button, Callout, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
 import { useAICopilotRecurringTasks } from '../hooks/use-ai-copilot-recurring-tasks/use-ai-copilot-recurring-tasks'
 import { useDeleteAICopilotRecurringTask } from '../hooks/use-delete-ai-copilot-recurring-task/use-delete-ai-copilot-recurring-task'
@@ -19,11 +19,19 @@ export interface AICopilotSettingsProps {
 export function AICopilotSettings(props: AICopilotSettingsProps) {
   const { organization } = props
 
+  const { roles } = useUserRole()
+  const canManage = roles.some((role) => role.includes(`organization:${organization.id}:admin`))
+
   const { data: userAccount } = useUserAccount()
   const { user: authUser } = useAuth()
   const userEmail = userAccount?.communication_email ?? authUser?.email
 
-  const { data: configData, isLoading: isLoadingConfig } = useAICopilotConfig({
+  const {
+    data: configData,
+    isLoading: isLoadingConfig,
+    isError: isConfigError,
+    refetch,
+  } = useAICopilotConfig({
     organizationId: organization.id,
   })
 
@@ -34,7 +42,7 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
   const tasks = recurringTasksData?.tasks || []
   const orgConfig = configData?.org_config
   const isEnabled = orgConfig?.enabled ?? false
-  const currentMode = orgConfig?.read_only ? 'read-only' : 'read-write'
+  const currentMode = orgConfig?.read_only !== false ? 'read-only' : 'read-write'
   const currentTokenMode = orgConfig?.token_mode ?? 'jwt'
 
   const toggleTaskMutation = useToggleAICopilotRecurringTask({ organizationId: organization.id })
@@ -45,13 +53,18 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
   })
 
   const handleToggleCopilot = (enabled: boolean) => {
-    updateConfigMutation.mutate({ enabled, readOnly: true, userEmail })
+    if (canManage)
+      updateConfigMutation.mutate({ enabled, readOnly: enabled ? true : orgConfig?.read_only ?? true, userEmail })
   }
 
   return (
     <div className="w-full justify-between">
       <Section className="px-8 pb-8 pt-6">
-        <SettingsHeading title="Copilot configuration" description="Configure Copilot" showNeedHelp={false} />
+        <SettingsHeading
+          title="Copilot configuration"
+          description="Manage Copilot access for your organization."
+          showNeedHelp={false}
+        />
         <div className="max-w-content-with-navigation-left">
           <Callout.Root color="sky" className="mb-4">
             <Callout.Icon>
@@ -65,10 +78,25 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
               </Callout.TextDescription>
             </Callout.Text>
           </Callout.Root>
-          {!isEnabled && !isLoadingConfig ? (
+          {isLoadingConfig ? (
+            <div role="status" className="flex items-center gap-2 p-4 text-sm text-neutral-subtle">
+              <LoaderSpinner className="w-5" /> Loading Copilot configuration…
+            </div>
+          ) : isConfigError || !orgConfig ? (
+            <Callout.Root color="red">
+              <Callout.Text>
+                <Callout.TextHeading>Unable to load Copilot configuration</Callout.TextHeading>
+                <Callout.TextDescription>Try again to check whether Copilot is active.</Callout.TextDescription>
+              </Callout.Text>
+              <Button variant="outline" onClick={() => refetch()}>
+                Retry
+              </Button>
+            </Callout.Root>
+          ) : !isEnabled ? (
             <SectionAICopilotOptIn
               organization={organization}
-              isLoading={isLoadingConfig}
+              isUpdating={updateConfigMutation.isLoading}
+              canManage={canManage}
               onEnable={() => handleToggleCopilot(true)}
             />
           ) : (
@@ -77,11 +105,18 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
                 organization={organization}
                 isLoading={isLoadingConfig || !orgConfig}
                 isUpdating={updateConfigMutation.isLoading}
+                canManage={canManage}
                 currentMode={currentMode}
                 currentTokenMode={currentTokenMode}
-                onModeChange={(mode) => updateConfigMutation.mutate({ enabled: true, readOnly: mode === 'read-only' })}
+                onModeChange={(mode) =>
+                  updateConfigMutation.mutate({ enabled: orgConfig.enabled, readOnly: mode === 'read-only' })
+                }
                 onTokenModeChange={(tokenMode) =>
-                  updateConfigMutation.mutate({ enabled: true, readOnly: orgConfig?.read_only ?? true, tokenMode })
+                  updateConfigMutation.mutate({
+                    enabled: orgConfig.enabled,
+                    readOnly: orgConfig?.read_only ?? true,
+                    tokenMode,
+                  })
                 }
                 onDisable={() => handleToggleCopilot(false)}
               />

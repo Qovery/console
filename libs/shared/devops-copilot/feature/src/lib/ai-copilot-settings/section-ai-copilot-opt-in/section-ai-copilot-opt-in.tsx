@@ -5,6 +5,8 @@ import { BlockContent, Button, Checkbox, Icon, LoaderSpinner, Section } from '@q
 export interface SectionAICopilotOptInProps {
   organization?: Organization
   isLoading?: boolean
+  isUpdating?: boolean
+  canManage?: boolean
   onEnable: () => void
 }
 
@@ -12,7 +14,13 @@ interface OptInFormData {
   hasAcceptedTerms: boolean
 }
 
-export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: SectionAICopilotOptInProps) {
+export function SectionAICopilotOptIn({
+  organization,
+  isLoading,
+  isUpdating,
+  canManage = true,
+  onEnable,
+}: SectionAICopilotOptInProps) {
   const methods = useForm<OptInFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -27,13 +35,13 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
   } = methods
 
   const onSubmit = handleSubmit(() => {
-    onEnable()
+    if (canManage && !isUpdating) onEnable()
   })
 
   return (
     <FormProvider {...methods}>
       <Section>
-        <BlockContent title="Opt-in to Copilot" classNameContent="p-0">
+        <BlockContent title="Enable Copilot" classNameContent="p-0">
           {isLoading ? (
             <div className="flex justify-center p-4">
               <LoaderSpinner className="w-5" />
@@ -45,10 +53,11 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                   <div>
                     <div className="mb-2 flex items-center">
                       <Icon iconName="robot" className="mr-2 text-brand" />
-                      <p className="text-sm font-medium text-neutral">Opt-in to Copilot</p>
+                      <p className="text-sm font-medium text-neutral">Enable Copilot</p>
                     </div>
                     <p className="text-xs text-neutral-subtle">
-                      Please review and accept the following terms to enable Copilot for your organization.
+                      Copilot is disabled for your organization. Enable it in read-only mode after reviewing and
+                      accepting the terms below.
                     </p>
                   </div>
 
@@ -470,6 +479,10 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                     </div>
                   </div>
 
+                  {!canManage && (
+                    <p className="text-sm text-neutral-subtle">Ask an organization administrator to enable Copilot.</p>
+                  )}
+
                   <Controller
                     name="hasAcceptedTerms"
                     control={control}
@@ -477,6 +490,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                     render={({ field }) => (
                       <label className="flex cursor-pointer items-start gap-3">
                         <Checkbox
+                          disabled={!canManage || isUpdating}
                           checked={field.value}
                           onCheckedChange={(checked) => field.onChange(checked === true)}
                           className="mt-0.5 flex-shrink-0"
@@ -488,7 +502,14 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                     )}
                   />
 
-                  <Button type="submit" size="md" color="brand" disabled={!isValid} className="mt-4">
+                  <Button
+                    type="submit"
+                    size="md"
+                    color="brand"
+                    loading={isUpdating}
+                    disabled={!isValid || !canManage || isUpdating}
+                    className="mt-4"
+                  >
                     <Icon iconName="circle-check" />
                     Enable Copilot
                   </Button>

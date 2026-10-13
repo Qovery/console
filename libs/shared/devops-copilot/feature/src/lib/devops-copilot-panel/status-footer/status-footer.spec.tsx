@@ -1,7 +1,8 @@
-import { fireEvent, render, screen } from '@qovery/shared/util-tests'
+import { render, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { StatusFooter } from './status-footer'
 
 jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
   Icon: ({ iconName }: { iconName: string }) => <span data-testid={`icon-${iconName}`} data-icon-name={iconName} />,
   Tooltip: ({ children, content }: { children: React.ReactNode; content: string }) => (
     <div data-tooltip={content}>{children}</div>
@@ -16,10 +17,10 @@ describe('StatusFooter', () => {
   }
 
   describe('rendering', () => {
-    it('should always render read-write mode text', () => {
+    it('should render the current read-only mode', () => {
       render(<StatusFooter {...defaultProps} />)
 
-      expect(screen.getByText('Read-write mode')).toBeInTheDocument()
+      expect(screen.getByText('Read-only mode')).toBeInTheDocument()
     })
 
     it('should render info icon', () => {
@@ -65,9 +66,9 @@ describe('StatusFooter', () => {
       expect(screen.getByTestId('icon-circle-info')).toBeInTheDocument()
     })
 
-    it('should call setIsReadOnly when toggle is clicked', () => {
+    it('should call setIsReadOnly when toggle is clicked', async () => {
       const mockSetIsReadOnly = jest.fn()
-      render(
+      const { userEvent } = renderWithProviders(
         <StatusFooter
           {...defaultProps}
           isReadOnly={true}
@@ -78,7 +79,7 @@ describe('StatusFooter', () => {
       )
 
       const buttons = screen.getAllByRole('button')
-      fireEvent.click(buttons[1])
+      await userEvent.click(buttons[1])
 
       expect(mockSetIsReadOnly).toHaveBeenCalledWith(false)
     })
@@ -155,7 +156,7 @@ describe('StatusFooter', () => {
     it('should render both read-write mode and operational status', () => {
       render(<StatusFooter {...defaultProps} isReadOnly={true} status="OPERATIONAL" />)
 
-      expect(screen.getByText('Read-write mode')).toBeInTheDocument()
+      expect(screen.getByText('Read-only mode')).toBeInTheDocument()
       expect(screen.getByText('All systems operational')).toBeInTheDocument()
     })
 

@@ -7,7 +7,7 @@ import { type CSSProperties, useCallback, useContext, useEffect, useRef, useStat
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useContextualDocLinks } from '@qovery/shared/assistant/feature'
 import { useQoveryContext } from '@qovery/shared/devops-copilot/context'
-import { Button, Callout, Icon } from '@qovery/shared/ui'
+import { Button, Callout, EmptyState, Icon, LoaderSpinner } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
@@ -91,7 +91,12 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isFinish, setIsFinish] = useState(false)
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
-  const { data: readOnlyData } = useAICopilotConfig({
+  const {
+    data: readOnlyData,
+    isLoading: isLoadingConfig,
+    isError: isConfigError,
+    refetch: refetchConfig,
+  } = useAICopilotConfig({
     organizationId,
     enabled: isPanelActive,
   })
@@ -377,7 +382,19 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               setIsLoading={setIsLoading}
               setPlan={setPlan}
             />
-            {isCopilotEnabled ? (
+            {isLoadingConfig ? (
+              <div role="status" className="flex h-full items-center justify-center gap-2 text-sm text-neutral-subtle">
+                <LoaderSpinner className="w-5" /> Loading Copilot configuration…
+              </div>
+            ) : isConfigError || !readOnlyData?.org_config ? (
+              <EmptyState
+                title="Unable to load Copilot configuration"
+                description="Try again to check whether Copilot is active."
+                icon="circle-exclamation"
+              >
+                <Button onClick={() => refetchConfig()}>Retry</Button>
+              </EmptyState>
+            ) : isCopilotEnabled ? (
               <div className="flex grow flex-col">
                 {!isReadOnly && (
                   <div className="animate-[fadein_0.22s_ease-in-out_forwards] px-4 pb-2 pt-4 opacity-0">

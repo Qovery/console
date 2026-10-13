@@ -10,6 +10,7 @@ import {
   LoaderSpinner,
   RadioGroup,
   Section,
+  StatusChip,
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
@@ -18,6 +19,7 @@ export interface SectionAICopilotConfigurationProps {
   organization?: Organization
   isLoading?: boolean
   isUpdating?: boolean
+  canManage?: boolean
   currentMode: 'read-only' | 'read-write'
   currentTokenMode?: 'jwt' | 'role'
   onModeChange: (mode: 'read-only' | 'read-write') => void
@@ -56,6 +58,7 @@ export function SectionAICopilotConfiguration({
   organization,
   isLoading,
   isUpdating,
+  canManage = true,
   currentMode,
   currentTokenMode,
   onModeChange,
@@ -99,12 +102,16 @@ export function SectionAICopilotConfiguration({
                     <Icon iconName="robot" className="mr-2 text-brand" />
                     <p className="text-sm font-medium text-neutral">Copilot for {organization?.name}</p>
                   </div>
-                  <p className="text-xs text-neutral-subtle">Copilot assistance is currently active</p>
+                  <div className="flex items-center gap-2 text-xs text-neutral-subtle">
+                    <StatusChip status="RUNNING" />
+                    Active · {currentMode === 'read-only' ? 'Read-only mode' : 'Read-write mode'}
+                  </div>
                 </div>
                 <Button
                   size="md"
                   color="red"
                   loading={isUpdating}
+                  disabled={!canManage || isUpdating}
                   onClick={() => {
                     openModal({
                       content: getDisableConfirmationModal(closeModal, onDisable),
@@ -127,6 +134,7 @@ export function SectionAICopilotConfiguration({
               </div>
               <RadioGroup.Root
                 value={currentTokenMode ?? 'jwt'}
+                disabled={!canManage || isUpdating}
                 onValueChange={(value) => onTokenModeChange?.(value as 'jwt' | 'role')}
                 className="flex flex-col gap-3"
               >
@@ -177,16 +185,28 @@ export function SectionAICopilotConfiguration({
                 options={modeOptions}
                 portal
                 label="Right access"
-                disabled={isUpdating}
+                disabled={!canManage || isUpdating}
               />
 
               {hasUnsavedChanges && (
                 <div className="flex items-center gap-3">
-                  <Button size="md" color="brand" onClick={handleSaveMode} loading={isUpdating}>
+                  <Button
+                    size="md"
+                    color="brand"
+                    onClick={handleSaveMode}
+                    loading={isUpdating}
+                    disabled={!canManage || isUpdating}
+                  >
                     <Icon iconName="check" />
                     Save changes
                   </Button>
-                  <Button size="md" color="neutral" variant="outline" onClick={handleCancelMode} disabled={isUpdating}>
+                  <Button
+                    size="md"
+                    color="neutral"
+                    variant="outline"
+                    onClick={handleCancelMode}
+                    disabled={!canManage || isUpdating}
+                  >
                     Cancel
                   </Button>
                 </div>

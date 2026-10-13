@@ -8,12 +8,11 @@ export interface EnableCopilotScreenProps {
 export function EnableCopilotScreen({ organizationId, onClose }: EnableCopilotScreenProps) {
   return (
     <EmptyState
-      title="AI Copilot not activated yet"
+      title="Copilot is disabled"
       description={
         <span className="mx-auto block max-w-[500px]">
-          Our DevOps AI Copilot can help you fix your deployments, optimize your infrastructure costs, audit your
-          security and do everything you would expect from a complete DevOps Engineering team. <br />
-          Enable it in your organization settings to get started.
+          Copilot can help you understand your deployments and infrastructure in read-only mode. An organization
+          administrator can enable it in settings after accepting the terms.
         </span>
       }
       icon="robot"

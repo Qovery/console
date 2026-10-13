@@ -44,11 +44,13 @@ export function StatusFooter({ isReadOnly, status, setIsReadOnly, userAccess, th
             <Icon iconName="circle-info" className="text-neutral-subtle" />
           </button>
         </Tooltip>
-        <span>Read-write mode</span>
+        <span>{isReadOnly ? 'Read-only mode' : 'Read-write mode'}</span>
         {canToggle && (
           <Tooltip content={isReadOnly ? 'Enable read-write mode' : 'Disable read-write mode'} delayDuration={400}>
             <button
               type="button"
+              aria-label={isReadOnly ? 'Enable read-write mode' : 'Disable read-write mode'}
+              aria-pressed={!isReadOnly}
               onClick={() => setIsReadOnly?.(!isReadOnly)}
               className={clsx(
                 'relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
