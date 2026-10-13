@@ -173,8 +173,6 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
           defaultSource={defaultSource}
           isFile={isFile}
           isJson={isJson}
-          // TODO(secret-manager-json): Enable submission once JSON secrets can be persisted by the API.
-          submitDisabled={isJson}
           initialSecret={currentSecret}
           onClose={closeModal}
           onSubmit={(secret) => {

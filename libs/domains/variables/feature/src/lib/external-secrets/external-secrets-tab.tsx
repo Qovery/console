@@ -144,7 +144,7 @@ export function ExternalSecretsTab({
       reference,
       secretManagerAccessId,
     }: AddSecretModalSubmitData) => {
-      // TODO(secret-manager-json): Wire the JSON API before enabling submission.
+      // TODO(secret-manager-json): Wire JSON persistence to the API when its contract is available.
       if (isJson) throw new Error('JSON secret API integration is not available yet.')
       await createVariable({
         variableRequest: {
@@ -168,7 +168,7 @@ export function ExternalSecretsTab({
       secretId: string,
       { name, description, filePath, isFile, isJson, reference, secretManagerAccessId }: AddSecretModalSubmitData
     ) => {
-      // TODO(secret-manager-json): Wire the JSON API before enabling submission.
+      // TODO(secret-manager-json): Wire JSON persistence to the API when its contract is available.
       if (isJson) throw new Error('JSON secret API integration is not available yet.')
       const variableEditRequest = {
         key: name,
@@ -201,7 +201,6 @@ export function ExternalSecretsTab({
             defaultSource={secretSources[0]}
             isFile={isFile}
             isJson={format === 'json'}
-            submitDisabled={format === 'json'}
             scope={scope}
             onClose={closeModal}
             onSubmit={handleCreateSecret}
@@ -226,7 +225,6 @@ export function ExternalSecretsTab({
             defaultSource={getSourceOption(secret)}
             isFile={secret.isFile ?? false}
             isJson={secret.isJson}
-            submitDisabled={secret.isJson}
             initialSecret={secret}
             onClose={closeModal}
             onSubmit={(updated) => handleEditSecret(secret.id, updated)}

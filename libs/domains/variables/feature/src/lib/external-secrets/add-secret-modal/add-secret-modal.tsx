@@ -48,7 +48,6 @@ export type AddSecretModalInitialSecret = {
 }
 
 interface AddSecretModalProps {
-  submitDisabled?: boolean
   secretSources: SecretSourceOption[]
   defaultSource?: SecretSourceOption
   isFile?: boolean
@@ -72,7 +71,6 @@ type AddSecretFormValues = {
 
 export function AddSecretModal({
   secretSources,
-  submitDisabled = false,
   defaultSource,
   isFile = false,
   isJson = false,
@@ -141,7 +139,7 @@ export function AddSecretModal({
 
   const handleSubmit = methods.handleSubmit(async (data) => {
     const finalReference = (data.reference || referenceInput).trim()
-    if (!finalReference || submitDisabled) return
+    if (!finalReference) return
 
     const finalName = data.secretName.trim() || finalReference.split('/').pop()?.toUpperCase() || 'NEW_SECRET'
     const selectedSource = secretSources.find((option) => option.value === data.source) ?? secretSources[0]
@@ -209,10 +207,8 @@ export function AddSecretModal({
         onClose={onClose}
         submitLabel={mode === 'edit' ? 'Edit secret' : 'Add secret'}
         loading={methods.formState.isSubmitting}
-        submitDisabled={submitDisabled}
       >
         <>
-          <h3 className="mb-2 text-sm font-medium text-neutral-subtle">Secret parameters</h3>
           <Controller
             name="source"
             control={methods.control}

@@ -221,9 +221,7 @@ describe('ApplicationContainerStepVariables', () => {
     ])
     await userEvent.click(screen.getByRole('menuitem', { name: option }))
     expect(screen.getByText(modal)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: modal }))[
-      option === 'Add secret as JSON' ? 'toBeDisabled' : 'toBeEnabled'
-    ]()
+    expect(screen.getByRole('button', { name: modal })).toBeEnabled()
   })
 
   it.each([undefined, 'APP', 'APP_'])(

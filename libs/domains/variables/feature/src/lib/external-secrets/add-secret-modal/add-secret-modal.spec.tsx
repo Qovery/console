@@ -94,6 +94,7 @@ describe('AddSecretModal', () => {
       <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
     )
     expect(screen.getByText('Add secret as JSON')).toBeInTheDocument()
+    expect(screen.queryByText('Secret parameters')).not.toBeInTheDocument()
     expect(screen.getByText('For identification only. Not used in your code.')).toBeInTheDocument()
     expect(screen.queryByLabelText('Path')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
@@ -145,6 +146,7 @@ describe('AddSecretModal', () => {
     await userEvent.paste('My credentials')
     await userEvent.click(screen.getByLabelText('Reference'))
     await userEvent.paste('new/json/reference')
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeEnabled()
     await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(
@@ -196,23 +198,6 @@ describe('AddSecretModal', () => {
     await userEvent.clear(screen.getByLabelText('Key prefix (optional)'))
     await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
     await waitFor(() => expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ keyPrefix: undefined })))
-  })
-  it('blocks disabled JSON submission through the form as well as the button', async () => {
-    const onSubmit = jest.fn()
-    const { userEvent } = renderWithProviders(
-      <AddSecretModal
-        isJson
-        submitDisabled
-        secretSources={secretSources}
-        onClose={jest.fn()}
-        onSubmit={onSubmit}
-        initialSecret={{ name: 'Credentials', reference: 'production/app' }}
-      />
-    )
-    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
-    await userEvent.click(screen.getByLabelText('Display name'))
-    await userEvent.keyboard('{Enter}')
-    expect(onSubmit).not.toHaveBeenCalled()
   })
   it('infers the JSON display name from the reference without overwriting a custom name', async () => {
     useSecretManagerProviderSecretsMock.mockReturnValue({

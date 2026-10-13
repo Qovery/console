@@ -504,7 +504,7 @@ describe('ExternalSecretsTab', () => {
       '/organization/organization-id/cluster/cluster-id/settings/addons'
     )
   })
-  it('disables JSON submission until its API integration is available', async () => {
+  it('opens the JSON form without a forced submission block', async () => {
     const openModal = jest.fn()
     useModalMock.mockReturnValue({ openModal, closeModal: jest.fn() })
     useVariablesMock.mockReturnValue({ data: [] } as unknown as ReturnType<typeof useVariables>)
@@ -516,9 +516,9 @@ describe('ExternalSecretsTab', () => {
     const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
     await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as JSON' }))
-    const modal = openModal.mock.calls[0][0].content as ReactElement<{ isJson: boolean; submitDisabled: boolean }>
+    const modal = openModal.mock.calls[0][0].content as ReactElement<{ isJson: boolean; submitDisabled?: boolean }>
     expect(modal.props.isJson).toBe(true)
-    expect(modal.props.submitDisabled).toBe(true)
+    expect(modal.props.submitDisabled).toBeUndefined()
     expect(screen.queryByText('Lucis application secrets')).not.toBeInTheDocument()
   })
 })
