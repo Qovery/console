@@ -7,8 +7,8 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
-import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
 import { usePlatformTemplateComponentConfiguration } from '../hooks/use-platform-template-component-configuration/use-platform-template-component-configuration'
+import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
 import { SelfManagedClusterCreationFlow } from './self-managed-cluster-creation-flow'
 
 const mockNavigate = jest.fn()
@@ -173,6 +173,25 @@ describe('SelfManagedClusterCreationFlow', () => {
     expect(screen.getByLabelText('Node group label key')).toHaveValue('eks.amazonaws.com/nodegroup')
     expect(screen.getByLabelText('Node group label value')).toHaveValue('')
     expect(screen.queryByText('CPU architectures')).not.toBeInTheDocument()
+  })
+
+  it('alerts about violations that no displayed field can show', async () => {
+    mockUsePlatformTemplateComponentConfiguration.mockReturnValue({
+      data: {
+        componentKey: 'qovery-operator',
+        fields: operatorComponent.fields,
+        requirements: [],
+        componentBindings: [],
+        violations: [{ fieldPath: 'unknownSetting', code: 'INVALID', message: 'The template is invalid.' }],
+      },
+    })
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('The template is invalid.')
   })
 
   it('validates the Operator configuration against the template', async () => {

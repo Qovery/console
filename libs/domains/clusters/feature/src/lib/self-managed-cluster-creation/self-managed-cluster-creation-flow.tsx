@@ -303,11 +303,18 @@ function OperatorStep({
           </Callout.Root>
         ) : null}
         {unmappedViolations.length ? (
-          <ul role="alert" className="mx-5 flex flex-col gap-1 text-sm text-negative">
-            {unmappedViolations.map((violation) => (
-              <li key={`${violation.fieldPath}-${violation.code}`}>{violation.message}</li>
-            ))}
-          </ul>
+          <Callout.Root color="red" className="mx-5" role="alert">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <ul className="flex flex-col gap-1">
+                {unmappedViolations.map((violation) => (
+                  <li key={`${violation.fieldPath}-${violation.code}`}>{violation.message}</li>
+                ))}
+              </ul>
+            </Callout.Text>
+          </Callout.Root>
         ) : null}
         {fields.length ? (
           <StepSection title="Configuration">
