@@ -7,8 +7,8 @@ import {
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useContext, useState } from 'react'
+import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/domains/catalog/feature'
 import { toast } from '@qovery/shared/ui'
-import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useUpdatePlatformConfiguration } from '../hooks/use-update-platform-configuration/use-update-platform-configuration'
 import {

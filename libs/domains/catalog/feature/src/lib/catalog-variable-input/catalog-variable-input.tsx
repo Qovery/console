@@ -9,7 +9,7 @@ import {
   InputToggle,
   Truncate,
 } from '@qovery/shared/ui'
-import { type CatalogVariableField, type CatalogVariableValue } from '@qovery/shared/util-js'
+import { type CatalogVariableField, type CatalogVariableValue } from '../catalog-variable-field/catalog-variable-field'
 
 export interface CatalogVariableInputProps {
   autoFocus?: boolean

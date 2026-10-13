@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { CatalogVariableInput } from '@qovery/shared/console-shared'
-import { ModalCrud } from '@qovery/shared/ui'
 import {
+  CatalogVariableInput,
   type CatalogVariableValue,
   getCatalogFieldValidationError,
   getCatalogVariableValue,
   isCatalogFieldValueFulfilled,
-} from '@qovery/shared/util-js'
+} from '@qovery/domains/catalog/feature'
+import { ModalCrud } from '@qovery/shared/ui'
 import {
   type PlatformFieldDescriptor,
   toCatalogVariableField,

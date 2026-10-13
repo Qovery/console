@@ -12,7 +12,11 @@ import {
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type CatalogVariableField, type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
+import {
+  type CatalogVariableField,
+  type CatalogVariableValue,
+  getCatalogVariableValue,
+} from '@qovery/domains/catalog/feature'
 
 export function toPlatformCloudVendor(
   cloudProvider: CloudProviderEnum | CloudVendorEnum | undefined

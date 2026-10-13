@@ -1,8 +1,12 @@
 import { type FieldSchemaResponse, type PlatformComponentConfigurationViolationResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useRef } from 'react'
-import { CatalogVariableDescription, CatalogVariableInput } from '@qovery/shared/console-shared'
+import {
+  CatalogVariableDescription,
+  CatalogVariableInput,
+  getCatalogSummaryFieldValue,
+  getCatalogVariableValue,
+} from '@qovery/domains/catalog/feature'
 import { Button, HighlightText, Icon, useModal } from '@qovery/shared/ui'
-import { getCatalogSummaryFieldValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import {
   type PlatformArrayField,
   type PlatformObjectField,
