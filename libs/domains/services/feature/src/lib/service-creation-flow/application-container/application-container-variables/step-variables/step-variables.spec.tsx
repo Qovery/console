@@ -37,22 +37,19 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
-  createJsonSecretPreview: () => [{ reference: 'lucis/production/application' }],
   AddSecretDropdown: jest.requireActual('@qovery/domains/variables/feature').AddSecretDropdown,
   AddSecretModal: ({
     isFile,
     isJson,
-    jsonSecrets,
+    submitDisabled,
   }: {
     isFile?: boolean
     isJson?: boolean
-    jsonSecrets?: { reference: string }[]
+    submitDisabled?: boolean
   }) => (
-    <div>
-      <span>{isJson ? 'JSON secret modal' : isFile ? 'File secret modal' : 'Variable secret modal'}</span>
-      {isJson &&
-        jsonSecrets?.map((secret, index) => <span key={`${secret.reference}-${index}`}>{secret.reference}</span>)}
-    </div>
+    <button disabled={submitDisabled}>
+      {isJson ? 'JSON secret modal' : isFile ? 'File secret modal' : 'Variable secret modal'}
+    </button>
   ),
   VariableFormModal: ({
     onSubmit,
@@ -224,7 +221,9 @@ describe('ApplicationContainerStepVariables', () => {
     ])
     await userEvent.click(screen.getByRole('menuitem', { name: option }))
     expect(screen.getByText(modal)).toBeInTheDocument()
-    expect(screen.queryAllByText('lucis/production/application')).toHaveLength(option === 'Add secret as JSON' ? 2 : 0)
+    expect(screen.getByRole('button', { name: modal }))[
+      option === 'Add secret as JSON' ? 'toBeDisabled' : 'toBeEnabled'
+    ]()
   })
 
   it.each([undefined, 'APP', 'APP_'])(

@@ -16,7 +16,7 @@ export interface ExternalSecretData {
   description?: string
   filePath?: string
   isFile?: boolean
-  // TODO(secret-manager-json): Replace these preview fields with the API model before production.
+  // TODO(secret-manager-json): Align these fields with the JSON API contract when available.
   isJson?: boolean
   keyPrefix?: string
   source?: string | null

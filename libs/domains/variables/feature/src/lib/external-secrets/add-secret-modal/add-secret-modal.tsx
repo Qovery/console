@@ -48,7 +48,7 @@ export type AddSecretModalInitialSecret = {
 }
 
 interface AddSecretModalProps {
-  jsonSecrets?: { reference: string; secretManagerAccessId?: string }[]
+  submitDisabled?: boolean
   secretSources: SecretSourceOption[]
   defaultSource?: SecretSourceOption
   isFile?: boolean
@@ -72,7 +72,7 @@ type AddSecretFormValues = {
 
 export function AddSecretModal({
   secretSources,
-  jsonSecrets,
+  submitDisabled = false,
   defaultSource,
   isFile = false,
   isJson = false,
@@ -135,26 +135,13 @@ export function AddSecretModal({
   )
 
   const referenceOptions = useMemo(
-    () =>
-      [
-        ...new Set([
-          ...(providerSecrets?.results ?? []),
-          ...(isJson
-            ? (jsonSecrets ?? [])
-                .filter((secret) => secret.secretManagerAccessId === selectedSourceId)
-                .map((secret) => secret.reference)
-            : []),
-        ]),
-      ].map((secret) => ({
-        label: secret,
-        value: secret,
-      })),
-    [providerSecrets?.results, isJson, jsonSecrets, selectedSourceId]
+    () => (providerSecrets?.results ?? []).map((secret) => ({ label: secret, value: secret })),
+    [providerSecrets?.results]
   )
 
   const handleSubmit = methods.handleSubmit(async (data) => {
     const finalReference = (data.reference || referenceInput).trim()
-    if (!finalReference) return
+    if (!finalReference || submitDisabled) return
 
     const finalName = data.secretName.trim() || finalReference.split('/').pop()?.toUpperCase() || 'NEW_SECRET'
     const selectedSource = secretSources.find((option) => option.value === data.source) ?? secretSources[0]
@@ -222,6 +209,7 @@ export function AddSecretModal({
         onClose={onClose}
         submitLabel={mode === 'edit' ? 'Edit secret' : 'Add secret'}
         loading={methods.formState.isSubmitting}
+        submitDisabled={submitDisabled}
       >
         <>
           <h3 className="mb-2 text-sm font-medium text-neutral-subtle">Secret parameters</h3>

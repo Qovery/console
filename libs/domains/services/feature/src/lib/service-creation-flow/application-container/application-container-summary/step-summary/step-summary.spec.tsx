@@ -249,7 +249,7 @@ describe('ApplicationContainerStepSummary', () => {
     })
   })
 
-  it('does not send JSON previews to the external variable API', async () => {
+  it('does not send unsupported JSON references to the external variable API', async () => {
     const { userEvent } = renderComponent({
       externalSecrets: [{ ...externalSecretsData[0], isJson: true }],
     })

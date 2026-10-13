@@ -8,7 +8,6 @@ import {
   type AddSecretModalSubmitData,
   type CreateUpdateVariableModalSubmitData,
   VariableFormModal,
-  createJsonSecretPreview,
   mapSecretManagersToSources,
   useVariablesSecretManagers,
 } from '@qovery/domains/variables/feature'
@@ -84,11 +83,6 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
 
   const serviceScope = generalForm.getValues('serviceType') === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER'
   const secretSources = useMemo(() => mapSecretManagersToSources(secretManagers), [secretManagers])
-  // TODO(secret-manager-json): Remove fixture references before production and use the provider reference list.
-  const jsonSecrets = useMemo(
-    () => secretManagers.flatMap((manager) => createJsonSecretPreview(environmentId, serviceScope, manager)),
-    [environmentId, serviceScope, secretManagers]
-  )
   const sourceById = useMemo(() => new Map(secretSources.map((source) => [source.value, source])), [secretSources])
 
   const {
@@ -176,13 +170,15 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
         <AddSecretModal
           mode={typeof index === 'number' ? 'edit' : 'create'}
           secretSources={secretSources}
-          jsonSecrets={jsonSecrets}
           defaultSource={defaultSource}
           isFile={isFile}
           isJson={isJson}
+          // TODO(secret-manager-json): Enable submission once JSON secrets can be persisted by the API.
+          submitDisabled={isJson}
           initialSecret={currentSecret}
           onClose={closeModal}
           onSubmit={(secret) => {
+            if (secret.isJson) throw new Error('JSON secret API integration is not available yet.')
             const mapped = mapSecretForForm(secret, sourceById, serviceScope)
             if (typeof index === 'number') {
               updateExternalSecret(index, mapped)

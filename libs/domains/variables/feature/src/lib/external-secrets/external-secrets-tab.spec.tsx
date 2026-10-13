@@ -1,17 +1,14 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactElement, type ReactNode } from 'react'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
 import { useVariablesSecretManagers } from '../hooks/use-variables-secret-managers/use-variables-secret-managers'
 import { useVariables } from '../hooks/use-variables/use-variables'
 import { type AddSecretModalSubmitData } from './add-secret-modal/add-secret-modal'
-import { createJsonSecretPreview } from './external-secret-json-preview'
 import { ExternalSecretsTab } from './external-secrets-tab'
-
-jest.mock('./external-secret-json-preview', () => ({ createJsonSecretPreview: jest.fn(() => []) }))
 
 jest.mock('../hooks/use-variables/use-variables', () => ({
   useVariables: jest.fn(),
@@ -73,7 +70,6 @@ describe('ExternalSecretsTab', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    jest.mocked(createJsonSecretPreview).mockReturnValue([])
     useParamsMock.mockReturnValue({
       organizationId: 'organization-id',
       environmentId: 'environment-id',
@@ -508,65 +504,9 @@ describe('ExternalSecretsTab', () => {
       '/organization/organization-id/cluster/cluster-id/settings/addons'
     )
   })
-  it('counts JSON references as one secret and searches reference metadata only', async () => {
-    jest.mocked(createJsonSecretPreview).mockReturnValue([
-      {
-        id: 'json',
-        name: 'Application credentials',
-        reference: 'lucis/app',
-        isJson: true,
-        source: 'Example manager',
-        scope: 'Environment',
-        previewParentId: 'environment-id',
-      },
-    ])
-    useVariablesMock.mockReturnValue({
-      data: [
-        {
-          id: 'regular',
-          key: 'PASSWORD',
-          value: 'lucis/password',
-          scope: 'ENVIRONMENT',
-          variable_type: 'EXTERNAL_SECRET',
-        },
-      ],
-    } as unknown as ReturnType<typeof useVariables>)
-    const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="ENVIRONMENT" parentId="environment-id" />)
-    expect(screen.getByText('2 external secrets')).toBeInTheDocument()
-    expect(screen.getByText('No prefix')).toBeInTheDocument()
-    await userEvent.click(screen.getByText('Application credentials'))
-    expect(screen.queryByLabelText(/Collapse keys|Expand keys/)).not.toBeInTheDocument()
-    expect(screen.queryByText(/secrets imported/)).not.toBeInTheDocument()
-    await userEvent.click(screen.getByPlaceholderText('Search secrets'))
-    await userEvent.paste('API_KEY')
-    expect(screen.getByText('0/2 external secrets')).toBeInTheDocument()
-    expect(screen.queryByText('Application credentials')).not.toBeInTheDocument()
-    await userEvent.clear(screen.getByPlaceholderText('Search secrets'))
-    await userEvent.paste('lucis/app')
-    expect(screen.getByText('Application credentials')).toBeInTheDocument()
-    expect(screen.getByText('1/2 external secrets')).toBeInTheDocument()
-    await userEvent.clear(screen.getByPlaceholderText('Search secrets'))
-    await userEvent.paste('Application credentials')
-    expect(screen.getByText('1/2 external secrets')).toBeInTheDocument()
-    await userEvent.clear(screen.getByPlaceholderText('Search secrets'))
-    expect(screen.getByText('2 external secrets')).toBeInTheDocument()
-  })
-
-  it('creates, edits and deletes JSON previews without calling the variable API', async () => {
-    const createVariable = jest.fn()
-    const editVariable = jest.fn()
-    const deleteVariable = jest.fn()
+  it('disables JSON submission until its API integration is available', async () => {
     const openModal = jest.fn()
-    const openModalConfirmation = jest.fn()
-    useCreateVariableMock.mockReturnValue({ mutateAsync: createVariable } as unknown as ReturnType<
-      typeof useCreateVariable
-    >)
-    useEditVariableMock.mockReturnValue({ mutateAsync: editVariable } as unknown as ReturnType<typeof useEditVariable>)
-    useDeleteVariableMock.mockReturnValue({ mutateAsync: deleteVariable } as unknown as ReturnType<
-      typeof useDeleteVariable
-    >)
     useModalMock.mockReturnValue({ openModal, closeModal: jest.fn() })
-    useModalConfirmationMock.mockReturnValue({ openModalConfirmation })
     useVariablesMock.mockReturnValue({ data: [] } as unknown as ReturnType<typeof useVariables>)
     useVariablesSecretManagersMock.mockReturnValue({
       secretManagers: [],
@@ -576,38 +516,9 @@ describe('ExternalSecretsTab', () => {
     const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
     await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as JSON' }))
-    const modal = openModal.mock.calls[0][0].content as ReactElement<{
-      isJson: boolean
-      initialSecret?: { keyPrefix?: string }
-      onSubmit: (data: AddSecretModalSubmitData) => Promise<void>
-    }>
+    const modal = openModal.mock.calls[0][0].content as ReactElement<{ isJson: boolean; submitDisabled: boolean }>
     expect(modal.props.isJson).toBe(true)
-    const data = {
-      name: 'Application credentials',
-      reference: 'lucis/app',
-      isJson: true,
-      isFile: false,
-      secretManagerAccessId: 'manager-id',
-      keyPrefix: 'APP',
-    }
-    await act(async () => modal.props.onSubmit(data))
-    expect(screen.getByText('lucis/app')).toBeInTheDocument()
-    expect(screen.getByText('1 external secret')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
-    const editModal = openModal.mock.calls[1][0].content as typeof modal
-    expect(editModal.props.isJson).toBe(true)
-    expect(editModal.props.initialSecret?.keyPrefix).toBe('APP')
-    expect(screen.getByText('APP_')).toBeInTheDocument()
-    await act(async () =>
-      editModal.props.onSubmit({ ...data, name: 'Updated credentials', reference: 'lucis/updated' })
-    )
-    expect(screen.getByText('lucis/updated')).toBeInTheDocument()
-    expect(screen.getByText('Updated credentials')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
-    await act(async () => openModalConfirmation.mock.calls[0][0].action())
-    expect(screen.queryByText('lucis/updated')).not.toBeInTheDocument()
-    expect(createVariable).not.toHaveBeenCalled()
-    expect(editVariable).not.toHaveBeenCalled()
-    expect(deleteVariable).not.toHaveBeenCalled()
+    expect(modal.props.submitDisabled).toBe(true)
+    expect(screen.queryByText('Lucis application secrets')).not.toBeInTheDocument()
   })
 })

@@ -91,18 +91,7 @@ describe('AddSecretModal', () => {
   it('submits a JSON display name separately from its reference', async () => {
     const onSubmit = jest.fn()
     const { userEvent } = renderWithProviders(
-      <AddSecretModal
-        isJson
-        jsonSecrets={[
-          {
-            reference: 'lucis/production/application',
-            secretManagerAccessId: 'secret-manager-access-id',
-          },
-        ]}
-        secretSources={secretSources}
-        onClose={jest.fn()}
-        onSubmit={onSubmit}
-      />
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
     )
     expect(screen.getByText('Add secret as JSON')).toBeInTheDocument()
     expect(screen.getByText('For identification only. Not used in your code.')).toBeInTheDocument()
@@ -132,7 +121,6 @@ describe('AddSecretModal', () => {
     const { userEvent } = renderWithProviders(
       <AddSecretModal
         isJson
-        jsonSecrets={[{ reference: 'lucis/app-updated', secretManagerAccessId: 'secret-manager-access-id' }]}
         mode="edit"
         initialSecret={{ name: 'lucis/app', reference: 'lucis/app' }}
         secretSources={secretSources}
@@ -208,5 +196,22 @@ describe('AddSecretModal', () => {
     await userEvent.clear(screen.getByLabelText('Key prefix (optional)'))
     await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
     await waitFor(() => expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ keyPrefix: undefined })))
+  })
+  it('blocks disabled JSON submission through the form as well as the button', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal
+        isJson
+        submitDisabled
+        secretSources={secretSources}
+        onClose={jest.fn()}
+        onSubmit={onSubmit}
+        initialSecret={{ name: 'Credentials', reference: 'production/app' }}
+      />
+    )
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+    await userEvent.click(screen.getByLabelText('Display name'))
+    await userEvent.keyboard('{Enter}')
+    expect(onSubmit).not.toHaveBeenCalled()
   })
 })
