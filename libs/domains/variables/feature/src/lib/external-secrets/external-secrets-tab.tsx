@@ -89,9 +89,12 @@ export function ExternalSecretsTab({
     suspense: true,
   })
 
+  // TODO(secret-manager-json): Replace these user-entered drafts and their handlers with the real API.
+  // No seeded data; drafts reset on remount and are isolated to their service/environment.
+  const [jsonDrafts, setJsonDrafts] = useState<(ExternalSecretRow & { parentId: string })[]>([])
   const secrets = useMemo<ExternalSecretRow[]>(
-    () =>
-      variables.filter(isExternalSecretVariable).map((variable) => {
+    () => [
+      ...variables.filter(isExternalSecretVariable).map((variable) => {
         const secretManager = secretManagers.find((manager) => manager.id === variable.secret_manager_access_id)
 
         return {
@@ -106,7 +109,9 @@ export function ExternalSecretsTab({
           scope: generateScopeLabel(variable.scope),
         }
       }),
-    [secretManagers, variables]
+      ...jsonDrafts.filter((secret) => secret.parentId === parentId),
+    ],
+    [secretManagers, variables, jsonDrafts, parentId]
   )
   const [search, setSearch] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
@@ -141,11 +146,31 @@ export function ExternalSecretsTab({
       filePath,
       isFile,
       isJson,
+      keyPrefix,
       reference,
       secretManagerAccessId,
     }: AddSecretModalSubmitData) => {
-      // TODO(secret-manager-json): Wire JSON persistence to the API when its contract is available.
-      if (isJson) throw new Error('JSON secret API integration is not available yet.')
+      // TODO(secret-manager-json): Replace local creation with the real JSON API handler.
+      if (isJson) {
+        const manager = secretManagers.find((item) => item.id === secretManagerAccessId)
+        setJsonDrafts((current) => [
+          ...current,
+          {
+            id: `json-draft-${crypto.randomUUID()}`,
+            parentId,
+            name,
+            reference,
+            description,
+            isJson: true,
+            keyPrefix,
+            secretManagerAccessId,
+            source: manager?.name ?? null,
+            sourceIcon: getSecretManagerProvider(manager),
+            scope: generateScopeLabel(scope),
+          },
+        ])
+        return
+      }
       await createVariable({
         variableRequest: {
           key: name,
@@ -160,16 +185,44 @@ export function ExternalSecretsTab({
       })
       onCreateSecret?.()
     },
-    [createVariable, onCreateSecret, parentId, scope]
+    [createVariable, onCreateSecret, parentId, scope, secretManagers]
   )
 
   const handleEditSecret = useCallback(
     async (
       secretId: string,
-      { name, description, filePath, isFile, isJson, reference, secretManagerAccessId }: AddSecretModalSubmitData
+      {
+        name,
+        description,
+        filePath,
+        isFile,
+        isJson,
+        keyPrefix,
+        reference,
+        secretManagerAccessId,
+      }: AddSecretModalSubmitData
     ) => {
-      // TODO(secret-manager-json): Wire JSON persistence to the API when its contract is available.
-      if (isJson) throw new Error('JSON secret API integration is not available yet.')
+      // TODO(secret-manager-json): Replace local editing with the real JSON API handler.
+      if (isJson) {
+        const manager = secretManagers.find((item) => item.id === secretManagerAccessId)
+        setJsonDrafts((current) =>
+          current.map((secret) =>
+            secret.id === secretId
+              ? {
+                  ...secret,
+                  name,
+                  reference,
+                  description,
+                  keyPrefix,
+                  secretManagerAccessId,
+                  source: manager?.name ?? null,
+                  sourceIcon: getSecretManagerProvider(manager),
+                }
+              : secret
+          )
+        )
+        return
+      }
       const variableEditRequest = {
         key: name,
         value: reference,
@@ -184,7 +237,7 @@ export function ExternalSecretsTab({
       })
       onEditSecret?.()
     },
-    [editVariable, onEditSecret]
+    [editVariable, onEditSecret, secretManagers]
   )
 
   const handleOpenAddSecret = useCallback(
@@ -249,8 +302,12 @@ export function ExternalSecretsTab({
   const handleDeleteSecrets = useCallback(
     async (secretIds: string[]) => {
       const idsToDelete = new Set(secretIds)
-      await Promise.all([...idsToDelete].map((variableId) => deleteVariable({ variableId })))
-      onDeleteSecret?.()
+      // TODO(secret-manager-json): Replace local deletion with the real JSON API handler.
+      const draftIds = new Set(jsonDrafts.map((secret) => secret.id))
+      const persistedIds = [...idsToDelete].filter((id) => !draftIds.has(id))
+      await Promise.all(persistedIds.map((variableId) => deleteVariable({ variableId })))
+      setJsonDrafts((current) => current.filter((secret) => !idsToDelete.has(secret.id)))
+      if (persistedIds.length > 0) onDeleteSecret?.()
       setRowSelection((prev) => {
         const next = { ...prev }
         for (const secretId of secretIds) {
@@ -259,7 +316,7 @@ export function ExternalSecretsTab({
         return next
       })
     },
-    [deleteVariable, onDeleteSecret]
+    [deleteVariable, onDeleteSecret, jsonDrafts]
   )
 
   const handleConfirmDeleteSecrets = useCallback(

@@ -96,6 +96,7 @@ export function AddSecretModal({
   })
   const { enableAlertClickOutside } = useModal()
   const [referenceInput, setReferenceInput] = useState('')
+  const [submitError, setSubmitError] = useState<string>()
   const debouncedReferenceInput = useDebounce(referenceInput, 300)
   const isDirty = methods.formState.isDirty
   const shouldDisplayEnvironmentAcknowledgement = scope === 'ENVIRONMENT' && mode === 'create'
@@ -149,6 +150,7 @@ export function AddSecretModal({
     const fallbackFilePath = `/vault/secrets/${finalReference.split('/').pop() || 'secret'}`
     const finalPath = data.path.trim() || fallbackFilePath
 
+    setSubmitError(undefined)
     try {
       await onSubmit({
         name: finalName,
@@ -175,6 +177,7 @@ export function AddSecretModal({
           is_file: isFile,
           success: false,
         })
+      setSubmitError(error instanceof Error ? error.message : 'Could not save the secret. Please try again.')
       console.error(error)
     }
   })
@@ -339,6 +342,12 @@ export function AddSecretModal({
               />
             )}
           />
+
+          {submitError && (
+            <p role="alert" className="mb-3 text-sm text-negative">
+              {submitError}
+            </p>
+          )}
 
           {shouldDisplayEnvironmentAcknowledgement && (
             <div className="mb-3 rounded border border-warning-subtle bg-surface-warning-subtle p-4 text-sm text-neutral">

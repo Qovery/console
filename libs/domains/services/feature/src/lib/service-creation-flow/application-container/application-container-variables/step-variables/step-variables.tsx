@@ -176,7 +176,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
           initialSecret={currentSecret}
           onClose={closeModal}
           onSubmit={(secret) => {
-            if (secret.isJson) throw new Error('JSON secret API integration is not available yet.')
+            // TODO(secret-manager-json): Persist JSON references with the real API in the final creation step.
             const mapped = mapSecretForForm(secret, sourceById, serviceScope)
             if (typeof index === 'number') {
               updateExternalSecret(index, mapped)

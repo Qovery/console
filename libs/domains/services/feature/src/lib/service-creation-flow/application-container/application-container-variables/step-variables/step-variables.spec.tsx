@@ -1,5 +1,6 @@
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect } from 'react'
+import { type AddSecretModalSubmitData } from '@qovery/domains/variables/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   ApplicationContainerCreationFlow,
@@ -41,13 +42,28 @@ jest.mock('@qovery/domains/variables/feature', () => ({
   AddSecretModal: ({
     isFile,
     isJson,
-    submitDisabled,
+    onSubmit,
+    onClose,
   }: {
     isFile?: boolean
     isJson?: boolean
-    submitDisabled?: boolean
+    onSubmit: (data: AddSecretModalSubmitData) => void | Promise<void>
+    onClose: () => void
   }) => (
-    <button disabled={submitDisabled}>
+    <button
+      type="button"
+      onClick={async () => {
+        await onSubmit({
+          name: 'My JSON credentials',
+          reference: 'production/credentials',
+          isJson,
+          isFile: !!isFile,
+          keyPrefix: 'APP',
+          secretManagerAccessId: 'manager-id',
+        })
+        onClose()
+      }}
+    >
       {isJson ? 'JSON secret modal' : isFile ? 'File secret modal' : 'Variable secret modal'}
     </button>
   ),
@@ -222,6 +238,32 @@ describe('ApplicationContainerStepVariables', () => {
     await userEvent.click(screen.getByRole('menuitem', { name: option }))
     expect(screen.getByText(modal)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: modal })).toBeEnabled()
+  })
+
+  it('adds and removes a user-entered JSON reference in the creation form', async () => {
+    mockUseVariablesSecretManagers.mockReturnValue({
+      secretManagers: [],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-1',
+    })
+    const { userEvent } = renderWithProviders(
+      <ApplicationContainerCreationFlow
+        creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
+        defaultServiceType="APPLICATION"
+      >
+        <ApplicationContainerStepVariables onBack={onBack} onSubmit={onSubmit} />
+        <VariablesState />
+      </ApplicationContainerCreationFlow>
+    )
+    const buttons = screen.getAllByRole('button', { name: 'Add secret' })
+    await userEvent.click(buttons[buttons.length - 1])
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as JSON' }))
+    await userEvent.click(screen.getByRole('button', { name: 'JSON secret modal' }))
+    expect(screen.getByText('My JSON credentials')).toBeInTheDocument()
+    expect(screen.getByText('APP_')).toBeInTheDocument()
+    expect(screen.getByTestId('variables-state')).toHaveTextContent('"keyPrefix":"APP"')
+    await userEvent.click(screen.getByRole('button', { name: 'Delete secret' }))
+    expect(screen.queryByText('My JSON credentials')).not.toBeInTheDocument()
   })
 
   it.each([undefined, 'APP', 'APP_'])(

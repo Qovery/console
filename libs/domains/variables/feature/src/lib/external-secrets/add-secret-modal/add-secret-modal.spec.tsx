@@ -133,6 +133,11 @@ describe('AddSecretModal', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
     await waitFor(() => expect(onSubmit).toHaveBeenCalled())
     expect(onClose).not.toHaveBeenCalled()
+    expect(screen.getByRole('alert')).toHaveTextContent('Could not save')
+    onSubmit.mockResolvedValueOnce(undefined)
+    await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
+    await waitFor(() => expect(onClose).toHaveBeenCalled())
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     consoleError.mockRestore()
   })
   it('accepts a JSON reference without fetching its keys', async () => {
