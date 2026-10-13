@@ -1,6 +1,7 @@
 import { redirect } from '@tanstack/react-router'
 import { z } from 'zod'
 import { AuthEnum, getSsoConnectionName } from '@qovery/shared/auth'
+import { getLocalStorageItem, setLocalStorageItem } from '@qovery/shared/util-hooks'
 import { type AuthPage } from './auth-page-tracking'
 
 export const LAST_USED_LOGIN_STORAGE_KEY = 'lastUsedLogin'
@@ -50,7 +51,7 @@ export function clearAuthEntry() {
 
 export function getStoredLastUsedLogin() {
   try {
-    return window.localStorage.getItem(LAST_USED_LOGIN_STORAGE_KEY) ?? undefined
+    return getLocalStorageItem(LAST_USED_LOGIN_STORAGE_KEY) ?? undefined
   } catch {
     return undefined
   }
@@ -58,7 +59,7 @@ export function getStoredLastUsedLogin() {
 
 function storeLastUsedLogin(lastUsedLogin: string) {
   try {
-    window.localStorage.setItem(LAST_USED_LOGIN_STORAGE_KEY, lastUsedLogin)
+    setLocalStorageItem(LAST_USED_LOGIN_STORAGE_KEY, lastUsedLogin)
   } catch (error) {
     console.error(error)
   }
