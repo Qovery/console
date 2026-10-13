@@ -201,6 +201,43 @@ export function ClusterCredentialsSettings({
             }
           />
 
+          {isSetting && (
+            <Link
+              color="brand"
+              to="/organization/$organizationId/settings/cloud-credentials"
+              params={{ organizationId }}
+              className="flex gap-1"
+            >
+              See and edit all Cloud credentials
+              <Icon iconName="key" iconStyle="regular" />
+            </Link>
+          )}
+
+          {isSetting && (
+            <Callout.Root
+              color="yellow"
+              // The extended credentials are displayed below when restrictive permissions are used
+              className={isUsingRestrictivePermissions ? 'my-4' : 'mt-4'}
+              data-testid="mirroring-registry-credentials-warning"
+            >
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextDescription className="flex flex-col gap-1">
+                  The credential change won't be applied to the mirroring registry of this cluster. Make sure to update
+                  the credentials properly in this cluster's mirroring registry section.
+                  <ExternalLink
+                    className="items-center"
+                    href={`/organization/${organizationId}/cluster/${clusterId}/settings/image-registry`}
+                  >
+                    Go to mirroring registry section
+                  </ExternalLink>
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          )}
+
           {isUsingRestrictivePermissions && (
             <Controller
               name="wide_permission_credentials"
@@ -230,38 +267,6 @@ export function ClusterCredentialsSettings({
                 />
               )}
             />
-          )}
-
-          {isSetting && (
-            <Link
-              color="brand"
-              to="/organization/$organizationId/settings/cloud-credentials"
-              params={{ organizationId }}
-              className="flex gap-1"
-            >
-              See and edit all Cloud credentials
-              <Icon iconName="key" iconStyle="regular" />
-            </Link>
-          )}
-
-          {isSetting && (
-            <Callout.Root color="yellow" className="mt-4" data-testid="mirroring-registry-credentials-warning">
-              <Callout.Icon>
-                <Icon iconName="circle-exclamation" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextDescription className="flex flex-col gap-1">
-                  The credential change won't be applied to the mirroring registry of this cluster. Make sure to update
-                  the credentials properly in this cluster's mirroring registry section.
-                  <ExternalLink
-                    className="items-center"
-                    href={`/organization/${organizationId}/cluster/${clusterId}/settings/image-registry`}
-                  >
-                    Go to mirroring registry section
-                  </ExternalLink>
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
           )}
         </>
       )}
