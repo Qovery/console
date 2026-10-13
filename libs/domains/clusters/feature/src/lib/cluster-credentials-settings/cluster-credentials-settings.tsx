@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type Cluster, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
 import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
 import {
@@ -11,20 +11,29 @@ import {
   ExternalLink,
   Icon,
   InputSelect,
+  InputToggle,
   Link,
   LoaderSpinner,
   useModal,
 } from '@qovery/shared/ui'
 import {
+  type ClusterCredentialAuthType,
   ClusterCredentialsModal,
   type ClusterCredentialsModalCloudProvider,
 } from '../cluster-credentials-modal/cluster-credentials-modal'
+
+// Extended permissions credentials must be an AWS role (assumed via STS)
+const WIDE_PERMISSION_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['STS']
 
 export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
   cluster?: Cluster
+  isWideCredentialsEnabled?: boolean
 }
+
+export const filterWidePermissionCredentials = (credentials: ClusterCredentials[]) =>
+  credentials.filter((credential) => credential.object_type === 'AWS_ROLE')
 
 export const filterCredentialsByCloudProvider = (
   credentials: ClusterCredentials[],
@@ -37,10 +46,19 @@ export const filterCredentialsByCloudProvider = (
   return credentials.filter((credential) => credential.object_type === 'EKS_ANYWHERE_VSPHERE')
 }
 
-export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }: ClusterCredentialsSettingsProps) {
+export function ClusterCredentialsSettings({
+  cloudProvider,
+  isSetting,
+  cluster,
+  isWideCredentialsEnabled = false,
+}: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
-  const { control } = useFormContext()
+  const { control, getValues } = useFormContext()
   const { openModal, closeModal } = useModal()
+
+  // useWatch subscribes this component itself, so it stays in sync even when the parent form is reset
+  const usingRestrictivePermissions = useWatch({ control, name: 'using_restrictive_permissions' })
+  const isUsingRestrictivePermissions = isWideCredentialsEnabled && Boolean(usingRestrictivePermissions)
 
   const queryCloudProvider = cloudProvider === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProvider
 
@@ -55,7 +73,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
   )
 
   const openCredentialsModal = useCallback(
-    (id?: string, onChange?: (e: string | string[]) => void) => {
+    (id?: string, onChange?: (e: string | string[]) => void, allowedTypes?: ClusterCredentialAuthType[]) => {
       openModal({
         content: (
           <ClusterCredentialsModal
@@ -69,6 +87,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
               (currentCredentials: ClusterCredentials) => currentCredentials.id === id
             )}
             cloudProvider={cloudProvider}
+            allowedTypes={allowedTypes}
           />
         ),
         options: {
@@ -79,11 +98,14 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
     [cloudProvider, clusterId, closeModal, openModal, organizationId, sortedCredentials]
   )
 
-  const buildCredentials = sortedCredentials.map((item: ClusterCredentials) => ({
+  const toCredentialOption = (item: ClusterCredentials) => ({
     label: `${item.name}${'access_key_id' in item ? ` (${item.access_key_id})` : ''}`,
     value: item.id,
     onClickEditable: !isSetting ? () => openCredentialsModal(item.id) : undefined,
-  }))
+  })
+
+  const buildCredentials = sortedCredentials.map(toCredentialOption)
+  const buildWidePermissionCredentials = filterWidePermissionCredentials(sortedCredentials).map(toCredentialOption)
 
   return (
     <div>
@@ -99,13 +121,37 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
                 <Icon iconName="triangle-exclamation" iconStyle="regular" />
               </Callout.Icon>
               <Callout.Text>
-                <Callout.TextHeading>Changing credentials triggers a cluster redeployment</Callout.TextHeading>
+                <Callout.TextHeading>
+                  {/* Only the restrictive credentials trigger a redeploy, not the toggle nor the extended credentials */}
+                  {isWideCredentialsEnabled
+                    ? 'Changing the restrictive credentials triggers a cluster redeployment'
+                    : 'Changing credentials triggers a cluster redeployment'}
+                </Callout.TextHeading>
                 <Callout.TextDescription>
                   Saving new credentials will automatically redeploy the cluster to keep your services' deployments
                   working.
                 </Callout.TextDescription>
               </Callout.Text>
             </Callout.Root>
+          )}
+
+          {isWideCredentialsEnabled && (
+            <Controller
+              name="using_restrictive_permissions"
+              control={control}
+              render={({ field }) => (
+                <InputToggle
+                  dataTestId="input-restrictive-permissions-toggle"
+                  className="mb-4"
+                  value={Boolean(field.value)}
+                  onChange={field.onChange}
+                  title="Use restrictive permissions"
+                  description="Qovery uses restrictive credentials for day-to-day operations and extended credentials (AWS role) only when wider access is required."
+                  align="top"
+                  small
+                />
+              )}
+            />
           )}
 
           <Controller
@@ -137,7 +183,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
               ) : (
                 <InputSelect
                   dataTestId="input-credentials"
-                  label="Credentials"
+                  label={isUsingRestrictivePermissions ? 'Restrictive credentials' : 'Credentials'}
                   className="mb-3"
                   options={buildCredentials}
                   onChange={field.onChange}
@@ -154,6 +200,37 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
               )
             }
           />
+
+          {isUsingRestrictivePermissions && (
+            <Controller
+              name="wide_permission_credentials"
+              control={control}
+              rules={{
+                // The field stays registered when the toggle is turned off, so only require it while restrictive permissions are used
+                validate: (value) =>
+                  !getValues('using_restrictive_permissions') || Boolean(value) || 'Please select a credential.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  dataTestId="input-wide-permission-credentials"
+                  label="Extended credentials"
+                  hint="Only AWS role credentials can be used for extended permissions."
+                  className="mb-3"
+                  options={buildWidePermissionCredentials}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  isSearchable
+                  menuListButton={{
+                    title: 'Select credential',
+                    label: 'New credential',
+                    icon: <Icon iconName="circle-plus" className="text-brand" />,
+                    onClick: () => openCredentialsModal(undefined, field.onChange, WIDE_PERMISSION_CREDENTIAL_TYPES),
+                  }}
+                />
+              )}
+            />
+          )}
 
           {isSetting && (
             <Link
