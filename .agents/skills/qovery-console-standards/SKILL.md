@@ -9,7 +9,7 @@ metadata:
 
 # Qovery Console Standards
 
-Comprehensive coding standards for the Qovery Console React/TypeScript monorepo. Contains 7 rules covering architecture, React patterns, styling, testing, naming, development workflow, and pre-commit quality gates.
+Comprehensive coding standards for the Qovery Console React/TypeScript monorepo. Contains 8 rules covering architecture, React patterns, styling, testing, naming, development workflow, pre-commit quality gates, and implementation and review decisions.
 
 ## When to Apply
 
@@ -24,15 +24,16 @@ Reference these guidelines when:
 
 ## Rule Categories
 
-| Rule                 | File                            | Scope                                                     |
-| -------------------- | ------------------------------- | --------------------------------------------------------- |
-| Project Architecture | `project-architecture.md`       | Nx monorepo structure, lib organization, layer boundaries |
-| React & TypeScript   | `react-typescript-standards.md` | Import rules, component patterns, state management        |
-| Styling              | `styling-standards.md`          | TailwindCSS, Radix UI, responsive design, accessibility   |
-| Testing              | `testing-standards.md`          | Test setup, structure, mocking, coverage                  |
-| Naming Conventions   | `naming-conventions.md`         | File, variable, component, and constant naming            |
-| Development Commands | `development-commands.md`       | Daily workflow, Nx commands, package management, git      |
-| Pre-commit Workflow  | `pre-commit-workflow.md`        | Conventional commits, format/test/lint checks             |
+| Rule                    | File                            | Scope                                                           |
+| ----------------------- | ------------------------------- | --------------------------------------------------------------- |
+| Project Architecture    | `project-architecture.md`       | Nx monorepo structure, lib organization, layer boundaries       |
+| React & TypeScript      | `react-typescript-standards.md` | Import rules, component patterns, state management              |
+| Styling                 | `styling-standards.md`          | TailwindCSS, Radix UI, responsive design, accessibility         |
+| Testing                 | `testing-standards.md`          | Test setup, structure, mocking, coverage                        |
+| Naming Conventions      | `naming-conventions.md`         | File, variable, component, and constant naming                  |
+| Development Commands    | `development-commands.md`       | Daily workflow, Nx commands, package management, git            |
+| Pre-commit Workflow     | `pre-commit-workflow.md`        | Conventional commits, format/test/lint checks                   |
+| Implementation & Review | `implementation-review.md`      | Code placement, shared changes, API boundaries, state ownership |
 
 ## Quick Reference
 
