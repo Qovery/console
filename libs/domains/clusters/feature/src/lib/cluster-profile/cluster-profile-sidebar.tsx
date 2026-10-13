@@ -5,7 +5,7 @@ import { Icon, InputSearch, Tooltip } from '@qovery/shared/ui'
 type LayerStatus = 'disabled' | 'success'
 
 export const NOT_CONFIGURABLE_COMPONENT_REASON = 'No configuration needed for this component'
-export const NOT_CONFIGURABLE_LAYER_REASON = 'No configuration needed for this layer'
+export const NOT_CONFIGURABLE_LAYER_REASON = 'No configuration needed for this layer yet'
 
 export interface ClusterProfileSidebarItem {
   id: string
