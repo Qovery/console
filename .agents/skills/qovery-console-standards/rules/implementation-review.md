@@ -16,7 +16,7 @@ Each new prop, abstraction, or shared-component change should have a concrete ca
 
 ## Separate Business Rules from Rendering
 
-Keep substantial payload construction, API parsing, and business transformations in domain helpers or hooks that can be tested independently. Prefer typed API fields over interpreting opaque payloads in rendering components; if the contract cannot change, isolate and validate the parsing at the domain boundary. Keep action labels, icons, and descriptions consistent when introducing a new operation.
+Keep substantial payload construction, API parsing, and business transformations in domain helpers or hooks that can be tested independently. Prefer typed API fields over interpreting opaque payloads in rendering components; if the contract cannot change, isolate and validate the parsing at the domain boundary. When introducing a new operation, ensure its label, icon, and description communicate the same operation. Flag contradictions, such as an update label paired with a delete icon or description; a neutral icon shared by several operations is not a mismatch by itself.
 
 Name business helpers after the resource or capability they identify, rather than a version or rollout label. Distinguish resource identity from access controlled by a feature flag.
 
