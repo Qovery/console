@@ -2,6 +2,22 @@
 
 All shared components live in `libs/shared/ui/src/lib/components/`. Check here before building anything new.
 
+## Reuse and Extend Shared UI
+
+Before creating a component or custom markup, inspect `shared/ui` and existing callers for a suitable component. Reuse it when its behavior fits the need; visual similarity alone does not justify substituting a component with different interaction semantics.
+
+Extend shared components only for a concrete need their current API cannot cover. Keep extensions generic, preserve existing callers, and verify relevant behavior in other flows. Avoid adding unused props or styling tokens in anticipation of future needs.
+
+For components with multiple styling variants, follow the existing CVA and `twMerge` patterns when they clarify the implementation; simple conditions do not automatically need a variant abstraction. Add or update Storybook stories for new shared components and meaningful visual states or variants.
+
+## Verify the Interaction
+
+Check the states affected by the change: loading, failure, validation, and saving should give clear feedback. Make clickable controls recognizable and distinguish checking a draft from having changes ready to save.
+
+For editable flows, verify that read-only fields remain read-only in nested editors and dialogs, and that leaving with unsaved changes has deliberate behavior. Preserve navigation within a draft when adding leave-page protection.
+
+Exercise the actual keyboard focus target for tooltips and popovers, including controls nested in clickable rows or links. A hover tooltip does not become keyboard-accessible just because its parent is focusable.
+
 ---
 
 ## Decision Guide

@@ -2,6 +2,8 @@
 
 This document compiles all Qovery Console coding standards into a single reference. For individual rules, see the `rules/` folder. For the quick reference, see `SKILL.md`.
 
+For implementation and review decisions about code placement, shared changes, API boundaries, state ownership, and evidence, also read [rules/implementation-review.md](rules/implementation-review.md).
+
 ---
 
 ## 1. Project Architecture

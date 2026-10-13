@@ -74,6 +74,8 @@ Reference these guidelines when:
 
 ## How to Use
 
+For implementation and PR review decisions, read [rules/implementation-review.md](rules/implementation-review.md). It complements the architecture, React, and testing rules without making optional refactors mandatory.
+
 Read individual rule files for detailed guidelines:
 
 ```

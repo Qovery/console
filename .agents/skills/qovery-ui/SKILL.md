@@ -38,9 +38,11 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 
 ## /audit
 
-**Load:** `references/colors.md`, `references/spacing-layout.md`, `references/anti-patterns.md`, `references/accessibility.md`
+**Load:** `references/colors.md`, `references/spacing-layout.md`, `references/anti-patterns.md`, `references/accessibility.md`, `references/components.md`
 
 Four-phase review. Label every finding:
+
+Distinguish demonstrated behavior problems from repository conventions and optional design suggestions. Do not assign blocking severity to a component substitution or refactor solely because it is preferred; explain the user impact and verify that the proposed shared component fits the interaction.
 
 - `[blocking]` — ships broken, violates semantic rules, or breaks accessibility
 - `[important]` — degrades experience, likely to cause design review rejection
@@ -80,6 +82,8 @@ Fix without changing functionality. Output a Before / After / Why table, one row
 ## /component
 
 **Load:** `references/components.md`
+
+Also use this reference when extending shared components or reviewing a new interactive flow. Follow its reuse, compatibility, Storybook, and interaction checks for the states affected by the change.
 
 1. Identify if a shared component already exists — always prefer it
 2. Return the import path and correct usage with props
