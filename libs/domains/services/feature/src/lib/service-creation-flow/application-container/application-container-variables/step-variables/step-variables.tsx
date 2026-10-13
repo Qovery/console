@@ -90,7 +90,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
   const secretSources = useMemo(() => mapSecretManagersToSources(secretManagers), [secretManagers])
   // TODO(secret-manager-json): Remove fixture metadata before production and load key-only metadata from the API.
   const jsonSecrets = useMemo(
-    () => createJsonSecretPreview(environmentId, serviceScope, secretManagers[0]),
+    () => secretManagers.flatMap((manager) => createJsonSecretPreview(environmentId, serviceScope, manager)),
     [environmentId, serviceScope, secretManagers]
   )
   const sourceById = useMemo(() => new Map(secretSources.map((source) => [source.value, source])), [secretSources])

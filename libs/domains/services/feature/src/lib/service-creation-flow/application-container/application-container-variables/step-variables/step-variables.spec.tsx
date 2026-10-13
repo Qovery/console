@@ -1,3 +1,4 @@
+import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
@@ -8,7 +9,7 @@ import { ApplicationContainerStepVariables } from './step-variables'
 
 const mockNavigate = jest.fn()
 const mockUseVariablesSecretManagers = jest.fn(() => ({
-  secretManagers: [],
+  secretManagers: [] as SecretManagerAccess[],
   hasClusterSecretManagerConfigured: false,
   clusterId: 'cluster-1',
 }))
@@ -51,8 +52,8 @@ jest.mock('@qovery/domains/variables/feature', () => ({
     <div>
       <span>{isJson ? 'JSON secret modal' : isFile ? 'File secret modal' : 'Variable secret modal'}</span>
       {isJson &&
-        jsonSecrets?.map((secret) => (
-          <span key={secret.reference}>
+        jsonSecrets?.map((secret, index) => (
+          <span key={`${secret.reference}-${index}`}>
             {secret.reference}: {secret.keys?.join(', ')}
           </span>
         ))}
@@ -206,7 +207,7 @@ describe('ApplicationContainerStepVariables', () => {
     ['Add secret as JSON', 'JSON secret modal'],
   ])('opens %s from the external secret dropdown', async (option, modal) => {
     mockUseVariablesSecretManagers.mockReturnValue({
-      secretManagers: [],
+      secretManagers: [{ id: 'first-source' }, { id: 'second-source' }] as SecretManagerAccess[],
       hasClusterSecretManagerConfigured: true,
       clusterId: 'cluster-1',
     })
@@ -228,8 +229,8 @@ describe('ApplicationContainerStepVariables', () => {
     ])
     await userEvent.click(screen.getByRole('menuitem', { name: option }))
     expect(screen.getByText(modal)).toBeInTheDocument()
-    expect(screen.queryByText('lucis/production/application: DATABASE_URL') !== null).toBe(
-      option === 'Add secret as JSON'
+    expect(screen.queryAllByText('lucis/production/application: DATABASE_URL')).toHaveLength(
+      option === 'Add secret as JSON' ? 2 : 0
     )
   })
 
