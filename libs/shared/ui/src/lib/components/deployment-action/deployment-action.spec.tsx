@@ -1,4 +1,5 @@
-import { getTriggerAction } from './deployment-action'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { DeploymentAction, getTriggerAction } from './deployment-action'
 
 describe('getTriggerAction', () => {
   it('returns undefined without status details', () => {
@@ -16,5 +17,20 @@ describe('getTriggerAction', () => {
 
   it('falls back to UNKNOWN when status details have no action', () => {
     expect(getTriggerAction({})).toBe('UNKNOWN')
+  })
+})
+
+describe('DeploymentAction', () => {
+  it('renders the action label derived from the status', () => {
+    renderWithProviders(<DeploymentAction status="DEPLOY" />)
+
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
+  })
+
+  it('renders the label override instead of the derived action label', () => {
+    renderWithProviders(<DeploymentAction status="DEPLOY" label="Operator" />)
+
+    expect(screen.getByText('Operator')).toBeInTheDocument()
+    expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
   })
 })

@@ -19,7 +19,6 @@ import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/
 import {
   Badge,
   CopyToClipboardButtonIcon,
-  DeploymentAction,
   EmptyState,
   Icon,
   Link,
@@ -33,6 +32,7 @@ import { dateFullFormat } from '@qovery/shared/util-dates'
 import { EventOriginIcon } from '@qovery/shared/util-icons'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
+import { ClusterDeploymentAction } from './cluster-deployment-action'
 import { ClusterDeploymentDurationCell } from './cluster-deployment-duration-cell'
 
 const { Table } = TablePrimitives
@@ -153,8 +153,8 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
 
           return (
             <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <DeploymentAction status={data.trigger_action} />
+              <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                <ClusterDeploymentAction status={data.trigger_action} operation={data.operation} />
                 {data.reason === 'MAINTENANCE' && (
                   <Badge color="neutral" variant="surface" className="font-medium">
                     Maintenance
@@ -166,7 +166,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
                   </Badge>
                 )}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 {data.action_status === 'ERROR' && (
                   <DevopsCopilotTroubleshootTrigger
                     source="cluster-deployment-list"

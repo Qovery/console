@@ -148,6 +148,7 @@ export const getTriggerAction = (statusDetails?: {
 
 export const DeploymentAction = ({
   status,
+  label,
   className,
   iconClassName,
   textClassName,
@@ -161,6 +162,7 @@ export const DeploymentAction = ({
     | StageStatusEnum
     | StepMetricStatusEnum
     | undefined
+  label?: string
   className?: string
   iconClassName?: string
   textClassName?: string
@@ -171,7 +173,7 @@ export const DeploymentAction = ({
   return (
     <div className={twMerge('flex items-center gap-2 text-sm', className)}>
       <span className={iconClassName}>{action.icon}</span>
-      <span className={twMerge('text-neutral', textClassName)}>{action.status}</span>
+      <span className={twMerge('text-neutral', textClassName)}>{label ?? action.status}</span>
     </div>
   )
 }

@@ -88,6 +88,7 @@ function ClusterDeploymentLogsPage({
               triggeredBy={deployment?.auditing_data.triggered_by}
               actionStatus={deployment?.action_status}
               totalDuration={deployment?.total_duration}
+              operation={deployment?.operation}
             />
           </div>
           {deployment?.action_status === 'ONGOING' && deployment?.reason === 'MAINTENANCE' && (

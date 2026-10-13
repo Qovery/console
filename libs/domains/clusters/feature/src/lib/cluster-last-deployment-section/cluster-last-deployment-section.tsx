@@ -8,21 +8,11 @@ import {
 import { useContext } from 'react'
 import { match } from 'ts-pattern'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
-import {
-  Badge,
-  DeploymentAction,
-  EmptyState,
-  Heading,
-  Icon,
-  Link,
-  Section,
-  Skeleton,
-  StatusChip,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { Badge, EmptyState, Heading, Icon, Link, Section, Skeleton, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { ClusterDeploymentAction } from '../cluster-deployment-list/cluster-deployment-action'
 import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
 
 const DotSeparator = () => (
@@ -117,6 +107,11 @@ export function ClusterLastDeploymentSection({
   const lastDeployment = deploymentHistory[0]
   const hasLastDeployment = Boolean(clusterStatus?.last_deployment_date || clusterStatus?.last_execution_id)
   const deploymentReasonLabel = getDeploymentReasonLabel(clusterStatus?.reason)
+  const lastDeploymentOperation =
+    lastDeployment?.identifier.execution_id &&
+    lastDeployment.identifier.execution_id === clusterStatus?.last_execution_id
+      ? lastDeployment.operation
+      : undefined
 
   const handleLaunchDiagnostic = () => {
     if (!clusterStatus) return
@@ -170,7 +165,10 @@ export function ClusterLastDeploymentSection({
           >
             <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
               <span className="font-medium">
-                <DeploymentAction status={getClusterDeploymentAction(clusterStatus)} />
+                <ClusterDeploymentAction
+                  status={getClusterDeploymentAction(clusterStatus)}
+                  operation={lastDeploymentOperation}
+                />
               </span>
               <StatusChip status={clusterStatus.status} />
               {deploymentReasonLabel && (

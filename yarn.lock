@@ -6285,7 +6285,7 @@ __metadata:
     prettier: 3.2.5
     prettier-plugin-tailwindcss: 0.5.14
     pretty-quick: 4.0.0
-    qovery-typescript-axios: 1.1.1004
+    qovery-typescript-axios: 1.1.1007
     qovery-ws-typescript-axios: 0.1.666
     react: 19.3.0
     react-country-flag: 3.0.2
@@ -24656,12 +24656,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:1.1.1004":
-  version: 1.1.1004
-  resolution: "qovery-typescript-axios@npm:1.1.1004"
+"qovery-typescript-axios@npm:1.1.1007":
+  version: 1.1.1007
+  resolution: "qovery-typescript-axios@npm:1.1.1007"
   dependencies:
     axios: 1.20.0
-  checksum: 99fca71abb55689b534cb7c3874deabb11fe6c20a564d7bd4b03d034f5a2a37c4daefbb568b46b468141b7ad7a858daae7e1013516fa8ba272046ba9ba635d73
+  checksum: f8662f1567d11edcbe0119c2db44ceeb0b1f0181517b31ca70c89173872dde9fde0f07087b48cbd0d81372c4399675191b520378e9021539ecca100182a5bba8
   languageName: node
   linkType: hard
 
