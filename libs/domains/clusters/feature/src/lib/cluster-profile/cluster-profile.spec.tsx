@@ -714,6 +714,25 @@ describe('ClusterProfileFeature', () => {
       expect(onSearchChange).toHaveBeenCalledWith('n')
     })
 
+    it('keeps the typed search and follows the URL one when navigation changes it', async () => {
+      let navigateToSearch: (search: string) => void = () => undefined
+      function ClusterProfileWithUrlSearch() {
+        const [search, setSearch] = useState('network')
+        navigateToSearch = setSearch
+        return <ClusterProfileFeature search={search} />
+      }
+      const { userEvent } = renderWithProviders(<ClusterProfileWithUrlSearch />)
+      const input = screen.getByRole('textbox', { name: 'Search layers' })
+
+      await userEvent.type(input, 's')
+
+      expect(input).toHaveValue('networks')
+
+      act(() => navigateToSearch(''))
+
+      expect(input).toHaveValue('')
+    })
+
     it('keeps the whole layer when its label matches', () => {
       renderWithProviders(<ClusterProfileFeature search="network" />)
 
