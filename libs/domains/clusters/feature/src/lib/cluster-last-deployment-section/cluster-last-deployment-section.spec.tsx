@@ -1,6 +1,8 @@
 import { TooltipProvider } from '@radix-ui/react-tooltip'
 import posthog from 'posthog-js'
 import {
+  type ClusterDeploymentHistory,
+  ClusterDeploymentHistoryOperationEnum,
   ClusterStateEnum,
   type ClusterStatus,
   DeploymentHistoryTriggerAction,
@@ -46,28 +48,35 @@ jest.mock('@qovery/shared/ui', () => ({
 
 let mockClusterDeploymentHistoryProps: UseClusterDeploymentHistoryProps | undefined
 
+const defaultDeploymentHistory: ClusterDeploymentHistory[] = [
+  {
+    identifier: {
+      deployment_id: 'deployment-1',
+      execution_id: 'execution-1',
+      cluster_id: 'cluster-1',
+    },
+    auditing_data: {
+      created_at: '2026-08-10T12:30:00Z',
+      updated_at: '2026-08-10T12:31:00Z',
+    },
+    status: 'DEPLOYED',
+    action_status: 'SUCCESS',
+    trigger_action: 'DEPLOY',
+    operation: ClusterDeploymentHistoryOperationEnum.CLUSTER,
+    is_dry_run: false,
+    reason: 'UNSPECIFIED',
+    total_duration: 'PT1M',
+  },
+]
+
+let mockDeploymentHistory = defaultDeploymentHistory
+
 jest.mock('../hooks/use-cluster-deployment-history/use-cluster-deployment-history', () => ({
   useClusterDeploymentHistory: (props: UseClusterDeploymentHistoryProps) => {
     mockClusterDeploymentHistoryProps = props
 
     return {
-      data: [
-        {
-          identifier: {
-            deployment_id: 'deployment-1',
-            execution_id: 'execution-1',
-            cluster_id: 'cluster-1',
-          },
-          auditing_data: {
-            created_at: '2026-08-10T12:30:00Z',
-          },
-          status: 'DEPLOYED',
-          action_status: 'SUCCESS',
-          trigger_action: 'DEPLOY',
-          reason: 'UNSPECIFIED',
-          total_duration: 'PT1M',
-        },
-      ],
+      data: mockDeploymentHistory,
       isFetched: true,
     }
   },
@@ -101,6 +110,7 @@ describe('ClusterLastDeploymentSection', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockClusterDeploymentHistoryProps = undefined
+    mockDeploymentHistory = defaultDeploymentHistory
   })
 
   it('renders the latest cluster deployment row linked to its deployment logs', () => {
@@ -179,6 +189,92 @@ describe('ClusterLastDeploymentSection', () => {
     )
 
     expect(screen.getByText('Maintenance')).toBeInTheDocument()
+  })
+
+  it('renders the Operator action with the reason when the last deployment is an Operator update', () => {
+    mockDeploymentHistory = [
+      { ...defaultDeploymentHistory[0], operation: ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE },
+    ]
+
+    renderWithProviders(
+      <ClusterLastDeploymentSection
+        organizationId="org-1"
+        clusterId="cluster-1"
+        clusterStatus={{ ...baseClusterStatus, reason: DeploymentInfraReason.MAINTENANCE }}
+      />
+    )
+
+    expect(screen.getByText('Operator')).toBeInTheDocument()
+    expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
+    expect(screen.getByText('Maintenance')).toBeInTheDocument()
+    expect(screen.getByText('Operator').closest('a')?.querySelector('[tabindex]')).toBeNull()
+    expect(screen.getByRole('link', { name: /Operator update/ })).toHaveAttribute(
+      'href',
+      '/organization/org-1/cluster/cluster-1/deployments/logs/deployment-1'
+    )
+  })
+
+  it('renders the Deploy action when the cluster status has no last execution id', () => {
+    mockDeploymentHistory = [
+      { ...defaultDeploymentHistory[0], operation: ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE },
+    ]
+
+    renderWithProviders(
+      <ClusterLastDeploymentSection
+        organizationId="org-1"
+        clusterId="cluster-1"
+        clusterStatus={{ ...baseClusterStatus, last_execution_id: undefined }}
+      />
+    )
+
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
+    expect(screen.queryByText('Operator')).not.toBeInTheDocument()
+  })
+
+  it('renders the Deploy action when the last deployment is a cluster deployment', () => {
+    renderWithProviders(
+      <ClusterLastDeploymentSection organizationId="org-1" clusterId="cluster-1" clusterStatus={baseClusterStatus} />
+    )
+
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
+    expect(screen.queryByText('Operator')).not.toBeInTheDocument()
+  })
+
+  it('renders the Deploy action when operation is missing from the payload', () => {
+    const legacyDeployment: Partial<ClusterDeploymentHistory> = { ...defaultDeploymentHistory[0] }
+    delete legacyDeployment.operation
+    mockDeploymentHistory = [legacyDeployment as ClusterDeploymentHistory]
+
+    renderWithProviders(
+      <ClusterLastDeploymentSection organizationId="org-1" clusterId="cluster-1" clusterStatus={baseClusterStatus} />
+    )
+
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
+    expect(screen.queryByText('Operator')).not.toBeInTheDocument()
+  })
+
+  it('ignores a stale Operator update when the cluster status points to a newer execution', () => {
+    mockDeploymentHistory = [
+      { ...defaultDeploymentHistory[0], operation: ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE },
+    ]
+
+    renderWithProviders(
+      <ClusterLastDeploymentSection
+        organizationId="org-1"
+        clusterId="cluster-1"
+        clusterStatus={
+          {
+            ...baseClusterStatus,
+            status: ClusterStateEnum.STOPPED,
+            last_execution_id: 'execution-2',
+            trigger_action: DeploymentHistoryTriggerAction.STOP,
+          } as ClusterStatus & { trigger_action: DeploymentHistoryTriggerAction }
+        }
+      />
+    )
+
+    expect(screen.getByText('Stop')).toBeInTheDocument()
+    expect(screen.queryByText('Operator')).not.toBeInTheDocument()
   })
 
   it('renders an empty state when the cluster has no deployment information', () => {

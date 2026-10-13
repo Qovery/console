@@ -1,4 +1,4 @@
-import { type ClusterDeploymentHistory } from 'qovery-typescript-axios'
+import { type ClusterDeploymentHistory, ClusterDeploymentHistoryOperationEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterDeploymentList } from './cluster-deployment-list'
@@ -19,6 +19,7 @@ const defaultDeploymentHistory: ClusterDeploymentHistory[] = [
     status: 'DEPLOYED',
     action_status: 'SUCCESS',
     trigger_action: 'DEPLOY',
+    operation: ClusterDeploymentHistoryOperationEnum.CLUSTER,
     is_dry_run: false,
     reason: 'MAINTENANCE',
     total_duration: 'PT16.503S',
@@ -65,6 +66,44 @@ describe('ClusterDeploymentList', () => {
     renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
 
     expect(screen.getByText('Maintenance')).toBeInTheDocument()
+  })
+
+  it('should render the Operator action with its maintenance badge when operation is OPERATOR_UPDATE', () => {
+    mockDeploymentHistory = [
+      {
+        ...defaultDeploymentHistory[0],
+        operation: ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE,
+      },
+    ]
+
+    renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
+
+    const action = screen.getByText('Operator').parentElement
+    expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
+    expect(screen.getByText('Maintenance')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Operator update/ }).tagName).toBe('TR')
+    expect(action?.querySelector('.fa-rotate-right')).toBeInTheDocument()
+    expect(action?.querySelector('[tabindex]')).toBeNull()
+    expect(action?.closest('[tabindex]')?.tagName).toBe('TR')
+  })
+
+  it('should render the Deploy action when operation is CLUSTER', () => {
+    renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
+
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
+    expect(screen.queryByText('Operator')).not.toBeInTheDocument()
+    expect(screen.getByText('Maintenance')).toBeInTheDocument()
+  })
+
+  it('should render the Deploy action when operation is missing from the payload', () => {
+    const legacyDeployment: Partial<ClusterDeploymentHistory> = { ...defaultDeploymentHistory[0] }
+    delete legacyDeployment.operation
+    mockDeploymentHistory = [legacyDeployment as ClusterDeploymentHistory]
+
+    renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
+
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
+    expect(screen.queryByText('Operator')).not.toBeInTheDocument()
   })
 
   it('should render a dry run badge when the deployment is a dry run', () => {
