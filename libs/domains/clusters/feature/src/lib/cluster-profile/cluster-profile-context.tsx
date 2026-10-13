@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { useBlocker, useParams } from '@tanstack/react-router'
 import equal from 'fast-deep-equal'
 import {
   type Cluster,
@@ -21,6 +21,9 @@ import {
 } from '../platform-configuration/platform-configuration-utils'
 import { type ProfileTreeItem } from './profile-tree'
 import { useClusterProfileTree } from './use-cluster-profile-tree'
+
+const PROFILE_ROUTE_ID = '/_authenticated/organization/$organizationId/cluster/$clusterId/profile'
+const LEAVE_UNSAVED_CHANGES_MESSAGE = 'You have unsaved changes on this profile. Leave the page and discard them?'
 
 export type ProfileValues = Record<string, Record<string, unknown>>
 export type ClusterInputValues = Record<string, Record<string, string>>
@@ -174,6 +177,21 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
     )
   }
 
+  const changeCount = countProfileChanges(profileTree, configuration, profileValues, clusterInputs)
+  const hasChanges = changeCount > 0
+
+  useBlocker({
+    disabled: !hasChanges,
+    // Edits are kept while switching components of this profile: only leaving it would drop them.
+    shouldBlockFn: ({ next }) =>
+      !(
+        next.routeId.startsWith(PROFILE_ROUTE_ID) &&
+        'clusterId' in next.params &&
+        next.params.clusterId === clusterId
+      ) && !window.confirm(LEAVE_UNSAVED_CHANGES_MESSAGE),
+    enableBeforeUnload: hasChanges,
+  })
+
   const resetChanges = () => {
     setProfileValues({})
     setClusterInputs({})
@@ -230,7 +248,7 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
     profileValues,
     clusterInputs,
     formKey,
-    changeCount: countProfileChanges(profileTree, configuration, profileValues, clusterInputs),
+    changeCount,
     isSaving: isSavingConfiguration && !isSaveAndDeployPending,
     isDeploying: isSaveAndDeployPending,
     updateProfileConfig,

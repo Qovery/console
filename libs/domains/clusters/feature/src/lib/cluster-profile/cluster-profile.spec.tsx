@@ -15,7 +15,11 @@ import { usePlatformConfiguration } from '../platform-configuration/hooks/use-pl
 import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/use-update-platform-configuration'
 import { ClusterProfileFeature } from './cluster-profile'
 
-jest.mock('@tanstack/react-router', () => ({ useParams: jest.fn() }))
+const mockUseBlocker = jest.fn()
+jest.mock('@tanstack/react-router', () => ({
+  useParams: jest.fn(),
+  useBlocker: (options: unknown) => mockUseBlocker(options),
+}))
 const mockUseDebounce = jest.fn(<T,>(value: T) => value)
 jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
@@ -1045,6 +1049,56 @@ describe('ClusterProfileFeature', () => {
 
       expect(mockDeployCluster).not.toHaveBeenCalled()
       expect(screen.getByRole('region', { name: 'Unsaved profile changes' })).toBeInTheDocument()
+    })
+  })
+
+  describe('leaving with unsaved changes', () => {
+    type BlockerOptions = {
+      disabled: boolean
+      enableBeforeUnload: boolean
+      shouldBlockFn: (args: { next: { routeId: string; params: Record<string, string> } }) => boolean
+    }
+    const getBlocker = () => mockUseBlocker.mock.calls.at(-1)?.[0] as BlockerOptions
+    const profileRoute = '/_authenticated/organization/$organizationId/cluster/$clusterId/profile/$componentKey'
+
+    it('does not block navigation without changes', () => {
+      renderWithProviders(<ClusterProfileFeature />)
+
+      expect(getBlocker()).toMatchObject({ disabled: true, enableBeforeUnload: false })
+    })
+
+    it('asks for confirmation before leaving the profile, and enables the before-unload warning', async () => {
+      const confirm = jest.spyOn(window, 'confirm')
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+
+      expect(getBlocker()).toMatchObject({ disabled: false, enableBeforeUnload: true })
+      const leaveProfile = {
+        next: { routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview', params: {} },
+      }
+      confirm.mockReturnValueOnce(false)
+      expect(getBlocker().shouldBlockFn(leaveProfile)).toBe(true)
+      confirm.mockReturnValueOnce(true)
+      expect(getBlocker().shouldBlockFn(leaveProfile)).toBe(false)
+      confirm.mockReturnValueOnce(false)
+      expect(
+        getBlocker().shouldBlockFn({ next: { routeId: profileRoute, params: { clusterId: 'other-cluster-id' } } })
+      ).toBe(true)
+      confirm.mockRestore()
+    })
+
+    it('lets the user switch components of the same profile', async () => {
+      const confirm = jest.spyOn(window, 'confirm')
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+
+      expect(getBlocker().shouldBlockFn({ next: { routeId: profileRoute, params: { clusterId: 'cluster-id' } } })).toBe(
+        false
+      )
+      expect(confirm).not.toHaveBeenCalled()
+      confirm.mockRestore()
     })
   })
 
