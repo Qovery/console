@@ -37,8 +37,7 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
-  createJsonSecretPreview: () => [{ reference: 'lucis/production/application', keys: ['DATABASE_URL'] }],
-  JsonSecretKeys: jest.requireActual('@qovery/domains/variables/feature').JsonSecretKeys,
+  createJsonSecretPreview: () => [{ reference: 'lucis/production/application' }],
   AddSecretDropdown: jest.requireActual('@qovery/domains/variables/feature').AddSecretDropdown,
   AddSecretModal: ({
     isFile,
@@ -47,16 +46,12 @@ jest.mock('@qovery/domains/variables/feature', () => ({
   }: {
     isFile?: boolean
     isJson?: boolean
-    jsonSecrets?: { reference: string; keys?: string[] }[]
+    jsonSecrets?: { reference: string }[]
   }) => (
     <div>
       <span>{isJson ? 'JSON secret modal' : isFile ? 'File secret modal' : 'Variable secret modal'}</span>
       {isJson &&
-        jsonSecrets?.map((secret, index) => (
-          <span key={`${secret.reference}-${index}`}>
-            {secret.reference}: {secret.keys?.join(', ')}
-          </span>
-        ))}
+        jsonSecrets?.map((secret, index) => <span key={`${secret.reference}-${index}`}>{secret.reference}</span>)}
     </div>
   ),
   VariableFormModal: ({
@@ -107,7 +102,6 @@ function JsonSecretStep() {
         name: 'Application credentials',
         reference: 'lucis/production/application',
         isJson: true,
-        keys: ['DATABASE_URL'],
       },
     ])
   }, [variablesForm])
@@ -229,18 +223,16 @@ describe('ApplicationContainerStepVariables', () => {
     ])
     await userEvent.click(screen.getByRole('menuitem', { name: option }))
     expect(screen.getByText(modal)).toBeInTheDocument()
-    expect(screen.queryAllByText('lucis/production/application: DATABASE_URL')).toHaveLength(
-      option === 'Add secret as JSON' ? 2 : 0
-    )
+    expect(screen.queryAllByText('lucis/production/application')).toHaveLength(option === 'Add secret as JSON' ? 2 : 0)
   })
 
-  it('toggles JSON keys from the name cell using pointer and keyboard', async () => {
+  it('renders JSON references without expandable key details', async () => {
     mockUseVariablesSecretManagers.mockReturnValue({
       secretManagers: [],
       hasClusterSecretManagerConfigured: true,
       clusterId: 'cluster-1',
     })
-    const { userEvent } = renderWithProviders(
+    renderWithProviders(
       <ApplicationContainerCreationFlow
         creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
         defaultServiceType="APPLICATION"
@@ -248,16 +240,10 @@ describe('ApplicationContainerStepVariables', () => {
         <JsonSecretStep />
       </ApplicationContainerCreationFlow>
     )
-    expect(screen.getByRole('button', { name: 'Copy DATABASE_URL' })).toBeInTheDocument()
-    await userEvent.click(screen.getByText('Application credentials'))
-    expect(screen.queryByRole('button', { name: 'Copy DATABASE_URL' })).not.toBeInTheDocument()
-    const cell = screen.getByRole('button', { name: 'Expand keys for lucis/production/application' })
-    expect(cell).toHaveAttribute('aria-expanded', 'false')
-    cell.focus()
-    await userEvent.keyboard('{Enter}')
-    expect(screen.getByRole('button', { name: 'Copy DATABASE_URL' })).toBeInTheDocument()
-    await userEvent.keyboard(' ')
-    expect(screen.queryByRole('button', { name: 'Copy DATABASE_URL' })).not.toBeInTheDocument()
+    expect(screen.getByText('Application credentials')).toBeInTheDocument()
+    expect(screen.getByText('lucis/production/application')).toBeInTheDocument()
+    expect(screen.queryByLabelText(/Expand keys|Collapse keys|Copy DATABASE_URL/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/secrets imported/)).not.toBeInTheDocument()
   })
 
   it('does not expose external secret creation when no secret manager is linked', () => {

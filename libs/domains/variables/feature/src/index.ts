@@ -23,4 +23,3 @@ export * from './lib/external-secrets/add-secret-modal/add-secret-modal'
 export * from './lib/external-secrets/add-secret-dropdown'
 // TODO(secret-manager-json): Remove the fixture export and its creation-flow usage before production.
 export { createJsonSecretPreview } from './lib/external-secrets/external-secret-json-preview'
-export { JsonSecretKeys } from './lib/external-secrets/json-secret-keys'

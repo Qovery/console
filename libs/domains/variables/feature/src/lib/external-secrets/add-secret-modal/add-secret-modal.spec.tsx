@@ -97,7 +97,6 @@ describe('AddSecretModal', () => {
           {
             reference: 'lucis/production/application',
             secretManagerAccessId: 'secret-manager-access-id',
-            keys: ['DATABASE_URL', 'API_KEY'],
           },
         ]}
         secretSources={secretSources}
@@ -119,7 +118,6 @@ describe('AddSecretModal', () => {
           name: 'Application credentials',
           reference: 'lucis/production/application',
           isJson: true,
-          keys: ['DATABASE_URL', 'API_KEY'],
           isFile: false,
           filePath: undefined,
         })
@@ -134,9 +132,7 @@ describe('AddSecretModal', () => {
     const { userEvent } = renderWithProviders(
       <AddSecretModal
         isJson
-        jsonSecrets={[
-          { reference: 'lucis/app-updated', secretManagerAccessId: 'secret-manager-access-id', keys: ['API_KEY'] },
-        ]}
+        jsonSecrets={[{ reference: 'lucis/app-updated', secretManagerAccessId: 'secret-manager-access-id' }]}
         mode="edit"
         initialSecret={{ name: 'lucis/app', reference: 'lucis/app' }}
         secretSources={secretSources}
@@ -150,29 +146,27 @@ describe('AddSecretModal', () => {
     expect(onClose).not.toHaveBeenCalled()
     consoleError.mockRestore()
   })
-  it('blocks submission without JSON keys and clears the preview when the reference changes', async () => {
+  it('accepts a JSON reference without fetching its keys', async () => {
     const onSubmit = jest.fn()
     const { userEvent } = renderWithProviders(
-      <AddSecretModal
-        isJson
-        secretSources={secretSources}
-        jsonSecrets={[{ reference: 'valid', secretManagerAccessId: 'secret-manager-access-id', keys: ['API_KEY'] }]}
-        onClose={jest.fn()}
-        onSubmit={onSubmit}
-      />
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
     )
-    await userEvent.type(screen.getByLabelText('Display name'), 'My credentials')
-    await userEvent.type(screen.getByLabelText('Reference'), 'not-json')
-    expect(screen.getByText('No JSON detected')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
-    await userEvent.keyboard('{Enter}')
-    expect(onSubmit).not.toHaveBeenCalled()
-    await userEvent.clear(screen.getByLabelText('Reference'))
-    await userEvent.type(screen.getByLabelText('Reference'), 'valid')
-    expect(screen.getByRole('button', { name: 'Copy API_KEY' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Add secret' })).toBeEnabled()
-    await userEvent.type(screen.getByLabelText('Reference'), '-unknown')
-    expect(screen.queryByRole('button', { name: 'Copy API_KEY' })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+    expect(screen.queryByText('Variables to import')).not.toBeInTheDocument()
+    expect(screen.queryByText('No JSON detected')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByLabelText('Display name'))
+    await userEvent.paste('My credentials')
+    await userEvent.click(screen.getByLabelText('Reference'))
+    await userEvent.paste('new/json/reference')
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'My credentials',
+          reference: 'new/json/reference',
+          isJson: true,
+        })
+      )
+    )
+    expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('keys')
   })
 })

@@ -13,7 +13,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import posthog from 'posthog-js'
-import { Fragment, type KeyboardEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { getSecretManagerProvider } from '@qovery/domains/clusters/data-access'
 import { type VariableScope } from '@qovery/domains/variables/data-access'
@@ -44,7 +44,6 @@ import {
   mapSecretManagersToSources,
 } from './add-secret-modal/add-secret-modal'
 import { type ExternalSecretJSON, createJsonSecretPreview } from './external-secret-json-preview'
-import { JsonSecretKeys } from './json-secret-keys'
 
 const { Table } = TablePrimitives
 
@@ -57,7 +56,6 @@ type ExternalSecretRow = {
   filePath?: string
   isFile?: boolean
   isJson?: boolean
-  keys?: string[]
   previewParentId?: string
   secretManagerAccessId?: string
   reference: string
@@ -97,7 +95,6 @@ export function ExternalSecretsTab({
   const [jsonSecrets, setJsonSecrets] = useState<ExternalSecretJSON[]>(() =>
     createJsonSecretPreview(parentId, scope, secretManagers[0])
   )
-  const [collapsedJsonSecrets, setCollapsedJsonSecrets] = useState<Record<string, boolean>>({})
 
   const secrets = useMemo<ExternalSecretRow[]>(
     () => [
@@ -121,7 +118,6 @@ export function ExternalSecretsTab({
     [secretManagers, variables, jsonSecrets, parentId]
   )
   const [search, setSearch] = useState('')
-  const searchQuery = search.trim().toLowerCase()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -154,7 +150,6 @@ export function ExternalSecretsTab({
       filePath,
       isFile,
       isJson,
-      keys,
       reference,
       secretManagerAccessId,
     }: AddSecretModalSubmitData) => {
@@ -168,7 +163,6 @@ export function ExternalSecretsTab({
             reference,
             description,
             isJson: true,
-            keys,
             source: manager?.name ?? null,
             sourceIcon: getSecretManagerProvider(manager),
             secretManagerAccessId,
@@ -198,7 +192,7 @@ export function ExternalSecretsTab({
   const handleEditSecret = useCallback(
     async (
       secretId: string,
-      { name, description, filePath, isFile, isJson, keys, reference, secretManagerAccessId }: AddSecretModalSubmitData
+      { name, description, filePath, isFile, isJson, reference, secretManagerAccessId }: AddSecretModalSubmitData
     ) => {
       if (isJson) {
         const manager = secretManagers.find((item) => item.id === secretManagerAccessId)
@@ -213,7 +207,6 @@ export function ExternalSecretsTab({
                   secretManagerAccessId,
                   source: manager?.name ?? null,
                   sourceIcon: getSecretManagerProvider(manager),
-                  keys,
                 }
               : secret
           )
@@ -408,27 +401,6 @@ export function ExternalSecretsTab({
         enableSorting: true,
         cell: (info) => {
           const secret = info.row.original
-          if (secret.isJson) {
-            const expanded = !collapsedJsonSecrets[secret.id]
-            return (
-              <div className="flex w-full items-center justify-between gap-2">
-                <span className="flex min-w-0 flex-col justify-center gap-1">
-                  <Tooltip align="start" content={secret.name}>
-                    <span className="truncate text-sm font-medium">{secret.name}</span>
-                  </Tooltip>
-                  <span className="flex items-center gap-1 text-ssm text-neutral-subtle">
-                    <Icon iconName="brackets-curly" />
-                    {secret.keys
-                      ? `${secret.keys.length} ${pluralize(secret.keys.length, 'secret')} imported`
-                      : 'Keys unavailable'}
-                  </span>
-                </span>
-                <span className="flex w-6 shrink-0 justify-center">
-                  <Icon iconName={expanded ? 'chevron-up' : 'chevron-down'} className="text-neutral-subtle" />
-                </span>
-              </div>
-            )
-          }
           const showFilePath = secret.isFile && secret.filePath
           return (
             <div className="flex flex-col justify-center gap-1">
@@ -535,7 +507,7 @@ export function ExternalSecretsTab({
         },
       }),
     ],
-    [handleConfirmDeleteSecrets, handleOpenEditSecret, collapsedJsonSecrets]
+    [handleConfirmDeleteSecrets, handleOpenEditSecret]
   )
 
   const table = useReactTable({
@@ -546,14 +518,6 @@ export function ExternalSecretsTab({
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setSearch,
     onColumnFiltersChange: setColumnFilters,
-    globalFilterFn: (row, columnId, value: string) => {
-      const query = value.trim().toLowerCase()
-      return (
-        String(row.getValue(columnId) ?? '')
-          .toLowerCase()
-          .includes(query) || Boolean(row.original.keys?.some((key) => key.toLowerCase().includes(query)))
-      )
-    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -563,22 +527,12 @@ export function ExternalSecretsTab({
   })
 
   const shouldShowEmptyState = secrets.length === 0 && Boolean(emptyStateConfig)
-  const countSecrets = (rows: ExternalSecretRow[], query = '') =>
-    rows.reduce(
-      (count, secret) =>
-        count + (secret.isJson ? secret.keys?.filter((key) => key.toLowerCase().includes(query)).length ?? 0 : 1),
-      0
-    )
-  const totalSecrets = countSecrets(secrets)
-  const visibleSecrets = table.getRowModel().rows.map(({ original }) => original)
-  const visibleCount = countSecrets(visibleSecrets, searchQuery)
-  const unknownCount = visibleSecrets.filter((secret) => secret.isJson && !secret.keys).length
-  const isSearching = visibleCount !== totalSecrets || table.getRowCount() !== secrets.length
+  const totalRows = table.getPreFilteredRowModel().rows.length
+  const visibleRows = table.getRowCount()
   const countText =
-    (isSearching
-      ? `${visibleCount}/${totalSecrets} external ${totalSecrets === 1 ? 'secret' : 'secrets'}`
-      : `${totalSecrets} external ${totalSecrets === 1 ? 'secret' : 'secrets'}`) +
-    (unknownCount > 0 ? ` · ${unknownCount} JSON ${pluralize(unknownCount, 'count')} unavailable` : '')
+    visibleRows !== totalRows
+      ? `${visibleRows}/${totalRows} external ${pluralize(totalRows, 'secret')}`
+      : `${totalRows} external ${pluralize(totalRows, 'secret')}`
   const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
   const selectedIds = selectedRows.map((secret) => secret.id)
   const hasSelection = selectedIds.length > 0
@@ -589,7 +543,7 @@ export function ExternalSecretsTab({
         <div className="flex items-center justify-between border-b border-neutral bg-surface-neutral px-4 py-2">
           <div className="flex items-center gap-1.5 text-sm font-medium text-neutral">
             <span>{countText}</span>
-            <Tooltip content="Each imported JSON key counts as one external secret. JSON secrets with unavailable keys are excluded.">
+            <Tooltip content="Number of external secret references">
               <span>
                 <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
               </span>
@@ -600,22 +554,7 @@ export function ExternalSecretsTab({
               className="h-8 w-[180px]"
               placeholder="Search secrets"
               value={search}
-              onChange={(e) => {
-                const value = e.target.value
-                setSearch(value)
-                const query = value.trim().toLowerCase()
-                if (query) {
-                  setCollapsedJsonSecrets((current) => {
-                    const next = { ...current }
-                    for (const secret of secrets) {
-                      if (secret.keys?.some((key) => key.toLowerCase().includes(query))) {
-                        delete next[secret.id]
-                      }
-                    }
-                    return next
-                  })
-                }
-              }}
+              onChange={(e) => setSearch(e.target.value)}
             />
             <AddSecretDropdown onSelect={handleOpenAddSecret} />
           </div>
@@ -683,63 +622,25 @@ export function ExternalSecretsTab({
                 </Table.Cell>
               </Table.Row>
             )}
-            {table.getRowModel().rows.map((row) => {
-              const matchingKeys = row.original.keys?.filter((key) => key.toLowerCase().includes(searchQuery))
-              return (
-                <Fragment key={row.id}>
-                  <Table.Row
-                    className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', gridLayoutClassName)}
+            {table.getRowModel().rows.map((row) => (
+              <Table.Row
+                key={row.id}
+                className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', gridLayoutClassName)}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <Table.Cell
+                    key={cell.id}
+                    className={twMerge(
+                      'flex h-full items-center first:relative',
+                      cell.column.id === 'actions' && 'justify-end',
+                      cell.column.id === 'name' && 'border-r border-neutral'
+                    )}
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <Table.Cell
-                        key={cell.id}
-                        {...(cell.column.id === 'name' && row.original.isJson
-                          ? {
-                              tabIndex: 0,
-                              'aria-label': `${collapsedJsonSecrets[row.id] ? 'Expand' : 'Collapse'} keys for ${row.original.reference}`,
-                              'aria-expanded': !collapsedJsonSecrets[row.id],
-                              'aria-controls': `json-keys-${row.id}`,
-                              onClick: () =>
-                                setCollapsedJsonSecrets((current) => ({ ...current, [row.id]: !current[row.id] })),
-                              onKeyDown: (event: KeyboardEvent<HTMLTableCellElement>) => {
-                                if (event.key === 'Enter' || event.key === ' ') {
-                                  event.preventDefault()
-                                  setCollapsedJsonSecrets((current) => ({ ...current, [row.id]: !current[row.id] }))
-                                }
-                              },
-                            }
-                          : {})}
-                        className={twMerge(
-                          'flex h-full items-center first:relative',
-                          cell.column.id === 'actions' && 'justify-end',
-                          cell.column.id === 'name' && 'border-r border-neutral',
-                          cell.column.id === 'name' &&
-                            row.original.isJson &&
-                            'cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong'
-                        )}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Table.Cell>
-                    ))}
-                  </Table.Row>
-                  {row.original.isJson && !collapsedJsonSecrets[row.id] && (
-                    <Table.Row id={`json-keys-${row.id}`}>
-                      <Table.Cell colSpan={6} className="h-auto bg-surface-neutral-subtle py-3">
-                        {matchingKeys ? (
-                          matchingKeys.length > 0 ? (
-                            <JsonSecretKeys keys={matchingKeys} label={`JSON keys for ${row.original.reference}`} />
-                          ) : (
-                            <p className="text-sm text-neutral-subtle">No keys match your search.</p>
-                          )
-                        ) : (
-                          <p className="text-sm text-neutral-subtle">Keys are not available yet.</p>
-                        )}
-                      </Table.Cell>
-                    </Table.Row>
-                  )}
-                </Fragment>
-              )
-            })}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            ))}
           </Table.Body>
         </Table.Root>
       )}

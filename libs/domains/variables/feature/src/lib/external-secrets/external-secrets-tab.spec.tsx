@@ -1,7 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactElement, type ReactNode } from 'react'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import * as utilHooks from '@qovery/shared/util-hooks'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
@@ -509,49 +508,13 @@ describe('ExternalSecretsTab', () => {
       '/organization/organization-id/cluster/cluster-id/settings/addons'
     )
   })
-  it('shows JSON keys under the reference and supports collapsing without exposing values', async () => {
-    jest.mocked(createJsonSecretPreview).mockReturnValue([
-      {
-        id: 'local-json-example',
-        name: 'Application credentials',
-        reference: 'lucis/app',
-        isJson: true,
-        keys: ['DATABASE_URL', 'API_KEY'],
-        source: 'Example manager',
-        scope: 'Environment',
-        previewParentId: 'environment-id',
-      },
-    ])
-    useVariablesMock.mockReturnValue({ data: [] } as unknown as ReturnType<typeof useVariables>)
-    const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="ENVIRONMENT" parentId="environment-id" />)
-    expect(screen.getByText('Application credentials')).toBeInTheDocument()
-    expect(screen.getByText('DATABASE_URL')).toBeInTheDocument()
-    expect(screen.getByText('API_KEY')).toBeInTheDocument()
-    await userEvent.click(screen.getByText('Application credentials'))
-    expect(screen.queryByText('DATABASE_URL')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Expand keys for lucis/app' })).not.toBeInTheDocument()
-    screen.getByRole('cell', { name: 'Expand keys for lucis/app' }).focus()
-    await userEvent.keyboard('{Enter}')
-    expect(screen.getByText('DATABASE_URL')).toBeInTheDocument()
-    const copyKey = jest.fn()
-    const copyHook = jest.spyOn(utilHooks, 'useCopyToClipboard').mockReturnValue([null, copyKey])
-    await userEvent.click(screen.getByText('Application credentials'))
-    await userEvent.click(screen.getByText('Application credentials'))
-    await userEvent.click(screen.getByRole('button', { name: 'Copy DATABASE_URL' }))
-    expect(copyKey).toHaveBeenCalledWith('DATABASE_URL')
-    expect(screen.getByText('Copied')).toBeInTheDocument()
-    expect(screen.getByText('API_KEY')).toBeInTheDocument()
-    copyHook.mockRestore()
-  })
-
-  it('counts imported keys and searches inside collapsed JSON secrets', async () => {
+  it('counts JSON references as one secret and searches reference metadata only', async () => {
     jest.mocked(createJsonSecretPreview).mockReturnValue([
       {
         id: 'json',
         name: 'Application credentials',
         reference: 'lucis/app',
         isJson: true,
-        keys: ['DATABASE_URL', 'API_KEY'],
         source: 'Example manager',
         scope: 'Environment',
         previewParentId: 'environment-id',
@@ -569,39 +532,23 @@ describe('ExternalSecretsTab', () => {
       ],
     } as unknown as ReturnType<typeof useVariables>)
     const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="ENVIRONMENT" parentId="environment-id" />)
-    expect(screen.getByText('3 external secrets')).toBeInTheDocument()
+    expect(screen.getByText('2 external secrets')).toBeInTheDocument()
     await userEvent.click(screen.getByText('Application credentials'))
-    expect(screen.queryByText('API_KEY')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/Collapse keys|Expand keys/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/secrets imported/)).not.toBeInTheDocument()
     await userEvent.click(screen.getByPlaceholderText('Search secrets'))
-    await userEvent.paste('api_key')
-    expect(screen.getByText('Application credentials')).toBeInTheDocument()
-    expect(screen.getByText('API_KEY')).toBeInTheDocument()
-    expect(screen.queryByText('DATABASE_URL')).not.toBeInTheDocument()
-    expect(screen.queryByText('PASSWORD')).not.toBeInTheDocument()
-    expect(screen.getByText('1/3 external secrets')).toBeInTheDocument()
+    await userEvent.paste('API_KEY')
+    expect(screen.getByText('0/2 external secrets')).toBeInTheDocument()
+    expect(screen.queryByText('Application credentials')).not.toBeInTheDocument()
     await userEvent.clear(screen.getByPlaceholderText('Search secrets'))
-    expect(screen.getByText('DATABASE_URL')).toBeInTheDocument()
-    expect(screen.getByText('API_KEY')).toBeInTheDocument()
-    await userEvent.click(screen.getByPlaceholderText('Search secrets'))
+    await userEvent.paste('lucis/app')
+    expect(screen.getByText('Application credentials')).toBeInTheDocument()
+    expect(screen.getByText('1/2 external secrets')).toBeInTheDocument()
+    await userEvent.clear(screen.getByPlaceholderText('Search secrets'))
     await userEvent.paste('Application credentials')
-    expect(screen.getByText('Application credentials')).toBeInTheDocument()
-    expect(screen.getByText('No keys match your search.')).toBeInTheDocument()
-    expect(screen.getByText('0/3 external secrets')).toBeInTheDocument()
-    expect(screen.queryByText('DATABASE_URL')).not.toBeInTheDocument()
-    expect(screen.queryByText('API_KEY')).not.toBeInTheDocument()
+    expect(screen.getByText('1/2 external secrets')).toBeInTheDocument()
     await userEvent.clear(screen.getByPlaceholderText('Search secrets'))
-    await userEvent.click(screen.getByPlaceholderText('Search secrets'))
-    await userEvent.paste('lucis')
-    expect(screen.getByText('Application credentials')).toBeInTheDocument()
-    expect(screen.getByText('PASSWORD')).toBeInTheDocument()
-    expect(screen.getByText('1/3 external secrets')).toBeInTheDocument()
-    await userEvent.clear(screen.getByPlaceholderText('Search secrets'))
-    await userEvent.click(screen.getByPlaceholderText('Search secrets'))
-    await userEvent.paste('no-match')
-    expect(screen.getByText('0/3 external secrets')).toBeInTheDocument()
-    expect(screen.getByText('No secrets match your search or filters.')).toBeInTheDocument()
-    await userEvent.clear(screen.getByPlaceholderText('Search secrets'))
-    expect(screen.getByText('3 external secrets')).toBeInTheDocument()
+    expect(screen.getByText('2 external secrets')).toBeInTheDocument()
   })
 
   it('creates, edits and deletes JSON previews without calling the variable API', async () => {
@@ -642,8 +589,7 @@ describe('ExternalSecretsTab', () => {
     }
     await act(async () => modal.props.onSubmit(data))
     expect(screen.getByText('lucis/app')).toBeInTheDocument()
-    expect(screen.getByText(/Keys are not available yet/)).toBeInTheDocument()
-    expect(screen.getByText('0 external secrets · 1 JSON count unavailable')).toBeInTheDocument()
+    expect(screen.getByText('1 external secret')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
     const editModal = openModal.mock.calls[1][0].content as typeof modal
     expect(editModal.props.isJson).toBe(true)

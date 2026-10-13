@@ -4,14 +4,13 @@ import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { generateScopeLabel } from '@qovery/shared/util-js'
 
 // UI model only. Replace the local preview storage when the API contract is available.
-// Keep only key names here: never fetch or store the JSON secret's values.
+// Reference metadata only: never fetch or store the JSON secret's contents.
 export interface ExternalSecretJSON {
   id: string
   name: string
   reference: string
   description?: string
   isJson: true
-  keys?: string[]
   source: string | null
   sourceIcon?: 'AWS' | 'GCP'
   secretManagerAccessId?: string
@@ -36,32 +35,8 @@ export function createJsonSecretPreview(
       id: 'local-json-example',
       name: 'Lucis application secrets',
       reference: 'lucis/production/application',
-      description: 'Example JSON secret — keys only, no secret values.',
+      description: 'Example JSON secret reference.',
       isJson: true,
-      keys: [
-        'DATABASE_URL',
-        'REDIS_URL',
-        'API_KEY',
-        'JWT_SECRET',
-        'SESSION_SECRET',
-        'ENCRYPTION_KEY',
-        'SMTP_HOST',
-        'SMTP_PORT',
-        'SMTP_USERNAME',
-        'SMTP_PASSWORD',
-        'STRIPE_SECRET_KEY',
-        'STRIPE_WEBHOOK_SECRET',
-        'S3_BUCKET',
-        'S3_ACCESS_KEY_ID',
-        'S3_SECRET_ACCESS_KEY',
-        'OAUTH_CLIENT_ID',
-        'OAUTH_CLIENT_SECRET',
-        'SENTRY_DSN',
-        'WEBHOOK_SIGNING_SECRET',
-        'INTERNAL_API_TOKEN',
-        'ANALYTICS_WRITE_KEY',
-        'SEARCH_API_KEY',
-      ],
       source: manager?.name ?? 'Example secret manager',
       sourceIcon: getSecretManagerProvider(manager),
       secretManagerAccessId: manager?.id,

@@ -1,13 +1,12 @@
 import { useParams } from '@tanstack/react-router'
 import { APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { type KeyboardEvent, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import {
   AddSecretDropdown,
   AddSecretModal,
   type AddSecretModalSubmitData,
   type CreateUpdateVariableModalSubmitData,
-  JsonSecretKeys,
   VariableFormModal,
   createJsonSecretPreview,
   mapSecretManagersToSources,
@@ -15,7 +14,6 @@ import {
 } from '@qovery/domains/variables/feature'
 import { type ExternalSecretData, type VariableData } from '@qovery/shared/interfaces'
 import { Button, EmptyState, FunnelFlowBody, Heading, Icon, Section, Tooltip, useModal } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
 import { useApplicationContainerCreateContext } from '../../application-container-creation-flow'
 
 export interface ApplicationContainerStepVariablesProps {
@@ -69,7 +67,7 @@ function mapSecretForForm(
     description: secret.description,
     filePath: secret.filePath,
     isFile: secret.isFile,
-    ...(secret.isJson ? { isJson: true, keys: secret.keys } : {}),
+    ...(secret.isJson ? { isJson: true } : {}),
     reference: secret.reference,
     secretManagerAccessId: secret.secretManagerAccessId,
     source: source?.tableLabel ?? null,
@@ -82,13 +80,11 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
   const { setCurrentStep, variablesForm, generalForm } = useApplicationContainerCreateContext()
   const { projectId = '', environmentId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
-  const [collapsedJsonSecrets, setCollapsedJsonSecrets] = useState<Record<string, boolean>>({})
-  const toggleJsonSecret = (id: string) => setCollapsedJsonSecrets((current) => ({ ...current, [id]: !current[id] }))
   const { secretManagers, hasClusterSecretManagerConfigured } = useVariablesSecretManagers()
 
   const serviceScope = generalForm.getValues('serviceType') === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER'
   const secretSources = useMemo(() => mapSecretManagersToSources(secretManagers), [secretManagers])
-  // TODO(secret-manager-json): Remove fixture metadata before production and load key-only metadata from the API.
+  // TODO(secret-manager-json): Remove fixture references before production and use the provider reference list.
   const jsonSecrets = useMemo(
     () => secretManagers.flatMap((manager) => createJsonSecretPreview(environmentId, serviceScope, manager)),
     [environmentId, serviceScope, secretManagers]
@@ -420,29 +416,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                         key={secret.id}
                         className="grid min-h-[60px] grid-cols-[minmax(0,1fr)_minmax(0,1fr)_88px] border-b border-neutral last:border-b-0"
                       >
-                        <div
-                          {...(secret.isJson
-                            ? {
-                                role: 'button',
-                                tabIndex: 0,
-                                'aria-label': `${collapsedJsonSecrets[secret.id] ? 'Expand' : 'Collapse'} keys for ${secret.reference}`,
-                                'aria-expanded': !collapsedJsonSecrets[secret.id],
-                                'aria-controls': `creation-json-keys-${secret.id}`,
-                                onClick: () => toggleJsonSecret(secret.id),
-                                onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
-                                  if (event.key === 'Enter' || event.key === ' ') {
-                                    event.preventDefault()
-                                    toggleJsonSecret(secret.id)
-                                  }
-                                },
-                              }
-                            : {})}
-                          className={twMerge(
-                            'relative flex min-w-0 flex-col justify-center gap-1 px-4 py-2',
-                            secret.isJson &&
-                              'cursor-pointer pr-10 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong'
-                          )}
-                        >
+                        <div className="flex min-w-0 flex-col justify-center gap-1 px-4 py-2">
                           <div className="flex min-w-0 items-center gap-1.5">
                             <span className="truncate text-sm font-medium text-neutral">{secret.name}</span>
                             {secret.description && (
@@ -453,17 +427,6 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                               </Tooltip>
                             )}
                           </div>
-                          {secret.isJson && (
-                            <span className="text-ssm text-neutral-subtle">
-                              {secret.keys?.length ?? 0} secrets imported
-                            </span>
-                          )}
-                          {secret.isJson && (
-                            <Icon
-                              iconName={collapsedJsonSecrets[secret.id] ? 'chevron-down' : 'chevron-up'}
-                              className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-subtle"
-                            />
-                          )}
                           {secret.filePath && (
                             <div className="flex items-center gap-1 text-xs text-neutral-subtle">
                               <Icon iconName="file-lock" iconStyle="regular" className="text-xs" />
@@ -500,14 +463,6 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                             <Icon iconName="trash" />
                           </Button>
                         </div>
-                        {secret.isJson && secret.keys && !collapsedJsonSecrets[secret.id] && (
-                          <div
-                            id={`creation-json-keys-${secret.id}`}
-                            className="col-span-3 border-t border-neutral bg-surface-neutral-subtle px-4 py-3"
-                          >
-                            <JsonSecretKeys keys={secret.keys} label={`JSON keys for ${secret.reference}`} />
-                          </div>
-                        )}
                       </div>
                     ))}
                   </>

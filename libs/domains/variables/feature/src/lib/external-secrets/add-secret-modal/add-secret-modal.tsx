@@ -6,18 +6,8 @@ import { match } from 'ts-pattern'
 import { getSecretManagerProvider } from '@qovery/domains/clusters/data-access'
 import { useSecretManagerProviderSecrets } from '@qovery/domains/clusters/feature'
 import { type VariableScope } from '@qovery/domains/variables/data-access'
-import {
-  Checkbox,
-  EmptyState,
-  Icon,
-  InputSelect,
-  InputText,
-  InputTextArea,
-  ModalCrud,
-  useModal,
-} from '@qovery/shared/ui'
+import { Checkbox, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
-import { JsonSecretKeys } from '../json-secret-keys'
 
 export type SecretSourceOption = {
   value: string
@@ -44,7 +34,6 @@ export type AddSecretModalSubmitData = {
   filePath?: string
   isFile: boolean
   isJson?: boolean
-  keys?: string[]
   reference: string
   secretManagerAccessId: string
 }
@@ -57,7 +46,7 @@ export type AddSecretModalInitialSecret = {
 }
 
 interface AddSecretModalProps {
-  jsonSecrets?: { reference: string; secretManagerAccessId?: string; keys?: string[] }[]
+  jsonSecrets?: { reference: string; secretManagerAccessId?: string }[]
   secretSources: SecretSourceOption[]
   defaultSource?: SecretSourceOption
   isFile?: boolean
@@ -111,13 +100,6 @@ export function AddSecretModal({
 
   const secretNameValue = methods.watch('secretName')
   const selectedSourceId = methods.watch('source')
-  const selectedReference = methods.watch('reference')
-  // TODO(secret-manager-json): Replace fixture lookup with key-only API metadata; never fetch secret values.
-  const jsonKeys = jsonSecrets?.find(
-    (secret) => secret.secretManagerAccessId === selectedSourceId && secret.reference === selectedReference.trim()
-  )?.keys
-  const hasJsonKeys = Boolean(jsonKeys?.length)
-
   const {
     data: providerSecrets,
     isError: isProviderSecretsError,
@@ -168,7 +150,7 @@ export function AddSecretModal({
 
   const handleSubmit = methods.handleSubmit(async (data) => {
     const finalReference = (data.reference || referenceInput).trim()
-    if (!finalReference || (isJson && !hasJsonKeys)) return
+    if (!finalReference) return
 
     const finalName = data.secretName.trim() || finalReference.split('/').pop()?.toUpperCase() || 'NEW_SECRET'
     const selectedSource = secretSources.find((option) => option.value === data.source) ?? secretSources[0]
@@ -184,7 +166,7 @@ export function AddSecretModal({
         description: descriptionValue ? descriptionValue : undefined,
         filePath: isFile ? finalPath : undefined,
         isFile,
-        ...(isJson ? { isJson: true, keys: jsonKeys } : {}),
+        ...(isJson ? { isJson: true } : {}),
         reference: finalReference,
         secretManagerAccessId: selectedSource.value,
       })
@@ -236,7 +218,6 @@ export function AddSecretModal({
         onClose={onClose}
         submitLabel={mode === 'edit' ? 'Edit secret' : 'Add secret'}
         loading={methods.formState.isSubmitting}
-        submitDisabled={isJson && !hasJsonKeys}
       >
         <>
           <h3 className="mb-2 text-sm font-medium text-neutral-subtle">Secret parameters</h3>
@@ -353,27 +334,6 @@ export function AddSecretModal({
               />
             )}
           />
-
-          {isJson && (
-            <section aria-label="Variables to import" className="mb-5">
-              <h3 className="mb-2 text-sm font-medium text-neutral-subtle">
-                Variables to import{hasJsonKeys ? ` (${jsonKeys?.length})` : ''}
-              </h3>
-              <div className="flex items-center overflow-x-auto rounded border border-neutral bg-surface-neutral-subtle p-4">
-                {hasJsonKeys && jsonKeys ? (
-                  <JsonSecretKeys keys={jsonKeys} label="Variables to import" className="w-max shrink-0 flex-nowrap" />
-                ) : (
-                  <EmptyState
-                    icon="brackets-curly"
-                    size="sm"
-                    title="No JSON detected"
-                    description="Select a JSON secret to import its keys."
-                    className="w-full border-0 bg-transparent p-0"
-                  />
-                )}
-              </div>
-            </section>
-          )}
 
           {shouldDisplayEnvironmentAcknowledgement && (
             <div className="mb-3 rounded border border-warning-subtle bg-surface-warning-subtle p-4 text-sm text-neutral">

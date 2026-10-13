@@ -251,7 +251,7 @@ describe('ApplicationContainerStepSummary', () => {
 
   it('does not send JSON previews to the external variable API', async () => {
     const { userEvent } = renderComponent({
-      externalSecrets: [{ ...externalSecretsData[0], isJson: true, keys: ['DATABASE_URL'] }],
+      externalSecrets: [{ ...externalSecretsData[0], isJson: true }],
     })
     await userEvent.click(screen.getByTestId('button-create'))
     await waitFor(() => expect(mockNavigate).toHaveBeenCalled())
