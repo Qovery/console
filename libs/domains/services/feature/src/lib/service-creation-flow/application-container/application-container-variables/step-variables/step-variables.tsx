@@ -251,10 +251,9 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                         color="neutral"
                         variant="solid"
                         size="md"
-                        className="text-ssm"
                         onClick={() => openVariableModal()}
                       >
-                        <Icon iconName="key" className="text-ssm" />
+                        <Icon iconName="key" />
                         Add variable
                       </Button>
                       <Button
@@ -262,10 +261,9 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                         color="neutral"
                         variant="outline"
                         size="md"
-                        className="text-ssm"
                         onClick={() => openVariableModal({ isSecret: true })}
                       >
-                        <Icon iconName="lock-keyhole" iconStyle="regular" className="text-ssm" />
+                        <Icon iconName="lock-keyhole" iconStyle="regular" />
                         Add secret
                       </Button>
                     </div>
@@ -425,7 +423,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                             <div className="flex min-w-0 items-center gap-1 text-ssm text-neutral-subtle">
                               <Icon iconName="brackets-curly" />
                               <span className="truncate">
-                                {secret.keyPrefix ? `${secret.keyPrefix.replace(/_+$/, '')}_` : 'No prefix'}
+                                {secret.keyPrefix ? `Prefix: ${secret.keyPrefix.replace(/_+$/, '')}_` : 'No prefix'}
                               </span>
                             </div>
                           )}

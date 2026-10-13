@@ -428,7 +428,7 @@ export function ExternalSecretsTab({
               {secret.isJson && (
                 <div className="flex items-center gap-1 text-ssm text-neutral-subtle">
                   <Icon iconName="brackets-curly" />
-                  <span>{secret.keyPrefix ? `${secret.keyPrefix.replace(/_+$/, '')}_` : 'No prefix'}</span>
+                  <span>{secret.keyPrefix ? `Prefix: ${secret.keyPrefix.replace(/_+$/, '')}_` : 'No prefix'}</span>
                 </div>
               )}
               {showFilePath && (

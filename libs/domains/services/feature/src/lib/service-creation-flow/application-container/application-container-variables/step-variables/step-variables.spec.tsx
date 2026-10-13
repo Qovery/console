@@ -260,7 +260,7 @@ describe('ApplicationContainerStepVariables', () => {
     await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as JSON' }))
     await userEvent.click(screen.getByRole('button', { name: 'JSON secret modal' }))
     expect(screen.getByText('My JSON credentials')).toBeInTheDocument()
-    expect(screen.getByText('APP_')).toBeInTheDocument()
+    expect(screen.getByText('Prefix: APP_')).toBeInTheDocument()
     expect(screen.getByTestId('variables-state')).toHaveTextContent('"keyPrefix":"APP"')
     await userEvent.click(screen.getByRole('button', { name: 'Delete secret' }))
     expect(screen.queryByText('My JSON credentials')).not.toBeInTheDocument()
@@ -284,7 +284,7 @@ describe('ApplicationContainerStepVariables', () => {
       )
       expect(screen.getByText('Application credentials')).toBeInTheDocument()
       expect(screen.getByText('lucis/production/application')).toBeInTheDocument()
-      expect(screen.getByText(keyPrefix ? 'APP_' : 'No prefix')).toBeInTheDocument()
+      expect(screen.getByText(keyPrefix ? 'Prefix: APP_' : 'No prefix')).toBeInTheDocument()
       expect(screen.queryByLabelText(/Expand keys|Collapse keys|Copy DATABASE_URL/)).not.toBeInTheDocument()
       expect(screen.queryByText(/secrets imported/)).not.toBeInTheDocument()
     }
