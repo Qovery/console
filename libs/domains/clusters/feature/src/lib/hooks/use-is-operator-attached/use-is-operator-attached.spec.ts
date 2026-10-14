@@ -48,4 +48,32 @@ describe('useIsOperatorAttached', () => {
 
     expect(result.current).toBe(false)
   })
+
+  it('ignores self-managed clusters without Operator state', () => {
+    mockUseClusterOperatorStatus.mockReturnValue({ data: null })
+    const { result } = renderHook(() => useIsOperatorAttached(cluster))
+
+    expect(result.current).toBe(false)
+  })
+
+  it('is unknown while the feature flags are loading', () => {
+    mockUseFeatureFlagEnabled.mockReturnValue(undefined)
+    const { result } = renderHook(() => useIsOperatorAttached(cluster))
+
+    expect(result.current).toBeUndefined()
+  })
+
+  it('is unknown while the cluster is loading', () => {
+    const { result } = renderHook(() => useIsOperatorAttached(undefined))
+
+    expect(mockUseClusterOperatorStatus).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
+    expect(result.current).toBeUndefined()
+  })
+
+  it('is unknown while the Operator status is loading', () => {
+    mockUseClusterOperatorStatus.mockReturnValue({ data: undefined, isLoading: true })
+    const { result } = renderHook(() => useIsOperatorAttached(cluster))
+
+    expect(result.current).toBeUndefined()
+  })
 })

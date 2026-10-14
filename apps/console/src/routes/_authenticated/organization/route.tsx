@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type BlueprintDetailsResponse, type Cluster } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { useClusters } from '@qovery/domains/clusters/feature'
+import { useClusters, useIsOperatorAttached } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import {
@@ -385,7 +385,6 @@ function useNavigationContext(): NavigationContext | null {
   const pathname = location.pathname
   const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
-  const isEngineV2PlatformConfigurationEnabled = Boolean(useFeatureFlagEnabled('engine-v2-platform-configuration'))
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
@@ -400,6 +399,8 @@ function useNavigationContext(): NavigationContext | null {
   })
   const hasAlerting = clusters.some((cluster) => cluster.metrics_parameters?.configuration?.alerting?.enabled)
   const currentCluster = clusters.find((cluster) => cluster.id === environment?.cluster_id)
+  // Only Engine v2 clusters, attached to the Qovery Operator, have a profile.
+  const isProfileAvailable = Boolean(useIsOperatorAttached(clusters.find((cluster) => cluster.id === params.clusterId)))
   const blueprintId = service && isBlueprintService(service) && isTerraform(service) ? service.blueprint_id : ''
   const { data: blueprint } = useBlueprint({
     blueprintId,
@@ -431,7 +432,7 @@ function useNavigationContext(): NavigationContext | null {
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
               : context.type === 'cluster'
-                ? context.tabs.filter((tab) => isEngineV2PlatformConfigurationEnabled || tab.id !== 'profile')
+                ? context.tabs.filter((tab) => isProfileAvailable || tab.id !== 'profile')
                 : context.type === 'environment'
                   ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automation')
                   : context.tabs

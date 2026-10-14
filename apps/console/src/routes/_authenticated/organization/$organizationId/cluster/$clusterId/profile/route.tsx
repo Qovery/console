@@ -1,6 +1,6 @@
 import { Navigate, Outlet, createFileRoute, useParams } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { z } from 'zod'
+import { useCluster, useIsOperatorAttached } from '@qovery/domains/clusters/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -12,10 +12,12 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 function RouteComponent() {
   useDocumentTitle('Cluster - Profile')
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
-  // Undefined until PostHog has loaded the flags: redirecting then would turn away users who have access.
-  const isProfileEnabled = useFeatureFlagEnabled('engine-v2-platform-configuration')
+  const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
+  // Only Engine v2 clusters, attached to the Qovery Operator, have a profile.
+  const isOperatorAttached = useIsOperatorAttached(cluster)
 
-  if (isProfileEnabled === undefined) {
+  // Redirecting before the flags, the cluster and its Operator status are loaded would turn away users who have access.
+  if (isClusterLoading || (cluster && isOperatorAttached === undefined)) {
     return (
       <div className="flex min-h-page-container items-center justify-center">
         <LoaderSpinner />
@@ -23,7 +25,7 @@ function RouteComponent() {
     )
   }
 
-  if (!isProfileEnabled && organizationId && clusterId) {
+  if (!isOperatorAttached && organizationId && clusterId) {
     return (
       <Navigate
         to="/organization/$organizationId/cluster/$clusterId/overview"
