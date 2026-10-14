@@ -131,10 +131,10 @@ describe('ClusterRestrictivePermissionsSettings', () => {
 
     const extendedBlock = screen.getByTestId('extended-credentials-block')
     expect(within(extendedBlock).getByText('Extended credentials')).toBeInTheDocument()
-    expectInOrder(
-      within(extendedBlock).getByTestId('input-wide-permission-credentials'),
-      within(extendedBlock).getByText('See and edit all Cloud credentials')
-    )
+    expect(within(extendedBlock).getByTestId('input-wide-permission-credentials')).toBeInTheDocument()
+    // The link is only displayed in the restrictive credentials block, so it doesn't move when switching the toggle
+    expect(within(extendedBlock).queryByText('See and edit all Cloud credentials')).not.toBeInTheDocument()
+    expect(screen.getAllByText('See and edit all Cloud credentials')).toHaveLength(1)
     expect(within(extendedBlock).queryByTestId('mirroring-registry-credentials-warning')).not.toBeInTheDocument()
     expect(isBefore(restrictiveBlock, extendedBlock)).toBe(true)
   })

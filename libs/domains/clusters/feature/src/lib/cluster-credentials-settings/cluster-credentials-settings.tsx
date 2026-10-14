@@ -11,6 +11,7 @@ import {
   ExternalLink,
   Icon,
   InputSelect,
+  Link,
   LoaderSpinner,
   useModal,
 } from '@qovery/shared/ui'
@@ -18,7 +19,6 @@ import {
   ClusterCredentialsModal,
   type ClusterCredentialsModalCloudProvider,
 } from '../cluster-credentials-modal/cluster-credentials-modal'
-import { CloudCredentialsLink } from './cloud-credentials-link'
 
 export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
@@ -166,7 +166,17 @@ export function ClusterCredentialsSettings({
             }
           />
 
-          {isSetting && <CloudCredentialsLink organizationId={organizationId} />}
+          {isSetting && (
+            <Link
+              color="brand"
+              to="/organization/$organizationId/settings/cloud-credentials"
+              params={{ organizationId }}
+              className="flex gap-1"
+            >
+              See and edit all Cloud credentials
+              <Icon iconName="key" iconStyle="regular" />
+            </Link>
+          )}
 
           {isSetting && (
             <Callout.Root color="yellow" className="mt-4" data-testid="mirroring-registry-credentials-warning">

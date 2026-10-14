@@ -7,7 +7,6 @@ import {
   type ClusterCredentialAuthType,
   ClusterCredentialsModal,
 } from '../cluster-credentials-modal/cluster-credentials-modal'
-import { CloudCredentialsLink } from './cloud-credentials-link'
 
 // Extended permissions credentials must be an AWS role (assumed via STS)
 const WIDE_PERMISSION_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['STS']
@@ -63,38 +62,33 @@ export function ClusterWidePermissionCredentialsSettings({
   }
 
   return (
-    <div>
-      <Controller
-        name="wide_permission_credentials"
-        control={control}
-        rules={{
-          // The field stays registered when the toggle is turned off, so only require it while restrictive permissions are used
-          validate: (value) =>
-            !getValues('using_restrictive_permissions') || Boolean(value) || 'Please select a credential.',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            dataTestId="input-wide-permission-credentials"
-            label="Credentials"
-            hint="Only AWS role credentials can be used for extended permissions."
-            className="mb-3"
-            options={widePermissionCredentials}
-            onChange={field.onChange}
-            value={field.value}
-            error={error?.message}
-            isSearchable
-            menuListButton={{
-              title: 'Select credential',
-              label: 'New credential',
-              icon: <Icon iconName="circle-plus" className="text-brand" />,
-              onClick: () => openCredentialsModal(field.onChange),
-            }}
-          />
-        )}
-      />
-
-      <CloudCredentialsLink organizationId={organizationId} />
-    </div>
+    <Controller
+      name="wide_permission_credentials"
+      control={control}
+      rules={{
+        // The field stays registered when the toggle is turned off, so only require it while restrictive permissions are used
+        validate: (value) =>
+          !getValues('using_restrictive_permissions') || Boolean(value) || 'Please select a credential.',
+      }}
+      render={({ field, fieldState: { error } }) => (
+        <InputSelect
+          dataTestId="input-wide-permission-credentials"
+          label="Credentials"
+          hint="Only AWS role credentials can be used for extended permissions."
+          options={widePermissionCredentials}
+          onChange={field.onChange}
+          value={field.value}
+          error={error?.message}
+          isSearchable
+          menuListButton={{
+            title: 'Select credential',
+            label: 'New credential',
+            icon: <Icon iconName="circle-plus" className="text-brand" />,
+            onClick: () => openCredentialsModal(field.onChange),
+          }}
+        />
+      )}
+    />
   )
 }
 
