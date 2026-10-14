@@ -21,22 +21,13 @@ jest.mock('@qovery/shared/ui', () => ({
   }),
 }))
 
-jest.mock('@tanstack/react-router', () => {
-  const React = jest.requireActual('react')
-  return {
-    ...jest.requireActual('@tanstack/react-router'),
-    useParams: () => ({
-      organizationId: 'org-123',
-      clusterId: 'cluster-123',
-    }),
-    Link: React.forwardRef(
-      (
-        { children, ...props }: { children?: React.ReactNode; [key: string]: unknown },
-        ref: React.Ref<HTMLAnchorElement>
-      ) => React.createElement('a', { ref, ...props }, children)
-    ),
-  }
-})
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({
+    organizationId: 'org-123',
+    clusterId: 'cluster-123',
+  }),
+}))
 
 const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
 
@@ -90,13 +81,13 @@ describe('ClusterWidePermissionCredentialsSettings', () => {
     expect(screen.getByTestId('spinner')).toBeInTheDocument()
   })
 
-  it('should display the credentials select, its hint and the cloud credentials link', () => {
+  it('should display the credentials select and its hint', () => {
     renderSettings({ using_restrictive_permissions: true, wide_permission_credentials: 'role-1' })
 
     expect(screen.getByLabelText('Credentials')).toBeInTheDocument()
     expect(screen.getByText('role-credential')).toBeInTheDocument()
     expect(screen.getByText('Only AWS role credentials can be used for extended permissions.')).toBeInTheDocument()
-    expect(screen.getByText('See and edit all Cloud credentials')).toBeInTheDocument()
+    expect(screen.queryByText('See and edit all Cloud credentials')).not.toBeInTheDocument()
   })
 
   it('should only list AWS role credentials', async () => {
