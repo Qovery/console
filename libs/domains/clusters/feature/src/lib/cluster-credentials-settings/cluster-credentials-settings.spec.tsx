@@ -5,11 +5,10 @@ import { useFormContext } from 'react-hook-form'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterCredentialsSettings, {
   type ClusterCredentialsSettingsProps,
   filterCredentialsByCloudProvider,
-  filterWidePermissionCredentials,
 } from './cluster-credentials-settings'
 
 const mockOpenModal = jest.fn()
@@ -249,181 +248,24 @@ describe('ClusterCredentialsSettings', () => {
     ])
   })
 
-  it('should only keep AWS role credentials for extended permissions', () => {
-    const credentials = [
-      { id: '1', name: 'AWS role credential', object_type: 'AWS_ROLE' },
-      { id: '2', name: 'AWS static credential', object_type: 'AWS' },
-    ] as ClusterCredentials[]
-
-    expect(filterWidePermissionCredentials(credentials)).toEqual([
-      { id: '1', name: 'AWS role credential', object_type: 'AWS_ROLE' },
-    ])
-  })
-
-  describe('wide credentials', () => {
-    const awsCredentials = [
-      { id: 'static-1', name: 'static-credential', object_type: 'AWS', access_key_id: 'AKIA' },
-      { id: 'role-1', name: 'role-credential', object_type: 'AWS_ROLE', role_arn: 'arn:aws:iam::1:role/qovery' },
-      { id: 'role-2', name: 'other-role-credential', object_type: 'AWS_ROLE', role_arn: 'arn:aws:iam::1:role/other' },
-    ]
-
-    function FormValues() {
-      const { watch } = useFormContext()
-      return (
-        <>
-          <output data-testid="value-credentials">{watch('credentials')}</output>
-          <output data-testid="value-wide-permission-credentials">{watch('wide_permission_credentials')}</output>
-        </>
-      )
-    }
-
-    function FormValidity() {
-      const {
-        formState: { isValid },
-      } = useFormContext()
-      return <output data-testid="form-valid">{String(isValid)}</output>
-    }
-
-    const renderSettings = (
-      defaultValues: Record<string, unknown>,
-      settingsProps: Partial<ClusterCredentialsSettingsProps> = {}
-    ) =>
+  it.each([
+    [false, 'Changing credentials triggers a cluster redeployment'],
+    [true, 'Changing the restrictive credentials triggers a cluster redeployment'],
+  ])(
+    'should adapt the EKS credentials change warning to restrictive permissions (%p)',
+    (isUsingRestrictivePermissions, heading) => {
       renderWithProviders(
         wrapWithReactHookForm(
-          <>
-            <ClusterCredentialsSettings
-              {...props}
-              isSetting
-              cluster={eksManagedCluster}
-              isWideCredentialsEnabled
-              {...settingsProps}
-            />
-            <FormValues />
-            <FormValidity />
-          </>,
-          { defaultValues }
+          <ClusterCredentialsSettings
+            {...props}
+            isSetting
+            cluster={eksManagedCluster}
+            isUsingRestrictivePermissions={isUsingRestrictivePermissions}
+          />
         )
       )
 
-    beforeEach(() => {
-      useCloudProviderCredentialsMockSpy.mockReturnValue({ data: awsCredentials, isLoading: false })
-    })
-
-    it('should only warn about a redeploy for the restrictive credentials', () => {
-      renderSettings({ credentials: 'static-1', using_restrictive_permissions: true })
-
-      expect(screen.getByTestId('eks-credentials-change-warning')).toHaveTextContent(
-        'Changing the restrictive credentials triggers a cluster redeployment'
-      )
-    })
-
-    const isBefore = (element: HTMLElement, other: HTMLElement) =>
-      Boolean(element.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING)
-
-    it('should display the credentials link and mirroring registry warning between restrictive and extended credentials', () => {
-      renderSettings({ credentials: 'static-1', using_restrictive_permissions: true })
-
-      const link = screen.getByText('See and edit all Cloud credentials')
-      const warning = screen.getByTestId('mirroring-registry-credentials-warning')
-      expect(isBefore(screen.getByTestId('input-credentials'), link)).toBe(true)
-      expect(isBefore(link, warning)).toBe(true)
-      expect(isBefore(warning, screen.getByTestId('input-wide-permission-credentials'))).toBe(true)
-    })
-
-    it('should display the mirroring registry warning last when restrictive permissions are off', () => {
-      renderSettings({ credentials: 'static-1', using_restrictive_permissions: false })
-
-      const warning = screen.getByTestId('mirroring-registry-credentials-warning')
-      expect(isBefore(screen.getByText('See and edit all Cloud credentials'), warning)).toBe(true)
-    })
-
-    it('should not display the restrictive permissions toggle when wide credentials are disabled', () => {
-      renderSettings({ credentials: 'static-1' }, { isWideCredentialsEnabled: false })
-
-      expect(screen.queryByRole('switch', { name: 'Use restrictive permissions' })).not.toBeInTheDocument()
-      expect(screen.queryByLabelText('Extended credentials')).not.toBeInTheDocument()
-      expect(screen.getByLabelText('Credentials')).toBeInTheDocument()
-    })
-
-    it('should only display a single credentials select when restrictive permissions are off', () => {
-      renderSettings({ credentials: 'static-1', using_restrictive_permissions: false })
-
-      expect(screen.getByRole('switch', { name: 'Use restrictive permissions' })).not.toBeChecked()
-      expect(screen.getByLabelText('Credentials')).toBeInTheDocument()
-      expect(screen.queryByLabelText('Extended credentials')).not.toBeInTheDocument()
-    })
-
-    it('should display restrictive and extended credentials selects when restrictive permissions are on', async () => {
-      const { userEvent } = renderSettings({ credentials: 'static-1', using_restrictive_permissions: false })
-
-      await userEvent.click(screen.getByRole('switch', { name: 'Use restrictive permissions' }))
-
-      expect(screen.getByLabelText('Restrictive credentials')).toBeInTheDocument()
-      expect(screen.getByLabelText('Extended credentials')).toBeInTheDocument()
-    })
-
-    it('should only list AWS role credentials in the extended credentials select', async () => {
-      renderSettings({ credentials: '', wide_permission_credentials: '', using_restrictive_permissions: true })
-
-      selectEvent.openMenu(screen.getByLabelText('Extended credentials'))
-
-      expect(await screen.findByText('role-credential')).toBeInTheDocument()
-      expect(screen.getByText('other-role-credential')).toBeInTheDocument()
-      expect(screen.queryByText('static-credential (AKIA)')).not.toBeInTheDocument()
-    })
-
-    it('should keep the initial values when toggling restrictive permissions off and on', async () => {
-      const { userEvent } = renderSettings({
-        credentials: 'static-1',
-        wide_permission_credentials: 'role-1',
-        using_restrictive_permissions: true,
-      })
-      const toggle = screen.getByRole('switch', { name: 'Use restrictive permissions' })
-
-      await userEvent.click(toggle)
-      expect(screen.queryByLabelText('Extended credentials')).not.toBeInTheDocument()
-      expect(screen.getByText('static-credential (AKIA)')).toBeInTheDocument()
-
-      await userEvent.click(toggle)
-      expect(screen.getByText('static-credential (AKIA)')).toBeInTheDocument()
-      expect(screen.getByText('role-credential')).toBeInTheDocument()
-      expect(screen.getByTestId('value-credentials')).toHaveTextContent('static-1')
-      expect(screen.getByTestId('value-wide-permission-credentials')).toHaveTextContent('role-1')
-    })
-
-    it('should require the extended credentials only while restrictive permissions are on', async () => {
-      const { userEvent } = renderSettings({
-        credentials: 'static-1',
-        wide_permission_credentials: '',
-        using_restrictive_permissions: false,
-      })
-      const toggle = screen.getByRole('switch', { name: 'Use restrictive permissions' })
-
-      await waitFor(() => expect(screen.getByTestId('form-valid')).toHaveTextContent('true'))
-
-      await userEvent.click(toggle)
-      await waitFor(() => expect(screen.getByTestId('form-valid')).toHaveTextContent('false'))
-
-      await userEvent.click(toggle)
-      await waitFor(() => expect(screen.getByTestId('form-valid')).toHaveTextContent('true'))
-    })
-
-    it('should only allow creating an AWS role credential from the extended credentials select', async () => {
-      const { userEvent } = renderSettings({
-        credentials: 'static-1',
-        wide_permission_credentials: '',
-        using_restrictive_permissions: true,
-      })
-
-      await userEvent.click(screen.getByLabelText('Extended credentials'))
-      await userEvent.click(await screen.findByText('New credential'))
-
-      const modalProps = mockOpenModal.mock.calls[0][0].content.props
-      expect(modalProps.allowedTypes).toEqual(['STS'])
-
-      act(() => modalProps.onClose({ id: 'role-new' }))
-      expect(screen.getByTestId('value-wide-permission-credentials')).toHaveTextContent('role-new')
-      expect(screen.getByTestId('value-credentials')).toHaveTextContent('static-1')
-    })
-  })
+      expect(screen.getByTestId('eks-credentials-change-warning')).toHaveTextContent(heading)
+    }
+  )
 })
