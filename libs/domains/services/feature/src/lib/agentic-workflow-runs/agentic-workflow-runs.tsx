@@ -17,6 +17,8 @@ import {
 import { dateFullFormat, formatDuration, timeAgo } from '@qovery/shared/util-dates'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
+import { useReplayAgenticWorkflowRun } from '../hooks/use-replay-agentic-workflow-run/use-replay-agentic-workflow-run'
+import { useService } from '../hooks/use-service/use-service'
 
 const { Table } = TablePrimitives
 
@@ -226,9 +228,33 @@ function PayloadEditor({ value }: { value: string }) {
   )
 }
 
-function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
+function ReplayRunButton({ serviceId, payload }: { serviceId: string; payload: string }) {
+  const { data: service } = useService({ serviceId, serviceType: 'AGENTIC_WORKFLOW' })
+  const { mutate: replayRun, isLoading } = useReplayAgenticWorkflowRun({ serviceId })
+  const webhookUrl = service?.webhook.url
+
+  return (
+    <Button
+      type="button"
+      color="neutral"
+      variant="outline"
+      size="md"
+      className="gap-2"
+      disabled={!webhookUrl}
+      loading={isLoading}
+      onClick={() => webhookUrl && replayRun({ webhookUrl, payload })}
+    >
+      <Icon iconName="rotate-right" iconStyle="regular" />
+      Replay
+    </Button>
+  )
+}
+
+function RunDetails({ run, serviceId, onClose }: { run: RunWithLifecycle; serviceId: string; onClose: () => void }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const formattedJson = run.payload ? formatJsonPayload(run.payload) : null
+  // Only a webhook call has a body to resend. Run history never stores request headers.
+  const replayPayload = run.trigger === AgenticWorkflowRunTrigger.WEBHOOK ? run.payload : undefined
 
   return (
     <Dialog.Root open onOpenChange={(open) => !open && onClose()}>
@@ -277,7 +303,12 @@ function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => vo
                   </dd>
                 </dl>
                 <section className="flex flex-col gap-2">
-                  <Heading level={3}>Payload</Heading>
+                  <div className="flex items-center justify-between gap-2">
+                    <Heading level={3}>Payload</Heading>
+                    {typeof replayPayload === 'string' && (
+                      <ReplayRunButton serviceId={serviceId} payload={replayPayload} />
+                    )}
+                  </div>
                   {formattedJson !== null ? (
                     <div
                       className="overflow-hidden rounded border border-neutral"
@@ -455,7 +486,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
           ))}
         </Table.Body>
       </Table.Root>
-      {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}
+      {selectedRun && <RunDetails run={selectedRun} serviceId={serviceId} onClose={() => setSelectedRun(null)} />}
     </div>
   )
 }
@@ -521,7 +552,7 @@ export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
           )}
         </span>
       </button>
-      {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}
+      {selectedRun && <RunDetails run={selectedRun} serviceId={serviceId} onClose={() => setSelectedRun(null)} />}
     </>
   )
 }

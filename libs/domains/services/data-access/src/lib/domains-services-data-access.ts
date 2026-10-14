@@ -972,10 +972,38 @@ type EditAdvancedSettingsRequest = {
       } & TerraformAdvancedSettings)
 }
 
+function isJson(value: string) {
+  try {
+    JSON.parse(value)
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const mutations = {
   async deployAgenticWorkflow({ agenticWorkflowId }: { agenticWorkflowId: string }) {
     const response = await agenticWorkflowsApi.deployAgenticWorkflow(agenticWorkflowId)
     return response.data
+  },
+  // Sent straight from the browser to the agent webhook, so the webhook must allow CORS for the Console origin.
+  // Run history does not store request headers, so the content type is inferred from the stored body.
+  async replayAgenticWorkflowRun({ webhookUrl, payload }: { webhookUrl: string; payload: string }) {
+    let response: Response
+    try {
+      response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': isJson(payload) ? 'application/json' : 'text/plain' },
+        body: payload,
+        credentials: 'omit',
+      })
+    } catch {
+      throw new Error('The webhook could not be reached. Check your network connection and its CORS settings.')
+    }
+    if (!response.ok) {
+      throw new Error(`The webhook responded with status ${response.status}.`)
+    }
+    return response
   },
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
     const { mutation } = match(serviceType)
