@@ -1,14 +1,12 @@
 import { type DeploymentHistoryEnvironmentV2, type Environment, type StateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { useCancelDeploymentEnvironment } from '@qovery/domains/environments/feature'
+import { useCancelDeploymentEnvironment, useDeployAllServices } from '@qovery/domains/environments/feature'
 import {
   useDeleteAllServices,
-  useDeployAllServices,
   useRestartAllServices,
   useStopAllServices,
   useUninstallAllServices,
 } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Button, Icon, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
 import { isCancelBuildAvailable } from '@qovery/shared/util-js'
 
@@ -21,12 +19,10 @@ export interface DeploymentActionButtonProps {
 export function DeploymentActionButton({ environment, deploymentHistory, state }: DeploymentActionButtonProps) {
   const { openModalConfirmation } = useModalConfirmation()
 
-  const logsLink =
-    ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) + ENVIRONMENT_STAGES_URL()
-
   const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
+    organizationId: environment.organization.id,
     projectId: environment.project.id,
-    logsLink,
+    environmentId: environment.id,
   })
   const { mutate: deployAllServices } = useDeployAllServices()
   const { mutate: restartAllServices } = useRestartAllServices()
