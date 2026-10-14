@@ -5,9 +5,12 @@ import {
 } from 'qovery-typescript-axios'
 
 export interface ClusterCredentialsFormValues {
+  configured_credentials?: string
+  restricted_credentials?: string
   credentials?: string
   wide_permission_credentials?: string
   using_restrictive_permissions?: boolean
+  slack_webhook_url?: string
 }
 
 export interface ClusterCredentialsSavePlan {
@@ -21,13 +24,17 @@ export const getCloudProviderInfoRequest = (
   credentials: ClusterCredentials[],
   cloudProviderInfo: ClusterCloudProviderInfo
 ): ClusterCloudProviderInfoRequest | undefined => {
-  const restrictiveCredentials = credentials.find(({ id }) => id === formValues.credentials)
+  const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
+  const credentialsId = usingRestrictivePermissions
+    ? formValues.restricted_credentials ?? formValues.credentials
+    : formValues.configured_credentials ?? formValues.credentials
+  const restrictiveCredentials = credentials.find(({ id }) => id === credentialsId)
   if (!restrictiveCredentials) return undefined
 
-  const widePermissionCredentials = formValues.using_restrictive_permissions
-    ? credentials.find(({ id }) => id === formValues.wide_permission_credentials)
+  const widePermissionCredentials = usingRestrictivePermissions
+    ? credentials.find(({ id }) => id === (formValues.configured_credentials ?? formValues.wide_permission_credentials))
     : undefined
-  if (formValues.using_restrictive_permissions && !widePermissionCredentials) return undefined
+  if (usingRestrictivePermissions && !widePermissionCredentials) return undefined
 
   return {
     cloud_provider: cloudProviderInfo.cloud_provider,
@@ -56,17 +63,21 @@ export const getClusterCredentialsSavePlan = ({
   initialUsingRestrictivePermissions: boolean
 }): ClusterCredentialsSavePlan => {
   const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
-  const hasCredentialsChanged = formValues.credentials !== cloudProviderInfo.credentials?.id
+  const credentialsId = usingRestrictivePermissions
+    ? formValues.restricted_credentials ?? formValues.credentials
+    : formValues.configured_credentials ?? formValues.credentials
+  const hasCredentialsChanged = credentialsId !== cloudProviderInfo.credentials?.id
   const hasWidePermissionCredentialsChanged =
     usingRestrictivePermissions &&
-    formValues.wide_permission_credentials !== cloudProviderInfo.wide_permission_credentials?.id
+    (formValues.configured_credentials ?? formValues.wide_permission_credentials) !==
+      cloudProviderInfo.wide_permission_credentials?.id
   const shouldEditCluster = usingRestrictivePermissions !== initialUsingRestrictivePermissions
 
   return {
     shouldEditCluster,
-    // Only toggling restrictive permissions is saved on the cluster alone
+    // Toggling restrictive permissions is saved on the cluster; changed credential mappings are saved with cloud provider info.
     shouldEditCloudProviderInfo: hasCredentialsChanged || hasWidePermissionCredentialsChanged || !shouldEditCluster,
-    // Only a restrictive credentials change requires a redeploy, not the toggle nor the extended credentials
+    // Changing the API credentials field requires a redeploy; changing the configured wide credential alone does not.
     shouldRedeploy: hasCredentialsChanged,
   }
 }

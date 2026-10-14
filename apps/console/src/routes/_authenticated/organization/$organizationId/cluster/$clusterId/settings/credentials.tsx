@@ -51,7 +51,7 @@ function ClusterCredentialsSettingsForm() {
   } = useEditCloudProviderInfo({
     showClusterUpdateAction: false,
   })
-  // Toggling restrictive permissions doesn't require a cluster update
+  // The permissions toggle is saved without prompting for a cluster update action.
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster({
     showClusterUpdateAction: false,
   })
@@ -72,7 +72,6 @@ function ClusterCredentialsSettingsForm() {
     openModalConfirmation({
       title: 'Confirm credentials change',
       description: 'Changing the credentials will trigger a cluster redeployment. To confirm, please type the name:',
-      warning: 'Your cluster will be redeployed automatically once the new credentials are saved.',
       name: cluster.name,
       action,
     })
@@ -129,18 +128,21 @@ function ClusterCredentialsSettingsForm() {
                 wide_permissions: { using_restrictive_permissions: Boolean(formValues.using_restrictive_permissions) },
               },
             }),
-          // Either the cluster is redeployed right after, or the change (toggle, extended credentials) doesn't require
-          // a cluster update: no update to offer
+          // Credential changes are followed by a redeploy when required; toggle and wide credential changes don't
+          // offer a separate cluster update action.
           editCloudProviderInfo: () => editCloudProviderInfoWithoutUpdateAction(variables),
           deployCluster: () => deployCluster({ organizationId, clusterId }),
         })
         const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
-        methods.reset({
-          credentials: formValues.credentials,
-          // Turning restrictive permissions off clears the extended credentials on the backend side
-          wide_permission_credentials: usingRestrictivePermissions ? formValues.wide_permission_credentials : undefined,
-          using_restrictive_permissions: usingRestrictivePermissions,
-        })
+        methods.reset(
+          isWideCredentialsEnabled
+            ? {
+                configured_credentials: formValues.configured_credentials,
+                restricted_credentials: usingRestrictivePermissions ? formValues.restricted_credentials : undefined,
+                using_restrictive_permissions: usingRestrictivePermissions,
+              }
+            : { credentials: formValues.credentials, using_restrictive_permissions: false }
+        )
       } finally {
         isSavingRef.current = false
       }
@@ -160,14 +162,25 @@ function ClusterCredentialsSettingsForm() {
 
   useEffect(() => {
     if (clusterCloudProviderInfo && !isSavingRef.current) {
-      // Toggling restrictive permissions never clears the fields, so the user always gets back these initial values
-      methods.reset({
-        credentials: clusterCloudProviderInfo.credentials?.id,
-        wide_permission_credentials: clusterCloudProviderInfo.wide_permission_credentials?.id,
-        using_restrictive_permissions: initialUsingRestrictivePermissions,
-      })
+      // Map the API credentials back into the stable configured/restricted form fields for the current mode.
+      methods.reset(
+        isWideCredentialsEnabled
+          ? {
+              configured_credentials: initialUsingRestrictivePermissions
+                ? clusterCloudProviderInfo.wide_permission_credentials?.id
+                : clusterCloudProviderInfo.credentials?.id,
+              restricted_credentials: initialUsingRestrictivePermissions
+                ? clusterCloudProviderInfo.credentials?.id
+                : undefined,
+              using_restrictive_permissions: initialUsingRestrictivePermissions,
+            }
+          : {
+              credentials: clusterCloudProviderInfo.credentials?.id,
+              using_restrictive_permissions: false,
+            }
+      )
     }
-  }, [methods, clusterCloudProviderInfo, initialUsingRestrictivePermissions])
+  }, [methods, clusterCloudProviderInfo, initialUsingRestrictivePermissions, isWideCredentialsEnabled])
 
   return (
     <FormProvider {...methods}>
@@ -177,16 +190,12 @@ function ClusterCredentialsSettingsForm() {
           <div className="max-w-content-with-navigation-left">
             <form onSubmit={onSubmit}>
               {isWideCredentialsEnabled ? (
-                <ClusterRestrictivePermissionsSettings
-                  cloudProvider={clusterCloudProviderInfo?.cloud_provider}
-                  cluster={cluster}
-                />
+                <ClusterRestrictivePermissionsSettings cloudProvider={clusterCloudProviderInfo?.cloud_provider} />
               ) : (
                 <BlockContent title="Configured credentials">
                   <ClusterCredentialsSettings
                     cloudProvider={clusterCloudProviderInfo?.cloud_provider}
                     isSetting={true}
-                    cluster={cluster}
                   />
                 </BlockContent>
               )}

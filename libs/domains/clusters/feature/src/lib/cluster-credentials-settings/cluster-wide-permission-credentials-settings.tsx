@@ -1,18 +1,20 @@
 import { useParams } from '@tanstack/react-router'
 import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
-import { Icon, InputSelect, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import {
   type ClusterCredentialAuthType,
   ClusterCredentialsModal,
 } from '../cluster-credentials-modal/cluster-credentials-modal'
 
-// Extended permissions credentials must be an AWS role (assumed via STS)
+// Wide permission credentials must be an AWS role (assumed via STS)
 const WIDE_PERMISSION_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['STS']
 
 export interface ClusterWidePermissionCredentialsSettingsProps {
   cloudProvider?: CloudProviderEnum
+  fieldName?: 'wide_permission_credentials' | 'configured_credentials'
+  isSetting?: boolean
 }
 
 export const filterWidePermissionCredentials = (credentials: ClusterCredentials[]) =>
@@ -20,18 +22,28 @@ export const filterWidePermissionCredentials = (credentials: ClusterCredentials[
 
 export function ClusterWidePermissionCredentialsSettings({
   cloudProvider,
+  fieldName = 'wide_permission_credentials',
+  isSetting,
 }: ClusterWidePermissionCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control, getValues } = useFormContext()
+  const isUsingRestrictivePermissions = Boolean(useWatch({ control, name: 'using_restrictive_permissions' }))
   const { openModal, closeModal } = useModal()
 
   const { data: credentials = [], isLoading } = useCloudProviderCredentials({
     organizationId,
     cloudProvider,
   })
-  const widePermissionCredentials = filterWidePermissionCredentials(credentials)
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((item) => ({ label: item.name, value: item.id }))
+  const sortedCredentials = [...credentials].sort((a, b) => a.name.localeCompare(b.name))
+  const widePermissionCredentials = filterWidePermissionCredentials(sortedCredentials)
+  const availableCredentials = (
+    fieldName === 'configured_credentials' && !isUsingRestrictivePermissions
+      ? sortedCredentials
+      : widePermissionCredentials
+  ).map((item) => ({
+    label: 'access_key_id' in item ? `${item.name} (${item.access_key_id})` : item.name,
+    value: item.id,
+  }))
 
   const openCredentialsModal = (onChange: (e: string | string[]) => void) => {
     openModal({
@@ -44,7 +56,11 @@ export function ClusterWidePermissionCredentialsSettings({
             closeModal()
           }}
           cloudProvider={cloudProvider}
-          allowedTypes={WIDE_PERMISSION_CREDENTIAL_TYPES}
+          allowedTypes={
+            fieldName === 'configured_credentials' && !isUsingRestrictivePermissions
+              ? undefined
+              : WIDE_PERMISSION_CREDENTIAL_TYPES
+          }
         />
       ),
       options: {
@@ -62,33 +78,62 @@ export function ClusterWidePermissionCredentialsSettings({
   }
 
   return (
-    <Controller
-      name="wide_permission_credentials"
-      control={control}
-      rules={{
-        // The field stays registered when the toggle is turned off, so only require it while restrictive permissions are used
-        validate: (value) =>
-          !getValues('using_restrictive_permissions') || Boolean(value) || 'Please select a credential.',
-      }}
-      render={({ field, fieldState: { error } }) => (
-        <InputSelect
-          dataTestId="input-wide-permission-credentials"
-          label="Credentials"
-          hint="Only AWS role credentials can be used for extended permissions."
-          options={widePermissionCredentials}
-          onChange={field.onChange}
-          value={field.value}
-          error={error?.message}
-          isSearchable
-          menuListButton={{
-            title: 'Select credential',
-            label: 'New credential',
-            icon: <Icon iconName="circle-plus" className="text-brand" />,
-            onClick: () => openCredentialsModal(field.onChange),
-          }}
-        />
+    <>
+      <Controller
+        name={fieldName}
+        control={control}
+        rules={{
+          validate: (value) => {
+            if (!value && (fieldName === 'configured_credentials' || getValues('using_restrictive_permissions'))) {
+              return 'Please select a credential.'
+            }
+            if (
+              fieldName === 'configured_credentials' &&
+              isUsingRestrictivePermissions &&
+              !widePermissionCredentials.some((credential) => credential.id === value)
+            ) {
+              return 'Select an AWS role credential for wider access.'
+            }
+            return true
+          },
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            dataTestId={
+              fieldName === 'wide_permission_credentials'
+                ? 'input-wide-permission-credentials'
+                : 'input-configured-credentials'
+            }
+            label="Credentials"
+            options={availableCredentials}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            isSearchable
+            menuListButton={{
+              title: 'Select credential',
+              label: 'New credential',
+              icon: <Icon iconName="circle-plus" className="text-brand" />,
+              onClick: () => openCredentialsModal(field.onChange),
+            }}
+          />
+        )}
+      />
+
+      {isSetting && (
+        <>
+          <Link
+            color="brand"
+            to="/organization/$organizationId/settings/cloud-credentials"
+            params={{ organizationId }}
+            className="flex gap-1"
+          >
+            See and edit all Cloud credentials
+            <Icon iconName="key" iconStyle="regular" />
+          </Link>
+        </>
       )}
-    />
+    </>
   )
 }
 

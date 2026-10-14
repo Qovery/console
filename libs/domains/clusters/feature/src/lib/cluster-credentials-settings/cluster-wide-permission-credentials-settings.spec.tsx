@@ -86,7 +86,9 @@ describe('ClusterWidePermissionCredentialsSettings', () => {
 
     expect(screen.getByLabelText('Credentials')).toBeInTheDocument()
     expect(screen.getByText('role-credential')).toBeInTheDocument()
-    expect(screen.getByText('Only AWS role credentials can be used for extended permissions.')).toBeInTheDocument()
+    expect(
+      screen.queryByText('When restrictive permissions are enabled, configured credentials must be an AWS role.')
+    ).not.toBeInTheDocument()
     expect(screen.queryByText('See and edit all Cloud credentials')).not.toBeInTheDocument()
   })
 

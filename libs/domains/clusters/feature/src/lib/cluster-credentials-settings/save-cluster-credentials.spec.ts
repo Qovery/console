@@ -20,10 +20,10 @@ const cloudProviderInfo: ClusterCloudProviderInfo = {
 }
 
 describe('getCloudProviderInfoRequest', () => {
-  it('should send the restrictive and extended credentials when restrictive permissions are on', () => {
+  it('should map configured credentials to wide and restricted credentials to credentials when enabled', () => {
     expect(
       getCloudProviderInfoRequest(
-        { credentials: 'static-2', wide_permission_credentials: 'role-2', using_restrictive_permissions: true },
+        { configured_credentials: 'role-2', restricted_credentials: 'static-2', using_restrictive_permissions: true },
         credentials,
         cloudProviderInfo
       )
@@ -35,10 +35,10 @@ describe('getCloudProviderInfoRequest', () => {
     })
   })
 
-  it('should not send the extended credentials when restrictive permissions are off', () => {
+  it('should map configured credentials to credentials when restrictive permissions are off', () => {
     expect(
       getCloudProviderInfoRequest(
-        { credentials: 'static-2', wide_permission_credentials: 'role-2', using_restrictive_permissions: false },
+        { configured_credentials: 'static-2', restricted_credentials: 'role-2', using_restrictive_permissions: false },
         credentials,
         cloudProviderInfo
       )
@@ -50,10 +50,12 @@ describe('getCloudProviderInfoRequest', () => {
   })
 
   it('should return undefined when a selected credential is missing', () => {
-    expect(getCloudProviderInfoRequest({ credentials: 'unknown' }, credentials, cloudProviderInfo)).toBeUndefined()
+    expect(
+      getCloudProviderInfoRequest({ configured_credentials: 'unknown' }, credentials, cloudProviderInfo)
+    ).toBeUndefined()
     expect(
       getCloudProviderInfoRequest(
-        { credentials: 'static-1', wide_permission_credentials: '', using_restrictive_permissions: true },
+        { configured_credentials: 'role-1', restricted_credentials: '', using_restrictive_permissions: true },
         credentials,
         cloudProviderInfo
       )
@@ -63,41 +65,39 @@ describe('getCloudProviderInfoRequest', () => {
 
 describe('getClusterCredentialsSavePlan', () => {
   const initialFormValues = {
-    credentials: 'static-1',
-    wide_permission_credentials: 'role-1',
+    configured_credentials: 'role-1',
+    restricted_credentials: 'static-1',
     using_restrictive_permissions: true,
   }
 
   it.each([
     {
-      case: 'restrictive credentials changed',
-      formValues: { ...initialFormValues, credentials: 'static-2' },
+      case: 'restricted credentials changed',
+      formValues: { ...initialFormValues, restricted_credentials: 'static-2' },
       initialUsingRestrictivePermissions: true,
       expected: { shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: true },
     },
     {
-      case: 'restrictive credentials and toggle changed',
-      formValues: { ...initialFormValues, credentials: 'static-2', using_restrictive_permissions: false },
+      case: 'configured credentials become active when the toggle is turned off',
+      formValues: { ...initialFormValues, using_restrictive_permissions: false },
       initialUsingRestrictivePermissions: true,
       expected: { shouldEditCluster: true, shouldEditCloudProviderInfo: true, shouldRedeploy: true },
     },
     {
-      case: 'toggle turned off only',
-      formValues: { ...initialFormValues, using_restrictive_permissions: false },
-      initialUsingRestrictivePermissions: true,
-      expected: { shouldEditCluster: true, shouldEditCloudProviderInfo: false, shouldRedeploy: false },
-    },
-    {
-      case: 'extended credentials changed only',
-      formValues: { ...initialFormValues, wide_permission_credentials: 'role-2' },
+      case: 'configured wide credential changed only',
+      formValues: { ...initialFormValues, configured_credentials: 'role-2' },
       initialUsingRestrictivePermissions: true,
       expected: { shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: false },
     },
     {
-      case: 'toggle turned on with extended credentials',
-      formValues: { ...initialFormValues, wide_permission_credentials: 'role-2' },
+      case: 'toggle turned on with new restricted credentials',
+      formValues: {
+        configured_credentials: 'role-2',
+        restricted_credentials: 'static-2',
+        using_restrictive_permissions: true,
+      },
       initialUsingRestrictivePermissions: false,
-      expected: { shouldEditCluster: true, shouldEditCloudProviderInfo: true, shouldRedeploy: false },
+      expected: { shouldEditCluster: true, shouldEditCloudProviderInfo: true, shouldRedeploy: true },
     },
     {
       case: 'nothing changed',
@@ -111,18 +111,18 @@ describe('getClusterCredentialsSavePlan', () => {
     ).toEqual(expected)
   })
 
-  it('should ignore extended credentials while restrictive permissions are off', () => {
+  it('should use configured credentials and ignore the restricted value while restrictive permissions are off', () => {
     expect(
       getClusterCredentialsSavePlan({
         formValues: {
-          credentials: 'static-1',
-          wide_permission_credentials: 'role-2',
+          configured_credentials: 'role-1',
+          restricted_credentials: 'static-2',
           using_restrictive_permissions: false,
         },
         cloudProviderInfo,
         initialUsingRestrictivePermissions: false,
       })
-    ).toEqual({ shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: false })
+    ).toEqual({ shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: true })
   })
 })
 
