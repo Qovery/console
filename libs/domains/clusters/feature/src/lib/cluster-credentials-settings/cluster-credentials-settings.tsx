@@ -1,20 +1,9 @@
 import { useParams } from '@tanstack/react-router'
-import { type Cluster, type ClusterCredentials } from 'qovery-typescript-axios'
+import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
-import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
-import {
-  Button,
-  Callout,
-  EmptyState,
-  ExternalLink,
-  Icon,
-  InputSelect,
-  Link,
-  LoaderSpinner,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, EmptyState, Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import {
   ClusterCredentialsModal,
   type ClusterCredentialsModalCloudProvider,
@@ -23,8 +12,8 @@ import {
 export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
-  cluster?: Cluster
-  isUsingRestrictivePermissions?: boolean
+  fieldName?: 'credentials' | 'restricted_credentials'
+  showSettingsInfo?: boolean
 }
 
 export const filterCredentialsByCloudProvider = (
@@ -41,16 +30,14 @@ export const filterCredentialsByCloudProvider = (
 export function ClusterCredentialsSettings({
   cloudProvider,
   isSetting,
-  cluster,
-  isUsingRestrictivePermissions = false,
+  fieldName = 'credentials',
+  showSettingsInfo = isSetting,
 }: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control } = useFormContext()
   const { openModal, closeModal } = useModal()
 
   const queryCloudProvider = cloudProvider === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProvider
-
-  const isEksManaged = cluster !== undefined && isClusterEksManaged(cluster)
 
   const { data: credentials = [], isLoading } = useCloudProviderCredentials({
     organizationId,
@@ -99,28 +86,8 @@ export function ClusterCredentialsSettings({
         </div>
       ) : (
         <>
-          {isSetting && isEksManaged && (
-            <Callout.Root color="red" className="mb-4" data-testid="eks-credentials-change-warning">
-              <Callout.Icon>
-                <Icon iconName="triangle-exclamation" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>
-                  {/* Only the restrictive credentials trigger a redeploy, not the toggle nor the extended credentials */}
-                  {isUsingRestrictivePermissions
-                    ? 'Changing the restrictive credentials triggers a cluster redeployment'
-                    : 'Changing credentials triggers a cluster redeployment'}
-                </Callout.TextHeading>
-                <Callout.TextDescription>
-                  Saving new credentials will automatically redeploy the cluster to keep your services' deployments
-                  working.
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
-          )}
-
           <Controller
-            name="credentials"
+            name={fieldName}
             control={control}
             rules={{
               required: 'Please select a credential.',
@@ -147,7 +114,7 @@ export function ClusterCredentialsSettings({
                 </EmptyState>
               ) : (
                 <InputSelect
-                  dataTestId="input-credentials"
+                  dataTestId={fieldName === 'credentials' ? 'input-credentials' : 'input-restricted-credentials'}
                   label="Credentials"
                   className="mb-3"
                   options={buildCredentials}
@@ -166,7 +133,7 @@ export function ClusterCredentialsSettings({
             }
           />
 
-          {isSetting && (
+          {showSettingsInfo && (
             <Link
               color="brand"
               to="/organization/$organizationId/settings/cloud-credentials"
@@ -176,26 +143,6 @@ export function ClusterCredentialsSettings({
               See and edit all Cloud credentials
               <Icon iconName="key" iconStyle="regular" />
             </Link>
-          )}
-
-          {isSetting && (
-            <Callout.Root color="yellow" className="mt-4" data-testid="mirroring-registry-credentials-warning">
-              <Callout.Icon>
-                <Icon iconName="circle-exclamation" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextDescription className="flex flex-col gap-1">
-                  The credential change won't be applied to the mirroring registry of this cluster. Make sure to update
-                  the credentials properly in this cluster's mirroring registry section.
-                  <ExternalLink
-                    className="items-center"
-                    href={`/organization/${organizationId}/cluster/${clusterId}/settings/image-registry`}
-                  >
-                    Go to mirroring registry section
-                  </ExternalLink>
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
           )}
         </>
       )}

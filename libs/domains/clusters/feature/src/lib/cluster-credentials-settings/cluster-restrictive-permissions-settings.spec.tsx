@@ -1,8 +1,7 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
-import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { ClusterRestrictivePermissionsSettings } from './cluster-restrictive-permissions-settings'
 
@@ -41,11 +40,6 @@ jest.mock('@tanstack/react-router', () => {
 
 const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
 
-const eksManagedCluster = {
-  ...clusterFactoryMock(1, CloudProviderEnum.AWS)[0],
-  kubernetes: KubernetesEnum.MANAGED,
-}
-
 const awsCredentials = [
   { id: 'static-1', name: 'static-credential', object_type: 'AWS', access_key_id: 'AKIA' },
   { id: 'role-1', name: 'role-credential', object_type: 'AWS_ROLE', role_arn: 'arn:aws:iam::1:role/qovery' },
@@ -55,8 +49,8 @@ function FormValues() {
   const { watch } = useFormContext()
   return (
     <>
-      <output data-testid="value-credentials">{watch('credentials')}</output>
-      <output data-testid="value-wide-permission-credentials">{watch('wide_permission_credentials')}</output>
+      <output data-testid="value-configured-credentials">{watch('configured_credentials')}</output>
+      <output data-testid="value-restricted-credentials">{watch('restricted_credentials')}</output>
     </>
   )
 }
@@ -65,7 +59,7 @@ const renderSettings = (defaultValues: Record<string, unknown>) =>
   renderWithProviders(
     wrapWithReactHookForm(
       <>
-        <ClusterRestrictivePermissionsSettings cloudProvider={CloudProviderEnum.AWS} cluster={eksManagedCluster} />
+        <ClusterRestrictivePermissionsSettings cloudProvider={CloudProviderEnum.AWS} />
         <FormValues />
       </>,
       { defaultValues }
@@ -84,101 +78,91 @@ describe('ClusterRestrictivePermissionsSettings', () => {
   })
 
   it('should display the toggle above the credentials block', () => {
-    renderSettings({ credentials: 'static-1', using_restrictive_permissions: false })
+    renderSettings({ configured_credentials: 'role-1', using_restrictive_permissions: false })
 
     const toggle = screen.getByRole('switch', { name: 'Use restrictive permissions' })
-    const block = screen.getByTestId('restrictive-credentials-block')
+    const block = screen.getByTestId('configured-credentials-block')
     expect(within(block).queryByRole('switch')).not.toBeInTheDocument()
-    expect(isBefore(toggle, block)).toBe(true)
+    expect(isBefore(block, toggle)).toBe(true)
   })
 
   it('should display a single configured credentials block when restrictive permissions are off', () => {
-    renderSettings({ credentials: 'static-1', using_restrictive_permissions: false })
+    renderSettings({ configured_credentials: 'role-1', using_restrictive_permissions: false })
 
     expect(screen.getByRole('switch', { name: 'Use restrictive permissions' })).not.toBeChecked()
-    const block = screen.getByTestId('restrictive-credentials-block')
+    const block = screen.getByTestId('configured-credentials-block')
     expect(within(block).getByText('Configured credentials')).toBeInTheDocument()
-    expect(within(block).getByTestId('eks-credentials-change-warning')).toHaveTextContent(
-      'Changing credentials triggers a cluster redeployment'
-    )
     expectInOrder(
-      within(block).getByTestId('eks-credentials-change-warning'),
-      within(block).getByTestId('input-credentials'),
-      within(block).getByText('See and edit all Cloud credentials'),
-      within(block).getByTestId('mirroring-registry-credentials-warning')
+      within(block).getByTestId('input-configured-credentials'),
+      within(block).getByText('See and edit all Cloud credentials')
     )
-    expect(screen.queryByTestId('extended-credentials-block')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('restricted-credentials-block')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('slack-notification-webhook-block')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('mirroring-registry-credentials-warning')).not.toBeInTheDocument()
   })
 
-  it('should display restrictive and extended credentials blocks when restrictive permissions are on', () => {
+  it('should keep configured credentials first and display restricted credentials when restrictive permissions are on', () => {
     renderSettings({
-      credentials: 'static-1',
-      wide_permission_credentials: 'role-1',
+      configured_credentials: 'role-1',
+      restricted_credentials: 'static-1',
       using_restrictive_permissions: true,
     })
 
-    const restrictiveBlock = screen.getByTestId('restrictive-credentials-block')
-    expect(within(restrictiveBlock).getByText('Restrictive credentials')).toBeInTheDocument()
-    expect(within(restrictiveBlock).getByTestId('eks-credentials-change-warning')).toHaveTextContent(
-      'Changing the restrictive credentials triggers a cluster redeployment'
-    )
-    expectInOrder(
-      within(restrictiveBlock).getByTestId('eks-credentials-change-warning'),
-      within(restrictiveBlock).getByTestId('input-credentials'),
-      within(restrictiveBlock).getByText('See and edit all Cloud credentials'),
-      within(restrictiveBlock).getByTestId('mirroring-registry-credentials-warning')
-    )
-
-    const extendedBlock = screen.getByTestId('extended-credentials-block')
-    expect(within(extendedBlock).getByText('Extended credentials')).toBeInTheDocument()
-    expect(within(extendedBlock).getByTestId('input-wide-permission-credentials')).toBeInTheDocument()
-    // The link is only displayed in the restrictive credentials block, so it doesn't move when switching the toggle
-    expect(within(extendedBlock).queryByText('See and edit all Cloud credentials')).not.toBeInTheDocument()
+    const configuredBlock = screen.getByTestId('configured-credentials-block')
+    const toggle = screen.getByRole('switch', { name: 'Use restrictive permissions' })
+    const restrictedBlock = screen.getByTestId('restricted-credentials-block')
+    const webhookBlock = screen.getByTestId('slack-notification-webhook-block')
+    expect(within(restrictedBlock).getByText('Restricted credentials')).toBeInTheDocument()
+    expectInOrder(configuredBlock, toggle, restrictedBlock, webhookBlock)
+    expect(within(configuredBlock).getByTestId('input-configured-credentials')).toBeInTheDocument()
+    expect(within(restrictedBlock).getByTestId('input-restricted-credentials')).toBeInTheDocument()
+    expect(within(configuredBlock).getByText('See and edit all Cloud credentials')).toBeInTheDocument()
     expect(screen.getAllByText('See and edit all Cloud credentials')).toHaveLength(1)
-    expect(within(extendedBlock).queryByTestId('mirroring-registry-credentials-warning')).not.toBeInTheDocument()
-    expect(isBefore(restrictiveBlock, extendedBlock)).toBe(true)
+    expect(screen.queryByTestId('mirroring-registry-credentials-warning')).not.toBeInTheDocument()
   })
 
-  it('should display the Slack webhook in its own block as a password field when restrictive permissions are on', () => {
+  it('should display the Slack webhook after restricted credentials when restrictive permissions are on', () => {
     renderSettings({
-      credentials: 'static-1',
-      wide_permission_credentials: 'role-1',
+      configured_credentials: 'role-1',
+      restricted_credentials: 'static-1',
       using_restrictive_permissions: true,
     })
 
-    const block = screen.getByTestId('slack-webhook-block')
-    expect(within(block).getByText('Slack webhook')).toBeInTheDocument()
+    const block = screen.getByTestId('slack-notification-webhook-block')
+    expect(within(block).getByText('Slack notification webhook')).toBeInTheDocument()
     expect(within(block).getByLabelText('Slack webhook URL')).toHaveAttribute('type', 'password')
     expect(
-      within(block).getByText('Receive a Slack message when Qovery requests access to the extended credentials.')
+      within(block).getByText('Receive a Slack message when Qovery requests access to the configured credentials.')
     ).toBeInTheDocument()
-    expect(isBefore(screen.getByTestId('extended-credentials-block'), block)).toBe(true)
+    expect(
+      within(screen.getByTestId('restricted-credentials-block')).getByTestId('input-restricted-credentials')
+    ).toBeInTheDocument()
   })
 
   it('should not display the Slack webhook when restrictive permissions are off', () => {
-    renderSettings({ credentials: 'static-1', using_restrictive_permissions: false })
+    renderSettings({ configured_credentials: 'role-1', using_restrictive_permissions: false })
 
-    expect(screen.queryByTestId('slack-webhook-block')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('slack-notification-webhook-block')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Slack webhook URL')).not.toBeInTheDocument()
   })
 
   it('should switch the layout with the toggle and keep the initial values', async () => {
     const { userEvent } = renderSettings({
-      credentials: 'static-1',
-      wide_permission_credentials: 'role-1',
+      configured_credentials: 'role-1',
+      restricted_credentials: 'static-1',
       using_restrictive_permissions: true,
     })
     const toggle = screen.getByRole('switch', { name: 'Use restrictive permissions' })
 
     await userEvent.click(toggle)
     expect(screen.getByText('Configured credentials')).toBeInTheDocument()
-    expect(screen.queryByTestId('extended-credentials-block')).not.toBeInTheDocument()
-    expect(screen.getByText('static-credential (AKIA)')).toBeInTheDocument()
+    expect(screen.queryByTestId('restricted-credentials-block')).not.toBeInTheDocument()
+    expect(screen.getByTestId('value-configured-credentials')).toHaveTextContent('role-1')
 
     await userEvent.click(toggle)
-    expect(screen.getByText('Restrictive credentials')).toBeInTheDocument()
-    expect(within(screen.getByTestId('extended-credentials-block')).getByText('role-credential')).toBeInTheDocument()
-    expect(screen.getByTestId('value-credentials')).toHaveTextContent('static-1')
-    expect(screen.getByTestId('value-wide-permission-credentials')).toHaveTextContent('role-1')
+    expect(screen.getByText('Restricted credentials')).toBeInTheDocument()
+    expect(screen.getByTestId('value-configured-credentials')).toHaveTextContent('role-1')
+    expect(screen.getByTestId('value-restricted-credentials')).toHaveTextContent('static-1')
+    expect(screen.getByTestId('value-configured-credentials')).toHaveTextContent('role-1')
   })
 })
