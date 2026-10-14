@@ -1,9 +1,0 @@
-{
-  "name": "domains-catalog-feature",
-  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/domains/catalog/feature/src",
-  "projectType": "library",
-  "tags": ["scope:domain", "type:feature", "slice:catalog"],
-  "// targets": "to see all targets run: nx show project domains-catalog-feature --web",
-  "targets": {}
-}

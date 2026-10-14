@@ -12,11 +12,7 @@ import {
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import {
-  type CatalogVariableField,
-  type CatalogVariableValue,
-  getCatalogVariableValue,
-} from '@qovery/domains/catalog/feature'
+import { type SchemaField, type SchemaFieldValue, getSchemaFieldValue } from '@qovery/shared/schema-fields/feature'
 
 export function toPlatformCloudVendor(
   cloudProvider: CloudProviderEnum | CloudVendorEnum | undefined
@@ -164,7 +160,7 @@ export function getCurrentPlatformConfigurationPreview(
   return preview
 }
 
-export function toCatalogVariableField(field: PlatformFieldDescriptor): CatalogVariableField {
+export function toSchemaField(field: PlatformFieldDescriptor): SchemaField {
   return {
     key: field.key,
     label: field.label,
@@ -188,7 +184,7 @@ export function applyPlatformConfigurationDefaults(
 ): Record<string, unknown> {
   const defaultValues = Object.fromEntries(
     fields.filter(isPlatformScalarField).flatMap((field) => {
-      const defaultValue = getCatalogVariableValue(field, undefined)
+      const defaultValue = getSchemaFieldValue(field, undefined)
       if (defaultValue === undefined) return []
 
       return [[field.key, toPlatformConfigurationValue(field, defaultValue)]]
@@ -198,10 +194,7 @@ export function applyPlatformConfigurationDefaults(
   return { ...defaultValues, ...values }
 }
 
-export function toPlatformConfigurationValue(
-  field: Pick<PlatformFieldDescriptor, 'type'>,
-  value: CatalogVariableValue
-) {
+export function toPlatformConfigurationValue(field: Pick<PlatformFieldDescriptor, 'type'>, value: SchemaFieldValue) {
   if (field.type !== 'number') return value
   if (typeof value !== 'string') return undefined
   // Keep the empty string: it marks a field the user explicitly cleared, so

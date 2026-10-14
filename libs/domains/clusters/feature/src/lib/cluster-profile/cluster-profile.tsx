@@ -1,10 +1,6 @@
 import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
-import {
-  CatalogVariableInput,
-  type CatalogVariableValue,
-  getCatalogVariableValue,
-} from '@qovery/domains/catalog/feature'
+import { SchemaFieldInput, type SchemaFieldValue, getSchemaFieldValue } from '@qovery/shared/schema-fields/feature'
 import { EmptyState, Heading, Navbar, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { usePlatformComponentConfigurations } from '../hooks/use-platform-component-configurations/use-platform-component-configurations'
@@ -17,8 +13,8 @@ import {
   isPlatformReadOnlyField,
   isSupportedPlatformField,
   omitEmptyValues,
-  toCatalogVariableField,
   toPlatformFieldDescriptor,
+  toSchemaField,
 } from '../utils/platform-configuration-utils'
 import { ClusterProfileProvider, useClusterProfileContext } from './cluster-profile-context'
 import {
@@ -168,7 +164,7 @@ function ProfileConfigurationSection({
   profileConfig: Record<string, unknown>
   clusterInputs: Record<string, string>
   onProfileConfigChange: (componentKey: string, fieldKey: string, value: unknown) => void
-  onClusterInputChange: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
+  onClusterInputChange: (componentKey: string, field: PlatformFieldDescriptor, value: SchemaFieldValue) => void
 }) {
   const { fields, allRequirements, requirements } = getSectionContent(section, preview)
   const violations = preview?.violations ?? []
@@ -203,12 +199,12 @@ function ProfileConfigurationSection({
       {requirements.length > 0 ? (
         <div className="flex flex-col">
           {requirements.map(toPlatformFieldDescriptor).map((requirement) => (
-            <CatalogVariableInput
+            <SchemaFieldInput
               key={requirement.key}
               booleanControl="toggle"
-              field={toCatalogVariableField(requirement)}
+              field={toSchemaField(requirement)}
               layout="row"
-              value={getCatalogVariableValue(requirement, clusterInputs[requirement.key])}
+              value={getSchemaFieldValue(requirement, clusterInputs[requirement.key])}
               error={getFieldViolation(violations, requirement.key, 'clusterInputs')}
               highlight={highlight}
               onChange={(value) => onClusterInputChange(section.component.key, requirement, value)}

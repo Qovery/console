@@ -9,25 +9,25 @@ import {
   InputToggle,
   Truncate,
 } from '@qovery/shared/ui'
-import { type CatalogVariableField, type CatalogVariableValue } from '../catalog-variable-field/catalog-variable-field'
+import { type SchemaField, type SchemaFieldValue } from '../schema-field/schema-field'
 
-export interface CatalogVariableInputProps {
+export interface SchemaFieldInputProps {
   autoFocus?: boolean
   booleanControl?: 'checkbox' | 'toggle'
   disabled?: boolean
   error?: string
-  field: CatalogVariableField
+  field: SchemaField
   // Search text highlighted in the label and description (row layout only).
   highlight?: string
   layout?: 'card' | 'row'
-  onChange: (value: CatalogVariableValue) => void
-  value: CatalogVariableValue | undefined
+  onChange: (value: SchemaFieldValue) => void
+  value: SchemaFieldValue | undefined
 }
 
 const DESCRIPTION_TRUNCATE_LIMIT = 200
 const formatDescription = (description: string) => description.replace(/([.!?])\s+/g, '$1\n')
 
-export function CatalogVariableDescription({ description, highlight }: { description: string; highlight?: string }) {
+export function SchemaFieldDescription({ description, highlight }: { description: string; highlight?: string }) {
   const formattedDescription = formatDescription(description)
 
   return (
@@ -47,9 +47,9 @@ export function CatalogVariableDescription({ description, highlight }: { descrip
   )
 }
 
-type CatalogVariableControlProps = Omit<CatalogVariableInputProps, 'layout'> & { errorId: string }
+type SchemaFieldControlProps = Omit<SchemaFieldInputProps, 'layout'> & { errorId: string }
 
-function CatalogVariableControl({
+function SchemaFieldControl({
   autoFocus,
   booleanControl = 'toggle',
   disabled,
@@ -58,7 +58,7 @@ function CatalogVariableControl({
   field,
   onChange,
   value,
-}: CatalogVariableControlProps) {
+}: SchemaFieldControlProps) {
   const errorProps = {
     'aria-describedby': error ? errorId : undefined,
     'aria-invalid': error ? true : undefined,
@@ -136,7 +136,7 @@ function CatalogVariableControl({
   )
 }
 
-function CatalogVariableInputRow({
+function SchemaFieldInputRow({
   autoFocus,
   booleanControl,
   disabled,
@@ -146,19 +146,17 @@ function CatalogVariableInputRow({
   highlight,
   onChange,
   value,
-}: CatalogVariableControlProps) {
+}: SchemaFieldControlProps) {
   return (
     <div className="flex flex-col gap-4 border-b border-neutral p-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0 flex-1">
         <p className="text-sm text-neutral">
           <HighlightText text={field.label} highlight={highlight} />
         </p>
-        {field.description ? (
-          <CatalogVariableDescription description={field.description} highlight={highlight} />
-        ) : null}
+        {field.description ? <SchemaFieldDescription description={field.description} highlight={highlight} /> : null}
       </div>
       <div className={field.type === 'bool' ? 'flex shrink-0 flex-col items-end' : 'w-full shrink-0 md:w-[400px]'}>
-        <CatalogVariableControl
+        <SchemaFieldControl
           autoFocus={autoFocus}
           disabled={disabled}
           booleanControl={booleanControl}
@@ -178,7 +176,7 @@ function CatalogVariableInputRow({
   )
 }
 
-export function CatalogVariableInput({
+export function SchemaFieldInput({
   autoFocus,
   booleanControl = 'toggle',
   disabled,
@@ -188,13 +186,13 @@ export function CatalogVariableInput({
   layout = 'card',
   onChange,
   value,
-}: CatalogVariableInputProps) {
+}: SchemaFieldInputProps) {
   // Field keys can repeat on a page (nested fields, requirements): the error id must be unique per instance.
   const errorId = useId()
 
   if (layout === 'row') {
     return (
-      <CatalogVariableInputRow
+      <SchemaFieldInputRow
         autoFocus={autoFocus}
         disabled={disabled}
         booleanControl={booleanControl}

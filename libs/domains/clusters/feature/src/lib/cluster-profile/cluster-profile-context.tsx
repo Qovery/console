@@ -6,7 +6,7 @@ import {
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useContext, useState } from 'react'
-import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/domains/catalog/feature'
+import { type SchemaFieldValue, getSchemaFieldValue } from '@qovery/shared/schema-fields/feature'
 import { toast } from '@qovery/shared/ui'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useUpdatePlatformConfiguration } from '../hooks/use-update-platform-configuration/use-update-platform-configuration'
@@ -29,7 +29,7 @@ export type ClusterInputValues = Record<string, Record<string, string>>
 
 // Scalars are compared as the inputs display them: an unset toggle shows as off, an unset text as empty.
 function getDisplayedScalarValue(field: Pick<PlatformFieldDescriptor, 'type' | 'defaultValue'>, value: unknown) {
-  return getCatalogVariableValue(field, value) ?? (field.type === 'bool' ? false : '')
+  return getSchemaFieldValue(field, value) ?? (field.type === 'bool' ? false : '')
 }
 
 // Local edits differing from the saved (or default) value; edits reverted by hand do not count.
@@ -140,7 +140,7 @@ interface ClusterProfileContextValue {
   isSaving: boolean
   isDeploying: boolean
   updateProfileConfig: (componentKey: string, fieldKey: string, value: unknown) => void
-  updateClusterInput: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
+  updateClusterInput: (componentKey: string, field: PlatformFieldDescriptor, value: SchemaFieldValue) => void
   resetChanges: () => void
   saveChanges: () => Promise<void>
   saveAndDeployChanges: () => Promise<void>
@@ -166,7 +166,7 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
     setProfileValues((currentValues) => updateComponentValue(currentValues, componentKey, fieldKey, value))
   }
 
-  const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
+  const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: SchemaFieldValue) => {
     // The input shows its default while unsaved: setting it back to what is displayed is no edit.
     const nextValue = String(value)
     const isDisplayedValue =
