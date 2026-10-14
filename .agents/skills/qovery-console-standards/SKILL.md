@@ -9,7 +9,7 @@ metadata:
 
 # Qovery Console Standards
 
-Comprehensive coding standards for the Qovery Console React/TypeScript monorepo. Contains 7 rules covering architecture, React patterns, styling, testing, naming, development workflow, and pre-commit quality gates.
+Comprehensive coding standards for the Qovery Console React/TypeScript monorepo. Contains 8 rules covering architecture, React patterns, styling, testing, naming, development workflow, pre-commit quality gates, and implementation and review decisions.
 
 ## When to Apply
 
@@ -24,15 +24,16 @@ Reference these guidelines when:
 
 ## Rule Categories
 
-| Rule                 | File                            | Scope                                                     |
-| -------------------- | ------------------------------- | --------------------------------------------------------- |
-| Project Architecture | `project-architecture.md`       | Nx monorepo structure, lib organization, layer boundaries |
-| React & TypeScript   | `react-typescript-standards.md` | Import rules, component patterns, state management        |
-| Styling              | `styling-standards.md`          | TailwindCSS, Radix UI, responsive design, accessibility   |
-| Testing              | `testing-standards.md`          | Test setup, structure, mocking, coverage                  |
-| Naming Conventions   | `naming-conventions.md`         | File, variable, component, and constant naming            |
-| Development Commands | `development-commands.md`       | Daily workflow, Nx commands, package management, git      |
-| Pre-commit Workflow  | `pre-commit-workflow.md`        | Conventional commits, format/test/lint checks             |
+| Rule                    | File                            | Scope                                                           |
+| ----------------------- | ------------------------------- | --------------------------------------------------------------- |
+| Project Architecture    | `project-architecture.md`       | Nx monorepo structure, lib organization, layer boundaries       |
+| React & TypeScript      | `react-typescript-standards.md` | Import rules, component patterns, state management              |
+| Styling                 | `styling-standards.md`          | TailwindCSS, Radix UI, responsive design, accessibility         |
+| Testing                 | `testing-standards.md`          | Test setup, structure, mocking, coverage                        |
+| Naming Conventions      | `naming-conventions.md`         | File, variable, component, and constant naming                  |
+| Development Commands    | `development-commands.md`       | Daily workflow, Nx commands, package management, git            |
+| Pre-commit Workflow     | `pre-commit-workflow.md`        | Conventional commits, format/test/lint checks                   |
+| Implementation & Review | `implementation-review.md`      | Code placement, shared changes, API boundaries, state ownership |
 
 ## Quick Reference
 
@@ -41,13 +42,14 @@ Reference these guidelines when:
 - Nx monorepo: `apps/` and `libs/` (domains, pages, shared)
 - `data-access` = API logic, `feature` = business components, `ui` = reusable presentation
 - No circular imports; use Nx generators for new libs
+- Domain hooks in `src/lib/hooks/use-<name>/`, helpers in `src/lib/utils/`; nothing new in `shared/console-shared` (legacy)
 
 ### React & TypeScript
 
 - Inline type imports: `import { type Foo, bar } from './module'`
 - Functional components only, no `React.FC`, destructure props in signature
 - Route-scoped components read URL identifiers with TanStack Router `useParams({ strict: false })`; do not forward route IDs through props solely for data access
-- React Query for server state, `clsx`/`twMerge` for conditional classes
+- React Query for server state, `clsx` for conditional classes, `twMerge` for conflicting Tailwind classes
 
 ### Styling
 
@@ -66,6 +68,12 @@ Reference these guidelines when:
 - Snake-case files (`user-profile.tsx`), PascalCase components
 - `Props` suffix for interfaces, `UPPER_SNAKE_CASE` for constants
 
+### Implementation & Review
+
+- Shared changes need a concrete caller; keep existing callers working
+- Business transformations in domain hooks/helpers, not in rendering
+- Classify review findings: bug (trigger + consequence), convention, or optional suggestion
+
 ### Workflow
 
 - Yarn Berry only (never npm), `nvm use`
@@ -80,6 +88,11 @@ Read individual rule files for detailed guidelines:
 rules/project-architecture.md
 rules/react-typescript-standards.md
 rules/styling-standards.md
+rules/testing-standards.md
+rules/naming-conventions.md
+rules/development-commands.md
+rules/pre-commit-workflow.md
+rules/implementation-review.md
 ```
 
 ## Full Compiled Document

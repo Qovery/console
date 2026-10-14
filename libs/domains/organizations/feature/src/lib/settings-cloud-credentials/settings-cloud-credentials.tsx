@@ -150,7 +150,6 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
             disabled={clusters.length !== 0}
             type="button"
             data-testid="delete-credential"
-            className="h-9 w-9 justify-center p-0"
           >
             <Icon iconName="trash-can" iconStyle="regular" />
           </Button>

@@ -11,7 +11,7 @@ tags: [tailwind, css, styling, accessibility, radix, responsive]
 - TailwindCSS only (no CSS modules or styled-components in new code)
 - Use utilities from `@qovery/shared/ui` when available
 - Mobile-first responsive design
-- Use `clsx` or `twMerge` from `@qovery/shared/util-js` for conditional classes
+- Use `clsx` (from `clsx`) for conditional classes and `twMerge` (from `@qovery/shared/util-js`) to resolve conflicting Tailwind classes, such as defaults and a caller's `className`
 
 ## Component Styling
 

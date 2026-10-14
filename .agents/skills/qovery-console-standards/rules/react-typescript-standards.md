@@ -21,7 +21,7 @@ tags: [react, typescript, components, imports, state]
 - Destructure props directly in parameters
 - Props interface named `<ComponentName>Props`
 - Named exports only (no default exports)
-- Use `clsx` or `twMerge` from `@qovery/shared/util-js` for conditional classes
+- Use `clsx` (from `clsx`) for conditional classes and `twMerge` (from `@qovery/shared/util-js`) to resolve conflicting Tailwind classes, such as defaults and a caller's `className`
 - Prefer Radix UI components when available
 
 ## Route Parameters
