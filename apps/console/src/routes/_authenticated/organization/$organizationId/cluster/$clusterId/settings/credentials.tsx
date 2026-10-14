@@ -7,6 +7,7 @@ import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
 import {
   type ClusterCredentialsFormValues,
   ClusterCredentialsSettings,
+  ClusterRestrictivePermissionsSettings,
   getCloudProviderInfoRequest,
   getClusterCredentialsSavePlan,
   saveClusterCredentials,
@@ -175,14 +176,20 @@ function ClusterCredentialsSettingsForm() {
           <SettingsHeading title="Credentials" />
           <div className="max-w-content-with-navigation-left">
             <form onSubmit={onSubmit}>
-              <BlockContent title="Configured credentials">
-                <ClusterCredentialsSettings
+              {isWideCredentialsEnabled ? (
+                <ClusterRestrictivePermissionsSettings
                   cloudProvider={clusterCloudProviderInfo?.cloud_provider}
-                  isSetting={true}
                   cluster={cluster}
-                  isWideCredentialsEnabled={isWideCredentialsEnabled}
                 />
-              </BlockContent>
+              ) : (
+                <BlockContent title="Configured credentials">
+                  <ClusterCredentialsSettings
+                    cloudProvider={clusterCloudProviderInfo?.cloud_provider}
+                    isSetting={true}
+                    cluster={cluster}
+                  />
+                </BlockContent>
+              )}
               <div className="flex justify-end">
                 <Button
                   data-testid="submit-button"

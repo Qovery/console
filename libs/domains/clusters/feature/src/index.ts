@@ -49,6 +49,8 @@ export * from './lib/secret-manager-modals/secret-manager-associated-external-se
 export * from './lib/secret-manager-modals/secret-manager-integration-modal'
 export * from './lib/cluster-general-settings/cluster-general-settings'
 export * from './lib/cluster-credentials-settings/cluster-credentials-settings'
+export * from './lib/cluster-credentials-settings/cluster-restrictive-permissions-settings'
+export * from './lib/cluster-credentials-settings/cluster-wide-permission-credentials-settings'
 export * from './lib/cluster-credentials-settings/save-cluster-credentials'
 export * from './lib/cluster-dns-provider-settings/cluster-dns-provider-settings'
 export * from './lib/hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
