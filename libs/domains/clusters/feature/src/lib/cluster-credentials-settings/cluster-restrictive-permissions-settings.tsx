@@ -1,6 +1,6 @@
 import { type CloudProviderEnum, type Cluster } from 'qovery-typescript-axios'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { BlockContent, InputToggle } from '@qovery/shared/ui'
+import { BlockContent, InputText, InputToggle } from '@qovery/shared/ui'
 import { ClusterCredentialsSettings } from './cluster-credentials-settings'
 import { ClusterWidePermissionCredentialsSettings } from './cluster-wide-permission-credentials-settings'
 
@@ -49,9 +49,32 @@ export function ClusterRestrictivePermissionsSettings({
       </BlockContent>
 
       {isUsingRestrictivePermissions && (
-        <BlockContent title="Extended credentials" dataTestId="extended-credentials-block">
-          <ClusterWidePermissionCredentialsSettings cloudProvider={cloudProvider} />
-        </BlockContent>
+        <>
+          <BlockContent title="Extended credentials" dataTestId="extended-credentials-block">
+            <ClusterWidePermissionCredentialsSettings cloudProvider={cloudProvider} />
+          </BlockContent>
+
+          {/* UI only for now: the value isn't sent until the backend supports it */}
+          <BlockContent title="Slack webhook" dataTestId="slack-webhook-block">
+            <Controller
+              name="slack_webhook_url"
+              control={control}
+              render={({ field }) => (
+                <InputText
+                  dataTestId="input-slack-webhook-url"
+                  type="password"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Slack webhook URL"
+                  placeholder="https://hooks.slack.com/services/…"
+                  hint="Receive a Slack message when Qovery requests access to the extended credentials."
+                  autoComplete="off"
+                />
+              )}
+            />
+          </BlockContent>
+        </>
       )}
     </>
   )

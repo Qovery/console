@@ -139,6 +139,29 @@ describe('ClusterRestrictivePermissionsSettings', () => {
     expect(isBefore(restrictiveBlock, extendedBlock)).toBe(true)
   })
 
+  it('should display the Slack webhook in its own block as a password field when restrictive permissions are on', () => {
+    renderSettings({
+      credentials: 'static-1',
+      wide_permission_credentials: 'role-1',
+      using_restrictive_permissions: true,
+    })
+
+    const block = screen.getByTestId('slack-webhook-block')
+    expect(within(block).getByText('Slack webhook')).toBeInTheDocument()
+    expect(within(block).getByLabelText('Slack webhook URL')).toHaveAttribute('type', 'password')
+    expect(
+      within(block).getByText('Receive a Slack message when Qovery requests access to the extended credentials.')
+    ).toBeInTheDocument()
+    expect(isBefore(screen.getByTestId('extended-credentials-block'), block)).toBe(true)
+  })
+
+  it('should not display the Slack webhook when restrictive permissions are off', () => {
+    renderSettings({ credentials: 'static-1', using_restrictive_permissions: false })
+
+    expect(screen.queryByTestId('slack-webhook-block')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Slack webhook URL')).not.toBeInTheDocument()
+  })
+
   it('should switch the layout with the toggle and keep the initial values', async () => {
     const { userEvent } = renderSettings({
       credentials: 'static-1',
