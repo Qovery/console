@@ -55,7 +55,7 @@ type ExternalSecretRow = {
   filePath?: string
   isFile?: boolean
   isJson?: boolean
-  keyPrefix?: string
+  keyName?: string
   secretManagerAccessId?: string
   reference: string
   source: string | null
@@ -146,7 +146,7 @@ export function ExternalSecretsTab({
       filePath,
       isFile,
       isJson,
-      keyPrefix,
+      keyName,
       reference,
       secretManagerAccessId,
     }: AddSecretModalSubmitData) => {
@@ -162,7 +162,7 @@ export function ExternalSecretsTab({
             reference,
             description,
             isJson: true,
-            keyPrefix,
+            keyName,
             secretManagerAccessId,
             source: manager?.name ?? null,
             sourceIcon: getSecretManagerProvider(manager),
@@ -197,7 +197,7 @@ export function ExternalSecretsTab({
         filePath,
         isFile,
         isJson,
-        keyPrefix,
+        keyName,
         reference,
         secretManagerAccessId,
       }: AddSecretModalSubmitData
@@ -213,7 +213,7 @@ export function ExternalSecretsTab({
                   name,
                   reference,
                   description,
-                  keyPrefix,
+                  keyName,
                   secretManagerAccessId,
                   source: manager?.name ?? null,
                   sourceIcon: getSecretManagerProvider(manager),
@@ -428,7 +428,7 @@ export function ExternalSecretsTab({
               {secret.isJson && (
                 <div className="flex items-center gap-1 text-ssm text-neutral-subtle">
                   <Icon iconName="brackets-curly" />
-                  <span>{secret.keyPrefix ? `Prefix: ${secret.keyPrefix.replace(/_+$/, '')}_` : 'No prefix'}</span>
+                  <span>{`Key: ${secret.keyName}`}</span>
                 </div>
               )}
               {showFilePath && (

@@ -88,34 +88,79 @@ describe('AddSecretModal', () => {
       )
     })
   })
-  it('submits a JSON display name separately from its reference', async () => {
+  it('imports a JSON key and follows its name until the secret name is overridden', async () => {
     const onSubmit = jest.fn()
     const { userEvent } = renderWithProviders(
       <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
     )
-    expect(screen.getByText('Add secret as JSON')).toBeInTheDocument()
-    expect(screen.queryByText('Secret parameters')).not.toBeInTheDocument()
-    expect(screen.getByText('For identification only. Not used in your code.')).toBeInTheDocument()
-    expect(screen.queryByLabelText('Path')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Display name')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Key prefix (optional)')).not.toBeInTheDocument()
+    expect(screen.queryByText('Variables to import')).not.toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
     expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
-    await userEvent.type(screen.getByLabelText('Reference'), 'lucis/production/application')
+    await userEvent.type(screen.getByLabelText('Key name'), 'DATABASE_URL')
+    expect(screen.getByLabelText('Secret name')).toHaveValue('DATABASE_URL')
+    await userEvent.clear(screen.getByLabelText('Key name'))
+    await userEvent.type(screen.getByLabelText('Key name'), 'DATABASE_PASSWORD')
+    expect(screen.getByLabelText('Secret name')).toHaveValue('DATABASE_PASSWORD')
+    await userEvent.clear(screen.getByLabelText('Secret name'))
     expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
-    await userEvent.type(screen.getByLabelText('Display name'), 'Application credentials')
+    await userEvent.type(screen.getByLabelText('Secret name'), 'APP_PASSWORD')
+    await userEvent.clear(screen.getByLabelText('Key name'))
+    await userEvent.type(screen.getByLabelText('Key name'), 'password')
+    expect(screen.getByLabelText('Secret name')).toHaveValue('APP_PASSWORD')
     await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: 'Application credentials',
-          reference: 'lucis/production/application',
+          name: 'APP_PASSWORD',
+          keyName: 'password',
+          reference: 'production/database',
           isJson: true,
-          isFile: false,
-          filePath: undefined,
         })
       )
     )
+    expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('keyPrefix')
   })
 
-  it('keeps the JSON edit form open if saving fails', async () => {
+  it.each(['Key name', 'Secret name'])('requires a nonblank %s for JSON secrets', async (label) => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
+    )
+    await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
+    await userEvent.type(screen.getByLabelText('Key name'), 'password')
+    await userEvent.clear(screen.getByLabelText(label))
+    await userEvent.type(screen.getByLabelText(label), '   ')
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it('keeps names unlinked after an override even when they match again', async () => {
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={jest.fn()} />
+    )
+    await userEvent.type(screen.getByLabelText('Key name'), 'password')
+    await userEvent.clear(screen.getByLabelText('Secret name'))
+    await userEvent.type(screen.getByLabelText('Secret name'), 'password')
+    await userEvent.type(screen.getByLabelText('Key name'), '_new')
+    expect(screen.getByLabelText('Secret name')).toHaveValue('password')
+  })
+
+  it('submits the auto-filled secret name without adding an underscore', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
+    )
+    await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
+    await userEvent.type(screen.getByLabelText('Key name'), 'password')
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name: 'password', keyName: 'password' }))
+    )
+  })
+
+  it('preserves the saved secret name when editing a JSON key and supports retry after failure', async () => {
     const onClose = jest.fn()
     const onSubmit = jest.fn().mockRejectedValue(new Error('Could not save'))
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
@@ -123,15 +168,20 @@ describe('AddSecretModal', () => {
       <AddSecretModal
         isJson
         mode="edit"
-        initialSecret={{ name: 'lucis/app', reference: 'lucis/app' }}
+        initialSecret={{ name: 'APP_PASSWORD', keyName: 'password', reference: 'production/database' }}
         secretSources={secretSources}
         onClose={onClose}
         onSubmit={onSubmit}
       />
     )
-    await userEvent.type(screen.getByLabelText('Reference'), '-updated')
+    expect(screen.getByLabelText('Secret name')).toHaveValue('APP_PASSWORD')
+    expect(screen.getByLabelText('Key name')).toHaveValue('password')
+    await userEvent.type(screen.getByLabelText('Key name'), '_new')
+    expect(screen.getByLabelText('Secret name')).toHaveValue('APP_PASSWORD')
     await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
-    await waitFor(() => expect(onSubmit).toHaveBeenCalled())
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name: 'APP_PASSWORD', keyName: 'password_new' }))
+    )
     expect(onClose).not.toHaveBeenCalled()
     expect(screen.getByRole('alert')).toHaveTextContent('Could not save')
     onSubmit.mockResolvedValueOnce(undefined)
@@ -140,73 +190,10 @@ describe('AddSecretModal', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     consoleError.mockRestore()
   })
-  it('accepts a JSON reference without fetching its keys', async () => {
-    const onSubmit = jest.fn()
-    const { userEvent } = renderWithProviders(
-      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
-    )
-    expect(screen.queryByText('Variables to import')).not.toBeInTheDocument()
-    expect(screen.queryByText('No JSON detected')).not.toBeInTheDocument()
-    await userEvent.click(screen.getByLabelText('Display name'))
-    await userEvent.paste('My credentials')
-    await userEvent.click(screen.getByLabelText('Reference'))
-    await userEvent.paste('new/json/reference')
-    expect(screen.getByRole('button', { name: 'Add secret' })).toBeEnabled()
-    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
-    await waitFor(() =>
-      expect(onSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'My credentials',
-          reference: 'new/json/reference',
-          isJson: true,
-        })
-      )
-    )
-    expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('keys')
-  })
-  it.each(['', 'APP'])('submits a JSON reference with optional prefix "%s"', async (prefix) => {
-    const onSubmit = jest.fn()
-    const { userEvent } = renderWithProviders(
-      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
-    )
-    expect(screen.getByLabelText('Key prefix (optional)')).toHaveValue('')
-    await userEvent.click(screen.getByLabelText('Display name'))
-    await userEvent.paste('Application credentials')
-    await userEvent.click(screen.getByLabelText('Reference'))
-    await userEvent.paste('lucis/app')
-    await userEvent.click(screen.getByLabelText('Key prefix (optional)'))
-    await userEvent.paste(prefix)
-    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
-    await waitFor(() =>
-      expect(onSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          isJson: true,
-          keyPrefix: prefix || undefined,
-        })
-      )
-    )
-  })
 
-  it('restores and clears the JSON prefix when editing', async () => {
-    const onSubmit = jest.fn()
-    const { userEvent } = renderWithProviders(
-      <AddSecretModal
-        isJson
-        mode="edit"
-        initialSecret={{ name: 'Credentials', reference: 'lucis/app', keyPrefix: 'APP' }}
-        secretSources={secretSources}
-        onClose={jest.fn()}
-        onSubmit={onSubmit}
-      />
-    )
-    expect(screen.getByLabelText('Key prefix (optional)')).toHaveValue('APP')
-    await userEvent.clear(screen.getByLabelText('Key prefix (optional)'))
-    await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ keyPrefix: undefined })))
-  })
-  it('infers the JSON display name from the reference without overwriting a custom name', async () => {
+  it('does not infer JSON keys from the reference name', async () => {
     useSecretManagerProviderSecretsMock.mockReturnValue({
-      data: { results: ['production/app', 'production/database'] },
+      data: { results: ['production/app'] },
       isError: false,
       isFetching: false,
     } as ReturnType<typeof useSecretManagerProviderSecrets>)
@@ -215,11 +202,8 @@ describe('AddSecretModal', () => {
     )
     await userEvent.click(screen.getByLabelText('Reference'))
     await userEvent.click(screen.getByText('production/app'))
-    expect(screen.getByLabelText('Display name')).toHaveValue('APP')
-    await userEvent.clear(screen.getByLabelText('Display name'))
-    await userEvent.paste('My credentials')
-    await userEvent.click(screen.getByLabelText('Reference'))
-    await userEvent.click(screen.getByText('production/database'))
-    expect(screen.getByLabelText('Display name')).toHaveValue('My credentials')
+    expect(screen.getByLabelText('Key name')).toHaveValue('')
+    expect(screen.getByLabelText('Secret name')).toHaveValue('')
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
   })
 })

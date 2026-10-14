@@ -66,7 +66,7 @@ function mapSecretForForm(
     description: secret.description,
     filePath: secret.filePath,
     isFile: secret.isFile,
-    ...(secret.isJson ? { isJson: true, keyPrefix: secret.keyPrefix } : {}),
+    ...(secret.isJson ? { isJson: true, keyName: secret.keyName } : {}),
     reference: secret.reference,
     secretManagerAccessId: secret.secretManagerAccessId,
     source: source?.tableLabel ?? null,
@@ -422,9 +422,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                           {secret.isJson && (
                             <div className="flex min-w-0 items-center gap-1 text-ssm text-neutral-subtle">
                               <Icon iconName="brackets-curly" />
-                              <span className="truncate">
-                                {secret.keyPrefix ? `Prefix: ${secret.keyPrefix.replace(/_+$/, '')}_` : 'No prefix'}
-                              </span>
+                              <span className="truncate">{`Key: ${secret.keyName}`}</span>
                             </div>
                           )}
                           {secret.filePath && (

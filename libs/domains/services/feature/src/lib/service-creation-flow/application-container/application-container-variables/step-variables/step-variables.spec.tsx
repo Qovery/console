@@ -58,7 +58,7 @@ jest.mock('@qovery/domains/variables/feature', () => ({
           reference: 'production/credentials',
           isJson,
           isFile: !!isFile,
-          keyPrefix: 'APP',
+          keyName: 'APP',
           secretManagerAccessId: 'manager-id',
         })
         onClose()
@@ -107,7 +107,7 @@ function VariablesState() {
   return <div data-testid="variables-state">{JSON.stringify(variablesForm.watch())}</div>
 }
 
-function JsonSecretStep({ keyPrefix }: { keyPrefix?: string }) {
+function JsonSecretStep({ keyName }: { keyName?: string }) {
   const { variablesForm } = useApplicationContainerCreateContext()
   useEffect(() => {
     variablesForm.setValue('externalSecrets', [
@@ -115,10 +115,10 @@ function JsonSecretStep({ keyPrefix }: { keyPrefix?: string }) {
         name: 'Application credentials',
         reference: 'lucis/production/application',
         isJson: true,
-        keyPrefix,
+        keyName,
       },
     ])
-  }, [variablesForm, keyPrefix])
+  }, [variablesForm, keyName])
   return <ApplicationContainerStepVariables onBack={jest.fn()} onSubmit={jest.fn()} />
 }
 
@@ -260,35 +260,32 @@ describe('ApplicationContainerStepVariables', () => {
     await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as JSON' }))
     await userEvent.click(screen.getByRole('button', { name: 'JSON secret modal' }))
     expect(screen.getByText('My JSON credentials')).toBeInTheDocument()
-    expect(screen.getByText('Prefix: APP_')).toBeInTheDocument()
-    expect(screen.getByTestId('variables-state')).toHaveTextContent('"keyPrefix":"APP"')
+    expect(screen.getByText('Key: APP')).toBeInTheDocument()
+    expect(screen.getByTestId('variables-state')).toHaveTextContent('"keyName":"APP"')
     await userEvent.click(screen.getByRole('button', { name: 'Delete secret' }))
     expect(screen.queryByText('My JSON credentials')).not.toBeInTheDocument()
   })
 
-  it.each([undefined, 'APP', 'APP_'])(
-    'renders JSON references with prefix %s without expandable key details',
-    (keyPrefix) => {
-      mockUseVariablesSecretManagers.mockReturnValue({
-        secretManagers: [],
-        hasClusterSecretManagerConfigured: true,
-        clusterId: 'cluster-1',
-      })
-      renderWithProviders(
-        <ApplicationContainerCreationFlow
-          creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
-          defaultServiceType="APPLICATION"
-        >
-          <JsonSecretStep keyPrefix={keyPrefix} />
-        </ApplicationContainerCreationFlow>
-      )
-      expect(screen.getByText('Application credentials')).toBeInTheDocument()
-      expect(screen.getByText('lucis/production/application')).toBeInTheDocument()
-      expect(screen.getByText(keyPrefix ? 'Prefix: APP_' : 'No prefix')).toBeInTheDocument()
-      expect(screen.queryByLabelText(/Expand keys|Collapse keys|Copy DATABASE_URL/)).not.toBeInTheDocument()
-      expect(screen.queryByText(/secrets imported/)).not.toBeInTheDocument()
-    }
-  )
+  it.each(['APP', 'APP_'])('renders JSON references with key name %s without expandable key details', (keyName) => {
+    mockUseVariablesSecretManagers.mockReturnValue({
+      secretManagers: [],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-1',
+    })
+    renderWithProviders(
+      <ApplicationContainerCreationFlow
+        creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
+        defaultServiceType="APPLICATION"
+      >
+        <JsonSecretStep keyName={keyName} />
+      </ApplicationContainerCreationFlow>
+    )
+    expect(screen.getByText('Application credentials')).toBeInTheDocument()
+    expect(screen.getByText('lucis/production/application')).toBeInTheDocument()
+    expect(screen.getByText(`Key: ${keyName}`)).toBeInTheDocument()
+    expect(screen.queryByLabelText(/Expand keys|Collapse keys|Copy DATABASE_URL/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/secrets imported/)).not.toBeInTheDocument()
+  })
 
   it('does not expose external secret creation when no secret manager is linked', () => {
     renderWithProviders(

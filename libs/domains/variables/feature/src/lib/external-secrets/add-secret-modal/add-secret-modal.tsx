@@ -32,7 +32,7 @@ export type AddSecretModalSubmitData = {
   name: string
   description?: string
   filePath?: string
-  keyPrefix?: string
+  keyName?: string
   isFile: boolean
   isJson?: boolean
   reference: string
@@ -44,7 +44,7 @@ export type AddSecretModalInitialSecret = {
   reference: string
   description?: string
   filePath?: string
-  keyPrefix?: string
+  keyName?: string
 }
 
 interface AddSecretModalProps {
@@ -64,7 +64,7 @@ type AddSecretFormValues = {
   reference: string
   path: string
   secretName: string
-  keyPrefix: string
+  keyName: string
   description: string
   acknowledgeEnvironmentSecretCost: boolean
 }
@@ -88,7 +88,7 @@ export function AddSecretModal({
       reference: initialSecret?.reference ?? '',
       path: initialSecret?.filePath ?? '',
       secretName: initialSecret?.name ?? '',
-      keyPrefix: initialSecret?.keyPrefix ?? '',
+      keyName: initialSecret?.keyName ?? '',
       description: initialSecret?.description ?? '',
       acknowledgeEnvironmentSecretCost: false,
     },
@@ -97,6 +97,7 @@ export function AddSecretModal({
   const { enableAlertClickOutside } = useModal()
   const [referenceInput, setReferenceInput] = useState('')
   const [submitError, setSubmitError] = useState<string>()
+  const [isSecretNameOverridden, setIsSecretNameOverridden] = useState(mode === 'edit')
   const debouncedReferenceInput = useDebounce(referenceInput, 300)
   const isDirty = methods.formState.isDirty
   const shouldDisplayEnvironmentAcknowledgement = scope === 'ENVIRONMENT' && mode === 'create'
@@ -157,7 +158,7 @@ export function AddSecretModal({
         description: descriptionValue ? descriptionValue : undefined,
         filePath: isFile ? finalPath : undefined,
         isFile,
-        ...(isJson ? { isJson: true, keyPrefix: data.keyPrefix.trim() || undefined } : {}),
+        ...(isJson ? { isJson: true, keyName: data.keyName.trim() } : {}),
         reference: finalReference,
         secretManagerAccessId: selectedSource.value,
       })
@@ -199,7 +200,7 @@ export function AddSecretModal({
         description={match({ isJson, isFile })
           .with(
             { isJson: true },
-            () => 'Qovery will inject all top-level JSON keys as environment variables at deployment.'
+            () => 'Qovery will import the selected JSON key as an environment variable at deployment.'
           )
           .with(
             { isFile: true },
@@ -257,7 +258,7 @@ export function AddSecretModal({
                     onChange={(value) => {
                       const selected = value as string
                       field.onChange(selected)
-                      if (!secretNameValue) {
+                      if (!isJson && !secretNameValue) {
                         const inferredName = selected.split('/').pop()?.toUpperCase()
                         if (inferredName) {
                           methods.setValue('secretName', inferredName, { shouldValidate: true })
@@ -291,43 +292,51 @@ export function AddSecretModal({
             />
           )}
 
+          {isJson && (
+            <Controller
+              name="keyName"
+              control={methods.control}
+              rules={{ validate: (value) => !!value.trim() || 'Please enter a key name.' }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  className="mb-3 w-full"
+                  name={field.name}
+                  label="Key name"
+                  value={field.value}
+                  onChange={(event) => {
+                    field.onChange(event)
+                    if (!isSecretNameOverridden) {
+                      methods.setValue('secretName', event.target.value, { shouldValidate: true })
+                    }
+                  }}
+                  hint="Key to import from the selected JSON secret."
+                  error={error?.message}
+                />
+              )}
+            />
+          )}
+
           <Controller
             name="secretName"
             control={methods.control}
-            rules={{ required: isJson ? 'Please enter a display name.' : 'Please enter a secret name.' }}
+            rules={{ validate: (value) => !!value.trim() || 'Please enter a secret name.' }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-3 w-full"
                 name={field.name}
-                label={isJson ? 'Display name' : 'Secret name'}
+                label="Secret name"
                 value={field.value}
-                onChange={field.onChange}
+                onChange={(event) => {
+                  field.onChange(event)
+                  if (isJson) setIsSecretNameOverridden(true)
+                }}
                 hint={
-                  isJson
-                    ? 'For identification only. Not used in your code.'
-                    : 'Name that other Qovery services will use'
+                  isJson ? 'Environment variable name to use in your code.' : 'Name that other Qovery services will use'
                 }
                 error={error?.message}
               />
             )}
           />
-
-          {isJson && (
-            <Controller
-              name="keyPrefix"
-              control={methods.control}
-              render={({ field }) => (
-                <InputText
-                  className="mb-3 w-full"
-                  name={field.name}
-                  label="Key prefix (optional)"
-                  value={field.value}
-                  onChange={field.onChange}
-                  hint="Prefix each key to avoid name conflicts. An underscore is added automatically."
-                />
-              )}
-            />
-          )}
 
           <Controller
             name="description"

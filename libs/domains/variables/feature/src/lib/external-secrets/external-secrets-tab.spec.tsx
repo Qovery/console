@@ -547,7 +547,7 @@ describe('ExternalSecretsTab', () => {
     await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as JSON' }))
     const modal = openModal.mock.calls[0][0].content as ReactElement<{
       isJson: boolean
-      initialSecret?: { keyPrefix?: string }
+      initialSecret?: { keyName?: string }
       onSubmit: (data: AddSecretModalSubmitData) => Promise<void>
     }>
     expect(modal.props.isJson).toBe(true)
@@ -557,7 +557,7 @@ describe('ExternalSecretsTab', () => {
       isJson: true,
       isFile: false,
       secretManagerAccessId: 'manager-id',
-      keyPrefix: 'APP_',
+      keyName: 'password',
     }
     await act(async () => modal.props.onSubmit(data))
     expect(screen.getByText('lucis/app')).toBeInTheDocument()
@@ -565,12 +565,19 @@ describe('ExternalSecretsTab', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
     const editModal = openModal.mock.calls[1][0].content as typeof modal
     expect(editModal.props.isJson).toBe(true)
-    expect(editModal.props.initialSecret?.keyPrefix).toBe('APP_')
+    expect(screen.getByText('Key: password')).toBeInTheDocument()
+    expect(editModal.props.initialSecret?.keyName).toBe('password')
     await act(async () =>
-      editModal.props.onSubmit({ ...data, name: 'Updated credentials', reference: 'lucis/updated' })
+      editModal.props.onSubmit({
+        ...data,
+        name: 'Updated credentials',
+        keyName: 'new_password',
+        reference: 'lucis/updated',
+      })
     )
     expect(screen.getByText('lucis/updated')).toBeInTheDocument()
     expect(screen.getByText('Updated credentials')).toBeInTheDocument()
+    expect(screen.getByText('Key: new_password')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
     await act(async () => openModalConfirmation.mock.calls[0][0].action())
     expect(screen.queryByText('lucis/updated')).not.toBeInTheDocument()
