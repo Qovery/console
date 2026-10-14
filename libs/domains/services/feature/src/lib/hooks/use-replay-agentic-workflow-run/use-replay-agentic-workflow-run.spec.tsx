@@ -107,7 +107,7 @@ describe('useReplayAgenticWorkflowRun', () => {
     expect(mockToast).not.toHaveBeenCalledWith('success', expect.anything(), expect.anything())
   })
 
-  it('explains a network or CORS failure', async () => {
+  it('reports an indeterminate delivery and advises checking the run history on a network or CORS failure', async () => {
     mockFetch.mockRejectedValue(new TypeError('Failed to fetch'))
     const { result } = renderHook(() => useReplayAgenticWorkflowRun({ serviceId: 'service-1' }), { wrapper })
 
@@ -116,7 +116,16 @@ describe('useReplayAgenticWorkflowRun', () => {
     })
 
     await waitFor(() =>
-      expect(mockToast).toHaveBeenCalledWith('error', 'Replay failed', expect.stringContaining('CORS'))
+      expect(mockToast).toHaveBeenCalledWith(
+        'error',
+        'Replay failed',
+        'Delivery could not be confirmed. The webhook may have received the request despite the browser error. Check the run history before replaying again.'
+      )
+    )
+    expect(mockToast).not.toHaveBeenCalledWith(
+      'error',
+      'Replay failed',
+      expect.stringContaining('could not be reached')
     )
     expect(invalidateQueries).not.toHaveBeenCalled()
   })

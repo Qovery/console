@@ -1000,7 +1000,10 @@ export const mutations = {
         credentials: 'omit',
       })
     } catch {
-      throw new Error('The webhook could not be reached. Check your network connection and its CORS settings.')
+      // The browser also rejects when the response lacks CORS headers, even if the webhook accepted the request.
+      throw new Error(
+        'Delivery could not be confirmed. The webhook may have received the request despite the browser error. Check the run history before replaying again.'
+      )
     }
     if (!response.ok) {
       throw new Error(`The webhook responded with status ${response.status}.`)

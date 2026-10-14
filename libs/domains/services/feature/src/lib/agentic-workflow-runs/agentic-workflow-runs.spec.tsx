@@ -644,6 +644,7 @@ describe('AgenticWorkflowRuns', () => {
       await userEvent.click(first)
 
       await waitFor(() => expect(first).toHaveClass('pointer-events-none'))
+      expect(first).toBeDisabled()
       expect(second).not.toHaveClass('pointer-events-none')
       expect(mockToast).not.toHaveBeenCalled()
 
@@ -651,6 +652,32 @@ describe('AgenticWorkflowRuns', () => {
 
       await waitFor(() => expect(mockToast).toHaveBeenCalledWith('success', 'Run replayed', expect.any(String)))
       expect(first).not.toHaveClass('pointer-events-none')
+    })
+
+    it('disables the pending row so a second click or key press cannot send the replay again', async () => {
+      let resolveFetch: (value: { ok: boolean; status: number }) => void = () => undefined
+      mockFetch.mockReturnValue(new Promise((resolve) => (resolveFetch = resolve)))
+      const { userEvent } = renderRuns([{}, { trigger: 'MANUAL', payload: null }])
+      const [first, second] = replayButtons()
+
+      first.focus()
+      await userEvent.keyboard('{Enter}')
+
+      await waitFor(() => expect(first).toBeDisabled())
+      expect(second).toBeEnabled()
+
+      first.focus()
+      await userEvent.keyboard('{Enter}')
+      await userEvent.keyboard(' ')
+      await userEvent.click(first)
+
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+
+      await act(async () => resolveFetch({ ok: true, status: 202 }))
+
+      await waitFor(() => expect(first).toBeEnabled())
+      await userEvent.click(first)
+      await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2))
     })
 
     it('shows an error message when the webhook rejects the replay', async () => {

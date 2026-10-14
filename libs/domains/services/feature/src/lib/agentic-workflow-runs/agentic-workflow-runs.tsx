@@ -240,11 +240,11 @@ function ReplayRunButton({ serviceId, payload }: { serviceId: string; payload?: 
       variant="outline"
       size="md"
       className="gap-2"
-      disabled={!webhookUrl}
+      disabled={!webhookUrl || isLoading}
       loading={isLoading}
       onClick={(event) => {
         event.stopPropagation()
-        if (webhookUrl) replayRun({ webhookUrl, payload })
+        if (webhookUrl && !isLoading) replayRun({ webhookUrl, payload })
       }}
     >
       <Icon iconName="rotate-right" iconStyle="regular" />
