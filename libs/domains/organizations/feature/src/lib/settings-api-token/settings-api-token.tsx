@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
+import { formatDistanceStrict } from 'date-fns'
 import { type OrganizationApiToken } from 'qovery-typescript-axios'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, Section, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
@@ -18,13 +19,14 @@ interface PageOrganizationApiProps {
 
 function PageOrganizationApi(props: PageOrganizationApiProps) {
   const { apiTokens, onDelete } = props
+  const [loadedAt] = useState(() => new Date())
 
   return (
     <div className="max-w-content-with-navigation-left">
       <BlockContent title="Token List" classNameContent="p-0">
         {apiTokens.length > 0 ? (
           <ul>
-            {apiTokens.map((token: OrganizationApiToken) => (
+            {apiTokens.map((token) => (
               <li
                 data-testid={`token-list-${token.id}`}
                 key={token.id}
@@ -45,8 +47,13 @@ function PageOrganizationApi(props: PageOrganizationApiProps) {
                     <p className="text-xs text-neutral-subtle">
                       <span className="mr-3 inline-block">Role: {upperCaseFirstLetter(token.role_name)}</span>
                       {token.created_at && (
-                        <span className="inline-block" title={dateUTCString(token.created_at)}>
+                        <span className="mr-3 inline-block" title={dateUTCString(token.created_at)}>
                           Created since {dateMediumLocalFormat(token.created_at)}
+                        </span>
+                      )}
+                      {token.last_used_at && (
+                        <span className="inline-block" title={dateUTCString(token.last_used_at)}>
+                          Last used {formatDistanceStrict(new Date(token.last_used_at), loadedAt, { addSuffix: true })}
                         </span>
                       )}
                     </p>

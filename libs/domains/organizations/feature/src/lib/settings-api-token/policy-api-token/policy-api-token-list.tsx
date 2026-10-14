@@ -1,4 +1,6 @@
+import { formatDistanceStrict } from 'date-fns'
 import { type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { Button, EmptyState, Icon, Skeleton, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -12,6 +14,7 @@ export interface PolicyApiTokenListProps {
 
 export function PolicyApiTokenList({ policyApiTokens, onDelete }: PolicyApiTokenListProps) {
   const { openModal, closeModal } = useModal()
+  const [loadedAt] = useState(() => new Date())
 
   if (policyApiTokens.length === 0) {
     return (
@@ -53,8 +56,13 @@ export function PolicyApiTokenList({ policyApiTokens, onDelete }: PolicyApiToken
               )}
               {token.creator_name && <span className="mr-3 inline-block">Created by {token.creator_name}</span>}
               {token.created_at && (
-                <span className="inline-block" title={dateUTCString(token.created_at)}>
+                <span className="mr-3 inline-block" title={dateUTCString(token.created_at)}>
                   Created since {dateMediumLocalFormat(token.created_at)}
+                </span>
+              )}
+              {token.last_used_at && (
+                <span className="inline-block" title={dateUTCString(token.last_used_at)}>
+                  Last used {formatDistanceStrict(new Date(token.last_used_at), loadedAt, { addSuffix: true })}
                 </span>
               )}
             </p>
