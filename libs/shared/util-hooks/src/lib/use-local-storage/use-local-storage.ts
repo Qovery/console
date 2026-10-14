@@ -4,7 +4,7 @@ function dispatchStorageEvent(key: string, newValue: string | null) {
   window.dispatchEvent(new StorageEvent('storage', { key, newValue }))
 }
 
-function setLocalStorageItem<T>(key: string, value: T) {
+export function setLocalStorageItem<T>(key: string, value: T) {
   const localStorageValue = typeof value === 'string' ? value : JSON.stringify(value)
   window.localStorage.setItem(key, localStorageValue)
   dispatchStorageEvent(key, localStorageValue)
@@ -15,7 +15,7 @@ function removeLocalStorageItem(key: string) {
   dispatchStorageEvent(key, null)
 }
 
-function getLocalStorageItem(key: string) {
+export function getLocalStorageItem(key: string) {
   return window.localStorage.getItem(key)
 }
 

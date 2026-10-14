@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { render, screen } from '__tests__/utils/setup-jest'
 import InputSelectSmall, { type InputSelectSmallProps } from './input-select-small'
 
 describe('InputSelectSmall', () => {
@@ -14,5 +14,19 @@ describe('InputSelectSmall', () => {
   it('should render successfully', () => {
     const { baseElement } = render(<InputSelectSmall {...props} />)
     expect(baseElement).toBeTruthy()
+  })
+
+  it('names the select with its aria label', () => {
+    render(
+      <InputSelectSmall
+        {...props}
+        name="storage"
+        label="Storage"
+        ariaLabel="Loki storage"
+        items={[{ label: 'PVC', value: 'pvc' }]}
+      />
+    )
+
+    expect(screen.getByRole('combobox', { name: 'Loki storage' })).toBeInTheDocument()
   })
 })

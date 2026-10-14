@@ -1,4 +1,6 @@
 import { type OrganizationApiToken } from 'qovery-typescript-axios'
+import { useState } from 'react'
+import { dateUTCString } from '@qovery/shared/util-dates'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useApiTokensModule from '../hooks/use-api-tokens/use-api-tokens'
 import * as useDeleteApiTokenModule from '../hooks/use-delete-api-token/use-delete-api-token'
@@ -35,6 +37,51 @@ describe('SettingsApiToken', () => {
     useDeleteApiTokenMockSpy.mockReturnValue({
       mutateAsync: deleteApiTokenMock,
     })
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('should show last usage next to creation, relative to when the list loaded', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-10-13T12:00:00Z'))
+    const lastUsedAt = '2026-10-13T10:00:00Z'
+    useApiTokensMockSpy.mockReturnValue({
+      data: [{ id: 'token-1', name: 'My token', created_at: '2024-01-01T00:00:00Z', last_used_at: lastUsedAt }],
+    })
+
+    function TestPage() {
+      const [renderCount, setRenderCount] = useState(0)
+      return (
+        <>
+          <button onClick={() => setRenderCount(renderCount + 1)}>Render {renderCount}</button>
+          <SettingsApiToken />
+        </>
+      )
+    }
+
+    const { userEvent } = renderWithProviders(<TestPage />)
+
+    const lastUsed = screen.getByText('Last used 2 hours ago')
+    expect(lastUsed).toHaveAttribute('title', dateUTCString(lastUsedAt))
+    expect(lastUsed.previousElementSibling).toHaveTextContent('Created since')
+
+    jest.setSystemTime(new Date('2026-10-13T13:00:00Z'))
+    await userEvent.click(screen.getByRole('button', { name: 'Render 0' }))
+
+    expect(screen.getByRole('button', { name: 'Render 1' })).toBeInTheDocument()
+    expect(screen.getByText('Last used 2 hours ago')).toBeInTheDocument()
+  })
+
+  it.each([null, undefined])('should hide last usage when the timestamp is %s', (lastUsedAt) => {
+    useApiTokensMockSpy.mockReturnValue({
+      data: [{ id: 'token-1', name: 'My token', last_used_at: lastUsedAt }],
+    })
+
+    renderWithProviders(<SettingsApiToken />)
+
+    expect(screen.getByTestId('token-list-token-1')).toBeInTheDocument()
+    expect(screen.queryByText(/Last used/)).not.toBeInTheDocument()
   })
 
   it('should render empty state', () => {
