@@ -6,7 +6,7 @@ interface ProfileChangesBarProps {
   changeCount: number
   isSaving: boolean
   isDeploying: boolean
-  // False once a check fails or reports violations or missing inputs; true while the edits are being checked.
+  // False once a check fails or reports violations or missing inputs. While edits are checked again, the last verdict holds.
   canSubmit: boolean
   onReset: () => void
   onSave: () => void
