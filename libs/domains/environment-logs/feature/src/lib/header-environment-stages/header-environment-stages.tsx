@@ -1,8 +1,9 @@
 import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type DeploymentHistoryEnvironmentV2, type EnvironmentStatus } from 'qovery-typescript-axios'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, useState } from 'react'
 import { Badge, DeploymentAction, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { trimId } from '@qovery/shared/util-js'
 
 export interface HeaderEnvironmentStagesProps extends PropsWithChildren {
@@ -17,6 +18,16 @@ export function HeaderEnvironmentStages({
 }: HeaderEnvironmentStagesProps) {
   const { deploymentId } = useParams({ strict: false })
   const totalDurationSec = environmentStatus?.total_deployment_duration_in_seconds ?? 0
+  const [isCopied, setIsCopied] = useState(false)
+  const [, copyToClipboard] = useCopyToClipboard()
+
+  const handleCopyExecutionId = () => {
+    if (!deploymentId) return
+
+    copyToClipboard(deploymentId)
+    setIsCopied(true)
+    setTimeout(() => setIsCopied(false), 1000)
+  }
 
   return (
     <div className="flex h-12 w-full items-center justify-between">
@@ -47,14 +58,50 @@ export function HeaderEnvironmentStages({
                   {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
                 </span>
               </Badge>
-              <Badge variant="surface" className="max-w-full whitespace-nowrap">
-                <Tooltip side="bottom" content={<span>Execution id: {deploymentId}</span>}>
-                  <span className="flex items-center gap-1.5 truncate">
-                    <Icon iconName="code" iconStyle="regular" className="text-sm text-neutral-subtle" />
-                    <span className="font-normal text-neutral">{trimId(deploymentId ?? '')}</span>
-                  </span>
-                </Tooltip>
-              </Badge>
+              <Tooltip side="bottom" content={<span>Execution id: {deploymentId}</span>}>
+                <button
+                  type="button"
+                  aria-label="Copy execution id"
+                  disabled={!deploymentId}
+                  onClick={handleCopyExecutionId}
+                  className="group inline-flex disabled:cursor-default"
+                >
+                  <Badge
+                    variant="surface"
+                    className="max-w-full cursor-pointer whitespace-nowrap transition-colors hover:bg-surface-neutral-componentHover group-disabled:cursor-default group-disabled:hover:bg-surface-neutral-subtle"
+                  >
+                    <span className="flex items-center gap-1.5 truncate">
+                      <span className="relative flex size-4 shrink-0 items-center justify-center">
+                        <Icon
+                          iconName="code"
+                          iconStyle="regular"
+                          className={clsx('absolute text-sm text-neutral-subtle transition-opacity', {
+                            'opacity-0': isCopied,
+                            'opacity-100 group-hover:opacity-0': !isCopied,
+                          })}
+                        />
+                        <Icon
+                          iconName="copy"
+                          iconStyle="regular"
+                          className={clsx('absolute text-sm text-neutral-subtle transition-opacity', {
+                            'opacity-0': isCopied,
+                            'opacity-0 group-hover:opacity-100': !isCopied,
+                          })}
+                        />
+                        <Icon
+                          iconName="check"
+                          iconStyle="regular"
+                          className={clsx('absolute text-sm text-neutral-subtle transition-opacity', {
+                            'opacity-100': isCopied,
+                            'opacity-0': !isCopied,
+                          })}
+                        />
+                      </span>
+                      <span className="font-normal text-neutral">{trimId(deploymentId ?? '')}</span>
+                    </span>
+                  </Badge>
+                </button>
+              </Tooltip>
             </div>
           )}
         </div>
