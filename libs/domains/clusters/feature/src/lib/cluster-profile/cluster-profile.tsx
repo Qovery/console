@@ -1,12 +1,9 @@
-import equal from 'fast-deep-equal'
 import { type PlatformComponentConfigurationResolutionResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
-import { CatalogVariableInput } from '@qovery/shared/console-shared'
+import { SchemaFieldInput, type SchemaFieldValue, getSchemaFieldValue } from '@qovery/shared/schema-fields/feature'
 import { EmptyState, Heading, Navbar, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
-import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
-import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
-import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
+import { usePlatformComponentConfigurations } from '../hooks/use-platform-component-configurations/use-platform-component-configurations'
 import {
   type PlatformFieldDescriptor,
   applyPlatformConfigurationDefaults,
@@ -16,9 +13,9 @@ import {
   isPlatformReadOnlyField,
   isSupportedPlatformField,
   omitEmptyValues,
-  toCatalogVariableField,
   toPlatformFieldDescriptor,
-} from '../platform-configuration/platform-configuration-utils'
+  toSchemaField,
+} from '../utils/platform-configuration-utils'
 import { ClusterProfileProvider, useClusterProfileContext } from './cluster-profile-context'
 import {
   ClusterProfileItemIcon,
@@ -117,6 +114,18 @@ function getSectionFields(section: ProfileSection, preview?: PlatformComponentCo
   return section.fieldSearch ? filterFieldsByProfileSearch(fields, section.fieldSearch) : fields
 }
 
+// What a section displays once resolved: its fields and the cluster inputs it requires, narrowed by the search.
+function getSectionContent(section: ProfileSection, preview?: PlatformComponentConfigurationResolutionResponse) {
+  const allRequirements = preview?.requirements ?? []
+  return {
+    fields: getSectionFields(section, preview),
+    allRequirements,
+    requirements: section.fieldSearch
+      ? allRequirements.filter((requirement) => matchesProfileSearch(requirement, section.fieldSearch ?? ''))
+      : allRequirements,
+  }
+}
+
 function ProfileConfigurationSkeleton() {
   return (
     <div role="status" aria-label="Loading configuration" className="flex flex-col">
@@ -155,13 +164,9 @@ function ProfileConfigurationSection({
   profileConfig: Record<string, unknown>
   clusterInputs: Record<string, string>
   onProfileConfigChange: (componentKey: string, fieldKey: string, value: unknown) => void
-  onClusterInputChange: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
+  onClusterInputChange: (componentKey: string, field: PlatformFieldDescriptor, value: SchemaFieldValue) => void
 }) {
-  const fields = getSectionFields(section, preview)
-  const allRequirements = preview?.requirements ?? []
-  const requirements = section.fieldSearch
-    ? allRequirements.filter((requirement) => matchesProfileSearch(requirement, section.fieldSearch ?? ''))
-    : allRequirements
+  const { fields, allRequirements, requirements } = getSectionContent(section, preview)
   const violations = preview?.violations ?? []
   // Sections showing a subset of a source component's fields would surface that component's other violations.
   const unmappedViolations = section.fieldKeys
@@ -194,12 +199,12 @@ function ProfileConfigurationSection({
       {requirements.length > 0 ? (
         <div className="flex flex-col">
           {requirements.map(toPlatformFieldDescriptor).map((requirement) => (
-            <CatalogVariableInput
+            <SchemaFieldInput
               key={requirement.key}
               booleanControl="toggle"
-              field={toCatalogVariableField(requirement)}
+              field={toSchemaField(requirement)}
               layout="row"
-              value={getCatalogVariableValue(requirement, clusterInputs[requirement.key])}
+              value={getSchemaFieldValue(requirement, clusterInputs[requirement.key])}
               error={getFieldViolation(violations, requirement.key, 'clusterInputs')}
               highlight={highlight}
               onChange={(value) => onClusterInputChange(section.component.key, requirement, value)}
@@ -245,7 +250,6 @@ function ClusterProfileView({
 }: ClusterProfileFeatureProps) {
   const {
     clusterId,
-    cluster,
     configuration,
     profileTree,
     isLoading,
@@ -397,22 +401,26 @@ function ClusterProfileView({
       (query) => query.isError && query.data && displayedComponentKeySet.has(query.data.componentKey)
     )
   const isConfigurationLoading = Boolean(activeComponent) && !hasResolvedConfiguration
+  // The sidebar searches the template fields, which include fields the current values hide: the active component can
+  // match the search while none of its displayed settings do.
+  const hasNoMatchingSetting =
+    Boolean(fieldSearch) &&
+    profileSections.every((section) => {
+      const { fields, requirements } = getSectionContent(section, previewsByComponent[section.component.key])
+      return !fields.length && !requirements.length
+    })
   const isInitialResolverError = hasResolverError && !hasResolvedConfiguration
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
-  // Saving needs every displayed or edited component resolved for the latest edits, with no violation or missing input.
-  const isConfigurationReady =
-    equal(debouncedEdits, edits) &&
-    Object.keys(previewRequests).every((componentKey) => {
-      const query = componentQueriesByKey[componentKey]
-      const preview = query?.data
-      return (
-        query &&
-        !query.isFetching &&
-        !query.isError &&
-        preview?.componentKey === componentKey &&
-        isPlatformConfigurationReady(preview.violations, preview.requirements)
-      )
-    })
+  // Saving is optimistic, as the API validates it too: only a failed check or one reporting violations or missing inputs
+  // blocks it. While edits are checked again, the last verdict holds so the buttons do not flicker.
+  const canSaveConfiguration = Object.keys(previewRequests).every((componentKey) => {
+    const query = componentQueriesByKey[componentKey]
+    if (query?.isError) return false
+    const preview = query?.data
+    return (
+      preview?.componentKey !== componentKey || isPlatformConfigurationReady(preview.violations, preview.requirements)
+    )
+  })
 
   const handleSelectSection = (sectionId: string) => {
     const firstItem = getFirstConfigurableComponent(visibleProfileTree.find((item) => item.id === sectionId)?.children)
@@ -423,123 +431,120 @@ function ClusterProfileView({
     onActiveComponentChange?.(itemId)
   }
 
+  const noSettingsState = (
+    <div className="p-4">
+      <EmptyState
+        icon="wave-pulse"
+        title={
+          <span className="font-normal leading-5">
+            {searchQuery ? 'No settings match your search' : 'Nothing to configure for this cluster'}
+          </span>
+        }
+        className="h-auto w-full p-8 shadow-sm"
+      />
+    </div>
+  )
+
   return (
-    <div className="flex h-page-container min-h-0 flex-col overflow-hidden bg-background-secondary text-sm">
-      <header className="flex min-h-11 items-center justify-between gap-4 px-4 py-2">
-        <div className="flex min-w-0 items-center gap-2">
-          {cluster ? <ClusterAvatar cluster={cluster} size="sm" /> : null}
-          <p className="truncate font-medium text-neutral">{cluster?.name ?? 'Cluster'}</p>
+    <div className="flex h-page-container min-h-0 items-stretch overflow-hidden text-sm">
+      <ClusterProfileSidebar
+        layers={sidebarLayers}
+        search={search}
+        selectedSectionId={activeLayer?.id}
+        selectedItemId={activeComponent?.key}
+        isLoading={isLoading}
+        isError={isError}
+        onSearchChange={(nextSearch) => onSearchChange?.(nextSearch)}
+        onSelectSection={handleSelectSection}
+        onSelectItem={handleSelectItem}
+        footer={<ProfileOperatorFooter />}
+      />
+
+      <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-background">
+        <div className="flex items-start justify-between gap-4 bg-surface-neutral px-4 pb-2 pt-4">
+          <div className="min-w-0">
+            <Heading level={2} className="!text-base font-medium leading-6">
+              {headerLayer?.label ?? 'Log infra'}
+            </Heading>
+            {headerLayer?.description ? (
+              <p className="mt-0.5 text-xs text-neutral-subtle">{headerLayer.description}</p>
+            ) : null}
+          </div>
         </div>
-      </header>
 
-      <div className="flex min-h-0 flex-1 items-stretch pr-4">
-        <ClusterProfileSidebar
-          layers={sidebarLayers}
-          search={search}
-          selectedSectionId={activeLayer?.id}
-          selectedItemId={activeComponent?.key}
-          isLoading={isLoading}
-          isError={isError}
-          onSearchChange={(nextSearch) => onSearchChange?.(nextSearch)}
-          onSelectSection={handleSelectSection}
-          onSelectItem={handleSelectItem}
-          footer={<ProfileOperatorFooter />}
-        />
+        <div className="border-b border-neutral bg-surface-neutral px-4">
+          <Navbar.Root
+            activeId={activeComponent?.key}
+            role="navigation"
+            ariaLabel={`${headerLayer?.label ?? 'Profile'} configuration`}
+          >
+            {profileTabs.map((tab) => (
+              <Navbar.Item
+                key={tab.id}
+                id={tab.id}
+                href="#"
+                onClick={(event) => {
+                  event.preventDefault()
+                  onActiveComponentChange?.(tab.id)
+                }}
+              >
+                <ClusterProfileItemIcon />
+                {tab.label}
+              </Navbar.Item>
+            ))}
+          </Navbar.Root>
+        </div>
 
-        <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
-          <div className="flex items-start justify-between gap-4 bg-surface-neutral px-4 pb-2 pt-4">
-            <div className="min-w-0">
-              <Heading level={2} className="!text-base font-medium leading-6">
-                {headerLayer?.label ?? 'Log infra'}
-              </Heading>
-              {headerLayer?.description ? (
-                <p className="mt-0.5 text-xs text-neutral-subtle">{headerLayer.description}</p>
-              ) : null}
-            </div>
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <div key={formKey} className="flex min-h-full flex-col">
+            {!isLoading && !isError && !activeComponent ? (
+              noSettingsState
+            ) : isInitialResolverError ? (
+              <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
+                Configuration could not be checked. Refresh the page and try again.
+              </div>
+            ) : isConfigurationLoading ? (
+              <ProfileConfigurationSkeleton />
+            ) : (
+              <>
+                {isBackgroundResolverError ? (
+                  <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
+                    Configuration could not be refreshed. The last resolved fields are still shown.
+                  </div>
+                ) : null}
+                {hasNoMatchingSetting
+                  ? noSettingsState
+                  : profileSections.map((section) => (
+                      <ProfileConfigurationSection
+                        key={section.id}
+                        section={section}
+                        highlight={searchQuery}
+                        preview={previewsByComponent[section.component.key]}
+                        profileConfig={profileConfigs[section.component.key] ?? {}}
+                        clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
+                        onProfileConfigChange={updateProfileConfig}
+                        onClusterInputChange={updateClusterInput}
+                      />
+                    ))}
+              </>
+            )}
+            {/* Keeps the last settings reachable above the floating changes bar. */}
+            {changeCount > 0 ? <div aria-hidden="true" className="h-28 shrink-0" /> : null}
           </div>
+        </div>
 
-          <div className="border-b border-neutral bg-surface-neutral px-4">
-            <Navbar.Root
-              activeId={activeComponent?.key}
-              role="navigation"
-              ariaLabel={`${headerLayer?.label ?? 'Profile'} configuration`}
-            >
-              {profileTabs.map((tab) => (
-                <Navbar.Item
-                  key={tab.id}
-                  id={tab.id}
-                  href="#"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    onActiveComponentChange?.(tab.id)
-                  }}
-                >
-                  <ClusterProfileItemIcon />
-                  {tab.label}
-                </Navbar.Item>
-              ))}
-            </Navbar.Root>
-          </div>
-
-          <div className="min-h-0 flex-1 overflow-y-auto">
-            <div key={formKey} className="flex min-h-full flex-col">
-              {!isLoading && !isError && !activeComponent ? (
-                <div className="p-4">
-                  <EmptyState
-                    icon="wave-pulse"
-                    title={
-                      <span className="font-normal leading-5">
-                        {searchQuery ? 'No settings match your search' : 'Nothing to configure for this cluster'}
-                      </span>
-                    }
-                    className="h-auto w-full p-8 shadow-sm"
-                  />
-                </div>
-              ) : isInitialResolverError ? (
-                <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
-                  Configuration could not be checked. Refresh the page and try again.
-                </div>
-              ) : isConfigurationLoading ? (
-                <ProfileConfigurationSkeleton />
-              ) : (
-                <>
-                  {isBackgroundResolverError ? (
-                    <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
-                      Configuration could not be refreshed. The last resolved fields are still shown.
-                    </div>
-                  ) : null}
-                  {profileSections.map((section) => (
-                    <ProfileConfigurationSection
-                      key={section.id}
-                      section={section}
-                      highlight={searchQuery}
-                      preview={previewsByComponent[section.component.key]}
-                      profileConfig={profileConfigs[section.component.key] ?? {}}
-                      clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
-                      onProfileConfigChange={updateProfileConfig}
-                      onClusterInputChange={updateClusterInput}
-                    />
-                  ))}
-                </>
-              )}
-              {/* Keeps the last settings reachable above the floating changes bar. */}
-              {changeCount > 0 ? <div aria-hidden="true" className="h-28 shrink-0" /> : null}
-            </div>
-          </div>
-
-          <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center px-4">
-            <ProfileChangesBar
-              changeCount={changeCount}
-              isSaving={isSaving}
-              isDeploying={isDeploying}
-              canSubmit={isConfigurationReady}
-              onReset={resetChanges}
-              onSave={saveChanges}
-              onSaveAndDeploy={saveAndDeployChanges}
-            />
-          </div>
-        </section>
-      </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center px-4">
+          <ProfileChangesBar
+            changeCount={changeCount}
+            isSaving={isSaving}
+            isDeploying={isDeploying}
+            canSubmit={canSaveConfiguration}
+            onReset={resetChanges}
+            onSave={saveChanges}
+            onSaveAndDeploy={saveAndDeployChanges}
+          />
+        </div>
+      </section>
     </div>
   )
 }

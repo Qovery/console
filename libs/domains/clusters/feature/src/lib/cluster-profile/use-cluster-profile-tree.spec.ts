@@ -1,12 +1,12 @@
 import { renderHook } from '@qovery/shared/util-tests'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
+import { usePlatformConfiguration } from '../hooks/use-platform-configuration/use-platform-configuration'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformConfiguration } from '../platform-configuration/hooks/use-platform-configuration'
 import { useClusterProfileTree } from './use-cluster-profile-tree'
 
 jest.mock('../hooks/use-cluster/use-cluster')
 jest.mock('../hooks/use-platform-templates/use-platform-templates')
-jest.mock('../platform-configuration/hooks/use-platform-configuration')
+jest.mock('../hooks/use-platform-configuration/use-platform-configuration')
 
 const mockUseCluster = useCluster as jest.Mock
 const mockUsePlatformTemplates = usePlatformTemplates as jest.Mock

@@ -1,16 +1,15 @@
-import { useParams } from '@tanstack/react-router'
+import { useBlocker, useParams } from '@tanstack/react-router'
 import equal from 'fast-deep-equal'
 import {
-  type Cluster,
   type ClusterPlatformConfigurationRequest,
   type ClusterPlatformConfigurationResponse,
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useContext, useState } from 'react'
+import { type SchemaFieldValue, getSchemaFieldValue } from '@qovery/shared/schema-fields/feature'
 import { toast } from '@qovery/shared/ui'
-import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
-import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/use-update-platform-configuration'
+import { useUpdatePlatformConfiguration } from '../hooks/use-update-platform-configuration/use-update-platform-configuration'
 import {
   type PlatformFieldDescriptor,
   type PlatformScalarField,
@@ -18,16 +17,19 @@ import {
   isPlatformScalarField,
   omitEmptyValues,
   updateComponentValue,
-} from '../platform-configuration/platform-configuration-utils'
+} from '../utils/platform-configuration-utils'
 import { type ProfileTreeItem } from './profile-tree'
 import { useClusterProfileTree } from './use-cluster-profile-tree'
+
+const PROFILE_ROUTE_ID = '/_authenticated/organization/$organizationId/cluster/$clusterId/profile'
+const LEAVE_UNSAVED_CHANGES_MESSAGE = 'You have unsaved changes on this profile. Leave the page and discard them?'
 
 export type ProfileValues = Record<string, Record<string, unknown>>
 export type ClusterInputValues = Record<string, Record<string, string>>
 
 // Scalars are compared as the inputs display them: an unset toggle shows as off, an unset text as empty.
 function getDisplayedScalarValue(field: Pick<PlatformFieldDescriptor, 'type' | 'defaultValue'>, value: unknown) {
-  return getCatalogVariableValue(field, value) ?? (field.type === 'bool' ? false : '')
+  return getSchemaFieldValue(field, value) ?? (field.type === 'bool' ? false : '')
 }
 
 // Local edits differing from the saved (or default) value; edits reverted by hand do not count.
@@ -124,7 +126,6 @@ function getConfigurationRequest(
 interface ClusterProfileContextValue {
   organizationId: string
   clusterId: string
-  cluster?: Cluster
   templates?: PlatformTemplateSummaryResponse[]
   configuration?: ClusterPlatformConfigurationResponse | null
   profileTree: ProfileTreeItem[]
@@ -139,7 +140,7 @@ interface ClusterProfileContextValue {
   isSaving: boolean
   isDeploying: boolean
   updateProfileConfig: (componentKey: string, fieldKey: string, value: unknown) => void
-  updateClusterInput: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
+  updateClusterInput: (componentKey: string, field: PlatformFieldDescriptor, value: SchemaFieldValue) => void
   resetChanges: () => void
   saveChanges: () => Promise<void>
   saveAndDeployChanges: () => Promise<void>
@@ -156,14 +157,16 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
   const { mutateAsync: updatePlatformConfiguration, isLoading: isSavingConfiguration } =
     useUpdatePlatformConfiguration()
   const { mutateAsync: deployCluster } = useDeployCluster()
-  const { cluster, templates, configuration, selectedTemplate, profileTree, isLoading, isError } =
-    useClusterProfileTree({ organizationId, clusterId })
+  const { templates, configuration, selectedTemplate, profileTree, isLoading, isError } = useClusterProfileTree({
+    organizationId,
+    clusterId,
+  })
 
   const updateProfileConfig = (componentKey: string, fieldKey: string, value: unknown) => {
     setProfileValues((currentValues) => updateComponentValue(currentValues, componentKey, fieldKey, value))
   }
 
-  const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
+  const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: SchemaFieldValue) => {
     // The input shows its default while unsaved: setting it back to what is displayed is no edit.
     const nextValue = String(value)
     const isDisplayedValue =
@@ -173,6 +176,21 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
       updateComponentValue(currentValues, componentKey, field.key, isDisplayedValue ? undefined : nextValue)
     )
   }
+
+  const changeCount = countProfileChanges(profileTree, configuration, profileValues, clusterInputs)
+  const hasChanges = changeCount > 0
+
+  useBlocker({
+    disabled: !hasChanges,
+    // Edits are kept while switching components of this profile: only leaving it would drop them.
+    shouldBlockFn: ({ next }) =>
+      !(
+        next.routeId.startsWith(PROFILE_ROUTE_ID) &&
+        'clusterId' in next.params &&
+        next.params.clusterId === clusterId
+      ) && !window.confirm(LEAVE_UNSAVED_CHANGES_MESSAGE),
+    enableBeforeUnload: hasChanges,
+  })
 
   const resetChanges = () => {
     setProfileValues({})
@@ -221,7 +239,6 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
   const value: ClusterProfileContextValue = {
     organizationId,
     clusterId,
-    cluster,
     templates,
     configuration,
     profileTree,
@@ -230,7 +247,7 @@ export function ClusterProfileProvider({ children }: PropsWithChildren) {
     profileValues,
     clusterInputs,
     formKey,
-    changeCount: countProfileChanges(profileTree, configuration, profileValues, clusterInputs),
+    changeCount,
     isSaving: isSavingConfiguration && !isSaveAndDeployPending,
     isDeploying: isSaveAndDeployPending,
     updateProfileConfig,

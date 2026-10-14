@@ -19,9 +19,9 @@ interface UsePlatformTemplateComponentConfigurationProps {
 
 export function usePlatformTemplateComponentConfiguration({
   organizationId,
-  templateKey,
-  templateVersion,
-  componentKey,
+  templateKey = '',
+  templateVersion = '',
+  componentKey = '',
   clusterMode,
   cloudProvider,
   request,
@@ -30,9 +30,9 @@ export function usePlatformTemplateComponentConfiguration({
   return useQuery({
     ...queries.platformConfiguration.templateComponentConfiguration({
       organizationId,
-      templateKey: templateKey ?? '',
-      templateVersion: templateVersion ?? '',
-      componentKey: componentKey ?? '',
+      templateKey,
+      templateVersion,
+      componentKey,
       clusterMode,
       cloudProvider,
       request,

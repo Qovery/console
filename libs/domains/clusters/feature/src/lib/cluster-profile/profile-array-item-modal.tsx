@@ -1,18 +1,18 @@
 import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { CatalogVariableInput } from '@qovery/shared/console-shared'
+import {
+  SchemaFieldInput,
+  type SchemaFieldValue,
+  getSchemaFieldValidationError,
+  getSchemaFieldValue,
+  isSchemaFieldValueFulfilled,
+} from '@qovery/shared/schema-fields/feature'
 import { ModalCrud } from '@qovery/shared/ui'
 import {
-  type CatalogVariableValue,
-  getCatalogFieldValidationError,
-  getCatalogVariableValue,
-  isCatalogFieldValueFulfilled,
-} from '@qovery/shared/util-js'
-import {
   type PlatformFieldDescriptor,
-  toCatalogVariableField,
   toPlatformConfigurationValue,
-} from '../platform-configuration/platform-configuration-utils'
+  toSchemaField,
+} from '../utils/platform-configuration-utils'
 
 export interface ProfileArrayItemModalProps {
   title: string
@@ -43,10 +43,10 @@ export function ProfileArrayItemModal({
     return () => onMountedChange?.(false)
   }, [onMountedChange])
 
-  const methods = useForm<Record<string, CatalogVariableValue | undefined>>({
+  const methods = useForm<Record<string, SchemaFieldValue | undefined>>({
     mode: 'onChange',
     defaultValues: Object.fromEntries(
-      fields.map((field, index) => [getFormName(index), getCatalogVariableValue(field, values[field.key])])
+      fields.map((field, index) => [getFormName(index), getSchemaFieldValue(field, values[field.key])])
     ),
   })
 
@@ -75,7 +75,7 @@ export function ProfileArrayItemModal({
       >
         <div className="flex flex-col gap-4">
           {fields.map((field, index) => {
-            const catalogField = toCatalogVariableField(field)
+            const schemaField = toSchemaField(field)
             return (
               <Controller
                 key={field.key}
@@ -83,14 +83,15 @@ export function ProfileArrayItemModal({
                 control={methods.control}
                 rules={{
                   validate: (value) => {
-                    if (catalogField.required && !isCatalogFieldValueFulfilled(value)) return 'Please enter a value.'
-                    return getCatalogFieldValidationError(catalogField, value) ?? true
+                    if (schemaField.required && !isSchemaFieldValueFulfilled(value)) return 'Please enter a value.'
+                    return getSchemaFieldValidationError(schemaField, value) ?? true
                   },
                 }}
                 render={({ field: { value, onChange }, fieldState: { error } }) => (
-                  <CatalogVariableInput
+                  <SchemaFieldInput
                     autoFocus={index === 0}
-                    field={catalogField}
+                    field={schemaField}
+                    disabled={field.readOnly}
                     value={value}
                     error={error?.message}
                     onChange={onChange}

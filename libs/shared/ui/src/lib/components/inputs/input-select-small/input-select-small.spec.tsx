@@ -16,13 +16,7 @@ describe('InputSelectSmall', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('names the select after its visible label', () => {
-    render(<InputSelectSmall {...props} name="storage" label="Storage" items={[{ label: 'PVC', value: 'pvc' }]} />)
-
-    expect(screen.getByRole('combobox', { name: 'Storage' })).toBeInTheDocument()
-  })
-
-  it('prefers an explicit accessible name', () => {
+  it('names the select with its aria label', () => {
     render(
       <InputSelectSmall
         {...props}

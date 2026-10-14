@@ -7,7 +7,7 @@ import {
   type PlatformTemplateComponentResponse,
   type SelfManagedClusterPlatformSelection,
 } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { type PropsWithChildren, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
@@ -15,12 +15,14 @@ import {
   Callout,
   CopyButton,
   ExternalLink,
+  Heading,
   Icon,
   IconFlag,
   InputSelect,
   InputText,
   InputToggle,
   LoaderSpinner,
+  Section,
 } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { ClusterCredentialsSettings } from '../cluster-credentials-settings/cluster-credentials-settings'
@@ -28,15 +30,15 @@ import { ProfileConfigurationField } from '../cluster-profile/profile-configurat
 import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
+import { usePlatformTemplateComponentConfiguration } from '../hooks/use-platform-template-component-configuration/use-platform-template-component-configuration'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformTemplateComponentConfiguration } from '../platform-configuration/hooks/use-platform-template-component-configuration'
 import {
   applyPlatformConfigurationDefaults,
   getUnmappedViolations,
   isPlatformConfigurationReady,
   isSupportedPlatformField,
   omitEmptyValues,
-} from '../platform-configuration/platform-configuration-utils'
+} from '../utils/platform-configuration-utils'
 
 const OPERATOR_STATUS_POLL_INTERVAL = 5000
 const INSTALLATION_DOCUMENTATION_URL = 'https://www.qovery.com/docs/getting-started/installation/kubernetes'
@@ -80,16 +82,15 @@ function StepLayout({
   description,
   children,
   footer,
-}: {
+}: PropsWithChildren<{
   title: string
   description: ReactNode
-  children: ReactNode
   footer?: ReactNode
-}) {
+}>) {
   return (
-    <div className="flex flex-col gap-6 pt-5">
+    <Section className="gap-6 pt-5">
       <div className="flex flex-col gap-1 px-5">
-        <h2 className="h4 text-neutral">{title}</h2>
+        <Heading className="text-2xl">{title}</Heading>
         <p className="text-sm text-neutral-subtle">{description}</p>
       </div>
       {children}
@@ -98,19 +99,19 @@ function StepLayout({
           {footer}
         </div>
       ) : null}
-    </div>
+    </Section>
   )
 }
 
-function StepSection({ title, action, children }: { title: string; action?: ReactNode; children: ReactNode }) {
+function StepSection({ title, action, children }: PropsWithChildren<{ title: string; action?: ReactNode }>) {
   return (
-    <section className="flex flex-col gap-3 px-5">
+    <Section className="gap-3 px-5">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-sm font-medium text-neutral">{title}</h3>
+        <Heading className="text-sm">{title}</Heading>
         {action}
       </div>
       {children}
-    </section>
+    </Section>
   )
 }
 
@@ -302,11 +303,18 @@ function OperatorStep({
           </Callout.Root>
         ) : null}
         {unmappedViolations.length ? (
-          <ul role="alert" className="mx-5 flex flex-col gap-1 text-sm text-negative">
-            {unmappedViolations.map((violation) => (
-              <li key={`${violation.fieldPath}-${violation.code}`}>{violation.message}</li>
-            ))}
-          </ul>
+          <Callout.Root color="red" className="mx-5" role="alert">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <ul className="flex flex-col gap-1">
+                {unmappedViolations.map((violation) => (
+                  <li key={`${violation.fieldPath}-${violation.code}`}>{violation.message}</li>
+                ))}
+              </ul>
+            </Callout.Text>
+          </Callout.Root>
         ) : null}
         {fields.length ? (
           <StepSection title="Configuration">
@@ -366,10 +374,8 @@ function InstallStep({
   }, [onInstalled, operatorStatus?.operator_connected])
 
   return (
-    <div className="flex flex-col gap-4 p-5">
-      <div>
-        <h2 className="h4 text-neutral">Install Qovery Operator</h2>
-      </div>
+    <Section className="gap-4 p-5">
+      <Heading className="text-2xl">Install Qovery Operator</Heading>
       {isBootstrapLoading ? (
         <div className="flex justify-center py-6">
           <LoaderSpinner />
@@ -447,7 +453,7 @@ function InstallStep({
           contact support
         </ExternalLink>
       </p>
-    </div>
+    </Section>
   )
 }
 

@@ -9,36 +9,31 @@ import { useModal } from '@qovery/shared/ui'
 import { act, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
+import { usePlatformComponentConfigurations } from '../hooks/use-platform-component-configurations/use-platform-component-configurations'
+import { usePlatformConfiguration } from '../hooks/use-platform-configuration/use-platform-configuration'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
-import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
-import { usePlatformConfiguration } from '../platform-configuration/hooks/use-platform-configuration'
-import { useUpdatePlatformConfiguration } from '../platform-configuration/hooks/use-update-platform-configuration'
+import { useUpdatePlatformConfiguration } from '../hooks/use-update-platform-configuration/use-update-platform-configuration'
 import { ClusterProfileFeature } from './cluster-profile'
 
-jest.mock('@tanstack/react-router', () => ({ useParams: jest.fn() }))
+const mockUseBlocker = jest.fn()
+jest.mock('@tanstack/react-router', () => ({
+  useParams: jest.fn(),
+  useBlocker: (options: unknown) => mockUseBlocker(options),
+}))
 const mockUseDebounce = jest.fn(<T,>(value: T) => value)
 jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
   useDebounce: <T,>(value: T) => mockUseDebounce(value),
 }))
-jest.mock('@qovery/shared/ui', () => {
-  const React = jest.requireActual('react')
-  const ui = jest.requireActual('@qovery/shared/ui')
-  return {
-    ...ui,
-    Icon: (props: { name?: string }) =>
-      React.createElement('span', { 'data-icon-name': props.name }, React.createElement(ui.Icon, props)),
-  }
-})
 jest.mock('../hooks/use-cluster/use-cluster')
 jest.mock('../hooks/use-cluster-operator-status/use-cluster-operator-status', () => ({
   useClusterOperatorStatus: () => ({ data: null, isLoading: false }),
 }))
 jest.mock('../hooks/use-deploy-cluster/use-deploy-cluster')
-jest.mock('../platform-configuration/hooks/use-update-platform-configuration')
+jest.mock('../hooks/use-update-platform-configuration/use-update-platform-configuration')
 jest.mock('../hooks/use-platform-templates/use-platform-templates')
-jest.mock('../platform-configuration/hooks/use-platform-configuration')
-jest.mock('../platform-configuration/hooks/use-platform-component-configurations')
+jest.mock('../hooks/use-platform-configuration/use-platform-configuration')
+jest.mock('../hooks/use-platform-component-configurations/use-platform-component-configurations')
 
 const mockUseParams = useParams as jest.Mock
 const mockUseCluster = useCluster as jest.MockedFunction<typeof useCluster>
@@ -268,23 +263,6 @@ describe('ClusterProfileFeature', () => {
     mockUseDeployCluster.mockReturnValue({ mutateAsync: mockDeployCluster, isLoading: false })
   })
 
-  it.each([
-    ['AWS', 'AWS'],
-    ['GCP', 'GCP'],
-    ['OVH', 'OVH_CLOUD'],
-    ['ORACLE', 'ORACLE_CLOUD'],
-    ['IBM', 'IBM_CLOUD'],
-  ])('shows the %s provider icon in the header', (cloudProvider, iconName) => {
-    mockUseCluster.mockReturnValue({
-      data: { name: 'my-cluster', cloud_provider: cloudProvider, kubernetes: 'SELF_MANAGED' },
-      isError: false,
-      isLoading: false,
-    } as ReturnType<typeof useCluster>)
-    renderWithProviders(<ClusterProfileFeature />)
-
-    expect(screen.getByRole('banner').querySelector(`[data-icon-name="${iconName}"]`)).toBeInTheDocument()
-  })
-
   it('renders API-defined configuration fields', () => {
     const { container } = renderWithProviders(<ClusterProfileFeature />)
 
@@ -294,7 +272,7 @@ describe('ClusterProfileFeature', () => {
       cloudProvider: 'AWS',
       enabled: true,
     })
-    expect(screen.getByRole('banner')).not.toHaveClass('border-b')
+    expect(screen.queryByRole('banner')).not.toBeInTheDocument()
     expect(container.querySelectorAll('.fa-circle-check')).toHaveLength(0)
     // No layer status without a cluster configuration: no layer is skipped or managed by Qovery.
     expect(container.querySelectorAll('.fa-circle-minus')).toHaveLength(0)
@@ -501,7 +479,8 @@ describe('ClusterProfileFeature', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Envoy' }))
 
       expect(getLastLokiRequest()).not.toHaveProperty('high-availability', true)
-      expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
+      // Saving stays available while the edit waits to be checked: the API validates it too.
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeEnabled()
     })
 
     it('checks the latest edit when coming back to its component', async () => {
@@ -710,6 +689,25 @@ describe('ClusterProfileFeature', () => {
       expect(onSearchChange).toHaveBeenCalledWith('n')
     })
 
+    it('keeps the typed search and follows the URL one when navigation changes it', async () => {
+      let navigateToSearch: (search: string) => void = () => undefined
+      function ClusterProfileWithUrlSearch() {
+        const [search, setSearch] = useState('network')
+        navigateToSearch = setSearch
+        return <ClusterProfileFeature search={search} />
+      }
+      const { userEvent } = renderWithProviders(<ClusterProfileWithUrlSearch />)
+      const input = screen.getByRole('textbox', { name: 'Search layers' })
+
+      await userEvent.type(input, 's')
+
+      expect(input).toHaveValue('networks')
+
+      act(() => navigateToSearch(''))
+
+      expect(input).toHaveValue('')
+    })
+
     it('keeps the whole layer when its label matches', () => {
       renderWithProviders(<ClusterProfileFeature search="network" />)
 
@@ -752,6 +750,47 @@ describe('ClusterProfileFeature', () => {
       expect(screen.getByRole('button', { name: 'Karpenter crd' })).toBeDisabled()
       expect(screen.getByText('No settings match your search')).toBeInTheDocument()
       expect(screen.queryByText('No configuration needed for this component')).not.toBeInTheDocument()
+    })
+
+    it('tells when the selected component only matches through settings hidden by the current values', () => {
+      mockUsePlatformComponentConfigurations.mockImplementation(
+        ({ requests }) =>
+          Object.keys(requests).map((componentKey) => {
+            const resolution = createResolution(componentKey)
+            return {
+              data:
+                componentKey === 'loki'
+                  ? { ...resolution, fields: resolution.fields.filter(({ key }) => key !== 'retention-period') }
+                  : resolution,
+              isError: false,
+              isFetching: false,
+            }
+          }) as ReturnType<typeof usePlatformComponentConfigurations>
+      )
+      renderWithProviders(<ClusterProfileFeature activeComponentKey="loki" search="retention" />)
+
+      expect(screen.getByRole('button', { name: 'Loki' })).toHaveAttribute('aria-current', 'page')
+      expect(screen.getByText('No settings match your search')).toBeInTheDocument()
+    })
+
+    it('still reports a failed refresh when no displayed setting matches the search', () => {
+      mockUsePlatformComponentConfigurations.mockImplementation(
+        ({ requests }) =>
+          Object.keys(requests).map((componentKey) => {
+            const resolution = createResolution(componentKey)
+            return componentKey === 'loki'
+              ? {
+                  data: { ...resolution, fields: resolution.fields.filter(({ key }) => key !== 'retention-period') },
+                  isError: true,
+                  isFetching: false,
+                }
+              : { data: resolution, isError: false, isFetching: false }
+          }) as ReturnType<typeof usePlatformComponentConfigurations>
+      )
+      renderWithProviders(<ClusterProfileFeature activeComponentKey="loki" search="retention" />)
+
+      expect(screen.getByRole('alert')).toHaveTextContent('Configuration could not be refreshed')
+      expect(screen.getByText('No settings match your search')).toBeInTheDocument()
     })
 
     it('shows empty states when nothing matches', () => {
@@ -848,8 +887,29 @@ describe('ClusterProfileFeature', () => {
       expect(within(bar).getByRole('button', { name: 'Save' })).toBeDisabled()
     })
 
-    it('blocks saving while the edits are being checked', async () => {
+    it('keeps saving available while the edits are being checked', async () => {
       mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki', 'alloy'], true))
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      const bar = await editProfile(userEvent)
+
+      expect(within(bar).getByRole('button', { name: 'Save' })).toBeEnabled()
+      expect(within(bar).getByRole('button', { name: 'Save and deploy' })).toBeEnabled()
+    })
+
+    it('keeps saving blocked while edits with violations are checked again', async () => {
+      const [loki, alloy] = createComponentQueries(['loki', 'alloy'])
+      mockUsePlatformComponentConfigurations.mockReturnValue([
+        {
+          ...loki,
+          isFetching: true,
+          data: {
+            ...createResolution('loki'),
+            violations: [{ fieldPath: 'storage', code: 'REQUIRED', message: 'Storage is required.' }],
+          },
+        },
+        alloy,
+      ] as ReturnType<typeof usePlatformComponentConfigurations>)
       const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
 
       const bar = await editProfile(userEvent)
@@ -1045,6 +1105,56 @@ describe('ClusterProfileFeature', () => {
 
       expect(mockDeployCluster).not.toHaveBeenCalled()
       expect(screen.getByRole('region', { name: 'Unsaved profile changes' })).toBeInTheDocument()
+    })
+  })
+
+  describe('leaving with unsaved changes', () => {
+    type BlockerOptions = {
+      disabled: boolean
+      enableBeforeUnload: boolean
+      shouldBlockFn: (args: { next: { routeId: string; params: Record<string, string> } }) => boolean
+    }
+    const getBlocker = () => mockUseBlocker.mock.calls.at(-1)?.[0] as BlockerOptions
+    const profileRoute = '/_authenticated/organization/$organizationId/cluster/$clusterId/profile/$componentKey'
+
+    it('does not block navigation without changes', () => {
+      renderWithProviders(<ClusterProfileFeature />)
+
+      expect(getBlocker()).toMatchObject({ disabled: true, enableBeforeUnload: false })
+    })
+
+    it('asks for confirmation before leaving the profile, and enables the before-unload warning', async () => {
+      const confirm = jest.spyOn(window, 'confirm')
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+
+      expect(getBlocker()).toMatchObject({ disabled: false, enableBeforeUnload: true })
+      const leaveProfile = {
+        next: { routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview', params: {} },
+      }
+      confirm.mockReturnValueOnce(false)
+      expect(getBlocker().shouldBlockFn(leaveProfile)).toBe(true)
+      confirm.mockReturnValueOnce(true)
+      expect(getBlocker().shouldBlockFn(leaveProfile)).toBe(false)
+      confirm.mockReturnValueOnce(false)
+      expect(
+        getBlocker().shouldBlockFn({ next: { routeId: profileRoute, params: { clusterId: 'other-cluster-id' } } })
+      ).toBe(true)
+      confirm.mockRestore()
+    })
+
+    it('lets the user switch components of the same profile', async () => {
+      const confirm = jest.spyOn(window, 'confirm')
+      const { userEvent } = renderWithProviders(<ClusterProfileFeature />)
+
+      await userEvent.click(screen.getByRole('switch', { name: 'High availability' }))
+
+      expect(getBlocker().shouldBlockFn({ next: { routeId: profileRoute, params: { clusterId: 'cluster-id' } } })).toBe(
+        false
+      )
+      expect(confirm).not.toHaveBeenCalled()
+      confirm.mockRestore()
     })
   })
 

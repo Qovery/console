@@ -11,14 +11,14 @@ interface UsePlatformComponentConfigurationProps {
 
 export function usePlatformComponentConfiguration({
   clusterId,
-  componentKey,
+  componentKey = '',
   request,
   enabled = true,
 }: UsePlatformComponentConfigurationProps) {
   return useQuery({
     ...queries.platformConfiguration.componentConfiguration({
       clusterId,
-      componentKey: componentKey ?? '',
+      componentKey,
       request,
     }),
     enabled: enabled && Boolean(clusterId) && Boolean(componentKey),

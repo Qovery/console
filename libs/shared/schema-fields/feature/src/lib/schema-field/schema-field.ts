@@ -1,11 +1,11 @@
-export type CatalogVariableValue = string | boolean
+export type SchemaFieldValue = string | boolean
 
-export type CatalogVariableFieldType = 'string' | 'number' | 'bool'
+export type SchemaFieldType = 'string' | 'number' | 'bool'
 
-export interface CatalogVariableField {
+export interface SchemaField {
   key: string
   label: string
-  type: CatalogVariableFieldType
+  type: SchemaFieldType
   description?: string
   required?: boolean
   sensitive?: boolean
@@ -18,23 +18,23 @@ export interface CatalogVariableField {
   max?: number
 }
 
-export function formatCatalogKey(key: string) {
+export function formatSchemaFieldKey(key: string) {
   const label = key.replace(/[-_]/g, ' ')
   return `${label.charAt(0).toUpperCase()}${label.slice(1)}`
 }
 
-export function getCatalogStringValue(value: CatalogVariableValue | undefined) {
+export function getSchemaFieldStringValue(value: SchemaFieldValue | undefined) {
   return typeof value === 'string' ? value : ''
 }
 
-export function getCatalogBooleanValue(value: CatalogVariableValue | undefined) {
+export function getSchemaFieldBooleanValue(value: SchemaFieldValue | undefined) {
   return typeof value === 'boolean' ? value : false
 }
 
-export function getCatalogVariableValue(
-  field: Pick<CatalogVariableField, 'type'> & { defaultValue?: string | null },
+export function getSchemaFieldValue(
+  field: Pick<SchemaField, 'type'> & { defaultValue?: string | null },
   value: unknown
-): CatalogVariableValue | undefined {
+): SchemaFieldValue | undefined {
   const resolvedValue = value ?? field.defaultValue
   if (field.type === 'bool') {
     if (typeof resolvedValue === 'boolean') return resolvedValue
@@ -46,14 +46,14 @@ export function getCatalogVariableValue(
   return undefined
 }
 
-export function isCatalogFieldValueFulfilled(value: CatalogVariableValue | undefined) {
+export function isSchemaFieldValueFulfilled(value: SchemaFieldValue | undefined) {
   if (typeof value === 'boolean') return true
   return Boolean(value?.trim())
 }
 
-export function isCatalogFieldValueMatchingPattern(
-  field: Pick<CatalogVariableField, 'pattern'>,
-  value: CatalogVariableValue | undefined
+export function isSchemaFieldValueMatchingPattern(
+  field: Pick<SchemaField, 'pattern'>,
+  value: SchemaFieldValue | undefined
 ) {
   if (typeof value !== 'string' || !value || !field.pattern) return true
 
@@ -64,9 +64,9 @@ export function isCatalogFieldValueMatchingPattern(
   }
 }
 
-export function getCatalogFieldLengthValidationError(
-  field: Pick<CatalogVariableField, 'minLength' | 'maxLength'>,
-  value: CatalogVariableValue | undefined
+export function getSchemaFieldLengthValidationError(
+  field: Pick<SchemaField, 'minLength' | 'maxLength'>,
+  value: SchemaFieldValue | undefined
 ) {
   if (typeof value !== 'string' || !value) return undefined
 
@@ -84,9 +84,9 @@ export function getCatalogFieldLengthValidationError(
   return undefined
 }
 
-export function getCatalogFieldNumberValidationError(
-  field: Pick<CatalogVariableField, 'type' | 'min' | 'max'>,
-  value: CatalogVariableValue | undefined
+export function getSchemaFieldNumberValidationError(
+  field: Pick<SchemaField, 'type' | 'min' | 'max'>,
+  value: SchemaFieldValue | undefined
 ) {
   if (field.type !== 'number' || typeof value !== 'string' || !value.trim()) return undefined
 
@@ -107,9 +107,9 @@ export function getCatalogFieldNumberValidationError(
   return undefined
 }
 
-export function getCatalogFieldValidationError(
-  field: Pick<CatalogVariableField, 'type' | 'allowedValues' | 'pattern' | 'minLength' | 'maxLength' | 'min' | 'max'>,
-  value: CatalogVariableValue | undefined
+export function getSchemaFieldValidationError(
+  field: Pick<SchemaField, 'type' | 'allowedValues' | 'pattern' | 'minLength' | 'maxLength' | 'min' | 'max'>,
+  value: SchemaFieldValue | undefined
 ) {
   if (
     field.type !== 'bool' &&
@@ -121,31 +121,28 @@ export function getCatalogFieldValidationError(
     return 'Please select one of the allowed values.'
   }
 
-  const numberValidationError = getCatalogFieldNumberValidationError(field, value)
+  const numberValidationError = getSchemaFieldNumberValidationError(field, value)
   if (numberValidationError) return numberValidationError
 
-  const lengthValidationError = getCatalogFieldLengthValidationError(field, value)
+  const lengthValidationError = getSchemaFieldLengthValidationError(field, value)
   if (lengthValidationError) return lengthValidationError
 
-  if (!isCatalogFieldValueMatchingPattern(field, value)) return 'Value does not match the expected format.'
+  if (!isSchemaFieldValueMatchingPattern(field, value)) return 'Value does not match the expected format.'
   return undefined
 }
 
-export function isCatalogFieldValid(
+export function isSchemaFieldValid(
   field: Pick<
-    CatalogVariableField,
+    SchemaField,
     'required' | 'type' | 'allowedValues' | 'pattern' | 'minLength' | 'maxLength' | 'min' | 'max'
   >,
-  value: CatalogVariableValue | undefined
+  value: SchemaFieldValue | undefined
 ) {
-  if (field.required && !isCatalogFieldValueFulfilled(value)) return false
-  return !getCatalogFieldValidationError(field, value)
+  if (field.required && !isSchemaFieldValueFulfilled(value)) return false
+  return !getSchemaFieldValidationError(field, value)
 }
 
-export function getCatalogSummaryFieldValue(
-  field: Pick<CatalogVariableField, 'sensitive'>,
-  value: CatalogVariableValue | undefined
-) {
+export function getSchemaFieldSummaryValue(field: Pick<SchemaField, 'sensitive'>, value: SchemaFieldValue | undefined) {
   if (typeof value === 'boolean') return value ? 'Enabled' : 'Disabled'
   if (field.sensitive && value) return '••••••••'
   return value

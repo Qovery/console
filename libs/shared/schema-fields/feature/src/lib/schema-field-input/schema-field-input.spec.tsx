@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { CatalogVariableInput, type CatalogVariableInputProps } from './catalog-variable-input'
+import { SchemaFieldInput, type SchemaFieldInputProps } from './schema-field-input'
 
-const defaultProps: CatalogVariableInputProps = {
+const defaultProps: SchemaFieldInputProps = {
   field: {
     key: 'retention',
     label: 'Retention',
@@ -13,7 +13,7 @@ const defaultProps: CatalogVariableInputProps = {
   value: '12',
 }
 
-describe('CatalogVariableInput', () => {
+describe('SchemaFieldInput', () => {
   beforeEach(() => {
     jest.useFakeTimers()
   })
@@ -23,7 +23,7 @@ describe('CatalogVariableInput', () => {
   })
 
   it('renders a number field with its validation error in place of the description', () => {
-    renderWithProviders(<CatalogVariableInput {...defaultProps} error="Retention is invalid." />)
+    renderWithProviders(<SchemaFieldInput {...defaultProps} error="Retention is invalid." />)
 
     expect(screen.getByRole('spinbutton', { name: 'Retention' })).toHaveValue(12)
     expect(screen.getByText('Retention is invalid.')).toBeInTheDocument()
@@ -31,7 +31,7 @@ describe('CatalogVariableInput', () => {
   })
 
   it('renders row layout with its description beside the control', () => {
-    renderWithProviders(<CatalogVariableInput {...defaultProps} layout="row" />)
+    renderWithProviders(<SchemaFieldInput {...defaultProps} layout="row" />)
 
     expect(screen.getByRole('spinbutton', { name: 'Retention' })).toHaveValue(12)
     expect(screen.getByText('Retention period in weeks.')).toBeInTheDocument()
@@ -43,7 +43,7 @@ describe('CatalogVariableInput', () => {
       "CPU/memory budget applied to the active Loki workloads. CHART_DEFAULT keeps the chart's own behavior, while presets apply Qovery's versioned budgets. Budgets are not capacity guarantees. Every resource field may be changed at any time; an update recompiles the Helm values and rolls the workloads. Preset budgets apply versioned resource values."
 
     const { userEvent } = renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         field={{ key: 'resource-profile', label: 'Resource profile', type: 'string', description }}
         layout="row"
@@ -61,7 +61,7 @@ describe('CatalogVariableInput', () => {
   })
 
   it('shows the whole row description while searching', () => {
-    renderWithProviders(<CatalogVariableInput {...defaultProps} layout="row" highlight="weeks" />)
+    renderWithProviders(<SchemaFieldInput {...defaultProps} layout="row" highlight="weeks" />)
 
     const match = screen.getByText('weeks', { selector: 'mark' })
     expect(match.closest('p')).not.toHaveClass('line-clamp-3')
@@ -70,7 +70,7 @@ describe('CatalogVariableInput', () => {
   it('names the row checkbox after its field', async () => {
     const onChange = jest.fn()
     const { userEvent } = renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         booleanControl="checkbox"
         field={{ key: 'enabled', label: 'Enabled', type: 'bool' }}
@@ -89,7 +89,7 @@ describe('CatalogVariableInput', () => {
     const error = 'Loki high availability requires object storage.'
 
     renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         error={error}
         field={{ key: 'high-availability', label: 'High availability', type: 'bool' }}
@@ -110,7 +110,7 @@ describe('CatalogVariableInput', () => {
     ['a checkbox in the card layout', { type: 'bool' }, 'card', 'checkbox', 'checkbox'],
   ] as const)('ties the error to %s', (_, fieldType, layout, role, booleanControl) => {
     renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         error="This value is not allowed."
         field={{ key: 'profile', label: 'Profile', ...fieldType }}
@@ -131,7 +131,7 @@ describe('CatalogVariableInput', () => {
       const [value, setValue] = useState('large')
       return (
         <>
-          <CatalogVariableInput {...defaultProps} field={field} layout="row" value={value} />
+          <SchemaFieldInput {...defaultProps} field={field} layout="row" value={value} />
           <button type="button" onClick={() => setValue('')}>
             Clear
           </button>
@@ -150,13 +150,8 @@ describe('CatalogVariableInput', () => {
     const field = { key: 'enabled', label: 'Enabled', type: 'bool' } as const
     renderWithProviders(
       <>
-        <CatalogVariableInput {...defaultProps} field={{ ...field, label: 'First' }} layout="row" error="First error" />
-        <CatalogVariableInput
-          {...defaultProps}
-          field={{ ...field, label: 'Second' }}
-          layout="row"
-          error="Second error"
-        />
+        <SchemaFieldInput {...defaultProps} field={{ ...field, label: 'First' }} layout="row" error="First error" />
+        <SchemaFieldInput {...defaultProps} field={{ ...field, label: 'Second' }} layout="row" error="Second error" />
       </>
     )
 
@@ -166,7 +161,7 @@ describe('CatalogVariableInput', () => {
 
   it('does not flag a control without error', () => {
     renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         field={{ key: 'high-availability', label: 'High availability', type: 'bool' }}
         layout="row"
@@ -181,7 +176,7 @@ describe('CatalogVariableInput', () => {
 
   it('renders sensitive values as passwords', () => {
     renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         field={{ key: 'token', label: 'Token', type: 'string', sensitive: true }}
         value="secret"
@@ -193,7 +188,7 @@ describe('CatalogVariableInput', () => {
 
   it.each(['card', 'row'] as const)('masks sensitive number values in the %s layout', (layout) => {
     renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         field={{ key: 'pin', label: 'Pin', type: 'number', sensitive: true }}
         layout={layout}
@@ -206,7 +201,7 @@ describe('CatalogVariableInput', () => {
 
   it('does not let a disabled sensitive field reveal its value', () => {
     renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         field={{ key: 'token', label: 'Token', type: 'string', sensitive: true }}
         layout="row"
@@ -222,7 +217,7 @@ describe('CatalogVariableInput', () => {
   it('keeps the toggle presentation as the default for boolean fields', async () => {
     const onChange = jest.fn()
     const { userEvent } = renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         field={{ key: 'enabled', label: 'Enabled', type: 'bool', description: 'Enable this option.' }}
         value={false}
@@ -239,7 +234,7 @@ describe('CatalogVariableInput', () => {
   it('renders a boolean control even when the field declares allowed values', async () => {
     const onChange = jest.fn()
     const { userEvent } = renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         field={{ key: 'enabled', label: 'Enabled', type: 'bool', allowedValues: ['true', 'false'] }}
         value={true}
@@ -255,7 +250,7 @@ describe('CatalogVariableInput', () => {
   it('supports a checkbox presentation for boolean fields', async () => {
     const onChange = jest.fn()
     const { userEvent } = renderWithProviders(
-      <CatalogVariableInput
+      <SchemaFieldInput
         {...defaultProps}
         booleanControl="checkbox"
         field={{ key: 'enabled', label: 'Enabled', type: 'bool', description: 'Enable this option.' }}

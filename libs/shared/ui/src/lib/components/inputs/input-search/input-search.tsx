@@ -1,11 +1,12 @@
-import { type ReactElement, useEffect, useRef, useState } from 'react'
+import { type ReactElement, useRef, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputSearchProps {
   ariaLabel?: string
   placeholder?: string
-  defaultValue?: string
+  // Controls the input value; the input keeps its own value when unset.
+  value?: string
   className?: string
   onChange?: (value: string) => void
   isEmpty?: boolean
@@ -18,7 +19,7 @@ export function InputSearch(props: InputSearchProps) {
   const {
     ariaLabel,
     placeholder = '',
-    defaultValue,
+    value,
     className = '',
     onChange,
     isEmpty = false,
@@ -28,15 +29,8 @@ export function InputSearch(props: InputSearchProps) {
   } = props
 
   const ref = useRef<HTMLInputElement>(null)
-  const [toggleDelete, setToggleDelete] = useState(Boolean(defaultValue))
-
-  useEffect(() => {
-    const input = ref.current
-    if (!input || document.activeElement === input) return
-    const nextValue = defaultValue ?? ''
-    if (input.value !== nextValue) input.value = nextValue
-    setToggleDelete(nextValue !== '')
-  }, [defaultValue])
+  const [toggleDelete, setToggleDelete] = useState(false)
+  const showClearButton = value === undefined ? toggleDelete : value !== ''
 
   const getValue = (value: string) => {
     if (onChange) onChange(value)
@@ -70,14 +64,13 @@ export function InputSearch(props: InputSearchProps) {
           )}
           type="text"
           aria-label={ariaLabel}
-          // A defaultValue prop, even undefined, makes React render an empty value attribute.
-          {...(defaultValue !== undefined ? { defaultValue } : {})}
+          value={value}
           placeholder={placeholder}
           disabled={false}
           onChange={(e) => getValue(e.currentTarget.value)}
           name="search"
         />
-        {toggleDelete && (
+        {showClearButton && (
           <button
             type="button"
             title="Clear search"

@@ -20,7 +20,7 @@ import {
   type SelfManagedClusterRequest,
 } from 'qovery-typescript-axios'
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
-import { isHttpStatus } from './http/is-http-status'
+import { isHttpStatus } from '@qovery/shared/utils'
 
 const clusterApi = new ClustersApi()
 const clusterDeploymentHistoryApi = new ClusterDeploymentHistoryApi()

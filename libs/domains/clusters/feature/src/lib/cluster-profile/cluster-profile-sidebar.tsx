@@ -1,11 +1,11 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon, InputSearch, Tooltip } from '@qovery/shared/ui'
 
 type LayerStatus = 'disabled' | 'success'
 
 export const NOT_CONFIGURABLE_COMPONENT_REASON = 'No configuration needed for this component'
-export const NOT_CONFIGURABLE_LAYER_REASON = 'No configuration needed for this layer'
+export const NOT_CONFIGURABLE_LAYER_REASON = 'No configuration needed for this layer yet'
 
 export interface ClusterProfileSidebarItem {
   id: string
@@ -157,16 +157,29 @@ export function ClusterProfileSidebar({
   footer,
 }: ClusterProfileSidebarProps) {
   const showEmptyState = !isLoading && !isError && layers.length === 0
+  // The URL search lags behind typing, so the input keeps its own value and follows the URL when navigation changes it.
+  const [searchInput, setSearchInput] = useState(search)
+  const [previousSearch, setPreviousSearch] = useState(search)
+  if (search !== previousSearch) {
+    setPreviousSearch(search)
+    setSearchInput(search)
+  }
 
   return (
-    <aside aria-label="Cluster layers" className="flex w-56 shrink-0 flex-col bg-background-secondary lg:w-[272px]">
+    <aside
+      aria-label="Cluster layers"
+      className="flex w-56 shrink-0 flex-col border-r border-neutral bg-background-secondary lg:w-[272px]"
+    >
       <div className="p-3">
         <InputSearch
           ariaLabel="Search layers"
           placeholder="Search…"
           customSize="h-7 text-ssm"
-          defaultValue={search}
-          onChange={onSearchChange}
+          value={searchInput}
+          onChange={(nextSearch) => {
+            setSearchInput(nextSearch)
+            onSearchChange(nextSearch)
+          }}
         />
       </div>
 

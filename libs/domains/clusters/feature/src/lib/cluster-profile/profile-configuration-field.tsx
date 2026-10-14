@@ -1,8 +1,12 @@
 import { type FieldSchemaResponse, type PlatformComponentConfigurationViolationResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useRef } from 'react'
-import { CatalogVariableDescription, CatalogVariableInput } from '@qovery/shared/console-shared'
+import {
+  SchemaFieldDescription,
+  SchemaFieldInput,
+  getSchemaFieldSummaryValue,
+  getSchemaFieldValue,
+} from '@qovery/shared/schema-fields/feature'
 import { Button, HighlightText, Icon, useModal } from '@qovery/shared/ui'
-import { getCatalogSummaryFieldValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import {
   type PlatformArrayField,
   type PlatformObjectField,
@@ -14,10 +18,10 @@ import {
   isPlatformArrayField,
   isPlatformObjectField,
   isPlatformScalarField,
-  toCatalogVariableField,
   toPlatformArrayItemDescriptor,
   toPlatformConfigurationValue,
-} from '../platform-configuration/platform-configuration-utils'
+  toSchemaField,
+} from '../utils/platform-configuration-utils'
 import { ProfileArrayItemModal } from './profile-array-item-modal'
 
 type Violations = PlatformComponentConfigurationViolationResponse[]
@@ -52,9 +56,7 @@ function CompositeFieldHeader({
         <p className="text-sm text-neutral">
           <HighlightText text={field.label} highlight={highlight} />
         </p>
-        {field.description ? (
-          <CatalogVariableDescription description={field.description} highlight={highlight} />
-        ) : null}
+        {field.description ? <SchemaFieldDescription description={field.description} highlight={highlight} /> : null}
         <FieldError error={error} />
       </div>
       {children}
@@ -135,14 +137,14 @@ function getArrayItemViolations(violations: Violations, itemPath: string) {
 function getArrayItemColumns(field: PlatformArrayField, item: unknown, index: number) {
   if (field.items.type !== 'object') {
     const itemField = toPlatformArrayItemDescriptor(field)
-    return [String(getCatalogSummaryFieldValue(itemField, getCatalogVariableValue(itemField, item)) ?? '')]
+    return [String(getSchemaFieldSummaryValue(itemField, getSchemaFieldValue(itemField, item)) ?? '')]
   }
 
   const values = isPlainObject(item) ? item : {}
   return getPlatformArrayItemFields(field, index)
     .filter(isPlatformScalarField)
     .map((itemField) =>
-      String(getCatalogSummaryFieldValue(itemField, getCatalogVariableValue(itemField, values[itemField.key])) ?? '')
+      String(getSchemaFieldSummaryValue(itemField, getSchemaFieldValue(itemField, values[itemField.key])) ?? '')
     )
 }
 
@@ -221,9 +223,7 @@ function ProfileArrayField({
           <p className="text-sm text-neutral">
             <HighlightText text={field.label} highlight={highlight} />
           </p>
-          {field.description ? (
-            <CatalogVariableDescription description={field.description} highlight={highlight} />
-          ) : null}
+          {field.description ? <SchemaFieldDescription description={field.description} highlight={highlight} /> : null}
           <FieldError error={error} />
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
@@ -341,13 +341,13 @@ export function ProfileConfigurationField({
   if (!isPlatformScalarField(field)) return null
 
   return (
-    <CatalogVariableInput
+    <SchemaFieldInput
       booleanControl="toggle"
       // Nested fields reuse keys like `name`: the full path keeps input ids unique.
-      field={toCatalogVariableField({ ...field, key: path })}
+      field={toSchemaField({ ...field, key: path })}
       layout="row"
       disabled={field.readOnly}
-      value={getCatalogVariableValue(field, value)}
+      value={getSchemaFieldValue(field, value)}
       error={getFieldViolation(violations, path)}
       highlight={highlight}
       onChange={(nextValue) => onChange(toPlatformConfigurationValue(field, nextValue))}

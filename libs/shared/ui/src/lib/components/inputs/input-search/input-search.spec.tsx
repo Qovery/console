@@ -1,13 +1,12 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { useState } from 'react'
-import { act, renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import InputSearch, { type InputSearchProps } from './input-search'
 
 let props: InputSearchProps
 
 describe('InputSearch', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<InputSearch />)
+    const { baseElement } = renderWithProviders(<InputSearch />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -21,39 +20,27 @@ describe('InputSearch', () => {
     expect(input).toHaveValue('some new text value')
   })
 
-  it('follows default value changes', () => {
-    const { rerender } = render(<InputSearch defaultValue="loki" />)
+  it('shows a controlled value with its clear button', () => {
+    const { rerender } = renderWithProviders(<InputSearch value="loki" />)
 
-    rerender(<InputSearch defaultValue="envoy" />)
-    expect(screen.getByRole('textbox')).toHaveValue('envoy')
+    expect(screen.getByRole('textbox')).toHaveValue('loki')
+    expect(screen.getByRole('button', { name: 'Clear search' })).toBeInTheDocument()
 
-    rerender(<InputSearch />)
+    rerender(<InputSearch value="" />)
+
     expect(screen.getByRole('textbox')).toHaveValue('')
     expect(screen.queryByRole('button', { name: 'Clear search' })).not.toBeInTheDocument()
   })
 
-  it('shows the clear button when an empty search receives a default value', () => {
-    const { rerender } = render(<InputSearch defaultValue="" />)
-
-    rerender(<InputSearch defaultValue="loki" />)
-
-    expect(screen.getByRole('textbox')).toHaveValue('loki')
-    expect(screen.getByRole('button', { name: 'Clear search' })).toBeInTheDocument()
-  })
-
-  it('keeps the typed value while focused', async () => {
-    let setDefaultValue: (value: string) => void = () => undefined
-    function InputSearchWithExternalValue() {
-      const [defaultValue, setValue] = useState('lo')
-      setDefaultValue = setValue
-      return <InputSearch defaultValue={defaultValue} />
+  it('clears a controlled value through onChange', async () => {
+    function ControlledInputSearch() {
+      const [value, setValue] = useState('loki')
+      return <InputSearch value={value} onChange={setValue} />
     }
-    const { userEvent } = renderWithProviders(<InputSearchWithExternalValue />)
-    const input = screen.getByRole('textbox')
+    const { userEvent } = renderWithProviders(<ControlledInputSearch />)
 
-    await userEvent.type(input, 'ki')
-    act(() => setDefaultValue('lok'))
+    await userEvent.click(screen.getByRole('button', { name: 'Clear search' }))
 
-    expect(input).toHaveValue('loki')
+    expect(screen.getByRole('textbox')).toHaveValue('')
   })
 })

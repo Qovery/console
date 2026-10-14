@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { type PlatformFieldDescriptor } from '../platform-configuration/platform-configuration-utils'
+import { type PlatformFieldDescriptor } from '../utils/platform-configuration-utils'
 import { ProfileArrayItemModal } from './profile-array-item-modal'
 
 const cidrField = {
@@ -34,6 +34,26 @@ describe('ProfileArrayItemModal', () => {
     await userEvent.click(addButton)
 
     expect(onSubmit).toHaveBeenCalledWith(submittedValues)
+  })
+
+  it('keeps read-only fields disabled and submits their value unchanged', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <ProfileArrayItemModal
+        title="Trusted CIDRs"
+        fields={[{ ...cidrField, readOnly: true }]}
+        values={{ cidr: '10.0.0.0/8' }}
+        isEdit
+        onClose={jest.fn()}
+        onSubmit={onSubmit}
+      />
+    )
+
+    expect(screen.getByRole('textbox')).toBeDisabled()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(onSubmit).toHaveBeenCalledWith({ cidr: '10.0.0.0/8' })
   })
 
   it('reports being mounted until it unmounts, including under StrictMode', () => {

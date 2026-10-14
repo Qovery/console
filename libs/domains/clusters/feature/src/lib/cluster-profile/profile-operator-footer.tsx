@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { Icon, LoaderSpinner, Popover, Tooltip } from '@qovery/shared/ui'
 import {
   ClusterOperatorStatus,
@@ -26,11 +27,17 @@ export function ProfileOperatorFooter() {
 
   const display = operatorStatus && !isError ? getClusterOperatorStatusDisplay(operatorStatus.status) : undefined
 
+  // Only the status opens a panel: the row then reacts on hover.
+  const opensPanel = Boolean(operatorStatus) && !isError
+
   const trigger = (
     <button
       type="button"
       aria-label={`Qovery Operator: ${display?.label ?? (isError ? 'status unavailable' : 'loading')}`}
-      className="flex w-full shrink-0 items-center gap-2 bg-background-secondary p-3 text-left text-sm font-medium text-neutral outline-none focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong"
+      className={clsx(
+        'flex w-full shrink-0 items-center gap-2 bg-background-secondary p-3 text-left text-sm font-medium text-neutral outline-none transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong',
+        { 'cursor-pointer hover:bg-surface-neutral-component': opensPanel }
+      )}
     >
       Qovery Operator
       {display ? (

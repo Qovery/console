@@ -1,5 +1,5 @@
 import { type FieldSchemaResponse } from 'qovery-typescript-axios'
-import { isPlatformArrayField, isPlatformObjectField } from '../platform-configuration/platform-configuration-utils'
+import { isPlatformArrayField, isPlatformObjectField } from '../utils/platform-configuration-utils'
 
 type SearchableText = { label: string; description?: string | null }
 
