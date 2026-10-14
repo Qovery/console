@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type BlueprintDetailsResponse, type Cluster } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { useClusters } from '@qovery/domains/clusters/feature'
+import { useClusters, useIsOperatorAttached } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import {
@@ -117,6 +117,12 @@ const CLUSTER_TABS: NavigationTab[] = [
     label: 'Cloud Shell',
     iconName: 'terminal',
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
+  },
+  {
+    id: 'profile',
+    label: 'Profile',
+    iconName: 'layer-group',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/profile',
   },
   {
     id: 'settings',
@@ -393,6 +399,8 @@ function useNavigationContext(): NavigationContext | null {
   })
   const hasAlerting = clusters.some((cluster) => cluster.metrics_parameters?.configuration?.alerting?.enabled)
   const currentCluster = clusters.find((cluster) => cluster.id === environment?.cluster_id)
+  // Only Engine v2 clusters, attached to the Qovery Operator, have a profile.
+  const isProfileAvailable = Boolean(useIsOperatorAttached(clusters.find((cluster) => cluster.id === params.clusterId)))
   const blueprintId = service && isBlueprintService(service) && isTerraform(service) ? service.blueprint_id : ''
   const { data: blueprint } = useBlueprint({
     blueprintId,
@@ -423,9 +431,11 @@ function useNavigationContext(): NavigationContext | null {
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled, blueprint)
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
-              : context.type === 'environment'
-                ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automation')
-                : context.tabs
+              : context.type === 'cluster'
+                ? context.tabs.filter((tab) => isProfileAvailable || tab.id !== 'profile')
+                : context.type === 'environment'
+                  ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automation')
+                  : context.tabs
 
         return {
           type: context.type,
@@ -546,6 +556,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/profile',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',

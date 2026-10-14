@@ -1,14 +1,55 @@
 import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
+import { type VariantProps, cva } from 'class-variance-authority'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
 
-export interface EmptyStateProps extends PropsWithChildren {
+const emptyStateVariants = cva(['rounded-lg border text-sm'], {
+  variants: {
+    size: {
+      sm: ['flex items-center justify-between gap-4 px-4 py-4'],
+      base: ['flex h-56 flex-col items-center justify-center gap-4 p-10 text-center'],
+    },
+    variant: {
+      neutral: ['border-neutral bg-surface-neutral-subtle text-neutral-subtle'],
+      positive: ['border-positive-subtle bg-surface-positive-subtle text-positive'],
+    },
+  },
+  defaultVariants: {
+    size: 'base',
+    variant: 'neutral',
+  },
+})
+
+const emptyStateIconVariants = cva([], {
+  variants: {
+    variant: {
+      neutral: ['text-neutral-disabled'],
+      positive: ['text-positive'],
+    },
+  },
+  defaultVariants: {
+    variant: 'neutral',
+  },
+})
+
+const emptyStateIconBackgroundVariants = cva([], {
+  variants: {
+    variant: {
+      neutral: ['fill-surface-neutral-component'],
+      positive: ['fill-surface-positive-component'],
+    },
+  },
+  defaultVariants: {
+    variant: 'neutral',
+  },
+})
+
+export interface EmptyStateProps extends PropsWithChildren, VariantProps<typeof emptyStateVariants> {
   title: ReactNode
   icon?: IconName | ReactNode
   iconStyle?: IconStyle
   description?: ReactNode
-  size?: 'sm' | 'base'
   className?: string
 }
 
@@ -19,6 +60,7 @@ export function EmptyState({
   icon,
   iconStyle,
   size = 'base',
+  variant = 'neutral',
   children,
 }: EmptyStateProps) {
   const emptyStateIcon =
@@ -28,7 +70,7 @@ export function EmptyState({
         <Icon
           iconName={icon as IconName}
           iconStyle={iconStyle}
-          className="absolute top-2 text-base text-neutral-disabled"
+          className={twMerge('absolute top-2 text-base', emptyStateIconVariants({ variant }))}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -39,12 +81,12 @@ export function EmptyState({
           className="h-10 w-10"
         >
           <path
-            className="fill-surface-neutral-component"
+            className={emptyStateIconBackgroundVariants({ variant })}
             fill="currentColor"
             d="M0 6a6 6 0 0 1 6-6h28a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6z"
           ></path>
           <path
-            className="text-neutral-disabled"
+            className={emptyStateIconVariants({ variant })}
             stroke="currentColor"
             d="M.5 7V4.5a4 4 0 0 1 4-4H7M39.5 33v2.5a4 4 0 0 1-4 4H33M.5 33v2.5a4 4 0 0 0 4 4H7M39.5 7V4.5a4 4 0 0 0-4-4H33"
           ></path>
@@ -56,12 +98,7 @@ export function EmptyState({
 
   if (size === 'sm') {
     return (
-      <div
-        className={twMerge(
-          'flex items-center justify-between gap-4 rounded-lg border border-neutral bg-surface-neutral-subtle px-4 py-4 text-sm text-neutral-subtle',
-          className
-        )}
-      >
+      <div className={twMerge(emptyStateVariants({ size, variant }), className)}>
         <div className="flex min-w-0 flex-1 items-center gap-4">
           {emptyStateIcon}
           <div className="flex min-w-0 flex-col gap-0.5 text-left">
@@ -75,12 +112,7 @@ export function EmptyState({
   }
 
   return (
-    <div
-      className={twMerge(
-        'flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral bg-surface-neutral-subtle p-10 text-center text-sm text-neutral-subtle',
-        className
-      )}
-    >
+    <div className={twMerge(emptyStateVariants({ size, variant }), className)}>
       {emptyStateIcon}
 
       <div className="flex flex-col gap-1">
