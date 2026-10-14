@@ -116,6 +116,7 @@ describe('AgenticWorkflowRuns', () => {
       'Payload',
       'Duration',
       'Cost',
+      'Actions',
     ])
     expect(screen.getByText('Completed')).toBeInTheDocument()
     expect(screen.getByText('Completed').closest('[data-accent-color]')).not.toBeInTheDocument()
@@ -547,85 +548,116 @@ describe('AgenticWorkflowRuns', () => {
   describe('replay', () => {
     const payload = '{ "event":  "deploy",\n  "id": 12345678901234567890 }'
 
-    async function openRun(overrides: Partial<AgenticWorkflowRun> = {}) {
+    function renderRuns(runs: Partial<AgenticWorkflowRun>[] = [{}]) {
       mockUseRunHistory.mockReturnValue({
-        data: [{ ...run, payload, ...overrides }],
+        data: runs.map((overrides, index) => ({ ...run, id: `run-${index + 1}`, payload, ...overrides })),
         isLoading: false,
         isError: false,
       })
-      const rendered = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
-      await rendered.userEvent.click(screen.getByRole('button', { name: /run-123/i }))
-      return rendered
+      return renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
     }
 
-    it('offers a replay for a webhook run with a stored payload', async () => {
-      await openRun()
+    function replayButtons() {
+      return screen.getAllByRole('button', { name: 'Replay' })
+    }
 
-      expect(within(screen.getByRole('dialog')).getByRole('button', { name: 'Replay' })).toBeEnabled()
+    it('shows an Actions column with a Replay button on every row, whatever the trigger or payload', () => {
+      renderRuns([
+        { trigger: 'WEBHOOK', payload },
+        { trigger: 'WEBHOOK', payload: '' },
+        { trigger: 'WEBHOOK', payload: null },
+        { trigger: 'MANUAL', payload: undefined },
+        { trigger: 'SCHEDULE', payload: null },
+      ])
+
+      expect(screen.getByRole('columnheader', { name: 'Actions' })).toBeInTheDocument()
+      expect(replayButtons()).toHaveLength(5)
+      replayButtons().forEach((button) => expect(button).toBeEnabled())
       expect(mockUseService).toHaveBeenCalledWith({ serviceId: 'workflow-123', serviceType: 'AGENTIC_WORKFLOW' })
     })
 
-    it('offers a replay for a webhook run with an empty stored payload', async () => {
-      await openRun({ payload: '' })
-
-      expect(within(screen.getByRole('dialog')).getByRole('button', { name: 'Replay' })).toBeInTheDocument()
-    })
-
-    it.each([
-      ['a webhook run without a stored payload', { trigger: 'WEBHOOK', payload: null }],
-      ['a manual run', { trigger: 'MANUAL', payload: payload }],
-      ['a scheduled run', { trigger: 'SCHEDULE', payload: payload }],
-    ] as const)('does not offer a replay for %s', async (_name, overrides) => {
-      await openRun(overrides)
+    it('does not offer a replay in the run details', async () => {
+      const { userEvent } = renderRuns()
+      await userEvent.click(screen.getByRole('button', { name: /run-1/i }))
 
       expect(within(screen.getByRole('dialog')).queryByRole('button', { name: 'Replay' })).not.toBeInTheDocument()
     })
 
-    it('disables the replay until the webhook URL is known', async () => {
+    it('disables every replay until the webhook URL is known', async () => {
       mockUseService.mockReturnValue({ data: undefined })
-      const { userEvent } = await openRun()
+      const { userEvent } = renderRuns([{}, { trigger: 'MANUAL', payload: null }])
 
-      const button = within(screen.getByRole('dialog')).getByRole('button', { name: 'Replay' })
-      expect(button).toBeDisabled()
-      await userEvent.click(button)
+      for (const button of replayButtons()) {
+        expect(button).toBeDisabled()
+        await userEvent.click(button)
+      }
 
       expect(mockFetch).not.toHaveBeenCalled()
     })
 
-    it('posts the exact original payload to the agent webhook URL', async () => {
-      const { userEvent } = await openRun()
+    it('posts the exact original payload to the agent webhook URL without opening the run details', async () => {
+      const { userEvent } = renderRuns()
 
-      await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Replay' }))
+      await userEvent.click(replayButtons()[0])
 
       await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
       const [url, init] = mockFetch.mock.calls[0]
       expect(url).toBe(webhookUrl)
       expect(init).toEqual(expect.objectContaining({ method: 'POST', body: payload }))
       expect(init.headers).toEqual({ 'Content-Type': 'application/json' })
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
 
-    it('shows a loading state while the request is in flight and a success message afterwards', async () => {
+    it('posts an empty stored payload as is', async () => {
+      const { userEvent } = renderRuns([{ payload: '' }])
+
+      await userEvent.click(replayButtons()[0])
+
+      await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+      expect(mockFetch.mock.calls[0][1]).toEqual(expect.objectContaining({ method: 'POST', body: '' }))
+    })
+
+    it.each([
+      ['a webhook run with a null payload', { trigger: 'WEBHOOK', payload: null }],
+      ['a webhook run with a missing payload', { trigger: 'WEBHOOK', payload: undefined }],
+      ['a manual run', { trigger: 'MANUAL', payload: null }],
+      ['a scheduled run', { trigger: 'SCHEDULE', payload: undefined }],
+    ] as const)('posts an empty body for %s', async (_name, overrides) => {
+      const { userEvent } = renderRuns([overrides])
+
+      await userEvent.click(replayButtons()[0])
+
+      await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1))
+      const [url, init] = mockFetch.mock.calls[0]
+      expect(url).toBe(webhookUrl)
+      expect(init.method).toBe('POST')
+      expect(init.body).toBeUndefined()
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+
+    it('shows the loading state on the activated row only and a success message afterwards', async () => {
       let resolveFetch: (value: { ok: boolean; status: number }) => void = () => undefined
       mockFetch.mockReturnValue(new Promise((resolve) => (resolveFetch = resolve)))
-      const { userEvent } = await openRun()
+      const { userEvent } = renderRuns([{}, { trigger: 'MANUAL', payload: null }])
+      const [first, second] = replayButtons()
 
-      const button = within(screen.getByRole('dialog')).getByRole('button', { name: 'Replay' })
-      await userEvent.click(button)
+      await userEvent.click(first)
 
-      await waitFor(() => expect(button).toHaveClass('pointer-events-none'))
+      await waitFor(() => expect(first).toHaveClass('pointer-events-none'))
+      expect(second).not.toHaveClass('pointer-events-none')
       expect(mockToast).not.toHaveBeenCalled()
 
       await act(async () => resolveFetch({ ok: true, status: 202 }))
 
       await waitFor(() => expect(mockToast).toHaveBeenCalledWith('success', 'Run replayed', expect.any(String)))
-      expect(button).not.toHaveClass('pointer-events-none')
+      expect(first).not.toHaveClass('pointer-events-none')
     })
 
     it('shows an error message when the webhook rejects the replay', async () => {
       mockFetch.mockResolvedValue({ ok: false, status: 500 })
-      const { userEvent } = await openRun()
+      const { userEvent } = renderRuns()
 
-      await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Replay' }))
+      await userEvent.click(replayButtons()[0])
 
       await waitFor(() =>
         expect(mockToast).toHaveBeenCalledWith('error', 'Replay failed', 'The webhook responded with status 500.')

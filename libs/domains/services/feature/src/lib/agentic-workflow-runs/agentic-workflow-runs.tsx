@@ -228,7 +228,7 @@ function PayloadEditor({ value }: { value: string }) {
   )
 }
 
-function ReplayRunButton({ serviceId, payload }: { serviceId: string; payload: string }) {
+function ReplayRunButton({ serviceId, payload }: { serviceId: string; payload?: string | null }) {
   const { data: service } = useService({ serviceId, serviceType: 'AGENTIC_WORKFLOW' })
   const { mutate: replayRun, isLoading } = useReplayAgenticWorkflowRun({ serviceId })
   const webhookUrl = service?.webhook.url
@@ -242,7 +242,10 @@ function ReplayRunButton({ serviceId, payload }: { serviceId: string; payload: s
       className="gap-2"
       disabled={!webhookUrl}
       loading={isLoading}
-      onClick={() => webhookUrl && replayRun({ webhookUrl, payload })}
+      onClick={(event) => {
+        event.stopPropagation()
+        if (webhookUrl) replayRun({ webhookUrl, payload })
+      }}
     >
       <Icon iconName="rotate-right" iconStyle="regular" />
       Replay
@@ -250,11 +253,9 @@ function ReplayRunButton({ serviceId, payload }: { serviceId: string; payload: s
   )
 }
 
-function RunDetails({ run, serviceId, onClose }: { run: RunWithLifecycle; serviceId: string; onClose: () => void }) {
+function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const formattedJson = run.payload ? formatJsonPayload(run.payload) : null
-  // Only a webhook call has a body to resend. Run history never stores request headers.
-  const replayPayload = run.trigger === AgenticWorkflowRunTrigger.WEBHOOK ? run.payload : undefined
 
   return (
     <Dialog.Root open onOpenChange={(open) => !open && onClose()}>
@@ -303,12 +304,7 @@ function RunDetails({ run, serviceId, onClose }: { run: RunWithLifecycle; servic
                   </dd>
                 </dl>
                 <section className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <Heading level={3}>Payload</Heading>
-                    {typeof replayPayload === 'string' && (
-                      <ReplayRunButton serviceId={serviceId} payload={replayPayload} />
-                    )}
-                  </div>
+                  <Heading level={3}>Payload</Heading>
                   {formattedJson !== null ? (
                     <div
                       className="overflow-hidden rounded border border-neutral"
@@ -401,7 +397,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1204px] table-fixed text-ssm">
+      <Table.Root className="w-full min-w-[1324px] table-fixed text-ssm">
         <Table.Header>
           <Table.Row className="divide-x divide-neutral">
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
@@ -410,6 +406,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             <Table.ColumnHeaderCell className="w-[180px] font-medium">Payload</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[160px] font-medium">Duration</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[120px] font-medium">Cost</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[120px] font-medium">Actions</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -482,11 +479,14 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
               <Table.Cell className="w-[120px] whitespace-nowrap font-mono">
                 <RunCost cost={run.cost} />
               </Table.Cell>
+              <Table.Cell className="w-[120px]">
+                <ReplayRunButton serviceId={serviceId} payload={run.payload} />
+              </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table.Root>
-      {selectedRun && <RunDetails run={selectedRun} serviceId={serviceId} onClose={() => setSelectedRun(null)} />}
+      {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}
     </div>
   )
 }
@@ -552,7 +552,7 @@ export function AgenticWorkflowLastRun({ serviceId }: { serviceId: string }) {
           )}
         </span>
       </button>
-      {selectedRun && <RunDetails run={selectedRun} serviceId={serviceId} onClose={() => setSelectedRun(null)} />}
+      {selectedRun && <RunDetails run={selectedRun} onClose={() => setSelectedRun(null)} />}
     </>
   )
 }

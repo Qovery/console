@@ -988,13 +988,15 @@ export const mutations = {
   },
   // Sent straight from the browser to the agent webhook, so the webhook must allow CORS for the Console origin.
   // Run history does not store request headers, so the content type is inferred from the stored body.
-  async replayAgenticWorkflowRun({ webhookUrl, payload }: { webhookUrl: string; payload: string }) {
+  // Runs without a stored payload (manual, scheduled) are replayed with an empty body.
+  async replayAgenticWorkflowRun({ webhookUrl, payload }: { webhookUrl: string; payload?: string | null }) {
     let response: Response
     try {
       response = await fetch(webhookUrl, {
         method: 'POST',
-        headers: { 'Content-Type': isJson(payload) ? 'application/json' : 'text/plain' },
-        body: payload,
+        headers:
+          typeof payload === 'string' ? { 'Content-Type': isJson(payload) ? 'application/json' : 'text/plain' } : {},
+        body: typeof payload === 'string' ? payload : undefined,
         credentials: 'omit',
       })
     } catch {

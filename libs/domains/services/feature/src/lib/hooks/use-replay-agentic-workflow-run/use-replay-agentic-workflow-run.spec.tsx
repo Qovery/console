@@ -66,6 +66,19 @@ describe('useReplayAgenticWorkflowRun', () => {
     )
   })
 
+  it.each([null, undefined])('posts an empty body without content type when the payload is %s', async (payload) => {
+    const { result } = renderHook(() => useReplayAgenticWorkflowRun({ serviceId: 'service-1' }), { wrapper })
+
+    await act(async () => {
+      await result.current.mutateAsync({ webhookUrl, payload })
+    })
+
+    const [url, init] = mockFetch.mock.calls[0]
+    expect(url).toBe(webhookUrl)
+    expect(init).toEqual(expect.objectContaining({ method: 'POST', headers: {}, credentials: 'omit' }))
+    expect(init.body).toBeUndefined()
+  })
+
   it('refreshes the run history of the service and shows a success toast', async () => {
     const { result } = renderHook(() => useReplayAgenticWorkflowRun({ serviceId: 'service-1' }), { wrapper })
 
