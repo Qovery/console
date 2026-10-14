@@ -1,13 +1,12 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { useState } from 'react'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import InputSearch, { type InputSearchProps } from './input-search'
 
 let props: InputSearchProps
 
 describe('InputSearch', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<InputSearch />)
+    const { baseElement } = renderWithProviders(<InputSearch />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -22,7 +21,7 @@ describe('InputSearch', () => {
   })
 
   it('shows a controlled value with its clear button', () => {
-    const { rerender } = render(<InputSearch value="loki" />)
+    const { rerender } = renderWithProviders(<InputSearch value="loki" />)
 
     expect(screen.getByRole('textbox')).toHaveValue('loki')
     expect(screen.getByRole('button', { name: 'Clear search' })).toBeInTheDocument()
