@@ -11,6 +11,7 @@ const mockNavigate = jest.fn()
 const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockCopyToClipboard = jest.fn()
+const mockCheckCostPolicy = jest.fn()
 const mockUseVariables = jest.fn()
 let mockVariables = [
   {
@@ -59,6 +60,11 @@ jest.mock('@qovery/shared/ui', () => ({
   useModalConfirmation: () => ({
     openModalConfirmation: mockOpenModalConfirmation,
   }),
+}))
+
+jest.mock('@qovery/domains/cost-management/feature', () => ({
+  ...jest.requireActual('@qovery/domains/cost-management/feature'),
+  useCostPolicyCheck: () => ({ checkCostPolicy: mockCheckCostPolicy }),
 }))
 
 jest.mock('@qovery/shared/util-hooks', () => ({
@@ -116,6 +122,7 @@ describe('EnvironmentActionToolbar', () => {
     mockUseVariables.mockImplementation(() => ({
       data: mockVariables,
     }))
+    mockCheckCostPolicy.mockImplementation((_operation: unknown, onAllowed: () => void) => onAllowed())
   })
 
   afterEach(() => {
@@ -147,6 +154,18 @@ describe('EnvironmentActionToolbar', () => {
 
     expect(mockDeployEnvironment).toHaveBeenCalledWith({ environmentId: mockEnvironment.id })
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+  })
+
+  it('should run the budget policy check before deploying', async () => {
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /redeploy/i }))
+
+    expect(mockCheckCostPolicy).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'deploy_environment', environmentName: mockEnvironment.name }),
+      expect.any(Function)
+    )
   })
 
   it('should disable manage deployment when the environment has no services', async () => {

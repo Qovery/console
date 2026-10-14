@@ -8,6 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { match } from 'ts-pattern'
+import { toServiceResources, useCostPolicyCheck } from '@qovery/domains/cost-management/feature'
 import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
@@ -129,14 +130,34 @@ export function MenuManageDeployment({
     tooltipEnvironmentNeedUpdate
   )
 
-  const mutationDeploy = () =>
-    deployEnvironment({
-      environmentId: environment.id,
-    })
+  const { checkCostPolicy } = useCostPolicyCheck({ projectId: environment.project.id })
 
-  const mutationRedeploy = () => {
-    deployEnvironment({ environmentId: environment.id })
-  }
+  // Deploying does not raise the run rate of an environment that is already up,
+  // so the check here is the 100% threshold: a project that has spent its
+  // budget cannot put new resources on a cluster.
+  const checkBudgetThenDeploy = () =>
+    checkCostPolicy(
+      {
+        type: 'deploy_environment',
+        environmentName: environment.name,
+        resources: services.map((service) =>
+          toServiceResources(
+            {
+              cpu: 'cpu' in service ? service.cpu : 0,
+              memory: 'memory' in service ? service.memory : 0,
+              gpu: 'gpu' in service ? service.gpu : 0,
+              max_running_instances: 'max_running_instances' in service ? service.max_running_instances : 1,
+            },
+            service.serviceType === 'DATABASE' && service.mode === 'MANAGED' ? { managedDatabases: 1 } : {}
+          )
+        ),
+      },
+      () => deployEnvironment({ environmentId: environment.id })
+    )
+
+  const mutationDeploy = checkBudgetThenDeploy
+
+  const mutationRedeploy = checkBudgetThenDeploy
 
   const mutationStop = () => {
     const hasDatabase = services.some(
