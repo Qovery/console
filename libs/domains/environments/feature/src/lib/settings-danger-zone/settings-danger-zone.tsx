@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, OVERVIEW_URL } from '@qovery/shared/routes'
+import { OVERVIEW_URL } from '@qovery/shared/routes'
 import { BlockContentDelete, Section } from '@qovery/shared/ui'
 import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
@@ -49,7 +49,6 @@ export function PageSettingsDangerZoneFeature() {
   const { data: environment } = useEnvironment({ environmentId })
   const { mutateAsync: deleteEnvironment } = useDeleteEnvironment({
     projectId,
-    logsLink: ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL,
   })
 
   return (

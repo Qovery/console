@@ -2,6 +2,7 @@ import download from 'downloadjs'
 import posthog from 'posthog-js'
 import {
   type Cluster,
+  ClusterDeploymentHistoryOperationEnum,
   type ClusterLogs,
   type ClusterStatus,
   type DeploymentHistoryActionStatus,
@@ -9,7 +10,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type RefObject, useContext } from 'react'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
-import { Button, Icon, Tooltip, Truncate } from '@qovery/shared/ui'
+import { Badge, Button, Icon, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateDifference, dateFullFormat, dateUTCString, formatDuration } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { EventOriginIcon } from '@qovery/shared/util-icons'
@@ -35,6 +36,7 @@ export interface ClusterHeaderLogsProps {
   triggeredBy?: string | null
   actionStatus?: DeploymentHistoryActionStatus
   totalDuration?: string | null
+  operation?: ClusterDeploymentHistoryOperationEnum
 }
 
 export function ClusterHeaderLogs({
@@ -49,6 +51,7 @@ export function ClusterHeaderLogs({
   triggeredBy,
   actionStatus,
   totalDuration,
+  operation,
 }: ClusterHeaderLogsProps) {
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
@@ -89,6 +92,11 @@ export function ClusterHeaderLogs({
           <Button onClick={onBack} variant="plain" iconOnly>
             <Icon className="text-base" iconName="arrow-left" iconStyle="regular" />
           </Button>
+        )}
+        {operation === ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE && (
+          <Badge color="neutral" variant="surface" className="font-medium">
+            Operator update
+          </Badge>
         )}
         {createdAt && (
           <>

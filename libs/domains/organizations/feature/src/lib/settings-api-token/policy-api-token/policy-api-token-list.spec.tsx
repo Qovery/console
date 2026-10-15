@@ -1,4 +1,6 @@
 import { type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
+import { useState } from 'react'
+import { dateUTCString } from '@qovery/shared/util-dates'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { PolicyApiTokenList } from './policy-api-token-list'
 
@@ -29,6 +31,48 @@ const policyApiToken = {
 describe('PolicyApiTokenList', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('should show last usage next to creation, relative to when the list loaded', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-10-13T12:00:00Z'))
+    const lastUsedAt = '2026-10-13T11:55:00Z'
+    const tokens = [{ ...policyApiToken, last_used_at: lastUsedAt }]
+    const onDelete = jest.fn()
+
+    function TestPage() {
+      const [renderCount, setRenderCount] = useState(0)
+      return (
+        <>
+          <button onClick={() => setRenderCount(renderCount + 1)}>Render {renderCount}</button>
+          <PolicyApiTokenList policyApiTokens={tokens} onDelete={onDelete} />
+        </>
+      )
+    }
+
+    const { userEvent } = renderWithProviders(<TestPage />)
+
+    const lastUsed = screen.getByText('Last used 5 minutes ago')
+    expect(lastUsed).toHaveAttribute('title', dateUTCString(lastUsedAt))
+    expect(lastUsed.previousElementSibling).toHaveTextContent('Created since')
+
+    jest.setSystemTime(new Date('2026-10-13T13:00:00Z'))
+    await userEvent.click(screen.getByRole('button', { name: 'Render 0' }))
+
+    expect(screen.getByRole('button', { name: 'Render 1' })).toBeInTheDocument()
+    expect(screen.getByText('Last used 5 minutes ago')).toBeInTheDocument()
+  })
+
+  it.each([null, undefined])('should hide last usage when the timestamp is %s', (lastUsedAt) => {
+    renderWithProviders(
+      <PolicyApiTokenList policyApiTokens={[{ ...policyApiToken, last_used_at: lastUsedAt }]} onDelete={jest.fn()} />
+    )
+
+    expect(screen.getByTestId(`policy-token-list-${policyApiToken.id}`)).toBeInTheDocument()
+    expect(screen.queryByText(/Last used/)).not.toBeInTheDocument()
   })
 
   it('should render an empty state', () => {

@@ -1,10 +1,11 @@
-import { type CloudProviderEnum, type Cluster, type ClusterOverviewResponse } from 'qovery-typescript-axios'
+import { type CloudVendorEnum, type Cluster, type ClusterOverviewResponse } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { match } from 'ts-pattern'
+import { IconEnum } from '@qovery/shared/enums'
 import { Avatar, Icon } from '@qovery/shared/ui'
 
 export interface ClusterAvatarProps extends Omit<ComponentPropsWithoutRef<typeof Avatar>, 'fallback'> {
-  cloudProvider?: CloudProviderEnum
+  cloudProvider?: CloudVendorEnum
   cluster?: Cluster | ClusterOverviewResponse
 }
 
@@ -18,6 +19,9 @@ export const ClusterAvatar = forwardRef<ElementRef<typeof Avatar>, ClusterAvatar
       <Icon iconName="laptop-code" className="text-base text-neutral-subtle" />
     ))
     .with({ localCloudProvider: 'ON_PREMISE' }, () => <Icon name="KUBERNETES" height="65%" width="65%" />)
+    .with({ localCloudProvider: 'OVH' }, () => <Icon name={IconEnum.OVH_CLOUD} height="65%" width="65%" />)
+    .with({ localCloudProvider: 'ORACLE' }, () => <Icon name={IconEnum.ORACLE_CLOUD} height="65%" width="65%" />)
+    .with({ localCloudProvider: 'IBM' }, () => <Icon name={IconEnum.IBM_CLOUD} height="65%" width="65%" />)
     .otherwise(() => <Icon name={localCloudProvider} height="65%" width="65%" />)
 
   return <Avatar ref={ref} fallback={fallback} {...props} />
