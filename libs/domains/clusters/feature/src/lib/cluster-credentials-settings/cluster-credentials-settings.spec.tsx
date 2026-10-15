@@ -144,11 +144,11 @@ describe('ClusterCredentialsSettings', () => {
     expect(screen.getByTestId('selected-credential')).toHaveTextContent('new-credential')
   })
 
-  it('preserves the empty selector and settings link in cluster settings', () => {
+  it('preserves the empty selector in cluster settings', () => {
     useCloudProviderCredentialsMockSpy.mockReturnValue({ data: [], isLoading: false })
     renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting />))
     expect(screen.getByLabelText('Credentials')).toBeInTheDocument()
-    expect(screen.getByText('See and edit all Cloud credentials')).toBeInTheDocument()
+    expect(screen.queryByText('See and edit all Cloud credentials')).not.toBeInTheDocument()
   })
 
   it('should render successfully', () => {
@@ -195,10 +195,10 @@ describe('ClusterCredentialsSettings', () => {
     })
   })
 
-  it('should keep the cloud credentials link without a mirroring registry warning in cluster settings', () => {
+  it('should hide the cloud credentials link and mirroring registry warning in cluster settings', () => {
     renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting />))
 
-    expect(screen.getByText('See and edit all Cloud credentials')).toBeInTheDocument()
+    expect(screen.queryByText('See and edit all Cloud credentials')).not.toBeInTheDocument()
     expect(screen.queryByText(/credential change won't be applied to the mirroring registry/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/credentials trigger.*cluster redeployment/i)).not.toBeInTheDocument()
   })

@@ -3,7 +3,7 @@ import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
-import { Button, EmptyState, Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { Button, EmptyState, Icon, InputSelect, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import {
   ClusterCredentialsModal,
   type ClusterCredentialsModalCloudProvider,
@@ -13,7 +13,6 @@ export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
   fieldName?: 'credentials' | 'restricted_credentials'
-  showSettingsInfo?: boolean
 }
 
 export const filterCredentialsByCloudProvider = (
@@ -31,7 +30,6 @@ export function ClusterCredentialsSettings({
   cloudProvider,
   isSetting,
   fieldName = 'credentials',
-  showSettingsInfo = isSetting,
 }: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control } = useFormContext()
@@ -85,66 +83,51 @@ export function ClusterCredentialsSettings({
           <LoaderSpinner className="w-4" />
         </div>
       ) : (
-        <>
-          <Controller
-            name={fieldName}
-            control={control}
-            rules={{
-              required: 'Please select a credential.',
-            }}
-            render={({ field, fieldState: { error } }) =>
-              !isSetting && sortedCredentials.length === 0 ? (
-                <EmptyState
-                  size="sm"
-                  icon="key"
-                  iconStyle="regular"
-                  title="No cloud credentials"
-                  description="Connect your cloud account to continue."
-                  className="mb-3 border-dashed"
+        <Controller
+          name={fieldName}
+          control={control}
+          rules={{
+            required: 'Please select a credential.',
+          }}
+          render={({ field, fieldState: { error } }) =>
+            !isSetting && sortedCredentials.length === 0 ? (
+              <EmptyState
+                size="sm"
+                icon="key"
+                iconStyle="regular"
+                title="No cloud credentials"
+                description="Connect your cloud account to continue."
+                className="border-dashed"
+              >
+                <Button
+                  type="button"
+                  color="neutral"
+                  variant="outline"
+                  onClick={() => openCredentialsModal(undefined, field.onChange)}
                 >
-                  <Button
-                    type="button"
-                    color="neutral"
-                    variant="outline"
-                    onClick={() => openCredentialsModal(undefined, field.onChange)}
-                  >
-                    <Icon iconName="circle-plus" iconStyle="regular" />
-                    Add New Credential
-                  </Button>
-                </EmptyState>
-              ) : (
-                <InputSelect
-                  dataTestId={fieldName === 'credentials' ? 'input-credentials' : 'input-restricted-credentials'}
-                  label="Credentials"
-                  className="mb-3"
-                  options={buildCredentials}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  isSearchable
-                  menuListButton={{
-                    title: 'Select credential',
-                    label: 'New credential',
-                    icon: <Icon iconName="circle-plus" className="text-brand" />,
-                    onClick: () => openCredentialsModal(undefined, field.onChange),
-                  }}
-                />
-              )
-            }
-          />
-
-          {showSettingsInfo && (
-            <Link
-              color="brand"
-              to="/organization/$organizationId/settings/cloud-credentials"
-              params={{ organizationId }}
-              className="flex gap-1"
-            >
-              See and edit all Cloud credentials
-              <Icon iconName="key" iconStyle="regular" />
-            </Link>
-          )}
-        </>
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                  Add New Credential
+                </Button>
+              </EmptyState>
+            ) : (
+              <InputSelect
+                dataTestId={fieldName === 'credentials' ? 'input-credentials' : 'input-restricted-credentials'}
+                label={fieldName === 'restricted_credentials' ? 'Restricted credentials' : 'Credentials'}
+                options={buildCredentials}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                isSearchable
+                menuListButton={{
+                  title: 'Select credential',
+                  label: 'New credential',
+                  icon: <Icon iconName="circle-plus" className="text-brand" />,
+                  onClick: () => openCredentialsModal(undefined, field.onChange),
+                }}
+              />
+            )
+          }
+        />
       )}
     </div>
   )

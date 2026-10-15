@@ -1,6 +1,6 @@
 import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { BlockContent, InputText, InputToggle } from '@qovery/shared/ui'
+import { InputText, InputToggle } from '@qovery/shared/ui'
 import { ClusterCredentialsSettings } from './cluster-credentials-settings'
 import { ClusterWidePermissionCredentialsSettings } from './cluster-wide-permission-credentials-settings'
 
@@ -14,14 +14,8 @@ export function ClusterRestrictivePermissionsSettings({ cloudProvider }: Cluster
   const isUsingRestrictivePermissions = Boolean(useWatch({ control, name: 'using_restrictive_permissions' }))
 
   return (
-    <>
-      <BlockContent title="Configured credentials" dataTestId="configured-credentials-block">
-        <ClusterWidePermissionCredentialsSettings
-          cloudProvider={cloudProvider}
-          fieldName="configured_credentials"
-          isSetting
-        />
-      </BlockContent>
+    <div className="flex flex-col gap-6">
+      <ClusterWidePermissionCredentialsSettings cloudProvider={cloudProvider} fieldName="configured_credentials" />
 
       <Controller
         name="using_restrictive_permissions"
@@ -29,11 +23,10 @@ export function ClusterRestrictivePermissionsSettings({ cloudProvider }: Cluster
         render={({ field }) => (
           <InputToggle
             dataTestId="input-restrictive-permissions-toggle"
-            className="mb-5 mt-5"
             value={Boolean(field.value)}
             onChange={field.onChange}
             title="Use restrictive permissions"
-            description="Qovery uses restrictive credentials day-to-day operations and configured credentials only when wider access is required."
+            description="Qovery uses restricted credentials for day-to-day operations and extended credentials only when wider access is required. Action is required in your AWS account when extended credentials need to be used."
             align="top"
             small
           />
@@ -41,39 +34,29 @@ export function ClusterRestrictivePermissionsSettings({ cloudProvider }: Cluster
       />
 
       {isUsingRestrictivePermissions && (
-        <>
-          <BlockContent title="Restricted credentials" dataTestId="restricted-credentials-block">
-            <ClusterCredentialsSettings
-              cloudProvider={cloudProvider}
-              isSetting
-              fieldName="restricted_credentials"
-              showSettingsInfo={false}
-            />
-          </BlockContent>
+        <div className="flex flex-col gap-4">
+          <ClusterCredentialsSettings cloudProvider={cloudProvider} isSetting fieldName="restricted_credentials" />
 
           {/* UI only for now: the value isn't sent until the backend supports it */}
-          <BlockContent title="Slack notification webhook" dataTestId="slack-notification-webhook-block">
-            <Controller
-              name="slack_webhook_url"
-              control={control}
-              render={({ field }) => (
-                <InputText
-                  dataTestId="input-slack-webhook-url"
-                  type="password"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Slack webhook URL"
-                  placeholder="https://hooks.slack.com/services/…"
-                  hint="Receive a Slack message when Qovery requests access to the configured credentials."
-                  autoComplete="off"
-                />
-              )}
-            />
-          </BlockContent>
-        </>
+          <Controller
+            name="slack_webhook_url"
+            control={control}
+            render={({ field }) => (
+              <InputText
+                dataTestId="input-slack-webhook-url"
+                type="password"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Slack webhook URL"
+                hint="Receive a Slack message when Qovery requests access to the extended credentials."
+                autoComplete="off"
+              />
+            )}
+          />
+        </div>
       )}
-    </>
+    </div>
   )
 }
 
