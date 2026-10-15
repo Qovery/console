@@ -2,7 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
-import { Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { Icon, InputSelect, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import {
   type ClusterCredentialAuthType,
   ClusterCredentialsModal,
@@ -14,7 +14,6 @@ const WIDE_PERMISSION_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['STS']
 export interface ClusterWidePermissionCredentialsSettingsProps {
   cloudProvider?: CloudProviderEnum
   fieldName?: 'wide_permission_credentials' | 'configured_credentials'
-  isSetting?: boolean
 }
 
 export const filterWidePermissionCredentials = (credentials: ClusterCredentials[]) =>
@@ -23,7 +22,6 @@ export const filterWidePermissionCredentials = (credentials: ClusterCredentials[
 export function ClusterWidePermissionCredentialsSettings({
   cloudProvider,
   fieldName = 'wide_permission_credentials',
-  isSetting,
 }: ClusterWidePermissionCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control, getValues } = useFormContext()
@@ -78,62 +76,46 @@ export function ClusterWidePermissionCredentialsSettings({
   }
 
   return (
-    <>
-      <Controller
-        name={fieldName}
-        control={control}
-        rules={{
-          validate: (value) => {
-            if (!value && (fieldName === 'configured_credentials' || getValues('using_restrictive_permissions'))) {
-              return 'Please select a credential.'
-            }
-            if (
-              fieldName === 'configured_credentials' &&
-              isUsingRestrictivePermissions &&
-              !widePermissionCredentials.some((credential) => credential.id === value)
-            ) {
-              return 'Select an AWS role credential for wider access.'
-            }
-            return true
-          },
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            dataTestId={
-              fieldName === 'wide_permission_credentials'
-                ? 'input-wide-permission-credentials'
-                : 'input-configured-credentials'
-            }
-            label="Credentials"
-            options={availableCredentials}
-            onChange={field.onChange}
-            value={field.value}
-            error={error?.message}
-            isSearchable
-            menuListButton={{
-              title: 'Select credential',
-              label: 'New credential',
-              icon: <Icon iconName="circle-plus" className="text-brand" />,
-              onClick: () => openCredentialsModal(field.onChange),
-            }}
-          />
-        )}
-      />
-
-      {isSetting && (
-        <>
-          <Link
-            color="brand"
-            to="/organization/$organizationId/settings/cloud-credentials"
-            params={{ organizationId }}
-            className="flex gap-1"
-          >
-            See and edit all Cloud credentials
-            <Icon iconName="key" iconStyle="regular" />
-          </Link>
-        </>
+    <Controller
+      name={fieldName}
+      control={control}
+      rules={{
+        validate: (value) => {
+          if (!value && (fieldName === 'configured_credentials' || getValues('using_restrictive_permissions'))) {
+            return 'Please select a credential.'
+          }
+          if (
+            fieldName === 'configured_credentials' &&
+            isUsingRestrictivePermissions &&
+            !widePermissionCredentials.some((credential) => credential.id === value)
+          ) {
+            return 'Select an AWS role credential for wider access.'
+          }
+          return true
+        },
+      }}
+      render={({ field, fieldState: { error } }) => (
+        <InputSelect
+          dataTestId={
+            fieldName === 'wide_permission_credentials'
+              ? 'input-wide-permission-credentials'
+              : 'input-configured-credentials'
+          }
+          label={fieldName === 'configured_credentials' ? 'Extended credentials' : 'Credentials'}
+          options={availableCredentials}
+          onChange={field.onChange}
+          value={field.value}
+          error={error?.message}
+          isSearchable
+          menuListButton={{
+            title: 'Select credential',
+            label: 'New credential',
+            icon: <Icon iconName="circle-plus" className="text-brand" />,
+            onClick: () => openCredentialsModal(field.onChange),
+          }}
+        />
       )}
-    </>
+    />
   )
 }
 

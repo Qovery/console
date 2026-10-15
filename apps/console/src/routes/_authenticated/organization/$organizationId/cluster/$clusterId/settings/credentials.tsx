@@ -18,7 +18,7 @@ import {
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, Section, toast, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, Section, toast, useModalConfirmation } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
@@ -188,16 +188,11 @@ function ClusterCredentialsSettingsForm() {
         <Section className="p-8">
           <SettingsHeading title="Credentials" />
           <div className="max-w-content-with-navigation-left">
-            <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmit} className="flex flex-col gap-6">
               {isWideCredentialsEnabled ? (
                 <ClusterRestrictivePermissionsSettings cloudProvider={clusterCloudProviderInfo?.cloud_provider} />
               ) : (
-                <BlockContent title="Configured credentials">
-                  <ClusterCredentialsSettings
-                    cloudProvider={clusterCloudProviderInfo?.cloud_provider}
-                    isSetting={true}
-                  />
-                </BlockContent>
+                <ClusterCredentialsSettings cloudProvider={clusterCloudProviderInfo?.cloud_provider} isSetting={true} />
               )}
               <div className="flex justify-end">
                 <Button
