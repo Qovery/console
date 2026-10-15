@@ -286,7 +286,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                     </li>
                   </ul>
                 </div>
-                <Button type="button" variant="plain" iconOnly size="md" onClick={props.goToResources}>
+                <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToResources}>
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </Section>
