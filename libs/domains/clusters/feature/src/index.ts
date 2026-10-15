@@ -80,7 +80,7 @@ export * from './lib/hooks/use-stop-cluster/use-stop-cluster'
 export * from './lib/hooks/use-upgrade-cluster/use-upgrade-cluster'
 export * from './lib/hooks/use-update-eks-anywhere-commit/use-update-eks-anywhere-commit'
 export * from './lib/hooks/use-eks-anywhere-cluster-jwt/use-eks-anywhere-cluster-jwt'
-export * from './lib/hooks/use-cluster-running-status/use-cluster-running-status'
+export * from './lib/hooks/use-retained-cluster-running-status/use-retained-cluster-running-status'
 export * from './lib/hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 export * from './lib/hooks/use-secret-manager-associated-services/use-secret-manager-associated-services'
 export * from './lib/hooks/use-secret-manager-provider-secrets/use-secret-manager-provider-secrets'
@@ -91,3 +91,9 @@ export * from './lib/utils/derive-global-spot-enabled'
 export * from './lib/utils/map-creation-spot-to-node-pools'
 export * from './lib/utils/normalize-karpenter-spot'
 export * from './lib/cluster-resources-settings/cluster-resources-settings'
+
+export {
+  subscribeToClusterStream,
+  scheduleClusterStreamExpiry,
+  setClusterStreamData,
+} from './lib/utils/cluster-stream-retention'

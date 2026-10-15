@@ -1,9 +1,8 @@
 import clsx from 'clsx'
 import { match } from 'ts-pattern'
-import { useCluster, useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useRetainedClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Badge, ExternalLink, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
-import { getPresentationState } from '@qovery/state/util-queries'
 
 export interface ClusterCardSetupProps {
   organizationId: string
@@ -13,19 +12,18 @@ export interface ClusterCardSetupProps {
 export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetupProps) {
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
-  const { data: displayStatus } = useClusterRunningDisplayStatus({
+  const { data: displayStatus } = useRetainedClusterRunningStatus({
     organizationId: organizationId,
     clusterId: clusterId,
   })
 
-  const presentation = getPresentationState(displayStatus)
-  const runningStatus = presentation.data
+  const runningStatus = displayStatus
 
   const kubeVersion = runningStatus?.computed_status?.kube_version_status
   const isEksAnywhereCluster = cluster?.kubernetes === 'PARTIALLY_MANAGED'
 
   const isLoading = !cluster?.created_at
-  const isVersionLoading = !cluster || presentation.status === 'loading'
+  const isVersionLoading = !cluster || displayStatus === undefined
   const skeletonClassName = isLoading ? 'my-2 ml-1.5' : undefined
 
   return (

@@ -6,8 +6,8 @@ import { match } from 'ts-pattern'
 import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { getClusterQuotaWarning } from '../cluster-quota-warning/cluster-quota-warning'
-import { useClusterRunningDisplayStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { useClusterStatus } from '../hooks/use-cluster-status/use-cluster-status'
+import { useRetainedClusterRunningStatus } from '../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status'
 
 function ClusterRunningStatusDot({ className, status }: { className: string; status: string }) {
   return (
@@ -36,7 +36,7 @@ export function ClusterRunningStatusIndicator({
 
   const isNotInstalled = cluster.status === 'READY'
 
-  const { data: runningStatus } = useClusterRunningDisplayStatus({
+  const { data: runningStatus } = useRetainedClusterRunningStatus({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })
@@ -82,7 +82,7 @@ export function ClusterRunningStatusIndicator({
     )
   }
 
-  return match(runningStatus === 'NotFound' ? undefined : runningStatus.computed_status)
+  return match(runningStatus?.computed_status)
     .with({ global_status: 'RUNNING' }, (s) =>
       type === 'dot' ? (
         <ClusterRunningStatusDot status="Running" className="border-positive-subtle bg-surface-positive-solid" />

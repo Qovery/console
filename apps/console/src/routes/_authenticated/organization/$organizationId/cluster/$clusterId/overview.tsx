@@ -4,9 +4,9 @@ import {
   ClusterCardNodeUsage,
   ClusterTableNode,
   ClusterTableNodepool,
-  getClusterInformationState,
-  useClusterDisplayMetrics,
+  getClusterRunningHealthAndMetricsStateWithStoppedPriority,
   useClusterMetricsSocket,
+  useRetainedClusterMetrics,
 } from '@qovery/domains/cluster-metrics/feature'
 import { ClusterCardResources } from '@qovery/domains/cluster-metrics/feature'
 import { ClusterCardSetup } from '@qovery/domains/cluster-metrics/feature'
@@ -20,10 +20,10 @@ import {
   ClusterType,
   hasGpuInstance,
   useCluster,
-  useClusterRunningDisplayStatus,
   useClusterRunningStatusSocket,
   useClusterStatus,
   useDeployCluster,
+  useRetainedClusterRunningStatus,
 } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -103,8 +103,8 @@ function TableLegend() {
 function ClusterOverview({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
   const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { mutate: deployCluster } = useDeployCluster()
-  const { data: runningStatus } = useClusterRunningDisplayStatus({ organizationId, clusterId })
-  const { data: clusterMetrics } = useClusterDisplayMetrics({ organizationId, clusterId })
+  const { data: runningStatus } = useRetainedClusterRunningStatus({ organizationId, clusterId })
+  const { data: clusterMetrics } = useRetainedClusterMetrics({ organizationId, clusterId })
   const { data: clusterStatus, isLoading: isClusterStatusLoading } = useClusterStatus({
     organizationId,
     clusterId,
@@ -112,7 +112,11 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
     enabled: Boolean(organizationId) && Boolean(clusterId),
   })
 
-  const informationState = getClusterInformationState(clusterStatus?.status, runningStatus, clusterMetrics)
+  const informationState = getClusterRunningHealthAndMetricsStateWithStoppedPriority(
+    clusterStatus?.status,
+    runningStatus,
+    clusterMetrics
+  )
   const isLoading = isClusterLoading || isClusterStatusLoading || informationState === 'loading'
 
   const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')

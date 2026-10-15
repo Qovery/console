@@ -1,15 +1,15 @@
-import { useCluster, useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useRetainedClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useClusterDisplayMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useRetainedClusterMetrics } from '../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics'
 import { ClusterTableNodepool } from './cluster-table-nodepool'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   useCluster: jest.fn(),
-  useClusterRunningDisplayStatus: jest.fn(),
+  useRetainedClusterRunningStatus: jest.fn(),
 }))
 
-jest.mock('../hooks/use-cluster-metrics/use-cluster-metrics', () => ({
-  useClusterDisplayMetrics: jest.fn(),
+jest.mock('../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics', () => ({
+  useRetainedClusterMetrics: jest.fn(),
 }))
 
 describe('ClusterTableNodepool', () => {
@@ -134,10 +134,10 @@ describe('ClusterTableNodepool', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useClusterDisplayMetrics as jest.Mock).mockReturnValue({
+    ;(useRetainedClusterMetrics as jest.Mock).mockReturnValue({
       data: mockMetrics,
     })
-    ;(useClusterRunningDisplayStatus as jest.Mock).mockReturnValue({
+    ;(useRetainedClusterRunningStatus as jest.Mock).mockReturnValue({
       data: mockRunningStatus,
     })
     ;(useCluster as jest.Mock).mockReturnValue({

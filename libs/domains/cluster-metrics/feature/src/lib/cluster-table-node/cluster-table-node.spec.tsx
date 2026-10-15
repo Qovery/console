@@ -1,15 +1,15 @@
 import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
-import { useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
+import { useRetainedClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useClusterDisplayMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useRetainedClusterMetrics } from '../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics'
 import { ClusterTableNode } from './cluster-table-node'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
-  useClusterRunningDisplayStatus: jest.fn(),
+  useRetainedClusterRunningStatus: jest.fn(),
 }))
 
-jest.mock('../hooks/use-cluster-metrics/use-cluster-metrics', () => ({
-  useClusterDisplayMetrics: jest.fn(),
+jest.mock('../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics', () => ({
+  useRetainedClusterMetrics: jest.fn(),
 }))
 
 describe('ClusterTableNode', () => {
@@ -26,7 +26,7 @@ describe('ClusterTableNode', () => {
       node_warnings: {},
     },
   }
-  const mockUseClusterRunningStatus = useClusterRunningDisplayStatus as jest.Mock
+  const mockUseClusterRunningStatus = useRetainedClusterRunningStatus as jest.Mock
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -72,7 +72,7 @@ describe('ClusterTableNode', () => {
       ],
     }
 
-    const mockUseClusterMetrics = useClusterDisplayMetrics as jest.Mock
+    const mockUseClusterMetrics = useRetainedClusterMetrics as jest.Mock
     mockUseClusterMetrics.mockReturnValue({
       data: mockMetrics,
     })
@@ -136,7 +136,7 @@ describe('ClusterTableNode', () => {
       },
     })
 
-    const mockUseClusterMetrics = useClusterDisplayMetrics as jest.Mock
+    const mockUseClusterMetrics = useRetainedClusterMetrics as jest.Mock
     mockUseClusterMetrics.mockReturnValue({
       data: mockMetrics,
     })
@@ -185,7 +185,7 @@ describe('ClusterTableNode', () => {
       ],
     }
 
-    const mockUseClusterMetrics = useClusterDisplayMetrics as jest.Mock
+    const mockUseClusterMetrics = useRetainedClusterMetrics as jest.Mock
     mockUseClusterMetrics.mockReturnValue({
       data: mockMetrics,
     })
@@ -228,7 +228,7 @@ describe('ClusterTableNode', () => {
       ],
     }
 
-    const mockUseClusterMetrics = useClusterDisplayMetrics as jest.Mock
+    const mockUseClusterMetrics = useRetainedClusterMetrics as jest.Mock
     mockUseClusterMetrics.mockReturnValue({
       data: mockMetrics,
     })
@@ -277,7 +277,7 @@ describe('ClusterTableNode', () => {
       ],
     }
 
-    const mockUseClusterMetrics = useClusterDisplayMetrics as jest.Mock
+    const mockUseClusterMetrics = useRetainedClusterMetrics as jest.Mock
     mockUseClusterMetrics.mockReturnValue({
       data: mockMetrics,
     })
@@ -327,7 +327,7 @@ describe('ClusterTableNode', () => {
       ],
     }
 
-    const mockUseClusterMetrics = useClusterDisplayMetrics as jest.Mock
+    const mockUseClusterMetrics = useRetainedClusterMetrics as jest.Mock
     mockUseClusterMetrics.mockReturnValue({
       data: mockMetrics,
     })

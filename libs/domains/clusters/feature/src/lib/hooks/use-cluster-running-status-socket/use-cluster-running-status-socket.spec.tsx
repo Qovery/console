@@ -28,7 +28,7 @@ describe('cluster status subscription', () => {
     jest.useRealTimers()
   })
 
-  it('retains only the display status during NotFound and recovers after the deadline', () => {
+  it('retains running status during NotFound and recovers after the deadline', () => {
     const { unmount } = renderHook(() => useClusterRunningStatusSocket(identity), {
       wrapper: ({ children }: PropsWithChildren) => (
         <QueryClientProvider client={client}>{children}</QueryClientProvider>
@@ -42,14 +42,12 @@ describe('cluster status subscription', () => {
       subscription.onMessage?.(client, running)
       subscription.onDisconnect?.(client, new CloseEvent('close', { reason: 'NotFound' }))
     })
-    expect(client.getQueryData(queries.clusters.runningStatus(identity).queryKey)).toBe('NotFound')
-    expect(client.getQueryData(queries.clusters.runningDisplayStatus(identity).queryKey)).toEqual(running)
+    expect(client.getQueryData(queries.clusters.runningStatus(identity).queryKey)).toEqual(running)
 
     act(() => jest.advanceTimersByTime(90_000))
-    expect(client.getQueryData(queries.clusters.runningDisplayStatus(identity).queryKey)).toBe('NotFound')
-    expect(client.getQueryData(queries.clusters.runningStatus(identity).queryKey)).toBe('NotFound')
+    expect(client.getQueryData(queries.clusters.runningStatus(identity).queryKey)).toBeNull()
     act(() => subscription.onMessage?.(client, running))
-    expect(client.getQueryData(queries.clusters.runningDisplayStatus(identity).queryKey)).toEqual(running)
+    expect(client.getQueryData(queries.clusters.runningStatus(identity).queryKey)).toEqual(running)
     unmount()
   })
 
@@ -65,9 +63,9 @@ describe('cluster status subscription', () => {
       subscription.onDisconnect?.(client, new CloseEvent('close', { code: 1006 }))
       jest.advanceTimersByTime(1_999)
     })
-    expect(client.getQueryData(queries.clusters.runningDisplayStatus(identity).queryKey)).toBeUndefined()
+    expect(client.getQueryData(queries.clusters.runningStatus(identity).queryKey)).toBeUndefined()
     act(() => jest.advanceTimersByTime(1))
-    expect(client.getQueryData(queries.clusters.runningDisplayStatus(identity).queryKey)).toBe('NotFound')
+    expect(client.getQueryData(queries.clusters.runningStatus(identity).queryKey)).toBeNull()
     unmount()
   })
 })

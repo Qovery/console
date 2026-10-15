@@ -22,7 +22,7 @@ const filtered = { nodes: [metrics.nodes[0]] }
 
 describe('cluster metrics connection grace period', () => {
   let client: QueryClient
-  const displayed = () => client.getQueryData(queries.clusters.displayMetrics(identity).queryKey)
+  const displayed = () => client.getQueryData(queries.clusters.metrics(identity).queryKey)
   const wrapper = ({ children }: PropsWithChildren) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
   )
@@ -52,7 +52,6 @@ describe('cluster metrics connection grace period', () => {
       jest.advanceTimersByTime(60_000)
     })
     expect(displayed()).toEqual(filtered)
-    expect(client.getQueryData(queries.clusters.metrics(identity).queryKey)).toBe('NotFound')
     act(() => subscription().onMessage?.(client, metrics))
     act(() => jest.advanceTimersByTime(90_000))
     expect(displayed()).toEqual(filtered)
@@ -89,7 +88,7 @@ describe('cluster metrics connection grace period', () => {
     unmount()
   })
   it('expires retained metrics when authentication fails before a socket can open', async () => {
-    client.setQueryData(queries.clusters.displayMetrics(identity).queryKey, filtered)
+    client.setQueryData(queries.clusters.metrics(identity).queryKey, filtered)
     jest
       .mocked(useReactQueryWsSubscription)
       .mockImplementation(jest.requireActual('@qovery/state/util-queries').useReactQueryWsSubscription)

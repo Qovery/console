@@ -1,22 +1,22 @@
-import { useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
+import { useRetainedClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useClusterDisplayMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useRetainedClusterMetrics } from '../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics'
 import { calculateClusterResources } from './calculate-cluster-resources'
 import { ClusterCardResources } from './cluster-card-resources'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
-  useClusterRunningDisplayStatus: jest.fn(),
+  useRetainedClusterRunningStatus: jest.fn(),
 }))
 
-jest.mock('../hooks/use-cluster-metrics/use-cluster-metrics', () => ({
-  useClusterDisplayMetrics: jest.fn(),
+jest.mock('../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics', () => ({
+  useRetainedClusterMetrics: jest.fn(),
 }))
 
 jest.mock('./calculate-cluster-resources', () => ({
   calculateClusterResources: jest.fn(),
 }))
 
-const mockUseClusterDisplayMetrics = useClusterDisplayMetrics as jest.Mock
+const mockUseClusterDisplayMetrics = useRetainedClusterMetrics as jest.Mock
 
 describe('ClusterCardResources', () => {
   const mockOrganizationId = 'org-123'
@@ -70,7 +70,7 @@ describe('ClusterCardResources', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useClusterRunningDisplayStatus as jest.Mock).mockReturnValue({
+    ;(useRetainedClusterRunningStatus as jest.Mock).mockReturnValue({
       data: defaultRunningStatus,
     })
     mockUseClusterDisplayMetrics.mockReturnValue({

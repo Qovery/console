@@ -1,23 +1,21 @@
 import { QueryClient } from '@tanstack/react-query'
 import { act, renderHook } from '@testing-library/react'
-import { StrictMode, useEffect, useMemo } from 'react'
-import { createQueryGracePeriod } from './create-query-grace-period'
+import { type ClusterStatusDto } from 'qovery-ws-typescript-axios'
+import { StrictMode, useEffect } from 'react'
+import { queries } from '@qovery/state/util-queries'
+import { scheduleClusterStreamExpiry, setClusterStreamData, subscribeToClusterStream } from './cluster-stream-retention'
+
+const running = { computed_status: { global_status: 'RUNNING' } } as ClusterStatusDto
 
 describe('query grace period lifecycle', () => {
   let client: QueryClient
-  const queryKey = ['display', 'org', 'cluster']
+  const queryKey = queries.clusters.runningStatus({ organizationId: 'org', clusterId: 'cluster' }).queryKey
   function useConnection() {
-    const connection = useMemo(
-      () =>
-        createQueryGracePeriod(client, queryKey, {
-          timeoutMs: 90_000,
-          initialTimeoutMs: 3_000,
-          unavailableValue: 'unavailable',
-        }),
-      []
-    )
-    useEffect(() => connection.subscribe(), [connection])
-    return connection
+    useEffect(() => subscribeToClusterStream(client, queryKey), [])
+    return {
+      received: () => setClusterStreamData(client, queryKey, running),
+      disconnected: () => scheduleClusterStreamExpiry(client, queryKey),
+    }
   }
   beforeEach(() => {
     jest.useFakeTimers()
@@ -32,16 +30,16 @@ describe('query grace period lifecycle', () => {
   it('balances Strict Mode setup/cleanup and keeps the original deadline on remount', () => {
     const first = renderHook(useConnection, { wrapper: StrictMode })
     act(() => {
-      first.result.current.received('running')
+      first.result.current.received()
       first.result.current.disconnected()
       jest.advanceTimersByTime(40_000)
     })
     first.unmount()
     const second = renderHook(useConnection, { wrapper: StrictMode })
     act(() => jest.advanceTimersByTime(49_999))
-    expect(client.getQueryData(queryKey)).toBe('running')
+    expect(client.getQueryData(queryKey)).toEqual(running)
     act(() => jest.advanceTimersByTime(1))
-    expect(client.getQueryData(queryKey)).toBe('unavailable')
+    expect(client.getQueryData(queryKey)).toBeNull()
     second.unmount()
     client.clear()
     act(() => jest.advanceTimersByTime(90_000))
@@ -51,14 +49,14 @@ describe('query grace period lifecycle', () => {
   it('bounds initial loading after eviction with an existing consumer still mounted', () => {
     const first = renderHook(useConnection, { wrapper: StrictMode })
     act(() => {
-      first.result.current.received('running')
+      first.result.current.received()
       first.result.current.disconnected()
       jest.advanceTimersByTime(10_000)
       client.removeQueries({ queryKey, exact: true })
     })
     const second = renderHook(useConnection, { wrapper: StrictMode })
     act(() => jest.advanceTimersByTime(3_000))
-    expect(client.getQueryData(queryKey)).toBe('unavailable')
+    expect(client.getQueryData(queryKey)).toBeNull()
     first.unmount()
     second.unmount()
   })

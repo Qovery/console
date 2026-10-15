@@ -2,18 +2,18 @@ import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { type ClusterQuotaWarningDto } from 'qovery-ws-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useClusterRunningDisplayStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { useClusterStatus } from '../hooks/use-cluster-status/use-cluster-status'
+import { useRetainedClusterRunningStatus } from '../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status'
 import { ClusterRunningStatusIndicator } from './cluster-running-status-indicator'
 
-jest.mock('../hooks/use-cluster-running-status/use-cluster-running-status')
+jest.mock('../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status')
 jest.mock('../hooks/use-cluster-status/use-cluster-status')
 jest.mock('posthog-js/react', () => ({
   useFeatureFlagVariantKey: jest.fn(),
 }))
 
-const mockUseClusterRunningDisplayStatus = useClusterRunningDisplayStatus as jest.MockedFunction<
-  typeof useClusterRunningDisplayStatus
+const mockUseClusterRunningDisplayStatus = useRetainedClusterRunningStatus as jest.MockedFunction<
+  typeof useRetainedClusterRunningStatus
 >
 const mockUseFeatureFlagVariantKey = useFeatureFlagVariantKey as jest.MockedFunction<typeof useFeatureFlagVariantKey>
 
@@ -114,7 +114,7 @@ describe('ClusterRunningStatusIndicator', () => {
 
   it('shows a brief skeleton instead of a Connecting badge on initial load', () => {
     mockUseClusterRunningDisplayStatus.mockReturnValue({ data: undefined } as ReturnType<
-      typeof useClusterRunningDisplayStatus
+      typeof useRetainedClusterRunningStatus
     >)
     const { container } = renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} />)
     expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
@@ -125,7 +125,7 @@ describe('ClusterRunningStatusIndicator', () => {
   it('resolves STOPPED centrally for header dots even with retained RUNNING health', () => {
     mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: { computed_status: { global_status: 'RUNNING' } },
-    } as ReturnType<typeof useClusterRunningDisplayStatus>)
+    } as ReturnType<typeof useRetainedClusterRunningStatus>)
     jest
       .mocked(useClusterStatus)
       .mockReturnValue({ data: { status: 'STOPPED' } } as ReturnType<typeof useClusterStatus>)
@@ -136,7 +136,7 @@ describe('ClusterRunningStatusIndicator', () => {
 
   it('shows Stopped immediately when deployment status is known', () => {
     mockUseClusterRunningDisplayStatus.mockReturnValue({ data: undefined } as ReturnType<
-      typeof useClusterRunningDisplayStatus
+      typeof useRetainedClusterRunningStatus
     >)
     renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} clusterDeploymentStatus="STOPPED" />)
     expect(screen.getByText('Stopped')).toBeInTheDocument()
@@ -144,14 +144,14 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it('shows unavailable after the shared grace period expires, then recovers', () => {
-    mockUseClusterRunningDisplayStatus.mockReturnValue({ data: 'NotFound' } as ReturnType<
-      typeof useClusterRunningDisplayStatus
+    mockUseClusterRunningDisplayStatus.mockReturnValue({ data: null } as ReturnType<
+      typeof useRetainedClusterRunningStatus
     >)
     const { rerender } = renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} />)
     expect(screen.getByText('Status unavailable')).toBeInTheDocument()
     mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: { computed_status: { global_status: 'RUNNING' } },
-    } as ReturnType<typeof useClusterRunningDisplayStatus>)
+    } as ReturnType<typeof useRetainedClusterRunningStatus>)
     rerender(<ClusterRunningStatusIndicator cluster={mockCluster} />)
     expect(screen.getByText('running')).toBeInTheDocument()
     expect(screen.queryByText('Status unavailable')).not.toBeInTheDocument()

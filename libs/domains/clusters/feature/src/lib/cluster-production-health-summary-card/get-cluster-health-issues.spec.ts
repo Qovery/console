@@ -25,7 +25,6 @@ describe('getClusterHealthIssues', () => {
         cluster: baseCluster,
         deploymentStatus: baseDeploymentStatus,
         runningStatus,
-        hasRunningStatusTimedOut: true,
       })
     ).toEqual([])
   })
@@ -36,7 +35,6 @@ describe('getClusterHealthIssues', () => {
         cluster: baseCluster,
         deploymentStatus: { ...baseDeploymentStatus, status: 'DEPLOYMENT_ERROR' },
         runningStatus: { computed_status: { global_status: 'RUNNING' } } as unknown as ClusterStatusDto,
-        hasRunningStatusTimedOut: true,
       })
     ).toContain('deploy-failed')
   })
@@ -47,7 +45,6 @@ describe('getClusterHealthIssues', () => {
         cluster: baseCluster,
         deploymentStatus: baseDeploymentStatus,
         runningStatus: { computed_status: { global_status: 'ERROR' } } as unknown as ClusterStatusDto,
-        hasRunningStatusTimedOut: true,
       })
     ).toContain('running-error')
   })
@@ -58,31 +55,18 @@ describe('getClusterHealthIssues', () => {
       deploymentStatus: baseDeploymentStatus,
       runningStatus: { computed_status: { global_status: 'ERROR' } } as unknown as ClusterStatusDto,
       isRunningStatusIssueEnabled: false,
-      hasRunningStatusTimedOut: true,
     })
 
     expect(issues).not.toContain('running-error')
     expect(issues).not.toContain('status-unavailable')
   })
 
-  it('flags status-unavailable when running status is NotFound', () => {
+  it('flags status-unavailable when retained running status expires', () => {
     expect(
       getClusterHealthIssues({
         cluster: baseCluster,
         deploymentStatus: baseDeploymentStatus,
-        runningStatus: 'NotFound',
-        hasRunningStatusTimedOut: true,
-      })
-    ).toContain('status-unavailable')
-  })
-
-  it('flags status-unavailable when running status is missing after timeout', () => {
-    expect(
-      getClusterHealthIssues({
-        cluster: baseCluster,
-        deploymentStatus: baseDeploymentStatus,
-        runningStatus: undefined,
-        hasRunningStatusTimedOut: true,
+        runningStatus: null,
       })
     ).toContain('status-unavailable')
   })
@@ -93,7 +77,6 @@ describe('getClusterHealthIssues', () => {
         cluster: baseCluster,
         deploymentStatus: baseDeploymentStatus,
         runningStatus: undefined,
-        hasRunningStatusTimedOut: false,
       })
     ).not.toContain('status-unavailable')
   })
@@ -104,7 +87,6 @@ describe('getClusterHealthIssues', () => {
         cluster: { ...baseCluster, deployment_status: 'OUT_OF_DATE' } as Cluster,
         deploymentStatus: baseDeploymentStatus,
         runningStatus: { computed_status: { global_status: 'RUNNING' } } as unknown as ClusterStatusDto,
-        hasRunningStatusTimedOut: true,
       })
     ).toContain('update-available')
   })
@@ -113,8 +95,7 @@ describe('getClusterHealthIssues', () => {
     const issues = getClusterHealthIssues({
       cluster: { ...baseCluster, deployment_status: 'OUT_OF_DATE' } as Cluster,
       deploymentStatus: { ...baseDeploymentStatus, status: 'STOPPED' },
-      runningStatus: 'NotFound',
-      hasRunningStatusTimedOut: true,
+      runningStatus: null,
     })
     expect(issues).not.toContain('running-error')
     expect(issues).not.toContain('status-unavailable')
@@ -139,7 +120,6 @@ describe('getClusterHealthIssues', () => {
       cluster: { ...baseCluster, deployment_status: 'OUT_OF_DATE' } as Cluster,
       deploymentStatus: { ...baseDeploymentStatus, status: 'DEPLOYMENT_ERROR' },
       runningStatus: { computed_status: { global_status: 'ERROR' } } as unknown as ClusterStatusDto,
-      hasRunningStatusTimedOut: true,
     })
     expect(issues).toEqual(expect.arrayContaining(['deploy-failed', 'running-error', 'update-available']))
   })

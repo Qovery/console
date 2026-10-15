@@ -186,31 +186,15 @@ export const clusters = createQueryKeys('clusters', {
   }),
   runningStatus: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
     queryKey: [organizationId, clusterId],
-    // NOTE: Value is set by WebSocket
+    // Populated by the socket. null means the connection retention period expired.
     queryFn() {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise<ClusterStatusDto | null>(() => {})
     },
   }),
-  runningDisplayStatus: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
-    queryKey: [organizationId, clusterId],
-    queryFn() {
-      // Populated by the cluster status subscription after its connection grace period.
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      return new Promise<ClusterStatusDto | 'NotFound'>(() => {})
-    },
-  }),
-  displayMetrics: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
-    queryKey: [organizationId, clusterId],
-    queryFn() {
-      // Last-known metrics for display; null means the connection grace period expired.
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      return new Promise<ClusterMetricsDto | null>(() => {})
-    },
-  }),
   metrics: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
     queryKey: [organizationId, clusterId],
-    // NOTE: Value is set by WebSocket
+    // Populated by the socket. null means the connection retention period expired.
     queryFn() {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise<ClusterMetricsDto | null>(() => {})

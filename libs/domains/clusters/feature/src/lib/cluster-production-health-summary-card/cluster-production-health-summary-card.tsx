@@ -30,7 +30,7 @@ function useClusterRunningStatusQueries({ clusters, enabled }: { clusters: Clust
   return useQueries({
     queries: enabled
       ? clusters.map((cluster) => ({
-          ...queries.clusters.runningDisplayStatus({
+          ...queries.clusters.runningStatus({
             organizationId: cluster.organization.id,
             clusterId: cluster.id,
           }),
@@ -179,7 +179,7 @@ export function ClusterProductionHealthSummaryCard({
   const runningStatusQueries = useClusterRunningStatusQueries({ clusters, enabled: isRunningStatusIssueEnabled })
 
   // Keep the skeleton up until every cluster has reported a running status
-  // (real payload or 'NotFound' after the shared initial-loading timeout).
+  // (real payload or null after the shared initial-loading timeout).
   const hasAllRunningStatuses =
     !isRunningStatusIssueEnabled ||
     clusters.length === 0 ||
@@ -202,7 +202,6 @@ export function ClusterProductionHealthSummaryCard({
           deploymentStatus,
           runningStatus,
           isRunningStatusIssueEnabled,
-          hasRunningStatusTimedOut: false,
         })
         return { cluster, deploymentStatus, issues }
       })

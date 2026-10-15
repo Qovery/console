@@ -1,14 +1,14 @@
-import { useCluster, useClusterRunningDisplayStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useRetainedClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterCardSetup } from './cluster-card-setup'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   useCluster: jest.fn(),
-  useClusterRunningDisplayStatus: jest.fn(),
+  useRetainedClusterRunningStatus: jest.fn(),
 }))
 
 const mockUseCluster = useCluster as jest.Mock
-const mockUseClusterRunningStatus = useClusterRunningDisplayStatus as jest.Mock
+const mockUseClusterRunningStatus = useRetainedClusterRunningStatus as jest.Mock
 
 describe('ClusterCardSetup', () => {
   const mockOrganizationId = 'org-123'
@@ -37,7 +37,7 @@ describe('ClusterCardSetup', () => {
     expect(screen.getByRole('link', { name: /Maintenance every Monday/ })).toBeInTheDocument()
     expect(screen.getByText(/Created .* ago/)).toBeInTheDocument()
 
-    mockUseClusterRunningStatus.mockReturnValue({ data: 'NotFound' })
+    mockUseClusterRunningStatus.mockReturnValue({ data: null })
     rerender(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
     expect(screen.getByText('Unavailable')).toBeInTheDocument()

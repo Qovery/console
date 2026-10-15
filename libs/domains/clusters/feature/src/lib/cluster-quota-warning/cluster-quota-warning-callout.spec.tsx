@@ -1,6 +1,6 @@
 import { type ClusterQuotaWarningDto } from 'qovery-ws-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useClusterRunningDisplayStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
+import { useRetainedClusterRunningStatus } from '../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status'
 import { ClusterQuotaWarningCallout } from './cluster-quota-warning-callout'
 
 const activeQuotaWarning = {
@@ -20,10 +20,10 @@ const activeQuotaWarning = {
 jest.mock('@tanstack/react-router', () => ({
   useParams: () => ({ organizationId: 'org-id', clusterId: 'cluster-id' }),
 }))
-jest.mock('../hooks/use-cluster-running-status/use-cluster-running-status')
+jest.mock('../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status')
 
-const mockUseClusterRunningStatus = useClusterRunningDisplayStatus as jest.MockedFunction<
-  typeof useClusterRunningDisplayStatus
+const mockUseClusterRunningStatus = useRetainedClusterRunningStatus as jest.MockedFunction<
+  typeof useRetainedClusterRunningStatus
 >
 
 describe('ClusterQuotaWarningCallout', () => {
@@ -39,7 +39,7 @@ describe('ClusterQuotaWarningCallout', () => {
           quota_warning: activeQuotaWarning,
         },
       },
-    } as unknown as ReturnType<typeof useClusterRunningDisplayStatus>)
+    } as unknown as ReturnType<typeof useRetainedClusterRunningStatus>)
 
     renderWithProviders(<ClusterQuotaWarningCallout />)
 
@@ -58,7 +58,7 @@ describe('ClusterQuotaWarningCallout', () => {
           global_status: 'RUNNING',
         },
       },
-    } as unknown as ReturnType<typeof useClusterRunningDisplayStatus>)
+    } as unknown as ReturnType<typeof useRetainedClusterRunningStatus>)
 
     renderWithProviders(<ClusterQuotaWarningCallout />)
 
@@ -78,7 +78,7 @@ describe('ClusterQuotaWarningCallout', () => {
           },
         },
       },
-    } as unknown as ReturnType<typeof useClusterRunningDisplayStatus>)
+    } as unknown as ReturnType<typeof useRetainedClusterRunningStatus>)
 
     renderWithProviders(<ClusterQuotaWarningCallout />)
 

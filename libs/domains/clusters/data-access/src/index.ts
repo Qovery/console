@@ -12,5 +12,3 @@ export { getReadableSecretManagerProvider } from './lib/secret-manager/get-reada
 export { getReadableSecretManagerAuth } from './lib/secret-manager/get-readable-secret-manager-auth'
 export { isSameSecretManagerAccess } from './lib/secret-manager/is-same-secret-manager-access'
 export { formatCloudProvider } from './lib/format-cloud-provider/format-cloud-provider'
-
-export * from './lib/cluster-connection-policy'
