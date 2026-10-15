@@ -99,11 +99,7 @@ export * from './lib/utils/map-creation-spot-to-node-pools'
 export * from './lib/utils/normalize-karpenter-spot'
 export * from './lib/cluster-resources-settings/cluster-resources-settings'
 
-export {
-  subscribeToClusterStream,
-  scheduleClusterStreamExpiry,
-  setClusterStreamData,
-} from './lib/utils/cluster-stream-retention'
+export * from './lib/utils/cluster-stream-retention'
 export * from './lib/cluster-add/cluster-add'
 export * from './lib/hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
 export * from './lib/hooks/use-cluster-operator-status/use-cluster-operator-status'

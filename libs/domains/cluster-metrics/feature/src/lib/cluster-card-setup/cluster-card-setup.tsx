@@ -12,18 +12,16 @@ export interface ClusterCardSetupProps {
 export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetupProps) {
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
-  const { data: displayStatus } = useRetainedClusterRunningStatus({
+  const { data: runningStatus } = useRetainedClusterRunningStatus({
     organizationId: organizationId,
     clusterId: clusterId,
   })
-
-  const runningStatus = displayStatus
 
   const kubeVersion = runningStatus?.computed_status?.kube_version_status
   const isEksAnywhereCluster = cluster?.kubernetes === 'PARTIALLY_MANAGED'
 
   const isLoading = !cluster?.created_at
-  const isVersionLoading = !cluster || displayStatus === undefined
+  const isVersionLoading = !cluster || runningStatus === undefined
   const skeletonClassName = isLoading ? 'my-2 ml-1.5' : undefined
 
   return (

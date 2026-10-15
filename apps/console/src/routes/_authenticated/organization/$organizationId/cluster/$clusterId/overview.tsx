@@ -4,7 +4,7 @@ import {
   ClusterCardNodeUsage,
   ClusterTableNode,
   ClusterTableNodepool,
-  getClusterRunningHealthAndMetricsStateWithStoppedPriority,
+  getClusterHealthAndMetricsState,
   useClusterMetricsSocket,
   useRetainedClusterMetrics,
 } from '@qovery/domains/cluster-metrics/feature'
@@ -112,11 +112,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
     enabled: Boolean(organizationId) && Boolean(clusterId),
   })
 
-  const informationState = getClusterRunningHealthAndMetricsStateWithStoppedPriority(
-    clusterStatus?.status,
-    runningStatus,
-    clusterMetrics
-  )
+  const informationState = getClusterHealthAndMetricsState(clusterStatus?.status, runningStatus, clusterMetrics)
   const isLoading = isClusterLoading || isClusterStatusLoading || informationState === 'loading'
 
   const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')

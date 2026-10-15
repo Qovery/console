@@ -276,12 +276,11 @@ function MetricProgressBar({ type, capacity, capacityRaw, limit, limitRaw, unit 
 }
 
 export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTableNodepoolProps) {
-  const { data: displayStatus } = useRetainedClusterRunningStatus({
+  const { data: runningStatus } = useRetainedClusterRunningStatus({
     organizationId: organizationId,
     clusterId: clusterId,
   })
 
-  const runningStatus = displayStatus
   const { data: metrics } = useRetainedClusterMetrics({
     organizationId: organizationId,
     clusterId: clusterId,

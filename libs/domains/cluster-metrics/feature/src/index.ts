@@ -7,4 +7,4 @@ export * from './lib/cluster-table-nodepool/cluster-table-nodepool'
 export * from './lib/cluster-table-node/cluster-table-node'
 export * from './lib/cluster-workloads/cluster-workloads'
 
-export * from './lib/utils/get-cluster-running-health-and-metrics-state-with-stopped-priority'
+export * from './lib/utils/get-cluster-health-and-metrics-state'
