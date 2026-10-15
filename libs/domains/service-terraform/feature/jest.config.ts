@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'domains-service-helm-feature',
   preset: '../../../../jest.preset.js',

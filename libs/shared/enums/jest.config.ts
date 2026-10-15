@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-enums',
   preset: '../../../jest.preset.js',

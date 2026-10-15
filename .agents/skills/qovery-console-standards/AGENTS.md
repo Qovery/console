@@ -52,7 +52,7 @@ libs/
 ### Import Rules
 
 - ALWAYS use inline type imports: `import { type MyType, myFunction } from './module'`
-- Respect import order according to `.eslintrc.json`
+- Respect import order according to `eslint.config.mjs`
 - Use `@qovery/*` aliases defined in `tsconfig.base.json`
 - DO NOT import directly from `react` (destructure React)
 - Use `@qovery/shared/util-tests` instead of `@testing-library/react`

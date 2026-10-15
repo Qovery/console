@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'domains-variables-util',
   preset: '../../../../jest.preset.js',

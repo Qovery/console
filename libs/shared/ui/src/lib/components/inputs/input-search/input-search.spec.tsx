@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import InputSearch, { type InputSearchProps } from './input-search'
-
-let props: InputSearchProps
+import InputSearch from './input-search'
 
 describe('InputSearch', () => {
   it('should render successfully', () => {
@@ -11,7 +9,7 @@ describe('InputSearch', () => {
   })
 
   it('should set the text value when the input event is emitted', async () => {
-    const { userEvent } = renderWithProviders(<InputSearch {...props} />)
+    const { userEvent } = renderWithProviders(<InputSearch />)
 
     const input = screen.getByRole('textbox')
 

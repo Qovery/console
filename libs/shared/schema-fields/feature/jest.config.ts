@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-schema-fields-feature',
   preset: '../../../../jest.preset.js',

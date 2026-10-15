@@ -342,7 +342,6 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
           }
         }
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       [handleUnselect, selected, freeTextInput, handleFreeTextInput]
     )
 

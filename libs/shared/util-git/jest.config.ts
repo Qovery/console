@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'util-git',
   preset: '../../../jest.preset.js',
