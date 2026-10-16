@@ -1,7 +1,6 @@
-import { useContext } from 'react'
-import { Controller } from 'react-hook-form'
-import { Button, Icon, InputText } from '@qovery/shared/ui'
-import { ContextOnboarding } from '../container/container'
+import { Controller, useFormContext } from 'react-hook-form'
+import { InputText } from '@qovery/shared/ui'
+import { OnboardingForm } from '../onboarding-form/onboarding-form'
 
 export interface StepProjectProps {
   onSubmit: () => void
@@ -9,72 +8,33 @@ export interface StepProjectProps {
   onFirstStepBack?: () => void
 }
 
-export function StepProject(props: StepProjectProps) {
-  const { onSubmit, loading, onFirstStepBack } = props
-  const { setContextValue } = useContext(ContextOnboarding)
+export function StepProject({ onSubmit, loading, onFirstStepBack }: StepProjectProps) {
+  const { formState } = useFormContext()
 
   return (
-    <div className="mx-auto max-w-content-with-navigation-left pb-10">
-      <h1 className="h3 mb-3 text-neutral">
-        Create your Organization
-        <span className="ml-2" role="img" aria-label="star">
-          ✨
-        </span>
-      </h1>
-      <p className="mb-10 text-sm text-neutral">
-        You will now create your Organization and a first project within it. Both the Organization and Project name can
-        be edited afterwards.
-      </p>
-      <form onSubmit={onSubmit}>
-        <Controller
-          name="organization_name"
-          rules={{ required: 'Please enter your organization name.' }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-3"
-              label="Organization name"
-              name={field.name}
-              onChange={(event) => {
-                field.onChange(event)
-                setContextValue?.({ organization_name: event.target.value })
-              }}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="project_name"
-          rules={{ required: 'Please enter your project name.' }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-3"
-              label="Project name"
-              name={field.name}
-              onChange={(event) => {
-                field.onChange(event)
-                setContextValue?.({ project_name: event.target.value })
-              }}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <div className="mt-10 flex justify-between border-t border-neutral pt-5">
-          {onFirstStepBack ? (
-            <Button type="button" size="lg" color="neutral" variant="surface" onClick={onFirstStepBack}>
-              <Icon iconName="arrow-left" iconStyle="solid" />
-              Back
-            </Button>
-          ) : (
-            <div />
-          )}
-          <Button type="submit" size="lg" loading={loading} disabled={loading}>
-            {loading ? 'Creating…' : 'Continue'}
-          </Button>
-        </div>
-      </form>
-    </div>
+    <OnboardingForm
+      title="Create your organization"
+      description="Name your organization and its first project"
+      onSubmit={onSubmit}
+      loading={loading}
+      disabled={!formState.isValid}
+      onBack={onFirstStepBack}
+    >
+      <Controller
+        name="organization_name"
+        rules={{ validate: (value: string) => !!value?.trim() || 'Please enter your organization name.' }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText {...field} label="Organization name" error={error?.message} />
+        )}
+      />
+      <Controller
+        name="project_name"
+        rules={{ validate: (value: string) => !!value?.trim() || 'Please enter your project name.' }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText {...field} label="Project name" error={error?.message} />
+        )}
+      />
+    </OnboardingForm>
   )
 }
 

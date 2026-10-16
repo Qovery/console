@@ -3,11 +3,16 @@ import posthog from 'posthog-js'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { useCreateOrganization } from '@qovery/domains/organizations/feature'
+import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
+import { toast } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OnboardingProvider } from '../container/container'
 import { OnboardingPersonalize } from './onboarding-personalize'
+
+jest.mock('@qovery/shared/ui', () => ({ ...jest.requireActual('@qovery/shared/ui'), toast: jest.fn() }))
+jest.mock('@qovery/domains/projects/feature', () => ({ useCreateProject: jest.fn() }))
 
 jest.mock('@qovery/domains/organizations/feature', () => ({ useCreateOrganization: jest.fn() }))
 
@@ -25,6 +30,7 @@ jest.mock('@qovery/domains/users-sign-up/feature', () => ({
   useCreateUserSignUp: jest.fn(),
 }))
 
+const createProject = jest.fn()
 const createOrganization = jest.fn()
 const refreshToken = jest.fn()
 const createUserSignUp = jest.fn()
@@ -54,6 +60,10 @@ describe('OnboardingPersonalize', () => {
     delete window.dataLayer
     refreshToken.mockResolvedValue('refreshed-token')
     createOrganization.mockResolvedValue({ id: 'created-org' })
+    createProject.mockResolvedValue({ id: 'created-project' })
+    jest
+      .mocked(useCreateProject)
+      .mockReturnValue({ mutateAsync: createProject } as unknown as ReturnType<typeof useCreateProject>)
     jest
       .mocked(useCreateOrganization)
       .mockReturnValue({ mutateAsync: createOrganization } as unknown as ReturnType<typeof useCreateOrganization>)
@@ -72,7 +82,7 @@ describe('OnboardingPersonalize', () => {
     createUserSignUp.mockResolvedValue({})
   })
 
-  it('creates the organization from the company name and opens the platform', async () => {
+  it('silently creates the organization and its main project before opening the platform', async () => {
     const { userEvent } = await fillProfile()
     expect(screen.getByLabelText('Full name')).toHaveValue('John van Doe')
     expect(screen.queryByLabelText('Professional email address')).not.toBeInTheDocument()
@@ -102,6 +112,9 @@ describe('OnboardingPersonalize', () => {
       organizationRequest: { name: 'Acme Corp', plan: PlanEnum.BUSINESS_2025, admin_emails: ['john@acme.com'] },
     })
     expect(refreshToken).toHaveBeenCalledWith({ cacheMode: 'off' })
+    expect(useCreateProject).toHaveBeenCalledWith({ silently: true })
+    expect(createProject).toHaveBeenCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
+    expect(toast).not.toHaveBeenCalled()
     expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ current_step: 'project' }))
     expect(posthog.capture).toHaveBeenCalledWith(
       'onboarding-organization-created',
@@ -337,6 +350,52 @@ describe('OnboardingPersonalize', () => {
     expect(createOrganization).toHaveBeenCalledTimes(1)
     expect(createUserSignUp).toHaveBeenCalledTimes(1)
     expect(refreshToken).toHaveBeenCalledTimes(2)
+  })
+
+  it('waits for the main project before opening the platform', async () => {
+    let finishProject: (value: unknown) => void = () => undefined
+    createProject.mockReturnValue(
+      new Promise((resolve) => {
+        finishProject = resolve
+      })
+    )
+    const { userEvent } = await fillProfile()
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() => expect(createProject).toHaveBeenCalledTimes(1))
+    expect(navigate).not.toHaveBeenCalled()
+    expect(posthog.capture).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+
+    finishProject({ id: 'created-project' })
+    await waitFor(() =>
+      expect(navigate).toHaveBeenCalledWith({
+        to: '/organization/$organizationId/overview',
+        params: { organizationId: 'created-org' },
+      })
+    )
+    expect(toast).not.toHaveBeenCalled()
+  })
+
+  it('retries project creation in the same organization after a failure', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    createProject
+      .mockRejectedValueOnce(new Error('Project creation failed'))
+      .mockResolvedValue({ id: 'created-project' })
+    const { userEvent } = await fillProfile()
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(createProject).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    expect(navigate).not.toHaveBeenCalled()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(createOrganization).toHaveBeenCalledTimes(1)
+    expect(createUserSignUp).toHaveBeenCalledTimes(1)
+    expect(createProject).toHaveBeenCalledTimes(2)
+    expect(createProject).toHaveBeenLastCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
+    expect(toast).not.toHaveBeenCalled()
+    consoleError.mockRestore()
   })
 
   it('keeps the form editable and does not advance when saving fails', async () => {

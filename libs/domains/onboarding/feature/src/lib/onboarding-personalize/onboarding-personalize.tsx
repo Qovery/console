@@ -4,9 +4,10 @@ import { TypeOfUseEnum } from 'qovery-typescript-axios'
 import { useContext, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useCreateOrganization } from '@qovery/domains/organizations/feature'
+import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { toast, toastError } from '@qovery/shared/ui'
+import { toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ContextOnboarding } from '../container/container'
 import { type ProfileFormValues, StepPersonalize } from '../step-personalize/step-personalize'
@@ -19,6 +20,8 @@ export function OnboardingPersonalize() {
 
   const { selectedPlan, phone } = useContext(ContextOnboarding)
   const [createdOrganizationId, setCreatedOrganizationId] = useState<string>()
+  const [projectCreated, setProjectCreated] = useState(false)
+  const { mutateAsync: createProject } = useCreateProject({ silently: true })
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
@@ -73,6 +76,11 @@ export function OnboardingPersonalize() {
         return
       }
 
+      if (!projectCreated) {
+        await createProject({ organizationId, projectRequest: { name: 'main' } })
+        setProjectCreated(true)
+      }
+
       posthog.capture('onboarding-tailor-experience-completed', {
         first_name: firstName,
         last_name: lastName.join(' '),
@@ -90,7 +98,6 @@ export function OnboardingPersonalize() {
       })
       pushToDataLayer({ event: 'onboarding-organization-created', plan: selectedPlan })
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId } })
-      toast('success', 'Your organization has been created')
     } catch (error) {
       console.error(error)
     }

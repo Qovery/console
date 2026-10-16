@@ -25,6 +25,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const { mutateAsync: createProject } = useCreateProject({ silently: true })
   const { data: userSignUp } = useUserSignUp()
   const methods = useForm<{ project_name: string; organization_name: string }>({
+    mode: 'onChange',
     defaultValues: {
       organization_name,
       project_name: project_name || 'main',
@@ -78,7 +79,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
     try {
       const organization = await createOrganization({
         organizationRequest: {
-          name: data.organization_name,
+          name: data.organization_name.trim(),
           plan: selectedPlan,
           admin_emails: admin_email.length > 0 ? [admin_email] : user?.email ? [user.email] : [],
         },
@@ -90,7 +91,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
       await createProject({
         organizationId: organization.id,
         projectRequest: {
-          name: data.project_name,
+          name: data.project_name.trim(),
         },
       })
 

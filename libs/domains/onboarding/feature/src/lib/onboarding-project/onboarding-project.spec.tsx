@@ -101,6 +101,22 @@ describe('OnboardingProject', () => {
     })
   })
 
+  it('uses the entered organization and first project names', async () => {
+    const { userEvent } = renderWithProviders(<OnboardingProject />)
+    await userEvent.type(screen.getByLabelText('Organization name'), ' Acme Corp ')
+    await userEvent.clear(screen.getByLabelText('Project name'))
+    await userEvent.type(screen.getByLabelText('Project name'), ' Production ')
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(mockCreateOrganization).toHaveBeenCalledWith(
+      expect.objectContaining({ organizationRequest: expect.objectContaining({ name: 'Acme Corp' }) })
+    )
+    expect(mockCreateProject).toHaveBeenCalledWith({
+      organizationId: 'organization-id',
+      projectRequest: { name: 'Production' },
+    })
+  })
+
   it('should push the organization creation event to the GTM dataLayer', async () => {
     const { userEvent } = renderWithProviders(<OnboardingProject />)
 

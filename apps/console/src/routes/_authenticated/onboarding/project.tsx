@@ -1,6 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { Container, OnboardingProject } from '@qovery/domains/onboarding/feature'
+import { UserMenu } from '../../../app/components/header/user-menu/user-menu'
 
 type OnboardingProjectSearch = {
   previousUrl?: string
@@ -26,7 +27,7 @@ function Project() {
   }
 
   return (
-    <Container>
+    <Container profileUserMenu={<UserMenu />}>
       <OnboardingProject previousUrl={search.previousUrl} />
     </Container>
   )
