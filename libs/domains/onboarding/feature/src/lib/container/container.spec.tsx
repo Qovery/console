@@ -1,47 +1,70 @@
-import { createElement } from 'react'
-import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
-import { renderWithProviders } from '@qovery/shared/util-tests'
-import Container, { type ContainerProps } from './container'
+import { useContext, useState } from 'react'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import Container, { ContextOnboarding, OnboardingProvider } from './container'
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useLocation: () => ({ pathname: '/personalize', search: '', state: undefined }),
-  useNavigate: () => jest.fn(),
-  useParams: () => ({ organizationId: 'org-1' }),
-  useMatches: () => [{ routeId: '/_authenticated/onboarding' }],
+  useLocation: () => ({ pathname: '/onboarding/personalize' }),
 }))
 
-jest.mock('@qovery/domains/organizations/feature', () => ({
-  ...jest.requireActual('@qovery/domains/organizations/feature'),
-  useOrganizations: jest.fn(),
-}))
+function ProfileStep() {
+  const { setContextValue } = useContext(ContextOnboarding)
+  return (
+    <button onClick={() => setContextValue?.({ organization_name: 'Acme', phone: '+33123456789' })}>
+      Save profile
+    </button>
+  )
+}
 
-jest.mock('@qovery/domains/users-sign-up/feature', () => ({
-  ...jest.requireActual('@qovery/domains/users-sign-up/feature'),
-  useUserSignUp: jest.fn(),
-}))
-
-const useOrganizationsMock = useOrganizations as jest.Mock
-const useUserSignUpMock = useUserSignUp as jest.Mock
+function ProjectStep() {
+  const { organization_name, phone } = useContext(ContextOnboarding)
+  return (
+    <p>
+      {organization_name} {phone}
+    </p>
+  )
+}
 
 describe('Container', () => {
-  let props: ContainerProps
+  beforeEach(() => jest.useFakeTimers())
+  afterEach(() => jest.useRealTimers())
+  it('keeps the existing funnel for subsequent steps', () => {
+    renderWithProviders(
+      <Container>
+        <p>Step content</p>
+      </Container>
+    )
 
-  beforeEach(() => {
-    props = {
-      children: createElement('div'),
-      params: {
-        '*': 'some-value',
-      },
-      firstStep: true,
-    }
-    useOrganizationsMock.mockReturnValue({ data: [] })
-    useUserSignUpMock.mockReturnValue({ data: undefined })
+    expect(screen.getByTestId('progress-bar-wrapper')).toBeInTheDocument()
+    expect(screen.getByText('Step content')).toBeInTheDocument()
   })
 
-  it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<Container {...props} />)
-    expect(baseElement).toBeTruthy()
+  it('renders the profile shell with the account menu and no funnel header', () => {
+    renderWithProviders(
+      <Container profileUserMenu={<button>User menu</button>}>
+        <p>Profile form</p>
+      </Container>
+    )
+
+    expect(screen.getByAltText('Qovery')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'User menu' })).toBeInTheDocument()
+    expect(screen.queryByTestId('progress-bar-wrapper')).not.toBeInTheDocument()
+  })
+
+  it('retains organization and phone when steps unmount inside the onboarding layout', async () => {
+    function Workflow() {
+      const [step, setStep] = useState(1)
+      return (
+        <OnboardingProvider>
+          {step === 1 ? <ProfileStep /> : <ProjectStep />}
+          <button onClick={() => setStep(2)}>Next step</button>
+        </OnboardingProvider>
+      )
+    }
+    const { userEvent } = renderWithProviders(<Workflow />)
+    await userEvent.click(screen.getByRole('button', { name: 'Save profile' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Next step' }))
+
+    expect(screen.getByText('Acme +33123456789')).toBeInTheDocument()
   })
 })

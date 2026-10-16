@@ -17,6 +17,7 @@ import { Route as LoginAuth0CallbackRouteImport } from './routes/login/auth0-cal
 import { Route as AuthenticatedPreviewCodeRouteImport } from './routes/_authenticated/preview-code'
 import { Route as AuthenticatedHelmDefaultValuesRouteImport } from './routes/_authenticated/helm-default-values'
 import { Route as AuthenticatedOrganizationRouteRouteImport } from './routes/_authenticated/organization/route'
+import { Route as AuthenticatedOnboardingRouteRouteImport } from './routes/_authenticated/onboarding/route'
 import { Route as AuthenticatedOrganizationIndexRouteImport } from './routes/_authenticated/organization/index'
 import { Route as AuthenticatedAcceptInvitationIndexRouteImport } from './routes/_authenticated/accept-invitation/index'
 import { Route as AuthenticatedOnboardingUseCasesRouteImport } from './routes/_authenticated/onboarding/use-cases'
@@ -262,6 +263,12 @@ const AuthenticatedOrganizationRouteRoute =
     path: '/organization',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedOnboardingRouteRoute =
+  AuthenticatedOnboardingRouteRouteImport.update({
+    id: '/onboarding',
+    path: '/onboarding',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOrganizationIndexRoute =
   AuthenticatedOrganizationIndexRouteImport.update({
     id: '/',
@@ -276,27 +283,27 @@ const AuthenticatedAcceptInvitationIndexRoute =
   } as any)
 const AuthenticatedOnboardingUseCasesRoute =
   AuthenticatedOnboardingUseCasesRouteImport.update({
-    id: '/onboarding/use-cases',
-    path: '/onboarding/use-cases',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/use-cases',
+    path: '/use-cases',
+    getParentRoute: () => AuthenticatedOnboardingRouteRoute,
   } as any)
 const AuthenticatedOnboardingProjectRoute =
   AuthenticatedOnboardingProjectRouteImport.update({
-    id: '/onboarding/project',
-    path: '/onboarding/project',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/project',
+    path: '/project',
+    getParentRoute: () => AuthenticatedOnboardingRouteRoute,
   } as any)
 const AuthenticatedOnboardingPlansRoute =
   AuthenticatedOnboardingPlansRouteImport.update({
-    id: '/onboarding/plans',
-    path: '/onboarding/plans',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/plans',
+    path: '/plans',
+    getParentRoute: () => AuthenticatedOnboardingRouteRoute,
   } as any)
 const AuthenticatedOnboardingPersonalizeRoute =
   AuthenticatedOnboardingPersonalizeRouteImport.update({
-    id: '/onboarding/personalize',
-    path: '/onboarding/personalize',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/personalize',
+    path: '/personalize',
+    getParentRoute: () => AuthenticatedOnboardingRouteRoute,
   } as any)
 const AuthenticatedOrganizationOrganizationIdRouteRoute =
   AuthenticatedOrganizationOrganizationIdRouteRouteImport.update({
@@ -1959,6 +1966,7 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/onboarding': typeof AuthenticatedOnboardingRouteRouteWithChildren
   '/organization': typeof AuthenticatedOrganizationRouteRouteWithChildren
   '/helm-default-values': typeof AuthenticatedHelmDefaultValuesRoute
   '/preview-code': typeof AuthenticatedPreviewCodeRoute
@@ -2170,6 +2178,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/onboarding': typeof AuthenticatedOnboardingRouteRouteWithChildren
   '/helm-default-values': typeof AuthenticatedHelmDefaultValuesRoute
   '/preview-code': typeof AuthenticatedPreviewCodeRoute
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
@@ -2359,6 +2368,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRouteRouteWithChildren
   '/_authenticated/organization': typeof AuthenticatedOrganizationRouteRouteWithChildren
   '/_authenticated/helm-default-values': typeof AuthenticatedHelmDefaultValuesRoute
   '/_authenticated/preview-code': typeof AuthenticatedPreviewCodeRoute
@@ -2572,6 +2582,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/onboarding'
     | '/organization'
     | '/helm-default-values'
     | '/preview-code'
@@ -2783,6 +2794,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/onboarding'
     | '/helm-default-values'
     | '/preview-code'
     | '/login/auth0-callback'
@@ -2971,6 +2983,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/_authenticated/onboarding'
     | '/_authenticated/organization'
     | '/_authenticated/helm-default-values'
     | '/_authenticated/preview-code'
@@ -3247,6 +3260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationRouteRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/organization/': {
       id: '/_authenticated/organization/'
       path: '/'
@@ -3263,31 +3283,31 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/onboarding/use-cases': {
       id: '/_authenticated/onboarding/use-cases'
-      path: '/onboarding/use-cases'
+      path: '/use-cases'
       fullPath: '/onboarding/use-cases'
       preLoaderRoute: typeof AuthenticatedOnboardingUseCasesRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedOnboardingRouteRoute
     }
     '/_authenticated/onboarding/project': {
       id: '/_authenticated/onboarding/project'
-      path: '/onboarding/project'
+      path: '/project'
       fullPath: '/onboarding/project'
       preLoaderRoute: typeof AuthenticatedOnboardingProjectRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedOnboardingRouteRoute
     }
     '/_authenticated/onboarding/plans': {
       id: '/_authenticated/onboarding/plans'
-      path: '/onboarding/plans'
+      path: '/plans'
       fullPath: '/onboarding/plans'
       preLoaderRoute: typeof AuthenticatedOnboardingPlansRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedOnboardingRouteRoute
     }
     '/_authenticated/onboarding/personalize': {
       id: '/_authenticated/onboarding/personalize'
-      path: '/onboarding/personalize'
+      path: '/personalize'
       fullPath: '/onboarding/personalize'
       preLoaderRoute: typeof AuthenticatedOnboardingPersonalizeRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedOnboardingRouteRoute
     }
     '/_authenticated/organization/$organizationId': {
       id: '/_authenticated/organization/$organizationId'
@@ -4664,6 +4684,27 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedOnboardingRouteRouteChildren {
+  AuthenticatedOnboardingPersonalizeRoute: typeof AuthenticatedOnboardingPersonalizeRoute
+  AuthenticatedOnboardingPlansRoute: typeof AuthenticatedOnboardingPlansRoute
+  AuthenticatedOnboardingProjectRoute: typeof AuthenticatedOnboardingProjectRoute
+  AuthenticatedOnboardingUseCasesRoute: typeof AuthenticatedOnboardingUseCasesRoute
+}
+
+const AuthenticatedOnboardingRouteRouteChildren: AuthenticatedOnboardingRouteRouteChildren =
+  {
+    AuthenticatedOnboardingPersonalizeRoute:
+      AuthenticatedOnboardingPersonalizeRoute,
+    AuthenticatedOnboardingPlansRoute: AuthenticatedOnboardingPlansRoute,
+    AuthenticatedOnboardingProjectRoute: AuthenticatedOnboardingProjectRoute,
+    AuthenticatedOnboardingUseCasesRoute: AuthenticatedOnboardingUseCasesRoute,
+  }
+
+const AuthenticatedOnboardingRouteRouteWithChildren =
+  AuthenticatedOnboardingRouteRoute._addFileChildren(
+    AuthenticatedOnboardingRouteRouteChildren,
+  )
+
 interface AuthenticatedOrganizationOrganizationIdAlertsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRoute: typeof AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRoute
   AuthenticatedOrganizationOrganizationIdAlertsIssuesRoute: typeof AuthenticatedOrganizationOrganizationIdAlertsIssuesRoute
@@ -5555,26 +5596,20 @@ const AuthenticatedOrganizationRouteRouteWithChildren =
   )
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedOnboardingRouteRoute: typeof AuthenticatedOnboardingRouteRouteWithChildren
   AuthenticatedOrganizationRouteRoute: typeof AuthenticatedOrganizationRouteRouteWithChildren
   AuthenticatedHelmDefaultValuesRoute: typeof AuthenticatedHelmDefaultValuesRoute
   AuthenticatedPreviewCodeRoute: typeof AuthenticatedPreviewCodeRoute
-  AuthenticatedOnboardingPersonalizeRoute: typeof AuthenticatedOnboardingPersonalizeRoute
-  AuthenticatedOnboardingPlansRoute: typeof AuthenticatedOnboardingPlansRoute
-  AuthenticatedOnboardingProjectRoute: typeof AuthenticatedOnboardingProjectRoute
-  AuthenticatedOnboardingUseCasesRoute: typeof AuthenticatedOnboardingUseCasesRoute
   AuthenticatedAcceptInvitationIndexRoute: typeof AuthenticatedAcceptInvitationIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedOnboardingRouteRoute:
+    AuthenticatedOnboardingRouteRouteWithChildren,
   AuthenticatedOrganizationRouteRoute:
     AuthenticatedOrganizationRouteRouteWithChildren,
   AuthenticatedHelmDefaultValuesRoute: AuthenticatedHelmDefaultValuesRoute,
   AuthenticatedPreviewCodeRoute: AuthenticatedPreviewCodeRoute,
-  AuthenticatedOnboardingPersonalizeRoute:
-    AuthenticatedOnboardingPersonalizeRoute,
-  AuthenticatedOnboardingPlansRoute: AuthenticatedOnboardingPlansRoute,
-  AuthenticatedOnboardingProjectRoute: AuthenticatedOnboardingProjectRoute,
-  AuthenticatedOnboardingUseCasesRoute: AuthenticatedOnboardingUseCasesRoute,
   AuthenticatedAcceptInvitationIndexRoute:
     AuthenticatedAcceptInvitationIndexRoute,
 }

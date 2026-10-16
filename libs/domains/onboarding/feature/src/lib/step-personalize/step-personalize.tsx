@@ -1,131 +1,124 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, Icon, InputText } from '@qovery/shared/ui'
+import { Button, InputText } from '@qovery/shared/ui'
+import arrowRight from './assets/arrow-right.svg'
 import { isPersonalEmail } from './personal-email-domains'
+
+export interface ProfileFormValues {
+  full_name: string
+  user_email: string
+  company_name: string
+  organization_name: string
+  phone: string
+}
 
 export interface StepPersonalizeProps {
   onSubmit: () => void
-  authLogout: () => void
+  needsProfessionalEmail?: boolean
 }
 
-export function StepPersonalize({ onSubmit, authLogout }: StepPersonalizeProps) {
-  const { control, formState } = useFormContext()
+export function StepPersonalize({ onSubmit, needsProfessionalEmail = false }: StepPersonalizeProps) {
+  const { control, formState } = useFormContext<ProfileFormValues>()
 
   return (
-    <div className="mx-auto max-w-content-with-navigation-left pb-10">
-      <h1 className="h3 mb-3 text-neutral">Set up your new organization</h1>
-      <p className="mb-10 text-sm text-neutral">
-        We need a few details to set up your new organization. If your team already has one, ask them for an invitation
-        instead.
-      </p>
-      <form onSubmit={onSubmit}>
-        <div className="mb-3 flex gap-3">
+    <form
+      onSubmit={onSubmit}
+      className="flex min-h-[620px] w-full max-w-[480px] flex-col justify-between gap-6 rounded-2xl border border-neutral bg-background p-6 shadow-lg"
+    >
+      <div className="flex flex-col gap-6">
+        <div
+          role="progressbar"
+          aria-label="Onboarding progress"
+          aria-valuemin={0}
+          aria-valuemax={3}
+          aria-valuenow={1}
+          aria-valuetext="Step 1 of 3"
+          className="flex gap-2"
+        >
+          <span className="h-1 flex-1 rounded-2xl bg-surface-brand-solid" />
+          <span className="h-1 flex-1 rounded-2xl border border-brand-subtle bg-surface-brand-component" />
+          <span className="h-1 flex-1 rounded-2xl border border-brand-subtle bg-surface-brand-component" />
+        </div>
+        <div>
+          <h1 className="mb-2 font-brand text-[28px] font-normal leading-9 text-neutral">Create your profile</h1>
+          <p className="text-base text-neutral-subtle">Tell us more about yourself</p>
+        </div>
+        <div className="flex flex-col gap-4 [&_.input]:min-h-12 [&_.input]:py-1.5">
           <Controller
-            name="first_name"
+            name="full_name"
             control={control}
-            rules={{ required: 'Please enter your first name.' }}
+            rules={{
+              validate: (value) => value.trim().split(/\s+/).length >= 2 || 'Please enter your first and last name.',
+            }}
             render={({ field, fieldState: { error } }) => (
-              <InputText
-                className="w-full"
-                label="First name"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-              />
+              <InputText {...field} label="Full name" autoComplete="name" error={error?.message} />
             )}
           />
           <Controller
-            name="last_name"
+            name="company_name"
             control={control}
-            rules={{ required: 'Please enter your last name.' }}
+            rules={{ validate: (value) => !!value.trim() || 'Please enter your company name.' }}
             render={({ field, fieldState: { error } }) => (
-              <InputText
-                className="w-full"
-                label="Last name"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-              />
+              <InputText {...field} label="Company name" autoComplete="organization" error={error?.message} />
             )}
           />
+          <Controller
+            name="phone"
+            control={control}
+            rules={{
+              pattern: {
+                value: /^[\d\s+\-()]{7,}$/,
+                message: 'Please enter a valid phone number.',
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText {...field} label="Phone number (optional)" autoComplete="tel" error={error?.message} />
+            )}
+          />
+          <Controller
+            name="organization_name"
+            control={control}
+            rules={{ validate: (value) => !!value.trim() || 'Please enter your organization name.' }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText {...field} label="Organization name" error={error?.message} />
+            )}
+          />
+          {needsProfessionalEmail && (
+            <Controller
+              name="user_email"
+              control={control}
+              rules={{
+                required: 'Please enter your email.',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Please enter a valid email address.',
+                },
+                validate: (value) => !isPersonalEmail(value) || 'Please enter your professional email address.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  {...field}
+                  label="Professional email address"
+                  type="email"
+                  autoComplete="email"
+                  error={error?.message}
+                />
+              )}
+            />
+          )}
         </div>
-        <Controller
-          name="user_email"
-          control={control}
-          rules={{
-            required: 'Please enter your email.',
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'Please enter a valid email address.',
-            },
-            validate: (value: string) => !isPersonalEmail(value) || 'Please enter your professional email address.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-3"
-              label="Professional email address"
-              type="email"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="company_name"
-          control={control}
-          rules={{ required: 'Please enter your company name.' }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-3"
-              label="Company name"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="phone"
-          control={control}
-          rules={{
-            required: false,
-            pattern: {
-              value: /^[\d\s+\-()]{7,}$/,
-              message: 'Please enter a valid phone number.',
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              label="Phone (recommended)"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <p className="mt-10 text-sm text-neutral-subtle">
-          Already part of an organization on Qovery?{' '}
-          <button type="button" className="text-brand hover:underline" onClick={() => authLogout()}>
-            Sign in with a different account
-          </button>{' '}
-          if you signed up with a different provider last time.
-        </p>
-        <div className="mt-5 flex justify-between border-t border-surface-neutral-subtle pt-5">
-          <Button type="button" color="neutral" variant="surface" size="lg" onClick={() => authLogout()}>
-            <Icon iconName="arrow-left" />
-            Disconnect
-          </Button>
-          <Button type="submit" size="lg" disabled={!formState.isValid}>
-            Continue
-          </Button>
-        </div>
-      </form>
-    </div>
+      </div>
+      <Button
+        type="submit"
+        size="lg"
+        color="neutral"
+        className="w-full justify-center text-base"
+        loading={formState.isSubmitting}
+        disabled={!formState.isValid || formState.isSubmitting}
+      >
+        Continue
+        <img src={arrowRight} alt="" className="dark:invert" />
+      </Button>
+    </form>
   )
 }
 
