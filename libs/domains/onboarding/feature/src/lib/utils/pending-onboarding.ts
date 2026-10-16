@@ -3,6 +3,7 @@ import { type ProfileFormValues } from '../step-personalize/step-personalize'
 export interface PendingOnboarding {
   organizationId: string
   projectId?: string
+  completionTracked?: boolean
   profile: ProfileFormValues
 }
 
@@ -19,6 +20,7 @@ export function readPendingOnboarding(userId?: string): PendingOnboarding | unde
       typeof value.organizationId === 'string' &&
       value.organizationId &&
       (value.projectId === undefined || typeof value.projectId === 'string') &&
+      (value.completionTracked === undefined || typeof value.completionTracked === 'boolean') &&
       typeof value.profile?.full_name === 'string' &&
       typeof value.profile?.company_name === 'string' &&
       typeof value.profile?.phone === 'string'
@@ -36,7 +38,8 @@ export function savePendingOnboarding(userId: string | undefined, value: Pending
   try {
     if (value) sessionStorage.setItem(storageKey(userId), JSON.stringify(value))
     else sessionStorage.removeItem(storageKey(userId))
-  } catch {
+  } catch (error) {
     // In-memory recovery remains available when session storage is disabled.
+    console.error(error)
   }
 }

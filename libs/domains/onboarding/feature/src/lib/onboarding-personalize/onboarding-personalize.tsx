@@ -97,25 +97,29 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
 
       if (!progress?.projectId) {
         const project = await createProject({ organizationId, projectRequest: { name: 'main' } })
-        updatePending({ organizationId, profile: data, projectId: project.id })
+        progress = { organizationId, profile: data, projectId: project.id }
+        updatePending(progress)
       }
 
-      posthog.capture('onboarding-tailor-experience-completed', {
-        first_name: firstName,
-        last_name: lastName.join(' '),
-        company_name: data.company_name.trim(),
-        phone: data.phone,
-      })
+      if (!progress.completionTracked) {
+        posthog.capture('onboarding-tailor-experience-completed', {
+          first_name: firstName,
+          last_name: lastName.join(' '),
+          company_name: data.company_name.trim(),
+          phone: data.phone,
+        })
 
-      posthog.capture('onboarding-organization-created', {
-        plan: selectedPlan,
-        first_name: firstName,
-        last_name: lastName.join(' '),
-        company_name: data.company_name.trim(),
-        phone: data.phone,
-        use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
-      })
-      pushToDataLayer({ event: 'onboarding-organization-created', plan: selectedPlan })
+        posthog.capture('onboarding-organization-created', {
+          plan: selectedPlan,
+          first_name: firstName,
+          last_name: lastName.join(' '),
+          company_name: data.company_name.trim(),
+          phone: data.phone,
+          use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
+        })
+        pushToDataLayer({ event: 'onboarding-organization-created', plan: selectedPlan })
+        updatePending({ ...progress, completionTracked: true })
+      }
       await navigate({ to: '/organization/$organizationId/overview', params: { organizationId } })
       updatePending(undefined)
     } catch (error) {

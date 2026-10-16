@@ -55,7 +55,10 @@ async function fillProfile() {
 }
 
 describe('OnboardingPersonalize', () => {
-  afterEach(() => jest.useRealTimers())
+  afterEach(() => {
+    jest.useRealTimers()
+    jest.restoreAllMocks()
+  })
   beforeEach(() => {
     jest.useFakeTimers()
     delete window.dataLayer
@@ -154,21 +157,32 @@ describe('OnboardingPersonalize', () => {
     expect(sessionStorage.getItem('onboarding-pending:user-1')).toBeNull()
   })
 
-  it('resumes an already-created project after navigation fails and the page reloads', async () => {
+  it('reports completion once across navigation retries and a reload', async () => {
     const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
-    navigate.mockRejectedValueOnce(new Error('Navigation failed')).mockResolvedValue(undefined)
+    navigate
+      .mockRejectedValueOnce(new Error('Navigation failed'))
+      .mockRejectedValueOnce(new Error('Navigation failed again'))
+      .mockResolvedValue(undefined)
     const first = await fillProfile()
     await first.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-    await waitFor(() => expect(consoleError).toHaveBeenCalled())
+    await waitFor(() => expect(consoleError).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await first.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(consoleError).toHaveBeenCalledTimes(2))
     first.unmount()
     const second = renderProfile()
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
     await second.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(3))
+    expect(posthog.capture).toHaveBeenCalledTimes(2)
+    expect(jest.mocked(posthog.capture).mock.calls.map(([event]) => event)).toEqual([
+      'onboarding-tailor-experience-completed',
+      'onboarding-organization-created',
+    ])
+    expect(window.dataLayer).toEqual([{ event: 'onboarding-organization-created', plan: PlanEnum.BUSINESS_2025 }])
     expect(createProject).toHaveBeenCalledTimes(1)
     expect(createOrganization).toHaveBeenCalledTimes(1)
     await waitFor(() => expect(sessionStorage.getItem('onboarding-pending:user-1')).toBeNull())
-    consoleError.mockRestore()
   })
 
   it('does not restore another account’s pending organization', async () => {
@@ -380,7 +394,7 @@ describe('OnboardingPersonalize', () => {
   })
 
   it('does not advance or report completion when the signup refresh fails', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
     refetchUserSignUp.mockRejectedValue(new Error('Refresh failed'))
     const { userEvent } = await fillProfile()
 
@@ -391,7 +405,6 @@ describe('OnboardingPersonalize', () => {
     expect(navigate).not.toHaveBeenCalled()
     expect(posthog.capture).not.toHaveBeenCalled()
     expect(screen.getByLabelText('Company name')).toHaveValue(' Acme Corp ')
-    consoleError.mockRestore()
   })
 
   it('waits for organization creation before refreshing access and navigating', async () => {
@@ -419,7 +432,7 @@ describe('OnboardingPersonalize', () => {
   })
 
   it('keeps the profile editable when organization creation fails', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
     createOrganization.mockRejectedValue(new Error('Creation failed'))
     const { userEvent } = await fillProfile()
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
@@ -430,7 +443,6 @@ describe('OnboardingPersonalize', () => {
     expect(navigate).not.toHaveBeenCalled()
     expect(refreshToken).not.toHaveBeenCalled()
     expect(posthog.capture).not.toHaveBeenCalled()
-    consoleError.mockRestore()
   })
 
   it('retries access refresh without creating a second organization', async () => {
@@ -482,7 +494,7 @@ describe('OnboardingPersonalize', () => {
   })
 
   it('retries project creation in the same organization after a failure', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
     createProject
       .mockRejectedValueOnce(new Error('Project creation failed'))
       .mockResolvedValue({ id: 'created-project' })
@@ -499,11 +511,10 @@ describe('OnboardingPersonalize', () => {
     expect(createProject).toHaveBeenCalledTimes(2)
     expect(createProject).toHaveBeenLastCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
     expect(toast).not.toHaveBeenCalled()
-    consoleError.mockRestore()
   })
 
   it('keeps the form editable and does not advance when saving fails', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
     createUserSignUp.mockRejectedValue(new Error('Saving failed'))
     const { userEvent } = await fillProfile()
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
@@ -511,6 +522,5 @@ describe('OnboardingPersonalize', () => {
     expect(navigate).not.toHaveBeenCalled()
     expect(screen.getByLabelText('Company name')).toHaveValue(' Acme Corp ')
     expect(createOrganization).not.toHaveBeenCalled()
-    consoleError.mockRestore()
   })
 })

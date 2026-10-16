@@ -1,6 +1,8 @@
+import posthog from 'posthog-js'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { toast, toastError, useModal } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { OnboardingProject } from '../onboarding-project/onboarding-project'
 import { CreateOrganizationModal } from './create-organization-modal'
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -8,6 +10,8 @@ jest.mock('@qovery/shared/ui', () => ({
   toast: jest.fn(),
   toastError: jest.fn(),
 }))
+
+jest.mock('posthog-js', () => ({ capture: jest.fn() }))
 
 const mockNavigate = jest.fn()
 const mockCreateOrganization = jest.fn()
@@ -25,13 +29,11 @@ jest.mock('@qovery/shared/auth', () => ({
 jest.mock('@qovery/domains/organizations/feature', () => ({
   ...jest.requireActual('@qovery/domains/organizations/feature'),
   useCreateOrganization: () => ({ mutateAsync: mockCreateOrganization }),
+  useOrganizations: () => ({ data: [{ id: 'existing-org' }] }),
 }))
 jest.mock('@qovery/domains/projects/feature', () => ({
   ...jest.requireActual('@qovery/domains/projects/feature'),
   useCreateProject: () => ({ mutateAsync: mockCreateProject }),
-}))
-jest.mock('@qovery/domains/users-sign-up/feature', () => ({
-  useUserSignUp: () => ({ data: { first_name: 'Jane', last_name: 'Doe', company_name: 'Acme' } }),
 }))
 
 describe('CreateOrganizationModal', () => {
@@ -95,7 +97,8 @@ describe('CreateOrganizationModal', () => {
     })
     expect(setModalDismissible).toHaveBeenNthCalledWith(1, false)
     expect(setModalDismissible).toHaveBeenLastCalledWith(true)
-    expect(window.dataLayer).toEqual([{ event: 'onboarding-organization-created', plan: PlanEnum.BUSINESS_2025 }])
+    expect(window.dataLayer).toBeUndefined()
+    expect(posthog.capture).not.toHaveBeenCalled()
   })
 
   it('rejects a blank organization name', async () => {
@@ -137,11 +140,33 @@ describe('CreateOrganizationModal', () => {
     await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
     await waitFor(() => expect(toastError).toHaveBeenCalledWith(navigationError))
-    expect(onClose).toHaveBeenCalledTimes(1)
+    expect(onClose).toHaveBeenCalledTimes(2)
     expect(toast).toHaveBeenCalledWith('success', 'Your organization and project have been created')
     expect(mockCreateOrganization).toHaveBeenCalledTimes(1)
     expect(mockCreateProject).toHaveBeenCalledTimes(1)
-    expect(window.dataLayer).toHaveLength(1)
+    expect(window.dataLayer).toBeUndefined()
+    expect(posthog.capture).not.toHaveBeenCalled()
+  })
+
+  it('returns to the previous platform page when the legacy route cannot open the new organization', async () => {
+    const navigationError = new Error('Destination failed')
+    mockNavigate.mockRejectedValueOnce(navigationError).mockResolvedValue(undefined)
+    const { userEvent } = renderWithProviders(<OnboardingProject previousUrl="/organization/existing-org/overview" />)
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledTimes(2))
+    expect(mockNavigate).toHaveBeenNthCalledWith(1, {
+      to: '/organization/$organizationId/overview',
+      params: { organizationId: 'new-org' },
+    })
+    expect(mockNavigate).toHaveBeenNthCalledWith(2, {
+      href: '/organization/existing-org/overview',
+      replace: true,
+    })
+    expect(toastError).toHaveBeenCalledWith(navigationError)
+    expect(mockCreateOrganization).toHaveBeenCalledTimes(1)
+    expect(mockCreateProject).toHaveBeenCalledTimes(1)
   })
 
   it('keeps the modal open and allows retry when organization creation fails', async () => {

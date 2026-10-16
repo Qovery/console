@@ -1,14 +1,11 @@
 import { useNavigate } from '@tanstack/react-router'
-import posthog from 'posthog-js'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCreateOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { Callout, Icon, InputText, ModalCrud, toast, toastError, useModal } from '@qovery/shared/ui'
-import { pushToDataLayer } from '../utils/data-layer'
 
 export interface CreateOrganizationModalProps {
   onClose: () => void
@@ -26,11 +23,9 @@ export function CreateOrganizationModal({
   const modal = useModal()
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject({ silently: true })
-  const { data: userSignUp } = useUserSignUp()
   const methods = useForm({ mode: 'onChange', defaultValues: { name: '' } })
   const pendingOrganizationId = useRef<string | undefined>(undefined)
   const projectCreated = useRef(false)
-  const creationTracked = useRef(false)
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
@@ -63,23 +58,15 @@ export function CreateOrganizationModal({
         })
         projectCreated.current = true
       }
-      if (!creationTracked.current) {
-        posthog.capture('onboarding-organization-created', {
-          plan: PlanEnum.BUSINESS_2025,
-          first_name: userSignUp?.first_name,
-          last_name: userSignUp?.last_name,
-          company_name: userSignUp?.company_name,
-          use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
-        })
-        pushToDataLayer({ event: 'onboarding-organization-created', plan: PlanEnum.BUSINESS_2025 })
-        creationTracked.current = true
-      }
       onCreated()
       toast('success', 'Your organization and project have been created')
       await navigate({
         to: '/organization/$organizationId/overview',
         params: { organizationId: pendingOrganizationId.current },
-      }).catch((error) => toastError(error as Error))
+      }).catch((error) => {
+        toastError(error as Error)
+        onClose()
+      })
     } catch {
       setError(true)
     } finally {

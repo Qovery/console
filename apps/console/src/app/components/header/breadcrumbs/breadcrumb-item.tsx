@@ -14,14 +14,22 @@ export interface BreadcrumbItemData {
   logo_url?: string
 }
 
-export interface BreadcrumbMenuAction {
+export type BreadcrumbMenuAction = {
   label: string
-  path?: string
-  onSelect?: () => void
-  search?: {
-    previousUrl?: string
-  }
-}
+} & (
+  | {
+      path: string
+      search?: {
+        previousUrl?: string
+      }
+      onSelect?: never
+    }
+  | {
+      onSelect: () => void
+      path?: never
+      search?: never
+    }
+)
 
 interface BreadcrumbItemProps {
   item: BreadcrumbItemData
