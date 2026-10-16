@@ -1,6 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, InputText } from '@qovery/shared/ui'
-import arrowRight from './assets/arrow-right.svg'
+import { Button, Icon, InputText } from '@qovery/shared/ui'
 
 export interface ProfileFormValues {
   full_name: string
@@ -90,7 +89,7 @@ export function StepPersonalize({ onSubmit }: StepPersonalizeProps) {
         disabled={!formState.isValid || formState.isSubmitting}
       >
         Continue
-        <img src={arrowRight} alt="" className="dark:invert" />
+        <Icon iconName="arrow-right" />
       </Button>
     </form>
   )
