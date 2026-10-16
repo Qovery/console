@@ -278,6 +278,23 @@ describe('ClusterCredentialsModal', () => {
     })
   })
 
+  it('should only offer the allowed authentication types', async () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} allowedTypes={['STS']} />))
+
+    selectEvent.openMenu(screen.getByLabelText('Authentication type'))
+
+    expect(await screen.findAllByText('Assume role via STS (preferred)')).not.toHaveLength(0)
+    expect(screen.queryByText('Static credentials')).not.toBeInTheDocument()
+  })
+
+  it('should offer both AWS authentication types by default', async () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
+
+    selectEvent.openMenu(screen.getByLabelText('Authentication type'))
+
+    expect(await screen.findByText('Static credentials')).toBeInTheDocument()
+  })
+
   it('should render GCP WIF as default authentication type', () => {
     props.cloudProvider = CloudProviderEnum.GCP
 
