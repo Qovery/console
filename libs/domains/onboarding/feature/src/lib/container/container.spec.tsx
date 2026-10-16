@@ -1,10 +1,15 @@
-import { useContext, useState } from 'react'
+import { type ComponentPropsWithoutRef, useContext, useState } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import Container, { ContextOnboarding, OnboardingProvider } from './container'
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useLocation: () => ({ pathname: '/onboarding/personalize' }),
+  Link: ({ to, children, ...props }: ComponentPropsWithoutRef<'a'> & { to: string }) => (
+    <a href={to} {...props}>
+      {children}
+    </a>
+  ),
 }))
 
 function ProfileStep() {
@@ -47,6 +52,7 @@ describe('Container', () => {
     )
 
     expect(screen.getByAltText('Qovery')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Qovery home' })).toHaveAttribute('href', '/')
     expect(screen.getByRole('button', { name: 'User menu' })).toBeInTheDocument()
     expect(screen.queryByTestId('progress-bar-wrapper')).not.toBeInTheDocument()
   })

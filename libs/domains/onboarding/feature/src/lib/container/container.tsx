@@ -1,4 +1,4 @@
-import { useLocation } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, createContext, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -81,7 +81,13 @@ export function Container({ children, profileUserMenu }: ContainerProps) {
     return createPortal(
       <div className="fixed inset-0 z-10 flex flex-col overflow-y-auto bg-background-secondary">
         <header className="absolute inset-x-0 top-0 flex items-center justify-between px-4 py-4 sm:px-8">
-          <img src={qoveryLogotype} alt="Qovery" className="dark:brightness-0 dark:invert" />
+          <Link
+            to="/"
+            aria-label="Qovery home"
+            className="focus-visible:ring-brand rounded focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:ring-offset-background-secondary"
+          >
+            <img src={qoveryLogotype} alt="Qovery" className="dark:brightness-0 dark:invert" />
+          </Link>
           {profileUserMenu}
         </header>
         <main className="flex min-h-full shrink-0 flex-col items-center justify-center px-4 py-20">{children}</main>
