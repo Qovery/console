@@ -1,124 +1,62 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import OnboardingProject from './onboarding-project'
 
-const mockedUsedNavigate = jest.fn()
-const mockCreateOrganization = jest.fn()
-const mockCreateProject = jest.fn()
-const mockCreateUserSignUp = jest.fn()
+const mockNavigate = jest.fn()
+const mockOrganizations = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useNavigate: () => mockedUsedNavigate,
+  useNavigate: () => mockNavigate,
 }))
-
-jest.mock('@qovery/shared/auth', () => ({
-  ...jest.requireActual('@qovery/shared/auth'),
-  useAuth: () => ({
-    user: {
-      email: 'user@qovery.com',
-    },
-    getAccessTokenSilently: jest.fn(),
-  }),
-}))
-
-jest.mock('@qovery/shared/util-hooks', () => ({
-  ...jest.requireActual('@qovery/shared/util-hooks'),
-  useDocumentTitle: () => undefined,
-}))
-
 jest.mock('@qovery/domains/organizations/feature', () => ({
   ...jest.requireActual('@qovery/domains/organizations/feature'),
-  useCreateOrganization: () => ({ mutateAsync: mockCreateOrganization }),
-  useOrganizations: () => ({ data: [] }),
+  useOrganizations: () => mockOrganizations(),
+}))
+jest.mock('../create-organization-modal/create-organization-modal', () => ({
+  CreateOrganizationModal: ({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) => (
+    <>
+      <button onClick={onClose}>Cancel creation</button>
+      <button onClick={onCreated}>Complete creation</button>
+    </>
+  ),
 }))
 
-jest.mock('@qovery/domains/projects/feature', () => ({
-  ...jest.requireActual('@qovery/domains/projects/feature'),
-  useCreateProject: () => ({ mutateAsync: mockCreateProject }),
-}))
-
-jest.mock('@qovery/domains/users-sign-up/feature', () => ({
-  ...jest.requireActual('@qovery/domains/users-sign-up/feature'),
-  useCreateUserSignUp: () => ({ mutateAsync: mockCreateUserSignUp }),
-  useUserSignUp: jest.fn(),
-}))
-
-const { useUserSignUp } = jest.requireMock('@qovery/domains/users-sign-up/feature') as {
-  useUserSignUp: jest.Mock
-}
-
-describe('OnboardingProject', () => {
+describe('OnboardingProject legacy modal route', () => {
   beforeEach(() => {
+    jest.useFakeTimers()
     jest.clearAllMocks()
-    delete window.dataLayer
-    mockCreateOrganization.mockResolvedValue({ id: 'organization-id' })
-    mockCreateProject.mockResolvedValue(undefined)
-    mockCreateUserSignUp.mockResolvedValue(undefined)
-    useUserSignUp.mockReturnValue({
-      data: {
-        first_name: 'Jane',
-        last_name: 'Doe',
-        company_name: 'Acme',
-        user_email: 'user@qovery.com',
-      },
-    })
+    mockOrganizations.mockReturnValue({ data: [] })
   })
+  afterEach(() => jest.useRealTimers())
 
-  it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<OnboardingProject />)
-    expect(baseElement).toBeTruthy()
-  })
-
-  it('should redirect to personalize for the standard onboarding flow', async () => {
+  it('can open after the last organization is deleted and safely cancel', async () => {
     const { userEvent } = renderWithProviders(<OnboardingProject />)
-
-    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
-
-    expect(mockedUsedNavigate).toHaveBeenCalledWith({ to: '/onboarding/use-cases' })
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel creation' }))
+    expect(mockNavigate).toHaveBeenCalledWith({ to: '/', replace: true })
   })
 
-  it('should redirect to the previous url when it is provided', async () => {
-    const { userEvent } = renderWithProviders(<OnboardingProject previousUrl="/organization/org-previous/overview" />)
+  it('closes after successful creation without navigating back to the previous organization', async () => {
+    const { userEvent } = renderWithProviders(<OnboardingProject previousUrl="/organization/existing/overview" />)
+    await userEvent.click(screen.getByRole('button', { name: 'Complete creation' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(mockNavigate).not.toHaveBeenCalled()
+  })
 
-    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
+  it('returns to the supplied platform location on cancel', async () => {
+    const { userEvent } = renderWithProviders(<OnboardingProject previousUrl="/organization/existing/overview" />)
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel creation' }))
+    expect(mockNavigate).toHaveBeenCalledWith({ href: '/organization/existing/overview', replace: true })
+  })
 
-    expect(mockedUsedNavigate).toHaveBeenCalledWith({
-      href: '/organization/org-previous/overview',
+  it('returns to an existing organization when no previous location is supplied', async () => {
+    mockOrganizations.mockReturnValue({ data: [{ id: 'existing' }] })
+    const { userEvent } = renderWithProviders(<OnboardingProject />)
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/overview',
+      params: { organizationId: 'existing' },
       replace: true,
     })
-  })
-
-  it('should create an organization without requesting billing details', async () => {
-    const { userEvent } = renderWithProviders(<OnboardingProject />)
-
-    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
-    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-
-    expect(mockCreateOrganization).toHaveBeenCalledTimes(1)
-    expect(mockCreateProject).toHaveBeenCalledWith({
-      organizationId: 'organization-id',
-      projectRequest: { name: 'main' },
-    })
-  })
-
-  it('should push the organization creation event to the GTM dataLayer', async () => {
-    const { userEvent } = renderWithProviders(<OnboardingProject />)
-
-    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
-    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-
-    expect(window.dataLayer).toContainEqual({ event: 'onboarding-organization-created', plan: 'BUSINESS_2025' })
-  })
-
-  it('should not push the GTM event when the organization creation fails', async () => {
-    mockCreateOrganization.mockRejectedValue({ code: '409' })
-    const { userEvent } = renderWithProviders(<OnboardingProject />)
-
-    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
-    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-
-    expect(window.dataLayer ?? []).not.toContainEqual(
-      expect.objectContaining({ event: 'onboarding-organization-created' })
-    )
   })
 })

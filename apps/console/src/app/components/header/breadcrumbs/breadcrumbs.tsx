@@ -1,17 +1,18 @@
-import { useLocation, useParams, useRouter } from '@tanstack/react-router'
+import { useParams, useRouter } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
+import { CreateOrganizationModal } from '@qovery/domains/onboarding/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { sortProjectsByFavorite, useFavoriteProjects, useProjects } from '@qovery/domains/projects/feature'
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
-import { Avatar } from '@qovery/shared/ui'
+import { Avatar, useModal } from '@qovery/shared/ui'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
-  const location = useLocation()
+  const { openModal, closeModal } = useModal()
   const {
     organizationId = '',
     clusterId = '',
@@ -36,7 +37,6 @@ export function Breadcrumbs() {
     organizations.find((org) => org.id !== organizationId) && organization
       ? [...organizations.filter((org) => org.id !== organizationId), organization]
       : organizations
-  const previousUrl = location.href
 
   const orgItems: BreadcrumbItemData[] = allOrganizations
     .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
@@ -49,10 +49,7 @@ export function Breadcrumbs() {
     }))
   const createOrganizationAction: BreadcrumbMenuAction = {
     label: 'Create organization',
-    path: '/onboarding/project',
-    search: {
-      previousUrl,
-    },
+    onSelect: () => openModal({ content: <CreateOrganizationModal onClose={closeModal} /> }),
   }
 
   const currentOrg = useMemo(

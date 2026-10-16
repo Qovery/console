@@ -1,131 +1,90 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, Icon, InputText } from '@qovery/shared/ui'
-import { isPersonalEmail } from './personal-email-domains'
+import { Button, Callout, Icon, InputText } from '@qovery/shared/ui'
+import { OnboardingForm } from '../onboarding-form/onboarding-form'
+
+export interface ProfileFormValues {
+  full_name: string
+  company_name: string
+  phone: string
+}
 
 export interface StepPersonalizeProps {
   onSubmit: () => void
-  authLogout: () => void
+  readOnly?: boolean
+  disabled?: boolean
+  onSignIn?: () => void
 }
 
-export function StepPersonalize({ onSubmit, authLogout }: StepPersonalizeProps) {
-  const { control, formState } = useFormContext()
+export function StepPersonalize({ onSubmit, readOnly = false, disabled, onSignIn }: StepPersonalizeProps) {
+  const { control, formState } = useFormContext<ProfileFormValues>()
 
   return (
-    <div className="mx-auto max-w-content-with-navigation-left pb-10">
-      <h1 className="h3 mb-3 text-neutral">Set up your new organization</h1>
-      <p className="mb-10 text-sm text-neutral">
-        We need a few details to set up your new organization. If your team already has one, ask them for an invitation
-        instead.
-      </p>
-      <form onSubmit={onSubmit}>
-        <div className="mb-3 flex gap-3">
-          <Controller
-            name="first_name"
-            control={control}
-            rules={{ required: 'Please enter your first name.' }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                className="w-full"
-                label="First name"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-              />
-            )}
+    <OnboardingForm
+      title="Create your profile"
+      description="Tell us more about yourself"
+      onSubmit={onSubmit}
+      loading={formState.isSubmitting}
+      disabled={disabled || !formState.isValid}
+    >
+      {onSignIn && (
+        <Callout.Root color="red" role="alert">
+          <Callout.Icon>
+            <Icon iconName="circle-exclamation" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextDescription>
+              We couldn’t retrieve your email address. Please sign in again to continue.
+            </Callout.TextDescription>
+            <Button type="button" variant="plain" color="neutral" onClick={onSignIn}>
+              Sign in again
+            </Button>
+          </Callout.Text>
+        </Callout.Root>
+      )}
+      <Controller
+        name="full_name"
+        control={control}
+        rules={{
+          validate: (value) => value.trim().split(/\s+/).length >= 2 || 'Please enter your first and last name.',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText {...field} readOnly={readOnly} label="Full name" autoComplete="name" error={error?.message} />
+        )}
+      />
+      <Controller
+        name="company_name"
+        control={control}
+        rules={{ validate: (value) => !!value.trim() || 'Please enter your company name.' }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            {...field}
+            readOnly={readOnly}
+            label="Company name"
+            autoComplete="organization"
+            error={error?.message}
           />
-          <Controller
-            name="last_name"
-            control={control}
-            rules={{ required: 'Please enter your last name.' }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                className="w-full"
-                label="Last name"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-              />
-            )}
+        )}
+      />
+      <Controller
+        name="phone"
+        control={control}
+        rules={{
+          pattern: {
+            value: /^[\d\s+\-()]{7,}$/,
+            message: 'Please enter a valid phone number.',
+          },
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            {...field}
+            readOnly={readOnly}
+            label="Phone number (optional)"
+            autoComplete="tel"
+            error={error?.message}
           />
-        </div>
-        <Controller
-          name="user_email"
-          control={control}
-          rules={{
-            required: 'Please enter your email.',
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'Please enter a valid email address.',
-            },
-            validate: (value: string) => !isPersonalEmail(value) || 'Please enter your professional email address.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-3"
-              label="Professional email address"
-              type="email"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="company_name"
-          control={control}
-          rules={{ required: 'Please enter your company name.' }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-3"
-              label="Company name"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="phone"
-          control={control}
-          rules={{
-            required: false,
-            pattern: {
-              value: /^[\d\s+\-()]{7,}$/,
-              message: 'Please enter a valid phone number.',
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              label="Phone (recommended)"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <p className="mt-10 text-sm text-neutral-subtle">
-          Already part of an organization on Qovery?{' '}
-          <button type="button" className="text-brand hover:underline" onClick={() => authLogout()}>
-            Sign in with a different account
-          </button>{' '}
-          if you signed up with a different provider last time.
-        </p>
-        <div className="mt-5 flex justify-between border-t border-surface-neutral-subtle pt-5">
-          <Button type="button" color="neutral" variant="surface" size="lg" onClick={() => authLogout()}>
-            <Icon iconName="arrow-left" />
-            Disconnect
-          </Button>
-          <Button type="submit" size="lg" disabled={!formState.isValid}>
-            Continue
-          </Button>
-        </div>
-      </form>
-    </div>
+        )}
+      />
+    </OnboardingForm>
   )
 }
 

@@ -14,13 +14,22 @@ export interface BreadcrumbItemData {
   logo_url?: string
 }
 
-export interface BreadcrumbMenuAction {
+export type BreadcrumbMenuAction = {
   label: string
-  path: string
-  search?: {
-    previousUrl?: string
-  }
-}
+} & (
+  | {
+      path: string
+      search?: {
+        previousUrl?: string
+      }
+      onSelect?: never
+    }
+  | {
+      onSelect: () => void
+      path?: never
+      search?: never
+    }
+)
 
 interface BreadcrumbItemProps {
   item: BreadcrumbItemData
@@ -232,19 +241,34 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
                 <CommandMenu.Item
                   forceMount
                   value={footerAction.label}
-                  keywords={[footerAction.label, footerAction.path, 'create organization']}
-                  onSelect={() => handleSelect(footerAction.path, footerAction.search)}
+                  keywords={[footerAction.label, footerAction.path ?? '', 'create organization']}
+                  onSelect={() => {
+                    if (footerAction.onSelect) {
+                      setOpen(false)
+                      setSearchQuery('')
+                      footerAction.onSelect()
+                    } else if (footerAction.path) {
+                      handleSelect(footerAction.path, footerAction.search)
+                    }
+                  }}
                   className="h-auto rounded px-2 py-2 text-sm font-medium text-neutral hover:bg-surface-neutral-subtle data-[selected=true]:bg-surface-brand-subtle data-[selected=true]:text-brand"
                 >
-                  <Link
-                    to={footerAction.path}
-                    search={footerAction.search}
-                    className="flex w-full min-w-0 items-center gap-2"
-                    onClick={handleMenuLinkClick}
-                  >
-                    <Icon iconName="circle-plus" iconStyle="regular" className="text-base text-brand" />
-                    <span className="min-w-0 truncate">{footerAction.label}</span>
-                  </Link>
+                  {footerAction.path ? (
+                    <Link
+                      to={footerAction.path}
+                      search={footerAction.search}
+                      className="flex w-full min-w-0 items-center gap-2"
+                      onClick={handleMenuLinkClick}
+                    >
+                      <Icon iconName="circle-plus" iconStyle="regular" className="text-base text-brand" />
+                      <span className="min-w-0 truncate">{footerAction.label}</span>
+                    </Link>
+                  ) : (
+                    <span className="flex w-full min-w-0 items-center gap-2">
+                      <Icon iconName="circle-plus" iconStyle="regular" className="text-base text-brand" />
+                      <span className="min-w-0 truncate">{footerAction.label}</span>
+                    </span>
+                  )}
                 </CommandMenu.Item>
               </div>
             )}

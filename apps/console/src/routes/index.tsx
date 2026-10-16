@@ -1,6 +1,5 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
@@ -21,7 +20,6 @@ export const Route = createFileRoute('/')({
 function Index() {
   const { isAuthenticated } = useAuth0Context()
   const { data: organizations = [] } = useOrganizations({ enabled: isAuthenticated, suspense: true })
-  const { data: userSignUp } = useUserSignUp({ enabled: isAuthenticated })
 
   // Redirect to latest selected organization
   const [currentOrganizationId = ''] = useLocalStorage<string>('currentOrganizationId', '')
@@ -37,7 +35,7 @@ function Index() {
   }
 
   if (isAuthenticated) {
-    return <Navigate to={getOnboardingEntryUrl(userSignUp)} replace />
+    return <Navigate to={getOnboardingEntryUrl()} replace />
   }
 
   return <Navigate to="/login" search={{ redirect: '/' }} />

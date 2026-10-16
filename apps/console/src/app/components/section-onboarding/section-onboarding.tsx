@@ -40,10 +40,7 @@ export function SectionOnboarding() {
   const { mutate: updateOnboarding } = useUpdateOrganizationOnboarding({ organizationId })
 
   const isOnboardingActive =
-    Boolean(onboarding?.use_cases) &&
-    onboarding?.status !== 'DISMISSED' &&
-    onboarding?.status !== 'COMPLETED' &&
-    !localDismissed
+    Boolean(onboarding) && onboarding?.status !== 'DISMISSED' && onboarding?.status !== 'COMPLETED' && !localDismissed
 
   const { data: clusters = [] } = useClusters({ organizationId, enabled: isOnboardingActive })
   const { data: clusterStatuses = [] } = useClusterStatuses({
@@ -223,7 +220,7 @@ export function SectionOnboarding() {
     if (
       !organization ||
       isOnboardingLoading ||
-      !onboarding?.use_cases ||
+      !onboarding ||
       !allRequiredDone ||
       isDismissed ||
       completionModalOpenedRef.current
@@ -293,7 +290,7 @@ export function SectionOnboarding() {
     isDismissed,
     isOnboardingLoading,
     navigate,
-    onboarding?.use_cases,
+    onboarding,
     openModal,
     organization,
     organizationId,
@@ -301,7 +298,7 @@ export function SectionOnboarding() {
   ])
 
   if (!organization || isOnboardingLoading) return null
-  if (!onboarding?.use_cases) return null
+  if (!onboarding) return null
 
   if (isDismissed) return null
   if (allRequiredDone) return null

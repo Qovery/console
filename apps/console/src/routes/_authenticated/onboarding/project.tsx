@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { Navigate, createFileRoute } from '@tanstack/react-router'
-import { Container, OnboardingProject } from '@qovery/domains/onboarding/feature'
+import { OnboardingProject } from '@qovery/domains/onboarding/feature'
 
 type OnboardingProjectSearch = {
   previousUrl?: string
@@ -25,9 +25,5 @@ function Project() {
     return <Navigate to="/login" search={{ redirect: '/' }} />
   }
 
-  return (
-    <Container>
-      <OnboardingProject previousUrl={search.previousUrl} />
-    </Container>
-  )
+  return <OnboardingProject previousUrl={search.previousUrl} />
 }
