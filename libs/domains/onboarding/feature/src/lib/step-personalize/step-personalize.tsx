@@ -1,11 +1,9 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { Button, InputText } from '@qovery/shared/ui'
 import arrowRight from './assets/arrow-right.svg'
-import { isPersonalEmail } from './personal-email-domains'
 
 export interface ProfileFormValues {
   full_name: string
-  user_email: string
   company_name: string
   organization_name: string
   phone: string
@@ -13,10 +11,9 @@ export interface ProfileFormValues {
 
 export interface StepPersonalizeProps {
   onSubmit: () => void
-  needsProfessionalEmail?: boolean
 }
 
-export function StepPersonalize({ onSubmit, needsProfessionalEmail = false }: StepPersonalizeProps) {
+export function StepPersonalize({ onSubmit }: StepPersonalizeProps) {
   const { control, formState } = useFormContext<ProfileFormValues>()
 
   return (
@@ -82,29 +79,6 @@ export function StepPersonalize({ onSubmit, needsProfessionalEmail = false }: St
               <InputText {...field} label="Organization name" error={error?.message} />
             )}
           />
-          {needsProfessionalEmail && (
-            <Controller
-              name="user_email"
-              control={control}
-              rules={{
-                required: 'Please enter your email.',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Please enter a valid email address.',
-                },
-                validate: (value) => !isPersonalEmail(value) || 'Please enter your professional email address.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  {...field}
-                  label="Professional email address"
-                  type="email"
-                  autoComplete="email"
-                  error={error?.message}
-                />
-              )}
-            />
-          )}
         </div>
       </div>
       <Button

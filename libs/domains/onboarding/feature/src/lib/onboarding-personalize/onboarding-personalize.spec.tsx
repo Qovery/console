@@ -90,20 +90,21 @@ describe('OnboardingPersonalize', () => {
     expect(screen.getByTestId('organization-draft')).toHaveTextContent('Acme')
   })
 
-  it('requests a professional email for personal accounts', async () => {
-    jest
-      .mocked(useAuth)
-      .mockReturnValue({ user: { name: 'John Doe', email: 'john@gmail.com' } } as ReturnType<typeof useAuth>)
-    const { userEvent } = await renderProfile()
-    expect(screen.getByLabelText('Professional email address')).toHaveValue('')
-    await userEvent.type(screen.getByLabelText('Professional email address'), 'john@acme.com')
-    await userEvent.type(screen.getByLabelText('Company name'), 'Acme')
-    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
-    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-    await waitFor(() =>
-      expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ user_email: 'john@acme.com' }))
-    )
-  })
+  it.each(['gmail.com', 'gmail.co', 'proton.me'])(
+    'uses the token email for personal accounts (%s) without requesting another email',
+    async (domain) => {
+      const email = `john@${domain}`
+      jest.mocked(useAuth).mockReturnValue({ user: { name: 'John Doe', email } } as ReturnType<typeof useAuth>)
+      const { userEvent } = await fillProfile()
+      expect(screen.queryByLabelText('Professional email address')).not.toBeInTheDocument()
+      expect(screen.getAllByRole('textbox')).toHaveLength(4)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+      await waitFor(() => expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ user_email: email })))
+      await waitFor(() => expect(navigate).toHaveBeenCalledWith({ to: '/onboarding/use-cases' }))
+    }
+  )
 
   it.each(['saved@gmail.com', 'saved@old-company.com'])(
     'prioritizes the token identity over saved signup details (%s)',
@@ -126,10 +127,8 @@ describe('OnboardingPersonalize', () => {
     }
   )
 
-  it('uses the saved professional email when the token email is personal', async () => {
-    jest
-      .mocked(useAuth)
-      .mockReturnValue({ user: { name: 'John Doe', email: 'john@gmail.com' } } as ReturnType<typeof useAuth>)
+  it('uses the saved email only when the token does not provide one', async () => {
+    jest.mocked(useAuth).mockReturnValue({ user: { name: 'John Doe' } } as ReturnType<typeof useAuth>)
     jest
       .mocked(useUserSignUp)
       .mockReturnValue({ data: { user_email: 'john@acme.com' }, refetch: refetchUserSignUp } as unknown as ReturnType<

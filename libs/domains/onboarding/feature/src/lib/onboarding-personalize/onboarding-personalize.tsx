@@ -7,7 +7,6 @@ import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-u
 import { useAuth } from '@qovery/shared/auth'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ContextOnboarding } from '../container/container'
-import { isPersonalEmail } from '../step-personalize/personal-email-domains'
 import { type ProfileFormValues, StepPersonalize } from '../step-personalize/step-personalize'
 
 export function OnboardingPersonalize() {
@@ -19,14 +18,13 @@ export function OnboardingPersonalize() {
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
-  const defaultEmail = [user?.email, userSignUp?.user_email].find((email) => email && !isPersonalEmail(email)) ?? ''
+  const userEmail = user?.email || userSignUp?.user_email || ''
 
   const methods = useForm<ProfileFormValues>({
     mode: 'onChange',
     resetOptions: { keepDirtyValues: true },
     values: {
       full_name: user?.name ?? [userSignUp?.first_name, userSignUp?.last_name].filter(Boolean).join(' '),
-      user_email: defaultEmail,
       company_name: userSignUp?.company_name ?? '',
       organization_name,
       phone: phone ?? '',
@@ -41,7 +39,7 @@ export function OnboardingPersonalize() {
         ...userSignUp,
         first_name: firstName,
         last_name: lastName.join(' '),
-        user_email: data.user_email,
+        user_email: userEmail,
         company_name: data.company_name.trim(),
         type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
         phone: data.phone,
@@ -68,7 +66,7 @@ export function OnboardingPersonalize() {
 
   return (
     <FormProvider {...methods}>
-      <StepPersonalize onSubmit={onSubmit} needsProfessionalEmail={!defaultEmail} />
+      <StepPersonalize onSubmit={onSubmit} />
     </FormProvider>
   )
 }

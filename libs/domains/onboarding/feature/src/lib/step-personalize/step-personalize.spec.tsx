@@ -4,15 +4,14 @@ import StepPersonalize, { type ProfileFormValues } from './step-personalize'
 
 const defaultValues: ProfileFormValues = {
   full_name: 'John Doe',
-  user_email: 'john.doe@acme.com',
   company_name: 'Acme Corp',
   organization_name: 'Acme',
   phone: '',
 }
 
-function renderProfile(values: Partial<ProfileFormValues> = {}, needsProfessionalEmail = false) {
+function renderProfile(values: Partial<ProfileFormValues> = {}) {
   return renderWithProviders(
-    wrapWithReactHookForm(<StepPersonalize onSubmit={jest.fn()} needsProfessionalEmail={needsProfessionalEmail} />, {
+    wrapWithReactHookForm(<StepPersonalize onSubmit={jest.fn()} />, {
       defaultValues: { ...defaultValues, ...values },
     })
   )
@@ -67,23 +66,4 @@ describe('StepPersonalize', () => {
     await userEvent.clear(screen.getByLabelText('Phone number (optional)'))
     await waitFor(() => expect(continueButton).toBeEnabled())
   })
-
-  it.each(['gmail.com', 'gmail.co', 'proton.me'])(
-    'rejects personal email addresses from %s when requesting a professional email',
-    async (domain) => {
-      const { userEvent } = renderProfile({ user_email: '' }, true)
-      const emailInput = screen.getByLabelText('Professional email address')
-
-      await userEvent.type(emailInput, `john.doe@${domain}`)
-      await userEvent.tab()
-
-      expect(await screen.findByText('Please enter your professional email address.')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
-
-      await userEvent.clear(emailInput)
-      await userEvent.type(emailInput, 'john.doe@acme.com')
-
-      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
-    }
-  )
 })
