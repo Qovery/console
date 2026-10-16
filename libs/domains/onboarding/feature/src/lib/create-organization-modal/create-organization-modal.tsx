@@ -93,7 +93,6 @@ export function CreateOrganizationModal({
     <FormProvider {...methods}>
       <ModalCrud
         title="Create organization"
-        description="Create an organization with a first project named main."
         onClose={() => {
           if (!submitting.current) onClose()
         }}
