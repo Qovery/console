@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useContext } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -23,6 +23,8 @@ jest.mock('@qovery/domains/users-sign-up/feature', () => ({
 
 const createUserSignUp = jest.fn()
 const navigate = jest.fn()
+const refetchUserSignUp = jest.fn()
+const SignupFixtureContext = createContext<ReturnType<typeof useUserSignUp>['data']>(undefined)
 
 function DraftOrganization() {
   const { organization_name } = useContext(ContextOnboarding)
@@ -52,11 +54,12 @@ describe('OnboardingPersonalize', () => {
     jest.useFakeTimers()
     jest
       .mocked(useAuth)
-      .mockReturnValue({ isAuthenticated: true, user: { name: 'John van Doe', email: 'john@acme.com' } } as ReturnType<
-        typeof useAuth
-      >)
+      .mockReturnValue({ user: { name: 'John van Doe', email: 'john@acme.com' } } as ReturnType<typeof useAuth>)
     jest.mocked(useNavigate).mockReturnValue(navigate)
-    jest.mocked(useUserSignUp).mockReturnValue({ data: undefined } as ReturnType<typeof useUserSignUp>)
+    jest
+      .mocked(useUserSignUp)
+      .mockReturnValue({ data: undefined, refetch: refetchUserSignUp } as unknown as ReturnType<typeof useUserSignUp>)
+    refetchUserSignUp.mockResolvedValue({})
     jest
       .mocked(useCreateUserSignUp)
       .mockReturnValue({ mutateAsync: createUserSignUp } as unknown as ReturnType<typeof useCreateUserSignUp>)
@@ -90,9 +93,7 @@ describe('OnboardingPersonalize', () => {
   it('requests a professional email for personal accounts', async () => {
     jest
       .mocked(useAuth)
-      .mockReturnValue({ isAuthenticated: true, user: { name: 'John Doe', email: 'john@gmail.com' } } as ReturnType<
-        typeof useAuth
-      >)
+      .mockReturnValue({ user: { name: 'John Doe', email: 'john@gmail.com' } } as ReturnType<typeof useAuth>)
     const { userEvent } = await renderProfile()
     expect(screen.getByLabelText('Professional email address')).toHaveValue('')
     await userEvent.type(screen.getByLabelText('Professional email address'), 'john@acme.com')
@@ -102,6 +103,90 @@ describe('OnboardingPersonalize', () => {
     await waitFor(() =>
       expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ user_email: 'john@acme.com' }))
     )
+  })
+
+  it.each(['saved@gmail.com', 'saved@old-company.com'])(
+    'prioritizes the token identity over saved signup details (%s)',
+    async (savedEmail) => {
+      jest.mocked(useUserSignUp).mockReturnValue({
+        data: { first_name: 'Saved', last_name: 'Name', user_email: savedEmail },
+        refetch: refetchUserSignUp,
+      } as unknown as ReturnType<typeof useUserSignUp>)
+      const { userEvent } = await fillProfile()
+      expect(screen.getByLabelText('Full name')).toHaveValue('John van Doe')
+      expect(screen.queryByLabelText('Professional email address')).not.toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+      await waitFor(() =>
+        expect(createUserSignUp).toHaveBeenCalledWith(
+          expect.objectContaining({ first_name: 'John', last_name: 'van Doe', user_email: 'john@acme.com' })
+        )
+      )
+    }
+  )
+
+  it('uses the saved professional email when the token email is personal', async () => {
+    jest
+      .mocked(useAuth)
+      .mockReturnValue({ user: { name: 'John Doe', email: 'john@gmail.com' } } as ReturnType<typeof useAuth>)
+    jest
+      .mocked(useUserSignUp)
+      .mockReturnValue({ data: { user_email: 'john@acme.com' }, refetch: refetchUserSignUp } as unknown as ReturnType<
+        typeof useUserSignUp
+      >)
+    const { userEvent } = await fillProfile()
+    expect(screen.queryByLabelText('Professional email address')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() =>
+      expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ user_email: 'john@acme.com' }))
+    )
+  })
+
+  it('retains edits when signup details arrive without subscribing to dirtyFields', async () => {
+    jest.mocked(useUserSignUp).mockImplementation(function useSignupFixture() {
+      return { data: useContext(SignupFixtureContext), refetch: refetchUserSignUp } as unknown as ReturnType<
+        typeof useUserSignUp
+      >
+    })
+    function DelayedSignup() {
+      const [signup, setSignup] = useState<ReturnType<typeof useUserSignUp>['data']>()
+      return (
+        <SignupFixtureContext.Provider value={signup}>
+          <OnboardingProvider>
+            <OnboardingPersonalize />
+          </OnboardingProvider>
+          <button
+            onClick={() =>
+              setSignup({
+                first_name: 'Saved',
+                last_name: 'Name',
+                user_email: 'saved@acme.com',
+                company_name: 'Saved company',
+              } as ReturnType<typeof useUserSignUp>['data'])
+            }
+          >
+            Load signup
+          </button>
+        </SignupFixtureContext.Provider>
+      )
+    }
+    const { userEvent } = renderWithProviders(<DelayedSignup />)
+    await userEvent.clear(screen.getByLabelText('Full name'))
+    await userEvent.type(screen.getByLabelText('Full name'), 'Edited Name')
+    await userEvent.type(screen.getByLabelText('Company name'), 'Edited company')
+    await userEvent.type(screen.getByLabelText('Phone number (optional)'), '+33123456789')
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Edited organization')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Load signup' }))
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    expect(screen.getByLabelText('Full name')).toHaveValue('Edited Name')
+    expect(screen.getByLabelText('Company name')).toHaveValue('Edited company')
+    expect(screen.getByLabelText('Phone number (optional)')).toHaveValue('+33123456789')
+    expect(screen.getByLabelText('Organization name')).toHaveValue('Edited organization')
   })
 
   it('prevents duplicate submissions while saving', async () => {
@@ -118,6 +203,42 @@ describe('OnboardingPersonalize', () => {
     expect(createUserSignUp).toHaveBeenCalledTimes(1)
     finishSaving({})
     await waitFor(() => expect(navigate).toHaveBeenCalled())
+  })
+
+  it('waits for refreshed signup details before advancing to use cases', async () => {
+    let finishRefetch: (value: unknown) => void = () => undefined
+    refetchUserSignUp.mockReturnValue(
+      new Promise((resolve) => {
+        finishRefetch = resolve
+      })
+    )
+    const { userEvent } = await fillProfile()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() => expect(refetchUserSignUp).toHaveBeenCalledWith({ throwOnError: true, cancelRefetch: false }))
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+    expect(navigate).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    expect(createUserSignUp).toHaveBeenCalledTimes(1)
+
+    finishRefetch({})
+    await waitFor(() => expect(navigate).toHaveBeenCalledWith({ to: '/onboarding/use-cases' }))
+  })
+
+  it('does not advance or report completion when the signup refresh fails', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    refetchUserSignUp.mockRejectedValue(new Error('Refresh failed'))
+    const { userEvent } = await fillProfile()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() => expect(refetchUserSignUp).toHaveBeenCalled())
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    expect(navigate).not.toHaveBeenCalled()
+    expect(posthog.capture).not.toHaveBeenCalled()
+    expect(screen.getByLabelText('Organization name')).toHaveValue(' Acme ')
+    consoleError.mockRestore()
   })
 
   it('keeps the form editable and does not advance when saving fails', async () => {

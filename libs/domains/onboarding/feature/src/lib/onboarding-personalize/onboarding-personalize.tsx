@@ -16,19 +16,16 @@ export function OnboardingPersonalize() {
   const { user } = useAuth()
 
   const { organization_name, phone, setContextValue } = useContext(ContextOnboarding)
-  const { data: userSignUp } = useUserSignUp()
+  const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
-  const socialEmail = userSignUp?.user_email ? userSignUp.user_email : user?.email
-  const defaultEmail = socialEmail && !isPersonalEmail(socialEmail) ? socialEmail : ''
+  const defaultEmail = [user?.email, userSignUp?.user_email].find((email) => email && !isPersonalEmail(email)) ?? ''
 
   const methods = useForm<ProfileFormValues>({
     mode: 'onChange',
     resetOptions: { keepDirtyValues: true },
     values: {
-      full_name: userSignUp?.first_name
-        ? [userSignUp.first_name, userSignUp.last_name].filter(Boolean).join(' ')
-        : user?.name ?? '',
+      full_name: user?.name ?? [userSignUp?.first_name, userSignUp?.last_name].filter(Boolean).join(' '),
       user_email: defaultEmail,
       company_name: userSignUp?.company_name ?? '',
       organization_name,
@@ -51,6 +48,8 @@ export function OnboardingPersonalize() {
         qovery_usage: userSignUp?.qovery_usage ?? '',
         current_step: userSignUp?.current_step ?? 'personalize',
       })
+
+      await refetchUserSignUp({ throwOnError: true, cancelRefetch: false })
 
       setContextValue?.({ organization_name: data.organization_name.trim(), phone: data.phone })
 
