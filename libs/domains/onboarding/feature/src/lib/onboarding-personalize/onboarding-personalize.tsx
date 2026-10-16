@@ -1,20 +1,25 @@
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useCreateOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
+import { toast, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ContextOnboarding } from '../container/container'
 import { type ProfileFormValues, StepPersonalize } from '../step-personalize/step-personalize'
+import { pushToDataLayer } from '../utils/data-layer'
 
 export function OnboardingPersonalize() {
   useDocumentTitle('Onboarding Personalize - Qovery')
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, getAccessTokenSilently } = useAuth()
 
-  const { organization_name, phone, setContextValue } = useContext(ContextOnboarding)
+  const { selectedPlan, phone } = useContext(ContextOnboarding)
+  const [createdOrganizationId, setCreatedOrganizationId] = useState<string>()
+  const { mutateAsync: createOrganization } = useCreateOrganization()
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
@@ -26,30 +31,47 @@ export function OnboardingPersonalize() {
     values: {
       full_name: user?.name ?? [userSignUp?.first_name, userSignUp?.last_name].filter(Boolean).join(' '),
       company_name: userSignUp?.company_name ?? '',
-      organization_name,
       phone: phone ?? '',
     },
   })
 
   const onSubmit = methods.handleSubmit(async (data) => {
     const [firstName, ...lastName] = data.full_name.trim().split(/\s+/)
+    let organizationId = createdOrganizationId
 
     try {
-      await createUserSignUp({
-        ...userSignUp,
-        first_name: firstName,
-        last_name: lastName.join(' '),
-        user_email: userEmail,
-        company_name: data.company_name.trim(),
-        type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
-        phone: data.phone,
-        qovery_usage: userSignUp?.qovery_usage ?? '',
-        current_step: userSignUp?.current_step ?? 'personalize',
-      })
+      if (!organizationId) {
+        await createUserSignUp({
+          ...userSignUp,
+          first_name: firstName,
+          last_name: lastName.join(' '),
+          user_email: userEmail,
+          company_name: data.company_name.trim(),
+          type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
+          phone: data.phone,
+          qovery_usage: userSignUp?.qovery_usage ?? '',
+          current_step: 'project',
+        })
 
-      await refetchUserSignUp({ throwOnError: true, cancelRefetch: false })
+        await refetchUserSignUp({ throwOnError: true, cancelRefetch: false })
 
-      setContextValue?.({ organization_name: data.organization_name.trim(), phone: data.phone })
+        const organization = await createOrganization({
+          organizationRequest: {
+            name: data.company_name.trim(),
+            plan: selectedPlan,
+            admin_emails: userEmail ? [userEmail] : [],
+          },
+        })
+        organizationId = organization.id
+        setCreatedOrganizationId(organization.id)
+      }
+
+      try {
+        await getAccessTokenSilently({ cacheMode: 'off' })
+      } catch (error) {
+        toastError(error as Error)
+        return
+      }
 
       posthog.capture('onboarding-tailor-experience-completed', {
         first_name: firstName,
@@ -58,7 +80,17 @@ export function OnboardingPersonalize() {
         phone: data.phone,
       })
 
-      navigate({ to: '/onboarding/use-cases' })
+      posthog.capture('onboarding-organization-created', {
+        plan: selectedPlan,
+        first_name: firstName,
+        last_name: lastName.join(' '),
+        company_name: data.company_name.trim(),
+        phone: data.phone,
+        use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
+      })
+      pushToDataLayer({ event: 'onboarding-organization-created', plan: selectedPlan })
+      navigate({ to: '/organization/$organizationId/overview', params: { organizationId } })
+      toast('success', 'Your organization has been created')
     } catch (error) {
       console.error(error)
     }
@@ -66,7 +98,7 @@ export function OnboardingPersonalize() {
 
   return (
     <FormProvider {...methods}>
-      <StepPersonalize onSubmit={onSubmit} />
+      <StepPersonalize onSubmit={onSubmit} readOnly={!!createdOrganizationId} />
     </FormProvider>
   )
 }

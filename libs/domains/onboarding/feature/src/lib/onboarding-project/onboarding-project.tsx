@@ -65,7 +65,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
       return
     }
 
-    navigate({ to: '/onboarding/use-cases' })
+    navigate({ to: '/onboarding/personalize' })
   }
 
   const onSubmit = methods.handleSubmit(async (data) => {

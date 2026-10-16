@@ -4,15 +4,15 @@ import { Button, Icon, InputText } from '@qovery/shared/ui'
 export interface ProfileFormValues {
   full_name: string
   company_name: string
-  organization_name: string
   phone: string
 }
 
 export interface StepPersonalizeProps {
   onSubmit: () => void
+  readOnly?: boolean
 }
 
-export function StepPersonalize({ onSubmit }: StepPersonalizeProps) {
+export function StepPersonalize({ onSubmit, readOnly = false }: StepPersonalizeProps) {
   const { control, formState } = useFormContext<ProfileFormValues>()
 
   return (
@@ -21,19 +21,6 @@ export function StepPersonalize({ onSubmit }: StepPersonalizeProps) {
       className="flex min-h-[620px] w-full max-w-[480px] flex-col justify-between gap-6 rounded-2xl border border-neutral bg-background p-6 shadow-lg"
     >
       <div className="flex flex-col gap-6">
-        <div
-          role="progressbar"
-          aria-label="Onboarding progress"
-          aria-valuemin={0}
-          aria-valuemax={3}
-          aria-valuenow={1}
-          aria-valuetext="Step 1 of 3"
-          className="flex gap-2"
-        >
-          <span className="h-1 flex-1 rounded-2xl bg-surface-brand-solid" />
-          <span className="h-1 flex-1 rounded-2xl border border-brand-subtle bg-surface-brand-component" />
-          <span className="h-1 flex-1 rounded-2xl border border-brand-subtle bg-surface-brand-component" />
-        </div>
         <div>
           <h1 className="mb-2 font-brand text-[28px] font-normal leading-9 text-neutral">Create your profile</h1>
           <p className="text-base text-neutral-subtle">Tell us more about yourself</p>
@@ -46,7 +33,7 @@ export function StepPersonalize({ onSubmit }: StepPersonalizeProps) {
               validate: (value) => value.trim().split(/\s+/).length >= 2 || 'Please enter your first and last name.',
             }}
             render={({ field, fieldState: { error } }) => (
-              <InputText {...field} label="Full name" autoComplete="name" error={error?.message} />
+              <InputText {...field} readOnly={readOnly} label="Full name" autoComplete="name" error={error?.message} />
             )}
           />
           <Controller
@@ -54,7 +41,13 @@ export function StepPersonalize({ onSubmit }: StepPersonalizeProps) {
             control={control}
             rules={{ validate: (value) => !!value.trim() || 'Please enter your company name.' }}
             render={({ field, fieldState: { error } }) => (
-              <InputText {...field} label="Company name" autoComplete="organization" error={error?.message} />
+              <InputText
+                {...field}
+                readOnly={readOnly}
+                label="Company name"
+                autoComplete="organization"
+                error={error?.message}
+              />
             )}
           />
           <Controller
@@ -67,15 +60,13 @@ export function StepPersonalize({ onSubmit }: StepPersonalizeProps) {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <InputText {...field} label="Phone number (optional)" autoComplete="tel" error={error?.message} />
-            )}
-          />
-          <Controller
-            name="organization_name"
-            control={control}
-            rules={{ validate: (value) => !!value.trim() || 'Please enter your organization name.' }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText {...field} label="Organization name" error={error?.message} />
+              <InputText
+                {...field}
+                readOnly={readOnly}
+                label="Phone number (optional)"
+                autoComplete="tel"
+                error={error?.message}
+              />
             )}
           />
         </div>

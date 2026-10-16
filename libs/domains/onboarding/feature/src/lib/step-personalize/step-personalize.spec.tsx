@@ -5,7 +5,6 @@ import StepPersonalize, { type ProfileFormValues } from './step-personalize'
 const defaultValues: ProfileFormValues = {
   full_name: 'John Doe',
   company_name: 'Acme Corp',
-  organization_name: 'Acme',
   phone: '',
 }
 
@@ -20,20 +19,20 @@ function renderProfile(values: Partial<ProfileFormValues> = {}) {
 describe('StepPersonalize', () => {
   beforeEach(() => jest.useFakeTimers())
   afterEach(() => jest.useRealTimers())
-  it('shows the four profile fields and the first step of the progress indicator', async () => {
+  it('shows the three profile fields without additional onboarding steps', async () => {
     renderProfile()
 
     expect(screen.getByRole('heading', { name: 'Create your profile' })).toBeInTheDocument()
-    expect(screen.getAllByRole('textbox')).toHaveLength(4)
+    expect(screen.getAllByRole('textbox')).toHaveLength(3)
     expect(screen.queryByLabelText('Professional email address')).not.toBeInTheDocument()
-    expect(screen.getByRole('progressbar')).toHaveValue(1)
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Organization name')).not.toBeInTheDocument()
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
   })
 
   it.each([
     ['Full name', 'full_name', 'John Doe'],
     ['Company name', 'company_name', 'Acme'],
-    ['Organization name', 'organization_name', 'Acme'],
   ])('requires a non-blank %s', async (label, field, validValue) => {
     const { userEvent } = renderProfile({ [field]: '   ' })
     const continueButton = screen.getByRole('button', { name: 'Continue' })

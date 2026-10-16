@@ -74,7 +74,7 @@ describe('OnboardingProject', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Back' }))
 
-    expect(mockedUsedNavigate).toHaveBeenCalledWith({ to: '/onboarding/use-cases' })
+    expect(mockedUsedNavigate).toHaveBeenCalledWith({ to: '/onboarding/personalize' })
   })
 
   it('should redirect to the previous url when it is provided', async () => {
