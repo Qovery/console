@@ -1,5 +1,9 @@
+import { configure } from '@testing-library/react'
 import type { ComponentType, ReactNode } from 'react'
 import * as React from 'react'
+
+// findBy*/waitFor default to 1s, which is too short when the suite runs in parallel
+configure({ asyncUtilTimeout: 5000 })
 
 jest.mock('@auth0/auth0-react', () => ({
   Auth0Provider: ({ children }: { children: ReactNode }) => children,
