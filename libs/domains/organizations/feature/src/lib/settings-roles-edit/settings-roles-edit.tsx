@@ -134,16 +134,15 @@ export const handleSubmitRolesEdit = (data: FieldValues, currentRole: Organizati
   return cloneCurrentRole
 }
 
-export function getValue(permission: OrganizationCustomRoleProjectPermission, isAdmin = false) {
-  let result: OrganizationCustomRoleProjectPermission = OrganizationCustomRoleProjectPermission.NO_ACCESS
-
+export function getValue(
+  permission: OrganizationCustomRoleProjectPermission,
+  isAdmin = false
+): OrganizationCustomRoleProjectPermission {
   if (isAdmin) {
-    result = OrganizationCustomRoleProjectPermission.MANAGER
-  } else {
-    result = OrganizationCustomRoleProjectPermission[permission]
+    return OrganizationCustomRoleProjectPermission.MANAGER
   }
 
-  return result
+  return OrganizationCustomRoleProjectPermission[permission]
 }
 
 export function resetForm(currentRole: OrganizationCustomRole) {

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-iam-data-access',
   preset: '../../../../jest.preset.js',

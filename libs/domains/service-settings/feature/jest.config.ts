@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'domains-service-settings-feature',
   preset: '../../../../jest.preset.js',

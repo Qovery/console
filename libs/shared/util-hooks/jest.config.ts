@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-util-hooks',
   preset: '../../../jest.preset.js',

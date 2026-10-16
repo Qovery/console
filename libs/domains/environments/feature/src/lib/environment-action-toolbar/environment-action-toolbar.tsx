@@ -9,7 +9,6 @@ import {
 import { useState } from 'react'
 import { match } from 'ts-pattern'
 import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
 import { useVariables } from '@qovery/domains/variables/feature'
 import { OVERVIEW_URL } from '@qovery/shared/routes'

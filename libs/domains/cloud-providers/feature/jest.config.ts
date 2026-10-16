@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'domains-cloud-providers-feature',
   preset: '../../../../jest.preset.js',

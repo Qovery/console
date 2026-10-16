@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-util-web-sockets',
   preset: '../../../jest.preset.js',

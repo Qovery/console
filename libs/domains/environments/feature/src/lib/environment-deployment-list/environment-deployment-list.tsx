@@ -21,7 +21,6 @@ import { Fragment, type KeyboardEvent, type MouseEvent, useCallback, useMemo, us
 import { P, match } from 'ts-pattern'
 // This import introduces a circular dependency with @qovery/shared/devops-copilot/feature.
 // Keep in mind for future refactoring if possible.
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import {
   Button,

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-devops-copilot-data-access',
   preset: '../../../../jest.preset.js',

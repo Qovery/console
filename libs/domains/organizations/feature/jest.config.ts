@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'domains-organizations-feature',
   preset: '../../../../jest.preset.js',

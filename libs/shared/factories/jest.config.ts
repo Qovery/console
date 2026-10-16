@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-factories',
   preset: '../../../jest.preset.js',

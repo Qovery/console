@@ -208,10 +208,7 @@ export function ContainerRegistryForm({
                     : undefined
                 )
                 .with(ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR, () =>
-                  !input?.match(
-                    // eslint-disable-next-line no-useless-escape
-                    /^https:\/\/containers\.[\w.-]+\.ghe\.com$/
-                  )
+                  !input?.match(/^https:\/\/containers\.[\w.-]+\.ghe\.com$/)
                     ? 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
                     : undefined
                 )

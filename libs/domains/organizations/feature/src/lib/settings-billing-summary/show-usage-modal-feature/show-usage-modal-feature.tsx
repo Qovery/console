@@ -135,7 +135,6 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
         rules={{
           required: 'Please enter an expiration time in hours between 1 and 168 (7 days).',
           pattern: {
-            // eslint-disable-next-line no-useless-escape
             value: /^(?:1[0-6][0-8]|[1-9][0-9]?|168)$/gm,
             message: 'The value must be between 1 hour and 168 hours (7 days)',
           },

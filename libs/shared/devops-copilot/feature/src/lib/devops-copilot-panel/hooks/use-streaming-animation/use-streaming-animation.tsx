@@ -35,7 +35,7 @@ export function useStreamingAnimation({
           return streamingMessage
         }
 
-        let chunkSize = 1
+        let chunkSize: number
         const currentLength = prev.length
 
         let baseChunkSize = 2
