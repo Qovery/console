@@ -1,4 +1,3 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { Button, Checkbox, DropdownMenu, Icon, Tooltip, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'

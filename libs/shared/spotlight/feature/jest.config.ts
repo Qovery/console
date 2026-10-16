@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-spotlight-feature',
   preset: '../../../../jest.preset.js',

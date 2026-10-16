@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-iam-feature',
   preset: '../../../../jest.preset.js',

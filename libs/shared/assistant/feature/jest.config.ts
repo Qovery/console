@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-assistant-feature',
   preset: '../../../../jest.preset.js',

@@ -1,5 +1,4 @@
 import { render } from '__tests__/utils/setup-jest'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import TableRowFilter from './table-row-filter'
 
 describe('TableRowFilter', () => {

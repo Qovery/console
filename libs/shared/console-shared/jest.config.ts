@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-console-shared',
   preset: '../../../jest.preset.js',

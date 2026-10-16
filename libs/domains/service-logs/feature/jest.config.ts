@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'domains-service-logs-feature',
   preset: '../../../../jest.preset.js',
