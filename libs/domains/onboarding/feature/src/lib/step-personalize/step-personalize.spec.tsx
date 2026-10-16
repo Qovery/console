@@ -65,4 +65,27 @@ describe('StepPersonalize', () => {
     await userEvent.clear(screen.getByLabelText('Phone number (optional)'))
     await waitFor(() => expect(continueButton).toBeEnabled())
   })
+
+  it('preserves the submitted profile while retrying organization setup', async () => {
+    const phone = '+33123456789'
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<StepPersonalize onSubmit={jest.fn()} readOnly />, {
+        defaultValues: { ...defaultValues, phone },
+      })
+    )
+
+    for (const [label, value] of [
+      ['Full name', defaultValues.full_name],
+      ['Company name', defaultValues.company_name],
+      ['Phone number (optional)', phone],
+    ]) {
+      const input = screen.getByLabelText(label)
+
+      await userEvent.click(input)
+      await userEvent.keyboard('{Control>}a{/Control}{Backspace}')
+      await userEvent.type(input, 'Changed')
+
+      expect(input).toHaveValue(value)
+    }
+  })
 })

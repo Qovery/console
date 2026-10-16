@@ -33,6 +33,7 @@ jest.mock('@qovery/domains/users-sign-up/feature', () => ({
 const createProject = jest.fn()
 const createOrganization = jest.fn()
 const refreshToken = jest.fn()
+const authLogin = jest.fn()
 const createUserSignUp = jest.fn()
 const navigate = jest.fn()
 const refetchUserSignUp = jest.fn()
@@ -58,6 +59,7 @@ describe('OnboardingPersonalize', () => {
   beforeEach(() => {
     jest.useFakeTimers()
     delete window.dataLayer
+    sessionStorage.clear()
     refreshToken.mockResolvedValue('refreshed-token')
     createOrganization.mockResolvedValue({ id: 'created-org' })
     createProject.mockResolvedValue({ id: 'created-project' })
@@ -69,7 +71,8 @@ describe('OnboardingPersonalize', () => {
       .mockReturnValue({ mutateAsync: createOrganization } as unknown as ReturnType<typeof useCreateOrganization>)
     jest.mocked(useAuth).mockReturnValue({
       getAccessTokenSilently: refreshToken,
-      user: { name: 'John van Doe', email: 'john@acme.com' },
+      authLogin,
+      user: { sub: 'user-1', name: 'John van Doe', email: 'john@acme.com' },
     } as ReturnType<typeof useAuth>)
     jest.mocked(useNavigate).mockReturnValue(navigate)
     jest
@@ -80,6 +83,107 @@ describe('OnboardingPersonalize', () => {
       .mocked(useCreateUserSignUp)
       .mockReturnValue({ mutateAsync: createUserSignUp } as unknown as ReturnType<typeof useCreateUserSignUp>)
     createUserSignUp.mockResolvedValue({})
+  })
+
+  it.each(['', '   '])('falls back to the saved name when the token name is %j', (name) => {
+    jest.mocked(useAuth).mockReturnValue({
+      getAccessTokenSilently: refreshToken,
+      user: { sub: 'user-1', name, email: 'john@acme.com' },
+    } as ReturnType<typeof useAuth>)
+    jest.mocked(useUserSignUp).mockReturnValue({
+      data: { first_name: 'Saved', last_name: 'Name' },
+      refetch: refetchUserSignUp,
+    } as unknown as ReturnType<typeof useUserSignUp>)
+    renderProfile()
+    expect(screen.getByLabelText('Full name')).toHaveValue('Saved Name')
+  })
+
+  it('blocks creation and offers sign in when neither source has an email', async () => {
+    jest.mocked(useAuth).mockReturnValue({
+      authLogin,
+      getAccessTokenSilently: refreshToken,
+      user: { sub: 'user-1', name: 'John Doe', email: '   ' },
+    } as ReturnType<typeof useAuth>)
+    const { userEvent } = renderProfile()
+    await userEvent.type(screen.getByLabelText('Company name'), 'Acme Corp')
+    expect(screen.getByRole('alert')).toHaveTextContent('Please sign in again to continue.')
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+    await userEvent.type(screen.getByLabelText('Company name'), '{Enter}')
+    expect(createUserSignUp).not.toHaveBeenCalled()
+    expect(createOrganization).not.toHaveBeenCalled()
+    expect(createProject).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in again' }))
+    expect(authLogin).toHaveBeenCalledWith(undefined, '/onboarding/personalize')
+  })
+
+  it('waits for signup data before showing a missing email error', () => {
+    jest.mocked(useAuth).mockReturnValue({
+      authLogin,
+      user: { name: 'John Doe' },
+      getAccessTokenSilently: refreshToken,
+    } as ReturnType<typeof useAuth>)
+    jest.mocked(useUserSignUp).mockReturnValue({
+      isLoading: true,
+      refetch: refetchUserSignUp,
+    } as unknown as ReturnType<typeof useUserSignUp>)
+    renderProfile()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+  })
+
+  it('resumes after a reload without creating another organization or losing edited profile values', async () => {
+    refreshToken.mockRejectedValueOnce(new Error('Token refresh failed'))
+    const first = await fillProfile()
+    await first.userEvent.clear(screen.getByLabelText('Full name'))
+    await first.userEvent.type(screen.getByLabelText('Full name'), 'Edited Name')
+    await first.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    expect(createOrganization).toHaveBeenCalledTimes(1)
+    first.unmount()
+
+    const second = renderProfile()
+    expect(screen.getByLabelText('Full name')).toHaveValue('Edited Name')
+    expect(screen.getByLabelText('Company name')).toHaveValue(' Acme Corp ')
+    expect(screen.getByLabelText('Company name')).toHaveAttribute('readonly')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await second.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(createOrganization).toHaveBeenCalledTimes(1)
+    expect(createUserSignUp).toHaveBeenCalledTimes(1)
+    expect(createProject).toHaveBeenCalledTimes(1)
+    expect(sessionStorage.getItem('onboarding-pending:user-1')).toBeNull()
+  })
+
+  it('resumes an already-created project after navigation fails and the page reloads', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    navigate.mockRejectedValueOnce(new Error('Navigation failed')).mockResolvedValue(undefined)
+    const first = await fillProfile()
+    await first.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(consoleError).toHaveBeenCalled())
+    first.unmount()
+    const second = renderProfile()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await second.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(2))
+    expect(createProject).toHaveBeenCalledTimes(1)
+    expect(createOrganization).toHaveBeenCalledTimes(1)
+    await waitFor(() => expect(sessionStorage.getItem('onboarding-pending:user-1')).toBeNull())
+    consoleError.mockRestore()
+  })
+
+  it('does not restore another account’s pending organization', async () => {
+    sessionStorage.setItem(
+      'onboarding-pending:other-user',
+      JSON.stringify({
+        organizationId: 'other-org',
+        profile: { full_name: 'Other User', company_name: 'Other company', phone: '' },
+      })
+    )
+    const { userEvent } = await fillProfile()
+    expect(screen.getByLabelText('Company name')).not.toHaveAttribute('readonly')
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(createOrganization).toHaveBeenCalledTimes(1))
+    expect(createProject).toHaveBeenCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
   })
 
   it('silently creates the organization and its main project before opening the platform', async () => {

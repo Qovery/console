@@ -12,35 +12,53 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ContextOnboarding } from '../container/container'
 import { type ProfileFormValues, StepPersonalize } from '../step-personalize/step-personalize'
 import { pushToDataLayer } from '../utils/data-layer'
+import { type PendingOnboarding, readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
 
 export function OnboardingPersonalize() {
+  const auth = useAuth()
+  return <OnboardingPersonalizeForm key={auth.user?.sub} auth={auth} />
+}
+
+function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
   useDocumentTitle('Onboarding Personalize - Qovery')
   const navigate = useNavigate()
-  const { user, getAccessTokenSilently } = useAuth()
+  const { user, getAccessTokenSilently, authLogin } = auth
 
   const { selectedPlan, phone } = useContext(ContextOnboarding)
-  const [createdOrganizationId, setCreatedOrganizationId] = useState<string>()
-  const [projectCreated, setProjectCreated] = useState(false)
+  // Keep restored defaults stable: saving progress must not reset a running submission.
+  const [initialPending] = useState(() => readPendingOnboarding(user?.sub))
+  const [pending, setPending] = useState(initialPending)
+  const updatePending = (value: PendingOnboarding | undefined) => {
+    savePendingOnboarding(user?.sub, value)
+    setPending(value)
+  }
   const { mutateAsync: createProject } = useCreateProject({ silently: true })
   const { mutateAsync: createOrganization } = useCreateOrganization()
-  const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
+  const { data: userSignUp, refetch: refetchUserSignUp, isLoading: signupLoading } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
-  const userEmail = user?.email || userSignUp?.user_email || ''
+  const userEmail = user?.email?.trim() || userSignUp?.user_email?.trim() || ''
+  const missingEmail = !userEmail && !signupLoading
 
   const methods = useForm<ProfileFormValues>({
     mode: 'onChange',
     resetOptions: { keepDirtyValues: true },
-    values: {
-      full_name: user?.name ?? [userSignUp?.first_name, userSignUp?.last_name].filter(Boolean).join(' '),
-      company_name: userSignUp?.company_name ?? '',
-      phone: phone ?? '',
-    },
+    defaultValues: initialPending?.profile,
+    values: initialPending
+      ? undefined
+      : {
+          full_name: user?.name?.trim() || [userSignUp?.first_name, userSignUp?.last_name].filter(Boolean).join(' '),
+          company_name: userSignUp?.company_name ?? '',
+          phone: phone ?? '',
+        },
   })
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    if (!userEmail) return
+
     const [firstName, ...lastName] = data.full_name.trim().split(/\s+/)
-    let organizationId = createdOrganizationId
+    let organizationId = pending?.organizationId
+    let progress = pending
 
     try {
       if (!organizationId) {
@@ -62,11 +80,12 @@ export function OnboardingPersonalize() {
           organizationRequest: {
             name: data.company_name.trim(),
             plan: selectedPlan,
-            admin_emails: userEmail ? [userEmail] : [],
+            admin_emails: [userEmail],
           },
         })
         organizationId = organization.id
-        setCreatedOrganizationId(organization.id)
+        progress = { organizationId: organization.id, profile: data }
+        updatePending(progress)
       }
 
       try {
@@ -76,9 +95,9 @@ export function OnboardingPersonalize() {
         return
       }
 
-      if (!projectCreated) {
-        await createProject({ organizationId, projectRequest: { name: 'main' } })
-        setProjectCreated(true)
+      if (!progress?.projectId) {
+        const project = await createProject({ organizationId, projectRequest: { name: 'main' } })
+        updatePending({ organizationId, profile: data, projectId: project.id })
       }
 
       posthog.capture('onboarding-tailor-experience-completed', {
@@ -97,7 +116,8 @@ export function OnboardingPersonalize() {
         use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
       })
       pushToDataLayer({ event: 'onboarding-organization-created', plan: selectedPlan })
-      navigate({ to: '/organization/$organizationId/overview', params: { organizationId } })
+      await navigate({ to: '/organization/$organizationId/overview', params: { organizationId } })
+      updatePending(undefined)
     } catch (error) {
       console.error(error)
     }
@@ -105,7 +125,12 @@ export function OnboardingPersonalize() {
 
   return (
     <FormProvider {...methods}>
-      <StepPersonalize onSubmit={onSubmit} readOnly={!!createdOrganizationId} />
+      <StepPersonalize
+        onSubmit={onSubmit}
+        readOnly={!!pending}
+        disabled={!userEmail}
+        onSignIn={missingEmail ? () => authLogin(undefined, '/onboarding/personalize') : undefined}
+      />
     </FormProvider>
   )
 }
