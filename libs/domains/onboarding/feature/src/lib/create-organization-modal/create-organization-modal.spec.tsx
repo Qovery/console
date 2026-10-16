@@ -1,6 +1,13 @@
 import { PlanEnum } from 'qovery-typescript-axios'
+import { toast, toastError, useModal } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { CreateOrganizationModal } from './create-organization-modal'
+
+jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
+  toast: jest.fn(),
+  toastError: jest.fn(),
+}))
 
 const mockNavigate = jest.fn()
 const mockCreateOrganization = jest.fn()
@@ -38,6 +45,33 @@ describe('CreateOrganizationModal', () => {
     mockNavigate.mockResolvedValue(undefined)
   })
   afterEach(() => jest.useRealTimers())
+
+  it('closes the actual modal and shows success while destination navigation is still pending', async () => {
+    let finishNavigation: () => void = () => undefined
+    mockNavigate.mockReturnValue(
+      new Promise<void>((resolve) => {
+        finishNavigation = resolve
+      })
+    )
+    function OrganizationMenu() {
+      const { openModal, closeModal } = useModal()
+      return (
+        <button onClick={() => openModal({ content: <CreateOrganizationModal onClose={closeModal} /> })}>
+          New organization
+        </button>
+      )
+    }
+    const { userEvent } = renderWithProviders(<OrganizationMenu />)
+    await userEvent.click(screen.getByRole('button', { name: 'New organization' }))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalled())
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    expect(toast).toHaveBeenCalledWith('success', 'Your organization and project have been created')
+    finishNavigation()
+  })
 
   it('asks only for the organization name and automatically creates main', async () => {
     const onClose = jest.fn()
@@ -95,15 +129,16 @@ describe('CreateOrganizationModal', () => {
     expect(mockCreateProject).toHaveBeenLastCalledWith({ organizationId: 'new-org', projectRequest: { name: 'main' } })
   })
 
-  it('retries navigation without recreating main', async () => {
-    mockNavigate.mockRejectedValueOnce(new Error('Navigation failed'))
+  it('reports a navigation failure after closing the successfully completed creation', async () => {
+    const navigationError = new Error('Navigation failed')
+    mockNavigate.mockRejectedValueOnce(navigationError)
     const onClose = jest.fn()
     const { userEvent } = renderWithProviders(<CreateOrganizationModal onClose={onClose} />)
     await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
-    await screen.findByRole('alert')
-    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
-    await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith(navigationError))
+    expect(onClose).toHaveBeenCalledTimes(1)
+    expect(toast).toHaveBeenCalledWith('success', 'Your organization and project have been created')
     expect(mockCreateOrganization).toHaveBeenCalledTimes(1)
     expect(mockCreateProject).toHaveBeenCalledTimes(1)
     expect(window.dataLayer).toHaveLength(1)

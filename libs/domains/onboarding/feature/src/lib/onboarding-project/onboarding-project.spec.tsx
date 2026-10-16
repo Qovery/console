@@ -13,7 +13,12 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   useOrganizations: () => mockOrganizations(),
 }))
 jest.mock('../create-organization-modal/create-organization-modal', () => ({
-  CreateOrganizationModal: ({ onClose }: { onClose: () => void }) => <button onClick={onClose}>Cancel creation</button>,
+  CreateOrganizationModal: ({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) => (
+    <>
+      <button onClick={onClose}>Cancel creation</button>
+      <button onClick={onCreated}>Complete creation</button>
+    </>
+  ),
 }))
 
 describe('OnboardingProject legacy modal route', () => {
@@ -29,6 +34,13 @@ describe('OnboardingProject legacy modal route', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel creation' }))
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/', replace: true })
+  })
+
+  it('closes after successful creation without navigating back to the previous organization', async () => {
+    const { userEvent } = renderWithProviders(<OnboardingProject previousUrl="/organization/existing/overview" />)
+    await userEvent.click(screen.getByRole('button', { name: 'Complete creation' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(mockNavigate).not.toHaveBeenCalled()
   })
 
   it('returns to the supplied platform location on cancel', async () => {

@@ -7,7 +7,7 @@ import { useCreateOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { Callout, Icon, InputText, ModalCrud, toast, useModal } from '@qovery/shared/ui'
+import { Callout, Icon, InputText, ModalCrud, toast, toastError, useModal } from '@qovery/shared/ui'
 import { pushToDataLayer } from '../utils/data-layer'
 
 export interface CreateOrganizationModalProps {
@@ -74,12 +74,12 @@ export function CreateOrganizationModal({
         pushToDataLayer({ event: 'onboarding-organization-created', plan: PlanEnum.BUSINESS_2025 })
         creationTracked.current = true
       }
+      onCreated()
+      toast('success', 'Your organization and project have been created')
       await navigate({
         to: '/organization/$organizationId/overview',
         params: { organizationId: pendingOrganizationId.current },
-      })
-      onCreated()
-      toast('success', 'Your organization and project have been created')
+      }).catch((error) => toastError(error as Error))
     } catch {
       setError(true)
     } finally {

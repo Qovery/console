@@ -1,10 +1,12 @@
 import { useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { Modal } from '@qovery/shared/ui'
 import { CreateOrganizationModal } from '../create-organization-modal/create-organization-modal'
 
 export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const navigate = useNavigate()
+  const [open, setOpen] = useState(true)
   const { data: organizations = [] } = useOrganizations()
 
   const onClose = () => {
@@ -22,8 +24,8 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   }
 
   return (
-    <Modal externalOpen setExternalOpen={(open) => !open && onClose()}>
-      <CreateOrganizationModal onClose={onClose} onCreated={() => undefined} />
+    <Modal externalOpen={open} setExternalOpen={(open) => !open && onClose()}>
+      <CreateOrganizationModal onClose={onClose} onCreated={() => setOpen(false)} />
     </Modal>
   )
 }
