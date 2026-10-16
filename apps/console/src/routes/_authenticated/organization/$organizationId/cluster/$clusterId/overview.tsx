@@ -4,8 +4,9 @@ import {
   ClusterCardNodeUsage,
   ClusterTableNode,
   ClusterTableNodepool,
-  useClusterMetrics,
+  getClusterHealthAndMetricsState,
   useClusterMetricsSocket,
+  useRetainedClusterMetrics,
 } from '@qovery/domains/cluster-metrics/feature'
 import { ClusterCardResources } from '@qovery/domains/cluster-metrics/feature'
 import { ClusterCardSetup } from '@qovery/domains/cluster-metrics/feature'
@@ -19,10 +20,10 @@ import {
   ClusterType,
   hasGpuInstance,
   useCluster,
-  useClusterRunningStatus,
   useClusterRunningStatusSocket,
   useClusterStatus,
   useDeployCluster,
+  useRetainedClusterRunningStatus,
 } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -102,8 +103,8 @@ function TableLegend() {
 function ClusterOverview({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
   const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { mutate: deployCluster } = useDeployCluster()
-  const { data: runningStatus } = useClusterRunningStatus({ organizationId, clusterId })
-  const { data: clusterMetrics } = useClusterMetrics({ organizationId, clusterId })
+  const { data: runningStatus } = useRetainedClusterRunningStatus({ organizationId, clusterId })
+  const { data: clusterMetrics } = useRetainedClusterMetrics({ organizationId, clusterId })
   const { data: clusterStatus, isLoading: isClusterStatusLoading } = useClusterStatus({
     organizationId,
     clusterId,
@@ -111,7 +112,8 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
     enabled: Boolean(organizationId) && Boolean(clusterId),
   })
 
-  const isLoading = isClusterLoading || isClusterStatusLoading || !runningStatus || !clusterMetrics
+  const informationState = getClusterHealthAndMetricsState(clusterStatus?.status, runningStatus, clusterMetrics)
+  const isLoading = isClusterLoading || isClusterStatusLoading || informationState === 'loading'
 
   const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
 
@@ -151,7 +153,9 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {cluster && <ClusterRunningStatusIndicator cluster={cluster} />}
+              {cluster && (
+                <ClusterRunningStatusIndicator cluster={cluster} clusterDeploymentStatus={clusterStatus?.status} />
+              )}
               {cluster?.production && (
                 <Badge variant="surface" color="red">
                   Production
@@ -233,13 +237,17 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4">
             <Heading className="text-base font-medium text-neutral">Cluster information</Heading>
-            {typeof runningStatus !== 'string' && <TableLegend />}
+            {informationState === 'available' && <TableLegend />}
           </div>
-          {typeof runningStatus === 'string' ? (
+          {informationState === 'unavailable' || informationState === 'stopped' ? (
             <div className="h-64">
               <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
                 <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
-                <span className="font-medium">No metrics available because the running status is unavailable.</span>
+                <span className="font-medium">
+                  {informationState === 'stopped'
+                    ? 'Cluster information is unavailable while the cluster is stopped.'
+                    : 'Cluster information is temporarily unavailable. Retrying automatically.'}
+                </span>
               </div>
             </div>
           ) : (

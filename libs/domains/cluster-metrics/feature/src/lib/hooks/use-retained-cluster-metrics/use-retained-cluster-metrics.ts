@@ -6,9 +6,8 @@ interface UseClusterMetricsWSProps {
   clusterId: string
 }
 
-// XXX: This hook requires initializing 'use-cluster-metrics-socket'.
-// This enables WebSocket integration with react-query
-export function useClusterMetrics({ organizationId, clusterId }: UseClusterMetricsWSProps) {
+// The matching metrics socket owns updates and disconnect expiry.
+export function useRetainedClusterMetrics({ organizationId, clusterId }: UseClusterMetricsWSProps) {
   return useQuery({
     ...queries.clusters.metrics({ organizationId, clusterId }),
     refetchOnMount: false,
@@ -18,4 +17,4 @@ export function useClusterMetrics({ organizationId, clusterId }: UseClusterMetri
   })
 }
 
-export default useClusterMetrics
+export default useRetainedClusterMetrics

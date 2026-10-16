@@ -66,11 +66,8 @@ const FAILED_DEPLOYMENT_STATUSES = new Set<ClusterStatus['status']>([
 export interface GetClusterHealthIssuesInput {
   cluster: Cluster
   deploymentStatus?: ClusterStatus
-  runningStatus?: ClusterStatusDto | 'NotFound' | null
+  runningStatus?: ClusterStatusDto | null
   isRunningStatusIssueEnabled?: boolean
-  // True once the running-status websocket has had enough time to report data.
-  // When true and runningStatus is still missing, we treat it as unavailable.
-  hasRunningStatusTimedOut: boolean
 }
 
 export function getClusterHealthIssues({
@@ -78,7 +75,6 @@ export function getClusterHealthIssues({
   deploymentStatus,
   runningStatus,
   isRunningStatusIssueEnabled = true,
-  hasRunningStatusTimedOut,
 }: GetClusterHealthIssuesInput): ClusterHealthIssueKind[] {
   const issues: ClusterHealthIssueKind[] = []
 
@@ -91,15 +87,11 @@ export function getClusterHealthIssues({
   }
 
   if (isRunningStatusIssueEnabled && isDeployed && !isStopped) {
-    const isRunningStatusObject = runningStatus && typeof runningStatus === 'object'
-
-    if (isRunningStatusObject && runningStatus.computed_status?.global_status === 'ERROR') {
+    if (runningStatus?.computed_status?.global_status === 'ERROR') {
       issues.push('running-error')
     }
 
-    const isStatusUnavailable = runningStatus === 'NotFound' || (hasRunningStatusTimedOut && runningStatus == null)
-
-    if (isStatusUnavailable) {
+    if (runningStatus === null) {
       issues.push('status-unavailable')
     }
   }

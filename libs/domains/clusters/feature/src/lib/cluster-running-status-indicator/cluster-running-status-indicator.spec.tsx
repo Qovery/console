@@ -1,16 +1,20 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { type ClusterQuotaWarningDto } from 'qovery-ws-typescript-axios'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useClusterStatus } from '../hooks/use-cluster-status/use-cluster-status'
+import { useRetainedClusterRunningStatus } from '../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status'
 import { ClusterRunningStatusIndicator } from './cluster-running-status-indicator'
 
-jest.mock('../hooks/use-cluster-running-status/use-cluster-running-status')
+jest.mock('../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status')
+jest.mock('../hooks/use-cluster-status/use-cluster-status')
 jest.mock('posthog-js/react', () => ({
   useFeatureFlagVariantKey: jest.fn(),
 }))
 
-const mockUseClusterRunningStatus = useClusterRunningStatus as jest.MockedFunction<typeof useClusterRunningStatus>
+const mockUseClusterRunningDisplayStatus = useRetainedClusterRunningStatus as jest.MockedFunction<
+  typeof useRetainedClusterRunningStatus
+>
 const mockUseFeatureFlagVariantKey = useFeatureFlagVariantKey as jest.MockedFunction<typeof useFeatureFlagVariantKey>
 
 const mockCluster = {
@@ -37,7 +41,9 @@ const activeQuotaWarning = {
 // TODO: Remove skip test when feature is available for all users 100%
 describe('ClusterRunningStatusIndicator', () => {
   beforeEach(() => {
+    jest.useFakeTimers()
     jest.clearAllMocks()
+    jest.mocked(useClusterStatus).mockReturnValue({ data: undefined } as ReturnType<typeof useClusterStatus>)
   })
 
   afterEach(() => {
@@ -45,7 +51,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it('should render a positive dot when global status is RUNNING and type is dot', () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'RUNNING',
@@ -69,7 +75,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it('should render a neutral dot when cluster deployment status is STOPPED and type is dot', () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: undefined,
       isLoading: false,
     })
@@ -96,7 +102,7 @@ describe('ClusterRunningStatusIndicator', () => {
       status: 'READY',
     } as Cluster
 
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: undefined,
       isLoading: false,
     })
@@ -106,51 +112,53 @@ describe('ClusterRunningStatusIndicator', () => {
     expect(screen.getByText('Not installed')).toBeInTheDocument()
   })
 
-  it.skip('should render "Unknown" badge for demo clusters when timeout occurs', async () => {
-    const demoCluster = {
-      ...mockCluster,
-      is_demo: true,
-    } as Cluster
-
-    mockUseClusterRunningStatus.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-    })
-
-    jest.useFakeTimers()
-
-    renderWithProviders(<ClusterRunningStatusIndicator cluster={demoCluster} />)
-
-    jest.advanceTimersByTime(3100)
-
-    await waitFor(() => {
-      expect(screen.getByText('Unknown')).toBeInTheDocument()
-    })
-
-    jest.useRealTimers()
+  it('shows a brief skeleton instead of a Connecting badge on initial load', () => {
+    mockUseClusterRunningDisplayStatus.mockReturnValue({ data: undefined } as ReturnType<
+      typeof useRetainedClusterRunningStatus
+    >)
+    const { container } = renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} />)
+    expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
+    expect(screen.queryByText('Connecting…')).not.toBeInTheDocument()
+    expect(screen.queryByText('Status unavailable')).not.toBeInTheDocument()
   })
 
-  it.skip('should render "Status unavailable" badge for non-demo clusters when timeout occurs', async () => {
-    mockUseClusterRunningStatus.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-    })
+  it('resolves STOPPED centrally for header dots even with retained RUNNING health', () => {
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
+      data: { computed_status: { global_status: 'RUNNING' } },
+    } as ReturnType<typeof useRetainedClusterRunningStatus>)
+    jest
+      .mocked(useClusterStatus)
+      .mockReturnValue({ data: { status: 'STOPPED' } } as ReturnType<typeof useClusterStatus>)
+    renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} type="dot" />)
+    expect(screen.getByLabelText('Stopped')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Running')).not.toBeInTheDocument()
+  })
 
-    jest.useFakeTimers()
+  it('shows Stopped immediately when deployment status is known', () => {
+    mockUseClusterRunningDisplayStatus.mockReturnValue({ data: undefined } as ReturnType<
+      typeof useRetainedClusterRunningStatus
+    >)
+    renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} clusterDeploymentStatus="STOPPED" />)
+    expect(screen.getByText('Stopped')).toBeInTheDocument()
+    expect(screen.queryByText('Connecting…')).not.toBeInTheDocument()
+  })
 
-    renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} />)
-
-    jest.advanceTimersByTime(3100)
-
-    await waitFor(() => {
-      expect(screen.getByText('Status unavailable')).toBeInTheDocument()
-    })
-
-    jest.useRealTimers()
+  it('shows unavailable after the shared grace period expires, then recovers', () => {
+    mockUseClusterRunningDisplayStatus.mockReturnValue({ data: null } as ReturnType<
+      typeof useRetainedClusterRunningStatus
+    >)
+    const { rerender } = renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} />)
+    expect(screen.getByText('Status unavailable')).toBeInTheDocument()
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
+      data: { computed_status: { global_status: 'RUNNING' } },
+    } as ReturnType<typeof useRetainedClusterRunningStatus>)
+    rerender(<ClusterRunningStatusIndicator cluster={mockCluster} />)
+    expect(screen.getByText('running')).toBeInTheDocument()
+    expect(screen.queryByText('Status unavailable')).not.toBeInTheDocument()
   })
 
   it.skip('should render "Running" badge when global status is RUNNING', () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'RUNNING',
@@ -165,7 +173,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it.skip('should render "Warning" badge with count when global status is WARNING', () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'WARNING',
@@ -185,7 +193,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it('should render the affected resource in the quota warning dot when type is dot', () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'WARNING',
@@ -202,7 +210,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it('should display an active quota warning without the feature flag', async () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'WARNING',
@@ -228,7 +236,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it('should render a "Warning" dot when the warning is not a quota issue and type is dot', () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'WARNING',
@@ -245,7 +253,7 @@ describe('ClusterRunningStatusIndicator', () => {
 
   it('should use the warning color for the warning badge chevron', () => {
     mockUseFeatureFlagVariantKey.mockReturnValue('test')
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'WARNING',
@@ -263,7 +271,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it.skip('should render "Error" badge with count when global status is ERROR', () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'ERROR',
@@ -283,7 +291,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it.skip('should render "Status unavailable" badge for unknown global status', () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'UNKNOWN',
@@ -298,7 +306,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it.skip('should open popover when clicking on WARNING badge', async () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'WARNING',
@@ -321,7 +329,7 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it.skip('should open popover when clicking on ERROR badge with failures', async () => {
-    mockUseClusterRunningStatus.mockReturnValue({
+    mockUseClusterRunningDisplayStatus.mockReturnValue({
       data: {
         computed_status: {
           global_status: 'ERROR',

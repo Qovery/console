@@ -2,7 +2,7 @@ import { useQueries } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { type EnvironmentModeEnum, type ServiceLightResponse } from 'qovery-typescript-axios'
 import { Fragment, type KeyboardEvent, useMemo, useState } from 'react'
-import { useServicesCluster } from '@qovery/domains/clusters/feature'
+import { useClusterStatus, useServicesCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, ProgressBar, Skeleton, TablePrimitives, Tooltip } from '@qovery/shared/ui'
@@ -15,7 +15,7 @@ import {
   twMerge,
 } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
-import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useRetainedClusterMetrics } from '../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics'
 import { ReservedTooltipContent } from '../metric-progress-bar/metric-progress-bar'
 import {
   type ClusterWorkloads as ClusterWorkloadsData,
@@ -483,19 +483,18 @@ export interface ClusterWorkloadsProps {
 }
 
 export function ClusterWorkloads({ organizationId, clusterId }: ClusterWorkloadsProps) {
-  const { data: metrics } = useClusterMetrics({ organizationId, clusterId })
+  const { data: retainedMetrics } = useRetainedClusterMetrics({ organizationId, clusterId })
+  const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId, refetchInterval: 4_000 })
+  const metrics = clusterStatus?.status === 'STOPPED' ? null : retainedMetrics
   const { data: services = [] } = useServicesCluster({ organizationId, clusterId })
   const [hoveredId, setHoveredId] = useState<string>()
   const [selectedId, setSelectedId] = useState<string>()
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
 
   const isLoading = metrics === undefined
-  const isUnavailable = typeof metrics === 'string'
+  const isUnavailable = metrics === null
 
-  const workloads = useMemo(
-    () => calculateClusterWorkloads(typeof metrics === 'object' && metrics !== null ? metrics.nodes : undefined),
-    [metrics]
-  )
+  const workloads = useMemo(() => calculateClusterWorkloads(metrics?.nodes), [metrics])
   const servicesById = useMemo(() => new Map(services.map((service) => [service.id, service])), [services])
 
   // Environment modes (production, staging...) are not part of the pod data, so load them per project on the cluster

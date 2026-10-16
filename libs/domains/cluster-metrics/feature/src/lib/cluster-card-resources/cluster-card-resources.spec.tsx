@@ -1,20 +1,22 @@
-import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useRetainedClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useRetainedClusterMetrics } from '../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics'
 import { calculateClusterResources } from './calculate-cluster-resources'
 import { ClusterCardResources } from './cluster-card-resources'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
-  useClusterRunningStatus: jest.fn(),
+  useRetainedClusterRunningStatus: jest.fn(),
 }))
 
-jest.mock('../hooks/use-cluster-metrics/use-cluster-metrics', () => ({
-  useClusterMetrics: jest.fn(),
+jest.mock('../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics', () => ({
+  useRetainedClusterMetrics: jest.fn(),
 }))
 
 jest.mock('./calculate-cluster-resources', () => ({
   calculateClusterResources: jest.fn(),
 }))
+
+const mockUseClusterDisplayMetrics = useRetainedClusterMetrics as jest.Mock
 
 describe('ClusterCardResources', () => {
   const mockOrganizationId = 'org-123'
@@ -68,13 +70,30 @@ describe('ClusterCardResources', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    ;(useRetainedClusterRunningStatus as jest.Mock).mockReturnValue({
       data: defaultRunningStatus,
     })
-    ;(useClusterMetrics as jest.Mock).mockReturnValue({
+    mockUseClusterDisplayMetrics.mockReturnValue({
       data: defaultMetrics,
     })
     ;(calculateClusterResources as jest.Mock).mockReturnValue(mockClusterResources)
+  })
+
+  it('replaces loading skeletons with unavailable values on expiry and restores recovered metrics', () => {
+    mockUseClusterDisplayMetrics.mockReturnValue({ data: undefined })
+    const { container, rerender } = renderWithProviders(
+      <ClusterCardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />
+    )
+    expect(container.querySelectorAll('[aria-busy="true"]')).toHaveLength(3)
+    mockUseClusterDisplayMetrics.mockReturnValue({ data: null })
+    rerender(<ClusterCardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+    expect(screen.getAllByText('Unavailable')).toHaveLength(3)
+    expect(screen.queryByText('2.5')).not.toBeInTheDocument()
+    mockUseClusterDisplayMetrics.mockReturnValue({ data: defaultMetrics })
+    rerender(<ClusterCardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    expect(screen.getByText('2.5')).toBeInTheDocument()
+    expect(screen.queryByText('Unavailable')).not.toBeInTheDocument()
   })
 
   it('should render the component with correct structure', () => {

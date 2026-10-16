@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { match } from 'ts-pattern'
-import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useRetainedClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Badge, ExternalLink, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 
@@ -12,7 +12,7 @@ export interface ClusterCardSetupProps {
 export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetupProps) {
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
-  const { data: runningStatus } = useClusterRunningStatus({
+  const { data: runningStatus } = useRetainedClusterRunningStatus({
     organizationId: organizationId,
     clusterId: clusterId,
   })
@@ -20,20 +20,23 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
   const kubeVersion = runningStatus?.computed_status?.kube_version_status
   const isEksAnywhereCluster = cluster?.kubernetes === 'PARTIALLY_MANAGED'
 
-  const isLoading = !cluster?.created_at || !kubeVersion
+  const isLoading = !cluster?.created_at
+  const isVersionLoading = !cluster || runningStatus === undefined
+  const skeletonClassName = isLoading ? 'my-2 ml-1.5' : undefined
 
   return (
     <div className="flex flex-col gap-2.5 rounded border border-neutral bg-surface-neutral p-4">
       <p className="text-sm text-neutral-subtle">Cluster setup</p>
-      <div
-        className={clsx('flex flex-col text-sm text-neutral', {
-          'mt-1 gap-3': isLoading,
-        })}
-      >
-        <Skeleton width="65%" height={32} show={isLoading}>
+      <div className="flex flex-col text-sm text-neutral">
+        <Skeleton
+          width="65%"
+          height={16}
+          show={isVersionLoading}
+          className={isVersionLoading ? 'my-2 ml-1.5' : undefined}
+        >
           <div className="flex h-8 items-center p-1.5">
             <span className="flex items-center gap-2.5">
-              {kubeVersion &&
+              {kubeVersion ? (
                 match(kubeVersion)
                   .with({ type: 'OK' }, (status) => (
                     <>
@@ -82,12 +85,23 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                       </Badge>
                     </>
                   ))
-                  .exhaustive()}
+                  .exhaustive()
+              ) : (
+                <>
+                  <span className="flex w-5 shrink-0 justify-center">
+                    <Icon className="text-base text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
+                  </span>
+                  Kubernetes version
+                  <Badge variant="surface" size="sm">
+                    Unavailable
+                  </Badge>
+                </>
+              )}
             </span>
           </div>
         </Skeleton>
         {cluster?.cloud_provider !== 'ON_PREMISE' && (
-          <Skeleton width="65%" height={32} show={isLoading} className="truncate">
+          <Skeleton width="65%" height={16} show={isLoading} className={clsx(skeletonClassName, 'truncate')}>
             <ExternalLink
               href="https://www.qovery.com/docs/configuration/clusters#faq"
               color="neutral"
@@ -102,7 +116,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
             </ExternalLink>
           </Skeleton>
         )}
-        <Skeleton width="65%" height={32} show={isLoading}>
+        <Skeleton width="65%" height={16} show={isLoading} className={skeletonClassName}>
           <div
             title={cluster?.created_at ? dateUTCString(cluster.created_at) : undefined}
             className="flex h-8 items-center gap-2.5 p-1.5"
