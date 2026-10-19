@@ -34,7 +34,7 @@ export function BackToWebsiteLink({ className }: { className?: string }) {
 export function AuthLegalNotice() {
   return (
     <p className="mt-6 text-center text-ssm text-neutral-subtle">
-      By signing up, you agree to Qovery’s{' '}
+      By continuing, you agree to Qovery’s{' '}
       <ExternalAnchor href="https://www.qovery.com/terms" className="font-normal" color="sky" size="ssm">
         Terms of Service
       </ExternalAnchor>{' '}
