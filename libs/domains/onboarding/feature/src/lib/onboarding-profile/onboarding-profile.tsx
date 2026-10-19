@@ -231,14 +231,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
         <Controller
           name="organization_name"
           control={methods.control}
-          render={({ field }) => (
-            <InputText
-              {...field}
-              readOnly={!!pending}
-              label="Organization name (optional)"
-              hint="Defaults to your company name."
-            />
-          )}
+          render={({ field }) => <InputText {...field} readOnly={!!pending} label="Organization name (optional)" />}
         />
       </OnboardingForm>
     </FormProvider>
