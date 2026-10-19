@@ -24,10 +24,8 @@ jest.mock('@tanstack/react-router', () => ({
 jest.mock('@qovery/shared/auth', () => ({
   useAuth: () => ({ user: { email: 'jane@example.com' }, getAccessTokenSilently: mockRefreshToken }),
 }))
-jest.mock('@qovery/domains/organizations/feature', () => ({
-  ...jest.requireActual('@qovery/domains/organizations/feature'),
+jest.mock('../hooks/use-create-organization/use-create-organization', () => ({
   useCreateOrganization: () => ({ mutateAsync: mockCreateOrganization }),
-  useOrganizations: () => ({ data: [{ id: 'existing-org' }] }),
 }))
 jest.mock('@qovery/domains/projects/feature', () => ({
   ...jest.requireActual('@qovery/domains/projects/feature'),

@@ -2,10 +2,10 @@ import { useNavigate } from '@tanstack/react-router'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useCreateOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { Callout, Icon, InputText, ModalCrud, toast, toastError, useModal } from '@qovery/shared/ui'
+import { useCreateOrganization } from '../hooks/use-create-organization/use-create-organization'
 
 export interface CreateOrganizationModalProps {
   onClose: () => void
