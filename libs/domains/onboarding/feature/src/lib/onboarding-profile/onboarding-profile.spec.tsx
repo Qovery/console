@@ -326,14 +326,20 @@ describe('OnboardingProfile', () => {
     }
   })
 
-  it('resumes the previous profile format without creating another organization', async () => {
+  it('restores a saved profile without creating another organization', async () => {
     sessionStorage.setItem(
       'onboarding-pending:user-1',
       JSON.stringify({
         organizationId: 'existing-org',
         projectId: 'existing-project',
         completionTracked: true,
-        profile: { full_name: 'Saved Name', company_name: 'Saved company', phone: '' },
+        profile: {
+          full_name: 'Saved Name',
+          user_email: 'john@acme.com',
+          organization_name: 'Saved company',
+          company_name: 'Saved company',
+          phone: '',
+        },
       })
     )
     const { userEvent } = renderProfile()

@@ -27,20 +27,11 @@ export function readPendingOnboarding(userId?: string): PendingOnboarding | unde
       value.organizationId &&
       (value.projectId === undefined || typeof value.projectId === 'string') &&
       (value.completionTracked === undefined || typeof value.completionTracked === 'boolean') &&
-      typeof value.profile?.full_name === 'string' &&
-      typeof value.profile?.company_name === 'string' &&
-      typeof value.profile?.phone === 'string' &&
-      (value.profile.user_email === undefined || typeof value.profile.user_email === 'string') &&
-      (value.profile.organization_name === undefined || typeof value.profile.organization_name === 'string')
+      ['full_name', 'company_name', 'phone', 'user_email', 'organization_name'].every(
+        (field) => typeof value.profile?.[field] === 'string'
+      )
     ) {
-      return {
-        ...value,
-        profile: {
-          ...value.profile,
-          user_email: value.profile.user_email ?? '',
-          organization_name: value.profile.organization_name ?? value.profile.company_name,
-        },
-      }
+      return value
     }
   } catch {
     // Storage may be unavailable or contain an invalid record.

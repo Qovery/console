@@ -25,23 +25,13 @@ describe('pending onboarding recovery', () => {
     expect(readPendingOnboarding('user-id')).toEqual(progress)
   })
 
-  it('preserves resource IDs from the previous profile fields when resuming', () => {
-    sessionStorage.setItem(
-      'onboarding-pending:user-id',
-      JSON.stringify({
-        organizationId: 'existing-org',
-        projectId: 'existing-project',
-        completionTracked: true,
-        profile: { full_name: 'John Doe', company_name: 'Acme', phone: '' },
-      })
-    )
-    expect(readPendingOnboarding('user-id')).toEqual({
-      organizationId: 'existing-org',
-      projectId: 'existing-project',
-      completionTracked: true,
-      profile: { full_name: 'John Doe', company_name: 'Acme', phone: '', user_email: '', organization_name: 'Acme' },
-    })
-  })
+  it.each(['invalid JSON', '{}', '{"organizationId":"existing-org","profile":{}}'])(
+    'ignores an invalid stored record: %s',
+    (value) => {
+      sessionStorage.setItem('onboarding-pending:user-id', value)
+      expect(readPendingOnboarding('user-id')).toBeUndefined()
+    }
+  )
 
   it.each(['setItem', 'removeItem'] as const)('logs a %s failure without blocking in-memory recovery', (method) => {
     const error = new Error('Session storage is unavailable')
