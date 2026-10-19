@@ -22,7 +22,7 @@ describe('Container', () => {
       </Container>
     )
 
-    expect(screen.getByAltText('Qovery')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Qovery' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Qovery home' })).toHaveAttribute('href', '/')
     expect(screen.getByRole('button', { name: 'User menu' })).toBeInTheDocument()
     expect(screen.queryByTestId('progress-bar-wrapper')).not.toBeInTheDocument()

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import qoveryLogotype from './assets/qovery-logotype.svg'
+import { LogoBrandedIcon } from '@qovery/shared/ui'
 
 export interface ContainerProps extends PropsWithChildren {
   profileUserMenu: ReactNode
@@ -16,7 +16,7 @@ export function Container({ children, profileUserMenu }: ContainerProps) {
           aria-label="Qovery home"
           className="focus-visible:ring-brand rounded focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:ring-offset-background-secondary"
         >
-          <img src={qoveryLogotype} alt="Qovery" className="dark:brightness-0 dark:invert" />
+          <LogoBrandedIcon className="h-6 w-auto text-neutral" role="img" aria-label="Qovery" />
         </Link>
         {profileUserMenu}
       </header>
