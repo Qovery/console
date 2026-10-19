@@ -7,7 +7,7 @@ import { useCreateOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { InputText, toastError } from '@qovery/shared/ui'
+import { InputText, toast, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ContextOnboarding } from '../container/container'
 import { OnboardingForm } from '../onboarding-form/onboarding-form'
@@ -139,6 +139,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
       }
       await navigate({ to: '/organization/$organizationId/overview', params: { organizationId } })
       updatePending(undefined)
+      toast('success', 'Your organization has been created')
     } catch (error) {
       console.error(error)
     } finally {

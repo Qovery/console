@@ -329,7 +329,7 @@ describe('OnboardingProfile', () => {
     expect(createProject).toHaveBeenCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
   })
 
-  it('silently creates the organization and its main project before opening the platform', async () => {
+  it('creates the organization and its main project before showing a success toast', async () => {
     const { userEvent } = await fillProfile()
     expect(screen.getByLabelText('Full name')).toHaveValue('John van Doe')
 
@@ -360,7 +360,7 @@ describe('OnboardingProfile', () => {
     expect(refreshToken).toHaveBeenCalledWith({ cacheMode: 'off' })
     expect(useCreateProject).toHaveBeenCalledWith({ silently: true })
     expect(createProject).toHaveBeenCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
-    expect(toast).not.toHaveBeenCalled()
+    expect(toast).toHaveBeenCalledWith('success', 'Your organization has been created')
     expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ current_step: 'project' }))
     expect(posthog.capture).toHaveBeenCalledWith(
       'onboarding-organization-created',
@@ -615,6 +615,7 @@ describe('OnboardingProfile', () => {
     await waitFor(() => expect(refetchUserSignUp).toHaveBeenCalled())
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
     expect(navigate).not.toHaveBeenCalled()
+    expect(toast).not.toHaveBeenCalled()
     expect(posthog.capture).not.toHaveBeenCalled()
     expect(screen.getByLabelText('Company name')).toHaveValue(' Acme Corp ')
   })
@@ -692,6 +693,7 @@ describe('OnboardingProfile', () => {
 
     await waitFor(() => expect(createProject).toHaveBeenCalledTimes(1))
     expect(navigate).not.toHaveBeenCalled()
+    expect(toast).not.toHaveBeenCalled()
     expect(posthog.capture).not.toHaveBeenCalled()
     expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
 
@@ -702,7 +704,7 @@ describe('OnboardingProfile', () => {
         params: { organizationId: 'created-org' },
       })
     )
-    expect(toast).not.toHaveBeenCalled()
+    expect(toast).toHaveBeenCalledWith('success', 'Your organization has been created')
   })
 
   it('retries project creation in the same organization after a failure', async () => {
@@ -722,7 +724,7 @@ describe('OnboardingProfile', () => {
     expect(createUserSignUp).toHaveBeenCalledTimes(1)
     expect(createProject).toHaveBeenCalledTimes(2)
     expect(createProject).toHaveBeenLastCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
-    expect(toast).not.toHaveBeenCalled()
+    expect(toast).toHaveBeenCalledWith('success', 'Your organization has been created')
   })
 
   it('keeps the form editable and does not advance when saving fails', async () => {
