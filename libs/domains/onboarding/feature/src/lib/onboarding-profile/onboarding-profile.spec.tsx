@@ -46,6 +46,21 @@ function renderProfile() {
   )
 }
 
+async function renderFilledProfile(values: Record<string, string> = {}) {
+  const result = renderProfile()
+  const fields = {
+    'Full name': values.full_name ?? 'John Doe',
+    'Work email': values.user_email ?? 'john@acme.com',
+    'Company name': values.company_name ?? 'Acme Corp',
+    'Organization name (optional)': values.organization_name ?? 'Acme workspace',
+  }
+  for (const [label, value] of Object.entries(fields)) {
+    await result.userEvent.clear(screen.getByLabelText(label))
+    await result.userEvent.type(screen.getByLabelText(label), value)
+  }
+  return result
+}
+
 async function fillProfile() {
   const result = renderProfile()
   await result.userEvent.type(screen.getByLabelText('Company name'), ' Acme Corp ')
@@ -55,6 +70,68 @@ async function fillProfile() {
 }
 
 describe('OnboardingProfile', () => {
+  it('shows the five profile fields without additional onboarding steps', async () => {
+    await renderFilledProfile()
+
+    expect(screen.getByRole('heading', { name: 'Create your profile' })).toBeInTheDocument()
+    expect(screen.getAllByRole('textbox')).toHaveLength(5)
+    expect(screen.queryByLabelText('Professional email address')).not.toBeInTheDocument()
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    expect(screen.getAllByRole('textbox').map((input) => input.getAttribute('name'))).toEqual([
+      'full_name',
+      'user_email',
+      'company_name',
+      'phone',
+      'organization_name',
+    ])
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+  })
+
+  it.each([
+    ['Full name', 'full_name', 'John Doe'],
+    ['Company name', 'company_name', 'Acme'],
+    ['Work email', 'user_email', 'john@acme.com'],
+  ])('requires a non-blank %s', async (label, field, validValue) => {
+    const { userEvent } = await renderFilledProfile({ [field]: '   ' })
+    const continueButton = screen.getByRole('button', { name: 'Continue' })
+    expect(continueButton).toBeDisabled()
+
+    await userEvent.clear(screen.getByLabelText(label))
+    await userEvent.type(screen.getByLabelText(label), validValue)
+
+    await waitFor(() => expect(continueButton).toBeEnabled())
+  })
+
+  it('rejects an invalid work email', async () => {
+    const { userEvent } = await renderFilledProfile({ user_email: 'invalid' })
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+    await userEvent.clear(screen.getByLabelText('Work email'))
+    await userEvent.type(screen.getByLabelText('Work email'), 'john@acme.com')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+  })
+
+  it('requires both parts of the name for the signup API', async () => {
+    const { userEvent } = await renderFilledProfile({ full_name: 'John' })
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+
+    await userEvent.type(screen.getByLabelText('Full name'), ' van Doe')
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+  })
+
+  it('keeps phone optional but validates a supplied number', async () => {
+    const { userEvent } = await renderFilledProfile()
+    const continueButton = screen.getByRole('button', { name: 'Continue' })
+    await waitFor(() => expect(continueButton).toBeEnabled())
+
+    await userEvent.type(screen.getByLabelText('Phone number (optional)'), 'invalid')
+    expect(await screen.findByText('Please enter a valid phone number.')).toBeInTheDocument()
+    expect(continueButton).toBeDisabled()
+
+    await userEvent.clear(screen.getByLabelText('Phone number (optional)'))
+    await waitFor(() => expect(continueButton).toBeEnabled())
+  })
+
   afterEach(() => {
     jest.useRealTimers()
     jest.restoreAllMocks()
@@ -185,6 +262,31 @@ describe('OnboardingProfile', () => {
     expect(createProject).toHaveBeenCalledTimes(1)
     expect(createOrganization).toHaveBeenCalledTimes(1)
     await waitFor(() => expect(sessionStorage.getItem('onboarding-pending:user-1')).toBeNull())
+  })
+
+  it('preserves all submitted fields while retrying organization setup', async () => {
+    const profile = {
+      full_name: 'Saved Name',
+      user_email: 'saved@acme.com',
+      company_name: 'Saved company',
+      organization_name: 'Saved workspace',
+      phone: '+33123456789',
+    }
+    sessionStorage.setItem('onboarding-pending:user-1', JSON.stringify({ organizationId: 'existing-org', profile }))
+    const { userEvent } = renderProfile()
+    for (const [label, value] of [
+      ['Full name', profile.full_name],
+      ['Work email', profile.user_email],
+      ['Company name', profile.company_name],
+      ['Organization name (optional)', profile.organization_name],
+      ['Phone number (optional)', profile.phone],
+    ]) {
+      const input = screen.getByLabelText(label)
+      await userEvent.click(input)
+      await userEvent.keyboard('{Control>}a{/Control}{Backspace}')
+      await userEvent.type(input, 'Changed')
+      expect(input).toHaveValue(value)
+    }
   })
 
   it('resumes the previous profile format without creating another organization', async () => {

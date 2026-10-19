@@ -1,7 +1,6 @@
 export * from './lib/accept-invitation/accept-invitation'
 export * from './lib/container/container'
 export * from './lib/hooks/use-invite-member/use-invite-member'
-export * from './lib/step-profile/step-profile'
 export * from './lib/step-use-cases/step-use-cases'
 export * from './lib/onboarding-project/onboarding-project'
 export * from './lib/create-organization-modal/create-organization-modal'

@@ -3,7 +3,7 @@ import { PlanEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, createContext, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
-import qoveryLogotype from '../step-profile/assets/qovery-logotype.svg'
+import qoveryLogotype from './assets/qovery-logotype.svg'
 
 interface DefaultContextProps {
   organization_name: string

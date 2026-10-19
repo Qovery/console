@@ -2,17 +2,25 @@ import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
 import { useContext, useRef, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCreateOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { toastError } from '@qovery/shared/ui'
+import { InputText, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ContextOnboarding } from '../container/container'
-import { type ProfileFormValues, StepProfile } from '../step-profile/step-profile'
+import { OnboardingForm } from '../onboarding-form/onboarding-form'
 import { pushToDataLayer } from '../utils/data-layer'
 import { type PendingOnboarding, readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
+
+export interface ProfileFormValues {
+  full_name: string
+  user_email: string
+  organization_name: string
+  company_name: string
+  phone: string
+}
 
 export function OnboardingProfile() {
   const auth = useAuth()
@@ -141,7 +149,90 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
 
   return (
     <FormProvider {...methods}>
-      <StepProfile onSubmit={onSubmit} loading={submitting} readOnly={!!pending} />
+      <OnboardingForm
+        title="Create your profile"
+        description="Tell us more about yourself"
+        onSubmit={onSubmit}
+        loading={submitting || methods.formState.isSubmitting}
+        disabled={!methods.formState.isValid}
+      >
+        <Controller
+          name="full_name"
+          control={methods.control}
+          rules={{
+            validate: (value) => value.trim().split(/\s+/).length >= 2 || 'Please enter your first and last name.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText {...field} readOnly={!!pending} label="Full name" autoComplete="name" error={error?.message} />
+          )}
+        />
+        <Controller
+          name="user_email"
+          control={methods.control}
+          rules={{
+            required: 'Please enter your work email.',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: 'Please enter a valid email address.',
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              {...field}
+              type="email"
+              label="Work email"
+              autoComplete="email"
+              readOnly={!!pending && !!field.value}
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="company_name"
+          control={methods.control}
+          rules={{ validate: (value) => !!value.trim() || 'Please enter your company name.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              {...field}
+              readOnly={!!pending}
+              label="Company name"
+              autoComplete="organization"
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="phone"
+          control={methods.control}
+          rules={{
+            pattern: {
+              value: /^[\d\s+\-()]{7,}$/,
+              message: 'Please enter a valid phone number.',
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              {...field}
+              readOnly={!!pending}
+              label="Phone number (optional)"
+              autoComplete="tel"
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="organization_name"
+          control={methods.control}
+          render={({ field }) => (
+            <InputText
+              {...field}
+              readOnly={!!pending}
+              label="Organization name (optional)"
+              hint="Defaults to your company name."
+            />
+          )}
+        />
+      </OnboardingForm>
     </FormProvider>
   )
 }
