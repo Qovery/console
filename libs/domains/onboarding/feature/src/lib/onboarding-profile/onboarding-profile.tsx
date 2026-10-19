@@ -181,6 +181,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
               {...field}
               type="email"
               label="Work email"
+              hint="Please use your work email to help us understand your company’s needs and support your onboarding."
               autoComplete="email"
               readOnly={!!pending && !!field.value}
               error={error?.message}
