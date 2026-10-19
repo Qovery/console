@@ -22,7 +22,7 @@ export function CostBudgetCard({ cost }: CostBudgetCardProps) {
   const forecastPercent = (forecast / monthlyLimit) * 100
 
   return (
-    <BlockContent title="Monthly budget" classNameContent="p-5">
+    <BlockContent title="Monthly budget" classNameContent="p-4">
       <div className="flex items-baseline gap-2">
         <span className="font-mono text-2xl text-neutral">{formatCost(estimatedSpend, currency)}</span>
         <span className="text-sm text-neutral-subtle">of {formatCost(monthlyLimit, currency)}</span>
@@ -37,7 +37,7 @@ export function CostBudgetCard({ cost }: CostBudgetCardProps) {
         <span>Resets on {dateFullFormat(resetsOn, undefined, 'MMM d, yyyy')}</span>
       </div>
 
-      <dl className="mt-5 grid grid-cols-3 gap-4 border-t border-neutral pt-4 text-sm">
+      <dl className="mt-4 grid grid-cols-3 gap-4 border-t border-neutral pt-4 text-sm">
         <div>
           <dt className="flex items-center gap-1.5 text-neutral-subtle">
             Estimated spend

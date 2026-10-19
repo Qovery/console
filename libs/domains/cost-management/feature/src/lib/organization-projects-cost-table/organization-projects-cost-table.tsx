@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
+import { match } from 'ts-pattern'
 import { type ProjectCost } from '@qovery/domains/cost-management/data-access'
 import {
   Badge,
@@ -9,13 +10,17 @@ import {
   Icon,
   InputSearch,
   ProgressBar,
+  SegmentedControl,
+  TablePrimitives,
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
 import useBudgetSettings from '../hooks/use-budget-settings/use-budget-settings'
 import { SetBudgetModal } from '../set-budget-modal/set-budget-modal'
-import { BUDGET_ENFORCEMENT_LABELS, budgetEnforcement } from '../utils/budget-enforcement'
+import { BUDGET_ENFORCEMENT_LABELS, budgetConsumption, budgetEnforcement } from '../utils/budget-enforcement'
 import { formatCost } from '../utils/format-cost'
+
+const { Table } = TablePrimitives
 
 export interface ProjectCostRow {
   id: string
@@ -31,10 +36,12 @@ export interface OrganizationProjectsCostTableProps {
 type BudgetStatus = 'within_budget' | 'at_risk' | 'over_budget'
 type StatusFilter = 'all' | BudgetStatus
 
-function budgetStatus(percent: number): BudgetStatus {
-  if (percent >= 100) return 'over_budget'
-  if (percent >= 90) return 'at_risk'
-  return 'within_budget'
+/** Status follows the enforcement tier, so the badge and the enforcement column never disagree. */
+function budgetStatus(cost: ProjectCost): BudgetStatus {
+  return match(budgetEnforcement(cost))
+    .with('new_resources_blocked', () => 'over_budget' as const)
+    .with('scale_up_blocked', () => 'at_risk' as const)
+    .otherwise(() => 'within_budget' as const)
 }
 
 const STATUS_PRESENTATION: Record<
@@ -66,12 +73,8 @@ export function OrganizationProjectsCostTable({ organizationId, rows }: Organiza
 
     return rows
       .filter((row) => (term ? row.name.toLowerCase().includes(term) : true))
-      .filter((row) =>
-        statusFilter === 'all'
-          ? true
-          : budgetStatus((row.cost.forecast / row.cost.policy.monthlyLimit) * 100) === statusFilter
-      )
-      .sort((a, b) => b.cost.forecast / b.cost.policy.monthlyLimit - a.cost.forecast / a.cost.policy.monthlyLimit)
+      .filter((row) => statusFilter === 'all' || budgetStatus(row.cost) === statusFilter)
+      .sort((a, b) => budgetConsumption(b.cost) - budgetConsumption(a.cost))
   }, [rows, search, statusFilter])
 
   const visibleIds = visibleRows.map((row) => row.id)
@@ -111,22 +114,18 @@ export function OrganizationProjectsCostTable({ organizationId, rows }: Organiza
     <BlockContent
       title="Projects"
       headRight={
-        <div className="flex items-center gap-2">
+        <SegmentedControl.Root
+          aria-label="Filter projects by budget status"
+          className="h-7 text-xs"
+          value={statusFilter}
+          onValueChange={(value) => setStatusFilter(value as StatusFilter)}
+        >
           {STATUS_FILTERS.map((filter) => (
-            <button
-              key={filter.value}
-              type="button"
-              onClick={() => setStatusFilter(filter.value)}
-              className={
-                filter.value === statusFilter
-                  ? 'rounded px-2 py-0.5 text-xs font-medium text-brand'
-                  : 'rounded px-2 py-0.5 text-xs text-neutral-subtle hover:text-neutral'
-              }
-            >
+            <SegmentedControl.Item key={filter.value} value={filter.value}>
               {filter.label}
-            </button>
+            </SegmentedControl.Item>
           ))}
-        </div>
+        </SegmentedControl.Root>
       }
       classNameContent="p-0"
     >
@@ -144,7 +143,12 @@ export function OrganizationProjectsCostTable({ organizationId, rows }: Organiza
             variant="outline"
             color="neutral"
             size="sm"
-            onClick={() => openBudgetModal(selectedVisible, rows[0]?.cost.policy.monthlyLimit ?? 0)}
+            onClick={() =>
+              openBudgetModal(
+                selectedVisible,
+                rows.find((row) => row.id === selectedVisible[0])?.cost.policy.monthlyLimit ?? 0
+              )
+            }
           >
             Set budget
           </Button>
@@ -161,46 +165,49 @@ export function OrganizationProjectsCostTable({ organizationId, rows }: Organiza
         </div>
       )}
 
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-neutral text-xs text-neutral-subtle">
-            <th className="w-10 px-4 py-2">
+      <Table.Root className="w-full" containerClassName="rounded-none border-0">
+        <Table.Header>
+          <Table.Row className="text-xs text-neutral-subtle">
+            <Table.ColumnHeaderCell className="w-10">
               <Checkbox
                 checked={allVisibleSelected}
                 onCheckedChange={toggleAll}
                 aria-label="Select every visible project"
               />
-            </th>
-            <th className="px-4 py-2 text-left font-medium">Project</th>
-            <th className="px-4 py-2 text-right font-medium">Budget</th>
-            <th className="px-4 py-2 text-right font-medium">Forecast</th>
-            <th className="w-44 px-4 py-2 text-left font-medium">Consumption</th>
-            <th className="px-4 py-2 text-left font-medium">Status</th>
-            <th className="px-4 py-2 text-left font-medium">Enforcement</th>
-            <th className="w-10 px-4 py-2" />
-          </tr>
-        </thead>
-        <tbody>
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Project</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="text-right">Budget</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="text-right">Forecast</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-44">Consumption</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Enforcement</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-10" />
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {visibleRows.map(({ id, name, cost }) => {
-            const percent = (cost.forecast / cost.policy.monthlyLimit) * 100
-            const { label, color, barColor } = STATUS_PRESENTATION[budgetStatus(percent)]
-            const enforcement = budgetEnforcement(cost)
+            const percent = budgetConsumption(cost)
+            const { label, color, barColor } = STATUS_PRESENTATION[budgetStatus(cost)]
 
             return (
-              <tr key={id} className="border-b border-neutral last:border-b-0">
-                <td className="px-4 py-2.5">
+              <Table.Row key={id}>
+                <Table.Cell>
                   <Checkbox
                     checked={selectedIds.includes(id)}
                     onCheckedChange={() => toggleOne(id)}
                     aria-label={`Select ${name}`}
                   />
-                </td>
-                <td className="px-4 py-2.5 text-neutral">{name}</td>
-                <td className="px-4 py-2.5 text-right">
-                  <button
+                </Table.Cell>
+                <Table.Cell>{name}</Table.Cell>
+                <Table.Cell className="text-right">
+                  <Button
                     type="button"
+                    variant="plain"
+                    color="neutral"
+                    size="sm"
+                    className="font-mono"
+                    aria-label={`Edit the budget of ${name}`}
                     onClick={() => openBudgetModal([id], cost.policy.monthlyLimit)}
-                    className="group inline-flex items-center gap-1.5 font-mono text-neutral hover:text-brand"
                   >
                     {formatCost(cost.policy.monthlyLimit, cost.policy.currency)}
                     {cost.budgetSource === 'custom' && (
@@ -210,12 +217,12 @@ export function OrganizationProjectsCostTable({ organizationId, rows }: Organiza
                         </span>
                       </Tooltip>
                     )}
-                  </button>
-                </td>
-                <td className="px-4 py-2.5 text-right font-mono text-neutral">
+                  </Button>
+                </Table.Cell>
+                <Table.Cell className="text-right font-mono">
                   {formatCost(cost.forecast, cost.policy.currency)}
-                </td>
-                <td className="px-4 py-2.5">
+                </Table.Cell>
+                <Table.Cell>
                   <div className="flex items-center gap-2">
                     <ProgressBar.Root mode="absolute" className="h-1.5 flex-1">
                       <ProgressBar.Cell value={Math.min(100, percent)} color={barColor} />
@@ -224,14 +231,16 @@ export function OrganizationProjectsCostTable({ organizationId, rows }: Organiza
                       {Math.round(percent)}%
                     </span>
                   </div>
-                </td>
-                <td className="px-4 py-2.5">
+                </Table.Cell>
+                <Table.Cell>
                   <Badge size="sm" variant="surface" color={color}>
                     {label}
                   </Badge>
-                </td>
-                <td className="px-4 py-2.5 text-xs text-neutral-subtle">{BUDGET_ENFORCEMENT_LABELS[enforcement]}</td>
-                <td className="px-4 py-2.5 text-right">
+                </Table.Cell>
+                <Table.Cell className="text-xs text-neutral-subtle">
+                  {BUDGET_ENFORCEMENT_LABELS[budgetEnforcement(cost)]}
+                </Table.Cell>
+                <Table.Cell className="text-right">
                   <Link
                     to="/organization/$organizationId/project/$projectId/settings/cost-budget"
                     params={{ organizationId, projectId: id }}
@@ -240,12 +249,12 @@ export function OrganizationProjectsCostTable({ organizationId, rows }: Organiza
                   >
                     <Icon iconName="arrow-right" />
                   </Link>
-                </td>
-              </tr>
+                </Table.Cell>
+              </Table.Row>
             )
           })}
-        </tbody>
-      </table>
+        </Table.Body>
+      </Table.Root>
 
       {visibleRows.length === 0 && (
         <p className="px-4 py-6 text-center text-sm text-neutral-subtle">No project matches these filters.</p>

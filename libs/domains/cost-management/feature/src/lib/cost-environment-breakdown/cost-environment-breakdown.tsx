@@ -1,6 +1,8 @@
 import { type ProjectCost } from '@qovery/domains/cost-management/data-access'
-import { BlockContent, Tooltip } from '@qovery/shared/ui'
+import { BlockContent, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { formatCost } from '../utils/format-cost'
+
+const { Table } = TablePrimitives
 
 export interface CostEnvironmentBreakdownProps {
   cost: ProjectCost
@@ -18,30 +20,30 @@ export function CostEnvironmentBreakdown({ cost }: CostEnvironmentBreakdownProps
 
   return (
     <BlockContent title="Spend by environment" classNameContent="p-0">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-neutral text-xs text-neutral-subtle">
-            <th className="px-4 py-2 text-left font-medium">Environment</th>
-            <th className="px-4 py-2 text-left font-medium">Namespace</th>
-            <th className="px-4 py-2 text-right font-medium">Month-to-date</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table.Root className="w-full" containerClassName="rounded-none border-0">
+        <Table.Header>
+          <Table.Row className="text-xs text-neutral-subtle">
+            <Table.ColumnHeaderCell>Environment</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Namespace</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="text-right">Month-to-date</Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {environments.map((environment) => (
-            <tr key={environment.environmentId} className="border-b border-neutral last:border-b-0">
-              <td className="px-4 py-2.5 text-neutral">{environment.name}</td>
-              <td className="px-4 py-2.5">
+            <Table.Row key={environment.environmentId}>
+              <Table.Cell>{environment.name}</Table.Cell>
+              <Table.Cell>
                 <Tooltip content="Cost is attributed to this namespace in the cloud provider's billing data">
                   <span className="font-mono text-xs text-neutral-subtle">{environment.namespace}</span>
                 </Tooltip>
-              </td>
-              <td className="px-4 py-2.5 text-right font-mono text-neutral">
+              </Table.Cell>
+              <Table.Cell className="text-right font-mono">
                 {formatCost(environment.estimatedSpend, policy.currency)}
-              </td>
-            </tr>
+              </Table.Cell>
+            </Table.Row>
           ))}
-        </tbody>
-      </table>
+        </Table.Body>
+      </Table.Root>
     </BlockContent>
   )
 }
