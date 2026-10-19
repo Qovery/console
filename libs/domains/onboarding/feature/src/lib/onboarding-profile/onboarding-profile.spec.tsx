@@ -52,7 +52,7 @@ async function renderFilledProfile(values: Record<string, string> = {}) {
     'Full name': values.full_name ?? 'John Doe',
     'Work email': values.user_email ?? 'john@acme.com',
     'Company name': values.company_name ?? 'Acme Corp',
-    'Organization name (optional)': values.organization_name ?? 'Acme workspace',
+    'Organization name': values.organization_name ?? 'Acme workspace',
   }
   for (const [label, value] of Object.entries(fields)) {
     await result.userEvent.clear(screen.getByLabelText(label))
@@ -64,8 +64,8 @@ async function renderFilledProfile(values: Record<string, string> = {}) {
 async function fillProfile() {
   const result = renderProfile()
   await result.userEvent.type(screen.getByLabelText('Company name'), ' Acme Corp ')
-  await result.userEvent.clear(screen.getByLabelText('Organization name (optional)'))
-  await result.userEvent.type(screen.getByLabelText('Organization name (optional)'), ' Acme Workspace ')
+  await result.userEvent.clear(screen.getByLabelText('Organization name'))
+  await result.userEvent.type(screen.getByLabelText('Organization name'), ' Acme Workspace ')
   await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
   return result
 }
@@ -181,7 +181,7 @@ describe('OnboardingProfile', () => {
   it('prefills the organization name from the company and preserves a custom name', async () => {
     const { userEvent } = renderProfile()
     const company = screen.getByLabelText('Company name')
-    const organization = screen.getByLabelText('Organization name (optional)')
+    const organization = screen.getByLabelText('Organization name')
     await userEvent.type(company, 'Acme')
     expect(organization).toHaveValue('Acme')
     await userEvent.type(company, ' Corp')
@@ -192,20 +192,21 @@ describe('OnboardingProfile', () => {
     expect(organization).toHaveValue('My workspace')
   })
 
-  it.each(['', '   '])('uses the company name when the organization name is %j', async (organizationName) => {
-    const { userEvent } = renderProfile()
-    await userEvent.type(screen.getByLabelText('Company name'), ' Acme Corp ')
-    await userEvent.clear(screen.getByLabelText('Organization name (optional)'))
-    if (organizationName) {
-      await userEvent.clear(screen.getByLabelText('Organization name (optional)'))
-      await userEvent.type(screen.getByLabelText('Organization name (optional)'), organizationName)
-    }
+  it.each(['', '   ', 'test', ' TEST '])('rejects organization name %j', async (name) => {
+    const { userEvent } = await fillProfile()
+    const organization = screen.getByLabelText('Organization name')
+    await userEvent.clear(organization)
+    if (name) await userEvent.type(organization, name)
+    await userEvent.tab()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled())
+    expect(
+      await screen.findByText(
+        name.trim() ? 'Please choose an organization name other than "test".' : 'Please enter your organization name.'
+      )
+    ).toBeInTheDocument()
+    expect(createOrganization).not.toHaveBeenCalled()
+    await userEvent.type(organization, ' workspace')
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
-    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-    await waitFor(() => expect(navigate).toHaveBeenCalled())
-    expect(createOrganization).toHaveBeenCalledWith({
-      organizationRequest: { name: 'Acme Corp', plan: PlanEnum.BUSINESS_2025, admin_emails: ['john@acme.com'] },
-    })
   })
 
   it('uses the entered work email and organization name independently of the company name', async () => {
@@ -216,8 +217,8 @@ describe('OnboardingProfile', () => {
     const { userEvent } = renderProfile()
     expect(screen.getByLabelText('Work email')).toHaveValue('')
     await userEvent.type(screen.getByLabelText('Company name'), 'Acme Corp')
-    await userEvent.clear(screen.getByLabelText('Organization name (optional)'))
-    await userEvent.type(screen.getByLabelText('Organization name (optional)'), 'My workspace')
+    await userEvent.clear(screen.getByLabelText('Organization name'))
+    await userEvent.type(screen.getByLabelText('Organization name'), 'My workspace')
     expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
     await userEvent.type(screen.getByLabelText('Work email'), 'edited@acme.com')
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
@@ -296,7 +297,7 @@ describe('OnboardingProfile', () => {
       ['Full name', profile.full_name],
       ['Work email', profile.user_email],
       ['Company name', profile.company_name],
-      ['Organization name (optional)', profile.organization_name],
+      ['Organization name', profile.organization_name],
       ['Phone number (optional)', profile.phone],
     ]) {
       const input = screen.getByLabelText(label)
@@ -319,7 +320,7 @@ describe('OnboardingProfile', () => {
     )
     const { userEvent } = renderProfile()
     expect(screen.getByLabelText('Work email')).toHaveValue('john@acme.com')
-    expect(screen.getByLabelText('Organization name (optional)')).toHaveValue('Saved company')
+    expect(screen.getByLabelText('Organization name')).toHaveValue('Saved company')
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
     await waitFor(() =>
@@ -485,8 +486,8 @@ describe('OnboardingProfile', () => {
     await userEvent.type(screen.getByLabelText('Company name'), 'Edited company')
     await userEvent.clear(screen.getByLabelText('Work email'))
     await userEvent.type(screen.getByLabelText('Work email'), 'edited@acme.com')
-    await userEvent.clear(screen.getByLabelText('Organization name (optional)'))
-    await userEvent.type(screen.getByLabelText('Organization name (optional)'), 'Edited workspace')
+    await userEvent.clear(screen.getByLabelText('Organization name'))
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Edited workspace')
     await userEvent.type(screen.getByLabelText('Phone number (optional)'), '+33123456789')
 
     await userEvent.click(screen.getByRole('button', { name: 'Load signup' }))
@@ -495,7 +496,7 @@ describe('OnboardingProfile', () => {
     expect(screen.getByLabelText('Full name')).toHaveValue('Edited Name')
     expect(screen.getByLabelText('Company name')).toHaveValue('Edited company')
     expect(screen.getByLabelText('Work email')).toHaveValue('edited@acme.com')
-    expect(screen.getByLabelText('Organization name (optional)')).toHaveValue('Edited workspace')
+    expect(screen.getByLabelText('Organization name')).toHaveValue('Edited workspace')
     expect(screen.getByLabelText('Phone number (optional)')).toHaveValue('+33123456789')
   })
 
@@ -553,8 +554,8 @@ describe('OnboardingProfile', () => {
     }
     const { userEvent } = renderWithProviders(<ProfileWithSignupRefresh />)
     await userEvent.type(screen.getByLabelText('Company name'), 'Acme Corp')
-    await userEvent.clear(screen.getByLabelText('Organization name (optional)'))
-    await userEvent.type(screen.getByLabelText('Organization name (optional)'), 'Acme Workspace')
+    await userEvent.clear(screen.getByLabelText('Organization name'))
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme Workspace')
     const continueButton = screen.getByRole('button', { name: 'Continue' })
     await waitFor(() => expect(continueButton).toBeEnabled())
     await userEvent.click(continueButton)

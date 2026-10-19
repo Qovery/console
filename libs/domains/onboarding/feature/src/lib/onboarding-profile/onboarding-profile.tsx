@@ -231,7 +231,25 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
         <Controller
           name="organization_name"
           control={methods.control}
-          render={({ field }) => <InputText {...field} readOnly={!!pending} label="Organization name (optional)" />}
+          rules={{
+            validate: (value) => !!value.trim() || 'Please enter your organization name.',
+            pattern: {
+              value: /^(?!\s*test\s*$)/i,
+              message: 'Please choose an organization name other than "test".',
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              {...field}
+              readOnly={!!pending}
+              label="Organization name"
+              error={
+                field.value.trim().toLowerCase() === 'test'
+                  ? 'Please choose an organization name other than "test".'
+                  : error?.message
+              }
+            />
+          )}
         />
       </OnboardingForm>
     </FormProvider>
