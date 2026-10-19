@@ -4,7 +4,6 @@ import Container from './container'
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useLocation: () => ({ pathname: '/onboarding/profile' }),
   Link: ({ to, children, ...props }: ComponentPropsWithoutRef<'a'> & { to: string }) => (
     <a href={to} {...props}>
       {children}
@@ -17,7 +16,7 @@ describe('Container', () => {
   afterEach(() => jest.useRealTimers())
   it('renders the profile shell with the account menu and no funnel header', () => {
     renderWithProviders(
-      <Container profileUserMenu={<button>User menu</button>}>
+      <Container userMenu={<button>User menu</button>}>
         <p>Profile form</p>
       </Container>
     )

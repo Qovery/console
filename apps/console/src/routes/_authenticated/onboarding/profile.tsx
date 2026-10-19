@@ -15,7 +15,7 @@ function Profile() {
   }
 
   return (
-    <Container profileUserMenu={<UserMenu />}>
+    <Container userMenu={<UserMenu />}>
       <OnboardingProfile />
     </Container>
   )
