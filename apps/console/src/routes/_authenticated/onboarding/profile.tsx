@@ -1,22 +1,6 @@
-import { useAuth0 } from '@auth0/auth0-react'
-import { Navigate, createFileRoute } from '@tanstack/react-router'
-import { Container, OnboardingProfile } from '@qovery/domains/onboarding/feature'
-import { UserMenu } from '../../../app/components/header/user-menu/user-menu'
+import { createFileRoute } from '@tanstack/react-router'
+import { OnboardingProfile } from '@qovery/domains/onboarding/feature'
 
 export const Route = createFileRoute('/_authenticated/onboarding/profile')({
-  component: Profile,
+  component: OnboardingProfile,
 })
-
-function Profile() {
-  const { isAuthenticated } = useAuth0()
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" search={{ redirect: '/' }} />
-  }
-
-  return (
-    <Container userMenu={<UserMenu />}>
-      <OnboardingProfile />
-    </Container>
-  )
-}

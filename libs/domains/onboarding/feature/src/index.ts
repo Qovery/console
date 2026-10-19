@@ -1,5 +1,4 @@
 export * from './lib/accept-invitation/accept-invitation'
-export * from './lib/container/container'
 export * from './lib/hooks/use-invite-member/use-invite-member'
 export * from './lib/onboarding-completion/use-onboarding-completion'
 export * from './lib/onboarding-profile/onboarding-profile'
