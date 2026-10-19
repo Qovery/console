@@ -75,7 +75,7 @@ describe('CreateOrganizationModal', () => {
     finishNavigation()
   })
 
-  it('keeps the close icon available while organization creation is pending', async () => {
+  it('keeps the close icon visible but disables dismissal while creation is pending', async () => {
     mockCreateOrganization.mockReturnValue(new Promise(() => undefined))
     function OrganizationMenu() {
       const { openModal, closeModal } = useModal()
@@ -90,8 +90,12 @@ describe('CreateOrganizationModal', () => {
     await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
     await waitFor(() => expect(mockCreateOrganization).toHaveBeenCalled())
-    await userEvent.click(screen.getByRole('button', { name: 'Close', exact: true }))
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    const closeButton = screen.getByRole('button', { name: 'Close', exact: true })
+    expect(closeButton).toBeVisible()
+    await waitFor(() => expect(closeButton).toBeDisabled())
+    await userEvent.click(closeButton)
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(mockCreateOrganization).toHaveBeenCalledTimes(1)
   })
 
   it('asks only for the organization name and automatically creates main', async () => {

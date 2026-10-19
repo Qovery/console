@@ -10,9 +10,14 @@ import { useCreateOrganization } from '../hooks/use-create-organization/use-crea
 export interface CreateOrganizationModalProps {
   onClose: () => void
   onCreated?: () => void
+  setModalDismissible?: (dismissible: boolean) => void
 }
 
-export function CreateOrganizationModal({ onClose, onCreated = onClose }: CreateOrganizationModalProps) {
+export function CreateOrganizationModal({
+  onClose,
+  onCreated = onClose,
+  setModalDismissible,
+}: CreateOrganizationModalProps) {
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = useAuth()
   const modal = useModal()
@@ -25,10 +30,13 @@ export function CreateOrganizationModal({ onClose, onCreated = onClose }: Create
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
+  const changeDismissible = setModalDismissible ?? modal.setModalDismissible
+
   const onSubmit = methods.handleSubmit(async ({ name }) => {
     if (submitting.current) return
     submitting.current = true
     setLoading(true)
+    changeDismissible(false)
     setError(false)
 
     try {
@@ -66,12 +74,20 @@ export function CreateOrganizationModal({ onClose, onCreated = onClose }: Create
     } finally {
       submitting.current = false
       setLoading(false)
+      changeDismissible(true)
     }
   })
 
   return (
     <FormProvider {...methods}>
-      <ModalCrud title="Create organization" onClose={onClose} onSubmit={onSubmit} loading={loading}>
+      <ModalCrud
+        title="Create organization"
+        onClose={() => {
+          if (!submitting.current) onClose()
+        }}
+        onSubmit={onSubmit}
+        loading={loading}
+      >
         <Controller
           name="name"
           rules={{ validate: (value) => !!value.trim() || 'Please enter your organization name.' }}

@@ -177,8 +177,8 @@ export const Modal = (props: ModalProps) => {
               setOpen: setExternalOpen ? setExternalOpen : setOpen,
               setModalDismissible: setContentDismissible,
             })}
-            {buttonClose && isDismissible && (
-              <Dialog.Close className="absolute right-4 top-4" asChild>
+            {buttonClose && (
+              <Dialog.Close className="absolute right-4 top-4" disabled={!isDismissible} asChild>
                 <button
                   type="button"
                   aria-label="Close"
