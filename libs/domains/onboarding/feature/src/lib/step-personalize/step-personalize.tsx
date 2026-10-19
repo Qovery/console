@@ -10,12 +10,13 @@ export interface ProfileFormValues {
 
 export interface StepPersonalizeProps {
   onSubmit: () => void
+  loading?: boolean
   readOnly?: boolean
   disabled?: boolean
   onSignIn?: () => void
 }
 
-export function StepPersonalize({ onSubmit, readOnly = false, disabled, onSignIn }: StepPersonalizeProps) {
+export function StepPersonalize({ onSubmit, loading, readOnly = false, disabled, onSignIn }: StepPersonalizeProps) {
   const { control, formState } = useFormContext<ProfileFormValues>()
 
   return (
@@ -23,7 +24,7 @@ export function StepPersonalize({ onSubmit, readOnly = false, disabled, onSignIn
       title="Create your profile"
       description="Tell us more about yourself"
       onSubmit={onSubmit}
-      loading={formState.isSubmitting}
+      loading={loading || formState.isSubmitting}
       disabled={disabled || !formState.isValid}
     >
       {onSignIn && (

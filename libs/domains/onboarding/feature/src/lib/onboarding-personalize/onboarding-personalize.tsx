@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useCreateOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
@@ -25,6 +25,8 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
   const { user, getAccessTokenSilently, authLogin } = auth
 
   const { selectedPlan, phone } = useContext(ContextOnboarding)
+  const submissionInFlight = useRef(false)
+  const [submitting, setSubmitting] = useState(false)
   // Keep restored defaults stable: saving progress must not reset a running submission.
   const [initialPending] = useState(() => readPendingOnboarding(user?.sub))
   const [pending, setPending] = useState(initialPending)
@@ -54,7 +56,10 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
   })
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    if (!userEmail) return
+    if (!userEmail || submissionInFlight.current) return
+
+    submissionInFlight.current = true
+    setSubmitting(true)
 
     const [firstName, ...lastName] = data.full_name.trim().split(/\s+/)
     let organizationId = pending?.organizationId
@@ -124,6 +129,9 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
       updatePending(undefined)
     } catch (error) {
       console.error(error)
+    } finally {
+      submissionInFlight.current = false
+      setSubmitting(false)
     }
   })
 
@@ -131,6 +139,7 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
     <FormProvider {...methods}>
       <StepPersonalize
         onSubmit={onSubmit}
+        loading={submitting}
         readOnly={!!pending}
         disabled={!userEmail}
         onSignIn={missingEmail ? () => authLogin(undefined, '/onboarding/personalize') : undefined}

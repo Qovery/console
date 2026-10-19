@@ -7,7 +7,7 @@ import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { toast } from '@qovery/shared/ui'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { OnboardingProvider } from '../container/container'
 import { OnboardingPersonalize } from './onboarding-personalize'
 
@@ -348,6 +348,87 @@ describe('OnboardingPersonalize', () => {
     expect(screen.getByLabelText('Full name')).toHaveValue('Edited Name')
     expect(screen.getByLabelText('Company name')).toHaveValue('Edited company')
     expect(screen.getByLabelText('Phone number (optional)')).toHaveValue('+33123456789')
+  })
+
+  it('keeps Continue loading through signup updates, resource creation and navigation', async () => {
+    let finishOrganization: (value: unknown) => void = () => undefined
+    let finishAccess: (value: unknown) => void = () => undefined
+    let finishProject: (value: unknown) => void = () => undefined
+    let finishNavigation: (value: unknown) => void = () => undefined
+    createOrganization.mockReturnValue(
+      new Promise((resolve) => {
+        finishOrganization = resolve
+      })
+    )
+    refreshToken.mockReturnValue(
+      new Promise((resolve) => {
+        finishAccess = resolve
+      })
+    )
+    createProject.mockReturnValue(
+      new Promise((resolve) => {
+        finishProject = resolve
+      })
+    )
+    navigate.mockReturnValue(
+      new Promise((resolve) => {
+        finishNavigation = resolve
+      })
+    )
+    jest.mocked(useUserSignUp).mockImplementation(function useSignupFixture() {
+      return { data: useContext(SignupFixtureContext), refetch: refetchUserSignUp } as unknown as ReturnType<
+        typeof useUserSignUp
+      >
+    })
+    function ProfileWithSignupRefresh() {
+      const [signup, setSignup] = useState<ReturnType<typeof useUserSignUp>['data']>()
+      return (
+        <SignupFixtureContext.Provider value={signup}>
+          <OnboardingProvider>
+            <OnboardingPersonalize />
+          </OnboardingProvider>
+          <button
+            onClick={() =>
+              setSignup({
+                first_name: 'John',
+                last_name: 'van Doe',
+                company_name: 'Acme Corp',
+                user_email: 'john@acme.com',
+              } as ReturnType<typeof useUserSignUp>['data'])
+            }
+          >
+            Refresh signup
+          </button>
+        </SignupFixtureContext.Provider>
+      )
+    }
+    const { userEvent } = renderWithProviders(<ProfileWithSignupRefresh />)
+    await userEvent.type(screen.getByLabelText('Company name'), 'Acme Corp')
+    const continueButton = screen.getByRole('button', { name: 'Continue' })
+    await waitFor(() => expect(continueButton).toBeEnabled())
+    await userEvent.click(continueButton)
+    await waitFor(() => expect(createOrganization).toHaveBeenCalledTimes(1))
+    await userEvent.click(screen.getByRole('button', { name: 'Refresh signup' }))
+    expect(continueButton).toBeDisabled()
+    expect(within(continueButton).getByTestId('spinner')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Company name'), '{Enter}')
+    expect(createUserSignUp).toHaveBeenCalledTimes(1)
+    expect(createOrganization).toHaveBeenCalledTimes(1)
+
+    finishOrganization({ id: 'created-org' })
+    await waitFor(() => expect(refreshToken).toHaveBeenCalledTimes(1))
+    expect(within(continueButton).getByTestId('spinner')).toBeInTheDocument()
+    expect(continueButton).toBeDisabled()
+    finishAccess('token')
+    await waitFor(() => expect(createProject).toHaveBeenCalledTimes(1))
+    expect(within(continueButton).getByTestId('spinner')).toBeInTheDocument()
+    expect(continueButton).toBeDisabled()
+    finishProject({ id: 'created-project' })
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1))
+    expect(within(continueButton).getByTestId('spinner')).toBeInTheDocument()
+    expect(continueButton).toBeDisabled()
+    finishNavigation(undefined)
+    await waitFor(() => expect(within(continueButton).queryByTestId('spinner')).not.toBeInTheDocument())
   })
 
   it('prevents duplicate submissions while saving', async () => {
