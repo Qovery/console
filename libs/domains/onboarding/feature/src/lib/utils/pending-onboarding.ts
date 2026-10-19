@@ -1,4 +1,4 @@
-import { type ProfileFormValues } from '../step-personalize/step-personalize'
+import { type ProfileFormValues } from '../step-profile/step-profile'
 
 export interface PendingOnboarding {
   organizationId: string

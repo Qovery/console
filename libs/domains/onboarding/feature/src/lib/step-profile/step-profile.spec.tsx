@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import StepPersonalize, { type ProfileFormValues } from './step-personalize'
+import StepProfile, { type ProfileFormValues } from './step-profile'
 
 const defaultValues: ProfileFormValues = {
   full_name: 'John Doe',
@@ -12,13 +12,13 @@ const defaultValues: ProfileFormValues = {
 
 function renderProfile(values: Partial<ProfileFormValues> = {}) {
   return renderWithProviders(
-    wrapWithReactHookForm(<StepPersonalize onSubmit={jest.fn()} />, {
+    wrapWithReactHookForm(<StepProfile onSubmit={jest.fn()} />, {
       defaultValues: { ...defaultValues, ...values },
     })
   )
 }
 
-describe('StepPersonalize', () => {
+describe('StepProfile', () => {
   beforeEach(() => jest.useFakeTimers())
   afterEach(() => jest.useRealTimers())
   it('shows the five profile fields without additional onboarding steps', async () => {
@@ -86,7 +86,7 @@ describe('StepPersonalize', () => {
   it('preserves the submitted profile while retrying organization setup', async () => {
     const phone = '+33123456789'
     const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<StepPersonalize onSubmit={jest.fn()} readOnly />, {
+      wrapWithReactHookForm(<StepProfile onSubmit={jest.fn()} readOnly />, {
         defaultValues: { ...defaultValues, phone },
       })
     )

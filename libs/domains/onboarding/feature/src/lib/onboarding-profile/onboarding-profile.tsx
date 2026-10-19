@@ -10,17 +10,17 @@ import { useAuth } from '@qovery/shared/auth'
 import { toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ContextOnboarding } from '../container/container'
-import { type ProfileFormValues, StepPersonalize } from '../step-personalize/step-personalize'
+import { type ProfileFormValues, StepProfile } from '../step-profile/step-profile'
 import { pushToDataLayer } from '../utils/data-layer'
 import { type PendingOnboarding, readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
 
-export function OnboardingPersonalize() {
+export function OnboardingProfile() {
   const auth = useAuth()
-  return <OnboardingPersonalizeForm key={auth.user?.sub} auth={auth} />
+  return <OnboardingProfileForm key={auth.user?.sub} auth={auth} />
 }
 
-function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
-  useDocumentTitle('Onboarding Personalize - Qovery')
+function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
+  useDocumentTitle('Onboarding Profile - Qovery')
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = auth
 
@@ -141,7 +141,7 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
 
   return (
     <FormProvider {...methods}>
-      <StepPersonalize onSubmit={onSubmit} loading={submitting} readOnly={!!pending} />
+      <StepProfile onSubmit={onSubmit} loading={submitting} readOnly={!!pending} />
     </FormProvider>
   )
 }

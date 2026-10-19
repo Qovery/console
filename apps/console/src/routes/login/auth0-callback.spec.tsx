@@ -83,7 +83,7 @@ describe('Auth0 callback', () => {
 
     renderWithProviders(<RouteComponent />)
 
-    expect(mockNavigate).toHaveBeenCalledWith({ href: '/onboarding/personalize' })
+    expect(mockNavigate).toHaveBeenCalledWith({ href: '/onboarding/profile' })
   })
 
   it('waits for organizations before selecting a destination', () => {

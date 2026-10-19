@@ -22,8 +22,8 @@ import { Route as AuthenticatedOrganizationIndexRouteImport } from './routes/_au
 import { Route as AuthenticatedAcceptInvitationIndexRouteImport } from './routes/_authenticated/accept-invitation/index'
 import { Route as AuthenticatedOnboardingUseCasesRouteImport } from './routes/_authenticated/onboarding/use-cases'
 import { Route as AuthenticatedOnboardingProjectRouteImport } from './routes/_authenticated/onboarding/project'
+import { Route as AuthenticatedOnboardingProfileRouteImport } from './routes/_authenticated/onboarding/profile'
 import { Route as AuthenticatedOnboardingPlansRouteImport } from './routes/_authenticated/onboarding/plans'
-import { Route as AuthenticatedOnboardingPersonalizeRouteImport } from './routes/_authenticated/onboarding/personalize'
 import { Route as AuthenticatedOrganizationOrganizationIdRouteRouteImport } from './routes/_authenticated/organization/$organizationId/route'
 import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
@@ -293,16 +293,16 @@ const AuthenticatedOnboardingProjectRoute =
     path: '/project',
     getParentRoute: () => AuthenticatedOnboardingRouteRoute,
   } as any)
+const AuthenticatedOnboardingProfileRoute =
+  AuthenticatedOnboardingProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedOnboardingRouteRoute,
+  } as any)
 const AuthenticatedOnboardingPlansRoute =
   AuthenticatedOnboardingPlansRouteImport.update({
     id: '/plans',
     path: '/plans',
-    getParentRoute: () => AuthenticatedOnboardingRouteRoute,
-  } as any)
-const AuthenticatedOnboardingPersonalizeRoute =
-  AuthenticatedOnboardingPersonalizeRouteImport.update({
-    id: '/personalize',
-    path: '/personalize',
     getParentRoute: () => AuthenticatedOnboardingRouteRoute,
   } as any)
 const AuthenticatedOrganizationOrganizationIdRouteRoute =
@@ -1974,8 +1974,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginIndexRoute
   '/signup': typeof SignupIndexRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdRouteRouteWithChildren
-  '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
+  '/onboarding/profile': typeof AuthenticatedOnboardingProfileRoute
   '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
   '/onboarding/use-cases': typeof AuthenticatedOnboardingUseCasesRoute
   '/accept-invitation': typeof AuthenticatedAcceptInvitationIndexRoute
@@ -2184,8 +2184,8 @@ export interface FileRoutesByTo {
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login': typeof LoginIndexRoute
   '/signup': typeof SignupIndexRoute
-  '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
+  '/onboarding/profile': typeof AuthenticatedOnboardingProfileRoute
   '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
   '/onboarding/use-cases': typeof AuthenticatedOnboardingUseCasesRoute
   '/accept-invitation': typeof AuthenticatedAcceptInvitationIndexRoute
@@ -2376,8 +2376,8 @@ export interface FileRoutesById {
   '/login/': typeof LoginIndexRoute
   '/signup/': typeof SignupIndexRoute
   '/_authenticated/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdRouteRouteWithChildren
-  '/_authenticated/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/_authenticated/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
+  '/_authenticated/onboarding/profile': typeof AuthenticatedOnboardingProfileRoute
   '/_authenticated/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
   '/_authenticated/onboarding/use-cases': typeof AuthenticatedOnboardingUseCasesRoute
   '/_authenticated/accept-invitation/': typeof AuthenticatedAcceptInvitationIndexRoute
@@ -2590,8 +2590,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/organization/$organizationId'
-    | '/onboarding/personalize'
     | '/onboarding/plans'
+    | '/onboarding/profile'
     | '/onboarding/project'
     | '/onboarding/use-cases'
     | '/accept-invitation'
@@ -2800,8 +2800,8 @@ export interface FileRouteTypes {
     | '/login/auth0-callback'
     | '/login'
     | '/signup'
-    | '/onboarding/personalize'
     | '/onboarding/plans'
+    | '/onboarding/profile'
     | '/onboarding/project'
     | '/onboarding/use-cases'
     | '/accept-invitation'
@@ -2991,8 +2991,8 @@ export interface FileRouteTypes {
     | '/login/'
     | '/signup/'
     | '/_authenticated/organization/$organizationId'
-    | '/_authenticated/onboarding/personalize'
     | '/_authenticated/onboarding/plans'
+    | '/_authenticated/onboarding/profile'
     | '/_authenticated/onboarding/project'
     | '/_authenticated/onboarding/use-cases'
     | '/_authenticated/accept-invitation/'
@@ -3295,18 +3295,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingProjectRouteImport
       parentRoute: typeof AuthenticatedOnboardingRouteRoute
     }
+    '/_authenticated/onboarding/profile': {
+      id: '/_authenticated/onboarding/profile'
+      path: '/profile'
+      fullPath: '/onboarding/profile'
+      preLoaderRoute: typeof AuthenticatedOnboardingProfileRouteImport
+      parentRoute: typeof AuthenticatedOnboardingRouteRoute
+    }
     '/_authenticated/onboarding/plans': {
       id: '/_authenticated/onboarding/plans'
       path: '/plans'
       fullPath: '/onboarding/plans'
       preLoaderRoute: typeof AuthenticatedOnboardingPlansRouteImport
-      parentRoute: typeof AuthenticatedOnboardingRouteRoute
-    }
-    '/_authenticated/onboarding/personalize': {
-      id: '/_authenticated/onboarding/personalize'
-      path: '/personalize'
-      fullPath: '/onboarding/personalize'
-      preLoaderRoute: typeof AuthenticatedOnboardingPersonalizeRouteImport
       parentRoute: typeof AuthenticatedOnboardingRouteRoute
     }
     '/_authenticated/organization/$organizationId': {
@@ -4685,17 +4685,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedOnboardingRouteRouteChildren {
-  AuthenticatedOnboardingPersonalizeRoute: typeof AuthenticatedOnboardingPersonalizeRoute
   AuthenticatedOnboardingPlansRoute: typeof AuthenticatedOnboardingPlansRoute
+  AuthenticatedOnboardingProfileRoute: typeof AuthenticatedOnboardingProfileRoute
   AuthenticatedOnboardingProjectRoute: typeof AuthenticatedOnboardingProjectRoute
   AuthenticatedOnboardingUseCasesRoute: typeof AuthenticatedOnboardingUseCasesRoute
 }
 
 const AuthenticatedOnboardingRouteRouteChildren: AuthenticatedOnboardingRouteRouteChildren =
   {
-    AuthenticatedOnboardingPersonalizeRoute:
-      AuthenticatedOnboardingPersonalizeRoute,
     AuthenticatedOnboardingPlansRoute: AuthenticatedOnboardingPlansRoute,
+    AuthenticatedOnboardingProfileRoute: AuthenticatedOnboardingProfileRoute,
     AuthenticatedOnboardingProjectRoute: AuthenticatedOnboardingProjectRoute,
     AuthenticatedOnboardingUseCasesRoute: AuthenticatedOnboardingUseCasesRoute,
   }

@@ -3,7 +3,7 @@ import { PlanEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, createContext, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
-import qoveryLogotype from '../step-personalize/assets/qovery-logotype.svg'
+import qoveryLogotype from '../step-profile/assets/qovery-logotype.svg'
 
 interface DefaultContextProps {
   organization_name: string
@@ -61,7 +61,7 @@ export function Container({ children, profileUserMenu }: ContainerProps) {
   const currentPath = `/${step?.split('/')[0] ?? ''}`
   const titlesPerRoute = [
     {
-      path: '/personalize',
+      path: '/profile',
       title: 'To tailor your experience',
     },
     {

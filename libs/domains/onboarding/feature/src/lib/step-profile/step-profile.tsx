@@ -10,13 +10,13 @@ export interface ProfileFormValues {
   phone: string
 }
 
-export interface StepPersonalizeProps {
+export interface StepProfileProps {
   onSubmit: () => void
   loading?: boolean
   readOnly?: boolean
 }
 
-export function StepPersonalize({ onSubmit, loading, readOnly = false }: StepPersonalizeProps) {
+export function StepProfile({ onSubmit, loading, readOnly = false }: StepProfileProps) {
   const { control, formState } = useFormContext<ProfileFormValues>()
 
   return (
@@ -107,4 +107,4 @@ export function StepPersonalize({ onSubmit, loading, readOnly = false }: StepPer
   )
 }
 
-export default StepPersonalize
+export default StepProfile

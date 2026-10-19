@@ -86,7 +86,7 @@ describe('SettingsDangerZone', () => {
 
     finishDeletion()
 
-    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith({ to: '/onboarding/personalize', replace: true }))
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith({ to: '/onboarding/profile', replace: true }))
     expect(localStorage.getItem('currentOrganizationId')).toBeNull()
     expect(localStorage.getItem('currentProjectId')).toBeNull()
   })

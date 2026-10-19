@@ -4,7 +4,7 @@ import Container, { ContextOnboarding, OnboardingProvider } from './container'
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useLocation: () => ({ pathname: '/onboarding/personalize' }),
+  useLocation: () => ({ pathname: '/onboarding/profile' }),
   Link: ({ to, children, ...props }: ComponentPropsWithoutRef<'a'> & { to: string }) => (
     <a href={to} {...props}>
       {children}

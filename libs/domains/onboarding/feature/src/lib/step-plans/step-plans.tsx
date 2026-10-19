@@ -168,7 +168,7 @@ export default function StepPlans(props: StepPlansProps) {
                     size="lg"
                     color="neutral"
                     variant="surface"
-                    onClick={() => navigate({ to: '/onboarding/personalize' })}
+                    onClick={() => navigate({ to: '/onboarding/profile' })}
                   >
                     <Icon iconName="arrow-left" iconStyle="solid" />
                     Back

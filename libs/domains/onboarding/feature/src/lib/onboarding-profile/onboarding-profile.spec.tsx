@@ -9,7 +9,7 @@ import { useAuth } from '@qovery/shared/auth'
 import { toast } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { OnboardingProvider } from '../container/container'
-import { OnboardingPersonalize } from './onboarding-personalize'
+import { OnboardingProfile } from './onboarding-profile'
 
 jest.mock('@qovery/shared/ui', () => ({ ...jest.requireActual('@qovery/shared/ui'), toast: jest.fn() }))
 jest.mock('@qovery/domains/projects/feature', () => ({ useCreateProject: jest.fn() }))
@@ -41,7 +41,7 @@ const SignupFixtureContext = createContext<ReturnType<typeof useUserSignUp>['dat
 function renderProfile() {
   return renderWithProviders(
     <OnboardingProvider>
-      <OnboardingPersonalize />
+      <OnboardingProfile />
     </OnboardingProvider>
   )
 }
@@ -54,7 +54,7 @@ async function fillProfile() {
   return result
 }
 
-describe('OnboardingPersonalize', () => {
+describe('OnboardingProfile', () => {
   afterEach(() => {
     jest.useRealTimers()
     jest.restoreAllMocks()
@@ -342,7 +342,7 @@ describe('OnboardingPersonalize', () => {
       return (
         <SignupFixtureContext.Provider value={signup}>
           <OnboardingProvider>
-            <OnboardingPersonalize />
+            <OnboardingProfile />
           </OnboardingProvider>
           <button
             onClick={() =>
@@ -413,7 +413,7 @@ describe('OnboardingPersonalize', () => {
       return (
         <SignupFixtureContext.Provider value={signup}>
           <OnboardingProvider>
-            <OnboardingPersonalize />
+            <OnboardingProfile />
           </OnboardingProvider>
           <button
             onClick={() =>
