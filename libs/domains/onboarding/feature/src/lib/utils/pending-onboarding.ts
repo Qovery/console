@@ -1,4 +1,10 @@
-import { type ProfileFormValues } from '../onboarding-profile/onboarding-profile'
+export interface ProfileFormValues {
+  full_name: string
+  user_email: string
+  organization_name: string
+  company_name: string
+  phone: string
+}
 
 export interface PendingOnboarding {
   organizationId: string

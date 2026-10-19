@@ -104,7 +104,10 @@ describe('OnboardingProfile', () => {
   })
 
   it('rejects an invalid work email', async () => {
-    const { userEvent } = await renderFilledProfile({ user_email: 'invalid' })
+    const { userEvent } = await renderFilledProfile()
+    await userEvent.clear(screen.getByLabelText('Work email'))
+    await userEvent.type(screen.getByLabelText('Work email'), 'invalid')
+    expect(await screen.findByText('Please enter a valid email address.')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
     await userEvent.clear(screen.getByLabelText('Work email'))
     await userEvent.type(screen.getByLabelText('Work email'), 'john@acme.com')
@@ -117,6 +120,16 @@ describe('OnboardingProfile', () => {
 
     await userEvent.type(screen.getByLabelText('Full name'), ' van Doe')
 
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+  })
+
+  it.each(['       ', '+++++++', '()-- ++', '+33 12 34'])('rejects phone %j without seven digits', async (phone) => {
+    const { userEvent } = await renderFilledProfile()
+    await userEvent.type(screen.getByLabelText('Phone number (optional)'), phone)
+    expect(await screen.findByText('Please enter a valid phone number.')).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled())
+    await userEvent.clear(screen.getByLabelText('Phone number (optional)'))
+    await userEvent.type(screen.getByLabelText('Phone number (optional)'), '+1 (234) 567')
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
   })
 
@@ -283,7 +296,7 @@ describe('OnboardingProfile', () => {
     await waitFor(() => expect(sessionStorage.getItem('onboarding-pending:user-1')).toBeNull())
   })
 
-  it('preserves all submitted fields while retrying organization setup', async () => {
+  it('keeps restored profile fields read-only while organization setup is pending', async () => {
     const profile = {
       full_name: 'Saved Name',
       user_email: 'saved@acme.com',

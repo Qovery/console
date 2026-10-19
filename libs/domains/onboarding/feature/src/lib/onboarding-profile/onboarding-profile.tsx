@@ -12,15 +12,12 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ContextOnboarding } from '../container/container'
 import { OnboardingForm } from '../onboarding-form/onboarding-form'
 import { pushToDataLayer } from '../utils/data-layer'
-import { type PendingOnboarding, readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
-
-export interface ProfileFormValues {
-  full_name: string
-  user_email: string
-  organization_name: string
-  company_name: string
-  phone: string
-}
+import {
+  type PendingOnboarding,
+  type ProfileFormValues,
+  readPendingOnboarding,
+  savePendingOnboarding,
+} from '../utils/pending-onboarding'
 
 export function OnboardingProfile() {
   const auth = useAuth()
@@ -214,7 +211,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           control={methods.control}
           rules={{
             pattern: {
-              value: /^[\d\s+\-()]{7,}$/,
+              value: /^(?=(?:\D*\d){7})[\d\s+\-()]+$/,
               message: 'Please enter a valid phone number.',
             },
           }}
