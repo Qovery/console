@@ -49,7 +49,7 @@ function renderProfile() {
 async function fillProfile() {
   const result = renderProfile()
   await result.userEvent.type(screen.getByLabelText('Company name'), ' Acme Corp ')
-  await result.userEvent.type(screen.getByLabelText('Organization name'), ' Acme Workspace ')
+  await result.userEvent.type(screen.getByLabelText('Organization name (optional)'), ' Acme Workspace ')
   await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
   return result
 }
@@ -100,6 +100,20 @@ describe('OnboardingPersonalize', () => {
     expect(screen.getByLabelText('Full name')).toHaveValue('Saved Name')
   })
 
+  it.each(['', '   '])('uses the company name when the organization name is %j', async (organizationName) => {
+    const { userEvent } = renderProfile()
+    await userEvent.type(screen.getByLabelText('Company name'), ' Acme Corp ')
+    if (organizationName) {
+      await userEvent.type(screen.getByLabelText('Organization name (optional)'), organizationName)
+    }
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(createOrganization).toHaveBeenCalledWith({
+      organizationRequest: { name: 'Acme Corp', plan: PlanEnum.BUSINESS_2025, admin_emails: ['john@acme.com'] },
+    })
+  })
+
   it('uses the entered work email and organization name independently of the company name', async () => {
     jest.mocked(useAuth).mockReturnValue({
       getAccessTokenSilently: refreshToken,
@@ -108,7 +122,7 @@ describe('OnboardingPersonalize', () => {
     const { userEvent } = renderProfile()
     expect(screen.getByLabelText('Work email')).toHaveValue('')
     await userEvent.type(screen.getByLabelText('Company name'), 'Acme Corp')
-    await userEvent.type(screen.getByLabelText('Organization name'), 'My workspace')
+    await userEvent.type(screen.getByLabelText('Organization name (optional)'), 'My workspace')
     expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
     await userEvent.type(screen.getByLabelText('Work email'), 'edited@acme.com')
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
@@ -185,7 +199,7 @@ describe('OnboardingPersonalize', () => {
     )
     const { userEvent } = renderProfile()
     expect(screen.getByLabelText('Work email')).toHaveValue('john@acme.com')
-    expect(screen.getByLabelText('Organization name')).toHaveValue('Saved company')
+    expect(screen.getByLabelText('Organization name (optional)')).toHaveValue('Saved company')
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
     await waitFor(() =>
@@ -351,7 +365,7 @@ describe('OnboardingPersonalize', () => {
     await userEvent.type(screen.getByLabelText('Company name'), 'Edited company')
     await userEvent.clear(screen.getByLabelText('Work email'))
     await userEvent.type(screen.getByLabelText('Work email'), 'edited@acme.com')
-    await userEvent.type(screen.getByLabelText('Organization name'), 'Edited workspace')
+    await userEvent.type(screen.getByLabelText('Organization name (optional)'), 'Edited workspace')
     await userEvent.type(screen.getByLabelText('Phone number (optional)'), '+33123456789')
 
     await userEvent.click(screen.getByRole('button', { name: 'Load signup' }))
@@ -360,7 +374,7 @@ describe('OnboardingPersonalize', () => {
     expect(screen.getByLabelText('Full name')).toHaveValue('Edited Name')
     expect(screen.getByLabelText('Company name')).toHaveValue('Edited company')
     expect(screen.getByLabelText('Work email')).toHaveValue('edited@acme.com')
-    expect(screen.getByLabelText('Organization name')).toHaveValue('Edited workspace')
+    expect(screen.getByLabelText('Organization name (optional)')).toHaveValue('Edited workspace')
     expect(screen.getByLabelText('Phone number (optional)')).toHaveValue('+33123456789')
   })
 
@@ -418,7 +432,7 @@ describe('OnboardingPersonalize', () => {
     }
     const { userEvent } = renderWithProviders(<ProfileWithSignupRefresh />)
     await userEvent.type(screen.getByLabelText('Company name'), 'Acme Corp')
-    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme Workspace')
+    await userEvent.type(screen.getByLabelText('Organization name (optional)'), 'Acme Workspace')
     const continueButton = screen.getByRole('button', { name: 'Continue' })
     await waitFor(() => expect(continueButton).toBeEnabled())
     await userEvent.click(continueButton)

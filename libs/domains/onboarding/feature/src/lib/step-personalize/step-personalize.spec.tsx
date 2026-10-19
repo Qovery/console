@@ -41,7 +41,6 @@ describe('StepPersonalize', () => {
   it.each([
     ['Full name', 'full_name', 'John Doe'],
     ['Company name', 'company_name', 'Acme'],
-    ['Organization name', 'organization_name', 'Acme workspace'],
     ['Work email', 'user_email', 'john@acme.com'],
   ])('requires a non-blank %s', async (label, field, validValue) => {
     const { userEvent } = renderProfile({ [field]: '   ' })
@@ -96,7 +95,7 @@ describe('StepPersonalize', () => {
       ['Full name', defaultValues.full_name],
       ['Company name', defaultValues.company_name],
       ['Work email', defaultValues.user_email],
-      ['Organization name', defaultValues.organization_name],
+      ['Organization name (optional)', defaultValues.organization_name],
       ['Phone number (optional)', phone],
     ]) {
       const input = screen.getByLabelText(label)

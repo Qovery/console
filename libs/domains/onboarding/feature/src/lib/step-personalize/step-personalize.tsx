@@ -94,10 +94,7 @@ export function StepPersonalize({ onSubmit, loading, readOnly = false }: StepPer
       <Controller
         name="organization_name"
         control={control}
-        rules={{ validate: (value) => !!value.trim() || 'Please enter your organization name.' }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText {...field} readOnly={readOnly} label="Organization name" error={error?.message} />
-        )}
+        render={({ field }) => <InputText {...field} readOnly={readOnly} label="Organization name (optional)" />}
       />
     </OnboardingForm>
   )

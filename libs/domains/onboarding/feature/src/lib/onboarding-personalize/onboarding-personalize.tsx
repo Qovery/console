@@ -87,7 +87,7 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
 
         const organization = await createOrganization({
           organizationRequest: {
-            name: data.organization_name.trim(),
+            name: data.organization_name.trim() || data.company_name.trim(),
             plan: selectedPlan,
             admin_emails: [userEmail],
           },
