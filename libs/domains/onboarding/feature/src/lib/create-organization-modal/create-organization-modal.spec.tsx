@@ -55,10 +55,13 @@ describe('CreateOrganizationModal', () => {
         finishNavigation = resolve
       })
     )
+    const onCreated = jest.fn()
     function OrganizationMenu() {
       const { openModal, closeModal } = useModal()
       return (
-        <button onClick={() => openModal({ content: <CreateOrganizationModal onClose={closeModal} /> })}>
+        <button
+          onClick={() => openModal({ content: <CreateOrganizationModal onClose={closeModal} onCreated={onCreated} /> })}
+        >
           New organization
         </button>
       )
@@ -71,6 +74,7 @@ describe('CreateOrganizationModal', () => {
 
     await waitFor(() => expect(mockNavigate).toHaveBeenCalled())
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+    expect(onCreated).toHaveBeenCalledTimes(1)
     expect(toast).toHaveBeenCalledWith('success', 'Your organization and project have been created')
     finishNavigation()
   })

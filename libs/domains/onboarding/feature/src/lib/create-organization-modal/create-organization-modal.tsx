@@ -58,6 +58,7 @@ export function CreateOrganizationModal({
         })
         projectCreated.current = true
       }
+      modal.closeModal()
       onCreated()
       toast('success', 'Your organization and project have been created')
       await navigate({
