@@ -19,15 +19,11 @@ export type BreadcrumbMenuAction = {
 } & (
   | {
       path: string
-      search?: {
-        previousUrl?: string
-      }
       onSelect?: never
     }
   | {
       onSelect: () => void
       path?: never
-      search?: never
     }
 )
 
@@ -101,10 +97,10 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
   )
 
   const handleSelect = useCallback(
-    (path: string, search?: BreadcrumbMenuAction['search']) => {
+    (path: string) => {
       setOpen(false)
       setSearchQuery('')
-      navigate({ to: path, search })
+      navigate({ to: path })
     },
     [navigate]
   )
@@ -248,7 +244,7 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
                       setSearchQuery('')
                       footerAction.onSelect()
                     } else if (footerAction.path) {
-                      handleSelect(footerAction.path, footerAction.search)
+                      handleSelect(footerAction.path)
                     }
                   }}
                   className="h-auto rounded px-2 py-2 text-sm font-medium text-neutral hover:bg-surface-neutral-subtle data-[selected=true]:bg-surface-brand-subtle data-[selected=true]:text-brand"
@@ -256,7 +252,6 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
                   {footerAction.path ? (
                     <Link
                       to={footerAction.path}
-                      search={footerAction.search}
                       className="flex w-full min-w-0 items-center gap-2"
                       onClick={handleMenuLinkClick}
                     >
