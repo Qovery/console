@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { TypeOfUseEnum } from 'qovery-typescript-axios'
-import { useContext, useRef, useState } from 'react'
+import { PlanEnum, TypeOfUseEnum } from 'qovery-typescript-axios'
+import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCreateOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
@@ -9,7 +9,6 @@ import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-u
 import { useAuth } from '@qovery/shared/auth'
 import { InputText, toast, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { ContextOnboarding } from '../container/container'
 import { OnboardingForm } from '../onboarding-form/onboarding-form'
 import { pushToDataLayer } from '../utils/data-layer'
 import {
@@ -30,7 +29,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = auth
 
-  const { selectedPlan, phone, organization_name } = useContext(ContextOnboarding)
+  const selectedPlan = PlanEnum.BUSINESS_2025
   const submissionInFlight = useRef(false)
   const [submitting, setSubmitting] = useState(false)
   // Keep restored defaults stable: saving progress must not reset a running submission.
@@ -58,9 +57,9 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
       : {
           full_name: user?.name?.trim() || [userSignUp?.first_name, userSignUp?.last_name].filter(Boolean).join(' '),
           user_email: defaultEmail,
-          organization_name: organization_name || userSignUp?.company_name || '',
+          organization_name: userSignUp?.company_name || '',
           company_name: userSignUp?.company_name ?? '',
-          phone: phone ?? '',
+          phone: '',
         },
   })
 

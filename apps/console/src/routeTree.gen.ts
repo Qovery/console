@@ -20,10 +20,7 @@ import { Route as AuthenticatedOrganizationRouteRouteImport } from './routes/_au
 import { Route as AuthenticatedOnboardingRouteRouteImport } from './routes/_authenticated/onboarding/route'
 import { Route as AuthenticatedOrganizationIndexRouteImport } from './routes/_authenticated/organization/index'
 import { Route as AuthenticatedAcceptInvitationIndexRouteImport } from './routes/_authenticated/accept-invitation/index'
-import { Route as AuthenticatedOnboardingUseCasesRouteImport } from './routes/_authenticated/onboarding/use-cases'
-import { Route as AuthenticatedOnboardingProjectRouteImport } from './routes/_authenticated/onboarding/project'
 import { Route as AuthenticatedOnboardingProfileRouteImport } from './routes/_authenticated/onboarding/profile'
-import { Route as AuthenticatedOnboardingPlansRouteImport } from './routes/_authenticated/onboarding/plans'
 import { Route as AuthenticatedOrganizationOrganizationIdRouteRouteImport } from './routes/_authenticated/organization/$organizationId/route'
 import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
@@ -281,28 +278,10 @@ const AuthenticatedAcceptInvitationIndexRoute =
     path: '/accept-invitation/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedOnboardingUseCasesRoute =
-  AuthenticatedOnboardingUseCasesRouteImport.update({
-    id: '/use-cases',
-    path: '/use-cases',
-    getParentRoute: () => AuthenticatedOnboardingRouteRoute,
-  } as any)
-const AuthenticatedOnboardingProjectRoute =
-  AuthenticatedOnboardingProjectRouteImport.update({
-    id: '/project',
-    path: '/project',
-    getParentRoute: () => AuthenticatedOnboardingRouteRoute,
-  } as any)
 const AuthenticatedOnboardingProfileRoute =
   AuthenticatedOnboardingProfileRouteImport.update({
     id: '/profile',
     path: '/profile',
-    getParentRoute: () => AuthenticatedOnboardingRouteRoute,
-  } as any)
-const AuthenticatedOnboardingPlansRoute =
-  AuthenticatedOnboardingPlansRouteImport.update({
-    id: '/plans',
-    path: '/plans',
     getParentRoute: () => AuthenticatedOnboardingRouteRoute,
   } as any)
 const AuthenticatedOrganizationOrganizationIdRouteRoute =
@@ -1974,10 +1953,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginIndexRoute
   '/signup': typeof SignupIndexRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdRouteRouteWithChildren
-  '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/onboarding/profile': typeof AuthenticatedOnboardingProfileRoute
-  '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
-  '/onboarding/use-cases': typeof AuthenticatedOnboardingUseCasesRoute
   '/accept-invitation': typeof AuthenticatedAcceptInvitationIndexRoute
   '/organization/': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRouteRouteWithChildren
@@ -2184,10 +2160,7 @@ export interface FileRoutesByTo {
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login': typeof LoginIndexRoute
   '/signup': typeof SignupIndexRoute
-  '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/onboarding/profile': typeof AuthenticatedOnboardingProfileRoute
-  '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
-  '/onboarding/use-cases': typeof AuthenticatedOnboardingUseCasesRoute
   '/accept-invitation': typeof AuthenticatedAcceptInvitationIndexRoute
   '/organization': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
@@ -2376,10 +2349,7 @@ export interface FileRoutesById {
   '/login/': typeof LoginIndexRoute
   '/signup/': typeof SignupIndexRoute
   '/_authenticated/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdRouteRouteWithChildren
-  '/_authenticated/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/_authenticated/onboarding/profile': typeof AuthenticatedOnboardingProfileRoute
-  '/_authenticated/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
-  '/_authenticated/onboarding/use-cases': typeof AuthenticatedOnboardingUseCasesRoute
   '/_authenticated/accept-invitation/': typeof AuthenticatedAcceptInvitationIndexRoute
   '/_authenticated/organization/': typeof AuthenticatedOrganizationIndexRoute
   '/_authenticated/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRouteRouteWithChildren
@@ -2590,10 +2560,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/organization/$organizationId'
-    | '/onboarding/plans'
     | '/onboarding/profile'
-    | '/onboarding/project'
-    | '/onboarding/use-cases'
     | '/accept-invitation'
     | '/organization/'
     | '/organization/$organizationId/alerts'
@@ -2800,10 +2767,7 @@ export interface FileRouteTypes {
     | '/login/auth0-callback'
     | '/login'
     | '/signup'
-    | '/onboarding/plans'
     | '/onboarding/profile'
-    | '/onboarding/project'
-    | '/onboarding/use-cases'
     | '/accept-invitation'
     | '/organization'
     | '/organization/$organizationId/audit-logs'
@@ -2991,10 +2955,7 @@ export interface FileRouteTypes {
     | '/login/'
     | '/signup/'
     | '/_authenticated/organization/$organizationId'
-    | '/_authenticated/onboarding/plans'
     | '/_authenticated/onboarding/profile'
-    | '/_authenticated/onboarding/project'
-    | '/_authenticated/onboarding/use-cases'
     | '/_authenticated/accept-invitation/'
     | '/_authenticated/organization/'
     | '/_authenticated/organization/$organizationId/alerts'
@@ -3281,32 +3242,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAcceptInvitationIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/onboarding/use-cases': {
-      id: '/_authenticated/onboarding/use-cases'
-      path: '/use-cases'
-      fullPath: '/onboarding/use-cases'
-      preLoaderRoute: typeof AuthenticatedOnboardingUseCasesRouteImport
-      parentRoute: typeof AuthenticatedOnboardingRouteRoute
-    }
-    '/_authenticated/onboarding/project': {
-      id: '/_authenticated/onboarding/project'
-      path: '/project'
-      fullPath: '/onboarding/project'
-      preLoaderRoute: typeof AuthenticatedOnboardingProjectRouteImport
-      parentRoute: typeof AuthenticatedOnboardingRouteRoute
-    }
     '/_authenticated/onboarding/profile': {
       id: '/_authenticated/onboarding/profile'
       path: '/profile'
       fullPath: '/onboarding/profile'
       preLoaderRoute: typeof AuthenticatedOnboardingProfileRouteImport
-      parentRoute: typeof AuthenticatedOnboardingRouteRoute
-    }
-    '/_authenticated/onboarding/plans': {
-      id: '/_authenticated/onboarding/plans'
-      path: '/plans'
-      fullPath: '/onboarding/plans'
-      preLoaderRoute: typeof AuthenticatedOnboardingPlansRouteImport
       parentRoute: typeof AuthenticatedOnboardingRouteRoute
     }
     '/_authenticated/organization/$organizationId': {
@@ -4685,18 +4625,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedOnboardingRouteRouteChildren {
-  AuthenticatedOnboardingPlansRoute: typeof AuthenticatedOnboardingPlansRoute
   AuthenticatedOnboardingProfileRoute: typeof AuthenticatedOnboardingProfileRoute
-  AuthenticatedOnboardingProjectRoute: typeof AuthenticatedOnboardingProjectRoute
-  AuthenticatedOnboardingUseCasesRoute: typeof AuthenticatedOnboardingUseCasesRoute
 }
 
 const AuthenticatedOnboardingRouteRouteChildren: AuthenticatedOnboardingRouteRouteChildren =
   {
-    AuthenticatedOnboardingPlansRoute: AuthenticatedOnboardingPlansRoute,
     AuthenticatedOnboardingProfileRoute: AuthenticatedOnboardingProfileRoute,
-    AuthenticatedOnboardingProjectRoute: AuthenticatedOnboardingProjectRoute,
-    AuthenticatedOnboardingUseCasesRoute: AuthenticatedOnboardingUseCasesRoute,
   }
 
 const AuthenticatedOnboardingRouteRouteWithChildren =

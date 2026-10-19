@@ -649,13 +649,6 @@ const mapping = {
       label: 'How to stop my cluster?',
     },
   ],
-  '/onboarding/project': [
-    { link: 'https://www.qovery.com/docs/getting-started/introduction', label: 'What is Qovery?' },
-    { link: 'https://www.qovery.com/docs/getting-started/quickstart', label: 'Get started' },
-    { link: 'https://www.qovery.com/docs/getting-started/how-it-works', label: 'How Qovery works?' },
-    { link: 'https://www.qovery.com/docs/getting-started/basic-concepts', label: 'Qovery basic concepts' },
-  ],
-  '/onboarding/pricing': [{ link: 'https://www.qovery.com/pricing/', label: 'Check pricing and compare plans' }],
   '/onboarding/profile': [
     { link: 'https://www.qovery.com/docs/getting-started/introduction', label: 'What is Qovery?' },
     { link: 'https://www.qovery.com/docs/getting-started/quickstart', label: 'Get started' },
@@ -672,8 +665,6 @@ const legacyPatterns = Object.keys(mapping) as MappingPath[]
 const tanstackRouteAliases: Array<{ pattern: string; target: MappingPath }> = [
   // Onboarding
   { pattern: '/onboarding/profile', target: '/onboarding/profile' },
-  { pattern: '/onboarding/project', target: '/onboarding/project' },
-  { pattern: '/onboarding/plans', target: '/onboarding/pricing' },
 
   // Organization settings
   { pattern: '/organization/:organizationId/audit-logs', target: '/organization/:organizationId/audit-logs/general' },

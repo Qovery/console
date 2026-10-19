@@ -8,7 +8,6 @@ import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-u
 import { useAuth } from '@qovery/shared/auth'
 import { toast } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
-import { OnboardingProvider } from '../container/container'
 import { OnboardingProfile } from './onboarding-profile'
 
 jest.mock('@qovery/shared/ui', () => ({ ...jest.requireActual('@qovery/shared/ui'), toast: jest.fn() }))
@@ -39,11 +38,7 @@ const refetchUserSignUp = jest.fn()
 const SignupFixtureContext = createContext<ReturnType<typeof useUserSignUp>['data']>(undefined)
 
 function renderProfile() {
-  return renderWithProviders(
-    <OnboardingProvider>
-      <OnboardingProfile />
-    </OnboardingProvider>
-  )
+  return renderWithProviders(<OnboardingProfile />)
 }
 
 async function renderFilledProfile(values: Record<string, string> = {}) {
@@ -493,9 +488,8 @@ describe('OnboardingProfile', () => {
       const [signup, setSignup] = useState<ReturnType<typeof useUserSignUp>['data']>()
       return (
         <SignupFixtureContext.Provider value={signup}>
-          <OnboardingProvider>
-            <OnboardingProfile />
-          </OnboardingProvider>
+          <OnboardingProfile />
+
           <button
             onClick={() =>
               setSignup({
@@ -565,9 +559,8 @@ describe('OnboardingProfile', () => {
       const [signup, setSignup] = useState<ReturnType<typeof useUserSignUp>['data']>()
       return (
         <SignupFixtureContext.Provider value={signup}>
-          <OnboardingProvider>
-            <OnboardingProfile />
-          </OnboardingProvider>
+          <OnboardingProfile />
+
           <button
             onClick={() =>
               setSignup({

@@ -1,5 +1,2 @@
 export const ONBOARDING_URL = '/onboarding'
 export const ONBOARDING_PROFILE_URL = '/profile'
-export const ONBOARDING_USE_CASES_URL = '/use-cases'
-export const ONBOARDING_PLANS_URL = '/plans'
-export const ONBOARDING_PROJECT_URL = '/project'

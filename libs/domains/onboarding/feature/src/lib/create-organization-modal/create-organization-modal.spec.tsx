@@ -2,7 +2,6 @@ import posthog from 'posthog-js'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { toast, toastError, useModal } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { OnboardingProject } from '../onboarding-project/onboarding-project'
 import { CreateOrganizationModal } from './create-organization-modal'
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -164,27 +163,6 @@ describe('CreateOrganizationModal', () => {
     expect(mockCreateProject).toHaveBeenCalledTimes(1)
     expect(window.dataLayer).toBeUndefined()
     expect(posthog.capture).not.toHaveBeenCalled()
-  })
-
-  it('returns to the previous platform page when the legacy route cannot open the new organization', async () => {
-    const navigationError = new Error('Destination failed')
-    mockNavigate.mockRejectedValueOnce(navigationError).mockResolvedValue(undefined)
-    const { userEvent } = renderWithProviders(<OnboardingProject previousUrl="/organization/existing-org/overview" />)
-    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
-    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
-
-    await waitFor(() => expect(mockNavigate).toHaveBeenCalledTimes(2))
-    expect(mockNavigate).toHaveBeenNthCalledWith(1, {
-      to: '/organization/$organizationId/overview',
-      params: { organizationId: 'new-org' },
-    })
-    expect(mockNavigate).toHaveBeenNthCalledWith(2, {
-      href: '/organization/existing-org/overview',
-      replace: true,
-    })
-    expect(toastError).toHaveBeenCalledWith(navigationError)
-    expect(mockCreateOrganization).toHaveBeenCalledTimes(1)
-    expect(mockCreateProject).toHaveBeenCalledTimes(1)
   })
 
   it('keeps the modal open and allows retry when organization creation fails', async () => {
