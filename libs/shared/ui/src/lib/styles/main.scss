@@ -64,10 +64,6 @@ body {
   min-height: 100vh;
   min-width: 44.5rem;
 
-  &:has([data-onboarding-profile]) {
-    min-width: 0;
-  }
-
   main:not(.h-screen, .layout-onboarding) {
     height: calc(100vh - theme('spacing.16'));
   }

@@ -8,7 +8,7 @@ export interface ContainerProps extends PropsWithChildren {
 
 export function Container({ children, userMenu }: ContainerProps) {
   return (
-    <div data-onboarding-profile className="fixed inset-0 z-10 flex flex-col overflow-y-auto bg-background-secondary">
+    <div className="fixed inset-0 z-10 flex flex-col overflow-y-auto bg-background-secondary">
       <header className="absolute inset-x-0 top-0 flex items-center justify-between px-4 py-4 sm:px-8">
         <Link
           to="/"
