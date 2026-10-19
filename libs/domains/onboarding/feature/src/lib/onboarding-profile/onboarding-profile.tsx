@@ -183,7 +183,9 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
               label="Work email"
               autoComplete="email"
               readOnly={!!pending && !!field.value}
-              error={error?.message}
+              error={
+                isPersonalEmail(field.value.trim()) ? 'Please enter your professional email address.' : error?.message
+              }
             />
           )}
         />

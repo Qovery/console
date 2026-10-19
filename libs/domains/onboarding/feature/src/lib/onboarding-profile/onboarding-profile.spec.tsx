@@ -401,6 +401,22 @@ describe('OnboardingProfile', () => {
     expect(window.dataLayer).toContainEqual({ event: 'onboarding-organization-created', plan: PlanEnum.BUSINESS_2025 })
   })
 
+  it('explains why a personal email from the token is rejected without editing it', async () => {
+    jest.mocked(useAuth).mockReturnValue({
+      getAccessTokenSilently: refreshToken,
+      user: { sub: 'user-1', name: 'John Doe', email: 'john@gmail.com' },
+    } as ReturnType<typeof useAuth>)
+    const { userEvent } = renderProfile()
+    expect(screen.getByLabelText('Work email')).toHaveValue('john@gmail.com')
+    expect(screen.getByText('Please enter your professional email address.')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Company name'), 'Acme')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled())
+    await userEvent.clear(screen.getByLabelText('Work email'))
+    await userEvent.type(screen.getByLabelText('Work email'), 'john@acme.com')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    expect(screen.queryByText('Please enter your professional email address.')).not.toBeInTheDocument()
+  })
+
   it.each(['gmail.com', 'gmail.co', 'proton.me', 'HOTMAIL.COM', '10minutemail.co.za'])(
     'rejects excluded work email domains (%s) until a professional email is entered',
     async (domain) => {
