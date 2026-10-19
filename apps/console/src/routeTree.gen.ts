@@ -100,6 +100,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileComponentKeyRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/profile/$componentKey'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/index'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/domains'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automation'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
@@ -913,6 +914,14 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
     {
       id: '/project/$projectId/environment/$environmentId/',
       path: '/project/$projectId/environment/$environmentId/',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRouteImport.update(
+    {
+      id: '/project/$projectId/environment/$environmentId/domains',
+      path: '/project/$projectId/environment/$environmentId/domains',
       getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
     } as any,
   )
@@ -2054,6 +2063,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/automation': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/domains': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewPipelineRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRoute
@@ -2253,6 +2263,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/automation': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/domains': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewPipelineRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRoute
@@ -2454,6 +2465,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automation': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/domains': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewPipelineRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/new': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRoute
@@ -2667,6 +2679,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/automation'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/domains'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new'
@@ -2866,6 +2879,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/automation'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/domains'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new'
@@ -3066,6 +3080,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automation'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/domains'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/new'
@@ -3826,6 +3841,13 @@ declare module '@tanstack/react-router' {
       path: '/project/$projectId/environment/$environmentId'
       fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/domains': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/domains'
+      path: '/project/$projectId/environment/$environmentId/domains'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/domains'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': {
@@ -5391,6 +5413,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteWithChildren
@@ -5480,6 +5503,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDomainsRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRoute:
