@@ -60,7 +60,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
       : {
           full_name: user?.name?.trim() || [userSignUp?.first_name, userSignUp?.last_name].filter(Boolean).join(' '),
           user_email: defaultEmail,
-          organization_name,
+          organization_name: organization_name || userSignUp?.company_name || '',
           company_name: userSignUp?.company_name ?? '',
           phone: phone ?? '',
         },
@@ -196,6 +196,13 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
             <InputText
               {...field}
               readOnly={!!pending}
+              onChange={(event) => {
+                const organizationName = methods.getValues('organization_name')
+                if (!organizationName || organizationName === field.value) {
+                  methods.setValue('organization_name', event.target.value, { shouldDirty: true })
+                }
+                field.onChange(event)
+              }}
               label="Company name"
               autoComplete="organization"
               error={error?.message}
