@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type Organization } from 'qovery-typescript-axios'
-import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { BlockContentDelete } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useDeleteOrganization } from '../hooks/use-delete-organization/use-delete-organization'
@@ -75,7 +74,7 @@ export function SettingsDangerZone() {
       localStorage.removeItem('currentProjectId')
 
       if (remainingOrganizations.length === 0) {
-        await navigate({ to: getOnboardingEntryUrl(), replace: true })
+        await navigate({ to: '/onboarding/profile', replace: true })
       } else {
         await navigate({
           to: '/organization/$organizationId/overview',

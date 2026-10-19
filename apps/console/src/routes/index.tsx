@@ -1,6 +1,5 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { useAuth0Context } from '../auth/auth0'
@@ -35,7 +34,7 @@ function Index() {
   }
 
   if (isAuthenticated) {
-    return <Navigate to={getOnboardingEntryUrl()} replace />
+    return <Navigate to="/onboarding/profile" replace />
   }
 
   return <Navigate to="/login" search={{ redirect: '/' }} />

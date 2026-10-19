@@ -4,7 +4,6 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { getSsoConnectionName, useAuth } from '@qovery/shared/auth'
-import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
@@ -67,7 +66,7 @@ function useRedirectIfLogged(connection?: string) {
           navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
         }
       } else {
-        navigate({ href: getOnboardingEntryUrl() })
+        navigate({ href: '/onboarding/profile' })
       }
     }
 
