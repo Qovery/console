@@ -22,7 +22,7 @@ export function OnboardingForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="flex min-h-[620px] w-full max-w-[480px] flex-col justify-between gap-6 rounded-2xl border border-neutral bg-background p-6 shadow-lg"
+      className="flex max-h-[532px] w-full max-w-[480px] flex-col justify-between gap-6 overflow-y-auto rounded-2xl border border-neutral bg-background p-6 shadow-lg"
     >
       <Section className="gap-6">
         <div>
