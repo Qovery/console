@@ -1,9 +1,11 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, Callout, Icon, InputText } from '@qovery/shared/ui'
+import { InputText } from '@qovery/shared/ui'
 import { OnboardingForm } from '../onboarding-form/onboarding-form'
 
 export interface ProfileFormValues {
   full_name: string
+  user_email: string
+  organization_name: string
   company_name: string
   phone: string
 }
@@ -12,11 +14,9 @@ export interface StepPersonalizeProps {
   onSubmit: () => void
   loading?: boolean
   readOnly?: boolean
-  disabled?: boolean
-  onSignIn?: () => void
 }
 
-export function StepPersonalize({ onSubmit, loading, readOnly = false, disabled, onSignIn }: StepPersonalizeProps) {
+export function StepPersonalize({ onSubmit, loading, readOnly = false }: StepPersonalizeProps) {
   const { control, formState } = useFormContext<ProfileFormValues>()
 
   return (
@@ -25,23 +25,8 @@ export function StepPersonalize({ onSubmit, loading, readOnly = false, disabled,
       description="Tell us more about yourself"
       onSubmit={onSubmit}
       loading={loading || formState.isSubmitting}
-      disabled={disabled || !formState.isValid}
+      disabled={!formState.isValid}
     >
-      {onSignIn && (
-        <Callout.Root color="red" role="alert">
-          <Callout.Icon>
-            <Icon iconName="circle-exclamation" />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextDescription>
-              We couldn’t retrieve your email address. Please sign in again to continue.
-            </Callout.TextDescription>
-            <Button type="button" variant="plain" color="neutral" onClick={onSignIn}>
-              Sign in again
-            </Button>
-          </Callout.Text>
-        </Callout.Root>
-      )}
       <Controller
         name="full_name"
         control={control}
@@ -50,6 +35,27 @@ export function StepPersonalize({ onSubmit, loading, readOnly = false, disabled,
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText {...field} readOnly={readOnly} label="Full name" autoComplete="name" error={error?.message} />
+        )}
+      />
+      <Controller
+        name="user_email"
+        control={control}
+        rules={{
+          required: 'Please enter your work email.',
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: 'Please enter a valid email address.',
+          },
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            {...field}
+            type="email"
+            label="Work email"
+            autoComplete="email"
+            readOnly={readOnly && !!field.value}
+            error={error?.message}
+          />
         )}
       />
       <Controller
@@ -83,6 +89,14 @@ export function StepPersonalize({ onSubmit, loading, readOnly = false, disabled,
             autoComplete="tel"
             error={error?.message}
           />
+        )}
+      />
+      <Controller
+        name="organization_name"
+        control={control}
+        rules={{ validate: (value) => !!value.trim() || 'Please enter your organization name.' }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText {...field} readOnly={readOnly} label="Organization name" error={error?.message} />
         )}
       />
     </OnboardingForm>

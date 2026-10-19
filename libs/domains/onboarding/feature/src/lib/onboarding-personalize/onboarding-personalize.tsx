@@ -22,9 +22,9 @@ export function OnboardingPersonalize() {
 function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
   useDocumentTitle('Onboarding Personalize - Qovery')
   const navigate = useNavigate()
-  const { user, getAccessTokenSilently, authLogin } = auth
+  const { user, getAccessTokenSilently } = auth
 
-  const { selectedPlan, phone } = useContext(ContextOnboarding)
+  const { selectedPlan, phone, organization_name } = useContext(ContextOnboarding)
   const submissionInFlight = useRef(false)
   const [submitting, setSubmitting] = useState(false)
   // Keep restored defaults stable: saving progress must not reset a running submission.
@@ -36,26 +36,30 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
   }
   const { mutateAsync: createProject } = useCreateProject({ silently: true })
   const { mutateAsync: createOrganization } = useCreateOrganization()
-  const { data: userSignUp, refetch: refetchUserSignUp, isLoading: signupLoading } = useUserSignUp()
+  const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
-  const userEmail = user?.email?.trim() || userSignUp?.user_email?.trim() || ''
-  const missingEmail = !userEmail && !signupLoading
+  const defaultEmail = user?.email?.trim() || userSignUp?.user_email?.trim() || ''
 
   const methods = useForm<ProfileFormValues>({
     mode: 'onChange',
     resetOptions: { keepDirtyValues: true },
-    defaultValues: initialPending?.profile,
+    defaultValues: initialPending
+      ? { ...initialPending.profile, user_email: initialPending.profile.user_email || defaultEmail }
+      : undefined,
     values: initialPending
       ? undefined
       : {
           full_name: user?.name?.trim() || [userSignUp?.first_name, userSignUp?.last_name].filter(Boolean).join(' '),
+          user_email: defaultEmail,
+          organization_name,
           company_name: userSignUp?.company_name ?? '',
           phone: phone ?? '',
         },
   })
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    const userEmail = data.user_email.trim()
     if (!userEmail || submissionInFlight.current) return
 
     submissionInFlight.current = true
@@ -83,7 +87,7 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
 
         const organization = await createOrganization({
           organizationRequest: {
-            name: data.company_name.trim(),
+            name: data.organization_name.trim(),
             plan: selectedPlan,
             admin_emails: [userEmail],
           },
@@ -137,13 +141,7 @@ function OnboardingPersonalizeForm({ auth }: { auth: ReturnType<typeof useAuth> 
 
   return (
     <FormProvider {...methods}>
-      <StepPersonalize
-        onSubmit={onSubmit}
-        loading={submitting}
-        readOnly={!!pending}
-        disabled={!userEmail}
-        onSignIn={missingEmail ? () => authLogin(undefined, '/onboarding/personalize') : undefined}
-      />
+      <StepPersonalize onSubmit={onSubmit} loading={submitting} readOnly={!!pending} />
     </FormProvider>
   )
 }
