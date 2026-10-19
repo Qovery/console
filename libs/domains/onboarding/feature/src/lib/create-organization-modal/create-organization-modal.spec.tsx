@@ -17,7 +17,6 @@ const mockNavigate = jest.fn()
 const mockCreateOrganization = jest.fn()
 const mockCreateProject = jest.fn()
 const mockRefreshToken = jest.fn()
-const setModalDismissible = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -79,11 +78,28 @@ describe('CreateOrganizationModal', () => {
     finishNavigation()
   })
 
+  it('keeps the close icon available while organization creation is pending', async () => {
+    mockCreateOrganization.mockReturnValue(new Promise(() => undefined))
+    function OrganizationMenu() {
+      const { openModal, closeModal } = useModal()
+      return (
+        <button onClick={() => openModal({ content: <CreateOrganizationModal onClose={closeModal} /> })}>
+          New organization
+        </button>
+      )
+    }
+    const { userEvent } = renderWithProviders(<OrganizationMenu />)
+    await userEvent.click(screen.getByRole('button', { name: 'New organization' }))
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+    await waitFor(() => expect(mockCreateOrganization).toHaveBeenCalled())
+    await userEvent.click(screen.getByRole('button', { name: 'Close', exact: true }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+  })
+
   it('asks only for the organization name and automatically creates main', async () => {
     const onClose = jest.fn()
-    const { userEvent } = renderWithProviders(
-      <CreateOrganizationModal onClose={onClose} setModalDismissible={setModalDismissible} />
-    )
+    const { userEvent } = renderWithProviders(<CreateOrganizationModal onClose={onClose} />)
     expect(screen.getAllByRole('textbox')).toHaveLength(1)
     expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled()
     await userEvent.type(screen.getByLabelText('Organization name'), ' Acme ')
@@ -99,8 +115,6 @@ describe('CreateOrganizationModal', () => {
       to: '/organization/$organizationId/overview',
       params: { organizationId: 'new-org' },
     })
-    expect(setModalDismissible).toHaveBeenNthCalledWith(1, false)
-    expect(setModalDismissible).toHaveBeenLastCalledWith(true)
     expect(window.dataLayer).toBeUndefined()
     expect(posthog.capture).not.toHaveBeenCalled()
   })

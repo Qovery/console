@@ -2,7 +2,7 @@ import { act, renderHook } from '__tests__/utils/setup-jest'
 import ModalProvider from '../../modal/modal-root'
 import useModal, { type UseModalProps } from './use-modal'
 
-const mockSetOpenModal = jest.fn()
+let mockSetOpenModal = jest.fn()
 const mockSetContentModal = jest.fn()
 const mockSetOptionsModal = jest.fn()
 
@@ -16,6 +16,17 @@ jest.mock('react', () => ({
 }))
 
 describe('useModal', () => {
+  it('does not reopen a closed modal when its effect reconnects', () => {
+    const { result, rerender } = renderHook(useModal)
+    act(() => result.current.openModal({ content: <div>content</div> }))
+    act(() => result.current.closeModal())
+    const previousSetter = mockSetOpenModal
+    mockSetOpenModal = jest.fn()
+    rerender()
+    expect(mockSetOpenModal).not.toHaveBeenCalledWith(true)
+    mockSetOpenModal = previousSetter
+  })
+
   it('should render successfully', () => {
     const { result } = renderHook(() => useModal())
     expect(result).toBeTruthy()

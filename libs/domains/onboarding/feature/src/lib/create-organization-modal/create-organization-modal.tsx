@@ -10,14 +10,9 @@ import { Callout, Icon, InputText, ModalCrud, toast, toastError, useModal } from
 export interface CreateOrganizationModalProps {
   onClose: () => void
   onCreated?: () => void
-  setModalDismissible?: (dismissible: boolean) => void
 }
 
-export function CreateOrganizationModal({
-  onClose,
-  onCreated = onClose,
-  setModalDismissible,
-}: CreateOrganizationModalProps) {
+export function CreateOrganizationModal({ onClose, onCreated = onClose }: CreateOrganizationModalProps) {
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = useAuth()
   const modal = useModal()
@@ -29,14 +24,12 @@ export function CreateOrganizationModal({
   const submitting = useRef(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
-  const changeDismissible = setModalDismissible ?? modal.setModalDismissible
 
   const onSubmit = methods.handleSubmit(async ({ name }) => {
     if (submitting.current) return
     submitting.current = true
     setLoading(true)
     setError(false)
-    changeDismissible(false)
 
     try {
       if (!pendingOrganizationId.current) {
@@ -73,20 +66,12 @@ export function CreateOrganizationModal({
     } finally {
       submitting.current = false
       setLoading(false)
-      changeDismissible(true)
     }
   })
 
   return (
     <FormProvider {...methods}>
-      <ModalCrud
-        title="Create organization"
-        onClose={() => {
-          if (!submitting.current) onClose()
-        }}
-        onSubmit={onSubmit}
-        loading={loading}
-      >
+      <ModalCrud title="Create organization" onClose={onClose} onSubmit={onSubmit} loading={loading}>
         <Controller
           name="name"
           rules={{ validate: (value) => !!value.trim() || 'Please enter your organization name.' }}
