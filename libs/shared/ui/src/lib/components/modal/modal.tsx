@@ -10,6 +10,7 @@ export interface ModalProps {
   trigger?: ReactNode
   defaultOpen?: boolean
   buttonClose?: boolean
+  keepCloseButtonVisible?: boolean
   dismissible?: boolean
   width?: number | string
   height?: number | string
@@ -45,6 +46,7 @@ export const Modal = (props: ModalProps) => {
     className = '',
     defaultOpen = false,
     buttonClose = true,
+    keepCloseButtonVisible = false,
     dismissible = true,
     externalOpen = false,
     setExternalOpen,
@@ -177,7 +179,7 @@ export const Modal = (props: ModalProps) => {
               setOpen: setExternalOpen ? setExternalOpen : setOpen,
               setModalDismissible: setContentDismissible,
             })}
-            {buttonClose && (
+            {buttonClose && (isDismissible || keepCloseButtonVisible) && (
               <Dialog.Close className="absolute right-4 top-4" disabled={!isDismissible} asChild>
                 <button
                   type="button"

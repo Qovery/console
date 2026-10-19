@@ -56,7 +56,12 @@ describe('CreateOrganizationModal', () => {
       const { openModal, closeModal } = useModal()
       return (
         <button
-          onClick={() => openModal({ content: <CreateOrganizationModal onClose={closeModal} onCreated={onCreated} /> })}
+          onClick={() =>
+            openModal({
+              content: <CreateOrganizationModal onClose={closeModal} onCreated={onCreated} />,
+              options: { keepCloseButtonVisible: true },
+            })
+          }
         >
           New organization
         </button>
@@ -80,7 +85,14 @@ describe('CreateOrganizationModal', () => {
     function OrganizationMenu() {
       const { openModal, closeModal } = useModal()
       return (
-        <button onClick={() => openModal({ content: <CreateOrganizationModal onClose={closeModal} /> })}>
+        <button
+          onClick={() =>
+            openModal({
+              content: <CreateOrganizationModal onClose={closeModal} />,
+              options: { keepCloseButtonVisible: true },
+            })
+          }
+        >
           New organization
         </button>
       )

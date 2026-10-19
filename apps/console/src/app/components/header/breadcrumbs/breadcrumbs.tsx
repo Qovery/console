@@ -48,7 +48,11 @@ export function Breadcrumbs() {
     }))
   const createOrganizationAction: BreadcrumbMenuAction = {
     label: 'Create organization',
-    onSelect: () => openModal({ content: <CreateOrganizationModal onClose={closeModal} /> }),
+    onSelect: () =>
+      openModal({
+        content: <CreateOrganizationModal onClose={closeModal} />,
+        options: { keepCloseButtonVisible: true },
+      }),
   }
 
   const currentOrg = useMemo(
