@@ -191,6 +191,16 @@ describe('OnboardingProfile', () => {
     expect(screen.getByLabelText('Full name')).toHaveValue('Saved Name')
   })
 
+  it('clears the organization name error when a company edit fills it again', async () => {
+    const { userEvent } = await fillProfile()
+    await userEvent.clear(screen.getByLabelText('Organization name'))
+    expect(await screen.findByText('Please enter your organization name.')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Company name'), ' Inc')
+    expect(screen.getByLabelText('Organization name')).toHaveValue(' Acme Corp  Inc')
+    await waitFor(() => expect(screen.queryByText('Please enter your organization name.')).not.toBeInTheDocument())
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+  })
+
   it('prefills the organization name from the company and preserves a custom name', async () => {
     const { userEvent } = renderProfile()
     const company = screen.getByLabelText('Company name')

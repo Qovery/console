@@ -200,7 +200,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
               onChange={(event) => {
                 const organizationName = methods.getValues('organization_name')
                 if (!organizationName || organizationName === field.value) {
-                  methods.setValue('organization_name', event.target.value, { shouldDirty: true })
+                  methods.setValue('organization_name', event.target.value, { shouldDirty: true, shouldValidate: true })
                 }
                 field.onChange(event)
               }}
