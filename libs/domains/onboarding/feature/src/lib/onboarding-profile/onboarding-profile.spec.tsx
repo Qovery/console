@@ -401,27 +401,19 @@ describe('OnboardingProfile', () => {
     expect(window.dataLayer).toContainEqual({ event: 'onboarding-organization-created', plan: PlanEnum.BUSINESS_2025 })
   })
 
-  it.each(['gmail.com', 'gmail.co', 'proton.me'])(
-    'uses the token email for personal accounts (%s) as the initial work email',
+  it.each(['gmail.com', 'gmail.co', 'proton.me', 'HOTMAIL.COM', '10minutemail.co.za'])(
+    'rejects excluded work email domains (%s) until a professional email is entered',
     async (domain) => {
-      const email = `john@${domain}`
-      jest
-        .mocked(useAuth)
-        .mockReturnValue({ getAccessTokenSilently: refreshToken, user: { name: 'John Doe', email } } as ReturnType<
-          typeof useAuth
-        >)
       const { userEvent } = await fillProfile()
-      expect(screen.getAllByRole('textbox')).toHaveLength(5)
-
-      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-
-      await waitFor(() => expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ user_email: email })))
-      await waitFor(() =>
-        expect(navigate).toHaveBeenCalledWith({
-          to: '/organization/$organizationId/overview',
-          params: { organizationId: 'created-org' },
-        })
-      )
+      const input = screen.getByLabelText('Work email')
+      await userEvent.clear(input)
+      await userEvent.type(input, `john@${domain}`)
+      expect(await screen.findByText('Please enter your professional email address.')).toBeInTheDocument()
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled())
+      expect(createOrganization).not.toHaveBeenCalled()
+      await userEvent.clear(input)
+      await userEvent.type(input, 'john@acme.com')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
     }
   )
 

@@ -18,6 +18,7 @@ import {
   readPendingOnboarding,
   savePendingOnboarding,
 } from '../utils/pending-onboarding'
+import { isPersonalEmail } from '../utils/personal-email-domains'
 
 export function OnboardingProfile() {
   const auth = useAuth()
@@ -169,6 +170,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           control={methods.control}
           rules={{
             required: 'Please enter your work email.',
+            validate: (value) => !isPersonalEmail(value.trim()) || 'Please enter your professional email address.',
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
               message: 'Please enter a valid email address.',
