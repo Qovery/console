@@ -79,7 +79,8 @@ const route = (path: string, service: RoutableService, extra: Partial<DomainRout
 
 // Deterministic shapes: one route, a static split, the front/api/cable split, plus one conflict and one empty domain.
 function extraRoutes(index: number, services: RoutableService[]): DomainRoute[] {
-  const exposable = services.filter((s) => s.ports.length > 0)
+  // Only running targets, so stopped services stay a rare issue in the preview rather than half the list.
+  const exposable = services.filter((s) => s.ports.length > 0 && s.status === 'RUNNING')
   const pick = (k: number) => exposable[(index * 7 + k * 3) % exposable.length]
   const strip = index % 2 === 0
   switch (index % 5) {
