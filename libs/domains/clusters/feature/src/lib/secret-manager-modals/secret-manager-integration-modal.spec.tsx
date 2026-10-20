@@ -201,6 +201,149 @@ describe('SecretManagerIntegrationModal', () => {
     expect(screen.getByText('Please enter your role ARN.')).toBeInTheDocument()
   })
 
+  describe('role to assume of an assume role integration', () => {
+    const fillAssumeRoleIntegration = async (userEvent: ReturnType<typeof renderWithProviders>['userEvent']) => {
+      await userEvent.click(screen.getByText('Manual integration'))
+      await selectEvent.select(screen.getByLabelText('Authentication type'), 'Assume role via STS', {
+        container: document.body,
+      })
+      await selectEvent.select(screen.getByLabelText('Region'), 'Paris (eu-west-3)', { container: document.body })
+      await userEvent.type(screen.getByLabelText('Role ARN'), 'arn:aws:iam::111111111111:role/base')
+      await userEvent.type(screen.getByLabelText('Secret manager name'), 'Cross account')
+    }
+
+    it('should send the role to assume and its external ID', async () => {
+      const onSubmit = jest.fn()
+      const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} onSubmit={onSubmit} />)
+
+      await fillAssumeRoleIntegration(userEvent)
+      await userEvent.type(
+        screen.getByLabelText('Role ARN to assume (optional)'),
+        'arn:aws:iam::222222222222:role/reader'
+      )
+      await userEvent.type(screen.getByLabelText('External ID (optional)'), 'prod-eu-1')
+      await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
+
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          authentication: {
+            mode: 'AWS_ROLE_ARN',
+            role_arn: 'arn:aws:iam::111111111111:role/base',
+            assume_role: { role_arn: 'arn:aws:iam::222222222222:role/reader', external_id: 'prod-eu-1' },
+          },
+        })
+      )
+    })
+
+    it('should trim a pasted role to assume and external ID', async () => {
+      const onSubmit = jest.fn()
+      const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} onSubmit={onSubmit} />)
+
+      await fillAssumeRoleIntegration(userEvent)
+      await userEvent.click(screen.getByLabelText('Role ARN to assume (optional)'))
+      await userEvent.paste('  arn:aws:iam::222222222222:role/reader  ')
+      await userEvent.click(screen.getByLabelText('External ID (optional)'))
+      await userEvent.paste(' prod-eu-1 ')
+
+      expect(screen.getByLabelText('Role ARN to assume (optional)')).toHaveValue(
+        'arn:aws:iam::222222222222:role/reader'
+      )
+      expect(screen.getByLabelText('External ID (optional)')).toHaveValue('prod-eu-1')
+
+      await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
+
+      expect(screen.queryByText('Please enter a valid IAM role ARN.')).not.toBeInTheDocument()
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          authentication: {
+            mode: 'AWS_ROLE_ARN',
+            role_arn: 'arn:aws:iam::111111111111:role/base',
+            assume_role: { role_arn: 'arn:aws:iam::222222222222:role/reader', external_id: 'prod-eu-1' },
+          },
+        })
+      )
+    })
+
+    it('should not send a role to assume when left empty', async () => {
+      const onSubmit = jest.fn()
+      const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} onSubmit={onSubmit} />)
+
+      await fillAssumeRoleIntegration(userEvent)
+      await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
+
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          authentication: { mode: 'AWS_ROLE_ARN', role_arn: 'arn:aws:iam::111111111111:role/base' },
+        })
+      )
+      expect(onSubmit.mock.calls[0][0].authentication.assume_role).toBeUndefined()
+    })
+
+    it('should reject an external ID without a role to assume', async () => {
+      const onSubmit = jest.fn()
+      const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} onSubmit={onSubmit} />)
+
+      await fillAssumeRoleIntegration(userEvent)
+      await userEvent.type(screen.getByLabelText('External ID (optional)'), 'prod-eu-1')
+      await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
+
+      expect(onSubmit).not.toHaveBeenCalled()
+      expect(await screen.findByText('Please enter the role ARN to assume to use an external ID.')).toBeInTheDocument()
+    })
+
+    it('should reject a role to assume that is not an IAM role ARN', async () => {
+      const onSubmit = jest.fn()
+      const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} onSubmit={onSubmit} />)
+
+      await fillAssumeRoleIntegration(userEvent)
+      await userEvent.type(screen.getByLabelText('Role ARN to assume (optional)'), 'arn:aws:iam::222222222222:user/bob')
+      await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
+
+      expect(onSubmit).not.toHaveBeenCalled()
+      expect(await screen.findByText('Please enter a valid IAM role ARN.')).toBeInTheDocument()
+    })
+
+    it('should prefill the role to assume when editing and remove it once cleared', async () => {
+      const onSubmit = jest.fn()
+      const initialValues = {
+        id: 'sm-role',
+        name: 'Cross account',
+        created_at: '2026-10-20T00:00:00Z',
+        updated_at: '2026-10-20T00:00:00Z',
+        endpoint: { mode: 'AWS_SECRET_MANAGER', region: 'eu-west-3' },
+        authentication: {
+          mode: 'AWS_ROLE_ARN',
+          role_arn: 'arn:aws:iam::111111111111:role/base',
+          assume_role: { role_arn: 'arn:aws:iam::222222222222:role/reader', external_id: 'prod-eu-1' },
+        },
+      } as SecretManagerIntegrationModalProps['initialValues']
+      const { userEvent } = renderWithProviders(
+        <SecretManagerIntegrationModal
+          {...defaultProps}
+          mode="edit"
+          initialValues={initialValues}
+          onSubmit={onSubmit}
+        />
+      )
+
+      expect(screen.getByLabelText('Role ARN to assume (optional)')).toHaveValue(
+        'arn:aws:iam::222222222222:role/reader'
+      )
+      expect(screen.getByLabelText('External ID (optional)')).toHaveValue('prod-eu-1')
+
+      await userEvent.clear(screen.getByLabelText('Role ARN to assume (optional)'))
+      await userEvent.clear(screen.getByLabelText('External ID (optional)'))
+      await userEvent.click(screen.getByRole('button', { name: 'Save changes' }))
+
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          authentication: { mode: 'AWS_ROLE_ARN', role_arn: 'arn:aws:iam::111111111111:role/base' },
+        })
+      )
+      expect(onSubmit.mock.calls[0][0].authentication.assume_role).toBeUndefined()
+    })
+  })
+
   it('should disable automatic tab when a GCP automatic integration already exists', async () => {
     jest.mocked(hasGcpAutomaticIntegrationConfigured).mockReturnValue(true)
 

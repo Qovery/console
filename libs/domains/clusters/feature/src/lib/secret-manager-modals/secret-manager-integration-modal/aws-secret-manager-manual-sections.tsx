@@ -1,4 +1,5 @@
 import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
+import { type ChangeEvent } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { P, match } from 'ts-pattern'
 import { type Value } from '@qovery/shared/interfaces'
@@ -10,6 +11,13 @@ import {
   SecretManagerNameField,
   SecretManagerRegionField,
 } from './secret-manager-integration-fields'
+
+// Same formats as the API validation of an assume role
+const IAM_ROLE_ARN_PATTERN = /^arn:aws(-cn|-us-gov)?:iam::\d{12}:role\/[\w+=,.@/-]{1,512}$/
+const STS_EXTERNAL_ID_PATTERN = /^[\w+=,.@:/-]{2,1224}$/
+
+// Neither format allows whitespace, so a pasted value is stored trimmed
+const trimInputValue = (event: ChangeEvent<HTMLInputElement>) => event.target.value.trim()
 
 interface AwsSecretManagerManualSectionsProps {
   authenticationTypeSelect?: AwsManualAuthenticationTypeSelect
@@ -261,8 +269,63 @@ function AwsAssumeRoleSections({
             />
           )}
         />
+        <AwsTargetRoleFields methods={methods} />
         <SecretManagerNameField methods={methods} />
       </Section>
     </div>
+  )
+}
+
+interface AwsTargetRoleFieldsProps {
+  methods: UseFormReturn<SecretManagerAccess>
+}
+
+function AwsTargetRoleFields({ methods }: AwsTargetRoleFieldsProps) {
+  return (
+    <>
+      <Controller
+        name="authentication.assume_role.role_arn"
+        control={methods.control}
+        rules={{
+          pattern: { value: IAM_ROLE_ARN_PATTERN, message: 'Please enter a valid IAM role ARN.' },
+          deps: ['authentication.assume_role.external_id'],
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            name={field.name}
+            label="Role ARN to assume (optional)"
+            value={field.value ?? ''}
+            onChange={(event) => field.onChange(trimInputValue(event))}
+            hint="Assumed from the role above, for example to read secrets stored in another AWS account. Its trust policy must allow the role above."
+            error={error?.message}
+          />
+        )}
+      />
+      <Controller
+        name="authentication.assume_role.external_id"
+        control={methods.control}
+        rules={{
+          validate: (value) => {
+            if (!value) {
+              return true
+            }
+            if (!methods.getValues('authentication.assume_role.role_arn')) {
+              return 'Please enter the role ARN to assume to use an external ID.'
+            }
+            return STS_EXTERNAL_ID_PATTERN.test(value) || 'Please enter a valid external ID.'
+          },
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            name={field.name}
+            label="External ID (optional)"
+            value={field.value ?? ''}
+            onChange={(event) => field.onChange(trimInputValue(event))}
+            hint="Only needed when the trust policy of the role to assume requires an external ID."
+            error={error?.message}
+          />
+        )}
+      />
+    </>
   )
 }
