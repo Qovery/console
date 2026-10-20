@@ -6,13 +6,17 @@ import { useCreateOrganization, useEditOrganization, useOrganization } from '@qo
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { toast } from '@qovery/shared/ui'
+import { toast, toastError } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { OnboardingCard } from '../onboarding-card/onboarding-card'
 import { readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
 import { OnboardingProfile } from './onboarding-profile'
 
-jest.mock('@qovery/shared/ui', () => ({ ...jest.requireActual('@qovery/shared/ui'), toast: jest.fn() }))
+jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
+  toast: jest.fn(),
+  toastError: jest.fn(),
+}))
 jest.mock('@qovery/domains/projects/feature', () => ({ useCreateProject: jest.fn() }))
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
@@ -357,6 +361,32 @@ describe('OnboardingProfile', () => {
     expect(createUserSignUp).not.toHaveBeenCalled()
     expect(readPendingOnboarding('user-1')?.profile.organization_name).toBe('Renamed workspace')
   })
+
+  it.each([undefined, organizationDetails])(
+    'reports a failed organization fetch without renaming with cached data %j',
+    async (data) => {
+      refetchOrganization.mockResolvedValueOnce({ data, isError: true })
+      const { userEvent } = renderSavedProfile()
+      await userEvent.clear(screen.getByLabelText('Organization name'))
+      await userEvent.type(screen.getByLabelText('Organization name'), 'Renamed workspace')
+      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+      await waitFor(() =>
+        expect(toastError).toHaveBeenCalledWith(new Error('Unable to load your organization. Please try again.'))
+      )
+      expect(refetchOrganization).toHaveBeenCalledWith({ cancelRefetch: false })
+      expect(editOrganization).not.toHaveBeenCalled()
+      expect(navigate).not.toHaveBeenCalled()
+      expect(readPendingOnboarding('user-1')?.profile).toEqual(savedProfile)
+      expect(screen.getByLabelText('Organization name')).toHaveValue('Renamed workspace')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+
+      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+      await waitFor(() => expect(navigate).toHaveBeenCalled())
+      expect(editOrganization).toHaveBeenCalledTimes(1)
+      expect(readPendingOnboarding('user-1')?.profile.organization_name).toBe('Renamed workspace')
+    }
+  )
 
   it.each([
     ['Full name', 'Updated Name', { first_name: 'Updated', last_name: 'Name' }],

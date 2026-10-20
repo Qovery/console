@@ -92,3 +92,19 @@ it('keeps the available configuration if a background refresh fails', () => {
   expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   expect(screen.queryByRole('button', { name: 'Enable Copilot' })).not.toBeInTheDocument()
 })
+
+it('offers to retry loading the organization instead of showing an endless loader', async () => {
+  const refetchOrganization = jest.fn()
+  jest.mocked(useQoveryContext).mockReturnValue({
+    context: {},
+    organizationError: new Error('Organization unavailable'),
+    refetchOrganization,
+  } as unknown as ReturnType<typeof useQoveryContext>)
+  const { userEvent } = renderWithProviders(panel())
+  expect(screen.getByRole('alert')).toHaveTextContent('Unable to load Copilot')
+  expect(screen.queryByRole('status', { name: 'Loading Copilot' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Enable Copilot' })).not.toBeInTheDocument()
+  await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+  expect(refetchOrganization).toHaveBeenCalledTimes(1)
+  expect(refetch).not.toHaveBeenCalled()
+})

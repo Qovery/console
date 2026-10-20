@@ -73,10 +73,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const isPanelActive = devopsCopilotOpen
   const { data } = useQoveryStatus(isPanelActive)
   const docLinks = useContextualDocLinks()
-  const { context, current } = useQoveryContext()
+  const { context, current, organizationError, refetchOrganization } = useQoveryContext()
   const { user, getAccessTokenSilently } = useAuth0()
 
   const organizationId = context?.organization?.id ?? ''
+  const isContextError = Boolean(organizationError) && !organizationId
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -381,11 +382,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               setIsLoading={setIsLoading}
               setPlan={setPlan}
             />
-            {!organizationId || (!readOnlyData && !isConfigError) ? (
+            {(!organizationId || (!readOnlyData && !isConfigError)) && !isContextError ? (
               <div role="status" aria-label="Loading Copilot" className="flex grow items-center justify-center">
                 <LoaderSpinner />
               </div>
-            ) : isConfigError && !readOnlyData ? (
+            ) : isContextError || (isConfigError && !readOnlyData) ? (
               <div className="flex grow items-center p-4">
                 <Callout.Root color="red" role="alert">
                   <Callout.Icon>
@@ -394,7 +395,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   <Callout.Text>
                     <Callout.TextHeading>Unable to load Copilot</Callout.TextHeading>
                     <Callout.TextDescription>Please try again.</Callout.TextDescription>
-                    <Button className="mt-3" variant="outline" onClick={() => refetchConfig()}>
+                    <Button
+                      className="mt-3"
+                      variant="outline"
+                      onClick={() => (isContextError ? refetchOrganization() : refetchConfig())}
+                    >
                       Retry
                     </Button>
                   </Callout.Text>

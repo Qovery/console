@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { type Cluster } from 'qovery-typescript-axios'
+import { type Cluster, ProjectsApi } from 'qovery-typescript-axios'
 import { toastError } from '@qovery/shared/ui'
 import { useCopyToClipboard, useOS } from '@qovery/shared/util-hooks'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -26,6 +26,7 @@ jest.mock('../hooks/use-demo-cluster-installation/use-demo-cluster-installation'
 
 const navigate = jest.fn()
 const copy = jest.fn()
+let listProjects: jest.SpyInstance
 const progress = {
   organizationId: 'created-org',
   projectId: 'created-project',
@@ -62,8 +63,14 @@ beforeEach(() => {
   jest.mocked(useOS).mockReturnValue('macos')
   jest.mocked(useCopyToClipboard).mockReturnValue(['', copy])
   installation()
+  listProjects = jest.spyOn(ProjectsApi.prototype, 'listProject').mockResolvedValue({
+    data: { results: [{ id: 'created-project' }] },
+  } as Awaited<ReturnType<ProjectsApi['listProject']>>)
 })
-afterEach(() => sessionStorage.clear())
+afterEach(() => {
+  sessionStorage.clear()
+  listProjects.mockRestore()
+})
 
 it('shows the third step, Docker Desktop prerequisite and macOS command', () => {
   renderDemo()
@@ -163,4 +170,55 @@ it('explains the required Windows terminal and WSL integration', () => {
   expect(
     screen.getByText('Run in PowerShell with WSL 2 installed and Docker Desktop’s WSL integration enabled.')
   ).toBeInTheDocument()
+})
+
+it('falls back to the organization when the saved project was deleted', async () => {
+  listProjects.mockResolvedValue({ data: { results: [{ id: 'another-project' }] } })
+  installation({ id: 'demo-id' } as Cluster)
+  const { userEvent } = renderDemo()
+  await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+  await waitFor(() =>
+    expect(navigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/overview',
+      params: { organizationId: 'created-org' },
+      replace: true,
+    })
+  )
+  expect(listProjects).toHaveBeenCalledWith('created-org')
+  expect(readPendingOnboarding('user-1')).toEqual(progress)
+})
+
+it('falls back to the organization without fetching projects when no project was saved', async () => {
+  savePendingOnboarding('user-1', { ...progress, projectId: undefined })
+  installation({ id: 'demo-id' } as Cluster)
+  const { userEvent } = renderDemo()
+  await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+  expect(navigate).toHaveBeenCalledWith({
+    to: '/organization/$organizationId/overview',
+    params: { organizationId: 'created-org' },
+    replace: true,
+  })
+  expect(listProjects).not.toHaveBeenCalled()
+})
+
+it('keeps the page and recovery record when project lookup fails and allows retrying', async () => {
+  const error = new Error('Project check failed')
+  listProjects.mockRejectedValueOnce(error)
+  installation({ id: 'demo-id' } as Cluster)
+  const { userEvent } = renderDemo()
+  await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+  await waitFor(() => expect(toastError).toHaveBeenCalledWith(error))
+  expect(navigate).not.toHaveBeenCalled()
+  expect(readPendingOnboarding('user-1')).toEqual(progress)
+  expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled()
+  await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+  await waitFor(() =>
+    expect(navigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/overview',
+      params: { organizationId: 'created-org', projectId: 'created-project' },
+      replace: true,
+    })
+  )
+  expect(listProjects).toHaveBeenCalledTimes(2)
+  expect(readPendingOnboarding('user-1')).toEqual(progress)
 })

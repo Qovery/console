@@ -1,9 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { getClusterSetupCommand } from '@qovery/domains/clusters/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { Button, Callout, CopyButton, ExternalLink, Heading, Icon, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle, useOS } from '@qovery/shared/util-hooks'
+import { queries } from '@qovery/state/util-queries'
 import { useDemoClusterInstallation } from '../hooks/use-demo-cluster-installation/use-demo-cluster-installation'
 import { readPendingOnboarding } from '../utils/pending-onboarding'
 
@@ -12,10 +14,11 @@ export function OnboardingDemoCluster() {
   const { organizationId = '' } = useParams({ strict: false })
   const { user } = useAuth()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [isContinuing, setIsContinuing] = useState(false)
   const os = useOS()
   const command = getClusterSetupCommand(os, 'LOCAL_DEMO')
-  const [program, action, ...arguments_] = command.split(' ')
+  const [program, ...arguments_] = command.split(' ')
   const { readyCluster, isError } = useDemoClusterInstallation({ organizationId })
   const continueToPlatform = async () => {
     if (!readyCluster || isContinuing) return
@@ -23,7 +26,14 @@ export function OnboardingDemoCluster() {
     const pending = readPendingOnboarding(user?.sub)
     const projectId = pending?.organizationId === organizationId ? pending.projectId : undefined
     try {
-      if (projectId) {
+      const projects = projectId
+        ? await queryClient.fetchQuery({
+            ...queries.projects.list({ organizationId }),
+            staleTime: 0,
+            retry: false,
+          })
+        : []
+      if (projectId && projects?.some((project) => project.id === projectId)) {
         await navigate({
           to: '/organization/$organizationId/project/$projectId/overview',
           params: { organizationId, projectId },
@@ -78,8 +88,7 @@ export function OnboardingDemoCluster() {
               className="flex items-center gap-4 rounded-lg border border-neutral bg-surface-neutral px-4 py-3"
             >
               <code className="min-w-0 flex-1 break-words font-code text-xs leading-5 text-neutral">
-                <span className="text-info">{program}</span> <span className="text-negative">{action}</span>{' '}
-                {arguments_.join(' ')}
+                <span className="text-info">{program}</span> {arguments_.join(' ')}
               </code>
               <CopyButton
                 content={command}

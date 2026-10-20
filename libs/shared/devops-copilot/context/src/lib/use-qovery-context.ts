@@ -70,7 +70,11 @@ export function useQoveryContext() {
 
   const contextualServiceId = applicationId || serviceId || databaseId
 
-  const { data: organization } = useQuery({
+  const {
+    data: organization,
+    error: organizationError,
+    refetch: refetchOrganization,
+  } = useQuery({
     ...queries.organizations.details({ organizationId }),
     enabled: Boolean(organizationId),
   })
@@ -110,6 +114,8 @@ export function useQoveryContext() {
   const current = entityMap.find(([entity]) => entity !== undefined)
 
   return {
+    organizationError,
+    refetchOrganization,
     context: {
       organization,
       cluster,

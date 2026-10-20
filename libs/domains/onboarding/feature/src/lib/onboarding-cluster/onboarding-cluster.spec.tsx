@@ -116,7 +116,7 @@ describe('OnboardingCluster', () => {
   })
   it('does not show the redundant explore link', () => {
     renderCluster()
-    expect(screen.queryByText('I’ll explore the platform by myself')).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /explore.*platform/i })).not.toBeInTheDocument()
   })
   it('goes back to the saved profile without discarding created resources', async () => {
     const { userEvent } = renderCluster()

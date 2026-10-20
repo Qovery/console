@@ -107,8 +107,8 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           updatePending(progress)
         }
         if (data.organization_name.trim() !== progress.profile.organization_name.trim()) {
-          const { data: organization } = await refetchOrganization({ throwOnError: true, cancelRefetch: false })
-          if (!organization) {
+          const { data: organization, isError } = await refetchOrganization({ cancelRefetch: false })
+          if (isError || !organization) {
             toastError(new Error('Unable to load your organization. Please try again.'))
             return
           }

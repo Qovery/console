@@ -47,7 +47,7 @@ export function OnboardingCluster() {
             Create a cluster
           </Heading>
           <p className="text-base text-neutral-subtle">
-            Choose where your apps will run. It's necessary to use the capabilities on Qovery, it takes few minutes.
+            Choose where your apps will run. A cluster is required to use Qovery, and setup takes a few minutes.
           </p>
         </div>
         <div className="flex flex-col gap-2 motion-safe:animate-[slidein-up-sm_240ms_cubic-bezier(0.165,0.84,0.44,1)_both,fadein_200ms_cubic-bezier(0.165,0.84,0.44,1)_both] motion-safe:[animation-delay:40ms] motion-reduce:animate-[fadein_120ms_cubic-bezier(0.165,0.84,0.44,1)]">
