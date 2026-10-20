@@ -9,7 +9,7 @@ export function OnboardingCard({ step, children }: PropsWithChildren<{ step: 1 |
 
   useLayoutEffect(() => {
     const content = contentRef.current
-    if (!content) return
+    if (!content || typeof ResizeObserver === 'undefined') return
     const measure = () => {
       const nextHeight = content.getBoundingClientRect().height
       // Include the card's top and bottom border in its measured height.

@@ -5,7 +5,7 @@ import { useAuth } from '@qovery/shared/auth'
 import { Button, Callout, CopyButton, ExternalLink, Heading, Icon, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle, useOS } from '@qovery/shared/util-hooks'
 import { useDemoClusterInstallation } from '../hooks/use-demo-cluster-installation/use-demo-cluster-installation'
-import { readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
+import { readPendingOnboarding } from '../utils/pending-onboarding'
 
 export function OnboardingDemoCluster() {
   useDocumentTitle('Create a demo cluster - Qovery')
@@ -13,7 +13,8 @@ export function OnboardingDemoCluster() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [isContinuing, setIsContinuing] = useState(false)
-  const command = getClusterSetupCommand(useOS(), 'LOCAL_DEMO')
+  const os = useOS()
+  const command = getClusterSetupCommand(os, 'LOCAL_DEMO')
   const [program, action, ...arguments_] = command.split(' ')
   const { readyCluster, isError } = useDemoClusterInstallation({ organizationId })
   const continueToPlatform = async () => {
@@ -30,9 +31,6 @@ export function OnboardingDemoCluster() {
         })
       } else {
         await navigate({ to: '/organization/$organizationId/overview', params: { organizationId }, replace: true })
-      }
-      if (readPendingOnboarding(user?.sub)?.organizationId === organizationId) {
-        savePendingOnboarding(user?.sub, undefined)
       }
     } catch (error) {
       toastError(error as Error)
@@ -70,6 +68,11 @@ export function OnboardingDemoCluster() {
           </div>
           <div className="flex flex-col gap-2">
             <h2 className="text-sm font-medium text-neutral">Run this command in your terminal</h2>
+            {os === 'windows' && (
+              <p className="text-sm text-neutral-subtle">
+                Run in PowerShell with WSL 2 installed and Docker Desktop’s WSL integration enabled.
+              </p>
+            )}
             <div
               data-theme="dark"
               className="flex items-center gap-4 rounded-lg border border-neutral bg-surface-neutral px-4 py-3"

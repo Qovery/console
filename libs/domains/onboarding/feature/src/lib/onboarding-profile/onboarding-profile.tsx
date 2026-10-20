@@ -47,7 +47,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
     enabled: false,
   })
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
-  const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
+  const { mutateAsync: createUserSignUp } = useCreateUserSignUp({ sendToCargo: !pending?.organizationId })
 
   const defaultEmail = user?.email?.trim() || userSignUp?.user_email?.trim() || ''
 
@@ -89,7 +89,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
         type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
         phone: data.phone,
         qovery_usage: userSignUp?.qovery_usage ?? '',
-        current_step: 'project',
+        current_step: userSignUp?.current_step ?? 'project',
       })
 
       await refetchUserSignUp({ throwOnError: true, cancelRefetch: false })

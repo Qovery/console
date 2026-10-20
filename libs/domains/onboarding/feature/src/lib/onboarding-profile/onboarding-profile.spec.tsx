@@ -371,9 +371,24 @@ describe('OnboardingProfile', () => {
     await waitFor(() => expect(navigate).toHaveBeenCalled())
     expect(createUserSignUp).toHaveBeenCalledTimes(1)
     expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining(payload))
+    expect(useCreateUserSignUp).toHaveBeenLastCalledWith({ sendToCargo: false })
     expect(editOrganization).not.toHaveBeenCalled()
     expect(createOrganization).not.toHaveBeenCalled()
     expect(createProject).not.toHaveBeenCalled()
+  })
+
+  it('preserves the saved onboarding step when editing a completed profile', async () => {
+    jest.mocked(useUserSignUp).mockReturnValue({
+      data: { current_step: 'completed' },
+      refetch: refetchUserSignUp,
+    } as unknown as ReturnType<typeof useUserSignUp>)
+    const { userEvent } = renderSavedProfile()
+    await userEvent.clear(screen.getByLabelText('Full name'))
+    await userEvent.type(screen.getByLabelText('Full name'), 'Updated Name')
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ current_step: 'completed' }))
   })
 
   it('keeps successful profile changes when renaming fails, then retries only the rename', async () => {

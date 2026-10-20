@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { type ComponentPropsWithoutRef, useContext as mockUseContext } from 'react'
 import { DevopsCopilotContext as mockCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { ModalProvider } from '@qovery/shared/ui'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { OnboardingCard } from '../onboarding-card/onboarding-card'
 import { OnboardingCopilot } from '../onboarding-copilot/onboarding-copilot'
 import { readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
@@ -96,7 +96,7 @@ describe('OnboardingCluster', () => {
       organization_id: 'created-org',
       $groups: { organization_id: 'created-org' },
     })
-    await waitFor(() => expect(readPendingOnboarding('user-1')).toBeUndefined())
+    expect(readPendingOnboarding('user-1')).toEqual(progress)
   })
   it('opens the demo installation step without discarding profile progress', async () => {
     const { userEvent } = renderCluster()
@@ -120,14 +120,14 @@ describe('OnboardingCluster', () => {
   })
   it('goes back to the saved profile without discarding created resources', async () => {
     const { userEvent } = renderCluster()
-    await userEvent.click(screen.getByRole('button', { name: 'Back', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
     expect(navigate).toHaveBeenCalledWith({ to: '/onboarding/profile' })
     expect(readPendingOnboarding('user-1')).toEqual(progress)
   })
   it('returns to the overview when there is no matching profile to resume', async () => {
     jest.mocked(useParams).mockReturnValue({ organizationId: 'other-org' })
     const { userEvent } = renderCluster()
-    await userEvent.click(screen.getByRole('button', { name: 'Back', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
     expect(navigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/overview',
       params: { organizationId: 'other-org' },

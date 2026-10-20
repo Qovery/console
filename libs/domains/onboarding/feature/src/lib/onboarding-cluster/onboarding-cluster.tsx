@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { useAuth } from '@qovery/shared/auth'
 import { Button, Heading, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
+import { readPendingOnboarding } from '../utils/pending-onboarding'
 import aws from './assets/aws.svg'
 import gcp from './assets/gcp.svg'
 import laptopCode from './assets/laptop-code.svg'
@@ -19,7 +19,6 @@ export function OnboardingCluster() {
 
   const leaveOnboarding = async () => {
     await navigate({ to: '/organization/$organizationId/overview', params: { organizationId } })
-    if (canGoBack) savePendingOnboarding(user?.sub, undefined)
   }
 
   const selectClusterOption = async (hasCloudAdminAccess: boolean) => {
@@ -35,7 +34,6 @@ export function OnboardingCluster() {
         params: { organizationId },
         search: { 'no-demo': true },
       })
-      if (canGoBack) savePendingOnboarding(user?.sub, undefined)
     } else {
       await navigate({ to: '/onboarding/organization/$organizationId/demo-cluster', params: { organizationId } })
     }

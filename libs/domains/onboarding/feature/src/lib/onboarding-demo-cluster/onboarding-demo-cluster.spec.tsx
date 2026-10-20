@@ -85,10 +85,7 @@ it('shows the third step, Docker Desktop prerequisite and macOS command', () => 
 it.each([
   ['macos', 'brew install Qovery/qovery-cli/qovery-cli && qovery demo up'],
   ['linux', 'curl -s https://get.qovery.com | bash && qovery demo up'],
-  [
-    'windows',
-    'scoop bucket add qovery https://github.com/Qovery/scoop-qovery-cli.git && scoop install qovery-cli && qovery demo up',
-  ],
+  ['windows', "wsl bash -c 'curl -s https://get.qovery.com | bash && qovery demo up'"],
 ] as const)('copies the full installation command for %s', async (os, command) => {
   jest.mocked(useOS).mockReturnValue(os)
   const { userEvent } = renderDemo()
@@ -121,7 +118,7 @@ it('waits for Continue before opening the created project once the demo is deplo
       replace: true,
     })
   )
-  await waitFor(() => expect(readPendingOnboarding('user-1')).toBeUndefined())
+  await waitFor(() => expect(readPendingOnboarding('user-1')).toEqual(progress))
   expect(navigate).toHaveBeenCalledTimes(1)
 })
 
@@ -129,6 +126,7 @@ it('keeps waiting when checking the installation fails', () => {
   installation(undefined, true)
   renderDemo()
   expect(screen.getByText('We couldn’t check your cluster yet. Retrying automatically.')).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
   expect(navigate).not.toHaveBeenCalled()
   expect(readPendingOnboarding('user-1')).toEqual(progress)
 })
@@ -155,6 +153,14 @@ it('preserves onboarding data after a failed navigation and allows retrying', as
   await waitFor(() => expect(toastError).toHaveBeenCalledWith(error))
   expect(readPendingOnboarding('user-1')).toEqual(progress)
   await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-  await waitFor(() => expect(readPendingOnboarding('user-1')).toBeUndefined())
+  await waitFor(() => expect(readPendingOnboarding('user-1')).toEqual(progress))
   expect(navigate).toHaveBeenCalledTimes(2)
+})
+
+it('explains the required Windows terminal and WSL integration', () => {
+  jest.mocked(useOS).mockReturnValue('windows')
+  renderDemo()
+  expect(
+    screen.getByText('Run in PowerShell with WSL 2 installed and Docker Desktop’s WSL integration enabled.')
+  ).toBeInTheDocument()
 })

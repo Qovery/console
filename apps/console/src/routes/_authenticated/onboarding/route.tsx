@@ -1,4 +1,4 @@
-import { Link, Outlet, createFileRoute, useLocation } from '@tanstack/react-router'
+import { Link, Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import { match } from 'ts-pattern'
 import { OnboardingCard, OnboardingCopilot } from '@qovery/domains/onboarding/feature'
 import { LogoBrandedIcon } from '@qovery/shared/ui'
@@ -9,16 +9,14 @@ export const Route = createFileRoute('/_authenticated/onboarding')({
 })
 
 function OnboardingLayout() {
-  const step = useLocation({
-    select: (location) =>
-      match(location.pathname)
-        .with('/onboarding/profile', () => 1 as const)
-        .when(
-          (pathname) => pathname.endsWith('/demo-cluster'),
-          () => 3 as const
-        )
-        .otherwise(() => 2 as const),
+  const matchRoute = useMatchRoute()
+  const step = match({
+    isProfile: Boolean(matchRoute({ to: '/onboarding/profile' })),
+    isDemoCluster: Boolean(matchRoute({ to: '/onboarding/organization/$organizationId/demo-cluster' })),
   })
+    .with({ isProfile: true }, () => 1 as const)
+    .with({ isDemoCluster: true }, () => 3 as const)
+    .otherwise(() => 2 as const)
   return (
     <div data-onboarding-profile className="fixed inset-0 z-10 flex flex-col overflow-y-auto bg-background-secondary">
       <header className="absolute inset-x-0 top-0 flex items-center justify-between px-4 py-4 sm:px-8">

@@ -28,7 +28,11 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
             1. {type === 'LOCAL_DEMO' ? 'Install Qovery CLI and your cluster' : 'Install Qovery CLI and your cluster'}
           </h5>
           <p className="mb-2 font-normal text-neutral-subtle">
-            Run the following command from your terminal to install the Qovery CLI and start the installation.
+            {os === 'windows'
+              ? type === 'LOCAL_DEMO'
+                ? 'Run in PowerShell with WSL 2 installed and Docker Desktop’s WSL integration enabled.'
+                : 'Run the following command in PowerShell to install the Qovery CLI and start the installation.'
+              : 'Run the following command from your terminal to install the Qovery CLI and start the installation.'}
           </p>
           <pre className="flex items-start justify-between gap-2 whitespace-pre-wrap break-all rounded-sm bg-surface-neutral-subtle p-3 font-mono text-neutral">
             <span>
