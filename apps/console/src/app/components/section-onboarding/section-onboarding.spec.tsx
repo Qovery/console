@@ -115,7 +115,7 @@ describe('SectionOnboarding', () => {
     expect(screen.queryByText('Bring your own cluster')).not.toBeInTheDocument()
   })
   it('waits for setup data before deciding whether to celebrate', async () => {
-    mockClusterStatuses.mockReturnValue({ data: [], isPending: false })
+    mockClusterStatuses.mockReturnValue({ data: [], isLoading: false })
     jest
       .mocked(useOnboardingCompletion)
       .mockReturnValue({ hasEnvironment: false, isServiceDeployed: false, isLoading: true })
@@ -125,7 +125,7 @@ describe('SectionOnboarding', () => {
 
     mockClusterStatuses.mockReturnValue({
       data: [{ status: ClusterStateEnum.DEPLOYED, is_deployed: true }],
-      isPending: false,
+      isLoading: false,
     })
     jest
       .mocked(useOnboardingCompletion)
@@ -140,7 +140,7 @@ describe('SectionOnboarding', () => {
     const { rerender } = renderWithProviders(<SectionOnboarding />, { wrapper: ({ children }) => children })
     mockClusterStatuses.mockReturnValue({
       data: [{ status: ClusterStateEnum.DEPLOYED, is_deployed: true }],
-      isPending: false,
+      isLoading: false,
     })
     jest
       .mocked(useOnboardingCompletion)

@@ -57,9 +57,9 @@ describe('useOnboardingCompletion', () => {
     (environmentsPending) => {
       mockedUseQueries
         .mockReturnValueOnce([
-          { data: environmentsPending ? undefined : [{ id: 'environment-1' }], isPending: environmentsPending },
+          { data: environmentsPending ? undefined : [{ id: 'environment-1' }], isLoading: environmentsPending },
         ] as never)
-        .mockReturnValueOnce(environmentsPending ? [] : ([{ data: undefined, isPending: true }] as never))
+        .mockReturnValueOnce(environmentsPending ? [] : ([{ data: undefined, isLoading: true }] as never))
 
       const { result } = renderHook(() => useOnboardingCompletion({ projectIds: ['project-1'], enabled: true }))
 

@@ -43,12 +43,12 @@ export function SectionOnboarding() {
     Boolean(onboarding) && onboarding?.status !== 'DISMISSED' && onboarding?.status !== 'COMPLETED' && !localDismissed
 
   const { data: clusters = [] } = useClusters({ organizationId, enabled: isOnboardingActive })
-  const { data: clusterStatuses = [], isPending: isClusterStatusesPending } = useClusterStatuses({
+  const { data: clusterStatuses = [], isLoading: isClusterStatusesLoading } = useClusterStatuses({
     organizationId,
     refetchInterval: isOnboardingActive ? 3000 : undefined,
     enabled: isOnboardingActive,
   })
-  const { data: projects = [], isPending: isProjectsPending } = useProjects({
+  const { data: projects = [], isLoading: isProjectsLoading } = useProjects({
     organizationId,
     enabled: isOnboardingActive,
   })
@@ -165,7 +165,7 @@ export function SectionOnboarding() {
   const hasEphemeralEnvironments = useCases.includes('ephemeral-environments')
   const hasRde = ['rde', 'ai-workflows', 'spec-to-prod'].some((useCase) => useCases.includes(useCase))
 
-  const { data: deploymentRule, isPending: isDeploymentRulePending } = useDeploymentRule({
+  const { data: deploymentRule, isLoading: isDeploymentRuleLoading } = useDeploymentRule({
     environmentId: firstEnvironment?.id ?? '',
     enabled: !!firstEnvironment?.id,
   })
@@ -228,10 +228,10 @@ export function SectionOnboarding() {
       !organization ||
       isOnboardingLoading ||
       !onboarding ||
-      isClusterStatusesPending ||
-      isProjectsPending ||
+      isClusterStatusesLoading ||
+      isProjectsLoading ||
       isCompletionLoading ||
-      (hasEphemeralEnvironments && isDeploymentRulePending) ||
+      (hasEphemeralEnvironments && isDeploymentRuleLoading) ||
       isDismissed
     ) {
       return
@@ -306,11 +306,11 @@ export function SectionOnboarding() {
     hasRde,
     isDismissed,
     isOnboardingLoading,
-    isClusterStatusesPending,
-    isProjectsPending,
+    isClusterStatusesLoading,
+    isProjectsLoading,
     isCompletionLoading,
     hasEphemeralEnvironments,
-    isDeploymentRulePending,
+    isDeploymentRuleLoading,
     navigate,
     onboarding,
     openModal,
