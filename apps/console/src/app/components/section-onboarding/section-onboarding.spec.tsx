@@ -115,10 +115,11 @@ describe('SectionOnboarding', () => {
     expect(screen.queryByText('Bring your own cluster')).not.toBeInTheDocument()
   })
   it('waits for setup data before deciding whether to celebrate', async () => {
-    mockClusterStatuses.mockReturnValue({ data: [], isPending: true })
+    mockClusterStatuses.mockReturnValue({ data: [], isPending: false })
     jest
       .mocked(useOnboardingCompletion)
       .mockReturnValue({ hasEnvironment: false, isServiceDeployed: false, isLoading: true })
+    // The default provider chain remounts children on rerender, resetting the completion ref.
     const { rerender } = renderWithProviders(<SectionOnboarding />, { wrapper: ({ children }) => children })
     expect(mockUpdateOnboarding).not.toHaveBeenCalled()
 
@@ -135,6 +136,7 @@ describe('SectionOnboarding', () => {
   })
 
   it('celebrates when an incomplete setup finishes during the session', async () => {
+    // The default provider chain remounts children on rerender, resetting the completion ref.
     const { rerender } = renderWithProviders(<SectionOnboarding />, { wrapper: ({ children }) => children })
     mockClusterStatuses.mockReturnValue({
       data: [{ status: ClusterStateEnum.DEPLOYED, is_deployed: true }],
