@@ -46,7 +46,7 @@ it.each([
   [true, 'DEPLOYED', true, 'cluster-id', 'DEPLOYING', false],
   [true, 'DEPLOYED', true, 'cluster-id', 'DEPLOYED', true],
 ])(
-  'checks demo=%s, state=%s, installed=%s, status cluster=%s, deployment=%s',
+  'checks demo=%s, state=%s, installed=%s, status cluster=%s, deployment=%s, ready=%s',
   async (isDemo, status, isDeployed, clusterId, deploymentStatus, ready) => {
     listClusters.mockResolvedValue(
       clustersResponse([{ id: 'cluster-id', is_demo: isDemo, status: status as Cluster['status'] }])

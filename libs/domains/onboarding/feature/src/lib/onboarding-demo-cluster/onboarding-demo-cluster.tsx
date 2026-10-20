@@ -80,7 +80,9 @@ export function OnboardingDemoCluster() {
             <h2 className="text-sm font-medium text-neutral">Run this command in your terminal</h2>
             {os === 'windows' && (
               <p className="text-sm text-neutral-subtle">
-                Run in PowerShell with WSL 2 installed and Docker Desktop’s WSL integration enabled.
+                Before running this in PowerShell, install a WSL 2 Linux distribution (such as Ubuntu) and set it as the
+                default. Enable Docker Desktop’s WSL integration for that distribution in Settings &gt; Resources &gt;
+                WSL Integration.
               </p>
             )}
             <div

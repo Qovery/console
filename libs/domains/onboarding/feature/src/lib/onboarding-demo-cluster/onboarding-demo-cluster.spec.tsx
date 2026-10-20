@@ -168,7 +168,9 @@ it('explains the required Windows terminal and WSL integration', () => {
   jest.mocked(useOS).mockReturnValue('windows')
   renderDemo()
   expect(
-    screen.getByText('Run in PowerShell with WSL 2 installed and Docker Desktop’s WSL integration enabled.')
+    screen.getByText(
+      'Before running this in PowerShell, install a WSL 2 Linux distribution (such as Ubuntu) and set it as the default. Enable Docker Desktop’s WSL integration for that distribution in Settings > Resources > WSL Integration.'
+    )
   ).toBeInTheDocument()
 })
 

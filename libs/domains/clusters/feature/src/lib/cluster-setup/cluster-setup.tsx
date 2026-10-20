@@ -30,7 +30,7 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
           <p className="mb-2 font-normal text-neutral-subtle">
             {os === 'windows'
               ? type === 'LOCAL_DEMO'
-                ? 'Run in PowerShell with WSL 2 installed and Docker Desktop’s WSL integration enabled.'
+                ? 'Before running this in PowerShell, install a WSL 2 Linux distribution (such as Ubuntu) and set it as the default. Enable Docker Desktop’s WSL integration for that distribution in Settings > Resources > WSL Integration.'
                 : 'Run the following command in PowerShell to install the Qovery CLI and start the installation.'
               : 'Run the following command from your terminal to install the Qovery CLI and start the installation.'}
           </p>
