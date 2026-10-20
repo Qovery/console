@@ -18,5 +18,4 @@ export * from './lib/text-area-variable-suggestion/text-area-variable-suggestion
 export * from './lib/dropdown-variable/dropdown-variable'
 export * from './lib/import-environment-variable-modal/import-environment-variable-modal'
 export * from './lib/external-secrets/external-secrets-tab'
-export * from './lib/external-secrets/secret-manager-feature-flag-entry-point'
 export * from './lib/external-secrets/add-secret-modal/add-secret-modal'
