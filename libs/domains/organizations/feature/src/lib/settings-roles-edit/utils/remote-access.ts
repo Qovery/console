@@ -1,14 +1,4 @@
-import {
-  OrganizationCustomRoleProjectPermission,
-  type OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner,
-} from 'qovery-typescript-axios'
-
-// TODO: drop the intersection once qovery-typescript-axios exposes `shell` and `port_forward`
-export type ProjectEnvironmentPermission =
-  OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner & {
-    shell?: boolean
-    port_forward?: boolean
-  }
+import { OrganizationCustomRoleProjectPermission } from 'qovery-typescript-axios'
 
 export const REMOTE_ACCESS_FLAGS = ['shell', 'port_forward'] as const
 

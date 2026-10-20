@@ -4,6 +4,7 @@ import {
   type OrganizationCustomRoleClusterPermissionsInner,
   OrganizationCustomRoleProjectPermission,
   type OrganizationCustomRoleProjectPermissionsInner,
+  type OrganizationCustomRoleProjectPermissionsInnerPermissionsInner,
   type OrganizationCustomRoleUpdateRequest,
 } from 'qovery-typescript-axios'
 import { Suspense, useCallback, useEffect } from 'react'
@@ -28,7 +29,7 @@ import RowProject from './row-project/row-project'
 import TableClusters from './table-clusters/table-clusters'
 import Table from './table/table'
 import { defaultProjectPermission } from './utils/default-project-permission'
-import { type ProjectEnvironmentPermission, REMOTE_ACCESS_FLAGS, remoteAccessFormKey } from './utils/remote-access'
+import { REMOTE_ACCESS_FLAGS, remoteAccessFormKey } from './utils/remote-access'
 
 const SettingsRolesEditSkeleton = () => (
   <div className="flex w-full flex-col justify-between">
@@ -166,13 +167,15 @@ export function resetForm(currentRole: OrganizationCustomRole) {
     const remoteAccess = Object.fromEntries(REMOTE_ACCESS_FLAGS.map((flag) => [flag, {} as { [key: string]: boolean }]))
 
     if (project.permissions && project.permissions?.length > 0) {
-      project.permissions?.forEach((currentPermission: ProjectEnvironmentPermission) => {
-        permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
-        permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission ?? 'NO_ACCESS')
-        REMOTE_ACCESS_FLAGS.forEach((flag) => {
-          remoteAccess[flag][currentPermission.environment_type || ''] = Boolean(currentPermission[flag])
-        })
-      })
+      project.permissions?.forEach(
+        (currentPermission: OrganizationCustomRoleProjectPermissionsInnerPermissionsInner) => {
+          permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
+          permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission ?? 'NO_ACCESS')
+          REMOTE_ACCESS_FLAGS.forEach((flag) => {
+            remoteAccess[flag][currentPermission.environment_type || ''] = Boolean(currentPermission[flag])
+          })
+        }
+      )
     } else {
       if (project.is_admin) {
         for (let i = 0; i < 4; i++) {
