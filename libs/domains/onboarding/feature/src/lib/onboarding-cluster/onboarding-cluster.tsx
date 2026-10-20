@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useAuth } from '@qovery/shared/auth'
-import { Button, Heading, Icon } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { readPendingOnboarding } from '../utils/pending-onboarding'
 
@@ -36,7 +36,7 @@ export function OnboardingCluster() {
   }
 
   return (
-    <section className="flex flex-col gap-20">
+    <Section className="gap-20">
       <div className="flex flex-col gap-6">
         <div className="motion-safe:animate-[slidein-up-sm_240ms_cubic-bezier(0.165,0.84,0.44,1)_both,fadein_200ms_cubic-bezier(0.165,0.84,0.44,1)_both] motion-reduce:animate-[fadein_120ms_cubic-bezier(0.165,0.84,0.44,1)]">
           <Heading level={1} className="mb-2 font-brand text-[28px] font-normal leading-9 text-neutral">
@@ -99,6 +99,6 @@ export function OnboardingCluster() {
       >
         <Icon iconName="arrow-left" iconStyle="solid" className="text-base text-neutral-subtle" /> Back
       </Button>
-    </section>
+    </Section>
   )
 }
