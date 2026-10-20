@@ -52,6 +52,21 @@ describe('useOnboardingCompletion', () => {
     mockedUseQueries.mockReset()
   })
 
+  it.each([true, false])(
+    'keeps setup loading while dependent queries are pending (environments: %s)',
+    (environmentsPending) => {
+      mockedUseQueries
+        .mockReturnValueOnce([
+          { data: environmentsPending ? undefined : [{ id: 'environment-1' }], isLoading: environmentsPending },
+        ] as never)
+        .mockReturnValueOnce(environmentsPending ? [] : ([{ data: undefined, isLoading: true }] as never))
+
+      const { result } = renderHook(() => useOnboardingCompletion({ projectIds: ['project-1'], enabled: true }))
+
+      expect(result.current.isLoading).toBe(true)
+    }
+  )
+
   it('polls service statuses while onboarding is active', () => {
     mockedUseQueries
       .mockReturnValueOnce([{ data: [{ id: 'environment-1' }] }] as never)
