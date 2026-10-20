@@ -1,5 +1,4 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { OrganizationCustomRoleClusterPermission } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import TableClusters from './table-clusters'
@@ -12,14 +11,12 @@ describe('TableClusters', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should toggle the global permission checkbox', async () => {
-    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<TableClusters clusters={clusters} />))
+  it('should not offer to set all the clusters at once', () => {
+    renderWithProviders(wrapWithReactHookForm(<TableClusters clusters={clusters} />))
 
-    const adminCheckbox = screen.getByTestId(`checkbox-${OrganizationCustomRoleClusterPermission.ADMIN}`)
-
-    await userEvent.click(adminCheckbox)
-
-    expect(adminCheckbox).toBeChecked()
+    // a permission applies to the listed clusters only: a new cluster gets read-only
+    expect(screen.queryByText('All Clusters')).not.toBeInTheDocument()
+    expect(screen.getAllByRole('checkbox')).toHaveLength(clusters.length * 3)
   })
 
   it('should render a row per cluster', () => {

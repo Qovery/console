@@ -41,17 +41,4 @@ describe('RowCluster', () => {
     const viewerCheckbox = container.querySelector('button[value="VIEWER"]') as HTMLButtonElement
     expect(viewerCheckbox).toBeChecked()
   })
-
-  it('should notify global check when a permission is selected', async () => {
-    const setGlobalCheck = jest.fn()
-
-    const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<RowCluster cluster={cluster} setGlobalCheck={setGlobalCheck} />)
-    )
-
-    const [firstCheckbox] = screen.getAllByRole('checkbox')
-    await userEvent.click(firstCheckbox)
-
-    expect(setGlobalCheck).toHaveBeenCalled()
-  })
 })
