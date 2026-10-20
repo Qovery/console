@@ -71,6 +71,26 @@ describe('FiltersStageStep', () => {
     expect(screen.getByText('2m : 0s')).toBeInTheDocument() // DEPLOY duration
   })
 
+  it('ignores a step name this console does not know yet', () => {
+    const props = {
+      ...defaultProps,
+      serviceStatus: {
+        ...defaultProps.serviceStatus,
+        steps: {
+          details: [
+            ...(defaultProps.serviceStatus.steps?.details ?? []),
+            { step_name: 'IMAGE_PULL', status: 'SUCCESS', duration_sec: 30 },
+          ],
+        },
+      } as Status,
+    }
+
+    renderWithProviders(<FiltersStageStep {...props} />)
+
+    expect(screen.getByText('1m : 0s')).toBeInTheDocument()
+    expect(screen.getByText('2m : 0s')).toBeInTheDocument()
+  })
+
   it('ticks the current step duration locally from its backend start time', () => {
     jest.setSystemTime(new Date('2026-08-25T10:05:00Z'))
     const props = {

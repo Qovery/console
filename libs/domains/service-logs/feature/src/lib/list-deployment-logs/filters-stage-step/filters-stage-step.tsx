@@ -162,7 +162,8 @@ export function FiltersStageStep({
         .with('BUILD', 'BUILD_QUEUEING', 'GIT_CLONE', 'REGISTRY_CREATE_REPOSITORY', () => acc.build.push(step))
         .with('DEPLOYMENT', 'DEPLOYMENT_QUEUEING', 'ROUTER_DEPLOYMENT', 'MIRROR_IMAGE', () => acc.deploy.push(step))
         .with('EXECUTING', () => acc.executing.push(step))
-        .exhaustive()
+        // The API can add step names before this console knows them: ignore them instead of throwing
+        .otherwise(() => undefined)
 
       return acc
     },
