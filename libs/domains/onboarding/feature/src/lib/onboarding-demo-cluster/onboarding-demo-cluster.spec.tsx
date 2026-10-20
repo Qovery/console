@@ -91,8 +91,8 @@ it('shows the third step, Docker Desktop prerequisite and macOS command', () => 
 
 it.each([
   ['macos', 'brew install Qovery/qovery-cli/qovery-cli && qovery demo up'],
-  ['linux', 'curl -s https://get.qovery.com | bash && qovery demo up'],
-  ['windows', "wsl bash -c 'curl -s https://get.qovery.com | bash && qovery demo up'"],
+  ['linux', `bash -o pipefail -c 'curl -fsS https://get.qovery.com | bash && qovery demo up'`],
+  ['windows', "wsl bash -o pipefail -c 'curl -fsS https://get.qovery.com | bash && qovery demo up'"],
 ] as const)('copies the full installation command for %s', async (os, command) => {
   jest.mocked(useOS).mockReturnValue(os)
   const { userEvent } = renderDemo()
