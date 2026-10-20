@@ -2,7 +2,12 @@ import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
-import { useCreateOrganization, useEditOrganization, useOrganization } from '@qovery/domains/organizations/feature'
+import {
+  useCreateOrganization,
+  useEditOrganization,
+  useOrganization,
+  useOrganizations,
+} from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -23,6 +28,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   useCreateOrganization: jest.fn(),
   useEditOrganization: jest.fn(),
   useOrganization: jest.fn(),
+  useOrganizations: jest.fn(),
 }))
 
 jest.mock('@qovery/shared/auth', () => ({
@@ -43,6 +49,7 @@ const createProject = jest.fn()
 const createOrganization = jest.fn()
 const editOrganization = jest.fn()
 const refetchOrganization = jest.fn()
+const refetchOrganizations = jest.fn()
 const organizationDetails = {
   name: 'Acme workspace',
   description: 'Keep description',
@@ -171,6 +178,10 @@ describe('OnboardingProfile', () => {
     jest.useFakeTimers()
     delete window.dataLayer
     sessionStorage.clear()
+    refetchOrganizations.mockResolvedValue({ data: [{ id: 'existing-org' }, { id: 'created-org' }] })
+    jest
+      .mocked(useOrganizations)
+      .mockReturnValue({ refetch: refetchOrganizations } as unknown as ReturnType<typeof useOrganizations>)
     refetchOrganization.mockResolvedValue({ data: organizationDetails })
     jest
       .mocked(useOrganization)
@@ -299,6 +310,7 @@ describe('OnboardingProfile', () => {
     await waitFor(() => expect(navigate).toHaveBeenCalled())
     expect(createOrganization).toHaveBeenCalledTimes(1)
     expect(createUserSignUp).toHaveBeenCalledTimes(1)
+    expect(refetchOrganizations).not.toHaveBeenCalled()
     expect(createProject).toHaveBeenCalledTimes(1)
     expect(readPendingOnboarding('user-1')).toEqual(
       expect.objectContaining({ organizationId: 'created-org', projectId: 'created-project', completionTracked: true })
@@ -345,6 +357,62 @@ describe('OnboardingProfile', () => {
     })
     return renderProfile()
   }
+
+  it.each([false, true])('recreates a deleted organization with the current profile (renamed: %s)', async (renamed) => {
+    refetchOrganizations.mockResolvedValueOnce({ data: [] })
+    const { userEvent } = renderSavedProfile()
+    if (renamed) {
+      await userEvent.clear(screen.getByLabelText('Organization name'))
+      await userEvent.type(screen.getByLabelText('Organization name'), 'Replacement workspace')
+    }
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() =>
+      expect(navigate).toHaveBeenCalledWith({
+        to: '/onboarding/organization/$organizationId/cluster',
+        params: { organizationId: 'created-org' },
+      })
+    )
+    expect(createOrganization).toHaveBeenCalledTimes(1)
+    expect(createOrganization).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationRequest: expect.objectContaining({
+          name: renamed ? 'Replacement workspace' : savedProfile.organization_name,
+        }),
+      })
+    )
+    expect(createProject).toHaveBeenCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
+    expect(editOrganization).not.toHaveBeenCalled()
+    expect(useCreateUserSignUp).toHaveBeenLastCalledWith({ sendToCargo: false })
+    expect(readPendingOnboarding('user-1')).toEqual(
+      expect.objectContaining({
+        organizationId: 'created-org',
+        projectId: 'created-project',
+        completionTracked: true,
+      })
+    )
+  })
+
+  it.each([403, 500])('does not recreate saved resources when validation returns %s', async (status) => {
+    refetchOrganizations.mockResolvedValueOnce({
+      data: [{ id: 'existing-org' }],
+      isError: true,
+      error: { response: { status } },
+    })
+    const { userEvent } = renderSavedProfile()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() =>
+      expect(toastError).toHaveBeenCalledWith(new Error('Unable to load your organizations. Please try again.'))
+    )
+    expect(navigate).not.toHaveBeenCalled()
+    expect(createOrganization).not.toHaveBeenCalled()
+    expect(createProject).not.toHaveBeenCalled()
+    expect(createUserSignUp).not.toHaveBeenCalled()
+    expect(readPendingOnboarding('user-1')?.organizationId).toBe('existing-org')
+  })
 
   it('updates only the existing organization when its name changes', async () => {
     const { userEvent } = renderSavedProfile()

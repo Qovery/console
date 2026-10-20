@@ -3,7 +3,12 @@ import posthog from 'posthog-js'
 import { PlanEnum, TypeOfUseEnum } from 'qovery-typescript-axios'
 import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useCreateOrganization, useEditOrganization, useOrganization } from '@qovery/domains/organizations/feature'
+import {
+  useCreateOrganization,
+  useEditOrganization,
+  useOrganization,
+  useOrganizations,
+} from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -46,6 +51,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
     organizationId: pending?.organizationId ?? '',
     enabled: false,
   })
+  const { refetch: refetchOrganizations } = useOrganizations({ enabled: false })
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp({ sendToCargo: !pending?.organizationId })
 
@@ -96,6 +102,17 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
     }
 
     try {
+      if (progress?.completionTracked) {
+        const { data: organizations, isError } = await refetchOrganizations({ cancelRefetch: false })
+        if (isError || !organizations) {
+          toastError(new Error('Unable to load your organizations. Please try again.'))
+          return
+        }
+        if (!organizations.some((organization) => organization.id === organizationId)) {
+          organizationId = undefined
+          progress = undefined
+        }
+      }
       if (progress && organizationId) {
         const previousProfile = progress.profile
         const profileChanged = (['full_name', 'user_email', 'company_name', 'phone'] as const).some(
