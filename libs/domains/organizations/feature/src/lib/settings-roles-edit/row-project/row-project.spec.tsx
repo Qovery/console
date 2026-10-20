@@ -141,6 +141,7 @@ describe('RowProject', () => {
     expect(getByLabelText('Shell on DEVELOPMENT')).toBeChecked()
     expect(getByLabelText('Shell on DEVELOPMENT')).toBeEnabled()
     expect(getByLabelText('Port-forward on DEVELOPMENT')).not.toBeChecked()
+    expect(getByLabelText('Port-forward on DEVELOPMENT')).toBeEnabled()
     expect(getByLabelText('Shell on PRODUCTION')).toBeDisabled()
     expect(getByLabelText('Port-forward on PRODUCTION')).toBeDisabled()
 
