@@ -43,13 +43,20 @@ export function SectionOnboarding() {
     Boolean(onboarding) && onboarding?.status !== 'DISMISSED' && onboarding?.status !== 'COMPLETED' && !localDismissed
 
   const { data: clusters = [] } = useClusters({ organizationId, enabled: isOnboardingActive })
-  const { data: clusterStatuses = [] } = useClusterStatuses({
+  const { data: clusterStatuses = [], isPending: isClusterStatusesPending } = useClusterStatuses({
     organizationId,
     refetchInterval: isOnboardingActive ? 3000 : undefined,
     enabled: isOnboardingActive,
   })
-  const { data: projects = [] } = useProjects({ organizationId, enabled: isOnboardingActive })
-  const { hasEnvironment, isServiceDeployed } = useOnboardingCompletion({
+  const { data: projects = [], isPending: isProjectsPending } = useProjects({
+    organizationId,
+    enabled: isOnboardingActive,
+  })
+  const {
+    hasEnvironment,
+    isServiceDeployed,
+    isLoading: isCompletionLoading,
+  } = useOnboardingCompletion({
     projectIds: projects.map(({ id }) => id),
     enabled: isOnboardingActive,
   })
@@ -59,7 +66,7 @@ export function SectionOnboarding() {
   const firstEnvironment = environments[0]
   const { data: services = [] } = useServices({ environmentId: firstEnvironment?.id })
   const { data: serviceStatuses } = useServiceStatuses({ environmentId: firstEnvironment?.id })
-  const completionModalOpenedRef = useRef(false)
+  const completionStateRef = useRef<{ organizationId: string; wasIncomplete: boolean; completed: boolean } | null>(null)
 
   const isClusterDeployed = useMemo(
     () => clusterStatuses.some((s) => s.status === ClusterStateEnum.DEPLOYED && s.is_deployed),
@@ -158,7 +165,7 @@ export function SectionOnboarding() {
   const hasEphemeralEnvironments = useCases.includes('ephemeral-environments')
   const hasRde = ['rde', 'ai-workflows', 'spec-to-prod'].some((useCase) => useCases.includes(useCase))
 
-  const { data: deploymentRule } = useDeploymentRule({
+  const { data: deploymentRule, isPending: isDeploymentRulePending } = useDeploymentRule({
     environmentId: firstEnvironment?.id ?? '',
     enabled: !!firstEnvironment?.id,
   })
@@ -221,15 +228,25 @@ export function SectionOnboarding() {
       !organization ||
       isOnboardingLoading ||
       !onboarding ||
-      !allRequiredDone ||
-      isDismissed ||
-      completionModalOpenedRef.current
+      isClusterStatusesPending ||
+      isProjectsPending ||
+      isCompletionLoading ||
+      (hasEphemeralEnvironments && isDeploymentRulePending) ||
+      isDismissed
     ) {
       return
     }
 
-    completionModalOpenedRef.current = true
+    if (completionStateRef.current?.organizationId !== organizationId) {
+      completionStateRef.current = { organizationId, wasIncomplete: !allRequiredDone, completed: false }
+    }
+    const completionState = completionStateRef.current
+    if (!allRequiredDone || completionState.completed) return
+
+    completionState.completed = true
     complete()
+    // Existing workspaces should complete silently once their setup data has loaded.
+    if (!completionState.wasIncomplete) return
     enableAlertClickOutside(false)
 
     openModal({
@@ -289,6 +306,11 @@ export function SectionOnboarding() {
     hasRde,
     isDismissed,
     isOnboardingLoading,
+    isClusterStatusesPending,
+    isProjectsPending,
+    isCompletionLoading,
+    hasEphemeralEnvironments,
+    isDeploymentRulePending,
     navigate,
     onboarding,
     openModal,

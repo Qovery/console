@@ -6,6 +6,9 @@ import { SectionOnboarding } from './section-onboarding'
 let mockOnboarding: OrganizationOnboardingResponse | undefined
 let mockLoading = false
 const mockUpdateOnboarding = jest.fn()
+const mockOpenModal = jest.fn()
+const mockCloseModal = jest.fn()
+const mockAlertClickOutside = jest.fn()
 const mockClusters = jest.fn()
 const mockClusterStatuses = jest.fn()
 
@@ -44,6 +47,14 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
   useSupportChat: () => ({ showPylonForm: jest.fn() }),
 }))
+jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
+  useModal: () => ({
+    openModal: mockOpenModal,
+    closeModal: mockCloseModal,
+    enableAlertClickOutside: mockAlertClickOutside,
+  }),
+}))
 jest.mock('@qovery/shared/mcp-suggestion/feature', () => ({ McpSuggestionCard: () => null }))
 
 describe('SectionOnboarding', () => {
@@ -54,7 +65,9 @@ describe('SectionOnboarding', () => {
     mockLoading = false
     mockClusters.mockReturnValue({ data: [] })
     mockClusterStatuses.mockReturnValue({ data: [] })
-    jest.mocked(useOnboardingCompletion).mockReturnValue({ hasEnvironment: false, isServiceDeployed: false })
+    jest
+      .mocked(useOnboardingCompletion)
+      .mockReturnValue({ hasEnvironment: false, isServiceDeployed: false, isLoading: false })
   })
   afterEach(() => jest.useRealTimers())
 
@@ -89,13 +102,51 @@ describe('SectionOnboarding', () => {
     expect(screen.getByText('Turn on preview environment')).toBeInTheDocument()
   })
 
-  it('marks the standard setup complete without requiring use cases', async () => {
+  it('silently completes an organization that is already set up', async () => {
     mockClusterStatuses.mockReturnValue({
       data: [{ status: ClusterStateEnum.DEPLOYED, is_deployed: true }],
     })
-    jest.mocked(useOnboardingCompletion).mockReturnValue({ hasEnvironment: true, isServiceDeployed: true })
+    jest
+      .mocked(useOnboardingCompletion)
+      .mockReturnValue({ hasEnvironment: true, isServiceDeployed: true, isLoading: false })
     renderWithProviders(<SectionOnboarding />)
     await waitFor(() => expect(mockUpdateOnboarding).toHaveBeenCalledWith('COMPLETED'))
+    expect(mockOpenModal).not.toHaveBeenCalled()
     expect(screen.queryByText('Bring your own cluster')).not.toBeInTheDocument()
+  })
+  it('waits for setup data before deciding whether to celebrate', async () => {
+    mockClusterStatuses.mockReturnValue({ data: [], isPending: true })
+    jest
+      .mocked(useOnboardingCompletion)
+      .mockReturnValue({ hasEnvironment: false, isServiceDeployed: false, isLoading: true })
+    const { rerender } = renderWithProviders(<SectionOnboarding />, { wrapper: ({ children }) => children })
+    expect(mockUpdateOnboarding).not.toHaveBeenCalled()
+
+    mockClusterStatuses.mockReturnValue({
+      data: [{ status: ClusterStateEnum.DEPLOYED, is_deployed: true }],
+      isPending: false,
+    })
+    jest
+      .mocked(useOnboardingCompletion)
+      .mockReturnValue({ hasEnvironment: true, isServiceDeployed: true, isLoading: false })
+    rerender(<SectionOnboarding />)
+    await waitFor(() => expect(mockUpdateOnboarding).toHaveBeenCalledWith('COMPLETED'))
+    expect(mockOpenModal).not.toHaveBeenCalled()
+  })
+
+  it('celebrates when an incomplete setup finishes during the session', async () => {
+    const { rerender } = renderWithProviders(<SectionOnboarding />, { wrapper: ({ children }) => children })
+    mockClusterStatuses.mockReturnValue({
+      data: [{ status: ClusterStateEnum.DEPLOYED, is_deployed: true }],
+      isPending: false,
+    })
+    jest
+      .mocked(useOnboardingCompletion)
+      .mockReturnValue({ hasEnvironment: true, isServiceDeployed: true, isLoading: false })
+    rerender(<SectionOnboarding />)
+    await waitFor(() => expect(mockOpenModal).toHaveBeenCalledTimes(1))
+    expect(mockUpdateOnboarding).toHaveBeenCalledWith('COMPLETED')
+    rerender(<SectionOnboarding />)
+    expect(mockOpenModal).toHaveBeenCalledTimes(1)
   })
 })
