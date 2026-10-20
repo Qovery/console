@@ -105,3 +105,4 @@ export * from './lib/hooks/use-update-platform-configuration/use-update-platform
 export * from './lib/hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
 export * from './lib/hooks/use-is-operator-attached/use-is-operator-attached'
 export * from './lib/hooks/use-update-cluster-operator/use-update-cluster-operator'
+export * from './lib/utils/cluster-setup-command'

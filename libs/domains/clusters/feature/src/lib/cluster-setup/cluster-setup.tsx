@@ -1,16 +1,10 @@
 import { Callout, CopyButton, ExternalLink, Icon } from '@qovery/shared/ui'
-import { type OS, useOS } from '@qovery/shared/util-hooks'
-
-const INSTALL_COMMANDS: Record<OS, string> = {
-  macos: 'brew install Qovery/qovery-cli/qovery-cli',
-  linux: 'curl -s https://get.qovery.com | bash',
-  windows: 'scoop bucket add qovery https://github.com/Qovery/scoop-qovery-cli.git && scoop install qovery-cli',
-}
+import { useOS } from '@qovery/shared/util-hooks'
+import { getClusterSetupCommand } from '../utils/cluster-setup-command'
 
 export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) {
   const os = useOS()
-  const clusterCommand = type === 'LOCAL_DEMO' ? 'qovery demo up' : 'qovery cluster install'
-  const fullCommand = `${INSTALL_COMMANDS[os]} && ${clusterCommand}`
+  const fullCommand = getClusterSetupCommand(os, type)
 
   return (
     <>
