@@ -4,10 +4,6 @@ import { useAuth } from '@qovery/shared/auth'
 import { Button, Heading, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { readPendingOnboarding } from '../utils/pending-onboarding'
-import aws from './assets/aws.svg'
-import gcp from './assets/gcp.svg'
-import laptopCode from './assets/laptop-code.svg'
-import scaleway from './assets/scaleway.svg'
 
 export function OnboardingCluster() {
   useDocumentTitle('Create a cluster - Qovery')
@@ -60,13 +56,13 @@ export function OnboardingCluster() {
           >
             <span aria-hidden className="flex h-5 items-center gap-1.5">
               <span className="flex size-5 items-center justify-center">
-                <img src={aws} alt="" />
+                <Icon name="AWS" width={20} height={20} />
               </span>
               <span className="flex size-5 items-center justify-center">
-                <img src={gcp} alt="" />
+                <Icon name="GCP" width={20} height={20} />
               </span>
               <span className="flex size-5 items-center justify-center">
-                <img src={scaleway} alt="" />
+                <Icon name="SCW" width={20} height={20} />
               </span>
             </span>
             <span className="flex min-h-[68px] flex-col gap-1">
@@ -83,7 +79,7 @@ export function OnboardingCluster() {
             className="h-auto flex-col items-start gap-3 px-4 pb-3 pt-4 text-left font-normal shadow-sm hover:border-brand-strong"
             onClick={() => selectClusterOption(false)}
           >
-            <img src={laptopCode} alt="" />
+            <Icon iconName="laptop-code" className="text-xl text-neutral-subtle" />
             <span className="flex min-h-[68px] flex-col gap-1">
               <span className="font-medium">I don’t have a cloud admin account</span>
               <span className="text-neutral-subtle">

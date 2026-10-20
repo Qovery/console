@@ -1,12 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useState } from 'react'
-import { getClusterSetupCommand } from '@qovery/domains/clusters/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { Button, Callout, CopyButton, ExternalLink, Heading, Icon, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle, useOS } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { useDemoClusterInstallation } from '../hooks/use-demo-cluster-installation/use-demo-cluster-installation'
+import { getClusterSetupCommand } from '../utils/cluster-setup-command'
 import { readPendingOnboarding } from '../utils/pending-onboarding'
 
 export function OnboardingDemoCluster() {
@@ -17,7 +17,7 @@ export function OnboardingDemoCluster() {
   const queryClient = useQueryClient()
   const [isContinuing, setIsContinuing] = useState(false)
   const os = useOS()
-  const command = getClusterSetupCommand(os, 'LOCAL_DEMO')
+  const command = getClusterSetupCommand(os)
   const [program, ...arguments_] = command.split(' ')
   const { readyCluster, isError } = useDemoClusterInstallation({ organizationId })
   const continueToPlatform = async () => {

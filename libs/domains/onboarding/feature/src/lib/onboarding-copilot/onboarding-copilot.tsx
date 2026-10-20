@@ -2,8 +2,7 @@ import posthog from 'posthog-js'
 import { useRef, useState } from 'react'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
-import { Button } from '@qovery/shared/ui'
-import qopilot from '../onboarding-cluster/assets/qopilot.svg'
+import { Button, Icon } from '@qovery/shared/ui'
 
 export function OnboardingCopilot() {
   const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
@@ -21,9 +20,7 @@ export function OnboardingCopilot() {
           posthog.capture('ai-copilot-opened', { trigger: 'onboarding-button-click' })
         }}
       >
-        <span className="relative size-3.5">
-          <img src={qopilot} alt="" className="absolute -left-px -top-px" />
-        </span>
+        <Icon iconName="sparkles" iconStyle="solid" className="text-sm text-brand" />
         Need help? Ask Qopilot
       </Button>
       <DevopsCopilotTrigger />

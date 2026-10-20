@@ -1,10 +1,16 @@
 import { Callout, CopyButton, ExternalLink, Icon } from '@qovery/shared/ui'
-import { useOS } from '@qovery/shared/util-hooks'
-import { getClusterSetupCommand } from '../utils/cluster-setup-command'
+import { type OS, useOS } from '@qovery/shared/util-hooks'
+
+const INSTALL_COMMANDS: Record<OS, string> = {
+  macos: 'brew install Qovery/qovery-cli/qovery-cli',
+  linux: 'curl -s https://get.qovery.com | bash',
+  windows: 'scoop bucket add qovery https://github.com/Qovery/scoop-qovery-cli.git && scoop install qovery-cli',
+}
 
 export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) {
   const os = useOS()
-  const fullCommand = getClusterSetupCommand(os, type)
+  const clusterCommand = type === 'LOCAL_DEMO' ? 'qovery demo up' : 'qovery cluster install'
+  const fullCommand = `${INSTALL_COMMANDS[os]} && ${clusterCommand}`
 
   return (
     <>
@@ -28,11 +34,7 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
             1. {type === 'LOCAL_DEMO' ? 'Install Qovery CLI and your cluster' : 'Install Qovery CLI and your cluster'}
           </h5>
           <p className="mb-2 font-normal text-neutral-subtle">
-            {os === 'windows'
-              ? type === 'LOCAL_DEMO'
-                ? 'Before running this in PowerShell, install a WSL 2 Linux distribution (such as Ubuntu) and set it as the default. Enable Docker Desktop’s WSL integration for that distribution in Settings > Resources > WSL Integration.'
-                : 'Run the following command in PowerShell to install the Qovery CLI and start the installation.'
-              : 'Run the following command from your terminal to install the Qovery CLI and start the installation.'}
+            Run the following command from your terminal to install the Qovery CLI and start the installation.
           </p>
           <pre className="flex items-start justify-between gap-2 whitespace-pre-wrap break-all rounded-sm bg-surface-neutral-subtle p-3 font-mono text-neutral">
             <span>
