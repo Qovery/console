@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-mcp-suggestion-feature',
   preset: '../../../../jest.preset.js',

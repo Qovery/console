@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-util-const',
   preset: '../../../jest.preset.js',

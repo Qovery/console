@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-interfaces',
   preset: '../../../jest.preset.js',

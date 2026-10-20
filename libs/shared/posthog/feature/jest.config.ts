@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-posthog-feature',
   preset: '../../../../jest.preset.js',

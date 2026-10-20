@@ -5,7 +5,6 @@ import { renderStreamingMessageWithMermaid } from '../streaming-mermaid-renderer
 import { MessageList } from './message-list'
 
 jest.mock('@qovery/shared/ui', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const React = require('react')
   return {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

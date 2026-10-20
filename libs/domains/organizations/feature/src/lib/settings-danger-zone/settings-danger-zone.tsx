@@ -74,7 +74,7 @@ export function SettingsDangerZone() {
       localStorage.removeItem('currentProjectId')
 
       if (remainingOrganizations.length === 0) {
-        await navigate({ to: '/onboarding/project' })
+        await navigate({ to: '/onboarding/profile', replace: true })
       } else {
         await navigate({
           to: '/organization/$organizationId/overview',

@@ -1,5 +1,3 @@
-/* eslint-disable */
-/* eslint-disable */
 module.exports = {
   displayName: 'shared-router',
   preset: '../../../jest.preset.js',
