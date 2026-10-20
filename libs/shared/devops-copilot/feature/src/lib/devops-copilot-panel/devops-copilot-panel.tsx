@@ -7,7 +7,7 @@ import { type CSSProperties, useCallback, useContext, useEffect, useRef, useStat
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useContextualDocLinks } from '@qovery/shared/assistant/feature'
 import { useQoveryContext } from '@qovery/shared/devops-copilot/context'
-import { Button, Callout, Icon } from '@qovery/shared/ui'
+import { Button, Callout, Icon, LoaderSpinner } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
@@ -91,7 +91,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isFinish, setIsFinish] = useState(false)
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
-  const { data: readOnlyData } = useAICopilotConfig({
+  const {
+    data: readOnlyData,
+    isError: isConfigError,
+    refetch: refetchConfig,
+  } = useAICopilotConfig({
     organizationId,
     enabled: isPanelActive,
   })
@@ -377,7 +381,26 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               setIsLoading={setIsLoading}
               setPlan={setPlan}
             />
-            {isCopilotEnabled ? (
+            {!organizationId || (!readOnlyData && !isConfigError) ? (
+              <div role="status" aria-label="Loading Copilot" className="flex grow items-center justify-center">
+                <LoaderSpinner />
+              </div>
+            ) : isConfigError && !readOnlyData ? (
+              <div className="flex grow items-center p-4">
+                <Callout.Root color="red" role="alert">
+                  <Callout.Icon>
+                    <Icon iconName="circle-exclamation" />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    <Callout.TextHeading>Unable to load Copilot</Callout.TextHeading>
+                    <Callout.TextDescription>Please try again.</Callout.TextDescription>
+                    <Button className="mt-3" variant="outline" onClick={() => refetchConfig()}>
+                      Retry
+                    </Button>
+                  </Callout.Text>
+                </Callout.Root>
+              </div>
+            ) : isCopilotEnabled ? (
               <div className="flex grow flex-col">
                 {!isReadOnly && (
                   <div className="animate-[fadein_0.22s_ease-in-out_forwards] px-4 pb-2 pt-4 opacity-0">
