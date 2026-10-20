@@ -23,7 +23,7 @@ export function UserMenu() {
     await authLogout()
   }
 
-  const displayName = `${user?.first_name} ${user?.last_name}`
+  const displayName = [user?.first_name, user?.last_name].filter(Boolean).join(' ') || userToken?.name || ''
   const initials = displayName
     .split(' ')
     .map((part) => part.charAt(0).toUpperCase())
@@ -36,7 +36,10 @@ export function UserMenu() {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button className="focus-visible:ring-brand ml-1 cursor-pointer select-none rounded-full bg-surface-neutral-component focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background-secondary">
+        <button
+          aria-label="User menu"
+          className="focus-visible:ring-brand ml-1 cursor-pointer select-none rounded-full bg-surface-neutral-component focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background-secondary"
+        >
           <Avatar
             src={userToken?.picture}
             className="h-7 w-7"

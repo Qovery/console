@@ -10,6 +10,7 @@ export function useModal() {
   const [modal, openModal] = useState<UseModalProps>()
   const { setOpenModal, setContentModal, setOptionsModal, enableAlertClickOutside } = useContext(ModalContext)
   const closeModal = useCallback(() => {
+    openModal(undefined)
     setOpenModal(false)
   }, [setOpenModal])
   const setModalDismissible = useCallback(
