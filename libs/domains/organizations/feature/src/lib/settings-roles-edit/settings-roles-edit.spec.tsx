@@ -110,6 +110,12 @@ describe('SettingsRolesEdit', () => {
 
 describe('SettingsRolesEdit helpers', () => {
   const customRole = customRolesMock(1)[0]
+  const noRemoteAccess = {
+    [EnvironmentModeEnum.DEVELOPMENT]: false,
+    [EnvironmentModeEnum.PREVIEW]: false,
+    [EnvironmentModeEnum.STAGING]: false,
+    [EnvironmentModeEnum.PRODUCTION]: false,
+  }
 
   it('should build default form values', () => {
     const result = resetForm(customRole)
@@ -127,6 +133,8 @@ describe('SettingsRolesEdit helpers', () => {
           [EnvironmentModeEnum.PRODUCTION]: OrganizationCustomRoleProjectPermission.NO_ACCESS,
         },
       },
+      shell_permissions: { [customRole.project_permissions?.[0].project_id ?? '']: noRemoteAccess },
+      port_forward_permissions: { [customRole.project_permissions?.[0].project_id ?? '']: noRemoteAccess },
       name: customRole.name,
       description: customRole.description ?? ' ',
     })
@@ -142,6 +150,8 @@ describe('SettingsRolesEdit helpers', () => {
     formData.cluster_permissions[clusterId] = OrganizationCustomRoleClusterPermission.ENV_CREATOR
     formData.project_permissions[projectId][EnvironmentModeEnum.DEVELOPMENT] =
       OrganizationCustomRoleProjectPermission.MANAGER
+    formData.shell_permissions[projectId][EnvironmentModeEnum.DEVELOPMENT] = true
+    formData.port_forward_permissions[projectId][EnvironmentModeEnum.PREVIEW] = true
 
     const result = handleSubmitRolesEdit(formData, customRole)
 
@@ -152,18 +162,26 @@ describe('SettingsRolesEdit helpers', () => {
       {
         environment_type: EnvironmentModeEnum.DEVELOPMENT,
         permission: OrganizationCustomRoleProjectPermission.MANAGER,
+        shell: true,
+        port_forward: false,
       },
       {
         environment_type: EnvironmentModeEnum.PREVIEW,
         permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+        shell: false,
+        port_forward: true,
       },
       {
         environment_type: EnvironmentModeEnum.STAGING,
         permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+        shell: false,
+        port_forward: false,
       },
       {
         environment_type: EnvironmentModeEnum.PRODUCTION,
         permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+        shell: false,
+        port_forward: false,
       },
     ])
   })
@@ -208,5 +226,33 @@ describe('SettingsRolesEdit helpers', () => {
     expect(getValue(OrganizationCustomRoleProjectPermission.NO_ACCESS, true)).toBe(
       OrganizationCustomRoleProjectPermission.MANAGER
     )
+  })
+})
+
+describe('SettingsRolesEdit remote access', () => {
+  it('should load shell and port-forward from the role', () => {
+    const customRole = customRolesMock(1)[0]
+    const projectId = customRole.project_permissions?.[0].project_id ?? ''
+    const role = {
+      ...customRole,
+      project_permissions: [
+        {
+          ...customRole.project_permissions?.[0],
+          permissions: [
+            {
+              environment_type: EnvironmentModeEnum.PRODUCTION,
+              permission: OrganizationCustomRoleProjectPermission.VIEWER,
+              shell: true,
+              port_forward: false,
+            },
+          ],
+        },
+      ],
+    }
+
+    const result = resetForm(role)
+
+    expect(result.shell_permissions[projectId]).toStrictEqual({ [EnvironmentModeEnum.PRODUCTION]: true })
+    expect(result.port_forward_permissions[projectId]).toStrictEqual({ [EnvironmentModeEnum.PRODUCTION]: false })
   })
 })

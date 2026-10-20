@@ -29,6 +29,14 @@ import { TerminalShellActionsAddon } from './terminal-shell-banner-addon'
 
 const MemoizedXTerm = memo(XTerm)
 
+// websocket-gateway closes the connection with this reason prefix when the permission check fails
+const PERMISSION_DENIED_PREFIX = 'Invalid permission: '
+
+export const isPermissionDenied = (closeReason: string) => closeReason.startsWith(PERMISSION_DENIED_PREFIX)
+
+export const permissionDeniedDescription = (closeReason: string) =>
+  closeReason.slice(PERMISSION_DENIED_PREFIX.length) || 'Your role does not allow opening a shell on this service.'
+
 const buildCommand = (...parts: Array<string | undefined>): string =>
   parts.filter((part): part is string => Boolean(part)).join(' ')
 
@@ -328,7 +336,19 @@ export function ServiceTerminal({
       </div>
       <div className="flex h-full flex-1 flex-col bg-background px-3 pt-5">
         <div ref={terminalContainerRef} className="relative min-h-0 flex-1">
-          {terminalLaunchError ? (
+          {terminalLaunchError && isPermissionDenied(terminalLaunchError) ? (
+            <EmptyState
+              icon="lock"
+              title="Permission denied"
+              description={permissionDeniedDescription(terminalLaunchError)}
+            >
+              <p className="text-xs text-neutral-subtle">Request ID: {requestId}</p>
+              {/* a role change only applies to new connections: retrying is how a granted access is picked up */}
+              <Button size="md" color="neutral" onClick={onRetryCliLaunch}>
+                Relaunch
+              </Button>
+            </EmptyState>
+          ) : terminalLaunchError ? (
             <EmptyState icon="terminal" title="Unable to launch CLI" description={terminalUnavailableDescription}>
               <p className="text-xs text-neutral-subtle">Request ID: {requestId}</p>
               <Button size="md" color="neutral" onClick={onRetryCliLaunch}>
