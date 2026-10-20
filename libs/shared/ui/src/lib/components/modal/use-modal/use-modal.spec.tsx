@@ -16,15 +16,26 @@ jest.mock('react', () => ({
 }))
 
 describe('useModal', () => {
-  it('does not reopen a closed modal when its effect reconnects', () => {
+  it('does not replay an opening request after the close icon dismisses the modal', () => {
     const { result, rerender } = renderHook(useModal)
     act(() => result.current.openModal({ content: <div>content</div> }))
-    act(() => result.current.closeModal())
+    // The close icon dismisses the provider without calling this hook’s closeModal.
+    act(() => mockSetOpenModal(false))
     const previousSetter = mockSetOpenModal
     mockSetOpenModal = jest.fn()
     rerender()
     expect(mockSetOpenModal).not.toHaveBeenCalledWith(true)
     mockSetOpenModal = previousSetter
+  })
+
+  it('can explicitly reopen the same modal after dismissal', () => {
+    const { result } = renderHook(useModal)
+    const modal = { content: <div>content</div> }
+    act(() => result.current.openModal(modal))
+    act(() => mockSetOpenModal(false))
+    mockSetOpenModal.mockClear()
+    act(() => result.current.openModal(modal))
+    expect(mockSetOpenModal).toHaveBeenCalledWith(true)
   })
 
   it('should render successfully', () => {

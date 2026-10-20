@@ -42,6 +42,8 @@ export function useModal() {
         setOptionsModal(defaultContext.optionsModal)
       }
       setContentModal(<>{modal.content}</>)
+      // Consume the request so dismissing through the provider cannot replay it later.
+      openModal(undefined)
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 
