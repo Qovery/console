@@ -15,7 +15,5 @@ module.exports = {
     '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
   },
   resetMocks: true,
-  // userEvent-heavy specs exceed the 5s default when the suite runs in parallel
-  testTimeout: 20000,
   ...nxPreset,
 }

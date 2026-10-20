@@ -16,7 +16,7 @@
     "build:console": "nx build console",
     "e2e:staging": "nx e2e console-e2e",
     "preview": "nx preview console",
-    "test": "nx run-many --all --target=test --parallel",
+    "test": "nx run-many --all --target=test --parallel=3 --maxWorkers=33%",
     "lint": "nx run-many --all --target=lint --parallel",
     "prepare": "husky install",
     "semantic-release": "semantic-release"
