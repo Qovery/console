@@ -88,25 +88,26 @@ export function VariablesActionToolbar({
             </DropdownMenu.Item>
           )}
 
-          <DropdownMenu.Item
-            icon={<Icon iconName="circle-info" iconStyle="regular" />}
-            onSelect={() => window.open('https://dashboard.doppler.com', '_blank', 'noopener,noreferrer')}
-          >
-            Import from Doppler
-            <Tooltip content="Documentation">
-              <a
-                className="ml-auto text-sm"
-                href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
-                aria-label="Doppler integration documentation"
-                target="_blank"
-                rel="noopener noreferrer"
-                // Only open the documentation, not the Doppler dashboard
-                onClick={(event) => event.stopPropagation()}
-              >
-                <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+          {/* Two sibling menu items: a link cannot contain another link */}
+          <div className="flex items-center gap-1">
+            <DropdownMenu.Item asChild className="flex-1" icon={<Icon iconName="circle-info" iconStyle="regular" />}>
+              <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
+                Import from Doppler
               </a>
+            </DropdownMenu.Item>
+            <Tooltip content="Documentation">
+              <DropdownMenu.Item asChild className="px-2">
+                <a
+                  href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
+                  aria-label="Doppler integration documentation"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                </a>
+              </DropdownMenu.Item>
             </Tooltip>
-          </DropdownMenu.Item>
+          </div>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 

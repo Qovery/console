@@ -26,10 +26,26 @@ describe('VariablesActionToolbar', () => {
 
     expect(menuItems[0]).toHaveTextContent('Import from .env file')
     expect(menuItems[1]).toHaveTextContent('Import from Doppler')
-    expect(screen.getByRole('link', { name: 'Doppler integration documentation' })).toHaveAttribute(
+  })
+
+  it('should render the doppler dashboard and documentation as separate links', async () => {
+    const { userEvent } = renderWithProviders(<VariablesActionToolbar {...props} />)
+
+    await userEvent.click(screen.getAllByRole('button')[0])
+
+    const dashboardLink = await screen.findByRole('menuitem', { name: 'Import from Doppler' })
+    const documentationLink = screen.getByRole('menuitem', { name: 'Doppler integration documentation' })
+
+    // Real anchors, so middle-click, modifier-click and "Open in new tab" work
+    expect(dashboardLink.tagName).toBe('A')
+    expect(dashboardLink).toHaveAttribute('href', 'https://dashboard.doppler.com')
+    expect(documentationLink.tagName).toBe('A')
+    expect(documentationLink).toHaveAttribute(
       'href',
       'https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler'
     )
+    // A link nested in another link is invalid HTML
+    expect(dashboardLink).not.toContainElement(documentationLink)
   })
 
   it('should call the env file import callback when selected from the dropdown', async () => {
