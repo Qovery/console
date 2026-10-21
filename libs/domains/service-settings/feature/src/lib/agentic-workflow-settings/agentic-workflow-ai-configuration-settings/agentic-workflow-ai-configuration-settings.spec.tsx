@@ -13,6 +13,11 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: () => ({ environmentId: 'environment-1', organizationId: 'organization-1' }),
 }))
 
+jest.mock('@qovery/domains/variables/feature', () => ({
+  ...jest.requireActual('@qovery/domains/variables/feature'),
+  useVariables: () => ({ data: [] }),
+}))
+
 const useLlmProviderModelsSpy = jest.spyOn(organizationsDomain, 'useLlmProviderModels') as jest.Mock
 
 const claudeProvider: LlmProviderResponse = {

@@ -1,6 +1,17 @@
+import { type ReactElement } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ChartContent, type ReferenceLineEvent } from './local-chart'
 import type { UnitType } from './tooltip'
+
+jest.mock('recharts', () => {
+  const { Children, cloneElement } = jest.requireActual('react')
+  return {
+    ...jest.requireActual('recharts'),
+    // jsdom has no layout, so render charts with a fixed size instead of measuring the container
+    ResponsiveContainer: ({ children }: { children: ReactElement<{ width?: number; height?: number }> }) =>
+      Children.map(children, (child: ReactElement) => cloneElement(child, { width: 800, height: 300 })),
+  }
+})
 
 jest.mock('../util-filter/dashboard-context', () => ({
   useDashboardContext: () => ({

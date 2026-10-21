@@ -26,6 +26,10 @@ describe('VariablesActionToolbar', () => {
 
     expect(menuItems[0]).toHaveTextContent('Import from .env file')
     expect(menuItems[1]).toHaveTextContent('Import from Doppler')
+    expect(screen.getByRole('link', { name: 'Doppler integration documentation' })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler'
+    )
   })
 
   it('should call the env file import callback when selected from the dropdown', async () => {

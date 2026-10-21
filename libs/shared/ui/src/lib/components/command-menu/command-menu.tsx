@@ -1,24 +1,45 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { Command as CmdK } from 'cmdk'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
 interface CommandDialogProps extends ComponentPropsWithoutRef<typeof CmdK.Dialog> {}
 
+// Same markup as `CmdK.Dialog`, plus a visually hidden `Dialog.Title` required by Radix for screen reader users
 const CommandDialog = forwardRef<ElementRef<typeof CmdK.Dialog>, CommandDialogProps>(function CommandDialog(
-  { className, ...props },
+  {
+    className,
+    open,
+    onOpenChange,
+    container,
+    overlayClassName = 'modal__overlay fixed w-full h-screen top-0 left-0 bg-background-overlay',
+    contentClassName = 'modal__content fixed top-[84px] left-1/2',
+    ...props
+  },
   ref
 ) {
   return (
-    <CmdK.Dialog
-      ref={ref}
-      contentClassName="modal__content fixed top-[84px] left-1/2"
-      overlayClassName="modal__overlay fixed w-full h-screen top-0 left-0 bg-background-overlay"
-      className={twMerge(
-        'mx-auto w-[640px] overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0_16px_70px_rgba(0,0,0,0.2)] transition-transform duration-100',
-        className
-      )}
-      {...props}
-    />
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Portal container={container}>
+        <Dialog.Overlay cmdk-overlay="" className={overlayClassName} />
+        <Dialog.Content
+          aria-label={props.label}
+          aria-describedby={undefined}
+          cmdk-dialog=""
+          className={contentClassName}
+        >
+          <Dialog.Title className="sr-only">{props.label}</Dialog.Title>
+          <CmdK
+            ref={ref}
+            className={twMerge(
+              'mx-auto w-[640px] overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0_16px_70px_rgba(0,0,0,0.2)] transition-transform duration-100',
+              className
+            )}
+            {...props}
+          />
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 })
 

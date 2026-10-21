@@ -1,4 +1,4 @@
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
 import ValuesOverrideYamlModal, { type ValuesOverrideYamlModalProps } from './values-override-yaml-modal'
 
@@ -37,13 +37,15 @@ describe('ValuesOverrideYamlModal', () => {
     })
   })
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(<ValuesOverrideYamlModal {...props} />)
     expect(baseElement).toBeTruthy()
+    await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
   })
 
-  it('should match snapshot', () => {
+  it('should match snapshot', async () => {
     const { baseElement } = renderWithProviders(<ValuesOverrideYamlModal {...props} />)
+    await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
     expect(baseElement).toMatchSnapshot()
   })
 })

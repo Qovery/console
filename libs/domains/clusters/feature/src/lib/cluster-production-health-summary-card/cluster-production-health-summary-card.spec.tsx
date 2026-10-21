@@ -59,7 +59,10 @@ describe('ClusterProductionHealthSummaryCard', () => {
   })
 
   afterEach(() => {
-    jest.runOnlyPendingTimers()
+    // The pending skeleton timeout updates the still mounted card
+    act(() => {
+      jest.runOnlyPendingTimers()
+    })
     jest.useRealTimers()
   })
 

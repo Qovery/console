@@ -1,6 +1,6 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { DatabaseResourcesSettings } from './database-resources-settings'
 
 jest.mock('@tanstack/react-router', () => ({
@@ -48,18 +48,19 @@ describe('DatabaseResourcesSettings', () => {
     mode: DatabaseModeEnum.MANAGED,
   }
 
-  it('should render managed callout and form controls', () => {
+  it('should render managed callout and form controls', async () => {
     renderWithProviders(<DatabaseResourcesSettings database={database} />)
 
     expect(screen.getByRole('heading', { name: 'Resources' })).toBeInTheDocument()
     expect(screen.getByText('Qovery manages this resource for you')).toBeInTheDocument()
     expect(screen.getByText('Resources configuration')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled())
   })
 
-  it('should render instance type field for managed database', () => {
+  it('should render instance type field for managed database', async () => {
     renderWithProviders(<DatabaseResourcesSettings database={database} />)
 
     expect(screen.getByLabelText('Instance type')).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled())
   })
 })

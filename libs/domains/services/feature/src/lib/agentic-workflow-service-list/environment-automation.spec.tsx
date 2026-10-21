@@ -13,31 +13,41 @@ let mockEnabled = true
 const environment = { id: 'env', cloud_provider: { provider: 'AWS' } } as Environment
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  Link: jest
-    .requireActual('react')
-    .forwardRef(
-      (
-        {
-          children,
-          to,
-          search,
-          params = {},
-          ...props
-        }: { children: ReactNode; to: string; search?: Record<string, string>; params?: Record<string, string> },
-        ref: React.Ref<HTMLAnchorElement>
-      ) => (
-        <a
-          ref={ref}
-          {...props}
-          href={
-            Object.entries(params).reduce((path, [key, value]) => path.replace(`$${key}`, value), to) +
-            (search ? '?' + new URLSearchParams(search).toString() : '')
-          }
-        >
-          {children}
-        </a>
-      )
-    ),
+  Link: jest.requireActual('react').forwardRef(
+    (
+      {
+        children,
+        to,
+        search,
+        params = {},
+        onClick,
+        ...props
+      }: {
+        children: ReactNode
+        to: string
+        search?: Record<string, string>
+        params?: Record<string, string>
+        onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+      },
+      ref: React.Ref<HTMLAnchorElement>
+    ) => (
+      <a
+        ref={ref}
+        {...props}
+        // Like the real router Link, prevent the browser navigation (not implemented in jsdom)
+        onClick={(event) => {
+          onClick?.(event)
+          event.preventDefault()
+        }}
+        href={
+          Object.entries(params).reduce((path, [key, value]) => path.replace(`$${key}`, value), to) +
+          (search ? '?' + new URLSearchParams(search).toString() : '')
+        }
+      >
+        {children}
+      </a>
+    )
+  ),
   useParams: () => ({ organizationId: 'org', projectId: 'project', environmentId: 'env' }),
   useNavigate: () => mockNavigate,
 }))

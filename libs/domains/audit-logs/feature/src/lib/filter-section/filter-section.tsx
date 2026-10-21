@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
 import { type AuditLogsParams } from '@qovery/shared/router'
-import { Button, Icon, type SelectedItem, type TableFilterProps, Truncate } from '@qovery/shared/ui'
+import { Button, Icon, type SelectedItem, type TableFilterProps, Truncate, buttonVariants } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { getTargetTypeLabel } from '../utils/target-type-selection-utils'
@@ -220,16 +220,17 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                     })
                   )}
                 >
-                  <Button
-                    variant="surface"
-                    color="neutral"
-                    size="xs"
-                    className={clsx('justify-center active:scale-[1]', {
-                      'rounded-l-full rounded-r-none border-r-0 pr-4': isFirst && !isLast,
-                      'rounded-full': isFirst && isLast,
-                      'rounded-l-none rounded-r-full border-l-0 pl-4': isLast && !isFirst,
-                      'rounded-none border-x-0 pl-4 pr-4': !isFirst && !isLast,
-                    })}
+                  {/* Styled as a button but rendered as a span: it contains the "Delete filter" button */}
+                  <span
+                    className={twMerge(
+                      buttonVariants({ variant: 'surface', color: 'neutral', size: 'xs' }),
+                      clsx('justify-center active:scale-[1]', {
+                        'rounded-l-full rounded-r-none border-r-0 pr-4': isFirst && !isLast,
+                        'rounded-full': isFirst && isLast,
+                        'rounded-l-none rounded-r-full border-l-0 pl-4': isLast && !isFirst,
+                        'rounded-none border-x-0 pl-4 pr-4': !isFirst && !isLast,
+                      })
+                    )}
                     style={
                       !isLast
                         ? { clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)' }
@@ -246,7 +247,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                         <Icon iconName="xmark" className="text-xs leading-4 text-neutral-subtle hover:text-neutral" />
                       )}
                     </button>
-                  </Button>
+                  </span>
                   {!isLast && (
                     <svg
                       className="pointer-events-none absolute right-0 top-0 h-6 w-[11px] text-neutral-subtle"

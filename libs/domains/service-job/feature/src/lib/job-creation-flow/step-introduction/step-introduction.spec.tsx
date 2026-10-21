@@ -10,6 +10,7 @@ jest.mock('@tanstack/react-router', () => ({
     projectId: 'proj-1',
     environmentId: 'env-1',
   }),
+  useNavigate: () => jest.fn(),
 }))
 
 describe('StepIntroduction', () => {

@@ -7,6 +7,12 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: () => ({ environmentId: '' }),
 }))
 
+jest.mock('@qovery/domains/variables/feature', () => ({
+  CodeEditorVariable: ({ value, onChange }: { value?: string; onChange?: (value?: string) => void }) => (
+    <textarea data-testid="code-editor-variable" value={value} onChange={(event) => onChange?.(event.target.value)} />
+  ),
+}))
+
 // https://github.com/suren-atoyan/monaco-react/issues/88
 // https://github.com/suren-atoyan/monaco-react/issues/88#issuecomment-887055307
 jest.mock('@monaco-editor/react', () => {

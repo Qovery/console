@@ -180,10 +180,12 @@ describe('CreateUpdateVariableModal', () => {
     })
   })
 
-  it('should not render the open editor button for aliases', () => {
+  it('should not render the open editor button for aliases', async () => {
     renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="ALIAS" variable={baseVariable} />)
 
     expect(screen.queryByRole('button', { name: /open editor/i })).not.toBeInTheDocument()
+    // Wait for the initial form validation to settle
+    await waitFor(() => expect(screen.getByRole('button', { name: /confirm/i })).toBeEnabled())
   })
 
   it('should open the fullscreen editor modal when clicking the button', async () => {

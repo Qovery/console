@@ -97,9 +97,11 @@ describe('SettingsGitRepositoryAccess', () => {
     jest.clearAllMocks()
   })
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(<SettingsGitRepositoryAccess />)
     expect(baseElement).toBeTruthy()
+    // The GitHub app installations are read from the token on mount
+    await waitFor(() => expect(jwtDecodeMock).toHaveBeenCalledWith('mock-token'))
   })
 
   it('should fetch token silently and then refetch auth provider at page init', async () => {

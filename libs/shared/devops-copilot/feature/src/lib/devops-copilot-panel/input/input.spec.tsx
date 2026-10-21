@@ -21,25 +21,28 @@ describe('Input', () => {
     expect(getByPlaceholderText('Ask Qovery Copilot')).toBeInTheDocument()
   })
 
-  it('should call onClick when button is clicked and not loading', () => {
-    const { getByRole } = renderWithProviders(<Input loading={false} onClick={mockOnClick} />, {
+  it('should call onClick when button is clicked and not loading', async () => {
+    const { getByRole, userEvent } = renderWithProviders(<Input loading={false} onClick={mockOnClick} />, {
       wrapper: TooltipWrapper,
     })
 
     const button = getByRole('button')
-    button.click()
+    await userEvent.click(button)
 
     expect(mockOnClick).toHaveBeenCalled()
     expect(mockStop).not.toHaveBeenCalled()
   })
 
-  it('should call stop when button is clicked and loading', () => {
-    const { getByRole } = renderWithProviders(<Input loading={true} onClick={mockOnClick} stop={mockStop} />, {
-      wrapper: TooltipWrapper,
-    })
+  it('should call stop when button is clicked and loading', async () => {
+    const { getByRole, userEvent } = renderWithProviders(
+      <Input loading={true} onClick={mockOnClick} stop={mockStop} />,
+      {
+        wrapper: TooltipWrapper,
+      }
+    )
 
     const button = getByRole('button')
-    button.click()
+    await userEvent.click(button)
 
     expect(mockStop).toHaveBeenCalled()
     expect(mockOnClick).not.toHaveBeenCalled()

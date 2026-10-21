@@ -340,7 +340,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class=""
                 >
                   <label
-                    class="input__label translate-y-[7px] text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm"
                     for="Service name"
                   >
                     Service name
@@ -373,7 +373,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class=""
                 >
                   <label
-                    class="input__label translate-y-[7px] text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm"
                     for="Service port"
                   >
                     Service port
@@ -504,7 +504,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class="pointer-events-none"
                 >
                   <label
-                    class="input__label translate-y-[7px] text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm"
                     for="External port"
                   >
                     External port
@@ -538,7 +538,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class=""
                 >
                   <label
-                    class="input__label translate-y-[7px] text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm"
                     for="Namespace (optional)"
                   >
                     Namespace (optional)
@@ -566,13 +566,13 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
               >
                 <div
                   aria-label="input-container"
-                  class="input group input--label-up"
+                  class="input group input--error input--label-up"
                 >
                   <div
                     class=""
                   >
                     <label
-                      class="input__label translate-y-[7px] text-sm !transition-none"
+                      class="input__label translate-y-[7px] text-sm"
                       for="Port name"
                     >
                       Port name
@@ -589,6 +589,11 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   </div>
                 </div>
               </div>
+              <p
+                class="mt-0.5 px-3 text-xs text-negative"
+              >
+                Name format is invalid. It should start with a lowercase letter and contain only lowercase letters, numbers, or hyphens (length: 1-37).
+              </p>
             </div>
             <p
               class="mb-5 ml-3 text-xs text-neutral-subtle"

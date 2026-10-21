@@ -48,7 +48,7 @@ describe('AdvancedSettings', () => {
     mockMutateEdit.mockClear()
   })
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(
       <AdvancedSettings
         service={mockApplication}
@@ -57,9 +57,10 @@ describe('AdvancedSettings', () => {
       />
     )
     expect(baseElement).toBeTruthy()
+    expect(await screen.findByText('deployment.custom_domain_check_enabled')).toBeInTheDocument()
   })
 
-  it('should have five textbox inputs', () => {
+  it('should have five textbox inputs', async () => {
     renderWithProviders(
       <AdvancedSettings
         service={mockApplication}
@@ -67,7 +68,7 @@ describe('AdvancedSettings', () => {
         defaultAdvancedSettings={defaultAdvancedSettings}
       />
     )
-    expect(screen.getAllByRole('textbox')).toHaveLength(5)
+    expect(await screen.findAllByRole('textbox')).toHaveLength(5)
   })
 
   it('should disable the form submit when required field is cleared', async () => {
@@ -155,7 +156,7 @@ describe('AdvancedSettings', () => {
     )
   })
 
-  it('should not display build.* keys in the table', () => {
+  it('should not display build.* keys in the table', async () => {
     const advancedSettingsWithBuild = {
       ...advancedSettings,
       'build.timeout_max_sec': 1800,
@@ -178,10 +179,10 @@ describe('AdvancedSettings', () => {
     expect(screen.queryByText('build.timeout_max_sec')).not.toBeInTheDocument()
     expect(screen.queryByText('build.cpu_max_in_milli')).not.toBeInTheDocument()
     expect(screen.queryByText('build.ram_max_in_gib')).not.toBeInTheDocument()
-    expect(screen.getByText('deployment.custom_domain_check_enabled')).toBeInTheDocument()
+    expect(await screen.findByText('deployment.custom_domain_check_enabled')).toBeInTheDocument()
   })
 
-  it('should still display build.* keys for Container services', () => {
+  it('should still display build.* keys for Container services', async () => {
     const advancedSettingsWithBuild = {
       ...advancedSettings,
       'build.timeout_max_sec': 1800,
@@ -197,7 +198,7 @@ describe('AdvancedSettings', () => {
         defaultAdvancedSettings={defaultAdvancedSettingsWithBuild}
       />
     )
-    expect(screen.getByText('build.timeout_max_sec')).toBeInTheDocument()
+    expect(await screen.findByText('build.timeout_max_sec')).toBeInTheDocument()
   })
 
   it('should hide the sticky toaster after a successful submit', async () => {

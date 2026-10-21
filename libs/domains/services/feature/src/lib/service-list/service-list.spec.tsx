@@ -374,15 +374,22 @@ jest.mock('../hooks/use-service-type/use-service-type', () => ({
   }),
 }))
 
-jest.mock('../hooks/use-links/use-links', () => ({
-  useLinks: () => ({
+jest.mock('../hooks/use-environment-links/use-environment-links', () => ({
+  useEnvironmentLinks: () => ({
     data: [
       {
         url: 'https://qovery.com',
         internal_port: 8080,
+        service_id: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
+        is_default: true,
+        is_qovery_domain: true,
       },
     ],
   }),
+}))
+
+jest.mock('../service-actions/service-actions', () => ({
+  ServiceActions: ({ serviceId }: { serviceId: string }) => <div>Actions for {serviceId}</div>,
 }))
 
 const mockNavigate = jest.fn()

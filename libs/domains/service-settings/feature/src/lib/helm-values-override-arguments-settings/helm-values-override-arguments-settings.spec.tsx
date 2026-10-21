@@ -2,7 +2,7 @@ import { type ReactNode } from 'react'
 import * as servicesDomain from '@qovery/domains/services/feature'
 import { helmFactoryMock } from '@qovery/shared/factories'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { HelmValuesOverrideArgumentsSettings } from './helm-values-override-arguments-settings'
 
 const useServiceSpy = jest.spyOn(servicesDomain, 'useService') as jest.Mock
@@ -92,7 +92,7 @@ describe('HelmValuesOverrideArgumentsSettings', () => {
     })
   })
 
-  it('prefills argument overrides from the Helm service', () => {
+  it('prefills argument overrides from the Helm service', async () => {
     const service = makeHelmService()
     service.values_override = {
       set: [['replicaCount', '1']],
@@ -109,6 +109,7 @@ describe('HelmValuesOverrideArgumentsSettings', () => {
     expect(screen.getByTestId('arguments-value')).toHaveTextContent('"key":"replicaCount"')
     expect(screen.getByTestId('arguments-value')).toHaveTextContent('"type":"--set-string"')
     expect(screen.getByTestId('arguments-value')).toHaveTextContent('"json":"{\\"enabled\\":true}"')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled())
   })
 
   it('submits mixed argument overrides while preserving file overrides', async () => {

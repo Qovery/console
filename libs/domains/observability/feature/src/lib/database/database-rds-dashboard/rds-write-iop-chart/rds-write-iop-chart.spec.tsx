@@ -1,3 +1,4 @@
+import { type ReactElement } from 'react'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { RdsWriteIopChart } from './rds-write-iop-chart'
 
@@ -12,6 +13,20 @@ jest.mock('@tanstack/react-router', () => ({
 
 jest.mock('../../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
+}))
+
+jest.mock('recharts', () => {
+  const { Children, cloneElement } = jest.requireActual('react')
+  return {
+    ...jest.requireActual('recharts'),
+    // jsdom has no layout, so render charts with a fixed size instead of measuring the container
+    ResponsiveContainer: ({ children }: { children: ReactElement<{ width?: number; height?: number }> }) =>
+      Children.map(children, (child: ReactElement) => cloneElement(child, { width: 800, height: 300 })),
+  }
+})
+
+jest.mock('../../../hooks/use-events/use-events', () => ({
+  useEvents: () => ({ data: [] }),
 }))
 
 jest.mock('../../../hooks/use-metrics/use-metrics', () => ({

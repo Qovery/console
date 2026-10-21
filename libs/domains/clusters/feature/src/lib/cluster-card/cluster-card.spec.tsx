@@ -6,15 +6,37 @@ import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-stat
 import { ClusterCard } from './cluster-card'
 
 jest.mock('../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket')
-jest.mock('@tanstack/react-router', () => ({
-  ...jest.requireActual('@tanstack/react-router'),
-  useNavigate: () => jest.fn(),
-  useLocation: () => ({ pathname: '/', search: '' }),
-  useRouter: () => ({
-    buildLocation: () => ({ href: '/' }),
-  }),
-  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
-}))
+jest.mock('@tanstack/react-router', () => {
+  // Fill in the route params like the router does, so assertions can check the destination
+  const buildHref = (to: string, params: Record<string, string> = {}) =>
+    Object.entries(params).reduce((path, [key, value]) => path.replace(`$${key}`, value), to)
+
+  return {
+    ...jest.requireActual('@tanstack/react-router'),
+    useNavigate: () => jest.fn(),
+    useLocation: () => ({ pathname: '/', search: '' }),
+    useRouter: () => ({
+      buildLocation: ({ to, params }: { to: string; params: Record<string, string> }) => ({
+        href: buildHref(to, params),
+      }),
+    }),
+    Link: ({
+      children,
+      to,
+      params,
+      ...props
+    }: {
+      children?: ReactNode
+      to: string
+      params?: Record<string, string>
+      [key: string]: unknown
+    }) => (
+      <a href={buildHref(to, params)} {...props}>
+        {children}
+      </a>
+    ),
+  }
+})
 jest.mock('@qovery/shared/util-dates', () => ({
   timeAgo: jest.fn(),
   dateFullFormat: jest.fn(),
@@ -212,8 +234,18 @@ describe('ClusterCard', () => {
       />
     )
 
-    const link = screen.getByText('Invalid cloud credentials')
-    expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/deployments')
+    const link = screen.getByRole('link', { name: 'Invalid cloud credentials' })
+    expect(link).toHaveAttribute('href', '/organization/org-id/cluster/cluster-id/deployments')
+    // A link nested in another link is invalid HTML
+    expect(link.parentElement?.closest('a')).toBeNull()
+  })
+
+  it('should link the cluster name to the overview', () => {
+    renderWithProviders(<ClusterCard cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />)
+
+    expect(screen.getByRole('link', { name: 'Test Cluster' })).toHaveAttribute(
+      'href',
+      '/organization/org-id/cluster/cluster-id/overview'
+    )
   })
 })

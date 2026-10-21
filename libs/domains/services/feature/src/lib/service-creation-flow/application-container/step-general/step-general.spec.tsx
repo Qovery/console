@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ApplicationContainerCreationFlow } from '../application-container-creation-flow'
 import { ApplicationContainerStepGeneral } from './step-general'
 
@@ -42,12 +42,16 @@ const defaultSlotProps = {
   onSubmit: mockOnSubmit,
 }
 
-function renderStepGeneral() {
-  return renderWithProviders(
+async function renderStepGeneral() {
+  const result = renderWithProviders(
     <ApplicationContainerCreationFlow creationFlowUrl="/create/container" defaultServiceType="CONTAINER">
       <ApplicationContainerStepGeneral {...defaultSlotProps} />
     </ApplicationContainerCreationFlow>
   )
+  // The form validates asynchronously on mount without changing what is rendered (Continue stays disabled),
+  // so there is nothing to wait for: flush the validation instead
+  await act(async () => undefined)
+  return result
 }
 
 describe('ApplicationContainerStepGeneral', () => {
@@ -55,33 +59,33 @@ describe('ApplicationContainerStepGeneral', () => {
     mockOnSubmit.mockClear()
   })
 
-  it('should render General information section and form', () => {
-    renderStepGeneral()
+  it('should render General information section and form', async () => {
+    await renderStepGeneral()
     expect(screen.getByRole('heading', { name: 'General information' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'General' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Source' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument()
   })
 
-  it('should show Application source select with Git provider and Container options', () => {
-    renderStepGeneral()
+  it('should show Application source select with Git provider and Container options', async () => {
+    await renderStepGeneral()
     expect(screen.getByLabelText('Application source')).toBeInTheDocument()
     expect(screen.getByTestId('container-settings')).toBeInTheDocument()
   })
 
-  it('should show container settings when Container is selected', () => {
-    renderStepGeneral()
+  it('should show container settings when Container is selected', async () => {
+    await renderStepGeneral()
     expect(screen.getByTestId('container-settings')).toBeVisible()
     expect(screen.queryByTestId('git-settings')).not.toBeInTheDocument()
   })
 
-  it('should show Extra labels/annotations collapsible section', () => {
-    renderStepGeneral()
+  it('should show Extra labels/annotations collapsible section', async () => {
+    await renderStepGeneral()
     expect(screen.getByRole('heading', { name: 'Extra labels/annotations' })).toBeInTheDocument()
   })
 
   it('should render Continue button and call onSubmit when clicked with valid form', async () => {
-    renderStepGeneral()
+    await renderStepGeneral()
     const continueButton = screen.getByRole('button', { name: 'Continue' })
     expect(continueButton).toBeInTheDocument()
     expect(continueButton).toBeDisabled()

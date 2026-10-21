@@ -192,7 +192,7 @@ export const ChartContent = memo(function ChartContent({
                 }
               />
             ) : !onHoverHideTooltip ? (
-              <div />
+              () => <div />
             ) : (
               <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />
             )
