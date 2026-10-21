@@ -7,7 +7,6 @@ import { Button, RadioGroup } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useChangePlan } from '../../hooks/use-change-plan/use-change-plan'
 
-// All 2026 plans and Enterprise 2025 are selectable
 const SELECTABLE_PLANS: PlanEnum[] = [
   PlanEnum.STARTER_2026,
   PlanEnum.GROWTH_2026,

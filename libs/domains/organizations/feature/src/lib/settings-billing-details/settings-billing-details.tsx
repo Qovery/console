@@ -74,8 +74,6 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
   // Add + 1 because Chargebee return 0 when the trial is ending today
   const remainingTrialDays = (currentCost?.remaining_trial_day ?? 0) + 1
   const remainingTrialDaysLabel = `${remainingTrialDays} ${pluralize(remainingTrialDays, 'day')}`
-  // During the free trial, adding the first credit card activates the plan chosen by the user.
-  // The plan can be switched until the end of the trial, the subscription then starts on the selected plan.
   const isActivatingPlan = isInActiveFreeTrial && creditCards.length === 0
   const canSwitchPlan = isInActiveFreeTrial && creditCards.length > 0
 

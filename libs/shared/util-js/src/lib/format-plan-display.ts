@@ -21,7 +21,6 @@ export function is2025Plan(plan?: string): boolean {
 export function formatPlanName(plan?: string): string {
   if (!plan) return 'N/A'
 
-  // Remove _2025 / _2026 suffix if present
   const planWithoutSuffix = plan.replace(/_202[56]$/i, '')
 
   return planWithoutSuffix.charAt(0).toUpperCase() + planWithoutSuffix.slice(1).toLowerCase()
