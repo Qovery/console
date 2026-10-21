@@ -11,7 +11,10 @@ jest.mock('@tanstack/react-router', () => ({
   useNavigate: () => jest.fn(),
   useLocation: () => ({ pathname: '/', search: '' }),
   useRouter: () => ({
-    buildLocation: () => ({ href: '/' }),
+    // Fill in the route params so assertions can check the destination
+    buildLocation: ({ to, params }: { to: string; params: Record<string, string> }) => ({
+      href: Object.entries(params).reduce((path, [key, value]) => path.replace(`$${key}`, value), to),
+    }),
   }),
   Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
@@ -221,6 +224,9 @@ describe('ClusterCard', () => {
   it('should link the cluster name to the overview', () => {
     renderWithProviders(<ClusterCard cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />)
 
-    expect(screen.getByText('Test Cluster').closest('a')).toHaveAttribute('to', '/')
+    expect(screen.getByText('Test Cluster').closest('a')).toHaveAttribute(
+      'to',
+      '/organization/org-id/cluster/cluster-id/overview'
+    )
   })
 })
