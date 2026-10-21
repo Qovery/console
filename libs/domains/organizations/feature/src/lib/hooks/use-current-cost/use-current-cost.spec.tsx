@@ -16,6 +16,8 @@ const serializedErrorWithStatus = (status: number) => ({
 
 // React Query logs every failed fetch: capture those logs to assert on the expected errors
 const queryLogger = { log: console.log, warn: console.warn, error: jest.fn() }
+// The logger also receives React Query's deprecation notice for custom loggers (a string): keep the fetch errors only
+const loggedFetchErrors = () => queryLogger.error.mock.calls.flat().filter((log) => typeof log !== 'string')
 
 describe('useCurrentCost', () => {
   let queryClient: QueryClient
@@ -91,7 +93,10 @@ describe('useCurrentCost', () => {
     })
 
     await waitFor(() => expect(mockAxiosRequest).toHaveBeenCalledTimes(6))
-    expect(queryLogger.error).toHaveBeenCalledWith(serializedErrorWithStatus(500))
+    // One log per failed fetch: the initial one, then the refetch
+    await waitFor(() =>
+      expect(loggedFetchErrors()).toEqual([serializedErrorWithStatus(500), serializedErrorWithStatus(500)])
+    )
   })
 
   it('refetches other errors on remount', async () => {
@@ -107,6 +112,9 @@ describe('useCurrentCost', () => {
     renderHook(() => useCurrentCost({ organizationId: 'org-1' }), { wrapper })
 
     await waitFor(() => expect(mockAxiosRequest).toHaveBeenCalledTimes(6))
-    expect(queryLogger.error).toHaveBeenCalledWith(serializedErrorWithStatus(500))
+    // One log per failed fetch: the initial one, then the refetch
+    await waitFor(() =>
+      expect(loggedFetchErrors()).toEqual([serializedErrorWithStatus(500), serializedErrorWithStatus(500)])
+    )
   })
 })

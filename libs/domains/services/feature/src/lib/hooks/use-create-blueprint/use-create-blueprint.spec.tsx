@@ -8,8 +8,12 @@ import { useCreateBlueprint } from './use-create-blueprint'
 // The generated client dispatches every call through `axios.request`
 const mockAxiosRequest = jest.spyOn(axios, 'request')
 
+// React Query logs every failed mutation: capture those logs to assert on the expected errors
+const queryLogger = { log: console.log, warn: console.warn, error: jest.fn() }
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
+    logger: queryLogger,
     defaultOptions: {
       queries: {
         retry: false,
@@ -72,8 +76,6 @@ describe('useCreateBlueprint', () => {
   it('should surface a rejected dispatch to the caller', async () => {
     const error = new Error('A service with this name already exists')
     mockAxiosRequest.mockRejectedValue(error)
-    // React Query logs failed mutations through console.error
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
     const { result } = renderHook(() => useCreateBlueprint(), { wrapper: createWrapper() })
 
@@ -83,7 +85,6 @@ describe('useCreateBlueprint', () => {
       )
     })
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(error)
-    consoleErrorSpy.mockRestore()
+    expect(queryLogger.error).toHaveBeenCalledWith(error)
   })
 })

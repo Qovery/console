@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ApplicationContainerCreationFlow } from '../application-container-creation-flow'
 import { ApplicationContainerStepGeneral } from './step-general'
 
@@ -48,8 +48,9 @@ async function renderStepGeneral() {
       <ApplicationContainerStepGeneral {...defaultSlotProps} />
     </ApplicationContainerCreationFlow>
   )
-  // Wait for the initial async form validation to settle
-  await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled())
+  // The form validates asynchronously on mount without changing what is rendered (Continue stays disabled),
+  // so there is nothing to wait for: flush the validation instead
+  await act(async () => undefined)
   return result
 }
 
