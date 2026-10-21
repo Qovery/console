@@ -95,7 +95,7 @@ const WebhookList = ({ organizationId }: { organizationId: string }) => {
               className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
             >
               <div className="flex flex-col">
-                <p className="mb-1 flex text-xs font-medium text-neutral">
+                <div className="mb-1 flex text-xs font-medium text-neutral">
                   <Truncate truncateLimit={58} text={webhook.target_url || ''} />
                   {webhook.description && (
                     <Tooltip content={webhook.description}>
@@ -104,7 +104,7 @@ const WebhookList = ({ organizationId }: { organizationId: string }) => {
                       </div>
                     </Tooltip>
                   )}
-                </p>
+                </div>
                 <div className="flex gap-3 text-xs text-neutral-subtle">
                   <span className="flex gap-2">
                     <Icon

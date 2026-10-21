@@ -12,6 +12,7 @@ jest.mock('@tanstack/react-router', () => ({
     slug: 'application',
   }),
   useSearch: () => ({}),
+  useNavigate: () => jest.fn(),
 }))
 
 jest.mock('@qovery/shared/ui', () => ({

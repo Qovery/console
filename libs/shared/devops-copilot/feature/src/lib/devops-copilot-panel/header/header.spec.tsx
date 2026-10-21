@@ -18,6 +18,11 @@ jest.mock('@qovery/shared/ui', () => {
     Button: ({
       children,
       onClick,
+      // Styling props of the real Button that must not reach the DOM
+      iconOnly: _iconOnly,
+      variant: _variant,
+      color: _color,
+      size: _size,
       ...props
     }: {
       children?: ReactNode

@@ -109,7 +109,11 @@ function ProviderSection({
   )
 }
 
-export function ClusterAdd() {
+export interface ClusterAddProps {
+  hideDemo?: boolean
+}
+
+export function ClusterAdd({ hideDemo = false }: ClusterAddProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { showPylonForm } = useSupportChat()
@@ -222,12 +226,14 @@ export function ClusterAdd() {
         title="Connect existing cluster (BYOK)"
         description="Install the Qovery Operator on a cluster you already run"
       >
-        <ProviderCard
-          title="Local machine (Demo)"
-          icon={Kubernetes}
-          onClick={() => openInstallationGuideModal({ isDemo: true })}
-          analytics={{ selectedCloudProvider: 'OTHER', selectedInstallationType: 'demo' }}
-        />
+        {!hideDemo && (
+          <ProviderCard
+            title="Local machine (Demo)"
+            icon={Kubernetes}
+            onClick={() => openInstallationGuideModal({ isDemo: true })}
+            analytics={{ selectedCloudProvider: 'OTHER', selectedInstallationType: 'demo' }}
+          />
+        )}
         <ProviderCard
           title="AWS"
           icon={<Icon name="AWS" />}

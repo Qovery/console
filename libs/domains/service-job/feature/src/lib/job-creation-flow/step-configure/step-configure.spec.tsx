@@ -20,13 +20,14 @@ describe('Configure', () => {
     mockPathname = '/'
   })
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(
       <JobCreationFlow creationFlowUrl={mockPathname}>
         <StepConfigure />
       </JobCreationFlow>
     )
     expect(baseElement).toBeTruthy()
+    expect(await screen.findByRole('button', { name: /Continue/i })).toBeInTheDocument()
   })
 
   it('for a cron job, with these defaultValues submit button should be enabled', async () => {
@@ -58,7 +59,7 @@ describe('Configure', () => {
   })
 
   it('for a lifecycle job, should have at least one of three event check to be valid', async () => {
-    renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <JobCreationFlow creationFlowUrl={mockPathname}>
         <StepConfigure />
       </JobCreationFlow>
@@ -68,7 +69,7 @@ describe('Configure', () => {
     expect(submitButton).toBeInTheDocument()
 
     const checkbox = screen.getByLabelText('Deploy')
-    checkbox.click()
+    await userEvent.click(checkbox)
 
     await waitFor(() => {
       expect(submitButton).toBeEnabled()

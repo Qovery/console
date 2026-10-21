@@ -1,5 +1,5 @@
 import { toast as sonnerToast } from 'sonner'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { toast } from '../../utils/toast'
 import ToastBehavior from './toast'
 
@@ -93,7 +93,6 @@ describe('Toast', () => {
     const closeButton = await screen.findByRole('button', { name: 'Close toast' })
     await userEvent.click(closeButton)
 
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    expect(screen.queryByText('my-title')).not.toBeInTheDocument()
+    await waitFor(() => expect(screen.queryByText('my-title')).not.toBeInTheDocument())
   })
 })

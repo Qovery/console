@@ -81,6 +81,9 @@ jest.mock('../hooks/use-pre-check-logs/use-pre-check-logs', () => {
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+  useRouter: () => ({
+    history: { back: jest.fn() },
+  }),
   useParams: () => ({
     organizationId: '0',
     projectId: '1',

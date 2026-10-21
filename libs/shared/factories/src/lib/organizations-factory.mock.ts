@@ -128,18 +128,26 @@ export const customRolesMock = (howMany: number): OrganizationCustomRole[] =>
           {
             environment_type: EnvironmentModeEnum.DEVELOPMENT,
             permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+            shell: false,
+            port_forward: false,
           },
           {
             environment_type: EnvironmentModeEnum.PREVIEW,
             permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+            shell: false,
+            port_forward: false,
           },
           {
             environment_type: EnvironmentModeEnum.STAGING,
             permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+            shell: false,
+            port_forward: false,
           },
           {
             environment_type: EnvironmentModeEnum.PRODUCTION,
             permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+            shell: false,
+            port_forward: false,
           },
         ],
       },

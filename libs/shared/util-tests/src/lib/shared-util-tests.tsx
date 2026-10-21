@@ -27,6 +27,21 @@ const allQueries = {
 const customScreen = { ...screen, ...within(document.body, allQueries) }
 const customWithin = (element: HTMLElement) => within(element, allQueries)
 
+// Same check as @testing-library/dom: legacy fake timers mock setTimeout, modern ones expose a `clock`
+const fakeTimersAreEnabled = () =>
+  (setTimeout as unknown as { _isMockFunction?: boolean })._isMockFunction === true ||
+  Object.prototype.hasOwnProperty.call(setTimeout, 'clock')
+
+/**
+ * userEvent calls this after every keystroke and pointer action. With real timers,
+ * `jest.advanceTimersByTime` logs a warning with a stack trace on each call, so only call it with fake timers
+ */
+const advanceTimers = (delay: number) => {
+  if (fakeTimersAreEnabled()) {
+    jest.advanceTimersByTime(delay)
+  }
+}
+
 /**
  * Custom testing-library/react render function providing by default
  * all providers and setting up userEvent
@@ -36,7 +51,7 @@ function renderWithProviders(
   { ...renderOptions }: RenderOptions = {}
 ): { userEvent: ReturnType<typeof userEvent.setup> } & ReturnType<typeof render> {
   function Wrapper({ children }: PropsWithChildren) {
-    const queryClient = new QueryClient()
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
     const FlatChainedProviders = useChainProviders()
       .add(Auth0Provider, { clientId: '__test_client_id__', domain: '__test_domain__' })
       .add(QueryClientProvider, { client: queryClient })
@@ -54,7 +69,7 @@ function renderWithProviders(
   window.ResizeObserver = ResizeObserver
 
   return {
-    userEvent: userEvent.setup({ advanceTimers: jest.advanceTimersByTime.bind(jest) }),
+    userEvent: userEvent.setup({ advanceTimers }),
     ...render(ui, { wrapper: Wrapper, ...renderOptions }),
   }
 }

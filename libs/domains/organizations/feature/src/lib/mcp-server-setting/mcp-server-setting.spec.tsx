@@ -2,7 +2,7 @@ import { type McpServerResponse } from 'qovery-typescript-axios'
 import { type ReactElement } from 'react'
 import selectEvent from 'react-select-event'
 import * as sharedUi from '@qovery/shared/ui'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { type McpServerCreateEditModalProps } from '../mcp-server-create-edit-modal/mcp-server-create-edit-modal'
 import { McpServerSetting } from './mcp-server-setting'
 
@@ -25,19 +25,20 @@ describe('McpServerSetting', () => {
     useModalMock.mockReturnValue({ openModal, closeModal })
   })
 
-  it('should create an organization MCP and select it', () => {
+  it('should create an organization MCP and select it', async () => {
     const onChange = jest.fn()
-    renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <McpServerSetting mcpServers={[]} organizationId="organization-1" value={[]} onChange={onChange} />
     )
 
     selectEvent.openMenu(screen.getByLabelText('Organization MCPs'))
-    screen.getByTestId('input-menu-list-button').click()
+    await userEvent.click(screen.getByTestId('input-menu-list-button'))
 
     expect(openModal).toHaveBeenCalledWith(expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
 
     const modal = openModal.mock.calls[0][0].content as ReactElement<McpServerCreateEditModalProps>
-    modal.props.onClose(mcpServer)
+    // The modal is mocked: simulate its closing with the created MCP server
+    act(() => modal.props.onClose(mcpServer))
 
     expect(onChange).toHaveBeenCalledWith(['mcp-1'])
     expect(closeModal).toHaveBeenCalled()

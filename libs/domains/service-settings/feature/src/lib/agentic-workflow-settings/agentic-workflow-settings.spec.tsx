@@ -29,6 +29,11 @@ jest.mock('@tanstack/react-router', () => ({
   }),
 }))
 
+jest.mock('@qovery/domains/variables/feature', () => ({
+  ...jest.requireActual('@qovery/domains/variables/feature'),
+  useVariables: () => ({ data: [] }),
+}))
+
 jest.mock('@qovery/domains/services/feature', () => ({
   ...jest.requireActual('@qovery/domains/services/feature'),
   AgenticWorkflowCodeEditorField: ({

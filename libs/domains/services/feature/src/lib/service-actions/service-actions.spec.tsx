@@ -167,7 +167,8 @@ describe('ServiceActions', () => {
     expect(screen.getByText('Environment ID')).toBeInTheDocument()
     expect(screen.getByText('Service ID')).toBeInTheDocument()
 
-    screen.getByRole('menuitem', { name: /service id/i }).focus()
+    await userEvent.keyboard('{ArrowRight}{End}')
+    expect(screen.getByRole('menuitem', { name: /service id/i })).toHaveFocus()
     await userEvent.keyboard('{Enter}')
 
     expect(mockCopyToClipboard).toHaveBeenCalledWith(mockService.id)

@@ -15,8 +15,8 @@ export interface PendingOnboarding {
 
 const storageKey = (userId: string) => `onboarding-pending:${userId}`
 
-// Keep successful creation IDs across reloads until navigation completes. The
-// authenticated subject scopes recovery to this account in this browser session.
+// Keep successful creation IDs across reloads and browser Back after onboarding.
+// The authenticated subject scopes recovery to this account in this browser session.
 export function readPendingOnboarding(userId?: string): PendingOnboarding | undefined {
   if (!userId) return
   try {

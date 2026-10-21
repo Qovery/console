@@ -261,10 +261,10 @@ exports[`InstanceMetrics should match snapshot with empty data 1`] = `
       <p
         class="font-medium"
       >
-        Service is not running
+        Application is not running
       </p>
       <p>
-        Deploy the service first
+        Deploy the application first
       </p>
     </div>
   </div>
@@ -309,10 +309,10 @@ exports[`InstanceMetrics should match snapshot with null data 1`] = `
       <p
         class="font-medium"
       >
-        Service is not running
+        Application is not running
       </p>
       <p>
-        Deploy the service first
+        Deploy the application first
       </p>
     </div>
   </div>

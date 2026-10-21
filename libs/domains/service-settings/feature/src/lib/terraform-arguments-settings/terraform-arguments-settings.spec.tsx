@@ -2,7 +2,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { type ReactNode } from 'react'
 import * as servicesDomain from '@qovery/domains/services/feature'
 import { terraformFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { TerraformArgumentsSettings } from './terraform-arguments-settings'
 
 const useServiceSpy = jest.spyOn(servicesDomain, 'useService') as jest.Mock
@@ -56,9 +56,10 @@ describe('PageSettingsTerraformArgumentsFeature', () => {
     })
   })
 
-  it('should render', () => {
+  it('should render', async () => {
     const { baseElement } = renderWithProviders(wrapWithReactHookForm(<TerraformArgumentsSettings />))
     expect(baseElement).toBeTruthy()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled())
   })
 
   it('should correctly submit the form', async () => {
@@ -104,12 +105,13 @@ describe('PageSettingsTerraformArgumentsFeature', () => {
     })
   })
 
-  it('should render variable interpolation wand button for each command', () => {
+  it('should render variable interpolation wand button for each command', async () => {
     renderWithProviders(wrapWithReactHookForm(<TerraformArgumentsSettings />))
 
     // Check that the wand button appears for each terraform command
     const wandButtons = screen.getAllByTestId('dropdown-variable')
     expect(wandButtons).toHaveLength(5) // init, validate, plan, apply, destroy
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled())
   })
 
   it('should add variable interpolation to empty input when wand is clicked', async () => {

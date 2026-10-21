@@ -7,6 +7,11 @@ import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-sett
 import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings-test-utils'
 import { AgenticWorkflowConnectionsSettings } from './agentic-workflow-connections-settings'
 
+jest.mock('@qovery/domains/organizations/feature', () => ({
+  ...jest.requireActual('@qovery/domains/organizations/feature'),
+  GitProviderSetting: () => <div>Git provider</div>,
+}))
+
 const useMcpServersSpy = jest.spyOn(organizationsDomain, 'useMcpServers') as jest.Mock
 const useCreateQoveryMcpServerSpy = jest.spyOn(organizationsDomain, 'useCreateQoveryMcpServer') as jest.Mock
 const useContextServicesSpy = jest.spyOn(servicesDomain, 'useAgenticWorkflowContextServices') as jest.Mock

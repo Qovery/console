@@ -1,6 +1,17 @@
 import { type ReactNode } from 'react'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import ListServiceLogs from './list-service-logs'
+
+const mockApplication = applicationFactoryMock(1)[0]
+
+jest.mock('@qovery/domains/services/feature', () => ({
+  ...jest.requireActual('@qovery/domains/services/feature'),
+  useService: () => ({ data: mockApplication }),
+  useRunningStatus: () => ({ data: { pods: [] } }),
+  useLinks: () => ({ data: [] }),
+  useDeploymentStatus: () => ({ data: { state: 'DEPLOYED' } }),
+}))
 
 window.HTMLElement.prototype.scroll = jest.fn()
 
