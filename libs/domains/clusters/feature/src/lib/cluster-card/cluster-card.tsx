@@ -1,23 +1,64 @@
-import { Link, useRouter } from '@tanstack/react-router'
+import { Link, useNavigate, useRouter } from '@tanstack/react-router'
 import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
+import { type KeyboardEvent, type MouseEvent, type ReactNode } from 'react'
 import { match } from 'ts-pattern'
 import {
   AnimatedGradientText,
   Badge,
   Icon,
   Indicator,
-  Link as LinkUI,
   LogoIcon,
   Skeleton,
   Tooltip,
+  linkVariants,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterActions } from '../cluster-actions/cluster-actions'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
 import { ClusterBadges } from '../cluster-badges/cluster-badges'
 import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicator/cluster-running-status-indicator'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
+
+// The whole card is already a link: render this shortcut as a span to avoid nesting <a> elements
+function DeploymentsLink({
+  cluster,
+  color,
+  className,
+  children,
+}: {
+  cluster: Cluster
+  color: 'brand' | 'red'
+  className?: string
+  children: ReactNode
+}) {
+  const navigate = useNavigate()
+
+  const goToDeployments = (event: MouseEvent | KeyboardEvent) => {
+    // Prevent the card link from handling the event
+    event.preventDefault()
+    event.stopPropagation()
+    navigate({
+      to: '/organization/$organizationId/cluster/$clusterId/deployments',
+      params: {
+        organizationId: cluster.organization.id,
+        clusterId: cluster.id,
+      },
+    })
+  }
+
+  return (
+    <span
+      role="link"
+      tabIndex={0}
+      className={twMerge(linkVariants({ color, size: 'sm', underline: true }), className)}
+      onClick={goToDeployments}
+      onKeyDown={(event) => event.key === 'Enter' && goToDeployments(event)}
+    >
+      {children}
+    </span>
+  )
+}
 
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
@@ -25,58 +66,26 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
       <span className="text-ssm font-normal text-neutral-subtle">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
     ))
     .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) => (
-      <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/deployments"
-        params={{
-          organizationId: cluster.organization.id,
-          clusterId: cluster.id,
-        }}
-        color="brand"
-        underline
-        size="sm"
-        className="group flex truncate"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <DeploymentsLink cluster={cluster} color="brand" className="group flex truncate">
         <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand">
           <span className="flex items-center gap-0.5">
             {s === 'DRY_RUN' ? 'Evaluating changes (dry-run) ' : upperCaseFirstLetter(s) + '...'}{' '}
             <Icon iconName="arrow-up-right" />
           </span>
         </AnimatedGradientText>
-      </LinkUI>
+      </DeploymentsLink>
     ))
     .with('BUILD_ERROR', 'DELETE_ERROR', 'DEPLOYMENT_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
-      <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/deployments"
-        params={{
-          organizationId: cluster.organization.id,
-          clusterId: cluster.id,
-        }}
-        color="red"
-        underline
-        size="sm"
-        className="truncate"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <DeploymentsLink cluster={cluster} color="red" className="truncate">
         Last deployment failed
         <Icon iconName="arrow-up-right" />
-      </LinkUI>
+      </DeploymentsLink>
     ))
     .with('INVALID_CREDENTIALS', () => (
-      <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/deployments"
-        params={{
-          organizationId: cluster.organization.id,
-          clusterId: cluster.id,
-        }}
-        color="red"
-        underline
-        size="sm"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <DeploymentsLink cluster={cluster} color="red">
         Invalid cloud credentials
         <Icon iconName="arrow-up-right" />
-      </LinkUI>
+      </DeploymentsLink>
     ))
     .otherwise(
       () =>

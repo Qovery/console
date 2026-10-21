@@ -81,7 +81,7 @@ export function ScalewayStaticIp({
                       radius="full"
                     >
                       <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs" />
-                      <Icon name="SCW" height="16" width="16" pathColor="#FFFFFF" />
+                      <Icon name="SCW" height="16" width="16" />
                     </ExternalLink>
                   </Tooltip>
                 )}

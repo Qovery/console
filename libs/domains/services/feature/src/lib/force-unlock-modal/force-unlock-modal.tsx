@@ -35,13 +35,13 @@ export const ForceUnlockModal = ({ environment, service }: { environment: Enviro
       <ModalCrud
         title="Force unlock"
         description={
-          <div className="flex flex-col gap-1">
+          <span className="flex flex-col gap-1">
             <span>This will manually release the Terraform state lock.</span>
             <span>
               Use only if a previous job crashed or left the state blocked. If the state is not locked, nothing will
               happen.
             </span>
-          </div>
+          </span>
         }
         onClose={closeModal}
         onSubmit={onSubmit}
