@@ -2,18 +2,34 @@ import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
-import { useCreateOrganization } from '@qovery/domains/organizations/feature'
+import {
+  useCreateOrganization,
+  useEditOrganization,
+  useOrganization,
+  useOrganizations,
+} from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { toast } from '@qovery/shared/ui'
+import { toast, toastError } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { OnboardingCard } from '../onboarding-card/onboarding-card'
+import { readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
 import { OnboardingProfile } from './onboarding-profile'
 
-jest.mock('@qovery/shared/ui', () => ({ ...jest.requireActual('@qovery/shared/ui'), toast: jest.fn() }))
+jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
+  toast: jest.fn(),
+  toastError: jest.fn(),
+}))
 jest.mock('@qovery/domains/projects/feature', () => ({ useCreateProject: jest.fn() }))
 
-jest.mock('@qovery/domains/organizations/feature', () => ({ useCreateOrganization: jest.fn() }))
+jest.mock('@qovery/domains/organizations/feature', () => ({
+  useCreateOrganization: jest.fn(),
+  useEditOrganization: jest.fn(),
+  useOrganization: jest.fn(),
+  useOrganizations: jest.fn(),
+}))
 
 jest.mock('@qovery/shared/auth', () => ({
   ...jest.requireActual('@qovery/shared/auth'),
@@ -31,6 +47,15 @@ jest.mock('@qovery/domains/users-sign-up/feature', () => ({
 
 const createProject = jest.fn()
 const createOrganization = jest.fn()
+const editOrganization = jest.fn()
+const refetchOrganization = jest.fn()
+const refetchOrganizations = jest.fn()
+const organizationDetails = {
+  name: 'Acme workspace',
+  description: 'Keep description',
+  logo_url: 'https://example.com/logo.png',
+  admin_emails: ['admin@acme.com'],
+}
 const refreshToken = jest.fn()
 const createUserSignUp = jest.fn()
 const navigate = jest.fn()
@@ -38,7 +63,11 @@ const refetchUserSignUp = jest.fn()
 const SignupFixtureContext = createContext<ReturnType<typeof useUserSignUp>['data']>(undefined)
 
 function renderProfile() {
-  return renderWithProviders(<OnboardingProfile />)
+  return renderWithProviders(
+    <OnboardingCard step={1}>
+      <OnboardingProfile />
+    </OnboardingCard>
+  )
 }
 
 async function renderFilledProfile(values: Record<string, string> = {}) {
@@ -66,13 +95,13 @@ async function fillProfile() {
 }
 
 describe('OnboardingProfile', () => {
-  it('shows the five profile fields without additional onboarding steps', async () => {
+  it('shows the five profile fields and the first onboarding step', async () => {
     await renderFilledProfile()
 
     expect(screen.getByRole('heading', { name: 'Create your profile' })).toBeInTheDocument()
     expect(screen.getAllByRole('textbox')).toHaveLength(5)
     expect(screen.queryByLabelText('Professional email address')).not.toBeInTheDocument()
-    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Onboarding progress' })).toHaveValue(1)
     expect(screen.getAllByRole('textbox').map((input) => input.getAttribute('name'))).toEqual([
       'full_name',
       'user_email',
@@ -149,6 +178,18 @@ describe('OnboardingProfile', () => {
     jest.useFakeTimers()
     delete window.dataLayer
     sessionStorage.clear()
+    refetchOrganizations.mockResolvedValue({ data: [{ id: 'existing-org' }, { id: 'created-org' }] })
+    jest
+      .mocked(useOrganizations)
+      .mockReturnValue({ refetch: refetchOrganizations } as unknown as ReturnType<typeof useOrganizations>)
+    refetchOrganization.mockResolvedValue({ data: organizationDetails })
+    jest
+      .mocked(useOrganization)
+      .mockReturnValue({ refetch: refetchOrganization } as unknown as ReturnType<typeof useOrganization>)
+    editOrganization.mockResolvedValue({})
+    jest
+      .mocked(useEditOrganization)
+      .mockReturnValue({ mutateAsync: editOrganization } as unknown as ReturnType<typeof useEditOrganization>)
     refreshToken.mockResolvedValue('refreshed-token')
     createOrganization.mockResolvedValue({ id: 'created-org' })
     createProject.mockResolvedValue({ id: 'created-project' })
@@ -263,14 +304,237 @@ describe('OnboardingProfile', () => {
     const second = renderProfile()
     expect(screen.getByLabelText('Full name')).toHaveValue('Edited Name')
     expect(screen.getByLabelText('Company name')).toHaveValue(' Acme Corp ')
-    expect(screen.getByLabelText('Company name')).toHaveAttribute('readonly')
+    expect(screen.getByLabelText('Company name')).not.toHaveAttribute('readonly')
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
     await second.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
     await waitFor(() => expect(navigate).toHaveBeenCalled())
     expect(createOrganization).toHaveBeenCalledTimes(1)
     expect(createUserSignUp).toHaveBeenCalledTimes(1)
+    expect(refetchOrganizations).not.toHaveBeenCalled()
     expect(createProject).toHaveBeenCalledTimes(1)
-    expect(sessionStorage.getItem('onboarding-pending:user-1')).toBeNull()
+    expect(readPendingOnboarding('user-1')).toEqual(
+      expect.objectContaining({ organizationId: 'created-org', projectId: 'created-project', completionTracked: true })
+    )
+  })
+
+  it('reuses the completed organization and project after going back to the profile', async () => {
+    const first = await fillProfile()
+    await first.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1))
+    first.unmount()
+
+    const second = renderProfile()
+    expect(screen.getByLabelText('Organization name')).toHaveValue(' Acme Workspace ')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await second.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() => expect(navigate).toHaveBeenCalledTimes(2))
+    expect(navigate).toHaveBeenLastCalledWith({
+      to: '/onboarding/organization/$organizationId/cluster',
+      params: { organizationId: 'created-org' },
+    })
+    expect(createOrganization).toHaveBeenCalledTimes(1)
+    expect(createProject).toHaveBeenCalledTimes(1)
+    expect(createUserSignUp).toHaveBeenCalledTimes(1)
+    expect(refreshToken).toHaveBeenCalledTimes(1)
+    expect(posthog.capture).toHaveBeenCalledTimes(2)
+    expect(toast).toHaveBeenCalledTimes(1)
+  })
+
+  const savedProfile = {
+    full_name: 'Saved Name',
+    user_email: 'saved@acme.com',
+    company_name: 'Acme',
+    organization_name: 'Acme workspace',
+    phone: '',
+  }
+  function renderSavedProfile() {
+    savePendingOnboarding('user-1', {
+      organizationId: 'existing-org',
+      projectId: 'existing-project',
+      completionTracked: true,
+      profile: savedProfile,
+    })
+    return renderProfile()
+  }
+
+  it.each([false, true])('recreates a deleted organization with the current profile (renamed: %s)', async (renamed) => {
+    refetchOrganizations.mockResolvedValueOnce({ data: [] })
+    const { userEvent } = renderSavedProfile()
+    if (renamed) {
+      await userEvent.clear(screen.getByLabelText('Organization name'))
+      await userEvent.type(screen.getByLabelText('Organization name'), 'Replacement workspace')
+    }
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() =>
+      expect(navigate).toHaveBeenCalledWith({
+        to: '/onboarding/organization/$organizationId/cluster',
+        params: { organizationId: 'created-org' },
+      })
+    )
+    expect(createOrganization).toHaveBeenCalledTimes(1)
+    expect(createOrganization).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationRequest: expect.objectContaining({
+          name: renamed ? 'Replacement workspace' : savedProfile.organization_name,
+        }),
+      })
+    )
+    expect(createProject).toHaveBeenCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
+    expect(editOrganization).not.toHaveBeenCalled()
+    expect(useCreateUserSignUp).toHaveBeenLastCalledWith({ sendToCargo: false })
+    expect(readPendingOnboarding('user-1')).toEqual(
+      expect.objectContaining({
+        organizationId: 'created-org',
+        projectId: 'created-project',
+        completionTracked: true,
+      })
+    )
+  })
+
+  it.each([403, 500])('does not recreate saved resources when validation returns %s', async (status) => {
+    refetchOrganizations.mockResolvedValueOnce({
+      data: [{ id: 'existing-org' }],
+      isError: true,
+      error: { response: { status } },
+    })
+    const { userEvent } = renderSavedProfile()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() =>
+      expect(toastError).toHaveBeenCalledWith(new Error('Unable to load your organizations. Please try again.'))
+    )
+    expect(navigate).not.toHaveBeenCalled()
+    expect(createOrganization).not.toHaveBeenCalled()
+    expect(createProject).not.toHaveBeenCalled()
+    expect(createUserSignUp).not.toHaveBeenCalled()
+    expect(readPendingOnboarding('user-1')?.organizationId).toBe('existing-org')
+  })
+
+  it('updates only the existing organization when its name changes', async () => {
+    const { userEvent } = renderSavedProfile()
+    await userEvent.clear(screen.getByLabelText('Organization name'))
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Renamed workspace')
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(editOrganization).toHaveBeenCalledWith({
+      organizationId: 'existing-org',
+      organizationRequest: { ...organizationDetails, name: 'Renamed workspace' },
+    })
+    expect(createOrganization).not.toHaveBeenCalled()
+    expect(createProject).not.toHaveBeenCalled()
+    expect(createUserSignUp).not.toHaveBeenCalled()
+    expect(readPendingOnboarding('user-1')?.profile.organization_name).toBe('Renamed workspace')
+  })
+
+  it.each([undefined, organizationDetails])(
+    'reports a failed organization fetch without renaming with cached data %j',
+    async (data) => {
+      refetchOrganization.mockResolvedValueOnce({ data, isError: true })
+      const { userEvent } = renderSavedProfile()
+      await userEvent.clear(screen.getByLabelText('Organization name'))
+      await userEvent.type(screen.getByLabelText('Organization name'), 'Renamed workspace')
+      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+      await waitFor(() =>
+        expect(toastError).toHaveBeenCalledWith(new Error('Unable to load your organization. Please try again.'))
+      )
+      expect(refetchOrganization).toHaveBeenCalledWith({ cancelRefetch: false })
+      expect(editOrganization).not.toHaveBeenCalled()
+      expect(navigate).not.toHaveBeenCalled()
+      expect(readPendingOnboarding('user-1')?.profile).toEqual(savedProfile)
+      expect(screen.getByLabelText('Organization name')).toHaveValue('Renamed workspace')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+
+      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+      await waitFor(() => expect(navigate).toHaveBeenCalled())
+      expect(editOrganization).toHaveBeenCalledTimes(1)
+      expect(readPendingOnboarding('user-1')?.profile.organization_name).toBe('Renamed workspace')
+    }
+  )
+
+  it.each([
+    ['Full name', 'Updated Name', { first_name: 'Updated', last_name: 'Name' }],
+    ['Work email', 'updated@acme.com', { user_email: 'updated@acme.com' }],
+    ['Company name', 'New company', { company_name: 'New company' }],
+    ['Phone number (optional)', '+33123456789', { phone: '+33123456789' }],
+  ])('updates the profile when %s changes', async (label, value, payload) => {
+    const { userEvent } = renderSavedProfile()
+    await userEvent.clear(screen.getByLabelText(label))
+    await userEvent.type(screen.getByLabelText(label), value)
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(createUserSignUp).toHaveBeenCalledTimes(1)
+    expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining(payload))
+    expect(useCreateUserSignUp).toHaveBeenLastCalledWith({ sendToCargo: false })
+    expect(editOrganization).not.toHaveBeenCalled()
+    expect(createOrganization).not.toHaveBeenCalled()
+    expect(createProject).not.toHaveBeenCalled()
+  })
+
+  it('preserves the saved onboarding step when editing a completed profile', async () => {
+    jest.mocked(useUserSignUp).mockReturnValue({
+      data: { current_step: 'completed' },
+      refetch: refetchUserSignUp,
+    } as unknown as ReturnType<typeof useUserSignUp>)
+    const { userEvent } = renderSavedProfile()
+    await userEvent.clear(screen.getByLabelText('Full name'))
+    await userEvent.type(screen.getByLabelText('Full name'), 'Updated Name')
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ current_step: 'completed' }))
+  })
+
+  it('keeps successful profile changes when renaming fails, then retries only the rename', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    editOrganization.mockRejectedValueOnce(new Error('Rename failed')).mockResolvedValue({})
+    const { userEvent } = renderSavedProfile()
+    await userEvent.clear(screen.getByLabelText('Full name'))
+    await userEvent.type(screen.getByLabelText('Full name'), 'Updated Name')
+    await userEvent.clear(screen.getByLabelText('Organization name'))
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Renamed workspace')
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(editOrganization).toHaveBeenCalledTimes(1))
+    expect(navigate).not.toHaveBeenCalled()
+    expect(readPendingOnboarding('user-1')?.profile).toEqual({ ...savedProfile, full_name: 'Updated Name' })
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(editOrganization).toHaveBeenCalledTimes(2)
+    expect(createUserSignUp).toHaveBeenCalledTimes(1)
+    expect(createOrganization).not.toHaveBeenCalled()
+  })
+
+  it('keeps edits available when saving the profile fails', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    createUserSignUp.mockRejectedValueOnce(new Error('Profile save failed'))
+    const { userEvent } = renderSavedProfile()
+    await userEvent.clear(screen.getByLabelText('Full name'))
+    await userEvent.type(screen.getByLabelText('Full name'), 'Updated Name')
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(createUserSignUp).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    expect(navigate).not.toHaveBeenCalled()
+    expect(readPendingOnboarding('user-1')?.profile).toEqual(savedProfile)
+    expect(screen.getByLabelText('Full name')).toHaveValue('Updated Name')
+    expect(screen.getByLabelText('Full name')).not.toHaveAttribute('readonly')
+    expect(editOrganization).not.toHaveBeenCalled()
+    expect(createOrganization).not.toHaveBeenCalled()
+  })
+
+  it('does not send any update when a saved profile is unchanged', async () => {
+    const { userEvent } = renderSavedProfile()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(navigate).toHaveBeenCalled())
+    expect(editOrganization).not.toHaveBeenCalled()
+    expect(createUserSignUp).not.toHaveBeenCalled()
+    expect(createOrganization).not.toHaveBeenCalled()
+    expect(createProject).not.toHaveBeenCalled()
   })
 
   it('reports completion once across navigation retries and a reload', async () => {
@@ -298,32 +562,15 @@ describe('OnboardingProfile', () => {
     expect(window.dataLayer).toEqual([{ event: 'onboarding-organization-created', plan: PlanEnum.BUSINESS_2025 }])
     expect(createProject).toHaveBeenCalledTimes(1)
     expect(createOrganization).toHaveBeenCalledTimes(1)
-    await waitFor(() => expect(sessionStorage.getItem('onboarding-pending:user-1')).toBeNull())
-  })
-
-  it('keeps restored profile fields read-only while organization setup is pending', async () => {
-    const profile = {
-      full_name: 'Saved Name',
-      user_email: 'saved@acme.com',
-      company_name: 'Saved company',
-      organization_name: 'Saved workspace',
-      phone: '+33123456789',
-    }
-    sessionStorage.setItem('onboarding-pending:user-1', JSON.stringify({ organizationId: 'existing-org', profile }))
-    const { userEvent } = renderProfile()
-    for (const [label, value] of [
-      ['Full name', profile.full_name],
-      ['Work email', profile.user_email],
-      ['Company name', profile.company_name],
-      ['Organization name', profile.organization_name],
-      ['Phone number (optional)', profile.phone],
-    ]) {
-      const input = screen.getByLabelText(label)
-      await userEvent.click(input)
-      await userEvent.keyboard('{Control>}a{/Control}{Backspace}')
-      await userEvent.type(input, 'Changed')
-      expect(input).toHaveValue(value)
-    }
+    await waitFor(() =>
+      expect(readPendingOnboarding('user-1')).toEqual(
+        expect.objectContaining({
+          organizationId: 'created-org',
+          projectId: 'created-project',
+          completionTracked: true,
+        })
+      )
+    )
   })
 
   it('restores a saved profile without creating another organization', async () => {
@@ -349,7 +596,7 @@ describe('OnboardingProfile', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
     await waitFor(() =>
       expect(navigate).toHaveBeenCalledWith({
-        to: '/organization/$organizationId/overview',
+        to: '/onboarding/organization/$organizationId/cluster',
         params: { organizationId: 'existing-org' },
       })
     )
@@ -380,7 +627,7 @@ describe('OnboardingProfile', () => {
 
     await waitFor(() =>
       expect(navigate).toHaveBeenCalledWith({
-        to: '/organization/$organizationId/overview',
+        to: '/onboarding/organization/$organizationId/cluster',
         params: { organizationId: 'created-org' },
       })
     )
@@ -650,7 +897,7 @@ describe('OnboardingProfile', () => {
     finishRefetch({})
     await waitFor(() =>
       expect(navigate).toHaveBeenCalledWith({
-        to: '/organization/$organizationId/overview',
+        to: '/onboarding/organization/$organizationId/cluster',
         params: { organizationId: 'created-org' },
       })
     )
@@ -689,7 +936,7 @@ describe('OnboardingProfile', () => {
     finishCreation({ id: 'created-org' })
     await waitFor(() =>
       expect(navigate).toHaveBeenCalledWith({
-        to: '/organization/$organizationId/overview',
+        to: '/onboarding/organization/$organizationId/cluster',
         params: { organizationId: 'created-org' },
       })
     )
@@ -716,14 +963,14 @@ describe('OnboardingProfile', () => {
 
     await waitFor(() => expect(refreshToken).toHaveBeenCalledTimes(1))
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
-    expect(screen.getByLabelText('Company name')).toHaveAttribute('readonly')
+    expect(screen.getByLabelText('Company name')).not.toHaveAttribute('readonly')
     expect(navigate).not.toHaveBeenCalled()
 
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
 
     await waitFor(() =>
       expect(navigate).toHaveBeenCalledWith({
-        to: '/organization/$organizationId/overview',
+        to: '/onboarding/organization/$organizationId/cluster',
         params: { organizationId: 'created-org' },
       })
     )
@@ -751,7 +998,7 @@ describe('OnboardingProfile', () => {
     finishProject({ id: 'created-project' })
     await waitFor(() =>
       expect(navigate).toHaveBeenCalledWith({
-        to: '/organization/$organizationId/overview',
+        to: '/onboarding/organization/$organizationId/cluster',
         params: { organizationId: 'created-org' },
       })
     )

@@ -15,7 +15,7 @@ function getUtmParams() {
   }
 }
 
-export function useCreateUserSignUp() {
+export function useCreateUserSignUp({ sendToCargo = true }: { sendToCargo?: boolean } = {}) {
   const queryClient = useQueryClient()
   const { mutate: signUpCargo } = useSignUpCargo()
 
@@ -24,6 +24,8 @@ export function useCreateUserSignUp() {
       queryClient.invalidateQueries({
         queryKey: queries.usersSignUp.get.queryKey,
       })
+
+      if (!sendToCargo) return
 
       const utmParams = getUtmParams()
 

@@ -3,7 +3,12 @@ import posthog from 'posthog-js'
 import { PlanEnum, TypeOfUseEnum } from 'qovery-typescript-axios'
 import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useCreateOrganization } from '@qovery/domains/organizations/feature'
+import {
+  useCreateOrganization,
+  useEditOrganization,
+  useOrganization,
+  useOrganizations,
+} from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -41,8 +46,14 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
   }
   const { mutateAsync: createProject } = useCreateProject({ silently: true })
   const { mutateAsync: createOrganization } = useCreateOrganization()
+  const { mutateAsync: editOrganization } = useEditOrganization()
+  const { refetch: refetchOrganization } = useOrganization({
+    organizationId: pending?.organizationId ?? '',
+    enabled: false,
+  })
+  const { refetch: refetchOrganizations } = useOrganizations({ enabled: false })
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
-  const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
+  const { mutateAsync: createUserSignUp } = useCreateUserSignUp({ sendToCargo: !pending?.organizationId })
 
   const defaultEmail = user?.email?.trim() || userSignUp?.user_email?.trim() || ''
 
@@ -74,21 +85,74 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
     let organizationId = pending?.organizationId
     let progress = pending
 
-    try {
-      if (!organizationId) {
-        await createUserSignUp({
-          ...userSignUp,
-          first_name: firstName,
-          last_name: lastName.join(' '),
-          user_email: userEmail,
-          company_name: data.company_name.trim(),
-          type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
-          phone: data.phone,
-          qovery_usage: userSignUp?.qovery_usage ?? '',
-          current_step: 'project',
-        })
+    const saveProfile = async () => {
+      await createUserSignUp({
+        ...userSignUp,
+        first_name: firstName,
+        last_name: lastName.join(' '),
+        user_email: userEmail,
+        company_name: data.company_name.trim(),
+        type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
+        phone: data.phone,
+        qovery_usage: userSignUp?.qovery_usage ?? '',
+        current_step: userSignUp?.current_step ?? 'project',
+      })
 
-        await refetchUserSignUp({ throwOnError: true, cancelRefetch: false })
+      await refetchUserSignUp({ throwOnError: true, cancelRefetch: false })
+    }
+
+    try {
+      if (progress?.completionTracked) {
+        const { data: organizations, isError } = await refetchOrganizations({ cancelRefetch: false })
+        if (isError || !organizations) {
+          toastError(new Error('Unable to load your organizations. Please try again.'))
+          return
+        }
+        if (!organizations.some((organization) => organization.id === organizationId)) {
+          organizationId = undefined
+          progress = undefined
+        }
+      }
+      if (progress && organizationId) {
+        const previousProfile = progress.profile
+        const profileChanged = (['full_name', 'user_email', 'company_name', 'phone'] as const).some(
+          (field) => data[field].trim() !== previousProfile[field].trim()
+        )
+        if (profileChanged) {
+          await saveProfile()
+          progress = { ...progress, profile: { ...data, organization_name: progress.profile.organization_name } }
+          updatePending(progress)
+        }
+        if (data.organization_name.trim() !== progress.profile.organization_name.trim()) {
+          const { data: organization, isError } = await refetchOrganization({ cancelRefetch: false })
+          if (isError || !organization) {
+            toastError(new Error('Unable to load your organization. Please try again.'))
+            return
+          }
+          await editOrganization({
+            organizationId,
+            organizationRequest: {
+              ...organization,
+              description: organization.description ?? '',
+              name: data.organization_name.trim(),
+            },
+          })
+          progress = { ...progress, profile: { ...progress.profile, organization_name: data.organization_name } }
+          updatePending(progress)
+        }
+      }
+
+      // Back returns to the completed profile; only resume the next step.
+      if (progress?.projectId && progress.completionTracked) {
+        await navigate({
+          to: '/onboarding/organization/$organizationId/cluster',
+          params: { organizationId: progress.organizationId },
+        })
+        return
+      }
+
+      if (!organizationId) {
+        await saveProfile()
 
         const organization = await createOrganization({
           organizationRequest: {
@@ -134,8 +198,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
         pushToDataLayer({ event: 'onboarding-organization-created', plan: selectedPlan })
         updatePending({ ...progress, completionTracked: true })
       }
-      await navigate({ to: '/organization/$organizationId/overview', params: { organizationId } })
-      updatePending(undefined)
+      await navigate({ to: '/onboarding/organization/$organizationId/cluster', params: { organizationId } })
       toast('success', 'Your organization has been created')
     } catch (error) {
       console.error(error)
@@ -161,7 +224,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
             validate: (value) => value.trim().split(/\s+/).length >= 2 || 'Please enter your first and last name.',
           }}
           render={({ field, fieldState: { error } }) => (
-            <InputText {...field} readOnly={!!pending} label="Full name" autoComplete="name" error={error?.message} />
+            <InputText {...field} readOnly={submitting} label="Full name" autoComplete="name" error={error?.message} />
           )}
         />
         <Controller
@@ -178,10 +241,10 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           render={({ field, fieldState: { error } }) => (
             <InputText
               {...field}
+              readOnly={submitting}
               type="email"
               label="Work email"
               autoComplete="email"
-              readOnly={!!pending && !!field.value}
               error={
                 isPersonalEmail(field.value.trim()) ? 'Please enter your professional email address.' : error?.message
               }
@@ -195,10 +258,10 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           render={({ field, fieldState: { error } }) => (
             <InputText
               {...field}
-              readOnly={!!pending}
+              readOnly={submitting}
               onChange={(event) => {
                 const organizationName = methods.getValues('organization_name')
-                if (!organizationName || organizationName === field.value) {
+                if (!pending && (!organizationName || organizationName === field.value)) {
                   methods.setValue('organization_name', event.target.value, { shouldDirty: true, shouldValidate: true })
                 }
                 field.onChange(event)
@@ -221,7 +284,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           render={({ field, fieldState: { error } }) => (
             <InputText
               {...field}
-              readOnly={!!pending}
+              readOnly={submitting}
               label="Phone number (optional)"
               autoComplete="tel"
               error={error?.message}
@@ -241,7 +304,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           render={({ field, fieldState: { error } }) => (
             <InputText
               {...field}
-              readOnly={!!pending}
+              readOnly={submitting}
               label="Organization name"
               error={
                 field.value.trim().toLowerCase() === 'test'
