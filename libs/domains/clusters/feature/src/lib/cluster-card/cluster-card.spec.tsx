@@ -5,18 +5,38 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 import { ClusterCard } from './cluster-card'
 
-const mockNavigate = jest.fn()
-
 jest.mock('../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket')
-jest.mock('@tanstack/react-router', () => ({
-  ...jest.requireActual('@tanstack/react-router'),
-  useNavigate: () => mockNavigate,
-  useLocation: () => ({ pathname: '/', search: '' }),
-  useRouter: () => ({
-    buildLocation: () => ({ href: '/' }),
-  }),
-  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
-}))
+jest.mock('@tanstack/react-router', () => {
+  // Fill in the route params like the router does, so assertions can check the destination
+  const buildHref = (to: string, params: Record<string, string> = {}) =>
+    Object.entries(params).reduce((path, [key, value]) => path.replace(`$${key}`, value), to)
+
+  return {
+    ...jest.requireActual('@tanstack/react-router'),
+    useNavigate: () => jest.fn(),
+    useLocation: () => ({ pathname: '/', search: '' }),
+    useRouter: () => ({
+      buildLocation: ({ to, params }: { to: string; params: Record<string, string> }) => ({
+        href: buildHref(to, params),
+      }),
+    }),
+    Link: ({
+      children,
+      to,
+      params,
+      ...props
+    }: {
+      children?: ReactNode
+      to: string
+      params?: Record<string, string>
+      [key: string]: unknown
+    }) => (
+      <a href={buildHref(to, params)} {...props}>
+        {children}
+      </a>
+    ),
+  }
+})
 jest.mock('@qovery/shared/util-dates', () => ({
   timeAgo: jest.fn(),
   dateFullFormat: jest.fn(),
@@ -207,7 +227,7 @@ describe('ClusterCard', () => {
   })
 
   it('should display invalid credentials link', async () => {
-    const { userEvent } = renderWithProviders(
+    renderWithProviders(
       <ClusterCard
         cluster={mockCluster}
         clusterDeploymentStatus={{ ...mockClusterDeploymentStatus, status: 'INVALID_CREDENTIALS' }}
@@ -215,13 +235,17 @@ describe('ClusterCard', () => {
     )
 
     const link = screen.getByRole('link', { name: 'Invalid cloud credentials' })
-    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', '/organization/org-id/cluster/cluster-id/deployments')
+    // A link nested in another link is invalid HTML
+    expect(link.parentElement?.closest('a')).toBeNull()
+  })
 
-    await userEvent.click(link)
+  it('should link the cluster name to the overview', () => {
+    renderWithProviders(<ClusterCard cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />)
 
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/cluster/$clusterId/deployments',
-      params: { organizationId: 'org-id', clusterId: 'cluster-id' },
-    })
+    expect(screen.getByRole('link', { name: 'Test Cluster' })).toHaveAttribute(
+      'href',
+      '/organization/org-id/cluster/cluster-id/overview'
+    )
   })
 })

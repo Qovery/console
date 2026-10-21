@@ -97,6 +97,7 @@ export function VariablesActionToolbar({
               <a
                 className="ml-auto text-sm"
                 href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
+                aria-label="Doppler integration documentation"
                 target="_blank"
                 rel="noopener noreferrer"
                 // Only open the documentation, not the Doppler dashboard
