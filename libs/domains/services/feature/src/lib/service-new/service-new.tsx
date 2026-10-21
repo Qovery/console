@@ -20,7 +20,7 @@ import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprin
 import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { BlueprintMissingModal } from './blueprint-missing-modal/blueprint-missing-modal'
 import { BaseServiceCard, Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
-import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
+import { getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
 import { serviceTemplates } from './service-templates'
 
 export interface ServiceNewProps {
@@ -226,18 +226,6 @@ export function ServiceNew({
         description: 'Deploy a long running service running from Git or a Container Registry.',
         icon: <Icon name="APPLICATION" width={32} height={32} />,
         link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('application')),
-        cloud_provider: cloudProvider,
-      },
-      {
-        title: 'Container Database',
-        description: 'Easy and fastest way to deploy the most popular databases.',
-        icon: <Icon name="DATABASE" width={32} height={32} />,
-        link: getServicesPath(
-          organizationId,
-          projectId,
-          environmentId,
-          buildCreateFlowPathForType('DATABASE', 'database', 'current') ?? '/service/create/database'
-        ),
         cloud_provider: cloudProvider,
       },
       {
