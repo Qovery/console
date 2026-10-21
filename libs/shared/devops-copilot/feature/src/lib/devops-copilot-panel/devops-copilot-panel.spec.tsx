@@ -1,6 +1,7 @@
+import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import { type PropsWithChildren } from 'react'
 import { useQoveryContext } from '@qovery/shared/devops-copilot/context'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
 import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
 import { DevopsCopilotPanel } from './devops-copilot-panel'
@@ -22,8 +23,9 @@ jest.mock('../hooks/use-threads/use-threads', () => ({ useThreads: () => ({ thre
 jest.mock('../hooks/use-thread-state/use-thread-state', () => ({
   useThreadState: () => ({ thread: [], setThread: jest.fn() }),
 }))
+const mockSendMessage = jest.fn()
 jest.mock('./hooks/use-message-submission/use-message-submission', () => ({
-  useMessageSubmission: () => ({ handleSendMessage: jest.fn() }),
+  useMessageSubmission: () => ({ handleSendMessage: mockSendMessage }),
 }))
 jest.mock('./hooks/use-panel-resize/use-panel-resize', () => ({ usePanelResize: () => ({}) }))
 jest.mock('./hooks/use-streaming-animation/use-streaming-animation', () => ({ useStreamingAnimation: jest.fn() }))
@@ -39,11 +41,9 @@ const refetch = jest.fn()
 function config(data?: { org_config: { enabled: boolean } }, isError = false) {
   jest.mocked(useAICopilotConfig).mockReturnValue({ data, isError, refetch } as ReturnType<typeof useAICopilotConfig>)
 }
-function panel() {
+function panel(sendMessageRef: { current: ((message: string) => void) | null } = { current: null }) {
   return (
-    <DevopsCopilotContext.Provider
-      value={{ devopsCopilotOpen: true, setDevopsCopilotOpen: jest.fn(), sendMessageRef: { current: null } }}
-    >
+    <DevopsCopilotContext.Provider value={{ devopsCopilotOpen: true, setDevopsCopilotOpen: jest.fn(), sendMessageRef }}>
       <DevopsCopilotPanel onClose={jest.fn()} />
     </DevopsCopilotContext.Provider>
   )
@@ -54,6 +54,43 @@ beforeEach(() => {
     .mocked(useQoveryContext)
     .mockReturnValue({ context: { organization: { id: 'org-id' } } } as ReturnType<typeof useQoveryContext>)
   config()
+})
+afterEach(() => jest.useRealTimers())
+
+it.each(['loading', 'disabled', 'error'])('queues external help while configuration is %s', (state) => {
+  jest.useFakeTimers()
+  config(state === 'disabled' ? { org_config: { enabled: false } } : undefined, state === 'error')
+  const sendMessageRef = { current: null as ((message: string) => void) | null }
+  const { rerender } = renderWithProviders(panel(sendMessageRef), { wrapper: TooltipProvider })
+
+  act(() => sendMessageRef.current?.('Help me install the demo cluster'))
+  act(() => jest.runOnlyPendingTimers())
+  expect(mockSendMessage).not.toHaveBeenCalled()
+
+  config({ org_config: { enabled: true } })
+  rerender(panel(sendMessageRef))
+  act(() => jest.runOnlyPendingTimers())
+  expect(mockSendMessage).toHaveBeenCalledWith('Help me install the demo cluster', true)
+  expect(mockSendMessage).toHaveBeenCalledTimes(1)
+})
+
+it('waits for organization context before sending external help', () => {
+  jest.useFakeTimers()
+  config({ org_config: { enabled: true } })
+  jest.mocked(useQoveryContext).mockReturnValue({ context: {} } as ReturnType<typeof useQoveryContext>)
+  const sendMessageRef = { current: null as ((message: string) => void) | null }
+  const { rerender } = renderWithProviders(panel(sendMessageRef), { wrapper: TooltipProvider })
+
+  act(() => sendMessageRef.current?.('Help me install the demo cluster'))
+  act(() => jest.runOnlyPendingTimers())
+  expect(mockSendMessage).not.toHaveBeenCalled()
+
+  jest.mocked(useQoveryContext).mockReturnValue({
+    context: { organization: { id: 'org-id' } },
+  } as ReturnType<typeof useQoveryContext>)
+  rerender(panel(sendMessageRef))
+  act(() => jest.runOnlyPendingTimers())
+  expect(mockSendMessage).toHaveBeenCalledTimes(1)
 })
 
 it.each([true, false])('waits for configuration before showing the enabled state (%s)', (enabled) => {

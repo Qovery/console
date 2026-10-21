@@ -108,6 +108,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [showPlans, setShowPlans] = useState<Record<string, boolean>>({})
 
   const pendingThreadId = useRef<string | undefined>(undefined)
+  const [pendingExternalMessage, setPendingExternalMessage] = useState<string>()
 
   const {
     threads = [],
@@ -225,30 +226,34 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   useEffect(() => {
     if (!sendMessageRef) return
 
-    sendMessageRef.current = (message: string) => {
-      controllerRef.current?.abort()
-
-      setThread([])
-      setThreadId(undefined)
-      setPlan([])
-      setIsReadOnly(true)
-      setStreamingMessage('')
-      setDisplayedStreamingMessage('')
-      setIsFinish(false)
-      setIsStopped(false)
-      setIsLoading(false)
-
-      setTimeout(() => {
-        handleSendMessage(message, true)
-      }, 0)
-    }
+    sendMessageRef.current = setPendingExternalMessage
 
     return () => {
       if (sendMessageRef) {
         sendMessageRef.current = null
       }
     }
-  }, [sendMessageRef, handleSendMessage, setThread])
+  }, [sendMessageRef])
+
+  useEffect(() => {
+    if (!pendingExternalMessage || !isCopilotEnabled || !organizationId || !isPanelActive) return
+
+    controllerRef.current?.abort()
+    setThread([])
+    setThreadId(undefined)
+    setPlan([])
+    setIsReadOnly(true)
+    setStreamingMessage('')
+    setDisplayedStreamingMessage('')
+    setIsFinish(false)
+    setIsStopped(false)
+    setIsLoading(false)
+    setPendingExternalMessage(undefined)
+
+    setTimeout(() => {
+      handleSendMessage(pendingExternalMessage, true)
+    }, 0)
+  }, [pendingExternalMessage, isCopilotEnabled, organizationId, isPanelActive, handleSendMessage, setThread])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
