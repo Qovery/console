@@ -7,6 +7,11 @@ import * as useAlertRules from '../../hooks/use-alert-rules/use-alert-rules'
 import * as useDeleteAlertRule from '../../hooks/use-delete-alert-rule/use-delete-alert-rule'
 import { AlertRulesOverview } from './alert-rules-overview'
 
+jest.mock('@qovery/domains/services/feature', () => ({
+  ...jest.requireActual('@qovery/domains/services/feature'),
+  useDeploymentStatus: () => ({ data: { service_deployment_status: 'UP_TO_DATE' } }),
+}))
+
 const mockUseAlertRules = jest.spyOn(useAlertRules, 'useAlertRules') as jest.Mock
 const mockUseAlertRulesGhosted = jest.spyOn(useAlertRulesGhosted, 'useAlertRulesGhosted') as jest.Mock
 const mockUseDeleteAlertRule = jest.spyOn(useDeleteAlertRule, 'useDeleteAlertRule') as jest.Mock

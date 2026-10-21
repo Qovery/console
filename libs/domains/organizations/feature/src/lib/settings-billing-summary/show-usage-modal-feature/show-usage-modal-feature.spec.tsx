@@ -107,9 +107,11 @@ describe('ShowUsageModalFeature', () => {
     } as unknown as ReturnType<typeof useOrganization>)
   })
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(<ShowUsageModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
+    // The default values are validated on mount
+    await waitFor(() => expect(screen.getByRole('button', { name: /generate report/i })).toBeEnabled())
   })
 
   it('should call useGenerateBillingUsageReport when onSubmit is called', async () => {

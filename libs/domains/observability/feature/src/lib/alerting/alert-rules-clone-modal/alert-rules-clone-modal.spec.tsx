@@ -1,11 +1,13 @@
-import { type AlertRuleResponse, type ServiceLightResponse } from 'qovery-typescript-axios'
+import { type AlertRuleResponse, type Cluster, type ServiceLightResponse } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import * as useClusters from '../../hooks/use-clusters/use-clusters'
 import * as useCreateAlertRule from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import * as useServicesSearch from '../../hooks/use-services-search/use-services-search'
 import { AlertRulesCloneModal } from './alert-rules-clone-modal'
 
 const mockUseCreateAlertRule = jest.spyOn(useCreateAlertRule, 'useCreateAlertRule') as jest.Mock
 const mockUseServicesSearch = jest.spyOn(useServicesSearch, 'useServicesSearch') as jest.Mock
+const mockUseClusters = jest.spyOn(useClusters, 'useClusters') as jest.Mock
 
 const mockOnClose = jest.fn()
 const mockMutateAsync = jest.fn()
@@ -74,6 +76,9 @@ describe('AlertRulesCloneModal', () => {
     mockUseServicesSearch.mockReturnValue({
       data: mockServices,
       isLoading: false,
+    })
+    mockUseClusters.mockReturnValue({
+      data: [{ id: 'cluster-123', name: 'Cluster 123', metrics_parameters: { enabled: true } } as Cluster],
     })
   })
 

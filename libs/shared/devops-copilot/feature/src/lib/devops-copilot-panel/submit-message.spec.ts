@@ -154,6 +154,8 @@ describe('submitMessage', () => {
     })
 
     it('should handle multiple data chunks in one stream', async () => {
+      // Non-JSON chunks are still streamed but logged as parse failures
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
       const onStreamMock = jest.fn()
       const mockReader = {
         read: jest
@@ -180,6 +182,12 @@ describe('submitMessage', () => {
       expect(onStreamMock).toHaveBeenCalledWith('chunk1')
       expect(onStreamMock).toHaveBeenCalledWith('chunk2')
       expect(onStreamMock).toHaveBeenCalledWith('chunk3')
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(3)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', 'chunk1', expect.any(Error))
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', 'chunk2', expect.any(Error))
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', 'chunk3', expect.any(Error))
+
+      consoleErrorSpy.mockRestore()
     })
 
     it('should handle invalid JSON in stream chunks gracefully', async () => {

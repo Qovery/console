@@ -14,6 +14,9 @@ const serializedErrorWithStatus = (status: number) => ({
   response: { status },
 })
 
+// React Query logs every failed fetch: capture those logs to assert on the expected errors
+const queryLogger = { log: console.log, warn: console.warn, error: jest.fn() }
+
 describe('useCurrentCost', () => {
   let queryClient: QueryClient
   const wrapper = ({ children }: PropsWithChildren) => (
@@ -22,7 +25,7 @@ describe('useCurrentCost', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    queryClient = new QueryClient()
+    queryClient = new QueryClient({ logger: queryLogger })
   })
 
   it('does not retry nor refetch on remount when the member is forbidden', async () => {
@@ -46,6 +49,7 @@ describe('useCurrentCost', () => {
 
     expect(remounted.current.isFetching).toBe(false)
     expect(mockAxiosRequest).toHaveBeenCalledTimes(1)
+    expect(queryLogger.error).toHaveBeenCalledWith(serializedErrorWithStatus(403))
   })
 
   it('does not refetch on remount when a refetch is forbidden after a successful load', async () => {
@@ -69,11 +73,12 @@ describe('useCurrentCost', () => {
     expect(remounted.current.data).toEqual({ plan: 'TEAM' })
     expect(remounted.current.isFetching).toBe(false)
     expect(mockAxiosRequest).toHaveBeenCalledTimes(2)
+    expect(queryLogger.error).toHaveBeenCalledWith(serializedErrorWithStatus(403))
   })
 
   it('retries then refetches other errors on window focus', async () => {
     mockAxiosRequest.mockRejectedValue(serializedErrorWithStatus(500))
-    queryClient = new QueryClient({ defaultOptions: { queries: { retryDelay: 0 } } })
+    queryClient = new QueryClient({ logger: queryLogger, defaultOptions: { queries: { retryDelay: 0 } } })
 
     const { result } = renderHook(() => useCurrentCost({ organizationId: 'org-1' }), { wrapper })
 
@@ -86,11 +91,12 @@ describe('useCurrentCost', () => {
     })
 
     await waitFor(() => expect(mockAxiosRequest).toHaveBeenCalledTimes(6))
+    expect(queryLogger.error).toHaveBeenCalledWith(serializedErrorWithStatus(500))
   })
 
   it('refetches other errors on remount', async () => {
     mockAxiosRequest.mockRejectedValue(serializedErrorWithStatus(500))
-    queryClient = new QueryClient({ defaultOptions: { queries: { retryDelay: 0 } } })
+    queryClient = new QueryClient({ logger: queryLogger, defaultOptions: { queries: { retryDelay: 0 } } })
 
     const { result, unmount } = renderHook(() => useCurrentCost({ organizationId: 'org-1' }), { wrapper })
 
@@ -101,5 +107,6 @@ describe('useCurrentCost', () => {
     renderHook(() => useCurrentCost({ organizationId: 'org-1' }), { wrapper })
 
     await waitFor(() => expect(mockAxiosRequest).toHaveBeenCalledTimes(6))
+    expect(queryLogger.error).toHaveBeenCalledWith(serializedErrorWithStatus(500))
   })
 })

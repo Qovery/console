@@ -70,7 +70,10 @@ describe('useCreateBlueprint', () => {
   })
 
   it('should surface a rejected dispatch to the caller', async () => {
-    mockAxiosRequest.mockRejectedValue(new Error('A service with this name already exists'))
+    const error = new Error('A service with this name already exists')
+    mockAxiosRequest.mockRejectedValue(error)
+    // React Query logs failed mutations through console.error
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
 
     const { result } = renderHook(() => useCreateBlueprint(), { wrapper: createWrapper() })
 
@@ -79,5 +82,8 @@ describe('useCreateBlueprint', () => {
         'A service with this name already exists'
       )
     })
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(error)
+    consoleErrorSpy.mockRestore()
   })
 })

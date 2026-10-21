@@ -1,4 +1,4 @@
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useDeployService from '../hooks/use-deploy-service/use-deploy-service'
 import * as useRestartService from '../hooks/use-restart-service/use-restart-service'
 import { RedeployModal, type RedeployModalProps } from './redeploy-modal'
@@ -54,13 +54,15 @@ describe('RedeployModal', () => {
     })
   })
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(<RedeployModal {...props} />)
     expect(baseElement).toBeTruthy()
+    await waitFor(() => expect(screen.getByRole('button', { name: /confirm/i })).toBeEnabled())
   })
 
-  it('should match snapshot', () => {
+  it('should match snapshot', async () => {
     const { baseElement } = renderWithProviders(<RedeployModal {...props} />)
+    await waitFor(() => expect(screen.getByRole('button', { name: /confirm/i })).toBeEnabled())
     expect(baseElement).toMatchSnapshot()
   })
 

@@ -1,6 +1,6 @@
 import { type Application, type Job, type Terraform } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock, cronjobFactoryMock, terraformFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceBuildSettings } from './service-build-settings'
 
 const mockEditService = jest.fn()
@@ -65,43 +65,48 @@ const mockJob = { ...cronjobFactoryMock(1)[0], build_settings_editable: true } a
 const mockTerraform = { ...terraformFactoryMock(1)[0], build_settings_editable: true } as Terraform
 const mockApplicationDisabled = { ...applicationFactoryMock(1)[0], build_settings_editable: false } as Application
 
-function setup(service: Application | Job | Terraform, advancedSettings?: Record<string, unknown>) {
+async function setup(service: Application | Job | Terraform, advancedSettings?: Record<string, unknown>) {
   mockService.data = service
   mockAdvancedSettings.data = advancedSettings ?? applicationAdvancedSettings
   mockDefaultAdvancedSettings.data = advancedSettings ?? applicationDefaultAdvancedSettings
   mockEditService.mockClear()
-  return renderWithProviders(<ServiceBuildSettings />)
+  const result = renderWithProviders(<ServiceBuildSettings />)
+  if ('build_settings_editable' in service && service.build_settings_editable) {
+    // Wait for the initial form validation to settle
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled())
+  }
+  return result
 }
 
 describe('ServiceBuildSettings', () => {
-  it('should render number inputs for timeout, CPU, RAM, and ephemeral storage', () => {
-    setup(mockApplication)
+  it('should render number inputs for timeout, CPU, RAM, and ephemeral storage', async () => {
+    await setup(mockApplication)
     expect(screen.getByLabelText(/timeout/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/cpu/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/ram/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/ephemeral storage/i)).toBeInTheDocument()
   })
 
-  it('should render toggle switches for BuildKit cache and Git submodules for Application', () => {
-    setup(mockApplication)
+  it('should render toggle switches for BuildKit cache and Git submodules for Application', async () => {
+    await setup(mockApplication)
     expect(screen.getByRole('switch', { name: /buildkit cache/i })).toBeInTheDocument()
     expect(screen.getByRole('switch', { name: /git submodules/i })).toBeInTheDocument()
   })
 
-  it('should render toggle switches for BuildKit cache and Git submodules for Job', () => {
-    setup(mockJob)
+  it('should render toggle switches for BuildKit cache and Git submodules for Job', async () => {
+    await setup(mockJob)
     expect(screen.getByRole('switch', { name: /buildkit cache/i })).toBeInTheDocument()
     expect(screen.getByRole('switch', { name: /git submodules/i })).toBeInTheDocument()
   })
 
-  it('should NOT render BuildKit cache toggle for Terraform', () => {
-    setup(mockTerraform, terraformAdvancedSettings)
+  it('should NOT render BuildKit cache toggle for Terraform', async () => {
+    await setup(mockTerraform, terraformAdvancedSettings)
     expect(screen.queryByRole('switch', { name: /buildkit cache/i })).not.toBeInTheDocument()
     expect(screen.getByRole('switch', { name: /git submodules/i })).toBeInTheDocument()
   })
 
-  it('should pre-populate form fields with values from advanced settings', () => {
-    setup(mockApplication)
+  it('should pre-populate form fields with values from advanced settings', async () => {
+    await setup(mockApplication)
     expect(screen.getByLabelText(/timeout/i)).toHaveValue(1800)
     expect(screen.getByLabelText(/cpu/i)).toHaveValue(4000)
     expect(screen.getByLabelText(/ram/i)).toHaveValue(8)
@@ -109,7 +114,7 @@ describe('ServiceBuildSettings', () => {
   })
 
   it('should call editService with build_settings in the payload on submit', async () => {
-    const { userEvent } = setup(mockApplication)
+    const { userEvent } = await setup(mockApplication)
 
     const timeoutInput = screen.getByLabelText(/timeout/i)
     await userEvent.clear(timeoutInput)
@@ -136,7 +141,7 @@ describe('ServiceBuildSettings', () => {
   })
 
   it('should not include disable_buildkit_cache in build_settings for Terraform', async () => {
-    const { userEvent } = setup(mockTerraform, terraformAdvancedSettings)
+    const { userEvent } = await setup(mockTerraform, terraformAdvancedSettings)
 
     const timeoutInput = screen.getByLabelText(/timeout/i)
     await userEvent.clear(timeoutInput)
@@ -157,7 +162,7 @@ describe('ServiceBuildSettings', () => {
   })
 
   it('should send all build_settings fields even when only one is modified', async () => {
-    const { userEvent } = setup(mockApplication)
+    const { userEvent } = await setup(mockApplication)
 
     const cpuInput = screen.getByLabelText(/cpu/i)
     await userEvent.clear(cpuInput)
@@ -178,26 +183,26 @@ describe('ServiceBuildSettings', () => {
     )
   })
 
-  it('should show Save button when build_settings_editable is true', () => {
-    setup(mockApplication)
+  it('should show Save button when build_settings_editable is true', async () => {
+    await setup(mockApplication)
     expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
   })
 
-  it('should disable all inputs when build_settings_editable is false', () => {
-    setup(mockApplicationDisabled)
+  it('should disable all inputs when build_settings_editable is false', async () => {
+    await setup(mockApplicationDisabled)
     expect(screen.getByLabelText(/timeout/i)).toBeDisabled()
     expect(screen.getByLabelText(/cpu/i)).toBeDisabled()
     expect(screen.getByLabelText(/ram/i)).toBeDisabled()
     expect(screen.getByLabelText(/ephemeral storage/i)).toBeDisabled()
   })
 
-  it('should show a callout message when build_settings_editable is false', () => {
-    setup(mockApplicationDisabled)
+  it('should show a callout message when build_settings_editable is false', async () => {
+    await setup(mockApplicationDisabled)
     expect(screen.getByText(/not available for your organization/i)).toBeInTheDocument()
   })
 
-  it('should not show Save button when build_settings_editable is false', () => {
-    setup(mockApplicationDisabled)
+  it('should not show Save button when build_settings_editable is false', async () => {
+    await setup(mockApplicationDisabled)
     expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument()
   })
 })

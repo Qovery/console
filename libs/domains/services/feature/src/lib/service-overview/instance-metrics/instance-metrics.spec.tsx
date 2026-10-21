@@ -20,6 +20,22 @@ describe('InstanceMetrics', () => {
 
   beforeEach(() => {
     jest.restoreAllMocks()
+    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
+      data: service,
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
+    jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        id: '1',
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+        state: StateEnum.DEPLOYED,
+      },
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
   })
 
   it('should match snapshot with data', () => {

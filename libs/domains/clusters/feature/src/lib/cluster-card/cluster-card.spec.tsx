@@ -5,10 +5,12 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 import { ClusterCard } from './cluster-card'
 
+const mockNavigate = jest.fn()
+
 jest.mock('../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket')
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useNavigate: () => jest.fn(),
+  useNavigate: () => mockNavigate,
   useLocation: () => ({ pathname: '/', search: '' }),
   useRouter: () => ({
     buildLocation: () => ({ href: '/' }),
@@ -205,15 +207,21 @@ describe('ClusterCard', () => {
   })
 
   it('should display invalid credentials link', async () => {
-    renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <ClusterCard
         cluster={mockCluster}
         clusterDeploymentStatus={{ ...mockClusterDeploymentStatus, status: 'INVALID_CREDENTIALS' }}
       />
     )
 
-    const link = screen.getByText('Invalid cloud credentials')
+    const link = screen.getByRole('link', { name: 'Invalid cloud credentials' })
     expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/deployments')
+
+    await userEvent.click(link)
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/cluster/$clusterId/deployments',
+      params: { organizationId: 'org-id', clusterId: 'cluster-id' },
+    })
   })
 })

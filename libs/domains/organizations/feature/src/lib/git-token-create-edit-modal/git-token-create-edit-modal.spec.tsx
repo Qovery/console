@@ -115,7 +115,7 @@ describe('GitTokenCreateEditModal', () => {
 
   describe('expired token warning banner', () => {
     describe('Warning banner display for expired tokens', () => {
-      it('should show expiration warning banner when editing expired token', () => {
+      it('should show expiration warning banner when editing expired token', async () => {
         const expiredToken: typeof props.gitToken = {
           id: '1111-1111-1111',
           created_at: '2023-01-01T00:00:00Z',
@@ -134,11 +134,13 @@ describe('GitTokenCreateEditModal', () => {
 
         expect(screen.getByText(/this token expired on/i)).toBeInTheDocument()
         expect(screen.getByText(/please update the token value below/i)).toBeInTheDocument()
+        // Edit mode triggers a validation on mount
+        expect(await screen.findByText('Please enter a token value.')).toBeInTheDocument()
       })
     })
 
     describe('No warning for non-expired tokens', () => {
-      it('should not show warning banner when editing non-expired token', () => {
+      it('should not show warning banner when editing non-expired token', async () => {
         const validToken: typeof props.gitToken = {
           id: '1111-1111-1111',
           created_at: '2023-01-01T00:00:00Z',
@@ -153,6 +155,8 @@ describe('GitTokenCreateEditModal', () => {
 
         renderWithProviders(wrapWithReactHookForm(<GitTokenCreateEditModal {...props} isEdit gitToken={validToken} />))
 
+        // Edit mode triggers a validation on mount
+        expect(await screen.findByText('Please enter a token value.')).toBeInTheDocument()
         expect(screen.queryByText(/this token expired on/i)).not.toBeInTheDocument()
       })
 
@@ -164,7 +168,7 @@ describe('GitTokenCreateEditModal', () => {
     })
 
     describe('Token without expiration date', () => {
-      it('should not show warning banner when token has no expiration date', () => {
+      it('should not show warning banner when token has no expiration date', async () => {
         const tokenWithoutExpiration: typeof props.gitToken = {
           id: '1111-1111-1111',
           created_at: '2023-01-01T00:00:00Z',
@@ -181,6 +185,8 @@ describe('GitTokenCreateEditModal', () => {
           wrapWithReactHookForm(<GitTokenCreateEditModal {...props} isEdit gitToken={tokenWithoutExpiration} />)
         )
 
+        // Edit mode triggers a validation on mount
+        expect(await screen.findByText('Please enter a token value.')).toBeInTheDocument()
         expect(screen.queryByText(/this token expired on/i)).not.toBeInTheDocument()
       })
     })
@@ -188,6 +194,7 @@ describe('GitTokenCreateEditModal', () => {
 
   describe('Mutation failure handling', () => {
     it('should keep modal open when edit mutation fails', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
       const mockError = new Error('Network error')
       useEditGitTokenMockSpy.mockReturnValue({
         mutateAsync: jest.fn().mockRejectedValue(mockError),
@@ -217,9 +224,12 @@ describe('GitTokenCreateEditModal', () => {
 
       // onClose should NOT be called when mutation fails
       expect(props.onClose).not.toHaveBeenCalled()
+      expect(consoleErrorSpy).toHaveBeenCalledWith(mockError)
 
       // Warning banner should still be visible (modal still open)
       expect(screen.getByText(/this token expired on/i)).toBeInTheDocument()
+
+      consoleErrorSpy.mockRestore()
     })
   })
 })

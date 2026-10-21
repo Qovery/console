@@ -18,7 +18,7 @@ describe('NetworkingPortSettingModal', () => {
     screen.getByText(/create/i)
     expect(baseElement).toMatchSnapshot()
   })
-  it('should match snapshot in edit state', () => {
+  it('should match snapshot in edit state', async () => {
     const { baseElement } = renderWithProviders(
       <NetworkingPortSettingModal
         helmId="1"
@@ -37,6 +37,8 @@ describe('NetworkingPortSettingModal', () => {
     )
     screen.getByText(/edit/i)
     expect(baseElement).toMatchSnapshot()
+    // Edit mode validates the form on mount, the provided name does not match the expected format
+    expect(await screen.findByText(/name format is invalid/i)).toBeInTheDocument()
   })
   it('should close on cancel', async () => {
     const onClose = jest.fn()

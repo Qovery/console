@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactElement, type ReactNode } from 'react'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
@@ -441,7 +441,8 @@ describe('ExternalSecretsTab', () => {
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
-    await openModalConfirmation.mock.calls[0][0].action()
+    // The confirmation modal is mocked, so its action runs outside of React and must be wrapped in act
+    await act(() => openModalConfirmation.mock.calls[0][0].action())
 
     expect(deleteVariable).toHaveBeenCalledWith({ variableId: 'secret-1' })
     expect(onDeleteSecret).toHaveBeenCalled()

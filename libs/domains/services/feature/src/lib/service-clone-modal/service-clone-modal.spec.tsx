@@ -29,6 +29,11 @@ jest.mock('../hooks/use-environments/use-environments', () => ({
   useEnvironments: () => ({ data: mockEnvironments, isLoading: false }),
 }))
 
+jest.mock('@qovery/domains/projects/feature', () => ({
+  ...jest.requireActual('@qovery/domains/projects/feature'),
+  useProjects: () => ({ data: [{ id: '1', name: 'my-project' }], isLoading: false }),
+}))
+
 const mockNavigate = jest.fn()
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
