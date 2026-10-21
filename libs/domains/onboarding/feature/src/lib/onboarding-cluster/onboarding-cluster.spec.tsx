@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { type ComponentPropsWithoutRef, useContext as mockUseContext } from 'react'
+import { type ComponentPropsWithoutRef, useContext as mockUseContext, useEffect as mockUseEffect } from 'react'
 import { DevopsCopilotContext as mockCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { ModalProvider } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -8,6 +8,8 @@ import { OnboardingCard } from '../onboarding-card/onboarding-card'
 import { OnboardingCopilot } from '../onboarding-copilot/onboarding-copilot'
 import { readPendingOnboarding, savePendingOnboarding } from '../utils/pending-onboarding'
 import { OnboardingCluster } from './onboarding-cluster'
+
+const mockSendMessage = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -35,7 +37,10 @@ jest.mock('@tanstack/react-router', () => ({
 jest.mock('@qovery/shared/auth', () => ({ useAuth: () => ({ user: { sub: 'user-1' } }) }))
 jest.mock('@qovery/shared/devops-copilot/feature', () => ({
   DevopsCopilotTrigger: function MockCopilot() {
-    const { devopsCopilotOpen, setDevopsCopilotOpen } = mockUseContext(mockCopilotContext)
+    const { devopsCopilotOpen, setDevopsCopilotOpen, sendMessageRef } = mockUseContext(mockCopilotContext)
+    mockUseEffect(() => {
+      if (sendMessageRef) sendMessageRef.current = mockSendMessage
+    }, [sendMessageRef])
     if (!devopsCopilotOpen) return null
     return (
       <div role="dialog" aria-label="Copilot">
@@ -64,7 +69,6 @@ function renderCluster() {
       <OnboardingCard step={2}>
         <OnboardingCluster />
       </OnboardingCard>
-      <OnboardingCopilot />
     </ModalProvider>
   )
 }
@@ -83,6 +87,7 @@ describe('OnboardingCluster', () => {
   it('shows step two and opens the existing cloud cluster flow', async () => {
     const { userEvent } = renderCluster()
     expect(screen.getByRole('progressbar')).toHaveValue(2)
+    expect(screen.queryByRole('button', { name: 'Need help? Ask Qopilot' })).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: /I have a cloud admin account/ }))
     expect(navigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/cluster/new',
@@ -134,12 +139,16 @@ describe('OnboardingCluster', () => {
     })
     expect(readPendingOnboarding('user-1')).toEqual(progress)
   })
-  it('opens and closes the usual Copilot through its provider', async () => {
-    const { userEvent } = renderCluster()
+  it('opens the demo Copilot with the installation prompt only once', async () => {
+    const { userEvent } = renderWithProviders(<OnboardingCopilot />)
     expect(screen.queryByRole('dialog', { name: 'Copilot' })).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Need help? Ask Qopilot' }))
     expect(screen.getByRole('dialog', { name: 'Copilot' })).toBeInTheDocument()
+    expect(mockSendMessage).toHaveBeenCalledWith("I can't install the demo cluster, explain how to do it.")
     await userEvent.click(screen.getByRole('button', { name: 'Close Copilot' }))
     expect(screen.queryByRole('dialog', { name: 'Copilot' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Need help? Ask Qopilot' }))
+    expect(screen.getByRole('dialog', { name: 'Copilot' })).toBeInTheDocument()
+    expect(mockSendMessage).toHaveBeenCalledTimes(1)
   })
 })

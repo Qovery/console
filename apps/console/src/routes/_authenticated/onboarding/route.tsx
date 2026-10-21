@@ -33,7 +33,7 @@ function OnboardingLayout() {
         <OnboardingCard step={step}>
           <Outlet />
         </OnboardingCard>
-        {step !== 1 && <OnboardingCopilot />}
+        {step === 3 && <OnboardingCopilot />}
       </main>
     </div>
   )
