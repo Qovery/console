@@ -5,12 +5,10 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 import { ClusterCard } from './cluster-card'
 
-const mockNavigate = jest.fn()
-
 jest.mock('../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket')
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useNavigate: () => mockNavigate,
+  useNavigate: () => jest.fn(),
   useLocation: () => ({ pathname: '/', search: '' }),
   useRouter: () => ({
     buildLocation: () => ({ href: '/' }),
@@ -207,21 +205,22 @@ describe('ClusterCard', () => {
   })
 
   it('should display invalid credentials link', async () => {
-    const { userEvent } = renderWithProviders(
+    renderWithProviders(
       <ClusterCard
         cluster={mockCluster}
         clusterDeploymentStatus={{ ...mockClusterDeploymentStatus, status: 'INVALID_CREDENTIALS' }}
       />
     )
 
-    const link = screen.getByRole('link', { name: 'Invalid cloud credentials' })
-    expect(link).toBeInTheDocument()
+    const link = screen.getByText('Invalid cloud credentials').closest('a')
+    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/deployments')
+    // A link nested in another link is invalid HTML
+    expect(link?.parentElement?.closest('a')).toBeNull()
+  })
 
-    await userEvent.click(link)
+  it('should link the cluster name to the overview', () => {
+    renderWithProviders(<ClusterCard cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />)
 
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/cluster/$clusterId/deployments',
-      params: { organizationId: 'org-id', clusterId: 'cluster-id' },
-    })
+    expect(screen.getByText('Test Cluster').closest('a')).toHaveAttribute('to', '/')
   })
 })
