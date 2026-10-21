@@ -10,6 +10,7 @@ export interface BillingDetailsProps {
   editInProcess?: boolean
   submitDisabled?: boolean
   submitLabel?: string
+  title?: string
 }
 
 const countryValues = countries.map((country) => ({
@@ -18,14 +19,20 @@ const countryValues = countries.map((country) => ({
   icon: <IconFlag code={country.code} />,
 }))
 
-export function BillingDetails({ onSubmit, editInProcess, submitDisabled, submitLabel = 'Save' }: BillingDetailsProps) {
+export function BillingDetails({
+  onSubmit,
+  editInProcess,
+  submitDisabled,
+  submitLabel = 'Save',
+  title = 'Billing information',
+}: BillingDetailsProps) {
   const { clearErrors, control, formState } = useFormContext<BillingInfoRequest>()
   const countryCode = useWatch({ control, name: 'country_code' })
   const isEuCountry = EU_COUNTRY_CODES.has(countryCode)
 
   return (
     <>
-      <h3 className="mb-5 text-sm font-medium text-neutral">Billing information</h3>
+      <h3 className="mb-5 text-sm font-medium text-neutral">{title}</h3>
       <div className="flex items-start gap-3">
         <Controller
           control={control}

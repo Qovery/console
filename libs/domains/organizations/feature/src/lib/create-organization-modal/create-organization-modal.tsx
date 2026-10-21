@@ -44,7 +44,7 @@ export function CreateOrganizationModal({
         const organization = await createOrganization({
           organizationRequest: {
             name: name.trim(),
-            plan: PlanEnum.BUSINESS_2025,
+            plan: PlanEnum.SCALE_2026,
             admin_emails: user?.email ? [user.email] : [],
           },
         })

@@ -34,7 +34,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = auth
 
-  const selectedPlan = PlanEnum.BUSINESS_2025
+  const selectedPlan = PlanEnum.SCALE_2026
   const submissionInFlight = useRef(false)
   const [submitting, setSubmitting] = useState(false)
   // Keep restored defaults stable: saving progress must not reset a running submission.

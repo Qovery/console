@@ -89,19 +89,54 @@ describe('PageOrganizationBillingSummary', () => {
     expect(pageProps.onPromoCodeClick).toHaveBeenCalled()
   })
 
-  it('should always show Contact our Team during an active trial, even when a credit card exists', async () => {
-    const onActivateAccountClick = jest.fn()
+  it('should show Add credit card during an active trial when no credit card exists', async () => {
+    const onAddCreditCardClick = jest.fn()
     const { userEvent } = renderWithProviders(
       <PageOrganizationBillingSummary
         {...pageProps}
         currentCost={{ ...currentCostMock, remaining_trial_day: 5 }}
-        hasCreditCard
-        onActivateAccountClick={onActivateAccountClick}
+        hasCreditCard={false}
+        creditCard={undefined}
+        onAddCreditCardClick={onAddCreditCardClick}
       />
     )
 
-    await userEvent.click(screen.getByText('Contact our Team'))
-    expect(onActivateAccountClick).toHaveBeenCalled()
+    await userEvent.click(screen.getByText('Add credit card'))
+    expect(onAddCreditCardClick).toHaveBeenCalled()
+  })
+
+  it('should not show Add credit card during an active trial when a credit card exists', () => {
+    renderWithProviders(
+      <PageOrganizationBillingSummary
+        {...pageProps}
+        currentCost={{ ...currentCostMock, remaining_trial_day: 5 }}
+        hasCreditCard
+      />
+    )
+
+    expect(screen.queryByText('Add credit card')).not.toBeInTheDocument()
+  })
+
+  it('should remind the activated plan with a switch action when a credit card exists during an active trial', async () => {
+    const onSwitchPlanClick = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <PageOrganizationBillingSummary
+        {...pageProps}
+        currentCost={{ ...currentCostMock, plan: PlanEnum.GROWTH_2026, remaining_trial_day: 10 }}
+        hasCreditCard
+        onSwitchPlanClick={onSwitchPlanClick}
+      />
+    )
+
+    expect(screen.getByText('Your account is activated on the Growth plan')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /Your free trial ends in 11 days, then your subscription starts on this plan. You can switch plan until then./
+      )
+    ).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('Switch plan'))
+    expect(onSwitchPlanClick).toHaveBeenCalled()
   })
 
   it('should only show Cancel free trial when a credit card exists during an active trial', async () => {
@@ -134,7 +169,7 @@ describe('PageOrganizationBillingSummary', () => {
       <PageOrganizationBillingSummary {...pageProps} currentCost={{ ...currentCostMock, remaining_trial_day: 91 }} />
     )
 
-    expect(screen.queryByText('Contact our Team')).not.toBeInTheDocument()
+    expect(screen.queryByText('Add credit card')).not.toBeInTheDocument()
     expect(screen.queryByText('Cancel free trial')).not.toBeInTheDocument()
   })
 

@@ -287,7 +287,7 @@ describe('OnboardingProfile', () => {
       expect.objectContaining({ user_email: 'edited@acme.com', company_name: 'Acme Corp' })
     )
     expect(createOrganization).toHaveBeenCalledWith({
-      organizationRequest: { name: 'My workspace', plan: PlanEnum.BUSINESS_2025, admin_emails: ['edited@acme.com'] },
+      organizationRequest: { name: 'My workspace', plan: PlanEnum.SCALE_2026, admin_emails: ['edited@acme.com'] },
     })
   })
 
@@ -559,7 +559,7 @@ describe('OnboardingProfile', () => {
       'onboarding-tailor-experience-completed',
       'onboarding-organization-created',
     ])
-    expect(window.dataLayer).toEqual([{ event: 'onboarding-organization-created', plan: PlanEnum.BUSINESS_2025 }])
+    expect(window.dataLayer).toEqual([{ event: 'onboarding-organization-created', plan: PlanEnum.SCALE_2026 }])
     expect(createProject).toHaveBeenCalledTimes(1)
     expect(createOrganization).toHaveBeenCalledTimes(1)
     await waitFor(() =>
@@ -645,7 +645,7 @@ describe('OnboardingProfile', () => {
       expect.objectContaining({ first_name: 'John', last_name: 'van Doe', company_name: 'Acme Corp' })
     )
     expect(createOrganization).toHaveBeenCalledWith({
-      organizationRequest: { name: 'Acme Workspace', plan: PlanEnum.BUSINESS_2025, admin_emails: ['john@acme.com'] },
+      organizationRequest: { name: 'Acme Workspace', plan: PlanEnum.SCALE_2026, admin_emails: ['john@acme.com'] },
     })
     expect(refreshToken).toHaveBeenCalledWith({ cacheMode: 'off' })
     expect(useCreateProject).toHaveBeenCalledWith({ silently: true })
@@ -654,9 +654,9 @@ describe('OnboardingProfile', () => {
     expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining({ current_step: 'project' }))
     expect(posthog.capture).toHaveBeenCalledWith(
       'onboarding-organization-created',
-      expect.objectContaining({ company_name: 'Acme Corp', plan: PlanEnum.BUSINESS_2025 })
+      expect.objectContaining({ company_name: 'Acme Corp', plan: PlanEnum.SCALE_2026 })
     )
-    expect(window.dataLayer).toContainEqual({ event: 'onboarding-organization-created', plan: PlanEnum.BUSINESS_2025 })
+    expect(window.dataLayer).toContainEqual({ event: 'onboarding-organization-created', plan: PlanEnum.SCALE_2026 })
   })
 
   it('explains why a personal email from the token is rejected without editing it', async () => {

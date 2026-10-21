@@ -1,33 +1,34 @@
 /**
- * Checks if a plan is a 2025 plan
+ * Checks if a plan is a current (2025 or 2026) plan
  * @param plan - The plan name to check
- * @returns true if the plan is a 2025 plan, false otherwise
+ * @returns true if the plan is a 2025 or 2026 plan, false otherwise
  */
 export function is2025Plan(plan?: string): boolean {
   if (!plan) return false
-  return plan.toUpperCase().includes('2025')
+  return /_202[56]$/i.test(plan)
 }
 
 /**
- * Formats a plan name (capitalized, without Legacy suffix, removes _2025)
+ * Formats a plan name (capitalized, without Legacy suffix, removes _2025 / _2026)
  * @param plan - The plan name to format
  * @returns The formatted plan name
  * @example
  * formatPlanName('TEAM') => 'Team'
  * formatPlanName('TEAM_2025') => 'Team'
  * formatPlanName('ENTERPRISE_2025') => 'Enterprise'
+ * formatPlanName('SCALE_2026') => 'Scale'
  */
 export function formatPlanName(plan?: string): string {
   if (!plan) return 'N/A'
 
-  // Remove _2025 suffix if present
-  const planWithoutSuffix = plan.replace(/_2025$/i, '')
+  // Remove _2025 / _2026 suffix if present
+  const planWithoutSuffix = plan.replace(/_202[56]$/i, '')
 
   return planWithoutSuffix.charAt(0).toUpperCase() + planWithoutSuffix.slice(1).toLowerCase()
 }
 
 /**
- * Formats a plan name with "plan" and "(Legacy)" suffix if it's not a 2025 plan
+ * Formats a plan name with "plan" and "(Legacy)" suffix if it's not a 2025 or 2026 plan
  * @param plan - The plan name to format
  * @returns The formatted plan name with "plan" suffix and optional "(Legacy)"
  * @example
@@ -35,6 +36,7 @@ export function formatPlanName(plan?: string): string {
  * formatPlanDisplay('TEAM_2025') => 'Team plan'
  * formatPlanDisplay('ENTERPRISE') => 'Enterprise plan (Legacy)'
  * formatPlanDisplay('ENTERPRISE_2025') => 'Enterprise plan'
+ * formatPlanDisplay('SCALE_2026') => 'Scale plan'
  */
 export function formatPlanDisplay(plan?: string): string {
   if (!plan) return 'N/A plan'

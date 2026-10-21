@@ -2,22 +2,26 @@ import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@charg
 import { type default as FieldContainer } from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import { type default as CbInstance } from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { useParams } from '@tanstack/react-router'
-import { type BillingInfo, type BillingInfoRequest, type CreditCard } from 'qovery-typescript-axios'
-import { Suspense, useRef, useState } from 'react'
+import { type BillingInfo, type BillingInfoRequest, type CreditCard, type PlanEnum } from 'qovery-typescript-axios'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Callout, toast, toastError, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, InputCreditCard, InputText, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
-import { formatPlanDisplay, isActiveFreeTrial } from '@qovery/shared/util-js'
+import { formatPlanDisplay, formatPlanName, isActiveFreeTrial, pluralize } from '@qovery/shared/util-js'
 import { fieldCardStyles, loadChargebee } from '@qovery/shared/util-payment'
 import { type SerializedError } from '@qovery/shared/utils'
 import { useAddCreditCard } from '../hooks/use-add-credit-card/use-add-credit-card'
 import { useBillingInfo } from '../hooks/use-billing-info/use-billing-info'
+import { useChangePlan } from '../hooks/use-change-plan/use-change-plan'
 import { useCreditCards } from '../hooks/use-credit-cards/use-credit-cards'
 import { useCurrentCost } from '../hooks/use-current-cost/use-current-cost'
 import { useDeleteCreditCard } from '../hooks/use-delete-credit-card/use-delete-credit-card'
 import { useEditBillingInfo } from '../hooks/use-edit-billing-info/use-edit-billing-info'
+import ActivationPlanSelection, {
+  getDefaultActivationPlan,
+} from './activation-plan-selection/activation-plan-selection'
 import BillingDetails from './billing-details/billing-details'
 
 function formatBillingInfo(data: BillingInfoRequest): BillingInfoRequest {
@@ -63,11 +67,21 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
   const { data: currentCost } = useCurrentCost({ organizationId, suspense: true })
   const { mutateAsync: editBillingInfo } = useEditBillingInfo()
   const { mutateAsync: addCreditCard } = useAddCreditCard({ notifyOnError: false })
-  const { showPylonForm } = useSupportChat()
+  const { mutateAsync: changePlan } = useChangePlan()
+  const { showChat, showPylonForm } = useSupportChat()
 
   const isInActiveFreeTrial = isActiveFreeTrial(currentCost?.remaining_trial_day)
+  // Add + 1 because Chargebee return 0 when the trial is ending today
+  const remainingTrialDays = (currentCost?.remaining_trial_day ?? 0) + 1
+  const remainingTrialDaysLabel = `${remainingTrialDays} ${pluralize(remainingTrialDays, 'day')}`
+  // During the free trial, adding the first credit card activates the plan chosen by the user.
+  // The plan can be switched until the end of the trial, the subscription then starts on the selected plan.
+  const isActivatingPlan = isInActiveFreeTrial && creditCards.length === 0
+  const canSwitchPlan = isInActiveFreeTrial && creditCards.length > 0
 
-  const [showAddCard, setShowAddCard] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState<PlanEnum>(() => getDefaultActivationPlan(currentCost?.plan))
+  const [isSwitchingPlan, setIsSwitchingPlan] = useState(false)
+  const [showAddCard, setShowAddCard] = useState(isActivatingPlan)
   const [editInProcess, setEditInProcess] = useState(false)
   const [cbInstance, setCbInstance] = useState<CbInstance | null>(null)
   const [isCardReady, setIsCardReady] = useState(false)
@@ -80,16 +94,24 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
     values: formatBillingInfoFormValues(billingInfo),
   })
 
-  const handleAddCard = async (cardId?: string) => {
+  useEffect(() => {
+    if (!showAddCard || cbInstance) return
+
+    let ignore = false
+    loadChargebee()
+      .then((instance) => {
+        if (!ignore) setCbInstance(instance)
+      })
+      .catch(() => undefined)
+
+    return () => {
+      ignore = true
+    }
+  }, [showAddCard, cbInstance])
+
+  const handleAddCard = (cardId?: string) => {
     setShowAddCard(true)
     setEditingCardId(cardId || null)
-
-    try {
-      const instance = await loadChargebee()
-      setCbInstance(instance)
-    } catch (error) {
-      return
-    }
   }
 
   const handleCancelAddCard = () => {
@@ -102,6 +124,9 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
 
   const saveBillingDetails = async (data: BillingInfoRequest) => {
     if (!organizationId) return
+
+    const planToActivate = isActivatingPlan && !editingCardId ? selectedPlan : undefined
+    let cardAdded = false
 
     setEditInProcess(true)
 
@@ -130,6 +155,8 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
           },
         })
 
+        cardAdded = true
+
         if (editingCardId) {
           await deleteReplacedCreditCard({ organizationId, creditCardId: editingCardId })
         }
@@ -153,8 +180,28 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
         showAddCard ? (editingCardId ? 'Unable to update card' : 'Unable to add card') : undefined,
         vatNumberError
       )
+    }
+
+    if (cardAdded && planToActivate && planToActivate !== currentCost?.plan) {
+      try {
+        await changePlan({ organizationId, plan: planToActivate })
+      } catch {
+        // Error is already notified by useChangePlan
+      }
+    }
+
+    setEditInProcess(false)
+  }
+
+  const handleSwitchPlan = async () => {
+    setIsSwitchingPlan(true)
+
+    try {
+      await changePlan({ organizationId, plan: selectedPlan })
+    } catch {
+      // Error is already notified by useChangePlan
     } finally {
-      setEditInProcess(false)
+      setIsSwitchingPlan(false)
     }
   }
 
@@ -165,6 +212,8 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
       'Review the highlighted billing fields and try again.'
     )
   }
+
+  const addCardLabel = isActivatingPlan ? `Activate ${formatPlanName(selectedPlan)} plan` : 'Add card'
 
   const submitBillingDetails = methods.handleSubmit(saveBillingDetails, onInvalidBillingDetails)
 
@@ -186,28 +235,81 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
           <SettingsHeading title="Payment method" showNeedHelp={false} />
 
           <div className="max-w-content-with-navigation-left">
-            {isInActiveFreeTrial && (
+            {isActivatingPlan && (
               <Callout.Root color="sky" className="mb-6 items-start">
                 <Callout.Icon>
                   <Icon iconName="circle-info" iconStyle="regular" />
                 </Callout.Icon>
                 <Callout.Text>
-                  <Callout.TextHeading>
-                    You are on the {formatPlanDisplay(currentCost?.plan)} during your free trial
-                  </Callout.TextHeading>
+                  <Callout.TextHeading>Choose your plan to activate your account</Callout.TextHeading>
                   <Callout.TextDescription>
-                    Activate your plan to keep this level of access after your trial ends.
+                    Your free trial runs on the {formatPlanDisplay(currentCost?.plan)}. Choose the plan you want to keep
+                    and add your payment details below. Your subscription starts when your trial ends in{' '}
+                    {remainingTrialDaysLabel}.
                   </Callout.TextDescription>
                 </Callout.Text>
-                <Button size="sm" variant="solid" onClick={() => showPylonForm('ask-for-activation')}>
-                  Contact our Team
+              </Callout.Root>
+            )}
+            {canSwitchPlan && (
+              <Callout.Root color="sky" className="mb-6 items-start" data-testid="current-plan-callout">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>
+                    Your account is activated on the {formatPlanDisplay(currentCost?.plan)}
+                  </Callout.TextHeading>
+                  <Callout.TextDescription>
+                    Your subscription starts on this plan when your trial ends in {remainingTrialDaysLabel}. You can
+                    switch plan until then.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            )}
+            {!isInActiveFreeTrial && currentCost?.plan && (
+              <Callout.Root color="sky" className="mb-6 items-center" data-testid="current-plan-callout">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>You are on the {formatPlanDisplay(currentCost?.plan)}</Callout.TextHeading>
+                  <Callout.TextDescription>Contact our team to change your plan.</Callout.TextDescription>
+                </Callout.Text>
+                <Button size="sm" variant="solid" onClick={() => showChat()}>
+                  Contact us
                 </Button>
               </Callout.Root>
             )}
-            <BlockContent title="Billing details">
+            <BlockContent title={isActivatingPlan ? 'Activate your account' : 'Billing details'}>
+              {isInActiveFreeTrial && (
+                <>
+                  <ActivationPlanSelection
+                    value={selectedPlan}
+                    onChange={setSelectedPlan}
+                    currentPlan={currentCost?.plan}
+                    title={canSwitchPlan ? 'Your plan' : undefined}
+                    action={
+                      canSwitchPlan && (
+                        <Button
+                          size="md"
+                          loading={isSwitchingPlan}
+                          disabled={selectedPlan === currentCost?.plan}
+                          onClick={handleSwitchPlan}
+                        >
+                          Switch to {formatPlanName(selectedPlan)} plan
+                        </Button>
+                      )
+                    }
+                    onContactUsClick={() => showPylonForm('ask-for-activation')}
+                  />
+                  <div className="-mx-4 my-6 border-t border-neutral" />
+                </>
+              )}
               <div className="mb-6" data-credit-card-section>
                 <div className="mb-4">
-                  <h3 className="text-sm font-medium text-neutral">Credit card</h3>
+                  <h3 className="text-sm font-medium text-neutral">
+                    {isActivatingPlan ? '2. Add your credit card' : 'Credit card'}
+                  </h3>
                 </div>
 
                 {creditCards.length > 0 && !showAddCard && (
@@ -261,16 +363,18 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
 
                 {showAddCard && (
                   <>
-                    <div className="mb-4 flex items-center justify-between">
-                      <h4 className="text-sm font-medium text-neutral">Add credit card</h4>
-                      <button
-                        type="button"
-                        onClick={() => handleCancelAddCard()}
-                        className="text-sm text-neutral-subtle hover:text-neutral"
-                      >
-                        Cancel
-                      </button>
-                    </div>
+                    {!isActivatingPlan && (
+                      <div className="mb-4 flex items-center justify-between">
+                        <h4 className="text-sm font-medium text-neutral">Add credit card</h4>
+                        <button
+                          type="button"
+                          onClick={() => handleCancelAddCard()}
+                          className="text-sm text-neutral-subtle hover:text-neutral"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
 
                     {!cbInstance ? (
                       <div className="space-y-4">
@@ -336,9 +440,10 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
               <div className="-mx-4 my-6 border-t border-neutral" />
 
               <BillingDetails
+                title={isActivatingPlan ? '3. Billing information' : undefined}
                 editInProcess={editInProcess}
                 submitDisabled={showAddCard && (!isCardReady || !isCardComplete)}
-                submitLabel={showAddCard ? (editingCardId ? 'Update card' : 'Add card') : 'Save'}
+                submitLabel={showAddCard ? (editingCardId ? 'Update card' : addCardLabel) : 'Save'}
                 onSubmit={submitBillingDetails}
               />
             </BlockContent>
