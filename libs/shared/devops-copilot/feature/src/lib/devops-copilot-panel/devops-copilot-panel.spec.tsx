@@ -1,5 +1,4 @@
-import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, useReducer, useState } from 'react'
 import { useQoveryContext } from '@qovery/shared/devops-copilot/context'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
@@ -41,13 +40,28 @@ const refetch = jest.fn()
 function config(data?: { org_config: { enabled: boolean } }, isError = false) {
   jest.mocked(useAICopilotConfig).mockReturnValue({ data, isError, refetch } as ReturnType<typeof useAICopilotConfig>)
 }
-function panel(sendMessageRef: { current: ((message: string) => void) | null } = { current: null }) {
+type SendMessageRef = { current: ((message: string) => void) | null }
+
+function panel(sendMessageRef: SendMessageRef = { current: null }, open = true) {
   return (
-    <DevopsCopilotContext.Provider value={{ devopsCopilotOpen: true, setDevopsCopilotOpen: jest.fn(), sendMessageRef }}>
+    <DevopsCopilotContext.Provider value={{ devopsCopilotOpen: open, setDevopsCopilotOpen: jest.fn(), sendMessageRef }}>
       <DevopsCopilotPanel onClose={jest.fn()} />
     </DevopsCopilotContext.Provider>
   )
 }
+// Update inside the provider tree so queued state survives configuration changes.
+function ExternalHelpPanel({ sendMessageRef }: { sendMessageRef: SendMessageRef }) {
+  const [, refresh] = useReducer((value: number) => value + 1, 0)
+  const [open, setOpen] = useState(true)
+  return (
+    <>
+      <button onClick={refresh}>Refresh configuration</button>
+      <button onClick={() => setOpen((value) => !value)}>Toggle panel</button>
+      {panel(sendMessageRef, open)}
+    </>
+  )
+}
+
 beforeEach(() => {
   jest.clearAllMocks()
   jest
@@ -57,29 +71,29 @@ beforeEach(() => {
 })
 afterEach(() => jest.useRealTimers())
 
-it.each(['loading', 'disabled', 'error'])('queues external help while configuration is %s', (state) => {
+it.each(['loading', 'disabled', 'error'])('queues external help while configuration is %s', async (state) => {
   jest.useFakeTimers()
   config(state === 'disabled' ? { org_config: { enabled: false } } : undefined, state === 'error')
   const sendMessageRef = { current: null as ((message: string) => void) | null }
-  const { rerender } = renderWithProviders(panel(sendMessageRef), { wrapper: TooltipProvider })
+  const { userEvent } = renderWithProviders(<ExternalHelpPanel sendMessageRef={sendMessageRef} />)
 
   act(() => sendMessageRef.current?.('Help me install the demo cluster'))
   act(() => jest.runOnlyPendingTimers())
   expect(mockSendMessage).not.toHaveBeenCalled()
 
   config({ org_config: { enabled: true } })
-  rerender(panel(sendMessageRef))
+  await userEvent.click(screen.getByRole('button', { name: 'Refresh configuration' }))
   act(() => jest.runOnlyPendingTimers())
   expect(mockSendMessage).toHaveBeenCalledWith('Help me install the demo cluster', true)
   expect(mockSendMessage).toHaveBeenCalledTimes(1)
 })
 
-it('waits for organization context before sending external help', () => {
+it('waits for organization context before sending external help', async () => {
   jest.useFakeTimers()
   config({ org_config: { enabled: true } })
   jest.mocked(useQoveryContext).mockReturnValue({ context: {} } as ReturnType<typeof useQoveryContext>)
   const sendMessageRef = { current: null as ((message: string) => void) | null }
-  const { rerender } = renderWithProviders(panel(sendMessageRef), { wrapper: TooltipProvider })
+  const { userEvent } = renderWithProviders(<ExternalHelpPanel sendMessageRef={sendMessageRef} />)
 
   act(() => sendMessageRef.current?.('Help me install the demo cluster'))
   act(() => jest.runOnlyPendingTimers())
@@ -88,8 +102,26 @@ it('waits for organization context before sending external help', () => {
   jest.mocked(useQoveryContext).mockReturnValue({
     context: { organization: { id: 'org-id' } },
   } as ReturnType<typeof useQoveryContext>)
-  rerender(panel(sendMessageRef))
+  await userEvent.click(screen.getByRole('button', { name: 'Refresh configuration' }))
   act(() => jest.runOnlyPendingTimers())
+  expect(mockSendMessage).toHaveBeenCalledTimes(1)
+})
+
+it('discards queued help when closed instead of sending it on reopening', async () => {
+  jest.useFakeTimers()
+  const sendMessageRef: SendMessageRef = { current: null }
+  const { userEvent } = renderWithProviders(<ExternalHelpPanel sendMessageRef={sendMessageRef} />)
+
+  act(() => sendMessageRef.current?.('Help me install the demo cluster'))
+  await userEvent.click(screen.getByRole('button', { name: 'Toggle panel' }))
+  config({ org_config: { enabled: true } })
+  await userEvent.click(screen.getByRole('button', { name: 'Toggle panel' }))
+  act(() => jest.runOnlyPendingTimers())
+  expect(mockSendMessage).not.toHaveBeenCalled()
+
+  act(() => sendMessageRef.current?.('A new request'))
+  act(() => jest.runOnlyPendingTimers())
+  expect(mockSendMessage).toHaveBeenCalledWith('A new request', true)
   expect(mockSendMessage).toHaveBeenCalledTimes(1)
 })
 

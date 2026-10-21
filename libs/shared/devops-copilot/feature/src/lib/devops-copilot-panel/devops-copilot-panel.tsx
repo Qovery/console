@@ -174,6 +174,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
       : plan
 
   const handleOnClose = useCallback(() => {
+    setPendingExternalMessage(undefined)
     onClose()
     setInputMessage('')
     setExpand(false)
@@ -236,7 +237,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   }, [sendMessageRef])
 
   useEffect(() => {
-    if (!pendingExternalMessage || !isCopilotEnabled || !organizationId || !isPanelActive) return
+    if (!isPanelActive) {
+      setPendingExternalMessage(undefined)
+      return
+    }
+    if (!pendingExternalMessage || !isCopilotEnabled || !organizationId) return
 
     controllerRef.current?.abort()
     setThread([])
