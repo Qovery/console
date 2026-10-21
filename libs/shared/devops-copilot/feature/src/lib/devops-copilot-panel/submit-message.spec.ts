@@ -154,15 +154,15 @@ describe('submitMessage', () => {
     })
 
     it('should handle multiple data chunks in one stream', async () => {
-      // Non-JSON chunks are still streamed but logged as parse failures
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
       const onStreamMock = jest.fn()
       const mockReader = {
         read: jest
           .fn()
           .mockResolvedValueOnce({
             done: false,
-            value: new TextEncoder().encode('data: chunk1\ndata: chunk2\ndata: chunk3\n'),
+            value: new TextEncoder().encode(
+              'data: {"type":"text","content":"chunk1"}\ndata: {"type":"text","content":"chunk2"}\ndata: {"type":"text","content":"chunk3"}\n'
+            ),
           })
           .mockResolvedValueOnce({
             done: true,
@@ -179,15 +179,9 @@ describe('submitMessage', () => {
       await submitMessage('user-123', 'Hello', 'token-123', 'thread-123', mockContext, onStreamMock)
 
       expect(onStreamMock).toHaveBeenCalledTimes(3)
-      expect(onStreamMock).toHaveBeenCalledWith('chunk1')
-      expect(onStreamMock).toHaveBeenCalledWith('chunk2')
-      expect(onStreamMock).toHaveBeenCalledWith('chunk3')
-      expect(consoleErrorSpy).toHaveBeenCalledTimes(3)
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', 'chunk1', expect.any(Error))
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', 'chunk2', expect.any(Error))
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', 'chunk3', expect.any(Error))
-
-      consoleErrorSpy.mockRestore()
+      expect(onStreamMock).toHaveBeenCalledWith('{"type":"text","content":"chunk1"}')
+      expect(onStreamMock).toHaveBeenCalledWith('{"type":"text","content":"chunk2"}')
+      expect(onStreamMock).toHaveBeenCalledWith('{"type":"text","content":"chunk3"}')
     })
 
     it('should handle invalid JSON in stream chunks gracefully', async () => {
@@ -211,12 +205,15 @@ describe('submitMessage', () => {
         },
       } as unknown as Response)
 
-      const result = await submitMessage('user-123', 'Hello', 'token-123', 'thread-123', mockContext, jest.fn())
+      try {
+        const result = await submitMessage('user-123', 'Hello', 'token-123', 'thread-123', mockContext, jest.fn())
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', '{invalid json}', expect.any(Error))
-      expect(result?.messageId).toBe('')
-
-      consoleErrorSpy.mockRestore()
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', '{invalid json}', expect.any(Error))
+        expect(result?.messageId).toBe('')
+      } finally {
+        // Restore even when an assertion fails, so later tests can still log
+        consoleErrorSpy.mockRestore()
+      }
     })
   })
 

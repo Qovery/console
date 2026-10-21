@@ -144,16 +144,19 @@ describe('StepSummary', () => {
     mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
     mockEditClusterKubeconfig.mockRejectedValue(kubeconfigError)
 
-    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+    try {
+      const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
 
-    await userEvent.click(screen.getByTestId('button-create'))
+      await userEvent.click(screen.getByTestId('button-create'))
 
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith({ to: '/organization/org-123/clusters' })
-    })
-    expect(consoleErrorSpy).toHaveBeenCalledWith(kubeconfigError)
-
-    consoleErrorSpy.mockRestore()
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith({ to: '/organization/org-123/clusters' })
+      })
+      expect(consoleErrorSpy).toHaveBeenCalledWith(kubeconfigError)
+    } finally {
+      // Restore even when an assertion fails, so later tests can still log
+      consoleErrorSpy.mockRestore()
+    }
   })
 
   it('should send GCP NAT_GATEWAY using nat_gateway_type format on create', async () => {
