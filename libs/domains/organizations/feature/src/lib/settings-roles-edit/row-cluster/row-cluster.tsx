@@ -7,34 +7,12 @@ import { Checkbox } from '@qovery/shared/ui'
 
 export interface RowClusterProps {
   cluster: OrganizationCustomRoleClusterPermissionsInner
-  setGlobalCheck?: (value: string) => void
-}
-
-const setGlobalCheckByValue = (
-  values: { [key: string]: string },
-  key: string,
-  setGlobalCheck: (value: string) => void
-) => {
-  let length = 0
-
-  const array = JSON.stringify(values).split(',')
-
-  for (let index = 0; index < array.length; index++) {
-    if (array[index].includes(key)) length += 1
-  }
-
-  if (length < Object.keys(OrganizationCustomRoleClusterPermission).length) {
-    // reset global check
-    setGlobalCheck('')
-  } else {
-    setGlobalCheck(key)
-  }
 }
 
 export function RowCluster(props: RowClusterProps) {
-  const { cluster, setGlobalCheck } = props
+  const { cluster } = props
 
-  const { control, getValues } = useFormContext()
+  const { control } = useFormContext()
 
   return (
     <div className="flex h-10 border-b border-neutral last:border-0">
@@ -63,13 +41,6 @@ export function RowCluster(props: RowClusterProps) {
                   onCheckedChange={(checked) => {
                     const value = checked ? permission : OrganizationCustomRoleClusterPermission.VIEWER
                     field.onChange(value)
-                    if (setGlobalCheck) {
-                      setGlobalCheckByValue(
-                        getValues(`cluster_permissions.${cluster.cluster_id}`),
-                        value,
-                        setGlobalCheck
-                      )
-                    }
                   }}
                 />
               )}

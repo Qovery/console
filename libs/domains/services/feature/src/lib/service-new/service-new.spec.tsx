@@ -139,7 +139,7 @@ describe('ServiceNew', () => {
     )
     expect(screen.getByRole('heading', { name: 'Base services' })).toBeInTheDocument()
     expect(screen.getByText('Application')).toBeInTheDocument()
-    expect(screen.getByText('Container Database')).toBeInTheDocument()
+    expect(screen.queryByText('Container Database')).not.toBeInTheDocument()
     expect(screen.getByText('Lifecycle Job')).toBeInTheDocument()
     expect(screen.getByText('Cron Job')).toBeInTheDocument()
     expect(screen.getByText('Helm')).toBeInTheDocument()
@@ -419,7 +419,7 @@ describe('ServiceNew', () => {
     expect(within(dialog).queryByText('vdefault')).not.toBeInTheDocument()
   })
 
-  it('should link database entries to the database create flow', async () => {
+  it('should keep database template links without a base database entry', async () => {
     const { container, userEvent } = renderWithProviders(
       <ServiceNew
         organizationId="org-1"
@@ -434,7 +434,7 @@ describe('ServiceNew', () => {
       container.querySelector(
         'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database"]'
       )
-    ).toBeInTheDocument()
+    ).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByText('PostgreSQL'))
 
