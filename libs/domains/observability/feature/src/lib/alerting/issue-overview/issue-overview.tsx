@@ -109,7 +109,6 @@ export function IssueOverview() {
                             name={match(alert.target.target_type)
                               .with('CONTAINER', () => 'APPLICATION')
                               .otherwise((s) => s)}
-                            iconStyle="regular"
                             width={13}
                           />
                         </span>

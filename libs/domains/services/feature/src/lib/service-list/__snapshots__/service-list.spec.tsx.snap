@@ -465,11 +465,10 @@ exports[`ServiceList should match snapshot 1`] = `
                 <div
                   class="flex h-full items-center"
                 >
-                  <div
-                    aria-busy="true"
-                    class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 96px; height: 26px;"
-                  />
+                  <div>
+                    Actions for 
+                    037c9e87-e098-4970-8b1f-9a5ffe9e4b89
+                  </div>
                 </div>
               </td>
             </tr>
@@ -840,11 +839,10 @@ exports[`ServiceList should match snapshot 1`] = `
                 <div
                   class="flex h-full items-center"
                 >
-                  <div
-                    aria-busy="true"
-                    class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 96px; height: 26px;"
-                  />
+                  <div>
+                    Actions for 
+                    04308de2-af27-405f-9e95-570fa94ed577
+                  </div>
                 </div>
               </td>
             </tr>
@@ -1537,11 +1535,10 @@ exports[`ServiceList should match snapshot 1`] = `
                 <div
                   class="flex h-full items-center"
                 >
-                  <div
-                    aria-busy="true"
-                    class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 96px; height: 26px;"
-                  />
+                  <div>
+                    Actions for 
+                    ebd8be35-d7a2-4d4f-ad82-de4378a83ef4
+                  </div>
                 </div>
               </td>
             </tr>
@@ -2027,11 +2024,10 @@ exports[`ServiceList should match snapshot 1`] = `
                 <div
                   class="flex h-full items-center"
                 >
-                  <div
-                    aria-busy="true"
-                    class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 96px; height: 26px;"
-                  />
+                  <div>
+                    Actions for 
+                    33962e52-7883-42fd-8613-85e04229a9b6
+                  </div>
                 </div>
               </td>
             </tr>

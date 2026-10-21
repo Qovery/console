@@ -309,7 +309,7 @@ export function AgenticWorkflowConfiguration() {
   const { data: contextServices = [], isLoading: areContextServicesLoading } =
     useAgenticWorkflowContextServices(environmentId)
   const navigate = useNavigate()
-  const { closeModal, openModal } = useModal()
+  const { closeModal, openModal, setModalDismissible } = useModal()
   const { form, onExit, requiresQoveryMcp, variablesForm, selectedTemplate } = useAgenticWorkflowCreateContext()
   const { isLoading: isCreatingQoveryMcpServer, mutateAsync: createQoveryMcpServer } = useCreateQoveryMcpServer()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
@@ -449,6 +449,7 @@ export function AgenticWorkflowConfiguration() {
       content: (
         <GitContextModal
           context={editingContext}
+          setModalDismissible={setModalDismissible}
           setOpen={(open) => {
             if (!open) closeModal()
           }}
@@ -492,6 +493,7 @@ export function AgenticWorkflowConfiguration() {
         <QoveryServiceContextModal
           isLoading={areContextServicesLoading}
           services={contextServices}
+          setModalDismissible={setModalDismissible}
           value={values.contextServices}
           setOpen={(open) => {
             if (!open) closeModal()

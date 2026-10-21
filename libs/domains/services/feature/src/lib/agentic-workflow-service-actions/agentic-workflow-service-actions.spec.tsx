@@ -142,7 +142,8 @@ describe('AgenticWorkflowServiceActions', () => {
     expect(screen.getByText('Environment ID')).toBeInTheDocument()
     expect(screen.getByText('Service ID')).toBeInTheDocument()
 
-    screen.getByRole('menuitem', { name: /Cluster ID cluster-1/i }).focus()
+    await userEvent.keyboard('{ArrowRight}{Home}')
+    expect(screen.getByRole('menuitem', { name: /Cluster ID cluster-1/i })).toHaveFocus()
     await userEvent.keyboard('{Enter}')
     expect(mockCopyToClipboard).toHaveBeenCalledWith('cluster-1')
   })

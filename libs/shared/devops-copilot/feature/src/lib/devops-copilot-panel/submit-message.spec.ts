@@ -160,7 +160,9 @@ describe('submitMessage', () => {
           .fn()
           .mockResolvedValueOnce({
             done: false,
-            value: new TextEncoder().encode('data: chunk1\ndata: chunk2\ndata: chunk3\n'),
+            value: new TextEncoder().encode(
+              'data: {"type":"text","content":"chunk1"}\ndata: {"type":"text","content":"chunk2"}\ndata: {"type":"text","content":"chunk3"}\n'
+            ),
           })
           .mockResolvedValueOnce({
             done: true,
@@ -177,9 +179,9 @@ describe('submitMessage', () => {
       await submitMessage('user-123', 'Hello', 'token-123', 'thread-123', mockContext, onStreamMock)
 
       expect(onStreamMock).toHaveBeenCalledTimes(3)
-      expect(onStreamMock).toHaveBeenCalledWith('chunk1')
-      expect(onStreamMock).toHaveBeenCalledWith('chunk2')
-      expect(onStreamMock).toHaveBeenCalledWith('chunk3')
+      expect(onStreamMock).toHaveBeenCalledWith('{"type":"text","content":"chunk1"}')
+      expect(onStreamMock).toHaveBeenCalledWith('{"type":"text","content":"chunk2"}')
+      expect(onStreamMock).toHaveBeenCalledWith('{"type":"text","content":"chunk3"}')
     })
 
     it('should handle invalid JSON in stream chunks gracefully', async () => {
@@ -203,12 +205,15 @@ describe('submitMessage', () => {
         },
       } as unknown as Response)
 
-      const result = await submitMessage('user-123', 'Hello', 'token-123', 'thread-123', mockContext, jest.fn())
+      try {
+        const result = await submitMessage('user-123', 'Hello', 'token-123', 'thread-123', mockContext, jest.fn())
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', '{invalid json}', expect.any(Error))
-      expect(result?.messageId).toBe('')
-
-      consoleErrorSpy.mockRestore()
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to parse chunk:', '{invalid json}', expect.any(Error))
+        expect(result?.messageId).toBe('')
+      } finally {
+        // Restore even when an assertion fails, so later tests can still log
+        consoleErrorSpy.mockRestore()
+      }
     })
   })
 

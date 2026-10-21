@@ -40,11 +40,12 @@ describe('ServicesDeploymentStageModal', () => {
     mockEditDeploymentStage.mockResolvedValue(undefined)
   })
 
-  it('prefills the form in edit mode', () => {
+  it('prefills the form in edit mode', async () => {
     renderWithProviders(<ServicesDeploymentStageModal environmentId="env-1" onClose={mockOnClose} stage={stage} />)
 
     expect(screen.getByLabelText('Name')).toHaveValue('Build')
     expect(screen.getByLabelText('Description (optional)')).toHaveValue('Compile and package')
+    await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
   })
 
   it('creates a stage', async () => {

@@ -36,7 +36,7 @@ describe('ClusterAdvancedSettings', () => {
     mockedBuildClusterAdvancedSettingsPayload.mockImplementation(actualBuildClusterAdvancedSettingsPayload)
   })
 
-  it('should render correctly', () => {
+  it('should render correctly', async () => {
     const { container } = renderWithProviders(
       wrapWithReactHookForm(
         <ClusterAdvancedSettingsComponent
@@ -55,21 +55,24 @@ describe('ClusterAdvancedSettings', () => {
       )
     )
     expect(container).toBeInTheDocument()
+    // The form validity is computed asynchronously on mount
+    await waitFor(() => expect(screen.getByRole('columnheader', { name: 'Settings' })).toBeInTheDocument())
   })
 
-  it('should display loader when loading and settings are empty', () => {
+  it('should display loader when loading and settings are empty', async () => {
     renderWithProviders(
       wrapWithReactHookForm(<ClusterAdvancedSettingsComponent onSubmit={mockOnSubmit} loading={true} />, {
         defaultValues: {},
       })
     )
 
+    // The form validity is computed asynchronously on mount
+    await waitFor(() => expect(screen.getAllByTestId('spinner')[0]).toBeInTheDocument())
     const spinners = screen.getAllByTestId('spinner')
     expect(spinners.length).toBeGreaterThan(0)
-    expect(spinners[0]).toBeInTheDocument()
   })
 
-  it('should display table even when loading if settings are provided', () => {
+  it('should display table even when loading if settings are provided', async () => {
     renderWithProviders(
       wrapWithReactHookForm(
         <ClusterAdvancedSettingsComponent
@@ -87,7 +90,8 @@ describe('ClusterAdvancedSettings', () => {
       )
     )
 
-    expect(screen.getByRole('columnheader', { name: 'Settings' })).toBeInTheDocument()
+    // The form validity is computed asynchronously on mount
+    await waitFor(() => expect(screen.getByRole('columnheader', { name: 'Settings' })).toBeInTheDocument())
     expect(screen.getByRole('columnheader', { name: 'Default Value' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Value' })).toBeInTheDocument()
     const spinners = screen.queryAllByTestId('spinner')
@@ -120,7 +124,7 @@ describe('ClusterAdvancedSettings', () => {
     await waitFor(() => expect(screen.getByTestId('sticky-action-form-toaster')).toBeVisible())
   })
 
-  it('should not show StickyActionFormToaster when the form payload is unchanged', () => {
+  it('should not show StickyActionFormToaster when the form payload is unchanged', async () => {
     renderWithProviders(
       wrapWithReactHookForm(
         <ClusterAdvancedSettingsComponent
@@ -139,7 +143,8 @@ describe('ClusterAdvancedSettings', () => {
       )
     )
 
-    expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
+    // The form validity is computed asynchronously on mount
+    await waitFor(() => expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument())
   })
 
   it('should not show StickyActionFormToaster when dirty form values produce the current payload', async () => {
@@ -238,7 +243,7 @@ describe('ClusterAdvancedSettings', () => {
     await waitFor(() => expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument())
   })
 
-  it('should call onSubmit when form is submitted', () => {
+  it('should call onSubmit when form is submitted', async () => {
     const { container } = renderWithProviders(
       wrapWithReactHookForm(
         <ClusterAdvancedSettingsComponent
@@ -261,10 +266,10 @@ describe('ClusterAdvancedSettings', () => {
       form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
     }
 
-    expect(mockOnSubmit).toHaveBeenCalled()
+    await waitFor(() => expect(mockOnSubmit).toHaveBeenCalled())
   })
 
-  it('should display toggle for show overridden only', () => {
+  it('should display toggle for show overridden only', async () => {
     renderWithProviders(
       wrapWithReactHookForm(
         <ClusterAdvancedSettingsComponent
@@ -282,7 +287,8 @@ describe('ClusterAdvancedSettings', () => {
       )
     )
 
-    expect(screen.getByText('Show only overridden settings')).toBeInTheDocument()
+    // The form validity is computed asynchronously on mount
+    expect(await screen.findByText('Show only overridden settings')).toBeInTheDocument()
   })
 
   it('should not rebuild the form payload when filtering overridden settings', async () => {

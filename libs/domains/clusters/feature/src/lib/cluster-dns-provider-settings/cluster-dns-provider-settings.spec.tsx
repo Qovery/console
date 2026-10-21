@@ -6,7 +6,7 @@ import {
   Route53DnsProviderResponseProviderEnum,
   Route53StaticCredentialsResponseTypeEnum,
 } from 'qovery-typescript-axios'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   ClusterDnsProviderSettings,
   buildClusterDnsProviderRequest,
@@ -135,7 +135,7 @@ describe('ClusterDnsProviderSettings utils', () => {
     })
   })
 
-  it('should disable the domain field when provider is Qovery', () => {
+  it('should disable the domain field when provider is Qovery', async () => {
     renderWithProviders(
       <ClusterDnsProviderSettings
         organizationId="org-1"
@@ -150,5 +150,7 @@ describe('ClusterDnsProviderSettings utils', () => {
     )
 
     expect(screen.getByTestId('input-domain')).toBeDisabled()
+    // The default values are validated on mount
+    await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
   })
 })

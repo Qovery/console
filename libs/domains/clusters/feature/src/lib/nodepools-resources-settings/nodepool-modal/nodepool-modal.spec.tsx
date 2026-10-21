@@ -26,13 +26,15 @@ const defaultProps: NodepoolModalProps = {
   },
 }
 
+const waitForFormValidation = () => waitFor(() => expect(screen.getByText('Confirm')).toBeEnabled())
+
 describe('NodepoolModal', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseFeatureFlagEnabled.mockReturnValue(true)
   })
 
-  it('should render correctly for stable type', () => {
+  it('should render correctly for stable type', async () => {
     renderWithProviders(<NodepoolModal {...defaultProps} type="stable" />)
 
     expect(screen.getByText('Nodepool stable')).toBeInTheDocument()
@@ -41,9 +43,11 @@ describe('NodepoolModal', () => {
     expect(screen.getByText('Consolidation schedule')).toBeInTheDocument()
     expect(screen.getByRole('switch', { name: 'Block node drift' })).not.toBeChecked()
     expect(screen.queryByLabelText('Drift blocking start time (UTC)')).not.toBeInTheDocument()
+    // The default values are validated on mount
+    await waitForFormValidation()
   })
 
-  it('should render correctly for default type', () => {
+  it('should render correctly for default type', async () => {
     renderWithProviders(<NodepoolModal {...defaultProps} type="default" />)
 
     expect(screen.getByText('Nodepool default')).toBeInTheDocument()
@@ -51,9 +55,11 @@ describe('NodepoolModal', () => {
     expect(screen.getByLabelText('Memory (GiB)')).toBeInTheDocument()
     expect(screen.getByText('Operates every day, 24 hours a day')).toBeInTheDocument()
     expect(screen.queryByRole('switch', { name: 'Block node drift' })).not.toBeInTheDocument()
+    // The default values are validated on mount
+    await waitForFormValidation()
   })
 
-  it('should render correctly for cronjob type', () => {
+  it('should render correctly for cronjob type', async () => {
     renderWithProviders(<NodepoolModal {...defaultProps} type="cronjob" />)
 
     expect(screen.getByText('Nodepool cronjob')).toBeInTheDocument()
@@ -61,6 +67,8 @@ describe('NodepoolModal', () => {
     expect(screen.getByLabelText('Memory (GiB)')).toBeInTheDocument()
     expect(screen.getByText('Consolidation schedule')).toBeInTheDocument()
     expect(screen.queryByRole('switch', { name: 'Block node drift' })).not.toBeInTheDocument()
+    // The default values are validated on mount
+    await waitForFormValidation()
   })
 
   it('omits drift blocking when saving an unconfigured stable nodepool', async () => {
@@ -297,10 +305,12 @@ describe('NodepoolModal', () => {
 
   it.each(['stable', 'default', 'gpu', 'cronjob'] as const)(
     'should render the spot toggle for the %s nodepool',
-    (type) => {
+    async (type) => {
       renderWithProviders(<NodepoolModal {...defaultProps} type={type} />)
 
       expect(screen.getByRole('switch', { name: 'Enable spot instances' })).toBeInTheDocument()
+      // The default values are validated on mount
+      await waitForFormValidation()
     }
   )
 
@@ -321,13 +331,15 @@ describe('NodepoolModal', () => {
       'cronjob' as const,
       'Run jobs on spot instances to reduce costs. A job interrupted by a spot reclaim is rescheduled on a new node.',
     ],
-  ])('should describe what spot instances mean for the %s nodepool', (type, description) => {
+  ])('should describe what spot instances mean for the %s nodepool', async (type, description) => {
     renderWithProviders(<NodepoolModal {...defaultProps} type={type} />)
 
     expect(screen.getByText(description)).toBeInTheDocument()
+    // The default values are validated on mount
+    await waitForFormValidation()
   })
 
-  it('should seed the spot toggle from defaultValues', () => {
+  it('should seed the spot toggle from defaultValues', async () => {
     renderWithProviders(
       <NodepoolModal
         {...defaultProps}
@@ -337,12 +349,16 @@ describe('NodepoolModal', () => {
     )
 
     expect(screen.getByRole('switch', { name: 'Enable spot instances' })).toBeChecked()
+    // The default values are validated on mount
+    await waitForFormValidation()
   })
 
-  it('should render the spot toggle off when defaultValues carry no spot value', () => {
+  it('should render the spot toggle off when defaultValues carry no spot value', async () => {
     renderWithProviders(<NodepoolModal {...defaultProps} type="default" />)
 
     expect(screen.getByRole('switch', { name: 'Enable spot instances' })).not.toBeChecked()
+    // The default values are validated on mount
+    await waitForFormValidation()
   })
 
   it('should emit spot_enabled on save', async () => {

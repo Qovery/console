@@ -152,7 +152,7 @@ export function GcpStaticIp({
                       radius="full"
                     >
                       <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs" />
-                      <Icon name="GCP" height="16" width="16" pathColor="#FFFFFF" />
+                      <Icon name="GCP" height="16" width="16" />
                     </ExternalLink>
                   </Tooltip>
                 )}

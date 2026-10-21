@@ -25,6 +25,14 @@ jest.mock('../hooks/use-services/use-services', () => ({
   useServices: () => mockUseServices(),
 }))
 
+jest.mock('../hooks/use-service-type/use-service-type', () => ({
+  useServiceType: () => ({ data: 'AGENTIC_WORKFLOW' }),
+}))
+
+jest.mock('../hooks/use-environment-links/use-environment-links', () => ({
+  useEnvironmentLinks: () => ({ data: [] }),
+}))
+
 jest.mock('../agentic-workflow-service-actions/agentic-workflow-service-actions', () => ({
   AgenticWorkflowServiceActions: ({ service }: { service: { id: string } }) => (
     <button type="button">Actions for {service.id}</button>

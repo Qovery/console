@@ -1,6 +1,10 @@
 import { useParams } from '@tanstack/react-router'
 import { act, within } from '@testing-library/react'
-import type { BlueprintItem, BlueprintManifestResponseResultsInner } from 'qovery-typescript-axios'
+import {
+  type BlueprintItem,
+  type BlueprintManifestResponseResultsInner,
+  VariableMainCallsApi,
+} from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useLayoutEffect, useState } from 'react'
 import selectEvent from 'react-select-event'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -262,6 +266,8 @@ describe('BlueprintCreationFlow', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    // DropdownVariable (blueprint variable fields) fetches environment variables for suggestions
+    jest.spyOn(VariableMainCallsApi.prototype, 'listVariables').mockResolvedValue({ data: { results: [] } } as never)
     useParamsMock.mockReturnValue({
       organizationId: 'org-1',
       projectId: 'proj-1',

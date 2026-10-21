@@ -49,6 +49,7 @@ const mockDeploymentHistory = [
 
 jest.mock('@qovery/domains/environments/feature', () => ({
   ...jest.requireActual('@qovery/domains/environments/feature'),
+  EnvironmentActionToolbar: () => <div data-testid="environment-action-toolbar" />,
   useDeploymentHistory: () => ({
     data: mockDeploymentHistory,
     isFetched: true,

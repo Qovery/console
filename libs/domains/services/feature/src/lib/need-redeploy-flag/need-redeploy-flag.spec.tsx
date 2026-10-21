@@ -24,6 +24,14 @@ describe('NeedRedeployFlag', () => {
     useDeployServiceSpy.mockReturnValue({
       mutate: jest.fn(),
     })
+    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
+      data: {
+        id: 'service-id',
+        serviceType: ServiceTypeEnum.APPLICATION,
+        created_at: '1696923386000',
+        healthchecks: {},
+      },
+    } as never)
   })
 
   it('should render successfully', () => {
