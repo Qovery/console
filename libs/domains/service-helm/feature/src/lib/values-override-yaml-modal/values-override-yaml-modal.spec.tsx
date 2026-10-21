@@ -45,7 +45,7 @@ describe('ValuesOverrideYamlModal', () => {
 
   it('should match snapshot', async () => {
     const { baseElement } = renderWithProviders(<ValuesOverrideYamlModal {...props} />)
-    expect(baseElement).toMatchSnapshot()
     await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
+    expect(baseElement).toMatchSnapshot()
   })
 })

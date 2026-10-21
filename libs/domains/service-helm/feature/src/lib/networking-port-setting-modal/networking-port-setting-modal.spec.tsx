@@ -36,9 +36,9 @@ describe('NetworkingPortSettingModal', () => {
       />
     )
     screen.getByText(/edit/i)
-    expect(baseElement).toMatchSnapshot()
     // Edit mode validates the form on mount, the provided name does not match the expected format
     expect(await screen.findByText(/name format is invalid/i)).toBeInTheDocument()
+    expect(baseElement).toMatchSnapshot()
   })
   it('should close on cancel', async () => {
     const onClose = jest.fn()
