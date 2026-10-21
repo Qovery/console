@@ -7,7 +7,7 @@ import {
   type OrganizationCustomRoleProjectPermissionsInnerPermissionsInner,
   type OrganizationCustomRoleUpdateRequest,
 } from 'qovery-typescript-axios'
-import { Suspense, useCallback, useEffect, useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef } from 'react'
 import { type FormEventHandler } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -220,16 +220,16 @@ function SettingsRolesEditContent({
   const { data: customRole } = useCustomRole({ organizationId, customRoleId: roleId, suspense: true })
   const { reset, handleSubmit: handleFormSubmit, control, formState } = useFormContext()
 
-  // `reset` unregisters every field and only the fields that render again register back. After a save, the refetched
+  // `reset` unregisters every field, and only the fields that render again register back. After a save, the refetched
   // role has the values the form already holds, so no field renders again and the checkboxes stop reacting until the
-  // page is refreshed. Changing the key of the form mounts its fields again after each reset.
-  const [formKey, setFormKey] = useState(0)
+  // page is refreshed. The form is filled once per role: a refetch must not reset it, it would also discard the edits
+  // not saved yet.
+  const filledRoleId = useRef<string>()
 
   useEffect(() => {
-    if (customRole) {
-      const result = resetForm(customRole)
-      reset(result)
-      setFormKey((key) => key + 1)
+    if (customRole && filledRoleId.current !== customRole.id) {
+      filledRoleId.current = customRole.id
+      reset(resetForm(customRole))
     }
   }, [customRole, reset])
 
@@ -271,7 +271,7 @@ function SettingsRolesEditContent({
                 </p>
               </div>
             </div>
-            <form key={formKey} onSubmit={onSubmit}>
+            <form onSubmit={onSubmit}>
               <div className="max-w-content-with-navigation-left">
                 <BlockContent title="General information">
                   <Controller
