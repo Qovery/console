@@ -78,6 +78,11 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   const hasFocus = focused
   const hasValue = Boolean(currentValue?.toString().length)
   const hasLabelUp = hasFocus || hasValue || Boolean(placeholder) ? 'input--label-up' : ''
+  // When empty + unfocused + a placeholder is set, the label is still forced up (see hasLabelUp above)
+  // so it doesn't overlap the placeholder, but that leaves the placeholder with no visible label to sit under.
+  // Hide the label and let the placeholder sit centered in the box instead of bottom-anchored.
+  const isPlaceholderCentered = Boolean(placeholder) && !hasFocus && !hasValue
+  const hasPlaceholderCentered = isPlaceholderCentered ? 'input--placeholder-centered' : ''
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const disabledClass = disabled ? 'input--disabled' : readOnly ? 'input--readonly' : ''
   const inputActions = hasFocus ? 'input--focused' : disabledClass
@@ -103,7 +108,8 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   const labelClassName = twMerge(
     'input__label',
     hasFocus ? 'text-xs' : 'translate-y-[7px] text-sm',
-    isLabelTransitionDisabled && '!transition-none'
+    isLabelTransitionDisabled && '!transition-none',
+    isPlaceholderCentered && 'invisible'
   )
 
   return (
@@ -115,7 +121,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
       <div className="relative">
         <div
           aria-label="input-container"
-          className={twMerge('input group', inputActions, isDisabled, hasError, hasLabelUp)}
+          className={twMerge('input group', inputActions, isDisabled, hasError, hasLabelUp, hasPlaceholderCentered)}
           ref={inputRef}
         >
           <div className={twMerge(disabled && 'pointer-events-none')}>

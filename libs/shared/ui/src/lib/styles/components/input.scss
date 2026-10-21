@@ -69,6 +69,14 @@
   }
 }
 
+// Empty + unfocused input with a placeholder: the label is hidden (see hasLabelUp/isPlaceholderCentered
+// in input-text.tsx), so the placeholder should sit vertically centered instead of bottom-anchored.
+.input--placeholder-centered {
+  .input__value {
+    @apply bottom-auto top-1/2 -translate-y-1/2;
+  }
+}
+
 .input--filter {
   min-height: theme('space.7');
   height: theme('space.7');

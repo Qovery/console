@@ -60,6 +60,26 @@ describe('InputText', () => {
     expect(input).toHaveClass('!pr-9')
   })
 
+  it('should center the placeholder and hide the label when the field is empty, unfocused and has a placeholder', () => {
+    props.placeholder = 'some placeholder'
+
+    render(<InputText {...props} />)
+
+    expect(screen.getByLabelText('input-container')).toHaveClass('input--placeholder-centered')
+    expect(screen.getByText(props.label)).toHaveClass('invisible')
+  })
+
+  it('should not center the placeholder once the field is focused or has a value', () => {
+    props.placeholder = 'some placeholder'
+
+    render(<InputText {...props} />)
+
+    fireEvent.focus(screen.getByRole('textbox'))
+
+    expect(screen.getByLabelText('input-container')).not.toHaveClass('input--placeholder-centered')
+    expect(screen.getByText(props.label)).not.toHaveClass('invisible')
+  })
+
   it('should keep the label up when the field is prefilled', () => {
     props.value = 'prefilled value'
 
