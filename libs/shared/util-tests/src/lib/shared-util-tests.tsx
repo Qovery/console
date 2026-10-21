@@ -51,7 +51,7 @@ function renderWithProviders(
   { ...renderOptions }: RenderOptions = {}
 ): { userEvent: ReturnType<typeof userEvent.setup> } & ReturnType<typeof render> {
   function Wrapper({ children }: PropsWithChildren) {
-    const queryClient = new QueryClient()
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
     const FlatChainedProviders = useChainProviders()
       .add(Auth0Provider, { clientId: '__test_client_id__', domain: '__test_domain__' })
       .add(QueryClientProvider, { client: queryClient })
