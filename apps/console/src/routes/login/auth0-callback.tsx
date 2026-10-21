@@ -3,9 +3,7 @@ import { Navigate, createFileRoute, useNavigate } from '@tanstack/react-router'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { getSsoConnectionName, useAuth } from '@qovery/shared/auth'
-import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
@@ -39,7 +37,6 @@ function useRedirectIfLogged(connection?: string) {
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
     enabled: isAuthenticated,
   })
-  const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
 
   useEffect(() => {
     if (connection && !isAuthenticated) {
@@ -50,7 +47,7 @@ function useRedirectIfLogged(connection?: string) {
       return
     }
 
-    async function fetchData() {
+    function redirect() {
       if (!isFetchedOrganizations) {
         return
       }
@@ -69,15 +66,14 @@ function useRedirectIfLogged(connection?: string) {
           navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
         }
       } else {
-        const { data: userSignUp } = await refetchUserSignUp()
-        navigate({ href: getOnboardingEntryUrl(userSignUp) })
+        navigate({ href: '/onboarding/profile' })
       }
     }
 
     if (isAuthenticated) {
-      fetchData()
+      redirect()
     }
-  }, [authLogin, connection, navigate, isAuthenticated, organizations, isFetchedOrganizations, refetchUserSignUp])
+  }, [authLogin, connection, navigate, isAuthenticated, organizations, isFetchedOrganizations])
 }
 
 function PageRedirectLogin() {

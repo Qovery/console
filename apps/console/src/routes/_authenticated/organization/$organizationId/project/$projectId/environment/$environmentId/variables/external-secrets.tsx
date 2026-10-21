@@ -1,9 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
-import { ExternalSecretsTab, SecretManagerFeatureFlagEntryPoint } from '@qovery/domains/variables/feature'
+import { ExternalSecretsTab } from '@qovery/domains/variables/feature'
 import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -15,7 +14,6 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { organizationId, projectId, environmentId } = Route.useParams()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   useDocumentTitle('External secrets - Environment')
 
   useEffect(() => {
@@ -63,10 +61,6 @@ function RouteComponent() {
       redeployEnvironmentAction,
       'Redeploy'
     )
-
-  if (!secretManagerEnabled) {
-    return <SecretManagerFeatureFlagEntryPoint />
-  }
 
   return (
     <ExternalSecretsTab

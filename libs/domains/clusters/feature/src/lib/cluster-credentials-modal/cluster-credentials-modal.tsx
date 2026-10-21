@@ -660,8 +660,9 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                 <p className="text-sm text-neutral-subtle">
                   Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
                 </p>
+                {/* Passes the organization to the Qovery role template, which scopes role trust to this organization once published */}
                 <ExternalLink
-                  href="https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation"
+                  href={`https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=${organizationId}`}
                   size="sm"
                 >
                   Cloudformation stack

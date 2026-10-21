@@ -237,7 +237,7 @@ export function AuthPage({ page, redirect }: AuthPageProps) {
 
             {auth0Error && <Auth0ErrorMessage error={auth0Error.error} description={auth0Error.error_description} />}
 
-            {!isLogin && <AuthLegalNotice />}
+            <AuthLegalNotice />
           </div>
 
           <TestimonialCarousel />

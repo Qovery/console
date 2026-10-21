@@ -10,6 +10,7 @@ export function useModal() {
   const [modal, openModal] = useState<UseModalProps>()
   const { setOpenModal, setContentModal, setOptionsModal, enableAlertClickOutside } = useContext(ModalContext)
   const closeModal = useCallback(() => {
+    openModal(undefined)
     setOpenModal(false)
   }, [setOpenModal])
   const setModalDismissible = useCallback(
@@ -41,6 +42,8 @@ export function useModal() {
         setOptionsModal(defaultContext.optionsModal)
       }
       setContentModal(<>{modal.content}</>)
+      // Consume the request so dismissing through the provider cannot replay it later.
+      openModal((current) => (current === modal ? undefined : current))
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 

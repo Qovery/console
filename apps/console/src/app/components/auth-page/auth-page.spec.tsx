@@ -178,12 +178,20 @@ describe('AuthPage', () => {
   })
 
   describe('login screen', () => {
-    it('mirrors the sign-up page without the terms', async () => {
+    it('shows the same legal notice and links as the sign-up page', async () => {
       const { userEvent } = renderWithProviders(<AuthPage page="login" />)
 
       expect(screen.getByAltText('Qovery logo black')).toBeInTheDocument()
       expect(screen.getByAltText('SOC 2 logo')).toBeInTheDocument()
-      expect(screen.queryByRole('link', { name: 'Terms of Service' })).not.toBeInTheDocument()
+      expect(screen.getByText(/By continuing, you agree to Qovery’s/)).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Terms of Service' })).toHaveAttribute(
+        'href',
+        'https://www.qovery.com/terms'
+      )
+      expect(screen.getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute(
+        'href',
+        'https://www.qovery.com/privacy'
+      )
       expect(screen.getByRole('link', { name: 'Sign up' })).toHaveAttribute('href', '/signup')
 
       await userEvent.click(screen.getByRole('link', { name: 'Sign up' }))
