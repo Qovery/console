@@ -35,7 +35,7 @@ export function CopyButton({ content, size, iconPosition = 'right', className }:
     >
       {iconPosition === 'left' && <Icon iconName={icon} iconStyle="solid" className="text-sm" />}
       Copy
-      {iconPosition === 'right' && <Icon iconName={icon} className="text-xs" />}
+      {iconPosition === 'right' && <Icon iconName={icon} className="text-sm" />}
     </Button>
   )
 }

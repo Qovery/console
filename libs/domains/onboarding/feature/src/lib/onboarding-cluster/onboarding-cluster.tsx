@@ -54,7 +54,7 @@ export function OnboardingCluster() {
             className="h-auto flex-col items-start gap-3 px-4 pb-3 pt-4 text-left font-normal shadow-sm hover:border-brand-strong"
             onClick={() => selectClusterOption(true)}
           >
-            <span aria-hidden className="flex h-5 items-center gap-1.5">
+            <span aria-hidden className="flex h-5 items-center gap-2">
               <span className="flex size-5 items-center justify-center">
                 <Icon name="AWS" width={20} height={20} />
               </span>
