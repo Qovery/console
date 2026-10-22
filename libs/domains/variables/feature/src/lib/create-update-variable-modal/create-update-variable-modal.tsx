@@ -585,6 +585,9 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         content: (
           <CreateUpdateVariableModal
             {...props}
+            // The modal provider renders this at the same position as the current modal: a new key forces a
+            // remount so the override form starts from the parent variable, not from this form's state
+            key={`override-${parentVariable.id}`}
             mode="CREATE"
             type="OVERRIDE"
             variable={parentVariable}

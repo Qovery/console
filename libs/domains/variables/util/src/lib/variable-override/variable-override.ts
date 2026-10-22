@@ -15,17 +15,22 @@ export function getVariableScopeRank(scope?: VariableScope): number | undefined 
 }
 
 export type ConflictingVariable = {
+  key: string
   scope: VariableScope
   variable_type?: VariableType
   is_secret?: boolean
 }
 
-// Mirrors q-core's override rules: the existing variable must be a plain value, a file or an override,
-// with the same secret kind, and live at a strictly higher scope than the one being created.
+// Mirrors q-core's override rules: the existing variable must have the same key (a 409 can also come from a
+// mount path clash with another key), be a plain value, a file or an override, with the same secret kind,
+// and live at a strictly higher scope than the one being created.
 export function canOverrideConflictingVariable(
   existingVariable: ConflictingVariable,
-  request: { variable_scope: VariableScope; is_secret: boolean }
+  request: { key: string; variable_scope: VariableScope; is_secret: boolean }
 ): boolean {
+  if (existingVariable.key !== request.key) {
+    return false
+  }
   const existingRank = getVariableScopeRank(existingVariable.scope)
   const requestedRank = getVariableScopeRank(request.variable_scope)
   if (existingRank === undefined || requestedRank === undefined || existingRank >= requestedRank) {
