@@ -6,9 +6,10 @@ import PlanSelectionModalFeature from './plan-selection-modal-feature'
 const useChangePlanSpy = jest.spyOn(useChangePlanHook, 'useChangePlan') as jest.Mock
 
 describe('PlanSelectionModalFeature', () => {
-  const mutateAsyncMock = jest.fn().mockResolvedValue(undefined)
+  const mutateAsyncMock = jest.fn()
 
   beforeEach(() => {
+    mutateAsyncMock.mockResolvedValue(undefined)
     useChangePlanSpy.mockReturnValue({ mutateAsync: mutateAsyncMock })
   })
 
