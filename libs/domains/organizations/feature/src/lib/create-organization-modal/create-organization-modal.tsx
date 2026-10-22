@@ -4,7 +4,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { Callout, Icon, InputText, ModalCrud, toast, toastError, useModal } from '@qovery/shared/ui'
-import { DEFAULT_PLAN } from '@qovery/shared/util-js'
+import { DEFAULT_PLAN } from '../default-plan/default-plan'
 import { useCreateOrganization } from '../hooks/use-create-organization/use-create-organization'
 
 export interface CreateOrganizationModalProps {

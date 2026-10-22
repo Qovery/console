@@ -25,6 +25,7 @@ jest.mock('@qovery/shared/ui', () => ({
 jest.mock('@qovery/domains/projects/feature', () => ({ useCreateProject: jest.fn() }))
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
+  DEFAULT_PLAN: 'SCALE_2026',
   useCreateOrganization: jest.fn(),
   useEditOrganization: jest.fn(),
   useOrganization: jest.fn(),

@@ -4,6 +4,7 @@ import { TypeOfUseEnum } from 'qovery-typescript-axios'
 import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import {
+  DEFAULT_PLAN,
   useCreateOrganization,
   useEditOrganization,
   useOrganization,
@@ -14,7 +15,6 @@ import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-u
 import { useAuth } from '@qovery/shared/auth'
 import { InputText, toast, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { DEFAULT_PLAN } from '@qovery/shared/util-js'
 import { OnboardingForm } from '../onboarding-form/onboarding-form'
 import { pushToDataLayer } from '../utils/data-layer'
 import {

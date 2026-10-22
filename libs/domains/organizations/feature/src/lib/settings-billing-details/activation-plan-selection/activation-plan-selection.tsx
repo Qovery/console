@@ -1,7 +1,8 @@
 import { PlanEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { ExternalLink, Heading, RadioGroup, linkVariants } from '@qovery/shared/ui'
-import { DEFAULT_PLAN, formatPlanName, twMerge } from '@qovery/shared/util-js'
+import { formatPlanName, twMerge } from '@qovery/shared/util-js'
+import { DEFAULT_PLAN } from '../../default-plan/default-plan'
 
 export const ACTIVATION_PLANS: PlanEnum[] = [PlanEnum.STARTER_2026, PlanEnum.GROWTH_2026, PlanEnum.SCALE_2026]
 
