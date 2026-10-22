@@ -328,6 +328,22 @@ describe('LlmProviderCreateEditModal', () => {
       expect(createLlmProvider).not.toHaveBeenCalled()
     })
 
+    it('should reject a base URL with an embedded tab that hides empty user info', async () => {
+      const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic-compatible')
+      await userEvent.type(screen.getByLabelText('Name'), 'Gateway')
+      await userEvent.type(screen.getByLabelText('Token'), 'gateway-token')
+      await userEvent.click(screen.getByLabelText('Base URL'))
+      await userEvent.paste('https:/\t/@gateway.example.com/anthropic')
+
+      expect(
+        await screen.findByText('Enter an HTTP or HTTPS URL without credentials, query or fragment.')
+      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Add token' })).toBeDisabled()
+      expect(createLlmProvider).not.toHaveBeenCalled()
+    })
+
     it('should accept an @ in the path prefix', async () => {
       const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
 

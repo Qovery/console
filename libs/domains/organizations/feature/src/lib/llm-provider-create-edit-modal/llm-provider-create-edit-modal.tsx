@@ -48,8 +48,8 @@ const SCOPE_OPTIONS = [
   { label: 'Organization', value: LlmProviderScope.ORGANIZATION },
 ]
 
-// URL parsing drops an empty user info (`https://@host`) and accepts any run of `/` or `\` after the scheme,
-// so also look for `@` in the raw authority.
+// URL parsing drops an empty user info (`https://@host`), accepts any run of `/` or `\` after the scheme and
+// ignores tabs and line breaks, so also look for `@` in the raw authority and refuse those characters.
 const RAW_USER_INFO = /^[^:/?#]+:[/\\]*[^/\\?#]*@/
 
 // The API accepts an absolute HTTP(S) URL with a host and an optional path prefix, without user info, query or fragment.
@@ -61,6 +61,7 @@ function isValidBaseUrl(value: string) {
       Boolean(url.hostname) &&
       !url.username &&
       !url.password &&
+      !/[\t\r\n]/.test(value) &&
       !RAW_USER_INFO.test(value) &&
       !value.includes('?') &&
       !value.includes('#') &&
