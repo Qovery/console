@@ -25,6 +25,7 @@ let mockMcpServersLoading = false
 let mockCreateQoveryMcpServerLoading = false
 let mockContextServicesLoading = false
 let mockLlmProviders: Array<{ id: string; has_credential: boolean; type: string }> = []
+let mockLlmProvidersLoading = false
 
 function deferred<T>() {
   let resolve!: (value: T) => void
@@ -103,7 +104,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
     isLoading: mockCreateQoveryMcpServerLoading,
     mutateAsync: mockCreateQoveryMcpServer,
   }),
-  useLlmProviders: () => ({ data: mockLlmProviders, isLoading: false }),
+  useLlmProviders: () => ({ data: mockLlmProviders, isLoading: mockLlmProvidersLoading }),
   useLlmProviderModels: () => ({
     data: [
       { id: 'claude-opus', display_name: 'Claude Opus', created_at: null },
@@ -286,6 +287,7 @@ describe('AgenticWorkflowConfiguration', () => {
     mockCreateQoveryMcpServerLoading = false
     mockContextServicesLoading = false
     mockLlmProviders = [{ id: 'provider-1', has_credential: true, type: 'CLAUDE' }]
+    mockLlmProvidersLoading = false
     mockRefetchMcpServers.mockImplementation(async () => ({ data: mockMcpServers, isError: false }))
     mockCreateQoveryMcpServer.mockResolvedValue({
       id: 'qovery-mcp',
@@ -404,6 +406,22 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(providerButton)
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
+  })
+
+  it('should not show a provider type for a saved token until the provider list has loaded', async () => {
+    mockLlmProviders = []
+    mockLlmProvidersLoading = true
+    const { userEvent } = renderConfiguration({ seed: { llmProviderId: 'provider-1' } })
+
+    expect(screen.getByRole('button', { name: 'Loading provider' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Anthropic' })).not.toBeInTheDocument()
+
+    mockLlmProviders = [{ id: 'provider-1', has_credential: true, type: 'ANTHROPIC_COMPATIBLE' }]
+    mockLlmProvidersLoading = false
+    await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'x')
+
+    expect(screen.getByRole('button', { name: 'Anthropic-compatible' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Loading provider' })).not.toBeInTheDocument()
   })
 
   it('should keep the Claude and Bedrock provider icons', () => {

@@ -364,9 +364,14 @@ export function AgenticWorkflowConfiguration() {
   const showLlmProviderError = (showValidationErrors || Boolean(dirtyFields.llmProviderId)) && !hasModelCredential
   const availableLlmProviders = llmProviders.filter(({ has_credential }) => has_credential)
   const selectedProviderType = values.aiModel
+  // The workflow model type cannot tell a gateway from Claude, so wait for the provider list before showing one.
   const selectedLlmProviderType =
     llmProviders.find(({ id }) => id === values.llmProviderId)?.type ??
-    (selectedProviderType === LlmProviderType.BEDROCK ? LlmProviderType.BEDROCK : LlmProviderType.CLAUDE)
+    (areLlmProvidersLoading
+      ? undefined
+      : selectedProviderType === LlmProviderType.BEDROCK
+        ? LlmProviderType.BEDROCK
+        : LlmProviderType.CLAUDE)
   const providerConfigurationInvalid = !hasModelCredential
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
@@ -985,12 +990,21 @@ export function AgenticWorkflowConfiguration() {
                     variant="outline"
                     onClick={() => setProviderModalOpen(true)}
                   >
-                    <LlmProviderIcon type={selectedLlmProviderType} size="sm" />
-                    {match(selectedLlmProviderType)
-                      .with(LlmProviderType.CLAUDE, () => 'Anthropic')
-                      .with(LlmProviderType.BEDROCK, () => 'Amazon Bedrock')
-                      .with(LlmProviderType.ANTHROPIC_COMPATIBLE, () => 'Anthropic-compatible')
-                      .exhaustive()}
+                    {selectedLlmProviderType ? (
+                      <>
+                        <LlmProviderIcon type={selectedLlmProviderType} size="sm" />
+                        {match(selectedLlmProviderType)
+                          .with(LlmProviderType.CLAUDE, () => 'Anthropic')
+                          .with(LlmProviderType.BEDROCK, () => 'Amazon Bedrock')
+                          .with(LlmProviderType.ANTHROPIC_COMPATIBLE, () => 'Anthropic-compatible')
+                          .exhaustive()}
+                      </>
+                    ) : (
+                      <>
+                        <Icon iconName="loader" iconStyle="regular" className="animate-spin" />
+                        Loading provider
+                      </>
+                    )}
                   </Button>
                 ) : (
                   <Button

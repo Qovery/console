@@ -264,8 +264,16 @@ describe('Agent settings pages', () => {
     expect(bedrockRow.querySelector('img')).toHaveClass('h-5', 'w-5', 'rounded-sm')
     const gatewayRow = screen.getByTestId('llm-provider-provider-gateway')
     expect(gatewayRow.querySelectorAll('img')).toHaveLength(2)
-    expect(gatewayRow.querySelector('img[src="/assets/ai-tools/openrouter-grape.svg"]')).toHaveClass('dark:hidden')
+    expect(gatewayRow.querySelector('img[src="/assets/ai-tools/openrouter-grape.svg"]')).toHaveClass(
+      'h-5',
+      'w-5',
+      'rounded-sm',
+      'dark:hidden'
+    )
     expect(gatewayRow.querySelector('img[src="/assets/ai-tools/openrouter-volt.svg"]')).toHaveClass(
+      'h-5',
+      'w-5',
+      'rounded-sm',
       'hidden',
       'dark:block'
     )
