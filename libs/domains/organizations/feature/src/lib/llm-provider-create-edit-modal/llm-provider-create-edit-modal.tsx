@@ -119,7 +119,16 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
 
   const providerChanged = isEdit && methods.watch('type') !== llmProvider.type
   const providerType = methods.watch('type')
-  const credentialRequired = !isEdit || providerChanged
+  // The stored token must not follow a changed destination, so a new base URL needs a new token.
+  const baseUrlChanged =
+    isEdit &&
+    providerType === LlmProviderType.ANTHROPIC_COMPATIBLE &&
+    llmProvider.type === LlmProviderType.ANTHROPIC_COMPATIBLE &&
+    methods.watch('baseUrl').trim() !== (llmProvider.base_url ?? '')
+  const credentialRequired = !isEdit || providerChanged || baseUrlChanged
+  const credentialRequiredMessage = baseUrlChanged
+    ? 'Enter a new token to use a different base URL.'
+    : 'Please enter a token.'
 
   const { mutateAsync: createLlmProvider, isLoading: isCreating } = useCreateLlmProvider()
   const { mutateAsync: editLlmProvider, isLoading: isEditing } = useEditLlmProvider()
@@ -208,8 +217,8 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
             rules={
               credentialRequired
                 ? {
-                    required: 'Please enter a token.',
-                    validate: (value) => Boolean(value.trim()) || 'Please enter a token.',
+                    required: credentialRequiredMessage,
+                    validate: (value) => Boolean(value.trim()) || credentialRequiredMessage,
                   }
                 : undefined
             }
@@ -224,9 +233,11 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
                 hint={
                   providerChanged
                     ? 'Enter a new token for the selected provider.'
-                    : isEdit
-                      ? 'Leave blank to keep the current token.'
-                      : 'Encrypted and never shown again.'
+                    : baseUrlChanged
+                      ? 'Enter a new token to use a different base URL.'
+                      : isEdit
+                        ? 'Leave blank to keep the current token.'
+                        : 'Encrypted and never shown again.'
                 }
               />
             )}

@@ -396,7 +396,7 @@ describe('LlmProviderCreateEditModal', () => {
 
       await userEvent.clear(screen.getByLabelText('Base URL'))
       await userEvent.type(screen.getByLabelText('Base URL'), 'http://localhost:4000')
-      await userEvent.type(screen.getByLabelText('Token (optional)'), 'rotated-token')
+      await userEvent.type(screen.getByLabelText('Token'), 'rotated-token')
       await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeEnabled())
       await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
 
@@ -410,6 +410,74 @@ describe('LlmProviderCreateEditModal', () => {
           }),
         })
       )
+    })
+
+    it('should block saving a changed base URL until a new token is entered', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await userEvent.clear(screen.getByLabelText('Base URL'))
+      await userEvent.type(screen.getByLabelText('Base URL'), 'https://other-gateway.example.com')
+
+      expect(screen.getByLabelText('Token')).toBeInTheDocument()
+      expect(screen.queryByLabelText('Token (optional)')).not.toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+
+      expect(await screen.findByText('Enter a new token to use a different base URL.')).toBeInTheDocument()
+      expect(editLlmProvider).not.toHaveBeenCalled()
+    })
+
+    it('should keep the stored token for a name-only edit, including a padded but unchanged base URL', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await userEvent.type(screen.getByLabelText('Base URL'), '  ')
+      await userEvent.clear(screen.getByLabelText('Name'))
+      await userEvent.type(screen.getByLabelText('Name'), 'Renamed gateway')
+
+      expect(screen.getByLabelText('Token (optional)')).toBeInTheDocument()
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+
+      await waitFor(() =>
+        expect(editLlmProvider).toHaveBeenCalledWith({
+          organizationId: 'org-1',
+          llmProviderId: 'provider-1',
+          llmProviderRequest: expect.objectContaining({
+            name: 'Renamed gateway',
+            credential: undefined,
+            base_url: 'https://gateway.example.com/anthropic',
+          }),
+        })
+      )
+    })
+
+    it('should make the token optional again when the base URL is restored', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await userEvent.type(screen.getByLabelText('Base URL'), '/v2')
+      expect(screen.getByLabelText('Token')).toBeInTheDocument()
+      await userEvent.type(screen.getByLabelText('Base URL'), '{Backspace}{Backspace}{Backspace}')
+
+      expect(screen.getByLabelText('Token (optional)')).toBeInTheDocument()
+      expect(screen.getByText('Leave blank to keep the current token.')).toBeInTheDocument()
+    })
+
+    it('should block saving a provider type change without a new token', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic Claude')
+
+      expect(screen.getByText('Enter a new token for the selected provider.')).toBeInTheDocument()
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeDisabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+      expect(editLlmProvider).not.toHaveBeenCalled()
     })
 
     it('should omit the base URL and require a new token when switching to Claude', async () => {
