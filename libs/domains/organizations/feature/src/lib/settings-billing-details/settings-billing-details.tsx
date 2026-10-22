@@ -7,7 +7,7 @@ import { Suspense, useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Callout, toast, toastError, useModalConfirmation } from '@qovery/shared/ui'
-import { BlockContent, Button, Icon, InputCreditCard, InputText, Section, Skeleton } from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, Icon, InputCreditCard, InputText, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { formatPlanDisplay, formatPlanName, isActiveFreeTrial, pluralize } from '@qovery/shared/util-js'
 import { fieldCardStyles, loadChargebee } from '@qovery/shared/util-payment'
@@ -310,9 +310,7 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
               )}
               <div className="mb-6" data-credit-card-section>
                 <div className="mb-4">
-                  <h3 className="text-sm font-medium text-neutral">
-                    {isActivatingPlan ? '2. Add your credit card' : 'Credit card'}
-                  </h3>
+                  <Heading level={3}>{isActivatingPlan ? '2. Add your credit card' : 'Credit card'}</Heading>
                 </div>
 
                 {creditCards.length > 0 && !showAddCard && (
@@ -467,7 +465,7 @@ function SettingsBillingDetailsSkeleton() {
           <BlockContent title="Billing details">
             <div className="mb-6" data-credit-card-section>
               <div className="mb-4">
-                <h3 className="text-sm font-medium text-neutral">Credit card</h3>
+                <Heading level={3}>Credit card</Heading>
               </div>
 
               <div className="flex flex-col" data-testid="credit-card-skeleton">

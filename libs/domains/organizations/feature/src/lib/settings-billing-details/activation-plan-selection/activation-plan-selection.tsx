@@ -1,7 +1,7 @@
 import { PlanEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { ExternalLink, RadioGroup, linkVariants } from '@qovery/shared/ui'
-import { formatPlanName, twMerge } from '@qovery/shared/util-js'
+import { ExternalLink, Heading, RadioGroup, linkVariants } from '@qovery/shared/ui'
+import { DEFAULT_PLAN, formatPlanName, twMerge } from '@qovery/shared/util-js'
 
 export const ACTIVATION_PLANS: PlanEnum[] = [PlanEnum.STARTER_2026, PlanEnum.GROWTH_2026, PlanEnum.SCALE_2026]
 
@@ -18,11 +18,8 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 0,
 })
 
-// Organizations start their free trial on the Scale plan
-export const DEFAULT_ACTIVATION_PLAN = PlanEnum.SCALE_2026
-
 export function getDefaultActivationPlan(currentPlan?: string): PlanEnum {
-  return ACTIVATION_PLANS.find((plan) => plan === currentPlan) ?? DEFAULT_ACTIVATION_PLAN
+  return ACTIVATION_PLANS.find((plan) => plan === currentPlan) ?? DEFAULT_PLAN
 }
 
 export interface ActivationPlanSelectionProps {
@@ -45,7 +42,7 @@ export function ActivationPlanSelection({
   return (
     <div data-plan-selection>
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-medium text-neutral">{title}</h3>
+        <Heading level={3}>{title}</Heading>
         <ExternalLink href="https://www.qovery.com/pricing" size="xs">
           Compare plans
         </ExternalLink>

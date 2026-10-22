@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { PlanEnum, TypeOfUseEnum } from 'qovery-typescript-axios'
+import { TypeOfUseEnum } from 'qovery-typescript-axios'
 import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import {
@@ -14,6 +14,7 @@ import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-u
 import { useAuth } from '@qovery/shared/auth'
 import { InputText, toast, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { DEFAULT_PLAN } from '@qovery/shared/util-js'
 import { OnboardingForm } from '../onboarding-form/onboarding-form'
 import { pushToDataLayer } from '../utils/data-layer'
 import {
@@ -34,7 +35,6 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = auth
 
-  const selectedPlan = PlanEnum.SCALE_2026
   const submissionInFlight = useRef(false)
   const [submitting, setSubmitting] = useState(false)
   // Keep restored defaults stable: saving progress must not reset a running submission.
@@ -157,7 +157,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
         const organization = await createOrganization({
           organizationRequest: {
             name: data.organization_name.trim() || data.company_name.trim(),
-            plan: selectedPlan,
+            plan: DEFAULT_PLAN,
             admin_emails: [userEmail],
           },
         })
@@ -188,14 +188,14 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
         })
 
         posthog.capture('onboarding-organization-created', {
-          plan: selectedPlan,
+          plan: DEFAULT_PLAN,
           first_name: firstName,
           last_name: lastName.join(' '),
           company_name: data.company_name.trim(),
           phone: data.phone,
           use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
         })
-        pushToDataLayer({ event: 'onboarding-organization-created', plan: selectedPlan })
+        pushToDataLayer({ event: 'onboarding-organization-created', plan: DEFAULT_PLAN })
         updatePending({ ...progress, completionTracked: true })
       }
       await navigate({ to: '/onboarding/organization/$organizationId/cluster', params: { organizationId } })

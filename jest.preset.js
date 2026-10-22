@@ -1,9 +1,6 @@
 const nxPreset = require('@nx/jest/preset').default
 const path = require('path')
 
-// Run tests in UTC so date assertions don't depend on the local timezone (CI runs in UTC)
-process.env.TZ = 'UTC'
-
 module.exports = {
   setupFilesAfterEnv: [path.join(__dirname, '__tests__/mocks.ts'), 'jest-canvas-mock'],
   collectCoverage: true,

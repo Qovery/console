@@ -1,10 +1,10 @@
 import { useNavigate } from '@tanstack/react-router'
-import { PlanEnum } from 'qovery-typescript-axios'
 import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { Callout, Icon, InputText, ModalCrud, toast, toastError, useModal } from '@qovery/shared/ui'
+import { DEFAULT_PLAN } from '@qovery/shared/util-js'
 import { useCreateOrganization } from '../hooks/use-create-organization/use-create-organization'
 
 export interface CreateOrganizationModalProps {
@@ -44,7 +44,7 @@ export function CreateOrganizationModal({
         const organization = await createOrganization({
           organizationRequest: {
             name: name.trim(),
-            plan: PlanEnum.SCALE_2026,
+            plan: DEFAULT_PLAN,
             admin_emails: user?.email ? [user.email] : [],
           },
         })
