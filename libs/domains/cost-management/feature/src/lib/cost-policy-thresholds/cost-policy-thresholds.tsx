@@ -1,5 +1,6 @@
 import { type BudgetPolicy } from '@qovery/domains/cost-management/data-access'
 import { BlockContent, Icon, Tooltip } from '@qovery/shared/ui'
+import { percentOfLimit } from '../utils/budget-enforcement'
 import { formatCost } from '../utils/format-cost'
 
 export interface CostPolicyThresholdsProps {
@@ -14,7 +15,7 @@ export interface CostPolicyThresholdsProps {
 
 /** Thresholds are set once at the organization level, so they are read-only here. */
 export function CostPolicyThresholds({ policy, forecast }: CostPolicyThresholdsProps) {
-  const forecastPercent = forecast !== undefined ? (forecast / policy.monthlyLimit) * 100 : undefined
+  const forecastPercent = forecast !== undefined ? percentOfLimit(forecast, policy.monthlyLimit) : undefined
 
   return (
     <BlockContent

@@ -6,6 +6,7 @@ import { CostEnvironmentBreakdown } from '../cost-environment-breakdown/cost-env
 import { CostPolicyThresholds } from '../cost-policy-thresholds/cost-policy-thresholds'
 import useProjectCost from '../hooks/use-project-cost/use-project-cost'
 import { requestBudgetIncrease } from '../request-budget-increase/request-budget-increase'
+import { budgetConsumption } from '../utils/budget-enforcement'
 
 export interface PageProjectCostBudgetProps {
   projectId: string
@@ -17,7 +18,7 @@ export function PageProjectCostBudget({ projectId, projectName }: PageProjectCos
 
   if (!cost) return null
 
-  const forecastPercent = (cost.forecast / cost.policy.monthlyLimit) * 100
+  const forecastPercent = budgetConsumption(cost)
 
   return (
     <Section className="px-8 pb-8 pt-6">

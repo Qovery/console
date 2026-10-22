@@ -1,6 +1,7 @@
 import { type ProjectCost } from '@qovery/domains/cost-management/data-access'
 import { BlockContent, Icon, ProgressBar, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
+import { budgetConsumption, percentOfLimit } from '../utils/budget-enforcement'
 import { formatCost } from '../utils/format-cost'
 
 export interface CostBudgetCardProps {
@@ -18,8 +19,8 @@ export function CostBudgetCard({ cost }: CostBudgetCardProps) {
   const { policy, estimatedSpend, forecast, resetsOn } = cost
   const { monthlyLimit, currency } = policy
 
-  const consumedPercent = (estimatedSpend / monthlyLimit) * 100
-  const forecastPercent = (forecast / monthlyLimit) * 100
+  const consumedPercent = percentOfLimit(estimatedSpend, monthlyLimit)
+  const forecastPercent = budgetConsumption(cost)
 
   return (
     <BlockContent title="Monthly budget" classNameContent="p-4">

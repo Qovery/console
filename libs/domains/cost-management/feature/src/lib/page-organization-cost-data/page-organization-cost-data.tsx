@@ -1,5 +1,5 @@
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, Callout, Icon, Link } from '@qovery/shared/ui'
+import { BlockContent, Button, Callout, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { Section } from '@qovery/shared/ui'
 
 /**
@@ -39,9 +39,13 @@ export function PageOrganizationCostData({ organizationId }: PageOrganizationCos
                 <Icon iconName="circle-dashed" iconStyle="regular" />
                 Not connected
               </span>
-              <Button type="button" variant="outline" color="neutral" size="sm">
-                Connect
-              </Button>
+              <Tooltip content="Not available in this prototype">
+                <span className="flex">
+                  <Button type="button" variant="outline" color="neutral" size="sm" disabled>
+                    Connect
+                  </Button>
+                </span>
+              </Tooltip>
             </div>
           </div>
 

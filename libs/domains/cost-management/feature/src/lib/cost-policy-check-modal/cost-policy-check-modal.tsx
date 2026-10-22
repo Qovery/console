@@ -2,6 +2,7 @@ import { match } from 'ts-pattern'
 import { type CostOperation, type PolicyEvaluation } from '@qovery/domains/cost-management/data-access'
 import { Button, Callout, DescriptionList, Icon, useModal } from '@qovery/shared/ui'
 import { requestBudgetIncrease } from '../request-budget-increase/request-budget-increase'
+import { percentOfLimit } from '../utils/budget-enforcement'
 import { formatCost, formatCostDelta } from '../utils/format-cost'
 
 export interface CostPolicyCheckModalProps {
@@ -115,8 +116,8 @@ export function CostPolicyCheckModal({ operation, evaluation, projectName, onCon
                 )
                 .with('project_scale_up_frozen', () => (
                   <>
-                    The project is at {Math.round((currentForecast / budget) * 100)}% of its monthly budget. Past 90%,
-                    services cannot grow beyond their current size.
+                    The project is at {Math.round(percentOfLimit(currentForecast, budget))}% of its monthly budget. At
+                    90% or above, services cannot grow beyond their current size.
                   </>
                 ))
                 .otherwise(() => (

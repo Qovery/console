@@ -1,8 +1,13 @@
 import { type BudgetEnforcement, type ProjectCost } from '@qovery/domains/cost-management/data-access'
 
+/** An amount as a percentage of a monthly limit. */
+export function percentOfLimit(amount: number, monthlyLimit: number): number {
+  return (amount / monthlyLimit) * 100
+}
+
 /** Forecast as a percentage of the monthly limit — the figure every threshold reads. */
 export function budgetConsumption(cost: ProjectCost): number {
-  return (cost.forecast / cost.policy.monthlyLimit) * 100
+  return percentOfLimit(cost.forecast, cost.policy.monthlyLimit)
 }
 
 /** What the policy is doing to a project right now, given its forecast. */

@@ -116,7 +116,6 @@ export function OrganizationProjectsCostTable({ organizationId, rows }: Organiza
       headRight={
         <SegmentedControl.Root
           aria-label="Filter projects by budget status"
-          className="h-7 text-xs"
           value={statusFilter}
           onValueChange={(value) => setStatusFilter(value as StatusFilter)}
         >
@@ -206,7 +205,7 @@ export function OrganizationProjectsCostTable({ organizationId, rows }: Organiza
                     color="neutral"
                     size="sm"
                     className="font-mono"
-                    aria-label={`Edit the budget of ${name}`}
+                    aria-label={`Edit the budget of ${name}, currently ${formatCost(cost.policy.monthlyLimit, cost.policy.currency)}`}
                     onClick={() => openBudgetModal([id], cost.policy.monthlyLimit)}
                   >
                     {formatCost(cost.policy.monthlyLimit, cost.policy.currency)}
