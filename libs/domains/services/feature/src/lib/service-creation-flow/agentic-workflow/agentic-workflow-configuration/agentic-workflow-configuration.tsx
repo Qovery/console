@@ -1,15 +1,12 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import posthog from 'posthog-js'
-import {
-  APIVariableScopeEnum,
-  type AgenticWorkflowModelType,
-  LlmProviderType,
-  type McpServerResponse,
-} from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, LlmProviderType, type McpServerResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import {
+  LlmProviderIcon,
   LlmProviderSetting,
   useCreateQoveryMcpServer,
   useLlmProviderModels,
@@ -51,6 +48,7 @@ import {
 import {
   AgenticWorkflowModelSetting,
   getAgenticWorkflowModel,
+  getAgenticWorkflowModelType,
   updateAgenticWorkflowModel,
 } from '../agentic-workflow-model-setting'
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
@@ -366,7 +364,9 @@ export function AgenticWorkflowConfiguration() {
   const showLlmProviderError = (showValidationErrors || Boolean(dirtyFields.llmProviderId)) && !hasModelCredential
   const availableLlmProviders = llmProviders.filter(({ has_credential }) => has_credential)
   const selectedProviderType = values.aiModel
-  const isBedrockProvider = selectedProviderType === LlmProviderType.BEDROCK
+  const selectedLlmProviderType =
+    llmProviders.find(({ id }) => id === values.llmProviderId)?.type ??
+    (selectedProviderType === LlmProviderType.BEDROCK ? LlmProviderType.BEDROCK : LlmProviderType.CLAUDE)
   const providerConfigurationInvalid = !hasModelCredential
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
@@ -985,13 +985,12 @@ export function AgenticWorkflowConfiguration() {
                     variant="outline"
                     onClick={() => setProviderModalOpen(true)}
                   >
-                    <img
-                      src={isBedrockProvider ? '/assets/ai-tools/bedrock.svg' : '/assets/ai-tools/claude.svg'}
-                      alt=""
-                      aria-hidden="true"
-                      className="h-4 w-4"
-                    />
-                    {isBedrockProvider ? 'Amazon Bedrock' : 'Anthropic'}
+                    <LlmProviderIcon type={selectedLlmProviderType} size="sm" />
+                    {match(selectedLlmProviderType)
+                      .with(LlmProviderType.CLAUDE, () => 'Anthropic')
+                      .with(LlmProviderType.BEDROCK, () => 'Amazon Bedrock')
+                      .with(LlmProviderType.ANTHROPIC_COMPATIBLE, () => 'Anthropic-compatible')
+                      .exhaustive()}
                   </Button>
                 ) : (
                   <Button
@@ -1163,7 +1162,8 @@ export function AgenticWorkflowConfiguration() {
                   value={field.value}
                   onChange={(providerId, llmProvider) => {
                     const provider = llmProvider ?? availableLlmProviders.find(({ id }) => id === providerId)
-                    const providerChanged = providerId !== field.value || provider?.type !== values.aiModel
+                    const modelType = provider ? getAgenticWorkflowModelType(provider.type) : undefined
+                    const providerChanged = providerId !== field.value || modelType !== values.aiModel
 
                     field.onChange(providerId)
                     if (providerChanged) {
@@ -1172,8 +1172,8 @@ export function AgenticWorkflowConfiguration() {
                       })
                     }
                     // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
-                    if (provider) {
-                      form.setValue('aiModel', provider.type as AgenticWorkflowModelType, { shouldDirty: true })
+                    if (modelType) {
+                      form.setValue('aiModel', modelType, { shouldDirty: true })
                     }
                   }}
                 >

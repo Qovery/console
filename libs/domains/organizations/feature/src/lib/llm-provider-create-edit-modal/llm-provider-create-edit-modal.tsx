@@ -12,6 +12,7 @@ import { IconFlag, InputSelect, InputText, InputTextArea, ModalCrud, useModal } 
 import { getAwsLocationFlagCode } from '@qovery/shared/util-js'
 import { useCreateLlmProvider } from '../hooks/use-create-llm-provider/use-create-llm-provider'
 import { useEditLlmProvider } from '../hooks/use-edit-llm-provider/use-edit-llm-provider'
+import { LlmProviderIcon } from '../llm-provider-icon/llm-provider-icon'
 
 interface LlmProviderFormValues {
   name: string
@@ -19,6 +20,7 @@ interface LlmProviderFormValues {
   type: LlmProviderType
   credential: string
   region: string
+  baseUrl: string
   scope: LlmProviderScope
 }
 
@@ -28,30 +30,41 @@ export interface LlmProviderCreateEditModalProps {
 }
 
 const PROVIDER_OPTIONS = [
-  {
-    label: (
-      <span className="flex items-center gap-2">
-        <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-5 w-5" />
-        Anthropic Claude
-      </span>
-    ),
-    value: LlmProviderType.CLAUDE,
-  },
-  {
-    label: (
-      <span className="flex items-center gap-2">
-        <img src="/assets/ai-tools/bedrock.svg" alt="" aria-hidden="true" className="h-5 w-5" />
-        Amazon Bedrock
-      </span>
-    ),
-    value: LlmProviderType.BEDROCK,
-  },
-]
+  { label: 'Anthropic Claude', value: LlmProviderType.CLAUDE },
+  { label: 'Amazon Bedrock', value: LlmProviderType.BEDROCK },
+  { label: 'Anthropic-compatible', value: LlmProviderType.ANTHROPIC_COMPATIBLE },
+].map(({ label, value }) => ({
+  label: (
+    <span className="flex items-center gap-2">
+      <LlmProviderIcon type={value} />
+      {label}
+    </span>
+  ),
+  value,
+}))
 
 const SCOPE_OPTIONS = [
   { label: 'Personal', value: LlmProviderScope.USER },
   { label: 'Organization', value: LlmProviderScope.ORGANIZATION },
 ]
+
+// The API accepts an absolute HTTP(S) URL with a host and an optional path prefix, without user info, query or fragment.
+function isValidBaseUrl(value: string) {
+  try {
+    const url = new URL(value)
+    return (
+      (url.protocol === 'http:' || url.protocol === 'https:') &&
+      Boolean(url.hostname) &&
+      !url.username &&
+      !url.password &&
+      !value.includes('?') &&
+      !value.includes('#') &&
+      url.port !== '0'
+    )
+  } catch {
+    return false
+  }
+}
 
 function BedrockRegionSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const { data: cloudProviders = [], isError, isLoading } = useCloudProviders()
@@ -92,6 +105,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
       type: llmProvider?.type ?? LlmProviderType.CLAUDE,
       credential: '',
       region: llmProvider?.type === LlmProviderType.BEDROCK ? llmProvider.region ?? '' : 'eu-west-1',
+      baseUrl: llmProvider?.type === LlmProviderType.ANTHROPIC_COMPATIBLE ? llmProvider.base_url ?? '' : '',
       scope: llmProvider?.scope ?? LlmProviderScope.USER,
     },
   })
@@ -112,6 +126,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
       type: data.type,
       credential: credential || undefined,
       ...(data.type === LlmProviderType.BEDROCK ? { region: data.region.trim() || null } : {}),
+      ...(data.type === LlmProviderType.ANTHROPIC_COMPATIBLE ? { base_url: data.baseUrl.trim() } : {}),
       scope: isEdit ? undefined : data.scope,
     }
 
@@ -215,6 +230,27 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
               name="region"
               control={methods.control}
               render={({ field }) => <BedrockRegionSelect {...field} />}
+            />
+          ) : null}
+          {providerType === LlmProviderType.ANTHROPIC_COMPATIBLE ? (
+            <Controller
+              name="baseUrl"
+              control={methods.control}
+              rules={{
+                required: 'Please enter a base URL.',
+                validate: (value) =>
+                  isValidBaseUrl(value.trim()) || 'Enter an HTTP or HTTPS URL without credentials, query or fragment.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  label="Base URL"
+                  name={field.name}
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={error?.message}
+                  hint="HTTP or HTTPS root of the API, with an optional path prefix, e.g. https://gateway.example.com/anthropic."
+                />
+              )}
             />
           ) : null}
           <Controller

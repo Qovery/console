@@ -125,6 +125,7 @@ export * from './lib/settings-agent-personalization/settings-agent-personalizati
 export * from './lib/mcp-server-create-edit-modal/mcp-server-create-edit-modal'
 export * from './lib/mcp-server-setting/mcp-server-setting'
 export * from './lib/llm-provider-setting/llm-provider-setting'
+export * from './lib/llm-provider-icon/llm-provider-icon'
 export * from './lib/settings-argocd-integration/settings-argocd-integration'
 export * from './lib/settings-danger-zone/settings-danger-zone'
 export * from './lib/settings-billing-details/settings-billing-details'

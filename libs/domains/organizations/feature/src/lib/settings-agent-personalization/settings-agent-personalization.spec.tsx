@@ -239,6 +239,32 @@ describe('Agent settings pages', () => {
     })
   })
 
+  it('should show a distinct icon for each provider type', () => {
+    useMcpServersMock.mockReturnValue({ data: [] })
+    useLlmProvidersMock.mockReturnValue({
+      data: [
+        llmProviders[0],
+        { ...llmProviders[0], id: 'provider-bedrock', name: 'Bedrock', type: LlmProviderType.BEDROCK },
+        {
+          ...llmProviders[0],
+          id: 'provider-gateway',
+          name: 'Gateway',
+          type: LlmProviderType.ANTHROPIC_COMPATIBLE,
+          base_url: 'https://gateway.example.com',
+        },
+      ],
+    })
+    renderWithProviders(<SettingsAgentTokens />)
+
+    const claudeRow = screen.getByTestId('llm-provider-provider-claude')
+    expect(claudeRow.querySelector('img')).toHaveAttribute('src', '/assets/ai-tools/claude.svg')
+    const bedrockRow = screen.getByTestId('llm-provider-provider-bedrock')
+    expect(bedrockRow.querySelector('img')).toHaveAttribute('src', '/assets/ai-tools/bedrock.svg')
+    const gatewayRow = screen.getByTestId('llm-provider-provider-gateway')
+    expect(gatewayRow.querySelector('i.fa-plug')).toBeInTheDocument()
+    expect(gatewayRow.querySelector('img')).not.toBeInTheDocument()
+  })
+
   it('should hide empty token scope sections', () => {
     useLlmProvidersMock.mockReturnValue({ data: [llmProviders[0]] })
     const organizationTokens = renderWithProviders(<SettingsAgentTokens />)

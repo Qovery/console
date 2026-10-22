@@ -62,6 +62,7 @@ jest.mock('../../../hooks/use-agentic-workflow-context-services/use-agentic-work
 }))
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
+  LlmProviderIcon: jest.requireActual('@qovery/domains/organizations/feature').LlmProviderIcon,
   GitBranchSettings: () => <div>Git branch</div>,
   GitProviderSetting: () => <div>Git provider</div>,
   GitRepositorySetting: () => <div>Git repository</div>,
@@ -104,7 +105,10 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   }),
   useLlmProviders: () => ({ data: mockLlmProviders, isLoading: false }),
   useLlmProviderModels: () => ({
-    data: [{ id: 'claude-opus', display_name: 'Claude Opus', created_at: null }],
+    data: [
+      { id: 'claude-opus', display_name: 'Claude Opus', created_at: null },
+      { id: 'vendor/gateway-model', display_name: 'Gateway model', created_at: null },
+    ],
     isError: false,
     isLoading: false,
     refetch: jest.fn(),
@@ -387,6 +391,49 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('heading', { name: 'Configure output' })).toBeInTheDocument()
     expect(within(screen.getByRole('dialog')).getByText('Outputs')).toBeInTheDocument()
     expect(within(screen.getByRole('dialog')).queryByText('Triggers')).not.toBeInTheDocument()
+  })
+
+  it('should show the Anthropic-compatible provider with its own icon', async () => {
+    mockLlmProviders = [{ id: 'provider-1', has_credential: true, type: 'ANTHROPIC_COMPATIBLE' }]
+    const { userEvent } = renderConfiguration({ seed: { llmProviderId: 'provider-1' } })
+
+    const providerButton = screen.getByRole('button', { name: 'Anthropic-compatible' })
+    expect(providerButton.querySelector('i.fa-plug')).toBeInTheDocument()
+    expect(providerButton.querySelector('img')).not.toBeInTheDocument()
+
+    await userEvent.click(providerButton)
+    expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
+  })
+
+  it('should keep the Claude and Bedrock provider icons', () => {
+    mockLlmProviders = [{ id: 'provider-1', has_credential: true, type: 'BEDROCK' }]
+    const bedrock = renderConfiguration({ seed: { llmProviderId: 'provider-1', aiModel: 'BEDROCK' } })
+    expect(screen.getByRole('button', { name: 'Amazon Bedrock' }).querySelector('img')).toHaveAttribute(
+      'src',
+      '/assets/ai-tools/bedrock.svg'
+    )
+    bedrock.unmount()
+
+    mockLlmProviders = [{ id: 'provider-1', has_credential: true, type: 'CLAUDE' }]
+    renderConfiguration({ seed: { llmProviderId: 'provider-1' } })
+    expect(screen.getByRole('button', { name: 'Anthropic' }).querySelector('img')).toHaveAttribute(
+      'src',
+      '/assets/ai-tools/claude.svg'
+    )
+  })
+
+  it('should keep the selected model when the same Anthropic-compatible token is selected again', async () => {
+    mockLlmProviders = [{ id: 'provider-1', has_credential: true, type: 'ANTHROPIC_COMPATIBLE' }]
+    const { userEvent } = renderConfiguration({
+      seed: { llmProviderId: 'provider-1', modelSettingsJson: '{"model":"vendor/gateway-model"}' },
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Anthropic-compatible' }))
+    expect(screen.getByText('Gateway model')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
+
+    expect(screen.getByText('Gateway model')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save provider' })).toBeEnabled()
   })
 
   it('should show the provider empty state when no token is available', async () => {
