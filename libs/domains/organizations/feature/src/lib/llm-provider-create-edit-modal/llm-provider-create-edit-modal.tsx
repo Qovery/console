@@ -265,7 +265,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
                   value={field.value}
                   onChange={field.onChange}
                   error={error?.message}
-                  hint="HTTP or HTTPS root of the API, with an optional path prefix, e.g. https://gateway.example.com/anthropic."
+                  hint="HTTP or HTTPS root of the API, with an optional path prefix, e.g. https://openrouter.ai/api."
                 />
               )}
             />

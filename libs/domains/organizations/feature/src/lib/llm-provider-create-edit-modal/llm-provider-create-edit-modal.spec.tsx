@@ -265,7 +265,10 @@ describe('LlmProviderCreateEditModal', () => {
 
       await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic-compatible')
       expect(screen.queryByLabelText('AWS region')).not.toBeInTheDocument()
-      expect(document.querySelector('i.fa-plug')).toBeInTheDocument()
+      expect(document.querySelector('img[src="/assets/ai-tools/openrouter-grape.svg"]')).toBeInTheDocument()
+      expect(screen.getByText('HTTP or HTTPS root of the API', { exact: false })).toHaveTextContent(
+        'e.g. https://openrouter.ai/api.'
+      )
       expect(document.querySelector('img[src="/assets/ai-tools/claude.svg"]')).not.toBeInTheDocument()
       await userEvent.type(screen.getByLabelText('Name'), 'Gateway')
       await userEvent.type(screen.getByLabelText('Token'), 'gateway-token')

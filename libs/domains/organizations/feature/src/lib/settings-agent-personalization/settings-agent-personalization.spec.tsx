@@ -263,8 +263,13 @@ describe('Agent settings pages', () => {
     expect(bedrockRow.querySelector('img')).toHaveAttribute('src', '/assets/ai-tools/bedrock.svg')
     expect(bedrockRow.querySelector('img')).toHaveClass('h-5', 'w-5', 'rounded-sm')
     const gatewayRow = screen.getByTestId('llm-provider-provider-gateway')
-    expect(gatewayRow.querySelector('i.fa-plug')).toBeInTheDocument()
-    expect(gatewayRow.querySelector('img')).not.toBeInTheDocument()
+    expect(gatewayRow.querySelectorAll('img')).toHaveLength(2)
+    expect(gatewayRow.querySelector('img[src="/assets/ai-tools/openrouter-grape.svg"]')).toHaveClass('dark:hidden')
+    expect(gatewayRow.querySelector('img[src="/assets/ai-tools/openrouter-volt.svg"]')).toHaveClass(
+      'hidden',
+      'dark:block'
+    )
+    expect(gatewayRow.querySelector('img[src$="claude.svg"], img[src$="bedrock.svg"]')).not.toBeInTheDocument()
   })
 
   it('should hide empty token scope sections', () => {

@@ -398,8 +398,9 @@ describe('AgenticWorkflowConfiguration', () => {
     const { userEvent } = renderConfiguration({ seed: { llmProviderId: 'provider-1' } })
 
     const providerButton = screen.getByRole('button', { name: 'Anthropic-compatible' })
-    expect(providerButton.querySelector('i.fa-plug')).toBeInTheDocument()
-    expect(providerButton.querySelector('img')).not.toBeInTheDocument()
+    expect(providerButton.querySelector('img[src="/assets/ai-tools/openrouter-grape.svg"]')).toBeInTheDocument()
+    expect(providerButton.querySelector('img[src="/assets/ai-tools/openrouter-volt.svg"]')).toBeInTheDocument()
+    expect(providerButton.querySelector('img[src$="claude.svg"], img[src$="bedrock.svg"]')).not.toBeInTheDocument()
 
     await userEvent.click(providerButton)
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()

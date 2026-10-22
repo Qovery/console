@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import { LlmProviderType } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { Icon } from '@qovery/shared/ui'
 
 export interface LlmProviderIconProps {
   type: LlmProviderType
@@ -20,9 +19,20 @@ export function LlmProviderIcon({ type, size = 'md', className }: LlmProviderIco
       <img src="/assets/ai-tools/bedrock.svg" alt="" aria-hidden="true" className={boxClassName} />
     ))
     .with(LlmProviderType.ANTHROPIC_COMPATIBLE, () => (
-      <span className={`inline-flex shrink-0 items-center justify-center text-neutral ${boxClassName}`}>
-        <Icon iconName="plug" iconStyle="regular" className={size === 'sm' ? 'text-xs' : 'text-sm'} />
-      </span>
+      <>
+        <img
+          src="/assets/ai-tools/openrouter-grape.svg"
+          alt=""
+          aria-hidden="true"
+          className={clsx(boxClassName, 'object-contain dark:hidden')}
+        />
+        <img
+          src="/assets/ai-tools/openrouter-volt.svg"
+          alt=""
+          aria-hidden="true"
+          className={clsx(boxClassName, 'hidden object-contain dark:block')}
+        />
+      </>
     ))
     .exhaustive()
 }
