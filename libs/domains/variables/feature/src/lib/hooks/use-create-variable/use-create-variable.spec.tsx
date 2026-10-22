@@ -116,6 +116,20 @@ describe('useCreateVariable', () => {
     )
   })
 
+  it('links to the conflicting variable when the conflict is on the mount path of another key', async () => {
+    const onCreateOverride = jest.fn()
+    const error = conflictError({
+      ...existingVariable,
+      key: 'OTHER_FILE',
+      variable_type: 'FILE',
+      mount_path: '/app/config',
+    })
+
+    await createWithError(error, onCreateOverride)
+
+    expect(mockToastError.mock.calls[0][4]).toBe('Go to the conflicting variable')
+  })
+
   it('links to the conflicting variable when its secret kind differs', async () => {
     const error = conflictError({ ...existingVariable, is_secret: true })
 

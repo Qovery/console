@@ -15,53 +15,84 @@ describe('getVariableScopeRank', () => {
 })
 
 describe('canOverrideConflictingVariable', () => {
-  const request = { variable_scope: 'APPLICATION' as const, is_secret: false }
+  const request = { key: 'LOG_LEVEL', variable_scope: 'APPLICATION' as const, is_secret: false }
 
   it('accepts a value variable at a higher scope with the same secret kind', () => {
     expect(
-      canOverrideConflictingVariable({ scope: 'ENVIRONMENT', variable_type: 'VALUE', is_secret: false }, request)
+      canOverrideConflictingVariable(
+        { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'VALUE', is_secret: false },
+        request
+      )
     ).toBe(true)
   })
 
   it('accepts file and override variables', () => {
-    expect(canOverrideConflictingVariable({ scope: 'PROJECT', variable_type: 'FILE', is_secret: false }, request)).toBe(
-      true
-    )
     expect(
-      canOverrideConflictingVariable({ scope: 'ENVIRONMENT', variable_type: 'OVERRIDE', is_secret: false }, request)
+      canOverrideConflictingVariable(
+        { key: 'LOG_LEVEL', scope: 'PROJECT', variable_type: 'FILE', is_secret: false },
+        request
+      )
     ).toBe(true)
+    expect(
+      canOverrideConflictingVariable(
+        { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'OVERRIDE', is_secret: false },
+        request
+      )
+    ).toBe(true)
+  })
+
+  it('rejects a variable with another key, e.g. a mount path conflict', () => {
+    expect(
+      canOverrideConflictingVariable(
+        { key: 'OTHER_FILE', scope: 'ENVIRONMENT', variable_type: 'FILE', is_secret: false },
+        request
+      )
+    ).toBe(false)
   })
 
   it('rejects a variable at the same or a lower scope', () => {
     expect(
-      canOverrideConflictingVariable({ scope: 'APPLICATION', variable_type: 'VALUE', is_secret: false }, request)
+      canOverrideConflictingVariable(
+        { key: 'LOG_LEVEL', scope: 'APPLICATION', variable_type: 'VALUE', is_secret: false },
+        request
+      )
     ).toBe(false)
     expect(
       canOverrideConflictingVariable(
-        { scope: 'ENVIRONMENT', variable_type: 'VALUE', is_secret: false },
-        { variable_scope: 'PROJECT', is_secret: false }
+        { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'VALUE', is_secret: false },
+        { key: 'LOG_LEVEL', variable_scope: 'PROJECT', is_secret: false }
       )
     ).toBe(false)
   })
 
   it('rejects a different secret kind or an unknown one', () => {
     expect(
-      canOverrideConflictingVariable({ scope: 'ENVIRONMENT', variable_type: 'VALUE', is_secret: true }, request)
+      canOverrideConflictingVariable(
+        { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'VALUE', is_secret: true },
+        request
+      )
     ).toBe(false)
-    expect(canOverrideConflictingVariable({ scope: 'ENVIRONMENT', variable_type: 'VALUE' }, request)).toBe(false)
+    expect(
+      canOverrideConflictingVariable({ key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'VALUE' }, request)
+    ).toBe(false)
   })
 
   it('rejects aliases, external secrets and unknown types', () => {
     expect(
-      canOverrideConflictingVariable({ scope: 'ENVIRONMENT', variable_type: 'ALIAS', is_secret: false }, request)
-    ).toBe(false)
-    expect(
       canOverrideConflictingVariable(
-        { scope: 'ENVIRONMENT', variable_type: 'EXTERNAL_SECRET', is_secret: false },
+        { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'ALIAS', is_secret: false },
         request
       )
     ).toBe(false)
-    expect(canOverrideConflictingVariable({ scope: 'ENVIRONMENT', is_secret: false }, request)).toBe(false)
+    expect(
+      canOverrideConflictingVariable(
+        { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'EXTERNAL_SECRET', is_secret: false },
+        request
+      )
+    ).toBe(false)
+    expect(canOverrideConflictingVariable({ key: 'LOG_LEVEL', scope: 'ENVIRONMENT', is_secret: false }, request)).toBe(
+      false
+    )
   })
 })
 

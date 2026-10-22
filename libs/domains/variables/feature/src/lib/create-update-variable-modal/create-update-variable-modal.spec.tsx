@@ -1,6 +1,6 @@
 import { type VariableResponse } from 'qovery-typescript-axios'
-import { type ReactElement, type ReactNode } from 'react'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { type ReactElement, type ReactNode, useState } from 'react'
+import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { type UseCreateVariableProps } from '../hooks/use-create-variable/use-create-variable'
 import { CreateUpdateVariableModal, VariableFormModal } from './create-update-variable-modal'
 
@@ -276,5 +276,48 @@ describe('CreateUpdateVariableModal', () => {
       defaultScope: 'APPLICATION',
       serviceId: 'service-id',
     })
+  })
+
+  it('should start the override form from the parent variable, not from the form it replaces', async () => {
+    // Holds the modal content in state like ModalProvider does, so the swap happens at the same tree position
+    let swapContent: (content: ReactElement) => void = () => undefined
+    function ModalHost() {
+      const [content, setContent] = useState<ReactElement>(
+        <CreateUpdateVariableModal {...baseProps} mode="CREATE" type="VALUE" />
+      )
+      swapContent = setContent
+      return <>{content}</>
+    }
+    const { userEvent } = renderWithProviders(<ModalHost />)
+
+    // Fill the creation form as a file, so stale state would leak into the override form if it were reused
+    await userEvent.click(screen.getByRole('radio', { name: /as file/i }))
+    await userEvent.type(screen.getByLabelText('Variable'), 'MY_VARIABLE')
+    await userEvent.click(screen.getByLabelText('Path'))
+    await userEvent.type(screen.getByLabelText('Path'), 'typed/path')
+    await userEvent.click(screen.getByRole('switch'))
+
+    const { onCreateOverride } = mockUseCreateVariable.mock.calls[0][0] as UseCreateVariableProps
+    const parentVariable = { ...baseVariable, scope: 'ENVIRONMENT' } as VariableResponse
+    onCreateOverride?.({
+      parentVariable,
+      variableRequest: {
+        key: 'MY_VARIABLE',
+        value: 'typed value',
+        is_secret: false,
+        variable_scope: 'APPLICATION',
+        variable_parent_id: 'service-id',
+      },
+    })
+    const { content } = mockOpenModal.mock.calls[0][0] as { content: ReactElement }
+
+    expect(content.key).toBe(`override-${parentVariable.id}`)
+
+    act(() => swapContent(content))
+
+    expect(screen.getByText('Create override variable')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Path')).not.toBeInTheDocument()
+    expect(screen.queryByText('Variable interpolation')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Value')).toHaveValue('typed value')
   })
 })
