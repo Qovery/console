@@ -5,6 +5,7 @@ import { type UseCreateVariableProps } from '../hooks/use-create-variable/use-cr
 import { CreateUpdateVariableModal, VariableFormModal } from './create-update-variable-modal'
 
 const mockOpenModal = jest.fn()
+const mockEnableAlertClickOutside = jest.fn()
 const mockUseCreateVariable = jest.fn()
 
 jest.mock('@qovery/shared/ui', () => {
@@ -13,7 +14,7 @@ jest.mock('@qovery/shared/ui', () => {
   return {
     ...actual,
     useModal: () => ({
-      enableAlertClickOutside: jest.fn(),
+      enableAlertClickOutside: mockEnableAlertClickOutside,
       openModal: mockOpenModal,
     }),
   }
@@ -87,6 +88,7 @@ describe('CreateUpdateVariableModal', () => {
   beforeEach(() => {
     closeModal.mockReset()
     mockOpenModal.mockReset()
+    mockEnableAlertClickOutside.mockReset()
     mockUseCreateVariable.mockReset()
   })
 
@@ -266,6 +268,7 @@ describe('CreateUpdateVariableModal', () => {
       },
     })
 
+    expect(mockEnableAlertClickOutside).toHaveBeenLastCalledWith(false)
     expect(mockOpenModal).toHaveBeenCalledTimes(1)
     const { content } = mockOpenModal.mock.calls[0][0] as { content: ReactElement }
     expect(content.props).toMatchObject({

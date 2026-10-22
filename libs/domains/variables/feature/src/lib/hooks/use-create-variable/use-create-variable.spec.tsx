@@ -53,11 +53,11 @@ const existingVariable = {
 }
 
 function conflictError(existing: object | undefined) {
+  // No `code`: the conflict is detected from the HTTP status
   return {
-    code: '409',
     name: 'Conflict',
     message: 'Variable LOG_LEVEL already exists at environment scope',
-    response: { data: existing ? { existing_variable: existing } : {} },
+    response: { status: 409, data: existing ? { existing_variable: existing } : {} },
   }
 }
 
@@ -130,6 +130,14 @@ describe('useCreateVariable', () => {
     expect(mockToastError.mock.calls[0][4]).toBe('Go to the conflicting variable')
   })
 
+  it('links to the conflicting variable when it is an override of unknown kind', async () => {
+    const error = conflictError({ ...existingVariable, variable_type: 'OVERRIDE' })
+
+    await createWithError(error, jest.fn())
+
+    expect(mockToastError.mock.calls[0][4]).toBe('Go to the conflicting variable')
+  })
+
   it('links to the conflicting variable when its secret kind differs', async () => {
     const error = conflictError({ ...existingVariable, is_secret: true })
 
@@ -166,7 +174,7 @@ describe('useCreateVariable', () => {
   })
 
   it('shows a generic error toast for other errors', async () => {
-    const error = { code: '400', name: 'Bad Request', message: 'Invalid key' }
+    const error = { code: '400', name: 'Bad Request', message: 'Invalid key', response: { status: 400, data: {} } }
 
     await createWithError(error)
 

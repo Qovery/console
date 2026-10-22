@@ -26,19 +26,44 @@ describe('canOverrideConflictingVariable', () => {
     ).toBe(true)
   })
 
-  it('accepts file and override variables', () => {
+  it('accepts a file when the request is a file', () => {
+    expect(
+      canOverrideConflictingVariable(
+        { key: 'LOG_LEVEL', scope: 'PROJECT', variable_type: 'FILE', is_secret: false },
+        { ...request, mount_path: '/app/config' }
+      )
+    ).toBe(true)
+  })
+
+  it('rejects a file when the request is a value, and a value when the request is a file', () => {
     expect(
       canOverrideConflictingVariable(
         { key: 'LOG_LEVEL', scope: 'PROJECT', variable_type: 'FILE', is_secret: false },
         request
       )
-    ).toBe(true)
+    ).toBe(false)
     expect(
       canOverrideConflictingVariable(
-        { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'OVERRIDE', is_secret: false },
-        request
+        { key: 'LOG_LEVEL', scope: 'PROJECT', variable_type: 'VALUE', is_secret: false },
+        { ...request, mount_path: '/app/config' }
       )
+    ).toBe(false)
+  })
+
+  it('accepts an override only when the kind of the variable it overrides is known and matches', () => {
+    const override = {
+      key: 'LOG_LEVEL',
+      scope: 'ENVIRONMENT' as const,
+      variable_type: 'OVERRIDE' as const,
+      is_secret: false,
+    }
+    expect(canOverrideConflictingVariable(override, request)).toBe(false)
+    expect(
+      canOverrideConflictingVariable({ ...override, overridden_variable: { variable_type: 'VALUE' } }, request)
     ).toBe(true)
+    expect(
+      canOverrideConflictingVariable({ ...override, overridden_variable: { variable_type: 'FILE' } }, request)
+    ).toBe(false)
   })
 
   it('rejects a variable with another key, e.g. a mount path conflict', () => {
