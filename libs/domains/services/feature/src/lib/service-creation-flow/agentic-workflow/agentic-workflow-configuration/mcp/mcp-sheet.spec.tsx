@@ -6,6 +6,11 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
 }))
 
+jest.mock('@qovery/shared/iam/feature', () => ({
+  ...jest.requireActual('@qovery/shared/iam/feature'),
+  useUserRole: () => ({ roles: [], loading: false, isQoveryAdminUser: false }),
+}))
+
 const mcpServers = [
   {
     id: 'm1',

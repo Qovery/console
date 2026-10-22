@@ -5,6 +5,10 @@ import { AlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { MetricConfigurationStep } from './metric-configuration-step'
 
+jest.mock('../../../hooks/use-alert-receivers/use-alert-receivers', () => ({
+  useAlertReceivers: () => ({ data: [{ id: 'receiver-1', name: 'Slack', type: 'SLACK' }] }),
+}))
+
 const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfiguration => ({
   id: 'alert-1',
   name: 'CPU Alert',

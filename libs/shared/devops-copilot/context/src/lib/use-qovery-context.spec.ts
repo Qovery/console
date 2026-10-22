@@ -30,6 +30,32 @@ describe('useQoveryContext', () => {
     expect(result.current.current).toEqual({ ...mockOrg, type: 'organization' })
   })
 
+  it('exposes organization load errors and the retry action', () => {
+    const error = new Error('Organization unavailable')
+    const refetch = jest.fn()
+    setPathname('/onboarding/organization/new-org/cluster')
+    useQueryMock.mockReturnValueOnce({ data: undefined, error, refetch })
+
+    const { result } = renderHook(() => useQoveryContext())
+
+    expect(result.current.organizationError).toBe(error)
+    expect(result.current.refetchOrganization).toBe(refetch)
+    expect(result.current.context.organization).toBeUndefined()
+  })
+
+  it('uses the new organization as Copilot context during cluster onboarding', () => {
+    const organization = { id: 'new-org', name: 'New organization' }
+    setPathname('/onboarding/organization/new-org/cluster')
+    useQueryMock.mockReturnValueOnce({ data: organization })
+
+    const { result } = renderHook(() => useQoveryContext())
+
+    expect(useQueryMock.mock.calls[0][0]).toEqual(expect.objectContaining({ enabled: true }))
+    expect(result.current.context.organization).toEqual(organization)
+    expect(result.current.context.cluster).toBeUndefined()
+    expect(result.current.current).toEqual({ ...organization, type: 'organization' })
+  })
+
   it('should return context with cluster when clusterId is provided', () => {
     const mockCluster = { id: 'cluster-123', name: 'Test Cluster' }
     setPathname('/organization/org-123/cluster/cluster-123/overview')

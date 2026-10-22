@@ -97,9 +97,11 @@ describe('ContainerRegistryCreateEditModal', () => {
     useFeatureFlagEnabledMock.mockReturnValue(true)
   })
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(<ContainerRegistryCreateEditModal {...props} />)
     expect(baseElement).toBeTruthy()
+    // The modal clears config errors in a timeout on mount
+    expect(await screen.findByLabelText('Type')).toBeInTheDocument()
   })
 
   it('should render the form with DOCKER_HUB', async () => {
@@ -117,7 +119,8 @@ describe('ContainerRegistryCreateEditModal', () => {
         {...props}
       />
     )
-    screen.getByDisplayValue('hello')
+    // The modal clears config errors in a timeout on mount
+    await screen.findByDisplayValue('hello')
     screen.getByDisplayValue('description')
     screen.getByDisplayValue('https://docker.io')
 
@@ -138,7 +141,8 @@ describe('ContainerRegistryCreateEditModal', () => {
         {...props}
       />
     )
-    screen.getByDisplayValue('hello')
+    // The modal clears config errors in a timeout on mount
+    await screen.findByDisplayValue('hello')
     screen.getByDisplayValue('https://qovery.com')
 
     screen.getByLabelText('Region')
@@ -164,7 +168,8 @@ describe('ContainerRegistryCreateEditModal', () => {
         {...props}
       />
     )
-    screen.getByDisplayValue('hello')
+    // The modal clears config errors in a timeout on mount
+    await screen.findByDisplayValue('hello')
     screen.getByDisplayValue('https://qovery.com')
     screen.getByDisplayValue('us-east-1')
     screen.getByDisplayValue('arn:aws:iam::123456789012:role/MyRole')
@@ -188,7 +193,8 @@ describe('ContainerRegistryCreateEditModal', () => {
       />
     )
 
-    screen.getByDisplayValue('hello')
+    // The modal clears config errors in a timeout on mount
+    await screen.findByDisplayValue('hello')
     screen.getByDisplayValue('https://qovery.com')
   })
 
@@ -206,7 +212,8 @@ describe('ContainerRegistryCreateEditModal', () => {
         {...props}
       />
     )
-    screen.getByDisplayValue('hello')
+    // The modal clears config errors in a timeout on mount
+    await screen.findByDisplayValue('hello')
     screen.getByDisplayValue('https://qovery.com')
 
     screen.getByLabelText('Region')
@@ -228,7 +235,8 @@ describe('ContainerRegistryCreateEditModal', () => {
         {...props}
       />
     )
-    screen.getByDisplayValue('hello')
+    // The modal clears config errors in a timeout on mount
+    await screen.findByDisplayValue('hello')
     screen.getByDisplayValue('description')
     screen.getByDisplayValue('https://ghcr.io')
 
@@ -250,7 +258,8 @@ describe('ContainerRegistryCreateEditModal', () => {
         {...props}
       />
     )
-    screen.getByDisplayValue('hello')
+    // The modal clears config errors in a timeout on mount
+    await screen.findByDisplayValue('hello')
     screen.getByDisplayValue('description')
     screen.getByDisplayValue('https://registry.gitlab.com')
 
@@ -273,7 +282,8 @@ describe('ContainerRegistryCreateEditModal', () => {
       />
     )
 
-    screen.getByDisplayValue('hello')
+    // The modal clears config errors in a timeout on mount
+    await screen.findByDisplayValue('hello')
     screen.getByDisplayValue('description')
 
     screen.getByLabelText('Login type')
@@ -300,7 +310,8 @@ describe('ContainerRegistryCreateEditModal', () => {
       />
     )
 
-    screen.getByDisplayValue('hello')
+    // The modal clears config errors in a timeout on mount
+    await screen.findByDisplayValue('hello')
     screen.getByDisplayValue('https://us-east1-docker.pkg.dev')
     screen.getByDisplayValue('us-east1')
     screen.getByDisplayValue('qovery@my-project.iam.gserviceaccount.com')

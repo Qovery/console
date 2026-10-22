@@ -1,4 +1,4 @@
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import ConfirmationCancelLifecycleModal, {
   type ConfirmationCancelLifecycleModalProps,
@@ -25,6 +25,7 @@ const props: ConfirmationCancelLifecycleModalProps = {
 describe('ConfirmationCancelLifecycleModal', () => {
   it('should match snapshot', async () => {
     const { container } = renderWithProviders(<ConfirmationCancelLifecycleModal {...props} />)
+    await waitFor(() => expect(screen.getByRole('button', { name: /confirm/i })).toBeEnabled())
     expect(container).toMatchSnapshot()
   })
 

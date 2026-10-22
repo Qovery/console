@@ -81,6 +81,16 @@ describe('ClusterNew', () => {
     expect(screen.getByText('Local machine (demo)')).toBeInTheDocument()
   })
 
+  it('should hide only the demo section when requested', () => {
+    renderWithProviders(<ClusterNew hideDemo />)
+    expect(screen.queryByText('Local machine (demo)')).not.toBeInTheDocument()
+    expect(screen.queryByText('Qovery on your local machine')).not.toBeInTheDocument()
+    expect(screen.getByText('Choose your hosting mode')).toBeInTheDocument()
+    expect(screen.getByText('Scaleway')).toBeInTheDocument()
+    expect(screen.getByText('Other')).toBeInTheDocument()
+    expect(screen.getByText('Amazon Web Services')).toBeInTheDocument()
+  })
+
   it('should render cloud provider cards', () => {
     renderWithProviders(<ClusterNew />)
     expect(screen.getByText('Amazon Web Services')).toBeInTheDocument()

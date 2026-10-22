@@ -1,7 +1,7 @@
 import { StorageTypeEnum } from 'qovery-typescript-axios'
 import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   ApplicationContainerStorageModal,
   type ApplicationContainerStorageModalProps,
@@ -58,11 +58,12 @@ describe('ApplicationContainerStorageModal', () => {
     expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument()
   })
 
-  it('renders edit mode', () => {
+  it('renders edit mode', async () => {
     renderWithProviders(<ApplicationContainerStorageModal {...props} storage={props.service.storage?.[0]} />)
 
     expect(screen.getByText('Edit storage')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Confirm' })).toBeInTheDocument()
+    // Edit mode validates the existing values on mount
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Confirm' })).toBeEnabled())
   })
 
   it('submits a new storage', async () => {

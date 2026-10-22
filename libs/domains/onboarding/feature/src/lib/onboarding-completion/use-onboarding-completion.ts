@@ -56,6 +56,8 @@ export function useOnboardingCompletion({ projectIds, enabled }: UseOnboardingCo
   })
 
   return {
+    isLoading:
+      environmentQueries.some(({ isLoading }) => isLoading) || serviceStatusQueries.some(({ isLoading }) => isLoading),
     hasEnvironment: hasAnyEnvironment(environmentQueries.map(({ data }) => data)),
     isServiceDeployed: hasAnyDeployedService(serviceStatusQueries.map(({ data }) => data)),
   }

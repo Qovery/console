@@ -3,13 +3,35 @@ import {
   ServiceDeploymentStatusEnum,
   StateEnum,
 } from 'qovery-typescript-axios'
-import { Route, Routes } from 'react-router-dom'
-import { environmentFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import DeploymentLogsFeature, {
   type DeploymentLogsContentProps,
   getServiceStatusesById,
 } from './deployment-logs-content'
+
+const mockApplication = applicationFactoryMock(1)[0]
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ serviceId: '052613b3-de4e-4077-8c89-7228bddda8f9', executionId: 'exec-1' }),
+  useNavigate: () => jest.fn(),
+}))
+
+jest.mock('@qovery/domains/services/feature', () => ({
+  ...jest.requireActual('@qovery/domains/services/feature'),
+  useService: () => ({ data: mockApplication }),
+  useDeploymentStatus: () => ({ data: undefined }),
+}))
+
+jest.mock('@qovery/domains/environments/feature', () => ({
+  ...jest.requireActual('@qovery/domains/environments/feature'),
+  useDeploymentHistory: () => ({ data: [] }),
+}))
+
+jest.mock('../../list-deployment-logs/list-deployment-logs', () => ({
+  ListDeploymentLogs: () => <div data-testid="list-deployment-logs" />,
+}))
 
 const services: DeploymentStageWithServicesStatuses[] = [
   {
@@ -57,19 +79,13 @@ const services: DeploymentStageWithServicesStatuses[] = [
 describe('DeploymentLogsFeature', () => {
   const props: DeploymentLogsContentProps = {
     environment: environmentFactoryMock(1)[0],
-    statusStages: services,
+    deploymentStages: services,
   }
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(
-      <Routes location="/organization/1/project/2/environment/3/logs/">
-        <Route
-          path="/organization/1/project/2/environment/3/logs/4/deployment-logs"
-          element={<DeploymentLogsFeature {...props} />}
-        />
-      </Routes>
-    )
+    const { baseElement } = renderWithProviders(<DeploymentLogsFeature {...props} />)
     expect(baseElement).toBeTruthy()
+    expect(screen.getByTestId('list-deployment-logs')).toBeInTheDocument()
   })
 
   it('should return the service with the given id', () => {

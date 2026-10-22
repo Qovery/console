@@ -1,5 +1,5 @@
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceResourcesSettings } from './service-resources-settings'
 
 jest.mock('@tanstack/react-router', () => ({
@@ -22,17 +22,18 @@ jest.mock('@qovery/domains/services/feature', () => ({
 describe('ServiceResourcesSettings', () => {
   const service = applicationFactoryMock(1)[0]
 
-  it('should render resources heading and save action', () => {
+  it('should render resources heading and save action', async () => {
     renderWithProviders(<ServiceResourcesSettings service={service} />)
 
     expect(screen.getByRole('heading', { name: 'Resources' })).toBeInTheDocument()
     expect(screen.getByText('Manage the resources assigned to the service.')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled())
   })
 
-  it('should render resources form content', () => {
+  it('should render resources form content', async () => {
     renderWithProviders(<ServiceResourcesSettings service={service} />)
 
     expect(screen.getByTestId('application-settings-resources')).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled())
   })
 })

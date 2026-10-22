@@ -19,7 +19,6 @@ jest.mock('@tanstack/react-router', () => ({
 
 describe('LlmProviderCreateEditModal', () => {
   beforeEach(() => {
-    jest.useFakeTimers()
     jest.clearAllMocks()
     createLlmProvider.mockResolvedValue({ id: 'provider-1' })
     editLlmProvider.mockResolvedValue({ id: 'provider-1' })
@@ -44,10 +43,6 @@ describe('LlmProviderCreateEditModal', () => {
       isError: false,
       isLoading: false,
     })
-  })
-
-  afterEach(() => {
-    jest.useRealTimers()
   })
 
   it('should create a personal Claude token', async () => {
@@ -85,9 +80,10 @@ describe('LlmProviderCreateEditModal', () => {
   })
 
   it('should keep the stored token when editing with a blank value', async () => {
+    const onClose = jest.fn()
     const { userEvent } = renderWithProviders(
       <LlmProviderCreateEditModal
-        onClose={jest.fn()}
+        onClose={onClose}
         llmProvider={{
           id: 'provider-1',
           name: 'Claude',
@@ -120,6 +116,7 @@ describe('LlmProviderCreateEditModal', () => {
         },
       })
     )
+    await waitFor(() => expect(onClose).toHaveBeenCalledWith({ id: 'provider-1' }))
   })
 
   it('should select Claude by default and allow choosing another provider', () => {
@@ -192,7 +189,7 @@ describe('LlmProviderCreateEditModal', () => {
     )
   })
 
-  it('keeps an existing Bedrock region visible when it is absent from the cluster region list', () => {
+  it('keeps an existing Bedrock region visible when it is absent from the cluster region list', async () => {
     renderWithProviders(
       <LlmProviderCreateEditModal
         onClose={jest.fn()}
@@ -210,6 +207,7 @@ describe('LlmProviderCreateEditModal', () => {
     )
 
     expect(screen.getByText('us-east-1')).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeEnabled())
   })
 
   it('preserves an empty region when saving an existing Bedrock token', async () => {

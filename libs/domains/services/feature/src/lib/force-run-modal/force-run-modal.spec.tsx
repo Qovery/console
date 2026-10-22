@@ -1,7 +1,7 @@
 import { JobForceEvent } from 'qovery-typescript-axios'
 import { type Job } from '@qovery/domains/services/data-access'
 import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import ForceRunModal from './force-run-modal'
 
 const mockLifecycle = lifecycleJobFactoryMock(1)[0] as Job
@@ -25,9 +25,10 @@ describe('ForceRunModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render no radio box if it is a cron', () => {
+  it('should render no radio box if it is a cron', async () => {
     renderWithProviders(<ForceRunModal organizationId="organization-id" projectId="project-id" service={mockCron} />)
     expect(screen.queryAllByTestId('input-radio-box')).toHaveLength(0)
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Force Run' })).toBeEnabled())
   })
 
   it('should dispatch forceRunJob with the good payload', async () => {

@@ -1,5 +1,5 @@
 import posthog from 'posthog-js'
-import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
+import { AgenticWorkflowExecutionMode, VariableMainCallsApi } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
@@ -33,6 +33,11 @@ function deferred<T>() {
   })
   return { promise, resolve }
 }
+
+beforeEach(() => {
+  // CodeEditorVariable (rendered by VariableRow) fetches environment variables for autocompletion
+  jest.spyOn(VariableMainCallsApi.prototype, 'listVariables').mockResolvedValue({ data: { results: [] } } as never)
+})
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -694,6 +699,8 @@ describe('AgenticWorkflowConfiguration', () => {
 
     expect(mockCreateService).toHaveBeenCalledTimes(1)
     creation.resolve({ id: 'workflow-1' })
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledTimes(1))
+    expect(mockCreateService).toHaveBeenCalledTimes(1)
   })
 
   it('should not create from a template when the required Qovery MCP cannot be initialized', async () => {

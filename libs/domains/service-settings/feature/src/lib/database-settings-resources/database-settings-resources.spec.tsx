@@ -4,6 +4,12 @@ import { DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import DatabaseSettingsResources, { type DatabaseSettingsResourcesProps } from './database-settings-resources'
 
+jest.mock('@qovery/domains/cloud-providers/feature', () => ({
+  useCloudProviderDatabaseInstanceTypes: () => ({
+    data: [{ name: 'db.t3.small' }],
+  }),
+}))
+
 const props: DatabaseSettingsResourcesProps = {
   database: databaseFactoryMock(1)[0],
   isManaged: true,

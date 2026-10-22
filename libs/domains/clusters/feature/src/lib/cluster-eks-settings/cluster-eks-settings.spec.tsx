@@ -3,6 +3,18 @@ import { type ReactNode } from 'react'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { ClusterEksSettings } from './cluster-eks-settings'
 
+jest.mock('@qovery/domains/cloud-providers/feature', () => ({
+  ...jest.requireActual('@qovery/domains/cloud-providers/feature'),
+  useCloudProviders: () => ({
+    data: [
+      {
+        short_name: 'AWS',
+        regions: [{ city: 'Paris', name: 'eu-west-3', country_code: 'FR' }],
+      },
+    ],
+  }),
+}))
+
 const render = (component: ReactNode) => {
   return renderWithProviders(wrapWithReactHookForm(component))
 }

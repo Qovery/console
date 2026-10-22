@@ -1,20 +1,31 @@
+import axios from 'axios'
 import type { ComponentType, ReactNode } from 'react'
 import * as React from 'react'
 
-jest.mock('@auth0/auth0-react', () => ({
-  Auth0Provider: ({ children }: { children: ReactNode }) => children,
-  withAuthenticationRequired: (component: ComponentType) => component,
-  useAuth0: () => {
-    return {
-      isLoading: false,
-      user: { sub: 'foobar' },
-      isAuthenticated: true,
-      logout: jest.fn(),
-      loginWithPopup: jest.fn(),
-      getAccessTokenSilently: jest.fn(),
-    }
-  },
-}))
+jest.mock('@auth0/auth0-react', () => {
+  // Unsigned JWT with no Qovery roles, so `jwtDecode` in `useUserRole` succeeds
+  const accessToken = 'eyJhbGciOiJub25lIn0.eyJodHRwczovL3FvdmVyeS5jb20vcm9sZXMiOltdfQ.'
+  // Stable reference: hooks list it as an effect dependency
+  const getAccessTokenSilently = () => Promise.resolve(accessToken)
+  return {
+    Auth0Provider: ({ children }: { children: ReactNode }) => children,
+    withAuthenticationRequired: (component: ComponentType) => component,
+    useAuth0: () => {
+      return {
+        isLoading: false,
+        user: { sub: 'foobar' },
+        isAuthenticated: true,
+        logout: jest.fn(),
+        loginWithPopup: jest.fn(),
+        getAccessTokenSilently,
+      }
+    },
+  }
+})
+
+// Unit tests must never reach the real API: mock the hook or service that sends the request
+axios.defaults.adapter = (config) =>
+  Promise.reject(new Error(`Unmocked request in unit test: ${config.method?.toUpperCase()} ${config.url}`))
 
 jest.mock('@tanstack/react-router', () => {
   const React = jest.requireActual('react')

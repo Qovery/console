@@ -438,7 +438,6 @@ export function AlertRulesOverview({
                             name={match(targetService.service_type)
                               .with('CONTAINER', () => 'APPLICATION')
                               .otherwise((s) => s)}
-                            iconStyle="regular"
                             width={13}
                           />
                         </span>
