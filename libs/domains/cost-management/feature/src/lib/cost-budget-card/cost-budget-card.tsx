@@ -15,7 +15,7 @@ function progressColor(percent: number): string {
 }
 
 export function CostBudgetCard({ cost }: CostBudgetCardProps) {
-  const { policy, estimatedSpend, reconciledSpend, reconciledAt, forecast, resetsOn } = cost
+  const { policy, estimatedSpend, forecast, resetsOn } = cost
   const { monthlyLimit, currency } = policy
 
   const consumedPercent = (estimatedSpend / monthlyLimit) * 100
@@ -51,14 +51,14 @@ export function CostBudgetCard({ cost }: CostBudgetCardProps) {
         </div>
         <div>
           <dt className="flex items-center gap-1.5 text-neutral-subtle">
-            AWS reconciled
-            <Tooltip content={`Billing data lags by up to 24 hours. Last refreshed ${dateFullFormat(reconciledAt)}.`}>
+            Billed spend
+            <Tooltip content="Appears once a cloud billing account is connected in Cost data.">
               <span className="flex">
                 <Icon iconName="circle-info" iconStyle="regular" className="text-xs" />
               </span>
             </Tooltip>
           </dt>
-          <dd className="mt-1 font-mono text-neutral">{formatCost(reconciledSpend, currency)}</dd>
+          <dd className="mt-1 text-neutral-subtle">Not connected</dd>
         </div>
         <div>
           <dt className="flex items-center gap-1.5 text-neutral-subtle">
