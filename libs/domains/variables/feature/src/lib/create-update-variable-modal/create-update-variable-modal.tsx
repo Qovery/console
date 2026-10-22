@@ -576,11 +576,13 @@ export type CreateUpdateVariableModalProps = {
 export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
   const { onSubmit, variable } = props
   const [loading, setLoading] = useState(false)
-  const { openModal } = useModal()
+  const { openModal, enableAlertClickOutside } = useModal()
 
   const { mutateAsync: createVariable } = useCreateVariable({
     // Swap this modal for the override flow, keeping the value and scope the user picked
-    onCreateOverride: ({ parentVariable, variableRequest }) =>
+    onCreateOverride: ({ parentVariable, variableRequest }) => {
+      // The creation form may have armed the unsaved-changes guard; the override form starts clean
+      enableAlertClickOutside(false)
       openModal({
         content: (
           <CreateUpdateVariableModal
@@ -598,7 +600,8 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         options: {
           fakeModal: true,
         },
-      }),
+      })
+    },
   })
   const { mutateAsync: createVariableAlias } = useCreateVariableAlias()
   const { mutateAsync: createVariableOverride } = useCreateVariableOverride()

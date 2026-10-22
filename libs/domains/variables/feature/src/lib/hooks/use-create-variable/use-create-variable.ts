@@ -5,6 +5,7 @@ import { type VariableRequest, type VariableResponse } from 'qovery-typescript-a
 import { mutations } from '@qovery/domains/variables/data-access'
 import { canOverrideConflictingVariable } from '@qovery/domains/variables/util'
 import { toastError } from '@qovery/shared/ui'
+import { isHttpStatus } from '@qovery/shared/utils'
 import { queries } from '@qovery/state/util-queries'
 
 // Body of a 409 on POST /variable. Location ids are always sent; the other VariableResponse fields
@@ -33,7 +34,7 @@ export function useCreateVariable({ onCreateOverride }: UseCreateVariableProps =
       })
     },
     onError(error: AxiosError<{ existing_variable?: ConflictingVariableResponse }>, { variableRequest }) {
-      if (error.code !== '409') {
+      if (!isHttpStatus(error, 409)) {
         toastError(error)
         return
       }
