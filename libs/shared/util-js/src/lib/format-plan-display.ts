@@ -1,9 +1,9 @@
 /**
- * Checks if a plan is a current (2025 or 2026) plan
+ * Checks if a plan is a 2025 or 2026 plan, i.e. not a legacy plan
  * @param plan - The plan name to check
  * @returns true if the plan is a 2025 or 2026 plan, false otherwise
  */
-export function is2025Plan(plan?: string): boolean {
+export function isNonLegacyPlan(plan?: string): boolean {
   if (!plan) return false
   return /_202[56]$/i.test(plan)
 }
@@ -40,7 +40,7 @@ export function formatPlanName(plan?: string): string {
 export function formatPlanDisplay(plan?: string): string {
   if (!plan) return 'N/A plan'
 
-  const isLegacy = !is2025Plan(plan)
+  const isLegacy = !isNonLegacyPlan(plan)
   const planName = formatPlanName(plan)
 
   return isLegacy ? `${planName} plan (Legacy)` : `${planName} plan`

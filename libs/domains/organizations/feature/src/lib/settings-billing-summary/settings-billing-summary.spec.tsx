@@ -131,7 +131,7 @@ describe('PageOrganizationBillingSummary', () => {
     expect(screen.getByText('Your account is activated on the Growth plan')).toBeInTheDocument()
     expect(
       screen.getByText(
-        /Your free trial ends in 11 days, then your subscription starts on this plan. You can switch plan until then./
+        /Your free trial ends in 11 days, then your subscription starts on this plan. You can switch plans until then./
       )
     ).toBeInTheDocument()
 
@@ -166,7 +166,12 @@ describe('PageOrganizationBillingSummary', () => {
 
   it('should not show the trial callout beyond the 90-day trial window', () => {
     renderWithProviders(
-      <PageOrganizationBillingSummary {...pageProps} currentCost={{ ...currentCostMock, remaining_trial_day: 91 }} />
+      <PageOrganizationBillingSummary
+        {...pageProps}
+        currentCost={{ ...currentCostMock, remaining_trial_day: 91 }}
+        hasCreditCard={false}
+        creditCard={undefined}
+      />
     )
 
     expect(screen.queryByText('Add credit card')).not.toBeInTheDocument()

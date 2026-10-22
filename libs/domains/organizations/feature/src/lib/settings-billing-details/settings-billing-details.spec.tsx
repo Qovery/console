@@ -289,7 +289,7 @@ describe('SettingsBillingDetails', () => {
     expect(screen.getByText('Your account is activated on the Growth plan')).toBeInTheDocument()
     expect(
       screen.getByText(
-        'Your subscription starts on this plan when your trial ends in 6 days. You can switch plan until then.'
+        'Your subscription starts on this plan when your trial ends in 6 days. You can switch plans until then.'
       )
     ).toBeInTheDocument()
     expect(screen.getByText('Your plan')).toBeInTheDocument()
@@ -341,13 +341,14 @@ describe('SettingsBillingDetails', () => {
     expect(screen.getByRole('radio', { name: /^Growth/ })).toBeChecked()
   })
 
-  it('should not show the plan selection once the free trial is over', () => {
+  it('should not show the plan selection once the free trial is over', async () => {
     useCurrentCostMock.mockReturnValue({ data: { plan: 'GROWTH_2026', remaining_trial_day: 0 } })
 
-    renderWithProviders(<SettingsBillingDetails />)
+    const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
 
     expect(screen.queryByRole('radio', { name: /^Growth/ })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Contact us' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Contact us' }))
+    expect(mockShowChat).toHaveBeenCalled()
   })
 
   describe('plan activation during the free trial', () => {
@@ -364,6 +365,14 @@ describe('SettingsBillingDetails', () => {
       expect(screen.getByRole('radio', { name: /^Scale/ })).toBeChecked()
       expect(await screen.findByTestId('chargebee-card-component')).toBeInTheDocument()
       expect(loadChargebeeSpy).toHaveBeenCalled()
+    })
+
+    it('should fall back to the add card placeholder when Chargebee fails to load', async () => {
+      loadChargebeeSpy.mockRejectedValueOnce(new Error('Chargebee unavailable'))
+
+      renderWithProviders(<SettingsBillingDetails />)
+
+      expect(await screen.findByTestId('add-new-card-button')).toBeInTheDocument()
     })
 
     it('should display the monthly price of each plan', () => {

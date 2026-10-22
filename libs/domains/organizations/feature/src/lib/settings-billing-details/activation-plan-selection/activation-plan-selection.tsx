@@ -82,7 +82,7 @@ export function ActivationPlanSelection({
       </RadioGroup.Root>
       {action && <div className="mt-3 flex justify-end">{action}</div>}
       <p className="mt-3 text-xs text-neutral-subtle">
-        This plan is billed monthly once your trial ends. You can switch plan until then. Need yearly billing or an
+        This plan is billed monthly once your trial ends. You can switch plans until then. Need yearly billing or an
         Enterprise plan?
         {onContactUsClick && (
           <>

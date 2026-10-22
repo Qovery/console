@@ -16,7 +16,7 @@ export function OrganizationFreeTrialBanner() {
   } = useClusterCreationRestriction({
     organizationId,
   })
-  const { data: creditCards = [], isFetched: isFetchedCreditCards } = useCreditCards({
+  const { data: creditCards = [], isSuccess: isCreditCardsLoaded } = useCreditCards({
     organizationId,
     enabled: Boolean(organizationId) && isInActiveFreeTrial,
   })
@@ -28,12 +28,8 @@ export function OrganizationFreeTrialBanner() {
   )
 
   // Once a credit card is added, the chosen plan starts automatically at the end of the trial
-  const shouldShowTrialBanner = isInActiveFreeTrial && isFetchedCreditCards && creditCards.length === 0
-  const shouldShowBanner = hasRestriction || shouldShowTrialBanner
-
-  if (!shouldShowBanner || isOnOrganizationBillingPage) {
-    return null
-  }
+  const shouldShowTrialBanner =
+    isInActiveFreeTrial && isCreditCardsLoaded && creditCards.length === 0 && !isOnOrganizationBillingPage
 
   if (hasRestriction) {
     return (
@@ -41,6 +37,10 @@ export function OrganizationFreeTrialBanner() {
         Deployments are restricted on your organization. Please contact support to resolve this issue.
       </Banner>
     )
+  }
+
+  if (!shouldShowTrialBanner) {
+    return null
   }
 
   const days = (remainingTrialDays ?? 0) + 1

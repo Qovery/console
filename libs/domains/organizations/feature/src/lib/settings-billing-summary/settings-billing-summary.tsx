@@ -140,7 +140,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 </Callout.TextHeading>
                 <>
                   Your free trial ends in {remainingTrialDays} {pluralize(remainingTrialDays, 'day')}, then your
-                  subscription starts on this plan. You can switch plan until then.
+                  subscription starts on this plan. You can switch plans until then.
                 </>
               </Callout.Text>
               <div className="flex gap-2">

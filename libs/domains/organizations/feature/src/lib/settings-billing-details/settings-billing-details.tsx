@@ -100,7 +100,12 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
       .then((instance) => {
         if (!ignore) setCbInstance(instance)
       })
-      .catch(() => undefined)
+      .catch(() => {
+        if (ignore) return
+        // Fall back to the add card placeholder so the user can retry
+        setShowAddCard(false)
+        toast('error', 'Unable to load the payment form', 'Please try again.')
+      })
 
     return () => {
       ignore = true
@@ -259,7 +264,7 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
                   </Callout.TextHeading>
                   <Callout.TextDescription>
                     Your subscription starts on this plan when your trial ends in {remainingTrialDaysLabel}. You can
-                    switch plan until then.
+                    switch plans until then.
                   </Callout.TextDescription>
                 </Callout.Text>
               </Callout.Root>
