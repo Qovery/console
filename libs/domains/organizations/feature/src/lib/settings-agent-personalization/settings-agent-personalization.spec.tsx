@@ -258,8 +258,10 @@ describe('Agent settings pages', () => {
 
     const claudeRow = screen.getByTestId('llm-provider-provider-claude')
     expect(claudeRow.querySelector('img')).toHaveAttribute('src', '/assets/ai-tools/claude.svg')
+    expect(claudeRow.querySelector('img')).toHaveClass('h-5', 'w-5', 'rounded-sm')
     const bedrockRow = screen.getByTestId('llm-provider-provider-bedrock')
     expect(bedrockRow.querySelector('img')).toHaveAttribute('src', '/assets/ai-tools/bedrock.svg')
+    expect(bedrockRow.querySelector('img')).toHaveClass('h-5', 'w-5', 'rounded-sm')
     const gatewayRow = screen.getByTestId('llm-provider-provider-gateway')
     expect(gatewayRow.querySelector('i.fa-plug')).toBeInTheDocument()
     expect(gatewayRow.querySelector('img')).not.toBeInTheDocument()

@@ -184,7 +184,7 @@ function LlmProviderRow({ organizationId, llmProvider, currentUserSub }: LlmProv
     >
       <Section className="min-w-0 space-y-1">
         <div className="flex items-center gap-2">
-          <LlmProviderIcon type={llmProvider.type} />
+          <LlmProviderIcon type={llmProvider.type} className="rounded-sm" />
           <Heading level={3} className="min-w-0">
             <Truncate truncateLimit={60} text={llmProvider.name} />
           </Heading>
