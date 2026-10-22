@@ -116,4 +116,143 @@ describe('RowProject', () => {
       expect(permission).toBeDisabled()
     }
   })
+
+  it('should only allow shell and port-forward on an environment type with at least a read-only access', async () => {
+    project.is_admin = false
+
+    const defaultValues = {
+      project_permissions: {
+        [project.project_id]: {
+          ADMIN: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          DEVELOPMENT: OrganizationCustomRoleProjectPermission.VIEWER,
+          PREVIEW: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          STAGING: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          PRODUCTION: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+        },
+      },
+      shell_permissions: { [project.project_id]: { DEVELOPMENT: true } },
+      port_forward_permissions: { [project.project_id]: { DEVELOPMENT: false } },
+    }
+
+    const { getByLabelText, userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<RowProject project={project} />, { defaultValues })
+    )
+
+    expect(getByLabelText('Shell on DEVELOPMENT')).toBeChecked()
+    expect(getByLabelText('Shell on DEVELOPMENT')).toBeEnabled()
+    expect(getByLabelText('Port-forward on DEVELOPMENT')).not.toBeChecked()
+    expect(getByLabelText('Port-forward on DEVELOPMENT')).toBeEnabled()
+    expect(getByLabelText('Shell on PRODUCTION')).toBeDisabled()
+    expect(getByLabelText('Port-forward on PRODUCTION')).toBeDisabled()
+
+    await userEvent.click(getByLabelText('Port-forward on DEVELOPMENT'))
+    expect(getByLabelText('Port-forward on DEVELOPMENT')).toBeChecked()
+  })
+
+  it('should revoke shell and port-forward when the environment type becomes NO_ACCESS', async () => {
+    project.is_admin = false
+
+    const defaultValues = {
+      project_permissions: {
+        [project.project_id]: {
+          ADMIN: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          DEVELOPMENT: OrganizationCustomRoleProjectPermission.VIEWER,
+          PREVIEW: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          STAGING: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          PRODUCTION: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+        },
+      },
+      shell_permissions: { [project.project_id]: { DEVELOPMENT: true } },
+      port_forward_permissions: { [project.project_id]: { DEVELOPMENT: true } },
+    }
+
+    const { container, getByLabelText, userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<RowProject project={project} />, { defaultValues })
+    )
+
+    // clicking the selected level falls back to NO_ACCESS
+    await userEvent.click(container.querySelector('button[value="VIEWER"]') as HTMLButtonElement)
+
+    expect(getByLabelText('Shell on DEVELOPMENT')).not.toBeChecked()
+    expect(getByLabelText('Shell on DEVELOPMENT')).toBeDisabled()
+    expect(getByLabelText('Port-forward on DEVELOPMENT')).not.toBeChecked()
+  })
+
+  it('should grant shell and port-forward to a project admin', () => {
+    project.is_admin = true
+
+    const defaultValues = {
+      project_permissions: {
+        [project.project_id]: {
+          ADMIN: 'ADMIN',
+          DEVELOPMENT: 'ADMIN',
+          PREVIEW: 'ADMIN',
+          STAGING: 'ADMIN',
+          PRODUCTION: 'ADMIN',
+        },
+      },
+    }
+
+    const { getAllByTestId } = renderWithProviders(
+      wrapWithReactHookForm(<RowProject project={project} />, { defaultValues })
+    )
+
+    ;[...getAllByTestId('shell-checkbox'), ...getAllByTestId('port_forward-checkbox')].forEach((checkbox) => {
+      expect(checkbox).toBeChecked()
+      expect(checkbox).toBeDisabled()
+    })
+  })
+
+  it('should grant shell and port-forward when an environment type moves from No access to Deploy', async () => {
+    project.is_admin = false
+
+    const defaultValues = {
+      project_permissions: {
+        [project.project_id]: {
+          ADMIN: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          DEVELOPMENT: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          PREVIEW: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          STAGING: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          PRODUCTION: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+        },
+      },
+    }
+
+    const { container, getByLabelText, userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<RowProject project={project} />, { defaultValues })
+    )
+
+    // the first DEPLOYER checkbox is the first environment type row
+    await userEvent.click(container.querySelector('button[value="DEPLOYER"]') as HTMLButtonElement)
+
+    const environmentType = project.permissions?.[0].environment_type
+    expect(getByLabelText(`Shell on ${environmentType}`)).toBeChecked()
+    expect(getByLabelText(`Port-forward on ${environmentType}`)).toBeChecked()
+  })
+
+  it('should keep shell and port-forward granted when a Full-access project is demoted', async () => {
+    project.is_admin = true
+
+    const defaultValues = {
+      project_permissions: {
+        [project.project_id]: {
+          ADMIN: 'ADMIN',
+          DEVELOPMENT: 'ADMIN',
+          PREVIEW: 'ADMIN',
+          STAGING: 'ADMIN',
+          PRODUCTION: 'ADMIN',
+        },
+      },
+    }
+
+    const { getByTestId, getAllByTestId, userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<RowProject project={project} />, { defaultValues })
+    )
+
+    await userEvent.click(getByTestId(`project.${OrganizationCustomRoleProjectPermission.MANAGER}`))
+    ;[...getAllByTestId('shell-checkbox'), ...getAllByTestId('port_forward-checkbox')].forEach((checkbox) => {
+      expect(checkbox).toBeChecked()
+      expect(checkbox).toBeEnabled()
+    })
+  })
 })

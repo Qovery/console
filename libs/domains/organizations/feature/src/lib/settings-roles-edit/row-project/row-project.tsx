@@ -5,10 +5,24 @@ import {
   type OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { Controller, type FieldValues, type UseFormSetValue, useFormContext } from 'react-hook-form'
+import {
+  Controller,
+  type FieldValues,
+  type UseFormGetValues,
+  type UseFormSetValue,
+  useFormContext,
+} from 'react-hook-form'
 import { Checkbox } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultProjectPermission } from '../utils/default-project-permission'
+import {
+  REMOTE_ACCESS_COLUMN_CLASS_NAME,
+  REMOTE_ACCESS_FLAGS,
+  type RemoteAccessFlag,
+  canGrantRemoteAccess,
+  remoteAccessAfterLevelChange,
+  remoteAccessFormKey,
+} from '../utils/remote-access'
 
 export interface RowProjectProps {
   project: OrganizationCustomRoleProjectPermissionsInner
@@ -44,11 +58,31 @@ const setGlobalCheckByValue = (
   }
 }
 
+const updateRemoteAccess = (
+  projectId: string | undefined,
+  environmentType: string | undefined,
+  previousLevel: string | undefined,
+  nextLevel: string,
+  getValues: UseFormGetValues<FieldValues>,
+  setValue: UseFormSetValue<FieldValues>
+) => {
+  REMOTE_ACCESS_FLAGS.forEach((flag) => {
+    const key = `${remoteAccessFormKey(flag)}.${projectId}.${environmentType}`
+    setValue(key, remoteAccessAfterLevelChange(previousLevel, nextLevel, Boolean(getValues(key))))
+  })
+}
+
+const remoteAccessLabels: Record<RemoteAccessFlag, string> = {
+  shell: 'Shell',
+  port_forward: 'Port-forward',
+}
+
 const onChangeHeadCheckbox = (
   project: OrganizationCustomRoleProjectPermissionsInner,
   currentPermission: string,
   globalCheck: string,
   setGlobalCheck: (value: string) => void,
+  getValues: UseFormGetValues<FieldValues>,
   setValue: UseFormSetValue<FieldValues>
 ) => {
   // get new value if currentPermission is already checked
@@ -59,7 +93,9 @@ const onChangeHeadCheckbox = (
   // set value for nextPermission if admin is uncheck
   Object.keys(EnvironmentModeEnum).forEach((currentMode) => {
     const key = `project_permissions.${project.project_id}.${currentMode}`
+    const previousValue = getValues(key)
     setValue(key, newValue)
+    updateRemoteAccess(project.project_id, currentMode, previousValue, newValue, getValues, setValue)
   })
 }
 
@@ -116,7 +152,16 @@ export function RowProject(props: RowProjectProps) {
                             const value = checked
                               ? currentPermission
                               : OrganizationCustomRoleProjectPermission.NO_ACCESS
+                            const previousValue = field.value
                             field.onChange(value)
+                            updateRemoteAccess(
+                              project.project_id,
+                              permission.environment_type,
+                              previousValue,
+                              value,
+                              getValues,
+                              setValue
+                            )
                             setGlobalCheckByValue(
                               getValues(`project_permissions.${project.project_id}`),
                               value,
@@ -128,6 +173,31 @@ export function RowProject(props: RowProjectProps) {
                     />
                   </div>
                 ))}
+              {REMOTE_ACCESS_FLAGS.map((flag) => {
+                const level = watch(`project_permissions.${project.project_id}.${permission.environment_type}`)
+                const isAdmin = level === ProjectPermissionAdmin.ADMIN
+                return (
+                  <div
+                    key={flag}
+                    className={`flex h-full items-center justify-center border-r border-neutral bg-surface-neutral-subtle px-4 last:border-0 ${REMOTE_ACCESS_COLUMN_CLASS_NAME}`}
+                  >
+                    <Controller
+                      name={`${remoteAccessFormKey(flag)}.${project.project_id}.${permission.environment_type}`}
+                      control={control}
+                      render={({ field }) => (
+                        <Checkbox
+                          data-testid={`${flag}-checkbox`}
+                          aria-label={`${remoteAccessLabels[flag]} on ${permission.environment_type}`}
+                          name={field.name}
+                          disabled={isAdmin || !canGrantRemoteAccess(level)}
+                          checked={isAdmin || Boolean(field.value)}
+                          onCheckedChange={(checked) => field.onChange(checked === true)}
+                        />
+                      )}
+                    />
+                  </div>
+                )
+              })}
             </div>
           )
         )}
@@ -152,11 +222,17 @@ export function RowProject(props: RowProjectProps) {
                 value={permission}
                 checked={globalCheck === permission}
                 onCheckedChange={() => {
-                  onChangeHeadCheckbox(project, permission, globalCheck, setGlobalCheck, setValue)
+                  onChangeHeadCheckbox(project, permission, globalCheck, setGlobalCheck, getValues, setValue)
                 }}
               />
             </div>
           ))}
+        {REMOTE_ACCESS_FLAGS.map((flag) => (
+          <div
+            key={flag}
+            className={`flex h-full items-center justify-center border-r border-neutral px-4 last:border-0 ${REMOTE_ACCESS_COLUMN_CLASS_NAME}`}
+          />
+        ))}
       </div>
     </>
   )
