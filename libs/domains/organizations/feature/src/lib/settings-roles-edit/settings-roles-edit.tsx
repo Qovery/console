@@ -4,10 +4,10 @@ import {
   type OrganizationCustomRoleClusterPermissionsInner,
   OrganizationCustomRoleProjectPermission,
   type OrganizationCustomRoleProjectPermissionsInner,
+  type OrganizationCustomRoleProjectPermissionsInnerPermissionsInner,
   type OrganizationCustomRoleUpdateRequest,
-  type OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner,
 } from 'qovery-typescript-axios'
-import { Suspense, useCallback, useEffect } from 'react'
+import { Suspense, useCallback, useEffect, useRef } from 'react'
 import { type FormEventHandler } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -29,6 +29,7 @@ import RowProject from './row-project/row-project'
 import TableClusters from './table-clusters/table-clusters'
 import Table from './table/table'
 import { defaultProjectPermission } from './utils/default-project-permission'
+import { REMOTE_ACCESS_FLAGS, remoteAccessFormKey } from './utils/remote-access'
 
 const SettingsRolesEditSkeleton = () => (
   <div className="flex w-full flex-col justify-between">
@@ -100,11 +101,17 @@ export const handleSubmitRolesEdit = (data: FieldValues, currentRole: Organizati
     const currentProject = data['project_permissions'][project.project_id || '']
 
     const permissions = Object.entries(currentProject)
-      .map((permission) => ({
-        environment_type: permission[0],
-        permission: permission[1],
+      .filter(([environmentType]) => environmentType !== 'ADMIN')
+      .map(([environmentType, permission]) => ({
+        environment_type: environmentType,
+        permission: permission,
+        ...Object.fromEntries(
+          REMOTE_ACCESS_FLAGS.map((flag) => [
+            flag,
+            Boolean(data[remoteAccessFormKey(flag)]?.[project.project_id || '']?.[environmentType]),
+          ])
+        ),
       }))
-      .filter((c) => c.environment_type !== 'ADMIN')
 
     const isAdmin = permissions[0].permission === 'ADMIN'
 
@@ -150,18 +157,23 @@ export function resetForm(currentRole: OrganizationCustomRole) {
   const result: FieldValues = {
     project_permissions: {},
     cluster_permissions: {},
+    ...Object.fromEntries(REMOTE_ACCESS_FLAGS.map((flag) => [remoteAccessFormKey(flag), {}])),
     name: currentRole?.name,
     description: currentRole?.description || ' ',
   }
 
   currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissionsInner) => {
     const permission = {} as { [key: string]: string }
+    const remoteAccess = Object.fromEntries(REMOTE_ACCESS_FLAGS.map((flag) => [flag, {} as { [key: string]: boolean }]))
 
     if (project.permissions && project.permissions?.length > 0) {
       project.permissions?.forEach(
-        (currentPermission: OrganizationCustomRoleUpdateRequestProjectPermissionsInnerPermissionsInner) => {
+        (currentPermission: OrganizationCustomRoleProjectPermissionsInnerPermissionsInner) => {
           permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
           permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission ?? 'NO_ACCESS')
+          REMOTE_ACCESS_FLAGS.forEach((flag) => {
+            remoteAccess[flag][currentPermission.environment_type || ''] = Boolean(currentPermission[flag])
+          })
         }
       )
     } else {
@@ -175,6 +187,9 @@ export function resetForm(currentRole: OrganizationCustomRole) {
     }
 
     result['project_permissions'][project.project_id || ''] = permission
+    REMOTE_ACCESS_FLAGS.forEach((flag) => {
+      result[remoteAccessFormKey(flag)][project.project_id || ''] = remoteAccess[flag]
+    })
   })
 
   currentRole?.cluster_permissions?.forEach((cluster: OrganizationCustomRoleClusterPermissionsInner) => {
@@ -205,10 +220,16 @@ function SettingsRolesEditContent({
   const { data: customRole } = useCustomRole({ organizationId, customRoleId: roleId, suspense: true })
   const { reset, handleSubmit: handleFormSubmit, control, formState } = useFormContext()
 
+  // `reset` unregisters every field, and only the fields that render again register back. After a save, the refetched
+  // role has the values the form already holds, so no field renders again and the checkboxes stop reacting until the
+  // page is refreshed. The form is filled once per role: a refetch must not reset it, it would also discard the edits
+  // not saved yet.
+  const filledRoleId = useRef<string | undefined>(undefined)
+
   useEffect(() => {
-    if (customRole) {
-      const result = resetForm(customRole)
-      reset(result)
+    if (customRole && filledRoleId.current !== customRole.id) {
+      filledRoleId.current = customRole.id
+      reset(resetForm(customRole))
     }
   }, [customRole, reset])
 
@@ -302,7 +323,7 @@ function SettingsRolesEditContent({
                     {
                       label: 'Deploy',
                       tooltip:
-                        'Manage the deployments of this environment type, access the logs, connect via SSH to the application and manage its environment variables.',
+                        'Manage the deployments of this environment type, access the logs and manage its environment variables.',
                     },
                     {
                       label: 'Read-Only',
@@ -311,6 +332,18 @@ function SettingsRolesEditContent({
                     {
                       label: 'No Access',
                       tooltip: 'The user has no access to this environment type.',
+                    },
+                    {
+                      label: 'Shell',
+                      tooltip:
+                        'Open a shell on the services of this environment type, from the CLI (qovery shell) or the console. Requires at least Read-Only.',
+                      group: 'Remote access',
+                    },
+                    {
+                      label: 'Port-forward',
+                      tooltip:
+                        'Port-forward to the services of this environment type (qovery port-forward). Requires at least Read-Only.',
+                      group: 'Remote access',
                     },
                   ]}
                 >
