@@ -305,6 +305,8 @@ describe('LlmProviderCreateEditModal', () => {
       ['a non-HTTP scheme', 'ftp://gateway.example.com'],
       ['a missing scheme', 'gateway.example.com/anthropic'],
       ['user info', 'https://user:secret@gateway.example.com'],
+      ['empty user info', 'https://@gateway.example.com/anthropic'],
+      ['an empty password', 'https://user:@gateway.example.com'],
       ['a query', 'https://gateway.example.com/anthropic?key=1'],
       ['a fragment', 'https://gateway.example.com/anthropic#top'],
       ['port 0', 'https://gateway.example.com:0'],
@@ -321,6 +323,23 @@ describe('LlmProviderCreateEditModal', () => {
       ).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Add token' })).toBeDisabled()
       expect(createLlmProvider).not.toHaveBeenCalled()
+    })
+
+    it('should accept an @ in the path prefix', async () => {
+      const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic-compatible')
+      await userEvent.type(screen.getByLabelText('Name'), 'Gateway')
+      await userEvent.type(screen.getByLabelText('Token'), 'gateway-token')
+      await userEvent.type(screen.getByLabelText('Base URL'), 'https://gateway.example.com/@team/anthropic')
+      await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
+
+      await waitFor(() =>
+        expect(createLlmProvider).toHaveBeenCalledWith({
+          organizationId: 'org-1',
+          llmProviderRequest: expect.objectContaining({ base_url: 'https://gateway.example.com/@team/anthropic' }),
+        })
+      )
     })
 
     it('should prefill the saved base URL and resend it when the token is left blank', async () => {
