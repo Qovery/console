@@ -224,7 +224,7 @@ function SettingsRolesEditContent({
   // role has the values the form already holds, so no field renders again and the checkboxes stop reacting until the
   // page is refreshed. The form is filled once per role: a refetch must not reset it, it would also discard the edits
   // not saved yet.
-  const filledRoleId = useRef<string>()
+  const filledRoleId = useRef<string | undefined>(undefined)
 
   useEffect(() => {
     if (customRole && filledRoleId.current !== customRole.id) {
