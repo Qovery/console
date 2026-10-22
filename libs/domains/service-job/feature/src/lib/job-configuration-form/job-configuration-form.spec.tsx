@@ -66,10 +66,10 @@ describe('JobConfigurationForm', () => {
       )
       const inputSchedule = screen.getByLabelText('Schedule - Cron expression')
 
-      userEvent.clear(inputSchedule)
+      await userEvent.clear(inputSchedule)
       await userEvent.type(inputSchedule, '9 * * * *')
 
-      screen.getByText('At 9 minutes past the hour (Etc/UTC)')
+      expect(await screen.findByText('At 9 minutes past the hour (Etc/UTC)')).toBeInTheDocument()
     })
   })
 })

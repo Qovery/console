@@ -17,7 +17,7 @@ Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 
 ## Essential Facts
 
-- **Yarn Berry** only (never npm). `nvm use 23`.
+- **Yarn Berry** only (never npm). `nvm use`.
 - Branch from `staging`. Conventional commits: `feat|fix|chore(scope): message`.
 - Before commit: format -> test -> snapshot review -> lint.
 - `ts-pattern` for branching logic. React Query for server state.

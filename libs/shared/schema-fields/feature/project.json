@@ -1,0 +1,9 @@
+{
+  "name": "shared-schema-fields-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/schema-fields/feature/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:feature"],
+  "// targets": "to see all targets run: nx show project shared-schema-fields-feature --web",
+  "targets": {}
+}

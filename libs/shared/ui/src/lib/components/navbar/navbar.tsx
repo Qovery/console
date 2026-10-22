@@ -56,7 +56,7 @@ interface NavbarContextValue {
   activeId?: string
   registerItem: (id: string, element: HTMLElement, contentElement: HTMLElement) => void
   unregisterItem: (id: string) => void
-  listRef: React.RefObject<HTMLDivElement>
+  listRef: React.RefObject<HTMLDivElement | null>
 }
 
 const NavbarContext = createContext<NavbarContextValue | undefined>(undefined)
@@ -147,7 +147,7 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
         display: 'block',
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- contentElements is needed to recalculate indicator position
+    // contentElements is needed to recalculate indicator position
     [contentElements]
   )
 
@@ -162,7 +162,7 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
       const currentIndex = itemIds.findIndex((id) => document.activeElement === items.get(id))
       if (currentIndex === -1) return
 
-      let nextIndex = currentIndex
+      let nextIndex: number
 
       switch (event.key) {
         case 'ArrowLeft':

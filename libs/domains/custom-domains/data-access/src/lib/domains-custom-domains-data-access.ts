@@ -20,7 +20,7 @@ export const customDomains = createQueryKeys('customDomains', {
     serviceId: string
     serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
   }) => ({
-    queryKey: [serviceId],
+    queryKey: [serviceId, serviceType],
     async queryFn() {
       const { query } = match(serviceType)
         .with('APPLICATION', (serviceType) => ({

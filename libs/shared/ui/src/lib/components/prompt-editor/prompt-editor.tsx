@@ -108,10 +108,12 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
   ref
 ) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const editorRef = useRef<EditorView>()
+  const editorRef = useRef<EditorView | undefined>(undefined)
   const initialValueRef = useRef(value)
   const onChangeRef = useRef(onChange)
   const suggestionsRef = useRef(suggestions)
+  // Values emitted by the editor that the parent has not echoed back yet.
+  const pendingEmittedValuesRef = useRef<string[]>([])
   const controlledUpdate = useMemo(() => Transaction.userEvent.of('input.controlled'), [])
   const editableCompartment = useMemo(() => new Compartment(), [])
   const attributesCompartment = useMemo(() => new Compartment(), [])
@@ -199,7 +201,9 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
               update.docChanged &&
               !update.transactions.some((transaction) => transaction.isUserEvent('input.controlled'))
             ) {
-              onChangeRef.current(update.state.doc.toString(), { cursor: update.state.selection.main.head })
+              const nextValue = update.state.doc.toString()
+              pendingEmittedValuesRef.current = [...pendingEmittedValuesRef.current, nextValue].slice(-50)
+              onChangeRef.current(nextValue, { cursor: update.state.selection.main.head })
             }
           }),
         ],
@@ -246,6 +250,14 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
     if (!editor) return
 
     const currentValue = editor.state.doc.toString()
+    const pendingEmittedValues = pendingEmittedValuesRef.current
+    const echoIndex = pendingEmittedValues.lastIndexOf(value)
+    if (echoIndex !== -1 && echoIndex < pendingEmittedValues.length - 1) {
+      // The parent echoed an edit that has since been superseded by further typing: keep the newer editor state.
+      pendingEmittedValuesRef.current = pendingEmittedValues.slice(echoIndex + 1)
+      return
+    }
+    pendingEmittedValuesRef.current = []
     if (currentValue === value) return
 
     editor.dispatch({

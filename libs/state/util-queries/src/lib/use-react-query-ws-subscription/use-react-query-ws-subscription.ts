@@ -107,6 +107,10 @@ export function useReactQueryWsSubscription({
         callbacksRef.current.onOpen?.(queryClientRef.current, event)
       }
       websocket.onmessage = async (event) => {
+        if (signal.aborted) {
+          return
+        }
+
         const data = parseWebSocketMessageData(event.data)
 
         if (isInvalidateOperation(data)) {

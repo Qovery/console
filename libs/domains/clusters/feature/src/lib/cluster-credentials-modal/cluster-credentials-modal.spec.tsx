@@ -82,6 +82,19 @@ describe('ClusterCredentialsModal', () => {
     expect(screen.getByLabelText('Name')).toBeInTheDocument()
   })
 
+  it('should pass the organization id to the Qovery role Cloudformation stack', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <ClusterCredentialsModal {...props} organizationId="3f2b7c1e-8d4a-4b6e-9f0a-1c2d3e4f5a6b" />
+      )
+    )
+
+    expect(screen.getByRole('link', { name: /Cloudformation stack/ })).toHaveAttribute(
+      'href',
+      'https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=3f2b7c1e-8d4a-4b6e-9f0a-1c2d3e4f5a6b'
+    )
+  })
+
   it('should get default credential type by object type', () => {
     expect(
       getDefaultClusterCredentialType({
@@ -176,6 +189,39 @@ describe('ClusterCredentialsModal', () => {
 
     expect(mockCreateCredential).toHaveBeenCalled()
     expect(props.onClose).toHaveBeenCalled()
+  })
+
+  it('keeps the form open and its values after an API error, then allows retry', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    try {
+      mockCreateCredential
+        .mockRejectedValueOnce(new Error('API unavailable'))
+        .mockResolvedValueOnce({ id: 'retry-credential' })
+      const { userEvent } = renderWithProviders(<ClusterCredentialsModal {...props} />)
+      await userEvent.type(screen.getByLabelText('Name'), 'test-credential')
+      await userEvent.type(screen.getByTestId('input-text'), 'arn:aws:iam::123456789012:role/test-role')
+      await userEvent.click(screen.getByTestId('submit-button'))
+      expect(props.onClose).not.toHaveBeenCalled()
+      expect(screen.getByLabelText('Name')).toHaveValue('test-credential')
+      expect(screen.getByTestId('input-text')).toHaveValue('arn:aws:iam::123456789012:role/test-role')
+      await userEvent.click(screen.getByTestId('submit-button'))
+      expect(props.onClose).toHaveBeenCalledWith({ id: 'retry-credential' })
+    } finally {
+      consoleSpy.mockRestore()
+    }
+  })
+
+  it('explains insufficient permissions with an administrator recovery action', () => {
+    const useCreateCredentialMock = useCreateCloudProviderCredentialHook.useCreateCloudProviderCredential as jest.Mock
+    useCreateCredentialMock.mockReturnValue({
+      mutateAsync: mockCreateCredential,
+      isLoading: false,
+      error: { response: { status: 403 } },
+    })
+    renderWithProviders(<ClusterCredentialsModal {...props} />)
+    expect(screen.getByRole('alert')).toHaveTextContent('You do not have permission to create cloud credentials')
+    expect(screen.getByRole('alert')).toHaveTextContent('Ask your organization administrator')
+    expect(props.onClose).not.toHaveBeenCalled()
   })
 
   it('should format AWS STS credentials correctly with handleSubmit', () => {

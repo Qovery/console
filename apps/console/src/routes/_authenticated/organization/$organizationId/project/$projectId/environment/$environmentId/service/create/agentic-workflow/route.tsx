@@ -33,7 +33,7 @@ function RouteComponent() {
       selectedTemplate={selectedTemplate}
       onExit={() =>
         navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
+          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
           params: { organizationId, projectId, environmentId },
         })
       }

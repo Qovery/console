@@ -200,3 +200,14 @@ describe('AuditLogs layering', () => {
     expect(tableHeader).toHaveClass('z-dropdown')
   })
 })
+
+describe('AuditLogs event filter', () => {
+  it('should list the Operator update event types in the Event filter', async () => {
+    const { userEvent } = renderWithProviders(<AuditLogs {...props} events={[]} isLoading={false} />)
+
+    await userEvent.click(screen.getByText('Event'))
+
+    const menuItems = screen.getAllByTestId('menuItem').map((item) => item.textContent)
+    expect(menuItems).toEqual(expect.arrayContaining(['Operator update', 'Maintenance operator']))
+  })
+})

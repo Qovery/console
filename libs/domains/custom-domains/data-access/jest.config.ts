@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'domains-custom-domains-data-access',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

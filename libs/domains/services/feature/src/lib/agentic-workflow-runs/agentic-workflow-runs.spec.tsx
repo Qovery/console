@@ -1,0 +1,531 @@
+import { act, waitFor, within } from '@testing-library/react'
+import { type AgenticWorkflowRun } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { AgenticWorkflowLastRun, AgenticWorkflowRuns } from './agentic-workflow-runs'
+
+const mockUseRunHistory = jest.fn()
+const mockCopyToClipboard = jest.fn()
+const mockMonacoEditor = jest.fn()
+const mockDisposeContentSizeListener = jest.fn()
+const mockGetContentHeight = jest.fn()
+let contentSizeListener: ((event: { contentHeight: number; contentHeightChanged: boolean }) => void) | undefined
+
+jest.mock('@monaco-editor/react', () => {
+  const { useEffect } = jest.requireActual('react')
+  return {
+    Editor: (props: { value?: string; onMount?: (editor: unknown) => void }) => {
+      mockMonacoEditor(props)
+      useEffect(() => {
+        props.onMount?.({
+          getContentHeight: mockGetContentHeight,
+          onDidContentSizeChange: (listener: typeof contentSizeListener) => {
+            contentSizeListener = listener
+            return { dispose: mockDisposeContentSizeListener }
+          },
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [])
+      return <pre data-testid="monaco-editor">{props.value}</pre>
+    },
+  }
+})
+
+jest.mock('../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history', () => ({
+  useAgenticWorkflowRunHistory: (args: unknown) => mockUseRunHistory(args),
+}))
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useCopyToClipboard: () => [jest.fn(), mockCopyToClipboard],
+}))
+
+const run: AgenticWorkflowRun = {
+  id: 'run-123',
+  source_workflow_id: 'workflow-123',
+  trigger: 'WEBHOOK',
+  prompt: 'Check the latest deployment',
+  created_at: '2026-09-23T12:00:00Z',
+  recorded_at: null,
+}
+
+describe('AgenticWorkflowRuns', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    contentSizeListener = undefined
+    mockGetContentHeight.mockReturnValue(0)
+    mockUseRunHistory.mockReturnValue({
+      data: [run],
+      isLoading: false,
+      isError: false,
+      isFetching: false,
+      refetch: jest.fn(),
+    })
+  })
+
+  it('shows run status, duration, and full dates on hover', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [
+        {
+          ...run,
+          status: 'COMPLETED',
+          started_at: '2026-09-23T12:01:00Z',
+          finished_at: '2026-09-23T12:02:05Z',
+          duration_ms: 65000,
+          cost: 0.0123,
+        },
+      ],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('Webhook')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'See the full prompt' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Copy run ID' })).toBeInTheDocument()
+    expect(screen.getByText('run-123')).toBeInTheDocument()
+    expect(screen.getByText('23 Sep, 12:01')).toBeInTheDocument()
+    expect(screen.getByText('12:02')).toBeInTheDocument()
+    expect(screen.getByText('23 Sep, 12:01').parentElement?.querySelector('i')).toHaveClass('fa-arrow-right')
+    await userEvent.hover(screen.getByText('23 Sep, 12:01'))
+    const tooltip = within(await screen.findByRole('tooltip'))
+    expect(tooltip.getByText('Started (UTC): 23 Sep 2026, 12:01')).toBeInTheDocument()
+    expect(tooltip.getByText('Finished (UTC): 23 Sep 2026, 12:02')).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Duration' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Payload' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Cost' })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Prompt' })).not.toBeInTheDocument()
+    expect(screen.getAllByRole('columnheader').map((header) => header.textContent)).toEqual([
+      'Date',
+      'Status',
+      'Trigger',
+      'Payload',
+      'Duration',
+      'Cost',
+    ])
+    expect(screen.getByText('Completed')).toBeInTheDocument()
+    expect(screen.getByText('Completed').closest('[data-accent-color]')).not.toBeInTheDocument()
+    expect(screen.getByText('Completed').closest('td')?.firstElementChild).toHaveClass('justify-between')
+    expect(screen.getByText('Completed').closest('td')?.querySelector('svg')).toBeInTheDocument()
+    expect(screen.getByText('00:01:05').querySelector('i')).toHaveClass('fa-clock-eight')
+    expect(screen.getByText('$0.02').closest('td')).toBe(screen.getByText('00:01:05').closest('td')?.nextElementSibling)
+    expect(screen.getByText('Webhook').querySelector('i')).toHaveClass('fa-webhook')
+    expect(screen.queryByRole('columnheader', { name: 'Recorded' })).not.toBeInTheDocument()
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123' })
+  })
+
+  it('keeps the finish date when a run crosses a UTC day boundary', () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, started_at: '2026-09-23T23:59:00Z', finished_at: '2026-09-24T00:01:00Z' }],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('23 Sep, 23:59')).toBeInTheDocument()
+    expect(screen.getByText('24 Sep, 00:01')).toBeInTheDocument()
+  })
+
+  it.each([
+    ['QUEUED', 'Queued'],
+    ['RUNNING', 'Running'],
+    ['COMPLETED', 'Completed'],
+    ['FAILED', 'Failed'],
+    ['CANCELLED', 'Cancelled'],
+  ])('renders %s as text and a status icon', (status, label) => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status }],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    const statusCell = screen.getByText(label).closest('td')
+    expect(statusCell?.querySelector('[data-accent-color]')).not.toBeInTheDocument()
+    expect(statusCell?.querySelector('svg')).toBeInTheDocument()
+  })
+
+  it('shows a placeholder for an unknown run status', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status: 'UNKNOWN' }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
+    expect(cells[1]).toHaveTextContent('—')
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+    expect(within(screen.getByRole('dialog')).getByText('Status').nextElementSibling).toHaveTextContent('—')
+  })
+
+  it('shows empty lifecycle values when the API has not updated a run yet', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status: 'QUEUED', started_at: null, finished_at: null, duration_ms: null, cost: null }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('Queued')).toBeInTheDocument()
+    expect(screen.getByText('23 Sep, 12:00')).toBeInTheDocument()
+    await userEvent.hover(screen.getByText('23 Sep, 12:00'))
+    const tooltip = within(await screen.findByRole('tooltip'))
+    expect(tooltip.getByText('Started (UTC): —')).toBeInTheDocument()
+    expect(tooltip.getByText('Finished (UTC): —')).toBeInTheDocument()
+    expect(tooltip.queryByText(/Requested \(UTC\)/)).not.toBeInTheDocument()
+    const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
+    expect(cells[3]).toHaveTextContent('—')
+    expect(cells[4]).toHaveTextContent('—')
+    expect(cells[5]).toHaveTextContent('—')
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    const details = within(screen.getByRole('dialog'))
+    expect(details.queryByText('Requested (UTC)')).not.toBeInTheDocument()
+    expect(details.getByText('Started (UTC)').nextElementSibling).toHaveTextContent('—')
+    expect(details.getByText('Finished (UTC)').nextElementSibling).toHaveTextContent('—')
+    expect(details.getByText('Duration').nextElementSibling).toHaveTextContent('—')
+    expect(details.getByText('Cost').nextElementSibling).toHaveTextContent('—')
+  })
+
+  it('rounds run durations to the nearest second', () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [
+        { ...run, duration_ms: 1500 },
+        { ...run, id: 'run-456', duration_ms: 59999 },
+      ],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('00:00:02')).toBeInTheDocument()
+    expect(screen.getByText('00:01:00')).toBeInTheDocument()
+  })
+
+  it('opens the run details in a sheet and closes it', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
+    expect(screen.queryByText('Agent Task ID')).not.toBeInTheDocument()
+    expect(screen.queryByText('Recorded in history (UTC)')).not.toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText('Check the latest deployment')).toBeInTheDocument()
+    expect(screen.queryByText('No prompt recorded.')).not.toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText('No payload recorded.')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Close run details' }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('shows a valid JSON payload in a read-only JSON editor and keeps the table preview condensed', async () => {
+    const payload = '{"message":"deploy completed","tags":["a","b"],"meta":{"attempt":1}}'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByRole('button', { name: 'See the full payload' })).toHaveTextContent(`${payload.slice(0, 30)}…`, {
+      normalizeWhitespace: false,
+    })
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    const editor = within(screen.getByRole('dialog')).getByTestId('monaco-editor')
+    expect(editor).toHaveTextContent(JSON.stringify(JSON.parse(payload), null, 2), { normalizeWhitespace: false })
+    expect(mockMonacoEditor).toHaveBeenCalledWith(
+      expect.objectContaining({
+        language: 'json',
+        options: expect.objectContaining({ readOnly: true, wordWrap: 'on', wrappingIndent: 'indent' }),
+      })
+    )
+  })
+
+  describe('payload editor height', () => {
+    const payload = '{"a":1,"b":[1,2]}'
+    const lastEditorHeight = () => mockMonacoEditor.mock.calls.at(-1)?.[0].height
+
+    async function openPayload(currentPayload = payload) {
+      mockUseRunHistory.mockReturnValue({
+        data: [{ ...run, payload: currentPayload }],
+        isLoading: false,
+        isError: false,
+      })
+      const view = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+      await view.userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+      return view
+    }
+
+    it('uses the measured content height instead of the newline count', async () => {
+      mockGetContentHeight.mockReturnValue(250)
+      await openPayload()
+
+      expect(lastEditorHeight()).toBe('250px')
+    })
+
+    it('starts from the line count height before Monaco reports a size', async () => {
+      await openPayload()
+
+      expect(mockMonacoEditor.mock.calls[0][0].height).toBe(
+        `${JSON.stringify(JSON.parse(payload), null, 2).split('\n').length * 19}px`
+      )
+    })
+
+    it('caps the measured height at 400px', async () => {
+      mockGetContentHeight.mockReturnValue(1200)
+      await openPayload()
+
+      expect(lastEditorHeight()).toBe('400px')
+    })
+
+    it('follows content size changes caused by resizing or wrapping', async () => {
+      mockGetContentHeight.mockReturnValue(100)
+      await openPayload()
+
+      act(() => contentSizeListener?.({ contentHeight: 180, contentHeightChanged: true }))
+      expect(lastEditorHeight()).toBe('180px')
+
+      act(() => contentSizeListener?.({ contentHeight: 900, contentHeightChanged: true }))
+      expect(lastEditorHeight()).toBe('400px')
+
+      act(() => contentSizeListener?.({ contentHeight: 50, contentHeightChanged: false }))
+      expect(lastEditorHeight()).toBe('400px')
+    })
+
+    it('disposes the content size listener when the details close', async () => {
+      const { userEvent } = await openPayload()
+      expect(mockDisposeContentSizeListener).not.toHaveBeenCalled()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Close run details' }))
+
+      expect(mockDisposeContentSizeListener).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it.each([
+    ['large integers', '{"id":12345678901234567890}'],
+    ['exponents', '{"big":1e400}'],
+    ['number spellings', '{"price":1.10,"neg":-0.0}'],
+    ['duplicate keys', '{"a":1,"a":2}'],
+    ['unicode escapes', '{"a":"\\u00e9"}'],
+  ])('shows JSON as received when re-serializing would alter it: %s', async (_name, payload) => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    const payloadElement = within(screen.getByRole('dialog')).getByText(payload)
+    expect(payloadElement).toHaveTextContent(payload, { normalizeWhitespace: false })
+    expect(screen.queryByTestId('monaco-editor')).not.toBeInTheDocument()
+  })
+
+  it('formats JSON with structural characters inside strings and empty containers', async () => {
+    const payload = '{ "a" : "x\\"{,}[:]", "e": {}, "l": [ ] }'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    expect(within(screen.getByRole('dialog')).getByTestId('monaco-editor')).toHaveTextContent(
+      '{\n  "a": "x\\"{,}[:]",\n  "e": {},\n  "l": []\n}',
+      { normalizeWhitespace: false }
+    )
+  })
+
+  it('shows an invalid JSON payload unchanged in the run details', async () => {
+    const payload = '{"message": "deploy completed",}'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, payload }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'See the full payload' }))
+
+    const payloadElement = within(screen.getByRole('dialog')).getByText(/deploy completed/)
+    expect(payloadElement).toHaveTextContent(payload, { normalizeWhitespace: false })
+    expect(payloadElement).toHaveClass('whitespace-pre-wrap', 'break-words')
+    expect(screen.queryByTestId('monaco-editor')).not.toBeInTheDocument()
+  })
+
+  it('shows a manual run with an empty payload', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, trigger: 'MANUAL', payload: '' }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('Manual')).toBeInTheDocument()
+    expect(screen.getByText('Manual').querySelector('i')).toHaveClass('fa-play')
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    expect(within(screen.getByRole('dialog')).getByText('Empty payload.')).toBeInTheDocument()
+  })
+
+  it('shows a schedule icon before a scheduled run', () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, trigger: 'SCHEDULE' }],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.getByText('Schedule').querySelector('i')).toHaveClass('fa-calendar-day')
+  })
+
+  it('keeps the prompt out of the table and shows it in full in the run details', async () => {
+    const fullPrompt = '123456789012345678901234567890 more details'
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, prompt: fullPrompt }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.queryByRole('button', { name: 'See the full prompt' })).not.toBeInTheDocument()
+    expect(within(screen.getByRole('table')).queryByText(/123456789012345678901234567890/)).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByRole('heading', { name: 'Prompt' })).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText(fullPrompt)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument()
+  })
+
+  it.each([
+    [0.0123, '$0.02'],
+    [1.5, '$1.50'],
+    [0, '$0.00'],
+    [0.000123, '$0.01'],
+    [0.07, '$0.07'],
+    [1234.5, '$1,234.50'],
+  ])('shows a cost of %s as %s in the table and the run details', async (cost, label) => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status: 'COMPLETED', cost }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
+    expect(cells[5]).toHaveTextContent(label)
+    expect(cells[5]).toHaveClass('font-mono')
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    expect(within(screen.getByRole('dialog')).getByText('Cost').nextElementSibling).toHaveTextContent(label)
+    expect(within(screen.getByRole('dialog')).getByText(label)).not.toHaveClass('font-mono')
+  })
+
+  it.each([
+    ['null', { cost: null }],
+    ['missing', {}],
+  ])('shows a dash when the cost is %s', (_name, overrides) => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, status: 'RUNNING', ...overrides }],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    const cells = within(screen.getByRole('button', { name: /run-123/i })).getAllByRole('cell')
+    expect(cells[5]).toHaveTextContent('—')
+    expect(cells[5]).not.toHaveTextContent('$')
+  })
+
+  it('treats whitespace-only prompts as missing in the table and sheet', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [{ ...run, prompt: '  \n  ' }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    expect(screen.queryByRole('button', { name: 'See the full prompt' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+
+    expect(within(screen.getByRole('dialog')).getByText('No prompt recorded.')).toBeInTheDocument()
+  })
+
+  it('closes the copy tooltip when the run sheet opens', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.hover(screen.getByRole('button', { name: 'Copy run ID' }))
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Copy run ID')
+
+    await userEvent.click(screen.getByRole('button', { name: /run-123/i }))
+    await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument())
+  })
+
+  it('copies the run ID from the keyboard', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.tab()
+    await userEvent.tab()
+    expect(screen.getByRole('button', { name: 'Copy run ID' })).toHaveFocus()
+
+    await userEvent.keyboard('{Enter}')
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(run.id)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('shows an empty state when no runs exist', () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: false,
+    })
+
+    renderWithProviders(<AgenticWorkflowLastRun serviceId="workflow-123" />)
+
+    expect(screen.getByText('No runs yet')).toBeInTheDocument()
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', pageSize: 1 })
+  })
+
+  it('shows only the latest run in the overview card and opens its details', async () => {
+    mockUseRunHistory.mockReturnValue({
+      data: [run, { ...run, id: 'run-older', prompt: 'Older prompt' }],
+      isLoading: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowLastRun serviceId="workflow-123" />)
+
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.queryByText('Older prompt')).not.toBeInTheDocument()
+    expect(screen.queryByText(run.prompt)).not.toBeInTheDocument()
+    expect(mockUseRunHistory).toHaveBeenCalledWith({ serviceId: 'workflow-123', pageSize: 1 })
+    const overviewRun = screen.getByRole('button', { name: /Webhook run/i })
+    expect(overviewRun).toHaveTextContent('Webhook run')
+    await userEvent.click(overviewRun)
+
+    expect(screen.getByRole('dialog', { name: 'Run run-123' })).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText(run.prompt)).toBeInTheDocument()
+  })
+
+  it('allows retrying after an API error', async () => {
+    const refetch = jest.fn()
+    mockUseRunHistory.mockReturnValue({ isLoading: false, isError: true, refetch })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowRuns serviceId="workflow-123" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+
+    expect(refetch).toHaveBeenCalledTimes(1)
+  })
+})

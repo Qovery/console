@@ -17,12 +17,11 @@
       }
     },
     "build": {
-      "executor": "@nx/vite:build",
-      "dependsOn": ["sync-changelog", "^build"],
-      "outputs": ["{options.outputPath}"],
+      "dependsOn": ["sync-changelog", "^build", "typecheck"],
+      "outputs": ["{workspaceRoot}/dist/apps/console"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/console"
+        "outDir": "../../dist/apps/console"
       },
       "configurations": {
         "development": {
@@ -34,35 +33,24 @@
       }
     },
     "serve": {
-      "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "console:build"
-      },
       "configurations": {
         "development": {
-          "buildTarget": "console:build:development",
-          "hmr": true
+          "mode": "development"
         },
         "production": {
-          "buildTarget": "console:build:production",
-          "hmr": false
+          "mode": "production"
         }
       }
     },
     "preview": {
-      "dependsOn": ["build"],
-      "executor": "@nx/vite:preview-server",
       "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "console:build"
-      },
       "configurations": {
         "development": {
-          "buildTarget": "console:build:development"
+          "mode": "development"
         },
         "production": {
-          "buildTarget": "console:build:production"
+          "mode": "production"
         }
       }
     },

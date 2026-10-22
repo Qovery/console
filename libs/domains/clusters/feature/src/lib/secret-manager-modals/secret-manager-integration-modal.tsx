@@ -3,7 +3,7 @@ import { type Cluster, type ClusterRegion, type SecretManagerAccess } from 'qove
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
-import { isGcpCluster } from '@qovery/domains/clusters/data-access'
+import { isGcpCluster, sanitizeSecretManagerAssumeRole } from '@qovery/domains/clusters/data-access'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, Heading, Icon, IconFlag, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 import {
@@ -100,7 +100,7 @@ export function SecretManagerIntegrationModal({
       }
     }
 
-    return data
+    return sanitizeSecretManagerAssumeRole(data)
   }
 
   const handleSubmit = methods.handleSubmit(async (data) => {

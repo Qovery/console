@@ -97,7 +97,7 @@ export function ClusterCardFeature({
                   radius="full"
                 >
                   <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs text-neutral" />
-                  <Icon name={cloudProvider} height="16" width="16" pathColor="currentColor" />
+                  <Icon name={cloudProvider} height="16" width="16" />
                 </ExternalLink>
               </Tooltip>
             )}

@@ -88,20 +88,24 @@ export function VariablesActionToolbar({
             </DropdownMenu.Item>
           )}
 
-          <DropdownMenu.Item asChild icon={<Icon iconName="circle-info" iconStyle="regular" />}>
-            <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
-              Import from Doppler
-              <Tooltip content="Documentation">
-                <a
-                  className="ml-auto text-sm"
-                  href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
-                </a>
-              </Tooltip>
-            </a>
+          <DropdownMenu.Item
+            icon={<Icon iconName="circle-info" iconStyle="regular" />}
+            onSelect={() => window.open('https://dashboard.doppler.com', '_blank', 'noopener,noreferrer')}
+          >
+            Import from Doppler
+            <Tooltip content="Documentation">
+              <a
+                className="ml-auto text-sm"
+                href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
+                aria-label="Doppler integration documentation"
+                target="_blank"
+                rel="noopener noreferrer"
+                // Only open the documentation, not the Doppler dashboard
+                onClick={(event) => event.stopPropagation()}
+              >
+                <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+              </a>
+            </Tooltip>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>

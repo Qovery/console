@@ -31,7 +31,7 @@ function RouteComponent() {
       <Section className="min-h-0 flex-1 gap-8">
         <div className="flex shrink-0 flex-col gap-6">
           <div className="flex justify-between">
-            <Heading>{isAgentTask ? 'Executions' : 'Deployments'}</Heading>
+            <Heading>Deployments</Heading>
             {isAgentTask ? (
               <AgenticWorkflowServiceActions environment={environment} service={service} variant="header" />
             ) : (

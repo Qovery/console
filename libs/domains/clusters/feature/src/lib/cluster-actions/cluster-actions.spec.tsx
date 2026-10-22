@@ -8,7 +8,11 @@ import {
 import type { ReactNode } from 'react'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useIsOperatorAttached } from '../hooks/use-is-operator-attached/use-is-operator-attached'
 import { ClusterActions } from './cluster-actions'
+
+jest.mock('../hooks/use-is-operator-attached/use-is-operator-attached')
+const mockUseIsOperatorAttached = useIsOperatorAttached as jest.Mock
 
 const mockCluster = clusterFactoryMock(1)[0]
 const mockOpenModal = jest.fn()
@@ -54,6 +58,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 describe('ClusterActions', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseIsOperatorAttached.mockReturnValue(false)
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     mockClusterStatus = {
       cluster_id: mockCluster.id,
@@ -309,5 +314,66 @@ describe('ClusterActions', () => {
 
     expect(screen.getByRole('button', { name: 'Deployments' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Logs' })).not.toBeInTheDocument()
+  })
+
+  describe('clusters with an attached Operator', () => {
+    const selfManagedCluster = {
+      ...mockCluster,
+      kubernetes: KubernetesEnum.SELF_MANAGED,
+      cloud_provider: 'AWS' as const,
+    }
+
+    it('keeps the installation guide for self-managed clusters without an attached Operator', () => {
+      const { container } = renderWithProviders(
+        <ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} />
+      )
+
+      // The installation guide button is only named by its tooltip.
+      expect(container.querySelector('.fa-circle-info')).toBeInTheDocument()
+      expect(screen.queryByLabelText(/manage deployment/i)).not.toBeInTheDocument()
+    })
+
+    it('offers to deploy a cluster with an attached Operator, without stopping it', async () => {
+      mockUseIsOperatorAttached.mockReturnValue(true)
+      const { userEvent } = renderWithProviders(
+        <ClusterActions
+          cluster={selfManagedCluster}
+          clusterStatus={{ ...mockClusterStatus, status: ClusterStateEnum.READY }}
+        />,
+        { container: document.body }
+      )
+
+      expect(document.body.querySelector('.fa-circle-info')).not.toBeInTheDocument()
+      await userEvent.click(screen.getByLabelText(/manage deployment/i))
+
+      expect(screen.getByRole('menuitem', { name: 'Deploy' })).toBeInTheDocument()
+      expect(screen.queryByRole('menuitem', { name: /stop/i })).not.toBeInTheDocument()
+    })
+
+    it('offers to redeploy a deployed cluster with an attached Operator, without upgrading Kubernetes', async () => {
+      mockUseIsOperatorAttached.mockReturnValue(true)
+      const { userEvent } = renderWithProviders(
+        <ClusterActions
+          cluster={selfManagedCluster}
+          clusterStatus={{ ...mockClusterStatus, next_k8s_available_version: '1.29' }}
+        />,
+        { container: document.body }
+      )
+
+      await userEvent.click(screen.getByLabelText(/manage deployment/i))
+
+      expect(screen.getByRole('menuitem', { name: 'Update' })).toBeInTheDocument()
+      expect(screen.queryByRole('menuitem', { name: /upgrade k8s/i })).not.toBeInTheDocument()
+      expect(screen.queryByRole('menuitem', { name: /stop/i })).not.toBeInTheDocument()
+    })
+
+    it('shows the deployments card action for clusters with an attached Operator', () => {
+      mockUseIsOperatorAttached.mockReturnValue(true)
+      renderWithProviders(
+        <ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} variant="card" />
+      )
+
+      expect(screen.getByRole('button', { name: 'Deployments' })).toBeInTheDocument()
+    })
   })
 })

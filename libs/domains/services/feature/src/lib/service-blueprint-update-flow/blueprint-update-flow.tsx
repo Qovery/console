@@ -73,7 +73,7 @@ export function BlueprintUpdateFlow({
   )
   const [completedSections, setCompletedSections] = useState<BlueprintUpdateSection[]>([])
   const [previewId, setPreviewId] = useState<string>()
-  const previewPayloadKeyRef = useRef<string>()
+  const previewPayloadKeyRef = useRef<string | undefined>(undefined)
   const [previewError, setPreviewError] = useState(false)
   const [values, setValues] = useState<BlueprintFieldValues>({})
   const [initializedBlueprintId, setInitializedBlueprintId] = useState<string>()

@@ -1,14 +1,18 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useState } from 'react'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
-import Button from '../button/button'
+import { twMerge } from '@qovery/shared/util-js'
+import Button, { type ButtonProps } from '../button/button'
 import Icon from '../icon/icon'
 
 export interface CopyButtonProps {
   content: string
+  size?: ButtonProps['size']
+  iconPosition?: 'left' | 'right'
+  className?: string
 }
 
-export function CopyButton({ content }: CopyButtonProps) {
+export function CopyButton({ content, size, iconPosition = 'right', className }: CopyButtonProps) {
   const [icon, setIcon] = useState<IconName>('copy')
   const [, copyToClipboard] = useCopyToClipboard()
 
@@ -25,11 +29,13 @@ export function CopyButton({ content }: CopyButtonProps) {
       type="button"
       color="neutral"
       variant="outline"
+      size={size}
       onClick={() => onClickCopyToClipboard(content)}
-      className="cursor-pointer font-sans font-medium"
+      className={twMerge('cursor-pointer font-sans font-medium', className)}
     >
+      {iconPosition === 'left' && <Icon iconName={icon} iconStyle="solid" className="text-sm" />}
       Copy
-      <Icon iconName={icon} className="text-xs" />
+      {iconPosition === 'right' && <Icon iconName={icon} className="text-sm" />}
     </Button>
   )
 }

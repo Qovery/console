@@ -309,7 +309,7 @@ export function AgenticWorkflowConfiguration() {
   const { data: contextServices = [], isLoading: areContextServicesLoading } =
     useAgenticWorkflowContextServices(environmentId)
   const navigate = useNavigate()
-  const { closeModal, openModal } = useModal()
+  const { closeModal, openModal, setModalDismissible } = useModal()
   const { form, onExit, requiresQoveryMcp, variablesForm, selectedTemplate } = useAgenticWorkflowCreateContext()
   const { isLoading: isCreatingQoveryMcpServer, mutateAsync: createQoveryMcpServer } = useCreateQoveryMcpServer()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
@@ -340,9 +340,9 @@ export function AgenticWorkflowConfiguration() {
   const [showValidationErrors, setShowValidationErrors] = useState(false)
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
-  const createdServiceIdRef = useRef<string>()
+  const createdServiceIdRef = useRef<string | undefined>(undefined)
   const qoveryMcpInitializationStartedRef = useRef(false)
-  const qoveryMcpInitializationPromiseRef = useRef<Promise<McpServerResponse>>()
+  const qoveryMcpInitializationPromiseRef = useRef<Promise<McpServerResponse> | undefined>(undefined)
   const submissionInFlightRef = useRef(false)
   const values = form.watch()
   const { dirtyFields } = form.formState
@@ -449,6 +449,7 @@ export function AgenticWorkflowConfiguration() {
       content: (
         <GitContextModal
           context={editingContext}
+          setModalDismissible={setModalDismissible}
           setOpen={(open) => {
             if (!open) closeModal()
           }}
@@ -492,6 +493,7 @@ export function AgenticWorkflowConfiguration() {
         <QoveryServiceContextModal
           isLoading={areContextServicesLoading}
           services={contextServices}
+          setModalDismissible={setModalDismissible}
           value={values.contextServices}
           setOpen={(open) => {
             if (!open) closeModal()
@@ -625,7 +627,7 @@ export function AgenticWorkflowConfiguration() {
       posthog.capture('agent-task-form-submitted', { success: true })
       posthog.capture('create-service', { selectedServiceType: 'agentic-workflow' })
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
         params: { organizationId, projectId, environmentId },
       })
     } catch {

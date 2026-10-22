@@ -1,4 +1,5 @@
 export * from './lib/domains-clusters-data-access'
+export * from './lib/platform-configuration/platform-configuration'
 export { isGcpCluster } from './lib/cluster-checks/is-gcp-cluster'
 export { isAwsCluster } from './lib/cluster-checks/is-aws-cluster'
 export { excludeSecretManagerAccess } from './lib/secret-manager/exclude-secret-manager-access'
@@ -11,4 +12,5 @@ export { getSecretManagerProvider } from './lib/secret-manager/get-secret-manage
 export { getReadableSecretManagerProvider } from './lib/secret-manager/get-readable-secret-manager-provider'
 export { getReadableSecretManagerAuth } from './lib/secret-manager/get-readable-secret-manager-auth'
 export { isSameSecretManagerAccess } from './lib/secret-manager/is-same-secret-manager-access'
+export { sanitizeSecretManagerAssumeRole } from './lib/secret-manager/sanitize-secret-manager-assume-role'
 export { formatCloudProvider } from './lib/format-cloud-provider/format-cloud-provider'

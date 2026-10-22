@@ -117,6 +117,11 @@ export function ClusterLastDeploymentSection({
   const lastDeployment = deploymentHistory[0]
   const hasLastDeployment = Boolean(clusterStatus?.last_deployment_date || clusterStatus?.last_execution_id)
   const deploymentReasonLabel = getDeploymentReasonLabel(clusterStatus?.reason)
+  const lastDeploymentOperation =
+    lastDeployment?.identifier.execution_id &&
+    lastDeployment.identifier.execution_id === clusterStatus?.last_execution_id
+      ? lastDeployment.operation
+      : undefined
 
   const handleLaunchDiagnostic = () => {
     if (!clusterStatus) return
@@ -170,7 +175,10 @@ export function ClusterLastDeploymentSection({
           >
             <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
               <span className="font-medium">
-                <DeploymentAction status={getClusterDeploymentAction(clusterStatus)} />
+                <DeploymentAction
+                  status={getClusterDeploymentAction(clusterStatus)}
+                  operation={lastDeploymentOperation}
+                />
               </span>
               <StatusChip status={clusterStatus.status} />
               {deploymentReasonLabel && (

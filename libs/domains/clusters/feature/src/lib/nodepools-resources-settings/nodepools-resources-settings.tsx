@@ -1,4 +1,5 @@
 import { add, format, parse } from 'date-fns'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -83,11 +84,14 @@ interface NodepoolLimits {
 interface NodepoolConsolidation {
   enabled?: boolean
   days?: string[]
+  start_time?: string
+  duration?: string
 }
 
 interface NodepoolSummaryData {
   limits?: NodepoolLimits
   consolidation?: NodepoolConsolidation
+  drift_blocking?: NodepoolConsolidation
   consolidate_after?: string
   spot_enabled?: boolean | null
 }
@@ -102,6 +106,7 @@ interface NodepoolCardConfig {
   end?: string
   alwaysOn?: boolean
   showGpuLimit?: boolean
+  showDriftBlocking?: boolean
   onChange: NodepoolModalProps['onChange']
 }
 
@@ -189,6 +194,7 @@ interface NodepoolSummaryCardProps {
   end?: string
   alwaysOn?: boolean
   showGpuLimit?: boolean
+  showDriftBlocking?: boolean
   onEdit: () => void
 }
 
@@ -201,8 +207,19 @@ function NodepoolSummaryCard({
   end,
   alwaysOn = false,
   showGpuLimit = false,
+  showDriftBlocking = false,
   onEdit,
 }: NodepoolSummaryCardProps) {
+  const driftBlockingRange = nodepool?.drift_blocking?.enabled
+    ? formatTimeRange(nodepool.drift_blocking.start_time, nodepool.drift_blocking.duration)
+    : undefined
+  const driftBlockingDays = nodepool?.drift_blocking?.days ?? []
+  const driftBlockingDayLabel = driftBlockingDays.length === 7 ? 'Every day' : formatWeekdays(driftBlockingDays)
+  const driftBlockingLabel =
+    driftBlockingDayLabel && driftBlockingRange?.start && driftBlockingRange.end
+      ? `${driftBlockingDayLabel}, ${driftBlockingRange.start} to ${driftBlockingRange.end} (UTC)`
+      : 'Enabled, schedule unavailable'
+
   return (
     <div className={CARD_CLASSNAME}>
       <div className="flex justify-between gap-10">
@@ -214,21 +231,27 @@ function NodepoolSummaryCard({
           <Icon iconName="pen" iconStyle="solid" />
         </Button>
       </div>
-      <div className="flex justify-between gap-4">
-        <div className="flex w-1/3 flex-col gap-1">
+      <div className={showDriftBlocking ? 'grid grid-cols-4 gap-4' : 'grid grid-cols-3 gap-4'}>
+        <div className="flex min-w-0 flex-col gap-1">
           <span className={SECTION_TITLE_CLASSNAME}>Consolidation</span>
           <div className="flex flex-col justify-between gap-4 text-sm text-neutral">
             <ConsolidationSummary region={region} nodepool={nodepool} start={start} end={end} alwaysOn={alwaysOn} />
           </div>
         </div>
-        <div className="flex w-1/3 flex-col gap-1">
+        <div className="flex min-w-0 flex-col gap-1">
           <span className={SECTION_TITLE_CLASSNAME}>Resources limit</span>
           <ResourceLimitsSummary limits={nodepool?.limits} showGpuLimit={showGpuLimit} />
         </div>
-        <div className="flex w-1/3 flex-col gap-1">
+        <div className="flex min-w-0 flex-col gap-1">
           <span className={SECTION_TITLE_CLASSNAME}>Spot instances</span>
           <span>{nodepool?.spot_enabled ? 'Enabled' : 'Disabled'}</span>
         </div>
+        {showDriftBlocking && (
+          <div className="flex min-w-0 flex-col gap-1">
+            <span className={SECTION_TITLE_CLASSNAME}>Drift blocking</span>
+            <span>{nodepool?.drift_blocking?.enabled ? driftBlockingLabel : 'Disabled'}</span>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -237,6 +260,7 @@ function NodepoolSummaryCard({
 export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourcesSettingsProps) {
   const { openModal } = useModal()
   const { watch, setValue } = useFormContext<ClusterResourcesData>()
+  const showDriftBlocking = useFeatureFlagEnabled('stable-nodepool-drift-blocking') === true
 
   const watchStable = watch('karpenter.qovery_node_pools.stable_override')
   const watchDefault = watch('karpenter.qovery_node_pools.default_override')
@@ -274,6 +298,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
           'Used for single instances and internal Qovery applications, such as containerized databases, to maintain stability.',
         defaultValues: watchStable,
         nodepool: watchStable,
+        showDriftBlocking,
         start: startStable,
         end: endStable,
         onChange: (data) => {
@@ -367,6 +392,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
             end={card.end}
             alwaysOn={card.alwaysOn}
             showGpuLimit={card.showGpuLimit}
+            showDriftBlocking={card.showDriftBlocking}
             onEdit={() => openNodepoolModal(card)}
           />
         ))}

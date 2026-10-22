@@ -150,7 +150,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                     class="w-8 h-4.5 outline-brand-11 inline-flex shrink-0 items-center rounded-full border-0 p-0.5 outline-0 disabled:pointer-events-none focus-visible:[&:active]:outline-0 focus-visible:[&:not(:active)]:outline-2 focus-visible:[&:not(:active)]:outline-offset-2 cursor-pointer bg-surface-neutral-componentActive"
                     data-state="unchecked"
                     data-testid="input-toggle-button"
-                    id=":r7:"
+                    id="_r_7_"
                     role="switch"
                     type="button"
                     value="false"
@@ -163,7 +163,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                   </button>
                   <input
                     aria-hidden="true"
-                    style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                    style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
                     tabindex="-1"
                     type="checkbox"
                     value="false"

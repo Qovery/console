@@ -20,7 +20,7 @@ function getSubtree(
   const { asChild, children } = options
   if (!asChild) return typeof content === 'function' ? content(children) : content
 
-  const firstChild = Children.only(children) as React.ReactElement
+  const firstChild = Children.only(children) as React.ReactElement<{ children?: ReactNode }>
   return cloneElement(firstChild, {
     children: typeof content === 'function' ? content(firstChild.props.children) : content,
   })

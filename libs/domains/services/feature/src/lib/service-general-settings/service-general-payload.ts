@@ -1,6 +1,7 @@
 import {
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
+  TerraformAutoDeployConfigTerraformActionEnum,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type EditableService } from '@qovery/domains/services/data-access'
@@ -66,7 +67,8 @@ export function buildServiceGeneralPayload({
   if ('is_public_repository' in data && data.is_public_repository) {
     if ('auto_deploy_config' in payload) {
       payload.auto_deploy_config = {
-        ...payload.auto_deploy_config,
+        terraform_action:
+          payload.auto_deploy_config?.terraform_action ?? TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
         auto_deploy: false,
       }
     } else if ('auto_deploy' in payload) {

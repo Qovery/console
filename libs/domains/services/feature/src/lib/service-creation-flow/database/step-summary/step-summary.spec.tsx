@@ -16,15 +16,15 @@ const baseContextValue = {
     getValues: () => ({
       name: 'postgres',
       accessibility: DatabaseAccessibilityEnum.PRIVATE,
-      mode: DatabaseModeEnum.MANAGED,
       type: DatabaseTypeEnum.POSTGRESQL,
       version: '16',
     }),
   },
   resourcesForm: {
     getValues: () => ({
+      cpu: 500,
+      memory: 512,
       storage: 20,
-      instance_type: 'db.t3.small',
     }),
   },
 }
@@ -42,7 +42,7 @@ jest.mock('@tanstack/react-router', () => ({
   }),
   useSearch: () => ({
     template: 'postgresql',
-    option: 'managed',
+    option: 'container',
   }),
   useNavigate: () => mockNavigate,
 }))
@@ -99,7 +99,9 @@ describe('DatabaseStepSummary', () => {
         payload: expect.objectContaining({
           serviceType: 'DATABASE',
           name: 'postgres',
-          instance_type: 'db.t3.small',
+          mode: DatabaseModeEnum.CONTAINER,
+          cpu: 500,
+          memory: 512,
         }),
       })
     })
@@ -114,7 +116,7 @@ describe('DatabaseStepSummary', () => {
     })
     expect(mockCapture).toHaveBeenCalledWith('create-service', {
       selectedServiceType: 'postgresql',
-      selectedServiceSubType: 'managed',
+      selectedServiceSubType: 'container',
     })
   })
 

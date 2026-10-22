@@ -172,7 +172,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.CRON_JOBS"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -199,7 +199,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.DEPLOYMENTS"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -226,7 +226,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.GATEWAY_API_ROUTES"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -253,7 +253,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.HPA"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -280,7 +280,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.INGRESS"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -307,7 +307,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.JOBS"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -334,7 +334,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.PODS"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -361,7 +361,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.SECRETS"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -388,7 +388,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.SERVICES"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"
@@ -415,7 +415,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
             <input
               aria-hidden="true"
               name="scopes.STATEFUL_SETS"
-              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
               value="on"

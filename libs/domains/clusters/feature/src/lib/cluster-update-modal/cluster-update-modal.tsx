@@ -17,6 +17,7 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
   const methods = useForm<{ name: string; dryRun: boolean }>({
     mode: 'onChange',
     defaultValues: {
+      name: '',
       dryRun: false,
     },
   })
@@ -49,7 +50,7 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
       <ModalCrud
         title="Confirm update"
         description={
-          <p className="mb-6 text-sm text-neutral-subtle">
+          <span className="mb-6 block text-sm text-neutral-subtle">
             To confirm the update of your cluster, please type the name:
             <Tooltip content="Copy">
               <span
@@ -59,7 +60,7 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
                 {cluster.name} <Icon iconName="copy" />
               </span>
             </Tooltip>
-          </p>
+          </span>
         }
         onClose={closeModal}
         onSubmit={onSubmit}

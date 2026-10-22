@@ -1,0 +1,26 @@
+name: Enforce production PR source
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+
+permissions: {}
+
+jobs:
+  check-source-branch:
+    name: check-source-branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Only allow staging from this repository
+        env:
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          if [ "$HEAD_BRANCH" != "staging" ] || [ "$HEAD_REPOSITORY" != "$REPOSITORY" ]; then
+            echo '::error::PRs to main must come from the staging branch of this repository.'
+            exit 1
+          fi
+
+          echo 'Valid production promotion: staging -> main.'

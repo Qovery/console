@@ -18,6 +18,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import { useClusters } from '../../hooks/use-clusters/use-clusters'
 import { useCreateAlertRule } from '../../hooks/use-create-alert-rule/use-create-alert-rule'
 import { useServicesSearch } from '../../hooks/use-services-search/use-services-search'
+import { canCloneAlertRule } from '../util/alert-type-guards'
 
 export interface AlertRulesCloneModalProps {
   organizationId: string
@@ -65,6 +66,7 @@ function ServiceItem({ service, onRemove }: { service: ServiceLightResponse; onR
 export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, onClose }: AlertRulesCloneModalProps) {
   const rulesToClone = alertRules ?? (alertRule ? [alertRule] : [])
   const firstRule = rulesToClone[0]
+  const hasUncloneableRule = rulesToClone.some((rule) => !canCloneAlertRule(rule))
 
   const methods = useForm({
     mode: 'all',
@@ -124,7 +126,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
   }
 
   const onSubmit = methods.handleSubmit(async () => {
-    if (!firstRule?.cluster_id) {
+    if (!firstRule?.cluster_id || hasUncloneableRule) {
       return
     }
 
@@ -177,6 +179,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
         onSubmit={onSubmit}
         loading={isCloning}
         submitLabel="Clone alerts"
+        submitDisabled={hasUncloneableRule}
       >
         <div className="flex flex-col gap-4">
           {/* This is a workaround to prevent the input from being focused when the user opens the modal */}

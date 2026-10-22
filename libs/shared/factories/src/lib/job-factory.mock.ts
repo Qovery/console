@@ -36,7 +36,6 @@ export const cronjobFactoryMock = (howMany: number, withContainer = false): Job[
         image: {
           name: 'nginx',
           image_name: 'nginx/nginx',
-          registry_id: chance.guid(),
           tag: '1.0.0',
           registry: {
             id: '0',
@@ -121,7 +120,6 @@ export const lifecycleJobFactoryMock = (howMany: number, withContainer = false):
       source = {
         image: {
           image_name: 'nginx/nginx',
-          registry_id: chance.guid(),
           tag: '1.0.0',
           registry: {
             id: '0',

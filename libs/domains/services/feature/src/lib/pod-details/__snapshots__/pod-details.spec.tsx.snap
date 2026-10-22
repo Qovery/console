@@ -35,13 +35,13 @@ exports[`PodDetails should match snapshot with container based pod and with mult
           tabindex="0"
         >
           <button
-            aria-controls="radix-:rm:-content-pod-container-1"
+            aria-controls="radix-_r_m_-content-pod-container-1"
             aria-selected="true"
             class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle rounded-full text-2xs px-2 h-5 font-semibold border"
             data-orientation="horizontal"
             data-radix-collection-item=""
             data-state="active"
-            id="radix-:rm:-trigger-pod-container-1"
+            id="radix-_r_m_-trigger-pod-container-1"
             role="tab"
             tabindex="-1"
             type="button"
@@ -52,13 +52,13 @@ exports[`PodDetails should match snapshot with container based pod and with mult
             pod-container-1
           </button>
           <button
-            aria-controls="radix-:rm:-content-pod-container-2"
+            aria-controls="radix-_r_m_-content-pod-container-2"
             aria-selected="false"
             class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle rounded-full text-2xs px-2 h-5 font-semibold border"
             data-orientation="horizontal"
             data-radix-collection-item=""
             data-state="inactive"
-            id="radix-:rm:-trigger-pod-container-2"
+            id="radix-_r_m_-trigger-pod-container-2"
             role="tab"
             tabindex="-1"
             type="button"
@@ -73,11 +73,11 @@ exports[`PodDetails should match snapshot with container based pod and with mult
           class="mt-3"
         >
           <div
-            aria-labelledby="radix-:rm:-trigger-pod-container-1"
+            aria-labelledby="radix-_r_m_-trigger-pod-container-1"
             class="relative outline-0"
             data-orientation="horizontal"
             data-state="active"
-            id="radix-:rm:-content-pod-container-1"
+            id="radix-_r_m_-content-pod-container-1"
             role="tabpanel"
             style="animation-duration: 0s;"
             tabindex="0"
@@ -120,12 +120,12 @@ exports[`PodDetails should match snapshot with container based pod and with mult
             </dl>
           </div>
           <div
-            aria-labelledby="radix-:rm:-trigger-pod-container-2"
+            aria-labelledby="radix-_r_m_-trigger-pod-container-2"
             class="relative outline-0"
             data-orientation="horizontal"
             data-state="inactive"
             hidden=""
-            id="radix-:rm:-content-pod-container-2"
+            id="radix-_r_m_-content-pod-container-2"
             role="tabpanel"
             tabindex="0"
           />
@@ -168,13 +168,13 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
           tabindex="0"
         >
           <button
-            aria-controls="radix-:re:-content-pod-container-1"
+            aria-controls="radix-_r_e_-content-pod-container-1"
             aria-selected="true"
             class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle rounded-full text-2xs px-2 h-5 font-semibold border"
             data-orientation="horizontal"
             data-radix-collection-item=""
             data-state="active"
-            id="radix-:re:-trigger-pod-container-1"
+            id="radix-_r_e_-trigger-pod-container-1"
             role="tab"
             tabindex="-1"
             type="button"
@@ -189,11 +189,11 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
           class="mt-3"
         >
           <div
-            aria-labelledby="radix-:re:-trigger-pod-container-1"
+            aria-labelledby="radix-_r_e_-trigger-pod-container-1"
             class="relative outline-0"
             data-orientation="horizontal"
             data-state="active"
-            id="radix-:re:-content-pod-container-1"
+            id="radix-_r_e_-content-pod-container-1"
             role="tabpanel"
             style="animation-duration: 0s;"
             tabindex="0"
@@ -295,13 +295,13 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
           tabindex="0"
         >
           <button
-            aria-controls="radix-:r6:-content-pod-container-1"
+            aria-controls="radix-_r_6_-content-pod-container-1"
             aria-selected="true"
             class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle rounded-full text-2xs px-2 h-5 font-semibold border"
             data-orientation="horizontal"
             data-radix-collection-item=""
             data-state="active"
-            id="radix-:r6:-trigger-pod-container-1"
+            id="radix-_r_6_-trigger-pod-container-1"
             role="tab"
             tabindex="-1"
             type="button"
@@ -316,11 +316,11 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
           class="mt-3"
         >
           <div
-            aria-labelledby="radix-:r6:-trigger-pod-container-1"
+            aria-labelledby="radix-_r_6_-trigger-pod-container-1"
             class="relative outline-0"
             data-orientation="horizontal"
             data-state="active"
-            id="radix-:r6:-content-pod-container-1"
+            id="radix-_r_6_-content-pod-container-1"
             role="tabpanel"
             style="animation-duration: 0s;"
             tabindex="0"

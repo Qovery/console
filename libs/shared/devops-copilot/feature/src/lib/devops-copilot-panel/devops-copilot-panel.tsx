@@ -7,7 +7,7 @@ import { type CSSProperties, useCallback, useContext, useEffect, useRef, useStat
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useContextualDocLinks } from '@qovery/shared/assistant/feature'
 import { useQoveryContext } from '@qovery/shared/devops-copilot/context'
-import { Button, Callout, Icon } from '@qovery/shared/ui'
+import { Button, Callout, Icon, LoaderSpinner } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
@@ -73,10 +73,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const isPanelActive = devopsCopilotOpen
   const { data } = useQoveryStatus(isPanelActive)
   const docLinks = useContextualDocLinks()
-  const { context, current } = useQoveryContext()
+  const { context, current, organizationError, refetchOrganization } = useQoveryContext()
   const { user, getAccessTokenSilently } = useAuth0()
 
   const organizationId = context?.organization?.id ?? ''
+  const isContextError = Boolean(organizationError) && !organizationId
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -91,7 +92,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isFinish, setIsFinish] = useState(false)
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
-  const { data: readOnlyData } = useAICopilotConfig({
+  const {
+    data: readOnlyData,
+    isError: isConfigError,
+    refetch: refetchConfig,
+  } = useAICopilotConfig({
     organizationId,
     enabled: isPanelActive,
   })
@@ -102,7 +107,8 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [plan, setPlan] = useState<PlanStep[]>([])
   const [showPlans, setShowPlans] = useState<Record<string, boolean>>({})
 
-  const pendingThreadId = useRef<string>()
+  const pendingThreadId = useRef<string | undefined>(undefined)
+  const [pendingExternalMessage, setPendingExternalMessage] = useState<string>()
 
   const {
     threads = [],
@@ -168,6 +174,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
       : plan
 
   const handleOnClose = useCallback(() => {
+    setPendingExternalMessage(undefined)
     onClose()
     setInputMessage('')
     setExpand(false)
@@ -220,30 +227,38 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   useEffect(() => {
     if (!sendMessageRef) return
 
-    sendMessageRef.current = (message: string) => {
-      controllerRef.current?.abort()
-
-      setThread([])
-      setThreadId(undefined)
-      setPlan([])
-      setIsReadOnly(true)
-      setStreamingMessage('')
-      setDisplayedStreamingMessage('')
-      setIsFinish(false)
-      setIsStopped(false)
-      setIsLoading(false)
-
-      setTimeout(() => {
-        handleSendMessage(message, true)
-      }, 0)
-    }
+    sendMessageRef.current = setPendingExternalMessage
 
     return () => {
       if (sendMessageRef) {
         sendMessageRef.current = null
       }
     }
-  }, [sendMessageRef, handleSendMessage, setThread])
+  }, [sendMessageRef])
+
+  useEffect(() => {
+    if (!isPanelActive) {
+      setPendingExternalMessage(undefined)
+      return
+    }
+    if (!pendingExternalMessage || !isCopilotEnabled || !organizationId) return
+
+    controllerRef.current?.abort()
+    setThread([])
+    setThreadId(undefined)
+    setPlan([])
+    setIsReadOnly(true)
+    setStreamingMessage('')
+    setDisplayedStreamingMessage('')
+    setIsFinish(false)
+    setIsStopped(false)
+    setIsLoading(false)
+    setPendingExternalMessage(undefined)
+
+    setTimeout(() => {
+      handleSendMessage(pendingExternalMessage, true)
+    }, 0)
+  }, [pendingExternalMessage, isCopilotEnabled, organizationId, isPanelActive, handleSendMessage, setThread])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
@@ -377,7 +392,30 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               setIsLoading={setIsLoading}
               setPlan={setPlan}
             />
-            {isCopilotEnabled ? (
+            {(!organizationId || (!readOnlyData && !isConfigError)) && !isContextError ? (
+              <div role="status" aria-label="Loading Copilot" className="flex grow items-center justify-center">
+                <LoaderSpinner />
+              </div>
+            ) : isContextError || (isConfigError && !readOnlyData) ? (
+              <div className="flex grow items-center p-4">
+                <Callout.Root color="red" role="alert">
+                  <Callout.Icon>
+                    <Icon iconName="circle-exclamation" />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    <Callout.TextHeading>Unable to load Copilot</Callout.TextHeading>
+                    <Callout.TextDescription>Please try again.</Callout.TextDescription>
+                    <Button
+                      className="mt-3"
+                      variant="outline"
+                      onClick={() => (isContextError ? refetchOrganization() : refetchConfig())}
+                    >
+                      Retry
+                    </Button>
+                  </Callout.Text>
+                </Callout.Root>
+              </div>
+            ) : isCopilotEnabled ? (
               <div className="flex grow flex-col">
                 {!isReadOnly && (
                   <div className="animate-[fadein_0.22s_ease-in-out_forwards] px-4 pb-2 pt-4 opacity-0">

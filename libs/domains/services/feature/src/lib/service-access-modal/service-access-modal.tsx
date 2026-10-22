@@ -60,12 +60,22 @@ export function getDatabaseConnectionUri(service: Pick<Database, 'type' | 'mode'
   return `${connectionURI}${sslQuery}`
 }
 
-function SectionDatabaseConnectionUri({ service }: { service: Database }) {
+function SectionDatabaseConnectionUri({
+  service,
+  viaPortForward = false,
+}: {
+  service: Database
+  viaPortForward?: boolean
+}) {
   const [, copyToClipboard] = useCopyToClipboard()
   const { data: masterCredentials } = useMasterCredentials({ serviceId: service.id, serviceType: 'DATABASE' })
 
   const handleCopyCredentials = (credentials: Credentials) => {
-    const connectionURI = getDatabaseConnectionUri(service, credentials)
+    // Through `qovery port-forward -p <port>` the database answers on localhost, not on its private host
+    const connectionURI = getDatabaseConnectionUri(
+      service,
+      viaPortForward ? { ...credentials, host: 'localhost' } : credentials
+    )
     copyToClipboard(connectionURI)
     toast('success', 'Credentials copied to clipboard')
   }
@@ -317,7 +327,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
               </div>
             </div>
             {isDatabaseService ? (
-              <SectionDatabaseConnectionUri service={service} />
+              <SectionDatabaseConnectionUri service={service} viaPortForward />
             ) : (
               <div className="flex flex-col gap-2 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
                 <span className="font-medium">3. Connect via shell</span>

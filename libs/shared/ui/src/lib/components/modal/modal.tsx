@@ -1,15 +1,16 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { type ReactElement, type ReactNode, cloneElement, useContext, useEffect, useState } from 'react'
+import { Fragment, type ReactElement, type ReactNode, cloneElement, useContext, useEffect, useState } from 'react'
 import { Icon } from '../icon/icon'
 import useModalAlert from '../modal-alert/use-modal-alert/use-modal-alert'
 import { isToastInteraction } from '../toast/toast'
 import { ModalContext } from './modal-root'
 
 export interface ModalProps {
-  children: ReactElement
+  children: ReactElement<ModalContentProps>
   trigger?: ReactNode
   defaultOpen?: boolean
   buttonClose?: boolean
+  keepCloseButtonVisible?: boolean
   dismissible?: boolean
   width?: number | string
   height?: number | string
@@ -45,6 +46,7 @@ export const Modal = (props: ModalProps) => {
     className = '',
     defaultOpen = false,
     buttonClose = true,
+    keepCloseButtonVisible = false,
     dismissible = true,
     externalOpen = false,
     setExternalOpen,
@@ -173,14 +175,19 @@ export const Modal = (props: ModalProps) => {
           className={`modal__content fixed left-1/2 top-[84px] z-modal overflow-hidden rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
           <div className={`${fullScreen || height ? 'h-full overflow-hidden' : 'max-h-[80vh] overflow-auto'}`}>
-            {cloneElement(children, {
-              setOpen: setExternalOpen ? setExternalOpen : setOpen,
-              setModalDismissible: setContentDismissible,
-            })}
-            {buttonClose && isDismissible && (
-              <Dialog.Close className="absolute right-4 top-4" asChild>
+            {/* Only components can receive these props: React rejects them on fragments and DOM elements.
+                `useModal` wraps its content in a fragment, so pass its `setModalDismissible` to that content explicitly */}
+            {children.type === Fragment || typeof children.type === 'string'
+              ? children
+              : cloneElement(children, {
+                  setOpen: setExternalOpen ? setExternalOpen : setOpen,
+                  setModalDismissible: setContentDismissible,
+                })}
+            {buttonClose && (isDismissible || keepCloseButtonVisible) && (
+              <Dialog.Close className="absolute right-4 top-4" disabled={!isDismissible} asChild>
                 <button
                   type="button"
+                  aria-label="Close"
                   className="flex h-7 w-7 items-center justify-center rounded-full bg-background text-neutral-disabled transition-colors hover:bg-surface-neutral-componentHover hover:text-neutral"
                 >
                   <Icon iconName="xmark" iconStyle="solid" />

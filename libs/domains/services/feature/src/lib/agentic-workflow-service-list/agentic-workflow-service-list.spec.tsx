@@ -25,6 +25,14 @@ jest.mock('../hooks/use-services/use-services', () => ({
   useServices: () => mockUseServices(),
 }))
 
+jest.mock('../hooks/use-service-type/use-service-type', () => ({
+  useServiceType: () => ({ data: 'AGENTIC_WORKFLOW' }),
+}))
+
+jest.mock('../hooks/use-environment-links/use-environment-links', () => ({
+  useEnvironmentLinks: () => ({ data: [] }),
+}))
+
 jest.mock('../agentic-workflow-service-actions/agentic-workflow-service-actions', () => ({
   AgenticWorkflowServiceActions: ({ service }: { service: { id: string } }) => (
     <button type="button">Actions for {service.id}</button>
@@ -103,4 +111,24 @@ describe('AgenticWorkflowServiceList', () => {
       expect.stringContaining('/service/workflow-1/overview')
     )
   })
+})
+
+it('keeps agents in clone mode in the Agent tasks table', () => {
+  mockUseServices.mockReturnValue({
+    data: [
+      {
+        id: 'clone-agent',
+        name: 'Clone agent',
+        service_type: 'AGENTIC_WORKFLOW',
+        serviceType: 'AGENTIC_WORKFLOW',
+        enabled: true,
+        execution_mode: 'CLONE_ENVIRONMENT',
+        webhook: { url: 'https://example.com' },
+        project_repositories: [],
+      },
+    ],
+  })
+  renderWithProviders(<AgenticWorkflowServiceList environment={environment} />)
+  expect(screen.getByText('Clone agent')).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'Agent tasks' })).toBeInTheDocument()
 })

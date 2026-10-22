@@ -25,6 +25,7 @@ import {
 import {
   WORKLOAD_IDENTITY_PROVIDER_RESOURCE_FORMAT_ERROR,
   WORKLOAD_IDENTITY_PROVIDER_RESOURCE_REGEXP,
+  isForbiddenError,
 } from '@qovery/shared/util-js'
 import { useClusterCloudProviderInfo } from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 
@@ -253,7 +254,11 @@ export function ClusterCredentialsModal({
   const isGcpMode = cloudProviderLocal === 'GCP'
   const apiCloudProvider: CloudProviderEnum = cloudProviderLocal === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProviderLocal
 
-  const { mutateAsync: createCloudProviderCredential, isLoading: isLoadingCreate } = useCreateCloudProviderCredential()
+  const {
+    mutateAsync: createCloudProviderCredential,
+    isLoading: isLoadingCreate,
+    error: createError,
+  } = useCreateCloudProviderCredential()
   const { mutateAsync: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
   const { mutateAsync: editCloudProviderCredential, isLoading: isLoadingEdit } = useEditCloudProviderCredential()
 
@@ -514,6 +519,18 @@ export function ClusterCredentialsModal({
         customLoader="Processing..."
       >
         <div className="flex flex-col gap-y-4">
+          {isForbiddenError(createError) && (
+            <Callout.Root color="red" role="alert">
+              <Callout.Icon>
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                You do not have permission to create cloud credentials in this organization. Ask your organization
+                administrator to create a compatible credential or update your permissions, then retry. Your entries are
+                preserved.
+              </Callout.Text>
+            </Callout.Root>
+          )}
           {(isAwsMode || isGcpMode) && (
             <Controller
               name="type"
@@ -643,8 +660,9 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                 <p className="text-sm text-neutral-subtle">
                   Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
                 </p>
+                {/* Passes the organization to the Qovery role template, which scopes role trust to this organization once published */}
                 <ExternalLink
-                  href="https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation"
+                  href={`https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=${organizationId}`}
                   size="sm"
                 >
                   Cloudformation stack

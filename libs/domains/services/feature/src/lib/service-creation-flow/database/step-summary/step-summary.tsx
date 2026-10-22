@@ -38,10 +38,10 @@ export function DatabaseStepSummary({ labelsGroup, annotationsGroup }: DatabaseS
   }, [setCurrentStep])
 
   useEffect(() => {
-    if (!generalData.name || !generalData.type || !generalData.version || !generalData.mode) {
+    if (!generalData.name || !generalData.type || !generalData.version) {
       navigate({ to: `${creationFlowUrl}/general`, search })
     }
-  }, [creationFlowUrl, generalData.mode, generalData.name, generalData.type, generalData.version, navigate, search])
+  }, [creationFlowUrl, generalData.name, generalData.type, generalData.version, navigate, search])
 
   const handleSubmit = async (withDeploy: boolean) => {
     setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')

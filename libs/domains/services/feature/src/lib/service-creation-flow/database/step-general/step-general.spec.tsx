@@ -1,11 +1,4 @@
-import {
-  type Cluster,
-  type ClusterFeatureAwsExistingVpc,
-  DatabaseAccessibilityEnum,
-  type DatabaseConfiguration,
-  DatabaseModeEnum,
-  DatabaseTypeEnum,
-} from 'qovery-typescript-axios'
+import { DatabaseAccessibilityEnum, type DatabaseConfiguration, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -26,31 +19,6 @@ const mockSearch = {
   template: 'postgresql',
   option: 'container',
 }
-
-const clusterVpc = {
-  aws_vpc_eks_id: 'vpc-1',
-  elasticache_subnets_zone_a_ids: ['subnet-1'],
-  elasticache_subnets_zone_b_ids: ['subnet-2'],
-  elasticache_subnets_zone_c_ids: ['subnet-3'],
-  rds_subnets_zone_a_ids: ['subnet-1'],
-  rds_subnets_zone_b_ids: ['subnet-2'],
-  rds_subnets_zone_c_ids: ['subnet-3'],
-  documentdb_subnets_zone_a_ids: [],
-  documentdb_subnets_zone_b_ids: [],
-  documentdb_subnets_zone_c_ids: [],
-  eks_create_nodes_in_private_subnet: false,
-  eks_subnets_zone_a_ids: [],
-  eks_subnets_zone_b_ids: [],
-  eks_subnets_zone_c_ids: [],
-  eks_karpenter_fargate_subnets_zone_a_ids: [],
-  eks_karpenter_fargate_subnets_zone_b_ids: [],
-  eks_karpenter_fargate_subnets_zone_c_ids: [],
-} as ClusterFeatureAwsExistingVpc
-
-const cluster = {
-  id: 'cluster-1',
-  kubernetes: 'EKS',
-} as Cluster
 
 const databaseConfigurations = [
   {
@@ -110,7 +78,6 @@ function TestProvider({ children, generalValues, resourcesValues }: TestProvider
       description: '',
       accessibility: DatabaseAccessibilityEnum.PRIVATE,
       icon_uri: 'app://qovery-console/postgresql',
-      mode: DatabaseModeEnum.CONTAINER,
       type: DatabaseTypeEnum.POSTGRESQL,
       version: '',
       labels_groups: [],
@@ -141,16 +108,10 @@ function TestProvider({ children, generalValues, resourcesValues }: TestProvider
 function renderComponent({
   generalValues,
   resourcesValues,
-  cloudProvider = 'AWS',
-  clusterValue = cluster,
-  clusterVpcValue = clusterVpc,
   databaseConfigurationsValue = databaseConfigurations,
 }: {
   generalValues?: Partial<DatabaseCreateGeneralData>
   resourcesValues?: Partial<DatabaseCreateResourcesData>
-  cloudProvider?: string
-  clusterValue?: Cluster
-  clusterVpcValue?: ClusterFeatureAwsExistingVpc
   databaseConfigurationsValue?: DatabaseConfiguration[]
 } = {}) {
   return renderWithProviders(
@@ -159,9 +120,6 @@ function renderComponent({
         onSubmit={mockOnSubmit}
         labelSetting={<div data-testid="label-setting">Labels</div>}
         annotationSetting={<div data-testid="annotation-setting">Annotations</div>}
-        cloudProvider={cloudProvider}
-        cluster={clusterValue}
-        clusterVpc={clusterVpcValue}
         databaseConfigurations={databaseConfigurationsValue}
       />
     </TestProvider>
@@ -177,31 +135,8 @@ describe('DatabaseStepGeneral', () => {
     renderComponent()
 
     expect(screen.getByRole('heading', { name: 'PostgreSQL - Container' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Database mode' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Database configuration' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument()
-  })
-
-  it('renders managed mode on AWS even when the existing VPC payload is missing', () => {
-    renderComponent({
-      cloudProvider: 'AWS',
-      clusterVpcValue: undefined,
-    })
-
-    expect(screen.getByRole('heading', { name: 'Database mode' })).toBeInTheDocument()
-    expect(screen.getByText('Container mode')).toBeInTheDocument()
-    expect(screen.getByText('Managed mode')).toBeInTheDocument()
-  })
-
-  it('renders only the container mode when managed mode is not available', () => {
-    renderComponent({
-      cloudProvider: 'GCP',
-      clusterVpcValue: undefined,
-    })
-
-    expect(screen.getByRole('heading', { name: 'Database mode' })).toBeInTheDocument()
-    expect(screen.getByText('Container mode')).toBeInTheDocument()
-    expect(screen.queryByLabelText('Managed mode')).not.toBeInTheDocument()
   })
 
   it('submits the form when required values are present', async () => {
@@ -209,7 +144,6 @@ describe('DatabaseStepGeneral', () => {
       generalValues: {
         name: 'postgres',
         type: DatabaseTypeEnum.POSTGRESQL,
-        mode: DatabaseModeEnum.CONTAINER,
         version: '16',
         accessibility: DatabaseAccessibilityEnum.PRIVATE,
       },
@@ -221,79 +155,21 @@ describe('DatabaseStepGeneral', () => {
         expect.objectContaining({
           name: 'postgres',
           type: DatabaseTypeEnum.POSTGRESQL,
-          mode: DatabaseModeEnum.CONTAINER,
           version: '16',
         })
       )
     })
   })
 
-  it('falls back to container mode when managed mode is preselected but unavailable', async () => {
-    renderComponent({
-      cloudProvider: 'GCP',
-      clusterVpcValue: undefined,
-      generalValues: {
-        name: 'postgres',
-        type: DatabaseTypeEnum.POSTGRESQL,
-        mode: DatabaseModeEnum.MANAGED,
-        version: '16',
-        accessibility: DatabaseAccessibilityEnum.PRIVATE,
-      },
-    })
-    ;(document.querySelector('form') as HTMLFormElement).requestSubmit()
+  it('does not render a database mode selector', () => {
+    renderComponent()
 
-    await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'postgres',
-          type: DatabaseTypeEnum.POSTGRESQL,
-          mode: DatabaseModeEnum.CONTAINER,
-          version: '16',
-        })
-      )
-    })
+    expect(screen.queryByRole('heading', { name: 'Database mode' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Managed mode')).not.toBeInTheDocument()
   })
 
-  it('resets type and version when switching to managed mode with MongoDB selected', async () => {
-    const { userEvent } = renderComponent({
-      cloudProvider: 'AWS',
-      clusterVpcValue: clusterVpc,
-      generalValues: {
-        mode: DatabaseModeEnum.CONTAINER,
-        type: DatabaseTypeEnum.MONGODB,
-        version: '6.0',
-      },
-    })
-
-    const managedRadio = screen.getByRole('radio', { name: /managed mode/i })
-    await userEvent.click(managedRadio)
-
-    expect(screen.getByLabelText('Database type')).toHaveValue('')
-  })
-
-  it('does not include MongoDB in the database type options when managed mode is selected', async () => {
-    const { userEvent } = renderComponent({
-      cloudProvider: 'AWS',
-      clusterVpcValue: clusterVpc,
-      generalValues: {
-        mode: DatabaseModeEnum.MANAGED,
-      },
-    })
-
-    const typeSelect = screen.getByLabelText('Database type')
-    await userEvent.click(typeSelect)
-
-    expect(screen.queryByRole('option', { name: 'MongoDB' })).not.toBeInTheDocument()
-  })
-
-  it('does include MongoDB in the database type options when container mode is selected', async () => {
-    const { userEvent } = renderComponent({
-      cloudProvider: 'AWS',
-      clusterVpcValue: clusterVpc,
-      generalValues: {
-        mode: DatabaseModeEnum.CONTAINER,
-      },
-    })
+  it('includes MongoDB in the database type options', async () => {
+    const { userEvent } = renderComponent()
 
     const typeSelect = screen.getByLabelText('Database type')
     await userEvent.click(typeSelect)

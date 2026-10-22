@@ -17,7 +17,6 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
         Create a new environment and deploy your applications.
       </p>
       <button
-        aria-controls="radix-:rd:"
         aria-expanded="false"
         aria-haspopup="dialog"
         class="hover:text-brandHover mt-2 cursor-pointer text-sm font-medium text-brand transition"
@@ -91,8 +90,10 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                 aria-live="polite"
                 aria-relevant="additions text"
                 class="css-1f43avz-a11yText-A11yText"
+                role="log"
               />
               <div
+                aria-disabled="true"
                 class="input-select__control input-select__control--is-disabled css-16xfy0z-control"
               >
                 <div
@@ -104,6 +105,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                     Project 1
                   </span>
                   <input
+                    aria-activedescendant=""
                     aria-autocomplete="list"
                     aria-expanded="false"
                     aria-haspopup="true"
@@ -183,6 +185,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                 aria-live="polite"
                 aria-relevant="additions text"
                 class="css-1f43avz-a11yText-A11yText"
+                role="log"
               />
               <div
                 class="input-select__control css-13cymwt-control"
@@ -197,6 +200,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                     Select...
                   </div>
                   <input
+                    aria-activedescendant=""
                     aria-autocomplete="list"
                     aria-describedby="react-select-6-placeholder"
                     aria-expanded="false"
@@ -292,6 +296,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                 aria-live="polite"
                 aria-relevant="additions text"
                 class="css-1f43avz-a11yText-A11yText"
+                role="log"
               />
               <div
                 class="input-select__control css-13cymwt-control"
@@ -305,6 +310,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
                     Development
                   </span>
                   <input
+                    aria-activedescendant=""
                     aria-autocomplete="list"
                     aria-expanded="false"
                     aria-haspopup="true"

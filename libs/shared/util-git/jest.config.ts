@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'util-git',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

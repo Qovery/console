@@ -54,7 +54,7 @@ export function AgenticWorkflowServiceActions({
       action: async () => {
         await deleteService({ serviceId: service.id, serviceType: service.serviceType })
         navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
           params: { organizationId, projectId, environmentId },
         })
       },

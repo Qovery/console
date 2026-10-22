@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { observability } from '@qovery/domains/observability/data-access'
-import { isGhostAlertRule } from '../../util-alerting/alert-type-guards'
+import { isGhostAlertRule } from '../../alerting/util/alert-type-guards'
 
 export function useAlertRulesGhosted({ organizationId, serviceId }: { organizationId: string; serviceId?: string }) {
   return useQuery({

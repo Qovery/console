@@ -15,6 +15,13 @@ See [package.json](./package.json) for the versions and available scripts.
 
 ## Getting started
 
+Use Node.js 24 LTS and the bundled Yarn Berry release. With nvm:
+
+```sh
+nvm install
+nvm use
+```
+
 First use
 
 ```sh

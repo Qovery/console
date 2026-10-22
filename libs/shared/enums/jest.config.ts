@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'shared-enums',
   preset: '../../../jest.preset.js',
   transform: {

@@ -139,7 +139,7 @@ describe('ServiceNew', () => {
     )
     expect(screen.getByRole('heading', { name: 'Base services' })).toBeInTheDocument()
     expect(screen.getByText('Application')).toBeInTheDocument()
-    expect(screen.getByText('Container Database')).toBeInTheDocument()
+    expect(screen.queryByText('Container Database')).not.toBeInTheDocument()
     expect(screen.getByText('Lifecycle Job')).toBeInTheDocument()
     expect(screen.getByText('Cron Job')).toBeInTheDocument()
     expect(screen.getByText('Helm')).toBeInTheDocument()
@@ -147,86 +147,14 @@ describe('ServiceNew', () => {
     expect(screen.queryByText('Agent task')).not.toBeInTheDocument()
   })
 
-  it('should render the from-scratch agent task entry in Agent use cases when the flag is enabled', () => {
+  it('does not offer agent creation in the service catalog even when enabled', () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
-
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
-
-    // The blank agent task entry lives in Agent use cases, not Base services.
-    const baseServices = screen.getByRole('heading', { name: 'Base services' }).closest('section')
-    expect(within(baseServices as HTMLElement).queryByText(/Agent task/i)).not.toBeInTheDocument()
-
-    expect(screen.getByRole('link', { name: /Start from scratch/i })).toHaveAttribute(
-      'href',
-      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow'
-    )
-  })
-
-  it('should render the Agent use cases section behind the agentic workflow flag', () => {
-    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
-
-    renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-
-    const agentUseCasesHeading = screen.getByRole('heading', { name: 'Agent use cases' })
-    expect(agentUseCasesHeading).toBeInTheDocument()
-    expect(within(agentUseCasesHeading.parentElement as HTMLElement).getByText('NEW')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Incident Analyzer with incident.io/i })).toHaveAttribute(
-      'href',
-      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=incident-io-analyzer'
-    )
-    expect(screen.getByRole('link', { name: /Incident Analyzer with Honeybadger/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Jira Coding Agent/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Linear Coding Agent/i })).toBeInTheDocument()
-    const buildOptimizerCard = screen.getByRole('link', { name: /Build & deployment optimizer/i })
-    const buildOptimizerIcon = buildOptimizerCard.querySelector('.h-8.w-8.text-brand')
-    expect(buildOptimizerIcon).toBeInTheDocument()
-    expect(buildOptimizerIcon).not.toHaveAttribute('width')
-    expect(buildOptimizerIcon).not.toHaveAttribute('height')
-    expect(screen.getByText(/Analyse build and deployment times/).parentElement).toHaveClass('w-full')
-    expect(
-      screen.getByText('Analyze incident.io incidents with deployment, code, logs, and metrics context.')
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('Turn a Jira issue into an implementation and a ready-to-review pull request.')
-    ).toBeInTheDocument()
-  })
-
-  it('should capture a PostHog event when an agent use case is selected', async () => {
-    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
-
-    const { userEvent } = renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-
-    await userEvent.click(screen.getByRole('link', { name: /Incident Analyzer with incident.io/i }))
-
-    expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'incident-io-analyzer' })
-  })
-
-  it('should open the template request modal from the Agent use cases request button', async () => {
-    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
-
-    const { userEvent } = renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-
-    await userEvent.click(screen.getByRole('button', { name: 'Request agent template' }))
-
-    expect(screen.getByRole('heading', { name: 'Request agent template' })).toBeInTheDocument()
-    expect(screen.getByText("Tell us which agent template you'd like Qovery to add next.")).toBeInTheDocument()
-  })
-
-  it('should hide the Agent use cases section when the agentic workflow flag is disabled', () => {
-    renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-
     expect(screen.queryByRole('heading', { name: 'Agent use cases' })).not.toBeInTheDocument()
-    expect(screen.queryByText('Incident Analyzer with incident.io')).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Start from scratch/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Request agent template' })).not.toBeInTheDocument()
   })
 
   it('should show base service descriptions in info tooltips', async () => {
@@ -491,7 +419,7 @@ describe('ServiceNew', () => {
     expect(within(dialog).queryByText('vdefault')).not.toBeInTheDocument()
   })
 
-  it('should link database entries to the database create flow', async () => {
+  it('should keep database template links without a base database entry', async () => {
     const { container, userEvent } = renderWithProviders(
       <ServiceNew
         organizationId="org-1"
@@ -506,7 +434,7 @@ describe('ServiceNew', () => {
       container.querySelector(
         'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database"]'
       )
-    ).toBeInTheDocument()
+    ).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByText('PostgreSQL'))
 
@@ -517,13 +445,11 @@ describe('ServiceNew', () => {
         )
       ).toBeInTheDocument()
     })
-    await waitFor(() => {
-      expect(
-        container.querySelector(
-          'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=managed"]'
-        )
-      ).toBeInTheDocument()
-    })
+    expect(
+      container.querySelector(
+        'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=managed"]'
+      )
+    ).not.toBeInTheDocument()
   })
 
   it('should keep default service links valid', () => {

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'webflow-data-access',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',

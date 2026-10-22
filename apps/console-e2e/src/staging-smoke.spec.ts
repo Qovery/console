@@ -1,4 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
+import { openEnvironment } from './utils/staging-navigation'
 
 const E2E_AUTH_TOKEN_STORAGE_KEY = 'qovery-e2e-auth-token'
 
@@ -10,20 +11,6 @@ const requiredEnv = (name: string) => {
   }
 
   return value
-}
-
-const clickByNameOrHref = async (page: Page, nameOrId: string, hrefPart: string) => {
-  const namedTarget = page
-    .getByRole('link', { name: nameOrId, exact: true })
-    .or(page.getByRole('button', { name: nameOrId, exact: true }))
-    .first()
-
-  if (await namedTarget.isVisible().catch(() => false)) {
-    await namedTarget.click()
-    return
-  }
-
-  await page.locator(`a[href*="${hrefPart}"]`).first().click()
 }
 
 const injectAuthToken = async (page: Page) => {
@@ -43,11 +30,5 @@ test('staging user can reach an environment', async ({ page }) => {
 
   await expect(page).toHaveURL(/\/organization\/[^/]+\/overview/)
 
-  const projectId = requiredEnv('E2E_PROJECT_ID')
-  await clickByNameOrHref(page, projectId, `/project/${projectId}/`)
-  await expect(page).toHaveURL(/\/project\/[^/]+\/overview/)
-
-  const environmentId = requiredEnv('E2E_ENVIRONMENT_ID')
-  await clickByNameOrHref(page, environmentId, `/environment/${environmentId}`)
-  await expect(page).toHaveURL(/\/environment\/[^/]+/)
+  await openEnvironment(page, requiredEnv('E2E_PROJECT_ID'), requiredEnv('E2E_ENVIRONMENT_ID'))
 })

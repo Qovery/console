@@ -57,7 +57,7 @@ describe('AgenticWorkflowModelSetting', () => {
       <AgenticWorkflowModelSetting
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
-        settings={'{"provider":"anthropic","model":"claude-haiku"}'}
+        settings='{"provider":"anthropic","model":"claude-haiku"}'
         onChange={onChange}
       />
     )
@@ -83,7 +83,7 @@ describe('AgenticWorkflowModelSetting', () => {
       <AgenticWorkflowModelSetting
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
-        settings={'{"model":"eu.anthropic.claude-opus-5"}'}
+        settings='{"model":"eu.anthropic.claude-opus-5"}'
         onChange={onChange}
       />
     )
@@ -109,7 +109,7 @@ describe('AgenticWorkflowModelSetting', () => {
           <AgenticWorkflowModelSetting
             llmProviderId={llmProviderId}
             providerType={LlmProviderType.CLAUDE}
-            settings={'{"model":"claude-sonnet"}'}
+            settings='{"model":"claude-sonnet"}'
             onChange={onChange}
           />
         </>
@@ -157,7 +157,7 @@ describe('AgenticWorkflowModelSetting', () => {
         llmProviderId="provider-1"
         providerType={LlmProviderType.BEDROCK}
         providerRegion="ap-south-1"
-        settings={'{"model":"anthropic.claude-sonnet-4"}'}
+        settings='{"model":"anthropic.claude-sonnet-4"}'
         onChange={jest.fn()}
       />
     )
@@ -175,7 +175,7 @@ describe('AgenticWorkflowModelSetting', () => {
         llmProviderId="provider-1"
         providerType={LlmProviderType.BEDROCK}
         providerRegion="eu-west-1"
-        settings={'{"model":"global.anthropic.claude-sonnet-4"}'}
+        settings='{"model":"global.anthropic.claude-sonnet-4"}'
         onChange={jest.fn()}
       />
     )
@@ -192,7 +192,7 @@ describe('AgenticWorkflowModelSetting', () => {
       <AgenticWorkflowModelSetting
         llmProviderId="provider-1"
         providerType={LlmProviderType.BEDROCK}
-        settings={'{"model":'}
+        settings='{"model":'
         onChange={onChange}
       />
     )
@@ -219,7 +219,7 @@ describe('AgenticWorkflowModelSetting', () => {
       <AgenticWorkflowModelSetting
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
-        settings={'{"model":"eu.anthropic.claude-opus-5"}'}
+        settings='{"model":"eu.anthropic.claude-opus-5"}'
         onChange={jest.fn()}
       />
     )

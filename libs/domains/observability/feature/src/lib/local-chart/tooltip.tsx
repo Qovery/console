@@ -19,6 +19,7 @@ export type GroupedEntry = {
 export type UnitType =
   | 'mCPU'
   | 'MiB'
+  | 'GiB'
   | 'req/s'
   | 'ms'
   | 'bytes'

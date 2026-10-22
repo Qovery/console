@@ -21,9 +21,7 @@ import { Fragment, type KeyboardEvent, type MouseEvent, useCallback, useMemo, us
 import { P, match } from 'ts-pattern'
 // This import introduces a circular dependency with @qovery/shared/devops-copilot/feature.
 // Keep in mind for future refactoring if possible.
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   Button,
   CopyToClipboardButtonIcon,
@@ -79,16 +77,13 @@ export function EnvironmentDeploymentList() {
   })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
 
-  const logsLink =
-    ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-    ENVIRONMENT_STAGES_URL()
-
   const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId, suspense: true })
   const { data: deploymentHistoryQueue = [] } = useDeploymentQueue({ environmentId, suspense: true })
 
   const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
+    organizationId: environment?.organization.id ?? '',
     projectId: environment?.project.id ?? '',
-    logsLink,
+    environmentId,
   })
   const { mutate: cancelDeploymentQueueService } = useCancelDeploymentQueueEnvironment({
     environmentId,

@@ -1,4 +1,5 @@
 import {
+  APIVariableScopeEnum,
   AgenticWorkflowExecutionMode,
   AgenticWorkflowModelType,
   type GitProviderEnum,
@@ -134,7 +135,16 @@ export function AgenticWorkflowCreationFlow({ children, onExit, selectedTemplate
     ...selectedTemplate?.seed,
   }))
   const [variablesDefaultValues] = useState<FlowVariableData>(() => ({
-    variables: selectedTemplate?.variables ?? [],
+    variables: [
+      {
+        variable: 'MAX_TURNS',
+        value: '200',
+        isSecret: false,
+        scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
+        description: 'Maximum number of turns the agent can take during a run.',
+      },
+      ...(selectedTemplate?.variables ?? []),
+    ],
     externalSecrets: [],
   }))
   const variablesForm = useForm<FlowVariableData>({

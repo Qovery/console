@@ -18,20 +18,20 @@ jest.mock('../hooks/use-clone-service/use-clone-service', () => {
   }
 })
 
+const mockUseService = jest.fn()
 jest.mock('../hooks/use-service/use-service', () => ({
   ...jest.requireActual('../hooks/use-service/use-service'),
-  useService: () => ({
-    data: {
-      id: '1',
-      serviceType: 'APPLICATION',
-      name: 'my-service',
-    },
-  }),
+  useService: (...args: unknown[]) => mockUseService(...args),
 }))
 
 jest.mock('../hooks/use-environments/use-environments', () => ({
   ...jest.requireActual('../hooks/use-environments/use-environments'),
   useEnvironments: () => ({ data: mockEnvironments, isLoading: false }),
+}))
+
+jest.mock('@qovery/domains/projects/feature', () => ({
+  ...jest.requireActual('@qovery/domains/projects/feature'),
+  useProjects: () => ({ data: [{ id: '1', name: 'my-project' }], isLoading: false }),
 }))
 
 const mockNavigate = jest.fn()
@@ -43,14 +43,30 @@ jest.mock('@tanstack/react-router', () => ({
 const props: ServiceCloneModalProps = {
   onClose: jest.fn(),
   serviceId: '1',
+  serviceType: 'APPLICATION',
   organizationId: '0',
   projectId: '1',
 }
 
 describe('ServiceCloneModal', () => {
+  beforeEach(() => {
+    mockUseService.mockReturnValue({
+      data: {
+        id: '1',
+        serviceType: 'APPLICATION',
+        name: 'my-service',
+      },
+    })
+  })
+
   it('should match snapshot', async () => {
     const { container } = renderWithProviders(<ServiceCloneModal {...props} />)
     expect(container).toMatchSnapshot()
+  })
+
+  it('should fetch the service with its type so the details query is enabled', () => {
+    renderWithProviders(<ServiceCloneModal {...props} />)
+    expect(mockUseService).toHaveBeenCalledWith({ serviceId: '1', serviceType: 'APPLICATION' })
   })
 
   it('should submit form on click on button', async () => {

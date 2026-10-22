@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'state-util-queries',
   preset: '../../../jest.preset.js',
   transform: {

@@ -13,7 +13,7 @@ exports[`AutoDeploySetting should match snapshot 1`] = `
         class="w-8 h-4.5 outline-brand-11 inline-flex shrink-0 items-center rounded-full border-0 p-0.5 outline-0 disabled:pointer-events-none focus-visible:[&:active]:outline-0 focus-visible:[&:not(:active)]:outline-2 focus-visible:[&:not(:active)]:outline-offset-2 cursor-pointer bg-surface-neutral-componentActive"
         data-state="unchecked"
         data-testid="input-toggle-button"
-        id=":r6:"
+        id="_r_6_"
         role="switch"
         type="button"
         value="false"
@@ -26,7 +26,7 @@ exports[`AutoDeploySetting should match snapshot 1`] = `
       </button>
       <label
         class=" ml-3 cursor-pointer flex flex-col gap-1"
-        for=":r6:"
+        for="_r_6_"
       >
         <p
           class="font-medium text-neutral"

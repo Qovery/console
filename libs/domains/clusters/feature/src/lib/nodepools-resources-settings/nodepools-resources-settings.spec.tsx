@@ -1,7 +1,12 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { NodepoolsResourcesSettings, formatTimeRange, formatWeekdays, shortenDay } from './nodepools-resources-settings'
+
+jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
+
+const mockUseFeatureFlagEnabled = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
 
 const mockCluster = {
   features: [
@@ -84,6 +89,132 @@ describe('NodepoolsResourcesSettings', () => {
   })
 
   describe('Component', () => {
+    beforeEach(() => {
+      mockUseFeatureFlagEnabled.mockReturnValue(true)
+    })
+
+    it('hides drift blocking in the summary when the feature flag is off', () => {
+      mockUseFeatureFlagEnabled.mockReturnValue(false)
+      renderWithProviders(
+        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
+          defaultValues: {
+            karpenter: {
+              qovery_node_pools: {
+                stable_override: {
+                  drift_blocking: {
+                    enabled: true,
+                    days: Object.values(WeekdayEnum),
+                    start_time: 'PT21:00',
+                    duration: 'PT2H',
+                  },
+                },
+              },
+            },
+          },
+        })
+      )
+
+      expect(screen.queryByText('Drift blocking')).not.toBeInTheDocument()
+      expect(screen.queryByText('Every day, 9:00 pm to 11:00 pm (UTC)')).not.toBeInTheDocument()
+    })
+
+    it('shows disabled drift blocking without parsing its inactive schedule', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
+          defaultValues: {
+            karpenter: {
+              qovery_node_pools: {
+                stable_override: {
+                  drift_blocking: {
+                    enabled: false,
+                    days: Object.values(WeekdayEnum),
+                    start_time: 'unused',
+                    duration: 'unused',
+                  },
+                },
+              },
+            },
+          },
+        })
+      )
+
+      expect(
+        within(screen.getByText('Drift blocking').parentElement as HTMLElement).getByText('Disabled')
+      ).toBeInTheDocument()
+    })
+
+    it('shows an unavailable schedule when an enabled drift window has no times', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
+          defaultValues: {
+            karpenter: {
+              qovery_node_pools: {
+                stable_override: {
+                  drift_blocking: {
+                    enabled: true,
+                    days: Object.values(WeekdayEnum),
+                    start_time: '',
+                    duration: '',
+                  },
+                },
+              },
+            },
+          },
+        })
+      )
+
+      const driftSection = screen.getByText('Drift blocking').parentElement as HTMLElement
+      expect(within(driftSection).getByText('Enabled, schedule unavailable')).toBeInTheDocument()
+    })
+
+    it('shows a daily drift window for all seven weekdays', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
+          defaultValues: {
+            karpenter: {
+              qovery_node_pools: {
+                stable_override: {
+                  drift_blocking: {
+                    enabled: true,
+                    days: Object.values(WeekdayEnum),
+                    start_time: 'PT21:00',
+                    duration: 'PT2H',
+                  },
+                },
+              },
+            },
+          },
+        })
+      )
+
+      const driftSection = screen.getByText('Drift blocking').parentElement as HTMLElement
+      expect(within(driftSection).getByText('Every day, 9:00 pm to 11:00 pm (UTC)')).toBeInTheDocument()
+    })
+
+    it('shows the configured weekdays for a drift window in existing cluster data', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
+          defaultValues: {
+            karpenter: {
+              qovery_node_pools: {
+                stable_override: {
+                  drift_blocking: {
+                    enabled: true,
+                    days: ['MONDAY'],
+                    start_time: 'PT21:00',
+                    duration: 'PT2H',
+                  },
+                },
+              },
+            },
+          },
+        })
+      )
+
+      const driftSection = screen.getByText('Drift blocking').parentElement as HTMLElement
+      expect(within(driftSection).getByText('Monday, 9:00 pm to 11:00 pm (UTC)')).toBeInTheDocument()
+    })
+
     it('should display default values from cluster configuration', () => {
       renderWithProviders(
         wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
@@ -109,6 +240,12 @@ describe('NodepoolsResourcesSettings', () => {
                     start_time: 'PT20:00',
                     duration: 'PT4H',
                   },
+                  drift_blocking: {
+                    enabled: true,
+                    days: Object.values(WeekdayEnum),
+                    start_time: 'PT21:00',
+                    duration: 'PT2H',
+                  },
                   spot_enabled: true,
                 },
               },
@@ -122,6 +259,7 @@ describe('NodepoolsResourcesSettings', () => {
       expect(screen.getByText('Memory limit: 32 GiB')).toBeInTheDocument()
       expect(screen.getByText('Mon, Wed, Fri,')).toBeInTheDocument()
       expect(screen.getByText('8:00 pm to 12:00 am')).toBeInTheDocument()
+      expect(screen.getByText('Every day, 9:00 pm to 11:00 pm (UTC)')).toBeInTheDocument()
 
       // Check default nodepool values
       expect(screen.getByText('vCPU limit: 12 vCPU;')).toBeInTheDocument()

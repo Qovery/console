@@ -1,6 +1,6 @@
 import selectEvent from 'react-select-event'
 import { webhookFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useCreateWebhookHook from '../../hooks/use-create-webhook/use-create-webhook'
 import * as useEditWebhookHook from '../../hooks/use-edit-webhook/use-edit-webhook'
 import WebhookCrudModal, { type WebhookCrudModalFeatureProps } from './webhook-crud-modal'
@@ -33,9 +33,11 @@ describe('WebhookCrudModal', () => {
     })
   })
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhook} />)
     expect(baseElement).toBeTruthy()
+    // The existing webhook values are validated on mount
+    await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
   })
 
   it('should render all the inputs when creating', () => {
@@ -50,7 +52,7 @@ describe('WebhookCrudModal', () => {
     screen.getByLabelText('Environment type filter')
   })
 
-  it('should not show secret field when editing (before form is dirty)', () => {
+  it('should not show secret field when editing (before form is dirty)', async () => {
     renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhook} />)
 
     screen.getByLabelText('URL')
@@ -58,6 +60,8 @@ describe('WebhookCrudModal', () => {
     screen.getByLabelText('Description')
     expect(screen.queryByLabelText('Secret')).not.toBeInTheDocument()
     screen.getByLabelText('Events')
+    // The existing webhook values are validated on mount
+    await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
   })
 
   it('should mutate useCreateWebhook', async () => {
@@ -269,11 +273,13 @@ describe('WebhookCrudModal', () => {
       expect(screen.getByLabelText('Secret')).toBeInTheDocument()
     })
 
-    it('should not show secret field when editing webhook (before form is dirty)', () => {
+    it('should not show secret field when editing webhook (before form is dirty)', async () => {
       renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhookWithSecret} />)
 
       expect(screen.queryByLabelText('Secret')).not.toBeInTheDocument()
       expect(screen.queryByText('Confirm your secret')).not.toBeInTheDocument()
+      // The existing webhook values are validated on mount
+      await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
     })
 
     it('should show "Confirm your secret" section when editing webhook with existing secret and form is dirty', async () => {

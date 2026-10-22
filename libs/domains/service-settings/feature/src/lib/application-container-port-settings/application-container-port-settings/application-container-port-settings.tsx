@@ -152,7 +152,7 @@ function ApplicationContainerPortSettingsContent() {
             .with({ serviceType: 'CONTAINER' }, (container) =>
               buildEditServicePayload({
                 service: container,
-                request: cloneService as ContainerRequest,
+                request: cloneService as Partial<ContainerRequest>,
               })
             )
             .exhaustive()

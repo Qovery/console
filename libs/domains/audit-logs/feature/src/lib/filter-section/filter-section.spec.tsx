@@ -95,8 +95,8 @@ describe('FilterSection', () => {
       />
     )
 
-    expect(screen.getByRole('button', { name: /Target Type: Agent task/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Agent task: Review pull requests/ })).toBeInTheDocument()
+    expect(screen.getByText(/^Target Type:/)).toHaveTextContent('Target Type: Agent task')
+    expect(screen.getByText(/^Agent task:/)).toHaveTextContent('Agent task: Review pull requests')
   })
 
   it('should render user badge when triggeredBy is set', () => {
@@ -133,7 +133,7 @@ describe('FilterSection', () => {
         item: { value: 'project-123', name: 'My Project' },
       },
     ]
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <FilterSection
         {...props}
         queryParams={queryParamsWithProject as DecodedValueMap<AuditLogsParams>}
@@ -141,9 +141,7 @@ describe('FilterSection', () => {
       />
     )
 
-    screen.getByText(/Project:/)
-    const buttons = container.querySelectorAll('button')
-    expect(buttons[1]?.textContent).toContain('My Project')
+    expect(screen.getByText(/^Project:/)).toHaveTextContent('Project: My Project')
   })
 
   it('should render environment badge when environmentId is set with selectedItems', () => {
@@ -156,7 +154,7 @@ describe('FilterSection', () => {
         item: { value: 'env-123', name: 'Production' },
       },
     ]
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <FilterSection
         {...props}
         queryParams={queryParamsWithEnvironment as DecodedValueMap<AuditLogsParams>}
@@ -164,9 +162,7 @@ describe('FilterSection', () => {
       />
     )
 
-    screen.getByText(/Environment:/)
-    const buttons = container.querySelectorAll('button')
-    expect(buttons[1]?.textContent).toContain('Production')
+    expect(screen.getByText(/^Environment:/)).toHaveTextContent('Environment: Production')
   })
 
   it('should render target badge when targetId is set with selectedItems', () => {
@@ -180,7 +176,7 @@ describe('FilterSection', () => {
         item: { value: 'target-123', name: 'My App' },
       },
     ]
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <FilterSection
         {...props}
         queryParams={queryParamsWithTarget as DecodedValueMap<AuditLogsParams>}
@@ -188,9 +184,7 @@ describe('FilterSection', () => {
       />
     )
 
-    screen.getByText(/Application:/)
-    const buttons = container.querySelectorAll('button')
-    expect(buttons[1]?.textContent).toContain('My App')
+    expect(screen.getByText(/^Application:/)).toHaveTextContent('Application: My App')
   })
 
   it('should render multiple badges when multiple filters are set', () => {

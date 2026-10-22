@@ -102,4 +102,16 @@ describe('InputTextSmall', () => {
     await userEvent.click(button)
     expect(input).toHaveAttribute('type', 'password')
   })
+
+  it('labels the input with its explicit id', () => {
+    renderWithProviders(<InputTextSmall {...props} id="retention" label="Retention" />)
+
+    expect(screen.getByLabelText('Retention')).toHaveAttribute('id', 'retention')
+  })
+
+  it('falls back to the label as input id', () => {
+    renderWithProviders(<InputTextSmall {...props} label="Retention" />)
+
+    expect(screen.getByLabelText('Retention')).toHaveAttribute('id', 'Retention')
+  })
 })

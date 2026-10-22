@@ -13,7 +13,7 @@ exports[`ForceUnlockModal should match snapshot 1`] = `
     <p
       class="mt-2 text-sm text-neutral-subtle"
     >
-      <div
+      <span
         class="flex flex-col gap-1"
       >
         <span>
@@ -22,7 +22,7 @@ exports[`ForceUnlockModal should match snapshot 1`] = `
         <span>
           Use only if a previous job crashed or left the state blocked. If the state is not locked, nothing will happen.
         </span>
-      </div>
+      </span>
     </p>
     <form
       class="mt-6"
@@ -42,7 +42,7 @@ exports[`ForceUnlockModal should match snapshot 1`] = `
         <input
           aria-hidden="true"
           name="acknowledge"
-          style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+          style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
           tabindex="-1"
           type="checkbox"
           value="on"

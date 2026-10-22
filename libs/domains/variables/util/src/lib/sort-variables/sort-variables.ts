@@ -4,7 +4,7 @@ export function sortVariables(variables: VariableResponse[]): VariableResponse[]
   const sortedAscii = variables
     .filter((sorted) => !sorted.aliased_variable && !sorted.overridden_variable)
     .sort((a, b) => {
-      let serviceNameSorting = 0
+      let serviceNameSorting: number
       let scopeOrdering = 0
       if (a.scope === APIVariableScopeEnum.BUILT_IN && b.scope !== APIVariableScopeEnum.BUILT_IN) {
         scopeOrdering = -1

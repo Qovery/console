@@ -16,7 +16,7 @@ export type Props = {
   children?: ReactNode
 } & Omit<Params, 'Component'>
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
 
 export const Wrapper = ({ children, route = '/' }: Props) => {
   window.history.pushState({}, 'Test page', route)

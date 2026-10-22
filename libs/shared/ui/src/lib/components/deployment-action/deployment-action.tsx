@@ -1,6 +1,8 @@
 import {
+  ClusterDeploymentHistoryOperationEnum,
   type ClusterStateEnum,
   type DeploymentHistoryTriggerAction,
+  type ServiceActionEnum,
   ServiceActionStatusEnum,
   type ServiceSubActionEnum,
   type StageStatusEnum,
@@ -136,8 +138,27 @@ export const getDeploymentAction = (
     .exhaustive()
 }
 
+const getDeploymentOperationAction = (operation?: ClusterDeploymentHistoryOperationEnum) =>
+  operation === ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE
+    ? {
+        status: 'Operator',
+        description: 'Operator update',
+        icon: <Icon iconStyle="regular" iconName="rotate-right" />,
+      }
+    : undefined
+
+export const getTriggerAction = (statusDetails?: {
+  action?: ServiceActionEnum
+  sub_action?: ServiceSubActionEnum
+}): ServiceActionEnum | ServiceSubActionEnum | undefined => {
+  if (!statusDetails) return undefined
+  if (statusDetails.sub_action && statusDetails.sub_action !== 'NONE') return statusDetails.sub_action
+  return statusDetails.action ?? 'UNKNOWN'
+}
+
 export const DeploymentAction = ({
   status,
+  operation,
   className,
   iconClassName,
   textClassName,
@@ -151,17 +172,22 @@ export const DeploymentAction = ({
     | StageStatusEnum
     | StepMetricStatusEnum
     | undefined
+  operation?: ClusterDeploymentHistoryOperationEnum
   className?: string
   iconClassName?: string
   textClassName?: string
 }) => {
-  const action = getDeploymentAction(status)
+  const operationAction = getDeploymentOperationAction(operation)
+  const action = operationAction ?? getDeploymentAction(status)
   if (!status || !action) return null
 
   return (
     <div className={twMerge('flex items-center gap-2 text-sm', className)}>
       <span className={iconClassName}>{action.icon}</span>
-      <span className={twMerge('text-neutral', textClassName)}>{action.status}</span>
+      <span className={twMerge('text-neutral', textClassName)} aria-hidden={operationAction ? true : undefined}>
+        {action.status}
+      </span>
+      {operationAction && <span className="sr-only">{operationAction.description}</span>}
     </div>
   )
 }

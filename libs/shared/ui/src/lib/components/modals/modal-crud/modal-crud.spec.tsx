@@ -14,9 +14,11 @@ describe('ModalCrud', () => {
     }
   })
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = render(wrapWithReactHookForm(<ModalCrud {...props} />))
     expect(baseElement).toBeTruthy()
+    // Wait for the initial form validation to settle
+    await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
   })
 
   it('should submit the form', async () => {

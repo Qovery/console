@@ -1,11 +1,11 @@
 import { type SerializedError } from '@qovery/shared/utils'
-import toast from './toast'
+import toast, { type ToastActionCallback } from './toast'
 
 export function toastError(
   error: SerializedError | Error,
   title?: string,
   description?: string,
-  callback?: () => void,
+  callback?: ToastActionCallback,
   labelAction?: string
 ): void {
   toast(

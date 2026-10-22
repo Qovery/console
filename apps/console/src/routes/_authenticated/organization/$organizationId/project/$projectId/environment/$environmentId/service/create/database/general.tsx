@@ -1,8 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { type ClusterFeatureAwsExistingVpc } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
-import { useCluster } from '@qovery/domains/clusters/feature'
-import { useEnvironment, useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
+import { useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { type DatabaseCreateGeneralData, DatabaseStepGeneral } from '@qovery/domains/services/feature'
 import { serviceCreateParamsSchema } from '@qovery/shared/router'
@@ -38,21 +36,11 @@ function GeneralContent() {
   const navigate = useNavigate()
   const creationFlowUrl = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/database`
 
-  const { data: environment } = useEnvironment({ environmentId, suspense: true })
-  const { data: cluster } = useCluster({
-    organizationId,
-    clusterId: environment?.cluster_id ?? '',
-    enabled: Boolean(environment?.cluster_id),
-    suspense: true,
-  })
   const { data: databaseConfigurations } = useListDatabaseConfigurations({
     environmentId,
     enabled: Boolean(environmentId),
     suspense: true,
   })
-  const clusterVpc = cluster?.features?.find((feature) => feature.id === 'EXISTING_VPC')?.value_object?.value as
-    | ClusterFeatureAwsExistingVpc
-    | undefined
 
   const handleSubmit = (_data: DatabaseCreateGeneralData) => {
     navigate({ to: `${creationFlowUrl}/resources`, search })
@@ -63,9 +51,6 @@ function GeneralContent() {
       onSubmit={handleSubmit}
       labelSetting={<LabelSetting />}
       annotationSetting={<AnnotationSetting />}
-      cloudProvider={environment?.cloud_provider.provider}
-      cluster={cluster}
-      clusterVpc={clusterVpc}
       databaseConfigurations={databaseConfigurations}
     />
   )

@@ -49,7 +49,7 @@ describe('SettingsPolicyApiToken', () => {
 
     // Its own h1 rather than a sub-heading of the API token page: the two are separate settings
     // pages now, each reached from its own sidebar entry.
-    expect(screen.getByRole('heading', { level: 1, name: /Policy API Token \(Beta\)/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: /Policy API Token \(New\)/i })).toBeInTheDocument()
   })
 
   it('should link to the policy token documentation', () => {

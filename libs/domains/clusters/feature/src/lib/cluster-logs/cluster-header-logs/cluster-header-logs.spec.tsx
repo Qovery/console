@@ -1,5 +1,5 @@
 import download from 'downloadjs'
-import { ClusterStateEnum } from 'qovery-typescript-axios'
+import { ClusterDeploymentHistoryOperationEnum, ClusterStateEnum } from 'qovery-typescript-axios'
 import { type RefObject } from 'react'
 import { clusterFactoryMock, clusterLogFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -9,7 +9,7 @@ jest.mock('downloadjs', () => jest.fn())
 
 window.HTMLElement.prototype.scroll = jest.fn()
 
-const refScrollSection: RefObject<HTMLDivElement> = {
+const refScrollSection: RefObject<HTMLDivElement | null> = {
   current: document.createElement('div'),
 }
 
@@ -43,6 +43,20 @@ describe('ClusterHeaderLogs', () => {
     expect(screen.getByText('Console')).toBeInTheDocument()
     expect(screen.getByText('deployed by')).toBeInTheDocument()
     expect(screen.getByText('Romain Billard')).toBeInTheDocument()
+  })
+
+  it('should render an Operator update badge when operation is OPERATOR_UPDATE', () => {
+    renderWithProviders(
+      <ClusterHeaderLogs {...props} operation={ClusterDeploymentHistoryOperationEnum.OPERATOR_UPDATE} />
+    )
+
+    expect(screen.getByText('Operator update')).toBeInTheDocument()
+  })
+
+  it('should not render an Operator update badge when operation is CLUSTER', () => {
+    renderWithProviders(<ClusterHeaderLogs {...props} operation={ClusterDeploymentHistoryOperationEnum.CLUSTER} />)
+
+    expect(screen.queryByText('Operator update')).not.toBeInTheDocument()
   })
 
   it('should trigger scroll up on click', async () => {

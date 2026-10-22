@@ -2,86 +2,11 @@ import clsx from 'clsx'
 import { type ClusterNodeDto, type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { Badge, Icon, ProgressBar, Tooltip } from '@qovery/shared/ui'
+import { Badge, Icon, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
-import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
+import { formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
-
-interface MetricProgressBarProps {
-  type: 'cpu' | 'memory'
-  reserved: number
-  reservedRaw: number
-  total: number
-  totalRaw: number
-  unit: string
-  isPressure?: boolean
-}
-
-function MetricProgressBar({
-  type,
-  reserved,
-  reservedRaw,
-  total,
-  totalRaw,
-  unit,
-  isPressure = false,
-}: MetricProgressBarProps) {
-  const reservedPercentage = calculatePercentage(reservedRaw, totalRaw)
-  const totalPercentage = Math.round(reservedPercentage)
-
-  return (
-    <div className="flex w-full items-center gap-1 text-ssm">
-      <span
-        className={clsx('flex min-w-8 items-center gap-1 whitespace-nowrap', {
-          'text-negative': isPressure,
-          'text-neutral-subtle': !isPressure,
-        })}
-      >
-        {totalPercentage}%
-        {isPressure && (
-          <Tooltip content={`Node has ${type} pressure condition`}>
-            <span className="mr-1.5">
-              <Icon iconName="circle-exclamation" iconStyle="regular" />
-            </span>
-          </Tooltip>
-        )}
-      </span>
-      <Tooltip
-        content={
-          <div className="flex flex-col gap-1 font-normal">
-            <div className="flex items-center justify-between border-b border-neutralInvert">
-              <span className="px-2.5 py-1.5">{type === 'cpu' ? 'CPU' : 'Memory'}</span>
-            </div>
-            <div className="flex flex-col gap-1 px-2.5 py-1.5">
-              <div className="flex w-full items-center gap-1.5">
-                <span className="flex items-center gap-2">
-                  <span className="bg-brand h-2 w-2 rounded-full" />
-                  Reserved
-                </span>
-                <span className="ml-auto block">
-                  {reserved} {unit}
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between border-t border-neutralInvert px-2.5 py-1.5">
-              <span>Total Available</span>
-              <span className="ml-auto block">
-                {total} {unit}
-              </span>
-            </div>
-          </div>
-        }
-        classNameContent="w-[173px] p-0"
-      >
-        <div className="relative w-full">
-          <ProgressBar.Root>
-            <ProgressBar.Cell value={reservedPercentage} color="var(--brand-9)" />
-          </ProgressBar.Root>
-        </div>
-      </Tooltip>
-    </div>
-  )
-}
+import { MetricProgressBar } from '../metric-progress-bar/metric-progress-bar'
 
 export interface ClusterTableNodeProps {
   organizationId: string

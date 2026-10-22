@@ -13,12 +13,14 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
     tabindex="0"
   />
   <button
-    aria-controls="radix-:rd:"
+    aria-controls="radix-_r_d_"
     aria-expanded="true"
     aria-haspopup="dialog"
     aria-hidden="true"
     class=""
     data-aria-hidden="true"
+    data-radix-popper-align="end"
+    data-radix-popper-side="bottom"
     data-state="open"
     type="button"
   >
@@ -33,7 +35,7 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
       data-align="end"
       data-side="bottom"
       data-state="open"
-      id="radix-:rd:"
+      id="radix-_r_d_"
       role="dialog"
       style="--radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
       tabindex="-1"

@@ -11,6 +11,7 @@ import { buildGitRepoUrl, generateScopeLabel, prepareVariableImportRequest } fro
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
 import { buildDockerfileFragment } from '../../utils/build-dockerfile-fragment'
+import { isKubernetesBackend } from '../../utils/is-kubernetes-backend'
 import { TERRAFORM_ENGINES } from '../../utils/terraform-engines'
 
 export const TerraformStepSummary = () => {
@@ -223,7 +224,7 @@ export const TerraformStepSummary = () => {
                 />
                 <SummaryValue
                   label="Backend"
-                  value={'kubernetes' in generalData.backend ? 'Kubernetes' : 'User provided'}
+                  value={isKubernetesBackend(generalData.backend) ? 'Kubernetes' : 'User provided'}
                 />
                 <SummaryValue
                   label="Execution credentials"

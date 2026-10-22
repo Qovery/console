@@ -15,7 +15,7 @@ export function useDeployEnvironment({ projectId }: { projectId: string }) {
         queryKey: queries.environments.listStatuses(projectId).queryKey,
       })
       queryClient.invalidateQueries({
-        queryKey: queries.environments.deploymentHistoryV2({ environmentId }).queryKey,
+        queryKey: [...queries.environments.deploymentHistoryV2._def, environmentId],
       })
       queryClient.invalidateQueries({
         queryKey: queries.services.deploymentHistory._def,

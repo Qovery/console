@@ -11,7 +11,7 @@ import { type renderStreamingMessageWithMermaid } from '../streaming-mermaid-ren
 import { StreamingMessage } from '../streaming-message/streaming-message'
 
 export interface MessageListProps {
-  scrollAreaRef: RefObject<HTMLDivElement>
+  scrollAreaRef: RefObject<HTMLDivElement | null>
   expand: boolean
   thread: Message[]
   onSuggestionClick: (label: string) => void

@@ -30,7 +30,7 @@ export const observability = createQueryKeys('observability', {
     startDate: string
     endDate: string
   }) => ({
-    queryKey: ['containerName', clusterId, serviceId, resourceType],
+    queryKey: ['containerName', clusterId, serviceId, resourceType, startDate, endDate],
     async queryFn() {
       const endpoints = {
         deployment: `api/v1/label/deployment/values?match[]=kube_deployment_labels{label_qovery_com_service_id="${serviceId}"}`,
@@ -69,7 +69,7 @@ export const observability = createQueryKeys('observability', {
     startDate: string
     endDate: string
   }) => ({
-    queryKey: ['ingressName', clusterId, serviceId],
+    queryKey: ['ingressName', clusterId, serviceId, startDate, endDate],
     async queryFn() {
       const endpoint = `api/v1/label/ingress/values?match[]=kube_ingress_labels{label_qovery_com_associated_service_id="${serviceId}"}`
       const response = await clusterApi.getClusterMetrics(
@@ -103,7 +103,7 @@ export const observability = createQueryKeys('observability', {
     startDate: string
     endDate: string
   }) => ({
-    queryKey: ['httpPortName', clusterId, serviceId],
+    queryKey: ['httpPortName', clusterId, serviceId, startDate, endDate],
     async queryFn() {
       const endpoint = `api/v1/label/httproute_name/values?match[]=kube_httproute_labels{qovery_com_associated_service_id="${serviceId}"}`
       const response = await clusterApi.getClusterMetrics(
@@ -173,7 +173,7 @@ export const observability = createQueryKeys('observability', {
     startDate: string
     endDate: string
   }) => ({
-    queryKey: ['namespace', clusterId, serviceId, resourceType],
+    queryKey: ['namespace', clusterId, serviceId, resourceType, startDate, endDate],
     async queryFn() {
       const endpoints = {
         deployment: `api/v1/label/namespace/values?match[]=kube_deployment_labels{label_qovery_com_service_id="${serviceId}"}`,
@@ -211,7 +211,7 @@ export const observability = createQueryKeys('observability', {
     startDate: string
     endDate: string
   }) => ({
-    queryKey: ['podNames', clusterId, statefulsetName],
+    queryKey: ['podNames', clusterId, statefulsetName, startDate, endDate],
     async queryFn() {
       const endpoint = `api/v1/label/pod/values?match[]=kube_pod_owner{owner_kind="StatefulSet",owner_name="${statefulsetName}"}`
       const response = await clusterApi.getClusterMetrics(
@@ -264,7 +264,21 @@ export const observability = createQueryKeys('observability', {
     queryRange?: 'query' | 'query_range'
     timeRange?: string
   }) => ({
-    queryKey: [query, timeRange, startTimestamp, endTimestamp, step],
+    queryKey: [
+      query,
+      timeRange,
+      startTimestamp,
+      endTimestamp,
+      step,
+      clusterId,
+      queryRange,
+      time,
+      maxSourceResolution,
+      boardShortName,
+      metricShortName,
+      traceId,
+      alignedRange,
+    ],
     async queryFn() {
       const response = await clusterApi.getClusterMetrics(
         clusterId,

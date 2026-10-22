@@ -1,6 +1,4 @@
-/* eslint-disable */
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'shared-auth',
   preset: '../../../jest.preset.js',
   transform: {

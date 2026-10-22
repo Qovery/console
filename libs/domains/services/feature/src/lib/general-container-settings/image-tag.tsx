@@ -66,7 +66,7 @@ export function ImageTag({
           label="Image tag"
           hint="Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)"
           isSearchable
-          filterOption="startsWith"
+          filterOption="fuzzy"
           isCreatable
         />
       )}

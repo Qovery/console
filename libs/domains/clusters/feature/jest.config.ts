@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'domains-clusters-feature',
   preset: '../../../../jest.preset.js',
   transform: {

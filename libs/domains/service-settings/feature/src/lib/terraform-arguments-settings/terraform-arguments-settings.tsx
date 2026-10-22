@@ -14,62 +14,62 @@ const commands = [
     name: 'init',
     description: 'Prepare your working directory for other commands.',
     hint: (
-      <div>
+      <span>
         Example:{' '}
         <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">
           -lock=false -upgrade
         </code>
         . Arguments are separated by a space.
-      </div>
+      </span>
     ),
   },
   {
     name: 'validate',
     description: 'Check whether the configuration is valid.',
     hint: (
-      <div>
+      <span>
         Example:{' '}
         <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">-json</code> or{' '}
         <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">-no-color</code>
         . Arguments are separated by a space.
-      </div>
+      </span>
     ),
   },
   {
     name: 'plan',
     description: 'Show changes required by the current configuration.',
     hint: (
-      <div>
+      <span>
         Example:{' '}
         <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">
           -refresh=false
         </code>
         . Arguments are separated by a space.
-      </div>
+      </span>
     ),
   },
   {
     name: 'apply',
     description: 'Create or update infrastructure.',
     hint: (
-      <div>
+      <span>
         Example:{' '}
         <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">
           -auto-approve
         </code>
         . Arguments are separated by a space.
-      </div>
+      </span>
     ),
   },
   {
     name: 'destroy',
     description: 'Destroy previously-created infrastructure.',
     hint: (
-      <div>
+      <span>
         Example:{' '}
         <code className="rounded bg-surface-neutral-component px-1 py-0.5 text-2xs text-neutral-subtle">-target</code>.
         Arguments are separated by a space.
-      </div>
+      </span>
     ),
   },
 ]
@@ -190,8 +190,8 @@ const TerraformArgumentsSettingsContent = ({ service }: { service: Terraform }) 
 }
 
 export function TerraformArgumentsSettings() {
-  const { serviceId = '' } = useParams({ strict: false })
-  const { data: service } = useService({ serviceId, suspense: true })
+  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
 
   if (service?.serviceType !== 'TERRAFORM') return null
 

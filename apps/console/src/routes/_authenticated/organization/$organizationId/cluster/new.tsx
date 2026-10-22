@@ -1,15 +1,20 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { ClusterNew } from '@qovery/domains/clusters/feature'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { z } from 'zod'
+import { ClusterAdd, ClusterNew } from '@qovery/domains/clusters/feature'
 import { Heading, Icon, Link, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/new')({
   component: RouteComponent,
+  validateSearch: z.object({ 'no-demo': z.boolean().optional().catch(false) }),
 })
 
 function RouteComponent() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Create new cluster')
+  const { 'no-demo': hideDemo = false } = Route.useSearch()
+  const isEngineV2Enabled = Boolean(useFeatureFlagEnabled('engine-v2-platform-configuration'))
+  useDocumentTitle(isEngineV2Enabled ? 'Add cluster' : 'Create new cluster')
 
   return (
     <Section className="flex w-full flex-1 flex-col pb-48 pt-6">
@@ -20,12 +25,12 @@ function RouteComponent() {
         className="mb-2 text-xs"
       >
         <Icon iconName="arrow-left" className="mr-1" />
-        Back to clusters
+        {isEngineV2Enabled ? 'Back to cluster list' : 'Back to clusters'}
       </Link>
       <div className="flex flex-col border-b border-neutral pb-6">
-        <Heading className="text-2xl">Install cluster</Heading>
+        <Heading className="text-2xl">{isEngineV2Enabled ? 'Add cluster' : 'Install cluster'}</Heading>
       </div>
-      <ClusterNew />
+      {isEngineV2Enabled ? <ClusterAdd hideDemo={hideDemo} /> : <ClusterNew hideDemo={hideDemo} />}
     </Section>
   )
 }

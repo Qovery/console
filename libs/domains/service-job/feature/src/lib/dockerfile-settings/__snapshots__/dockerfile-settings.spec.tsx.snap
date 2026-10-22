@@ -31,6 +31,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
               aria-live="polite"
               aria-relevant="additions text"
               class="css-1f43avz-a11yText-A11yText"
+              role="log"
             />
             <div
               class="input-select__control css-13cymwt-control"
@@ -44,6 +45,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
                   Git repository
                 </span>
                 <input
+                  aria-activedescendant=""
                   aria-autocomplete="list"
                   aria-expanded="false"
                   aria-haspopup="true"
@@ -250,6 +252,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
               aria-live="polite"
               aria-relevant="additions text"
               class="css-1f43avz-a11yText-A11yText"
+              role="log"
             />
             <div
               class="input-select__control css-13cymwt-control"
@@ -263,6 +266,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
                   Git repository
                 </span>
                 <input
+                  aria-activedescendant=""
                   aria-autocomplete="list"
                   aria-expanded="false"
                   aria-haspopup="true"

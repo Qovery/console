@@ -45,6 +45,7 @@ exports[`SelectVersionModal should match snapshot 1`] = `
             aria-live="polite"
             aria-relevant="additions text"
             class="css-1f43avz-a11yText-A11yText"
+            role="log"
           />
           <div
             class="input-select__control css-13cymwt-control"
@@ -63,6 +64,7 @@ exports[`SelectVersionModal should match snapshot 1`] = `
                 data-value=""
               >
                 <input
+                  aria-activedescendant=""
                   aria-autocomplete="list"
                   aria-describedby="react-select-2-placeholder"
                   aria-expanded="false"
@@ -196,6 +198,7 @@ exports[`SelectVersionModal should match snapshot with helm version 1`] = `
             aria-live="polite"
             aria-relevant="additions text"
             class="css-1f43avz-a11yText-A11yText"
+            role="log"
           />
           <div
             class="input-select__control css-13cymwt-control"
@@ -213,6 +216,7 @@ exports[`SelectVersionModal should match snapshot with helm version 1`] = `
                 data-value=""
               >
                 <input
+                  aria-activedescendant=""
                   aria-autocomplete="list"
                   aria-expanded="false"
                   aria-haspopup="true"
