@@ -127,7 +127,13 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 </Callout.TextHeading>
                 Choose your plan to activate your account and avoid service interruption at the end of your trial.
               </Callout.Text>
-              <Button size="sm" variant="solid" color="red" onClick={() => props.onAddCreditCardClick?.()}>
+              <Button
+                size="sm"
+                variant="solid"
+                color="red"
+                className="shrink-0"
+                onClick={() => props.onAddCreditCardClick?.()}
+              >
                 Add credit card
               </Button>
             </Callout.Root>
@@ -143,7 +149,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                   subscription starts on this plan. You can switch plans until then.
                 </>
               </Callout.Text>
-              <div className="flex gap-2">
+              <div className="flex shrink-0 gap-2">
                 <Button size="sm" variant="outline" color="neutral" onClick={() => props.onCancelTrialClick?.()}>
                   Cancel free trial
                 </Button>
@@ -221,7 +227,7 @@ function SettingsBillingSummaryContent() {
 
   const { data: creditCards = [] } = useCreditCards({ organizationId, suspense: true })
   const { data: currentCost } = useCurrentCost({ organizationId, suspense: true })
-  const { showChat } = useSupportChat()
+  const { showChat, showPylonForm } = useSupportChat()
   const { isQoveryAdminUser } = useUserRole()
 
   const openPromoCodeModal = () => {
@@ -257,7 +263,7 @@ function SettingsBillingSummaryContent() {
   }
 
   const handleCancelTrialClick = () => {
-    navigate({ to: '/organization/$organizationId/settings/danger-zone', params: { organizationId } })
+    showPylonForm('cancel-free-trial')
   }
 
   // Plan selection and credit card are both managed on the billing details page

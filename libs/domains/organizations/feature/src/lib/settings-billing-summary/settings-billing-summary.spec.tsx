@@ -226,6 +226,22 @@ describe('SettingsBillingSummary', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should open the cancel free trial Pylon form', async () => {
+    const showPylonForm = jest.fn()
+    useSupportChatMock.mockReturnValue({
+      showChat: jest.fn(),
+      showPylonForm,
+    } as unknown as ReturnType<typeof useSupportChat>)
+    useCurrentCostMock.mockReturnValue({
+      data: { ...currentCostMock, remaining_trial_day: 5 },
+    } as unknown as ReturnType<typeof useCurrentCost>)
+
+    const { userEvent } = renderWithProviders(<SettingsBillingSummary />)
+
+    await userEvent.click(screen.getByText('Cancel free trial'))
+    expect(showPylonForm).toHaveBeenCalledWith('cancel-free-trial')
+  })
+
   it('should fetch credit cards and current cost', () => {
     renderWithProviders(<SettingsBillingSummary />)
 
