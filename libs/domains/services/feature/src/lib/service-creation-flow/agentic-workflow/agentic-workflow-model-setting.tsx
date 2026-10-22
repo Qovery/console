@@ -1,4 +1,8 @@
-import { LlmProviderType, type LlmProviderType as LlmProviderTypeValue } from 'qovery-typescript-axios'
+import {
+  AgenticWorkflowModelType,
+  LlmProviderType,
+  type LlmProviderType as LlmProviderTypeValue,
+} from 'qovery-typescript-axios'
 import { useEffect, useRef } from 'react'
 import { match } from 'ts-pattern'
 import { useLlmProviderModels } from '@qovery/domains/organizations/feature'
@@ -24,6 +28,14 @@ export function getAgenticWorkflowModel(value: string) {
 export function updateAgenticWorkflowModel(value: string, model: string) {
   const settings = parseModelSettings(value) ?? {}
   return JSON.stringify({ ...settings, model }, null, 2)
+}
+
+// A workflow has no Anthropic-compatible model type: it runs the Claude engine against the provider's gateway.
+export function getAgenticWorkflowModelType(providerType: LlmProviderTypeValue): AgenticWorkflowModelType {
+  return match(providerType)
+    .with(LlmProviderType.CLAUDE, LlmProviderType.ANTHROPIC_COMPATIBLE, () => AgenticWorkflowModelType.CLAUDE)
+    .with(LlmProviderType.BEDROCK, () => AgenticWorkflowModelType.BEDROCK)
+    .exhaustive()
 }
 
 export interface AgenticWorkflowModelSettingProps {

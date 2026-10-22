@@ -3,7 +3,6 @@ import { useParams } from '@tanstack/react-router'
 import {
   type LlmProviderResponse,
   LlmProviderScope,
-  LlmProviderType,
   type McpServerResponse,
   McpServerScope,
 } from 'qovery-typescript-axios'
@@ -29,6 +28,7 @@ import { useDeleteMcpServer } from '../hooks/use-delete-mcp-server/use-delete-mc
 import { useLlmProviders } from '../hooks/use-llm-providers/use-llm-providers'
 import { useMcpServers } from '../hooks/use-mcp-servers/use-mcp-servers'
 import { LlmProviderCreateEditModal } from '../llm-provider-create-edit-modal/llm-provider-create-edit-modal'
+import { LlmProviderIcon } from '../llm-provider-icon/llm-provider-icon'
 import { McpServerCreateEditModal } from '../mcp-server-create-edit-modal/mcp-server-create-edit-modal'
 
 interface McpServerRowProps {
@@ -184,16 +184,7 @@ function LlmProviderRow({ organizationId, llmProvider, currentUserSub }: LlmProv
     >
       <Section className="min-w-0 space-y-1">
         <div className="flex items-center gap-2">
-          <img
-            src={
-              llmProvider.type === LlmProviderType.CLAUDE
-                ? '/assets/ai-tools/claude.svg'
-                : '/assets/ai-tools/bedrock.svg'
-            }
-            alt=""
-            aria-hidden="true"
-            className="h-5 w-5 rounded-sm"
-          />
+          <LlmProviderIcon type={llmProvider.type} className="rounded-sm" />
           <Heading level={3} className="min-w-0">
             <Truncate truncateLimit={60} text={llmProvider.name} />
           </Heading>

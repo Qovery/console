@@ -246,4 +246,292 @@ describe('LlmProviderCreateEditModal', () => {
       })
     )
   })
+
+  describe('Anthropic-compatible provider', () => {
+    const compatibleProvider = {
+      id: 'provider-1',
+      name: 'Gateway',
+      description: '',
+      type: LlmProviderType.ANTHROPIC_COMPATIBLE,
+      base_url: 'https://gateway.example.com/anthropic',
+      has_credential: true,
+      scope: LlmProviderScope.ORGANIZATION,
+      created_at: '2026-09-15T10:00:00Z',
+      updated_at: '2026-09-15T10:00:00Z',
+    }
+
+    it('should create a token with a base URL that has a path prefix and a port', async () => {
+      const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic-compatible')
+      expect(screen.queryByLabelText('AWS region')).not.toBeInTheDocument()
+      expect(document.querySelector('img[src="/assets/ai-tools/openrouter-grape.svg"]')).toBeInTheDocument()
+      expect(screen.getByText('HTTP or HTTPS root of the API', { exact: false })).toHaveTextContent(
+        'e.g. https://openrouter.ai/api.'
+      )
+      expect(document.querySelector('img[src="/assets/ai-tools/claude.svg"]')).not.toBeInTheDocument()
+      await userEvent.type(screen.getByLabelText('Name'), 'Gateway')
+      await userEvent.type(screen.getByLabelText('Token'), 'gateway-token')
+      await userEvent.type(screen.getByLabelText('Base URL'), ' https://gateway.example.com:8443/anthropic/v1 ')
+      await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
+
+      await waitFor(() =>
+        expect(createLlmProvider).toHaveBeenCalledWith({
+          organizationId: 'org-1',
+          llmProviderRequest: {
+            name: 'Gateway',
+            description: undefined,
+            type: LlmProviderType.ANTHROPIC_COMPATIBLE,
+            credential: 'gateway-token',
+            base_url: 'https://gateway.example.com:8443/anthropic/v1',
+            scope: LlmProviderScope.USER,
+          },
+        })
+      )
+    })
+
+    it('should require a base URL', async () => {
+      const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic-compatible')
+      await userEvent.type(screen.getByLabelText('Name'), 'Gateway')
+      await userEvent.type(screen.getByLabelText('Token'), 'gateway-token')
+      await userEvent.type(screen.getByLabelText('Base URL'), 'h')
+      await userEvent.clear(screen.getByLabelText('Base URL'))
+
+      expect(await screen.findByText('Please enter a base URL.')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Add token' })).toBeDisabled()
+      expect(createLlmProvider).not.toHaveBeenCalled()
+    })
+
+    it.each([
+      ['a non-HTTP scheme', 'ftp://gateway.example.com'],
+      ['a missing scheme', 'gateway.example.com/anthropic'],
+      ['user info', 'https://user:secret@gateway.example.com'],
+      ['empty user info', 'https://@gateway.example.com/anthropic'],
+      ['an empty password', 'https://user:@gateway.example.com'],
+      ['user info after extra slashes', 'https:///user:secret@gateway.example.com/anthropic'],
+      ['empty user info after extra slashes', 'https:///@gateway.example.com/anthropic'],
+      ['empty user info after backslashes', 'https:\\\\@gateway.example.com/anthropic'],
+      ['a query', 'https://gateway.example.com/anthropic?key=1'],
+      ['a fragment', 'https://gateway.example.com/anthropic#top'],
+      ['port 0', 'https://gateway.example.com:0'],
+    ])('should reject a base URL with %s', async (_, baseUrl) => {
+      const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic-compatible')
+      await userEvent.type(screen.getByLabelText('Name'), 'Gateway')
+      await userEvent.type(screen.getByLabelText('Token'), 'gateway-token')
+      await userEvent.type(screen.getByLabelText('Base URL'), baseUrl)
+
+      expect(
+        await screen.findByText('Enter an HTTP or HTTPS URL without credentials, query or fragment.')
+      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Add token' })).toBeDisabled()
+      expect(createLlmProvider).not.toHaveBeenCalled()
+    })
+
+    it('should reject a base URL with an embedded tab that hides empty user info', async () => {
+      const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic-compatible')
+      await userEvent.type(screen.getByLabelText('Name'), 'Gateway')
+      await userEvent.type(screen.getByLabelText('Token'), 'gateway-token')
+      await userEvent.click(screen.getByLabelText('Base URL'))
+      await userEvent.paste('https:/\t/@gateway.example.com/anthropic')
+
+      expect(
+        await screen.findByText('Enter an HTTP or HTTPS URL without credentials, query or fragment.')
+      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Add token' })).toBeDisabled()
+      expect(createLlmProvider).not.toHaveBeenCalled()
+    })
+
+    it('should accept an @ in the path prefix', async () => {
+      const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic-compatible')
+      await userEvent.type(screen.getByLabelText('Name'), 'Gateway')
+      await userEvent.type(screen.getByLabelText('Token'), 'gateway-token')
+      await userEvent.type(screen.getByLabelText('Base URL'), 'https://gateway.example.com/@team/anthropic')
+      await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
+
+      await waitFor(() =>
+        expect(createLlmProvider).toHaveBeenCalledWith({
+          organizationId: 'org-1',
+          llmProviderRequest: expect.objectContaining({ base_url: 'https://gateway.example.com/@team/anthropic' }),
+        })
+      )
+    })
+
+    it('should prefill the saved base URL and resend it when the token is left blank', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      expect(screen.getByLabelText('Base URL')).toHaveValue('https://gateway.example.com/anthropic')
+      expect(screen.getByText('Leave blank to keep the current token.')).toBeInTheDocument()
+      expect(screen.queryByLabelText('Scope')).not.toBeInTheDocument()
+      const saveButton = screen.getByRole('button', { name: 'Save token' })
+      await waitFor(() => expect(saveButton).toBeEnabled())
+      await userEvent.click(saveButton)
+
+      await waitFor(() =>
+        expect(editLlmProvider).toHaveBeenCalledWith({
+          organizationId: 'org-1',
+          llmProviderId: 'provider-1',
+          llmProviderRequest: {
+            name: 'Gateway',
+            description: undefined,
+            type: LlmProviderType.ANTHROPIC_COMPATIBLE,
+            credential: undefined,
+            base_url: 'https://gateway.example.com/anthropic',
+            scope: undefined,
+          },
+        })
+      )
+    })
+
+    it('should send an edited base URL together with a rotated token', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await userEvent.clear(screen.getByLabelText('Base URL'))
+      await userEvent.type(screen.getByLabelText('Base URL'), 'http://localhost:4000')
+      await userEvent.type(screen.getByLabelText('Token'), 'rotated-token')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+
+      await waitFor(() =>
+        expect(editLlmProvider).toHaveBeenCalledWith({
+          organizationId: 'org-1',
+          llmProviderId: 'provider-1',
+          llmProviderRequest: expect.objectContaining({
+            credential: 'rotated-token',
+            base_url: 'http://localhost:4000',
+          }),
+        })
+      )
+    })
+
+    it('should block saving a changed base URL until a new token is entered', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await userEvent.clear(screen.getByLabelText('Base URL'))
+      await userEvent.type(screen.getByLabelText('Base URL'), 'https://other-gateway.example.com')
+
+      expect(screen.getByLabelText('Token')).toBeInTheDocument()
+      expect(screen.queryByLabelText('Token (optional)')).not.toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+
+      expect(await screen.findByText('Enter a new token to use a different base URL.')).toBeInTheDocument()
+      expect(editLlmProvider).not.toHaveBeenCalled()
+    })
+
+    it('should keep the stored token for a name-only edit, including a padded but unchanged base URL', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await userEvent.type(screen.getByLabelText('Base URL'), '  ')
+      await userEvent.clear(screen.getByLabelText('Name'))
+      await userEvent.type(screen.getByLabelText('Name'), 'Renamed gateway')
+
+      expect(screen.getByLabelText('Token (optional)')).toBeInTheDocument()
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+
+      await waitFor(() =>
+        expect(editLlmProvider).toHaveBeenCalledWith({
+          organizationId: 'org-1',
+          llmProviderId: 'provider-1',
+          llmProviderRequest: expect.objectContaining({
+            name: 'Renamed gateway',
+            credential: undefined,
+            base_url: 'https://gateway.example.com/anthropic',
+          }),
+        })
+      )
+    })
+
+    it('should make the token optional again when the base URL is restored', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await userEvent.type(screen.getByLabelText('Base URL'), '/v2')
+      expect(screen.getByLabelText('Token')).toBeInTheDocument()
+      await userEvent.type(screen.getByLabelText('Base URL'), '{Backspace}{Backspace}{Backspace}')
+
+      expect(screen.getByLabelText('Token (optional)')).toBeInTheDocument()
+      expect(screen.getByText('Leave blank to keep the current token.')).toBeInTheDocument()
+    })
+
+    it('should block saving a provider type change without a new token', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic Claude')
+
+      expect(screen.getByText('Enter a new token for the selected provider.')).toBeInTheDocument()
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeDisabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+      expect(editLlmProvider).not.toHaveBeenCalled()
+    })
+
+    it('should omit the base URL and require a new token when switching to Claude', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal onClose={jest.fn()} llmProvider={compatibleProvider} />
+      )
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic Claude')
+      expect(screen.queryByLabelText('Base URL')).not.toBeInTheDocument()
+      await userEvent.type(screen.getByLabelText('Token'), 'sk-ant-secret')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+
+      await waitFor(() => expect(editLlmProvider).toHaveBeenCalledTimes(1))
+      const { llmProviderRequest } = editLlmProvider.mock.calls[0][0]
+      expect(llmProviderRequest).toEqual({
+        name: 'Gateway',
+        description: undefined,
+        type: LlmProviderType.CLAUDE,
+        credential: 'sk-ant-secret',
+        scope: undefined,
+      })
+      expect(llmProviderRequest).not.toHaveProperty('base_url')
+    })
+
+    it('should ask for a base URL when an existing Claude token switches to Anthropic-compatible', async () => {
+      const { userEvent } = renderWithProviders(
+        <LlmProviderCreateEditModal
+          onClose={jest.fn()}
+          llmProvider={{ ...compatibleProvider, type: LlmProviderType.CLAUDE, base_url: null }}
+        />
+      )
+
+      await selectEvent.select(screen.getByLabelText('Provider'), 'Anthropic-compatible')
+      expect(screen.getByLabelText('Base URL')).toHaveValue('')
+      await userEvent.type(screen.getByLabelText('Token'), 'gateway-token')
+      await userEvent.type(screen.getByLabelText('Base URL'), 'https://gateway.example.com')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+
+      await waitFor(() =>
+        expect(editLlmProvider).toHaveBeenCalledWith({
+          organizationId: 'org-1',
+          llmProviderId: 'provider-1',
+          llmProviderRequest: expect.objectContaining({
+            type: LlmProviderType.ANTHROPIC_COMPATIBLE,
+            credential: 'gateway-token',
+            base_url: 'https://gateway.example.com',
+          }),
+        })
+      )
+    })
+  })
 })

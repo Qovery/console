@@ -4,6 +4,7 @@ import {
   LlmProviderScope,
   LlmProviderType,
 } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings-test-utils'
@@ -136,5 +137,43 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
     expect(screen.getByLabelText('Model')).toBeInTheDocument()
     expect(document.querySelector('[data-testid="selected-icon"] img[src*="/eu.svg"]')).toBeInTheDocument()
     expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
+  })
+
+  it.each([
+    [LlmProviderType.ANTHROPIC_COMPATIBLE, 'Gateway token', AgenticWorkflowModelType.CLAUDE],
+    [LlmProviderType.BEDROCK, 'Bedrock token', AgenticWorkflowModelType.BEDROCK],
+    [LlmProviderType.CLAUDE, 'Claude token', AgenticWorkflowModelType.CLAUDE],
+  ])('sets the workflow model type for a %s token', async (_, tokenName, expectedModelType) => {
+    const gatewayProvider: LlmProviderResponse = {
+      ...claudeProvider,
+      id: 'provider-3',
+      name: 'Gateway token',
+      type: LlmProviderType.ANTHROPIC_COMPATIBLE,
+      base_url: 'https://gateway.example.com/anthropic',
+    }
+    // Start from the opposite model type so a missing update is visible.
+    const initialModelType =
+      expectedModelType === AgenticWorkflowModelType.CLAUDE
+        ? AgenticWorkflowModelType.BEDROCK
+        : AgenticWorkflowModelType.CLAUDE
+
+    renderWithProviders(
+      <AgenticWorkflowSettingsFormHarness values={{ modelType: initialModelType }}>
+        {(form) => (
+          <>
+            <AgenticWorkflowAiConfigurationSettings
+              form={form}
+              llmProviders={[claudeProvider, bedrockProvider, gatewayProvider]}
+              modelType={initialModelType}
+            />
+            <output aria-label="Workflow model type">{form.watch('modelType')}</output>
+          </>
+        )}
+      </AgenticWorkflowSettingsFormHarness>
+    )
+
+    await selectEvent.select(screen.getByLabelText('Token'), tokenName, { container: document.body })
+
+    expect(screen.getByLabelText('Workflow model type')).toHaveTextContent(expectedModelType)
   })
 })

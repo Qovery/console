@@ -1,7 +1,11 @@
 import { type AgenticWorkflowModelType, type LlmProviderResponse } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { LlmProviderSetting } from '@qovery/domains/organizations/feature'
-import { AgenticWorkflowModelSetting, AgenticWorkflowPromptEditor } from '@qovery/domains/services/feature'
+import {
+  AgenticWorkflowModelSetting,
+  AgenticWorkflowPromptEditor,
+  getAgenticWorkflowModelType,
+} from '@qovery/domains/services/feature'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
@@ -35,7 +39,7 @@ export function AgenticWorkflowAiConfigurationSettings({
                 field.onChange(providerId)
                 const provider = llmProvider ?? llmProviders.find(({ id }) => id === providerId)
                 if (provider) {
-                  form.setValue('modelType', provider.type as AgenticWorkflowModelType, { shouldDirty: true })
+                  form.setValue('modelType', getAgenticWorkflowModelType(provider.type), { shouldDirty: true })
                 }
               }}
             />
