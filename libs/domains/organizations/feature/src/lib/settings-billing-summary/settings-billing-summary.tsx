@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { format } from 'date-fns'
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
-import { Suspense, useMemo } from 'react'
+import { Suspense } from 'react'
 import { type CardImages } from 'react-payment-inputs/images'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
@@ -25,7 +24,8 @@ export interface PageOrganizationBillingSummaryProps {
   onShowUsageClick?: () => void
   onChangePlanClick?: () => void
   onCancelTrialClick?: () => void
-  onActivateAccountClick?: () => void
+  onAddCreditCardClick?: () => void
+  onSwitchPlanClick?: () => void
 }
 
 // This function is used to get the billing recurrence word to display based on the renewal date.
@@ -94,29 +94,10 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   // Get the billing recurrence word to display based on the renewal date.
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
-  const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
+  // Add + 1 because Chargebee return 0 when the trial is ending today
+  const remainingTrialDays = (props.currentCost?.remaining_trial_day ?? 0) + 1
   const showTrialCallout = isActiveFreeTrial(props.currentCost?.remaining_trial_day)
-  const showErrorCallout = props.hasCreditCard ?? Boolean(props.creditCard)
-
-  // This function is used to get the trial start date based on the remaining trial days from the API
-  const trialStartDate = useMemo(() => {
-    const remainingTrialDayFromApi = props.currentCost?.remaining_trial_day
-    if (remainingTrialDayFromApi === undefined || remainingTrialDayFromApi === null) return null
-
-    const trialDurationDays = 14
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
-    const daysUntilExpiration = remainingTrialDayFromApi + 1
-    const expirationDate = new Date(today)
-    expirationDate.setDate(expirationDate.getDate() + daysUntilExpiration)
-
-    const startDate = new Date(expirationDate)
-    startDate.setDate(startDate.getDate() - trialDurationDays)
-    startDate.setHours(0, 0, 0, 0)
-
-    return startDate
-  }, [props.currentCost?.remaining_trial_day])
+  const hasCreditCard = props.hasCreditCard ?? Boolean(props.creditCard)
 
   return (
     <div className="w-full">
@@ -137,34 +118,44 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           </div>
         </div>
         <div className="max-w-content-with-navigation-left">
-          {showTrialCallout && (
-            <Callout.Root color={showErrorCallout ? 'yellow' : 'red'} className="mb-8 items-center">
+          {showTrialCallout && !hasCreditCard && (
+            <Callout.Root color="red" className="mb-8 items-center">
               <Callout.Text>
                 <Callout.TextHeading>
-                  {/* Add + 1 because Chargebee return 0 when the trial is ending today */}
-                  {showErrorCallout
-                    ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')} from now`
-                    : `Your account will be blocked at the end of your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`}
+                  Your account will be blocked at the end of your trial in {remainingTrialDays}{' '}
+                  {pluralize(remainingTrialDays, 'day')}
                 </Callout.TextHeading>
-                {showErrorCallout ? (
-                  <>
-                    You have contracted a free 14-days trial on{' '}
-                    {trialStartDate ? format(trialStartDate, 'MMMM d, yyyy') : '...'}. At the end of this plan your user
-                    subscription will start. You cancel your trial by deleting your organization.
-                  </>
-                ) : (
-                  <>Activate your plan to avoid service interruption at the end of your trial.</>
-                )}
+                Choose your plan to activate your account and avoid service interruption at the end of your trial.
               </Callout.Text>
-              <div className="flex gap-2">
-                <Button size="sm" variant="solid" color="red" onClick={() => props.onActivateAccountClick?.()}>
-                  Contact our Team
+              <Button
+                size="sm"
+                variant="solid"
+                color="red"
+                className="shrink-0"
+                onClick={() => props.onAddCreditCardClick?.()}
+              >
+                Add credit card
+              </Button>
+            </Callout.Root>
+          )}
+          {showTrialCallout && hasCreditCard && (
+            <Callout.Root color="sky" className="mb-8 items-center">
+              <Callout.Text>
+                <Callout.TextHeading>
+                  Your account is activated on the {formatPlanDisplay(props.currentCost?.plan)}
+                </Callout.TextHeading>
+                <>
+                  Your free trial ends in {remainingTrialDays} {pluralize(remainingTrialDays, 'day')}, then your
+                  subscription starts on this plan. You can switch plans until then.
+                </>
+              </Callout.Text>
+              <div className="flex shrink-0 gap-2">
+                <Button size="sm" variant="outline" color="neutral" onClick={() => props.onCancelTrialClick?.()}>
+                  Cancel free trial
                 </Button>
-                {showErrorCallout && (
-                  <Button size="sm" variant="solid" color="yellow" onClick={() => props.onCancelTrialClick?.()}>
-                    Cancel free trial
-                  </Button>
-                )}
+                <Button size="sm" variant="solid" onClick={() => props.onSwitchPlanClick?.()}>
+                  Switch plan
+                </Button>
               </div>
             </Callout.Root>
           )}
@@ -272,11 +263,12 @@ function SettingsBillingSummaryContent() {
   }
 
   const handleCancelTrialClick = () => {
-    navigate({ to: '/organization/$organizationId/settings/danger-zone', params: { organizationId } })
+    showPylonForm('cancel-free-trial')
   }
 
-  const handleActivateAccountClick = () => {
-    showPylonForm('ask-for-activation')
+  // Plan selection and credit card are both managed on the billing details page
+  const handleAddCreditCardClick = () => {
+    navigate({ to: '/organization/$organizationId/settings/billing-details', params: { organizationId } })
   }
 
   return (
@@ -288,7 +280,8 @@ function SettingsBillingSummaryContent() {
       onShowUsageClick={openShowUsageModal}
       onChangePlanClick={handleChangePlanClick}
       onCancelTrialClick={handleCancelTrialClick}
-      onActivateAccountClick={handleActivateAccountClick}
+      onAddCreditCardClick={handleAddCreditCardClick}
+      onSwitchPlanClick={handleAddCreditCardClick}
     />
   )
 }

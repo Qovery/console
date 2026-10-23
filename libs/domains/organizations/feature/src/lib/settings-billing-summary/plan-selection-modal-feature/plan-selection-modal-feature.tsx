@@ -3,19 +3,16 @@ import { useState } from 'react'
 import { type FormEventHandler } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
-import { P, match } from 'ts-pattern'
 import { Button, RadioGroup } from '@qovery/shared/ui'
-import { is2025Plan } from '@qovery/shared/util-js'
 import { twMerge } from '@qovery/shared/util-js'
 import { useChangePlan } from '../../hooks/use-change-plan/use-change-plan'
 
-// All 2025 plans are selectable
-const SELECTABLE_PLANS = [
-  PlanEnum.USER_2025,
-  PlanEnum.TEAM_2025,
-  PlanEnum.BUSINESS_2025,
+const SELECTABLE_PLANS: PlanEnum[] = [
+  PlanEnum.STARTER_2026,
+  PlanEnum.GROWTH_2026,
+  PlanEnum.SCALE_2026,
   PlanEnum.ENTERPRISE_2025,
-] as const
+]
 
 export interface PlanSelectionModalProps {
   onClose: () => void
@@ -29,7 +26,7 @@ export function PlanSelectionModal(props: PlanSelectionModalProps) {
   const { control } = useFormContext()
 
   const isCurrentPlan = (plan: PlanEnum) => {
-    return props.currentPlan?.toUpperCase().includes(plan)
+    return props.currentPlan?.toUpperCase() === plan
   }
 
   return (
@@ -100,21 +97,12 @@ export interface PlanSelectionModalFeatureProps {
 }
 
 /**
- * Normalizes the current plan to match the 2025 plan enum values
- * Only returns a value if the current plan is already a 2025 plan
- * Returns undefined for legacy plans to avoid pre-selection
+ * Normalizes the current plan to match the selectable plan enum values
+ * Only returns a value if the current plan is already a selectable plan
+ * Returns undefined for other plans to avoid pre-selection
  */
 function normalizePlanSelection(currentPlan?: string): PlanEnum | undefined {
-  if (!is2025Plan(currentPlan)) {
-    return undefined
-  }
-
-  return match(currentPlan?.toUpperCase())
-    .with(P.string.includes('USER'), () => PlanEnum.USER_2025)
-    .with(P.string.includes('TEAM'), () => PlanEnum.TEAM_2025)
-    .with(P.string.includes('BUSINESS'), () => PlanEnum.BUSINESS_2025)
-    .with(P.string.includes('ENTERPRISE'), () => PlanEnum.ENTERPRISE_2025)
-    .otherwise(() => undefined)
+  return SELECTABLE_PLANS.find((plan) => plan === currentPlan?.toUpperCase())
 }
 
 export function PlanSelectionModalFeature({ organizationId, closeModal, currentPlan }: PlanSelectionModalFeatureProps) {
