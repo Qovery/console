@@ -1,4 +1,11 @@
-import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
+import {
+  AgenticWorkflowExecutionMode,
+  AgenticWorkflowModelType,
+  type LlmProviderResponse,
+  LlmProviderScope,
+  LlmProviderType,
+} from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import * as servicesDomain from '@qovery/domains/services/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -449,6 +456,207 @@ describe('AgenticWorkflowSettings views', () => {
       expect(editService).toHaveBeenCalledWith({
         serviceId: 'workflow-1',
         payload: expect.objectContaining({ docker_fragment: '' }),
+      })
+    )
+  })
+})
+
+describe('AgenticWorkflowSettings model type', () => {
+  const llmProvider = (id: string, name: string, type: LlmProviderType): LlmProviderResponse => ({
+    id,
+    name,
+    type,
+    description: '',
+    scope: LlmProviderScope.ORGANIZATION,
+    has_credential: true,
+    created_at: '2026-09-23T00:00:00Z',
+    updated_at: '2026-09-23T00:00:00Z',
+  })
+  const claudeProvider = llmProvider('provider-claude', 'Claude token', LlmProviderType.CLAUDE)
+  const bedrockProvider = llmProvider('provider-bedrock', 'Bedrock token', LlmProviderType.BEDROCK)
+  const gatewayProvider = llmProvider('provider-gateway', 'Gateway token', LlmProviderType.ANTHROPIC_COMPATIBLE)
+  const providers = [claudeProvider, bedrockProvider, gatewayProvider]
+
+  // What a backend without `model.type` returns.
+  const serviceWithoutModelType = (llmProviderId: string | null, settings = '{"model":"saved-model"}') => ({
+    ...service,
+    model: { llm_provider_id: llmProviderId, settings },
+  })
+
+  const saveDescription = async (userEvent: ReturnType<typeof renderWithProviders>['userEvent']) => {
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Description' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Description' }), 'Updated description')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+  }
+
+  beforeEach(() => {
+    jest.useFakeTimers()
+    editService.mockReset()
+    useGitTokensSpy.mockReturnValue({ data: [{ id: 'token-1', type: 'GITHUB' }], isLoading: false })
+    useLlmProviderModelsSpy.mockReturnValue({
+      data: [
+        { id: 'first-model', display_name: 'First model', created_at: null },
+        { id: 'saved-model', display_name: 'Saved model', created_at: null },
+      ],
+      isError: false,
+      isLoading: false,
+    })
+    useMcpServersSpy.mockReturnValue({ data: [], isLoading: false })
+    useContextServicesSpy.mockReturnValue({ data: [], isLoading: false })
+    useEditServiceSpy.mockReturnValue({ mutateAsync: editService, isLoading: false })
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it.each([
+    [LlmProviderType.CLAUDE, claudeProvider, AgenticWorkflowModelType.CLAUDE],
+    [LlmProviderType.ANTHROPIC_COMPATIBLE, gatewayProvider, AgenticWorkflowModelType.CLAUDE],
+    [LlmProviderType.BEDROCK, bedrockProvider, AgenticWorkflowModelType.BEDROCK],
+  ])(
+    'sends the workflow type of a saved %s provider when the response has no model type',
+    async (_, provider, expectedType) => {
+      useServiceSpy.mockReturnValue({ data: serviceWithoutModelType(provider.id) })
+      useLlmProvidersSpy.mockReturnValue({ data: providers })
+      const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+      await saveDescription(userEvent)
+
+      await waitFor(() =>
+        expect(editService).toHaveBeenCalledWith({
+          serviceId: 'workflow-1',
+          payload: expect.objectContaining({
+            model: { type: expectedType, llm_provider_id: provider.id, settings: '{"model":"saved-model"}' },
+          }),
+        })
+      )
+    }
+  )
+
+  it('prefers the saved provider over the model type of an older response', async () => {
+    useServiceSpy.mockReturnValue({
+      data: { ...service, model: { ...service.model, type: AgenticWorkflowModelType.CLAUDE } },
+    })
+    useLlmProvidersSpy.mockReturnValue({ data: [{ ...bedrockProvider, id: 'provider-1' }] })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+    await saveDescription(userEvent)
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          model: expect.objectContaining({ type: AgenticWorkflowModelType.BEDROCK }),
+        }),
+      })
+    )
+  })
+
+  it('keeps sending the model type of an older response while the providers are loading', async () => {
+    useServiceSpy.mockReturnValue({
+      data: { ...service, model: { ...service.model, type: AgenticWorkflowModelType.CLAUDE } },
+    })
+    useLlmProvidersSpy.mockReturnValue({ data: undefined, isLoading: true })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+    await saveDescription(userEvent)
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({ model: expect.objectContaining({ type: AgenticWorkflowModelType.CLAUDE }) }),
+      })
+    )
+  })
+
+  it('does not invent a model type while the providers load for a response without one', async () => {
+    useServiceSpy.mockReturnValue({ data: serviceWithoutModelType('provider-bedrock') })
+    useLlmProvidersSpy.mockReturnValue({ data: undefined, isLoading: true })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+    await saveDescription(userEvent)
+
+    await waitFor(() => expect(editService).toHaveBeenCalledTimes(1))
+    const { model } = editService.mock.calls[0][0].payload
+    expect(model.type).toBeUndefined()
+    expect(model.llm_provider_id).toBe('provider-bedrock')
+  })
+
+  it('shows the model picker once the providers load and keeps the saved model', async () => {
+    useServiceSpy.mockReturnValue({ data: serviceWithoutModelType('provider-bedrock') })
+    useLlmProvidersSpy.mockReturnValue({ data: undefined, isLoading: true })
+    const { userEvent, rerender } = renderWithProviders(<AgenticWorkflowSettings page="ai-configuration" />)
+    expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
+
+    useLlmProvidersSpy.mockReturnValue({ data: providers, isLoading: false })
+    rerender(<AgenticWorkflowSettings page="ai-configuration" />)
+
+    expect(await screen.findByLabelText('Model')).toBeInTheDocument()
+    expect(useLlmProviderModelsSpy).toHaveBeenLastCalledWith({ llmProviderId: 'provider-bedrock', enabled: true })
+    expect(screen.getByText('Saved model')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+
+    await selectEvent.select(screen.getByLabelText('Model'), 'First model', { container: document.body })
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          model: {
+            type: AgenticWorkflowModelType.BEDROCK,
+            llm_provider_id: 'provider-bedrock',
+            settings: JSON.stringify({ model: 'first-model' }, null, 2),
+          },
+        }),
+      })
+    )
+  })
+
+  it.each([
+    [LlmProviderType.BEDROCK, bedrockProvider, AgenticWorkflowModelType.BEDROCK],
+    [LlmProviderType.ANTHROPIC_COMPATIBLE, gatewayProvider, AgenticWorkflowModelType.CLAUDE],
+  ])('sends the workflow type of a newly selected %s provider', async (_, provider, expectedType) => {
+    useServiceSpy.mockReturnValue({ data: serviceWithoutModelType(claudeProvider.id) })
+    useLlmProvidersSpy.mockReturnValue({ data: providers })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="ai-configuration" />)
+
+    await selectEvent.select(screen.getByLabelText('Token'), provider.name, { container: document.body })
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          model: expect.objectContaining({ type: expectedType, llm_provider_id: provider.id }),
+        }),
+      })
+    )
+  })
+
+  it('asks a workflow without a provider to select one and does not bind one', async () => {
+    useServiceSpy.mockReturnValue({
+      data: { ...service, model: { type: AgenticWorkflowModelType.CLAUDE, llm_provider_id: null, settings: '{}' } },
+    })
+    useLlmProvidersSpy.mockReturnValue({ data: providers })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="ai-configuration" />)
+
+    expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+
+    await selectEvent.select(screen.getByLabelText('Token'), bedrockProvider.name, { container: document.body })
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          model: expect.objectContaining({
+            type: AgenticWorkflowModelType.BEDROCK,
+            llm_provider_id: bedrockProvider.id,
+          }),
+        }),
       })
     )
   })

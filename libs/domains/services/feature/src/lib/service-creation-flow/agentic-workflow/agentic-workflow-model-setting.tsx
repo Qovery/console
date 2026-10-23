@@ -78,6 +78,9 @@ export function AgenticWorkflowModelSetting({
 
     if (isLoading || isError) return
 
+    // The provider type resolves after the provider id for a saved workflow. That is not a switch, so keep the saved model.
+    if (activeProviderKey.current === `${llmProviderId}:`) activeProviderKey.current = initializationKey
+
     if (activeProviderKey.current !== initializationKey) {
       if (!firstModelId) return
 
