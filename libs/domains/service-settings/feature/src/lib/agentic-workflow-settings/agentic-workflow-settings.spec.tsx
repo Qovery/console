@@ -635,7 +635,7 @@ describe('AgenticWorkflowSettings model type', () => {
     )
   })
 
-  it('asks a workflow without a provider to select one and does not bind one', async () => {
+  it('requires a provider before saving and binds the newly selected provider', async () => {
     useServiceSpy.mockReturnValue({
       data: { ...service, model: { type: AgenticWorkflowModelType.CLAUDE, llm_provider_id: null, settings: '{}' } },
     })
