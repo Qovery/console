@@ -180,6 +180,37 @@ describe('AgenticWorkflowModelSetting', () => {
     expect(onChange).not.toHaveBeenCalled()
   })
 
+  it('keeps the saved model when the type of the same provider changes after the models load', async () => {
+    mockModels = [
+      { id: 'anthropic.claude-opus', display_name: 'Claude Opus', created_at: null },
+      { id: 'anthropic.claude-sonnet', display_name: 'Claude Sonnet', created_at: null },
+    ]
+    const onChange = jest.fn()
+    function ModelSettingHarness() {
+      const [providerType, setProviderType] = useState<LlmProviderType>(LlmProviderType.CLAUDE)
+
+      return (
+        <>
+          <button type="button" onClick={() => setProviderType(LlmProviderType.BEDROCK)}>
+            Resolve provider
+          </button>
+          <AgenticWorkflowModelSetting
+            llmProviderId="provider-1"
+            providerType={providerType}
+            settings='{"model":"anthropic.claude-sonnet"}'
+            onChange={onChange}
+          />
+        </>
+      )
+    }
+    const { userEvent } = renderWithProviders(<ModelSettingHarness />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Resolve provider' }))
+
+    expect(screen.getByText('Claude Sonnet')).toBeInTheDocument()
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
   it('lists Bedrock models and serializes the first model', async () => {
     mockModels = [
       { id: 'eu.anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null },
