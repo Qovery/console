@@ -131,6 +131,12 @@ const services = {
   },
 }
 
+const mockUseLlmProviders = jest.fn()
+jest.mock('@qovery/domains/organizations/feature', () => ({
+  ...jest.requireActual('@qovery/domains/organizations/feature'),
+  useLlmProviders: (props: unknown) => mockUseLlmProviders(props),
+}))
+
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => mockNavigate,
@@ -402,6 +408,7 @@ describe('ServiceHeader', () => {
     mockUseBlueprintUpdate.mockReturnValue({ data: undefined })
     mockUseBlueprintDatabase.mockReturnValue({ data: undefined })
     mockUseBlueprintDatabaseMasterCredentials.mockReturnValue({ data: undefined })
+    mockUseLlmProviders.mockReturnValue({ data: [] })
   })
 
   const renderServiceHeader = (
@@ -509,6 +516,62 @@ describe('ServiceHeader', () => {
     expect(modelBadge).toBeInTheDocument()
     expect(screen.getByText('Enabled')).toBeInTheDocument()
     expect(modelBadge?.querySelector('img')).toHaveAttribute('src', '/assets/ai-tools/claude.svg')
+  })
+
+  describe('agentic workflow model badge', () => {
+    const renderWorkflowHeader = (model: Record<string, unknown>) =>
+      renderWithProviders(
+        <ServiceHeader
+          environment={environment}
+          service={{ ...services['agentic-workflow-mock'], model } as unknown as AnyService}
+        />
+      )
+
+    it.each([
+      ['CLAUDE', 'Claude'],
+      ['ANTHROPIC_COMPATIBLE', 'Claude'],
+      ['BEDROCK', 'Bedrock'],
+    ])('derives the badge from a %s saved provider when the response has no model type', (type, label) => {
+      mockUseLlmProviders.mockReturnValue({ data: [{ id: 'provider-1', type }] })
+
+      renderWorkflowHeader({ llm_provider_id: 'provider-1', settings: '{}' })
+
+      expect(screen.getByText(label)).toBeInTheDocument()
+      expect(mockUseLlmProviders).toHaveBeenCalledWith({ organizationId: 'org-id', enabled: true })
+    })
+
+    it('shows no model badge while the providers load for a response without a model type', () => {
+      mockUseLlmProviders.mockReturnValue({ data: undefined, isLoading: true })
+
+      renderWorkflowHeader({ llm_provider_id: 'provider-1', settings: '{}' })
+
+      expect(screen.queryByText('Claude')).not.toBeInTheDocument()
+      expect(screen.queryByText('Bedrock')).not.toBeInTheDocument()
+      expect(screen.getByText('Enabled')).toBeInTheDocument()
+    })
+
+    it('prefers the saved provider over the model type of an older response', () => {
+      mockUseLlmProviders.mockReturnValue({ data: [{ id: 'provider-1', type: 'BEDROCK' }] })
+
+      renderWorkflowHeader({ type: 'CLAUDE', llm_provider_id: 'provider-1', settings: '{}' })
+
+      expect(screen.getByText('Bedrock')).toBeInTheDocument()
+      expect(screen.queryByText('Claude')).not.toBeInTheDocument()
+    })
+
+    it('uses the model type of an older response until the providers load', () => {
+      mockUseLlmProviders.mockReturnValue({ data: undefined, isLoading: true })
+
+      renderWorkflowHeader({ type: 'BEDROCK', llm_provider_id: 'provider-1', settings: '{}' })
+
+      expect(screen.getByText('Bedrock')).toBeInTheDocument()
+    })
+
+    it('does not load the providers for other service types', () => {
+      renderServiceHeader('application-mock')
+
+      expect(mockUseLlmProviders).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
+    })
   })
 
   it('renders blueprint metadata without the update status in the overview', () => {
