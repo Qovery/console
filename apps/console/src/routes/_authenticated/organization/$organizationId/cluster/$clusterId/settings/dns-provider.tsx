@@ -54,7 +54,7 @@ function ClusterDnsProviderSettingsFeature() {
       })
     } catch (error) {
       if (isForbiddenError(error)) {
-        const message = 'Changing the DNS provider requires a Business or Enterprise plan.'
+        const message = 'Changing the DNS provider requires a Scale, Business or Enterprise plan.'
         setSubmitError(message)
         toast('error', 'DNS provider update blocked', message)
       } else {

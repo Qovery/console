@@ -120,7 +120,7 @@ describe('CreateOrganizationModal', () => {
 
     await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
     expect(mockCreateOrganization).toHaveBeenCalledWith({
-      organizationRequest: { name: 'Acme', plan: PlanEnum.BUSINESS_2025, admin_emails: ['jane@example.com'] },
+      organizationRequest: { name: 'Acme', plan: PlanEnum.SCALE_2026, admin_emails: ['jane@example.com'] },
     })
     expect(mockRefreshToken).toHaveBeenCalledWith({ cacheMode: 'off' })
     expect(mockCreateProject).toHaveBeenCalledWith({ organizationId: 'new-org', projectRequest: { name: 'main' } })

@@ -6,6 +6,7 @@ import * as chargebeeUtils from '@qovery/shared/util-payment'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useAddCreditCardHook from '../hooks/use-add-credit-card/use-add-credit-card'
 import * as useBillingInfoHook from '../hooks/use-billing-info/use-billing-info'
+import * as useChangePlanHook from '../hooks/use-change-plan/use-change-plan'
 import * as useCreditCardsHook from '../hooks/use-credit-cards/use-credit-cards'
 import * as useCurrentCostHook from '../hooks/use-current-cost/use-current-cost'
 import * as useDeleteCreditCardHook from '../hooks/use-delete-credit-card/use-delete-credit-card'
@@ -16,7 +17,9 @@ const mockOpenModalConfirmation = jest.fn()
 const mockDeleteCreditCard = jest.fn().mockResolvedValue(undefined)
 const mockEditBillingInfo = jest.fn().mockResolvedValue(undefined)
 const mockAddCreditCard = jest.fn().mockResolvedValue(undefined)
+const mockChangePlan = jest.fn().mockResolvedValue(undefined)
 const mockShowPylonForm = jest.fn()
+const mockShowChat = jest.fn()
 const mockTokenizeCard = jest.fn()
 const mockToastError = jest.fn()
 
@@ -37,6 +40,7 @@ const mockCreditCards = creditCardsFactoryMock(3)
 
 const useAddCreditCardMock = jest.spyOn(useAddCreditCardHook, 'useAddCreditCard') as jest.Mock
 const useBillingInfoMock = jest.spyOn(useBillingInfoHook, 'useBillingInfo') as jest.Mock
+const useChangePlanMock = jest.spyOn(useChangePlanHook, 'useChangePlan') as jest.Mock
 const useCreditCardsMock = jest.spyOn(useCreditCardsHook, 'useCreditCards') as jest.Mock
 const useCurrentCostMock = jest.spyOn(useCurrentCostHook, 'useCurrentCost') as jest.Mock
 const useDeleteCreditCardMock = jest.spyOn(useDeleteCreditCardHook, 'useDeleteCreditCard') as jest.Mock
@@ -50,7 +54,7 @@ jest.mock('@tanstack/react-router', () => ({
 
 jest.mock('@qovery/shared/util-hooks', () => ({
   useDocumentTitle: jest.fn(),
-  useSupportChat: () => ({ showPylonForm: mockShowPylonForm }),
+  useSupportChat: () => ({ showChat: mockShowChat, showPylonForm: mockShowPylonForm }),
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -97,6 +101,7 @@ describe('SettingsBillingDetails', () => {
     mockEditBillingInfo.mockResolvedValue(defaultBillingInfo)
     useEditBillingInfoMock.mockReturnValue({ mutateAsync: mockEditBillingInfo })
     useAddCreditCardMock.mockReturnValue({ mutateAsync: mockAddCreditCard })
+    useChangePlanMock.mockReturnValue({ mutateAsync: mockChangePlan })
     fieldCardStylesSpy.mockReturnValue({})
     loadChargebeeSpy.mockResolvedValue(mockChargebeeInstance as CbInstance)
     mockTokenizeCard.mockResolvedValue({
@@ -276,31 +281,147 @@ describe('SettingsBillingDetails', () => {
     expect(screen.getByTestId('placeholder-credit-card')).toBeInTheDocument()
   })
 
-  it('should show a plan activation banner during an active free trial while still allowing self-service card management', async () => {
-    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 5 } })
+  it('should let the user switch plan during the free trial once the account is activated', async () => {
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'GROWTH_2026', remaining_trial_day: 5 } })
 
     const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
 
-    expect(screen.getByText(/You are on the Business plan during your free trial/)).toBeInTheDocument()
-    expect(screen.getAllByTestId('credit-card-row')).toHaveLength(3)
+    expect(screen.getByText('Your account is activated on the Growth plan')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Your subscription starts on this plan when your trial ends in 6 days. You can switch plans until then.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByText('Your plan')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /^Growth/ })).toBeChecked()
+    expect(screen.getByRole('button', { name: 'Switch to Growth plan' })).toBeDisabled()
 
-    await userEvent.click(screen.getByText('Contact our Team'))
-    expect(mockShowPylonForm).toHaveBeenCalledWith('ask-for-activation')
+    await userEvent.click(screen.getByRole('radio', { name: /^Starter/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Switch to Starter plan' }))
+
+    expect(mockChangePlan).toHaveBeenCalledWith({ organizationId: 'org-1', plan: 'STARTER_2026' })
   })
 
-  it('should not show the plan activation banner once the free trial is over', () => {
-    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 0 } })
+  it('should remind the current plan once the free trial is over', () => {
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'SCALE_2026', remaining_trial_day: 0 } })
 
     renderWithProviders(<SettingsBillingDetails />)
 
-    expect(screen.queryByText(/You are on the Business plan during your free trial/)).not.toBeInTheDocument()
+    expect(screen.getByText('You are on the Scale plan')).toBeInTheDocument()
+    expect(screen.getByText('Contact our team to change your plan.')).toBeInTheDocument()
   })
 
-  it('should not show the plan activation banner beyond the 90-day trial window', () => {
-    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 91 } })
+  it('should remind the current plan after removing the credit card outside of the free trial', () => {
+    useCreditCardsMock.mockReturnValue({ data: [] })
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'SCALE_2026', remaining_trial_day: 0 } })
 
     renderWithProviders(<SettingsBillingDetails />)
 
-    expect(screen.queryByText(/You are on the Business plan during your free trial/)).not.toBeInTheDocument()
+    expect(screen.getByText('You are on the Scale plan')).toBeInTheDocument()
+    expect(screen.getByText('Contact our team to change your plan.')).toBeInTheDocument()
+    expect(screen.queryByText('Choose your plan to activate your account')).not.toBeInTheDocument()
+  })
+
+  it('should allow removing the only credit card during the free trial', () => {
+    useCreditCardsMock.mockReturnValue({ data: mockCreditCards.slice(0, 1) })
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'GROWTH_2026', remaining_trial_day: 5 } })
+
+    renderWithProviders(<SettingsBillingDetails />)
+
+    expect(screen.getByTestId('delete-credit-card')).toBeEnabled()
+  })
+
+  it('should show the activation flow again when the credit card is removed during the free trial', () => {
+    useCreditCardsMock.mockReturnValue({ data: [] })
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'GROWTH_2026', remaining_trial_day: 5 } })
+
+    renderWithProviders(<SettingsBillingDetails />)
+
+    expect(screen.getByText('Choose your plan to activate your account')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /^Growth/ })).toBeChecked()
+  })
+
+  it('should not show the plan selection once the free trial is over', async () => {
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'GROWTH_2026', remaining_trial_day: 0 } })
+
+    const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+    expect(screen.queryByRole('radio', { name: /^Growth/ })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Contact us' }))
+    expect(mockShowChat).toHaveBeenCalled()
+  })
+
+  describe('plan activation during the free trial', () => {
+    beforeEach(() => {
+      useCreditCardsMock.mockReturnValue({ data: [] })
+      useCurrentCostMock.mockReturnValue({ data: { plan: 'SCALE_2026', remaining_trial_day: 5 } })
+    })
+
+    it('should preselect the Scale plan and open the credit card form', async () => {
+      renderWithProviders(<SettingsBillingDetails />)
+
+      expect(screen.getByText('Choose your plan to activate your account')).toBeInTheDocument()
+      expect(screen.getByText(/Your subscription starts when your trial ends in 6 days\./)).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /^Scale/ })).toBeChecked()
+      expect(await screen.findByTestId('chargebee-card-component')).toBeInTheDocument()
+      expect(loadChargebeeSpy).toHaveBeenCalled()
+    })
+
+    it('should fall back to the add card placeholder when Chargebee fails to load', async () => {
+      loadChargebeeSpy.mockRejectedValueOnce(new Error('Chargebee unavailable'))
+
+      renderWithProviders(<SettingsBillingDetails />)
+
+      expect(await screen.findByTestId('add-new-card-button')).toBeInTheDocument()
+    })
+
+    it('should display the monthly price of each plan', () => {
+      renderWithProviders(<SettingsBillingDetails />)
+
+      expect(screen.getByRole('radio', { name: /^Starter.*\$374 \/ month/ })).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /^Growth.*\$1,124 \/ month/ })).toBeInTheDocument()
+      expect(screen.getByRole('radio', { name: /^Scale.*\$3,749 \/ month/ })).toBeInTheDocument()
+    })
+
+    it('should not change the plan when activating the current trial plan', async () => {
+      const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Activate Scale plan' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Activate Scale plan' }))
+
+      await waitFor(() => expect(mockAddCreditCard).toHaveBeenCalledTimes(1))
+      expect(mockChangePlan).not.toHaveBeenCalled()
+    })
+
+    it('should change the plan after adding the credit card when another plan is selected', async () => {
+      const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+      await userEvent.click(screen.getByRole('radio', { name: /^Growth/ }))
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Activate Growth plan' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Activate Growth plan' }))
+
+      await waitFor(() => expect(mockChangePlan).toHaveBeenCalledWith({ organizationId: 'org-1', plan: 'GROWTH_2026' }))
+      expect(mockAddCreditCard.mock.invocationCallOrder[0]).toBeLessThan(mockChangePlan.mock.invocationCallOrder[0])
+    })
+
+    it('should not change the plan when the credit card cannot be added', async () => {
+      mockAddCreditCard.mockRejectedValueOnce(new Error('Card declined'))
+      const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+      await userEvent.click(screen.getByRole('radio', { name: /^Starter/ }))
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Activate Starter plan' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Activate Starter plan' }))
+
+      await waitFor(() => expect(mockToastError).toHaveBeenCalled())
+      expect(mockChangePlan).not.toHaveBeenCalled()
+    })
+
+    it('should let the user contact the team for an Enterprise plan', async () => {
+      const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+      await userEvent.click(screen.getByRole('button', { name: 'Contact our team' }))
+      expect(mockShowPylonForm).toHaveBeenCalledWith('ask-for-activation')
+    })
   })
 })

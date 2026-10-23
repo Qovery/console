@@ -15,13 +15,16 @@ import {
 } from './cluster-dns-provider-settings'
 
 describe('ClusterDnsProviderSettings utils', () => {
-  it('should allow editing for Business and Enterprise plans', () => {
+  it('should allow editing for Business, Enterprise and Scale plans', () => {
     expect(canEditDnsProvider(PlanEnum.BUSINESS)).toBe(true)
     expect(canEditDnsProvider(PlanEnum.BUSINESS_2025)).toBe(true)
     expect(canEditDnsProvider(PlanEnum.ENTERPRISE)).toBe(true)
     expect(canEditDnsProvider(PlanEnum.ENTERPRISE_YEARLY)).toBe(true)
     expect(canEditDnsProvider(PlanEnum.ENTERPRISE_2025)).toBe(true)
+    expect(canEditDnsProvider(PlanEnum.SCALE_2026)).toBe(true)
     expect(canEditDnsProvider(PlanEnum.TEAM_2025)).toBe(false)
+    expect(canEditDnsProvider(PlanEnum.GROWTH_2026)).toBe(false)
+    expect(canEditDnsProvider(PlanEnum.STARTER_2026)).toBe(false)
   })
 
   it('should not prefill Cloudflare secret from the response', () => {

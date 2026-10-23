@@ -89,19 +89,54 @@ describe('PageOrganizationBillingSummary', () => {
     expect(pageProps.onPromoCodeClick).toHaveBeenCalled()
   })
 
-  it('should always show Contact our Team during an active trial, even when a credit card exists', async () => {
-    const onActivateAccountClick = jest.fn()
+  it('should show Add credit card during an active trial when no credit card exists', async () => {
+    const onAddCreditCardClick = jest.fn()
     const { userEvent } = renderWithProviders(
       <PageOrganizationBillingSummary
         {...pageProps}
         currentCost={{ ...currentCostMock, remaining_trial_day: 5 }}
-        hasCreditCard
-        onActivateAccountClick={onActivateAccountClick}
+        hasCreditCard={false}
+        creditCard={undefined}
+        onAddCreditCardClick={onAddCreditCardClick}
       />
     )
 
-    await userEvent.click(screen.getByText('Contact our Team'))
-    expect(onActivateAccountClick).toHaveBeenCalled()
+    await userEvent.click(screen.getByText('Add credit card'))
+    expect(onAddCreditCardClick).toHaveBeenCalled()
+  })
+
+  it('should not show Add credit card during an active trial when a credit card exists', () => {
+    renderWithProviders(
+      <PageOrganizationBillingSummary
+        {...pageProps}
+        currentCost={{ ...currentCostMock, remaining_trial_day: 5 }}
+        hasCreditCard
+      />
+    )
+
+    expect(screen.queryByText('Add credit card')).not.toBeInTheDocument()
+  })
+
+  it('should remind the activated plan with a switch action when a credit card exists during an active trial', async () => {
+    const onSwitchPlanClick = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <PageOrganizationBillingSummary
+        {...pageProps}
+        currentCost={{ ...currentCostMock, plan: PlanEnum.GROWTH_2026, remaining_trial_day: 10 }}
+        hasCreditCard
+        onSwitchPlanClick={onSwitchPlanClick}
+      />
+    )
+
+    expect(screen.getByText('Your account is activated on the Growth plan')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /Your free trial ends in 11 days, then your subscription starts on this plan. You can switch plans until then./
+      )
+    ).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('Switch plan'))
+    expect(onSwitchPlanClick).toHaveBeenCalled()
   })
 
   it('should only show Cancel free trial when a credit card exists during an active trial', async () => {
@@ -131,10 +166,15 @@ describe('PageOrganizationBillingSummary', () => {
 
   it('should not show the trial callout beyond the 90-day trial window', () => {
     renderWithProviders(
-      <PageOrganizationBillingSummary {...pageProps} currentCost={{ ...currentCostMock, remaining_trial_day: 91 }} />
+      <PageOrganizationBillingSummary
+        {...pageProps}
+        currentCost={{ ...currentCostMock, remaining_trial_day: 91 }}
+        hasCreditCard={false}
+        creditCard={undefined}
+      />
     )
 
-    expect(screen.queryByText('Contact our Team')).not.toBeInTheDocument()
+    expect(screen.queryByText('Add credit card')).not.toBeInTheDocument()
     expect(screen.queryByText('Cancel free trial')).not.toBeInTheDocument()
   })
 
@@ -184,6 +224,22 @@ describe('SettingsBillingSummary', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<SettingsBillingSummary />)
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should open the cancel free trial Pylon form', async () => {
+    const showPylonForm = jest.fn()
+    useSupportChatMock.mockReturnValue({
+      showChat: jest.fn(),
+      showPylonForm,
+    } as unknown as ReturnType<typeof useSupportChat>)
+    useCurrentCostMock.mockReturnValue({
+      data: { ...currentCostMock, remaining_trial_day: 5 },
+    } as unknown as ReturnType<typeof useCurrentCost>)
+
+    const { userEvent } = renderWithProviders(<SettingsBillingSummary />)
+
+    await userEvent.click(screen.getByText('Cancel free trial'))
+    expect(showPylonForm).toHaveBeenCalledWith('cancel-free-trial')
   })
 
   it('should fetch credit cards and current cost', () => {

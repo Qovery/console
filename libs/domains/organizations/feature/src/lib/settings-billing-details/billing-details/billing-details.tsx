@@ -2,7 +2,7 @@ import { type BillingInfoRequest } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { EU_COUNTRY_CODES, countries } from '@qovery/shared/enums'
-import { Button, IconFlag, InputSelect, InputText } from '@qovery/shared/ui'
+import { Button, Heading, IconFlag, InputSelect, InputText } from '@qovery/shared/ui'
 import { validatePostalCode, validateRequiredField, validateVatNumber } from './billing-details-validation'
 
 export interface BillingDetailsProps {
@@ -10,6 +10,7 @@ export interface BillingDetailsProps {
   editInProcess?: boolean
   submitDisabled?: boolean
   submitLabel?: string
+  title?: string
 }
 
 const countryValues = countries.map((country) => ({
@@ -18,14 +19,22 @@ const countryValues = countries.map((country) => ({
   icon: <IconFlag code={country.code} />,
 }))
 
-export function BillingDetails({ onSubmit, editInProcess, submitDisabled, submitLabel = 'Save' }: BillingDetailsProps) {
+export function BillingDetails({
+  onSubmit,
+  editInProcess,
+  submitDisabled,
+  submitLabel = 'Save',
+  title = 'Billing information',
+}: BillingDetailsProps) {
   const { clearErrors, control, formState } = useFormContext<BillingInfoRequest>()
   const countryCode = useWatch({ control, name: 'country_code' })
   const isEuCountry = EU_COUNTRY_CODES.has(countryCode)
 
   return (
     <>
-      <h3 className="mb-5 text-sm font-medium text-neutral">Billing information</h3>
+      <Heading level={3} className="mb-5">
+        {title}
+      </Heading>
       <div className="flex items-start gap-3">
         <Controller
           control={control}

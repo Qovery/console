@@ -53,7 +53,8 @@ export function canEditDnsProvider(plan?: string): boolean {
     plan === PlanEnum.BUSINESS_2025 ||
     plan === PlanEnum.ENTERPRISE ||
     plan === PlanEnum.ENTERPRISE_YEARLY ||
-    plan === PlanEnum.ENTERPRISE_2025
+    plan === PlanEnum.ENTERPRISE_2025 ||
+    plan === PlanEnum.SCALE_2026
   )
 }
 
@@ -371,7 +372,7 @@ export function ClusterDnsProviderSettings({
                 </Callout.Icon>
                 <Callout.Text>
                   <Callout.TextHeading>
-                    Changing the DNS provider requires a Business or Enterprise plan.
+                    Changing the DNS provider requires a Scale, Business or Enterprise plan.
                   </Callout.TextHeading>
                   <Callout.TextDescription>
                     You can review the current configuration here or upgrade from{' '}

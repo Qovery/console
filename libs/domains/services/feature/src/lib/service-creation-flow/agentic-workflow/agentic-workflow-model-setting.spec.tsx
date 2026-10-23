@@ -72,6 +72,29 @@ describe('AgenticWorkflowModelSetting', () => {
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ provider: 'anthropic', model: 'claude-sonnet' })
   })
 
+  it('keeps gateway model IDs unchanged, including namespaced IDs and a null created date', async () => {
+    mockModels = [
+      { id: 'vendor/claude-sonnet:latest', display_name: 'Gateway Sonnet', created_at: null },
+      { id: 'team.custom-model', display_name: 'Custom model', created_at: null },
+    ]
+    const onChange = jest.fn()
+
+    renderWithProviders(
+      <AgenticWorkflowModelSetting
+        llmProviderId="provider-1"
+        providerType={LlmProviderType.CLAUDE}
+        settings='{"model":"vendor/claude-sonnet:latest"}'
+        onChange={onChange}
+      />
+    )
+
+    expect(screen.getByText('Gateway Sonnet')).toBeInTheDocument()
+    await selectEvent.select(screen.getByLabelText('Model'), 'Custom model', { container: document.body })
+
+    expect(onChange).toHaveBeenCalledTimes(1)
+    expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'team.custom-model' })
+  })
+
   it('selects the first Claude model by default', async () => {
     mockModels = [
       { id: 'claude-opus', display_name: 'Claude Opus', created_at: null },
