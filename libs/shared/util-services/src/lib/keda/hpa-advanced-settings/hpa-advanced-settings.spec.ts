@@ -96,6 +96,32 @@ describe('hpa-advanced-settings', () => {
       })
     })
 
+    it('should not echo build settings from current settings', () => {
+      const formData = {
+        hpa_metric_type: 'CPU',
+        hpa_cpu_average_utilization_percent: 75,
+      }
+
+      const currentSettings = {
+        'build.timeout_max_sec': 1800,
+        'build.cpu_max_in_milli': 4000,
+        'build.ram_max_in_gib': 8,
+        'build.ephemeral_storage_in_gib': 20,
+        'build.disable_buildkit_cache': false,
+        'build.skip_git_submodules': false,
+        'deployment.termination_grace_period_seconds': 30,
+        'hpa.cpu.average_utilization_percent': 60,
+      }
+
+      const result = buildHpaAdvancedSettingsPayload(formData, currentSettings)
+
+      expect(result).toEqual({
+        'deployment.termination_grace_period_seconds': 30,
+        'hpa.cpu.average_utilization_percent': 75,
+        'hpa.memory.average_utilization_percent': null,
+      })
+    })
+
     it('should use default CPU value when not provided', () => {
       const formData = {
         hpa_metric_type: 'CPU',
