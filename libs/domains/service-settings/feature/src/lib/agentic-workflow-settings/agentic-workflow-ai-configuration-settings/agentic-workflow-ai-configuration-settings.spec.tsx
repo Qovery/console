@@ -47,13 +47,7 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
   it('renders the token, model settings, and instructions', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness>
-        {(form) => (
-          <AgenticWorkflowAiConfigurationSettings
-            form={form}
-            llmProviders={[]}
-            modelType={AgenticWorkflowModelType.BEDROCK}
-          />
-        )}
+        {(form) => <AgenticWorkflowAiConfigurationSettings form={form} llmProviders={[]} />}
       </AgenticWorkflowSettingsFormHarness>
     )
 
@@ -69,13 +63,7 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
   it('does not show an instructions error before the field is modified', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness values={{ agentPrompt: '' }}>
-        {(form) => (
-          <AgenticWorkflowAiConfigurationSettings
-            form={form}
-            llmProviders={[]}
-            modelType={AgenticWorkflowModelType.BEDROCK}
-          />
-        )}
+        {(form) => <AgenticWorkflowAiConfigurationSettings form={form} llmProviders={[]} />}
       </AgenticWorkflowSettingsFormHarness>
     )
 
@@ -95,18 +83,22 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
       <AgenticWorkflowSettingsFormHarness
         values={{ llmProviderId: claudeProvider.id, modelSettings: '{"model":"claude-sonnet"}' }}
       >
-        {(form) => (
-          <AgenticWorkflowAiConfigurationSettings
-            form={form}
-            llmProviders={[claudeProvider]}
-            modelType={AgenticWorkflowModelType.CLAUDE}
-          />
-        )}
+        {(form) => <AgenticWorkflowAiConfigurationSettings form={form} llmProviders={[claudeProvider]} />}
       </AgenticWorkflowSettingsFormHarness>
     )
 
     expect(screen.getByLabelText('Model')).toBeInTheDocument()
     expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
+  })
+
+  it('hides the model selector until the model type is resolved', () => {
+    renderWithProviders(
+      <AgenticWorkflowSettingsFormHarness values={{ llmProviderId: claudeProvider.id, modelType: undefined }}>
+        {(form) => <AgenticWorkflowAiConfigurationSettings form={form} llmProviders={[claudeProvider]} />}
+      </AgenticWorkflowSettingsFormHarness>
+    )
+
+    expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
   })
 
   it('shows the model selector for Bedrock', () => {
@@ -124,13 +116,7 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
           modelSettings: '{"model":"anthropic.claude-opus-5"}',
         }}
       >
-        {(form) => (
-          <AgenticWorkflowAiConfigurationSettings
-            form={form}
-            llmProviders={[bedrockProvider]}
-            modelType={AgenticWorkflowModelType.BEDROCK}
-          />
-        )}
+        {(form) => <AgenticWorkflowAiConfigurationSettings form={form} llmProviders={[bedrockProvider]} />}
       </AgenticWorkflowSettingsFormHarness>
     )
 
@@ -164,7 +150,6 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
             <AgenticWorkflowAiConfigurationSettings
               form={form}
               llmProviders={[claudeProvider, bedrockProvider, gatewayProvider]}
-              modelType={initialModelType}
             />
             <output aria-label="Workflow model type">{form.watch('modelType')}</output>
           </>
