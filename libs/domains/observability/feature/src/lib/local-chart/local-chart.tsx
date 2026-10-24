@@ -46,6 +46,8 @@ interface ChartContentProps extends PropsWithChildren {
   tooltipLabel?: string
   referenceLineData?: ReferenceLineEvent[]
   isFullscreen?: boolean
+  hasError?: boolean
+  emptyLabel?: string
 }
 
 export const ChartContent = memo(function ChartContent({
@@ -60,6 +62,8 @@ export const ChartContent = memo(function ChartContent({
   yDomain,
   referenceLineData,
   isFullscreen = false,
+  hasError,
+  emptyLabel,
 }: ChartContentProps) {
   const {
     startTimestamp,
@@ -115,6 +119,8 @@ export const ChartContent = memo(function ChartContent({
       isLoading={isLoading}
       isEmpty={isEmpty}
       isRefreshing={isAnyChartRefreshing}
+      hasError={hasError}
+      emptyLabel={emptyLabel}
     >
       <ComposedChart
         data={data}
@@ -234,6 +240,8 @@ export interface LocalChartProps extends PropsWithChildren {
   referenceLineData?: ReferenceLineEvent[]
   isFullscreen?: boolean
   handleResetLegend?: () => void
+  hasError?: boolean
+  emptyLabel?: string
 }
 
 export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(function LocalChart(
@@ -255,6 +263,8 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
     referenceLineData,
     isFullscreen = false,
     handleResetLegend,
+    hasError,
+    emptyLabel,
   },
   ref
 ) {
@@ -325,6 +335,8 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             yDomain={yDomain}
             referenceLineData={events}
             isFullscreen={isFullscreen}
+            hasError={hasError}
+            emptyLabel={emptyLabel}
           >
             {children}
           </ChartContent>
@@ -353,6 +365,8 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
               yDomain={yDomain}
               referenceLineData={events}
               isFullscreen={isFullscreen}
+              hasError={hasError}
+              emptyLabel={emptyLabel}
             >
               {children}
             </ChartContent>
