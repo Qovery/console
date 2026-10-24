@@ -211,7 +211,7 @@ export const clusters = createQueryKeys('clusters', {
   }),
   runningStatus: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
     queryKey: [organizationId, clusterId],
-    // NOTE: Value is set by WebSocket
+    // Populated by the socket. null means the connection retention period expired.
     queryFn() {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise<ClusterStatusDto | null>(() => {})
@@ -219,7 +219,7 @@ export const clusters = createQueryKeys('clusters', {
   }),
   metrics: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
     queryKey: [organizationId, clusterId],
-    // NOTE: Value is set by WebSocket
+    // Populated by the socket. null means the connection retention period expired.
     queryFn() {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise<ClusterMetricsDto | null>(() => {})

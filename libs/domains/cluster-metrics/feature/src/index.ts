@@ -1,8 +1,10 @@
 export * from './lib/hooks/use-cluster-metrics-socket/use-cluster-metrics-socket'
-export * from './lib/hooks/use-cluster-metrics/use-cluster-metrics'
+export * from './lib/hooks/use-retained-cluster-metrics/use-retained-cluster-metrics'
 export * from './lib/cluster-card-node-usage/cluster-card-node-usage'
 export * from './lib/cluster-card-resources/cluster-card-resources'
 export * from './lib/cluster-card-setup/cluster-card-setup'
 export * from './lib/cluster-table-nodepool/cluster-table-nodepool'
 export * from './lib/cluster-table-node/cluster-table-node'
 export * from './lib/cluster-workloads/cluster-workloads'
+
+export * from './lib/utils/get-cluster-health-and-metrics-state'

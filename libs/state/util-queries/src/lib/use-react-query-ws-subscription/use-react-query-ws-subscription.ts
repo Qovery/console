@@ -17,8 +17,12 @@ export interface UseReactQueryWsSubscriptionProps {
   onOpen?: (queryClient: QueryClient, event: Event) => void
   onError?: (queryClient: QueryClient, event: Event) => void
   onClose?: (QueryClient: QueryClient, event: CloseEvent) => void
+  /** Called on every unexpected close, including while automatic retries continue. */
+  onDisconnect?: (queryClient: QueryClient, event: CloseEvent) => void
+  maxReconnectDelay?: number
+  onConnectionError?: (error: unknown) => void
   enabled?: boolean
-  /* `boolean` to enable or disable reconnection or `number` to set the maximum number of attempts */
+  /** `boolean` enables/disables reconnection; `number` caps total retries for this subscription, even after messages arrive. */
   shouldReconnect?: boolean | number
 }
 
@@ -53,6 +57,9 @@ export function useReactQueryWsSubscription({
   onOpen,
   onError,
   onClose,
+  onDisconnect,
+  maxReconnectDelay = 100_000,
+  onConnectionError,
   enabled = true,
   shouldReconnect = false,
 }: UseReactQueryWsSubscriptionProps) {
@@ -80,11 +87,19 @@ export function useReactQueryWsSubscription({
   const reconnectCount = useRef<number>(0)
   const queryClientRef = useRef(queryClient)
   const getAccessTokenSilentlyRef = useRef(getAccessTokenSilently)
-  const callbacksRef = useRef({ onClose, onError, onMessage, onOpen, onQueryInvalidated })
+  const callbacksRef = useRef({
+    onClose,
+    onDisconnect,
+    onError,
+    onMessage,
+    onOpen,
+    onQueryInvalidated,
+    onConnectionError,
+  })
 
   queryClientRef.current = queryClient
   getAccessTokenSilentlyRef.current = getAccessTokenSilently
-  callbacksRef.current = { onClose, onError, onMessage, onOpen, onQueryInvalidated }
+  callbacksRef.current = { onClose, onDisconnect, onError, onMessage, onOpen, onQueryInvalidated, onConnectionError }
 
   useEffect(() => {
     if (!enabled) {
@@ -93,24 +108,66 @@ export function useReactQueryWsSubscription({
 
     let timeout: ReturnType<typeof setTimeout> | undefined
     const controller = new AbortController()
-    let canReconnect = shouldReconnect
+    const canReconnect = shouldReconnect
+    let websocket: WebSocket | undefined
+    let backoffCount = 0
+    reconnectCount.current = 0
+
+    function scheduleReconnect() {
+      if (controller.signal.aborted || !canReconnect || reconnectCount.current >= MAX_RECONNECT_ATTEMPTS) return false
+      timeout = setTimeout(
+        () => {
+          timeout = undefined
+          reconnectCount.current++
+          backoffCount++
+          void connect({ signal: controller.signal })
+        },
+        Math.min(Math.pow(2, backoffCount) * 5000, maxReconnectDelay)
+      )
+      return true
+    }
 
     async function connect({ signal }: { signal: AbortSignal }) {
-      const token = await getAccessTokenSilentlyRef.current()
-      if (signal.aborted) {
+      let token: string
+      try {
+        token = await getAccessTokenSilentlyRef.current()
+      } catch (error) {
+        if (signal.aborted) return
+        callbacksRef.current.onConnectionError?.(error)
+        const code = typeof error === 'object' && error !== null && 'error' in error ? error.error : undefined
+        // These require user interaction; network/time-out failures may recover.
+        if (
+          !['login_required', 'consent_required', 'interaction_required', 'invalid_grant', 'access_denied'].includes(
+            String(code)
+          )
+        ) {
+          scheduleReconnect()
+        }
         return
       }
 
-      const websocket = new WebSocket(`${url}?${searchParamsString}`, ['v1', 'auth.bearer.' + token])
+      if (signal.aborted) return
+      let socket: WebSocket
+      try {
+        socket = new WebSocket(`${url}?${searchParamsString}`, ['v1', 'auth.bearer.' + token])
+        websocket = socket
+      } catch (error) {
+        // Invalid URLs/protocols and browser security restrictions cannot recover by retrying.
+        callbacksRef.current.onConnectionError?.(error)
+        return
+      }
 
-      websocket.onopen = async (event) => {
+      socket.onopen = async (event) => {
+        if (signal.aborted) return
         callbacksRef.current.onOpen?.(queryClientRef.current, event)
       }
-      websocket.onmessage = async (event) => {
+      socket.onmessage = async (event) => {
         if (signal.aborted) {
           return
         }
 
+        // Recovery resets the delay, but does not replenish a finite retry budget.
+        backoffCount = 0
         const data = parseWebSocketMessageData(event.data)
 
         if (isInvalidateOperation(data)) {
@@ -122,46 +179,31 @@ export function useReactQueryWsSubscription({
           callbacksRef.current.onMessage?.(queryClientRef.current, data)
         }
       }
-      websocket.onerror = async (event) => {
+      socket.onerror = async (event) => {
+        if (signal.aborted) return
         callbacksRef.current.onError?.(queryClientRef.current, event)
       }
-      websocket.onclose = async (event) => {
+      socket.onclose = async (event) => {
         if (signal.aborted) {
           return
         }
 
-        if (canReconnect && reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
-          timeout = setTimeout(
-            function () {
-              reconnectCount.current++
-              connect({ signal })
-            },
-            // Exponential Backoff
-            // attemptNumber will be 0 the first time it attempts to reconnect, so this equation results in a reconnect pattern of 5 second, 10 seconds, 20 seconds, 40 seconds, 80 seconds, and then caps at 100 seconds until the maximum number of attempts is reached
-            Math.min(Math.pow(2, reconnectCount.current) * 5000, 100_000)
-          )
-        } else {
+        callbacksRef.current.onDisconnect?.(queryClientRef.current, event)
+
+        if (!scheduleReconnect()) {
           callbacksRef.current.onClose?.(queryClientRef.current, event)
         }
       }
-
-      const onAbort = () => {
-        canReconnect = false
-        websocket.close()
-        if (timeout) {
-          clearTimeout(timeout)
-        }
-        signal.removeEventListener('abort', onAbort)
-      }
-      signal.addEventListener('abort', onAbort)
     }
 
     connect({ signal: controller.signal })
 
     return () => {
       controller.abort()
+      clearTimeout(timeout)
+      websocket?.close()
     }
-  }, [shouldReconnect, MAX_RECONNECT_ATTEMPTS, url, searchParamsString, enabled])
+  }, [shouldReconnect, MAX_RECONNECT_ATTEMPTS, maxReconnectDelay, url, searchParamsString, enabled])
 }
 
 export default useReactQueryWsSubscription

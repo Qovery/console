@@ -1,14 +1,14 @@
-import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useRetainedClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterCardSetup } from './cluster-card-setup'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   useCluster: jest.fn(),
-  useClusterRunningStatus: jest.fn(),
+  useRetainedClusterRunningStatus: jest.fn(),
 }))
 
 const mockUseCluster = useCluster as jest.Mock
-const mockUseClusterRunningStatus = useClusterRunningStatus as jest.Mock
+const mockUseClusterRunningStatus = useRetainedClusterRunningStatus as jest.Mock
 
 describe('ClusterCardSetup', () => {
   const mockOrganizationId = 'org-123'
@@ -27,6 +27,62 @@ describe('ClusterCardSetup', () => {
       data: mockCluster,
     })
   })
+
+  it('keeps static setup details visible while the live version loads, expires, and recovers', () => {
+    mockUseClusterRunningStatus.mockReturnValue({ data: undefined })
+    const { container, rerender } = renderWithProviders(
+      <ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />
+    )
+    expect(container.querySelectorAll('[aria-busy="true"]')).toHaveLength(1)
+    expect(screen.getByRole('link', { name: /Maintenance every Monday/ })).toBeInTheDocument()
+    expect(screen.getByText(/Created .* ago/)).toBeInTheDocument()
+
+    mockUseClusterRunningStatus.mockReturnValue({ data: null })
+    rerender(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+    expect(screen.getByText('Unavailable')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Maintenance every Monday/ })).toBeInTheDocument()
+    expect(screen.getByText(/Created .* ago/)).toBeInTheDocument()
+
+    mockUseClusterRunningStatus.mockReturnValue({
+      data: { computed_status: { kube_version_status: { type: 'OK', kube_version: 'v1.28.1' } } },
+    })
+    rerender(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    expect(screen.getByText('v1.28.1')).toBeInTheDocument()
+    expect(screen.queryByText('Unavailable')).not.toBeInTheDocument()
+  })
+
+  it.each(['PARTIALLY_MANAGED', 'MANAGED'])(
+    'waits for cluster metadata before interpreting drift for %s',
+    (kubernetes) => {
+      mockUseCluster.mockReturnValue({ data: undefined })
+      mockUseClusterRunningStatus.mockReturnValue({
+        data: {
+          computed_status: {
+            kube_version_status: {
+              type: 'DRIFT',
+              kube_version: 'v1.34',
+              expected_kube_version: 'v1.33',
+            },
+          },
+        },
+      })
+      const { container, rerender } = renderWithProviders(
+        <ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />
+      )
+      expect(container.querySelectorAll('[aria-busy="true"]')).toHaveLength(3)
+      expect(screen.queryByText('Upgrade Kubernetes')).not.toBeInTheDocument()
+      expect(screen.queryByText('v1.34 → v1.33')).not.toBeInTheDocument()
+
+      mockUseCluster.mockReturnValue({ data: { ...mockCluster, kubernetes } })
+      rerender(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+      expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+      const isEksAnywhere = kubernetes === 'PARTIALLY_MANAGED'
+      expect(screen.getByText(isEksAnywhere ? 'Kubernetes version' : 'Upgrade Kubernetes')).toBeInTheDocument()
+      expect(screen.getByText(isEksAnywhere ? 'v1.34' : 'v1.34 → v1.33')).toBeInTheDocument()
+      expect(screen.queryAllByText('Upgrade Kubernetes')).toHaveLength(isEksAnywhere ? 0 : 1)
+    }
+  )
 
   it('should render Kubernetes up to date status', () => {
     const mockRunningStatus = {

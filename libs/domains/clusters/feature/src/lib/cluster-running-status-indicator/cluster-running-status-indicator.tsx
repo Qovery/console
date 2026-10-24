@@ -1,12 +1,13 @@
 import clsx from 'clsx'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, type ClusterStateEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { getClusterQuotaWarning } from '../cluster-quota-warning/cluster-quota-warning'
-import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
+import { useClusterStatus } from '../hooks/use-cluster-status/use-cluster-status'
+import { useRetainedClusterRunningStatus } from '../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status'
 
 function ClusterRunningStatusDot({ className, status }: { className: string; status: string }) {
   return (
@@ -31,32 +32,25 @@ export function ClusterRunningStatusIndicator({
 }: ClusterRunningStatusIndicatorProps) {
   const isFeatureFlag = useFeatureFlagVariantKey('cluster-running-status')
 
-  const [isTimeout, setIsTimeout] = useState(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const isNotInstalled = cluster.status === 'READY'
 
-  const { data: runningStatus, isLoading } = useClusterRunningStatus({
+  const { data: runningStatus } = useRetainedClusterRunningStatus({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })
 
+  const { data: deploymentStatus } = useClusterStatus({
+    organizationId: cluster.organization.id,
+    clusterId: cluster.id,
+    enabled: clusterDeploymentStatus === undefined,
+    refetchInterval: 4_000,
+  })
+
   const quotaWarning = getClusterQuotaWarning(runningStatus)
 
-  useEffect(() => {
-    if (runningStatus === undefined) {
-      const timeoutId = setTimeout(() => {
-        if (runningStatus === undefined) {
-          setIsTimeout(true)
-        }
-      }, 3000)
-
-      return () => clearTimeout(timeoutId)
-    }
-    return
-  }, [runningStatus])
-
-  if (clusterDeploymentStatus === 'STOPPED') {
+  if ((clusterDeploymentStatus ?? deploymentStatus?.status) === 'STOPPED') {
     return type === 'dot' ? (
       <ClusterRunningStatusDot status="Stopped" className="border-neutral-subtle bg-surface-neutral-solid" />
     ) : (
@@ -78,7 +72,7 @@ export function ClusterRunningStatusIndicator({
     )
   }
 
-  if (isLoading && !runningStatus && !isTimeout) {
+  if (runningStatus === undefined) {
     return type === 'dot' ? (
       <span className="flex h-5 w-5 items-center justify-center">
         <Skeleton width={9} height={9} rounded />
@@ -86,35 +80,6 @@ export function ClusterRunningStatusIndicator({
     ) : (
       <Skeleton width={80} height={24} />
     )
-  }
-
-  if (isTimeout && !runningStatus) {
-    if (cluster.is_demo) {
-      return type === 'dot' ? (
-        <ClusterRunningStatusDot status="Unknown" className="border-neutral-subtle bg-surface-neutral-solid" />
-      ) : (
-        <Tooltip content="Cannot fetch the cluster status. Check the installation guide">
-          <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
-            Unknown
-            <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
-          </Badge>
-        </Tooltip>
-      )
-    } else {
-      return type === 'dot' ? (
-        <ClusterRunningStatusDot
-          status="Status unavailable"
-          className="border-neutral-subtle bg-surface-neutral-solid"
-        />
-      ) : (
-        <Tooltip content="Cannot fetch the cluster status. Please contact us if the issue persists">
-          <Badge variant="surface" color="neutral" className="items-center gap-2 border-neutral-component pr-2">
-            Status unavailable
-            <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
-          </Badge>
-        </Tooltip>
-      )
-    }
   }
 
   return match(runningStatus?.computed_status)
@@ -266,10 +231,12 @@ export function ClusterRunningStatusIndicator({
           className="border-neutral-subtle bg-surface-neutral-solid"
         />
       ) : (
-        <Badge variant="surface" color="neutral" className="items-center gap-2 border-neutral-component pr-2">
-          <span className="text-neutral">Status unavailable</span>
-          <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
-        </Badge>
+        <Tooltip content="Qovery cannot retrieve the cluster health. Retrying automatically.">
+          <Badge variant="surface" color="neutral" className="items-center gap-2 border-neutral-component pr-2">
+            <span className="text-neutral">Status unavailable</span>
+            <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
+          </Badge>
+        </Tooltip>
       )
     )
 }

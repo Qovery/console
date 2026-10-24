@@ -21,11 +21,11 @@ import { ClusterAccessModal } from '../cluster-access-modal/cluster-access-modal
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
 import { ClusterUpdateModal } from '../cluster-update-modal/cluster-update-modal'
-import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useEksAnywhereClusterJwt } from '../hooks/use-eks-anywhere-cluster-jwt/use-eks-anywhere-cluster-jwt'
 import { useIsOperatorAttached } from '../hooks/use-is-operator-attached/use-is-operator-attached'
+import { useRetainedClusterRunningStatus } from '../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 import { useUpdateEksAnywhereCommit } from '../hooks/use-update-eks-anywhere-commit/use-update-eks-anywhere-commit'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
@@ -424,7 +424,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
   const location = useLocation()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
   const { openModal, closeModal } = useModal()
-  const { data: runningStatus } = useClusterRunningStatus({
+  const { data: runningStatus } = useRetainedClusterRunningStatus({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })

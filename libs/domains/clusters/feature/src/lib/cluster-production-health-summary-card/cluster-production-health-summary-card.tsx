@@ -2,7 +2,7 @@ import type { IconName } from '@fortawesome/fontawesome-common-types'
 import { useQueries } from '@tanstack/react-query'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
-import { type ReactNode, memo, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, memo, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { Icon, Skeleton, useModal } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
@@ -19,11 +19,6 @@ import {
   getClusterHealthIssuesSeverity,
 } from './get-cluster-health-issues'
 
-// Max time we wait for the running-status websocket to report before we assume
-// the connection is slow and render the card anyway (with potential
-// "status unavailable" issues). While waiting we display a skeleton to avoid
-// flashing incorrect states caused by temporarily missing running-status data.
-const RUNNING_STATUS_TIMEOUT_MS = 8_000
 const CLUSTER_RUNNING_STATUS_QUERY_OPTIONS = {
   refetchOnMount: false,
   refetchOnWindowFocus: false,
@@ -181,27 +176,21 @@ export function ClusterProductionHealthSummaryCard({
 }: ClusterProductionHealthSummaryCardProps) {
   const { openModal, closeModal } = useModal()
   const isRunningStatusIssueEnabled = Boolean(useFeatureFlagVariantKey('cluster-running-status'))
-  const runningStatusScopeKey = useMemo(
-    () => clusters.map((cluster) => `${cluster.organization.id}:${cluster.id}`).join('|'),
-    [clusters]
-  )
-
-  const [hasRunningStatusTimedOut, setHasRunningStatusTimedOut] = useState(false)
-  useEffect(() => {
-    setHasRunningStatusTimedOut(false)
-    const timeoutId = setTimeout(() => setHasRunningStatusTimedOut(true), RUNNING_STATUS_TIMEOUT_MS)
-    return () => clearTimeout(timeoutId)
-  }, [runningStatusScopeKey])
-
   const runningStatusQueries = useClusterRunningStatusQueries({ clusters, enabled: isRunningStatusIssueEnabled })
 
   // Keep the skeleton up until every cluster has reported a running status
-  // (real payload or explicit 'NotFound'), or the timeout fires as a safety net
+  // (real payload or null after the shared initial-loading timeout).
   const hasAllRunningStatuses =
     !isRunningStatusIssueEnabled ||
     clusters.length === 0 ||
-    runningStatusQueries.every((query) => query.data !== undefined)
-  const isReady = hasAllRunningStatuses || hasRunningStatusTimedOut
+    clusters.every((cluster, index) => {
+      const deploymentStatus = clusterStatuses.find((status) => status.cluster_id === cluster.id)
+      return (
+        (deploymentStatus && (!deploymentStatus.is_deployed || deploymentStatus.status === 'STOPPED')) ||
+        runningStatusQueries[index]?.data !== undefined
+      )
+    })
+  const isReady = hasAllRunningStatuses
 
   const clustersWithIssues = useMemo<ClusterWithHealthIssues[]>(() => {
     return clusters
@@ -213,12 +202,11 @@ export function ClusterProductionHealthSummaryCard({
           deploymentStatus,
           runningStatus,
           isRunningStatusIssueEnabled,
-          hasRunningStatusTimedOut,
         })
         return { cluster, deploymentStatus, issues }
       })
       .filter((entry) => entry.issues.length > 0)
-  }, [clusters, clusterStatuses, runningStatusQueries, isRunningStatusIssueEnabled, hasRunningStatusTimedOut])
+  }, [clusters, clusterStatuses, runningStatusQueries, isRunningStatusIssueEnabled])
 
   const issuesCount = clustersWithIssues.length
   const hasIssues = issuesCount > 0

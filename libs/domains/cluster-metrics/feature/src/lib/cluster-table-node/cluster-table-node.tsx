@@ -1,11 +1,11 @@
 import clsx from 'clsx'
 import { type ClusterNodeDto, type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
-import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useRetainedClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Badge, Icon, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
-import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useRetainedClusterMetrics } from '../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics'
 import { MetricProgressBar } from '../metric-progress-bar/metric-progress-bar'
 
 export interface ClusterTableNodeProps {
@@ -26,11 +26,12 @@ export function ClusterTableNode({
   clusterId,
   className,
 }: ClusterTableNodeProps) {
-  const { data: runningStatus } = useClusterRunningStatus({
+  const { data: runningStatus } = useRetainedClusterRunningStatus({
     organizationId: organizationId,
     clusterId: clusterId,
   })
-  const { data: metrics } = useClusterMetrics({
+
+  const { data: metrics } = useRetainedClusterMetrics({
     organizationId: organizationId,
     clusterId: clusterId,
   })

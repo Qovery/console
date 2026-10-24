@@ -14,7 +14,7 @@ jest.mock('@qovery/state/util-queries', () => ({
   useReactQueryWsSubscription: jest.fn(),
 }))
 
-jest.mock('../hooks/use-cluster-running-status/use-cluster-running-status', () => ({
+jest.mock('../hooks/use-retained-cluster-running-status/use-retained-cluster-running-status', () => ({
   __esModule: true,
   default: () => ({ data: {} }),
 }))

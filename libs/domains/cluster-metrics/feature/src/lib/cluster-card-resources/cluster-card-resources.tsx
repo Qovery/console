@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useMemo } from 'react'
 import { Icon, Skeleton } from '@qovery/shared/ui'
-import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useRetainedClusterMetrics } from '../hooks/use-retained-cluster-metrics/use-retained-cluster-metrics'
 import { type ResourcesProps, calculateClusterResources } from './calculate-cluster-resources'
 
 export interface ClusterCardResourcesProps {
@@ -10,7 +10,7 @@ export interface ClusterCardResourcesProps {
 }
 
 export function ClusterCardResources({ organizationId, clusterId }: ClusterCardResourcesProps) {
-  const { data: metrics } = useClusterMetrics({
+  const { data: metrics } = useRetainedClusterMetrics({
     organizationId,
     clusterId,
   })
@@ -54,17 +54,21 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
                 <Icon className="shrink-0 text-base text-neutral-subtle" iconName={icon} iconStyle="regular" />
                 <span className="truncate whitespace-nowrap">{label}</span>
               </span>
-              <Skeleton width={160} height={20} show={typeof metrics !== 'object' ? true : false}>
-                <p className="flex items-center gap-1 text-right text-neutral">
-                  <span className="font-medium">{value.used}</span>
-                  <span className="flex items-center gap-1.5 text-neutral-subtle">
-                    <span>
-                      /{value.total} {value.unit}
+              <Skeleton width={160} height={20} show={metrics === undefined}>
+                {metrics === null ? (
+                  <span className="text-neutral-subtle">Unavailable</span>
+                ) : (
+                  <p className="flex items-center gap-1 text-right text-neutral">
+                    <span className="font-medium">{value.used}</span>
+                    <span className="flex items-center gap-1.5 text-neutral-subtle">
+                      <span>
+                        /{value.total} {value.unit}
+                      </span>
+                      <span className="block h-[3px] w-[3px] rounded-full bg-surface-neutral-solid" />
+                      {value.percent}%
                     </span>
-                    <span className="block h-[3px] w-[3px] rounded-full bg-surface-neutral-solid" />
-                    {value.percent}%
-                  </span>
-                </p>
+                  </p>
+                )}
               </Skeleton>
             </li>
           ) : (
@@ -73,11 +77,15 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
                 <Icon className="shrink-0 text-base text-neutral-subtle" iconName={icon} iconStyle="regular" />
                 <span className="truncate whitespace-nowrap">{label}</span>
               </span>
-              <Skeleton width={160} height={20} show={typeof metrics !== 'object' ? true : false}>
-                <p className="flex items-center gap-1 text-right text-neutral">
-                  <span className="font-medium">{value.total}</span>
-                  <span className="text-neutral-subtle">{value.unit}</span>
-                </p>
+              <Skeleton width={160} height={20} show={metrics === undefined}>
+                {metrics === null ? (
+                  <span className="text-neutral-subtle">Unavailable</span>
+                ) : (
+                  <p className="flex items-center gap-1 text-right text-neutral">
+                    <span className="font-medium">{value.total}</span>
+                    <span className="text-neutral-subtle">{value.unit}</span>
+                  </p>
+                )}
               </Skeleton>
             </li>
           )
