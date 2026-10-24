@@ -51,7 +51,7 @@ type ClusterCredentialsFormValues = {
   id?: string
 }
 
-type ClusterCredentialAuthType = ClusterCredentialsFormValues['type']
+export type ClusterCredentialAuthType = ClusterCredentialsFormValues['type']
 export type ClusterCredentialsModalCloudProvider = CloudProviderEnum | 'AWS_EKS_ANYWHERE'
 const AWS_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['STS', 'STATIC']
 const GCP_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['WIF', 'STATIC']
@@ -66,6 +66,8 @@ export interface ClusterCredentialsModalProps {
   onClose: (response?: ClusterCredentials) => void
   credential?: ClusterCredentials
   cloudProvider?: ClusterCredentialsModalCloudProvider
+  // Restricts the authentication types the user can pick (e.g. extended permissions only accept an AWS role)
+  allowedTypes?: ClusterCredentialAuthType[]
 }
 
 export const getDefaultClusterCredentialType = ({
@@ -238,6 +240,7 @@ export function ClusterCredentialsModal({
   onClose,
   credential,
   cloudProvider = 'AWS',
+  allowedTypes,
 }: ClusterCredentialsModalProps) {
   const isEksAnywhereEnabled = Boolean(useFeatureFlagEnabled('eks-anywhere'))
   const { enableAlertClickOutside } = useModal()
@@ -304,10 +307,20 @@ export function ClusterCredentialsModal({
           : cloudProviderLocal === 'AWS_EKS_ANYWHERE'
             ? EKS_ANYWHERE_CREDENTIAL_TYPES
             : AWS_CREDENTIAL_TYPES
-      ).filter((type) =>
-        type === 'EKS_ANYWHERE_VSPHERE_ROLE' || type === 'EKS_ANYWHERE_VSPHERE_STATIC' ? isEksAnywhereEnabled : true
-      ),
-    [cloudProviderLocal, credential?.object_type, inferredCredentialTypes, isEdit, isEksAnywhereEnabled, isGcpMode]
+      )
+        .filter((type) =>
+          type === 'EKS_ANYWHERE_VSPHERE_ROLE' || type === 'EKS_ANYWHERE_VSPHERE_STATIC' ? isEksAnywhereEnabled : true
+        )
+        .filter((type) => !allowedTypes || allowedTypes.includes(type)),
+    [
+      allowedTypes,
+      cloudProviderLocal,
+      credential?.object_type,
+      inferredCredentialTypes,
+      isEdit,
+      isEksAnywhereEnabled,
+      isGcpMode,
+    ]
   )
 
   const defaultType: ClusterCredentialsFormValues['type'] = getDefaultClusterCredentialType({
