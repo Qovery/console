@@ -5,6 +5,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type BlueprintDetailsResponse, type Cluster } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useClusters, useIsOperatorAttached } from '@qovery/domains/clusters/feature'
+import { useIsDomainRoutingEnabled } from '@qovery/domains/custom-domains/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import {
@@ -178,6 +179,13 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     label: 'Deployments',
     iconName: 'rocket',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
+  },
+  {
+    id: 'domains',
+    label: 'Domains',
+    isNew: true,
+    iconName: 'globe',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/domains',
   },
   {
     id: 'variables',
@@ -385,6 +393,7 @@ function useNavigationContext(): NavigationContext | null {
   const pathname = location.pathname
   const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
+  const isDomainRoutingEnabled = useIsDomainRoutingEnabled()
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
@@ -434,7 +443,11 @@ function useNavigationContext(): NavigationContext | null {
               : context.type === 'cluster'
                 ? context.tabs.filter((tab) => isProfileAvailable || tab.id !== 'profile')
                 : context.type === 'environment'
-                  ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automation')
+                  ? context.tabs.filter(
+                      (tab) =>
+                        (isAgenticWorkflowEnabled || tab.id !== 'automation') &&
+                        (isDomainRoutingEnabled || tab.id !== 'domains')
+                    )
                   : context.tabs
 
         return {

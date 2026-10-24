@@ -2,6 +2,7 @@ import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-t
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
+import { useIsDomainRoutingEnabled } from '@qovery/domains/custom-domains/feature'
 import { isAgenticWorkflow, isBlueprintService, isEditableService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
@@ -40,6 +41,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
   } = useParams({
     strict: false,
   })
+  const isDomainRoutingEnabled = useIsDomainRoutingEnabled()
   const pathSettings = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}/settings`
 
   const linkItem = (title: string, to: string, icon: IconName, iconStyle?: IconStyle): SidebarSettingsLinkItem => ({
@@ -90,7 +92,11 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
 
   const resourcesLink = linkItem('Resources', toSettingsPath(pathSettings, '/resources'), 'chart-bullet')
   const storageLink = linkItem('Storage', toSettingsPath(pathSettings, '/storage'), 'hard-drive')
-  const domainLink = linkItem('Domain', toSettingsPath(pathSettings, '/domain'), 'earth-americas')
+  const domainLink = linkItem(
+    isDomainRoutingEnabled ? 'URLs' : 'Domain',
+    toSettingsPath(pathSettings, '/domain'),
+    'earth-americas'
+  )
   const portLink = linkItem('Port', toSettingsPath(pathSettings, '/port'), 'plug')
   const healthchecksLink = linkItem('Health checks', toSettingsPath(pathSettings, '/health-checks'), 'shield-check')
   const deploymentRestrictionsLink = linkItem(
