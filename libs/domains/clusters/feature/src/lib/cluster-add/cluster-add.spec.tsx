@@ -31,9 +31,10 @@ jest.mock('../hooks/use-cluster-creation-restriction/use-cluster-creation-restri
 }))
 jest.mock('../self-managed-cluster-creation/self-managed-cluster-creation-flow', () => ({
   ...jest.requireActual('../self-managed-cluster-creation/self-managed-cluster-creation-flow'),
-  SelfManagedClusterCreationFlow: ({ onStepChange, onClose }: SelfManagedClusterCreationFlowProps) => (
+  SelfManagedClusterCreationFlow: ({ cloudProvider, onStepChange, onClose }: SelfManagedClusterCreationFlowProps) => (
     <div>
       <p>Creation flow</p>
+      <p>Provider {cloudProvider}</p>
       <button type="button" onClick={() => onStepChange?.('install')}>
         Reach install step
       </button>
@@ -85,6 +86,22 @@ describe('ClusterAdd', () => {
     expect(screen.getByRole('button', { name: 'AWS' })).toBeInTheDocument()
     expect(screen.queryAllByRole('img')).toHaveLength(0)
     expect(container.querySelectorAll('svg:not([aria-hidden="true"])')).toHaveLength(0)
+  })
+
+  it.each([
+    ['AWS', 'AWS'],
+    ['GCP', 'GCP'],
+    ['Scaleway', 'SCW'],
+  ])('opens the creation flow on %s for a cluster to connect', async (title, provider) => {
+    const { userEvent } = renderWithProviders(<ClusterAdd />)
+
+    await userEvent.click(screen.getByRole('button', { name: title }))
+
+    expect(await screen.findByText(`Provider ${provider}`)).toBeInTheDocument()
+    expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
+      selectedCloudProvider: provider,
+      selectedInstallationType: 'self-managed',
+    })
   })
 
   it('lets the creation flow be dismissed before the cluster is created', async () => {
