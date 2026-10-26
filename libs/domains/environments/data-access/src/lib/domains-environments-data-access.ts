@@ -219,6 +219,7 @@ export const mutations = {
     return result.data
   },
   async attachServiceToDeploymentStage({
+    prevStage,
     stageId,
     serviceId,
     isSkipped = false,
@@ -228,6 +229,9 @@ export const mutations = {
     serviceId: string
     isSkipped?: boolean
   }) {
+    if (isSkipped && prevStage?.stageId !== stageId) {
+      await deploymentStageMainCallApi.attachServiceToDeploymentStage(stageId, serviceId)
+    }
     const result = await deploymentStageMainCallApi.attachServiceToDeploymentStage(
       stageId,
       serviceId,

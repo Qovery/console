@@ -19,6 +19,9 @@ export function useAttachServiceToDeploymentStage() {
         })
       }
     },
+    onError() {
+      queryClient.invalidateQueries({ queryKey: queries.environments.listDeploymentStages._def })
+    },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {
         const { prevStage } = variables as Parameters<typeof mutations.attachServiceToDeploymentStage>[0]
