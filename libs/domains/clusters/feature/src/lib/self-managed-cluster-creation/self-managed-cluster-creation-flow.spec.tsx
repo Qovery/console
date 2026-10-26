@@ -141,7 +141,7 @@ describe('SelfManagedClusterCreationFlow', () => {
 
   it('enables Continue once the name, credentials and region are set', async () => {
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     expect(screen.getByRole('heading', { name: 'Connect AWS cluster' })).toBeInTheDocument()
@@ -154,7 +154,7 @@ describe('SelfManagedClusterCreationFlow', () => {
 
   it('keeps the general values when going back from the Operator step', async () => {
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -165,7 +165,7 @@ describe('SelfManagedClusterCreationFlow', () => {
 
   it('renders the Operator fields of the template bootstrap component, without the demo-only ones', async () => {
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -186,7 +186,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       },
     })
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -205,7 +205,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       },
     })
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -254,7 +254,7 @@ describe('SelfManagedClusterCreationFlow', () => {
   ])('cannot continue while the Operator configuration %s', async (_, preview) => {
     mockUsePlatformTemplateComponentConfiguration.mockReturnValue(preview)
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -264,7 +264,7 @@ describe('SelfManagedClusterCreationFlow', () => {
 
   it('creates the cluster with the Operator configuration', async () => {
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -289,9 +289,48 @@ describe('SelfManagedClusterCreationFlow', () => {
     expect(await screen.findByRole('heading', { name: 'Install Qovery Operator' })).toBeInTheDocument()
   })
 
+  it('connects a cluster of another provider with its credentials, regions and platform template', async () => {
+    useCloudProvidersMockSpy.mockReturnValue({
+      data: [
+        {
+          name: 'AWS',
+          short_name: CloudProviderEnum.AWS,
+          regions: [{ name: 'eu-west-3', city: 'Paris', country_code: 'FR' }],
+        },
+        {
+          name: 'Scaleway',
+          short_name: CloudProviderEnum.SCW,
+          regions: [{ name: 'fr-par-1', city: 'Paris', country_code: 'FR' }],
+        },
+      ],
+    })
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="SCW" onClose={mockOnClose} />
+    )
+
+    expect(screen.getByRole('heading', { name: 'Connect Scaleway cluster' })).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
+    await selectEvent.select(screen.getByLabelText('Credentials'), 'creds', { container: document.body })
+    await selectEvent.select(screen.getByLabelText('Region'), 'Paris (fr-par-1)', { container: document.body })
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await screen.findByRole('heading', { name: 'Configure Qovery Operator' })
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(useCloudProviderCredentialsMockSpy).toHaveBeenCalledWith(expect.objectContaining({ cloudProvider: 'SCW' }))
+    expect(mockUsePlatformTemplates).toHaveBeenCalledWith(expect.objectContaining({ cloudProvider: 'SCW' }))
+    expect(mockUsePlatformTemplateComponentConfiguration).toHaveBeenLastCalledWith(
+      expect.objectContaining({ cloudProvider: 'SCW' })
+    )
+    expect(mockCreateSelfManagedCluster).toHaveBeenCalledWith({
+      organizationId: 'org-123',
+      clusterRequest: expect.objectContaining({ provider: 'SCW', region: 'fr-par-1' }),
+    })
+  })
+
   it('sends no Operator configuration when it is left untouched', async () => {
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -317,7 +356,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       isError: false,
     })
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -340,7 +379,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       refetch: jest.fn(),
     })
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -357,7 +396,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       refetch: refetchPreview,
     })
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -380,7 +419,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       refetch: refetchTemplates,
     })
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -397,7 +436,7 @@ describe('SelfManagedClusterCreationFlow', () => {
   it('cannot be cancelled or left while the cluster is being created', async () => {
     mockUseCreateSelfManagedCluster.mockReturnValue({ mutateAsync: mockCreateSelfManagedCluster, isLoading: true })
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -409,7 +448,7 @@ describe('SelfManagedClusterCreationFlow', () => {
   it('stays on the Operator step when the creation fails', async () => {
     mockCreateSelfManagedCluster.mockRejectedValue(new Error('Invalid credentials'))
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -421,7 +460,7 @@ describe('SelfManagedClusterCreationFlow', () => {
 
   it('gives the Operator bootstrap values file and Helm command', async () => {
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -447,7 +486,7 @@ describe('SelfManagedClusterCreationFlow', () => {
     const refetch = jest.fn()
     mockUseClusterOperatorBootstrap.mockReturnValue({ data: undefined, isLoading: false, isError: true, refetch })
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
@@ -463,6 +502,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       return (
         <SelfManagedClusterCreationFlow
           organizationId="org-123"
+          cloudProvider="AWS"
           onClose={() => {
             mockOnClose()
             setCloseCount((count) => count + 1)
@@ -483,7 +523,7 @@ describe('SelfManagedClusterCreationFlow', () => {
 
   it('redirects to the cluster profile once the Operator is connected', async () => {
     const { userEvent } = renderWithProviders(
-      <SelfManagedClusterCreationFlow organizationId="org-123" onClose={mockOnClose} />
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
     await goToOperatorStep(userEvent)
