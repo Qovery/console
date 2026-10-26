@@ -204,7 +204,7 @@ describe('ServicesDeploymentPipeline', () => {
     expect(screen.getByRole('status')).toBeInTheDocument()
   })
 
-  it('keeps skipped services in their actual stage with a badge', () => {
+  it('keeps skipped services in their actual stage with an icon', () => {
     mockServices = [applicationService, databaseService, skippedService]
     mockDeploymentStages = [
       {
@@ -229,7 +229,7 @@ describe('ServicesDeploymentPipeline', () => {
 
     renderWithProviders(<ServicesDeploymentPipeline />)
 
-    expect(screen.getByText('Skipped')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'Skipped in environment-level deployments' })).toBeInTheDocument()
     expect(
       within(screen.getByRole('region', { name: 'column-stage-1' })).getByText('Skipped service')
     ).toBeInTheDocument()
@@ -271,7 +271,7 @@ describe('ServicesDeploymentPipeline', () => {
     const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
     const stage = within(screen.getByRole('region', { name: 'column-stage-1' }))
 
-    expect(stage.getAllByText('Skipped')).toHaveLength(count)
+    expect(stage.getAllByRole('img', { name: 'Skipped in environment-level deployments' })).toHaveLength(count)
     expect(stage.queryByText(/No service for this stage/)).not.toBeInTheDocument()
     expect(stage.getAllByText('Skipped service')).toHaveLength(count)
 
@@ -318,7 +318,7 @@ describe('ServicesDeploymentPipeline', () => {
     const stage = within(screen.getByRole('region', { name: 'column-stage-1' }))
 
     expect(stage.getByText('API service')).toBeInTheDocument()
-    expect(stage.getByText('Skipped')).toBeInTheDocument()
+    expect(stage.getByRole('img', { name: 'Skipped in environment-level deployments' })).toBeInTheDocument()
     expect(stage.getByText('Skipped service')).toBeInTheDocument()
     expect(
       within(screen.getByRole('region', { name: 'column-stage-2' })).queryByText(/skipped service belongs/)

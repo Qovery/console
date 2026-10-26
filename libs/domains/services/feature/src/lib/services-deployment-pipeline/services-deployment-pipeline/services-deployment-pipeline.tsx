@@ -8,7 +8,6 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   Avatar,
-  Badge,
   BadgeDeploymentOrder,
   Board,
   type BoardCard,
@@ -359,14 +358,22 @@ export function ServicesDeploymentPipeline() {
                                       subtitle ? 'text-xs' : 'text-ssm'
                                     )}
                                   >
-                                    <Truncate truncateLimit={subtitle ? 32 : 27} text={service?.name || ''} />
+                                    <div className="flex items-center gap-1">
+                                      {is_skipped && (
+                                        <Tooltip content="Skipped in environment-level deployments">
+                                          <span
+                                            role="img"
+                                            aria-label="Skipped in environment-level deployments"
+                                            tabIndex={0}
+                                            className="inline-flex shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-brand-strong"
+                                          >
+                                            <Icon iconName="ban" iconStyle="regular" />
+                                          </span>
+                                        </Tooltip>
+                                      )}
+                                      <Truncate truncateLimit={subtitle ? 32 : 27} text={service?.name || ''} />
+                                    </div>
                                     {subtitle && <div className="text-2xs font-normal">{subtitle}</div>}
-                                    {is_skipped && (
-                                      <Badge size="sm" className="mt-1 gap-1">
-                                        <Icon iconName="ban" iconStyle="regular" />
-                                        Skipped
-                                      </Badge>
-                                    )}
                                   </div>
                                   <DropdownMenu.Root>
                                     <DropdownMenu.Trigger asChild>
