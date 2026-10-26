@@ -296,7 +296,9 @@ export function ServicesDeploymentPipeline() {
                                   color={hasAttachedServices ? 'neutral' : 'red'}
                                   aria-disabled={hasAttachedServices}
                                   className={
-                                    hasAttachedServices ? 'cursor-not-allowed text-neutral-disabled' : undefined
+                                    hasAttachedServices
+                                      ? 'cursor-not-allowed text-neutral-disabled hover:bg-transparent hover:text-neutral-disabled data-[highlighted]:bg-transparent data-[highlighted]:text-neutral-disabled [&>i]:text-neutral-disabled'
+                                      : undefined
                                   }
                                   icon={<Icon iconName="trash" />}
                                   onSelect={(event) => {
