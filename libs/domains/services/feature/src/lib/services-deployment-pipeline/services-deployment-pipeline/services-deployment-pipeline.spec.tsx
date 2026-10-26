@@ -1,6 +1,7 @@
+import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { applicationFactoryMock, databaseFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { SKIPPED_STAGE_ID, ServicesDeploymentPipeline } from './services-deployment-pipeline'
 
 const mockAttachServiceToDeploymentStage = jest.fn()
@@ -28,7 +29,7 @@ const databaseService = {
 
 let mockServices = [applicationService, databaseService]
 let mockIsServicesLoading = false
-let mockDeploymentStages = [
+let mockDeploymentStages: DeploymentStageResponse[] = [
   {
     id: 'stage-1',
     created_at: '',
@@ -238,7 +239,8 @@ describe('ServicesDeploymentPipeline', () => {
     expect(mockOpenModal).toHaveBeenCalledTimes(1)
   })
 
-  it('opens the delete confirmation for a stage', async () => {
+  it('opens the delete confirmation for an empty stage', async () => {
+    mockDeploymentStages[0].services = []
     const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Stage actions for Build' }))
@@ -249,6 +251,62 @@ describe('ServicesDeploymentPipeline', () => {
     mockOpenModalConfirmation.mock.calls[0][0].action()
 
     expect(mockDeleteDeploymentStage).toHaveBeenCalledWith({ stageId: 'stage-1' })
+  })
+
+  it.each([1, 2])('shows a stage with %i skipped services as occupied and prevents deletion', async (count) => {
+    mockServices = Array.from({ length: count }, (_, index) => ({ ...skippedService, id: `app-skipped-${index}` }))
+    mockDeploymentStages[0].services = Array.from({ length: count }, (_, index) => ({
+      id: `skipped-${index}`,
+      created_at: '',
+      service_id: `app-skipped-${index}`,
+      service_type: 'APPLICATION',
+      is_skipped: true,
+    }))
+
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
+    const stage = within(screen.getByRole('region', { name: 'column-stage-1' }))
+
+    expect(stage.getByText(new RegExp(`${count} skipped`))).toHaveTextContent('shown in the Skipped column')
+    expect(stage.queryByText(/No service for this stage/)).not.toBeInTheDocument()
+    expect(
+      within(screen.getByRole('region', { name: `column-${SKIPPED_STAGE_ID}` })).getAllByText('Skipped service')
+    ).toHaveLength(count)
+
+    await userEvent.click(stage.getByRole('button', { name: 'Stage actions for Build' }))
+    const deleteAction = screen.getByRole('menuitem', { name: 'Delete stage' })
+    expect(deleteAction).toHaveAttribute('aria-disabled', 'true')
+    await userEvent.click(deleteAction)
+    expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+    expect(mockDeleteDeploymentStage).not.toHaveBeenCalled()
+  })
+
+  it('shows skipped membership alongside the active services in their stage', () => {
+    mockServices = [applicationService, databaseService, skippedService]
+    mockDeploymentStages[0].services?.push({
+      id: 'skipped-1',
+      created_at: '',
+      service_id: 'app-2',
+      service_type: 'APPLICATION',
+      is_skipped: true,
+    })
+
+    renderWithProviders(<ServicesDeploymentPipeline />)
+    const stage = within(screen.getByRole('region', { name: 'column-stage-1' }))
+
+    expect(stage.getByText('API service')).toBeInTheDocument()
+    expect(stage.getByText(/1 skipped service belongs to this stage/)).toBeInTheDocument()
+    expect(stage.queryByText('Skipped service')).not.toBeInTheDocument()
+    expect(
+      within(screen.getByRole('region', { name: 'column-stage-2' })).queryByText(/skipped service belongs/)
+    ).not.toBeInTheDocument()
+  })
+
+  it('prevents deleting a stage containing a non-skipped service', async () => {
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Stage actions for Build' }))
+
+    expect(screen.getByRole('menuitem', { name: 'Delete stage' })).toHaveAttribute('aria-disabled', 'true')
   })
 
   it('opens the order modal from the stage actions', async () => {

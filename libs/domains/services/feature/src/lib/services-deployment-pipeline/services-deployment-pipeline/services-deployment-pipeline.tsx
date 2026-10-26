@@ -217,6 +217,9 @@ export function ServicesDeploymentPipeline() {
                 const { id: stageId, deployment_order, name, description, services: stageServices } = stage
                 const isVirtualSkippedStage = stageId === SKIPPED_STAGE_ID
                 const showArrow = index < stages.length - 1 && !isVirtualSkippedStage
+                const attachedServices = deploymentStages?.find(({ id }) => id === stageId)?.services ?? []
+                const skippedServiceCount = attachedServices.filter(({ is_skipped }) => is_skipped).length
+                const hasAttachedServices = attachedServices.length > 0 || (stageServices?.length ?? 0) > 0
 
                 return (
                   <div className="relative shrink-0 first:ml-4 last:mr-4" key={stageId}>
@@ -336,29 +339,43 @@ export function ServicesDeploymentPipeline() {
                                   Edit order
                                 </DropdownMenu.Item>
                                 <DropdownMenu.Separator />
-                                <DropdownMenu.Item
-                                  color="red"
-                                  icon={<Icon iconName="trash" />}
-                                  onSelect={() =>
-                                    openModalConfirmation({
-                                      title: 'Delete this stage',
-                                      confirmationMethod: 'action',
-                                      name,
-                                      action: () => {
-                                        deleteDeploymentStage({ stageId })
-                                      },
-                                    })
-                                  }
+                                <Tooltip
+                                  content="Move all services, including skipped services, to another stage before deleting this stage"
+                                  disabled={!hasAttachedServices}
                                 >
-                                  Delete stage
-                                </DropdownMenu.Item>
+                                  <DropdownMenu.Item
+                                    color="red"
+                                    disabled={hasAttachedServices}
+                                    icon={<Icon iconName="trash" />}
+                                    onSelect={() =>
+                                      openModalConfirmation({
+                                        title: 'Delete this stage',
+                                        confirmationMethod: 'action',
+                                        name,
+                                        action: () => {
+                                          deleteDeploymentStage({ stageId })
+                                        },
+                                      })
+                                    }
+                                  >
+                                    Delete stage
+                                  </DropdownMenu.Item>
+                                </Tooltip>
                               </DropdownMenu.Content>
                             </DropdownMenu.Root>
                           )}
                         </div>
                       }
                     >
-                      {!stageServices || stageServices.length === 0 ? (
+                      {!isVirtualSkippedStage && skippedServiceCount > 0 && (
+                        <p className="mt-2.5 rounded border border-neutral bg-surface-neutral p-3 text-xs text-neutral-subtle">
+                          {skippedServiceCount} skipped{' '}
+                          {skippedServiceCount === 1 ? 'service belongs' : 'services belong'} to this stage and{' '}
+                          {skippedServiceCount === 1 ? 'is' : 'are'} shown in the Skipped column. Move{' '}
+                          {skippedServiceCount === 1 ? 'it' : 'them'} to another stage before deleting this stage.
+                        </p>
+                      )}
+                      {(!stageServices || stageServices.length === 0) && skippedServiceCount === 0 ? (
                         <div className="mt-2.5 flex flex-col items-center gap-2 rounded border border-neutral bg-surface-neutral p-3 text-center">
                           <Icon
                             iconName={isVirtualSkippedStage ? 'ban' : 'wave-pulse'}
