@@ -107,4 +107,29 @@ export const Primary = {
   },
 }
 
+export const MutedCard = {
+  render: () => {
+    const [cards, setCards] = useState([
+      { cardId: 'active', columnId: 'stage', content: 'Active content' },
+      { cardId: 'muted', columnId: 'stage', content: 'Muted content' },
+    ])
+    return (
+      <Board.Root>
+        <Board.Column heading="Stage" columnId="stage" data={cards} setData={({ newData }) => setCards(newData)}>
+          {cards.map(({ cardId, columnId, content }) => (
+            <Board.Card
+              key={cardId}
+              cardId={cardId}
+              columnId={columnId}
+              className={cardId === 'muted' ? 'bg-surface-neutral-subtle' : undefined}
+            >
+              <div className={cardId === 'muted' ? 'opacity-60' : undefined}>{content}</div>
+            </Board.Card>
+          ))}
+        </Board.Column>
+      </Board.Root>
+    )
+  },
+}
+
 export default Story
