@@ -293,10 +293,17 @@ export function ServicesDeploymentPipeline() {
                                 disabled={!hasAttachedServices}
                               >
                                 <DropdownMenu.Item
-                                  color="red"
-                                  disabled={hasAttachedServices}
+                                  color={hasAttachedServices ? 'neutral' : 'red'}
+                                  aria-disabled={hasAttachedServices}
+                                  className={
+                                    hasAttachedServices ? 'cursor-not-allowed text-neutral-disabled' : undefined
+                                  }
                                   icon={<Icon iconName="trash" />}
-                                  onSelect={() =>
+                                  onSelect={(event) => {
+                                    if (hasAttachedServices) {
+                                      event.preventDefault()
+                                      return
+                                    }
                                     openModalConfirmation({
                                       title: 'Delete this stage',
                                       confirmationMethod: 'action',
@@ -305,7 +312,7 @@ export function ServicesDeploymentPipeline() {
                                         deleteDeploymentStage({ stageId })
                                       },
                                     })
-                                  }
+                                  }}
                                 >
                                   Delete stage
                                 </DropdownMenu.Item>

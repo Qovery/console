@@ -278,7 +278,28 @@ describe('ServicesDeploymentPipeline', () => {
     await userEvent.click(stage.getByRole('button', { name: 'Stage actions for Build' }))
     const deleteAction = screen.getByRole('menuitem', { name: 'Delete stage' })
     expect(deleteAction).toHaveAttribute('aria-disabled', 'true')
+    await userEvent.hover(deleteAction)
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Move all services, including skipped services, to another stage before deleting this stage'
+    )
     await userEvent.click(deleteAction)
+    expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+    expect(mockDeleteDeploymentStage).not.toHaveBeenCalled()
+  })
+
+  it('explains blocked deletion from keyboard focus and prevents Enter and Space activation', async () => {
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
+
+    await userEvent.tab()
+    await userEvent.tab()
+    expect(screen.getByRole('button', { name: 'Stage actions for Build' })).toHaveFocus()
+    await userEvent.keyboard('[Enter][End]')
+
+    expect(screen.getByRole('menuitem', { name: 'Delete stage' })).toHaveFocus()
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Move all services, including skipped services, to another stage before deleting this stage'
+    )
+    await userEvent.keyboard('[Enter][Space]')
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
     expect(mockDeleteDeploymentStage).not.toHaveBeenCalled()
   })
@@ -426,8 +447,19 @@ describe('deployment stage attachment requests', () => {
     expect(attach).toHaveBeenCalledWith('source', 'service', { is_skipped: true })
   })
 
-  it('restores stage membership and skipped status when undoing a move', async () => {
+  it('only skips when there is no known cross-stage move', async () => {
     await mutations.attachServiceToDeploymentStage({ stageId: 'source', serviceId: 'service', isSkipped: true })
+    expect(attach).toHaveBeenCalledTimes(1)
+    expect(attach).toHaveBeenCalledWith('source', 'service', { is_skipped: true })
+  })
+
+  it('restores stage membership and skipped status when undoing a move', async () => {
+    await mutations.attachServiceToDeploymentStage({
+      stageId: 'source',
+      serviceId: 'service',
+      isSkipped: true,
+      prevStage: { stageId: 'target', serviceId: 'service', isSkipped: true },
+    })
     expect(attach).toHaveBeenNthCalledWith(1, 'source', 'service')
     expect(attach).toHaveBeenNthCalledWith(2, 'source', 'service', { is_skipped: true })
   })
@@ -435,7 +467,12 @@ describe('deployment stage attachment requests', () => {
   it('does not skip the service if moving it fails', async () => {
     attach.mockRejectedValueOnce(new Error('Move failed'))
     await expect(
-      mutations.attachServiceToDeploymentStage({ stageId: 'target', serviceId: 'service', isSkipped: true })
+      mutations.attachServiceToDeploymentStage({
+        stageId: 'target',
+        serviceId: 'service',
+        isSkipped: true,
+        prevStage: { stageId: 'source', serviceId: 'service', isSkipped: true },
+      })
     ).rejects.toThrow('Move failed')
     expect(attach).toHaveBeenCalledTimes(1)
   })
@@ -443,7 +480,12 @@ describe('deployment stage attachment requests', () => {
   it('reports a failure when restoring the skipped status fails', async () => {
     attach.mockResolvedValueOnce(response).mockRejectedValueOnce(new Error('Skip failed'))
     await expect(
-      mutations.attachServiceToDeploymentStage({ stageId: 'target', serviceId: 'service', isSkipped: true })
+      mutations.attachServiceToDeploymentStage({
+        stageId: 'target',
+        serviceId: 'service',
+        isSkipped: true,
+        prevStage: { stageId: 'source', serviceId: 'service', isSkipped: true },
+      })
     ).rejects.toThrow('Skip failed')
     expect(attach).toHaveBeenCalledTimes(2)
   })

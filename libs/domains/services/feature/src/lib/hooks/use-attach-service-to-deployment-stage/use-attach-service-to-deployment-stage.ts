@@ -24,7 +24,9 @@ export function useAttachServiceToDeploymentStage() {
     },
     meta: {
       notifyOnSuccess(_: unknown, variables: unknown) {
-        const { prevStage } = variables as Parameters<typeof mutations.attachServiceToDeploymentStage>[0]
+        const { prevStage, ...currentStage } = variables as Parameters<
+          typeof mutations.attachServiceToDeploymentStage
+        >[0]
 
         return prevStage
           ? {
@@ -32,7 +34,7 @@ export function useAttachServiceToDeploymentStage() {
               description: 'Do you need to go back?',
               labelAction: 'Undo',
               callback() {
-                currentUseMutation.mutate(prevStage)
+                currentUseMutation.mutate({ ...prevStage, prevStage: currentStage })
               },
             }
           : {
