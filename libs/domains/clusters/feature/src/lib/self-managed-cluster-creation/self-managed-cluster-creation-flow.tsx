@@ -137,7 +137,7 @@ function GeneralStep({
 }) {
   const methods = useForm<GeneralValues>({
     mode: 'onChange',
-    defaultValues: values ?? { name: '', production: true, credentials: '', region: '' },
+    defaultValues: values ?? { name: '', production: false, credentials: '', region: '' },
   })
   const { data: cloudProviders = [] } = useCloudProviders()
   const regionOptions = useMemo(

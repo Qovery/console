@@ -275,7 +275,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       organizationId: 'org-123',
       clusterRequest: {
         name: 'my-cluster',
-        production: true,
+        production: false,
         provider: 'AWS',
         region: 'eu-west-3',
         credentials: { id: 'credential-id' },
@@ -324,7 +324,7 @@ describe('SelfManagedClusterCreationFlow', () => {
     )
     expect(mockCreateSelfManagedCluster).toHaveBeenCalledWith({
       organizationId: 'org-123',
-      clusterRequest: expect.objectContaining({ provider: 'SCW', region: 'fr-par-1' }),
+      clusterRequest: expect.objectContaining({ provider: 'SCW', region: 'fr-par-1', production: false }),
     })
   })
 
