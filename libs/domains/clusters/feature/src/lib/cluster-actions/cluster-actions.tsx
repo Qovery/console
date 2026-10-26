@@ -25,7 +25,6 @@ import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useEksAnywhereClusterJwt } from '../hooks/use-eks-anywhere-cluster-jwt/use-eks-anywhere-cluster-jwt'
-import { useIsOperatorAttached } from '../hooks/use-is-operator-attached/use-is-operator-attached'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 import { useUpdateEksAnywhereCommit } from '../hooks/use-update-eks-anywhere-commit/use-update-eks-anywhere-commit'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
@@ -37,13 +36,10 @@ function MenuManageDeployment({
   cluster,
   clusterStatus,
   variant = 'default',
-  isOperatorAttached = false,
 }: {
   cluster: Cluster
   clusterStatus: ClusterStatus
   variant?: ActionToolbarVariant
-  // The cluster is attached to the Qovery Operator: Qovery only deploys its platform profile, it cannot stop or upgrade it.
-  isOperatorAttached?: boolean
 }) {
   const { openModalConfirmation } = useModalConfirmation()
   const { openModal, closeModal } = useModal()
@@ -68,7 +64,7 @@ function MenuManageDeployment({
     clusterStatus.next_k8s_available_version !== null &&
     clusterStatus.status === 'DEPLOYED' &&
     cluster.kubernetes !== 'PARTIALLY_MANAGED' &&
-    !isOperatorAttached
+    !cluster.is_catalog_managed
   const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
   const isEksAnywhereCluster = cluster.kubernetes === 'PARTIALLY_MANAGED'
   const hasEksAnywhereGitRepository = Boolean(
@@ -207,7 +203,7 @@ function MenuManageDeployment({
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
-    !isOperatorAttached &&
+    !cluster.is_catalog_managed &&
       cluster.cloud_provider !== 'GCP' &&
       cluster.cloud_provider !== 'AZURE' &&
       isStopAvailable(clusterStatus.status) &&
@@ -428,7 +424,6 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })
-  const isOperatorAttached = useIsOperatorAttached(cluster)
 
   const searchParams = useMemo(() => {
     // @ts-expect-error TODO needs to be fixed
@@ -478,12 +473,9 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
   }, [searchParams, location.search, location.pathname, cluster.kubernetes, closeModal, openInstallationGuideModal])
 
   const primaryActionButton = match(cluster)
-    .when(
-      () => isOperatorAttached,
-      () => (
-        <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} isOperatorAttached />
-      )
-    )
+    .with({ is_catalog_managed: true }, () => (
+      <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />
+    ))
     .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => (
       <Tooltip content="Installation guide">
         <Button onClick={() => openInstallationGuideModal()} iconOnly size={variant === 'default' ? 'sm' : 'md'}>
@@ -506,7 +498,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
     ))
     .otherwise(() => <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />)
   const logsButton =
-    variant === 'card' && (cluster.kubernetes !== 'SELF_MANAGED' || isOperatorAttached) ? (
+    variant === 'card' && (cluster.kubernetes !== 'SELF_MANAGED' || cluster.is_catalog_managed) ? (
       <Tooltip content="Deployments">
         <Button
           aria-label="Deployments"
