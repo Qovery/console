@@ -342,38 +342,41 @@ export function ServicesDeploymentPipeline() {
                             const subtitle = getDatabaseSubtitle(service)
 
                             return (
-                              <Board.Card key={cardId} cardId={cardId} columnId={stage.id}>
+                              <Board.Card
+                                key={cardId}
+                                cardId={cardId}
+                                columnId={stage.id}
+                                className={is_skipped ? 'bg-surface-neutral-subtle' : undefined}
+                              >
                                 <div className="flex items-center gap-2">
-                                  {service && (
-                                    <Avatar
-                                      className="h-5 w-6 shrink-0"
-                                      size="custom"
-                                      fallback={<Icon name={getServiceIconName(service)} height="100%" width="100%" />}
-                                    />
-                                  )}
                                   <div
                                     className={clsx(
-                                      'min-w-0 flex-1 font-medium text-neutral',
-                                      is_skipped && 'text-neutral-subtle',
-                                      subtitle ? 'text-xs' : 'text-ssm'
+                                      'flex min-w-0 flex-1 items-center gap-2',
+                                      is_skipped && 'opacity-60'
                                     )}
                                   >
-                                    <div className="flex items-center gap-1">
-                                      {is_skipped && (
-                                        <Tooltip content="Skipped in environment-level deployments">
-                                          <span
-                                            role="img"
-                                            aria-label="Skipped in environment-level deployments"
-                                            tabIndex={0}
-                                            className="inline-flex shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-brand-strong"
-                                          >
-                                            <Icon iconName="ban" iconStyle="regular" />
-                                          </span>
-                                        </Tooltip>
+                                    {service && (
+                                      <Avatar
+                                        className="h-5 w-6 shrink-0"
+                                        size="custom"
+                                        fallback={
+                                          <Icon name={getServiceIconName(service)} height="100%" width="100%" />
+                                        }
+                                      />
+                                    )}
+                                    <div
+                                      className={clsx(
+                                        'min-w-0 flex-1 font-medium text-neutral',
+                                        is_skipped && 'text-neutral-subtle',
+                                        subtitle ? 'text-xs' : 'text-ssm'
                                       )}
+                                    >
                                       <Truncate truncateLimit={subtitle ? 32 : 27} text={service?.name || ''} />
+                                      {is_skipped && (
+                                        <div className="text-xs font-normal text-neutral-subtle">Skipped</div>
+                                      )}
+                                      {subtitle && <div className="text-2xs font-normal">{subtitle}</div>}
                                     </div>
-                                    {subtitle && <div className="text-2xs font-normal">{subtitle}</div>}
                                   </div>
                                   <DropdownMenu.Root>
                                     <DropdownMenu.Trigger asChild>
