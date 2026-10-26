@@ -31,6 +31,7 @@ const databaseService = {
 
 let mockServices = [applicationService, databaseService]
 let mockIsServicesLoading = false
+let mockIsUpdatingStage = false
 let mockDeploymentStages: DeploymentStageResponse[] = [
   {
     id: 'stage-1',
@@ -77,6 +78,7 @@ jest.mock('../../hooks/use-services/use-services', () => ({
 jest.mock('../../hooks/use-attach-service-to-deployment-stage/use-attach-service-to-deployment-stage', () => ({
   useAttachServiceToDeploymentStage: () => ({
     mutate: mockAttachServiceToDeploymentStage,
+    isLoading: mockIsUpdatingStage,
   }),
 }))
 
@@ -162,6 +164,7 @@ describe('ServicesDeploymentPipeline', () => {
     jest.clearAllMocks()
     mockServices = [applicationService, databaseService]
     mockIsServicesLoading = false
+    mockIsUpdatingStage = false
     mockDeploymentStages = [
       {
         id: 'stage-1',
@@ -204,7 +207,7 @@ describe('ServicesDeploymentPipeline', () => {
     expect(screen.getByRole('status')).toBeInTheDocument()
   })
 
-  it('keeps skipped services in their actual stage with a skipped label', () => {
+  it('keeps skipped services in their actual stage with an unchecked deployment switch', () => {
     mockServices = [applicationService, databaseService, skippedService]
     mockDeploymentStages = [
       {
@@ -229,7 +232,8 @@ describe('ServicesDeploymentPipeline', () => {
 
     renderWithProviders(<ServicesDeploymentPipeline />)
 
-    expect(screen.getByText('Skipped')).toBeInTheDocument()
+    expect(screen.getByRole('switch', { name: 'Include Skipped service in environment deployments' })).not.toBeChecked()
+    expect(screen.queryByText('Skipped')).not.toBeInTheDocument()
     expect(
       within(screen.getByRole('region', { name: 'column-stage-1' })).getByText('Skipped service')
     ).toBeInTheDocument()
@@ -271,7 +275,7 @@ describe('ServicesDeploymentPipeline', () => {
     const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
     const stage = within(screen.getByRole('region', { name: 'column-stage-1' }))
 
-    expect(stage.getAllByText('Skipped')).toHaveLength(count)
+    expect(stage.getAllByRole('switch', { checked: false })).toHaveLength(count)
     expect(stage.queryByText(/No service for this stage/)).not.toBeInTheDocument()
     expect(stage.getAllByText('Skipped service')).toHaveLength(count)
 
@@ -318,7 +322,7 @@ describe('ServicesDeploymentPipeline', () => {
     const stage = within(screen.getByRole('region', { name: 'column-stage-1' }))
 
     expect(stage.getByText('API service')).toBeInTheDocument()
-    expect(stage.getByText('Skipped')).toBeInTheDocument()
+    expect(stage.getByRole('switch', { name: 'Include Skipped service in environment deployments' })).not.toBeChecked()
     expect(stage.getByText('Skipped service')).toBeInTheDocument()
     expect(
       within(screen.getByRole('region', { name: 'column-stage-2' })).queryByText(/skipped service belongs/)
@@ -366,10 +370,12 @@ describe('ServicesDeploymentPipeline', () => {
     ]
     const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Deployment options for API service' }))
-    await userEvent.click(
-      screen.getByRole('menuitem', { name: isSkipped ? 'Include in deployments' : 'Skip in deployments' })
-    )
+    const toggle = screen.getByRole('switch', {
+      name: 'Include API service in environment deployments',
+      checked: !isSkipped,
+    })
+    expect(toggle).toBeEnabled()
+    await userEvent.click(toggle)
 
     expect(mockAttachServiceToDeploymentStage).toHaveBeenCalledWith({
       stageId: 'stage-1',
@@ -377,6 +383,30 @@ describe('ServicesDeploymentPipeline', () => {
       isSkipped: !isSkipped,
       prevStage: { stageId: 'stage-1', serviceId: 'app-1', isSkipped },
     })
+  })
+
+  it('explains the switch on keyboard focus and toggles with Space', async () => {
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
+    await userEvent.tab()
+    await userEvent.tab()
+    await userEvent.tab()
+    await userEvent.tab()
+    const toggle = screen.getByRole('switch', { name: 'Include API service in environment deployments' })
+    expect(toggle).toHaveFocus()
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Included in environment deployments')
+    await userEvent.keyboard('[Space]')
+    expect(mockAttachServiceToDeploymentStage).toHaveBeenCalledWith(
+      expect.objectContaining({ serviceId: 'app-1', isSkipped: true })
+    )
+  })
+
+  it('disables the switches while a stage update is in progress', async () => {
+    mockIsUpdatingStage = true
+    const { userEvent } = renderWithProviders(<ServicesDeploymentPipeline />)
+    const toggle = screen.getByRole('switch', { name: 'Include API service in environment deployments' })
+    expect(toggle).toBeDisabled()
+    await userEvent.click(toggle)
+    expect(mockAttachServiceToDeploymentStage).not.toHaveBeenCalled()
   })
 
   it.each([false, true])('preserves is_skipped=%s when moving a service to another stage', async (isSkipped) => {
