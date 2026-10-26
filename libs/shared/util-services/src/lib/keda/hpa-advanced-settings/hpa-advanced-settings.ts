@@ -21,7 +21,13 @@ export function loadHpaSettingsFromAdvancedSettings(advancedSettings?: unknown):
  * Builds advanced settings update payload for HPA settings
  */
 export function buildHpaAdvancedSettingsPayload(formData: Record<string, unknown>, currentAdvancedSettings: unknown) {
-  const settings = currentAdvancedSettings as Record<string, unknown>
+  // Temporary (QOV-2233): build.* keys moved to build settings, same as shouldHideKey in service-advanced-settings.tsx.
+  // Remove once the API stops returning build.* keys in advanced settings.
+  const settings = Object.fromEntries(
+    Object.entries((currentAdvancedSettings ?? {}) as Record<string, unknown>).filter(
+      ([key]) => !key.startsWith('build.')
+    )
+  )
   const hpaSettings = {
     ...settings,
     'hpa.cpu.average_utilization_percent': Number(formData['hpa_cpu_average_utilization_percent']) || 60,

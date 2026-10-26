@@ -219,9 +219,11 @@ const BoardColumn = <T extends Card>({
   )
 }
 
-interface BoardCardProps extends Card, PropsWithChildren {}
+interface BoardCardProps extends Card, PropsWithChildren {
+  className?: string
+}
 
-const BoardCard = ({ children, cardId, columnId }: BoardCardProps) => {
+const BoardCard = ({ children, cardId, columnId, className }: BoardCardProps) => {
   const handleDragStart = (e: DragEvent) => {
     e.dataTransfer?.setData('cardId', cardId)
     e.dataTransfer?.setData('columnId', columnId)
@@ -235,7 +237,10 @@ const BoardCard = ({ children, cardId, columnId }: BoardCardProps) => {
         layoutId={cardId}
         draggable="true"
         onDragStart={(e) => handleDragStart(e as unknown as DragEvent)}
-        className="cursor-grab rounded border border-neutral bg-surface-neutral p-3 text-neutral active:cursor-grabbing"
+        className={twMerge(
+          'cursor-grab rounded border border-neutral bg-surface-neutral p-3 text-neutral active:cursor-grabbing',
+          className
+        )}
       >
         {children}
       </motion.div>

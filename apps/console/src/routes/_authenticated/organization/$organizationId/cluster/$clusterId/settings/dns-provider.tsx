@@ -1,9 +1,10 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
 import { type ClusterDnsProviderRequest } from 'qovery-typescript-axios'
 import { Suspense, useState } from 'react'
 import {
   ClusterDnsProviderSettings,
   canEditDnsProvider,
+  useCluster,
   useClusterDnsProvider,
   useEditClusterDnsProvider,
 } from '@qovery/domains/clusters/feature'
@@ -20,15 +21,31 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   useDocumentTitle('DNS provider - Cluster settings')
+  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
+  const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
+
+  const loader = (
+    <div className="flex justify-center p-8">
+      <LoaderSpinner className="w-4" />
+    </div>
+  )
+
+  if (isClusterLoading) {
+    return loader
+  }
+
+  if (!cluster || cluster.is_catalog_managed) {
+    return (
+      <Navigate
+        to="/organization/$organizationId/cluster/$clusterId/settings/general"
+        params={{ organizationId, clusterId }}
+        replace
+      />
+    )
+  }
 
   return (
-    <Suspense
-      fallback={
-        <div className="flex justify-center p-8">
-          <LoaderSpinner className="w-4" />
-        </div>
-      }
-    >
+    <Suspense fallback={loader}>
       <ClusterDnsProviderSettingsFeature />
     </Suspense>
   )

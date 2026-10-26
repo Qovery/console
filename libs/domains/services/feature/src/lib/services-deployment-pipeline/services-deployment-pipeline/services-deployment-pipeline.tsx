@@ -15,6 +15,7 @@ import {
   DropdownMenu,
   Heading,
   Icon,
+  InputToggle,
   LoaderSpinner,
   Section,
   Tooltip,
@@ -30,48 +31,12 @@ import { useServices } from '../../hooks/use-services/use-services'
 import { ServicesDeploymentStageModal } from '../services-deployment-stage-modal/services-deployment-stage-modal'
 import { ServicesDeploymentStageOrderModal } from '../services-deployment-stage-order-modal/services-deployment-stage-order-modal'
 
-export const SKIPPED_STAGE_ID = '__VIRTUAL_SKIPPED__'
-
-const VIRTUAL_SKIPPED_STAGE: DeploymentStageResponse = {
-  id: SKIPPED_STAGE_ID,
-  created_at: '',
-  environment: { id: '' },
-  name: 'Skipped',
-  description: 'Services excluded from environment-level deployments',
-  deployment_order: -1,
-  services: [],
-}
-
 type StageServiceCard = NonNullable<DeploymentStageResponse['services']>[number] & BoardCard
 
 interface StageRequest {
   stageId: string
   serviceId: string
   isSkipped?: boolean
-}
-
-function getProcessedStages(deploymentStages?: DeploymentStageResponse[]) {
-  if (!deploymentStages || deploymentStages.length === 0) {
-    return []
-  }
-
-  const regularStages = deploymentStages.map((stage) => ({
-    ...stage,
-    services: stage.services?.filter((service) => !service.is_skipped) ?? [],
-  }))
-
-  const skippedServices = deploymentStages.flatMap(
-    (stage) => stage.services?.filter((service) => service.is_skipped) ?? []
-  )
-
-  return [
-    {
-      ...VIRTUAL_SKIPPED_STAGE,
-      environment: deploymentStages[0]?.environment ?? VIRTUAL_SKIPPED_STAGE.environment,
-      services: skippedServices,
-    },
-    ...regularStages,
-  ]
 }
 
 function getDatabaseSubtitle(service?: AnyService) {
@@ -115,16 +80,14 @@ export function ServicesDeploymentPipeline() {
 
   const { data: services, isLoading: isServicesLoading } = useServices({ environmentId })
   const { data: deploymentStages, isLoading: isDeploymentStagesLoading } = useListDeploymentStages({ environmentId })
-  const { mutate: attachServiceToDeploymentStage } = useAttachServiceToDeploymentStage()
+  const { mutate: attachServiceToDeploymentStage, isLoading: isUpdatingStage } = useAttachServiceToDeploymentStage()
   const { mutate: deleteDeploymentStage } = useDeleteDeploymentStage({ environmentId })
 
   const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>()
 
-  const processedStages = useMemo(() => getProcessedStages(deploymentStages), [deploymentStages])
-
   useEffect(() => {
-    setStages(processedStages)
-  }, [processedStages])
+    setStages(deploymentStages)
+  }, [deploymentStages])
 
   const cards = useMemo(
     () =>
@@ -148,22 +111,12 @@ export function ServicesDeploymentPipeline() {
       return
     }
 
-    if (newStage.stageId === SKIPPED_STAGE_ID) {
-      attachServiceToDeploymentStage({
-        stageId: prevStage.stageId,
-        serviceId: newStage.serviceId,
-        isSkipped: true,
-        prevStage,
-      })
-      return
-    }
-
-    attachServiceToDeploymentStage({
-      stageId: newStage.stageId,
-      serviceId: newStage.serviceId,
-      isSkipped: false,
-      prevStage,
-    })
+    attachServiceToDeploymentStage(
+      { ...newStage, prevStage },
+      {
+        onError: () => setStages(deploymentStages),
+      }
+    )
   }
 
   const isLoading = isServicesLoading || isDeploymentStagesLoading || !stages || !services
@@ -183,7 +136,7 @@ export function ServicesDeploymentPipeline() {
             <Heading>Pipeline</Heading>
             <p className="text-ssm text-neutral-subtle">
               Stages allow to define deployment order within the deployment pipeline of your environment. <br />
-              Tips: You can drag & drop services to change their order.
+              Drag and drop services between stages. Skipped services are excluded from environment-level deployments.
             </p>
           </div>
 
@@ -215,8 +168,9 @@ export function ServicesDeploymentPipeline() {
             <Board.Root className="gap-4 pb-4">
               {stages.map((stage, index) => {
                 const { id: stageId, deployment_order, name, description, services: stageServices } = stage
-                const isVirtualSkippedStage = stageId === SKIPPED_STAGE_ID
-                const showArrow = index < stages.length - 1 && !isVirtualSkippedStage
+                const showArrow = index < stages.length - 1
+                const attachedServices = deploymentStages?.find(({ id }) => id === stageId)?.services ?? []
+                const hasAttachedServices = attachedServices.length > 0 || (stageServices?.length ?? 0) > 0
 
                 return (
                   <div className="relative shrink-0 first:ml-4 last:mr-4" key={stageId}>
@@ -239,11 +193,16 @@ export function ServicesDeploymentPipeline() {
                       data={cards}
                       shouldHighlightIndicator={false}
                       setData={({ sourceColumnId, sourceCardId, targetColumnId, newData }) => {
+                        if (isUpdatingStage) {
+                          return
+                        }
                         updateLocalStages(newData, setStages)
 
-                        const serviceId = stages
+                        const movedService = stages
                           ?.flatMap((currentStage) => currentStage.services ?? [])
-                          .find((service) => service.id === sourceCardId)?.service_id
+                          .find((service) => service.id === sourceCardId)
+
+                        const serviceId = movedService?.service_id
 
                         if (!serviceId || !sourceCardId) {
                           return
@@ -253,20 +212,19 @@ export function ServicesDeploymentPipeline() {
                           {
                             stageId: targetColumnId,
                             serviceId,
+                            isSkipped: movedService.is_skipped ?? false,
                           },
                           {
                             stageId: sourceColumnId,
                             serviceId,
+                            isSkipped: movedService.is_skipped ?? false,
                           }
                         )
                       }}
                       heading={
                         <div className="flex grow items-center gap-2">
-                          {!isVirtualSkippedStage && <BadgeDeploymentOrder order={deployment_order} />}
+                          <BadgeDeploymentOrder order={deployment_order} />
                           <span className="flex items-center gap-1 truncate text-xs text-neutral">
-                            {isVirtualSkippedStage && (
-                              <Icon iconName="ban" iconStyle="regular" className="text-neutral-subtle" />
-                            )}
                             <Truncate truncateLimit={18} text={name || ''} />
                             {description && (
                               <Tooltip content={description}>
@@ -280,66 +238,74 @@ export function ServicesDeploymentPipeline() {
                               </Tooltip>
                             )}
                           </span>
-                          {!isVirtualSkippedStage && (
-                            <DropdownMenu.Root>
-                              <DropdownMenu.Trigger asChild>
-                                <Button
-                                  type="button"
-                                  color="neutral"
-                                  variant="outline"
-                                  size="xs"
-                                  className="ml-auto justify-center"
-                                  aria-label={`Stage actions for ${name}`}
-                                  iconOnly
-                                >
-                                  <Icon iconName="ellipsis" />
-                                </Button>
-                              </DropdownMenu.Trigger>
-                              <DropdownMenu.Content>
+                          <DropdownMenu.Root>
+                            <DropdownMenu.Trigger asChild>
+                              <Button
+                                type="button"
+                                color="neutral"
+                                variant="outline"
+                                size="xs"
+                                className="ml-auto justify-center"
+                                aria-label={`Stage actions for ${name}`}
+                                iconOnly
+                              >
+                                <Icon iconName="ellipsis" />
+                              </Button>
+                            </DropdownMenu.Trigger>
+                            <DropdownMenu.Content>
+                              <DropdownMenu.Item
+                                icon={<Icon iconName="pen" />}
+                                onSelect={() =>
+                                  openModal({
+                                    content: (
+                                      <ServicesDeploymentStageModal
+                                        environmentId={environmentId}
+                                        onClose={closeModal}
+                                        stage={stage}
+                                      />
+                                    ),
+                                    options: {
+                                      width: 488,
+                                      fakeModal: true,
+                                    },
+                                  })
+                                }
+                              >
+                                Edit stage
+                              </DropdownMenu.Item>
+                              <DropdownMenu.Item
+                                icon={<Icon iconName="arrow-down-1-9" />}
+                                onSelect={() =>
+                                  openModal({
+                                    content: <ServicesDeploymentStageOrderModal onClose={closeModal} stages={stages} />,
+                                    options: {
+                                      width: 488,
+                                      fakeModal: true,
+                                    },
+                                  })
+                                }
+                              >
+                                Edit order
+                              </DropdownMenu.Item>
+                              <DropdownMenu.Separator />
+                              <Tooltip
+                                content="Move all services, including skipped services, to another stage before deleting this stage"
+                                disabled={!hasAttachedServices}
+                              >
                                 <DropdownMenu.Item
-                                  icon={<Icon iconName="pen" />}
-                                  onSelect={() =>
-                                    openModal({
-                                      content: (
-                                        <ServicesDeploymentStageModal
-                                          environmentId={environmentId}
-                                          onClose={closeModal}
-                                          stage={stage}
-                                        />
-                                      ),
-                                      options: {
-                                        width: 488,
-                                        fakeModal: true,
-                                      },
-                                    })
+                                  color={hasAttachedServices ? 'neutral' : 'red'}
+                                  aria-disabled={hasAttachedServices}
+                                  className={
+                                    hasAttachedServices
+                                      ? 'cursor-not-allowed text-neutral-disabled hover:bg-transparent hover:text-neutral-disabled data-[highlighted]:bg-transparent data-[highlighted]:text-neutral-disabled [&>i]:text-neutral-disabled'
+                                      : undefined
                                   }
-                                >
-                                  Edit stage
-                                </DropdownMenu.Item>
-                                <DropdownMenu.Item
-                                  icon={<Icon iconName="arrow-down-1-9" />}
-                                  onSelect={() =>
-                                    openModal({
-                                      content: (
-                                        <ServicesDeploymentStageOrderModal
-                                          onClose={closeModal}
-                                          stages={stages.filter(({ id }) => id !== SKIPPED_STAGE_ID)}
-                                        />
-                                      ),
-                                      options: {
-                                        width: 488,
-                                        fakeModal: true,
-                                      },
-                                    })
-                                  }
-                                >
-                                  Edit order
-                                </DropdownMenu.Item>
-                                <DropdownMenu.Separator />
-                                <DropdownMenu.Item
-                                  color="red"
                                   icon={<Icon iconName="trash" />}
-                                  onSelect={() =>
+                                  onSelect={(event) => {
+                                    if (hasAttachedServices) {
+                                      event.preventDefault()
+                                      return
+                                    }
                                     openModalConfirmation({
                                       title: 'Delete this stage',
                                       confirmationMethod: 'action',
@@ -348,39 +314,27 @@ export function ServicesDeploymentPipeline() {
                                         deleteDeploymentStage({ stageId })
                                       },
                                     })
-                                  }
+                                  }}
                                 >
                                   Delete stage
                                 </DropdownMenu.Item>
-                              </DropdownMenu.Content>
-                            </DropdownMenu.Root>
-                          )}
+                              </Tooltip>
+                            </DropdownMenu.Content>
+                          </DropdownMenu.Root>
                         </div>
                       }
                     >
                       {!stageServices || stageServices.length === 0 ? (
                         <div className="mt-2.5 flex flex-col items-center gap-2 rounded border border-neutral bg-surface-neutral p-3 text-center">
-                          <Icon
-                            iconName={isVirtualSkippedStage ? 'ban' : 'wave-pulse'}
-                            className="text-neutral-subtle"
-                          />
+                          <Icon iconName="wave-pulse" className="text-neutral-subtle" />
                           <p className="text-xs text-neutral-subtle">
-                            {isVirtualSkippedStage ? (
-                              <>
-                                Skipped services are excluded from environment-level deployments. <br /> Drag services
-                                here to skip them.
-                              </>
-                            ) : (
-                              <>
-                                No service for this stage. <br /> Please drag and drop a service.
-                              </>
-                            )}
+                            No service for this stage. <br /> Please drag and drop a service.
                           </p>
                         </div>
                       ) : (
                         cards
                           .filter(({ columnId }) => columnId === stage.id)
-                          .map(({ cardId, service_id }) => {
+                          .map(({ cardId, service_id, is_skipped }) => {
                             if (!service_id) {
                               return null
                             }
@@ -389,27 +343,69 @@ export function ServicesDeploymentPipeline() {
                             const subtitle = getDatabaseSubtitle(service)
 
                             return (
-                              <Board.Card key={cardId} cardId={cardId} columnId={stage.id}>
-                                <div
-                                  className={clsx('flex flex-row items-center', isVirtualSkippedStage && 'opacity-60')}
-                                >
-                                  {service && (
-                                    <Avatar
-                                      className="mr-2 h-5 w-6"
-                                      size="custom"
-                                      fallback={<Icon name={getServiceIconName(service)} height="100%" width="100%" />}
-                                    />
-                                  )}
+                              <Board.Card
+                                key={cardId}
+                                cardId={cardId}
+                                columnId={stage.id}
+                                className={is_skipped ? 'bg-surface-neutral-subtle' : undefined}
+                              >
+                                <div className="flex items-center gap-2">
                                   <div
                                     className={clsx(
-                                      'font-medium text-neutral',
-                                      isVirtualSkippedStage && 'text-neutral-subtle',
-                                      subtitle ? 'text-xs' : 'text-ssm'
+                                      'flex min-w-0 flex-1 items-center gap-2',
+                                      is_skipped && 'opacity-60'
                                     )}
                                   >
-                                    <Truncate truncateLimit={subtitle ? 32 : 27} text={service?.name || ''} />
-                                    {subtitle && <div className="text-2xs font-normal">{subtitle}</div>}
+                                    {service && (
+                                      <Avatar
+                                        className="h-5 w-6 shrink-0"
+                                        size="custom"
+                                        fallback={
+                                          <Icon name={getServiceIconName(service)} height="100%" width="100%" />
+                                        }
+                                      />
+                                    )}
+                                    <div
+                                      className={clsx(
+                                        'min-w-0 flex-1 font-medium text-neutral',
+                                        is_skipped && 'text-neutral-subtle',
+                                        subtitle ? 'text-xs' : 'text-ssm'
+                                      )}
+                                    >
+                                      <Tooltip content={service?.name || ''}>
+                                        <span className="block truncate">{service?.name || ''}</span>
+                                      </Tooltip>
+                                      {subtitle && <div className="text-2xs font-normal">{subtitle}</div>}
+                                    </div>
                                   </div>
+                                  <Tooltip
+                                    content={
+                                      is_skipped
+                                        ? 'Skipped in environment deployments'
+                                        : 'Included in environment deployments'
+                                    }
+                                  >
+                                    <div className="shrink-0">
+                                      <InputToggle
+                                        small
+                                        ariaLabel={`Include ${service?.name || service_id} in environment deployments`}
+                                        value={!is_skipped}
+                                        disabled={isUpdatingStage}
+                                        onChange={(included) =>
+                                          attachServiceToDeploymentStage({
+                                            stageId,
+                                            serviceId: service_id,
+                                            isSkipped: !included,
+                                            prevStage: {
+                                              stageId,
+                                              serviceId: service_id,
+                                              isSkipped: is_skipped ?? false,
+                                            },
+                                          })
+                                        }
+                                      />
+                                    </div>
+                                  </Tooltip>
                                 </div>
                               </Board.Card>
                             )

@@ -358,19 +358,18 @@ export function ContainerRegistryForm({
                 )}
                 shouldUnregister
               />
-              {isEditDirty && (
+              {isEditDirty && watchKind !== ContainerRegistryKindEnum.GITHUB_CR && (
                 <>
                   <hr className="border-neutral" />
                   <span className="text-sm text-neutral-subtle">
-                    {watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                    watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
+                    {watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
                     watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
                       ? 'Confirm your personal access token'
                       : 'Confirm your password'}
                   </span>
                 </>
               )}
-              {(!isEdit || isEditDirty) && (
+              {(!isEdit || isEditDirty || watchKind === ContainerRegistryKindEnum.GITHUB_CR) && (
                 <Controller
                   name="config.password"
                   control={methods.control}

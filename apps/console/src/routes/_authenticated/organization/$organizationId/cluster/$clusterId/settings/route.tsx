@@ -82,7 +82,7 @@ function RouteComponent() {
   const LINKS_SETTINGS = match(cluster)
     .with({ kubernetes: 'SELF_MANAGED' }, () => [
       generalLink,
-      dnsProviderLink,
+      ...(cluster?.is_catalog_managed ? [] : [dnsProviderLink]),
       imageRegistryLink,
       advancedSettingsLink,
       dangerZoneLink,
