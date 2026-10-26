@@ -340,6 +340,7 @@ export function ServicesDeploymentPipeline() {
 
                             const service = servicesById.get(service_id)
                             const subtitle = getDatabaseSubtitle(service)
+                            const hasSubtitle = Boolean(subtitle || is_skipped)
 
                             return (
                               <Board.Card
@@ -368,14 +369,17 @@ export function ServicesDeploymentPipeline() {
                                       className={clsx(
                                         'min-w-0 flex-1 font-medium text-neutral',
                                         is_skipped && 'text-neutral-subtle',
-                                        subtitle ? 'text-xs' : 'text-ssm'
+                                        hasSubtitle ? 'text-xs' : 'text-ssm'
                                       )}
                                     >
-                                      <Truncate truncateLimit={subtitle ? 32 : 27} text={service?.name || ''} />
-                                      {is_skipped && (
-                                        <div className="text-xs font-normal text-neutral-subtle">Skipped</div>
+                                      <Truncate truncateLimit={hasSubtitle ? 32 : 27} text={service?.name || ''} />
+                                      {hasSubtitle && (
+                                        <div className="text-2xs font-normal">
+                                          {subtitle}
+                                          {subtitle && is_skipped && ' · '}
+                                          {is_skipped && <span>Skipped</span>}
+                                        </div>
                                       )}
-                                      {subtitle && <div className="text-2xs font-normal">{subtitle}</div>}
                                     </div>
                                   </div>
                                   <DropdownMenu.Root>
