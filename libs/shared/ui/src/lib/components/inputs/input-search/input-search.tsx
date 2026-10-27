@@ -4,11 +4,11 @@ import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 const inputSearchVariants = cva(
-  'w-full rounded-md border border-neutral bg-surface-neutral leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]',
+  'w-full rounded-md border border-neutral bg-surface-neutral pl-10 pr-6 leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]',
   {
     variants: {
       size: {
-        md: 'h-9 pl-10 pr-6 text-sm',
+        md: 'h-9 text-sm',
         sm: 'h-7 pl-7 pr-7 text-ssm',
       },
     },
@@ -67,10 +67,11 @@ export function InputSearch(props: InputSearchProps) {
       <div className={twMerge('relative w-full', className)}>
         <Icon
           iconName="magnifying-glass"
-          className={twMerge(
-            'pointer-events-none absolute top-1/2 block -translate-y-1/2 leading-none text-neutral-subtle',
-            size === 'sm' ? 'left-2 text-ssm' : 'left-3 text-base'
-          )}
+          className={
+            size === 'sm'
+              ? 'absolute left-2 top-1/2 block -translate-y-1/2 text-ssm leading-none text-neutral-subtle'
+              : 'absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle'
+          }
         />
         <input
           data-testid="input-search"
@@ -90,10 +91,12 @@ export function InputSearch(props: InputSearchProps) {
             type="button"
             title="Clear search"
             aria-label="Clear search"
-            className={twMerge('absolute top-1/2 -translate-y-1/2', size === 'sm' ? 'right-2' : 'right-3')}
+            className={
+              size === 'sm' ? 'absolute right-2 top-1/2 -translate-y-1/2' : 'absolute right-3 top-1/2 -translate-y-1/2'
+            }
             onClick={deleteValue}
           >
-            <Icon className={twMerge('text-neutral', size === 'sm' ? 'text-xs' : 'text-sm')} iconName="circle-xmark" />
+            <Icon className={size === 'sm' ? 'text-xs text-neutral' : 'text-sm text-neutral'} iconName="circle-xmark" />
           </button>
         )}
       </div>
