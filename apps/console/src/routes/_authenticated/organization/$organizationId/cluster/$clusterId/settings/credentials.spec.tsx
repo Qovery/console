@@ -29,6 +29,11 @@ const mockCloudProviderInfo = {
   credentials: { id: 'restricted-credential', name: 'restricted' },
   wide_permission_credentials: { id: 'wide-credential', name: 'wide' },
 }
+const mockCredentials = [
+  { id: 'restricted-credential', name: 'restricted', object_type: 'AWS' },
+  { id: 'wide-credential', name: 'wide', object_type: 'AWS_ROLE' },
+  { id: 'other-wide-credential', name: 'other wide', object_type: 'AWS_ROLE' },
+]
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -45,13 +50,15 @@ jest.mock('@qovery/domains/clusters/data-access', () => ({
 }))
 
 jest.mock('@qovery/domains/cloud-providers/feature', () => ({
-  useCloudProviderCredentials: () => ({ data: [], isLoading: false }),
+  useCloudProviderCredentials: () => ({ data: mockCredentials, isLoading: false }),
 }))
 
 jest.mock('@qovery/domains/clusters/feature', () => {
   const { useFormContext } = jest.requireActual('react-hook-form')
+  const actual = jest.requireActual('@qovery/domains/clusters/feature')
 
   return {
+    ...actual,
     ClusterCredentialsSettings: () => {
       const { watch } = useFormContext()
       return <output data-testid="legacy-credential">{watch('credentials') ?? ''}</output>
@@ -74,19 +81,6 @@ jest.mock('@qovery/domains/clusters/feature', () => {
         </>
       )
     },
-    getClusterCredentialsFormValuesAfterSave: ({ formValues }: { formValues: unknown }) => formValues,
-    getCloudProviderInfoRequest: (formValues: Record<string, unknown>) => {
-      const usingRestrictivePermissions = Boolean(formValues['using_restrictive_permissions'])
-      return {
-        credentials: {
-          id: usingRestrictivePermissions ? formValues['restricted_credentials'] : formValues['configured_credentials'],
-        },
-        ...(usingRestrictivePermissions && {
-          wide_permission_credentials: { id: formValues['configured_credentials'] },
-        }),
-      }
-    },
-    getWidePermissionsRequest: jest.fn(),
     useCluster: () => ({ data: mockCluster, isFetching: false }),
     useClusterCloudProviderInfo: () => ({ data: mockCloudProviderInfo, isFetching: false }),
     useDeployCluster: () => ({ mutateAsync: mockDeployCluster }),
@@ -108,6 +102,7 @@ jest.mock('@qovery/shared/console-shared', () => ({
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
   Button: ({ children, type }: { children: ReactNode; type: 'submit' | 'button' }) => (
     <button type={type}>{children}</button>
   ),
