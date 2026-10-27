@@ -69,8 +69,8 @@ export function InputSearch(props: InputSearchProps) {
           iconName="magnifying-glass"
           className={
             size === 'sm'
-              ? 'absolute left-2 top-1/2 block -translate-y-1/2 text-ssm leading-none text-neutral-subtle'
-              : 'absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle'
+              ? 'pointer-events-none absolute left-2 top-1/2 block -translate-y-1/2 text-ssm leading-none text-neutral-subtle'
+              : 'pointer-events-none absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle'
           }
         />
         <input
