@@ -1,5 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { type Cluster, type ClusterCloudProviderInfo } from 'qovery-typescript-axios'
 import { useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
@@ -18,6 +20,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Section, toast, useModalConfirmation } from '@qovery/shared/ui'
+import { queries } from '@qovery/state/util-queries'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
@@ -28,14 +31,15 @@ export const Route = createFileRoute(
 function ClusterCredentialsSettingsForm() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const isWideCredentialsFeatureFlagEnabled = Boolean(useFeatureFlagEnabled('wide-credentials'))
+  const queryClient = useQueryClient()
 
   const methods = useForm<ClusterCredentialsFormValues>({
     mode: 'onChange',
   })
 
-  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const { data: cluster, isFetching: isClusterFetching } = useCluster({ organizationId, clusterId })
 
-  const { data: clusterCloudProviderInfo } = useClusterCloudProviderInfo({
+  const { data: clusterCloudProviderInfo, isFetching: isCloudProviderInfoFetching } = useClusterCloudProviderInfo({
     organizationId,
     clusterId,
   })
@@ -63,7 +67,7 @@ function ClusterCredentialsSettingsForm() {
   // Restrictive (dual) credentials are only available for AWS managed (EKS) clusters
   const isWideCredentialsEnabled = isWideCredentialsFeatureFlagEnabled && !!cluster && isClusterEksManaged(cluster)
   const initialUsingRestrictivePermissions = cluster?.wide_permissions?.using_restrictive_permissions ?? false
-  const isSavingRef = useRef(false)
+  const initializedClusterIdRef = useRef<string | undefined>(undefined)
 
   const openRedeployConfirmation = (action: () => Promise<void>) => {
     if (!cluster) return
@@ -125,43 +129,66 @@ function ClusterCredentialsSettingsForm() {
     }
 
     const save = async () => {
-      // The cluster and its credentials are refetched one after the other: syncing the form from each refetch would
-      // briefly show a mix of old and new values, so the form is reset once with the saved values instead
-      isSavingRef.current = true
-      try {
-        if (plan.shouldEditCluster) {
-          await (plan.shouldEditCloudProviderInfo ? editClusterSilently : editCluster)({
-            organizationId,
-            clusterId,
-            clusterRequest: {
-              ...cluster,
-              wide_permissions: getWidePermissionsRequest(formValues, cluster.wide_permissions),
-            },
-          })
-        }
-
-        // Credential changes are followed by a redeploy when required; toggle and wide credential changes don't
-        // offer a separate cluster update action.
-        if (plan.shouldEditCloudProviderInfo) {
-          await editCloudProviderInfoWithoutUpdateAction(variables)
-        }
-
-        if (plan.shouldRedeploy) {
-          await deployCluster({ organizationId, clusterId })
-        }
-        methods.reset(
-          isWideCredentialsEnabled
-            ? {
-                configured_credentials: formValues.configured_credentials,
-                restricted_credentials: usingRestrictivePermissions ? formValues.restricted_credentials : undefined,
-                using_restrictive_permissions: usingRestrictivePermissions,
-                slack_webhook_url: usingRestrictivePermissions ? formValues.slack_webhook_url ?? '' : '',
-              }
-            : { credentials: formValues.credentials, using_restrictive_permissions: false }
-        )
-      } finally {
-        isSavingRef.current = false
+      if (plan.shouldEditCluster) {
+        await (plan.shouldEditCloudProviderInfo ? editClusterSilently : editCluster)({
+          organizationId,
+          clusterId,
+          clusterRequest: {
+            ...cluster,
+            wide_permissions: getWidePermissionsRequest(formValues, cluster.wide_permissions),
+          },
+        })
       }
+
+      // Credential changes are followed by a redeploy when required; toggle and wide credential changes don't
+      // offer a separate cluster update action.
+      if (plan.shouldEditCloudProviderInfo) {
+        await editCloudProviderInfoWithoutUpdateAction(variables)
+      }
+
+      if (plan.shouldRedeploy) {
+        await deployCluster({ organizationId, clusterId })
+      }
+
+      await Promise.all([
+        queryClient.refetchQueries({
+          queryKey: queries.clusters.list({ organizationId }).queryKey,
+          type: 'active',
+        }),
+        queryClient.refetchQueries({
+          queryKey: queries.clusters.cloudProviderInfo({ organizationId, clusterId }).queryKey,
+          type: 'active',
+        }),
+      ])
+
+      const refreshedCluster = queryClient
+        .getQueryData<Cluster[]>(queries.clusters.list({ organizationId }).queryKey)
+        ?.find((item) => item.id === clusterId)
+      const refreshedCloudProviderInfo = queryClient.getQueryData<ClusterCloudProviderInfo>(
+        queries.clusters.cloudProviderInfo({ organizationId, clusterId }).queryKey
+      )
+
+      if (!refreshedCluster || !refreshedCloudProviderInfo) return
+
+      const usingRestrictivePermissionsAfterSave =
+        refreshedCluster.wide_permissions?.using_restrictive_permissions ?? false
+      methods.reset(
+        isWideCredentialsEnabled
+          ? {
+              configured_credentials: usingRestrictivePermissionsAfterSave
+                ? refreshedCloudProviderInfo.wide_permission_credentials?.id
+                : refreshedCloudProviderInfo.credentials?.id,
+              restricted_credentials: usingRestrictivePermissionsAfterSave
+                ? refreshedCloudProviderInfo.credentials?.id
+                : undefined,
+              using_restrictive_permissions: usingRestrictivePermissionsAfterSave,
+              slack_webhook_url: refreshedCluster.wide_permissions?.slack_webhook_url ?? '',
+            }
+          : {
+              credentials: refreshedCloudProviderInfo.credentials?.id,
+              using_restrictive_permissions: false,
+            }
+      )
     }
 
     if (plan.shouldRedeploy) {
@@ -177,7 +204,13 @@ function ClusterCredentialsSettingsForm() {
   })
 
   useEffect(() => {
-    if (clusterCloudProviderInfo && !isSavingRef.current) {
+    if (
+      cluster &&
+      clusterCloudProviderInfo &&
+      !isClusterFetching &&
+      !isCloudProviderInfoFetching &&
+      initializedClusterIdRef.current !== clusterId
+    ) {
       // Map the API credentials back into the stable configured/restricted form fields for the current mode.
       methods.reset(
         isWideCredentialsEnabled
@@ -196,13 +229,17 @@ function ClusterCredentialsSettingsForm() {
               using_restrictive_permissions: false,
             }
       )
+      initializedClusterIdRef.current = clusterId
     }
   }, [
     methods,
+    cluster,
     clusterCloudProviderInfo,
-    cluster?.wide_permissions?.slack_webhook_url,
+    clusterId,
     initialUsingRestrictivePermissions,
     isWideCredentialsEnabled,
+    isClusterFetching,
+    isCloudProviderInfoFetching,
   ])
 
   return (
@@ -223,6 +260,8 @@ function ClusterCredentialsSettingsForm() {
                   type="submit"
                   size="lg"
                   loading={
+                    isClusterFetching ||
+                    isCloudProviderInfoFetching ||
                     isEditCloudProviderInfoLoading ||
                     isEditCloudProviderInfoWithoutUpdateActionLoading ||
                     isEditClusterLoading ||
