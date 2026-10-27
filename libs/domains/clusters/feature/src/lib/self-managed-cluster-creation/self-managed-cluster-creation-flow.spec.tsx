@@ -175,6 +175,32 @@ describe('SelfManagedClusterCreationFlow', () => {
     expect(screen.queryByText('CPU architectures')).not.toBeInTheDocument()
   })
 
+  it('shows the API-resolved value for read-only Operator fields', async () => {
+    mockUsePlatformTemplateComponentConfiguration.mockReturnValue({
+      data: {
+        componentKey: 'qovery-operator',
+        fields: operatorComponent.fields.map((field) =>
+          field.key === 'nodeSelectorKey' ? { ...field, readOnly: true } : field
+        ),
+        resolvedValues: { nodeSelectorKey: 'resolved-node-group' },
+        requirements: [],
+        componentBindings: [],
+        violations: [],
+      },
+      isFetching: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+
+    expect(screen.getByLabelText('Node group label key')).toHaveValue('resolved-node-group')
+    expect(screen.getByLabelText('Node group label key')).toBeDisabled()
+    expect(screen.getByLabelText('Node group label value')).toBeEnabled()
+  })
+
   it('alerts about violations that no displayed field can show', async () => {
     mockUsePlatformTemplateComponentConfiguration.mockReturnValue({
       data: {

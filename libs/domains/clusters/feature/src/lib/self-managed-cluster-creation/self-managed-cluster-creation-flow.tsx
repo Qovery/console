@@ -36,6 +36,7 @@ import {
   applyPlatformConfigurationDefaults,
   getUnmappedViolations,
   isPlatformConfigurationReady,
+  isPlatformReadOnlyField,
   isSupportedPlatformField,
   omitEmptyValues,
 } from '../utils/platform-configuration-utils'
@@ -347,7 +348,7 @@ function OperatorStep({
                 <OperatorConfigurationField
                   key={field.key}
                   field={field}
-                  value={values[field.key]}
+                  value={isPlatformReadOnlyField(field) ? preview?.resolvedValues?.[field.key] : values[field.key]}
                   violations={violations}
                   onChange={(value) => {
                     const { [field.key]: _, ...otherValues } = values
