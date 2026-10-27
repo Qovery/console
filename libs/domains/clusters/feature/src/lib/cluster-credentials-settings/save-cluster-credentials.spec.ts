@@ -1,5 +1,9 @@
-import { type ClusterCloudProviderInfo, type ClusterCredentials } from 'qovery-typescript-axios'
-import { getCloudProviderInfoRequest, getWidePermissionsRequest } from './save-cluster-credentials'
+import { type Cluster, type ClusterCloudProviderInfo, type ClusterCredentials } from 'qovery-typescript-axios'
+import {
+  getCloudProviderInfoRequest,
+  getClusterCredentialsFormValuesAfterSave,
+  getWidePermissionsRequest,
+} from './save-cluster-credentials'
 
 const credentials = [
   { id: 'static-1', name: 'static-credential', object_type: 'AWS' },
@@ -91,6 +95,77 @@ describe('getWidePermissionsRequest', () => {
       using_restrictive_permissions: true,
       wide_scope_cloud_account_id: null,
       slack_webhook_url: null,
+    })
+  })
+})
+
+describe('getClusterCredentialsFormValuesAfterSave', () => {
+  it('should use the mutation responses for the saved form values', () => {
+    expect(
+      getClusterCredentialsFormValuesAfterSave({
+        formValues: {
+          configured_credentials: 'stale-wide-id',
+          restricted_credentials: 'stale-restricted-id',
+          using_restrictive_permissions: true,
+          slack_webhook_url: 'https://hooks.slack.test/old',
+        },
+        editedCluster: {
+          wide_permissions: { using_restrictive_permissions: true, slack_webhook_url: 'https://hooks.slack.test/new' },
+        } as Cluster,
+        editedCloudProviderInfo: {
+          ...cloudProviderInfo,
+          credentials: { id: 'saved-restricted-id', name: 'saved-restricted' },
+          wide_permission_credentials: { id: 'saved-wide-id', name: 'saved-wide' },
+        },
+      })
+    ).toEqual({
+      configured_credentials: 'saved-wide-id',
+      restricted_credentials: 'saved-restricted-id',
+      using_restrictive_permissions: true,
+      slack_webhook_url: 'https://hooks.slack.test/new',
+    })
+  })
+
+  it('should retain submitted values when the save plan skipped a mutation', () => {
+    expect(
+      getClusterCredentialsFormValuesAfterSave({
+        formValues: {
+          configured_credentials: 'submitted-credential',
+          restricted_credentials: 'unused-restricted-credential',
+          using_restrictive_permissions: true,
+          slack_webhook_url: 'https://hooks.slack.test/submitted',
+        },
+      })
+    ).toEqual({
+      configured_credentials: 'submitted-credential',
+      restricted_credentials: 'unused-restricted-credential',
+      using_restrictive_permissions: true,
+      slack_webhook_url: 'https://hooks.slack.test/submitted',
+    })
+  })
+
+  it('should clear wide-permission form values when the saved cluster has restrictive permissions off', () => {
+    expect(
+      getClusterCredentialsFormValuesAfterSave({
+        formValues: {
+          configured_credentials: 'submitted-credential',
+          restricted_credentials: 'old-restricted-credential',
+          using_restrictive_permissions: true,
+          slack_webhook_url: 'https://hooks.slack.test/old',
+        },
+        editedCluster: {
+          wide_permissions: {
+            using_restrictive_permissions: false,
+            wide_scope_cloud_account_id: null,
+            slack_webhook_url: null,
+          },
+        } as Cluster,
+      })
+    ).toEqual({
+      configured_credentials: 'submitted-credential',
+      restricted_credentials: undefined,
+      using_restrictive_permissions: false,
+      slack_webhook_url: '',
     })
   })
 })

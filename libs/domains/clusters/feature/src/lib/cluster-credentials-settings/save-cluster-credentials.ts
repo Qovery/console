@@ -1,4 +1,5 @@
 import {
+  type Cluster,
   type ClusterCloudProviderInfo,
   type ClusterCloudProviderInfoRequest,
   type ClusterCredentials,
@@ -13,6 +14,37 @@ export interface ClusterCredentialsFormValues {
   wide_permission_credentials?: string
   using_restrictive_permissions?: boolean
   slack_webhook_url?: string
+}
+
+export const getClusterCredentialsFormValuesAfterSave = ({
+  formValues,
+  editedCluster,
+  editedCloudProviderInfo,
+}: {
+  formValues: ClusterCredentialsFormValues
+  editedCluster?: Cluster
+  editedCloudProviderInfo?: ClusterCloudProviderInfo
+}): ClusterCredentialsFormValues => {
+  const usingRestrictivePermissions =
+    editedCluster?.wide_permissions?.using_restrictive_permissions ?? Boolean(formValues.using_restrictive_permissions)
+  const responseSlackWebhookUrl = editedCluster?.wide_permissions?.slack_webhook_url
+
+  return {
+    configured_credentials: editedCloudProviderInfo
+      ? (usingRestrictivePermissions
+          ? editedCloudProviderInfo.wide_permission_credentials?.id
+          : editedCloudProviderInfo.credentials?.id) ?? formValues.configured_credentials
+      : formValues.configured_credentials,
+    restricted_credentials: usingRestrictivePermissions
+      ? editedCloudProviderInfo?.credentials?.id ?? formValues.restricted_credentials
+      : undefined,
+    using_restrictive_permissions: usingRestrictivePermissions,
+    slack_webhook_url: usingRestrictivePermissions
+      ? editedCluster && responseSlackWebhookUrl !== undefined
+        ? responseSlackWebhookUrl ?? ''
+        : formValues.slack_webhook_url ?? ''
+      : '',
+  }
 }
 
 const getNormalizedSlackWebhookUrl = (url?: string | null) => url?.trim() || null

@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type ClusterCloudProviderInfo } from 'qovery-typescript-axios'
@@ -11,6 +10,7 @@ import {
   ClusterCredentialsSettings,
   ClusterRestrictivePermissionsSettings,
   getCloudProviderInfoRequest,
+  getClusterCredentialsFormValuesAfterSave,
   getWidePermissionsRequest,
   useCluster,
   useClusterCloudProviderInfo,
@@ -20,7 +20,6 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Section, toast, useModalConfirmation } from '@qovery/shared/ui'
-import { queries } from '@qovery/state/util-queries'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
@@ -31,7 +30,6 @@ export const Route = createFileRoute(
 function ClusterCredentialsSettingsForm() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const isWideCredentialsFeatureFlagEnabled = Boolean(useFeatureFlagEnabled('wide-credentials'))
-  const queryClient = useQueryClient()
 
   const methods = useForm<ClusterCredentialsFormValues>({
     mode: 'onChange',
@@ -129,8 +127,11 @@ function ClusterCredentialsSettingsForm() {
     }
 
     const save = async () => {
+      let editedCluster: Cluster | undefined
+      let editedCloudProviderInfo: ClusterCloudProviderInfo | undefined
+
       if (plan.shouldEditCluster) {
-        await (plan.shouldEditCloudProviderInfo ? editClusterSilently : editCluster)({
+        editedCluster = await (plan.shouldEditCloudProviderInfo ? editClusterSilently : editCluster)({
           organizationId,
           clusterId,
           clusterRequest: {
@@ -143,52 +144,14 @@ function ClusterCredentialsSettingsForm() {
       // Credential changes are followed by a redeploy when required; toggle and wide credential changes don't
       // offer a separate cluster update action.
       if (plan.shouldEditCloudProviderInfo) {
-        await editCloudProviderInfoWithoutUpdateAction(variables)
+        editedCloudProviderInfo = await editCloudProviderInfoWithoutUpdateAction(variables)
       }
 
       if (plan.shouldRedeploy) {
         await deployCluster({ organizationId, clusterId })
       }
 
-      await Promise.all([
-        queryClient.refetchQueries({
-          queryKey: queries.clusters.list({ organizationId }).queryKey,
-          type: 'active',
-        }),
-        queryClient.refetchQueries({
-          queryKey: queries.clusters.cloudProviderInfo({ organizationId, clusterId }).queryKey,
-          type: 'active',
-        }),
-      ])
-
-      const refreshedCluster = queryClient
-        .getQueryData<Cluster[]>(queries.clusters.list({ organizationId }).queryKey)
-        ?.find((item) => item.id === clusterId)
-      const refreshedCloudProviderInfo = queryClient.getQueryData<ClusterCloudProviderInfo>(
-        queries.clusters.cloudProviderInfo({ organizationId, clusterId }).queryKey
-      )
-
-      if (!refreshedCluster || !refreshedCloudProviderInfo) return
-
-      const usingRestrictivePermissionsAfterSave =
-        refreshedCluster.wide_permissions?.using_restrictive_permissions ?? false
-      methods.reset(
-        isWideCredentialsEnabled
-          ? {
-              configured_credentials: usingRestrictivePermissionsAfterSave
-                ? refreshedCloudProviderInfo.wide_permission_credentials?.id
-                : refreshedCloudProviderInfo.credentials?.id,
-              restricted_credentials: usingRestrictivePermissionsAfterSave
-                ? refreshedCloudProviderInfo.credentials?.id
-                : undefined,
-              using_restrictive_permissions: usingRestrictivePermissionsAfterSave,
-              slack_webhook_url: refreshedCluster.wide_permissions?.slack_webhook_url ?? '',
-            }
-          : {
-              credentials: refreshedCloudProviderInfo.credentials?.id,
-              using_restrictive_permissions: false,
-            }
-      )
+      methods.reset(getClusterCredentialsFormValuesAfterSave({ formValues, editedCluster, editedCloudProviderInfo }))
     }
 
     if (plan.shouldRedeploy) {
