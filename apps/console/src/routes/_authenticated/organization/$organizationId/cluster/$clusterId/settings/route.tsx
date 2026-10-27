@@ -2,7 +2,7 @@ import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { match } from 'ts-pattern'
-import { useCluster, useIsOperatorAttached } from '@qovery/domains/clusters/feature'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { Sidebar } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -14,7 +14,6 @@ function RouteComponent() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
-  const isOperatorAttached = useIsOperatorAttached(cluster)
 
   const pathSettings = `/organization/${organizationId}/cluster/${clusterId}/settings`
 
@@ -83,7 +82,7 @@ function RouteComponent() {
   const LINKS_SETTINGS = match(cluster)
     .with({ kubernetes: 'SELF_MANAGED' }, () => [
       generalLink,
-      ...(isOperatorAttached === false ? [dnsProviderLink] : []),
+      ...(cluster?.is_catalog_managed ? [] : [dnsProviderLink]),
       imageRegistryLink,
       advancedSettingsLink,
       dangerZoneLink,

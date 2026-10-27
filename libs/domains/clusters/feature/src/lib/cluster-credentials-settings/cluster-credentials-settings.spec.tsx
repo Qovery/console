@@ -1,10 +1,9 @@
 import { act } from '@testing-library/react'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CloudProviderEnum, type ClusterCredentials, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
-import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterCredentialsSettings, {
   type ClusterCredentialsSettingsProps,
@@ -52,12 +51,6 @@ const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'use
 const props: ClusterCredentialsSettingsProps = {
   cloudProvider: CloudProviderEnum.AWS,
 }
-
-const eksManagedCluster = {
-  ...clusterFactoryMock(1, CloudProviderEnum.AWS)[0],
-  kubernetes: KubernetesEnum.MANAGED,
-}
-const eksSelfManagedCluster = { ...eksManagedCluster, kubernetes: KubernetesEnum.SELF_MANAGED }
 
 function ClusterFields() {
   const { register, watch } = useFormContext()
@@ -151,11 +144,11 @@ describe('ClusterCredentialsSettings', () => {
     expect(screen.getByTestId('selected-credential')).toHaveTextContent('new-credential')
   })
 
-  it('preserves the empty selector and settings link in cluster settings', () => {
+  it('preserves the empty selector in cluster settings', () => {
     useCloudProviderCredentialsMockSpy.mockReturnValue({ data: [], isLoading: false })
     renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting />))
     expect(screen.getByLabelText('Credentials')).toBeInTheDocument()
-    expect(screen.getByText('See and edit all Cloud credentials')).toBeInTheDocument()
+    expect(screen.queryByText('See and edit all Cloud credentials')).not.toBeInTheDocument()
   })
 
   it('should render successfully', () => {
@@ -202,36 +195,15 @@ describe('ClusterCredentialsSettings', () => {
     })
   })
 
-  it('should display the EKS credentials change warning in cluster settings for EKS clusters', () => {
-    renderWithProviders(
-      wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting cluster={eksManagedCluster} />)
-    )
-
-    expect(screen.getByTestId('eks-credentials-change-warning')).toBeInTheDocument()
-    expect(screen.getByText('Changing credentials triggers a cluster redeployment')).toBeInTheDocument()
-  })
-
-  it('should not display the EKS credentials change warning for non EKS clusters', () => {
-    renderWithProviders(
-      wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting cluster={eksSelfManagedCluster} />)
-    )
-
-    expect(screen.queryByTestId('eks-credentials-change-warning')).not.toBeInTheDocument()
-  })
-
-  it('should not display the EKS credentials change warning outside cluster settings', () => {
-    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} cluster={eksManagedCluster} />))
-
-    expect(screen.queryByTestId('eks-credentials-change-warning')).not.toBeInTheDocument()
-  })
-
-  it('should display the mirroring registry warning by default in cluster settings', () => {
+  it('should hide the cloud credentials link and mirroring registry warning in cluster settings', () => {
     renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} isSetting />))
 
-    expect(screen.getByTestId('mirroring-registry-credentials-warning')).toBeInTheDocument()
+    expect(screen.queryByText('See and edit all Cloud credentials')).not.toBeInTheDocument()
+    expect(screen.queryByText(/credential change won't be applied to the mirroring registry/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/credentials trigger.*cluster redeployment/i)).not.toBeInTheDocument()
   })
 
-  it('should not display the mirroring registry warning outside cluster settings', () => {
+  it('should not display the mirroring registry warning outside cluster settings either', () => {
     renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
 
     expect(screen.queryByTestId('mirroring-registry-credentials-warning')).not.toBeInTheDocument()

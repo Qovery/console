@@ -13,6 +13,7 @@ import { ClusterInstallationGuideModal } from '../cluster-installation-guide-mod
 import { useClusterCreationRestriction } from '../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction'
 import {
   SELF_MANAGED_CLUSTER_CREATION_MODAL_WIDTH,
+  type SelfManagedClusterCloudProvider,
   SelfManagedClusterCreationFlow,
   type SelfManagedClusterCreationStep,
 } from '../self-managed-cluster-creation/self-managed-cluster-creation-flow'
@@ -120,6 +121,7 @@ export function ClusterAdd({ hideDemo = false }: ClusterAddProps) {
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
   const { isClusterCreationRestricted: disabled } = useClusterCreationRestriction({ organizationId })
   const [isCreationFlowOpen, setIsCreationFlowOpen] = useState(false)
+  const [creationCloudProvider, setCreationCloudProvider] = useState<SelfManagedClusterCloudProvider>('AWS')
   const [creationStep, setCreationStep] = useState<SelfManagedClusterCreationStep>('general')
 
   // The flow closes itself before navigating once the Operator connects: that navigation must not be blocked.
@@ -139,8 +141,9 @@ export function ClusterAdd({ hideDemo = false }: ClusterAddProps) {
       content: <ClusterInstallationGuideModal mode="CREATE" isDemo={isDemo} type="ON_PREMISE" onClose={closeModal} />,
     })
 
-  const openCreationFlow = () => {
+  const openCreationFlow = (cloudProvider: SelfManagedClusterCloudProvider) => {
     isFlowClosingRef.current = false
+    setCreationCloudProvider(cloudProvider)
     setCreationStep('general')
     setIsCreationFlowOpen(true)
   }
@@ -237,12 +240,25 @@ export function ClusterAdd({ hideDemo = false }: ClusterAddProps) {
         <ProviderCard
           title="AWS"
           icon={<Icon name="AWS" />}
-          onClick={openCreationFlow}
+          onClick={() => openCreationFlow('AWS')}
           disabled={disabled}
           analytics={selfManaged('AWS')}
         />
+        <ProviderCard
+          title="GCP"
+          icon={GCP}
+          onClick={() => openCreationFlow('GCP')}
+          disabled={disabled}
+          analytics={selfManaged('GCP')}
+        />
+        <ProviderCard
+          title="Scaleway"
+          icon={<Icon name="SCW" />}
+          onClick={() => openCreationFlow('SCW')}
+          disabled={disabled}
+          analytics={selfManaged('SCW')}
+        />
         {[
-          { title: 'GCP', icon: GCP, provider: 'GCP' },
           { title: 'Microsoft Azure', icon: Azure, provider: 'AZURE' },
           { title: 'OVH Cloud', icon: <Icon name="OVH_CLOUD" />, provider: 'OVH_CLOUD' },
           { title: 'Digital Ocean', icon: DigitalOcean, provider: 'DIGITAL_OCEAN' },
@@ -272,6 +288,7 @@ export function ClusterAdd({ hideDemo = false }: ClusterAddProps) {
         {/* The dialog unmounts its content once closed, so each opening starts a fresh flow. */}
         <SelfManagedClusterCreationFlow
           organizationId={organizationId}
+          cloudProvider={creationCloudProvider}
           onStepChange={setCreationStep}
           onClose={() => {
             isFlowClosingRef.current = true

@@ -6,6 +6,7 @@ import {
   type PlatformComponentConfigurationResolutionResponse,
   type PlatformTemplateComponentResponse,
   type SelfManagedClusterPlatformSelection,
+  type SelfManagedClusterRequestProviderEnum,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -46,6 +47,14 @@ const INSTALLATION_DOCUMENTATION_URL = 'https://www.qovery.com/docs/getting-star
 const SUPPORT_URL = 'https://www.qovery.com/contact'
 
 export type SelfManagedClusterCreationStep = 'general' | 'operator' | 'install'
+
+export type SelfManagedClusterCloudProvider = SelfManagedClusterRequestProviderEnum
+
+const CLOUD_PROVIDER_LABELS: Record<SelfManagedClusterCloudProvider, string> = {
+  AWS: 'AWS',
+  GCP: 'GCP',
+  SCW: 'Scaleway',
+}
 
 export const SELF_MANAGED_CLUSTER_CREATION_MODAL_WIDTH: Record<SelfManagedClusterCreationStep, number> = {
   general: 676,
@@ -117,35 +126,37 @@ function StepSection({ title, action, children }: PropsWithChildren<{ title: str
 }
 
 function GeneralStep({
+  cloudProvider,
   values,
   onCancel,
   onContinue,
 }: {
+  cloudProvider: SelfManagedClusterCloudProvider
   values?: GeneralValues
   onCancel: () => void
   onContinue: (values: GeneralValues) => void
 }) {
   const methods = useForm<GeneralValues>({
     mode: 'onChange',
-    defaultValues: values ?? { name: '', production: true, credentials: '', region: '' },
+    defaultValues: values ?? { name: '', production: false, credentials: '', region: '' },
   })
   const { data: cloudProviders = [] } = useCloudProviders()
   const regionOptions = useMemo(
     () =>
       cloudProviders
-        .find(({ short_name }) => short_name === 'AWS')
+        .find(({ short_name }) => short_name === cloudProvider)
         ?.regions?.map((region: ClusterRegion) => {
           const label = `${region.city} (${region.name})`
           return { label, value: region.name, icon: <IconFlag code={region.country_code} /> }
         }) ?? [],
-    [cloudProviders]
+    [cloudProviders, cloudProvider]
   )
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onContinue)}>
         <StepLayout
-          title="Connect AWS cluster"
+          title={`Connect ${CLOUD_PROVIDER_LABELS[cloudProvider]} cluster`}
           description="Fill in your cluster base information to connect it with Qovery"
           footer={
             <>
@@ -193,7 +204,7 @@ function GeneralStep({
           </StepSection>
           <StepSection title="Deployment target">
             <ClusterCredentialsSettings
-              cloudProvider="AWS"
+              cloudProvider={cloudProvider}
               isSetting={false}
               portal
               maxMenuHeight={DEPLOYMENT_TARGET_MENU_MAX_HEIGHT}
@@ -479,12 +490,14 @@ function InstallStep({
 
 export interface SelfManagedClusterCreationFlowProps {
   organizationId: string
+  cloudProvider: SelfManagedClusterCloudProvider
   onStepChange?: (step: SelfManagedClusterCreationStep) => void
   onClose: () => void
 }
 
 export function SelfManagedClusterCreationFlow({
   organizationId,
+  cloudProvider,
   onStepChange,
   onClose,
 }: SelfManagedClusterCreationFlowProps) {
@@ -502,7 +515,7 @@ export function SelfManagedClusterCreationFlow({
   } = usePlatformTemplates({
     organizationId,
     clusterMode: 'CUSTOMER_MANAGED',
-    cloudProvider: 'AWS',
+    cloudProvider,
   })
   const template = templates?.[0]
   const operatorComponent = template?.bootstrapComponent
@@ -526,7 +539,7 @@ export function SelfManagedClusterCreationFlow({
     templateVersion: template?.version,
     componentKey: operatorComponent?.key,
     clusterMode: 'CUSTOMER_MANAGED',
-    cloudProvider: 'AWS',
+    cloudProvider,
     request: { profileConfig: debouncedOperatorConfig, clusterInputs: {}, componentOutputs: {} },
     enabled: step === 'operator',
   })
@@ -560,7 +573,7 @@ export function SelfManagedClusterCreationFlow({
         clusterRequest: {
           name: generalValues.name.trim(),
           production: generalValues.production,
-          provider: 'AWS',
+          provider: cloudProvider,
           region: generalValues.region,
           credentials: { id: generalValues.credentials },
           platform: getPlatformSelection(),
@@ -612,6 +625,7 @@ export function SelfManagedClusterCreationFlow({
 
   return (
     <GeneralStep
+      cloudProvider={cloudProvider}
       values={generalValues}
       onCancel={onClose}
       onContinue={(values) => {

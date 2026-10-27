@@ -7,7 +7,6 @@ import {
   useCluster,
   useClusterDnsProvider,
   useEditClusterDnsProvider,
-  useIsOperatorAttached,
 } from '@qovery/domains/clusters/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { LoaderSpinner, toast } from '@qovery/shared/ui'
@@ -24,7 +23,6 @@ function RouteComponent() {
   useDocumentTitle('DNS provider - Cluster settings')
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
-  const isOperatorAttached = useIsOperatorAttached(cluster)
 
   const loader = (
     <div className="flex justify-center p-8">
@@ -32,11 +30,11 @@ function RouteComponent() {
     </div>
   )
 
-  if (isClusterLoading || (cluster && isOperatorAttached === undefined)) {
+  if (isClusterLoading) {
     return loader
   }
 
-  if (isOperatorAttached) {
+  if (!cluster || cluster.is_catalog_managed) {
     return (
       <Navigate
         to="/organization/$organizationId/cluster/$clusterId/settings/general"

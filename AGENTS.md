@@ -18,7 +18,9 @@ Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 ## Essential Facts
 
 - **Yarn Berry** only (never npm). `nvm use`.
-- Branch from `staging`. Conventional commits: `feat|fix|chore(scope): message`.
+- Before creating any new branch, run `git fetch origin staging` successfully, then create the branch explicitly from the freshly fetched `origin/staging` (for example, `git switch -c <branch-name> origin/staging`). Never use local `staging` or the current HEAD as a substitute. If fetching fails, do not silently fall back to a stale local reference. Only use another base when the user explicitly requests it.
+- Before opening a PR targeting `staging`, fetch `origin/staging` again and check for merge conflicts; do not assume the base is still current.
+- Conventional commits: `feat|fix|chore(scope): message`.
 - Before commit: format -> test -> snapshot review -> lint.
 - `ts-pattern` for branching logic. React Query for server state.
 - Shared utilities live in `@qovery/shared/util-js`.

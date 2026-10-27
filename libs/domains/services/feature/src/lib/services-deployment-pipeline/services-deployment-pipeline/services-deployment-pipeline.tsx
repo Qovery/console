@@ -15,6 +15,7 @@ import {
   DropdownMenu,
   Heading,
   Icon,
+  InputToggle,
   LoaderSpinner,
   Section,
   Tooltip,
@@ -340,7 +341,6 @@ export function ServicesDeploymentPipeline() {
 
                             const service = servicesById.get(service_id)
                             const subtitle = getDatabaseSubtitle(service)
-                            const hasSubtitle = Boolean(subtitle || is_skipped)
 
                             return (
                               <Board.Card
@@ -369,41 +369,33 @@ export function ServicesDeploymentPipeline() {
                                       className={clsx(
                                         'min-w-0 flex-1 font-medium text-neutral',
                                         is_skipped && 'text-neutral-subtle',
-                                        hasSubtitle ? 'text-xs' : 'text-ssm'
+                                        subtitle ? 'text-xs' : 'text-ssm'
                                       )}
                                     >
-                                      <Truncate truncateLimit={hasSubtitle ? 32 : 27} text={service?.name || ''} />
-                                      {hasSubtitle && (
-                                        <div className="text-2xs font-normal">
-                                          {subtitle}
-                                          {subtitle && is_skipped && ' · '}
-                                          {is_skipped && <span>Skipped</span>}
-                                        </div>
-                                      )}
+                                      <Tooltip content={service?.name || ''}>
+                                        <span className="block truncate">{service?.name || ''}</span>
+                                      </Tooltip>
+                                      {subtitle && <div className="text-2xs font-normal">{subtitle}</div>}
                                     </div>
                                   </div>
-                                  <DropdownMenu.Root>
-                                    <DropdownMenu.Trigger asChild>
-                                      <Button
-                                        type="button"
-                                        color="neutral"
-                                        variant="plain"
-                                        size="xs"
-                                        iconOnly
-                                        aria-label={`Deployment options for ${service?.name || service_id}`}
+                                  <Tooltip
+                                    content={
+                                      is_skipped
+                                        ? 'Skipped in environment deployments'
+                                        : 'Included in environment deployments'
+                                    }
+                                  >
+                                    <div className="shrink-0">
+                                      <InputToggle
+                                        small
+                                        ariaLabel={`Include ${service?.name || service_id} in environment deployments`}
+                                        value={!is_skipped}
                                         disabled={isUpdatingStage}
-                                      >
-                                        <Icon iconName="ellipsis" />
-                                      </Button>
-                                    </DropdownMenu.Trigger>
-                                    <DropdownMenu.Content>
-                                      <DropdownMenu.Item
-                                        icon={<Icon iconName={is_skipped ? 'play' : 'ban'} />}
-                                        onSelect={() =>
+                                        onChange={(included) =>
                                           attachServiceToDeploymentStage({
                                             stageId,
                                             serviceId: service_id,
-                                            isSkipped: !is_skipped,
+                                            isSkipped: !included,
                                             prevStage: {
                                               stageId,
                                               serviceId: service_id,
@@ -411,11 +403,9 @@ export function ServicesDeploymentPipeline() {
                                             },
                                           })
                                         }
-                                      >
-                                        {is_skipped ? 'Include in deployments' : 'Skip in deployments'}
-                                      </DropdownMenu.Item>
-                                    </DropdownMenu.Content>
-                                  </DropdownMenu.Root>
+                                      />
+                                    </div>
+                                  </Tooltip>
                                 </div>
                               </Board.Card>
                             )

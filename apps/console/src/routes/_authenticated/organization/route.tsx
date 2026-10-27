@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type BlueprintDetailsResponse, type Cluster } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { useClusters, useIsOperatorAttached } from '@qovery/domains/clusters/feature'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import {
@@ -399,8 +399,7 @@ function useNavigationContext(): NavigationContext | null {
   })
   const hasAlerting = clusters.some((cluster) => cluster.metrics_parameters?.configuration?.alerting?.enabled)
   const currentCluster = clusters.find((cluster) => cluster.id === environment?.cluster_id)
-  // Only Engine v2 clusters, attached to the Qovery Operator, have a profile.
-  const isProfileAvailable = Boolean(useIsOperatorAttached(clusters.find((cluster) => cluster.id === params.clusterId)))
+  const isProfileAvailable = Boolean(clusters.find((cluster) => cluster.id === params.clusterId)?.is_catalog_managed)
   const blueprintId = service && isBlueprintService(service) && isTerraform(service) ? service.blueprint_id : ''
   const { data: blueprint } = useBlueprint({
     blueprintId,

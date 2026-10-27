@@ -1,6 +1,6 @@
 import { Navigate, Outlet, createFileRoute, useParams } from '@tanstack/react-router'
 import { z } from 'zod'
-import { useCluster, useIsOperatorAttached } from '@qovery/domains/clusters/feature'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -13,11 +13,8 @@ function RouteComponent() {
   useDocumentTitle('Cluster - Profile')
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
-  // Only Engine v2 clusters, attached to the Qovery Operator, have a profile.
-  const isOperatorAttached = useIsOperatorAttached(cluster)
 
-  // Redirecting before the flags, the cluster and its Operator status are loaded would turn away users who have access.
-  if (isClusterLoading || (cluster && isOperatorAttached === undefined)) {
+  if (isClusterLoading) {
     return (
       <div className="flex min-h-page-container items-center justify-center">
         <LoaderSpinner />
@@ -25,7 +22,7 @@ function RouteComponent() {
     )
   }
 
-  if (!isOperatorAttached && organizationId && clusterId) {
+  if (!cluster?.is_catalog_managed && organizationId && clusterId) {
     return (
       <Navigate
         to="/organization/$organizationId/cluster/$clusterId/overview"
