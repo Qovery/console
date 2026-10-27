@@ -99,8 +99,8 @@ describe('ProfileOperatorFooter', () => {
     expect(status).toHaveTextContent('Update available')
     expect(status).toHaveTextContent('v1.202.0')
     expect(status).toHaveTextContent('0.2.0')
-    expect(status).not.toHaveTextContent('v1.203.0')
-    expect(status).not.toHaveTextContent('0.2.1')
+    expect(status).toHaveTextContent('Target: v1.203.0')
+    expect(status).toHaveTextContent('Target: 0.2.1')
 
     await userEvent.click(screen.getByRole('button', { name: 'Update Operator' }))
 
@@ -130,7 +130,8 @@ describe('ProfileOperatorFooter', () => {
     expect(status).toHaveTextContent('Up-to-date')
     expect(status).toHaveTextContent('v1.203.0')
     expect(status).toHaveTextContent('0.2.1')
-    expect(status).not.toHaveTextContent('Update to:')
+    expect(status).toHaveTextContent('Target: v1.203.0')
+    expect(status).toHaveTextContent('Target: 0.2.1')
     expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
   })
 

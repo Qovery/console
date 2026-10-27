@@ -32,6 +32,8 @@ Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 
 ## Agent Behavior
 
+- Before any implementation change, search the codebase for existing solutions to the same problem, shared components/utilities, and comparable working usages. Inspect how those usages are configured and reuse the existing approach first; do not invent a workaround before checking the existing foundation.
+- Before changing a shared component globally, compare the affected usage with existing working callers. Prefer correcting the local integration when that is sufficient. Only change shared behavior when evidence shows the issue belongs there, and assess the impact on other callers.
 - Do not revert changes you did not author.
 - State assumptions clearly.
 - Keep diffs focused.

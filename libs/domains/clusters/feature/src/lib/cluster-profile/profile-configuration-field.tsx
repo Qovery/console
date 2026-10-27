@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { type FieldSchemaResponse, type PlatformComponentConfigurationViolationResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useRef } from 'react'
 import {
@@ -7,7 +6,7 @@ import {
   getSchemaFieldSummaryValue,
   getSchemaFieldValue,
 } from '@qovery/shared/schema-fields/feature'
-import { Button, EmptyState, HighlightText, Icon, useModal } from '@qovery/shared/ui'
+import { Button, HighlightText, Icon, useModal } from '@qovery/shared/ui'
 import {
   type PlatformArrayField,
   type PlatformObjectField,
@@ -33,8 +32,6 @@ interface ProfileConfigurationFieldProps {
   value: unknown
   violations: Violations
   highlight?: string
-  layout?: 'row' | 'card'
-  arrayLabels?: { item: string; add: string; empty: string; emptyDescription?: string }
   onChange: (value: unknown) => void
 }
 
@@ -157,8 +154,6 @@ function ProfileArrayField({
   value,
   violations,
   highlight,
-  layout = 'row',
-  arrayLabels,
   onChange,
 }: Omit<ProfileConfigurationFieldProps, 'field'> & { field: PlatformArrayField }) {
   const { openModal, closeModal } = useModal()
@@ -221,36 +216,29 @@ function ProfileArrayField({
     })
   }
 
-  const addButton = (
-    <Button
-      type="button"
-      variant={layout === 'card' && items.length === 0 ? 'solid' : 'outline'}
-      color="neutral"
-      size={layout === 'card' ? 'sm' : 'md'}
-      aria-label={`Add item to ${field.label}`}
-      disabled={!canAdd}
-      onClick={() => openItemModal()}
-    >
-      <Icon iconName="circle-plus" iconStyle="regular" />
-      {arrayLabels?.add ?? 'Add item'}
-    </Button>
-  )
-
   return (
-    <div className={clsx('flex flex-col', layout === 'card' ? 'mt-3 gap-3' : 'gap-4 border-b border-neutral p-4')}>
+    <div className="flex flex-col gap-4 border-b border-neutral p-4">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="min-w-0 flex-1">
-          <p className={clsx('text-sm text-neutral', layout === 'card' && 'font-medium')}>
+          <p className="text-sm text-neutral">
             <HighlightText text={field.label} highlight={highlight} />
-            {layout === 'card' && !field.required ? ' (optional)' : null}
           </p>
-          {layout === 'row' && field.description ? (
-            <SchemaFieldDescription description={field.description} highlight={highlight} />
-          ) : null}
+          {field.description ? <SchemaFieldDescription description={field.description} highlight={highlight} /> : null}
           <FieldError error={error} />
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
-          {layout === 'row' || items.length > 0 ? addButton : null}
+          <Button
+            type="button"
+            variant="outline"
+            color="neutral"
+            size="md"
+            aria-label={`Add item to ${field.label}`}
+            disabled={!canAdd}
+            onClick={() => openItemModal()}
+          >
+            <Icon iconName="circle-plus" iconStyle="regular" />
+            Add item
+          </Button>
           {hasNestedItemFields ? (
             <p className="text-xs text-neutral-subtle">Items with nested settings cannot be added here yet.</p>
           ) : typeof maxItems === 'number' && !isUnderLimit ? (
@@ -259,76 +247,42 @@ function ProfileArrayField({
         </div>
       </div>
 
-      {layout === 'card' && items.length === 0 ? (
-        <EmptyState
-          size="sm"
-          icon="diagram-project"
-          iconStyle="regular"
-          title={arrayLabels?.empty ?? 'No items added'}
-          description={arrayLabels?.emptyDescription ?? field.description}
-        >
-          {addButton}
-        </EmptyState>
-      ) : null}
       {items.length > 0 ? (
         <ul className="flex flex-col gap-2">
           {items.map((item, index) => {
             const itemViolations = getArrayItemViolations(violations, getPlatformArrayItemPath(path, index))
-            const columns = getArrayItemColumns(field, item, index)
-            const [primaryValue, ...otherValues] = columns
-            const itemFields = getPlatformArrayItemFields(field, index).filter(isPlatformScalarField)
+            const [primaryValue, ...otherValues] = getArrayItemColumns(field, item, index)
             const itemName = primaryValue || `Item ${index + 1}`
             return (
               <li key={index} className="flex flex-col">
                 <div
-                  className={clsx(
-                    'flex min-h-11 items-center gap-4 rounded-md border',
-                    layout === 'card' ? 'bg-surface-neutral-subtle px-4 py-3' : 'bg-surface-neutral py-2 pl-4 pr-2',
+                  className={`flex min-h-11 items-center gap-4 rounded-md border bg-surface-neutral py-2 pl-4 pr-2 ${
                     itemViolations.length ? 'border-negative-strong' : 'border-neutral'
-                  )}
+                  }`}
                 >
-                  {layout === 'card' ? (
-                    <div className="flex min-w-0 flex-1 flex-col gap-1 text-ssm">
-                      <p className="font-medium text-neutral">
-                        {arrayLabels?.item ? `${arrayLabels.item} ${index + 1}` : itemName}
-                      </p>
-                      <div className="flex flex-wrap gap-x-2 gap-y-1 text-neutral-subtle">
-                        {columns.map((column, columnIndex) => (
-                          <span key={columnIndex} className="break-all">
-                            {itemFields[columnIndex]?.label ?? 'Value'}: {column || '—'}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <p className="w-1/4 min-w-0 shrink-0 truncate text-sm font-medium text-neutral">{itemName}</p>
-                      {otherValues.map((otherValue, valueIndex) => (
-                        <p key={valueIndex} className="min-w-0 flex-1 truncate text-sm text-neutral-subtle">
-                          {otherValue}
-                        </p>
-                      ))}
-                    </>
-                  )}
+                  <p className="w-1/4 min-w-0 shrink-0 truncate text-sm font-medium text-neutral">{itemName}</p>
+                  {otherValues.map((otherValue, valueIndex) => (
+                    <p key={valueIndex} className="min-w-0 flex-1 truncate text-sm text-neutral-subtle">
+                      {otherValue}
+                    </p>
+                  ))}
                   <div className="ml-auto flex shrink-0 items-center gap-1.5">
                     <Button
                       type="button"
                       variant="outline"
                       color="neutral"
-                      size={layout === 'card' ? 'xs' : 'sm'}
-                      className={layout === 'card' ? 'bg-surface-neutral-component' : undefined}
+                      size="sm"
                       iconOnly
                       aria-label={`Edit ${itemName}`}
                       onClick={() => openItemModal(index)}
                     >
-                      <Icon iconName={layout === 'card' ? 'gear-complex' : 'pen'} iconStyle="regular" />
+                      <Icon iconName="pen" iconStyle="regular" />
                     </Button>
                     <Button
                       type="button"
                       variant="outline"
                       color="neutral"
-                      size={layout === 'card' ? 'xs' : 'sm'}
-                      className={layout === 'card' ? 'bg-surface-neutral-component' : undefined}
+                      size="sm"
                       iconOnly
                       aria-label={`Remove ${itemName}`}
                       disabled={!canRemove}
@@ -356,16 +310,12 @@ export function ProfileConfigurationField({
   value,
   violations,
   highlight,
-  layout = 'row',
-  arrayLabels,
   onChange,
 }: ProfileConfigurationFieldProps) {
   if (isPlatformArrayField(field)) {
     return (
       <ProfileArrayField
         field={field}
-        layout={layout}
-        arrayLabels={arrayLabels}
         path={path}
         value={value}
         violations={violations}
@@ -390,25 +340,17 @@ export function ProfileConfigurationField({
 
   if (!isPlatformScalarField(field)) return null
 
-  const input = (
+  return (
     <SchemaFieldInput
       booleanControl="toggle"
       // Nested fields reuse keys like `name`: the full path keeps input ids unique.
-      field={toSchemaField({ ...field, key: path, description: layout === 'card' ? undefined : field.description })}
-      layout={layout}
+      field={toSchemaField({ ...field, key: path })}
+      layout="row"
       disabled={field.readOnly}
       value={getSchemaFieldValue(field, value)}
       error={getFieldViolation(violations, path)}
       highlight={highlight}
       onChange={(nextValue) => onChange(toPlatformConfigurationValue(field, nextValue))}
     />
-  )
-  return layout === 'card' ? (
-    <div className="flex flex-col gap-1">
-      {input}
-      {field.description ? <p className="text-sm text-neutral-subtle">{field.description}</p> : null}
-    </div>
-  ) : (
-    input
   )
 }

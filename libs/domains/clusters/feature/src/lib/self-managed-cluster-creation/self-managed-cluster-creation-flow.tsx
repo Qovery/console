@@ -27,7 +27,6 @@ import {
 } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { ClusterCredentialsSettings } from '../cluster-credentials-settings/cluster-credentials-settings'
-import { ProfileConfigurationField } from '../cluster-profile/profile-configuration-field'
 import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
@@ -40,6 +39,7 @@ import {
   isSupportedPlatformField,
   omitEmptyValues,
 } from '../utils/platform-configuration-utils'
+import { OperatorConfigurationField } from './operator-configuration-field'
 
 const DEPLOYMENT_TARGET_MENU_MAX_HEIGHT = 240
 const OPERATOR_STATUS_POLL_INTERVAL = 5000
@@ -344,17 +344,10 @@ function OperatorStep({
           <StepSection title="Configuration">
             <div className="flex flex-col gap-3">
               {fields.map((field) => (
-                <ProfileConfigurationField
+                <OperatorConfigurationField
                   key={field.key}
                   field={field}
                   path={field.key}
-                  layout="card"
-                  arrayLabels={{
-                    item: 'Node group taint',
-                    add: 'Add taint',
-                    empty: 'No group taints added',
-                    emptyDescription: 'Tolerating a taint without selecting a node is allowed.',
-                  }}
                   value={values[field.key]}
                   violations={violations}
                   onChange={(value) => {

@@ -67,6 +67,15 @@ export function getClusterOperatorStatusDisplay(status: ClusterOperatorFleetStat
     .exhaustive()
 }
 
+function Version({ installed, target }: { installed?: string | null; target?: string | null }) {
+  return (
+    <span className="flex flex-col">
+      <span className="text-neutral">{installed ?? 'Not reported'}</span>
+      <span className="text-ssm text-neutral-subtle">Target: {target ?? 'Unknown'}</span>
+    </span>
+  )
+}
+
 export interface ClusterOperatorStatusProps {
   operatorStatus: ClusterOperatorStatusResponse
 }
@@ -119,12 +128,16 @@ export function ClusterOperatorStatus({ operatorStatus }: ClusterOperatorStatusP
           </dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-neutral-subtle">Operator image</dt>
-          <dd className="text-neutral">{operatorStatus.operator_version ?? 'Not reported'}</dd>
+          <dt className="text-xs text-neutral-subtle">Operator image</dt>
+          <dd>
+            <Version installed={operatorStatus.operator_version} target={operatorStatus.desired_image_version} />
+          </dd>
         </div>
         <div className="flex flex-col gap-1">
-          <dt className="text-neutral-subtle">Helm chart</dt>
-          <dd className="text-neutral">{operatorStatus.reported_chart_version ?? 'Not reported'}</dd>
+          <dt className="text-xs text-neutral-subtle">Helm chart</dt>
+          <dd>
+            <Version installed={operatorStatus.reported_chart_version} target={operatorStatus.desired_chart_version} />
+          </dd>
         </div>
       </dl>
     </section>
