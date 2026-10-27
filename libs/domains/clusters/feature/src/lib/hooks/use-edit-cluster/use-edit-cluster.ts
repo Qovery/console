@@ -10,18 +10,12 @@ export function useEditCluster({ silently = false, showClusterUpdateAction = tru
   const { mutateAsync: deployCluster } = useDeployCluster()
 
   return useMutation(mutations.editCluster, {
-    onSuccess(editedCluster, { organizationId, clusterId, clusterRequest }) {
+    onSuccess(_, { organizationId, clusterId, clusterRequest }) {
       const clustersQueryKey = queries.clusters.list({ organizationId }).queryKey
       const previousCluster = queryClient
         .getQueryData<Cluster[]>(clustersQueryKey)
         ?.find((cluster) => cluster.id === clusterId)
 
-      // Seed the list with the edited cluster so consumers don't briefly read stale values before the refetch completes
-      if (editedCluster) {
-        queryClient.setQueryData(clustersQueryKey, (clusters: Cluster[] | undefined) =>
-          clusters?.map((cluster) => (cluster.id === editedCluster.id ? editedCluster : cluster))
-        )
-      }
       queryClient.invalidateQueries({ queryKey: clustersQueryKey })
       queryClient.invalidateQueries({
         queryKey: queries.clusters.kubeconfig({ organizationId, clusterId }).queryKey,

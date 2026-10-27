@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import axios from 'axios'
 import { type Cluster, type ClusterRequest } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { act, renderHook, waitFor } from '@qovery/shared/util-tests'
+import { act, renderHook } from '@qovery/shared/util-tests'
 import { queries } from '@qovery/state/util-queries'
 import { useEditCluster } from './use-edit-cluster'
 
@@ -42,7 +42,7 @@ describe('useEditCluster', () => {
     jest.restoreAllMocks()
   })
 
-  it('seeds the edited cluster in the list before the refetch completes', async () => {
+  it('invalidates the cluster list without seeding it from the mutation response', async () => {
     const editedCluster = { ...cluster, wide_permissions: { using_restrictive_permissions: true } } as Cluster
     const { queryClient, invalidateSpy, mutation, list, clustersQuery } = setup(editedCluster)
 
@@ -54,7 +54,7 @@ describe('useEditCluster', () => {
       })
     })
 
-    await waitFor(() => expect(list.current.data).toEqual([editedCluster, otherCluster]))
+    expect(list.current.data).toEqual([cluster, otherCluster])
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: clustersQuery.queryKey })
     expect(invalidateSpy).toHaveBeenCalledWith({
       queryKey: queries.clusters.cloudProviderInfo({ organizationId, clusterId }).queryKey,
