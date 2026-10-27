@@ -78,44 +78,6 @@ export const getCloudProviderInfoRequest = (
   }
 }
 
-export const getClusterCredentialsSavePlan = ({
-  formValues,
-  cloudProviderInfo,
-  initialUsingRestrictivePermissions,
-  initialSlackWebhookUrl,
-}: {
-  formValues: ClusterCredentialsFormValues
-  cloudProviderInfo: ClusterCloudProviderInfo
-  initialUsingRestrictivePermissions: boolean
-  initialSlackWebhookUrl?: string | null
-}): ClusterCredentialsSavePlan => {
-  const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
-  const credentialsId = usingRestrictivePermissions
-    ? formValues.restricted_credentials ?? formValues.credentials
-    : formValues.configured_credentials ?? formValues.credentials
-  const hasCredentialsChanged = credentialsId !== cloudProviderInfo.credentials?.id
-  const hasWidePermissionCredentialsChanged =
-    usingRestrictivePermissions &&
-    (formValues.configured_credentials ?? formValues.wide_permission_credentials) !==
-      cloudProviderInfo.wide_permission_credentials?.id
-  const hasSlackWebhookChanged =
-    getNormalizedSlackWebhookUrl(usingRestrictivePermissions ? formValues.slack_webhook_url : null) !==
-    getNormalizedSlackWebhookUrl(initialSlackWebhookUrl)
-  // Saving with restrictive permissions off must send the explicit nulls that clear the wide-permission settings.
-  const shouldEditCluster =
-    !usingRestrictivePermissions ||
-    usingRestrictivePermissions !== initialUsingRestrictivePermissions ||
-    hasSlackWebhookChanged
-
-  return {
-    shouldEditCluster,
-    // Toggling restrictive permissions is saved on the cluster; changed credential mappings are saved with cloud provider info.
-    shouldEditCloudProviderInfo: hasCredentialsChanged || hasWidePermissionCredentialsChanged || !shouldEditCluster,
-    // Changing the API credentials field requires a redeploy; changing the configured wide credential alone does not.
-    shouldRedeploy: hasCredentialsChanged,
-  }
-}
-
 // The cluster is updated first, the credentials are only sent once it succeeded, then the cluster is redeployed
 export async function saveClusterCredentials({
   plan,

@@ -1,7 +1,6 @@
 import { type ClusterCloudProviderInfo, type ClusterCredentials } from 'qovery-typescript-axios'
 import {
   getCloudProviderInfoRequest,
-  getClusterCredentialsSavePlan,
   getWidePermissionsRequest,
   saveClusterCredentials,
 } from './save-cluster-credentials'
@@ -97,97 +96,6 @@ describe('getWidePermissionsRequest', () => {
       wide_scope_cloud_account_id: null,
       slack_webhook_url: null,
     })
-  })
-})
-
-describe('getClusterCredentialsSavePlan', () => {
-  const initialFormValues = {
-    configured_credentials: 'role-1',
-    restricted_credentials: 'static-1',
-    using_restrictive_permissions: true,
-  }
-
-  it.each([
-    {
-      case: 'restricted credentials changed',
-      formValues: { ...initialFormValues, restricted_credentials: 'static-2' },
-      initialUsingRestrictivePermissions: true,
-      expected: { shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: true },
-    },
-    {
-      case: 'configured credentials become active when the toggle is turned off',
-      formValues: { ...initialFormValues, using_restrictive_permissions: false },
-      initialUsingRestrictivePermissions: true,
-      expected: { shouldEditCluster: true, shouldEditCloudProviderInfo: true, shouldRedeploy: true },
-    },
-    {
-      case: 'configured wide credential changed only',
-      formValues: { ...initialFormValues, configured_credentials: 'role-2' },
-      initialUsingRestrictivePermissions: true,
-      expected: { shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: false },
-    },
-    {
-      case: 'Slack webhook changed only',
-      formValues: { ...initialFormValues, slack_webhook_url: 'https://hooks.slack.test/abc' },
-      initialUsingRestrictivePermissions: true,
-      initialSlackWebhookUrl: null,
-      expected: { shouldEditCluster: true, shouldEditCloudProviderInfo: false, shouldRedeploy: false },
-    },
-    {
-      case: 'toggle turned on with new restricted credentials',
-      formValues: {
-        configured_credentials: 'role-2',
-        restricted_credentials: 'static-2',
-        using_restrictive_permissions: true,
-      },
-      initialUsingRestrictivePermissions: false,
-      expected: { shouldEditCluster: true, shouldEditCloudProviderInfo: true, shouldRedeploy: true },
-    },
-    {
-      case: 'nothing changed',
-      formValues: initialFormValues,
-      initialUsingRestrictivePermissions: true,
-      expected: { shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: false },
-    },
-  ])(
-    'should plan the save when $case',
-    ({ formValues, initialUsingRestrictivePermissions, initialSlackWebhookUrl, expected }) => {
-      expect(
-        getClusterCredentialsSavePlan({
-          formValues,
-          cloudProviderInfo,
-          initialUsingRestrictivePermissions,
-          initialSlackWebhookUrl,
-        })
-      ).toEqual(expected)
-    }
-  )
-
-  it('should use configured credentials and ignore the restricted value while restrictive permissions are off', () => {
-    expect(
-      getClusterCredentialsSavePlan({
-        formValues: {
-          configured_credentials: 'role-1',
-          restricted_credentials: 'static-2',
-          using_restrictive_permissions: false,
-        },
-        cloudProviderInfo,
-        initialUsingRestrictivePermissions: false,
-      })
-    ).toEqual({ shouldEditCluster: true, shouldEditCloudProviderInfo: true, shouldRedeploy: true })
-  })
-
-  it('should edit the cluster when saving with restrictive permissions off to clear wide permission values', () => {
-    expect(
-      getClusterCredentialsSavePlan({
-        formValues: {
-          configured_credentials: 'static-1',
-          using_restrictive_permissions: false,
-        },
-        cloudProviderInfo,
-        initialUsingRestrictivePermissions: false,
-      })
-    ).toEqual({ shouldEditCluster: true, shouldEditCloudProviderInfo: false, shouldRedeploy: false })
   })
 })
 

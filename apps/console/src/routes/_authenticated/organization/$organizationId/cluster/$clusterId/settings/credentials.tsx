@@ -9,7 +9,6 @@ import {
   ClusterCredentialsSettings,
   ClusterRestrictivePermissionsSettings,
   getCloudProviderInfoRequest,
-  getClusterCredentialsSavePlan,
   getWidePermissionsRequest,
   saveClusterCredentials,
   useCluster,
@@ -106,12 +105,25 @@ function ClusterCredentialsSettingsForm() {
       return
     }
 
-    const plan = getClusterCredentialsSavePlan({
-      formValues,
-      cloudProviderInfo: clusterCloudProviderInfo,
-      initialUsingRestrictivePermissions,
-      initialSlackWebhookUrl: cluster.wide_permissions?.slack_webhook_url,
-    })
+    const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
+    const hasCredentialsChanged = cloudProviderInfoRequest.credentials.id !== clusterCloudProviderInfo.credentials?.id
+    const hasWidePermissionCredentialsChanged =
+      usingRestrictivePermissions &&
+      cloudProviderInfoRequest.wide_permission_credentials?.id !==
+        clusterCloudProviderInfo.wide_permission_credentials?.id
+    const hasSlackWebhookChanged =
+      (usingRestrictivePermissions ? formValues.slack_webhook_url?.trim() || null : null) !==
+      (cluster.wide_permissions?.slack_webhook_url?.trim() || null)
+    // Saving with restrictive permissions off sends explicit nulls to clear the wide-permission settings.
+    const shouldEditCluster =
+      !usingRestrictivePermissions ||
+      usingRestrictivePermissions !== initialUsingRestrictivePermissions ||
+      hasSlackWebhookChanged
+    const plan = {
+      shouldEditCluster,
+      shouldEditCloudProviderInfo: hasCredentialsChanged || hasWidePermissionCredentialsChanged || !shouldEditCluster,
+      shouldRedeploy: hasCredentialsChanged,
+    }
 
     const save = async () => {
       // The cluster and its credentials are refetched one after the other: syncing the form from each refetch would
@@ -135,7 +147,6 @@ function ClusterCredentialsSettingsForm() {
           editCloudProviderInfo: () => editCloudProviderInfoWithoutUpdateAction(variables),
           deployCluster: () => deployCluster({ organizationId, clusterId }),
         })
-        const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
         methods.reset(
           isWideCredentialsEnabled
             ? {
