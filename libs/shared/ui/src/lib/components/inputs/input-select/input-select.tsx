@@ -45,6 +45,7 @@ export interface InputSelectProps {
   isFilter?: boolean
   autoFocus?: boolean
   placeholder?: string
+  maxMenuHeight?: number
   menuPlacement?: MenuPlacement
   filterOption?: 'fuzzy' | 'startsWith' | ((option: Value, inputValue: string) => boolean)
   isCreatable?: boolean
@@ -57,16 +58,22 @@ export interface InputSelectProps {
 // react-select forwards unknown props through `selectProps`, which lets the renderers below stay at module level.
 // Their identity must remain stable: a new component type on each render remounts the whole menu, which detaches the
 // option under the pointer and swallows in-flight clicks.
-type InputSelectCustomProps = Pick<InputSelectProps, 'menuListButton' | 'minInputLength'>
+type InputSelectCustomProps = Pick<InputSelectProps, 'menuListButton' | 'minInputLength' | 'portal'>
 
 // Read the custom props forwarded by `InputSelect` back from react-select's `selectProps`.
 const getCustomProps = ({ selectProps }: { selectProps: unknown }) => selectProps as InputSelectCustomProps
 
 const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => {
-  const { menuListButton } = getCustomProps(props)
+  const { menuListButton, portal } = getCustomProps(props)
 
   return (
-    <div role="listbox">
+    <div
+      role="listbox"
+      // A portaled menu lives outside Dialog.Content. Keep its scroll events from reaching
+      // the dialog's document-level scroll lock, while retaining the lock on the page behind it.
+      onWheel={portal ? (event) => event.stopPropagation() : undefined}
+      onTouchMove={portal ? (event) => event.stopPropagation() : undefined}
+    >
       <components.MenuList {...props}>
         {menuListButton && (
           <div
@@ -222,6 +229,7 @@ export function InputSelect({
   placeholder,
   menuListButton,
   menuPlacement = 'auto',
+  maxMenuHeight = 300,
   filterOption = 'fuzzy',
   isCreatable = false,
   minInputLength = 0,
@@ -295,11 +303,15 @@ export function InputSelect({
     isMulti,
     components: selectComponents,
     menuListButton,
+    portal,
     minInputLength,
     name: label,
     isLoading,
     inputId: label,
     menuPlacement,
+    maxMenuHeight,
+    menuPosition: portal ? 'fixed' : 'absolute',
+    menuShouldScrollIntoView: portal ? false : undefined,
     closeMenuOnSelect: !isMulti,
     onChange: handleChange,
     onInputChange,
@@ -323,6 +335,7 @@ export function InputSelect({
       menuList: (base) => ({
         ...base,
         backgroundColor: 'var(--neutral-1)',
+        overscrollBehavior: portal ? 'contain' : undefined,
       }),
       menuPortal: (base) => ({
         ...base,

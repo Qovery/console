@@ -40,6 +40,7 @@ import {
   omitEmptyValues,
 } from '../utils/platform-configuration-utils'
 
+const DEPLOYMENT_TARGET_MENU_MAX_HEIGHT = 240
 const OPERATOR_STATUS_POLL_INTERVAL = 5000
 const INSTALLATION_DOCUMENTATION_URL = 'https://www.qovery.com/docs/getting-started/installation/kubernetes'
 const SUPPORT_URL = 'https://www.qovery.com/contact'
@@ -180,12 +181,23 @@ function GeneralStep({
               name="production"
               control={methods.control}
               render={({ field }) => (
-                <InputToggle small title="Production cluster" value={field.value} onChange={field.onChange} />
+                <InputToggle
+                  className="py-1"
+                  small
+                  title="Production cluster"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               )}
             />
           </StepSection>
           <StepSection title="Deployment target">
-            <ClusterCredentialsSettings cloudProvider="AWS" isSetting={false} />
+            <ClusterCredentialsSettings
+              cloudProvider="AWS"
+              isSetting={false}
+              portal
+              maxMenuHeight={DEPLOYMENT_TARGET_MENU_MAX_HEIGHT}
+            />
             <Controller
               name="region"
               control={methods.control}
@@ -193,6 +205,7 @@ function GeneralStep({
               render={({ field, fieldState: { error } }) => (
                 <InputSelect
                   label="Region"
+                  maxMenuHeight={DEPLOYMENT_TARGET_MENU_MAX_HEIGHT}
                   options={regionOptions}
                   value={field.value}
                   onChange={field.onChange}
@@ -318,12 +331,19 @@ function OperatorStep({
         ) : null}
         {fields.length ? (
           <StepSection title="Configuration">
-            <div className="overflow-hidden rounded-md border border-neutral [&>*:last-child]:border-b-0">
+            <div className="flex flex-col gap-3">
               {fields.map((field) => (
                 <ProfileConfigurationField
                   key={field.key}
                   field={field}
                   path={field.key}
+                  layout="card"
+                  arrayLabels={{
+                    item: 'Node group taint',
+                    add: 'Add taint',
+                    empty: 'No group taints added',
+                    emptyDescription: 'Tolerating a taint without selecting a node is allowed.',
+                  }}
                   value={values[field.key]}
                   violations={violations}
                   onChange={(value) => {

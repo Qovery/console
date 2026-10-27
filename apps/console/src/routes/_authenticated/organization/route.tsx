@@ -784,7 +784,7 @@ function OrganizationRoute() {
               <Suspense fallback={<MainLoader />}>
                 <>
                   <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
-                    <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
+                    <Navbar.Root activeId={activeTabId} className="container relative mx-0 -mb-px">
                       {navigationContext && <NavigationBar context={navigationContext} />}
                     </Navbar.Root>
                   </div>
