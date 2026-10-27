@@ -347,7 +347,6 @@ function OperatorStep({
                 <OperatorConfigurationField
                   key={field.key}
                   field={field}
-                  path={field.key}
                   value={values[field.key]}
                   violations={violations}
                   onChange={(value) => {
