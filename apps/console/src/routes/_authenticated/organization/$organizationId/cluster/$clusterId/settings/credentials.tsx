@@ -64,8 +64,10 @@ function ClusterCredentialsSettingsForm() {
 
   // Restrictive (dual) credentials are only available for AWS managed (EKS) clusters
   const isWideCredentialsEnabled = isWideCredentialsFeatureFlagEnabled && !!cluster && isClusterEksManaged(cluster)
+  const formMode = isWideCredentialsEnabled ? 'wide' : 'legacy'
+  const formInitializationKey = `${organizationId}:${clusterId}:${formMode}`
   const initialUsingRestrictivePermissions = cluster?.wide_permissions?.using_restrictive_permissions ?? false
-  const initializedClusterIdRef = useRef<string | undefined>(undefined)
+  const initializedFormKeyRef = useRef<string | undefined>(undefined)
 
   const openRedeployConfirmation = (action: () => Promise<void>) => {
     if (!cluster) return
@@ -172,7 +174,7 @@ function ClusterCredentialsSettingsForm() {
       clusterCloudProviderInfo &&
       !isClusterFetching &&
       !isCloudProviderInfoFetching &&
-      initializedClusterIdRef.current !== clusterId
+      initializedFormKeyRef.current !== formInitializationKey
     ) {
       // Map the API credentials back into the stable configured/restricted form fields for the current mode.
       methods.reset(
@@ -192,13 +194,14 @@ function ClusterCredentialsSettingsForm() {
               using_restrictive_permissions: false,
             }
       )
-      initializedClusterIdRef.current = clusterId
+      initializedFormKeyRef.current = formInitializationKey
     }
   }, [
     methods,
     cluster,
     clusterCloudProviderInfo,
     clusterId,
+    formInitializationKey,
     initialUsingRestrictivePermissions,
     isWideCredentialsEnabled,
     isClusterFetching,
