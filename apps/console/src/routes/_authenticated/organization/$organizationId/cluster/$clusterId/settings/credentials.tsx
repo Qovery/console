@@ -110,7 +110,9 @@ function ClusterCredentialsSettingsForm() {
     }
 
     const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
-    const hasCredentialsChanged = cloudProviderInfoRequest.credentials.id !== clusterCloudProviderInfo.credentials?.id
+    const requestCredentialsId = cloudProviderInfoRequest.credentials?.id
+    const hasCredentialsChanged =
+      requestCredentialsId !== undefined && requestCredentialsId !== clusterCloudProviderInfo.credentials?.id
     const hasWidePermissionCredentialsChanged =
       usingRestrictivePermissions &&
       cloudProviderInfoRequest.wide_permission_credentials?.id !==
