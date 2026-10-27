@@ -25,6 +25,14 @@ interface OperatorConfigurationFieldProps {
   onChange: (value: unknown) => void
 }
 
+function isOperatorTaintsField(field: FieldSchemaResponse): field is PlatformArrayField {
+  return isPlatformArrayField(field) && field.items.type === 'object' && field.label === 'Node group taints to tolerate'
+}
+
+export function isSupportedOperatorConfigurationField(field: FieldSchemaResponse) {
+  return isPlatformScalarField(field) || isOperatorTaintsField(field)
+}
+
 function FieldError({ error }: { error?: string }) {
   return error ? <p className="mt-1 text-xs font-medium text-negative">{error}</p> : null
 }
@@ -210,7 +218,7 @@ function OperatorTaintsField({
 }
 
 export function OperatorConfigurationField({ field, value, violations, onChange }: OperatorConfigurationFieldProps) {
-  if (isPlatformArrayField(field) && field.items.type === 'object' && field.label === 'Node group taints to tolerate') {
+  if (isOperatorTaintsField(field)) {
     return <OperatorTaintsField field={field} value={value} violations={violations} onChange={onChange} />
   }
 

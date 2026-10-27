@@ -220,6 +220,41 @@ describe('SelfManagedClusterCreationFlow', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('The template is invalid.')
   })
 
+  it.each([
+    { type: 'object', fields: [] },
+    { type: 'array', items: { type: 'string', constraints: {} } },
+  ])('shows an alert for errors on unsupported $type fields', async (schema) => {
+    mockUsePlatformTemplateComponentConfiguration.mockReturnValue({
+      data: {
+        componentKey: 'qovery-operator',
+        fields: [
+          ...operatorComponent.fields,
+          {
+            key: 'extraSettings',
+            label: 'Extra settings',
+            required: true,
+            sensitive: false,
+            constraints: {},
+            ...schema,
+          },
+        ],
+        requirements: [],
+        componentBindings: [],
+        violations: [{ fieldPath: 'extraSettings', code: 'REQUIRED', message: 'Extra settings must be configured.' }],
+      },
+      isFetching: false,
+      isError: false,
+    })
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Extra settings must be configured.')
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+  })
+
   it('validates the Operator configuration against the template', async () => {
     mockUsePlatformTemplateComponentConfiguration.mockReturnValue({
       data: {

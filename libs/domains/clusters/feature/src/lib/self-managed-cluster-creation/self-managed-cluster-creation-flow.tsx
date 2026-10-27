@@ -40,7 +40,7 @@ import {
   isSupportedPlatformField,
   omitEmptyValues,
 } from '../utils/platform-configuration-utils'
-import { OperatorConfigurationField } from './operator-configuration-field'
+import { OperatorConfigurationField, isSupportedOperatorConfigurationField } from './operator-configuration-field'
 
 const DEPLOYMENT_TARGET_MENU_MAX_HEIGHT = 240
 const OPERATOR_STATUS_POLL_INTERVAL = 5000
@@ -263,7 +263,7 @@ function OperatorStep({
   onCancel: () => void
   onContinue: () => void
 }) {
-  const fields = getOperatorFields(component, preview)
+  const fields = getOperatorFields(component, preview).filter(isSupportedOperatorConfigurationField)
   const violations = preview?.violations ?? []
   const unmappedViolations = getUnmappedViolations(violations, fields, values, preview?.requirements ?? [])
   const loadingError = isTemplatesError
