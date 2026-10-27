@@ -15,12 +15,6 @@ export interface ClusterCredentialsFormValues {
   slack_webhook_url?: string
 }
 
-export interface ClusterCredentialsSavePlan {
-  shouldEditCluster: boolean
-  shouldEditCloudProviderInfo: boolean
-  shouldRedeploy: boolean
-}
-
 const getNormalizedSlackWebhookUrl = (url?: string | null) => url?.trim() || null
 
 export const getWidePermissionsRequest = (
@@ -76,21 +70,4 @@ export const getCloudProviderInfoRequest = (
       },
     }),
   }
-}
-
-// The cluster is updated first, the credentials are only sent once it succeeded, then the cluster is redeployed
-export async function saveClusterCredentials({
-  plan,
-  editCluster,
-  editCloudProviderInfo,
-  deployCluster,
-}: {
-  plan: ClusterCredentialsSavePlan
-  editCluster: () => Promise<unknown>
-  editCloudProviderInfo: () => Promise<unknown>
-  deployCluster: () => Promise<unknown>
-}) {
-  if (plan.shouldEditCluster) await editCluster()
-  if (plan.shouldEditCloudProviderInfo) await editCloudProviderInfo()
-  if (plan.shouldRedeploy) await deployCluster()
 }

@@ -1,9 +1,5 @@
 import { type ClusterCloudProviderInfo, type ClusterCredentials } from 'qovery-typescript-axios'
-import {
-  getCloudProviderInfoRequest,
-  getWidePermissionsRequest,
-  saveClusterCredentials,
-} from './save-cluster-credentials'
+import { getCloudProviderInfoRequest, getWidePermissionsRequest } from './save-cluster-credentials'
 
 const credentials = [
   { id: 'static-1', name: 'static-credential', object_type: 'AWS' },
@@ -96,70 +92,5 @@ describe('getWidePermissionsRequest', () => {
       wide_scope_cloud_account_id: null,
       slack_webhook_url: null,
     })
-  })
-})
-
-describe('saveClusterCredentials', () => {
-  const plan = { shouldEditCluster: true, shouldEditCloudProviderInfo: true, shouldRedeploy: true }
-
-  it('should update the cluster, then the cloud provider info, then redeploy', async () => {
-    const calls: string[] = []
-    await saveClusterCredentials({
-      plan,
-      editCluster: async () => calls.push('editCluster'),
-      editCloudProviderInfo: async () => calls.push('editCloudProviderInfo'),
-      deployCluster: async () => calls.push('deployCluster'),
-    })
-
-    expect(calls).toEqual(['editCluster', 'editCloudProviderInfo', 'deployCluster'])
-  })
-
-  it('should not update the cloud provider info nor redeploy when the cluster update fails', async () => {
-    const editCloudProviderInfo = jest.fn()
-    const deployCluster = jest.fn()
-
-    await expect(
-      saveClusterCredentials({
-        plan,
-        editCluster: () => Promise.reject(new Error('cluster update failed')),
-        editCloudProviderInfo,
-        deployCluster,
-      })
-    ).rejects.toThrow('cluster update failed')
-
-    expect(editCloudProviderInfo).not.toHaveBeenCalled()
-    expect(deployCluster).not.toHaveBeenCalled()
-  })
-
-  it('should not redeploy when the cloud provider info update fails', async () => {
-    const deployCluster = jest.fn()
-
-    await expect(
-      saveClusterCredentials({
-        plan,
-        editCluster: jest.fn().mockResolvedValue(undefined),
-        editCloudProviderInfo: () => Promise.reject(new Error('credentials update failed')),
-        deployCluster,
-      })
-    ).rejects.toThrow('credentials update failed')
-
-    expect(deployCluster).not.toHaveBeenCalled()
-  })
-
-  it('should only run the planned steps', async () => {
-    const editCluster = jest.fn()
-    const editCloudProviderInfo = jest.fn()
-    const deployCluster = jest.fn()
-
-    await saveClusterCredentials({
-      plan: { shouldEditCluster: true, shouldEditCloudProviderInfo: false, shouldRedeploy: false },
-      editCluster,
-      editCloudProviderInfo,
-      deployCluster,
-    })
-
-    expect(editCluster).toHaveBeenCalledTimes(1)
-    expect(editCloudProviderInfo).not.toHaveBeenCalled()
-    expect(deployCluster).not.toHaveBeenCalled()
   })
 })

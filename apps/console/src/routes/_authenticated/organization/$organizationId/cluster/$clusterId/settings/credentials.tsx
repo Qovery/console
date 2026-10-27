@@ -10,7 +10,6 @@ import {
   ClusterRestrictivePermissionsSettings,
   getCloudProviderInfoRequest,
   getWidePermissionsRequest,
-  saveClusterCredentials,
   useCluster,
   useClusterCloudProviderInfo,
   useDeployCluster,
@@ -130,23 +129,26 @@ function ClusterCredentialsSettingsForm() {
       // briefly show a mix of old and new values, so the form is reset once with the saved values instead
       isSavingRef.current = true
       try {
-        await saveClusterCredentials({
-          plan,
-          // A single toast is shown when the credentials are saved too
-          editCluster: () =>
-            (plan.shouldEditCloudProviderInfo ? editClusterSilently : editCluster)({
-              organizationId,
-              clusterId,
-              clusterRequest: {
-                ...cluster,
-                wide_permissions: getWidePermissionsRequest(formValues, cluster.wide_permissions),
-              },
-            }),
-          // Credential changes are followed by a redeploy when required; toggle and wide credential changes don't
-          // offer a separate cluster update action.
-          editCloudProviderInfo: () => editCloudProviderInfoWithoutUpdateAction(variables),
-          deployCluster: () => deployCluster({ organizationId, clusterId }),
-        })
+        if (plan.shouldEditCluster) {
+          await (plan.shouldEditCloudProviderInfo ? editClusterSilently : editCluster)({
+            organizationId,
+            clusterId,
+            clusterRequest: {
+              ...cluster,
+              wide_permissions: getWidePermissionsRequest(formValues, cluster.wide_permissions),
+            },
+          })
+        }
+
+        // Credential changes are followed by a redeploy when required; toggle and wide credential changes don't
+        // offer a separate cluster update action.
+        if (plan.shouldEditCloudProviderInfo) {
+          await editCloudProviderInfoWithoutUpdateAction(variables)
+        }
+
+        if (plan.shouldRedeploy) {
+          await deployCluster({ organizationId, clusterId })
+        }
         methods.reset(
           isWideCredentialsEnabled
             ? {
