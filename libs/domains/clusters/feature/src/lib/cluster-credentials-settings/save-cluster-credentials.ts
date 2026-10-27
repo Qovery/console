@@ -2,6 +2,8 @@ import {
   type ClusterCloudProviderInfo,
   type ClusterCloudProviderInfoRequest,
   type ClusterCredentials,
+  type WidePermissionsRequestDto,
+  type WidePermissionsResponseDto,
 } from 'qovery-typescript-axios'
 
 export interface ClusterCredentialsFormValues {
@@ -17,6 +19,29 @@ export interface ClusterCredentialsSavePlan {
   shouldEditCluster: boolean
   shouldEditCloudProviderInfo: boolean
   shouldRedeploy: boolean
+}
+
+const getNormalizedSlackWebhookUrl = (url?: string | null) => url?.trim() || null
+
+export const getWidePermissionsRequest = (
+  formValues: ClusterCredentialsFormValues,
+  currentWidePermissions?: WidePermissionsResponseDto
+): WidePermissionsRequestDto => {
+  const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
+
+  if (!usingRestrictivePermissions) {
+    return {
+      using_restrictive_permissions: false,
+      wide_scope_cloud_account_id: null,
+      slack_webhook_url: null,
+    }
+  }
+
+  return {
+    using_restrictive_permissions: true,
+    wide_scope_cloud_account_id: currentWidePermissions?.wide_scope_cloud_account_id ?? null,
+    slack_webhook_url: getNormalizedSlackWebhookUrl(formValues.slack_webhook_url),
+  }
 }
 
 export const getCloudProviderInfoRequest = (
@@ -57,10 +82,12 @@ export const getClusterCredentialsSavePlan = ({
   formValues,
   cloudProviderInfo,
   initialUsingRestrictivePermissions,
+  initialSlackWebhookUrl,
 }: {
   formValues: ClusterCredentialsFormValues
   cloudProviderInfo: ClusterCloudProviderInfo
   initialUsingRestrictivePermissions: boolean
+  initialSlackWebhookUrl?: string | null
 }): ClusterCredentialsSavePlan => {
   const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
   const credentialsId = usingRestrictivePermissions
@@ -71,7 +98,14 @@ export const getClusterCredentialsSavePlan = ({
     usingRestrictivePermissions &&
     (formValues.configured_credentials ?? formValues.wide_permission_credentials) !==
       cloudProviderInfo.wide_permission_credentials?.id
-  const shouldEditCluster = usingRestrictivePermissions !== initialUsingRestrictivePermissions
+  const hasSlackWebhookChanged =
+    getNormalizedSlackWebhookUrl(usingRestrictivePermissions ? formValues.slack_webhook_url : null) !==
+    getNormalizedSlackWebhookUrl(initialSlackWebhookUrl)
+  // Saving with restrictive permissions off must send the explicit nulls that clear the wide-permission settings.
+  const shouldEditCluster =
+    !usingRestrictivePermissions ||
+    usingRestrictivePermissions !== initialUsingRestrictivePermissions ||
+    hasSlackWebhookChanged
 
   return {
     shouldEditCluster,

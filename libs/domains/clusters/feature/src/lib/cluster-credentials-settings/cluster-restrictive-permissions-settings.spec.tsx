@@ -126,6 +126,17 @@ describe('ClusterRestrictivePermissionsSettings', () => {
     expect(screen.getByTestId('input-restricted-credentials')).toBeInTheDocument()
   })
 
+  it('should display the saved Slack webhook URL in the password field', () => {
+    renderSettings({
+      configured_credentials: 'role-1',
+      restricted_credentials: 'static-1',
+      using_restrictive_permissions: true,
+      slack_webhook_url: 'https://hooks.slack.test/abc',
+    })
+
+    expect(screen.getByLabelText('Slack webhook URL')).toHaveValue('https://hooks.slack.test/abc')
+  })
+
   it('should not display the Slack webhook when restrictive permissions are off', () => {
     renderSettings({ configured_credentials: 'role-1', using_restrictive_permissions: false })
 

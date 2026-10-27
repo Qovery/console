@@ -10,6 +10,7 @@ import {
   ClusterRestrictivePermissionsSettings,
   getCloudProviderInfoRequest,
   getClusterCredentialsSavePlan,
+  getWidePermissionsRequest,
   saveClusterCredentials,
   useCluster,
   useClusterCloudProviderInfo,
@@ -109,6 +110,7 @@ function ClusterCredentialsSettingsForm() {
       formValues,
       cloudProviderInfo: clusterCloudProviderInfo,
       initialUsingRestrictivePermissions,
+      initialSlackWebhookUrl: cluster.wide_permissions?.slack_webhook_url,
     })
 
     const save = async () => {
@@ -125,7 +127,7 @@ function ClusterCredentialsSettingsForm() {
               clusterId,
               clusterRequest: {
                 ...cluster,
-                wide_permissions: { using_restrictive_permissions: Boolean(formValues.using_restrictive_permissions) },
+                wide_permissions: getWidePermissionsRequest(formValues, cluster.wide_permissions),
               },
             }),
           // Credential changes are followed by a redeploy when required; toggle and wide credential changes don't
@@ -140,6 +142,7 @@ function ClusterCredentialsSettingsForm() {
                 configured_credentials: formValues.configured_credentials,
                 restricted_credentials: usingRestrictivePermissions ? formValues.restricted_credentials : undefined,
                 using_restrictive_permissions: usingRestrictivePermissions,
+                slack_webhook_url: usingRestrictivePermissions ? formValues.slack_webhook_url ?? '' : '',
               }
             : { credentials: formValues.credentials, using_restrictive_permissions: false }
         )
@@ -173,6 +176,7 @@ function ClusterCredentialsSettingsForm() {
                 ? clusterCloudProviderInfo.credentials?.id
                 : undefined,
               using_restrictive_permissions: initialUsingRestrictivePermissions,
+              slack_webhook_url: cluster?.wide_permissions?.slack_webhook_url ?? '',
             }
           : {
               credentials: clusterCloudProviderInfo.credentials?.id,
@@ -180,7 +184,13 @@ function ClusterCredentialsSettingsForm() {
             }
       )
     }
-  }, [methods, clusterCloudProviderInfo, initialUsingRestrictivePermissions, isWideCredentialsEnabled])
+  }, [
+    methods,
+    clusterCloudProviderInfo,
+    cluster?.wide_permissions?.slack_webhook_url,
+    initialUsingRestrictivePermissions,
+    isWideCredentialsEnabled,
+  ])
 
   return (
     <FormProvider {...methods}>

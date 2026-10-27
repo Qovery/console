@@ -2,6 +2,7 @@ import { type ClusterCloudProviderInfo, type ClusterCredentials } from 'qovery-t
 import {
   getCloudProviderInfoRequest,
   getClusterCredentialsSavePlan,
+  getWidePermissionsRequest,
   saveClusterCredentials,
 } from './save-cluster-credentials'
 
@@ -63,6 +64,42 @@ describe('getCloudProviderInfoRequest', () => {
   })
 })
 
+describe('getWidePermissionsRequest', () => {
+  it('should include a nonblank webhook URL when restrictive permissions are enabled', () => {
+    expect(
+      getWidePermissionsRequest(
+        { using_restrictive_permissions: true, slack_webhook_url: '  https://hooks.slack.test/abc  ' },
+        { using_restrictive_permissions: true, wide_scope_cloud_account_id: 'account-123' }
+      )
+    ).toEqual({
+      using_restrictive_permissions: true,
+      wide_scope_cloud_account_id: 'account-123',
+      slack_webhook_url: 'https://hooks.slack.test/abc',
+    })
+  })
+
+  it('should clear webhook and wide account values when restrictive permissions are disabled', () => {
+    expect(
+      getWidePermissionsRequest({
+        using_restrictive_permissions: false,
+        slack_webhook_url: 'https://hooks.slack.test/abc',
+      })
+    ).toEqual({
+      using_restrictive_permissions: false,
+      wide_scope_cloud_account_id: null,
+      slack_webhook_url: null,
+    })
+  })
+
+  it('should send null when the enabled webhook field is blank', () => {
+    expect(getWidePermissionsRequest({ using_restrictive_permissions: true, slack_webhook_url: '  ' })).toEqual({
+      using_restrictive_permissions: true,
+      wide_scope_cloud_account_id: null,
+      slack_webhook_url: null,
+    })
+  })
+})
+
 describe('getClusterCredentialsSavePlan', () => {
   const initialFormValues = {
     configured_credentials: 'role-1',
@@ -90,6 +127,13 @@ describe('getClusterCredentialsSavePlan', () => {
       expected: { shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: false },
     },
     {
+      case: 'Slack webhook changed only',
+      formValues: { ...initialFormValues, slack_webhook_url: 'https://hooks.slack.test/abc' },
+      initialUsingRestrictivePermissions: true,
+      initialSlackWebhookUrl: null,
+      expected: { shouldEditCluster: true, shouldEditCloudProviderInfo: false, shouldRedeploy: false },
+    },
+    {
       case: 'toggle turned on with new restricted credentials',
       formValues: {
         configured_credentials: 'role-2',
@@ -105,11 +149,19 @@ describe('getClusterCredentialsSavePlan', () => {
       initialUsingRestrictivePermissions: true,
       expected: { shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: false },
     },
-  ])('should plan the save when $case', ({ formValues, initialUsingRestrictivePermissions, expected }) => {
-    expect(
-      getClusterCredentialsSavePlan({ formValues, cloudProviderInfo, initialUsingRestrictivePermissions })
-    ).toEqual(expected)
-  })
+  ])(
+    'should plan the save when $case',
+    ({ formValues, initialUsingRestrictivePermissions, initialSlackWebhookUrl, expected }) => {
+      expect(
+        getClusterCredentialsSavePlan({
+          formValues,
+          cloudProviderInfo,
+          initialUsingRestrictivePermissions,
+          initialSlackWebhookUrl,
+        })
+      ).toEqual(expected)
+    }
+  )
 
   it('should use configured credentials and ignore the restricted value while restrictive permissions are off', () => {
     expect(
@@ -122,7 +174,20 @@ describe('getClusterCredentialsSavePlan', () => {
         cloudProviderInfo,
         initialUsingRestrictivePermissions: false,
       })
-    ).toEqual({ shouldEditCluster: false, shouldEditCloudProviderInfo: true, shouldRedeploy: true })
+    ).toEqual({ shouldEditCluster: true, shouldEditCloudProviderInfo: true, shouldRedeploy: true })
+  })
+
+  it('should edit the cluster when saving with restrictive permissions off to clear wide permission values', () => {
+    expect(
+      getClusterCredentialsSavePlan({
+        formValues: {
+          configured_credentials: 'static-1',
+          using_restrictive_permissions: false,
+        },
+        cloudProviderInfo,
+        initialUsingRestrictivePermissions: false,
+      })
+    ).toEqual({ shouldEditCluster: true, shouldEditCloudProviderInfo: false, shouldRedeploy: false })
   })
 })
 

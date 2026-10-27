@@ -37,7 +37,6 @@ export function ClusterRestrictivePermissionsSettings({ cloudProvider }: Cluster
         <div className="flex flex-col gap-4">
           <ClusterCredentialsSettings cloudProvider={cloudProvider} isSetting fieldName="restricted_credentials" />
 
-          {/* UI only for now: the value isn't sent until the backend supports it */}
           <Controller
             name="slack_webhook_url"
             control={control}
@@ -47,7 +46,7 @@ export function ClusterRestrictivePermissionsSettings({ cloudProvider }: Cluster
                 type="password"
                 name={field.name}
                 onChange={field.onChange}
-                value={field.value}
+                value={field.value ?? ''}
                 label="Slack webhook URL"
                 hint="Receive a Slack message when Qovery requests access to the extended credentials."
                 autoComplete="off"
