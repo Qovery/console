@@ -47,7 +47,7 @@ export const getClusterCredentialsFormValuesAfterSave = ({
   }
 }
 
-const getNormalizedSlackWebhookUrl = (url?: string | null) => url?.trim() || null
+export const getNormalizedSlackWebhookUrl = (url?: string | null) => url?.trim() || null
 
 export const getWidePermissionsRequest = (
   formValues: ClusterCredentialsFormValues,

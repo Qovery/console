@@ -11,6 +11,7 @@ import {
   ClusterRestrictivePermissionsSettings,
   getCloudProviderInfoRequest,
   getClusterCredentialsFormValuesAfterSave,
+  getNormalizedSlackWebhookUrl,
   getWidePermissionsRequest,
   useCluster,
   useClusterCloudProviderInfo,
@@ -115,8 +116,8 @@ function ClusterCredentialsSettingsForm() {
       cloudProviderInfoRequest.wide_permission_credentials?.id !==
         clusterCloudProviderInfo.wide_permission_credentials?.id
     const hasSlackWebhookChanged =
-      (usingRestrictivePermissions ? formValues.slack_webhook_url?.trim() || null : null) !==
-      (cluster.wide_permissions?.slack_webhook_url?.trim() || null)
+      getNormalizedSlackWebhookUrl(usingRestrictivePermissions ? formValues.slack_webhook_url : null) !==
+      getNormalizedSlackWebhookUrl(cluster.wide_permissions?.slack_webhook_url)
     // Saving with restrictive permissions off sends explicit nulls to clear the wide-permission settings.
     const shouldEditCluster =
       !usingRestrictivePermissions ||

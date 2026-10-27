@@ -2,6 +2,7 @@ import { type Cluster, type ClusterCloudProviderInfo, type ClusterCredentials } 
 import {
   getCloudProviderInfoRequest,
   getClusterCredentialsFormValuesAfterSave,
+  getNormalizedSlackWebhookUrl,
   getWidePermissionsRequest,
 } from './save-cluster-credentials'
 
@@ -96,6 +97,14 @@ describe('getWidePermissionsRequest', () => {
       wide_scope_cloud_account_id: null,
       slack_webhook_url: null,
     })
+  })
+})
+
+describe('getNormalizedSlackWebhookUrl', () => {
+  it('trims a nonblank URL and normalizes blank values to null', () => {
+    expect(getNormalizedSlackWebhookUrl(' https://hooks.slack.test/abc ')).toBe('https://hooks.slack.test/abc')
+    expect(getNormalizedSlackWebhookUrl('  ')).toBeNull()
+    expect(getNormalizedSlackWebhookUrl(null)).toBeNull()
   })
 })
 
