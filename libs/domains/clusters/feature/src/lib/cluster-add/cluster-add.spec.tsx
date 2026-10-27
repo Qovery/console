@@ -98,6 +98,8 @@ describe('ClusterAdd', () => {
     await userEvent.click(screen.getByRole('button', { name: title }))
 
     expect(await screen.findByText(`Provider ${provider}`)).toBeInTheDocument()
+    // Portaled selects must stay outside Radix's document-level scroll lock.
+    expect(document.body).not.toHaveAttribute('data-scroll-locked')
     expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
       selectedCloudProvider: provider,
       selectedInstallationType: 'self-managed',
