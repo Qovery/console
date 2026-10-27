@@ -1,13 +1,13 @@
 import clsx from 'clsx'
 import { type FieldSchemaResponse, type PlatformComponentConfigurationViolationResponse } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   SchemaFieldDescription,
   SchemaFieldInput,
   getSchemaFieldSummaryValue,
   getSchemaFieldValue,
 } from '@qovery/shared/schema-fields/feature'
-import { Button, EmptyState, HighlightText, Icon, useModal } from '@qovery/shared/ui'
+import { Button, EmptyState, Icon, useModal } from '@qovery/shared/ui'
 import { ProfileArrayItemModal } from '../cluster-profile/profile-array-item-modal'
 import {
   type PlatformArrayField,
@@ -32,7 +32,6 @@ interface OperatorConfigurationFieldProps {
   path: string
   value: unknown
   violations: Violations
-  highlight?: string
   onChange: (value: unknown) => void
 }
 
@@ -40,27 +39,14 @@ function FieldError({ error }: { error?: string }) {
   return error ? <p className="mt-1 text-xs font-medium text-negative">{error}</p> : null
 }
 
-function CompositeFieldHeader({
-  field,
-  error,
-  highlight,
-  children,
-}: {
-  field: PlatformArrayField | PlatformObjectField
-  error?: string
-  highlight?: string
-  children?: ReactNode
-}) {
+function CompositeFieldHeader({ field, error }: { field: PlatformObjectField; error?: string }) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0 flex-1">
-        <p className="text-sm text-neutral">
-          <HighlightText text={field.label} highlight={highlight} />
-        </p>
-        {field.description ? <SchemaFieldDescription description={field.description} highlight={highlight} /> : null}
+        <p className="text-sm text-neutral">{field.label}</p>
+        {field.description ? <SchemaFieldDescription description={field.description} /> : null}
         <FieldError error={error} />
       </div>
-      {children}
     </div>
   )
 }
@@ -70,14 +56,12 @@ function NestedFields({
   path,
   value,
   violations,
-  highlight,
   onChange,
 }: {
   fields: FieldSchemaResponse[]
   path: string
   value: unknown
   violations: Violations
-  highlight?: string
   onChange: (value: Record<string, unknown>) => void
 }) {
   const values = isPlainObject(value) ? value : {}
@@ -91,7 +75,6 @@ function NestedFields({
           path={getPlatformFieldPath(path, childField.key)}
           value={values[childField.key]}
           violations={violations}
-          highlight={highlight}
           onChange={(childValue) => {
             const { [childField.key]: _, ...otherValues } = values
             onChange(childValue === undefined ? otherValues : { ...otherValues, [childField.key]: childValue })
@@ -107,21 +90,13 @@ function OperatorObjectField({
   path,
   value,
   violations,
-  highlight,
   onChange,
 }: Omit<OperatorConfigurationFieldProps, 'field'> & { field: PlatformObjectField }) {
   return (
     <div className="flex flex-col gap-3">
-      <CompositeFieldHeader field={field} error={getFieldViolation(violations, path)} highlight={highlight} />
+      <CompositeFieldHeader field={field} error={getFieldViolation(violations, path)} />
       <div className="flex flex-col gap-3">
-        <NestedFields
-          fields={field.fields}
-          path={path}
-          value={value}
-          violations={violations}
-          highlight={highlight}
-          onChange={onChange}
-        />
+        <NestedFields fields={field.fields} path={path} value={value} violations={violations} onChange={onChange} />
       </div>
     </div>
   )
@@ -154,7 +129,6 @@ function OperatorArrayField({
   path,
   value,
   violations,
-  highlight,
   onChange,
 }: Omit<OperatorConfigurationFieldProps, 'field'> & { field: PlatformArrayField }) {
   const { openModal, closeModal } = useModal()
@@ -237,7 +211,7 @@ function OperatorArrayField({
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium text-neutral">
-            <HighlightText text={field.label} highlight={highlight} />
+            {field.label}
             {!field.required ? ' (optional)' : null}
           </p>
           <FieldError error={error} />
@@ -337,33 +311,14 @@ export function OperatorConfigurationField({
   path,
   value,
   violations,
-  highlight,
   onChange,
 }: OperatorConfigurationFieldProps) {
   if (isPlatformArrayField(field)) {
-    return (
-      <OperatorArrayField
-        field={field}
-        path={path}
-        value={value}
-        violations={violations}
-        highlight={highlight}
-        onChange={onChange}
-      />
-    )
+    return <OperatorArrayField field={field} path={path} value={value} violations={violations} onChange={onChange} />
   }
 
   if (isPlatformObjectField(field)) {
-    return (
-      <OperatorObjectField
-        field={field}
-        path={path}
-        value={value}
-        violations={violations}
-        highlight={highlight}
-        onChange={onChange}
-      />
-    )
+    return <OperatorObjectField field={field} path={path} value={value} violations={violations} onChange={onChange} />
   }
 
   if (!isPlatformScalarField(field)) return null
@@ -377,7 +332,6 @@ export function OperatorConfigurationField({
       disabled={field.readOnly}
       value={getSchemaFieldValue(field, value)}
       error={getFieldViolation(violations, path)}
-      highlight={highlight}
       onChange={(nextValue) => onChange(toPlatformConfigurationValue(field, nextValue))}
     />
   )

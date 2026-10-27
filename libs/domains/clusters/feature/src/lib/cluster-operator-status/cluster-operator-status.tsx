@@ -13,56 +13,48 @@ export function getClusterOperatorStatusDisplay(status: ClusterOperatorFleetStat
       color: 'green' as const,
       chipStatus: 'DEPLOYED' as const,
       icon: { name: 'circle-check' as IconName, className: 'text-positive' },
-      description: null,
     }))
     .with('DISCONNECTED', () => ({
       label: 'Disconnected',
       color: 'red' as const,
       chipStatus: 'ERROR' as const,
       icon: { name: 'circle-xmark' as IconName, className: 'text-negative' },
-      description: 'No recent heartbeat was received from the Operator.',
     }))
     .with('OUTDATED_IMAGE', () => ({
       label: 'Image update available',
       color: 'yellow' as const,
       chipStatus: 'WARNING' as const,
       icon: { name: 'circle-exclamation' as IconName, className: 'text-warning' },
-      description: null,
     }))
     .with('OUTDATED_CHART', () => ({
       label: 'Chart update available',
       color: 'yellow' as const,
       chipStatus: 'WARNING' as const,
       icon: { name: 'circle-exclamation' as IconName, className: 'text-warning' },
-      description: null,
     }))
     .with('OUTDATED_IMAGE_AND_CHART', () => ({
       label: 'Update available',
       color: 'yellow' as const,
       chipStatus: 'WARNING' as const,
       icon: { name: 'circle-exclamation' as IconName, className: 'text-warning' },
-      description: null,
     }))
     .with('TARGET_UNKNOWN', () => ({
       label: 'Target unknown',
       color: 'yellow' as const,
       chipStatus: 'WARNING' as const,
       icon: { name: 'circle-exclamation' as IconName, className: 'text-warning' },
-      description: 'Qovery cannot determine the image or Helm chart version selected for this cluster.',
     }))
     .with('REPORTED_VERSION_UNKNOWN', () => ({
       label: 'Version unknown',
       color: 'yellow' as const,
       chipStatus: 'WARNING' as const,
       icon: { name: 'circle-exclamation' as IconName, className: 'text-warning' },
-      description: 'The Operator is connected but does not report enough version information.',
     }))
     .with('NOT_ATTACHED', () => ({
       label: 'Not attached',
       color: 'neutral' as const,
       chipStatus: 'UNKNOWN' as const,
       icon: { name: 'circle-minus' as IconName, className: 'text-neutral-subtle' },
-      description: 'This cluster is not attached to the Qovery Operator execution path.',
     }))
     .exhaustive()
 }
@@ -88,10 +80,7 @@ export function ClusterOperatorStatus({ operatorStatus }: ClusterOperatorStatusP
   return (
     <section aria-label="Qovery Operator status" className="flex flex-col">
       <div className="flex items-center justify-between gap-4 px-4 py-3">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-sm font-medium text-neutral">Qovery Operator</h2>
-          {display.description && <p className="text-sm font-normal text-neutral-subtle">{display.description}</p>}
-        </div>
+        <h2 className="text-sm font-medium text-neutral">Qovery Operator</h2>
         <div className="flex shrink-0 items-center gap-2">
           <Badge size="sm" variant="surface" color={display.color} className="gap-1 font-medium leading-none">
             <StatusChip status={display.chipStatus} className="h-3 w-3 shrink-0" disabledTooltip />

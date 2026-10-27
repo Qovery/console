@@ -155,7 +155,7 @@ describe('ProfileOperatorFooter', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Qovery Operator: Disconnected' }))
 
-    expect(await screen.findByText('No recent heartbeat was received from the Operator.')).toBeInTheDocument()
+    expect(await screen.findByText('Disconnected')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
   })
 })
