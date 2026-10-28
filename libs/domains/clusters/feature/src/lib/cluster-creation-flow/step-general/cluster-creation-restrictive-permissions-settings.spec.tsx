@@ -8,6 +8,9 @@ const mockOnSubmit = jest.fn()
 jest.mock('../../cluster-credentials-settings/cluster-credentials-settings', () => ({
   ClusterCredentialsSettings: () => null,
 }))
+jest.mock('../../cluster-credentials-settings/cluster-wide-permission-credentials-settings', () => ({
+  ClusterWidePermissionCredentialsSettings: () => null,
+}))
 
 function FormHarness() {
   const { handleSubmit } = useFormContext()
@@ -53,6 +56,8 @@ describe('ClusterCreationRestrictivePermissionsSettings webhook validation', () 
     'http://hooks.slack.com/services/T00000000/B00000000/abcdefghijklmnop',
     'https://hooks.slack.com.evil.example/services/T00000000/B00000000/abcdefghijklmnop',
     'https://hooks.slack.com/services/%ZZ',
+    'https://hooks.slack.com',
+    'https://hooks.slack.com/',
   ])('blocks an invalid Slack webhook URL: %s', async (url) => {
     const { userEvent } = renderSettings()
 

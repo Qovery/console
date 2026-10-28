@@ -1,9 +1,10 @@
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { InputText, InputToggle } from '@qovery/shared/ui'
 import { ClusterCredentialsSettings } from '../../cluster-credentials-settings/cluster-credentials-settings'
+import { ClusterWidePermissionCredentialsSettings } from '../../cluster-credentials-settings/cluster-wide-permission-credentials-settings'
 
 const SLACK_WEBHOOK_URL_PATTERN = new RegExp(
-  String.raw`^https://hooks\.slack\.com(?::\d+)?(?:/(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@/])*)?(?:\?(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@/?])*)?(?:#(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@/?])*)?$`,
+  String.raw`^https://hooks\.slack\.com(?::\d+)?/(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@])(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@/])*(?:\?(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@/?])*)?(?:#(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@/?])*)?$`,
   'i'
 )
 const SLACK_WEBHOOK_URL_ERROR = 'Enter a valid Slack webhook URL from hooks.slack.com.'
@@ -31,11 +32,11 @@ export function ClusterCreationRestrictivePermissionsSettings() {
         )}
       />
 
-      <ClusterCredentialsSettings cloudProvider="AWS" label="Extended credentials" />
+      <ClusterWidePermissionCredentialsSettings cloudProvider="AWS" fieldName="credentials" />
 
       {isUsingRestrictivePermissions && (
         <div className="flex flex-col gap-3">
-          <ClusterCredentialsSettings cloudProvider="AWS" fieldName="restricted_credentials" isSetting />
+          <ClusterCredentialsSettings cloudProvider="AWS" fieldName="restricted_credentials" />
 
           <Controller
             name="slack_webhook_url"

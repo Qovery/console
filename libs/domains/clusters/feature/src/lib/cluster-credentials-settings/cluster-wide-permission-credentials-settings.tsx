@@ -13,7 +13,8 @@ const WIDE_PERMISSION_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['STS']
 
 export interface ClusterWidePermissionCredentialsSettingsProps {
   cloudProvider?: CloudProviderEnum
-  fieldName?: 'wide_permission_credentials' | 'configured_credentials'
+  fieldName?: 'wide_permission_credentials' | 'configured_credentials' | 'credentials'
+  label?: string
 }
 
 export const filterWidePermissionCredentials = (credentials: ClusterCredentials[]) =>
@@ -22,6 +23,7 @@ export const filterWidePermissionCredentials = (credentials: ClusterCredentials[
 export function ClusterWidePermissionCredentialsSettings({
   cloudProvider,
   fieldName = 'wide_permission_credentials',
+  label,
 }: ClusterWidePermissionCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control, getValues } = useFormContext()
@@ -34,10 +36,9 @@ export function ClusterWidePermissionCredentialsSettings({
   })
   const sortedCredentials = [...credentials].sort((a, b) => a.name.localeCompare(b.name))
   const widePermissionCredentials = filterWidePermissionCredentials(sortedCredentials)
+  const isExtendedCredentialField = fieldName === 'configured_credentials' || fieldName === 'credentials'
   const availableCredentials = (
-    fieldName === 'configured_credentials' && !isUsingRestrictivePermissions
-      ? sortedCredentials
-      : widePermissionCredentials
+    isExtendedCredentialField && !isUsingRestrictivePermissions ? sortedCredentials : widePermissionCredentials
   ).map((item) => ({
     label: 'access_key_id' in item ? `${item.name} (${item.access_key_id})` : item.name,
     value: item.id,
@@ -55,9 +56,7 @@ export function ClusterWidePermissionCredentialsSettings({
           }}
           cloudProvider={cloudProvider}
           allowedTypes={
-            fieldName === 'configured_credentials' && !isUsingRestrictivePermissions
-              ? undefined
-              : WIDE_PERMISSION_CREDENTIAL_TYPES
+            isExtendedCredentialField && !isUsingRestrictivePermissions ? undefined : WIDE_PERMISSION_CREDENTIAL_TYPES
           }
         />
       ),
@@ -81,11 +80,11 @@ export function ClusterWidePermissionCredentialsSettings({
       control={control}
       rules={{
         validate: (value) => {
-          if (!value && (fieldName === 'configured_credentials' || getValues('using_restrictive_permissions'))) {
+          if (!value && (isExtendedCredentialField || getValues('using_restrictive_permissions'))) {
             return 'Please select a credential.'
           }
           if (
-            fieldName === 'configured_credentials' &&
+            isExtendedCredentialField &&
             isUsingRestrictivePermissions &&
             !widePermissionCredentials.some((credential) => credential.id === value)
           ) {
@@ -99,9 +98,11 @@ export function ClusterWidePermissionCredentialsSettings({
           dataTestId={
             fieldName === 'wide_permission_credentials'
               ? 'input-wide-permission-credentials'
-              : 'input-configured-credentials'
+              : fieldName === 'credentials'
+                ? 'input-credentials'
+                : 'input-configured-credentials'
           }
-          label={fieldName === 'configured_credentials' ? 'Extended credentials' : 'Credentials'}
+          label={label ?? (isExtendedCredentialField ? 'Extended credentials' : 'Credentials')}
           options={availableCredentials}
           onChange={field.onChange}
           value={field.value}

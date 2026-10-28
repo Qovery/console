@@ -121,7 +121,9 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
     if (!generalData?.name) throw new Error('Invalid generalData')
 
     const hasWidePermissionsConfiguration =
-      generalData.cloud_provider === 'AWS' && typeof generalData.using_restrictive_permissions === 'boolean'
+      generalData.cloud_provider === 'AWS' &&
+      generalData.installation_type === 'MANAGED' &&
+      typeof generalData.using_restrictive_permissions === 'boolean'
     const widePermissionsPayload = hasWidePermissionsConfiguration
       ? { wide_permissions: getWidePermissionsRequest(generalData) }
       : {}

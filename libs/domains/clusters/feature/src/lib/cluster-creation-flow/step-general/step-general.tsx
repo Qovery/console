@@ -114,7 +114,10 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
 
   const watchCloudProvider = watch('cloud_provider')
   const watchInstallationType = watch('installation_type')
-  const isWideCredentialsEnabled = isWideCredentialsFeatureFlagEnabled && watchCloudProvider === CloudProviderEnum.AWS
+  const isWideCredentialsEnabled =
+    isWideCredentialsFeatureFlagEnabled &&
+    watchCloudProvider === CloudProviderEnum.AWS &&
+    watchInstallationType === 'MANAGED'
 
   useEffect(() => {
     const provider = cloudProviders?.filter((cloud) => cloud.short_name === watchCloudProvider && cloud.regions)[0]
@@ -142,22 +145,32 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
     }))
 
     if (credentials.length > 0 || data.installation_type === 'PARTIALLY_MANAGED') {
-      if (data['credentials']) {
-        const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
+      const generalData = { ...data }
+      if (isWideCredentialsEnabled) {
+        generalData.using_restrictive_permissions = Boolean(generalData.using_restrictive_permissions)
+      } else {
+        delete generalData.using_restrictive_permissions
+        delete generalData.restricted_credentials
+        delete generalData.restricted_credentials_name
+        delete generalData.slack_webhook_url
+      }
+
+      if (generalData.credentials) {
+        const currentCredentials = credentials.find((item) => item.id === generalData.credentials)
         if (currentCredentials) {
-          data['credentials_name'] = currentCredentials.name
+          generalData.credentials_name = currentCredentials.name
         }
       }
 
-      if (data.restricted_credentials) {
-        const restrictedCredentials = credentials.find((item) => item.id === data.restricted_credentials)
+      if (generalData.restricted_credentials) {
+        const restrictedCredentials = credentials.find((item) => item.id === generalData.restricted_credentials)
         if (restrictedCredentials) {
-          data.restricted_credentials_name = restrictedCredentials.name
+          generalData.restricted_credentials_name = restrictedCredentials.name
         }
       }
 
-      setGeneralData(data)
-      onSubmit(data)
+      setGeneralData(generalData)
+      onSubmit(generalData)
     }
   })
 
