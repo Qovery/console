@@ -1,7 +1,8 @@
 import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { InputText, InputToggle } from '@qovery/shared/ui'
+import { InputText } from '@qovery/shared/ui'
 import { ClusterCredentialsSettings } from './cluster-credentials-settings'
+import { ClusterRestrictivePermissionsToggle } from './cluster-restrictive-permissions-toggle'
 import { ClusterWidePermissionCredentialsSettings } from './cluster-wide-permission-credentials-settings'
 import { validateSlackWebhookUrl } from './slack-webhook-url'
 
@@ -18,21 +19,7 @@ export function ClusterRestrictivePermissionsSettings({ cloudProvider }: Cluster
     <div className="flex flex-col gap-6">
       <ClusterWidePermissionCredentialsSettings cloudProvider={cloudProvider} fieldName="configured_credentials" />
 
-      <Controller
-        name="using_restrictive_permissions"
-        control={control}
-        render={({ field }) => (
-          <InputToggle
-            dataTestId="input-restrictive-permissions-toggle"
-            value={Boolean(field.value)}
-            onChange={field.onChange}
-            title="Use restrictive permissions"
-            description="Qovery uses restricted credentials for day-to-day operations and extended credentials only when wider access is required. Action is required in your AWS account when extended credentials need to be used."
-            align="top"
-            small
-          />
-        )}
-      />
+      <ClusterRestrictivePermissionsToggle />
 
       {isUsingRestrictivePermissions && (
         <div className="flex flex-col gap-4">
