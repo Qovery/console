@@ -1,18 +1,13 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputToggle } from '@qovery/shared/ui'
 
-export interface ClusterRestrictivePermissionsToggleProps {
-  defaultValue?: boolean
-}
-
-export function ClusterRestrictivePermissionsToggle({ defaultValue }: ClusterRestrictivePermissionsToggleProps) {
+export function ClusterRestrictivePermissionsToggle() {
   const { control } = useFormContext()
 
   return (
     <Controller
       name="using_restrictive_permissions"
       control={control}
-      defaultValue={defaultValue}
       render={({ field }) => (
         <InputToggle
           dataTestId="input-restrictive-permissions-toggle"

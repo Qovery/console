@@ -37,14 +37,23 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
   const { generalData, setGeneralData, setResourcesData, setCurrentStep } = useClusterContainerCreateContext()
 
   const methods = useForm<ClusterGeneralData>({
-    defaultValues: { installation_type: 'LOCAL_DEMO', production: false, ...generalData },
+    defaultValues: {
+      installation_type: 'LOCAL_DEMO',
+      production: false,
+      ...generalData,
+      using_restrictive_permissions: generalData?.using_restrictive_permissions ?? false,
+    },
     mode: 'onChange',
   })
 
   // Sync form values when context generalData changes (from slug defaults)
   useEffect(() => {
     if (generalData) {
-      methods.reset({ production: false, ...generalData })
+      methods.reset({
+        production: false,
+        ...generalData,
+        using_restrictive_permissions: generalData.using_restrictive_permissions ?? false,
+      })
     }
   }, [generalData, methods])
 

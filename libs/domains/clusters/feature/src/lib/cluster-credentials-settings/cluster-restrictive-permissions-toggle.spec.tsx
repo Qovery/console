@@ -9,19 +9,20 @@ function FormValue() {
 }
 
 describe('ClusterRestrictivePermissionsToggle', () => {
-  it('uses the provided default value and updates the form value', async () => {
+  it('uses the form default value and updates the form value', async () => {
     const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(
         <>
-          <ClusterRestrictivePermissionsToggle defaultValue={false} />
+          <ClusterRestrictivePermissionsToggle />
           <FormValue />
         </>,
-        { defaultValues: {} }
+        { defaultValues: { using_restrictive_permissions: false } }
       )
     )
     const toggle = screen.getByRole('switch', { name: 'Use restrictive permissions' })
 
     expect(toggle).not.toBeChecked()
+    expect(screen.getByTestId('value-restrictive-permissions')).toHaveTextContent('false')
 
     await userEvent.click(toggle)
 
