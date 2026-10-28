@@ -2,7 +2,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ClusterRestrictivePermissionsSettings } from './cluster-restrictive-permissions-settings'
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -169,7 +169,7 @@ describe('ClusterRestrictivePermissionsSettings', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-    expect(mockOnSubmit).toHaveBeenCalled()
+    await waitFor(() => expect(mockOnSubmit).toHaveBeenCalled())
     expect(screen.queryByText('Enter a valid Slack webhook URL from hooks.slack.com.')).not.toBeInTheDocument()
   })
 
