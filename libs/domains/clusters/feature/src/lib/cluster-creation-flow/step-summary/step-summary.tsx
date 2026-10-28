@@ -12,6 +12,7 @@ import { useCallback, useEffect } from 'react'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { FunnelFlowBody } from '@qovery/shared/ui'
+import { getWidePermissionsRequest } from '../../cluster-credentials-settings/save-cluster-credentials'
 import { useCreateCluster } from '../../hooks/use-create-cluster/use-create-cluster'
 import { useDeployCluster } from '../../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useEditCloudProviderInfo } from '../../hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info'
@@ -119,10 +120,22 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   const onSubmit = async (withDeploy: boolean) => {
     if (!generalData?.name) throw new Error('Invalid generalData')
 
+    const hasWidePermissionsConfiguration =
+      generalData.cloud_provider === 'AWS' && typeof generalData.using_restrictive_permissions === 'boolean'
+    const widePermissionsPayload = hasWidePermissionsConfiguration
+      ? { wide_permissions: getWidePermissionsRequest(generalData) }
+      : {}
+    const usingRestrictivePermissions = hasWidePermissionsConfiguration && generalData.using_restrictive_permissions
+
     const cloudProviderCredentials: ClusterCloudProviderInfoRequest = {
       cloud_provider: generalData.cloud_provider,
-      credentials: { id: generalData.credentials, name: generalData.credentials_name },
+      credentials: usingRestrictivePermissions
+        ? { id: generalData.restricted_credentials, name: generalData.restricted_credentials_name }
+        : { id: generalData.credentials, name: generalData.credentials_name },
       region: generalData.region,
+      ...(usingRestrictivePermissions && {
+        wide_permission_credentials: { id: generalData.credentials, name: generalData.credentials_name },
+      }),
     }
 
     const addonsPayload = {
@@ -157,6 +170,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             production: generalData.production,
             features: [],
             cloud_provider_credentials: cloudProviderCredentials,
+            ...widePermissionsPayload,
             ...addonsPayload,
             ...awsLabelsGroups,
           },
@@ -190,6 +204,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             production: generalData.production,
             features: [],
             cloud_provider_credentials: cloudProviderCredentials,
+            ...widePermissionsPayload,
             infrastructure_charts_parameters: resourcesData?.infrastructure_charts_parameters,
             ...addonsPayload,
             ...awsLabelsGroups,
@@ -345,6 +360,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
         features: formatFeatures,
         region: generalData.region,
         cloud_provider_credentials: cloudProviderCredentials,
+        ...widePermissionsPayload,
         ...addonsPayload,
       }))
       .with('SCW', () => {
@@ -384,6 +400,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           instance_type: resourcesData.instance_type,
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
           cloud_provider_credentials: cloudProviderCredentials,
+          ...widePermissionsPayload,
           features: scwFeatures,
           ...addonsPayload,
         }
@@ -399,6 +416,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             kubernetes: resourcesData.cluster_type as KubernetesEnum,
             features: formatFeatures,
             cloud_provider_credentials: cloudProviderCredentials,
+            ...widePermissionsPayload,
             ...addonsPayload,
             ...awsLabelsGroups,
           }
@@ -419,6 +437,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
           features: formatFeatures,
           cloud_provider_credentials: cloudProviderCredentials,
+          ...widePermissionsPayload,
           ...addonsPayload,
           ...awsLabelsGroups,
         }

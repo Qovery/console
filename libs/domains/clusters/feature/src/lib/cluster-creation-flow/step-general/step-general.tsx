@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProvider, CloudProviderEnum, type ClusterRegion } from 'qovery-typescript-axios'
 import { type FormEventHandler, type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -22,6 +23,7 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterCredentialsSettings } from '../../cluster-credentials-settings/cluster-credentials-settings'
 import { ClusterGeneralSettings } from '../../cluster-general-settings/cluster-general-settings'
 import { defaultResourcesData, steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
+import { ClusterCreationRestrictivePermissionsSettings } from './cluster-creation-restrictive-permissions-settings'
 
 export interface StepGeneralProps extends PropsWithChildren {
   organizationId: string
@@ -56,6 +58,7 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
   const { control, formState, watch } = methods
 
   const { data: cloudProviders = [] } = useCloudProviders()
+  const isWideCredentialsFeatureFlagEnabled = Boolean(useFeatureFlagEnabled('wide-credentials'))
   const { data: credentials = [] } = useCloudProviderCredentials({
     organizationId,
     cloudProvider: methods.getValues('cloud_provider'),
@@ -111,6 +114,7 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
 
   const watchCloudProvider = watch('cloud_provider')
   const watchInstallationType = watch('installation_type')
+  const isWideCredentialsEnabled = isWideCredentialsFeatureFlagEnabled && watchCloudProvider === CloudProviderEnum.AWS
 
   useEffect(() => {
     const provider = cloudProviders?.filter((cloud) => cloud.short_name === watchCloudProvider && cloud.regions)[0]
@@ -140,7 +144,16 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
     if (credentials.length > 0 || data.installation_type === 'PARTIALLY_MANAGED') {
       if (data['credentials']) {
         const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
-        data['credentials_name'] = currentCredentials.name
+        if (currentCredentials) {
+          data['credentials_name'] = currentCredentials.name
+        }
+      }
+
+      if (data.restricted_credentials) {
+        const restrictedCredentials = credentials.find((item) => item.id === data.restricted_credentials)
+        if (restrictedCredentials) {
+          data.restricted_credentials_name = restrictedCredentials.name
+        }
       }
 
       setGeneralData(data)
@@ -213,14 +226,18 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
                         )}
                       />
 
-                      <ClusterCredentialsSettings
-                        cloudProvider={
-                          watchInstallationType === 'PARTIALLY_MANAGED'
-                            ? 'AWS_EKS_ANYWHERE'
-                            : (currentProvider.short_name as CloudProviderEnum)
-                        }
-                        isSetting={false}
-                      />
+                      {isWideCredentialsEnabled ? (
+                        <ClusterCreationRestrictivePermissionsSettings />
+                      ) : (
+                        <ClusterCredentialsSettings
+                          cloudProvider={
+                            watchInstallationType === 'PARTIALLY_MANAGED'
+                              ? 'AWS_EKS_ANYWHERE'
+                              : (currentProvider.short_name as CloudProviderEnum)
+                          }
+                          isSetting={false}
+                        />
+                      )}
 
                       <Callout.Root className="mb-5 mt-10 grid grid-cols-[40px_auto] gap-4" color="neutral">
                         <Callout.Icon className="w-10 text-4xl">
