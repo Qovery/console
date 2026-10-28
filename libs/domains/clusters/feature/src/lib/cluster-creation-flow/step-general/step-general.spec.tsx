@@ -3,7 +3,7 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   ClusterContainerCreateContext,
   type ClusterContainerCreateContextInterface,
@@ -158,16 +158,23 @@ describe('StepGeneral', () => {
 
     const { userEvent } = renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
 
-    const restrictivePermissionsToggle = screen.getByRole('switch', { name: 'Use restrictive permissions' })
+    const restrictivePermissionsToggle = await screen.findByRole('switch', { name: 'Use restrictive permissions' })
     expect(restrictivePermissionsToggle).not.toBeChecked()
+    expect(screen.getByTestId('input-credentials')).toBeInTheDocument()
 
     await userEvent.click(screen.getByTestId('button-submit'))
 
-    expect(mockOnSubmit).toHaveBeenCalledWith(expect.objectContaining({ using_restrictive_permissions: false }))
+    await waitFor(() =>
+      expect(mockOnSubmit).toHaveBeenCalledWith(expect.objectContaining({ using_restrictive_permissions: false }))
+    )
   })
 
-  it('should keep the EKS Anywhere credential flow when the feature flag is enabled', () => {
+  it('should keep the EKS Anywhere credential flow when the feature flag is enabled', async () => {
     mockUseFeatureFlagEnabled.mockReturnValue(true)
+    useCloudProviderCredentialsMockSpy.mockReturnValue({
+      data: [{ id: 'eks-credential', name: 'EKS Anywhere credential', object_type: 'EKS_ANYWHERE_VSPHERE' }],
+      isLoading: false,
+    })
     mockContextValue.generalData = {
       name: 'test-cluster',
       credentials: 'eks-credential',
@@ -179,6 +186,7 @@ describe('StepGeneral', () => {
 
     renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
 
+    expect(await screen.findByTestId('input-credentials')).toBeInTheDocument()
     expect(screen.queryByRole('switch', { name: 'Use restrictive permissions' })).not.toBeInTheDocument()
   })
 
