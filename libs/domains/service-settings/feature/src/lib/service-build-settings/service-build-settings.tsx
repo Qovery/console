@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import { type BuildSettings } from 'qovery-typescript-axios'
 import { Suspense, useEffect } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import {
@@ -7,12 +8,7 @@ import {
   type Job,
   type Terraform,
 } from '@qovery/domains/services/data-access'
-import {
-  useAdvancedSettings,
-  useDefaultAdvancedSettings,
-  useEditService,
-  useService,
-} from '@qovery/domains/services/feature'
+import { useDefaultAdvancedSettings, useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Callout, Icon, InputText, InputToggle, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
@@ -33,18 +29,14 @@ interface BuildSettingsFormData {
   skip_git_submodules: boolean
 }
 
-function getDefaultValues(
-  advancedSettings: Record<string, unknown> | undefined,
-  defaultAdvancedSettings: Record<string, unknown> | undefined
-): BuildSettingsFormData {
-  const get = (key: string) => advancedSettings?.[key] ?? defaultAdvancedSettings?.[key]
+function getDefaultValues(buildSettings: BuildSettings | undefined): BuildSettingsFormData {
   return {
-    timeout_max_sec: (get('build.timeout_max_sec') as number) ?? '',
-    cpu_max_in_milli: (get('build.cpu_max_in_milli') as number) ?? '',
-    ram_max_in_gib: (get('build.ram_max_in_gib') as number) ?? '',
-    ephemeral_storage_in_gib: (get('build.ephemeral_storage_in_gib') as number) ?? '',
-    disable_buildkit_cache: (get('build.disable_buildkit_cache') as boolean) ?? false,
-    skip_git_submodules: (get('build.skip_git_submodules') as boolean) ?? false,
+    timeout_max_sec: buildSettings?.timeout_max_sec ?? '',
+    cpu_max_in_milli: buildSettings?.cpu_max_in_milli ?? '',
+    ram_max_in_gib: buildSettings?.ram_max_in_gib ?? '',
+    ephemeral_storage_in_gib: buildSettings?.ephemeral_storage_in_gib ?? '',
+    disable_buildkit_cache: buildSettings?.disable_buildkit_cache ?? false,
+    skip_git_submodules: buildSettings?.skip_git_submodules ?? false,
   }
 }
 
@@ -235,12 +227,6 @@ function ServiceBuildSettingsForm({
   environmentId,
   serviceId,
 }: ServiceBuildSettingsFormProps) {
-  const { data: advancedSettings } = useAdvancedSettings({
-    serviceId,
-    serviceType: service.serviceType,
-    suspense: true,
-  })
-
   const { data: defaultAdvancedSettings } = useDefaultAdvancedSettings({
     serviceType: service.serviceType,
     suspense: true,
@@ -254,20 +240,12 @@ function ServiceBuildSettingsForm({
 
   const methods = useForm<BuildSettingsFormData>({
     mode: 'onChange',
-    defaultValues: getDefaultValues(
-      advancedSettings as Record<string, unknown> | undefined,
-      defaultAdvancedSettings as Record<string, unknown> | undefined
-    ),
+    defaultValues: getDefaultValues(service.build_settings),
   })
 
   useEffect(() => {
-    methods.reset(
-      getDefaultValues(
-        advancedSettings as Record<string, unknown> | undefined,
-        defaultAdvancedSettings as Record<string, unknown> | undefined
-      )
-    )
-  }, [serviceId, advancedSettings, defaultAdvancedSettings, methods])
+    methods.reset(getDefaultValues(service.build_settings))
+  }, [serviceId, service.build_settings, methods])
 
   const isTerraform = service.serviceType === 'TERRAFORM'
   const buildSettingsEditable =
