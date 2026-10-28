@@ -3,6 +3,7 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { InputText, InputToggle } from '@qovery/shared/ui'
 import { ClusterCredentialsSettings } from './cluster-credentials-settings'
 import { ClusterWidePermissionCredentialsSettings } from './cluster-wide-permission-credentials-settings'
+import { validateSlackWebhookUrl } from './slack-webhook-url'
 
 export interface ClusterRestrictivePermissionsSettingsProps {
   cloudProvider?: CloudProviderEnum
@@ -40,7 +41,8 @@ export function ClusterRestrictivePermissionsSettings({ cloudProvider }: Cluster
           <Controller
             name="slack_webhook_url"
             control={control}
-            render={({ field }) => (
+            rules={{ validate: validateSlackWebhookUrl }}
+            render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-slack-webhook-url"
                 type="password"
@@ -49,6 +51,7 @@ export function ClusterRestrictivePermissionsSettings({ cloudProvider }: Cluster
                 value={field.value ?? ''}
                 label="Slack webhook URL"
                 hint="Receive a Slack message when Qovery requests access to the extended credentials."
+                error={error?.message}
                 autoComplete="off"
               />
             )}

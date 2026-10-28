@@ -2,12 +2,7 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { InputText, InputToggle } from '@qovery/shared/ui'
 import { ClusterCredentialsSettings } from '../../cluster-credentials-settings/cluster-credentials-settings'
 import { ClusterWidePermissionCredentialsSettings } from '../../cluster-credentials-settings/cluster-wide-permission-credentials-settings'
-
-const SLACK_WEBHOOK_URL_PATTERN = new RegExp(
-  String.raw`^https://hooks\.slack\.com(?::\d+)?/(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@])(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@/])*(?:\?(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@/?])*)?(?:#(?:[A-Za-z0-9._~-]|%[A-Fa-f0-9]{2}|[!$&'()*+,;=:@/?])*)?$`,
-  'i'
-)
-const SLACK_WEBHOOK_URL_ERROR = 'Enter a valid Slack webhook URL from hooks.slack.com.'
+import { validateSlackWebhookUrl } from '../../cluster-credentials-settings/slack-webhook-url'
 
 export function ClusterCreationRestrictivePermissionsSettings() {
   const { control } = useFormContext()
@@ -41,12 +36,7 @@ export function ClusterCreationRestrictivePermissionsSettings() {
           <Controller
             name="slack_webhook_url"
             control={control}
-            rules={{
-              validate: (value) => {
-                const url = typeof value === 'string' ? value.trim() : ''
-                return !url || SLACK_WEBHOOK_URL_PATTERN.test(url) || SLACK_WEBHOOK_URL_ERROR
-              },
-            }}
+            rules={{ validate: validateSlackWebhookUrl }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-slack-webhook-url"
