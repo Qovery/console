@@ -10,6 +10,7 @@ import {
 import clsx from 'clsx'
 import download from 'downloadjs'
 import posthog from 'posthog-js'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type DeploymentHistoryEnvironmentV2,
   type Environment,
@@ -34,7 +35,9 @@ import {
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
+import { DeploymentLogsSteps } from '../deployment-logs-steps/deployment-logs-steps'
 import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
+import { HeaderDeploymentLogs } from '../header-deployment-logs/header-deployment-logs'
 import HeaderLogs from '../header-logs/header-logs'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { useGenerateBuildUsageReport } from '../hooks/use-generate-build-usage-report/use-generate-build-usage-report'
@@ -43,106 +46,15 @@ import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
+import { type EnvironmentEngineStep, type FilterType, getFilterStep } from '../utils/deployment-log-filter-step'
 import { FiltersStageStep } from './filters-stage-step/filters-stage-step'
 import { RowDeploymentLogs } from './row-deployment-logs/row-deployment-logs'
+
+export type { FilterType }
 
 const { Table } = TablePrimitives
 
 const MemoizedRowDeploymentLogs = memo(RowDeploymentLogs)
-
-export type FilterType = 'ALL' | 'DEPLOY' | 'BUILD' | 'EXECUTING'
-
-// Waiting back-end to provide correct step names from API documentation
-// https://qovery.slack.com/archives/C02NPSG2HBL/p1728485209941179?thread_ts=1727785723.481289&cid=C02NPSG2HBL
-enum EnvironmentEngineStep {
-  // Build steps
-  Build = 'Build',
-  Built = 'Built',
-  BuiltError = 'BuiltError',
-
-  // Deploy steps
-  Deploy = 'Deploy',
-  Deployed = 'Deployed',
-  DeployedError = 'DeployedError',
-  Cancel = 'Cancel',
-  Cancelled = 'Cancelled',
-  Pause = 'Pause',
-  Paused = 'Paused',
-  PausedError = 'PausedError',
-  Delete = 'Delete',
-  Deleted = 'Deleted',
-  DeletedError = 'DeletedError',
-  LoadConfiguration = 'LoadConfiguration',
-  Terminated = 'Terminated',
-  Recap = 'Recap',
-  Restart = 'Restart',
-  Restarted = 'Restarted',
-  RestartedError = 'RestartedError',
-
-  // Executing steps
-  Executing = 'Executing',
-
-  // Pre-check steps
-  PreCheck = 'PreCheck',
-  Start = 'Start',
-  RetrieveClusterConfig = 'RetrieveClusterConfig',
-  RetrieveClusterResources = 'RetrieveClusterResources',
-  ValidateSystemRequirements = 'ValidateSystemRequirements',
-  ValidateApiInput = 'ValidateApiInput',
-
-  // Configuration transfer
-  JobOutput = 'JobOutput',
-  DatabaseOutput = 'DatabaseOutput',
-
-  // Global error
-  GlobalError = 'GlobalError',
-
-  // Default value
-  Unknown = 'Unknown',
-}
-
-const getFilterStep = (step: EnvironmentEngineStep): FilterType =>
-  match(step)
-    .with(
-      EnvironmentEngineStep.Build,
-      EnvironmentEngineStep.Built,
-      EnvironmentEngineStep.BuiltError,
-      () => 'BUILD' as const
-    )
-    .with(
-      EnvironmentEngineStep.Deploy,
-      EnvironmentEngineStep.Deployed,
-      EnvironmentEngineStep.DeployedError,
-      EnvironmentEngineStep.Cancel,
-      EnvironmentEngineStep.Cancelled,
-      EnvironmentEngineStep.Pause,
-      EnvironmentEngineStep.Paused,
-      EnvironmentEngineStep.PausedError,
-      EnvironmentEngineStep.Delete,
-      EnvironmentEngineStep.Deleted,
-      EnvironmentEngineStep.DeletedError,
-      EnvironmentEngineStep.LoadConfiguration,
-      EnvironmentEngineStep.Terminated,
-      EnvironmentEngineStep.Recap,
-      EnvironmentEngineStep.Restart,
-      EnvironmentEngineStep.Restarted,
-      EnvironmentEngineStep.RestartedError,
-      () => 'DEPLOY' as const
-    )
-    .with(EnvironmentEngineStep.Executing, () => 'EXECUTING' as const)
-    // TODO: theses steps are not yet available
-    // .with(
-    //   EnvironmentEngineStep.PreCheck,
-    //   EnvironmentEngineStep.Start,
-    //   EnvironmentEngineStep.RetrieveClusterConfig,
-    //   EnvironmentEngineStep.RetrieveClusterResources,
-    //   EnvironmentEngineStep.ValidateSystemRequirements,
-    //   EnvironmentEngineStep.ValidateApiInput,
-    //   () => 'Pre-check' as const
-    // )
-    // .with(EnvironmentEngineStep.JobOutput, EnvironmentEngineStep.DatabaseOutput, () => 'Configuration' as const)
-    // .with(EnvironmentEngineStep.GlobalError, () => 'All' as const)
-    .otherwise(() => 'ALL' as const)
 
 export interface ListDeploymentLogsProps {
   environment: Environment
@@ -159,12 +71,12 @@ interface DeploymentLogsHeaderProps {
   deploymentHistory: DeploymentHistoryEnvironmentV2[]
 }
 
-const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
-  environment,
-  serviceStatus,
-  environmentStatus,
-  deploymentHistory,
-}: DeploymentLogsHeaderProps) {
+interface DeploymentHistoryDropdownProps {
+  environment: Environment
+  deploymentHistory: DeploymentHistoryEnvironmentV2[]
+}
+
+function DeploymentHistoryDropdown({ environment, deploymentHistory }: DeploymentHistoryDropdownProps) {
   const { organizationId = '', projectId = '', serviceId = '', executionId = '' } = useParams({ strict: false })
   const [open, setOpen] = useState(false)
 
@@ -178,6 +90,75 @@ const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
   const isLastVersion = deploymentHistory[0]?.identifier.execution_id === executionId || !executionId
 
   return (
+    <div className="flex items-center gap-4">
+      <DropdownMenu.Root open={open} onOpenChange={setOpen}>
+        <DropdownMenu.Trigger asChild>
+          <Button variant="outline">
+            <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
+            {isLastVersion
+              ? 'Latest'
+              : selectedDeploymentDate
+                ? dateYearMonthDayHourMinuteSecond(new Date(selectedDeploymentDate))
+                : 'Not available'}
+            <Icon iconName="angle-down" />
+          </Button>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
+          {deploymentHistory.map((deployment) => (
+            <DropdownMenu.Item
+              asChild
+              key={deployment.identifier.execution_id}
+              className={clsx('min-h-9', {
+                'bg-surface-brand-component': deployment.identifier.execution_id === executionId,
+              })}
+            >
+              <Link
+                className="flex w-full justify-between"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                params={{
+                  organizationId,
+                  projectId,
+                  environmentId: environment.id,
+                  serviceId,
+                  executionId: deployment.identifier.execution_id,
+                }}
+                replace={true}
+              >
+                <Tooltip content={deployment.identifier.execution_id}>
+                  <span className="group flex items-center gap-0.5 truncate">
+                    <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                    {deployment.identifier.execution_id && (
+                      <CopyToClipboardButtonIcon
+                        content={deployment.identifier.execution_id}
+                        tooltipContent="Copy execution id"
+                        className="opacity-0 transition-opacity group-hover:opacity-100"
+                        iconClassName="text-xs"
+                      />
+                    )}
+                  </span>
+                </Tooltip>
+                <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
+                  {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
+                  <StatusChip status={deployment.status} />
+                </span>
+              </Link>
+            </DropdownMenu.Item>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+    </div>
+  )
+}
+
+const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
+  environment,
+  serviceStatus,
+  environmentStatus,
+  deploymentHistory,
+}: DeploymentLogsHeaderProps) {
+  const { serviceId = '' } = useParams({ strict: false })
+
+  return (
     <HeaderLogs
       type="DEPLOYMENT"
       environment={environment}
@@ -185,63 +166,7 @@ const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
       serviceStatus={serviceStatus}
       environmentStatus={environmentStatus}
     >
-      <div className="flex items-center gap-4">
-        <DropdownMenu.Root open={open} onOpenChange={setOpen}>
-          <DropdownMenu.Trigger asChild>
-            <Button variant="outline">
-              <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
-              {isLastVersion
-                ? 'Latest'
-                : selectedDeploymentDate
-                  ? dateYearMonthDayHourMinuteSecond(new Date(selectedDeploymentDate))
-                  : 'Not available'}
-              <Icon iconName="angle-down" />
-            </Button>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
-            {deploymentHistory.map((deployment) => (
-              <DropdownMenu.Item
-                asChild
-                key={deployment.identifier.execution_id}
-                className={clsx('min-h-9', {
-                  'bg-surface-brand-component': deployment.identifier.execution_id === executionId,
-                })}
-              >
-                <Link
-                  className="flex w-full justify-between"
-                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
-                  params={{
-                    organizationId,
-                    projectId,
-                    environmentId: environment.id,
-                    serviceId,
-                    executionId: deployment.identifier.execution_id,
-                  }}
-                  replace={true}
-                >
-                  <Tooltip content={deployment.identifier.execution_id}>
-                    <span className="group flex items-center gap-0.5 truncate">
-                      <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
-                      {deployment.identifier.execution_id && (
-                        <CopyToClipboardButtonIcon
-                          content={deployment.identifier.execution_id}
-                          tooltipContent="Copy execution id"
-                          className="opacity-0 transition-opacity group-hover:opacity-100"
-                          iconClassName="text-xs"
-                        />
-                      )}
-                    </span>
-                  </Tooltip>
-                  <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
-                    {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
-                    <StatusChip status={deployment.status} />
-                  </span>
-                </Link>
-              </DropdownMenu.Item>
-            ))}
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      </div>
+      <DeploymentHistoryDropdown environment={environment} deploymentHistory={deploymentHistory} />
     </HeaderLogs>
   )
 })
@@ -603,6 +528,26 @@ export function ListDeploymentLogs({
     serviceId,
     suspense: true,
   })
+  const isDeploymentLogsV2Enabled = useFeatureFlagEnabled('deployment-logs-v2') === true
+
+  if (isDeploymentLogsV2Enabled) {
+    return (
+      <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-background">
+        <HeaderDeploymentLogs serviceStatus={serviceStatus}>
+          <DeploymentHistoryDropdown environment={environment} deploymentHistory={deploymentHistory} />
+        </HeaderDeploymentLogs>
+        <DeploymentLogsSteps
+          key={executionId || 'latest'}
+          environment={environment}
+          serviceStatus={serviceStatus}
+          stage={stage}
+          environmentStatus={environmentStatus}
+          preCheckStage={preCheckStage}
+          deploymentHistory={deploymentHistory}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-background">

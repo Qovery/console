@@ -1,0 +1,177 @@
+import clsx from 'clsx'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { LogsType } from '@qovery/shared/enums'
+import { Ansi, Button, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
+import {
+  LOG_COPY_EXCLUDE_DATA_ATTRIBUTE,
+  LOG_MESSAGE_DATA_ATTRIBUTE,
+  copySelectedLogMessages,
+  pluralize,
+} from '@qovery/shared/util-js'
+import { type EnvironmentLogIds } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { ProgressIndicator } from '../progress-indicator/progress-indicator'
+import {
+  type DeploymentLogStep,
+  type DeploymentLogStepStatus,
+  formatDeploymentLogDuration,
+} from '../utils/deployment-log-steps'
+
+// Rendering every line of a long build slows the page down: older lines are shown on demand
+const MAX_VISIBLE_LINES = 1000
+
+export function DeploymentLogStatusIcon({ status }: { status?: DeploymentLogStepStatus }) {
+  if (!status) return null
+
+  if (status === 'PENDING') {
+    return (
+      <Tooltip content="Not started">
+        <span role="img" aria-label="Not started" className="flex h-3.5 w-3.5 items-center justify-center">
+          <Icon iconName="circle" iconStyle="regular" className="text-sm text-neutral-disabled" />
+        </span>
+      </Tooltip>
+    )
+  }
+
+  return <StatusChip status={status} />
+}
+
+function DeploymentLogLine({ line }: { line: EnvironmentLogIds }) {
+  const step = line.details.stage?.step
+  const isErrorLine = line.type === LogsType.ERROR
+  const isError = isErrorLine || step === 'DeployedError'
+  const isSuccess = step === 'Deployed'
+
+  return (
+    <div className="flex items-start">
+      <span
+        className="w-20 shrink-0 select-none text-neutral-subtle"
+        title={dateUTCString(line.timestamp)}
+        {...{ [LOG_COPY_EXCLUDE_DATA_ATTRIBUTE]: 'true' }}
+      >
+        {dateFullFormat(line.timestamp, 'UTC', 'HH:mm:ss')}
+      </span>
+      <span
+        className={clsx('min-w-0 flex-1 whitespace-pre-wrap break-all', {
+          'text-negative': isError,
+          'text-positive': isSuccess,
+          'text-neutral': !isError && !isSuccess,
+        })}
+        {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}
+      >
+        <Ansi>{isErrorLine ? line.error?.user_log_message : line.message?.safe_message}</Ansi>
+      </span>
+    </div>
+  )
+}
+
+function DeploymentLogLines({ lines, isStreaming }: { lines: EnvironmentLogIds[]; isStreaming: boolean }) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const isScrolledToBottomRef = useRef(true)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [showAllLines, setShowAllLines] = useState(false)
+
+  const hiddenLinesCount = showAllLines ? 0 : Math.max(0, lines.length - MAX_VISIBLE_LINES)
+  const visibleLines = hiddenLinesCount > 0 ? lines.slice(hiddenLinesCount) : lines
+
+  // Follows new lines like a terminal, unless the user scrolled up to read older ones
+  useLayoutEffect(() => {
+    const element = scrollRef.current
+    if (element && isScrolledToBottomRef.current) {
+      element.scrollTop = element.scrollHeight
+    }
+  }, [visibleLines.length])
+
+  return (
+    <div className="relative border-t border-neutral bg-surface-neutral-subtle">
+      {isScrolled && (
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-5 bg-gradient-to-b from-surface-neutral-subtle to-transparent" />
+      )}
+      <div
+        ref={scrollRef}
+        className="flex max-h-[400px] flex-col gap-1 overflow-y-auto px-4 py-2 font-code text-xs leading-5"
+        onCopy={copySelectedLogMessages}
+        onScroll={(event) => {
+          const element = event.currentTarget
+          isScrolledToBottomRef.current = element.scrollTop + element.clientHeight >= element.scrollHeight - 4
+          setIsScrolled(element.scrollTop > 0)
+        }}
+      >
+        {hiddenLinesCount > 0 && (
+          <Button
+            variant="outline"
+            color="neutral"
+            size="xs"
+            className="mb-1 self-start font-sans"
+            onClick={() => setShowAllLines(true)}
+          >
+            Show {hiddenLinesCount.toLocaleString('en-US')} previous {pluralize(hiddenLinesCount, 'line')}
+          </Button>
+        )}
+        {visibleLines.map((line) => (
+          <DeploymentLogLine key={line.id} line={line} />
+        ))}
+        {isStreaming && (
+          <ProgressIndicator
+            pauseLogs={false}
+            message="Streaming deployment logs"
+            className="mb-0 h-5 border-none pl-0 font-sans text-ssm font-medium text-neutral-subtle"
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
+export interface DeploymentLogStepRowProps {
+  step: DeploymentLogStep<EnvironmentLogIds>
+  label: string
+  isOpen: boolean
+  isSearching: boolean
+  onToggle: () => void
+}
+
+export function DeploymentLogStepRow({ step, label, isOpen, isSearching, onToggle }: DeploymentLogStepRowProps) {
+  const linesCount = step.lines.length
+  const hasLines = linesCount > 0
+  const isNotStarted = step.status === 'PENDING' || step.status === 'SKIP'
+
+  const linesCountLabel = isSearching
+    ? hasLines
+      ? `${linesCount.toLocaleString('en-US')} ${pluralize(linesCount, 'match', 'matches')}`
+      : 'No match'
+    : hasLines
+      ? `${linesCount.toLocaleString('en-US')} ${pluralize(linesCount, 'line')}`
+      : null
+
+  return (
+    <div className="border-b border-neutral last:border-b-0">
+      <button
+        type="button"
+        className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-sm transition-colors enabled:hover:bg-surface-neutral-subtle disabled:cursor-default"
+        onClick={onToggle}
+        disabled={!hasLines}
+        aria-expanded={hasLines ? isOpen : undefined}
+      >
+        <span className="flex min-w-0 items-center gap-2">
+          <Icon
+            iconName={isOpen && hasLines ? 'chevron-down' : 'chevron-right'}
+            iconStyle="regular"
+            className={clsx('w-3.5 text-xs', hasLines ? 'text-neutral' : 'text-neutral-disabled')}
+          />
+          <span className={clsx('truncate', isNotStarted ? 'text-neutral-subtle' : 'text-neutral')}>{label}</span>
+          {linesCountLabel && <span className="shrink-0 text-neutral-subtle">{linesCountLabel}</span>}
+        </span>
+        <span className="flex shrink-0 items-center gap-2">
+          {step.durationSec !== undefined && !isNotStarted && (
+            <span className="text-neutral-subtle">{formatDeploymentLogDuration(step.durationSec)}</span>
+          )}
+          <DeploymentLogStatusIcon status={step.status} />
+        </span>
+      </button>
+      {isOpen && hasLines && <DeploymentLogLines lines={step.lines} isStreaming={step.status === 'ONGOING'} />}
+    </div>
+  )
+}
+
+export default DeploymentLogStepRow
