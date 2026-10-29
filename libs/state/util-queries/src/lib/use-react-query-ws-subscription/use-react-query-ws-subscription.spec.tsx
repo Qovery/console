@@ -171,6 +171,43 @@ describe('useReactQueryWsSubscription', () => {
     expect(onMessage).not.toHaveBeenCalled()
   })
 
+  it('should reconnect after the server closes the socket when shouldReconnect is enabled', async () => {
+    // Skip the reconnect backoff delay, mock-socket relies on short timeouts so fake timers can't be used here
+    const realSetTimeout = global.setTimeout
+    const backoffDelays: number[] = []
+    const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(((
+      callback: (...args: unknown[]) => void,
+      ms?: number,
+      ...args: unknown[]
+    ) => {
+      if (ms && ms >= 5000) {
+        backoffDelays.push(ms)
+        return realSetTimeout(callback, 0, ...args)
+      }
+      return realSetTimeout(callback, ms, ...args)
+    }) as typeof setTimeout)
+    const onClose = jest.fn()
+    const { unmount } = renderHook(() =>
+      useReactQueryWsSubscription({ url: 'ws://localhost:1234', onClose, shouldReconnect: true })
+    )
+    await server.connected
+
+    server.close()
+    server = new WS('ws://localhost:1234', { jsonProtocol: true })
+    await server.connected
+
+    server.close()
+    server = new WS('ws://localhost:1234', { jsonProtocol: true })
+    const connection = await server.connected
+
+    expect(connection.readyState).toBe(WebSocket.OPEN)
+    // The retry counter resets once a socket opens, so the second disconnect backs off 5s again instead of 10s
+    expect(backoffDelays).toEqual([5000, 5000])
+    expect(onClose).not.toHaveBeenCalled()
+    unmount()
+    setTimeoutSpy.mockRestore()
+  })
+
   it('should not call onClose when the component cleans up its own socket', async () => {
     const onClose = jest.fn()
     const { unmount } = renderHook(() => useReactQueryWsSubscription({ url: 'ws://localhost:1234', onClose }))

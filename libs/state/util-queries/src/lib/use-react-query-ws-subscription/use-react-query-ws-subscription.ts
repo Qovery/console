@@ -104,6 +104,7 @@ export function useReactQueryWsSubscription({
       const websocket = new WebSocket(`${url}?${searchParamsString}`, ['v1', 'auth.bearer.' + token])
 
       websocket.onopen = async (event) => {
+        reconnectCount.current = 0
         callbacksRef.current.onOpen?.(queryClientRef.current, event)
       }
       websocket.onmessage = async (event) => {
