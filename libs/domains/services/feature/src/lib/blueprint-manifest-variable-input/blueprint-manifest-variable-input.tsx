@@ -1,12 +1,14 @@
 import { useParams } from '@tanstack/react-router'
 import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
-import { Button, Icon, InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
+import { Button, CodeEditor, Icon, InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import {
   type BlueprintFieldValue,
   formatFieldLabel,
   getBooleanFieldValue,
   getStringFieldValue,
+  isJsonField,
 } from '../blueprint-field-utils/blueprint-field-utils'
 
 // Above this many allowed values, a plain dropdown means scrolling (e.g. RDS instance classes), so let users search.
@@ -63,6 +65,27 @@ export function BlueprintManifestVariableInput({
           onChange(value)
         }}
       />
+    )
+  }
+
+  // A secret stays masked in the password input below rather than shown in an editor
+  if (isJsonField(field) && !field.is_secret) {
+    return (
+      <div>
+        <p className="mb-1 px-3 text-xs text-neutral-subtle">{inputLabel}</p>
+        <div className={twMerge('overflow-hidden rounded-md border border-neutral', error && 'border-negative')}>
+          <CodeEditor
+            language="json"
+            height="200px"
+            value={getStringFieldValue(value)}
+            options={{ ariaLabel: inputLabel, scrollBeyondLastLine: false }}
+            onMount={(editor) => autoFocus && editor.focus()}
+            onChange={(value) => onChange(value ?? '')}
+          />
+        </div>
+        {field.description && !error && <p className="mt-0.5 px-3 text-xs text-neutral-subtle">{field.description}</p>}
+        {error && <p className="mt-0.5 px-3 text-xs text-negative">{error}</p>}
+      </div>
     )
   }
 
