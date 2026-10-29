@@ -177,15 +177,19 @@ describe('BlueprintManifestVariableInput', () => {
       expect(mockEditorFocus).toHaveBeenCalled()
     })
 
-    it('sends the edited text unchanged', async () => {
+    it('sends pasted text unchanged', async () => {
+      // Whitespace a JSON reformatter would rewrite
+      const typed = '{\n    "log_connections":   "1",\n  "max_wal_size" : "16384"\n}\n'
       const onChange = jest.fn()
       const { userEvent } = renderWithProviders(
         <BlueprintManifestVariableInput field={jsonField} value="" onChange={onChange} />
       )
 
-      await userEvent.type(screen.getByLabelText('Db parameters'), '1')
+      await userEvent.click(screen.getByLabelText('Db parameters'))
+      await userEvent.paste(typed)
 
-      expect(onChange).toHaveBeenLastCalledWith('1')
+      expect(onChange).toHaveBeenCalledTimes(1)
+      expect(onChange).toHaveBeenCalledWith(typed)
     })
 
     it('shows the validation error in place of the description', () => {
