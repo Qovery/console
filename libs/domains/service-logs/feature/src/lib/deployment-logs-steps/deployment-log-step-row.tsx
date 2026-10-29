@@ -10,7 +10,6 @@ import {
   pluralize,
 } from '@qovery/shared/util-js'
 import { type EnvironmentLogIds } from '../hooks/use-deployment-logs/use-deployment-logs'
-import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { splitAnsiTextOnMatches } from '../utils/ansi-text-matches'
 import {
   type DeploymentLogStep,
@@ -139,13 +138,7 @@ function DeploymentLogLines({
         {visibleLines.map((line) => (
           <DeploymentLogLine key={line.id} line={line} searchQuery={searchQuery} />
         ))}
-        {isStreaming && (
-          <ProgressIndicator
-            pauseLogs={false}
-            message="Streaming deployment logs"
-            className="mb-0 h-5 border-none pl-0 font-sans text-ssm font-medium text-neutral-subtle"
-          />
-        )}
+        {isStreaming && <p className="font-sans text-sm font-medium text-neutral-subtle">Streaming deployment logs…</p>}
       </div>
     </div>
   )
@@ -193,7 +186,7 @@ export function DeploymentLogStepRow({
             iconStyle="regular"
             className={clsx('w-3.5 text-xs', hasLines ? 'text-neutral' : 'text-neutral-disabled')}
           />
-          <span className={clsx('truncate', isNotStarted ? 'text-neutral-subtle' : 'text-neutral')}>{label}</span>
+          <span className={clsx('truncate', isNotStarted ? 'text-neutral-disabled' : 'text-neutral')}>{label}</span>
           <DeploymentLogStatusIcon status={step.status} />
           {matchesCountLabel && <span className="shrink-0 text-neutral-subtle">{matchesCountLabel}</span>}
         </span>

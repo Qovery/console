@@ -184,9 +184,9 @@ export function DeploymentLogsSteps({
                   <Icon
                     iconName={PHASE_ICONS[phase.id]}
                     iconStyle="regular"
-                    className={clsx('w-3.5', isNotStarted ? 'text-neutral-subtle' : 'text-neutral')}
+                    className={clsx('w-3.5', isNotStarted ? 'text-neutral-disabled' : 'text-neutral')}
                   />
-                  <Heading level={3} className={clsx(isNotStarted && 'text-neutral-subtle')}>
+                  <Heading level={3} className={clsx(isNotStarted && 'text-neutral-disabled')}>
                     {getDeploymentLogPhaseLabel(phase.id, action)}
                   </Heading>
                   <DeploymentLogStatusIcon status={phase.status} />
