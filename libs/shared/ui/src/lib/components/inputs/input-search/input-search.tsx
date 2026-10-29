@@ -13,6 +13,8 @@ export interface InputSearchProps {
   emptyContent?: ReactElement
   autofocus?: boolean
   customSize?: string
+  // Sizes and places the magnifying glass, to go with the paddings of `customSize`
+  iconClassName?: string
 }
 
 export function InputSearch(props: InputSearchProps) {
@@ -26,6 +28,7 @@ export function InputSearch(props: InputSearchProps) {
     emptyContent,
     customSize = 'h-9 text-sm',
     autofocus = false,
+    iconClassName,
   } = props
 
   const ref = useRef<HTMLInputElement>(null)
@@ -52,7 +55,10 @@ export function InputSearch(props: InputSearchProps) {
       <div className={twMerge('relative w-full', className)}>
         <Icon
           iconName="magnifying-glass"
-          className="absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle"
+          className={twMerge(
+            'absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle',
+            iconClassName
+          )}
         />
         <input
           data-testid="input-search"
