@@ -14,7 +14,7 @@ import { type EnvironmentEngineStep, getFilterStep } from './deployment-log-filt
 
 export type DeploymentLogPhaseId = 'PRE_CHECK' | 'BUILD' | 'DEPLOY' | 'EXECUTE'
 
-// `PENDING`: the step has not started yet while its parent step runs (the image build while the builder is provisioned)
+// `PENDING`: the step has not started yet while the deployment runs
 export type DeploymentLogStepStatus = StepMetricStatusEnum | 'PENDING'
 
 export interface DeploymentLogStep<T extends EnvironmentLogs = EnvironmentLogs> {
@@ -245,7 +245,7 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
 }: GetDeploymentLogPhasesProps<T>): DeploymentLogPhase<T>[] {
   const metrics = getStepMetrics({ serviceSteps, preCheckSteps, serviceId, nowMs })
 
-  return PHASE_IDS.flatMap((phaseId) => {
+  const stepsByPhase = PHASE_IDS.map((phaseId) => {
     const knownStepNames = PHASE_STEP_NAMES[phaseId]
     const ungroupedStepName = UNGROUPED_STEP_NAMES[phaseId]
     const otherStepNames = new Set(
@@ -279,6 +279,24 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
       return []
     })
 
+    return { phaseId, steps }
+  })
+
+  // Steps without status that come after the running step haven't started yet
+  const runningStepIndex = stepsByPhase
+    .flatMap(({ steps }) => steps)
+    .map((step) => step.status)
+    .lastIndexOf('ONGOING')
+  let stepIndex = 0
+  for (const { steps } of stepsByPhase) {
+    for (const step of steps) {
+      if (runningStepIndex >= 0 && stepIndex > runningStepIndex && !step.status) step.status = 'PENDING'
+      stepIndex++
+    }
+  }
+
+  return stepsByPhase.flatMap(({ phaseId, steps }) => {
+    const ungroupedStepName = UNGROUPED_STEP_NAMES[phaseId]
     const ungroupedLines = linesByStep.get(ungroupedStepName)?.lines ?? []
     if (steps.length === 0 && ungroupedLines.length === 0) return []
 

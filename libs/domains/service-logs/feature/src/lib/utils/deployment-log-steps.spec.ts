@@ -160,6 +160,30 @@ describe('getDeploymentLogPhases', () => {
     expect(phases[0]).toMatchObject({ status: 'ONGOING', durationSec: 67, isLive: true })
   })
 
+  it('marks the steps without status after the running one as not started', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [
+        { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
+        { step_name: 'BUILD', status: 'ONGOING', duration_sec: 0, started_at: '2026-10-26T08:39:00Z' },
+      ],
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Registry ready', 'Build', 'REGISTRY_CREATE_REPOSITORY'),
+        createLog('Queued', 'Deploy', 'QUEUEING'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases.flatMap((phase) => phase.steps.map((step) => [step.name, step.status]))).toEqual([
+      // Before the running step: left as the API reports it
+      ['REGISTRY_CREATE_REPOSITORY', undefined],
+      ['GIT_CLONE', 'SUCCESS'],
+      ['BUILD', 'ONGOING'],
+      ['DEPLOYMENT_QUEUEING', 'PENDING'],
+    ])
+    expect(phases[1]).toMatchObject({ id: 'DEPLOY', status: 'PENDING' })
+  })
+
   it('keeps the steps the API reports as skipped', () => {
     const phases = getDeploymentLogPhases({
       serviceSteps: [{ step_name: 'BUILD', status: 'SKIP', duration_sec: 0 }],
