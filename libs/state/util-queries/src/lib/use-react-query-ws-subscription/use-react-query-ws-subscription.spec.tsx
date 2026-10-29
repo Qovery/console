@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { renderHook } from '@testing-library/react'
+import { renderHook, waitFor } from '@testing-library/react'
 import WS from 'jest-websocket-mock'
 import useReactQueryWsSubscription from './use-react-query-ws-subscription'
 
@@ -186,26 +186,58 @@ describe('useReactQueryWsSubscription', () => {
       }
       return realSetTimeout(callback, ms, ...args)
     }) as typeof setTimeout)
-    const onClose = jest.fn()
-    const { unmount } = renderHook(() =>
-      useReactQueryWsSubscription({ url: 'ws://localhost:1234', onClose, shouldReconnect: true })
-    )
-    await server.connected
+    try {
+      const onClose = jest.fn()
+      const { unmount } = renderHook(() =>
+        useReactQueryWsSubscription({ url: 'ws://localhost:1234', onClose, shouldReconnect: true })
+      )
+      await server.connected
 
-    server.close()
-    server = new WS('ws://localhost:1234', { jsonProtocol: true })
-    await server.connected
+      server.close()
+      server = new WS('ws://localhost:1234', { jsonProtocol: true })
+      await server.connected
 
-    server.close()
-    server = new WS('ws://localhost:1234', { jsonProtocol: true })
-    const connection = await server.connected
+      server.close()
+      server = new WS('ws://localhost:1234', { jsonProtocol: true })
+      const connection = await server.connected
 
-    expect(connection.readyState).toBe(WebSocket.OPEN)
-    // The retry counter resets once a socket opens, so the second disconnect backs off 5s again instead of 10s
-    expect(backoffDelays).toEqual([5000, 5000])
-    expect(onClose).not.toHaveBeenCalled()
-    unmount()
-    setTimeoutSpy.mockRestore()
+      expect(connection.readyState).toBe(WebSocket.OPEN)
+      // The backoff resets once a socket opens, so the second disconnect waits 5s again instead of 10s
+      expect(backoffDelays).toEqual([5000, 5000])
+      expect(onClose).not.toHaveBeenCalled()
+      unmount()
+    } finally {
+      setTimeoutSpy.mockRestore()
+    }
+  })
+
+  it('should stop reconnecting once the maximum number of attempts is reached, even after successful opens', async () => {
+    // Skip the reconnect backoff delay, mock-socket relies on short timeouts so fake timers can't be used here
+    const realSetTimeout = global.setTimeout
+    const setTimeoutSpy = jest
+      .spyOn(global, 'setTimeout')
+      .mockImplementation(((callback: (...args: unknown[]) => void, ms?: number, ...args: unknown[]) =>
+        realSetTimeout(callback, ms && ms >= 5000 ? 0 : ms, ...args)) as typeof setTimeout)
+    try {
+      const onClose = jest.fn()
+      const { unmount } = renderHook(() =>
+        useReactQueryWsSubscription({ url: 'ws://localhost:1234', onClose, shouldReconnect: 1 })
+      )
+      await server.connected
+
+      server.close()
+      server = new WS('ws://localhost:1234', { jsonProtocol: true })
+      await server.connected
+      expect(onClose).not.toHaveBeenCalled()
+
+      // Keep a server listening so the only reason to give up is the attempt limit
+      server.close()
+      server = new WS('ws://localhost:1234', { jsonProtocol: true })
+      await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
+      unmount()
+    } finally {
+      setTimeoutSpy.mockRestore()
+    }
   })
 
   it('should not call onClose when the component cleans up its own socket', async () => {

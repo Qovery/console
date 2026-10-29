@@ -78,6 +78,8 @@ export function useReactQueryWsSubscription({
   const searchParams = new URLSearchParams(_urlSearchParams)
   const searchParamsString = searchParams.toString()
   const reconnectCount = useRef<number>(0)
+  // Reset once a socket opens, unlike reconnectCount which enforces the maximum number of attempts
+  const backoffAttempt = useRef<number>(0)
   const queryClientRef = useRef(queryClient)
   const getAccessTokenSilentlyRef = useRef(getAccessTokenSilently)
   const callbacksRef = useRef({ onClose, onError, onMessage, onOpen, onQueryInvalidated })
@@ -104,7 +106,7 @@ export function useReactQueryWsSubscription({
       const websocket = new WebSocket(`${url}?${searchParamsString}`, ['v1', 'auth.bearer.' + token])
 
       websocket.onopen = async (event) => {
-        reconnectCount.current = 0
+        backoffAttempt.current = 0
         callbacksRef.current.onOpen?.(queryClientRef.current, event)
       }
       websocket.onmessage = async (event) => {
@@ -135,11 +137,12 @@ export function useReactQueryWsSubscription({
           timeout = setTimeout(
             function () {
               reconnectCount.current++
+              backoffAttempt.current++
               connect({ signal })
             },
             // Exponential Backoff
             // attemptNumber will be 0 the first time it attempts to reconnect, so this equation results in a reconnect pattern of 5 second, 10 seconds, 20 seconds, 40 seconds, 80 seconds, and then caps at 100 seconds until the maximum number of attempts is reached
-            Math.min(Math.pow(2, reconnectCount.current) * 5000, 100_000)
+            Math.min(Math.pow(2, backoffAttempt.current) * 5000, 100_000)
           )
         } else {
           callbacksRef.current.onClose?.(queryClientRef.current, event)
