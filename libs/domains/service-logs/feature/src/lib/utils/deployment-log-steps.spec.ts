@@ -136,7 +136,7 @@ describe('getDeploymentLogPhases', () => {
     expect(phases[0].steps.map((step) => step.name)).not.toContain('BUILD_QUEUEING')
   })
 
-  it('lists the upcoming steps while the deployment runs', () => {
+  it('lists only the steps the API reports while the deployment runs', () => {
     const phases = getDeploymentLogPhases({
       serviceSteps: [
         { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
@@ -149,19 +149,26 @@ describe('getDeploymentLogPhases', () => {
       ],
       linesByStep: new Map(),
       serviceId: 'service-1',
-      expectedPhases: ['BUILD', 'DEPLOY'],
-      notStartedStepStatus: 'PENDING',
       nowMs: NOW_MS,
     })
 
+    expect(phases).toHaveLength(1)
     expect(phases[0].steps.map((step) => [step.name, step.status])).toEqual([
       ['GIT_CLONE', 'SUCCESS'],
       ['BUILD', 'ONGOING'],
-      ['IMAGE_PUSH', 'PENDING'],
-      ['CACHE_EXPORT', 'PENDING'],
     ])
     expect(phases[0]).toMatchObject({ status: 'ONGOING', durationSec: 67, isLive: true })
-    expect(phases[1]).toMatchObject({ id: 'DEPLOY', status: 'PENDING', durationSec: undefined })
+  })
+
+  it('keeps the steps the API reports as skipped', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [{ step_name: 'BUILD', status: 'SKIP', duration_sec: 0 }],
+      linesByStep: new Map(),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases[0].steps.map((step) => [step.name, step.status])).toEqual([['BUILD', 'SKIP']])
   })
 
   it('marks the image build done once a later sub-step runs', () => {
@@ -186,7 +193,7 @@ describe('getDeploymentLogPhases', () => {
     ])
   })
 
-  it('shows the failing sub-step and skips the steps that never ran', () => {
+  it('shows the failing sub-step as the one that failed', () => {
     const phases = getDeploymentLogPhases({
       serviceSteps: [
         {
@@ -198,19 +205,15 @@ describe('getDeploymentLogPhases', () => {
       ],
       linesByStep: new Map(),
       serviceId: 'service-1',
-      expectedPhases: ['BUILD', 'DEPLOY'],
-      notStartedStepStatus: 'SKIP',
       nowMs: NOW_MS,
     })
 
+    expect(phases).toHaveLength(1)
     expect(phases[0].steps.map((step) => [step.name, step.status])).toEqual([
-      ['GIT_CLONE', 'SKIP'],
       ['BUILD', 'SUCCESS'],
       ['IMAGE_PUSH', 'ERROR'],
-      ['CACHE_EXPORT', 'SKIP'],
     ])
     expect(phases[0].status).toBe('ERROR')
-    expect(phases[1]).toMatchObject({ id: 'DEPLOY', status: 'SKIP' })
   })
 
   it('keeps the Git check of this service only', () => {

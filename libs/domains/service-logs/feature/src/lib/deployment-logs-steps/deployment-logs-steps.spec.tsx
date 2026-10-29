@@ -173,7 +173,7 @@ describe('DeploymentLogsSteps', () => {
     expect(screen.queryByRole('heading', { name: 'Build' })).not.toBeInTheDocument()
   })
 
-  it('opens the running step and lists the upcoming ones', () => {
+  it('opens the running step and lists only the steps that started', () => {
     mockLogs(logs.slice(0, 3))
 
     renderWithProviders(
@@ -197,9 +197,8 @@ describe('DeploymentLogsSteps', () => {
 
     expect(screen.getByRole('button', { name: /Building image/ })).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText('Streaming deployment logs…')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Saving build cache/ })).toBeDisabled()
-    // Pushing image, Saving build cache, the Deploy phase and its step
-    expect(screen.getAllByRole('img', { name: 'Not started' })).toHaveLength(4)
+    expect(screen.queryByRole('button', { name: /Saving build cache/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Deploy' })).not.toBeInTheDocument()
   })
 
   it('shows the lines of an older deployment, by phase, when they carry no step', async () => {

@@ -14,7 +14,7 @@ import { type EnvironmentEngineStep, getFilterStep } from './deployment-log-filt
 
 export type DeploymentLogPhaseId = 'PRE_CHECK' | 'BUILD' | 'DEPLOY' | 'EXECUTE'
 
-// `PENDING`: the step has not started yet and the deployment is still running
+// `PENDING`: the step has not started yet while its parent step runs (the image build while the builder is provisioned)
 export type DeploymentLogStepStatus = StepMetricStatusEnum | 'PENDING'
 
 export interface DeploymentLogStep<T extends EnvironmentLogs = EnvironmentLogs> {
@@ -64,14 +64,6 @@ const PHASE_STEP_NAMES: Record<DeploymentLogPhaseId, string[]> = {
     'CACHE_EXPORT',
   ],
   DEPLOY: ['DEPLOYMENT_QUEUEING', 'MIRROR_IMAGE', 'DEPLOYMENT', 'ROUTER_DEPLOYMENT'],
-  EXECUTE: ['EXECUTING'],
-}
-
-// Steps a deployment always runs: they are listed before they start, and as skipped when a failure stops the deployment
-const EXPECTED_STEP_NAMES: Record<DeploymentLogPhaseId, string[]> = {
-  PRE_CHECK: [],
-  BUILD: ['GIT_CLONE', 'BUILD', 'IMAGE_PUSH', 'CACHE_EXPORT'],
-  DEPLOY: ['DEPLOYMENT'],
   EXECUTE: ['EXECUTING'],
 }
 
@@ -236,24 +228,19 @@ export interface GetDeploymentLogPhasesProps<T extends EnvironmentLogs> {
   preCheckSteps?: PreCheckStepMetric[]
   linesByStep: Map<string, DeploymentLogStepLines<T>>
   serviceId: string
-  // Phases listed even when none of their steps has started
-  expectedPhases?: DeploymentLogPhaseId[]
-  // How the expected steps that haven't started are shown. Leave it unset to hide them.
-  notStartedStepStatus?: Extract<DeploymentLogStepStatus, 'PENDING' | 'SKIP'>
   nowMs: number
 }
 
 /**
  * Builds the phases (pre-check, build, deploy, execute) of a deployment and their steps,
  * from the step metrics of the deployment statuses and the log lines grouped by step.
+ * Only the steps the API reports are listed: steps that haven't started yet aren't known.
  */
 export function getDeploymentLogPhases<T extends EnvironmentLogs>({
   serviceSteps,
   preCheckSteps,
   linesByStep,
   serviceId,
-  expectedPhases = [],
-  notStartedStepStatus,
   nowMs,
 }: GetDeploymentLogPhasesProps<T>): DeploymentLogPhase<T>[] {
   const metrics = getStepMetrics({ serviceSteps, preCheckSteps, serviceId, nowMs })
@@ -268,18 +255,15 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
         )
         .map(([name]) => name)
     )
-    const isExpectedPhase = expectedPhases.includes(phaseId)
 
     const steps = [...knownStepNames, ...otherStepNames].flatMap((name): DeploymentLogStep<T>[] => {
       const metric = metrics.get(name)
       const lines = linesByStep.get(name)?.lines ?? []
-      const isExpectedStep = isExpectedPhase && EXPECTED_STEP_NAMES[phaseId].includes(name)
 
       if (metric || lines.length > 0) {
-        // A step that took no time and logged nothing is noise, unless every deployment runs it
-        const isEmptyStep =
-          lines.length === 0 && metric?.durationSec === 0 && metric.status !== 'ONGOING' && metric.status !== 'ERROR'
-        if (isEmptyStep && !isExpectedStep) return []
+        // A step that went through in no time and logged nothing is noise, like a queue without wait
+        const isEmptyStep = lines.length === 0 && metric?.durationSec === 0 && metric.status === 'SUCCESS'
+        if (isEmptyStep) return []
 
         return [
           {
@@ -290,10 +274,6 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
             lines,
           },
         ]
-      }
-
-      if (isExpectedStep && notStartedStepStatus) {
-        return [{ name, status: notStartedStepStatus, isLive: false, lines: [] }]
       }
 
       return []
