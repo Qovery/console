@@ -1,5 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useParams } from '@tanstack/react-router'
+import { useLocation, useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import {
   type DeploymentHistoryEnvironmentV2,
@@ -9,13 +9,19 @@ import {
   type Stage,
   type Status,
 } from 'qovery-typescript-axios'
-import { useContext, useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useService } from '@qovery/domains/services/feature'
 import { EmptyState, Heading, Icon, InputSearch } from '@qovery/shared/ui'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
+import {
+  formatDeploymentLogLineHash,
+  getNextDeploymentLogLineRange,
+  isDeploymentLogLineSelected,
+  parseDeploymentLogLineHash,
+} from '../utils/deployment-log-line-selection'
 import {
   type DeploymentLogPhase,
   type DeploymentLogPhaseId,
@@ -81,6 +87,27 @@ export function DeploymentLogsSteps({
   const deferredSearchQuery = useDeferredValue(searchQuery)
   const [openStepOverrides, setOpenStepOverrides] = useState<Record<string, boolean>>({})
 
+  // Lines linked from the URL hash: `#L12`, or `#L12-L20`
+  const { hash } = useLocation()
+  const navigate = useNavigate()
+  const selectedLineRange = useMemo(() => parseDeploymentLogLineHash(hash), [hash])
+  // The page opened on a link scrolls to its lines once they're loaded
+  const [lineIdToScrollTo, setLineIdToScrollTo] = useState(selectedLineRange?.start)
+  const clearLineIdToScrollTo = useCallback(() => setLineIdToScrollTo(undefined), [])
+  const selectLine = useCallback(
+    (lineId: number, isExtending: boolean) => {
+      const nextRange = getNextDeploymentLogLineRange(selectedLineRange, lineId, isExtending)
+      navigate({
+        hash: nextRange ? formatDeploymentLogLineHash(nextRange) : undefined,
+        search: true,
+        replace: true,
+        resetScroll: false,
+        hashScrollIntoView: false,
+      })
+    },
+    [navigate, selectedLineRange]
+  )
+
   useEffect(() => {
     if (stage) updateStageId(stage.id)
   }, [serviceId, serviceStatus, updateStageId, stage])
@@ -124,8 +151,17 @@ export function DeploymentLogsSteps({
   // Once the deployment went through, the slowest step shows where time can be saved
   const slowestStepName = actionStatus === 'SUCCESS' ? getSlowestDeploymentLogStepName(allPhases) : undefined
   const builderUsage = serviceStatus.steps?.details?.find((step) => step.step_name === 'BUILD')?.builder_usage
+  const stepNamesWithSelectedLines = new Set(
+    selectedLineRange
+      ? allPhases
+          .flatMap((phase) => phase.steps)
+          .filter((step) => step.lines.some((line) => isDeploymentLogLineSelected(selectedLineRange, line.id)))
+          .map((step) => step.name)
+      : []
+  )
   const isStepOpen = (name: string, linesCount: number) =>
-    openStepOverrides[name] ?? (isSearching ? linesCount > 0 : name === defaultOpenStepName)
+    openStepOverrides[name] ??
+    (isSearching ? linesCount > 0 : name === defaultOpenStepName || stepNamesWithSelectedLines.has(name))
 
   return (
     <div className="min-h-0 w-full flex-1 overflow-y-auto">
@@ -193,6 +229,10 @@ export function DeploymentLogsSteps({
                       searchQuery={deferredSearchQuery}
                       isSlowest={step.name === slowestStepName}
                       onToggle={() => setOpenStepOverrides((overrides) => ({ ...overrides, [step.name]: !isOpen }))}
+                      selectedLineRange={selectedLineRange}
+                      onSelectLine={selectLine}
+                      lineIdToScrollTo={lineIdToScrollTo}
+                      onScrolledToLine={clearLineIdToScrollTo}
                     />
                   )
                 })}

@@ -8,9 +8,14 @@ import { DeploymentLogsSteps } from './deployment-logs-steps'
 jest.mock('../hooks/use-deployment-logs/use-deployment-logs')
 jest.mock('@qovery/domains/services/feature')
 
+const mockNavigate = jest.fn()
+let mockHash = ''
+
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: '1', projectId: '2', serviceId: 'service-1', executionId: '4' }),
+  useLocation: () => ({ hash: mockHash }),
+  useNavigate: () => mockNavigate,
 }))
 
 const useDeploymentLogsMock = useDeploymentLogs as jest.MockedFunction<typeof useDeploymentLogs>
@@ -76,6 +81,8 @@ describe('DeploymentLogsSteps', () => {
   const environment = environmentFactoryMock(1)[0]
 
   beforeEach(() => {
+    mockHash = ''
+    mockNavigate.mockClear()
     mockLogs(logs)
     useServiceMock.mockReturnValue({
       data: { id: 'service-1', name: 'web-app', serviceType: 'APPLICATION' },
@@ -146,6 +153,36 @@ describe('DeploymentLogsSteps', () => {
     await userEvent.click(buildingImage)
 
     expect(screen.queryByText('Building layer 1')).not.toBeInTheDocument()
+  })
+
+  it('links to the clicked line, and to the lines in between with shift', async () => {
+    const { userEvent, rerender } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+    await userEvent.click(screen.getByRole('button', { name: /Building image/ }))
+
+    await userEvent.click(screen.getAllByRole('link', { name: '08:38:02' })[0])
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ hash: 'L2', replace: true }))
+
+    mockHash = 'L2'
+    rerender(<DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />)
+    await userEvent.keyboard('{Shift>}')
+    await userEvent.click(screen.getByRole('link', { name: '08:38:03' }))
+    await userEvent.keyboard('{/Shift}')
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ hash: 'L2-L3' }))
+  })
+
+  it('opens the steps of the linked lines and highlights them', () => {
+    mockHash = 'L3-L4'
+
+    renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    expect(screen.getByRole('button', { name: /Building image/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: /Pushing image/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('link', { name: '08:38:03' })).toHaveClass('text-brand')
+    expect(screen.getByRole('link', { name: '08:38:02' })).not.toHaveClass('text-brand')
   })
 
   it('shows only the phases and steps matching the search, opened', async () => {
