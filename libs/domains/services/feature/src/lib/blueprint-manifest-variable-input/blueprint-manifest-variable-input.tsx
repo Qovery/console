@@ -76,7 +76,7 @@ export function BlueprintManifestVariableInput({
         <div className={twMerge('overflow-hidden rounded-md border border-neutral', error && 'border-negative')}>
           <CodeEditor
             language="json"
-            height="200px"
+            height="100px"
             value={getStringFieldValue(value)}
             options={{ ariaLabel: inputLabel, scrollBeyondLastLine: false }}
             onMount={(editor) => autoFocus && editor.focus()}
