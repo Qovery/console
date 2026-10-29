@@ -1,13 +1,13 @@
 import { type EnvironmentLogs, type ServiceStepMetric } from 'qovery-typescript-axios'
 import {
-  filterDeploymentLogsByStep,
+  filterDeploymentLogPhases,
   formatDeploymentLogDuration,
   getDeploymentLogLineStep,
   getDeploymentLogPhaseLabel,
   getDeploymentLogPhases,
   getDeploymentLogStepLabel,
+  getDeploymentLogUngroupedStepLabel,
   groupDeploymentLogsByStep,
-  hasDeploymentLogStepNames,
 } from './deployment-log-steps'
 
 const NOW_MS = Date.parse('2026-10-26T08:40:00Z')
@@ -38,9 +38,15 @@ describe('getDeploymentLogLineStep', () => {
     expect(getDeploymentLogLineStep(createLog('Queued', 'Deploy', 'QUEUEING')).name).toBe('DEPLOYMENT_QUEUEING')
   })
 
-  it('falls back to the main step of the stage phase without step name', () => {
-    expect(getDeploymentLogLineStep(createLog('Building', 'Built'))).toEqual({ phase: 'BUILD', name: 'BUILD' })
-    expect(getDeploymentLogLineStep(createLog('Deploying', 'Deploy'))).toEqual({ phase: 'DEPLOY', name: 'DEPLOYMENT' })
+  it('keeps the lines without step name apart, in the phase of their stage', () => {
+    expect(getDeploymentLogLineStep(createLog('Building', 'Built'))).toEqual({
+      phase: 'BUILD',
+      name: 'BUILD_UNGROUPED',
+    })
+    expect(getDeploymentLogLineStep(createLog('Deploying', 'Deploy'))).toEqual({
+      phase: 'DEPLOY',
+      name: 'DEPLOY_UNGROUPED',
+    })
   })
 
   it('puts unknown step names in the phase of their stage', () => {
@@ -51,33 +57,26 @@ describe('getDeploymentLogLineStep', () => {
   })
 })
 
-describe('hasDeploymentLogStepNames', () => {
-  it('returns whether a line carries its step', () => {
-    expect(hasDeploymentLogStepNames([createLog('Deploying', 'Deploy')])).toBe(false)
-    expect(hasDeploymentLogStepNames([createLog('Deploying', 'Deploy', 'DEPLOYMENT')])).toBe(true)
-  })
-})
-
-describe('filterDeploymentLogsByStep', () => {
-  it('keeps the lines matching the query, ignoring case', () => {
-    const groups = groupDeploymentLogsByStep([
+describe('filterDeploymentLogPhases', () => {
+  const phases = getDeploymentLogPhases({
+    linesByStep: groupDeploymentLogsByStep([
       createLog('Pushing layer', 'Build', 'IMAGE_PUSH'),
       createLog('Pushing manifest', 'Build', 'IMAGE_PUSH'),
       createLog('Pod started', 'Deploy', 'DEPLOYMENT'),
-    ])
+    ]),
+    serviceId: 'service-1',
+    nowMs: NOW_MS,
+  })
 
-    const filteredGroups = filterDeploymentLogsByStep(groups, 'MANIFEST')
+  it('keeps the lines matching the query, ignoring case, and every step', () => {
+    const filteredPhases = filterDeploymentLogPhases(phases, 'MANIFEST')
 
-    expect(filteredGroups.get('IMAGE_PUSH')?.lines.map((log) => log.message?.safe_message)).toEqual([
-      'Pushing manifest',
-    ])
-    expect(filteredGroups.get('DEPLOYMENT')?.lines).toEqual([])
+    expect(filteredPhases[0].steps[0].lines.map((log) => log.message?.safe_message)).toEqual(['Pushing manifest'])
+    expect(filteredPhases[1].steps[0]).toMatchObject({ name: 'DEPLOYMENT', lines: [] })
   })
 
   it('returns every line without query', () => {
-    const groups = groupDeploymentLogsByStep([createLog('Pod started', 'Deploy', 'DEPLOYMENT')])
-
-    expect(filterDeploymentLogsByStep(groups, '  ')).toBe(groups)
+    expect(filterDeploymentLogPhases(phases, '  ')).toBe(phases)
   })
 })
 
@@ -222,6 +221,51 @@ describe('getDeploymentLogPhases', () => {
 
     expect(phases).toHaveLength(1)
     expect(phases[0]).toMatchObject({ id: 'PRE_CHECK', status: 'SUCCESS', durationSec: 3 })
+  })
+
+  it('shows every line of a phase when none names its step, with the time of the phase', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps,
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Cloning', 'Build'),
+        createLog('Building', 'Build'),
+        createLog('Deploying', 'Deploy'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases.map((phase) => phase.steps)).toEqual([
+      [
+        {
+          name: 'BUILD_UNGROUPED',
+          status: 'SUCCESS',
+          durationSec: 157,
+          isLive: false,
+          lines: [expect.objectContaining({ message: { safe_message: 'Cloning' } }), expect.anything()],
+          isUngrouped: true,
+        },
+      ],
+      [expect.objectContaining({ name: 'DEPLOY_UNGROUPED', status: 'SUCCESS', durationSec: 76 })],
+    ])
+    expect(getDeploymentLogUngroupedStepLabel(phases[0])).toBe('Build logs')
+  })
+
+  it('lists the lines without step after the steps of their phase', () => {
+    const phases = getDeploymentLogPhases({
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Environment queued', 'Deploy'),
+        createLog('Deploying', 'Deploy', 'DEPLOYMENT'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases[0].steps.map((step) => [step.name, step.lines.length, step.isUngrouped])).toEqual([
+      ['DEPLOYMENT', 1, undefined],
+      ['DEPLOY_UNGROUPED', 1, true],
+    ])
+    expect(getDeploymentLogUngroupedStepLabel(phases[0], 'STOP')).toBe('Other logs')
   })
 
   it('lists step names the API adds later after the known ones', () => {

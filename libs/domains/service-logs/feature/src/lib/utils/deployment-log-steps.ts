@@ -21,6 +21,8 @@ export interface DeploymentLogStep<T extends EnvironmentLogs = EnvironmentLogs> 
   durationSec?: number
   isLive: boolean
   lines: T[]
+  // Holds the lines of the phase that don't name their step
+  isUngrouped?: boolean
 }
 
 export interface DeploymentLogPhase<T extends EnvironmentLogs = EnvironmentLogs> {
@@ -71,12 +73,12 @@ const EXPECTED_STEP_NAMES: Record<DeploymentLogPhaseId, string[]> = {
   EXECUTE: ['EXECUTING'],
 }
 
-// Step of a line without `step_name` (older deployments, first lines of a deployment)
-const PHASE_MAIN_STEP_NAME: Record<DeploymentLogPhaseId, string> = {
-  PRE_CHECK: 'CLOUD_CREDENTIALS_CHECK',
-  BUILD: 'BUILD',
-  DEPLOY: 'DEPLOYMENT',
-  EXECUTE: 'EXECUTING',
+// Lines without `step_name` (older deployments) can't be put in a step: they're listed together, per phase
+const UNGROUPED_STEP_NAMES: Record<DeploymentLogPhaseId, string> = {
+  PRE_CHECK: 'PRE_CHECK_UNGROUPED',
+  BUILD: 'BUILD_UNGROUPED',
+  DEPLOY: 'DEPLOY_UNGROUPED',
+  EXECUTE: 'EXECUTE_UNGROUPED',
 }
 
 const STEP_PHASES = new Map<string, DeploymentLogPhaseId>(
@@ -103,7 +105,7 @@ export function getDeploymentLogLineStep(log: EnvironmentLogs): { phase: Deploym
   const stagePhase = getPhaseFromStageStep(log.details.stage?.step)
   const stepName = log.details.step_name
 
-  if (!stepName) return { phase: stagePhase, name: PHASE_MAIN_STEP_NAME[stagePhase] }
+  if (!stepName) return { phase: stagePhase, name: UNGROUPED_STEP_NAMES[stagePhase] }
 
   // Queueing lines share one name: their stage tells which queue they wait in
   if (stepName === 'QUEUEING') {
@@ -113,14 +115,6 @@ export function getDeploymentLogLineStep(log: EnvironmentLogs): { phase: Deploym
   }
 
   return { phase: STEP_PHASES.get(stepName) ?? stagePhase, name: stepName }
-}
-
-/**
- * Returns whether the logs carry the step of each line.
- * Older API versions don't send `step_name`, so lines can't be grouped by step.
- */
-export function hasDeploymentLogStepNames(logs: EnvironmentLogs[]) {
-  return logs.some((log) => Boolean(log.details.step_name))
 }
 
 /**
@@ -140,29 +134,6 @@ export function groupDeploymentLogsByStep<T extends EnvironmentLogs>(logs: T[]) 
   }
 
   return groups
-}
-
-/**
- * Keeps only the lines whose message contains the query, ignoring case.
- */
-export function filterDeploymentLogsByStep<T extends EnvironmentLogs>(
-  groups: Map<string, DeploymentLogStepLines<T>>,
-  query: string
-) {
-  const normalizedQuery = query.trim().toLowerCase()
-  if (!normalizedQuery) return groups
-
-  return new Map(
-    [...groups].map(([name, group]) => [
-      name,
-      {
-        ...group,
-        lines: group.lines.filter((log) =>
-          (log.message?.safe_message ?? log.error?.user_log_message ?? '').toLowerCase().includes(normalizedQuery)
-        ),
-      },
-    ])
-  )
 }
 
 function getStepMetric(phase: DeploymentLogPhaseId, step: StepTiming, nowMs: number): StepMetric {
@@ -287,9 +258,12 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
 
   return PHASE_IDS.flatMap((phaseId) => {
     const knownStepNames = PHASE_STEP_NAMES[phaseId]
+    const ungroupedStepName = UNGROUPED_STEP_NAMES[phaseId]
     const otherStepNames = new Set(
       [...metrics, ...linesByStep]
-        .filter(([name, { phase }]) => phase === phaseId && !knownStepNames.includes(name))
+        .filter(
+          ([name, { phase }]) => phase === phaseId && !knownStepNames.includes(name) && name !== ungroupedStepName
+        )
         .map(([name]) => name)
     )
     const isExpectedPhase = expectedPhases.includes(phaseId)
@@ -323,23 +297,67 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
       return []
     })
 
-    if (steps.length === 0) return []
+    const ungroupedLines = linesByStep.get(ungroupedStepName)?.lines ?? []
+    if (steps.length === 0 && ungroupedLines.length === 0) return []
 
     const timedSteps = steps.filter((step) => step.durationSec !== undefined)
+    const phase = {
+      id: phaseId,
+      status: getPhaseStatus(steps),
+      durationSec:
+        timedSteps.length > 0
+          ? timedSteps.reduce((totalDurationSec, step) => totalDurationSec + (step.durationSec ?? 0), 0)
+          : undefined,
+      isLive: steps.some((step) => step.isLive),
+    }
 
+    if (ungroupedLines.length === 0) return [{ ...phase, steps }]
+
+    // Some lines name their step: the others come after the steps
+    if (steps.some((step) => step.lines.length > 0)) {
+      return [
+        {
+          ...phase,
+          steps: [...steps, { name: ungroupedStepName, isLive: false, lines: ungroupedLines, isUngrouped: true }],
+        },
+      ]
+    }
+
+    // No line names its step: the steps are replaced by all the lines of the phase, with its status and duration
     return [
       {
-        id: phaseId,
-        status: getPhaseStatus(steps),
-        durationSec:
-          timedSteps.length > 0
-            ? timedSteps.reduce((totalDurationSec, step) => totalDurationSec + (step.durationSec ?? 0), 0)
-            : undefined,
-        isLive: steps.some((step) => step.isLive),
-        steps,
+        ...phase,
+        steps: [
+          {
+            name: ungroupedStepName,
+            status: phase.status,
+            durationSec: phase.durationSec,
+            isLive: phase.isLive,
+            lines: ungroupedLines,
+            isUngrouped: true,
+          },
+        ],
       },
     ]
   })
+}
+
+/**
+ * Keeps only the lines whose message contains the query, ignoring case. Steps without a matching line stay listed.
+ */
+export function filterDeploymentLogPhases<T extends EnvironmentLogs>(phases: DeploymentLogPhase<T>[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase()
+  if (!normalizedQuery) return phases
+
+  return phases.map((phase) => ({
+    ...phase,
+    steps: phase.steps.map((step) => ({
+      ...step,
+      lines: step.lines.filter((log) =>
+        (log.message?.safe_message ?? log.error?.user_log_message ?? '').toLowerCase().includes(normalizedQuery)
+      ),
+    })),
+  }))
 }
 
 /**
@@ -398,6 +416,13 @@ export function getDeploymentLogStepLabel(
   // Step names the API adds later: `NEW_STEP` reads `New step`
   const words = name.toLowerCase().replace(/_/g, ' ')
   return words.charAt(0).toUpperCase() + words.slice(1)
+}
+
+/**
+ * Names the row of the lines without step: all the logs of the phase, or the ones left once the others are in steps.
+ */
+export function getDeploymentLogUngroupedStepLabel(phase: DeploymentLogPhase, action?: ServiceActionEnum) {
+  return phase.steps.length === 1 ? `${getDeploymentLogPhaseLabel(phase.id, action)} logs` : 'Other logs'
 }
 
 export function getDeploymentLogPhaseLabel(id: DeploymentLogPhaseId, action?: ServiceActionEnum) {
