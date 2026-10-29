@@ -12,6 +12,7 @@ import {
   Tooltip,
   getTriggerAction,
 } from '@qovery/shared/ui'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { trimId } from '@qovery/shared/util-js'
 import { getOngoingDeploymentComputingDurationSec } from '../header-logs/header-logs'
@@ -19,6 +20,8 @@ import { hasLiveServiceStepComputingDuration } from '../service-step-metrics'
 
 export interface HeaderDeploymentLogsProps extends PropsWithChildren {
   serviceStatus: Status | null
+  // When the deployment was requested
+  deploymentDate?: string
 }
 
 // `3:58` reads `03:58`, and `1:02:05` past an hour
@@ -31,7 +34,7 @@ export function formatDeploymentDurationClock(durationSec: number) {
   return hours > 0 ? `${hours}:${pad(minutes)}:${pad(seconds)}` : `${pad(minutes)}:${pad(seconds)}`
 }
 
-export function HeaderDeploymentLogs({ serviceStatus, children }: HeaderDeploymentLogsProps) {
+export function HeaderDeploymentLogs({ serviceStatus, deploymentDate, children }: HeaderDeploymentLogsProps) {
   const router = useRouter()
   const { executionId = '' } = useParams({ strict: false })
 
@@ -63,9 +66,17 @@ export function HeaderDeploymentLogs({ serviceStatus, children }: HeaderDeployme
         </div>
         <span className="h-full border-l border-neutral" aria-hidden="true" />
         <div className="flex items-center gap-2">
+          {deploymentDate && (
+            <Tooltip content={dateFullFormat(deploymentDate)}>
+              <Badge className="gap-1 text-ssm text-neutral-subtle">
+                <Icon iconName="calendar-day" iconStyle="regular" />
+                <span>{dateFullFormat(deploymentDate, undefined, 'dd/MM')}</span>
+              </Badge>
+            </Tooltip>
+          )}
           <Tooltip content="Deployment duration">
             <Badge className="gap-1 text-ssm text-neutral-subtle">
-              <Icon iconName="stopwatch" iconStyle="regular" />
+              <Icon iconName="clock" iconStyle="regular" />
               <span>{formatDeploymentDurationClock(computingDurationSec)}</span>
             </Badge>
           </Tooltip>

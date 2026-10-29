@@ -7,6 +7,7 @@ import {
   getDeploymentLogPhases,
   getDeploymentLogStepLabel,
   getDeploymentLogUngroupedStepLabel,
+  getSlowestDeploymentLogStepName,
   groupDeploymentLogsByStep,
 } from './deployment-log-steps'
 
@@ -279,6 +280,39 @@ describe('getDeploymentLogPhases', () => {
     })
 
     expect(phases[0].steps.map((step) => step.name)).toEqual(['BUILD', 'IMAGE_SCAN'])
+  })
+})
+
+describe('getSlowestDeploymentLogStepName', () => {
+  it('returns the step that took the longest across the phases', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [
+        { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
+        {
+          step_name: 'BUILD',
+          status: 'SUCCESS',
+          duration_sec: 150,
+          sub_steps: [{ name: 'IMAGE_PUSH', status: 'SUCCESS', duration_sec: 13 }],
+        },
+        { step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 71 },
+      ],
+      linesByStep: new Map(),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(getSlowestDeploymentLogStepName(phases)).toBe('BUILD')
+  })
+
+  it('returns nothing without at least two timed steps', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [{ step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 71 }],
+      linesByStep: groupDeploymentLogsByStep([createLog('Building', 'Build')]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(getSlowestDeploymentLogStepName(phases)).toBeUndefined()
   })
 })
 
