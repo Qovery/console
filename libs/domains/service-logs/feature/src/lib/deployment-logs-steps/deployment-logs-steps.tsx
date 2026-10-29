@@ -14,7 +14,7 @@ import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
-import { Heading, Icon, InputSearch } from '@qovery/shared/ui'
+import { EmptyState, Heading, Icon, InputSearch } from '@qovery/shared/ui'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -114,21 +114,20 @@ export function DeploymentLogsSteps({
         ]
       : []
 
-  const phases = filterDeploymentLogPhases(
-    getDeploymentLogPhases({
-      serviceSteps: serviceStatus.steps?.details,
-      preCheckSteps: preCheckStage?.steps,
-      linesByStep,
-      serviceId,
-      expectedPhases,
-      // Steps that never started: upcoming while the deployment runs, skipped once it failed, hidden once it succeeded
-      notStartedStepStatus: actionStatus === 'SUCCESS' ? undefined : isDeploymentRunning ? 'PENDING' : 'SKIP',
-      nowMs: Date.now(),
-    }),
-    deferredSearchQuery
-  )
+  const allPhases = getDeploymentLogPhases({
+    serviceSteps: serviceStatus.steps?.details,
+    preCheckSteps: preCheckStage?.steps,
+    linesByStep,
+    serviceId,
+    expectedPhases,
+    // Steps that never started: upcoming while the deployment runs, skipped once it failed, hidden once it succeeded
+    notStartedStepStatus: actionStatus === 'SUCCESS' ? undefined : isDeploymentRunning ? 'PENDING' : 'SKIP',
+    nowMs: Date.now(),
+  })
+  // While searching, only the phases and steps with matching lines are shown
+  const phases = filterDeploymentLogPhases(allPhases, deferredSearchQuery)
 
-  useIntervalTick(phases.some((phase) => phase.isLive))
+  useIntervalTick(allPhases.some((phase) => phase.isLive))
 
   if (logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
@@ -149,7 +148,7 @@ export function DeploymentLogsSteps({
 
   const defaultOpenStepName = getDefaultOpenStepName(phases)
   // Once the deployment went through, the slowest step shows where time can be saved
-  const slowestStepName = actionStatus === 'SUCCESS' ? getSlowestDeploymentLogStepName(phases) : undefined
+  const slowestStepName = actionStatus === 'SUCCESS' ? getSlowestDeploymentLogStepName(allPhases) : undefined
   const builderUsage = serviceStatus.steps?.details?.find((step) => step.step_name === 'BUILD')?.builder_usage
   const isStepOpen = (name: string, linesCount: number) =>
     openStepOverrides[name] ?? (isSearching ? linesCount > 0 : name === defaultOpenStepName)
@@ -168,6 +167,13 @@ export function DeploymentLogsSteps({
             onChange={setSearchQuery}
           />
         </div>
+        {isSearching && phases.length === 0 && (
+          <EmptyState
+            icon="magnifying-glass"
+            title="No matching logs"
+            description={`No log line contains "${deferredSearchQuery.trim()}".`}
+          />
+        )}
         {phases.map((phase) => {
           const isNotStarted = phase.status === 'PENDING' || phase.status === 'SKIP'
 
@@ -209,7 +215,7 @@ export function DeploymentLogsSteps({
                           : getDeploymentLogStepLabel(step.name, { action, serviceType: service?.serviceType })
                       }
                       isOpen={isOpen}
-                      isSearching={isSearching}
+                      searchQuery={deferredSearchQuery}
                       isSlowest={step.name === slowestStepName}
                       onToggle={() => setOpenStepOverrides((overrides) => ({ ...overrides, [step.name]: !isOpen }))}
                     />

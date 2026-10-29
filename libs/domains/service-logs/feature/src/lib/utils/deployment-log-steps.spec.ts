@@ -69,11 +69,16 @@ describe('filterDeploymentLogPhases', () => {
     nowMs: NOW_MS,
   })
 
-  it('keeps the lines matching the query, ignoring case, and every step', () => {
+  it('keeps the lines matching the query, ignoring case, and the steps and phases that have some', () => {
     const filteredPhases = filterDeploymentLogPhases(phases, 'MANIFEST')
 
+    expect(filteredPhases.map((phase) => phase.id)).toEqual(['BUILD'])
+    expect(filteredPhases[0].steps.map((step) => step.name)).toEqual(['IMAGE_PUSH'])
     expect(filteredPhases[0].steps[0].lines.map((log) => log.message?.safe_message)).toEqual(['Pushing manifest'])
-    expect(filteredPhases[1].steps[0]).toMatchObject({ name: 'DEPLOYMENT', lines: [] })
+  })
+
+  it('returns no phase when no line matches', () => {
+    expect(filterDeploymentLogPhases(phases, 'nowhere')).toEqual([])
   })
 
   it('returns every line without query', () => {
