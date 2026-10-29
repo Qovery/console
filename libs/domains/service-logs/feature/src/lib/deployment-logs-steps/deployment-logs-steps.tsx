@@ -10,10 +10,7 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { useContext, useDeferredValue, useEffect, useMemo, useState } from 'react'
-import { P, match } from 'ts-pattern'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { EmptyState, Heading, Icon, InputSearch } from '@qovery/shared/ui'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
@@ -39,15 +36,6 @@ const PHASE_ICONS: Record<DeploymentLogPhaseId, IconName> = {
   BUILD: 'hammer',
   DEPLOY: 'rocket',
   EXECUTE: 'play',
-}
-
-function isServiceBuiltByQovery(service?: AnyService) {
-  return match(service)
-    .with({ serviceType: 'CONTAINER' }, () => false)
-    .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
-    .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)
-    .with({ serviceType: 'HELM', values_override: P.when(isHelmRepositorySource) }, () => false)
-    .otherwise(() => true)
 }
 
 // Step opened by default: the one running, or the one that failed
@@ -102,26 +90,12 @@ export function DeploymentLogsSteps({
 
   const action = serviceStatus.status_details?.action
   const actionStatus = serviceStatus.status_details?.status
-  const isDeploymentRunning = match(actionStatus)
-    .with('QUEUED', 'ONGOING', 'CANCELING', 'EXECUTING', () => true)
-    .otherwise(() => false)
-  const expectedPhases: DeploymentLogPhaseId[] =
-    action === 'DEPLOY'
-      ? [
-          ...(isServiceBuiltByQovery(service) ? (['BUILD'] as const) : []),
-          'DEPLOY',
-          ...(service?.serviceType === 'TERRAFORM' ? (['EXECUTE'] as const) : []),
-        ]
-      : []
 
   const allPhases = getDeploymentLogPhases({
     serviceSteps: serviceStatus.steps?.details,
     preCheckSteps: preCheckStage?.steps,
     linesByStep,
     serviceId,
-    expectedPhases,
-    // Steps that never started: upcoming while the deployment runs, skipped once it failed, hidden once it succeeded
-    notStartedStepStatus: actionStatus === 'SUCCESS' ? undefined : isDeploymentRunning ? 'PENDING' : 'SKIP',
     nowMs: Date.now(),
   })
   // While searching, only the phases and steps with matching lines are shown
