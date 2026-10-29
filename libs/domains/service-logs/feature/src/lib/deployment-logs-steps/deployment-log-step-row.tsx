@@ -154,7 +154,7 @@ export function DeploymentLogStepRow({
     <div className="border-b border-neutral last:border-b-0">
       <button
         type="button"
-        className="flex h-12 w-full items-center justify-between gap-4 px-4 text-left text-sm transition-colors enabled:hover:bg-surface-neutral-subtle disabled:cursor-default"
+        className="flex h-12 w-full items-center justify-between gap-4 px-4 text-left text-sm disabled:cursor-default"
         onClick={onToggle}
         disabled={!hasLines}
         aria-expanded={hasLines ? isOpen : undefined}
