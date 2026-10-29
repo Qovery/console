@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { LogsType } from '@qovery/shared/enums'
 import { Ansi, Badge, Button, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
@@ -11,6 +11,11 @@ import {
 } from '@qovery/shared/util-js'
 import { type EnvironmentLogIds } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { splitAnsiTextOnMatches } from '../utils/ansi-text-matches'
+import {
+  type DeploymentLogLineRange,
+  formatDeploymentLogLineHash,
+  isDeploymentLogLineSelected,
+} from '../utils/deployment-log-line-selection'
 import {
   type DeploymentLogStep,
   type DeploymentLogStepStatus,
@@ -50,7 +55,25 @@ function HighlightedLogMessage({ message, searchQuery }: { message: string; sear
   )
 }
 
-function DeploymentLogLine({ line, searchQuery }: { line: EnvironmentLogIds; searchQuery: string }) {
+export interface DeploymentLogLineSelectionProps {
+  selectedLineRange?: DeploymentLogLineRange
+  onSelectLine: (lineId: number, isExtending: boolean) => void
+  // Line the page was opened on, scrolled to once it shows
+  lineIdToScrollTo?: number
+  onScrolledToLine: () => void
+}
+
+function DeploymentLogLine({
+  line,
+  searchQuery,
+  isSelected,
+  onSelectLine,
+}: {
+  line: EnvironmentLogIds
+  searchQuery: string
+  isSelected: boolean
+  onSelectLine: DeploymentLogLineSelectionProps['onSelectLine']
+}) {
   const message = getDeploymentLogLineMessage(line)
   const step = line.details.stage?.step
   const isErrorLine = line.type === LogsType.ERROR
@@ -58,14 +81,26 @@ function DeploymentLogLine({ line, searchQuery }: { line: EnvironmentLogIds; sea
   const isSuccess = step === 'Deployed'
 
   return (
-    <div className="flex items-start">
-      <span
-        className="w-20 shrink-0 select-none text-neutral-subtle"
+    <div
+      data-line-id={line.id}
+      className={clsx('-mx-4 flex items-start px-4 py-0.5', isSelected && 'bg-surface-brand-component')}
+    >
+      {/* Links to the line, like GitHub line numbers: shift-click selects the lines in between */}
+      <a
+        href={`#${formatDeploymentLogLineHash({ start: line.id, end: line.id })}`}
+        className={clsx(
+          'w-20 shrink-0 select-none hover:text-brand hover:underline',
+          isSelected ? 'text-brand' : 'text-neutral-subtle'
+        )}
         title={dateUTCString(line.timestamp)}
+        onClick={(event) => {
+          event.preventDefault()
+          onSelectLine(line.id, event.shiftKey)
+        }}
         {...{ [LOG_COPY_EXCLUDE_DATA_ATTRIBUTE]: 'true' }}
       >
         {dateFullFormat(line.timestamp, 'UTC', 'HH:mm:ss')}
-      </span>
+      </a>
       <span
         className={clsx('min-w-0 flex-1 whitespace-pre-wrap break-all', {
           'text-negative': isError,
@@ -88,17 +123,26 @@ function DeploymentLogLines({
   lines,
   isStreaming,
   searchQuery,
+  selectedLineRange,
+  onSelectLine,
+  lineIdToScrollTo,
+  onScrolledToLine,
 }: {
   lines: EnvironmentLogIds[]
   isStreaming: boolean
   searchQuery: string
-}) {
+} & DeploymentLogLineSelectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const isScrolledToBottomRef = useRef(true)
   const [isScrolled, setIsScrolled] = useState(false)
   const [showAllLines, setShowAllLines] = useState(false)
 
-  const hiddenLinesCount = showAllLines ? 0 : Math.max(0, lines.length - MAX_VISIBLE_LINES)
+  const overflowLinesCount = Math.max(0, lines.length - MAX_VISIBLE_LINES)
+  // Selected lines are never hidden behind "Show previous lines"
+  const hasHiddenSelectedLine = lines
+    .slice(0, overflowLinesCount)
+    .some((line) => isDeploymentLogLineSelected(selectedLineRange, line.id))
+  const hiddenLinesCount = showAllLines || hasHiddenSelectedLine ? 0 : overflowLinesCount
   const visibleLines = hiddenLinesCount > 0 ? lines.slice(hiddenLinesCount) : lines
 
   // Follows new lines like a terminal, unless the user scrolled up to read older ones
@@ -109,6 +153,15 @@ function DeploymentLogLines({
     }
   }, [visibleLines.length])
 
+  useEffect(() => {
+    if (lineIdToScrollTo === undefined) return
+    const lineElement = scrollRef.current?.querySelector(`[data-line-id="${lineIdToScrollTo}"]`)
+    if (!lineElement) return
+
+    lineElement.scrollIntoView?.({ block: 'center' })
+    onScrolledToLine()
+  }, [lineIdToScrollTo, visibleLines.length, onScrolledToLine])
+
   return (
     <div className="relative border-t border-neutral bg-surface-neutral-subtle">
       {isScrolled && (
@@ -116,7 +169,7 @@ function DeploymentLogLines({
       )}
       <div
         ref={scrollRef}
-        className="flex max-h-[400px] flex-col gap-1 overflow-y-auto px-4 py-2 font-code text-xs leading-5"
+        className="flex max-h-[400px] flex-col overflow-y-auto px-4 py-1.5 font-code text-xs leading-5"
         onCopy={copySelectedLogMessages}
         onScroll={(event) => {
           const element = event.currentTarget
@@ -129,22 +182,30 @@ function DeploymentLogLines({
             variant="outline"
             color="neutral"
             size="xs"
-            className="mb-1 self-start font-sans"
+            className="my-1 self-start font-sans"
             onClick={() => setShowAllLines(true)}
           >
             Show {hiddenLinesCount.toLocaleString('en-US')} previous {pluralize(hiddenLinesCount, 'line')}
           </Button>
         )}
         {visibleLines.map((line) => (
-          <DeploymentLogLine key={line.id} line={line} searchQuery={searchQuery} />
+          <DeploymentLogLine
+            key={line.id}
+            line={line}
+            searchQuery={searchQuery}
+            isSelected={isDeploymentLogLineSelected(selectedLineRange, line.id)}
+            onSelectLine={onSelectLine}
+          />
         ))}
-        {isStreaming && <p className="font-sans text-sm font-medium text-neutral-subtle">Streaming deployment logs…</p>}
+        {isStreaming && (
+          <p className="py-0.5 font-sans text-sm font-medium text-neutral-subtle">Streaming deployment logs…</p>
+        )}
       </div>
     </div>
   )
 }
 
-export interface DeploymentLogStepRowProps {
+export interface DeploymentLogStepRowProps extends DeploymentLogLineSelectionProps {
   step: DeploymentLogStep<EnvironmentLogIds>
   label: string
   isOpen: boolean
@@ -160,6 +221,7 @@ export function DeploymentLogStepRow({
   searchQuery,
   isSlowest = false,
   onToggle,
+  ...lineSelectionProps
 }: DeploymentLogStepRowProps) {
   const linesCount = step.lines.length
   const hasLines = linesCount > 0
@@ -202,7 +264,12 @@ export function DeploymentLogStepRow({
         </span>
       </button>
       {isOpen && hasLines && (
-        <DeploymentLogLines lines={step.lines} isStreaming={step.status === 'ONGOING'} searchQuery={searchQuery} />
+        <DeploymentLogLines
+          lines={step.lines}
+          isStreaming={step.status === 'ONGOING'}
+          searchQuery={searchQuery}
+          {...lineSelectionProps}
+        />
       )}
     </div>
   )
