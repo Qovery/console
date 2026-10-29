@@ -13,6 +13,7 @@ export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
   fieldName?: 'credentials' | 'restricted_credentials'
+  label?: string
   portal?: boolean
   maxMenuHeight?: number
 }
@@ -32,6 +33,7 @@ export function ClusterCredentialsSettings({
   cloudProvider,
   isSetting,
   fieldName = 'credentials',
+  label,
   portal,
   maxMenuHeight,
 }: ClusterCredentialsSettingsProps) {
@@ -118,7 +120,7 @@ export function ClusterCredentialsSettings({
         ) : (
           <InputSelect
             dataTestId={fieldName === 'credentials' ? 'input-credentials' : 'input-restricted-credentials'}
-            label={fieldName === 'restricted_credentials' ? 'Restricted credentials' : 'Credentials'}
+            label={label ?? (fieldName === 'restricted_credentials' ? 'Restricted credentials' : 'Credentials')}
             portal={portal}
             maxMenuHeight={maxMenuHeight}
             options={buildCredentials}

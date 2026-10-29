@@ -2,7 +2,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ClusterRestrictivePermissionsSettings } from './cluster-restrictive-permissions-settings'
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -39,6 +39,7 @@ jest.mock('@tanstack/react-router', () => {
 })
 
 const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
+const mockOnSubmit = jest.fn()
 
 const awsCredentials = [
   { id: 'static-1', name: 'static-credential', object_type: 'AWS', access_key_id: 'AKIA' },
@@ -55,16 +56,20 @@ function FormValues() {
   )
 }
 
-const renderSettings = (defaultValues: Record<string, unknown>) =>
-  renderWithProviders(
-    wrapWithReactHookForm(
-      <>
-        <ClusterRestrictivePermissionsSettings cloudProvider={CloudProviderEnum.AWS} />
-        <FormValues />
-      </>,
-      { defaultValues }
-    )
+function FormHarness() {
+  const { handleSubmit } = useFormContext()
+
+  return (
+    <form onSubmit={handleSubmit(mockOnSubmit)}>
+      <ClusterRestrictivePermissionsSettings cloudProvider={CloudProviderEnum.AWS} />
+      <FormValues />
+      <button type="submit">Save</button>
+    </form>
   )
+}
+
+const renderSettings = (defaultValues: Record<string, unknown>) =>
+  renderWithProviders(wrapWithReactHookForm(<FormHarness />, { defaultValues }))
 
 const isBefore = (element: HTMLElement, other: HTMLElement) =>
   Boolean(element.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING)
@@ -74,6 +79,7 @@ const expectInOrder = (...elements: HTMLElement[]) =>
 
 describe('ClusterRestrictivePermissionsSettings', () => {
   beforeEach(() => {
+    jest.clearAllMocks()
     useCloudProviderCredentialsMockSpy.mockReturnValue({ data: awsCredentials, isLoading: false })
   })
 
@@ -131,10 +137,40 @@ describe('ClusterRestrictivePermissionsSettings', () => {
       configured_credentials: 'role-1',
       restricted_credentials: 'static-1',
       using_restrictive_permissions: true,
-      slack_webhook_url: 'https://hooks.slack.test/abc',
+      slack_webhook_url: 'https://hooks.slack.com/services/T00000000/B00000000/abcdefghijklmnop',
     })
 
-    expect(screen.getByLabelText('Slack webhook URL')).toHaveValue('https://hooks.slack.test/abc')
+    expect(screen.getByLabelText('Slack webhook URL')).toHaveValue(
+      'https://hooks.slack.com/services/T00000000/B00000000/abcdefghijklmnop'
+    )
+  })
+
+  it('should block saving an invalid Slack webhook URL when editing credentials', async () => {
+    const { userEvent } = renderSettings({
+      configured_credentials: 'role-1',
+      restricted_credentials: 'static-1',
+      using_restrictive_permissions: true,
+      slack_webhook_url: 'https://example.com/services/invalid',
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(await screen.findByText('Enter a valid Slack webhook URL from hooks.slack.com.')).toBeInTheDocument()
+    expect(mockOnSubmit).not.toHaveBeenCalled()
+  })
+
+  it('should allow saving a valid Slack webhook URL when editing credentials', async () => {
+    const { userEvent } = renderSettings({
+      configured_credentials: 'role-1',
+      restricted_credentials: 'static-1',
+      using_restrictive_permissions: true,
+      slack_webhook_url: 'https://hooks.slack.com/services/T00000000/B00000000/abcdefghijklmnop',
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => expect(mockOnSubmit).toHaveBeenCalled())
+    expect(screen.queryByText('Enter a valid Slack webhook URL from hooks.slack.com.')).not.toBeInTheDocument()
   })
 
   it('should not display the Slack webhook when restrictive permissions are off', () => {
