@@ -361,6 +361,21 @@ export function filterDeploymentLogPhases<T extends EnvironmentLogs>(phases: Dep
 }
 
 /**
+ * Returns the step that took the longest across every phase.
+ * Rows of lines without step are left out: they time a whole phase, not a step.
+ */
+export function getSlowestDeploymentLogStepName(phases: DeploymentLogPhase[]) {
+  const timedSteps = phases
+    .flatMap((phase) => phase.steps)
+    .filter((step) => !step.isUngrouped && (step.durationSec ?? 0) > 0)
+  if (timedSteps.length < 2) return undefined
+
+  return timedSteps.reduce((slowestStep, step) =>
+    (step.durationSec ?? 0) > (slowestStep.durationSec ?? 0) ? step : slowestStep
+  ).name
+}
+
+/**
  * Formats a duration the way step durations read in the logs: `7s`, `2min 8s`, `1h 5min`.
  */
 export function formatDeploymentLogDuration(durationSec: number) {

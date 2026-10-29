@@ -28,8 +28,10 @@ import {
   getDeploymentLogPhases,
   getDeploymentLogStepLabel,
   getDeploymentLogUngroupedStepLabel,
+  getSlowestDeploymentLogStepName,
   groupDeploymentLogsByStep,
 } from '../utils/deployment-log-steps'
+import { BuilderUsageBadges } from './builder-usage-badges'
 import { DeploymentLogStatusIcon, DeploymentLogStepRow } from './deployment-log-step-row'
 
 const PHASE_ICONS: Record<DeploymentLogPhaseId, IconName> = {
@@ -146,6 +148,9 @@ export function DeploymentLogsSteps({
   }
 
   const defaultOpenStepName = getDefaultOpenStepName(phases)
+  // Once the deployment went through, the slowest step shows where time can be saved
+  const slowestStepName = actionStatus === 'SUCCESS' ? getSlowestDeploymentLogStepName(phases) : undefined
+  const builderUsage = serviceStatus.steps?.details?.find((step) => step.step_name === 'BUILD')?.builder_usage
   const isStepOpen = (name: string, linesCount: number) =>
     openStepOverrides[name] ?? (isSearching ? linesCount > 0 : name === defaultOpenStepName)
 
@@ -167,39 +172,50 @@ export function DeploymentLogsSteps({
           const isNotStarted = phase.status === 'PENDING' || phase.status === 'SKIP'
 
           return (
-            <div key={phase.id} className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-              <div className="flex items-center gap-2 border-b border-neutral px-4 py-3 text-sm">
-                <Icon
-                  iconName={PHASE_ICONS[phase.id]}
-                  iconStyle="regular"
-                  className={clsx('w-3.5', isNotStarted ? 'text-neutral-subtle' : 'text-neutral')}
-                />
-                <Heading level={3} className={clsx('flex-1', isNotStarted && 'text-neutral-subtle')}>
-                  {getDeploymentLogPhaseLabel(phase.id, action)}
-                </Heading>
-                {phase.durationSec !== undefined && !isNotStarted && (
-                  <span className="text-neutral-subtle">{formatDeploymentLogDuration(phase.durationSec)}</span>
-                )}
-                <DeploymentLogStatusIcon status={phase.status} />
-              </div>
-              {phase.steps.map((step) => {
-                const isOpen = isStepOpen(step.name, step.lines.length)
-
-                return (
-                  <DeploymentLogStepRow
-                    key={step.name}
-                    step={step}
-                    label={
-                      step.isUngrouped
-                        ? getDeploymentLogUngroupedStepLabel(phase, action)
-                        : getDeploymentLogStepLabel(step.name, { action, serviceType: service?.serviceType })
-                    }
-                    isOpen={isOpen}
-                    isSearching={isSearching}
-                    onToggle={() => setOpenStepOverrides((overrides) => ({ ...overrides, [step.name]: !isOpen }))}
+            <div key={phase.id} className="rounded-lg border border-neutral bg-surface-neutral-subtle">
+              <div className="flex h-12 items-center justify-between gap-4 px-4 text-sm">
+                <div className="flex min-w-0 items-center gap-2">
+                  <Icon
+                    iconName={PHASE_ICONS[phase.id]}
+                    iconStyle="regular"
+                    className={clsx('w-3.5', isNotStarted ? 'text-neutral-subtle' : 'text-neutral')}
                   />
-                )
-              })}
+                  <Heading level={3} className={clsx(isNotStarted && 'text-neutral-subtle')}>
+                    {getDeploymentLogPhaseLabel(phase.id, action)}
+                  </Heading>
+                  <DeploymentLogStatusIcon status={phase.status} />
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  {phase.id === 'BUILD' && builderUsage && (
+                    <BuilderUsageBadges usage={builderUsage} service={service} />
+                  )}
+                  {phase.durationSec !== undefined && !isNotStarted && (
+                    <span className="text-neutral-subtle">{formatDeploymentLogDuration(phase.durationSec)}</span>
+                  )}
+                </div>
+              </div>
+              {/* The steps sit on their own card, its borders over the ones of the phase */}
+              <div className="-mx-px -mb-px overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+                {phase.steps.map((step) => {
+                  const isOpen = isStepOpen(step.name, step.lines.length)
+
+                  return (
+                    <DeploymentLogStepRow
+                      key={step.name}
+                      step={step}
+                      label={
+                        step.isUngrouped
+                          ? getDeploymentLogUngroupedStepLabel(phase, action)
+                          : getDeploymentLogStepLabel(step.name, { action, serviceType: service?.serviceType })
+                      }
+                      isOpen={isOpen}
+                      isSearching={isSearching}
+                      isSlowest={step.name === slowestStepName}
+                      onToggle={() => setOpenStepOverrides((overrides) => ({ ...overrides, [step.name]: !isOpen }))}
+                    />
+                  )
+                })}
+              </div>
             </div>
           )
         })}

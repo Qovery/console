@@ -531,9 +531,13 @@ export function ListDeploymentLogs({
   const isDeploymentLogsV2Enabled = useFeatureFlagEnabled('deployment-logs-v2') === true
 
   if (isDeploymentLogsV2Enabled) {
+    const deployment = executionId
+      ? deploymentHistory.find((deployment) => deployment.identifier.execution_id === executionId)
+      : deploymentHistory[0]
+
     return (
       <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-background">
-        <HeaderDeploymentLogs serviceStatus={serviceStatus}>
+        <HeaderDeploymentLogs serviceStatus={serviceStatus} deploymentDate={deployment?.auditing_data.created_at}>
           <DeploymentHistoryDropdown environment={environment} deploymentHistory={deploymentHistory} />
         </HeaderDeploymentLogs>
         <DeploymentLogsSteps

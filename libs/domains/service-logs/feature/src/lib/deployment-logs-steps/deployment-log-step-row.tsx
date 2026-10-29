@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { useLayoutEffect, useRef, useState } from 'react'
 import { LogsType } from '@qovery/shared/enums'
-import { Ansi, Button, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Ansi, Badge, Button, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import {
   LOG_COPY_EXCLUDE_DATA_ATTRIBUTE,
@@ -128,27 +128,33 @@ export interface DeploymentLogStepRowProps {
   label: string
   isOpen: boolean
   isSearching: boolean
+  isSlowest?: boolean
   onToggle: () => void
 }
 
-export function DeploymentLogStepRow({ step, label, isOpen, isSearching, onToggle }: DeploymentLogStepRowProps) {
+export function DeploymentLogStepRow({
+  step,
+  label,
+  isOpen,
+  isSearching,
+  isSlowest = false,
+  onToggle,
+}: DeploymentLogStepRowProps) {
   const linesCount = step.lines.length
   const hasLines = linesCount > 0
   const isNotStarted = step.status === 'PENDING' || step.status === 'SKIP'
 
-  const linesCountLabel = isSearching
+  const matchesCountLabel = isSearching
     ? hasLines
       ? `${linesCount.toLocaleString('en-US')} ${pluralize(linesCount, 'match', 'matches')}`
       : 'No match'
-    : hasLines
-      ? `${linesCount.toLocaleString('en-US')} ${pluralize(linesCount, 'line')}`
-      : null
+    : null
 
   return (
     <div className="border-b border-neutral last:border-b-0">
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-sm transition-colors enabled:hover:bg-surface-neutral-subtle disabled:cursor-default"
+        className="flex h-12 w-full items-center justify-between gap-4 px-4 text-left text-sm transition-colors enabled:hover:bg-surface-neutral-subtle disabled:cursor-default"
         onClick={onToggle}
         disabled={!hasLines}
         aria-expanded={hasLines ? isOpen : undefined}
@@ -160,13 +166,18 @@ export function DeploymentLogStepRow({ step, label, isOpen, isSearching, onToggl
             className={clsx('w-3.5 text-xs', hasLines ? 'text-neutral' : 'text-neutral-disabled')}
           />
           <span className={clsx('truncate', isNotStarted ? 'text-neutral-subtle' : 'text-neutral')}>{label}</span>
-          {linesCountLabel && <span className="shrink-0 text-neutral-subtle">{linesCountLabel}</span>}
+          <DeploymentLogStatusIcon status={step.status} />
+          {matchesCountLabel && <span className="shrink-0 text-neutral-subtle">{matchesCountLabel}</span>}
         </span>
         <span className="flex shrink-0 items-center gap-2">
+          {isSlowest && (
+            <Badge size="sm" color="yellow" variant="surface" className="rounded-md font-medium">
+              Slowest
+            </Badge>
+          )}
           {step.durationSec !== undefined && !isNotStarted && (
             <span className="text-neutral-subtle">{formatDeploymentLogDuration(step.durationSec)}</span>
           )}
-          <DeploymentLogStatusIcon status={step.status} />
         </span>
       </button>
       {isOpen && hasLines && <DeploymentLogLines lines={step.lines} isStreaming={step.status === 'ONGOING'} />}

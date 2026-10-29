@@ -1,5 +1,5 @@
 import { type Status } from 'qovery-typescript-axios'
-import { useService } from '@qovery/domains/services/feature'
+import { useDefaultAdvancedSettings, useService } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -15,6 +15,9 @@ jest.mock('@tanstack/react-router', () => ({
 
 const useDeploymentLogsMock = useDeploymentLogs as jest.MockedFunction<typeof useDeploymentLogs>
 const useServiceMock = useService as jest.MockedFunction<typeof useService>
+const useDefaultAdvancedSettingsMock = useDefaultAdvancedSettings as jest.MockedFunction<
+  typeof useDefaultAdvancedSettings
+>
 
 function createLog(id: number, message: string, stageStep: string, stepName?: string): EnvironmentLogIds {
   return {
@@ -87,11 +90,45 @@ describe('DeploymentLogsSteps', () => {
     expect(screen.getByRole('heading', { name: 'Logs' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Build' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Deploy' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Cloning repository 1 line 7s/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Building image 2 lines 57s/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Pushing image 1 line 13s/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Deploying application 1 line 11s/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cloning repository 7s' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Building image Slowest 57s' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Pushing image 13s' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploying application 11s' })).toBeInTheDocument()
     expect(screen.queryByText('Building layer 1')).not.toBeInTheDocument()
+  })
+
+  it('shows the CPU and memory the builder used against the build limits', async () => {
+    useDefaultAdvancedSettingsMock.mockReturnValue({
+      data: { 'build.cpu_max_in_milli': 8000, 'build.ram_max_in_gib': 16 },
+    } as ReturnType<typeof useDefaultAdvancedSettings>)
+    const [gitClone, build, deployment] = serviceStatus.steps?.details ?? []
+
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps
+        environment={environment}
+        serviceStatus={{
+          ...serviceStatus,
+          steps: {
+            total_duration_sec: 90,
+            total_computing_duration_sec: 90,
+            details: [
+              gitClone,
+              {
+                ...build,
+                builder_usage: { cpu_milli_avg: 1200, cpu_milli_max: 3800, memory_mib_max: 15155, samples: 20 },
+              },
+              deployment,
+            ],
+          },
+        }}
+        deploymentHistory={[]}
+      />
+    )
+
+    expect(screen.getByText('CPU')).toBeInTheDocument()
+    await userEvent.hover(screen.getByText('Memory'))
+
+    expect(await screen.findAllByText('14.8 / 16 GiB (92%)')).not.toHaveLength(0)
   })
 
   it('shows the lines of a step once expanded', async () => {
@@ -161,10 +198,10 @@ describe('DeploymentLogsSteps', () => {
     )
 
     expect(screen.queryByRole('button', { name: /Cloning repository/ })).not.toBeInTheDocument()
-    const buildLogs = screen.getByRole('button', { name: /Build logs 1 line 1min 17s/ })
+    const buildLogs = screen.getByRole('button', { name: 'Build logs 1min 17s' })
     await userEvent.click(buildLogs)
 
     expect(screen.getByText('Cloning acme/web-app')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Deploy logs 1 line 11s/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploy logs 11s' })).toBeInTheDocument()
   })
 })
