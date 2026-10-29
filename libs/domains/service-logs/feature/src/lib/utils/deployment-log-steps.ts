@@ -7,7 +7,9 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { LogsType } from '@qovery/shared/enums'
 import { getServiceStepDurationSec, isServiceStepDurationLive } from '../service-step-metrics'
+import { stripAnsi } from './ansi-text-matches'
 import { type EnvironmentEngineStep, getFilterStep } from './deployment-log-filter-step'
 
 export type DeploymentLogPhaseId = 'PRE_CHECK' | 'BUILD' | 'DEPLOY' | 'EXECUTE'
@@ -343,21 +345,29 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
 }
 
 /**
- * Keeps only the lines whose message contains the query, ignoring case. Steps without a matching line stay listed.
+ * Returns the message a log line shows: the error explained to the user on error lines.
+ */
+export function getDeploymentLogLineMessage(log: EnvironmentLogs) {
+  return (log.type === LogsType.ERROR ? log.error?.user_log_message : log.message?.safe_message) ?? ''
+}
+
+/**
+ * Keeps only the lines whose message contains the query, ignoring case and colors,
+ * and the steps and phases that still have lines.
  */
 export function filterDeploymentLogPhases<T extends EnvironmentLogs>(phases: DeploymentLogPhase<T>[], query: string) {
   const normalizedQuery = query.trim().toLowerCase()
   if (!normalizedQuery) return phases
 
-  return phases.map((phase) => ({
-    ...phase,
-    steps: phase.steps.map((step) => ({
-      ...step,
-      lines: step.lines.filter((log) =>
-        (log.message?.safe_message ?? log.error?.user_log_message ?? '').toLowerCase().includes(normalizedQuery)
-      ),
-    })),
-  }))
+  return phases.flatMap((phase) => {
+    const steps = phase.steps.flatMap((step) => {
+      const lines = step.lines.filter((log) =>
+        stripAnsi(getDeploymentLogLineMessage(log)).toLowerCase().includes(normalizedQuery)
+      )
+      return lines.length > 0 ? [{ ...step, lines }] : []
+    })
+    return steps.length > 0 ? [{ ...phase, steps }] : []
+  })
 }
 
 /**

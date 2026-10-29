@@ -11,10 +11,12 @@ import {
 } from '@qovery/shared/util-js'
 import { type EnvironmentLogIds } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
+import { splitAnsiTextOnMatches } from '../utils/ansi-text-matches'
 import {
   type DeploymentLogStep,
   type DeploymentLogStepStatus,
   formatDeploymentLogDuration,
+  getDeploymentLogLineMessage,
 } from '../utils/deployment-log-steps'
 
 // Rendering every line of a long build slows the page down: older lines are shown on demand
@@ -36,7 +38,21 @@ export function DeploymentLogStatusIcon({ status }: { status?: DeploymentLogStep
   return <StatusChip status={status} />
 }
 
-function DeploymentLogLine({ line }: { line: EnvironmentLogIds }) {
+// Highlights the matches the way `HighlightText` does, keeping the colors of the rest of the message
+function HighlightedLogMessage({ message, searchQuery }: { message: string; searchQuery: string }) {
+  return splitAnsiTextOnMatches(message, searchQuery).map((part, index) =>
+    part.isMatch ? (
+      <mark key={index} className="rounded-sm bg-surface-warning-highlight text-neutral">
+        {part.text}
+      </mark>
+    ) : (
+      <Ansi key={index}>{part.text}</Ansi>
+    )
+  )
+}
+
+function DeploymentLogLine({ line, searchQuery }: { line: EnvironmentLogIds; searchQuery: string }) {
+  const message = getDeploymentLogLineMessage(line)
   const step = line.details.stage?.step
   const isErrorLine = line.type === LogsType.ERROR
   const isError = isErrorLine || step === 'DeployedError'
@@ -59,13 +75,25 @@ function DeploymentLogLine({ line }: { line: EnvironmentLogIds }) {
         })}
         {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}
       >
-        <Ansi>{isErrorLine ? line.error?.user_log_message : line.message?.safe_message}</Ansi>
+        {searchQuery.trim() ? (
+          <HighlightedLogMessage message={message} searchQuery={searchQuery} />
+        ) : (
+          <Ansi>{message}</Ansi>
+        )}
       </span>
     </div>
   )
 }
 
-function DeploymentLogLines({ lines, isStreaming }: { lines: EnvironmentLogIds[]; isStreaming: boolean }) {
+function DeploymentLogLines({
+  lines,
+  isStreaming,
+  searchQuery,
+}: {
+  lines: EnvironmentLogIds[]
+  isStreaming: boolean
+  searchQuery: string
+}) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const isScrolledToBottomRef = useRef(true)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -109,7 +137,7 @@ function DeploymentLogLines({ lines, isStreaming }: { lines: EnvironmentLogIds[]
           </Button>
         )}
         {visibleLines.map((line) => (
-          <DeploymentLogLine key={line.id} line={line} />
+          <DeploymentLogLine key={line.id} line={line} searchQuery={searchQuery} />
         ))}
         {isStreaming && (
           <ProgressIndicator
@@ -127,7 +155,7 @@ export interface DeploymentLogStepRowProps {
   step: DeploymentLogStep<EnvironmentLogIds>
   label: string
   isOpen: boolean
-  isSearching: boolean
+  searchQuery: string
   isSlowest?: boolean
   onToggle: () => void
 }
@@ -136,7 +164,7 @@ export function DeploymentLogStepRow({
   step,
   label,
   isOpen,
-  isSearching,
+  searchQuery,
   isSlowest = false,
   onToggle,
 }: DeploymentLogStepRowProps) {
@@ -144,10 +172,10 @@ export function DeploymentLogStepRow({
   const hasLines = linesCount > 0
   const isNotStarted = step.status === 'PENDING' || step.status === 'SKIP'
 
+  const isSearching = searchQuery.trim() !== ''
+
   const matchesCountLabel = isSearching
-    ? hasLines
-      ? `${linesCount.toLocaleString('en-US')} ${pluralize(linesCount, 'match', 'matches')}`
-      : 'No match'
+    ? `${linesCount.toLocaleString('en-US')} ${pluralize(linesCount, 'match', 'matches')}`
     : null
 
   return (
@@ -180,7 +208,9 @@ export function DeploymentLogStepRow({
           )}
         </span>
       </button>
-      {isOpen && hasLines && <DeploymentLogLines lines={step.lines} isStreaming={step.status === 'ONGOING'} />}
+      {isOpen && hasLines && (
+        <DeploymentLogLines lines={step.lines} isStreaming={step.status === 'ONGOING'} searchQuery={searchQuery} />
+      )}
     </div>
   )
 }

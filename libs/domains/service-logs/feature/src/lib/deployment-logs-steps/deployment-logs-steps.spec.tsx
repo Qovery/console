@@ -148,17 +148,29 @@ describe('DeploymentLogsSteps', () => {
     expect(screen.queryByText('Building layer 1')).not.toBeInTheDocument()
   })
 
-  it('opens the steps matching the search', async () => {
+  it('shows only the phases and steps matching the search, opened', async () => {
     const { userEvent } = renderWithProviders(
       <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
     )
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Search logs' }), 'layer 2')
 
-    expect(await screen.findByText('Building layer 2')).toBeInTheDocument()
-    expect(screen.queryByText('Building layer 1')).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Building image 1 match/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Cloning repository No match/ })).toBeDisabled()
+    expect(await screen.findByText('layer 2', { selector: 'mark' })).toBeInTheDocument()
+    expect(screen.queryByText(/Building layer 1/)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Building image 1 match/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.queryByRole('button', { name: /Cloning repository/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Deploy' })).not.toBeInTheDocument()
+  })
+
+  it('tells when no line matches the search', async () => {
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Search logs' }), 'nowhere')
+
+    expect(await screen.findByText('No matching logs')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Build' })).not.toBeInTheDocument()
   })
 
   it('opens the running step and lists the upcoming ones', () => {
