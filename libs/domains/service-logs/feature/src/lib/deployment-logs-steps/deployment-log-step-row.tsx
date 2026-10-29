@@ -29,7 +29,7 @@ export function DeploymentLogStatusIcon({ status }: { status?: DeploymentLogStep
     return (
       <Tooltip content="Not started">
         <span role="img" aria-label="Not started" className="flex h-3.5 w-3.5 items-center justify-center">
-          <Icon iconName="circle" iconStyle="regular" className="text-sm text-neutral-disabled" />
+          <Icon iconName="circle-dashed" iconStyle="regular" className="text-sm text-neutral-disabled" />
         </span>
       </Tooltip>
     )
@@ -189,7 +189,7 @@ export function DeploymentLogStepRow({
       >
         <span className="flex min-w-0 items-center gap-2">
           <Icon
-            iconName={isOpen && hasLines ? 'chevron-down' : 'chevron-right'}
+            iconName={isOpen && hasLines ? 'angle-down' : 'angle-right'}
             iconStyle="regular"
             className={clsx('w-3.5 text-xs', hasLines ? 'text-neutral' : 'text-neutral-disabled')}
           />
