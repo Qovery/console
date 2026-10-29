@@ -184,7 +184,7 @@ export function DeploymentLogStepRow({
           <Icon
             iconName={isOpen && hasLines ? 'angle-down' : 'angle-right'}
             iconStyle="regular"
-            className={clsx('w-3.5 text-xs', hasLines ? 'text-neutral' : 'text-neutral-disabled')}
+            className={clsx('w-3.5 text-xs', hasLines && !isNotStarted ? 'text-neutral' : 'text-neutral-disabled')}
           />
           <span className={clsx('truncate', isNotStarted ? 'text-neutral-disabled' : 'text-neutral')}>{label}</span>
           <DeploymentLogStatusIcon status={step.status} />
