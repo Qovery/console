@@ -14,7 +14,7 @@ import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
-import { Badge, Heading, Icon, InputSearch, Tooltip } from '@qovery/shared/ui'
+import { Heading, Icon, InputSearch } from '@qovery/shared/ui'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -22,15 +22,14 @@ import { ServiceStageIdsContext } from '../service-stage-ids-context/service-sta
 import {
   type DeploymentLogPhase,
   type DeploymentLogPhaseId,
-  filterDeploymentLogsByStep,
+  filterDeploymentLogPhases,
   formatDeploymentLogDuration,
   getDeploymentLogPhaseLabel,
   getDeploymentLogPhases,
   getDeploymentLogStepLabel,
+  getDeploymentLogUngroupedStepLabel,
   groupDeploymentLogsByStep,
-  hasDeploymentLogStepNames,
 } from '../utils/deployment-log-steps'
-import { MOCK_DEPLOYMENT_LOGS, MOCK_PRE_CHECK_STEPS, MOCK_SERVICE_STEPS } from '../utils/deployment-log-steps-mock'
 import { DeploymentLogStatusIcon, DeploymentLogStepRow } from './deployment-log-step-row'
 
 const PHASE_ICONS: Record<DeploymentLogPhaseId, IconName> = {
@@ -96,15 +95,7 @@ export function DeploymentLogsSteps({
     if (stage) updateStageId(stage.id)
   }, [serviceId, serviceStatus, updateStageId, stage])
 
-  // The API may not send the step of each line yet: fall back to a sample deployment to preview the view
-  const isSampleData = logs.length > 0 && !hasDeploymentLogStepNames(logs)
-  const displayedLogs = isSampleData ? MOCK_DEPLOYMENT_LOGS : logs
-
-  const linesByStep = useMemo(() => groupDeploymentLogsByStep(displayedLogs), [displayedLogs])
-  const filteredLinesByStep = useMemo(
-    () => filterDeploymentLogsByStep(linesByStep, deferredSearchQuery),
-    [linesByStep, deferredSearchQuery]
-  )
+  const linesByStep = useMemo(() => groupDeploymentLogsByStep(logs), [logs])
   const isSearching = deferredSearchQuery.trim() !== ''
 
   const action = serviceStatus.status_details?.action
@@ -121,17 +112,19 @@ export function DeploymentLogsSteps({
         ]
       : []
 
-  const phases = getDeploymentLogPhases({
-    serviceSteps: isSampleData ? MOCK_SERVICE_STEPS : serviceStatus.steps?.details,
-    preCheckSteps: isSampleData ? MOCK_PRE_CHECK_STEPS : preCheckStage?.steps,
-    linesByStep: filteredLinesByStep,
-    serviceId,
-    expectedPhases: isSampleData ? [] : expectedPhases,
-    // Steps that never started: upcoming while the deployment runs, skipped once it failed, hidden once it succeeded
-    notStartedStepStatus:
-      isSampleData || actionStatus === 'SUCCESS' ? undefined : isDeploymentRunning ? 'PENDING' : 'SKIP',
-    nowMs: Date.now(),
-  })
+  const phases = filterDeploymentLogPhases(
+    getDeploymentLogPhases({
+      serviceSteps: serviceStatus.steps?.details,
+      preCheckSteps: preCheckStage?.steps,
+      linesByStep,
+      serviceId,
+      expectedPhases,
+      // Steps that never started: upcoming while the deployment runs, skipped once it failed, hidden once it succeeded
+      notStartedStepStatus: actionStatus === 'SUCCESS' ? undefined : isDeploymentRunning ? 'PENDING' : 'SKIP',
+      nowMs: Date.now(),
+    }),
+    deferredSearchQuery
+  )
 
   useIntervalTick(phases.some((phase) => phase.isLive))
 
@@ -160,16 +153,7 @@ export function DeploymentLogsSteps({
     <div className="min-h-0 w-full flex-1 overflow-y-auto">
       <section className="container mx-auto flex flex-col gap-3 px-4 pb-10 pt-8">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Heading level={2}>Logs</Heading>
-            {isSampleData && (
-              <Tooltip content="The API doesn't send the step of each log line yet. This is a sample deployment.">
-                <Badge size="sm" color="yellow" variant="surface">
-                  Sample data
-                </Badge>
-              </Tooltip>
-            )}
-          </div>
+          <Heading level={2}>Logs</Heading>
           <InputSearch
             className="w-[200px]"
             customSize="h-8 text-sm"
@@ -205,7 +189,11 @@ export function DeploymentLogsSteps({
                   <DeploymentLogStepRow
                     key={step.name}
                     step={step}
-                    label={getDeploymentLogStepLabel(step.name, { action, serviceType: service?.serviceType })}
+                    label={
+                      step.isUngrouped
+                        ? getDeploymentLogUngroupedStepLabel(phase, action)
+                        : getDeploymentLogStepLabel(step.name, { action, serviceType: service?.serviceType })
+                    }
                     isOpen={isOpen}
                     isSearching={isSearching}
                     onToggle={() => setOpenStepOverrides((overrides) => ({ ...overrides, [step.name]: !isOpen }))}

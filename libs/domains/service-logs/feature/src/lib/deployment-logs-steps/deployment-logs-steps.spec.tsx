@@ -1,7 +1,7 @@
 import { type Status } from 'qovery-typescript-axios'
 import { useService } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { DeploymentLogsSteps } from './deployment-logs-steps'
 
@@ -153,16 +153,18 @@ describe('DeploymentLogsSteps', () => {
     expect(screen.getAllByRole('img', { name: 'Not started' })).toHaveLength(4)
   })
 
-  it('falls back to sample data when the lines carry no step', () => {
-    mockLogs([createLog(1, 'A line from an older API', 'Deploy')])
+  it('shows the lines of an older deployment, by phase, when they carry no step', async () => {
+    mockLogs([createLog(1, 'Cloning acme/web-app', 'Build'), createLog(2, 'Pod is ready', 'Deploy')])
 
-    renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
     )
 
-    expect(screen.getByText('Sample data')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Pre-check' })).toBeInTheDocument()
-    const savingBuildCache = screen.getByRole('button', { name: /Saving build cache/ })
-    expect(within(savingBuildCache).getByText('5 lines')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Cloning repository/ })).not.toBeInTheDocument()
+    const buildLogs = screen.getByRole('button', { name: /Build logs 1 line 1min 17s/ })
+    await userEvent.click(buildLogs)
+
+    expect(screen.getByText('Cloning acme/web-app')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Deploy logs 1 line 11s/ })).toBeInTheDocument()
   })
 })
