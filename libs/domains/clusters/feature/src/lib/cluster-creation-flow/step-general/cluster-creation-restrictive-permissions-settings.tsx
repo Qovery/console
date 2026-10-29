@@ -9,9 +9,9 @@ export function ClusterCreationRestrictivePermissionsSettings() {
 
   return (
     <div className="flex flex-col gap-3">
-      <ClusterRestrictivePermissionsToggle />
-
       <ClusterWidePermissionCredentialsSettings cloudProvider="AWS" fieldName="credentials" />
+
+      <ClusterRestrictivePermissionsToggle />
 
       {isUsingRestrictivePermissions && (
         <div className="flex flex-col gap-3">
