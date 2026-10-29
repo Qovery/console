@@ -196,7 +196,7 @@ describe('DeploymentLogsSteps', () => {
     )
 
     expect(screen.getByRole('button', { name: /Building image/ })).toHaveAttribute('aria-expanded', 'true')
-    expect(screen.getByText('Streaming deployment logs')).toBeInTheDocument()
+    expect(screen.getByText('Streaming deployment logs…')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Saving build cache/ })).toBeDisabled()
     // Pushing image, Saving build cache, the Deploy phase and its step
     expect(screen.getAllByRole('img', { name: 'Not started' })).toHaveLength(4)
