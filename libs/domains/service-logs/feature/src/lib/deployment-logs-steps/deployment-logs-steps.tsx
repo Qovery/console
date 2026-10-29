@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useLocation, useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type DeploymentHistoryEnvironmentV2,
   type Environment,
@@ -34,6 +35,7 @@ import {
   getSlowestDeploymentLogStepName,
   groupDeploymentLogsByStep,
 } from '../utils/deployment-log-steps'
+import { BuildOptimizerButton } from './build-optimizer-button'
 import { BuilderUsageBadges } from './builder-usage-badges'
 import { DeploymentLogStatusIcon, DeploymentLogStepRow } from './deployment-log-step-row'
 
@@ -86,6 +88,8 @@ export function DeploymentLogsSteps({
   const [searchQuery, setSearchQuery] = useState('')
   const deferredSearchQuery = useDeferredValue(searchQuery)
   const [openStepOverrides, setOpenStepOverrides] = useState<Record<string, boolean>>({})
+  // The build optimization analysis is a sample until the API serves it
+  const isBuildOptimizerEnabled = useFeatureFlagEnabled('deployment-logs-build-optimizer') === true
 
   // Lines linked from the URL hash: `#L12`, or `#L12-L20`
   const { hash } = useLocation()
@@ -150,7 +154,8 @@ export function DeploymentLogsSteps({
   const defaultOpenStepName = getDefaultOpenStepName(phases)
   // Once the deployment went through, the slowest step shows where time can be saved
   const slowestStepName = actionStatus === 'SUCCESS' ? getSlowestDeploymentLogStepName(allPhases) : undefined
-  const builderUsage = serviceStatus.steps?.details?.find((step) => step.step_name === 'BUILD')?.builder_usage
+  const buildStep = serviceStatus.steps?.details?.find((step) => step.step_name === 'BUILD')
+  const builderUsage = buildStep?.builder_usage
   const stepNamesWithSelectedLines = new Set(
     selectedLineRange
       ? allPhases
@@ -191,16 +196,21 @@ export function DeploymentLogsSteps({
           return (
             <div key={phase.id} className="rounded-lg border border-neutral bg-surface-neutral-subtle">
               <div className="flex h-12 items-center justify-between gap-4 px-4 text-sm">
-                <div className="flex min-w-0 items-center gap-2">
-                  <Icon
-                    iconName={PHASE_ICONS[phase.id]}
-                    iconStyle="regular"
-                    className={clsx('w-3.5', isNotStarted ? 'text-neutral-disabled' : 'text-neutral')}
-                  />
-                  <Heading level={3} className={clsx(isNotStarted && 'text-neutral-disabled')}>
-                    {getDeploymentLogPhaseLabel(phase.id, action)}
-                  </Heading>
-                  <DeploymentLogStatusIcon status={phase.status} />
+                <div className="flex min-w-0 items-center gap-4">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <Icon
+                      iconName={PHASE_ICONS[phase.id]}
+                      iconStyle="regular"
+                      className={clsx('w-3.5', isNotStarted ? 'text-neutral-disabled' : 'text-neutral')}
+                    />
+                    <Heading level={3} className={clsx(isNotStarted && 'text-neutral-disabled')}>
+                      {getDeploymentLogPhaseLabel(phase.id, action)}
+                    </Heading>
+                    <DeploymentLogStatusIcon status={phase.status} />
+                  </div>
+                  {phase.id === 'BUILD' && isBuildOptimizerEnabled && (
+                    <BuildOptimizerButton isBuildSucceeded={buildStep?.status === 'SUCCESS'} />
+                  )}
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   {phase.id === 'BUILD' && builderUsage && (
