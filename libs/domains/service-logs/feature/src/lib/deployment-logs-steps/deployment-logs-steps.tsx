@@ -134,7 +134,8 @@ export function DeploymentLogsSteps({
           <Heading level={2}>Logs</Heading>
           <InputSearch
             className="w-[200px]"
-            customSize="h-8 text-sm"
+            customSize="h-8 pl-[30px] text-sm"
+            iconClassName="left-2.5 text-sm"
             placeholder="Search logs"
             ariaLabel="Search logs"
             value={searchQuery}
