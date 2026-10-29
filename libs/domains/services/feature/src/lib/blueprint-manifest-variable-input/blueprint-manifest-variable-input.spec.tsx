@@ -1,4 +1,4 @@
-import { type BlueprintManifestFieldType, type BlueprintManifestVariableField } from 'qovery-typescript-axios'
+import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintManifestVariableInput } from './blueprint-manifest-variable-input'
 
@@ -154,7 +154,7 @@ describe('BlueprintManifestVariableInput', () => {
       name: 'db_parameters',
       required: false,
       description: 'PostgreSQL parameters',
-      type: { type: 'string', format: 'json' } as BlueprintManifestFieldType,
+      type: { type: 'string', format: 'json' },
     })
 
     it('renders a JSON editor with the current value and the field description', () => {

@@ -15,8 +15,7 @@ export type OverridableBlueprintManifestContextVariableField = BlueprintManifest
 export const JSON_FIELD_FORMAT = 'json'
 
 export function isJsonField(field: BlueprintManifestVariableField) {
-  // `format` is newer than the generated client's BlueprintManifestFieldType
-  return 'format' in field.type && field.type.format === JSON_FIELD_FORMAT
+  return field.type.format === JSON_FIELD_FORMAT
 }
 
 export function getBlueprintFieldPath(name: string): BlueprintFieldPath {

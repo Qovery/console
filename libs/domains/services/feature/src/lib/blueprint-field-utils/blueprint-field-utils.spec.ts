@@ -1,6 +1,5 @@
 import {
   type BlueprintManifestContextVariableField,
-  type BlueprintManifestFieldType,
   type BlueprintManifestResponseResultsInner,
   type BlueprintManifestVariableField,
 } from 'qovery-typescript-axios'
@@ -212,7 +211,7 @@ describe('field validation', () => {
   it('validates json fields as one JSON document and leaves empty values to the required check', () => {
     const jsonField = createVariableField({
       required: false,
-      type: { type: 'string', format: 'json' } as BlueprintManifestFieldType,
+      type: { type: 'string', format: 'json' },
     })
 
     expect(getFieldJsonValidationError(jsonField, '{"log_connections":"1"}')).toBeUndefined()
@@ -237,12 +236,8 @@ describe('field validation', () => {
 
 describe('field type guards', () => {
   it('identifies json fields from their format and ignores unknown formats', () => {
-    expect(
-      isJsonField(createVariableField({ type: { type: 'string', format: 'json' } as BlueprintManifestFieldType }))
-    ).toBe(true)
-    expect(
-      isJsonField(createVariableField({ type: { type: 'string', format: 'yaml' } as BlueprintManifestFieldType }))
-    ).toBe(false)
+    expect(isJsonField(createVariableField({ type: { type: 'string', format: 'json' } }))).toBe(true)
+    expect(isJsonField(createVariableField({ type: { type: 'string', format: 'yaml' } }))).toBe(false)
     expect(isJsonField(createVariableField())).toBe(false)
   })
 
