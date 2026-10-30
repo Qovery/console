@@ -13,6 +13,10 @@ export interface ClusterGeneralData {
   region: string
   credentials: string
   credentials_name: string
+  restricted_credentials?: string
+  restricted_credentials_name?: string
+  using_restrictive_permissions?: boolean
+  slack_webhook_url?: string
   installation_type: 'MANAGED' | 'SELF_MANAGED' | 'LOCAL_DEMO' | 'PARTIALLY_MANAGED'
   labels_groups?: string[]
   gke_kms_key?: { enabled: boolean; value?: string }

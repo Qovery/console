@@ -2,6 +2,29 @@ import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintManifestVariableInput } from './blueprint-manifest-variable-input'
 
+const mockEditorFocus = jest.fn()
+
+// Monaco does not run in jsdom: render its controlled value in a textarea
+jest.mock('@monaco-editor/react', () => ({
+  Editor: (props: {
+    language?: string
+    onChange: (value: string) => void
+    onMount?: (editor: { focus: () => void }) => void
+    options?: { ariaLabel?: string }
+    value?: string
+  }) => {
+    props.onMount?.({ focus: mockEditorFocus })
+    return (
+      <textarea
+        aria-label={props.options?.ariaLabel}
+        data-language={props.language}
+        onChange={(e) => props.onChange(e.target.value)}
+        value={props.value}
+      />
+    )
+  },
+}))
+
 const mockUseParams = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
@@ -123,6 +146,72 @@ describe('BlueprintManifestVariableInput', () => {
       await userEvent.click(screen.getByText('db.m5.large'))
 
       expect(onChange).toHaveBeenCalledWith('db.m5.large')
+    })
+  })
+
+  describe('with the json format', () => {
+    const jsonField = createVariableField({
+      name: 'db_parameters',
+      required: false,
+      description: 'PostgreSQL parameters',
+      type: { type: 'string', format: 'json' },
+    })
+
+    it('renders a JSON editor with the current value and the field description', () => {
+      renderWithProviders(
+        <BlueprintManifestVariableInput field={jsonField} value='{"log_connections":"1"}' onChange={jest.fn()} />
+      )
+
+      const editor = screen.getByLabelText('Db parameters')
+      expect(editor).toHaveAttribute('data-language', 'json')
+      expect(editor).toHaveValue('{"log_connections":"1"}')
+      expect(screen.getByText('PostgreSQL parameters')).toBeInTheDocument()
+    })
+
+    it('focuses the editor only when asked to', () => {
+      mockEditorFocus.mockClear()
+      renderWithProviders(<BlueprintManifestVariableInput field={jsonField} value="" onChange={jest.fn()} />)
+      expect(mockEditorFocus).not.toHaveBeenCalled()
+
+      renderWithProviders(<BlueprintManifestVariableInput autoFocus field={jsonField} value="" onChange={jest.fn()} />)
+      expect(mockEditorFocus).toHaveBeenCalled()
+    })
+
+    it('sends pasted text unchanged', async () => {
+      // Whitespace a JSON reformatter would rewrite
+      const typed = '{\n    "log_connections":   "1",\n  "max_wal_size" : "16384"\n}\n'
+      const onChange = jest.fn()
+      const { userEvent } = renderWithProviders(
+        <BlueprintManifestVariableInput field={jsonField} value="" onChange={onChange} />
+      )
+
+      await userEvent.click(screen.getByLabelText('Db parameters'))
+      await userEvent.paste(typed)
+
+      expect(onChange).toHaveBeenCalledTimes(1)
+      expect(onChange).toHaveBeenCalledWith(typed)
+    })
+
+    it('shows the validation error in place of the description', () => {
+      renderWithProviders(
+        <BlueprintManifestVariableInput
+          field={jsonField}
+          value="{"
+          error="Value must be valid JSON."
+          onChange={jest.fn()}
+        />
+      )
+
+      expect(screen.getByText('Value must be valid JSON.')).toBeInTheDocument()
+      expect(screen.queryByText('PostgreSQL parameters')).not.toBeInTheDocument()
+    })
+
+    it('keeps a secret json field in a masked input', () => {
+      renderWithProviders(
+        <BlueprintManifestVariableInput field={{ ...jsonField, is_secret: true }} value="{}" onChange={jest.fn()} />
+      )
+
+      expect(screen.getByLabelText('Db parameters')).toHaveAttribute('type', 'password')
     })
   })
 

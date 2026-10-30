@@ -1,3 +1,4 @@
+import { type BuildSettings } from 'qovery-typescript-axios'
 import { type Application, type Job, type Terraform } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock, cronjobFactoryMock, terraformFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -5,10 +6,6 @@ import { ServiceBuildSettings } from './service-build-settings'
 
 const mockEditService = jest.fn()
 const mockService = { data: undefined as Application | Job | Terraform | undefined }
-
-const mockAdvancedSettings = {
-  data: undefined as Record<string, unknown> | undefined,
-}
 
 const mockDefaultAdvancedSettings = {
   data: undefined as Record<string, unknown> | undefined,
@@ -26,19 +23,17 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 
 jest.mock('@qovery/domains/services/feature', () => ({
   useService: () => mockService,
-  useAdvancedSettings: () => mockAdvancedSettings,
   useDefaultAdvancedSettings: () => mockDefaultAdvancedSettings,
   useEditService: () => ({ mutate: mockEditService, isLoading: false }),
 }))
 
-const applicationAdvancedSettings: Record<string, unknown> = {
-  'build.timeout_max_sec': 1800,
-  'build.cpu_max_in_milli': 4000,
-  'build.ram_max_in_gib': 8,
-  'build.ephemeral_storage_in_gib': 10,
-  'build.disable_buildkit_cache': false,
-  'build.skip_git_submodules': false,
-  'network.ingress.enable_cors': true,
+const buildSettings: BuildSettings = {
+  timeout_max_sec: 1800,
+  cpu_max_in_milli: 4000,
+  ram_max_in_gib: 8,
+  ephemeral_storage_in_gib: 10,
+  disable_buildkit_cache: false,
+  skip_git_submodules: false,
 }
 
 const applicationDefaultAdvancedSettings: Record<string, unknown> = {
@@ -51,7 +46,7 @@ const applicationDefaultAdvancedSettings: Record<string, unknown> = {
   'network.ingress.enable_cors': true,
 }
 
-const terraformAdvancedSettings: Record<string, unknown> = {
+const terraformDefaultAdvancedSettings: Record<string, unknown> = {
   'build.timeout_max_sec': 1800,
   'build.cpu_max_in_milli': 4000,
   'build.ram_max_in_gib': 8,
@@ -60,15 +55,26 @@ const terraformAdvancedSettings: Record<string, unknown> = {
   'network.ingress.enable_cors': true,
 }
 
-const mockApplication = { ...applicationFactoryMock(1)[0], build_settings_editable: true } as Application
-const mockJob = { ...cronjobFactoryMock(1)[0], build_settings_editable: true } as Job
-const mockTerraform = { ...terraformFactoryMock(1)[0], build_settings_editable: true } as Terraform
-const mockApplicationDisabled = { ...applicationFactoryMock(1)[0], build_settings_editable: false } as Application
+const mockApplication = {
+  ...applicationFactoryMock(1)[0],
+  build_settings: buildSettings,
+  build_settings_editable: true,
+} as Application
+const mockJob = { ...cronjobFactoryMock(1)[0], build_settings: buildSettings, build_settings_editable: true } as Job
+const mockTerraform = {
+  ...terraformFactoryMock(1)[0],
+  build_settings: { ...buildSettings, disable_buildkit_cache: undefined },
+  build_settings_editable: true,
+} as Terraform
+const mockApplicationDisabled = {
+  ...applicationFactoryMock(1)[0],
+  build_settings: buildSettings,
+  build_settings_editable: false,
+} as Application
 
-async function setup(service: Application | Job | Terraform, advancedSettings?: Record<string, unknown>) {
+async function setup(service: Application | Job | Terraform, defaultAdvancedSettings?: Record<string, unknown>) {
   mockService.data = service
-  mockAdvancedSettings.data = advancedSettings ?? applicationAdvancedSettings
-  mockDefaultAdvancedSettings.data = advancedSettings ?? applicationDefaultAdvancedSettings
+  mockDefaultAdvancedSettings.data = defaultAdvancedSettings ?? applicationDefaultAdvancedSettings
   mockEditService.mockClear()
   const result = renderWithProviders(<ServiceBuildSettings />)
   if ('build_settings_editable' in service && service.build_settings_editable) {
@@ -100,17 +106,31 @@ describe('ServiceBuildSettings', () => {
   })
 
   it('should NOT render BuildKit cache toggle for Terraform', async () => {
-    await setup(mockTerraform, terraformAdvancedSettings)
+    await setup(mockTerraform, terraformDefaultAdvancedSettings)
     expect(screen.queryByRole('switch', { name: /buildkit cache/i })).not.toBeInTheDocument()
     expect(screen.getByRole('switch', { name: /git submodules/i })).toBeInTheDocument()
   })
 
-  it('should pre-populate form fields with values from advanced settings', async () => {
-    await setup(mockApplication)
-    expect(screen.getByLabelText(/timeout/i)).toHaveValue(1800)
+  it('should pre-populate form fields with the service build_settings', async () => {
+    await setup({
+      ...mockApplication,
+      build_settings: { ...buildSettings, timeout_max_sec: 2400, disable_buildkit_cache: true },
+    } as Application)
+    expect(screen.getByLabelText(/timeout/i)).toHaveValue(2400)
     expect(screen.getByLabelText(/cpu/i)).toHaveValue(4000)
     expect(screen.getByLabelText(/ram/i)).toHaveValue(8)
     expect(screen.getByLabelText(/ephemeral storage/i)).toHaveValue(10)
+    expect(screen.getByRole('switch', { name: /buildkit cache/i })).toBeChecked()
+  })
+
+  it('should leave ephemeral storage empty with the default as placeholder when it is null', async () => {
+    await setup({
+      ...mockApplication,
+      build_settings: { ...buildSettings, ephemeral_storage_in_gib: null },
+    } as Application)
+    const input = screen.getByLabelText(/ephemeral storage/i)
+    expect(input).toHaveValue(null)
+    expect(input).toHaveAttribute('placeholder', '10')
   })
 
   it('should call editService with build_settings in the payload on submit', async () => {
@@ -141,7 +161,7 @@ describe('ServiceBuildSettings', () => {
   })
 
   it('should not include disable_buildkit_cache in build_settings for Terraform', async () => {
-    const { userEvent } = await setup(mockTerraform, terraformAdvancedSettings)
+    const { userEvent } = await setup(mockTerraform, terraformDefaultAdvancedSettings)
 
     const timeoutInput = screen.getByLabelText(/timeout/i)
     await userEvent.clear(timeoutInput)

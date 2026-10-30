@@ -98,6 +98,8 @@ describe('ClusterAdd', () => {
     await userEvent.click(screen.getByRole('button', { name: title }))
 
     expect(await screen.findByText(`Provider ${provider}`)).toBeInTheDocument()
+    // The BYOC modal wrapper must not enable Radix's document-level scroll lock.
+    expect(document.body).not.toHaveAttribute('data-scroll-locked')
     expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
       selectedCloudProvider: provider,
       selectedInstallationType: 'self-managed',

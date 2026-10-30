@@ -1,20 +1,9 @@
 import { useParams } from '@tanstack/react-router'
-import { type Cluster, type ClusterCredentials } from 'qovery-typescript-axios'
+import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
-import { isClusterEksManaged } from '@qovery/domains/clusters/data-access'
-import {
-  Button,
-  Callout,
-  EmptyState,
-  ExternalLink,
-  Icon,
-  InputSelect,
-  Link,
-  LoaderSpinner,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, EmptyState, Icon, InputSelect, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import {
   ClusterCredentialsModal,
   type ClusterCredentialsModalCloudProvider,
@@ -23,7 +12,10 @@ import {
 export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
-  cluster?: Cluster
+  fieldName?: 'credentials' | 'restricted_credentials'
+  label?: string
+  portal?: boolean
+  maxMenuHeight?: number
 }
 
 export const filterCredentialsByCloudProvider = (
@@ -37,14 +29,19 @@ export const filterCredentialsByCloudProvider = (
   return credentials.filter((credential) => credential.object_type === 'EKS_ANYWHERE_VSPHERE')
 }
 
-export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }: ClusterCredentialsSettingsProps) {
+export function ClusterCredentialsSettings({
+  cloudProvider,
+  isSetting,
+  fieldName = 'credentials',
+  label,
+  portal,
+  maxMenuHeight,
+}: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control } = useFormContext()
   const { openModal, closeModal } = useModal()
 
   const queryCloudProvider = cloudProvider === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProvider
-
-  const isEksManaged = cluster !== undefined && isClusterEksManaged(cluster)
 
   const { data: credentials = [], isLoading } = useCloudProviderCredentials({
     organizationId,
@@ -85,110 +82,62 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting, cluster }
     onClickEditable: !isSetting ? () => openCredentialsModal(item.id) : undefined,
   }))
 
+  if (isLoading) {
+    return (
+      <div className="mt-2 flex justify-center">
+        <LoaderSpinner className="w-4" />
+      </div>
+    )
+  }
+
   return (
-    <div>
-      {isLoading ? (
-        <div className="mt-2 flex justify-center">
-          <LoaderSpinner className="w-4" />
-        </div>
-      ) : (
-        <>
-          {isSetting && isEksManaged && (
-            <Callout.Root color="red" className="mb-4" data-testid="eks-credentials-change-warning">
-              <Callout.Icon>
-                <Icon iconName="triangle-exclamation" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Changing credentials triggers a cluster redeployment</Callout.TextHeading>
-                <Callout.TextDescription>
-                  Saving new credentials will automatically redeploy the cluster to keep your services' deployments
-                  working.
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
-          )}
-
-          <Controller
-            name="credentials"
-            control={control}
-            rules={{
-              required: 'Please select a credential.',
-            }}
-            render={({ field, fieldState: { error } }) =>
-              !isSetting && sortedCredentials.length === 0 ? (
-                <EmptyState
-                  size="sm"
-                  icon="key"
-                  iconStyle="regular"
-                  title="No cloud credentials"
-                  description="Connect your cloud account to continue."
-                  className="mb-3 border-dashed"
-                >
-                  <Button
-                    type="button"
-                    color="neutral"
-                    variant="outline"
-                    onClick={() => openCredentialsModal(undefined, field.onChange)}
-                  >
-                    <Icon iconName="circle-plus" iconStyle="regular" />
-                    Add New Credential
-                  </Button>
-                </EmptyState>
-              ) : (
-                <InputSelect
-                  dataTestId="input-credentials"
-                  label="Credentials"
-                  className="mb-3"
-                  options={buildCredentials}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  isSearchable
-                  menuListButton={{
-                    title: 'Select credential',
-                    label: 'New credential',
-                    icon: <Icon iconName="circle-plus" className="text-brand" />,
-                    onClick: () => openCredentialsModal(undefined, field.onChange),
-                  }}
-                />
-              )
-            }
-          />
-
-          {isSetting && (
-            <Link
-              color="brand"
-              to="/organization/$organizationId/settings/cloud-credentials"
-              params={{ organizationId }}
-              className="flex gap-1"
+    <Controller
+      name={fieldName}
+      control={control}
+      rules={{
+        required: 'Please select a credential.',
+      }}
+      render={({ field, fieldState: { error } }) =>
+        !isSetting && sortedCredentials.length === 0 ? (
+          <EmptyState
+            size="sm"
+            icon="key"
+            iconStyle="regular"
+            title="No cloud credentials"
+            description="Connect your cloud account to continue."
+            className="border-dashed"
+          >
+            <Button
+              type="button"
+              color="neutral"
+              variant="outline"
+              onClick={() => openCredentialsModal(undefined, field.onChange)}
             >
-              See and edit all Cloud credentials
-              <Icon iconName="key" iconStyle="regular" />
-            </Link>
-          )}
-
-          {isSetting && (
-            <Callout.Root color="yellow" className="mt-4" data-testid="mirroring-registry-credentials-warning">
-              <Callout.Icon>
-                <Icon iconName="circle-exclamation" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextDescription className="flex flex-col gap-1">
-                  The credential change won't be applied to the mirroring registry of this cluster. Make sure to update
-                  the credentials properly in this cluster's mirroring registry section.
-                  <ExternalLink
-                    className="items-center"
-                    href={`/organization/${organizationId}/cluster/${clusterId}/settings/image-registry`}
-                  >
-                    Go to mirroring registry section
-                  </ExternalLink>
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
-          )}
-        </>
-      )}
-    </div>
+              <Icon iconName="circle-plus" iconStyle="regular" />
+              Add New Credential
+            </Button>
+          </EmptyState>
+        ) : (
+          <InputSelect
+            dataTestId={fieldName === 'credentials' ? 'input-credentials' : 'input-restricted-credentials'}
+            label={label ?? (fieldName === 'restricted_credentials' ? 'Restricted credentials' : 'Credentials')}
+            portal={portal}
+            maxMenuHeight={maxMenuHeight}
+            options={buildCredentials}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            isSearchable
+            menuListButton={{
+              title: 'Select credential',
+              label: 'New credential',
+              icon: <Icon iconName="circle-plus" className="text-brand" />,
+              onClick: () => openCredentialsModal(undefined, field.onChange),
+            }}
+          />
+        )
+      }
+    />
   )
 }
 
