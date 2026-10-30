@@ -1,5 +1,6 @@
 .modal__overlay {
-  z-index: var(--overlay-zindex) !important;
+  // Keep each portal's overlay and content on the same layer so a later dialog dims the previous one.
+  z-index: var(--modal-zindex) !important;
 }
 
 .modal__overlay[data-state='open'] {

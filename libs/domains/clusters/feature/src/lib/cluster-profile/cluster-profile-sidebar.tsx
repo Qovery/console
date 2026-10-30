@@ -174,7 +174,7 @@ export function ClusterProfileSidebar({
         <InputSearch
           ariaLabel="Search layers"
           placeholder="Search…"
-          customSize="h-7 text-ssm"
+          size="sm"
           value={searchInput}
           onChange={(nextSearch) => {
             setSearchInput(nextSearch)

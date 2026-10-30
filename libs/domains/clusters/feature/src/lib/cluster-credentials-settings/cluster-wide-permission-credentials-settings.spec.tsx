@@ -50,11 +50,14 @@ function FormState() {
   )
 }
 
-const renderSettings = (defaultValues: Record<string, unknown>) =>
+const renderSettings = (
+  defaultValues: Record<string, unknown>,
+  fieldName: 'wide_permission_credentials' | 'configured_credentials' | 'credentials' = 'wide_permission_credentials'
+) =>
   renderWithProviders(
     wrapWithReactHookForm(
       <>
-        <ClusterWidePermissionCredentialsSettings cloudProvider={CloudProviderEnum.AWS} />
+        <ClusterWidePermissionCredentialsSettings cloudProvider={CloudProviderEnum.AWS} fieldName={fieldName} />
         <FormState />
       </>,
       { defaultValues }
@@ -100,6 +103,39 @@ describe('ClusterWidePermissionCredentialsSettings', () => {
     expect(await screen.findByText('role-credential')).toBeInTheDocument()
     expect(screen.getByText('other-role-credential')).toBeInTheDocument()
     expect(screen.queryByText('static-credential')).not.toBeInTheDocument()
+  })
+
+  it('should allow all AWS credential types for Extended credentials when restrictive permissions are off', async () => {
+    renderSettings({ using_restrictive_permissions: false, credentials: '' }, 'credentials')
+
+    selectEvent.openMenu(screen.getByLabelText('Extended credentials'))
+
+    expect(await screen.findByText('static-credential (AKIA)')).toBeInTheDocument()
+    expect(screen.getByText('role-credential')).toBeInTheDocument()
+  })
+
+  it('should restrict Extended credentials to AWS roles when restrictive permissions are on', async () => {
+    renderSettings({ using_restrictive_permissions: true, credentials: '' }, 'credentials')
+
+    selectEvent.openMenu(screen.getByLabelText('Extended credentials'))
+
+    expect(await screen.findByText('role-credential')).toBeInTheDocument()
+    expect(screen.queryByText('static-credential (AKIA)')).not.toBeInTheDocument()
+  })
+
+  it('should invalidate a static credential already selected as Extended credentials in restrictive mode', async () => {
+    renderSettings({ using_restrictive_permissions: true, credentials: 'static-1' }, 'credentials')
+
+    await waitFor(() => expect(screen.getByTestId('form-valid')).toHaveTextContent('false'))
+  })
+
+  it('should only allow creating an AWS role for Extended credentials when restrictive permissions are on', async () => {
+    const { userEvent } = renderSettings({ using_restrictive_permissions: true, credentials: '' }, 'credentials')
+
+    await userEvent.click(screen.getByLabelText('Extended credentials'))
+    await userEvent.click(await screen.findByText('New credential'))
+
+    expect(mockOpenModal.mock.calls[0][0].content.props.allowedTypes).toEqual(['STS'])
   })
 
   it.each([

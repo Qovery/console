@@ -53,7 +53,7 @@ export function ProfileChangesBar({
             <div className="flex items-center gap-2">
               <Button
                 type="button"
-                variant="solid"
+                variant="outline"
                 color="neutral"
                 size="md"
                 className="gap-1.5"
@@ -66,7 +66,7 @@ export function ProfileChangesBar({
               </Button>
               <Button
                 type="button"
-                variant="outline"
+                variant="solid"
                 color="neutral"
                 size="md"
                 className="gap-1.5"

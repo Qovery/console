@@ -12,6 +12,12 @@ export type OverridableBlueprintManifestContextVariableField = BlueprintManifest
   overridable?: boolean
 }
 
+export const JSON_FIELD_FORMAT = 'json'
+
+export function isJsonField(field: BlueprintManifestVariableField) {
+  return field.type.format === JSON_FIELD_FORMAT
+}
+
 export function getBlueprintFieldPath(name: string): BlueprintFieldPath {
   return `fields.${name}`
 }
@@ -120,6 +126,20 @@ export function getFieldNumberValidationError(
   return undefined
 }
 
+export function getFieldJsonValidationError(
+  field: BlueprintManifestVariableField,
+  value: BlueprintFieldValue | undefined
+) {
+  if (!isJsonField(field) || typeof value !== 'string' || !value.trim()) return undefined
+
+  try {
+    JSON.parse(value)
+    return undefined
+  } catch {
+    return 'Value must be valid JSON.'
+  }
+}
+
 export function getFieldValidationError(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
   // The referenced value is only known server-side, which validates it
   if (isVariableReference(value)) return undefined
@@ -131,7 +151,7 @@ export function getFieldValidationError(field: BlueprintManifestVariableField, v
   if (lengthValidationError) return lengthValidationError
 
   if (!isFieldValueMatchingPattern(field, value)) return 'Value does not match the expected format.'
-  return undefined
+  return getFieldJsonValidationError(field, value)
 }
 
 export function isFieldValid(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {

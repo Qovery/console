@@ -148,7 +148,7 @@ function SchemaFieldInputRow({
   value,
 }: SchemaFieldControlProps) {
   return (
-    <div className="flex flex-col gap-4 border-b border-neutral p-4 md:flex-row md:items-start md:justify-between">
+    <div className="flex flex-col gap-4 border-b border-neutral p-4 md:flex-row md:items-center md:justify-between">
       <div className="min-w-0 flex-1">
         <p className="text-sm text-neutral">
           <HighlightText text={field.label} highlight={highlight} />

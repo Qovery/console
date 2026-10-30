@@ -18,7 +18,9 @@ Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 ## Essential Facts
 
 - **Yarn Berry** only (never npm). `nvm use`.
-- Branch from `staging`. Conventional commits: `feat|fix|chore(scope): message`.
+- Before creating any new branch, run `git fetch origin staging` successfully, then create the branch explicitly from the freshly fetched `origin/staging` (for example, `git switch -c <branch-name> origin/staging`). Never use local `staging` or the current HEAD as a substitute. If fetching fails, do not silently fall back to a stale local reference. Only use another base when the user explicitly requests it.
+- Before opening a PR targeting `staging`, fetch `origin/staging` again and check for merge conflicts; do not assume the base is still current.
+- Conventional commits: `feat|fix|chore(scope): message`.
 - Before commit: format -> test -> snapshot review -> lint.
 - `ts-pattern` for branching logic. React Query for server state.
 - Shared utilities live in `@qovery/shared/util-js`.
@@ -30,6 +32,8 @@ Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 
 ## Agent Behavior
 
+- Before any implementation change, search the codebase for existing solutions to the same problem, shared components/utilities, and comparable working usages. Inspect how those usages are configured and reuse the existing approach first; do not invent a workaround before checking the existing foundation.
+- Before changing a shared component globally, compare the affected usage with existing working callers. Prefer correcting the local integration when that is sufficient. Only change shared behavior when evidence shows the issue belongs there, and assess the impact on other callers.
 - Do not revert changes you did not author.
 - State assumptions clearly.
 - Keep diffs focused.

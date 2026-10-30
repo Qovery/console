@@ -474,6 +474,7 @@ function ClusterProfileView({
 
         <div className="border-b border-neutral bg-surface-neutral px-4">
           <Navbar.Root
+            className="relative -mb-px"
             activeId={activeComponent?.key}
             role="navigation"
             ariaLabel={`${headerLayer?.label ?? 'Profile'} configuration`}

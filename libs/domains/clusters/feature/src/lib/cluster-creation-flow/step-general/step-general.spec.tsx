@@ -3,7 +3,7 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   ClusterContainerCreateContext,
   type ClusterContainerCreateContextInterface,
@@ -11,8 +11,13 @@ import {
 } from '../cluster-creation-flow'
 import StepGeneral, { type StepGeneralProps } from './step-general'
 
+const mockUseFeatureFlagEnabled = jest.fn()
 const mockOnSubmit = jest.fn()
 const mockOpenModal = jest.fn()
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: (...args: unknown[]) => mockUseFeatureFlagEnabled(...args),
+}))
 
 const mockContextValue: ClusterContainerCreateContextInterface = {
   currentStep: 1,
@@ -85,6 +90,7 @@ const defaultProps: StepGeneralProps = {
 describe('StepGeneral', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseFeatureFlagEnabled.mockReturnValue(false)
     mockContextValue.generalData = undefined
     useCloudProvidersMockSpy.mockReturnValue({
       data: [
@@ -137,6 +143,51 @@ describe('StepGeneral', () => {
     expect(screen.getByTestId('input-name')).toBeInTheDocument()
     expect(screen.getByTestId('input-description')).toBeInTheDocument()
     expect(screen.getByTestId('input-cloud-provider')).toBeInTheDocument()
+  })
+
+  it('should show wide credentials and submit the default restrictive mode for managed AWS', async () => {
+    mockUseFeatureFlagEnabled.mockReturnValue(true)
+    mockContextValue.generalData = {
+      name: 'test-cluster',
+      credentials: 'role-1',
+      credentials_name: 'role-credential',
+      cloud_provider: CloudProviderEnum.AWS,
+      installation_type: 'MANAGED',
+      region: 'us-east-1',
+    }
+
+    const { userEvent } = renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
+
+    const restrictivePermissionsToggle = await screen.findByRole('switch', { name: 'Use restrictive permissions' })
+    expect(restrictivePermissionsToggle).not.toBeChecked()
+    expect(screen.getByTestId('input-credentials')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByTestId('button-submit'))
+
+    await waitFor(() =>
+      expect(mockOnSubmit).toHaveBeenCalledWith(expect.objectContaining({ using_restrictive_permissions: false }))
+    )
+  })
+
+  it('should keep the EKS Anywhere credential flow when the feature flag is enabled', async () => {
+    mockUseFeatureFlagEnabled.mockReturnValue(true)
+    useCloudProviderCredentialsMockSpy.mockReturnValue({
+      data: [{ id: 'eks-credential', name: 'EKS Anywhere credential', object_type: 'EKS_ANYWHERE_VSPHERE' }],
+      isLoading: false,
+    })
+    mockContextValue.generalData = {
+      name: 'test-cluster',
+      credentials: 'eks-credential',
+      credentials_name: 'EKS Anywhere credential',
+      cloud_provider: CloudProviderEnum.AWS,
+      installation_type: 'PARTIALLY_MANAGED',
+      region: 'us-east-1',
+    }
+
+    renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
+
+    expect(await screen.findByTestId('input-credentials')).toBeInTheDocument()
+    expect(screen.queryByRole('switch', { name: 'Use restrictive permissions' })).not.toBeInTheDocument()
   })
 
   it('should show loader when cloud providers are not loaded', () => {

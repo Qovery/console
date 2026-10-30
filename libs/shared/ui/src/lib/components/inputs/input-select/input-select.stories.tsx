@@ -2,6 +2,7 @@ import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { IconEnum } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
 import { Icon } from '../../icon/icon'
+import Modal from '../../modal/modal'
 import { InputSelect, type InputSelectProps } from './input-select'
 
 export default {
@@ -52,3 +53,17 @@ Multi.args = {
   value: ['test1', 'test2'],
   isSearchable: false,
 }
+
+export const InModal: StoryFn<InputSelectProps> = () => (
+  <Modal defaultOpen>
+    <div className="p-5">
+      <InputSelect
+        label="Region"
+        options={Array.from({ length: 30 }, (_, index) => ({ label: `Region ${index + 1}`, value: String(index) }))}
+        isSearchable
+        portal
+        maxMenuHeight={240}
+      />
+    </div>
+  </Modal>
+)

@@ -44,3 +44,14 @@ export const Primary = Template.bind({
   defaultOpen: false,
   buttonClose: true,
 })
+
+export const Stacked: StoryFn<ModalProps> = () => (
+  <Modal defaultOpen width={676}>
+    <div className="p-5">
+      <h3 className="mb-4 text-xl font-medium">Parent modal</h3>
+      <Modal trigger={<Button>Open child modal</Button>}>
+        <Content />
+      </Modal>
+    </div>
+  </Modal>
+)

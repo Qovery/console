@@ -13,6 +13,9 @@ export interface ClusterCredentialsSettingsProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
   fieldName?: 'credentials' | 'restricted_credentials'
+  label?: string
+  portal?: boolean
+  maxMenuHeight?: number
 }
 
 export const filterCredentialsByCloudProvider = (
@@ -30,6 +33,9 @@ export function ClusterCredentialsSettings({
   cloudProvider,
   isSetting,
   fieldName = 'credentials',
+  label,
+  portal,
+  maxMenuHeight,
 }: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams({ strict: false })
   const { control } = useFormContext()
@@ -76,60 +82,62 @@ export function ClusterCredentialsSettings({
     onClickEditable: !isSetting ? () => openCredentialsModal(item.id) : undefined,
   }))
 
+  if (isLoading) {
+    return (
+      <div className="mt-2 flex justify-center">
+        <LoaderSpinner className="w-4" />
+      </div>
+    )
+  }
+
   return (
-    <div>
-      {isLoading ? (
-        <div className="mt-2 flex justify-center">
-          <LoaderSpinner className="w-4" />
-        </div>
-      ) : (
-        <Controller
-          name={fieldName}
-          control={control}
-          rules={{
-            required: 'Please select a credential.',
-          }}
-          render={({ field, fieldState: { error } }) =>
-            !isSetting && sortedCredentials.length === 0 ? (
-              <EmptyState
-                size="sm"
-                icon="key"
-                iconStyle="regular"
-                title="No cloud credentials"
-                description="Connect your cloud account to continue."
-                className="border-dashed"
-              >
-                <Button
-                  type="button"
-                  color="neutral"
-                  variant="outline"
-                  onClick={() => openCredentialsModal(undefined, field.onChange)}
-                >
-                  <Icon iconName="circle-plus" iconStyle="regular" />
-                  Add New Credential
-                </Button>
-              </EmptyState>
-            ) : (
-              <InputSelect
-                dataTestId={fieldName === 'credentials' ? 'input-credentials' : 'input-restricted-credentials'}
-                label={fieldName === 'restricted_credentials' ? 'Restricted credentials' : 'Credentials'}
-                options={buildCredentials}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-                isSearchable
-                menuListButton={{
-                  title: 'Select credential',
-                  label: 'New credential',
-                  icon: <Icon iconName="circle-plus" className="text-brand" />,
-                  onClick: () => openCredentialsModal(undefined, field.onChange),
-                }}
-              />
-            )
-          }
-        />
-      )}
-    </div>
+    <Controller
+      name={fieldName}
+      control={control}
+      rules={{
+        required: 'Please select a credential.',
+      }}
+      render={({ field, fieldState: { error } }) =>
+        !isSetting && sortedCredentials.length === 0 ? (
+          <EmptyState
+            size="sm"
+            icon="key"
+            iconStyle="regular"
+            title="No cloud credentials"
+            description="Connect your cloud account to continue."
+            className="border-dashed"
+          >
+            <Button
+              type="button"
+              color="neutral"
+              variant="outline"
+              onClick={() => openCredentialsModal(undefined, field.onChange)}
+            >
+              <Icon iconName="circle-plus" iconStyle="regular" />
+              Add New Credential
+            </Button>
+          </EmptyState>
+        ) : (
+          <InputSelect
+            dataTestId={fieldName === 'credentials' ? 'input-credentials' : 'input-restricted-credentials'}
+            label={label ?? (fieldName === 'restricted_credentials' ? 'Restricted credentials' : 'Credentials')}
+            portal={portal}
+            maxMenuHeight={maxMenuHeight}
+            options={buildCredentials}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            isSearchable
+            menuListButton={{
+              title: 'Select credential',
+              label: 'New credential',
+              icon: <Icon iconName="circle-plus" className="text-brand" />,
+              onClick: () => openCredentialsModal(undefined, field.onChange),
+            }}
+          />
+        )
+      }
+    />
   )
 }
 

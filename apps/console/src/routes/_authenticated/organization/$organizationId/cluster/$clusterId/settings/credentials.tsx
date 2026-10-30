@@ -141,7 +141,10 @@ function ClusterCredentialsSettingsForm() {
           clusterId,
           clusterRequest: {
             ...cluster,
-            wide_permissions: getWidePermissionsRequest(formValues, cluster.wide_permissions),
+            wide_permissions: getWidePermissionsRequest(
+              formValues,
+              cluster.wide_permissions?.wide_scope_cloud_account_id
+            ),
           },
         })
       }

@@ -1,8 +1,22 @@
+import { type VariantProps, cva } from 'class-variance-authority'
 import { type ReactElement, useRef, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
-export interface InputSearchProps {
+const inputSearchVariants = cva(
+  'w-full rounded-md border border-neutral bg-surface-neutral pl-10 pr-6 leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]',
+  {
+    variants: {
+      size: {
+        md: 'h-9 text-sm',
+        sm: 'h-7 pl-7 pr-7 text-ssm',
+      },
+    },
+    defaultVariants: { size: 'md' },
+  }
+)
+
+export interface InputSearchProps extends VariantProps<typeof inputSearchVariants> {
   ariaLabel?: string
   placeholder?: string
   // Controls the input value; the input keeps its own value when unset.
@@ -26,7 +40,8 @@ export function InputSearch(props: InputSearchProps) {
     onChange,
     isEmpty = false,
     emptyContent,
-    customSize = 'h-9 text-sm',
+    size = 'md',
+    customSize,
     autofocus = false,
     iconClassName,
   } = props
@@ -56,7 +71,9 @@ export function InputSearch(props: InputSearchProps) {
         <Icon
           iconName="magnifying-glass"
           className={twMerge(
-            'absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle',
+            size === 'sm'
+              ? 'pointer-events-none absolute left-2 top-1/2 block -translate-y-1/2 text-ssm leading-none text-neutral-subtle'
+              : 'pointer-events-none absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle',
             iconClassName
           )}
         />
@@ -64,10 +81,7 @@ export function InputSearch(props: InputSearchProps) {
           data-testid="input-search"
           ref={ref}
           autoFocus={autofocus}
-          className={twMerge(
-            'w-full rounded-md border border-neutral bg-surface-neutral pl-10 pr-6 leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]',
-            customSize
-          )}
+          className={twMerge(inputSearchVariants({ size }), customSize)}
           type="text"
           aria-label={ariaLabel}
           value={value}
@@ -81,10 +95,12 @@ export function InputSearch(props: InputSearchProps) {
             type="button"
             title="Clear search"
             aria-label="Clear search"
-            className="absolute right-3 top-1/2 -translate-y-1/2"
+            className={
+              size === 'sm' ? 'absolute right-2 top-1/2 -translate-y-1/2' : 'absolute right-3 top-1/2 -translate-y-1/2'
+            }
             onClick={deleteValue}
           >
-            <Icon className="text-sm text-neutral" iconName="circle-xmark" />
+            <Icon className={size === 'sm' ? 'text-xs text-neutral' : 'text-sm text-neutral'} iconName="circle-xmark" />
           </button>
         )}
       </div>

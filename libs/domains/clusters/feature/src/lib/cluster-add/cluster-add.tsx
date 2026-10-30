@@ -279,6 +279,7 @@ export function ClusterAdd({ hideDemo = false }: ClusterAddProps) {
       </ProviderSection>
 
       <Modal
+        fakeModal
         externalOpen={isCreationFlowOpen}
         setExternalOpen={setIsCreationFlowOpen}
         width={SELF_MANAGED_CLUSTER_CREATION_MODAL_WIDTH[creationStep]}
