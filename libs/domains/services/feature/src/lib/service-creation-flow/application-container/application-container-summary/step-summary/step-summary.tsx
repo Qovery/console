@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
+import { getJsonTargetKey, useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { buildHpaAdvancedSettingsPayload } from '@qovery/shared/util-services'
@@ -115,9 +115,6 @@ export function ApplicationContainerStepSummary({
       // External secret creation errors are surfaced by the mutation notifications but should not block the service creation flow.
       await Promise.allSettled(
         externalSecretsData.map(async (externalSecret) => {
-          // TODO(secret-manager-json): Persist the form’s JSON drafts here when the real API handler is available.
-          // Until then they are local only; never send JSON references through the single-variable API.
-          if (externalSecret.isJson) return
           const scope = externalSecret.scope ?? createPayload.serviceType
           return createVariable({
             variableRequest: {
@@ -135,6 +132,7 @@ export function ApplicationContainerStepSummary({
               mount_path: externalSecret.isFile ? externalSecret.filePath ?? null : null,
               description: externalSecret.description ?? null,
               secret_manager_access_id: externalSecret.secretManagerAccessId ?? null,
+              json_target_key: getJsonTargetKey(externalSecret),
             },
           })
         })

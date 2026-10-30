@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { type VariableScope } from '@qovery/domains/variables/data-access'
+import { type VariableResponse, type VariableScope } from '@qovery/domains/variables/data-access'
 import { sortVariables } from '@qovery/domains/variables/util'
 import { queries } from '@qovery/state/util-queries'
 
@@ -23,7 +23,8 @@ export function useVariables({ parentId, scope, isSecret, suspense = false, enab
       if (!data) {
         return data
       }
-      return sortVariables(data)
+      const sortedVariables: VariableResponse[] = sortVariables(data)
+      return sortedVariables
         .map((v) => ({
           ...v,
           // NOTE: This is to simplify react-table usage and filtering of `is_secret`
