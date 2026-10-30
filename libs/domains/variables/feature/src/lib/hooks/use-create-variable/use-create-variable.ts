@@ -1,22 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import type { AxiosError } from 'axios'
-import { type VariableRequest, type VariableResponse } from 'qovery-typescript-axios'
+import { type VariableConflictResponse, type VariableRequest, type VariableResponse } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/variables/data-access'
 import { canOverrideConflictingVariable } from '@qovery/domains/variables/util'
 import { toastError } from '@qovery/shared/ui'
 import { isHttpStatus } from '@qovery/shared/utils'
 import { queries } from '@qovery/state/util-queries'
-
-// Body of a 409 on POST /variable. Location ids are always sent; the other VariableResponse fields
-// (variable_type, is_secret, value, mount_path...) may be missing on older API versions.
-export type ConflictingVariableResponse = Pick<VariableResponse, 'id' | 'key' | 'scope'> &
-  Partial<Omit<VariableResponse, 'id' | 'key' | 'scope'>> & {
-    organization_id: string
-    project_id: string
-    environment_id?: string | null
-    service_id?: string | null
-  }
 
 export type UseCreateVariableProps = {
   // Called when the user picks "Create an override" on a conflict with an overridable higher-scope variable.
@@ -33,7 +23,7 @@ export function useCreateVariable({ onCreateOverride }: UseCreateVariableProps =
         queryKey: queries.variables.list._def,
       })
     },
-    onError(error: AxiosError<{ existing_variable?: ConflictingVariableResponse }>, { variableRequest }) {
+    onError(error: AxiosError<VariableConflictResponse>, { variableRequest }) {
       if (!isHttpStatus(error, 409)) {
         toastError(error)
         return
@@ -45,19 +35,17 @@ export function useCreateVariable({ onCreateOverride }: UseCreateVariableProps =
         return
       }
 
-      const { variable_type, is_secret } = existingVariable
-      if (
-        onCreateOverride &&
-        variable_type !== undefined &&
-        is_secret !== undefined &&
-        canOverrideConflictingVariable(existingVariable, variableRequest)
-      ) {
+      if (onCreateOverride && canOverrideConflictingVariable(existingVariable, variableRequest)) {
+        // The 409 body never exposes the value: the override form is prefilled with the one the user typed
         const parentVariable: VariableResponse = {
+          id: existingVariable.id,
           created_at: '',
+          key: existingVariable.key,
           value: null,
-          ...existingVariable,
-          variable_type,
-          is_secret,
+          scope: existingVariable.scope,
+          variable_type: existingVariable.variable_type,
+          is_secret: existingVariable.is_secret,
+          mount_path: existingVariable.mount_path,
         }
         toastError(
           error,
@@ -75,6 +63,10 @@ export function useCreateVariable({ onCreateOverride }: UseCreateVariableProps =
         environment_id: envId,
         service_id: serviceId,
       } = existingVariable
+      if (!orgId || !projectId) {
+        toastError(error, 'Conflict', error.message)
+        return
+      }
       const url =
         serviceId && envId
           ? buildLocation({

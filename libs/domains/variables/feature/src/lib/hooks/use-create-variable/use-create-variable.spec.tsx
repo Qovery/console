@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { type VariableRequest } from 'qovery-typescript-axios'
+import { type ExistingVariableResponse, type VariableRequest } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { act, renderHook } from '@qovery/shared/util-tests'
 import { useCreateVariable } from './use-create-variable'
@@ -38,7 +38,7 @@ const variableRequest: VariableRequest = {
   variable_parent_id: 'service-id',
 }
 
-const existingVariable = {
+const existingVariable: ExistingVariableResponse = {
   id: 'parent-id',
   key: 'LOG_LEVEL',
   scope: 'ENVIRONMENT',
@@ -46,10 +46,9 @@ const existingVariable = {
   project_id: 'project-id',
   environment_id: 'environment-id',
   service_id: null,
-  created_at: '2024-06-10T12:53:23.97647Z',
-  value: 'info',
   variable_type: 'VALUE',
   is_secret: false,
+  mount_path: null,
 }
 
 function conflictError(existing: object | undefined) {
@@ -96,7 +95,13 @@ describe('useCreateVariable', () => {
 
     mockToastError.mock.calls[0][3]()
     expect(onCreateOverride).toHaveBeenCalledWith({
-      parentVariable: expect.objectContaining({ id: 'parent-id', key: 'LOG_LEVEL', scope: 'ENVIRONMENT' }),
+      parentVariable: expect.objectContaining({
+        id: 'parent-id',
+        key: 'LOG_LEVEL',
+        scope: 'ENVIRONMENT',
+        variable_type: 'VALUE',
+        is_secret: false,
+      }),
       variableRequest,
     })
   })
@@ -130,7 +135,7 @@ describe('useCreateVariable', () => {
     expect(mockToastError.mock.calls[0][4]).toBe('Go to the conflicting variable')
   })
 
-  it('links to the conflicting variable when it is an override of unknown kind', async () => {
+  it('links to the conflicting variable when it is an override', async () => {
     const error = conflictError({ ...existingVariable, variable_type: 'OVERRIDE' })
 
     await createWithError(error, jest.fn())
@@ -146,15 +151,12 @@ describe('useCreateVariable', () => {
     expect(mockToastError.mock.calls[0][4]).toBe('Go to the conflicting variable')
   })
 
-  it('links to the conflicting variable when the API does not send its type', async () => {
-    const legacyExistingVariable: Record<string, unknown> = { ...existingVariable }
-    delete legacyExistingVariable['variable_type']
-    delete legacyExistingVariable['is_secret']
-    const error = conflictError(legacyExistingVariable)
+  it('shows the conflict message without a link when the body has no location', async () => {
+    const error = conflictError({ ...existingVariable, scope: 'APPLICATION', organization_id: null, project_id: null })
 
     await createWithError(error, jest.fn())
 
-    expect(mockToastError.mock.calls[0][4]).toBe('Go to the conflicting variable')
+    expect(mockToastError).toHaveBeenCalledWith(error, 'Conflict', error.message)
   })
 
   it('links to the conflicting variable when no override handler is given', async () => {

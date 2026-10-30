@@ -50,19 +50,12 @@ describe('canOverrideConflictingVariable', () => {
     ).toBe(false)
   })
 
-  it('accepts an override only when the kind of the variable it overrides is known and matches', () => {
-    const override = {
-      key: 'LOG_LEVEL',
-      scope: 'ENVIRONMENT' as const,
-      variable_type: 'OVERRIDE' as const,
-      is_secret: false,
-    }
-    expect(canOverrideConflictingVariable(override, request)).toBe(false)
+  it('rejects an existing override, whose kind the 409 body does not give', () => {
     expect(
-      canOverrideConflictingVariable({ ...override, overridden_variable: { variable_type: 'VALUE' } }, request)
-    ).toBe(true)
-    expect(
-      canOverrideConflictingVariable({ ...override, overridden_variable: { variable_type: 'FILE' } }, request)
+      canOverrideConflictingVariable(
+        { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'OVERRIDE', is_secret: false },
+        request
+      )
     ).toBe(false)
   })
 
@@ -90,19 +83,16 @@ describe('canOverrideConflictingVariable', () => {
     ).toBe(false)
   })
 
-  it('rejects a different secret kind or an unknown one', () => {
+  it('rejects a different secret kind', () => {
     expect(
       canOverrideConflictingVariable(
         { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'VALUE', is_secret: true },
         request
       )
     ).toBe(false)
-    expect(
-      canOverrideConflictingVariable({ key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'VALUE' }, request)
-    ).toBe(false)
   })
 
-  it('rejects aliases, external secrets and unknown types', () => {
+  it('rejects aliases, external secrets and built-in variables', () => {
     expect(
       canOverrideConflictingVariable(
         { key: 'LOG_LEVEL', scope: 'ENVIRONMENT', variable_type: 'ALIAS', is_secret: false },
@@ -115,9 +105,12 @@ describe('canOverrideConflictingVariable', () => {
         request
       )
     ).toBe(false)
-    expect(canOverrideConflictingVariable({ key: 'LOG_LEVEL', scope: 'ENVIRONMENT', is_secret: false }, request)).toBe(
-      false
-    )
+    expect(
+      canOverrideConflictingVariable(
+        { key: 'LOG_LEVEL', scope: 'BUILT_IN', variable_type: 'BUILT_IN', is_secret: false },
+        request
+      )
+    ).toBe(false)
   })
 })
 
