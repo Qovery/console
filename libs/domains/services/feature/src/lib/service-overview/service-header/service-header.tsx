@@ -8,6 +8,7 @@ import {
   useCluster,
   useClusterRunningStatusSocket,
 } from '@qovery/domains/clusters/feature'
+import { useLlmProviders } from '@qovery/domains/organizations/feature'
 import {
   type AnyService,
   type Database,
@@ -48,6 +49,7 @@ import { getDatabaseConnectionUri } from '../../service-access-modal/service-acc
 import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import { BlueprintMetadata, BlueprintMetadataSkeleton } from '../../service-blueprint-update-flow/blueprint-metadata'
+import { getAgenticWorkflowModelType } from '../../service-creation-flow/agentic-workflow/agentic-workflow-model-setting'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
 
@@ -194,6 +196,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
     serviceId,
     serviceType: isAgenticWorkflow(service) ? undefined : service?.service_type,
   })
+  const { data: llmProviders = [] } = useLlmProviders({ organizationId, enabled: isAgenticWorkflow(service) })
   const [, copyToClipboard] = useCopyToClipboard()
   const blueprintId = 'blueprint_id' in service ? service.blueprint_id : undefined
   const gitRepository = isAgenticWorkflow(service)
@@ -205,6 +208,17 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
         .with({ serviceType: 'TERRAFORM' }, ({ terraform_files_source }) => terraform_files_source?.git?.git_repository)
         .with({ serviceType: 'ARGOCD_APP' }, ({ git_repository }) => git_repository)
         .otherwise(() => undefined)
+
+  // The saved provider is the source of the model type. Older backends also return `model.type`, used until the
+  // providers load. Without either, the badge is hidden instead of showing a guessed model.
+  const savedProvider = isAgenticWorkflow(service)
+    ? llmProviders.find(({ id }) => id === service.model.llm_provider_id)
+    : undefined
+  const agenticWorkflowModelType = isAgenticWorkflow(service)
+    ? savedProvider
+      ? getAgenticWorkflowModelType(savedProvider.type)
+      : service.model.type
+    : undefined
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
@@ -350,22 +364,24 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
       )}
       {isAgenticWorkflowService && (
         <>
-          <Badge variant="surface" className="items-center gap-1">
-            {match(service.model.type)
-              .with('CLAUDE', () => (
-                <>
-                  <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-3 w-3" />
-                  Claude
-                </>
-              ))
-              .with('BEDROCK', () => (
-                <>
-                  <Icon name={IconEnum.AWS_GRAY} className="h-3 w-3" />
-                  Bedrock
-                </>
-              ))
-              .otherwise((model) => model)}
-          </Badge>
+          {agenticWorkflowModelType && (
+            <Badge variant="surface" className="items-center gap-1">
+              {match(agenticWorkflowModelType)
+                .with('CLAUDE', () => (
+                  <>
+                    <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-3 w-3" />
+                    Claude
+                  </>
+                ))
+                .with('BEDROCK', () => (
+                  <>
+                    <Icon name={IconEnum.AWS_GRAY} className="h-3 w-3" />
+                    Bedrock
+                  </>
+                ))
+                .otherwise((model) => model)}
+            </Badge>
+          )}
           <Badge variant="surface" color={service.enabled ? 'green' : 'neutral'}>
             {service.enabled ? 'Enabled' : 'Disabled'}
           </Badge>
