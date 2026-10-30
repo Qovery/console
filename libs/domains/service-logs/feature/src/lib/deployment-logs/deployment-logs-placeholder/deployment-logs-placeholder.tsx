@@ -8,7 +8,7 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { useService } from '@qovery/domains/services/feature'
-import { Icon, Link, LoaderDots } from '@qovery/shared/ui'
+import { Icon, Link, LoaderDots, Skeleton } from '@qovery/shared/ui'
 import { mergeDeploymentServices } from '@qovery/shared/util-js'
 
 function ErrorIcon() {
@@ -72,6 +72,23 @@ export function LoaderPlaceholder({
       <div className="flex flex-col gap-2">
         <p className="text-neutral">{title}</p>
         <span className="text-sm text-neutral-subtle">{description}</span>
+      </div>
+    </div>
+  )
+}
+
+// Page loader: the header skeleton keeps the loader where it stays once the header shows up
+export function DeploymentLogsLoader() {
+  return (
+    <div className="flex h-page-container flex-col">
+      <div className="flex h-12 shrink-0 items-center gap-3 border-b border-neutral px-4">
+        <Skeleton width={105} height={28} />
+        <Skeleton width={124} height={28} />
+        <Skeleton width={80} height={28} />
+        <Skeleton width={305} height={28} />
+      </div>
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-background">
+        <LoaderPlaceholder />
       </div>
     </div>
   )
