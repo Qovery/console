@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type DeploymentHistoryEnvironmentV2, type Status } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { useDeploymentStatus, useLinks, useService } from '@qovery/domains/services/feature'
@@ -12,6 +13,9 @@ window.HTMLElement.prototype.scroll = jest.fn()
 jest.mock('../hooks/use-deployment-logs/use-deployment-logs')
 jest.mock('../hooks/use-service-deployment-history/use-service-deployment-history')
 jest.mock('@qovery/domains/services/feature')
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => false),
+}))
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -176,6 +180,19 @@ describe('ListDeploymentLogs', () => {
       expect(screen.getByText('Log 1')).toBeInTheDocument()
       expect(screen.queryByText('Log 2')).not.toBeInTheDocument()
     })
+  })
+
+  it('should display logs grouped by step behind the deployment-logs-v2 flag', () => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
+
+    renderWithProviders(<ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />)
+
+    expect(useFeatureFlagEnabled).toHaveBeenCalledWith('deployment-logs-v2')
+    expect(screen.getByRole('heading', { name: 'Logs' })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Search logs' })).toBeInTheDocument()
+    expect(screen.queryByText('Log 1')).not.toBeInTheDocument()
+
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
   })
 
   it('should show progress indicator when deployment is progressing', () => {
