@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import { DeploymentLogs } from '@qovery/domains/service-logs/feature'
-import { LoaderPlaceholder } from '@qovery/domains/service-logs/feature'
+import { DeploymentLogs, DeploymentLogsLoader } from '@qovery/domains/service-logs/feature'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
@@ -11,13 +10,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex h-page-container w-full flex-col justify-center">
-          <LoaderPlaceholder />
-        </div>
-      }
-    >
+    <Suspense fallback={<DeploymentLogsLoader />}>
       <DeploymentLogs />
     </Suspense>
   )
