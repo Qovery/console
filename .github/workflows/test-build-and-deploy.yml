@@ -148,13 +148,14 @@ jobs:
 
           yarn nx affected --target=lint --parallel=3
 
-          yarn nx affected \
+          # Run every project (unchanged ones are Nx Cloud cache hits) so each Codecov upload
+          # covers the whole repo and PR vs. base comparisons are meaningful.
+          yarn nx run-many \
             --target=test \
             --parallel=3 \
             --configuration=${{ inputs.configuration }} \
             --ci \
             --coverage \
-            --coverageReporters=lcov \
             --maxWorkers=2 \
             --forceExit
 
