@@ -10,12 +10,11 @@ export const Route = createFileRoute('/_authenticated/onboarding')({
 
 function OnboardingLayout() {
   const matchRoute = useMatchRoute()
+  const isDemoCluster = Boolean(matchRoute({ to: '/onboarding/organization/$organizationId/demo-cluster' }))
   const step = match({
     isProfile: Boolean(matchRoute({ to: '/onboarding/profile' })),
-    isDemoCluster: Boolean(matchRoute({ to: '/onboarding/organization/$organizationId/demo-cluster' })),
   })
     .with({ isProfile: true }, () => 1 as const)
-    .with({ isDemoCluster: true }, () => 3 as const)
     .otherwise(() => 2 as const)
   return (
     <div data-onboarding-profile className="fixed inset-0 z-10 flex flex-col overflow-y-auto bg-background-secondary">
@@ -33,7 +32,7 @@ function OnboardingLayout() {
         <OnboardingCard step={step}>
           <Outlet />
         </OnboardingCard>
-        {step === 3 && <OnboardingCopilot />}
+        {isDemoCluster && <OnboardingCopilot />}
       </main>
     </div>
   )
