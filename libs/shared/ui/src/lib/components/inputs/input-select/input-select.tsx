@@ -45,6 +45,7 @@ export interface InputSelectProps {
   isFilter?: boolean
   autoFocus?: boolean
   placeholder?: string
+  maxMenuHeight?: number
   menuPlacement?: MenuPlacement
   filterOption?: 'fuzzy' | 'startsWith' | ((option: Value, inputValue: string) => boolean)
   isCreatable?: boolean
@@ -222,6 +223,7 @@ export function InputSelect({
   placeholder,
   menuListButton,
   menuPlacement = 'auto',
+  maxMenuHeight = 300,
   filterOption = 'fuzzy',
   isCreatable = false,
   minInputLength = 0,
@@ -300,6 +302,7 @@ export function InputSelect({
     isLoading,
     inputId: label,
     menuPlacement,
+    maxMenuHeight,
     closeMenuOnSelect: !isMulti,
     onChange: handleChange,
     onInputChange,

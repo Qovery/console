@@ -98,8 +98,8 @@ describe('ProfileOperatorFooter', () => {
     const status = await screen.findByRole('region', { name: 'Qovery Operator status' })
     expect(status).toHaveTextContent('Update available')
     expect(status).toHaveTextContent('v1.202.0')
-    expect(status).toHaveTextContent('Target: v1.203.0')
     expect(status).toHaveTextContent('0.2.0')
+    expect(status).toHaveTextContent('Target: v1.203.0')
     expect(status).toHaveTextContent('Target: 0.2.1')
 
     await userEvent.click(screen.getByRole('button', { name: 'Update Operator' }))
@@ -110,6 +110,29 @@ describe('ProfileOperatorFooter', () => {
       chartVersion: '0.2.1',
       imageVersion: 'v1.203.0',
     })
+  })
+
+  it('shows installed versions without an update action when up-to-date', async () => {
+    mockUseClusterOperatorStatus.mockReturnValue({
+      data: {
+        ...operatorStatus,
+        operator_version: operatorStatus.desired_image_version,
+        reported_chart_version: operatorStatus.desired_chart_version,
+        status: 'CURRENT',
+      },
+      isLoading: false,
+    })
+    const { userEvent } = renderWithProviders(<ProfileOperatorFooter />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Qovery Operator: Up-to-date' }))
+
+    const status = await screen.findByRole('region', { name: 'Qovery Operator status' })
+    expect(status).toHaveTextContent('Up-to-date')
+    expect(status).toHaveTextContent('v1.203.0')
+    expect(status).toHaveTextContent('0.2.1')
+    expect(status).toHaveTextContent('Target: v1.203.0')
+    expect(status).toHaveTextContent('Target: 0.2.1')
+    expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
   })
 
   it('reaches the update action from the keyboard', async () => {
@@ -132,7 +155,7 @@ describe('ProfileOperatorFooter', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Qovery Operator: Disconnected' }))
 
-    expect(await screen.findByText('No recent heartbeat was received from the Operator.')).toBeInTheDocument()
+    expect(await screen.findByText('Disconnected')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
   })
 })

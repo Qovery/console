@@ -10,6 +10,7 @@ import {
   getDefaultBlueprintFieldValues,
   getDefaultContextFieldValue,
   getDefaultFieldValue,
+  getFieldJsonValidationError,
   getFieldLengthValidationError,
   getFieldNumberValidationError,
   getFieldValidationError,
@@ -18,6 +19,7 @@ import {
   isFieldValid,
   isFieldValueFulfilled,
   isFieldValueMatchingPattern,
+  isJsonField,
   isOptionalVariableField,
   isOverridableContextVariableField,
   isRequiredVariableField,
@@ -206,6 +208,21 @@ describe('field validation', () => {
     expect(getFieldValidationError(field, '19')).toBe('Value must be between 20 and 65536.')
   })
 
+  it('validates json fields as one JSON document and leaves empty values to the required check', () => {
+    const jsonField = createVariableField({
+      required: false,
+      type: { type: 'string', format: 'json' },
+    })
+
+    expect(getFieldJsonValidationError(jsonField, '{"log_connections":"1"}')).toBeUndefined()
+    expect(getFieldJsonValidationError(jsonField, '{"log_connections":')).toBe('Value must be valid JSON.')
+    expect(getFieldJsonValidationError(jsonField, '   ')).toBeUndefined()
+    expect(getFieldValidationError(jsonField, "{'a':'1'}")).toBe('Value must be valid JSON.')
+    expect(getFieldValidationError(jsonField, '{{DB_PARAMETERS}}')).toBeUndefined()
+    expect(isFieldValid(jsonField, '{"a":')).toBe(false)
+    expect(getFieldJsonValidationError(createVariableField(), '{"a":')).toBeUndefined()
+  })
+
   it('requires a fulfilled value only for required fields', () => {
     const requiredField = createVariableField({ required: true })
     const optionalField = createVariableField({ required: false })
@@ -218,6 +235,12 @@ describe('field validation', () => {
 })
 
 describe('field type guards', () => {
+  it('identifies json fields from their format and ignores unknown formats', () => {
+    expect(isJsonField(createVariableField({ type: { type: 'string', format: 'json' } }))).toBe(true)
+    expect(isJsonField(createVariableField({ type: { type: 'string', format: 'yaml' } }))).toBe(false)
+    expect(isJsonField(createVariableField())).toBe(false)
+  })
+
   it('identifies variable fields and their required state', () => {
     const requiredField = createVariableField({ required: true }) as BlueprintManifestResponseResultsInner
     const optionalField = createVariableField({ required: false }) as BlueprintManifestResponseResultsInner

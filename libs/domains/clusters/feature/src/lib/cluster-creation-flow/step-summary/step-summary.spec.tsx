@@ -115,6 +115,45 @@ describe('StepSummary', () => {
     })
   })
 
+  it.each(['button-create', 'button-create-deploy'])(
+    'should send the extended credentials ID with wide permissions using %s',
+    async (buttonTestId) => {
+      mockContextValue.generalData = {
+        name: 'test-cluster',
+        cloud_provider: CloudProviderEnum.AWS,
+        region: 'us-east-1',
+        installation_type: 'MANAGED',
+        production: false,
+        credentials: 'extended-role-id',
+        credentials_name: 'extended-role',
+        restricted_credentials: 'restricted-credential-id',
+        restricted_credentials_name: 'restricted-credential',
+        using_restrictive_permissions: true,
+        slack_webhook_url: ' https://hooks.slack.com/services/test ',
+      }
+      mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+      mockEditCloudProviderInfo.mockResolvedValue({})
+
+      const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+      await userEvent.click(screen.getByTestId(buttonTestId))
+
+      await waitFor(() => expect(mockCreateCluster).toHaveBeenCalled())
+
+      const clusterRequest = mockCreateCluster.mock.calls[0][0].clusterRequest
+      expect(clusterRequest.wide_permissions).toEqual({
+        using_restrictive_permissions: true,
+        wide_scope_cloud_account_id: 'extended-role-id',
+        slack_webhook_url: 'https://hooks.slack.com/services/test',
+      })
+      expect(clusterRequest.cloud_provider_credentials).toEqual(
+        expect.objectContaining({
+          credentials: { id: 'restricted-credential-id', name: 'restricted-credential' },
+          wide_permission_credentials: { id: 'extended-role-id', name: 'extended-role' },
+        })
+      )
+    }
+  )
+
   it('should set current step on mount', async () => {
     renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
 
@@ -133,6 +172,10 @@ describe('StepSummary', () => {
       production: false,
       credentials: 'cred-id',
       credentials_name: 'cred-name',
+      using_restrictive_permissions: true,
+      restricted_credentials: 'restricted-cred-id',
+      restricted_credentials_name: 'restricted-cred-name',
+      slack_webhook_url: 'https://hooks.slack.com/services/test',
     }
     mockContextValue.kubeconfigData = {
       file_name: 'cluster.yml',
@@ -152,6 +195,9 @@ describe('StepSummary', () => {
       await waitFor(() => {
         expect(mockNavigate).toHaveBeenCalledWith({ to: '/organization/org-123/clusters' })
       })
+      const clusterRequest = mockCreateCluster.mock.calls[0][0].clusterRequest
+      expect(clusterRequest).not.toHaveProperty('wide_permissions')
+      expect(clusterRequest.cloud_provider_credentials).not.toHaveProperty('wide_permission_credentials')
       expect(consoleErrorSpy).toHaveBeenCalledWith(kubeconfigError)
     } finally {
       // Restore even when an assertion fails, so later tests can still log

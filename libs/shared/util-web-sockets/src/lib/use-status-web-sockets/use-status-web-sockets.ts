@@ -117,6 +117,8 @@ export function useRunningStatusWebSocket({
     },
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
     enabled: wsEnabled,
+    // NOTE: the gateway closes the socket once the token used at connect time expires, reconnect to get a fresh one
+    shouldReconnect: true,
     onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
         queryClient.setQueryData(
