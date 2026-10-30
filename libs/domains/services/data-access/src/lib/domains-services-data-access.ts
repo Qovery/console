@@ -972,10 +972,43 @@ type EditAdvancedSettingsRequest = {
       } & TerraformAdvancedSettings)
 }
 
+function isJson(value: string) {
+  try {
+    JSON.parse(value)
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const mutations = {
   async deployAgenticWorkflow({ agenticWorkflowId }: { agenticWorkflowId: string }) {
     const response = await agenticWorkflowsApi.deployAgenticWorkflow(agenticWorkflowId)
     return response.data
+  },
+  // Sent straight from the browser to the agent webhook, so the webhook must allow CORS for the Console origin.
+  // Run history does not store request headers, so the content type is inferred from the stored body.
+  // Runs without a stored payload (manual, scheduled) are replayed with an empty body.
+  async replayAgenticWorkflowRun({ webhookUrl, payload }: { webhookUrl: string; payload?: string | null }) {
+    let response: Response
+    try {
+      response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers:
+          typeof payload === 'string' ? { 'Content-Type': isJson(payload) ? 'application/json' : 'text/plain' } : {},
+        body: typeof payload === 'string' ? payload : undefined,
+        credentials: 'omit',
+      })
+    } catch {
+      // The browser also rejects when the response lacks CORS headers, even if the webhook accepted the request.
+      throw new Error(
+        'Delivery could not be confirmed. The webhook may have received the request despite the browser error. Check the run history before replaying again.'
+      )
+    }
+    if (!response.ok) {
+      throw new Error(`The webhook responded with status ${response.status}.`)
+    }
+    return response
   },
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
     const { mutation } = match(serviceType)
