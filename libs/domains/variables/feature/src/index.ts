@@ -20,3 +20,4 @@ export * from './lib/import-environment-variable-modal/import-environment-variab
 export * from './lib/external-secrets/external-secrets-tab'
 export * from './lib/external-secrets/add-secret-modal/add-secret-modal'
 export * from './lib/external-secrets/add-secret-dropdown'
+export * from './lib/external-secrets/get-json-target-key'

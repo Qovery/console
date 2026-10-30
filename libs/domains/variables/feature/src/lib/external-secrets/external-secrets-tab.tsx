@@ -43,6 +43,7 @@ import {
   type SecretSourceOption,
   mapSecretManagersToSources,
 } from './add-secret-modal/add-secret-modal'
+import { getJsonTargetKey } from './get-json-target-key'
 
 const { Table } = TablePrimitives
 
@@ -89,29 +90,26 @@ export function ExternalSecretsTab({
     suspense: true,
   })
 
-  // TODO(secret-manager-json): Replace these user-entered drafts and their handlers with the real API.
-  // No seeded data; drafts reset on remount and are isolated to their service/environment.
-  const [jsonDrafts, setJsonDrafts] = useState<(ExternalSecretRow & { parentId: string })[]>([])
   const secrets = useMemo<ExternalSecretRow[]>(
-    () => [
-      ...variables.filter(isExternalSecretVariable).map((variable) => {
+    () =>
+      variables.filter(isExternalSecretVariable).map((variable) => {
         const secretManager = secretManagers.find((manager) => manager.id === variable.secret_manager_access_id)
-
         return {
           id: variable.id,
           name: variable.key,
           description: variable.description,
           filePath: variable.mount_path ?? undefined,
           isFile: Boolean(variable.mount_path),
+          isJson: variable.json_target_key != null,
+          keyName: variable.json_target_key ?? undefined,
+          secretManagerAccessId: variable.secret_manager_access_id ?? undefined,
           reference: variable.value ?? '',
           source: secretManager?.name ?? null,
           sourceIcon: getSecretManagerProvider(secretManager),
           scope: generateScopeLabel(variable.scope),
         }
       }),
-      ...jsonDrafts.filter((secret) => secret.parentId === parentId),
-    ],
-    [secretManagers, variables, jsonDrafts, parentId]
+    [secretManagers, variables]
   )
   const [search, setSearch] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
@@ -127,13 +125,10 @@ export function ExternalSecretsTab({
 
   const getSourceOption = useCallback(
     (secret?: ExternalSecretRow): SecretSourceOption | undefined => {
-      if (!secret?.source) {
-        return secretSources[0]
-      }
       return (
-        secretSources.find(
-          (option) => option.value === secret.secretManagerAccessId || option.tableLabel === secret.source
-        ) ?? secretSources[0]
+        secretSources.find((option) => option.value === secret?.secretManagerAccessId) ??
+        secretSources.find((option) => option.tableLabel === secret?.source) ??
+        secretSources[0]
       )
     },
     [secretSources]
@@ -150,27 +145,6 @@ export function ExternalSecretsTab({
       reference,
       secretManagerAccessId,
     }: AddSecretModalSubmitData) => {
-      // TODO(secret-manager-json): Replace local creation with the real JSON API handler.
-      if (isJson) {
-        const manager = secretManagers.find((item) => item.id === secretManagerAccessId)
-        setJsonDrafts((current) => [
-          ...current,
-          {
-            id: `json-draft-${crypto.randomUUID()}`,
-            parentId,
-            name,
-            reference,
-            description,
-            isJson: true,
-            keyName,
-            secretManagerAccessId,
-            source: manager?.name ?? null,
-            sourceIcon: getSecretManagerProvider(manager),
-            scope: generateScopeLabel(scope),
-          },
-        ])
-        return
-      }
       await createVariable({
         variableRequest: {
           key: name,
@@ -181,11 +155,12 @@ export function ExternalSecretsTab({
           variable_parent_id: parentId,
           description: description ?? null,
           secret_manager_access_id: secretManagerAccessId,
+          json_target_key: getJsonTargetKey({ isJson, isFile, keyName }),
         },
       })
       onCreateSecret?.()
     },
-    [createVariable, onCreateSecret, parentId, scope, secretManagers]
+    [createVariable, onCreateSecret, parentId, scope]
   )
 
   const handleEditSecret = useCallback(
@@ -202,33 +177,13 @@ export function ExternalSecretsTab({
         secretManagerAccessId,
       }: AddSecretModalSubmitData
     ) => {
-      // TODO(secret-manager-json): Replace local editing with the real JSON API handler.
-      if (isJson) {
-        const manager = secretManagers.find((item) => item.id === secretManagerAccessId)
-        setJsonDrafts((current) =>
-          current.map((secret) =>
-            secret.id === secretId
-              ? {
-                  ...secret,
-                  name,
-                  reference,
-                  description,
-                  keyName,
-                  secretManagerAccessId,
-                  source: manager?.name ?? null,
-                  sourceIcon: getSecretManagerProvider(manager),
-                }
-              : secret
-          )
-        )
-        return
-      }
       const variableEditRequest = {
         key: name,
         value: reference,
         mount_path: isFile ? filePath ?? null : null,
         description: description ?? null,
         secret_manager_access_id: secretManagerAccessId,
+        json_target_key: getJsonTargetKey({ isJson, isFile, keyName }),
       }
 
       await editVariable({
@@ -237,7 +192,7 @@ export function ExternalSecretsTab({
       })
       onEditSecret?.()
     },
-    [editVariable, onEditSecret, secretManagers]
+    [editVariable, onEditSecret]
   )
 
   const handleOpenAddSecret = useCallback(
@@ -301,13 +256,8 @@ export function ExternalSecretsTab({
 
   const handleDeleteSecrets = useCallback(
     async (secretIds: string[]) => {
-      const idsToDelete = new Set(secretIds)
-      // TODO(secret-manager-json): Replace local deletion with the real JSON API handler.
-      const draftIds = new Set(jsonDrafts.map((secret) => secret.id))
-      const persistedIds = [...idsToDelete].filter((id) => !draftIds.has(id))
-      await Promise.all(persistedIds.map((variableId) => deleteVariable({ variableId })))
-      setJsonDrafts((current) => current.filter((secret) => !idsToDelete.has(secret.id)))
-      if (persistedIds.length > 0) onDeleteSecret?.()
+      await Promise.all(secretIds.map((variableId) => deleteVariable({ variableId })))
+      onDeleteSecret?.()
       setRowSelection((prev) => {
         const next = { ...prev }
         for (const secretId of secretIds) {
@@ -316,7 +266,7 @@ export function ExternalSecretsTab({
         return next
       })
     },
-    [deleteVariable, onDeleteSecret, jsonDrafts]
+    [deleteVariable, onDeleteSecret]
   )
 
   const handleConfirmDeleteSecrets = useCallback(
@@ -428,7 +378,7 @@ export function ExternalSecretsTab({
               {secret.isJson && (
                 <div className="flex items-center gap-1 text-ssm text-neutral-subtle">
                   <Icon iconName="brackets-curly" />
-                  <span>{`Key: ${secret.keyName}`}</span>
+                  <span>{`JSON path: ${secret.keyName}`}</span>
                 </div>
               )}
               {showFilePath && (

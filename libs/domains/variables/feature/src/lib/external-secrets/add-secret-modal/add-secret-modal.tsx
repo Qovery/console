@@ -6,7 +6,16 @@ import { match } from 'ts-pattern'
 import { getSecretManagerProvider } from '@qovery/domains/clusters/data-access'
 import { useSecretManagerProviderSecrets } from '@qovery/domains/clusters/feature'
 import { type VariableScope } from '@qovery/domains/variables/data-access'
-import { Checkbox, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
+import {
+  Checkbox,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  ModalCrud,
+  useModal,
+} from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { ENVIRONMENT_VARIABLE_NAME_PATTERN } from '@qovery/shared/util-js'
 
@@ -163,22 +172,22 @@ export function AddSecretModal({
         reference: finalReference,
         secretManagerAccessId: selectedSource.value,
       })
-      if (!isJson)
-        posthog.capture('external-secret-form-submitted', {
-          mode,
-          scope,
-          is_file: isFile,
-          success: true,
-        })
+      posthog.capture('external-secret-form-submitted', {
+        mode,
+        scope,
+        is_file: isFile,
+        is_json: isJson,
+        success: true,
+      })
       onClose()
     } catch (error) {
-      if (!isJson)
-        posthog.capture('external-secret-form-submitted', {
-          mode,
-          scope,
-          is_file: isFile,
-          success: false,
-        })
+      posthog.capture('external-secret-form-submitted', {
+        mode,
+        scope,
+        is_file: isFile,
+        is_json: isJson,
+        success: false,
+      })
       setSubmitError(error instanceof Error ? error.message : 'Could not save the secret. Please try again.')
       console.error(error)
     }
@@ -297,12 +306,12 @@ export function AddSecretModal({
             <Controller
               name="keyName"
               control={methods.control}
-              rules={{ validate: (value) => !!value.trim() || 'Please enter a key name.' }}
+              rules={{ validate: (value) => !!value.trim() || 'Please enter a JSON property path.' }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
                   className="mb-3 w-full"
                   name={field.name}
-                  label="Key name"
+                  label="JSON property path"
                   value={field.value}
                   onChange={(event) => {
                     field.onChange(event)
@@ -311,7 +320,17 @@ export function AddSecretModal({
                       methods.setValue('secretName', inferredName, { shouldValidate: true })
                     }
                   }}
-                  hint="Key to import from the selected JSON secret."
+                  hint={
+                    <>
+                      Use dots to navigate JSON objects and numeric indexes for arrays. Example: accounts.0.password.{' '}
+                      <ExternalLink
+                        href="https://www.qovery.com/docs/configuration/integrations/secret-managers/secret-manager-access#selecting-a-value-from-a-json-secret"
+                        size="xs"
+                      >
+                        JSON selection syntax
+                      </ExternalLink>
+                    </>
+                  }
                   error={error?.message}
                 />
               )}
@@ -325,7 +344,7 @@ export function AddSecretModal({
               validate: (value) => {
                 const name = value.trim()
                 if (!name) {
-                  return 'Please enter a secret name.'
+                  return isJson ? 'Please enter an environment variable name.' : 'Please enter a secret name.'
                 }
                 return (
                   !isJson ||
@@ -338,7 +357,7 @@ export function AddSecretModal({
               <InputText
                 className="mb-3 w-full"
                 name={field.name}
-                label="Secret name"
+                label={isJson ? 'Environment variable name' : 'Secret name'}
                 value={field.value}
                 onChange={(event) => {
                   field.onChange(event)

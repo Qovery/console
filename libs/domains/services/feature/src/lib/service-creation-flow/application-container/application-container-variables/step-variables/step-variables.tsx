@@ -176,7 +176,6 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
           initialSecret={currentSecret}
           onClose={closeModal}
           onSubmit={(secret) => {
-            // TODO(secret-manager-json): Persist JSON references with the real API in the final creation step.
             const mapped = mapSecretForForm(secret, sourceById, serviceScope)
             if (typeof index === 'number') {
               updateExternalSecret(index, mapped)
@@ -422,7 +421,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                           {secret.isJson && (
                             <div className="flex min-w-0 items-center gap-1 text-ssm text-neutral-subtle">
                               <Icon iconName="brackets-curly" />
-                              <span className="truncate">{`Key: ${secret.keyName}`}</span>
+                              <span className="truncate">{`JSON path: ${secret.keyName}`}</span>
                             </div>
                           )}
                           {secret.filePath && (

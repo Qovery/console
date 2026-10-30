@@ -88,7 +88,7 @@ describe('AddSecretModal', () => {
       )
     })
   })
-  it('imports a JSON key and follows its name until the secret name is overridden', async () => {
+  it('imports a JSON property path and follows it until the environment variable name is overridden', async () => {
     const onSubmit = jest.fn()
     const { userEvent } = renderWithProviders(
       <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
@@ -98,23 +98,23 @@ describe('AddSecretModal', () => {
     expect(screen.queryByText('Variables to import')).not.toBeInTheDocument()
     await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
     expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
-    await userEvent.type(screen.getByLabelText('Key name'), 'DATABASE_URL')
-    expect(screen.getByLabelText('Secret name')).toHaveValue('DATABASE_URL')
-    await userEvent.clear(screen.getByLabelText('Key name'))
-    await userEvent.type(screen.getByLabelText('Key name'), 'DATABASE_PASSWORD')
-    expect(screen.getByLabelText('Secret name')).toHaveValue('DATABASE_PASSWORD')
-    await userEvent.clear(screen.getByLabelText('Secret name'))
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'DATABASE_URL')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('DATABASE_URL')
+    await userEvent.clear(screen.getByLabelText('JSON property path'))
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'DATABASE_PASSWORD')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('DATABASE_PASSWORD')
+    await userEvent.clear(screen.getByLabelText('Environment variable name'))
     expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
-    await userEvent.type(screen.getByLabelText('Secret name'), 'APP_PASSWORD')
-    await userEvent.clear(screen.getByLabelText('Key name'))
-    await userEvent.type(screen.getByLabelText('Key name'), 'password')
-    expect(screen.getByLabelText('Secret name')).toHaveValue('APP_PASSWORD')
+    await userEvent.type(screen.getByLabelText('Environment variable name'), 'APP_PASSWORD')
+    await userEvent.clear(screen.getByLabelText('JSON property path'))
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'accounts.0.password')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('APP_PASSWORD')
     await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
           name: 'APP_PASSWORD',
-          keyName: 'password',
+          keyName: 'accounts.0.password',
           reference: 'production/database',
           isJson: true,
         })
@@ -133,8 +133,8 @@ describe('AddSecretModal', () => {
       <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
     )
     await userEvent.type(screen.getByLabelText('Reference'), 'production/config')
-    await userEvent.type(screen.getByLabelText('Key name'), keyName)
-    expect(screen.getByLabelText('Secret name')).toHaveValue(name)
+    await userEvent.type(screen.getByLabelText('JSON property path'), keyName)
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue(name)
     await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
     await waitFor(() => expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name, keyName })))
   })
@@ -147,9 +147,9 @@ describe('AddSecretModal', () => {
         <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
       )
       await userEvent.type(screen.getByLabelText('Reference'), 'production/config')
-      await userEvent.type(screen.getByLabelText('Key name'), 'password')
-      await userEvent.clear(screen.getByLabelText('Secret name'))
-      await userEvent.type(screen.getByLabelText('Secret name'), name)
+      await userEvent.type(screen.getByLabelText('JSON property path'), 'password')
+      await userEvent.clear(screen.getByLabelText('Environment variable name'))
+      await userEvent.type(screen.getByLabelText('Environment variable name'), name)
       expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
       expect(
         screen.getByText(
@@ -160,28 +160,31 @@ describe('AddSecretModal', () => {
     }
   )
 
-  it.each(['Key name', 'Secret name'])('requires a nonblank %s for JSON secrets', async (label) => {
-    const onSubmit = jest.fn()
-    const { userEvent } = renderWithProviders(
-      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
-    )
-    await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
-    await userEvent.type(screen.getByLabelText('Key name'), 'password')
-    await userEvent.clear(screen.getByLabelText(label))
-    await userEvent.type(screen.getByLabelText(label), '   ')
-    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
-    expect(onSubmit).not.toHaveBeenCalled()
-  })
+  it.each(['JSON property path', 'Environment variable name'])(
+    'requires a nonblank %s for JSON secrets',
+    async (label) => {
+      const onSubmit = jest.fn()
+      const { userEvent } = renderWithProviders(
+        <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
+      )
+      await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
+      await userEvent.type(screen.getByLabelText('JSON property path'), 'password')
+      await userEvent.clear(screen.getByLabelText(label))
+      await userEvent.type(screen.getByLabelText(label), '   ')
+      expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+      expect(onSubmit).not.toHaveBeenCalled()
+    }
+  )
 
   it('keeps names unlinked after an override even when they match again', async () => {
     const { userEvent } = renderWithProviders(
       <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={jest.fn()} />
     )
-    await userEvent.type(screen.getByLabelText('Key name'), 'password')
-    await userEvent.clear(screen.getByLabelText('Secret name'))
-    await userEvent.type(screen.getByLabelText('Secret name'), 'password')
-    await userEvent.type(screen.getByLabelText('Key name'), '_new')
-    expect(screen.getByLabelText('Secret name')).toHaveValue('password')
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'password')
+    await userEvent.clear(screen.getByLabelText('Environment variable name'))
+    await userEvent.type(screen.getByLabelText('Environment variable name'), 'password')
+    await userEvent.type(screen.getByLabelText('JSON property path'), '_new')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('password')
   })
 
   it('submits the auto-filled secret name without adding an underscore', async () => {
@@ -190,7 +193,7 @@ describe('AddSecretModal', () => {
       <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
     )
     await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
-    await userEvent.type(screen.getByLabelText('Key name'), 'password')
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'password')
     await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name: 'password', keyName: 'password' }))
@@ -211,10 +214,10 @@ describe('AddSecretModal', () => {
         onSubmit={onSubmit}
       />
     )
-    expect(screen.getByLabelText('Secret name')).toHaveValue('APP_PASSWORD')
-    expect(screen.getByLabelText('Key name')).toHaveValue('password')
-    await userEvent.type(screen.getByLabelText('Key name'), '_new')
-    expect(screen.getByLabelText('Secret name')).toHaveValue('APP_PASSWORD')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('APP_PASSWORD')
+    expect(screen.getByLabelText('JSON property path')).toHaveValue('password')
+    await userEvent.type(screen.getByLabelText('JSON property path'), '_new')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('APP_PASSWORD')
     await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name: 'APP_PASSWORD', keyName: 'password_new' }))
@@ -228,6 +231,16 @@ describe('AddSecretModal', () => {
     consoleError.mockRestore()
   })
 
+  it('links to the JSON selector documentation', () => {
+    renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={jest.fn()} />
+    )
+    expect(screen.getByRole('link', { name: 'JSON selection syntax' })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/configuration/integrations/secret-managers/secret-manager-access#selecting-a-value-from-a-json-secret'
+    )
+  })
+
   it('does not infer JSON keys from the reference name', async () => {
     useSecretManagerProviderSecretsMock.mockReturnValue({
       data: { results: ['production/app'] },
@@ -239,8 +252,8 @@ describe('AddSecretModal', () => {
     )
     await userEvent.click(screen.getByLabelText('Reference'))
     await userEvent.click(screen.getByText('production/app'))
-    expect(screen.getByLabelText('Key name')).toHaveValue('')
-    expect(screen.getByLabelText('Secret name')).toHaveValue('')
+    expect(screen.getByLabelText('JSON property path')).toHaveValue('')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('')
     expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
   })
 })
