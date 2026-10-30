@@ -2,7 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { type PropsWithChildren, useLayoutEffect, useRef, useState } from 'react'
 import { OnboardingProgress } from '../onboarding-progress/onboarding-progress'
 
-export function OnboardingCard({ step, children }: PropsWithChildren<{ step: 1 | 2 | 3 }>) {
+export function OnboardingCard({ step, children }: PropsWithChildren<{ step: 1 | 2 }>) {
   const contentRef = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState<number>()
   const reducedMotion = useReducedMotion()
