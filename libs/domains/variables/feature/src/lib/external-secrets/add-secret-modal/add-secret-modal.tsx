@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios'
 import posthog from 'posthog-js'
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useEffect, useId, useMemo, useState } from 'react'
@@ -174,23 +175,25 @@ export function AddSecretModal({
         reference: finalReference,
         secretManagerAccessId: selectedSource.value,
       })
-      if (!isJson)
-        posthog.capture('external-secret-form-submitted', {
-          mode,
-          scope,
-          is_file: isFile,
-          success: true,
-        })
+      posthog.capture('external-secret-form-submitted', {
+        mode,
+        scope,
+        is_file: isFile,
+        is_json: isJson,
+        success: true,
+      })
       onClose()
     } catch (error) {
-      if (!isJson)
-        posthog.capture('external-secret-form-submitted', {
-          mode,
-          scope,
-          is_file: isFile,
-          success: false,
-        })
-      setSubmitError(error instanceof Error ? error.message : 'Could not save the secret. Please try again.')
+      posthog.capture('external-secret-form-submitted', {
+        mode,
+        scope,
+        is_file: isFile,
+        is_json: isJson,
+        success: false,
+      })
+      if (!isAxiosError(error)) {
+        setSubmitError(error instanceof Error ? error.message : 'Could not save the secret. Please try again.')
+      }
       console.error(error)
     }
   })
@@ -380,7 +383,7 @@ export function AddSecretModal({
               <InputText
                 className="mb-3 w-full"
                 name={field.name}
-                label="Secret name"
+                label={isJson ? 'Environment variable name' : 'Secret name'}
                 value={field.value}
                 onChange={(event) => {
                   field.onChange(event)

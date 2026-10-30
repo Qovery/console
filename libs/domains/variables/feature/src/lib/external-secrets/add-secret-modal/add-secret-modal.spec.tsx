@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import { type ComponentProps } from 'react'
 import { useSecretManagerProviderSecrets } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -119,7 +120,12 @@ describe('AddSecretModal', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled())
     await userEvent.type(screen.getByLabelText('JSON property path'), 'accounts.0.password')
     expect(screen.getByRole('button', { name: 'Add secret' })).toBeEnabled()
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('APP_PASSWORD')
+    expect(screen.queryByLabelText('Secret name')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'JSON source' }))
     expect(screen.getByLabelText('Secret name')).toHaveValue('APP_PASSWORD')
+    expect(screen.queryByLabelText('Environment variable name')).not.toBeInTheDocument()
   })
 
   it.each([
@@ -132,7 +138,7 @@ describe('AddSecretModal', () => {
     await userEvent.type(screen.getByLabelText('Reference'), 'production/config')
     await userEvent.click(screen.getByRole('checkbox', { name: 'JSON source' }))
     await userEvent.type(screen.getByLabelText('JSON property path'), keyName)
-    expect(screen.getByLabelText('Secret name')).toHaveValue(name)
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue(name)
     await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
     await waitFor(() => expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name, keyName, isJson: true })))
   })
@@ -144,7 +150,7 @@ describe('AddSecretModal', () => {
     await userEvent.type(screen.getByLabelText('Secret name'), 'APP_PASSWORD')
     await userEvent.click(screen.getByRole('checkbox', { name: 'JSON source' }))
     await userEvent.type(screen.getByLabelText('JSON property path'), 'accounts.0.password')
-    expect(screen.getByLabelText('Secret name')).toHaveValue('APP_PASSWORD')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('APP_PASSWORD')
     await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(
@@ -165,8 +171,8 @@ describe('AddSecretModal', () => {
       await userEvent.type(screen.getByLabelText('Reference'), 'production/config')
       await userEvent.click(screen.getByRole('checkbox', { name: 'JSON source' }))
       await userEvent.type(screen.getByLabelText('JSON property path'), 'password')
-      await userEvent.clear(screen.getByLabelText('Secret name'))
-      await userEvent.type(screen.getByLabelText('Secret name'), name)
+      await userEvent.clear(screen.getByLabelText('Environment variable name'))
+      await userEvent.type(screen.getByLabelText('Environment variable name'), name)
       expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
       expect(
         screen.getByText(
@@ -177,7 +183,7 @@ describe('AddSecretModal', () => {
     }
   )
 
-  it.each(['JSON property path', 'Secret name'])('requires a nonblank %s in JSON mode', async (label) => {
+  it.each(['JSON property path', 'Environment variable name'])('requires a nonblank %s in JSON mode', async (label) => {
     const onSubmit = jest.fn()
     const { userEvent } = renderModal({ onSubmit })
     await userEvent.type(screen.getByLabelText('Reference'), 'production/config')
@@ -256,7 +262,7 @@ describe('AddSecretModal', () => {
         initialSecret: { name: 'APP_PASSWORD', keyName: 'password', reference: 'production/config' },
       })
       await userEvent.type(screen.getByLabelText('JSON property path'), '_new')
-      expect(screen.getByLabelText('Secret name')).toHaveValue('APP_PASSWORD')
+      expect(screen.getByLabelText('Environment variable name')).toHaveValue('APP_PASSWORD')
       await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
       await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('Could not save'))
       expect(onClose).not.toHaveBeenCalled()
@@ -266,6 +272,30 @@ describe('AddSecretModal', () => {
       expect(onSubmit).toHaveBeenLastCalledWith(
         expect.objectContaining({ name: 'APP_PASSWORD', keyName: 'password_new' })
       )
+    } finally {
+      consoleError.mockRestore()
+    }
+  })
+
+  it('keeps Axios API failures out of inline alerts and allows retry', async () => {
+    const onClose = jest.fn()
+    const onSubmit = jest.fn().mockRejectedValueOnce(new AxiosError('Request failed with status code 400'))
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    try {
+      const { userEvent } = renderModal({
+        mode: 'edit',
+        onClose,
+        onSubmit,
+        initialSecret: { name: 'APP_PASSWORD', keyName: 'password', reference: 'production/config' },
+      })
+      await userEvent.type(screen.getByLabelText('JSON property path'), '_new')
+      await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
+      await waitFor(() => expect(consoleError).toHaveBeenCalled())
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+      expect(onClose).not.toHaveBeenCalled()
+      onSubmit.mockResolvedValueOnce(undefined)
+      await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
+      await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1))
     } finally {
       consoleError.mockRestore()
     }
