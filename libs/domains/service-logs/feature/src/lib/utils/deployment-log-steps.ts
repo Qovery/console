@@ -1,5 +1,6 @@
 import {
   type EnvironmentLogs,
+  type EnvironmentStatusesWithStagesPreCheckStage,
   type PreCheckStepMetric,
   type ServiceActionEnum,
   type ServiceStepMetric,
@@ -225,7 +226,7 @@ function getPhaseStatus(steps: DeploymentLogStep[]): DeploymentLogStepStatus | u
 
 export interface GetDeploymentLogPhasesProps<T extends EnvironmentLogs> {
   serviceSteps?: ServiceStepMetric[]
-  preCheckSteps?: PreCheckStepMetric[]
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
   linesByStep: Map<string, DeploymentLogStepLines<T>>
   serviceId: string
   nowMs: number
@@ -238,12 +239,12 @@ export interface GetDeploymentLogPhasesProps<T extends EnvironmentLogs> {
  */
 export function getDeploymentLogPhases<T extends EnvironmentLogs>({
   serviceSteps,
-  preCheckSteps,
+  preCheckStage,
   linesByStep,
   serviceId,
   nowMs,
 }: GetDeploymentLogPhasesProps<T>): DeploymentLogPhase<T>[] {
-  const metrics = getStepMetrics({ serviceSteps, preCheckSteps, serviceId, nowMs })
+  const metrics = getStepMetrics({ serviceSteps, preCheckSteps: preCheckStage?.steps, serviceId, nowMs })
 
   const stepsByPhase = PHASE_IDS.map((phaseId) => {
     const knownStepNames = PHASE_STEP_NAMES[phaseId]
@@ -301,13 +302,16 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
     if (steps.length === 0 && ungroupedLines.length === 0) return []
 
     const timedSteps = steps.filter((step) => step.durationSec !== undefined)
+    // Pre-checks without step metrics (older deployments, or no check run) only have the status and time of the stage
+    const preCheckStageMetric =
+      phaseId === 'PRE_CHECK' && steps.every((step) => !step.status) ? preCheckStage : undefined
     const phase = {
       id: phaseId,
-      status: getPhaseStatus(steps),
+      status: getPhaseStatus(steps) ?? preCheckStageMetric?.status,
       durationSec:
         timedSteps.length > 0
           ? timedSteps.reduce((totalDurationSec, step) => totalDurationSec + (step.durationSec ?? 0), 0)
-          : undefined,
+          : preCheckStageMetric?.total_duration_sec,
       isLive: steps.some((step) => step.isLive),
     }
 

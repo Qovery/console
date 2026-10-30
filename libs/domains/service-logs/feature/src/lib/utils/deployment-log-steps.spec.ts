@@ -242,11 +242,15 @@ describe('getDeploymentLogPhases', () => {
 
   it('keeps the Git check of this service only', () => {
     const phases = getDeploymentLogPhases({
-      preCheckSteps: [
-        { name: 'CLOUD_CREDENTIALS_CHECK', status: 'SUCCESS', duration_sec: 1 },
-        { name: 'GIT_CHECK', status: 'SUCCESS', duration_sec: 2, service_id: 'service-1' },
-        { name: 'GIT_CHECK', status: 'ERROR', duration_sec: 3, service_id: 'service-2' },
-      ],
+      preCheckStage: {
+        status: 'ERROR',
+        total_duration_sec: 7,
+        steps: [
+          { name: 'CLOUD_CREDENTIALS_CHECK', status: 'SUCCESS', duration_sec: 1 },
+          { name: 'GIT_CHECK', status: 'SUCCESS', duration_sec: 2, service_id: 'service-1' },
+          { name: 'GIT_CHECK', status: 'ERROR', duration_sec: 3, service_id: 'service-2' },
+        ],
+      },
       linesByStep: new Map(),
       serviceId: 'service-1',
       nowMs: NOW_MS,
@@ -255,6 +259,31 @@ describe('getDeploymentLogPhases', () => {
     expect(phases).toHaveLength(1)
     expect(phases[0]).toMatchObject({ id: 'PRE_CHECK', status: 'SUCCESS', durationSec: 3 })
   })
+
+  it.each([
+    ['SUCCESS', 2],
+    ['ERROR', 5],
+  ] as const)(
+    'takes the %s status and time of the pre-check stage when it has no step metrics',
+    (status, totalDurationSec) => {
+      const phases = getDeploymentLogPhases({
+        preCheckStage: { status, total_duration_sec: totalDurationSec },
+        linesByStep: groupDeploymentLogsByStep([createLog('Checking credentials', 'PreCheck')]),
+        serviceId: 'service-1',
+        nowMs: NOW_MS,
+      })
+
+      expect(phases).toEqual([
+        {
+          id: 'PRE_CHECK',
+          status,
+          durationSec: totalDurationSec,
+          isLive: false,
+          steps: [expect.objectContaining({ name: 'PRE_CHECK_UNGROUPED', status, durationSec: totalDurationSec })],
+        },
+      ])
+    }
+  )
 
   it('shows every line of a phase when none names its step, with the time of the phase', () => {
     const phases = getDeploymentLogPhases({
