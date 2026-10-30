@@ -69,7 +69,7 @@ describe('getWidePermissionsRequest', () => {
     expect(
       getWidePermissionsRequest(
         { using_restrictive_permissions: true, slack_webhook_url: '  https://hooks.slack.test/abc  ' },
-        { using_restrictive_permissions: true, wide_scope_cloud_account_id: 'account-123' }
+        'account-123'
       )
     ).toEqual({
       using_restrictive_permissions: true,
@@ -80,10 +80,13 @@ describe('getWidePermissionsRequest', () => {
 
   it('should clear webhook and wide account values when restrictive permissions are disabled', () => {
     expect(
-      getWidePermissionsRequest({
-        using_restrictive_permissions: false,
-        slack_webhook_url: 'https://hooks.slack.test/abc',
-      })
+      getWidePermissionsRequest(
+        {
+          using_restrictive_permissions: false,
+          slack_webhook_url: 'https://hooks.slack.test/abc',
+        },
+        'account-123'
+      )
     ).toEqual({
       using_restrictive_permissions: false,
       wide_scope_cloud_account_id: null,

@@ -125,7 +125,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       generalData.installation_type === 'MANAGED' &&
       typeof generalData.using_restrictive_permissions === 'boolean'
     const widePermissionsPayload = hasWidePermissionsConfiguration
-      ? { wide_permissions: getWidePermissionsRequest(generalData) }
+      ? { wide_permissions: getWidePermissionsRequest(generalData, generalData.credentials) }
       : {}
     const usingRestrictivePermissions = hasWidePermissionsConfiguration && generalData.using_restrictive_permissions
 

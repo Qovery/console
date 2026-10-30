@@ -4,7 +4,6 @@ import {
   type ClusterCloudProviderInfoRequest,
   type ClusterCredentials,
   type WidePermissionsRequestDto,
-  type WidePermissionsResponseDto,
 } from 'qovery-typescript-axios'
 
 export interface ClusterCredentialsFormValues {
@@ -51,7 +50,7 @@ export const getNormalizedSlackWebhookUrl = (url?: string | null) => url?.trim()
 
 export const getWidePermissionsRequest = (
   formValues: ClusterCredentialsFormValues,
-  currentWidePermissions?: WidePermissionsResponseDto
+  wideScopeCloudAccountId?: string | null
 ): WidePermissionsRequestDto => {
   const usingRestrictivePermissions = Boolean(formValues.using_restrictive_permissions)
 
@@ -65,7 +64,7 @@ export const getWidePermissionsRequest = (
 
   return {
     using_restrictive_permissions: true,
-    wide_scope_cloud_account_id: currentWidePermissions?.wide_scope_cloud_account_id ?? null,
+    wide_scope_cloud_account_id: wideScopeCloudAccountId ?? null,
     slack_webhook_url: getNormalizedSlackWebhookUrl(formValues.slack_webhook_url),
   }
 }
