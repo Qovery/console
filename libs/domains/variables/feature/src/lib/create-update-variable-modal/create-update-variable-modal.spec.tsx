@@ -1,7 +1,12 @@
 import { type VariableResponse } from 'qovery-typescript-axios'
-import { type ReactNode } from 'react'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { type ReactElement, type ReactNode, useState } from 'react'
+import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { type UseCreateVariableProps } from '../hooks/use-create-variable/use-create-variable'
 import { CreateUpdateVariableModal, VariableFormModal } from './create-update-variable-modal'
+
+const mockOpenModal = jest.fn()
+const mockEnableAlertClickOutside = jest.fn()
+const mockUseCreateVariable = jest.fn()
 
 jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
@@ -9,7 +14,8 @@ jest.mock('@qovery/shared/ui', () => {
   return {
     ...actual,
     useModal: () => ({
-      enableAlertClickOutside: jest.fn(),
+      enableAlertClickOutside: mockEnableAlertClickOutside,
+      openModal: mockOpenModal,
     }),
   }
 })
@@ -25,9 +31,10 @@ jest.mock('./variable-value-editor-modal/variable-value-editor-modal', () => ({
 }))
 
 jest.mock('../hooks/use-create-variable/use-create-variable', () => ({
-  useCreateVariable: () => ({
-    mutateAsync: jest.fn(),
-  }),
+  useCreateVariable: (props: unknown) => {
+    mockUseCreateVariable(props)
+    return { mutateAsync: jest.fn() }
+  },
 }))
 
 jest.mock('../hooks/use-create-variable-alias/use-create-variable-alias', () => ({
@@ -80,6 +87,9 @@ const baseVariable = {
 describe('CreateUpdateVariableModal', () => {
   beforeEach(() => {
     closeModal.mockReset()
+    mockOpenModal.mockReset()
+    mockEnableAlertClickOutside.mockReset()
+    mockUseCreateVariable.mockReset()
   })
 
   it('should render the open editor button when the value field is available', () => {
@@ -196,5 +206,121 @@ describe('CreateUpdateVariableModal', () => {
     await userEvent.click(screen.getByRole('button', { name: /open editor/i }))
 
     expect(screen.getByTestId('mock-value-editor-modal')).toBeInTheDocument()
+  })
+  it('should prefill an override with the given value and scope', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <VariableFormModal
+        {...baseProps}
+        mode="CREATE"
+        type="OVERRIDE"
+        variable={{ ...baseVariable, scope: 'PROJECT', value: 'parent value' }}
+        defaultValue="typed value"
+        defaultScope="APPLICATION"
+        onSubmit={onSubmit}
+      />
+    )
+
+    expect(screen.getByText('Create override variable')).toBeInTheDocument()
+    expect(screen.getByLabelText('Value')).toHaveValue('typed value')
+
+    await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ value: 'typed value', scope: 'APPLICATION' }))
+    })
+  })
+
+  it('should default an override to the scope right below its parent without a default scope', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <VariableFormModal
+        {...baseProps}
+        mode="CREATE"
+        type="OVERRIDE"
+        variable={{ ...baseVariable, scope: 'PROJECT', value: 'parent value' }}
+        onSubmit={onSubmit}
+      />
+    )
+
+    expect(screen.getByLabelText('Value')).toHaveValue('parent value')
+
+    await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ scope: 'ENVIRONMENT' }))
+    })
+  })
+
+  it('should open the override modal when a creation conflict offers an override', () => {
+    renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="VALUE" />)
+
+    const { onCreateOverride } = mockUseCreateVariable.mock.calls[0][0] as UseCreateVariableProps
+    const parentVariable = { ...baseVariable, scope: 'ENVIRONMENT' } as VariableResponse
+    onCreateOverride?.({
+      parentVariable,
+      variableRequest: {
+        key: 'MY_VARIABLE',
+        value: 'typed value',
+        is_secret: false,
+        variable_scope: 'APPLICATION',
+        variable_parent_id: 'service-id',
+      },
+    })
+
+    expect(mockEnableAlertClickOutside).toHaveBeenLastCalledWith(false)
+    expect(mockOpenModal).toHaveBeenCalledTimes(1)
+    const { content } = mockOpenModal.mock.calls[0][0] as { content: ReactElement }
+    expect(content.props).toMatchObject({
+      mode: 'CREATE',
+      type: 'OVERRIDE',
+      variable: parentVariable,
+      defaultValue: 'typed value',
+      defaultScope: 'APPLICATION',
+      serviceId: 'service-id',
+    })
+  })
+
+  it('should start the override form from the parent variable, not from the form it replaces', async () => {
+    // Holds the modal content in state like ModalProvider does, so the swap happens at the same tree position
+    let swapContent: (content: ReactElement) => void = () => undefined
+    function ModalHost() {
+      const [content, setContent] = useState<ReactElement>(
+        <CreateUpdateVariableModal {...baseProps} mode="CREATE" type="VALUE" />
+      )
+      swapContent = setContent
+      return <>{content}</>
+    }
+    const { userEvent } = renderWithProviders(<ModalHost />)
+
+    // Fill the creation form as a file, so stale state would leak into the override form if it were reused
+    await userEvent.click(screen.getByRole('radio', { name: /as file/i }))
+    await userEvent.type(screen.getByLabelText('Variable'), 'MY_VARIABLE')
+    await userEvent.click(screen.getByLabelText('Path'))
+    await userEvent.type(screen.getByLabelText('Path'), 'typed/path')
+    await userEvent.click(screen.getByRole('switch'))
+
+    const { onCreateOverride } = mockUseCreateVariable.mock.calls[0][0] as UseCreateVariableProps
+    const parentVariable = { ...baseVariable, scope: 'ENVIRONMENT' } as VariableResponse
+    onCreateOverride?.({
+      parentVariable,
+      variableRequest: {
+        key: 'MY_VARIABLE',
+        value: 'typed value',
+        is_secret: false,
+        variable_scope: 'APPLICATION',
+        variable_parent_id: 'service-id',
+      },
+    })
+    const { content } = mockOpenModal.mock.calls[0][0] as { content: ReactElement }
+
+    expect(content.key).toBe(`override-${parentVariable.id}`)
+
+    act(() => swapContent(content))
+
+    expect(screen.getByText('Create override variable')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Path')).not.toBeInTheDocument()
+    expect(screen.queryByText('Variable interpolation')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Value')).toHaveValue('typed value')
   })
 })
