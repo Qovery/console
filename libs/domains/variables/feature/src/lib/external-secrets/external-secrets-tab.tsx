@@ -21,7 +21,6 @@ import { isExternalSecretVariable } from '@qovery/domains/variables/util'
 import {
   Button,
   Checkbox,
-  DropdownMenu,
   EmptyState,
   Icon,
   TableFilter,
@@ -37,27 +36,16 @@ import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-varia
 import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
 import { useVariablesSecretManagers } from '../hooks/use-variables-secret-managers/use-variables-secret-managers'
 import { useVariables } from '../hooks/use-variables/use-variables'
+import { AddSecretDropdown, type SecretFormat } from './add-secret-dropdown'
 import {
   AddSecretModal,
   type AddSecretModalSubmitData,
   type SecretSourceOption,
   mapSecretManagersToSources,
 } from './add-secret-modal/add-secret-modal'
+import { getJsonTargetKey } from './get-json-target-key'
 
 const { Table } = TablePrimitives
-
-const ADD_SECRET_OPTIONS = [
-  {
-    value: 'variable',
-    label: 'Add secret as variable',
-    icon: 'key' as const,
-  },
-  {
-    value: 'file',
-    label: 'Add secret as file',
-    icon: 'file-lines' as const,
-  },
-]
 
 const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220px_140px_104px]'
 
@@ -67,6 +55,9 @@ type ExternalSecretRow = {
   description?: string
   filePath?: string
   isFile?: boolean
+  isJson?: boolean
+  keyName?: string
+  secretManagerAccessId?: string
   reference: string
   source: string | null
   sourceIcon?: 'AWS' | 'GCP'
@@ -74,36 +65,6 @@ type ExternalSecretRow = {
 }
 
 const columnHelper = createColumnHelper<ExternalSecretRow>()
-
-type AddSecretDropdownProps = {
-  color?: 'brand' | 'neutral'
-  onSelect: (isFile: boolean) => void
-}
-
-function AddSecretDropdown({ color = 'brand', onSelect }: AddSecretDropdownProps) {
-  return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild>
-        <Button color={color} variant="solid" size="md" type="button">
-          <Icon iconName="circle-plus" iconStyle="regular" />
-          Add secret
-          <Icon iconName="angle-down" />
-        </Button>
-      </DropdownMenu.Trigger>
-      <DropdownMenu.Content className="w-[240px]">
-        {ADD_SECRET_OPTIONS.map((option) => (
-          <DropdownMenu.Item
-            key={option.value}
-            icon={<Icon iconName={option.icon} />}
-            onSelect={() => onSelect(option.value === 'file')}
-          >
-            {option.label}
-          </DropdownMenu.Item>
-        ))}
-      </DropdownMenu.Content>
-    </DropdownMenu.Root>
-  )
-}
 
 export type ExternalSecretsTabProps = {
   scope: VariableScope
@@ -129,17 +90,19 @@ export function ExternalSecretsTab({
     suspense: true,
   })
 
-  const secrets = useMemo(
+  const secrets = useMemo<ExternalSecretRow[]>(
     () =>
       variables.filter(isExternalSecretVariable).map((variable) => {
         const secretManager = secretManagers.find((manager) => manager.id === variable.secret_manager_access_id)
-
         return {
           id: variable.id,
           name: variable.key,
           description: variable.description,
           filePath: variable.mount_path ?? undefined,
           isFile: Boolean(variable.mount_path),
+          isJson: variable.json_target_key != null,
+          keyName: variable.json_target_key ?? undefined,
+          secretManagerAccessId: variable.secret_manager_access_id ?? undefined,
           reference: variable.value ?? '',
           source: secretManager?.name ?? null,
           sourceIcon: getSecretManagerProvider(secretManager),
@@ -162,10 +125,11 @@ export function ExternalSecretsTab({
 
   const getSourceOption = useCallback(
     (secret?: ExternalSecretRow): SecretSourceOption | undefined => {
-      if (!secret?.source) {
-        return secretSources[0]
-      }
-      return secretSources.find((option) => option.tableLabel === secret.source) ?? secretSources[0]
+      return (
+        secretSources.find((option) => option.value === secret?.secretManagerAccessId) ??
+        secretSources.find((option) => option.tableLabel === secret?.source) ??
+        secretSources[0]
+      )
     },
     [secretSources]
   )
@@ -176,16 +140,11 @@ export function ExternalSecretsTab({
       description,
       filePath,
       isFile,
+      isJson,
+      keyName,
       reference,
       secretManagerAccessId,
-    }: {
-      name: string
-      description?: string
-      filePath?: string
-      isFile: boolean
-      reference: string
-      secretManagerAccessId: string
-    }) => {
+    }: AddSecretModalSubmitData) => {
       await createVariable({
         variableRequest: {
           key: name,
@@ -196,6 +155,7 @@ export function ExternalSecretsTab({
           variable_parent_id: parentId,
           description: description ?? null,
           secret_manager_access_id: secretManagerAccessId,
+          json_target_key: getJsonTargetKey({ isJson, isFile, keyName }),
         },
       })
       onCreateSecret?.()
@@ -206,7 +166,16 @@ export function ExternalSecretsTab({
   const handleEditSecret = useCallback(
     async (
       secretId: string,
-      { name, description, filePath, isFile, reference, secretManagerAccessId }: AddSecretModalSubmitData
+      {
+        name,
+        description,
+        filePath,
+        isFile,
+        isJson,
+        keyName,
+        reference,
+        secretManagerAccessId,
+      }: AddSecretModalSubmitData
     ) => {
       const variableEditRequest = {
         key: name,
@@ -214,6 +183,7 @@ export function ExternalSecretsTab({
         mount_path: isFile ? filePath ?? null : null,
         description: description ?? null,
         secret_manager_access_id: secretManagerAccessId,
+        json_target_key: getJsonTargetKey({ isJson, isFile, keyName }),
       }
 
       await editVariable({
@@ -226,7 +196,8 @@ export function ExternalSecretsTab({
   )
 
   const handleOpenAddSecret = useCallback(
-    (isFile: boolean) => {
+    (format: SecretFormat) => {
+      const isFile = format === 'file'
       posthog.capture('external-secret-add-clicked', {
         scope,
         is_file: isFile,
@@ -237,6 +208,7 @@ export function ExternalSecretsTab({
             secretSources={secretSources}
             defaultSource={secretSources[0]}
             isFile={isFile}
+            isJson={format === 'json'}
             scope={scope}
             onClose={closeModal}
             onSubmit={handleCreateSecret}
@@ -260,6 +232,7 @@ export function ExternalSecretsTab({
             secretSources={secretSources}
             defaultSource={getSourceOption(secret)}
             isFile={secret.isFile ?? false}
+            isJson={secret.isJson}
             initialSecret={secret}
             onClose={closeModal}
             onSubmit={(updated) => handleEditSecret(secret.id, updated)}
@@ -283,8 +256,7 @@ export function ExternalSecretsTab({
 
   const handleDeleteSecrets = useCallback(
     async (secretIds: string[]) => {
-      const idsToDelete = new Set(secretIds)
-      await Promise.all([...idsToDelete].map((variableId) => deleteVariable({ variableId })))
+      await Promise.all(secretIds.map((variableId) => deleteVariable({ variableId })))
       onDeleteSecret?.()
       setRowSelection((prev) => {
         const next = { ...prev }
@@ -403,6 +375,12 @@ export function ExternalSecretsTab({
                   </Tooltip>
                 )}
               </div>
+              {secret.isJson && (
+                <div className="flex items-center gap-1 text-ssm text-neutral-subtle">
+                  <Icon iconName="brackets-curly" />
+                  <span>{`JSON path: ${secret.keyName}`}</span>
+                </div>
+              )}
               {showFilePath && (
                 <div className="flex flex-row gap-1 text-xs text-neutral-subtle">
                   <Icon iconName="file" iconStyle="regular" className="text-xs text-neutral-subtle" />
@@ -515,10 +493,11 @@ export function ExternalSecretsTab({
 
   const shouldShowEmptyState = secrets.length === 0 && Boolean(emptyStateConfig)
   const totalRows = table.getPreFilteredRowModel().rows.length
-  const isSearching = table.getRowCount() !== totalRows
-  const countText = isSearching
-    ? `${table.getRowCount()}/${totalRows} external ${pluralize(table.getRowCount(), 'secret')}`
-    : `${totalRows} external ${pluralize(totalRows, 'secret')}`
+  const visibleRows = table.getRowCount()
+  const countText =
+    visibleRows !== totalRows
+      ? `${visibleRows}/${totalRows} external ${pluralize(totalRows, 'secret')}`
+      : `${totalRows} external ${pluralize(totalRows, 'secret')}`
   const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
   const selectedIds = selectedRows.map((secret) => secret.id)
   const hasSelection = selectedIds.length > 0
@@ -529,7 +508,7 @@ export function ExternalSecretsTab({
         <div className="flex items-center justify-between border-b border-neutral bg-surface-neutral px-4 py-2">
           <div className="flex items-center gap-1.5 text-sm font-medium text-neutral">
             <span>{countText}</span>
-            <Tooltip content="Number of external secrets linked to this service">
+            <Tooltip content="Number of external secret references">
               <span>
                 <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
               </span>
@@ -601,6 +580,13 @@ export function ExternalSecretsTab({
             ))}
           </Table.Header>
           <Table.Body>
+            {table.getRowModel().rows.length === 0 && (
+              <Table.Row>
+                <Table.Cell colSpan={6} className="text-center text-sm text-neutral-subtle">
+                  No secrets match your search or filters.
+                </Table.Cell>
+              </Table.Row>
+            )}
             {table.getRowModel().rows.map((row) => (
               <Table.Row
                 key={row.id}

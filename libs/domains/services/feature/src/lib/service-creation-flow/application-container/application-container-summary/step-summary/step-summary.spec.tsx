@@ -37,6 +37,7 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
+  getJsonTargetKey: jest.requireActual('@qovery/domains/variables/feature').getJsonTargetKey,
   useCreateVariable: () => ({ mutateAsync: mockCreateVariable }),
   useImportVariables: () => ({ mutateAsync: mockImportVariables }),
 }))
@@ -213,6 +214,7 @@ describe('ApplicationContainerStepSummary', () => {
         mount_path: null,
         description: 'Database password',
         secret_manager_access_id: 'sm-1',
+        json_target_key: null,
       },
     })
     expect(mockNavigate).toHaveBeenCalledWith({
@@ -249,9 +251,43 @@ describe('ApplicationContainerStepSummary', () => {
     })
   })
 
+  it.each(['APPLICATION', 'ENVIRONMENT'] as const)(
+    'creates JSON secrets at %s scope with the exact selector',
+    async (scope) => {
+      const keyName = String.raw`accounts.0.database\.password`
+      const { userEvent } = renderComponent({
+        externalSecrets: [{ ...externalSecretsData[0], isJson: true, keyName, scope }],
+      })
+      await userEvent.click(screen.getByTestId('button-create'))
+      await waitFor(() => expect(mockNavigate).toHaveBeenCalled())
+      expect(mockCreateVariable).toHaveBeenCalledWith({
+        variableRequest: {
+          key: 'DB_PASSWORD',
+          value: 'my-app/prod/db-password',
+          variable_scope: scope,
+          variable_parent_id: scope === 'ENVIRONMENT' ? 'env-1' : 'service-1',
+          is_secret: false,
+          mount_path: null,
+          description: 'Database password',
+          secret_manager_access_id: 'sm-1',
+          json_target_key: keyName,
+        },
+      })
+    }
+  )
+
+  it('does not import a whole secret when a JSON draft has lost its selector', async () => {
+    const { userEvent } = renderComponent({ externalSecrets: [{ ...externalSecretsData[0], isJson: true }] })
+    await userEvent.click(screen.getByTestId('button-create'))
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalled())
+    expect(mockCreateVariable).not.toHaveBeenCalled()
+  })
+
   it('continues service creation when external secret creation fails', async () => {
     mockCreateVariable.mockRejectedValueOnce(new Error('External secret creation failed'))
-    const { userEvent } = renderComponent()
+    const { userEvent } = renderComponent({
+      externalSecrets: [{ ...externalSecretsData[0], isJson: true, keyName: 'credentials.password' }],
+    })
 
     await userEvent.click(screen.getByTestId('button-create'))
 

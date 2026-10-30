@@ -1,7 +1,9 @@
-import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum, type APIVariableTypeEnum } from 'qovery-typescript-axios'
 import { useId, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { type VariableResponse } from '@qovery/domains/variables/data-access'
+import { isExternalSecretVariable } from '@qovery/domains/variables/util'
 import {
   Button,
   Callout,
@@ -670,6 +672,12 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             variableId: variable.id,
             variableEditRequest: {
               key: data.key,
+              ...(isExternalSecretVariable(variable)
+                ? {
+                    secret_manager_access_id: variable.secret_manager_access_id,
+                    json_target_key: variable.json_target_key ?? null,
+                  }
+                : {}),
               value: variable.aliased_variable?.key || data.value,
               description: data.description,
               enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,

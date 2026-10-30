@@ -16,6 +16,8 @@ export interface ExternalSecretData {
   description?: string
   filePath?: string
   isFile?: boolean
+  isJson?: boolean
+  keyName?: string
   source?: string | null
   sourceIcon?: 'aws' | 'gcp'
   secretManagerAccessId?: string

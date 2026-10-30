@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
+import { getJsonTargetKey, useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { buildHpaAdvancedSettingsPayload } from '@qovery/shared/util-services'
@@ -132,6 +132,7 @@ export function ApplicationContainerStepSummary({
               mount_path: externalSecret.isFile ? externalSecret.filePath ?? null : null,
               description: externalSecret.description ?? null,
               secret_manager_access_id: externalSecret.secretManagerAccessId ?? null,
+              json_target_key: getJsonTargetKey(externalSecret),
             },
           })
         })

@@ -1,5 +1,5 @@
-import { type VariableResponse } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
+import { type VariableResponse } from '@qovery/domains/variables/data-access'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { CreateUpdateVariableModal, VariableFormModal } from './create-update-variable-modal'
 
@@ -44,11 +44,12 @@ jest.mock('../hooks/use-create-variable-override/use-create-variable-override', 
 
 jest.mock('../hooks/use-edit-variable/use-edit-variable', () => ({
   useEditVariable: () => ({
-    mutateAsync: jest.fn(),
+    mutateAsync: mockEditVariable,
   }),
 }))
 
 const closeModal = jest.fn()
+const mockEditVariable = jest.fn()
 
 const baseProps = {
   closeModal,
@@ -80,6 +81,7 @@ const baseVariable = {
 describe('CreateUpdateVariableModal', () => {
   beforeEach(() => {
     closeModal.mockReset()
+    mockEditVariable.mockReset()
   })
 
   it('should render the open editor button when the value field is available', () => {
@@ -186,6 +188,36 @@ describe('CreateUpdateVariableModal', () => {
     expect(screen.queryByRole('button', { name: /open editor/i })).not.toBeInTheDocument()
     // Wait for the initial form validation to settle
     await waitFor(() => expect(screen.getByRole('button', { name: /confirm/i })).toBeEnabled())
+  })
+
+  it('preserves the JSON selector and manager when the generic editor changes a description', async () => {
+    const { userEvent } = renderWithProviders(
+      <CreateUpdateVariableModal
+        {...baseProps}
+        mode="UPDATE"
+        type="EXTERNAL_SECRET"
+        variable={{
+          ...baseVariable,
+          variable_type: 'EXTERNAL_SECRET',
+          value: 'production/config',
+          secret_manager_access_id: 'manager-id',
+          json_target_key: 'accounts.0.password',
+        }}
+      />
+    )
+    await userEvent.type(screen.getByLabelText('Description (optional)'), 'Updated description')
+    await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
+    await waitFor(() =>
+      expect(mockEditVariable).toHaveBeenCalledWith({
+        variableId: 'variable-id',
+        variableEditRequest: expect.objectContaining({
+          value: 'production/config',
+          description: 'Updated description',
+          secret_manager_access_id: 'manager-id',
+          json_target_key: 'accounts.0.password',
+        }),
+      })
+    )
   })
 
   it('should open the fullscreen editor modal when clicking the button', async () => {

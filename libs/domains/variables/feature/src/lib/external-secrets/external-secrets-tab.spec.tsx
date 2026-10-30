@@ -248,6 +248,7 @@ describe('ExternalSecretsTab', () => {
         mount_path: '/vault/secrets/updated-credentials',
         description: null,
         secret_manager_access_id: 'sm-1',
+        json_target_key: null,
       },
     })
     expect(onEditSecret).toHaveBeenCalled()
@@ -316,6 +317,7 @@ describe('ExternalSecretsTab', () => {
         variable_parent_id: 'service-id',
         description: null,
         secret_manager_access_id: 'sm-1',
+        json_target_key: null,
       },
     })
     expect(onCreateSecret).toHaveBeenCalled()
@@ -504,5 +506,169 @@ describe('ExternalSecretsTab', () => {
       'href',
       '/organization/organization-id/cluster/cluster-id/settings/addons'
     )
+  })
+  it('opens the JSON form without a forced submission block', async () => {
+    const openModal = jest.fn()
+    useModalMock.mockReturnValue({ openModal, closeModal: jest.fn() })
+    useVariablesMock.mockReturnValue({ data: [] } as unknown as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+    const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as JSON' }))
+    const modal = openModal.mock.calls[0][0].content as ReactElement<{ isJson: boolean; submitDisabled?: boolean }>
+    expect(modal.props.isJson).toBe(true)
+    expect(modal.props.submitDisabled).toBeUndefined()
+    expect(screen.queryByText('Lucis application secrets')).not.toBeInTheDocument()
+  })
+  it('persists JSON secrets and restores the API selector and source when editing', async () => {
+    const createVariable = jest.fn()
+    const editVariable = jest.fn()
+    const deleteVariable = jest.fn()
+    const openModal = jest.fn()
+    const openModalConfirmation = jest.fn()
+    const onCreateSecret = jest.fn()
+    const onEditSecret = jest.fn()
+    const onDeleteSecret = jest.fn()
+    useCreateVariableMock.mockReturnValue({ mutateAsync: createVariable } as ReturnType<typeof useCreateVariable>)
+    useEditVariableMock.mockReturnValue({ mutateAsync: editVariable } as ReturnType<typeof useEditVariable>)
+    useDeleteVariableMock.mockReturnValue({ mutateAsync: deleteVariable } as ReturnType<typeof useDeleteVariable>)
+    useModalMock.mockReturnValue({ openModal, closeModal: jest.fn() })
+    useModalConfirmationMock.mockReturnValue({ openModalConfirmation })
+    useVariablesMock.mockReturnValue({ data: [] } as unknown as ReturnType<typeof useVariables>)
+    // Two managers can share a display name: editing must retain the saved ID.
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: ['other-manager', 'manager-id'].map((id) => ({
+        id,
+        name: 'Production secrets',
+        created_at: '2026-01-01T00:00:00.000Z',
+        updated_at: '2026-01-01T00:00:00.000Z',
+        endpoint: { mode: 'AWS_SECRET_MANAGER' },
+        authentication: { mode: 'STS' },
+      })),
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+    const props = {
+      scope: 'APPLICATION' as const,
+      parentId: 'service-id',
+      onCreateSecret,
+      onEditSecret,
+      onDeleteSecret,
+    }
+    const { userEvent, rerender } = renderWithProviders(<ExternalSecretsTab {...props} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as JSON' }))
+    type SecretModal = ReactElement<{
+      isJson: boolean
+      initialSecret?: { keyName?: string }
+      defaultSource?: { value: string }
+      onSubmit: (data: AddSecretModalSubmitData) => Promise<void>
+    }>
+    const modal = openModal.mock.calls[0][0].content as SecretModal
+    const data = {
+      name: 'APP_PASSWORD',
+      reference: 'production/config',
+      isJson: true,
+      isFile: false,
+      secretManagerAccessId: 'manager-id',
+      keyName: String.raw`accounts.0.database\.password`,
+    }
+    await act(async () => modal.props.onSubmit(data))
+    expect(createVariable).toHaveBeenCalledWith({
+      variableRequest: {
+        key: 'APP_PASSWORD',
+        value: 'production/config',
+        is_secret: false,
+        variable_scope: 'APPLICATION',
+        variable_parent_id: 'service-id',
+        mount_path: null,
+        description: null,
+        secret_manager_access_id: 'manager-id',
+        json_target_key: data.keyName,
+      },
+    })
+    expect(onCreateSecret).toHaveBeenCalledTimes(1)
+    expect(screen.queryByText('APP_PASSWORD')).not.toBeInTheDocument()
+
+    // Simulate the API refetch; the persisted row has a real variable ID.
+    const savedVariable = {
+      id: 'json-variable-id',
+      key: data.name,
+      value: data.reference,
+      scope: 'APPLICATION' as const,
+      variable_type: 'EXTERNAL_SECRET' as const,
+      secret_manager_access_id: data.secretManagerAccessId,
+      json_target_key: data.keyName,
+      created_at: '2026-01-01T00:00:00.000Z',
+    }
+    useVariablesMock.mockReturnValue({ data: [savedVariable] } as ReturnType<typeof useVariables>)
+    rerender(<ExternalSecretsTab {...props} />)
+    expect(screen.getByText(`JSON path: ${data.keyName}`)).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+    const editModal = openModal.mock.calls[1][0].content as SecretModal
+    expect(editModal.props.isJson).toBe(true)
+    expect(editModal.props.initialSecret?.keyName).toBe(data.keyName)
+    expect(editModal.props.defaultSource?.value).toBe('manager-id')
+    await act(async () => editModal.props.onSubmit({ ...data, description: 'Updated description' }))
+    expect(editVariable).toHaveBeenLastCalledWith({
+      variableId: 'json-variable-id',
+      variableEditRequest: {
+        key: 'APP_PASSWORD',
+        value: 'production/config',
+        mount_path: null,
+        description: 'Updated description',
+        secret_manager_access_id: 'manager-id',
+        json_target_key: data.keyName,
+      },
+    })
+    expect(onEditSecret).toHaveBeenCalledTimes(1)
+    await act(async () => editModal.props.onSubmit({ ...data, keyName: 'credentials.password' }))
+    expect(editVariable).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        variableEditRequest: expect.objectContaining({ json_target_key: 'credentials.password' }),
+      })
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    await act(async () => openModalConfirmation.mock.calls[0][0].action())
+    expect(deleteVariable).toHaveBeenCalledWith({ variableId: 'json-variable-id' })
+    expect(onDeleteSecret).toHaveBeenCalledTimes(1)
+  })
+
+  it('propagates JSON API creation failures without adding a local row or calling success', async () => {
+    const createVariable = jest.fn().mockRejectedValue(new Error('Invalid JSON selector'))
+    const openModal = jest.fn()
+    const onCreateSecret = jest.fn()
+    useCreateVariableMock.mockReturnValue({ mutateAsync: createVariable } as ReturnType<typeof useCreateVariable>)
+    useModalMock.mockReturnValue({ openModal, closeModal: jest.fn() })
+    useVariablesMock.mockReturnValue({ data: [] } as unknown as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+    const { userEvent } = renderWithProviders(
+      <ExternalSecretsTab scope="APPLICATION" parentId="service-id" onCreateSecret={onCreateSecret} />
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as JSON' }))
+    const modal = openModal.mock.calls[0][0].content as ReactElement<{
+      onSubmit: (data: AddSecretModalSubmitData) => Promise<void>
+    }>
+    await expect(
+      modal.props.onSubmit({
+        name: 'APP_PASSWORD',
+        reference: 'production/config',
+        isFile: false,
+        isJson: true,
+        keyName: 'credentials..password',
+        secretManagerAccessId: 'manager-id',
+      })
+    ).rejects.toThrow('Invalid JSON selector')
+    expect(onCreateSecret).not.toHaveBeenCalled()
+    expect(screen.queryByText('APP_PASSWORD')).not.toBeInTheDocument()
   })
 })

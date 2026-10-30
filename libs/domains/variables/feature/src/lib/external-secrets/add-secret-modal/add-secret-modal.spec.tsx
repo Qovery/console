@@ -88,4 +88,172 @@ describe('AddSecretModal', () => {
       )
     })
   })
+  it('imports a JSON property path and follows it until the environment variable name is overridden', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
+    )
+    expect(screen.queryByLabelText('Display name')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Key prefix (optional)')).not.toBeInTheDocument()
+    expect(screen.queryByText('Variables to import')).not.toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'DATABASE_URL')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('DATABASE_URL')
+    await userEvent.clear(screen.getByLabelText('JSON property path'))
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'DATABASE_PASSWORD')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('DATABASE_PASSWORD')
+    await userEvent.clear(screen.getByLabelText('Environment variable name'))
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+    await userEvent.type(screen.getByLabelText('Environment variable name'), 'APP_PASSWORD')
+    await userEvent.clear(screen.getByLabelText('JSON property path'))
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'accounts.0.password')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('APP_PASSWORD')
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'APP_PASSWORD',
+          keyName: 'accounts.0.password',
+          reference: 'production/database',
+          isJson: true,
+        })
+      )
+    )
+    expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('keyPrefix')
+  })
+
+  it.each([
+    ['accounts.0.password', 'accounts_0_password'],
+    [String.raw`database\.password`, 'database__password'],
+    ['0.password', '_0_password'],
+  ])('suggests a valid variable name for %s without changing the selector', async (keyName, name) => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
+    )
+    await userEvent.type(screen.getByLabelText('Reference'), 'production/config')
+    await userEvent.type(screen.getByLabelText('JSON property path'), keyName)
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue(name)
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name, keyName })))
+  })
+
+  it.each(['accounts.0.password', 'APP-PASSWORD', 'APP PASSWORD', '0PASSWORD'])(
+    'rejects the invalid custom JSON environment variable name %s',
+    async (name) => {
+      const onSubmit = jest.fn()
+      const { userEvent } = renderWithProviders(
+        <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
+      )
+      await userEvent.type(screen.getByLabelText('Reference'), 'production/config')
+      await userEvent.type(screen.getByLabelText('JSON property path'), 'password')
+      await userEvent.clear(screen.getByLabelText('Environment variable name'))
+      await userEvent.type(screen.getByLabelText('Environment variable name'), name)
+      expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+      expect(
+        screen.getByText(
+          'Variable name must start with a letter or underscore, and contain only letters, numbers, and underscores.'
+        )
+      ).toBeInTheDocument()
+      expect(onSubmit).not.toHaveBeenCalled()
+    }
+  )
+
+  it.each(['JSON property path', 'Environment variable name'])(
+    'requires a nonblank %s for JSON secrets',
+    async (label) => {
+      const onSubmit = jest.fn()
+      const { userEvent } = renderWithProviders(
+        <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
+      )
+      await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
+      await userEvent.type(screen.getByLabelText('JSON property path'), 'password')
+      await userEvent.clear(screen.getByLabelText(label))
+      await userEvent.type(screen.getByLabelText(label), '   ')
+      expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+      expect(onSubmit).not.toHaveBeenCalled()
+    }
+  )
+
+  it('keeps names unlinked after an override even when they match again', async () => {
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={jest.fn()} />
+    )
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'password')
+    await userEvent.clear(screen.getByLabelText('Environment variable name'))
+    await userEvent.type(screen.getByLabelText('Environment variable name'), 'password')
+    await userEvent.type(screen.getByLabelText('JSON property path'), '_new')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('password')
+  })
+
+  it('submits the auto-filled secret name without adding an underscore', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={onSubmit} />
+    )
+    await userEvent.type(screen.getByLabelText('Reference'), 'production/database')
+    await userEvent.type(screen.getByLabelText('JSON property path'), 'password')
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name: 'password', keyName: 'password' }))
+    )
+  })
+
+  it('preserves the saved secret name when editing a JSON key and supports retry after failure', async () => {
+    const onClose = jest.fn()
+    const onSubmit = jest.fn().mockRejectedValue(new Error('Could not save'))
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal
+        isJson
+        mode="edit"
+        initialSecret={{ name: 'APP_PASSWORD', keyName: 'password', reference: 'production/database' }}
+        secretSources={secretSources}
+        onClose={onClose}
+        onSubmit={onSubmit}
+      />
+    )
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('APP_PASSWORD')
+    expect(screen.getByLabelText('JSON property path')).toHaveValue('password')
+    await userEvent.type(screen.getByLabelText('JSON property path'), '_new')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('APP_PASSWORD')
+    await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ name: 'APP_PASSWORD', keyName: 'password_new' }))
+    )
+    expect(onClose).not.toHaveBeenCalled()
+    expect(screen.getByRole('alert')).toHaveTextContent('Could not save')
+    onSubmit.mockResolvedValueOnce(undefined)
+    await userEvent.click(screen.getByRole('button', { name: 'Edit secret' }))
+    await waitFor(() => expect(onClose).toHaveBeenCalled())
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    consoleError.mockRestore()
+  })
+
+  it('links to the JSON selector documentation', () => {
+    renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={jest.fn()} />
+    )
+    expect(screen.getByRole('link', { name: 'JSON selection syntax' })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/configuration/integrations/secret-managers/secret-manager-access#selecting-a-value-from-a-json-secret'
+    )
+  })
+
+  it('does not infer JSON keys from the reference name', async () => {
+    useSecretManagerProviderSecretsMock.mockReturnValue({
+      data: { results: ['production/app'] },
+      isError: false,
+      isFetching: false,
+    } as ReturnType<typeof useSecretManagerProviderSecrets>)
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal isJson secretSources={secretSources} onClose={jest.fn()} onSubmit={jest.fn()} />
+    )
+    await userEvent.click(screen.getByLabelText('Reference'))
+    await userEvent.click(screen.getByText('production/app'))
+    expect(screen.getByLabelText('JSON property path')).toHaveValue('')
+    expect(screen.getByLabelText('Environment variable name')).toHaveValue('')
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+  })
 })
