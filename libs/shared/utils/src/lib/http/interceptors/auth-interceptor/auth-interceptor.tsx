@@ -12,6 +12,17 @@ export interface SerializedError {
 }
 
 const E2E_AUTH_TOKEN_STORAGE_KEY = 'qovery-e2e-auth-token'
+// Auth0 errors meaning the cached session can't be renewed without signing in again
+const AUTH0_SESSION_ERRORS = ['login_required', 'missing_refresh_token', 'invalid_grant', 'consent_required']
+
+export function isAuth0SessionError(error: unknown) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'error' in error &&
+    AUTH0_SESSION_ERRORS.includes((error as { error: unknown }).error as string)
+  )
+}
 
 export function buildLoginRedirectUrl(pathname: string, search: string, hash: string) {
   const redirect = `${pathname}${search}${hash}`
@@ -31,9 +42,20 @@ export function useAuthInterceptor(
   apiUrl: string,
   navigateToLogin: () => void = redirectToLogin
 ) {
-  const { getAccessTokenSilently } = useAuth0()
+  const { getAccessTokenSilently, logout } = useAuth0()
 
   useEffect(() => {
+    // Clear the cached Auth0 user before leaving, otherwise the login page still sees
+    // `isAuthenticated` and sends us straight back, looping forever
+    const clearSessionAndNavigateToLogin = async () => {
+      try {
+        await logout({ openUrl: false })
+      } catch (error) {
+        console.error(error)
+      }
+      navigateToLogin()
+    }
+
     const requestInterceptor = axiosInstance.interceptors.request.use(async (config) => {
       // The auto generated api adds a base url by default
       // we override here to have a better control over it
@@ -44,7 +66,11 @@ export function useAuthInterceptor(
       try {
         token = token || (await getAccessTokenSilently())
       } catch (e) {
-        navigateToLogin()
+        if (isAuth0SessionError(e)) {
+          await clearSessionAndNavigateToLogin()
+        } else {
+          navigateToLogin()
+        }
         return Promise.reject(e)
       }
 
@@ -58,7 +84,7 @@ export function useAuthInterceptor(
       async (response) => {
         return response
       },
-      (error) => {
+      async (error) => {
         if (NODE_ENV !== 'production') {
           console.error(
             error.response?.data?.error || error.code || 'Error',
@@ -67,7 +93,7 @@ export function useAuthInterceptor(
         }
 
         if (error.response?.status === 401) {
-          navigateToLogin()
+          await clearSessionAndNavigateToLogin()
         }
 
         // we reformat the error output to improve the dev experience
@@ -92,6 +118,7 @@ export function useAuthInterceptor(
     axiosInstance.interceptors.response,
     apiUrl,
     getAccessTokenSilently,
+    logout,
     navigateToLogin,
   ])
 
