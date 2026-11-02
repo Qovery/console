@@ -2,7 +2,12 @@ import type { IconName } from '@fortawesome/fontawesome-common-types'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
 import type { ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
-export type ClusterHealthIssueKind = 'deploy-failed' | 'running-error' | 'status-unavailable' | 'update-available'
+export type ClusterHealthIssueKind =
+  | 'deploy-failed'
+  | 'running-error'
+  | 'status-unavailable'
+  | 'extended-credentials-required'
+  | 'update-available'
 
 export type ClusterHealthIssueSeverity = 'error' | 'warning'
 
@@ -18,6 +23,7 @@ export const CLUSTER_HEALTH_ISSUE_ORDER: ClusterHealthIssueKind[] = [
   'deploy-failed',
   'running-error',
   'status-unavailable',
+  'extended-credentials-required',
   'update-available',
 ]
 
@@ -38,6 +44,12 @@ export const CLUSTER_HEALTH_ISSUE_META: Record<ClusterHealthIssueKind, ClusterHe
     kind: 'status-unavailable',
     label: 'Status unavailable',
     icon: 'circle-exclamation',
+    severity: 'warning',
+  },
+  'extended-credentials-required': {
+    kind: 'extended-credentials-required',
+    label: 'Extended credentials required',
+    icon: 'key',
     severity: 'warning',
   },
   'update-available': {
@@ -66,6 +78,7 @@ const FAILED_DEPLOYMENT_STATUSES = new Set<ClusterStatus['status']>([
 export interface GetClusterHealthIssuesInput {
   cluster: Cluster
   deploymentStatus?: ClusterStatus
+  isDeploymentStatusSuccess?: boolean
   runningStatus?: ClusterStatusDto | 'NotFound' | null
   isRunningStatusIssueEnabled?: boolean
   // True once the running-status websocket has had enough time to report data.
@@ -76,6 +89,7 @@ export interface GetClusterHealthIssuesInput {
 export function getClusterHealthIssues({
   cluster,
   deploymentStatus,
+  isDeploymentStatusSuccess = true,
   runningStatus,
   isRunningStatusIssueEnabled = true,
   hasRunningStatusTimedOut,
@@ -102,6 +116,15 @@ export function getClusterHealthIssues({
     if (isStatusUnavailable) {
       issues.push('status-unavailable')
     }
+  }
+
+  if (
+    cluster.wide_permissions?.require_wide_access_to_deploy === true &&
+    isDeploymentStatusSuccess &&
+    status &&
+    status !== 'DEPLOYING'
+  ) {
+    issues.push('extended-credentials-required')
   }
 
   if (cluster.deployment_status === 'OUT_OF_DATE' && !isStopped) {

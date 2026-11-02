@@ -10,9 +10,10 @@ export interface CopyButtonProps {
   size?: ButtonProps['size']
   iconPosition?: 'left' | 'right'
   className?: string
+  iconOnly?: boolean
 }
 
-export function CopyButton({ content, size, iconPosition = 'right', className }: CopyButtonProps) {
+export function CopyButton({ content, size, iconPosition = 'right', className, iconOnly = false }: CopyButtonProps) {
   const [icon, setIcon] = useState<IconName>('copy')
   const [, copyToClipboard] = useCopyToClipboard()
 
@@ -30,11 +31,13 @@ export function CopyButton({ content, size, iconPosition = 'right', className }:
       color="neutral"
       variant="outline"
       size={size}
+      iconOnly={iconOnly}
+      aria-label={iconOnly ? 'Copy' : undefined}
       onClick={() => onClickCopyToClipboard(content)}
       className={twMerge('cursor-pointer font-sans font-medium', className)}
     >
       {iconPosition === 'left' && <Icon iconName={icon} iconStyle="solid" className="text-sm" />}
-      Copy
+      {!iconOnly && 'Copy'}
       {iconPosition === 'right' && <Icon iconName={icon} className="text-sm" />}
     </Button>
   )
