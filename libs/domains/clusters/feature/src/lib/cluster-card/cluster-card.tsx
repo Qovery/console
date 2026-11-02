@@ -94,9 +94,10 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
 export interface ClusterCardProps {
   cluster: Cluster
   clusterDeploymentStatus?: ClusterStatus
+  isDeploymentStatusSuccess?: boolean
 }
 
-export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardProps) {
+export function ClusterCard({ cluster, clusterDeploymentStatus, isDeploymentStatusSuccess = false }: ClusterCardProps) {
   useClusterRunningStatusSocket({ organizationId: cluster.organization.id, clusterId: cluster.id })
   const { buildLocation } = useRouter()
   const overviewHref = buildLocation({
@@ -137,6 +138,8 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
                 </Link>
               </Tooltip>
               {cluster.wide_permissions?.require_wide_access_to_deploy === true &&
+                isDeploymentStatusSuccess &&
+                Boolean(clusterDeploymentStatus?.status) &&
                 clusterDeploymentStatus?.status !== 'DEPLOYING' && (
                   <LinkUI
                     to="/organization/$organizationId/cluster/$clusterId/settings/credentials"

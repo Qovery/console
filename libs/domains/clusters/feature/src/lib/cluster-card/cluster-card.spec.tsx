@@ -132,6 +132,7 @@ describe('ClusterCard', () => {
       <ClusterCard
         cluster={{ ...mockCluster, wide_permissions: { require_wide_access_to_deploy: true } }}
         clusterDeploymentStatus={mockClusterDeploymentStatus}
+        isDeploymentStatusSuccess
       />
     )
 
@@ -149,6 +150,7 @@ describe('ClusterCard', () => {
         <ClusterCard
           cluster={{ ...mockCluster, wide_permissions: widePermissions }}
           clusterDeploymentStatus={mockClusterDeploymentStatus}
+          isDeploymentStatusSuccess
         />
       )
 
@@ -161,11 +163,48 @@ describe('ClusterCard', () => {
       <ClusterCard
         cluster={{ ...mockCluster, wide_permissions: { require_wide_access_to_deploy: true } }}
         clusterDeploymentStatus={{ ...mockClusterDeploymentStatus, status: 'DEPLOYING' }}
+        isDeploymentStatusSuccess
       />
     )
 
     expect(screen.queryByText('Extended credentials required')).not.toBeInTheDocument()
     expect(screen.getByText('Deploying...')).toBeInTheDocument()
+  })
+
+  it('should hide the wide credentials warning when the cluster status is missing', () => {
+    renderWithProviders(
+      <ClusterCard
+        cluster={{ ...mockCluster, wide_permissions: { require_wide_access_to_deploy: true } }}
+        isDeploymentStatusSuccess
+      />
+    )
+
+    expect(screen.queryByText('Extended credentials required')).not.toBeInTheDocument()
+  })
+
+  it.each([undefined, null])('should hide the warning when the deployment status value is %s', (status) => {
+    renderWithProviders(
+      <ClusterCard
+        cluster={{ ...mockCluster, wide_permissions: { require_wide_access_to_deploy: true } }}
+        clusterDeploymentStatus={{ ...mockClusterDeploymentStatus, status } as unknown as ClusterStatus}
+        isDeploymentStatusSuccess
+      />
+    )
+
+    expect(screen.queryByText('Extended credentials required')).not.toBeInTheDocument()
+  })
+
+  it.each([false, undefined])('should hide the warning without a successful status query (%s)', (isSuccess) => {
+    renderWithProviders(
+      <ClusterCard
+        cluster={{ ...mockCluster, wide_permissions: { require_wide_access_to_deploy: true } }}
+        clusterDeploymentStatus={mockClusterDeploymentStatus}
+        isDeploymentStatusSuccess={isSuccess}
+      />
+    )
+
+    expect(screen.queryByText('Extended credentials required')).not.toBeInTheDocument()
+    expect(screen.getByText('2 months ago')).toBeInTheDocument()
   })
 
   it('should display Self managed badge for self managed Kubernetes', () => {
