@@ -1,18 +1,18 @@
 import { motion, useReducedMotion } from 'framer-motion'
 
-export function OnboardingProgress({ step }: { step: 1 | 2 | 3 }) {
+export function OnboardingProgress({ step }: { step: 1 | 2 }) {
   const reducedMotion = useReducedMotion()
   return (
     <div
       role="progressbar"
       aria-label="Onboarding progress"
       aria-valuemin={1}
-      aria-valuemax={3}
+      aria-valuemax={2}
       aria-valuenow={step}
-      aria-valuetext={`Step ${step} of 3`}
+      aria-valuetext={`Step ${step} of 2`}
       className="flex gap-2"
     >
-      {[1, 2, 3].map((value) => (
+      {[1, 2].map((value) => (
         <span key={value} className="relative h-1 flex-1 overflow-hidden rounded-2xl bg-surface-brand-component">
           <span
             aria-hidden

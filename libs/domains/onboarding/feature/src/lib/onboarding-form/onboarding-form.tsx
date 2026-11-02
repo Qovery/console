@@ -19,7 +19,7 @@ export function OnboardingForm({ title, description, onSubmit, loading, disabled
           </Heading>
           <p className="text-base text-neutral-subtle">{description}</p>
         </div>
-        <div className="flex flex-col gap-4 motion-safe:animate-[slidein-up-sm_240ms_cubic-bezier(0.165,0.84,0.44,1)_both,fadein_200ms_cubic-bezier(0.165,0.84,0.44,1)_both] motion-safe:[animation-delay:40ms] motion-reduce:animate-[fadein_120ms_cubic-bezier(0.165,0.84,0.44,1)] [&_.input]:py-1.5">
+        <div className="flex flex-col gap-4 motion-safe:animate-[slidein-up-sm_240ms_cubic-bezier(0.165,0.84,0.44,1)_both,fadein_200ms_cubic-bezier(0.165,0.84,0.44,1)_both] motion-safe:[animation-delay:40ms] motion-reduce:animate-[fadein_120ms_cubic-bezier(0.165,0.84,0.44,1)]">
           {children}
         </div>
       </Section>

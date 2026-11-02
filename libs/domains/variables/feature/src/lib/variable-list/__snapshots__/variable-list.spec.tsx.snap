@@ -49,7 +49,7 @@ exports[`VariableList should match snapshot 1`] = `
                     class="flex items-center gap-1 cursor-pointer select-none truncate"
                     type="button"
                   >
-                    8 variables
+                    10 variables
                     <i
                       aria-hidden="true"
                       class="fa-regular fa-arrow-down-arrow-up text-xs opacity-0 transition-opacity group-hover:opacity-100"
@@ -272,7 +272,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-label="Other actions"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
-                      id="radix-_r_2v_"
+                      id="radix-_r_3d_"
                       type="button"
                     >
                       <div
@@ -421,7 +421,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-label="Other actions"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
-                      id="radix-_r_36_"
+                      id="radix-_r_3k_"
                       type="button"
                     >
                       <div
@@ -548,7 +548,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-label="Other actions"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
-                      id="radix-_r_3c_"
+                      id="radix-_r_3q_"
                       type="button"
                     >
                       <div
@@ -677,7 +677,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-label="Other actions"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
-                      id="radix-_r_3j_"
+                      id="radix-_r_41_"
                       type="button"
                     >
                       <div
@@ -805,7 +805,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-label="Other actions"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
-                      id="radix-_r_3q_"
+                      id="radix-_r_48_"
                       type="button"
                     >
                       <div
@@ -983,7 +983,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-label="Other actions"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
-                      id="radix-_r_42_"
+                      id="radix-_r_4g_"
                       type="button"
                     >
                       <div
@@ -1121,7 +1121,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-label="Other actions"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
-                      id="radix-_r_4a_"
+                      id="radix-_r_4o_"
                       type="button"
                     >
                       <div
@@ -1270,7 +1270,302 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-label="Other actions"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
-                      id="radix-_r_4h_"
+                      id="radix-_r_4v_"
+                      type="button"
+                    >
+                      <div
+                        class="flex h-full w-full items-center justify-center"
+                        data-state="closed"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-ellipsis-vertical "
+                        />
+                      </div>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                id="variable-row-b5a0f1de-3c2e-4d7a-9f61-2e7c1c0d4a11"
+              >
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                >
+                  <label
+                    class="absolute inset-y-0 left-0 flex items-center p-4"
+                  >
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </label>
+                </td>
+                <td
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative opacity-60 border-r border-neutral"
+                >
+                  <div
+                    class="flex flex-col justify-center gap-1"
+                  >
+                    <div
+                      class="flex items-center gap-2"
+                    >
+                      <div
+                        class="flex items-center truncate"
+                      >
+                        <span
+                          class="truncate text-sm font-medium"
+                          data-state="closed"
+                        >
+                          LOG_LEVEL
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      class="flex min-w-0 flex-row gap-1 text-2xs text-neutral-subtle"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-subtle"
+                      />
+                      <button
+                        aria-label="Scroll to LOG_LEVEL override"
+                        class="max-w-full truncate rounded-sm text-left hover:underline focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text"
+                        type="button"
+                      >
+                        Overridden in 
+                        service
+                      </button>
+                    </div>
+                  </div>
+                </td>
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative opacity-60"
+                >
+                  <span
+                    class="group flex h-5 w-full min-w-0 items-center gap-2 text-sm"
+                  >
+                    <span
+                      class="min-w-0 truncate text-neutral"
+                      data-testid="visible_value"
+                    >
+                      info
+                    </span>
+                    <span
+                      class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-['']"
+                      data-state="closed"
+                      data-testid="copy-container"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                      />
+                    </span>
+                  </span>
+                </td>
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                >
+                  <span
+                    class="text-sm font-medium capitalize"
+                  >
+                    environment
+                  </span>
+                </td>
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                >
+                  <span
+                    class="text-sm text-neutral-subtle"
+                    data-state="closed"
+                  >
+                    2 months
+                     ago
+                  </span>
+                </td>
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
+                >
+                  <div
+                    class="flex items-center justify-end gap-2"
+                  >
+                    <button
+                      aria-label="Edit"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      type="button"
+                    >
+                      <div
+                        class="flex h-full w-full items-center justify-center"
+                        data-state="closed"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-pen "
+                        />
+                      </div>
+                    </button>
+                    <button
+                      aria-expanded="false"
+                      aria-haspopup="menu"
+                      aria-label="Other actions"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      data-state="closed"
+                      id="radix-_r_56_"
+                      type="button"
+                    >
+                      <div
+                        class="flex h-full w-full items-center justify-center"
+                        data-state="closed"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-ellipsis-vertical "
+                        />
+                      </div>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                id="variable-row-c6b1e2ef-4d3f-4e8b-8a72-3f8d2d1e5b22"
+              >
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                >
+                  <label
+                    class="absolute inset-y-0 left-0 flex items-center p-4"
+                  >
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </label>
+                </td>
+                <td
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
+                >
+                  <div
+                    class="flex flex-col justify-center gap-1"
+                  >
+                    <div
+                      class="flex items-center gap-2"
+                    >
+                      <div
+                        class="flex items-center truncate"
+                      >
+                        <span
+                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-brand-component px-1 text-2xs font-bold text-brand"
+                        >
+                          OVERRIDE
+                        </span>
+                        <span
+                          class="truncate text-sm font-medium"
+                          data-state="closed"
+                        >
+                          LOG_LEVEL
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      class="flex min-w-0 flex-row gap-1 text-2xs text-neutral-subtle"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-subtle"
+                      />
+                      <button
+                        aria-label="Scroll to overridden LOG_LEVEL variable"
+                        class="max-w-full truncate rounded-sm text-left hover:underline focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text"
+                        type="button"
+                      >
+                        Overrides 
+                        environment
+                      </button>
+                    </div>
+                  </div>
+                </td>
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                >
+                  <span
+                    class="group flex h-5 w-full min-w-0 items-center gap-2 text-sm"
+                  >
+                    <span
+                      class="min-w-0 truncate text-neutral"
+                      data-testid="visible_value"
+                    >
+                      debug
+                    </span>
+                    <span
+                      class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-['']"
+                      data-state="closed"
+                      data-testid="copy-container"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                      />
+                    </span>
+                  </span>
+                </td>
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                >
+                  <span
+                    class="text-sm font-medium capitalize"
+                  >
+                    Service
+                  </span>
+                </td>
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                >
+                  <span
+                    class="text-sm text-neutral-subtle"
+                    data-state="closed"
+                  >
+                    2 months
+                     ago
+                  </span>
+                </td>
+                <td
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
+                >
+                  <div
+                    class="flex items-center justify-end gap-2"
+                  >
+                    <button
+                      aria-label="Edit"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      type="button"
+                    >
+                      <div
+                        class="flex h-full w-full items-center justify-center"
+                        data-state="closed"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-pen "
+                        />
+                      </div>
+                    </button>
+                    <button
+                      aria-expanded="false"
+                      aria-haspopup="menu"
+                      aria-label="Other actions"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      data-state="closed"
+                      id="radix-_r_5d_"
                       type="button"
                     >
                       <div
@@ -1501,7 +1796,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-label="Other actions"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
-                      id="radix-_r_4r_"
+                      id="radix-_r_5n_"
                       type="button"
                     >
                       <div
