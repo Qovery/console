@@ -1,5 +1,4 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import {
   ClusterCardNodeUsage,
   ClusterTableNode,
@@ -13,11 +12,10 @@ import {
   ClusterActions,
   ClusterAvatar,
   ClusterLastDeploymentSection,
-  ClusterNeedRedeployFlag,
+  ClusterOverviewBanners,
   ClusterQuotaWarningCallout,
   ClusterRunningStatusIndicator,
   ClusterType,
-  ClusterWideCredentialsBanner,
   hasGpuInstance,
   useCluster,
   useClusterRunningStatus,
@@ -118,10 +116,10 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
 
   return (
     <>
-      {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
-        <ClusterNeedRedeployFlag
+      {cluster && (
+        <ClusterOverviewBanners
           deploymentStatus={cluster.deployment_status}
-          onClickButton={() =>
+          onDeploy={() =>
             deployCluster({
               organizationId,
               clusterId,
@@ -129,9 +127,6 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           }
         />
       )}
-      <div className="relative left-1/2 w-screen -translate-x-1/2">
-        <ClusterWideCredentialsBanner />
-      </div>
       <Section className="my-6 gap-8 pb-6">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
