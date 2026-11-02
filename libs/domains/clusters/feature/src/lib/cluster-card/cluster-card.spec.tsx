@@ -127,6 +127,47 @@ describe('ClusterCard', () => {
     expect(screen.getByText('Qovery managed')).toBeInTheDocument()
   })
 
+  it('should link the wide credentials warning to the cluster credentials settings', () => {
+    renderWithProviders(
+      <ClusterCard
+        cluster={{ ...mockCluster, wide_permissions: { require_wide_access_to_deploy: true } }}
+        clusterDeploymentStatus={mockClusterDeploymentStatus}
+      />
+    )
+
+    const link = screen.getByRole('link', { name: 'Extended credentials required' })
+    expect(link).toHaveAttribute('href', '/organization/org-id/cluster/cluster-id/settings/credentials')
+    expect(link).toHaveClass('pointer-events-auto')
+    expect(link.parentElement?.closest('a')).toBeNull()
+    expect(screen.getByText('Qovery managed')).toBeInTheDocument()
+  })
+
+  it.each([undefined, {}, { require_wide_access_to_deploy: false }])(
+    'should hide the wide credentials warning when wide_permissions is %j',
+    (widePermissions) => {
+      renderWithProviders(
+        <ClusterCard
+          cluster={{ ...mockCluster, wide_permissions: widePermissions }}
+          clusterDeploymentStatus={mockClusterDeploymentStatus}
+        />
+      )
+
+      expect(screen.queryByText('Extended credentials required')).not.toBeInTheDocument()
+    }
+  )
+
+  it('should hide the wide credentials warning while the cluster is deploying', () => {
+    renderWithProviders(
+      <ClusterCard
+        cluster={{ ...mockCluster, wide_permissions: { require_wide_access_to_deploy: true } }}
+        clusterDeploymentStatus={{ ...mockClusterDeploymentStatus, status: 'DEPLOYING' }}
+      />
+    )
+
+    expect(screen.queryByText('Extended credentials required')).not.toBeInTheDocument()
+    expect(screen.getByText('Deploying...')).toBeInTheDocument()
+  })
+
   it('should display Self managed badge for self managed Kubernetes', () => {
     const selfManagedCluster = {
       ...mockCluster,

@@ -17,6 +17,7 @@ import {
   ClusterQuotaWarningCallout,
   ClusterRunningStatusIndicator,
   ClusterType,
+  ClusterWideCredentialsBanner,
   hasGpuInstance,
   useCluster,
   useClusterRunningStatus,
@@ -128,6 +129,9 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           }
         />
       )}
+      <div className="relative left-1/2 w-screen -translate-x-1/2">
+        <ClusterWideCredentialsBanner />
+      </div>
       <Section className="my-6 gap-8 pb-6">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">

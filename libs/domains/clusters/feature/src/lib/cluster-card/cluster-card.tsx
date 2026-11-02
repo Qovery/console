@@ -136,6 +136,20 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
                   {cluster.name}
                 </Link>
               </Tooltip>
+              {cluster.wide_permissions?.require_wide_access_to_deploy === true &&
+                clusterDeploymentStatus?.status !== 'DEPLOYING' && (
+                  <LinkUI
+                    to="/organization/$organizationId/cluster/$clusterId/settings/credentials"
+                    params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
+                    color="neutral"
+                    underline
+                    size="sm"
+                    className="pointer-events-auto self-start text-warning hover:text-warning"
+                  >
+                    <span>Extended credentials required</span>
+                    <Icon iconName="arrow-up-right" className="shrink-0" />
+                  </LinkUI>
+                )}
               <Subtitle cluster={cluster} clusterDeploymentStatus={clusterDeploymentStatus} />
             </div>
           </div>
