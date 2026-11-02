@@ -2,7 +2,6 @@ import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { useWatch } from 'react-hook-form'
 import { ClusterRestrictedCredentialsAndWebhookFields } from './cluster-restricted-credentials-and-webhook-fields'
 import { ClusterRestrictivePermissionsToggle } from './cluster-restrictive-permissions-toggle'
-import { ClusterWideCredentialsCallout } from './cluster-wide-credentials-callout'
 import { ClusterWidePermissionCredentialsSettings } from './cluster-wide-permission-credentials-settings'
 
 export interface ClusterRestrictivePermissionsSettingsProps {
@@ -15,10 +14,7 @@ export function ClusterRestrictivePermissionsSettings({ cloudProvider }: Cluster
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
-        <ClusterWidePermissionCredentialsSettings cloudProvider={cloudProvider} fieldName="configured_credentials" />
-        <ClusterWideCredentialsCallout />
-      </div>
+      <ClusterWidePermissionCredentialsSettings cloudProvider={cloudProvider} fieldName="configured_credentials" />
 
       <ClusterRestrictivePermissionsToggle />
 

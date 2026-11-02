@@ -3,12 +3,7 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { useClusterStatus } from '../hooks/use-cluster-status/use-cluster-status'
-import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { ClusterRestrictivePermissionsSettings } from './cluster-restrictive-permissions-settings'
-
-jest.mock('../hooks/use-cluster-status/use-cluster-status')
-jest.mock('../hooks/use-cluster/use-cluster')
 
 jest.mock('@tanstack/react-router', () => {
   const React = jest.requireActual('react')
@@ -37,8 +32,6 @@ jest.mock('@tanstack/react-router', () => {
 
 const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
 const mockOnSubmit = jest.fn()
-const mockUseCluster = useCluster as jest.Mock
-const mockUseClusterStatus = useClusterStatus as jest.Mock
 
 const awsCredentials = [
   { id: 'static-1', name: 'static-credential', object_type: 'AWS', access_key_id: 'AKIA' },
@@ -80,60 +73,6 @@ describe('ClusterRestrictivePermissionsSettings', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     useCloudProviderCredentialsMockSpy.mockReturnValue({ data: awsCredentials, isLoading: false })
-    mockUseCluster.mockReturnValue({ data: { wide_permissions: { require_wide_access_to_deploy: false } } })
-    mockUseClusterStatus.mockReturnValue({ data: { status: 'DEPLOYED' }, isLoading: false, isSuccess: true })
-  })
-
-  it.each([false, undefined])('should hide the wide credentials callout when wide access is %s', (required) => {
-    mockUseCluster.mockReturnValue({ data: { wide_permissions: { require_wide_access_to_deploy: required } } })
-    renderSettings({ configured_credentials: 'role-1', using_restrictive_permissions: false })
-
-    expect(screen.queryByText('Extended credentials required')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'View instructions' })).not.toBeInTheDocument()
-  })
-
-  it.each([
-    { data: { status: 'DEPLOYING' }, isLoading: false, isSuccess: true },
-    { data: undefined, isLoading: true, isSuccess: false },
-    { data: undefined, isLoading: false, isSuccess: false, isError: true },
-    { data: { status: 'DEPLOYED' }, isLoading: false, isSuccess: false, isError: true },
-    { data: undefined, isLoading: false, isSuccess: true },
-    { data: {}, isLoading: false, isSuccess: true },
-  ])('should hide the callout without a confirmed non-deploying status (%j)', (status) => {
-    mockUseCluster.mockReturnValue({ data: { wide_permissions: { require_wide_access_to_deploy: true } } })
-    mockUseClusterStatus.mockReturnValue(status)
-    renderSettings({ configured_credentials: 'role-1', using_restrictive_permissions: false })
-
-    expect(screen.queryByText('Extended credentials required')).not.toBeInTheDocument()
-  })
-
-  it('should show the callout below extended credentials and open the shared modal without submitting', async () => {
-    mockUseCluster.mockReturnValue({ data: { wide_permissions: { require_wide_access_to_deploy: true } } })
-    const { userEvent } = renderSettings({ configured_credentials: 'role-1', using_restrictive_permissions: false })
-    const message = screen.getByText('Extended credentials required')
-    const trigger = screen.getByRole('button', { name: 'View instructions' })
-    expectInOrder(
-      screen.getByTestId('input-configured-credentials'),
-      message,
-      trigger,
-      screen.getByRole('switch', { name: 'Use restrictive permissions' })
-    )
-
-    await userEvent.click(trigger)
-
-    expect(await screen.findByRole('dialog', { name: 'Allow Qovery access' })).toBeInTheDocument()
-    expect(screen.getByText(/Allow Qovery to assume/)).toBeInTheDocument()
-    const policy = screen.getByRole('textbox', { name: 'Required IAM trust policy' }) as HTMLTextAreaElement
-    expect(JSON.parse(policy.value)).toMatchObject({
-      Statement: [{ Condition: { StringLike: { 'sts:ExternalId': 'org-123:*' } } }],
-    })
-    expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument()
-    expect(mockOnSubmit).not.toHaveBeenCalled()
-
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
-
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
-    expect(mockOnSubmit).not.toHaveBeenCalled()
   })
 
   it('should display extended credentials above the toggle', () => {
