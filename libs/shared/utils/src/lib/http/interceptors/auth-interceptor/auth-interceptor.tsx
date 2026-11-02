@@ -47,11 +47,14 @@ export function useAuthInterceptor(
   useEffect(() => {
     // Clear the cached Auth0 user before leaving, otherwise the login page still sees
     // `isAuthenticated` and sends us straight back, looping forever
+    // The e2e token isn't an Auth0 session, so logging out of Auth0 can't recover it
     const clearSessionAndNavigateToLogin = async () => {
-      try {
-        await logout({ openUrl: false })
-      } catch (error) {
-        console.error(error)
+      if (!window.localStorage.getItem(E2E_AUTH_TOKEN_STORAGE_KEY)) {
+        try {
+          await logout({ openUrl: false })
+        } catch (error) {
+          console.error(error)
+        }
       }
       navigateToLogin()
     }

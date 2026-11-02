@@ -137,6 +137,26 @@ describe('UseAuthInterceptor', () => {
     consoleErrorSpy.mockRestore()
   })
 
+  it('should not clear the auth0 session on unauthorized when using the e2e auth token', async () => {
+    window.localStorage.setItem('qovery-e2e-auth-token', 'e2eToken')
+    const requestUse = jest.fn().mockReturnValue(1)
+    const responseUse = jest.fn().mockReturnValue(2)
+    const axiosInstance = createAxiosInstanceMock(requestUse, responseUse)
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    const navigateToLogin = jest.fn()
+
+    renderHook(() => useAuthInterceptor(axiosInstance, 'https://api.qovery.com', navigateToLogin))
+
+    const responseErrorHandler = responseUse.mock.calls[0][1]
+
+    await expect(responseErrorHandler({ response: { status: 401, data: { status: 401 } } })).rejects.toMatchObject({
+      code: '401',
+    })
+    expect(mockLogout).not.toHaveBeenCalled()
+    expect(navigateToLogin).toHaveBeenCalledTimes(1)
+    consoleErrorSpy.mockRestore()
+  })
+
   it('should build the login redirect url from the current location', () => {
     expect(buildLoginRedirectUrl('/organization/123', '?tab=clusters', '#overview')).toBe(
       '/login?redirect=%2Forganization%2F123%3Ftab%3Dclusters%23overview'
