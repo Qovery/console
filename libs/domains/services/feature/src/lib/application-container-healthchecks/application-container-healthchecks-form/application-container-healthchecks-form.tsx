@@ -2,16 +2,49 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type HealthcheckData } from '@qovery/shared/interfaces'
 import { Icon, InputSelectSmall, InputTextSmall, TableEdition, type TableEditionRow, Tooltip } from '@qovery/shared/ui'
+import { type ProbeName } from '../healthchecks-utils'
 
 export interface ApplicationContainerHealthchecksFormProps {
   ports?: number[]
 }
 
+interface ProbeColumn {
+  name: ProbeName
+  label: string
+  description: string
+  testId: string
+  type: ProbeTypeEnum
+}
+
 export function ApplicationContainerHealthchecksForm({ ports = [] }: ApplicationContainerHealthchecksFormProps) {
   const { control, watch } = useFormContext<HealthcheckData>()
 
-  const typeReadiness = watch('readiness_probe.current_type') || ProbeTypeEnum.NONE
-  const typeLiveness = watch('liveness_probe.current_type') || ProbeTypeEnum.NONE
+  const probeColumns: ProbeColumn[] = [
+    {
+      name: 'liveness_probe',
+      label: 'Liveness',
+      description: 'Verifies if the container is operating and it is not in a broken state.',
+      testId: 'liveness-probe',
+      type: (watch('liveness_probe.current_type') as ProbeTypeEnum | undefined) || ProbeTypeEnum.NONE,
+    },
+    {
+      name: 'readiness_probe',
+      label: 'Readiness',
+      description: 'Verifies if the application is ready to receive traffic.',
+      testId: 'readiness-probe',
+      type: (watch('readiness_probe.current_type') as ProbeTypeEnum | undefined) || ProbeTypeEnum.NONE,
+    },
+    {
+      name: 'startup_probe',
+      label: 'Startup',
+      description:
+        'Verifies if the application has started. Liveness and readiness checks wait until it succeeds, so a slow start does not trigger a restart.',
+      testId: 'startup-probe',
+      type: (watch('startup_probe.current_type') as ProbeTypeEnum | undefined) || ProbeTypeEnum.NONE,
+    },
+  ]
+
+  const anyProbe = (predicate: (type: ProbeTypeEnum) => boolean) => probeColumns.some(({ type }) => predicate(type))
 
   const tableHead: TableEditionRow[] = [
     {
@@ -20,37 +53,25 @@ export function ApplicationContainerHealthchecksForm({ ports = [] }: Application
           className: 'pr-10',
           content: 'Settings',
         },
-        {
+        ...probeColumns.map(({ label, description }) => ({
           content: (
             <div className="flex w-full justify-between">
-              Liveness
-              <Tooltip content="Verifies if the container is operating and it is not in a broken state.">
+              {label}
+              <Tooltip content={description}>
                 <span>
                   <Icon className="text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
                 </span>
               </Tooltip>
             </div>
           ),
-        },
-        {
-          content: (
-            <div className="flex w-full justify-between">
-              Readiness
-              <Tooltip content="Verifies if the application is ready to receive traffic.">
-                <span>
-                  <Icon className="text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
-                </span>
-              </Tooltip>
-            </div>
-          ),
-        },
+        })),
       ],
     },
   ]
 
   const rowClassName = '!p-1 hover:bg-initial'
 
-  const selectType = (name: 'liveness_probe.current_type' | 'readiness_probe.current_type', testId: string) => (
+  const selectType = (name: `${ProbeName}.current_type`, testId: string) => (
     <Controller
       name={name}
       control={control}
@@ -115,118 +136,65 @@ export function ApplicationContainerHealthchecksForm({ ports = [] }: Application
       />
     ) : null
 
+  const probeRow = (label: string, renderCell: (column: ProbeColumn) => ReturnType<typeof renderTextInput>) => ({
+    cells: [
+      { content: label },
+      ...probeColumns.map((column) => ({
+        className: rowClassName,
+        content: renderCell(column),
+      })),
+    ],
+  })
+
   const tableBody: TableEditionRow[] = [
-    {
-      cells: [
-        { content: 'Type' },
-        {
-          className: rowClassName,
-          content: selectType('liveness_probe.current_type', 'input-liveness-probe-current-type'),
-        },
-        {
-          className: rowClassName,
-          content: selectType('readiness_probe.current_type', 'input-readiness-probe-current-type'),
-        },
-      ],
-    },
+    probeRow('Type', ({ name, testId }) => selectType(`${name}.current_type`, `input-${testId}-current-type`)),
   ]
 
-  if (typeReadiness !== ProbeTypeEnum.EXEC || typeLiveness !== ProbeTypeEnum.EXEC) {
-    tableBody.push({
-      cells: [
-        { content: 'Port' },
-        {
-          className: rowClassName,
-          content: renderPortSelect(
-            `liveness_probe.type.${typeLiveness?.toLowerCase()}.port`,
-            'input-liveness-probe-port',
-            typeLiveness !== ProbeTypeEnum.NONE && typeLiveness !== ProbeTypeEnum.EXEC
-          ),
-        },
-        {
-          className: rowClassName,
-          content: renderPortSelect(
-            `readiness_probe.type.${typeReadiness?.toLowerCase()}.port`,
-            'input-readiness-probe-port',
-            typeReadiness !== ProbeTypeEnum.NONE && typeReadiness !== ProbeTypeEnum.EXEC
-          ),
-        },
-      ],
-    })
+  const usesPort = (type: ProbeTypeEnum) => type !== ProbeTypeEnum.NONE && type !== ProbeTypeEnum.EXEC
+
+  if (anyProbe(usesPort)) {
+    tableBody.push(
+      probeRow('Port', ({ name, testId, type }) =>
+        renderPortSelect(`${name}.type.${type.toLowerCase()}.port`, `input-${testId}-port`, usesPort(type))
+      )
+    )
   }
 
-  if (typeReadiness === ProbeTypeEnum.HTTP || typeLiveness === ProbeTypeEnum.HTTP) {
-    tableBody.push({
-      cells: [
-        { content: 'Path' },
-        {
-          className: rowClassName,
-          content: renderTextInput(
-            `liveness_probe.type.${typeLiveness?.toLowerCase()}.path`,
-            'input-liveness-probe-path',
-            typeLiveness === ProbeTypeEnum.HTTP,
-            '/'
-          ),
-        },
-        {
-          className: rowClassName,
-          content: renderTextInput(
-            `readiness_probe.type.${typeReadiness?.toLowerCase()}.path`,
-            'input-readiness-probe-path',
-            typeReadiness === ProbeTypeEnum.HTTP,
-            '/'
-          ),
-        },
-      ],
-    })
+  if (anyProbe((type) => type === ProbeTypeEnum.HTTP)) {
+    tableBody.push(
+      probeRow('Path', ({ name, testId, type }) =>
+        renderTextInput(
+          `${name}.type.${type.toLowerCase()}.path`,
+          `input-${testId}-path`,
+          type === ProbeTypeEnum.HTTP,
+          '/'
+        )
+      )
+    )
   }
 
-  if (typeReadiness === ProbeTypeEnum.EXEC || typeLiveness === ProbeTypeEnum.EXEC) {
-    tableBody.push({
-      cells: [
-        { content: 'Command' },
-        {
-          className: rowClassName,
-          content: renderTextInput(
-            `liveness_probe.type.${typeLiveness?.toLowerCase()}.command`,
-            'input-liveness-probe-command',
-            typeLiveness === ProbeTypeEnum.EXEC
-          ),
-        },
-        {
-          className: rowClassName,
-          content: renderTextInput(
-            `readiness_probe.type.${typeReadiness?.toLowerCase()}.command`,
-            'input-readiness-probe-command',
-            typeReadiness === ProbeTypeEnum.EXEC
-          ),
-        },
-      ],
-    })
+  if (anyProbe((type) => type === ProbeTypeEnum.EXEC)) {
+    tableBody.push(
+      probeRow('Command', ({ name, testId, type }) =>
+        renderTextInput(
+          `${name}.type.${type.toLowerCase()}.command`,
+          `input-${testId}-command`,
+          type === ProbeTypeEnum.EXEC
+        )
+      )
+    )
   }
 
-  if (typeReadiness === ProbeTypeEnum.GRPC || typeLiveness === ProbeTypeEnum.GRPC) {
-    tableBody.push({
-      cells: [
-        { content: 'Service' },
-        {
-          className: rowClassName,
-          content: renderTextInput(
-            `liveness_probe.type.${typeLiveness?.toLowerCase()}.service`,
-            'input-liveness-probe-service',
-            typeLiveness === ProbeTypeEnum.GRPC
-          ),
-        },
-        {
-          className: rowClassName,
-          content: renderTextInput(
-            `readiness_probe.type.${typeReadiness?.toLowerCase()}.service`,
-            'input-readiness-probe-service',
-            typeReadiness === ProbeTypeEnum.GRPC
-          ),
-        },
-      ],
-    })
+  if (anyProbe((type) => type === ProbeTypeEnum.GRPC)) {
+    tableBody.push(
+      probeRow('Service', ({ name, testId, type }) =>
+        renderTextInput(
+          `${name}.type.${type.toLowerCase()}.service`,
+          `input-${testId}-service`,
+          type === ProbeTypeEnum.GRPC
+        )
+      )
+    )
   }
 
   const probeFields: [string, string, string][] = [
@@ -237,32 +205,16 @@ export function ApplicationContainerHealthchecksForm({ ports = [] }: Application
     ['Failure Threshold', 'failure_threshold', 'fail-threshold'],
   ]
   probeFields.forEach(([label, field, suffix]) => {
-    tableBody.push({
-      cells: [
-        { content: label },
-        {
-          className: rowClassName,
-          content: renderTextInput(
-            `liveness_probe.${field}`,
-            `input-liveness-probe-${suffix}`,
-            typeLiveness !== ProbeTypeEnum.NONE
-          ),
-        },
-        {
-          className: rowClassName,
-          content: renderTextInput(
-            `readiness_probe.${field}`,
-            `input-readiness-probe-${suffix}`,
-            typeReadiness !== ProbeTypeEnum.NONE
-          ),
-        },
-      ],
-    })
+    tableBody.push(
+      probeRow(label, ({ name, testId, type }) =>
+        renderTextInput(`${name}.${field}`, `input-${testId}-${suffix}`, type !== ProbeTypeEnum.NONE)
+      )
+    )
   })
 
   return (
     <TableEdition
-      key={`${typeLiveness}.${typeReadiness}`}
+      key={probeColumns.map(({ type }) => type).join('.')}
       className="mb-5 border border-neutral bg-surface-neutral-subtle text-sm font-medium text-neutral"
       tableBody={[...tableHead, ...tableBody]}
     />
