@@ -1,5 +1,6 @@
 import {
   type EnvironmentLogs,
+  type EnvironmentStatusesWithStagesPreCheckStage,
   type PreCheckStepMetric,
   type ServiceActionEnum,
   type ServiceStepMetric,
@@ -225,7 +226,7 @@ function getPhaseStatus(steps: DeploymentLogStep[]): DeploymentLogStepStatus | u
 
 export interface GetDeploymentLogPhasesProps<T extends EnvironmentLogs> {
   serviceSteps?: ServiceStepMetric[]
-  preCheckSteps?: PreCheckStepMetric[]
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
   linesByStep: Map<string, DeploymentLogStepLines<T>>
   serviceId: string
   nowMs: number
@@ -238,12 +239,12 @@ export interface GetDeploymentLogPhasesProps<T extends EnvironmentLogs> {
  */
 export function getDeploymentLogPhases<T extends EnvironmentLogs>({
   serviceSteps,
-  preCheckSteps,
+  preCheckStage,
   linesByStep,
   serviceId,
   nowMs,
 }: GetDeploymentLogPhasesProps<T>): DeploymentLogPhase<T>[] {
-  const metrics = getStepMetrics({ serviceSteps, preCheckSteps, serviceId, nowMs })
+  const metrics = getStepMetrics({ serviceSteps, preCheckSteps: preCheckStage?.steps, serviceId, nowMs })
 
   const stepsByPhase = PHASE_IDS.map((phaseId) => {
     const knownStepNames = PHASE_STEP_NAMES[phaseId]
@@ -301,13 +302,16 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
     if (steps.length === 0 && ungroupedLines.length === 0) return []
 
     const timedSteps = steps.filter((step) => step.durationSec !== undefined)
+    // Pre-checks without step metrics (older deployments, or no check run) only have the status and time of the stage
+    const preCheckStageMetric =
+      phaseId === 'PRE_CHECK' && steps.every((step) => !step.status) ? preCheckStage : undefined
     const phase = {
       id: phaseId,
-      status: getPhaseStatus(steps),
+      status: getPhaseStatus(steps) ?? preCheckStageMetric?.status,
       durationSec:
         timedSteps.length > 0
           ? timedSteps.reduce((totalDurationSec, step) => totalDurationSec + (step.durationSec ?? 0), 0)
-          : undefined,
+          : preCheckStageMetric?.total_duration_sec,
       isLive: steps.some((step) => step.isLive),
     }
 
@@ -323,14 +327,19 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
       ]
     }
 
-    // No line names its step: the steps are replaced by all the lines of the phase, with its status and duration
+    // No line names its step (older deployments): the steps are replaced by all the lines of the phase, with its
+    // status and duration. Their metrics may have missed the failure, or time only the part that went through: an
+    // error line tells the phase failed once it no longer runs.
+    const hasErrorLine = ungroupedLines.some((line) => line.type === LogsType.ERROR)
+    const status = hasErrorLine && phase.status !== 'ONGOING' ? 'ERROR' : phase.status
     return [
       {
         ...phase,
+        status,
         steps: [
           {
             name: ungroupedStepName,
-            status: phase.status,
+            status,
             durationSec: phase.durationSec,
             isLive: phase.isLive,
             lines: ungroupedLines,

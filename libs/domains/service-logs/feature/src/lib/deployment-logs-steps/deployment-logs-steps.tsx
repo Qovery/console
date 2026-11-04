@@ -124,7 +124,7 @@ export function DeploymentLogsSteps({
 
   const allPhases = getDeploymentLogPhases({
     serviceSteps: serviceStatus.steps?.details,
-    preCheckSteps: preCheckStage?.steps,
+    preCheckStage,
     linesByStep,
     serviceId,
     nowMs: Date.now(),
