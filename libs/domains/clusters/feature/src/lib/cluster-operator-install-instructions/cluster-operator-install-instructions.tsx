@@ -29,15 +29,6 @@ export function ClusterOperatorInstallInstructions({
   return (
     <Section className="gap-4 p-5">
       <Heading className="text-2xl">Install Qovery Operator</Heading>
-      <Callout.Root color="sky">
-        <Callout.Icon>
-          <Icon iconName="circle-info" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          The Operator connects to Qovery once installed. You can close this window: it opens again with this cluster
-          until the Operator connects.
-        </Callout.Text>
-      </Callout.Root>
       {isBootstrapLoading ? (
         <div
           role="status"
@@ -108,6 +99,12 @@ export function ClusterOperatorInstallInstructions({
           </li>
         </ol>
       )}
+      <Callout.Root color="sky">
+        <Callout.Icon>
+          <Icon iconName="circle-info" iconStyle="regular" />
+        </Callout.Icon>
+        <Callout.Text>Your cluster will be available as soon as the Operator is connected.</Callout.Text>
+      </Callout.Root>
       <p className="text-ssm text-neutral-subtle">
         Having trouble installing? Check our{' '}
         <ExternalLink href={INSTALLATION_DOCUMENTATION_URL} size="ssm" withIcon={false} className="underline">

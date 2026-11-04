@@ -634,7 +634,7 @@ describe('SelfManagedClusterCreationFlow', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
 
     expect(
-      await screen.findByText(/You can close this window: it opens again with this cluster until the Operator connects/)
+      await screen.findByText(/Your cluster will be available as soon as the Operator is connected/)
     ).toBeInTheDocument()
     expect(mockOnClose).not.toHaveBeenCalled()
   })

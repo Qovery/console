@@ -40,7 +40,7 @@ describe('ClusterOperatorInstallModal', () => {
 
     expect(screen.getByRole('dialog')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Install Qovery Operator' })).toBeInTheDocument()
-    expect(screen.getByText(/it opens again with this cluster until the Operator connects/)).toBeInTheDocument()
+    expect(screen.getByText(/Your cluster will be available as soon as the Operator is connected/)).toBeInTheDocument()
     expect(screen.getByText('helm upgrade --install qovery-operator')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'documentation' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'contact support' })).toBeInTheDocument()
