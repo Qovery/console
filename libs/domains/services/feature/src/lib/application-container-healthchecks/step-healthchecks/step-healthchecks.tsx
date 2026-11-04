@@ -9,6 +9,7 @@ import {
   buildHealthchecksPayload,
   defaultLivenessProbe,
   defaultReadinessProbe,
+  defaultStartupProbe,
   resetHealthchecksFormFromValue,
 } from '../healthchecks-utils'
 
@@ -51,6 +52,11 @@ export function ApplicationContainerStepHealthchecks({
         },
         ...defaultLivenessProbe,
       },
+      startup_probe: {
+        current_type: ProbeTypeEnum.NONE,
+        type: {},
+        ...defaultStartupProbe,
+      },
     },
   })
 
@@ -83,6 +89,11 @@ export function ApplicationContainerStepHealthchecks({
         },
         ...defaultLivenessProbe,
       },
+      startup_probe: {
+        current_type: ProbeTypeEnum.NONE,
+        type: {},
+        ...defaultStartupProbe,
+      },
     })
   }, [defaultPort, methods, portForm, ports])
 
@@ -104,7 +115,8 @@ export function ApplicationContainerStepHealthchecks({
             <div className="flex flex-col gap-2">
               <Heading>Health checks</Heading>
               <p className="text-sm text-neutral-subtle">
-                Configure liveness and readiness probes for the ports exposed by your service.
+                Configure liveness and readiness probes for the ports exposed by your service, and an optional startup
+                probe for services that are slow to start.
               </p>
             </div>
 

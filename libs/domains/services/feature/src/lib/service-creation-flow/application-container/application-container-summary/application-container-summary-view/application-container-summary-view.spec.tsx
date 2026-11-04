@@ -134,6 +134,39 @@ describe('ApplicationContainerSummaryView', () => {
     expect(screen.queryByRole('heading', { name: 'Health checks' })).not.toBeInTheDocument()
   })
 
+  it('renders the startup probe only when one is configured', () => {
+    const { rerender } = renderWithProviders(<ApplicationContainerSummaryView {...defaultProps} />)
+
+    expect(screen.getByText('Liveness')).toBeInTheDocument()
+    expect(screen.queryByText('Startup')).not.toBeInTheDocument()
+
+    rerender(
+      <ApplicationContainerSummaryView
+        {...defaultProps}
+        portsData={{
+          ...defaultProps.portsData,
+          healthchecks: {
+            typeStartup: 'EXEC',
+            item: {
+              startup_probe: {
+                initial_delay_seconds: 10,
+                period_seconds: 10,
+                timeout_seconds: 5,
+                success_threshold: 1,
+                failure_threshold: 30,
+                type: { exec: { command: ['true'] } },
+              },
+            },
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('Startup')).toBeInTheDocument()
+    expect(screen.getByText('EXEC')).toBeInTheDocument()
+    expect(screen.queryByText('Liveness')).not.toBeInTheDocument()
+  })
+
   it('renders the selected CPU architecture when it is explicit', () => {
     renderWithProviders(
       <ApplicationContainerSummaryView

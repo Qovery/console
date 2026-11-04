@@ -94,4 +94,22 @@ describe('ApplicationContainerPortSettingsList', () => {
       'The health check pointing to this port will be deleted as well.'
     )
   })
+
+  it('calls onRemovePort with warning when port is used by the startup probe', async () => {
+    const { userEvent } = renderComponent({
+      ...props,
+      startupProbeType: {
+        tcp: {
+          port: 3000,
+        },
+      },
+    })
+
+    await userEvent.click(screen.getAllByTestId('delete-button')[0])
+
+    expect(props.onRemovePort).toHaveBeenCalledWith(
+      ports[0],
+      'The health check pointing to this port will be deleted as well.'
+    )
+  })
 })
