@@ -1,5 +1,4 @@
 import { useNavigate } from '@tanstack/react-router'
-import download from 'downloadjs'
 import equal from 'fast-deep-equal'
 import {
   type ClusterRegion,
@@ -14,7 +13,6 @@ import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
   Button,
   Callout,
-  CopyButton,
   ExternalLink,
   Heading,
   Icon,
@@ -22,12 +20,14 @@ import {
   InputSelect,
   InputText,
   InputToggle,
-  LoaderSpinner,
   Section,
 } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { ClusterCredentialsSettings } from '../cluster-credentials-settings/cluster-credentials-settings'
-import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
+import {
+  ClusterOperatorInstallInstructions,
+  INSTALLATION_DOCUMENTATION_URL,
+} from '../cluster-operator-install-instructions/cluster-operator-install-instructions'
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
 import { usePlatformTemplateComponentConfiguration } from '../hooks/use-platform-template-component-configuration/use-platform-template-component-configuration'
@@ -44,8 +44,6 @@ import { OperatorConfigurationField, isSupportedOperatorConfigurationField } fro
 
 const DEPLOYMENT_TARGET_MENU_MAX_HEIGHT = 240
 const OPERATOR_STATUS_POLL_INTERVAL = 5000
-const INSTALLATION_DOCUMENTATION_URL = 'https://www.qovery.com/docs/getting-started/installation/kubernetes'
-const SUPPORT_URL = 'https://www.qovery.com/contact'
 
 export type SelfManagedClusterCreationStep = 'general' | 'operator' | 'install'
 
@@ -71,9 +69,6 @@ interface GeneralValues {
 }
 
 type OperatorValues = Record<string, unknown>
-
-// The bootstrap Helm command reads its values from this file name.
-export const OPERATOR_VALUES_FILE_NAME = 'values.yaml'
 
 // Only the local demo builder needs the Operator CPU architecture.
 const DEMO_ONLY_OPERATOR_FIELD_KEYS = ['cpuArchitectures']
@@ -377,12 +372,6 @@ function InstallStep({
   clusterId: string
   onInstalled: () => void
 }) {
-  const {
-    data: bootstrap,
-    isLoading: isBootstrapLoading,
-    isError: isBootstrapError,
-    refetch: refetchBootstrap,
-  } = useClusterOperatorBootstrap({ organizationId, clusterId })
   const { data: operatorStatus } = useClusterOperatorStatus({
     organizationId,
     clusterId,
@@ -397,88 +386,7 @@ function InstallStep({
     onInstalled()
   }, [onInstalled, operatorStatus?.operator_connected])
 
-  return (
-    <Section className="gap-4 p-5">
-      <Heading className="text-2xl">Install Qovery Operator</Heading>
-      {isBootstrapLoading ? (
-        <div className="flex justify-center py-6">
-          <LoaderSpinner />
-        </div>
-      ) : isBootstrapError || !bootstrap ? (
-        <Callout.Root color="red">
-          <Callout.Icon>
-            <Icon iconName="circle-exclamation" iconStyle="regular" />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextDescription>The installation instructions could not be generated.</Callout.TextDescription>
-            <Button
-              type="button"
-              variant="outline"
-              color="neutral"
-              size="sm"
-              className="mt-2"
-              onClick={() => refetchBootstrap()}
-            >
-              Try again
-            </Button>
-          </Callout.Text>
-        </Callout.Root>
-      ) : (
-        <ol className="flex flex-col gap-4 text-sm text-neutral">
-          <li className="flex flex-col gap-2">
-            <p>
-              <span className="font-medium">1. Download the Helm values file.</span>{' '}
-              <span className="text-neutral-subtle">
-                It contains the cluster credential: keep it private and delete it once installed.
-              </span>
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              color="neutral"
-              size="md"
-              className="self-start"
-              onClick={() => download(bootstrap.values_yaml, OPERATOR_VALUES_FILE_NAME, 'text/yaml')}
-            >
-              <Icon iconName="download" iconStyle="regular" />
-              Download {OPERATOR_VALUES_FILE_NAME}
-            </Button>
-          </li>
-          <li className="flex flex-col gap-2">
-            <p>
-              <span className="font-medium">2. Run this command</span>{' '}
-              <span className="text-neutral-subtle">
-                from the folder of the values file, with a kubeconfig pointing to your cluster.
-              </span>
-            </p>
-            <div className="flex items-center gap-3 rounded-md border border-neutral bg-surface-neutral-subtle p-3">
-              <code className="min-w-0 flex-1 break-all text-sm text-neutral">{bootstrap.helm_command}</code>
-              <CopyButton content={bootstrap.helm_command} />
-            </div>
-          </li>
-        </ol>
-      )}
-      <Callout.Root color="sky">
-        <Callout.Icon>
-          <Icon iconName="circle-info" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          Do not close this tab. The Operator will connect to Qovery shortly once its installation completes. You'll be
-          redirected to the cluster profile settings once the Operator is installed.
-        </Callout.Text>
-      </Callout.Root>
-      <p className="text-ssm text-neutral-subtle">
-        Having trouble installing? Check our{' '}
-        <ExternalLink href={INSTALLATION_DOCUMENTATION_URL} size="ssm" withIcon={false} className="underline">
-          documentation
-        </ExternalLink>{' '}
-        or{' '}
-        <ExternalLink href={SUPPORT_URL} size="ssm" withIcon={false} className="underline">
-          contact support
-        </ExternalLink>
-      </p>
-    </Section>
-  )
+  return <ClusterOperatorInstallInstructions organizationId={organizationId} clusterId={clusterId} />
 }
 
 export interface SelfManagedClusterCreationFlowProps {
@@ -486,6 +394,7 @@ export interface SelfManagedClusterCreationFlowProps {
   cloudProvider: SelfManagedClusterCloudProvider
   onStepChange?: (step: SelfManagedClusterCreationStep) => void
   onClose: () => void
+  setModalDismissible?: (dismissible: boolean) => void
 }
 
 export function SelfManagedClusterCreationFlow({
@@ -493,6 +402,7 @@ export function SelfManagedClusterCreationFlow({
   cloudProvider,
   onStepChange,
   onClose,
+  setModalDismissible,
 }: SelfManagedClusterCreationFlowProps) {
   const navigate = useNavigate()
   const [step, setStep] = useState<SelfManagedClusterCreationStep>('general')
@@ -560,6 +470,7 @@ export function SelfManagedClusterCreationFlow({
   const createCluster = async () => {
     if (!generalValues) return
 
+    setModalDismissible?.(false)
     try {
       const cluster = await createSelfManagedCluster({
         organizationId,
@@ -576,6 +487,8 @@ export function SelfManagedClusterCreationFlow({
       goToStep('install')
     } catch {
       // Errors are notified by the mutation.
+    } finally {
+      setModalDismissible?.(true)
     }
   }
 
