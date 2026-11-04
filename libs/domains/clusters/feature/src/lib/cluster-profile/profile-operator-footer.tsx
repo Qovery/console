@@ -5,9 +5,10 @@ import {
   ClusterOperatorStatus,
   getClusterOperatorStatusDisplay,
 } from '../cluster-operator-status/cluster-operator-status'
-import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
-
-const OPERATOR_STATUS_REFRESH_INTERVAL = 30_000
+import {
+  OPERATOR_STATUS_REFRESH_INTERVAL,
+  useClusterOperatorStatus,
+} from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 
 export function ProfileOperatorFooter() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })

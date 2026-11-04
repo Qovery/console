@@ -35,6 +35,21 @@ describe('useClusterOperatorStatus', () => {
     expect(refetchInterval(null)).toBe(false)
   })
 
+  it('stops polling once the Operator has reported a heartbeat when asked to', () => {
+    renderHook(() =>
+      useClusterOperatorStatus({
+        organizationId: 'org-123',
+        clusterId: 'cluster-123',
+        refetchInterval: 30_000,
+        stopPollingOnceInstalled: true,
+      })
+    )
+
+    const { refetchInterval } = mockUseQuery.mock.calls.at(-1)[0]
+    expect(refetchInterval({ status: 'DISCONNECTED', last_heartbeat: null })).toBe(30_000)
+    expect(refetchInterval({ status: 'CURRENT', last_heartbeat: '2026-11-04T10:00:00Z' })).toBe(false)
+  })
+
   it('does not poll without interval', () => {
     renderHook(() => useClusterOperatorStatus({ organizationId: 'org-123', clusterId: 'cluster-123' }))
 

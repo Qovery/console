@@ -3,7 +3,8 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { Modal } from '@qovery/shared/ui'
+import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
@@ -506,6 +507,30 @@ describe('SelfManagedClusterCreationFlow', () => {
     expect(screen.getByRole('button', { name: 'Back' })).toBeDisabled()
   })
 
+  it('keeps its modal open while the cluster is being created', async () => {
+    let resolveCreation: (cluster: { id: string }) => void = () => undefined
+    mockCreateSelfManagedCluster.mockReturnValue(new Promise((resolve) => (resolveCreation = resolve)))
+    const setOpen = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <Modal fakeModal externalOpen setExternalOpen={setOpen}>
+        <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
+      </Modal>
+    )
+
+    await goToOperatorStep(userEvent)
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+    await userEvent.keyboard('{Escape}')
+    expect(setOpen).not.toHaveBeenCalled()
+
+    await act(async () => resolveCreation({ id: 'cluster-id' }))
+    await screen.findByRole('heading', { name: 'Install Qovery Operator' })
+    await userEvent.keyboard('{Escape}')
+
+    expect(setOpen).toHaveBeenCalled()
+  })
+
   it('stays on the Operator step when the creation fails', async () => {
     mockCreateSelfManagedCluster.mockRejectedValue(new Error('Invalid credentials'))
     const { userEvent } = renderWithProviders(
@@ -598,5 +623,19 @@ describe('SelfManagedClusterCreationFlow', () => {
       })
     )
     expect(mockOnClose).toHaveBeenCalled()
+  })
+
+  it('tells that the install step can be closed', async () => {
+    const { userEvent } = renderWithProviders(
+      <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
+    )
+
+    await goToOperatorStep(userEvent)
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(
+      await screen.findByText(/You can close this window: it opens again with this cluster until the Operator connects/)
+    ).toBeInTheDocument()
+    expect(mockOnClose).not.toHaveBeenCalled()
   })
 })
