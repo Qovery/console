@@ -22,6 +22,10 @@ function createLog(message: string, stageStep: string, stepName?: string): Envir
   }
 }
 
+function createErrorLog(message: string, stageStep: string, stepName?: string): EnvironmentLogs {
+  return { ...createLog(message, stageStep, stepName), type: 'error' }
+}
+
 describe('getDeploymentLogLineStep', () => {
   it('uses the step name of the line', () => {
     expect(getDeploymentLogLineStep(createLog('Cloning', 'Build', 'GIT_CLONE'))).toEqual({
@@ -311,6 +315,62 @@ describe('getDeploymentLogPhases', () => {
       [expect.objectContaining({ name: 'DEPLOY_UNGROUPED', status: 'SUCCESS', durationSec: 76 })],
     ])
     expect(getDeploymentLogUngroupedStepLabel(phases[0])).toBe('Build logs')
+  })
+
+  it('fails a phase whose lines name no step when one of them is an error, whatever its metrics say', () => {
+    // A Terraform deletion whose job pod never started: the engine reported the deletion as done and the execution as failed
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [
+        { step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 88 },
+        { step_name: 'EXECUTING', status: 'ERROR', duration_sec: 1 },
+      ],
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Deletion of terraform service is starting', 'Delete'),
+        createErrorLog('Job was active longer than specified deadline', 'DeletedError'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(
+      phases.map((phase) => [phase.id, phase.status, phase.steps.map((step) => [step.name, step.status])])
+    ).toEqual([
+      ['DEPLOY', 'ERROR', [['DEPLOY_UNGROUPED', 'ERROR']]],
+      ['EXECUTE', 'ERROR', [['EXECUTING', 'ERROR']]],
+    ])
+  })
+
+  it('does not take the success of the pre-check stage when its lines report an error', () => {
+    // The checks went through, then the engine never answered: the timeout line was logged as a pre-check line
+    const phases = getDeploymentLogPhases({
+      preCheckStage: { status: 'SUCCESS', total_duration_sec: 2 },
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Checking Git configuration', 'PreCheck'),
+        createErrorLog('Failed to get an answer from the engine in 10 min', 'PreCheck'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases).toEqual([
+      expect.objectContaining({
+        id: 'PRE_CHECK',
+        status: 'ERROR',
+        durationSec: 2,
+        steps: [expect.objectContaining({ name: 'PRE_CHECK_UNGROUPED', status: 'ERROR', durationSec: 2 })],
+      }),
+    ])
+  })
+
+  it('keeps running a phase whose lines name no step while it runs, even with an error line', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [{ step_name: 'DEPLOYMENT', status: 'ONGOING', duration_sec: 30 }],
+      linesByStep: groupDeploymentLogsByStep([createErrorLog('Readiness probe failed, retrying', 'Deploy')]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases[0]).toMatchObject({ id: 'DEPLOY', status: 'ONGOING', steps: [{ status: 'ONGOING' }] })
   })
 
   it('lists the lines without step after the steps of their phase', () => {

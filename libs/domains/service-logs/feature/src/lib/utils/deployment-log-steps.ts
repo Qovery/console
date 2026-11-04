@@ -327,14 +327,19 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
       ]
     }
 
-    // No line names its step: the steps are replaced by all the lines of the phase, with its status and duration
+    // No line names its step (older deployments): the steps are replaced by all the lines of the phase, with its
+    // status and duration. Their metrics may have missed the failure, or time only the part that went through: an
+    // error line tells the phase failed once it no longer runs.
+    const hasErrorLine = ungroupedLines.some((line) => line.type === LogsType.ERROR)
+    const status = hasErrorLine && phase.status !== 'ONGOING' ? 'ERROR' : phase.status
     return [
       {
         ...phase,
+        status,
         steps: [
           {
             name: ungroupedStepName,
-            status: phase.status,
+            status,
             durationSec: phase.durationSec,
             isLive: phase.isLive,
             lines: ungroupedLines,
