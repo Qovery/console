@@ -1,5 +1,4 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import {
   ClusterCardNodeUsage,
   ClusterTableNode,
@@ -13,7 +12,7 @@ import {
   ClusterActions,
   ClusterAvatar,
   ClusterLastDeploymentSection,
-  ClusterNeedRedeployFlag,
+  ClusterOverviewBanners,
   ClusterQuotaWarningCallout,
   ClusterRunningStatusIndicator,
   ClusterType,
@@ -117,10 +116,10 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
 
   return (
     <>
-      {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
-        <ClusterNeedRedeployFlag
+      {cluster && (
+        <ClusterOverviewBanners
           deploymentStatus={cluster.deployment_status}
-          onClickButton={() =>
+          onDeploy={() =>
             deployCluster({
               organizationId,
               clusterId,

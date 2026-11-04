@@ -106,6 +106,56 @@ describe('ClusterProductionHealthSummaryCard', () => {
     )
   })
 
+  it('counts a cluster once and puts extended credentials before updates in the health report', async () => {
+    const cluster = {
+      ...baseCluster,
+      deployment_status: 'OUT_OF_DATE',
+      wide_permissions: { require_wide_access_to_deploy: true },
+    } as Cluster
+    const { userEvent } = renderWithProviders(
+      <ClusterProductionHealthSummaryCard clusters={[cluster]} clusterStatuses={[deployedStatus]} />
+    )
+
+    const trigger = screen.getByRole('button', { name: /1 cluster needs attention/i })
+
+    await userEvent.click(trigger)
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          props: expect.objectContaining({
+            count: 1,
+            groups: [
+              { kind: 'extended-credentials-required', entries: [expect.objectContaining({ cluster })] },
+              { kind: 'update-available', entries: [expect.objectContaining({ cluster })] },
+            ],
+          }),
+        }),
+      })
+    )
+  })
+
+  it('shows an attention warning when extended credentials are the only issue', () => {
+    const cluster = { ...baseCluster, wide_permissions: { require_wide_access_to_deploy: true } }
+    renderWithProviders(<ClusterProductionHealthSummaryCard clusters={[cluster]} clusterStatuses={[deployedStatus]} />)
+
+    expect(screen.getByRole('button', { name: /1 cluster needs attention/i })).toBeInTheDocument()
+    expect(screen.queryByText('All clusters healthy')).not.toBeInTheDocument()
+  })
+
+  it('ignores the credentials requirement after a failed status request with cached data', () => {
+    const cluster = { ...baseCluster, wide_permissions: { require_wide_access_to_deploy: true } }
+    renderWithProviders(
+      <ClusterProductionHealthSummaryCard
+        clusters={[cluster]}
+        clusterStatuses={[deployedStatus]}
+        isDeploymentStatusSuccess={false}
+      />
+    )
+
+    expect(screen.queryByRole('button', { name: /needs attention/i })).not.toBeInTheDocument()
+  })
+
   it('does not show running-status issues when the feature flag is disabled', () => {
     mockUseFeatureFlagVariantKey.mockReturnValue(false)
     mockUseQueries.mockReturnValue([{ data: { computed_status: { global_status: 'ERROR' } } }])

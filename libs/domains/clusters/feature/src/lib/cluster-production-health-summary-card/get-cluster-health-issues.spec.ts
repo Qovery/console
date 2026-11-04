@@ -121,12 +121,60 @@ describe('getClusterHealthIssues', () => {
     expect(issues).not.toContain('update-available')
   })
 
+  it.each(['DEPLOYED', 'STOPPED'] as const)('flags extended credentials when required and status is %s', (status) => {
+    expect(
+      getClusterHealthIssues({
+        cluster: { ...baseCluster, wide_permissions: { require_wide_access_to_deploy: true } },
+        deploymentStatus: { ...baseDeploymentStatus, status },
+        isRunningStatusIssueEnabled: false,
+        hasRunningStatusTimedOut: false,
+      })
+    ).toEqual(['extended-credentials-required'])
+  })
+
+  it.each([false, undefined])('does not flag extended credentials when the requirement is %s', (required) => {
+    expect(
+      getClusterHealthIssues({
+        cluster: { ...baseCluster, wide_permissions: { require_wide_access_to_deploy: required } },
+        deploymentStatus: baseDeploymentStatus,
+        isRunningStatusIssueEnabled: false,
+        hasRunningStatusTimedOut: false,
+      })
+    ).not.toContain('extended-credentials-required')
+  })
+
+  it.each([undefined, {}, { ...baseDeploymentStatus, status: 'DEPLOYING' }] as (ClusterStatus | undefined)[])(
+    'does not flag extended credentials while deploying or without a known status (%j)',
+    (deploymentStatus) => {
+      expect(
+        getClusterHealthIssues({
+          cluster: { ...baseCluster, wide_permissions: { require_wide_access_to_deploy: true } },
+          deploymentStatus,
+          hasRunningStatusTimedOut: false,
+        })
+      ).not.toContain('extended-credentials-required')
+    }
+  )
+
+  it('does not flag extended credentials after a failed status refetch, even with cached data', () => {
+    expect(
+      getClusterHealthIssues({
+        cluster: { ...baseCluster, wide_permissions: { require_wide_access_to_deploy: true } },
+        deploymentStatus: baseDeploymentStatus,
+        isDeploymentStatusSuccess: false,
+        hasRunningStatusTimedOut: false,
+      })
+    ).not.toContain('extended-credentials-required')
+  })
+
   it('returns null severity for an empty issue list', () => {
     expect(getClusterHealthIssuesSeverity([])).toBeNull()
   })
 
   it('returns warning severity when only warning-level issues are present', () => {
-    expect(getClusterHealthIssuesSeverity(['status-unavailable', 'update-available'])).toBe('warning')
+    expect(
+      getClusterHealthIssuesSeverity(['status-unavailable', 'extended-credentials-required', 'update-available'])
+    ).toBe('warning')
   })
 
   it('returns error severity when at least one error-level issue is present', () => {
@@ -136,11 +184,17 @@ describe('getClusterHealthIssues', () => {
 
   it('combines multiple issues', () => {
     const issues = getClusterHealthIssues({
-      cluster: { ...baseCluster, deployment_status: 'OUT_OF_DATE' } as Cluster,
+      cluster: {
+        ...baseCluster,
+        deployment_status: 'OUT_OF_DATE',
+        wide_permissions: { require_wide_access_to_deploy: true },
+      } as Cluster,
       deploymentStatus: { ...baseDeploymentStatus, status: 'DEPLOYMENT_ERROR' },
       runningStatus: { computed_status: { global_status: 'ERROR' } } as unknown as ClusterStatusDto,
       hasRunningStatusTimedOut: true,
     })
-    expect(issues).toEqual(expect.arrayContaining(['deploy-failed', 'running-error', 'update-available']))
+    expect(issues).toEqual(
+      expect.arrayContaining(['deploy-failed', 'running-error', 'extended-credentials-required', 'update-available'])
+    )
   })
 })

@@ -8,7 +8,7 @@ import useClusters from '../hooks/use-clusters/use-clusters'
 export function SectionProductionHealth() {
   const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
   const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
-  const { data: clusterStatuses = [] } = useClusterStatuses({
+  const { data: clusterStatuses = [], isSuccess: isDeploymentStatusSuccess } = useClusterStatuses({
     organizationId,
     refetchInterval: 3000,
     suspense: true,
@@ -51,7 +51,11 @@ export function SectionProductionHealth() {
           </Link>
         </EmptyState>
       ) : (
-        <ClusterProductionHealthSummaryCard clusters={clusterProduction} clusterStatuses={clusterStatuses} />
+        <ClusterProductionHealthSummaryCard
+          clusters={clusterProduction}
+          clusterStatuses={clusterStatuses}
+          isDeploymentStatusSuccess={isDeploymentStatusSuccess}
+        />
       )}
     </Section>
   )

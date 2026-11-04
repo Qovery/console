@@ -1,10 +1,33 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import type { Cluster } from 'qovery-typescript-axios'
+import { type ComponentPropsWithoutRef } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   type ClusterProductionHealthIssuesGroup,
   ClusterProductionHealthIssuesModal,
 } from './cluster-production-health-issues-modal'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  Link: ({
+    to,
+    params,
+    onClick,
+    children,
+    ...props
+  }: ComponentPropsWithoutRef<'a'> & { to: string; params: Record<string, string> }) => (
+    <a
+      {...props}
+      href={Object.entries(params).reduce((path, [key, value]) => path.replace(`$${key}`, value), to)}
+      onClick={(event) => {
+        event.preventDefault()
+        onClick?.(event)
+      }}
+    >
+      {children}
+    </a>
+  ),
+}))
 
 const baseCluster = {
   id: 'cluster-id',
@@ -21,6 +44,37 @@ const baseCluster = {
 const noop = jest.fn()
 
 describe('ClusterProductionHealthIssuesModal', () => {
+  it('lists clusters requiring extended credentials with their badges and links to the overview', async () => {
+    const onClose = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <Dialog.Root open>
+        <Dialog.Content>
+          <ClusterProductionHealthIssuesModal
+            groups={[
+              {
+                kind: 'extended-credentials-required',
+                entries: [{ cluster: baseCluster, issues: ['extended-credentials-required'] }],
+              },
+            ]}
+            count={1}
+            onClose={onClose}
+          />
+        </Dialog.Content>
+      </Dialog.Root>
+    )
+
+    expect(screen.getByText('Cluster health report')).toBeInTheDocument()
+    expect(screen.getByText('Extended credentials required')).toBeInTheDocument()
+    expect(screen.getByText('Qovery managed')).toBeInTheDocument()
+    expect(screen.getByText('us-east-1')).toBeInTheDocument()
+    const clusterLink = screen.getByRole('link', { name: /prod-cluster/i })
+    expect(clusterLink).toHaveAttribute('href', '/organization/org-id/cluster/cluster-id/overview')
+
+    await userEvent.click(clusterLink)
+
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
   it('renders a calmer update report when clusters only have updates available', () => {
     const groups: ClusterProductionHealthIssuesGroup[] = [
       {

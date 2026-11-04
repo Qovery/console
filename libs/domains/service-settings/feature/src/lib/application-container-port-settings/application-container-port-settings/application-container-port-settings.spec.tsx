@@ -46,4 +46,32 @@ describe('ApplicationContainerPortSettings helpers', () => {
       },
     })
   })
+
+  it('should remove the startup probe if it targets the removed port', () => {
+    const application = applicationFactoryMock(1)[0]
+    application.healthchecks = {
+      readiness_probe: {
+        type: {
+          tcp: { port: 8082 },
+        },
+      },
+      startup_probe: {
+        type: {
+          http: { port: 8080, path: '/started' },
+        },
+      },
+    }
+
+    const result = removePortFromProbes(application, 8080)
+
+    expect(result.healthchecks).toEqual({
+      liveness_probe: undefined,
+      readiness_probe: {
+        type: {
+          tcp: { port: 8082 },
+        },
+      },
+      startup_probe: undefined,
+    })
+  })
 })
