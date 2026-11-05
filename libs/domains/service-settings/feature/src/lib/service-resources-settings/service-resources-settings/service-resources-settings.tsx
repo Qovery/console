@@ -7,6 +7,7 @@ import { useParams } from '@tanstack/react-router'
 import { type FormEventHandler, useEffect } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { toServiceResources, useCostPolicyCheck } from '@qovery/domains/cost-management/feature'
 import { type Database, type EditableService, type Helm } from '@qovery/domains/services/data-access'
 import {
   ApplicationSettingsResources,
@@ -187,6 +188,8 @@ export function ServiceResourcesSettings({ service }: ServiceResourcesSettingsPr
     environmentId,
   })
 
+  const { checkCostPolicy } = useCostPolicyCheck({ projectId })
+
   const methods = useForm<ServiceResourcesFormData>({
     mode: 'onChange',
     defaultValues: getDefaultValues(service, advancedSettings),
@@ -245,20 +248,34 @@ export function ServiceResourcesSettings({ service }: ServiceResourcesSettingsPr
       )
       .exhaustive()
 
-    if (data.autoscaling_mode === 'HPA' && advancedSettings) {
-      await editAdvancedSettings({
+    const applyChange = async () => {
+      if (data.autoscaling_mode === 'HPA' && advancedSettings) {
+        await editAdvancedSettings({
+          serviceId: service.id,
+          payload: {
+            serviceType: service.serviceType,
+            ...buildHpaAdvancedSettingsPayload(data as unknown as Record<string, unknown>, advancedSettings),
+          },
+        })
+      }
+
+      editService({
         serviceId: service.id,
-        payload: {
-          serviceType: service.serviceType,
-          ...buildHpaAdvancedSettingsPayload(data as unknown as Record<string, unknown>, advancedSettings),
-        },
+        payload,
       })
     }
 
-    editService({
-      serviceId: service.id,
-      payload,
-    })
+    // Resource changes are the main way a project's cost moves, so they go
+    // through the budget policy before anything is sent to the API.
+    checkCostPolicy(
+      {
+        type: 'scale_service',
+        serviceName: service.name,
+        before: toServiceResources(getDefaultValues(service, advancedSettings)),
+        after: toServiceResources(data),
+      },
+      applyChange
+    )
   })
 
   const displayWarningCpu: boolean =
