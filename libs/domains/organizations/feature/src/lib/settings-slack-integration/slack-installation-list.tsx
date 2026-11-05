@@ -8,16 +8,12 @@ import { type AlertRule, type SlackChannel, type SlackInstallation } from './typ
 
 function formatScope(rule: AlertRule, projects: { id: string; name: string }[]): string {
   if (rule.qovery_environment_ids?.length > 0) {
-    const projectNames = projects
-      .filter((p) => rule.qovery_project_ids?.includes(p.id))
-      .map((p) => p.name)
+    const projectNames = projects.filter((p) => rule.qovery_project_ids?.includes(p.id)).map((p) => p.name)
     const count = rule.qovery_environment_ids.length
     return `${count} env${count > 1 ? 's' : ''}${projectNames.length > 0 ? ` ${projectNames.join(', ')}` : ''}`
   }
   if (rule.qovery_project_ids?.length > 0) {
-    const projectNames = projects
-      .filter((p) => rule.qovery_project_ids.includes(p.id))
-      .map((p) => p.name)
+    const projectNames = projects.filter((p) => rule.qovery_project_ids.includes(p.id)).map((p) => p.name)
     return projectNames.length > 0 ? projectNames.join(', ') : 'Selected projects'
   }
   return 'All projects'

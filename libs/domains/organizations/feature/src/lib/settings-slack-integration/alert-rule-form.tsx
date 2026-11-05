@@ -85,14 +85,11 @@ export function AlertRuleForm({
       }
 
       if (isEditing) {
-        const res = await fetch(
-          `${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/alert-rules/${existingRule.id}`,
-          {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          }
-        )
+        const res = await fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/alert-rules/${existingRule.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
         if (res.ok) {
           toast('success', 'Alert rule updated')
           posthog.capture('slack-alert-rule-updated', { organization_id: organizationId })

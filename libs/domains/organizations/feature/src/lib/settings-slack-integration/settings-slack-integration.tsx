@@ -1,5 +1,5 @@
-import posthog from 'posthog-js'
 import { useParams } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
