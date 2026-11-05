@@ -1,4 +1,11 @@
-import { type Assignment, type Group, matchTargetSelection } from './rbac-v2-mock-data'
+import {
+  type Assignment,
+  type Group,
+  capabilitiesOfPreset,
+  matchTargetSelection,
+  presetMatching,
+} from './rbac-v2-mock-data'
+import { TARGETED_PERMISSIONS } from './rbac-v2-targeted-data'
 import { getRoleSources } from './rbac-v2-utils'
 
 const manual = (roleId: string): Assignment => ({
@@ -81,5 +88,25 @@ describe('matchTargetSelection', () => {
 
     expect(objects.map((resource) => resource.id)).toEqual(['e-ares'])
     expect(services.map((resource) => resource.id)).toEqual(['s-ares-proxy'])
+  })
+})
+
+describe('presets', () => {
+  it('should not be stored: a permission only keeps its capabilities', () => {
+    const permission = TARGETED_PERMISSIONS['r-v1-developer'].find((p) => p.id === 't-dev-3')
+
+    expect(permission).not.toHaveProperty('preset')
+    expect(permission?.capabilities).toContain('service.shell')
+  })
+
+  it('should be recognized only when the capabilities are exactly the preset ones', () => {
+    const deployer = capabilitiesOfPreset('deployer', 'environment')
+
+    expect(presetMatching(deployer, 'environment')?.id).toBe('deployer')
+    expect(presetMatching([...deployer, 'service.shell'], 'environment')).toBeUndefined()
+  })
+
+  it('should only bring the capabilities of the target', () => {
+    expect(capabilitiesOfPreset('viewer', 'cluster')).toEqual(['cluster.view'])
   })
 })

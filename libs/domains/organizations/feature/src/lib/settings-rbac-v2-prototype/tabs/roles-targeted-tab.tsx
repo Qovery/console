@@ -3,12 +3,15 @@ import {
   Badge,
   Button,
   Checkbox,
+  Heading,
   Icon,
   InputSelect,
   InputText,
   InputTextArea,
+  Section,
   SegmentedControl,
   Tooltip,
+  useModal,
 } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import {
@@ -22,9 +25,10 @@ import {
   type Resource,
   type Role,
   type RoleScope,
+  capabilitiesOfPreset,
   capabilityById,
   matchTargetSelection,
-  presetById,
+  presetMatching,
   resourceById,
   resourcePath,
   stageAtLeast,
@@ -56,16 +60,6 @@ const impliedContext = (environments: Resource[]) => {
 
 const targetOf = (target: PermissionTarget) => PERMISSION_TARGETS.find((item) => item.target === target)
 
-// A preset only brings the capabilities of the permission's target
-const targetCapabilities = (permission: TargetedPermission) => {
-  const levels = targetOf(permission.target)?.levels ?? []
-  return new Set(
-    [...presetById(permission.preset).capabilities, ...permission.added].filter(
-      (id) => levels.includes(capabilityById(id)?.level ?? 'organization') && !permission.removed.includes(id)
-    )
-  )
-}
-
 function MatchSummary({ permission }: { permission: TargetedPermission }) {
   const { objects, services } = matchTargetSelection(permission.target, permission.selection)
   const kind = TARGET_NOUN[permission.target]
@@ -77,20 +71,26 @@ function MatchSummary({ permission }: { permission: TargetedPermission }) {
   )
 }
 
-function Adjustments({ permission }: { permission: TargetedPermission }) {
+// The preset name when the capabilities are exactly a preset, otherwise how many were picked
+function CapabilitiesBadge({ permission }: { permission: TargetedPermission }) {
+  const preset = presetMatching(permission.capabilities, permission.target)
   return (
-    <>
-      {permission.added.map((id) => (
-        <Badge key={id} size="sm" variant="surface" color="green">
-          + {capabilityById(id)?.label}
+    <Tooltip
+      content={
+        permission.capabilities.length > 0
+          ? permission.capabilities.map((id) => capabilityById(id)?.label).join(', ')
+          : 'No capability'
+      }
+      classNameContent="max-w-sm"
+    >
+      <span>
+        <Badge size="sm" variant="outline" color="neutral" className="font-medium">
+          {preset
+            ? preset.label
+            : `Custom · ${permission.capabilities.length} ${permission.capabilities.length === 1 ? 'capability' : 'capabilities'}`}
         </Badge>
-      ))}
-      {permission.removed.map((id) => (
-        <Badge key={id} size="sm" variant="surface" color="red">
-          − {capabilityById(id)?.label}
-        </Badge>
-      ))}
-    </>
+      </span>
+    </Tooltip>
   )
 }
 
@@ -169,10 +169,7 @@ export function PermissionSummary({ permission }: { permission: TargetedPermissi
     <li className="flex flex-wrap items-center gap-2 text-xs">
       <SelectionSentence permission={permission} />
       <Icon iconName="arrow-right" className="text-neutral-subtle" />
-      <Badge size="sm" variant="outline" color="neutral" className="font-medium">
-        {presetById(permission.preset).label}
-      </Badge>
-      <Adjustments permission={permission} />
+      <CapabilitiesBadge permission={permission} />
       <MatchSummary permission={permission} />
     </li>
   )
@@ -187,23 +184,13 @@ function TargetedCapabilities({
 }) {
   const { mode } = useRbacPrototype()
   const levels = targetOf(permission.target)?.levels ?? []
-  const effective = targetCapabilities(permission)
-  const preset = new Set(presetById(permission.preset).capabilities)
-
   const toggle = (id: string) =>
-    onChange(
-      preset.has(id)
-        ? {
-            ...permission,
-            removed: permission.removed.includes(id)
-              ? permission.removed.filter((r) => r !== id)
-              : [...permission.removed, id],
-          }
-        : {
-            ...permission,
-            added: permission.added.includes(id) ? permission.added.filter((a) => a !== id) : [...permission.added, id],
-          }
-    )
+    onChange({
+      ...permission,
+      capabilities: permission.capabilities.includes(id)
+        ? permission.capabilities.filter((capability) => capability !== id)
+        : [...permission.capabilities, id],
+    })
 
   return (
     <div className={twMerge('grid gap-4', levels.length > 1 ? 'grid-cols-2' : 'grid-cols-1')}>
@@ -217,7 +204,7 @@ function TargetedCapabilities({
               <li key={capability.id} className="flex items-center gap-2 text-xs">
                 <Checkbox
                   id={`${permission.id}-${capability.id}`}
-                  checked={effective.has(capability.id)}
+                  checked={permission.capabilities.includes(capability.id)}
                   onCheckedChange={() => toggle(capability.id)}
                 />
                 <label htmlFor={`${permission.id}-${capability.id}`} className="cursor-pointer text-neutral">
@@ -235,6 +222,62 @@ function TargetedCapabilities({
   )
 }
 
+// Opens in a modal, which renders outside the prototype provider: it gets the matched objects as props
+function MatchesModal({
+  noun,
+  objects,
+  services,
+  context,
+}: {
+  noun: string
+  objects: Resource[]
+  services: Resource[]
+  context: Resource[]
+}) {
+  const list = (resources: Resource[], name = false) => (
+    <ul className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2">
+      {resources.map((resource) => (
+        <li key={resource.id} className="flex items-center py-1.5 text-sm text-neutral">
+          <Icon iconName={RESOURCE_ICONS[resource.kind]} iconStyle="regular" className="mr-2 text-neutral-subtle" />
+          {name ? resource.name : resourcePath(resource)}
+        </li>
+      ))}
+    </ul>
+  )
+
+  return (
+    <Section className="p-6">
+      <Heading className="mb-1 text-2xl text-neutral">Matches today</Heading>
+      <p className="mb-5 text-sm text-neutral-subtle">Objects added later are covered automatically.</p>
+      <div className="flex flex-col gap-4">
+        <div>
+          <Heading level={3} className="mb-2 text-neutral">
+            {count(objects.length, noun)}
+          </Heading>
+          {list(objects)}
+        </div>
+        {services.length > 0 && (
+          <div>
+            <Heading level={3} className="mb-2 text-neutral">
+              {count(services.length, 'service')}
+            </Heading>
+            {list(services)}
+          </div>
+        )}
+        {context.length > 0 && (
+          <div>
+            <Heading level={3} className="mb-1 text-neutral">
+              Also visible as context
+            </Heading>
+            <p className="mb-2 text-xs text-neutral-subtle">Name and status only, no settings and no actions.</p>
+            {list(context, true)}
+          </div>
+        )}
+      </div>
+    </Section>
+  )
+}
+
 function TargetedPermissionEditor({
   permission,
   index,
@@ -246,7 +289,8 @@ function TargetedPermissionEditor({
   onChange: (permission: TargetedPermission) => void
   onRemove: () => void
 }) {
-  const [showCapabilities, setShowCapabilities] = useState(false)
+  const [showCapabilities, setShowCapabilities] = useState(true)
+  const { openModal } = useModal()
   const setSelection = (selection: RoleScope) => onChange({ ...permission, selection })
   const { objects, services } = matchTargetSelection(permission.target, permission.selection)
   const targetLabel = targetOf(permission.target)?.label.toLowerCase() ?? ''
@@ -268,13 +312,12 @@ function TargetedPermissionEditor({
             className="w-fit text-xs"
             value={permission.target}
             onValueChange={(value) =>
-              // Capabilities belong to a target: changing it starts again from the selected preset
+              // Capabilities belong to a target: changing it starts again from the Viewer preset
               onChange({
                 ...permission,
                 target: value as PermissionTarget,
                 selection: { resourceIds: [], conditions: permission.selection.conditions },
-                added: [],
-                removed: [],
+                capabilities: capabilitiesOfPreset('viewer', value as PermissionTarget),
               })
             }
           >
@@ -288,7 +331,36 @@ function TargetedPermissionEditor({
 
         <div className="flex flex-col gap-3">
           <div>
-            <p className="mb-1 text-xs font-medium text-neutral">Applies to</p>
+            <div className="mb-1 flex items-center justify-between gap-3">
+              <p className="text-xs font-medium text-neutral">Applies to</p>
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-neutral-subtle">
+                  Matches {count(objects.length, noun)}
+                  {permission.target === 'environment' && ` and ${count(services.length, 'service')}`} today
+                </span>
+                <Button
+                  type="button"
+                  size="xs"
+                  variant="plain"
+                  color="brand"
+                  disabled={objects.length === 0}
+                  onClick={() =>
+                    openModal({
+                      content: (
+                        <MatchesModal
+                          noun={noun}
+                          objects={objects}
+                          services={services}
+                          context={permission.target === 'environment' ? impliedContext(objects) : []}
+                        />
+                      ),
+                    })
+                  }
+                >
+                  View
+                </Button>
+              </div>
+            </div>
             <div className="rounded border border-brand-subtle bg-surface-brand-subtle px-3 py-2">
               <SelectionSentence permission={permission} />
             </div>
@@ -326,57 +398,43 @@ function TargetedPermissionEditor({
             conditions={permission.selection.conditions}
             onChange={(conditions) => setSelection({ ...permission.selection, conditions })}
           />
-          <div className="rounded border border-neutral bg-surface-neutral-subtle p-3">
-            <p className="mb-2 text-xs font-medium text-neutral">
-              Matches {count(objects.length, noun)}
-              {permission.target === 'environment' && ` and ${count(services.length, 'service')}`} today
-              <span className="font-normal text-neutral-subtle"> · objects added later are covered automatically</span>
-            </p>
-            <div className="flex flex-wrap gap-1">
-              {objects.slice(0, 12).map((resource) => (
-                <Badge key={resource.id} size="sm" variant="outline" color="neutral">
-                  <Icon iconName={RESOURCE_ICONS[resource.kind]} iconStyle="regular" className="mr-1" />
-                  {resourcePath(resource)}
-                </Badge>
-              ))}
-            </div>
-            {permission.target === 'environment' && objects.length > 0 && (
-              <div className="mt-3 flex flex-wrap items-center gap-1 border-t border-neutral pt-3 text-xs text-neutral-subtle">
-                <Icon iconName="eye" iconStyle="regular" className="mr-1" />
-                Also visible as context, name and status only:
-                {impliedContext(objects).map((resource) => (
-                  <Badge key={resource.id} size="sm" variant="surface" color="neutral">
-                    <Icon iconName={RESOURCE_ICONS[resource.kind]} iconStyle="regular" className="mr-1" />
-                    {resource.name}
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
-        <div className="flex items-end gap-3">
-          <InputSelect
-            className="w-56"
-            label="Preset"
-            portal
-            value={permission.preset}
-            onChange={(value) => onChange({ ...permission, preset: value as PresetId, added: [], removed: [] })}
-            options={PRESETS.map((preset) => ({ label: preset.label, value: preset.id }))}
-          />
-          <div className="flex min-h-9 flex-1 flex-wrap items-center gap-1 pb-1">
-            <Adjustments permission={permission} />
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-medium text-neutral">Permissions</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-neutral-subtle">Apply a preset</span>
+            {PRESETS.map((preset) => (
+              <Tooltip key={preset.id} content={preset.description}>
+                <Button
+                  type="button"
+                  size="xs"
+                  variant={
+                    presetMatching(permission.capabilities, permission.target)?.id === preset.id ? 'solid' : 'outline'
+                  }
+                  color={
+                    presetMatching(permission.capabilities, permission.target)?.id === preset.id ? 'brand' : 'neutral'
+                  }
+                  onClick={() =>
+                    onChange({ ...permission, capabilities: capabilitiesOfPreset(preset.id, permission.target) })
+                  }
+                >
+                  {preset.label}
+                </Button>
+              </Tooltip>
+            ))}
+            <Button
+              type="button"
+              className="ml-auto"
+              variant="plain"
+              color="neutral"
+              size="xs"
+              onClick={() => setShowCapabilities((show) => !show)}
+            >
+              <Icon iconName={showCapabilities ? 'chevron-up' : 'chevron-down'} iconStyle="regular" />
+              {showCapabilities ? 'Hide capabilities' : 'Show capabilities'}
+            </Button>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            color="neutral"
-            size="md"
-            onClick={() => setShowCapabilities((show) => !show)}
-          >
-            <Icon iconName={showCapabilities ? 'chevron-up' : 'sliders'} iconStyle="regular" />
-            {showCapabilities ? 'Hide capabilities' : 'Adjust capabilities'}
-          </Button>
         </div>
         {showCapabilities && <TargetedCapabilities permission={permission} onChange={onChange} />}
       </div>
@@ -501,9 +559,7 @@ function TargetedRoleEditor({
                   id: `t-${Date.now()}`,
                   target: 'environment',
                   selection: { resourceIds: [], conditions: [{ key: 'env_type', operator: '=', value: 'dev' }] },
-                  preset: 'viewer',
-                  added: [],
-                  removed: [],
+                  capabilities: capabilitiesOfPreset('viewer', 'environment'),
                 },
               ])
             }

@@ -1,4 +1,4 @@
-import { type PermissionTarget, type PresetId, type RoleScope } from './rbac-v2-mock-data'
+import { type PermissionTarget, type PresetId, type RoleScope, capabilitiesOfPreset } from './rbac-v2-mock-data'
 
 // Next (by target): "On <target> matching <selection>, the member can <capabilities of that target>"
 export interface TargetedPermission {
@@ -6,9 +6,8 @@ export interface TargetedPermission {
   target: PermissionTarget
   // Resources the objects are (in/on) AND tag conditions; both empty: every object of the target
   selection: RoleScope
-  preset: PresetId
-  added: string[]
-  removed: string[]
+  // The capabilities granted, all of the target's kind. A preset only fills this list, it is not stored.
+  capabilities: string[]
 }
 
 const tag = (key: string, value: string) => ({ key, operator: '=' as const, value })
@@ -20,7 +19,14 @@ const permission = (
   selection: RoleScope,
   preset: PresetId,
   changes: { added?: string[]; removed?: string[] } = {}
-): TargetedPermission => ({ id, target, selection, preset, added: changes.added ?? [], removed: changes.removed ?? [] })
+): TargetedPermission => ({
+  id,
+  target,
+  selection,
+  capabilities: [...capabilitiesOfPreset(preset, target), ...(changes.added ?? [])].filter(
+    (capability) => !(changes.removed ?? []).includes(capability)
+  ),
+})
 
 export const TARGETED_PERMISSIONS: Record<string, TargetedPermission[]> = {
   'r-admin': [

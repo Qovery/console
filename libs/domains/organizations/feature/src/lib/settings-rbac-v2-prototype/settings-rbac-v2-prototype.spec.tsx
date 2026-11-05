@@ -210,8 +210,9 @@ describe('SettingsRbacV2Page', () => {
     expect(screen.getByText('Project Core app · Development · Deploy + Shell')).toBeInTheDocument()
     expect(screen.getByText('Nothing to migrate: no access')).toBeInTheDocument()
     expect(screen.getByText('No permission needed: implied by the environment permissions')).toBeInTheDocument()
-    // Environment permissions show their project and cluster as context, without a permission on them
-    expect(screen.getAllByText('Also visible as context, name and status only:').length).toBeGreaterThan(0)
+    // The matches open in a modal, with the project and cluster shown as context, without a permission on them
+    await userEvent.click(screen.getAllByRole('button', { name: 'View' })[3])
+    expect(await screen.findByText('Also visible as context')).toBeInTheDocument()
   })
 
   it('should target clusters, projects or environments in Next', async () => {

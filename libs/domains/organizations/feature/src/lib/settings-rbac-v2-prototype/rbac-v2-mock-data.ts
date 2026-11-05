@@ -360,6 +360,21 @@ export const PERMISSION_TARGETS: { target: PermissionTarget; label: string; leve
   { target: 'environment', label: 'Environments & services', levels: ['environment', 'service'] },
 ]
 
+// A preset's capabilities, limited to the kind of object a permission targets
+export const capabilitiesOfPreset = (preset: PresetId, target: PermissionTarget) => {
+  const levels = PERMISSION_TARGETS.find((item) => item.target === target)?.levels ?? []
+  return presetById(preset).capabilities.filter((id) => levels.includes(capabilityById(id)?.level ?? 'organization'))
+}
+
+// The preset whose capabilities are exactly these ones, if any
+export const presetMatching = (capabilities: string[], target: PermissionTarget) =>
+  PRESETS.find((preset) => {
+    const presetCapabilities = capabilitiesOfPreset(preset.id, target)
+    return (
+      presetCapabilities.length === capabilities.length && presetCapabilities.every((id) => capabilities.includes(id))
+    )
+  })
+
 // The objects a resource sits in or on: its parents, and the cluster of its environment
 const containersOf = (resource: Resource): string[] => {
   const parent = resource.parentId ? resourceById(resource.parentId) : undefined
