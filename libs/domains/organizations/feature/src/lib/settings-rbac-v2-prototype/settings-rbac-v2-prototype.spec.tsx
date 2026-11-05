@@ -228,16 +228,21 @@ describe('SettingsRbacV2Page', () => {
     expect(screen.getByText('Matches 1 cluster today', { exact: false })).toBeInTheDocument()
   })
 
-  it('should say how selected resources relate to the target, one field per relationship', async () => {
+  it('should build the filters as typed rows, added from an Add filter menu', async () => {
     localStorage.setItem(RBAC_PROTOTYPE_MODE_KEY, JSON.stringify('r1'))
     const { userEvent } = renderPage('roles')
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit Developer' }))
 
-    expect(screen.getAllByText('In projects').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Running on clusters').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Only these services').length).toBeGreaterThan(0)
+    // Each environment permission has an "In project" row and a "With tag" row
+    expect(screen.getAllByText('In project').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('With tag').length).toBeGreaterThan(0)
     expect(screen.getAllByText('in project').length).toBeGreaterThan(0)
-    expect(screen.getAllByText(', tagged').length).toBeGreaterThan(0)
+
+    const removeTagFilters = screen.getAllByRole('button', { name: 'Remove filter With tag' })
+    await userEvent.click(removeTagFilters[0])
+    expect(screen.getAllByRole('button', { name: 'Remove filter With tag' })).toHaveLength(removeTagFilters.length - 1)
+
+    expect(screen.getAllByRole('button', { name: /Add filter/ }).length).toBeGreaterThan(0)
   })
 })

@@ -1,13 +1,16 @@
+import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
   Badge,
   Button,
   Checkbox,
+  DropdownMenu,
   Heading,
   Icon,
   InputSelect,
   InputText,
   InputTextArea,
+  Link,
   Section,
   SegmentedControl,
   Tooltip,
@@ -25,6 +28,8 @@ import {
   type Resource,
   type Role,
   type RoleScope,
+  TAG_KEYS,
+  type TagCondition,
   capabilitiesOfPreset,
   capabilityById,
   environmentsMatchingFilters,
@@ -39,7 +44,7 @@ import { useRbacPrototype } from '../rbac-v2-prototype-context'
 import { type TargetedPermission, V1_MIGRATIONS } from '../rbac-v2-targeted-data'
 import { Panel, RESOURCE_ICONS, RoleName, TagConditionBadge } from '../rbac-v2-ui'
 import { getRoleSources } from '../rbac-v2-utils'
-import { OrganizationSettingsEditor, TagConditionsEditor } from './shared-editors'
+import { OrganizationSettingsEditor } from './organization-settings-editor'
 
 // Next (by target): "On <target> matching <selection>, the member can <capabilities of that target>". The selection
 // is computed from the selected resources (the objects themselves, or what they contain or run) and the tags.
@@ -100,27 +105,24 @@ function CapabilitiesBadge({ permission }: { permission: TargetedPermission }) {
 // they run on, specific environments, and specific services
 const RELATIONS: Record<
   PermissionTarget,
-  // Narrow relations pick specific objects among what the other filters allow
-  { kind: Resource['kind']; label: string; phrase: string; placeholder: string; narrow?: boolean }[]
+  { kind: Resource['kind']; label: string; phrase: string; placeholder: string }[]
 > = {
-  cluster: [{ kind: 'cluster', label: 'Clusters', phrase: '', placeholder: 'Every cluster' }],
-  project: [{ kind: 'project', label: 'Projects', phrase: '', placeholder: 'Every project' }],
+  cluster: [{ kind: 'cluster', label: 'Cluster is', phrase: '', placeholder: 'Select clusters' }],
+  project: [{ kind: 'project', label: 'Project is', phrase: '', placeholder: 'Select projects' }],
   environment: [
-    { kind: 'project', label: 'In projects', phrase: 'in project', placeholder: 'Any project' },
-    { kind: 'cluster', label: 'Running on clusters', phrase: 'running on cluster', placeholder: 'Any cluster' },
+    { kind: 'project', label: 'In project', phrase: 'in project', placeholder: 'Select projects' },
+    { kind: 'cluster', label: 'Running on cluster', phrase: 'running on cluster', placeholder: 'Select clusters' },
     {
       kind: 'environment',
-      label: 'Only these environments',
+      label: 'Environment is',
       phrase: 'only',
-      placeholder: 'Every matching environment',
-      narrow: true,
+      placeholder: 'Select environments',
     },
     {
       kind: 'service',
-      label: 'Only these services',
+      label: 'Service is',
       phrase: 'only service',
-      placeholder: 'Every service',
-      narrow: true,
+      placeholder: 'Select services',
     },
   ],
 }
@@ -306,6 +308,8 @@ function TargetedPermissionEditor({
   const [showCapabilities, setShowCapabilities] = useState(true)
   const { openModal } = useModal()
   const [removedNote, setRemovedNote] = useState<string | undefined>()
+  const { isTarget } = useRbacPrototype()
+  const { organizationId = '' } = useParams({ strict: false })
 
   // Narrow filters only keep what the broader ones still allow: environments in the selected projects, on the selected
   // clusters and matching the tags; services of those environments
@@ -344,39 +348,149 @@ function TargetedPermissionEditor({
         ? allowedServices(permission.selection)
         : RESOURCES.filter((resource) => resource.kind === kind)
 
-  const relationFields = (narrow: boolean) => {
-    const relations = RELATIONS[permission.target].filter((relation) => Boolean(relation.narrow) === narrow)
-    return (
-      relations.length > 0 && (
-        <div className={twMerge('grid gap-3', relations.length > 1 ? 'grid-cols-2' : 'grid-cols-1')}>
-          {relations.map((relation) => (
-            <InputSelect
-              key={relation.kind}
-              label={relation.label}
-              isMulti
-              portal
-              isSearchable
-              placeholder={relation.placeholder}
-              value={selectedOfKind(permission.selection, relation.kind).map((resource) => resource.id)}
-              onChange={(value) =>
+  // Filters added but not set yet: they show as empty rows until a value is picked
+  const [pendingKinds, setPendingKinds] = useState<Resource['kind'][]>([])
+  const relations = RELATIONS[permission.target]
+  const resourceRows = relations.filter(
+    (relation) => selectedOfKind(permission.selection, relation.kind).length > 0 || pendingKinds.includes(relation.kind)
+  )
+  const removeKind = (kind: Resource['kind']) => {
+    setPendingKinds(pendingKinds.filter((k) => k !== kind))
+    setSelection({
+      ...permission.selection,
+      resourceIds: permission.selection.resourceIds.filter((id) => resourceById(id)?.kind !== kind),
+    })
+  }
+  const updateCondition = (index: number, patch: Partial<TagCondition>) =>
+    setSelection({
+      ...permission.selection,
+      conditions: permission.selection.conditions.map((condition, i) =>
+        i === index ? { ...condition, ...patch } : condition
+      ),
+    })
+
+  const removeButton = (label: string, onClick: () => void) => (
+    <Button type="button" variant="plain" color="neutral" size="md" iconOnly aria-label={label} onClick={onClick}>
+      <Icon iconName="trash-can" iconStyle="regular" />
+    </Button>
+  )
+
+  const filterRows = (
+    <div className="flex flex-col gap-2">
+      {resourceRows.map((relation) => (
+        <div key={relation.kind} className="flex items-center gap-2">
+          <span className="w-36 shrink-0 text-xs font-medium text-neutral">{relation.label}</span>
+          <InputSelect
+            className="flex-1"
+            label={relation.label}
+            isMulti
+            portal
+            isSearchable
+            placeholder={relation.placeholder}
+            value={selectedOfKind(permission.selection, relation.kind).map((resource) => resource.id)}
+            onChange={(value) =>
+              setSelection({
+                ...permission.selection,
+                resourceIds: [
+                  ...permission.selection.resourceIds.filter((id) => resourceById(id)?.kind !== relation.kind),
+                  ...(value as string[]),
+                ],
+              })
+            }
+            options={optionsOf(relation.kind).map((resource) => ({
+              label: resourcePath(resource),
+              value: resource.id,
+            }))}
+          />
+          {removeButton(`Remove filter ${relation.label}`, () => removeKind(relation.kind))}
+        </div>
+      ))}
+      {permission.selection.conditions.map((condition, index) => (
+        <div key={index} className="flex items-center gap-2">
+          <span className="w-36 shrink-0 text-xs font-medium text-neutral">With tag</span>
+          <InputSelect
+            className="w-44"
+            label="Tag"
+            portal
+            value={condition.key}
+            onChange={(value) => updateCondition(index, { key: value as string, value: '' })}
+            options={TAG_KEYS.map((tag) => ({ label: tag.key, value: tag.key }))}
+          />
+          <InputSelect
+            className="w-28"
+            label="Operator"
+            portal
+            value={condition.operator}
+            onChange={(value) => updateCondition(index, { operator: value as TagCondition['operator'] })}
+            options={[{ label: '=', value: '=' }, ...(isTarget ? [{ label: '!= (NOT)', value: '!=' }] : [])]}
+          />
+          <InputSelect
+            className="flex-1"
+            label="Value"
+            portal
+            value={condition.value}
+            onChange={(value) => updateCondition(index, { value: value as string })}
+            options={(TAG_KEYS.find((tag) => tag.key === condition.key)?.values ?? []).map((value) => ({
+              label: value,
+              value,
+            }))}
+          />
+          {removeButton('Remove filter With tag', () =>
+            setSelection({
+              ...permission.selection,
+              conditions: permission.selection.conditions.filter((_, i) => i !== index),
+            })
+          )}
+        </div>
+      ))}
+      <div className="flex items-center gap-3">
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
+            <Button type="button" size="sm" variant="outline" color="neutral" className="self-start">
+              <Icon iconName="plus" />
+              Add filter
+            </Button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content align="start">
+            {relations.map((relation) => (
+              <DropdownMenu.Item
+                key={relation.kind}
+                icon={<Icon iconName={RESOURCE_ICONS[relation.kind]} iconStyle="regular" />}
+                disabled={resourceRows.includes(relation)}
+                onSelect={() => setPendingKinds([...pendingKinds, relation.kind])}
+              >
+                {relation.label}
+              </DropdownMenu.Item>
+            ))}
+            <DropdownMenu.Item
+              icon={<Icon iconName="tag" iconStyle="regular" />}
+              onSelect={() =>
                 setSelection({
                   ...permission.selection,
-                  resourceIds: [
-                    ...permission.selection.resourceIds.filter((id) => resourceById(id)?.kind !== relation.kind),
-                    ...(value as string[]),
-                  ],
+                  conditions: [...permission.selection.conditions, { key: 'env_type', operator: '=', value: '' }],
                 })
               }
-              options={optionsOf(relation.kind).map((resource) => ({
-                label: resourcePath(resource),
-                value: resource.id,
-              }))}
-            />
-          ))}
-        </div>
-      )
-    )
-  }
+            >
+              With tag
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+        {resourceRows.length === 0 && permission.selection.conditions.length === 0 && (
+          <span className="text-xs text-neutral-subtle">No filter: every {TARGET_NOUN[permission.target]}.</span>
+        )}
+        <Link
+          className="ml-auto text-xs"
+          color="brand"
+          size="xs"
+          to="/organization/$organizationId/settings/tags"
+          params={{ organizationId }}
+        >
+          Manage tags
+          <Icon iconName="arrow-up-right" className="ml-1" />
+        </Link>
+      </div>
+    </div>
+  )
   const { objects, services } = matchTargetSelection(permission.target, permission.selection)
   const targetLabel = targetOf(permission.target)?.label.toLowerCase() ?? ''
   const noun = TARGET_NOUN[permission.target]
@@ -416,12 +530,7 @@ function TargetedPermissionEditor({
 
         <div className="flex flex-col gap-3">
           <p className="text-xs font-medium text-neutral">Filters</p>
-          {relationFields(false)}
-          {relationFields(true)}
-          <TagConditionsEditor
-            conditions={permission.selection.conditions}
-            onChange={(conditions) => setSelection({ ...permission.selection, conditions })}
-          />
+          {filterRows}
           {removedNote && <p className="text-xs text-neutral-subtle">{removedNote}</p>}
           {/* The result of the filters */}
           <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-brand-subtle bg-surface-brand-subtle px-3 py-2">
