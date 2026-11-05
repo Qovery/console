@@ -134,7 +134,9 @@ function DeploymentLogLines({
 } & DeploymentLogLineSelectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const isScrolledToBottomRef = useRef(true)
-  const [isScrolled, setIsScrolled] = useState(false)
+  // Gradients at the top and bottom edges hint that there are more lines to scroll to
+  const [canScrollUp, setCanScrollUp] = useState(false)
+  const [canScrollDown, setCanScrollDown] = useState(false)
   const [showAllLines, setShowAllLines] = useState(false)
 
   const overflowLinesCount = Math.max(0, lines.length - MAX_VISIBLE_LINES)
@@ -145,15 +147,24 @@ function DeploymentLogLines({
   const hiddenLinesCount = showAllLines || hasHiddenSelectedLine ? 0 : overflowLinesCount
   const visibleLines = hiddenLinesCount > 0 ? lines.slice(hiddenLinesCount) : lines
 
+  const updateScrollEdges = (element: HTMLDivElement) => {
+    const isAtBottom = element.scrollTop + element.clientHeight >= element.scrollHeight - 4
+    isScrolledToBottomRef.current = isAtBottom
+    setCanScrollUp(element.scrollTop > 0)
+    setCanScrollDown(!isAtBottom)
+  }
+
   // Follows new lines like a terminal, unless the user scrolled up to read older ones
   useLayoutEffect(() => {
     const element = scrollRef.current
-    if (element && isScrolledToBottomRef.current) {
+    if (!element) return
+    if (isScrolledToBottomRef.current) {
       element.scrollTop = element.scrollHeight
-      // The browser fires the scroll event of this programmatic scroll a frame later, after the first paint.
-      // Setting the state here instead renders the top gradient before that paint, so it doesn't pop in.
-      setIsScrolled(element.scrollTop > 0)
     }
+    // The browser fires the scroll event of a programmatic scroll a frame later, after the first paint,
+    // and none at all when lines arrive while the user reads older ones. Updating the gradients here
+    // renders them before that paint, so they don't pop in.
+    updateScrollEdges(element)
   }, [visibleLines.length])
 
   useEffect(() => {
@@ -167,18 +178,17 @@ function DeploymentLogLines({
 
   return (
     <div className="relative border-t border-neutral bg-surface-neutral-subtle">
-      {isScrolled && (
+      {canScrollUp && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-5 bg-gradient-to-b from-surface-neutral-subtle to-transparent" />
+      )}
+      {canScrollDown && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-5 bg-gradient-to-t from-surface-neutral-subtle to-transparent" />
       )}
       <div
         ref={scrollRef}
         className="flex max-h-[400px] flex-col overflow-y-auto px-4 py-1.5 font-code text-xs leading-5"
         onCopy={copySelectedLogMessages}
-        onScroll={(event) => {
-          const element = event.currentTarget
-          isScrolledToBottomRef.current = element.scrollTop + element.clientHeight >= element.scrollHeight - 4
-          setIsScrolled(element.scrollTop > 0)
-        }}
+        onScroll={(event) => updateScrollEdges(event.currentTarget)}
       >
         {hiddenLinesCount > 0 && (
           <Button
