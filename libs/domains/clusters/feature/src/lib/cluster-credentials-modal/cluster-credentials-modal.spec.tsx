@@ -101,9 +101,13 @@ describe('ClusterCredentialsModal', () => {
         isWideCredentialsEnabled ? ['Extended permissions', 'Restricted permissions'] : ['Cloudformation stack']
       )
       for (const link of links) {
+        const templateBucket =
+          link.textContent === 'Restricted permissions'
+            ? 'cloudformation-restricted-qovery-role-creation'
+            : 'cloudformation-qovery-role-creation'
         expect(link).toHaveAttribute(
           'href',
-          'https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=3f2b7c1e-8d4a-4b6e-9f0a-1c2d3e4f5a6b'
+          `https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2F${templateBucket}.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=3f2b7c1e-8d4a-4b6e-9f0a-1c2d3e4f5a6b`
         )
       }
     }

@@ -246,6 +246,7 @@ export function ClusterCredentialsModal({
   const isWideCredentialsFeatureFlagEnabled = Boolean(useFeatureFlagEnabled('wide-credentials'))
   // Passes the organization to the Qovery role template, which scopes role trust to this organization once published.
   const awsRoleCloudformationUrl = `https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=${organizationId}`
+  const awsRestrictedRoleCloudformationUrl = `https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-restricted-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=${organizationId}`
   const { enableAlertClickOutside } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -681,7 +682,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                     <ExternalLink href={awsRoleCloudformationUrl} size="sm">
                       Extended permissions
                     </ExternalLink>
-                    <ExternalLink href={awsRoleCloudformationUrl} size="sm">
+                    <ExternalLink href={awsRestrictedRoleCloudformationUrl} size="sm">
                       Restricted permissions
                     </ExternalLink>
                   </div>
