@@ -100,7 +100,7 @@ function CapabilitiesBadge({ permission }: { permission: TargetedPermission }) {
 // they run on, specific environments, and specific services
 const RELATIONS: Record<
   PermissionTarget,
-  // Narrow relations come after the tags: they pick among what the broader filters allow
+  // Narrow relations pick specific objects among what the other filters allow
   { kind: Resource['kind']; label: string; phrase: string; placeholder: string; narrow?: boolean }[]
 > = {
   cluster: [{ kind: 'cluster', label: 'Clusters', phrase: '', placeholder: 'Every cluster' }],
@@ -133,8 +133,7 @@ export function SelectionSentence({ permission }: { permission: TargetedPermissi
   const allParts = RELATIONS[permission.target]
     .map((relation) => ({ relation, resources: selectedOfKind(permission.selection, relation.kind) }))
     .filter(({ resources }) => resources.length > 0)
-  const parts = allParts.filter(({ relation }) => !relation.narrow)
-  const narrowParts = allParts.filter(({ relation }) => relation.narrow)
+  const parts = allParts
   const { conditions } = permission.selection
   const isEverything = allParts.length === 0 && conditions.length === 0
 
@@ -163,7 +162,7 @@ export function SelectionSentence({ permission }: { permission: TargetedPermissi
         {isEverything ? `Every ${TARGET_NOUN[permission.target]}` : targetOf(permission.target)?.label}
       </span>
       {permission.target === 'environment' && isEverything && <span className="text-neutral">and service</span>}
-      {parts.map((part, index) => relationPart(part, index > 0))}
+      {allParts.map((part, index) => relationPart(part, index > 0))}
       {conditions.length > 0 && (
         <span className={twMerge('text-neutral-subtle', parts.length > 0 && '-ml-1')}>
           {parts.length > 0 ? ', tagged' : 'tagged'}
@@ -175,7 +174,6 @@ export function SelectionSentence({ permission }: { permission: TargetedPermissi
           <TagConditionBadge condition={condition} />
         </span>
       ))}
-      {narrowParts.map((part) => relationPart(part, parts.length > 0 || conditions.length > 0))}
     </span>
   )
 }
@@ -417,48 +415,45 @@ function TargetedPermissionEditor({
         </div>
 
         <div className="flex flex-col gap-3">
-          <div>
-            <div className="mb-1 flex items-center justify-between gap-3">
-              <p className="text-xs font-medium text-neutral">Filters</p>
-              <div className="flex items-center gap-2 text-xs">
-                <span className="text-neutral-subtle">
-                  Matches {count(objects.length, noun)}
-                  {permission.target === 'environment' && ` and ${count(services.length, 'service')}`} today
-                </span>
-                <Button
-                  type="button"
-                  size="xs"
-                  variant="plain"
-                  color="brand"
-                  disabled={objects.length === 0}
-                  onClick={() =>
-                    openModal({
-                      content: (
-                        <MatchesModal
-                          noun={noun}
-                          objects={objects}
-                          services={services}
-                          context={permission.target === 'environment' ? impliedContext(objects) : []}
-                        />
-                      ),
-                    })
-                  }
-                >
-                  View
-                </Button>
-              </div>
-            </div>
-            <div className="rounded border border-brand-subtle bg-surface-brand-subtle px-3 py-2">
-              <SelectionSentence permission={permission} />
-            </div>
-          </div>
+          <p className="text-xs font-medium text-neutral">Filters</p>
           {relationFields(false)}
+          {relationFields(true)}
           <TagConditionsEditor
             conditions={permission.selection.conditions}
             onChange={(conditions) => setSelection({ ...permission.selection, conditions })}
           />
-          {relationFields(true)}
           {removedNote && <p className="text-xs text-neutral-subtle">{removedNote}</p>}
+          {/* The result of the filters */}
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-brand-subtle bg-surface-brand-subtle px-3 py-2">
+            <SelectionSentence permission={permission} />
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-neutral-subtle">
+                Matches {count(objects.length, noun)}
+                {permission.target === 'environment' && ` and ${count(services.length, 'service')}`} today
+              </span>
+              <Button
+                type="button"
+                size="xs"
+                variant="plain"
+                color="brand"
+                disabled={objects.length === 0}
+                onClick={() =>
+                  openModal({
+                    content: (
+                      <MatchesModal
+                        noun={noun}
+                        objects={objects}
+                        services={services}
+                        context={permission.target === 'environment' ? impliedContext(objects) : []}
+                      />
+                    ),
+                  })
+                }
+              >
+                View
+              </Button>
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col gap-2">
