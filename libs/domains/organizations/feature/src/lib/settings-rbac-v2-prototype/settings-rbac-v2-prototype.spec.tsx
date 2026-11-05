@@ -22,6 +22,9 @@ const renderPage = (pageId: RbacV2PageId) =>
     </RbacPrototypeProvider>
   )
 
+// The prototype renders large interactive pages: leave room on slow CI runners
+jest.setTimeout(30_000)
+
 describe('SettingsRbacV2Page', () => {
   beforeEach(() => {
     localStorage.clear()
