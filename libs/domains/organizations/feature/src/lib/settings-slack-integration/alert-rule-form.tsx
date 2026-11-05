@@ -1,9 +1,10 @@
+import { useQuery } from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import { useEffect, useRef, useState } from 'react'
-import { useEnvironments } from '@qovery/domains/environments/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { Button, InputSelect, InputText, InputTextArea, InputToggle, Skeleton, toast } from '@qovery/shared/ui'
 import { SLACK_BOT_API_URL } from '@qovery/shared/util-node-env'
+import { queries } from '@qovery/state/util-queries'
 import { type AlertRule, ENV_TYPES, type SlackChannel } from './types'
 import { VariableDropdown } from './variable-dropdown'
 
@@ -43,8 +44,10 @@ export function AlertRuleForm({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const { data: projects } = useProjects({ organizationId })
-  const { data: environments } = useEnvironments({
-    projectId: selectedProjectIds.length === 1 ? selectedProjectIds[0] : '',
+  const projectIdForEnvs = selectedProjectIds.length === 1 ? selectedProjectIds[0] : ''
+  const { data: environments } = useQuery({
+    ...queries.environments.list({ projectId: projectIdForEnvs }),
+    enabled: projectIdForEnvs !== '',
   })
 
   useEffect(() => {
@@ -60,7 +63,7 @@ export function AlertRuleForm({
       })
       .catch(() => setChannels([]))
       .finally(() => setLoadingChannels(false))
-  }, [organizationId])
+  }, [organizationId, existingRule])
 
   const handleSave = async () => {
     if (!SLACK_BOT_API_URL || !selectedChannel || envTypes.length === 0) return
