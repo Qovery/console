@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import { useEffect, useRef, useState } from 'react'
 import { useEnvironments } from '@qovery/domains/environments/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
@@ -25,6 +26,7 @@ export function AlertRuleForm({
   const [channels, setChannels] = useState<SlackChannel[]>([])
   const [loadingChannels, setLoadingChannels] = useState(true)
   const [ruleName, setRuleName] = useState(existingRule?.name ?? '')
+  const [nameManuallyEdited, setNameManuallyEdited] = useState(!!existingRule?.name)
   const [selectedChannel, setSelectedChannel] = useState(existingRule?.slack_channel_id ?? '')
   const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>(existingRule?.qovery_project_ids ?? [])
   const [selectedEnvironmentIds, setSelectedEnvironmentIds] = useState<string[]>(
@@ -35,7 +37,9 @@ export function AlertRuleForm({
   const [alertRecovered, setAlertRecovered] = useState(existingRule?.alert_recovered ?? true)
   const [envTypes, setEnvTypes] = useState<string[]>(existingRule?.environment_types ?? ['PRODUCTION', 'STAGING'])
   const [saving, setSaving] = useState(false)
-  const [customMessage, setCustomMessage] = useState(customTextBlock?.custom_text ?? '')
+  const DEFAULT_MESSAGE =
+    '🚨 Deployment failed on {{environment_name}} ({{environment_type}}) in {{project_name}}. Failed services: {{failed_services}}. Triggered by {{triggered_by}}.'
+  const [customMessage, setCustomMessage] = useState(customTextBlock?.custom_text ?? DEFAULT_MESSAGE)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const { data: projects } = useProjects({ organizationId })
@@ -49,7 +53,10 @@ export function AlertRuleForm({
       .then((res) => (res.ok ? res.json() : []))
       .then((data: SlackChannel[]) => {
         setChannels(data)
-        if (!existingRule && data.length > 0) setSelectedChannel(data[0].id)
+        if (!existingRule && data.length > 0) {
+          setSelectedChannel(data[0].id)
+          setRuleName(`#${data[0].name}`)
+        }
       })
       .catch(() => setChannels([]))
       .finally(() => setLoadingChannels(false))
@@ -88,6 +95,7 @@ export function AlertRuleForm({
         )
         if (res.ok) {
           toast('success', 'Alert rule updated')
+          posthog.capture('slack-alert-rule-updated', { organization_id: organizationId })
           onSaved()
         } else {
           toast('error', 'Failed to update alert rule')
@@ -100,6 +108,7 @@ export function AlertRuleForm({
         })
         if (res.ok) {
           toast('success', 'Alert rule created')
+          posthog.capture('slack-alert-rule-created', { organization_id: organizationId })
           onSaved()
         } else {
           toast('error', 'Failed to create alert rule')
@@ -139,20 +148,30 @@ export function AlertRuleForm({
     <div className="flex max-h-[80vh] flex-col gap-4 overflow-y-auto p-6">
       <h2 className="text-lg font-medium text-neutral">{isEditing ? 'Edit alert rule' : 'Create alert rule'}</h2>
 
-      <InputText
-        label="Name"
-        name="rule_name"
-        value={ruleName}
-        onChange={(e) => setRuleName(e.currentTarget.value)}
-        hint="Give your alert rule a descriptive name."
-      />
-
       <InputSelect
         label="Channel"
         options={channelOptions}
         value={selectedChannel}
-        onChange={(value) => setSelectedChannel(value as string)}
+        onChange={(value) => {
+          setSelectedChannel(value as string)
+          if (!nameManuallyEdited) {
+            const channel = channels.find((ch) => ch.id === value)
+            if (channel) setRuleName(`#${channel.name}`)
+          }
+        }}
+        isSearchable
         hint="Private channels require the bot to be invited first (/invite @Qovery Alerts)"
+      />
+
+      <InputText
+        label="Name"
+        name="rule_name"
+        value={ruleName}
+        onChange={(e) => {
+          setRuleName(e.currentTarget.value)
+          setNameManuallyEdited(true)
+        }}
+        hint="Give your alert rule a descriptive name."
       />
 
       <InputSelect
@@ -190,7 +209,7 @@ export function AlertRuleForm({
       />
 
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-medium text-neutral">Alert types</span>
+        <span className="text-sm font-medium text-neutral">Alert types</span>
         <div className="flex flex-col gap-3">
           <InputToggle
             small
@@ -217,9 +236,9 @@ export function AlertRuleForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-medium text-neutral">Custom message (optional)</span>
-        <p className="text-xs text-neutral-subtle">
-          Leave empty for the default message. Use the wand button to insert variables.
+        <span className="text-sm font-medium text-neutral">Failure event message (optional)</span>
+        <p className="text-sm text-neutral-subtle">
+          Customize the message sent when a deployment fails. Use the wand button to insert variables.
         </p>
         <div className="relative">
           <InputTextArea
