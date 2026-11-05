@@ -117,6 +117,36 @@ describe('Tooltip with different units', () => {
     expect(getByText('10.75 req/s')).toBeInTheDocument()
   })
 
+  it('should distinguish a low request rate from zero', () => {
+    const payload: TooltipEntry[] = [
+      {
+        dataKey: 'requests',
+        value: 1 / 300,
+        color: '#ff00ff',
+        payload: { timestamp: 1640995200000, fullTime: '2022-01-01 12:00:00' },
+      },
+    ]
+
+    const { getByText } = render(<Tooltip active={true} unit="req/s" payload={payload} customLabel="Request Rate" />)
+
+    expect(getByText('< 0.01 req/s')).toBeInTheDocument()
+  })
+
+  it('should keep an exact zero distinct from a low value', () => {
+    const payload: TooltipEntry[] = [
+      {
+        dataKey: 'requests',
+        value: 0,
+        color: '#ff00ff',
+        payload: { timestamp: 1640995200000, fullTime: '2022-01-01 12:00:00' },
+      },
+    ]
+
+    const { getByText } = render(<Tooltip active={true} unit="req/s" payload={payload} customLabel="Request Rate" />)
+
+    expect(getByText('0.00 req/s')).toBeInTheDocument()
+  })
+
   it('should format instance unit without decimal places', () => {
     const payload: TooltipEntry[] = [
       {

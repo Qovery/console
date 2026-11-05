@@ -22,12 +22,18 @@ interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   isLoading?: boolean
   isEmpty?: boolean
   isRefreshing?: boolean
+  /** The underlying query failed (as opposed to succeeding with no data) — rendered as a distinct, more alarming state than `isEmpty`. */
+  hasError?: boolean
+  /** Overrides the default "No data available" copy shown for the `isEmpty` (non-error) state, e.g. "No traffic in this period". */
+  emptyLabel?: string
 }
 
 const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function ChartContainer(
-  { children, className, isLoading, isEmpty, isRefreshing, ...htmlProps },
+  { children, className, isLoading, isEmpty, isRefreshing, hasError, emptyLabel, ...htmlProps },
   ref
 ) {
+  const showOverlay = isLoading || hasError || isEmpty
+
   return (
     <div
       ref={ref}
@@ -39,7 +45,7 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
       )}
       {...htmlProps}
     >
-      {!isLoading && !isEmpty ? (
+      {!showOverlay ? (
         <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
           {children}
         </RechartsPrimitive.ResponsiveContainer>
@@ -49,7 +55,7 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
         </div>
       )}
 
-      {(isLoading || (isEmpty && !isLoading)) && (
+      {showOverlay && (
         <div
           className={twMerge(
             'absolute inset-0 p-4 transition-all ease-in-out',
@@ -63,19 +69,26 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
                 <ChartLoader />
                 <div className="text-sm text-neutral-subtle">Fetching data...</div>
               </>
+            ) : hasError ? (
+              <>
+                <div className="flex h-8 w-8 items-center justify-center rounded-md border border-neutral bg-surface-neutral p-2 text-base text-warning">
+                  <Icon iconName="triangle-exclamation" iconStyle="regular" />
+                </div>
+                <div className="text-sm text-neutral-subtle">Unable to load metrics</div>
+              </>
             ) : (
               <>
                 <div className="flex h-8 w-8 items-center justify-center rounded-md border border-neutral bg-surface-neutral p-2 text-base text-neutral">
                   <Icon iconName="chart-column" iconStyle="regular" />
                 </div>
-                <div className="text-sm text-neutral-subtle">No data available</div>
+                <div className="text-sm text-neutral-subtle">{emptyLabel ?? 'No data available'}</div>
               </>
             )}
           </div>
         </div>
       )}
 
-      {isRefreshing && !isLoading && !isEmpty && (
+      {isRefreshing && !isLoading && !isEmpty && !hasError && (
         <div className="pointer-events-none absolute inset-0 bg-background opacity-50" />
       )}
     </div>
