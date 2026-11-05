@@ -27,10 +27,12 @@ import {
   type RoleScope,
   capabilitiesOfPreset,
   capabilityById,
+  environmentsMatchingFilters,
   matchTargetSelection,
   presetMatching,
   resourceById,
   resourcePath,
+  selectedIdsOfKind,
   stageAtLeast,
 } from '../rbac-v2-mock-data'
 import { useRbacPrototype } from '../rbac-v2-prototype-context'
@@ -98,7 +100,8 @@ function CapabilitiesBadge({ permission }: { permission: TargetedPermission }) {
 // they run on, specific environments, and specific services
 const RELATIONS: Record<
   PermissionTarget,
-  { kind: Resource['kind']; label: string; phrase: string; placeholder: string }[]
+  // Narrow relations come after the tags: they pick among what the broader filters allow
+  { kind: Resource['kind']; label: string; phrase: string; placeholder: string; narrow?: boolean }[]
 > = {
   cluster: [{ kind: 'cluster', label: 'Clusters', phrase: '', placeholder: 'Every cluster' }],
   project: [{ kind: 'project', label: 'Projects', phrase: '', placeholder: 'Every project' }],
@@ -108,10 +111,17 @@ const RELATIONS: Record<
     {
       kind: 'environment',
       label: 'Only these environments',
-      phrase: 'named',
+      phrase: 'only',
       placeholder: 'Every matching environment',
+      narrow: true,
     },
-    { kind: 'service', label: 'Only these services', phrase: 'only service', placeholder: 'Every service' },
+    {
+      kind: 'service',
+      label: 'Only these services',
+      phrase: 'only service',
+      placeholder: 'Every service',
+      narrow: true,
+    },
   ],
 }
 
@@ -120,11 +130,32 @@ const selectedOfKind = (selection: RoleScope, kind: Resource['kind']) =>
 
 // "Environments & services in project Core app, tagged env_type = prod"
 export function SelectionSentence({ permission }: { permission: TargetedPermission }) {
-  const parts = RELATIONS[permission.target]
+  const allParts = RELATIONS[permission.target]
     .map((relation) => ({ relation, resources: selectedOfKind(permission.selection, relation.kind) }))
     .filter(({ resources }) => resources.length > 0)
+  const parts = allParts.filter(({ relation }) => !relation.narrow)
+  const narrowParts = allParts.filter(({ relation }) => relation.narrow)
   const { conditions } = permission.selection
-  const isEverything = parts.length === 0 && conditions.length === 0
+  const isEverything = allParts.length === 0 && conditions.length === 0
+
+  const relationPart = (
+    { relation, resources }: { relation: (typeof RELATIONS)[PermissionTarget][number]; resources: Resource[] },
+    withComma: boolean
+  ) => (
+    <span key={relation.kind} className="flex items-center gap-1">
+      {withComma && <span className="-ml-1 text-neutral-subtle">,</span>}
+      {relation.phrase && <span className="text-neutral-subtle">{relation.phrase}</span>}
+      {resources.map((resource, i) => (
+        <span key={resource.id} className="flex items-center gap-1">
+          {i > 0 && <span className="text-neutral-subtle">or</span>}
+          <Badge size="sm" variant="surface" color="brand">
+            <Icon iconName={RESOURCE_ICONS[resource.kind]} iconStyle="regular" className="mr-1" />
+            {resource.kind === 'service' || resource.kind === 'environment' ? resourcePath(resource) : resource.name}
+          </Badge>
+        </span>
+      ))}
+    </span>
+  )
 
   return (
     <span className="flex flex-wrap items-center gap-1 text-xs">
@@ -132,23 +163,7 @@ export function SelectionSentence({ permission }: { permission: TargetedPermissi
         {isEverything ? `Every ${TARGET_NOUN[permission.target]}` : targetOf(permission.target)?.label}
       </span>
       {permission.target === 'environment' && isEverything && <span className="text-neutral">and service</span>}
-      {parts.map(({ relation, resources }, index) => (
-        <span key={relation.kind} className="flex items-center gap-1">
-          {index > 0 && <span className="-ml-1 text-neutral-subtle">,</span>}
-          {relation.phrase && <span className="text-neutral-subtle">{relation.phrase}</span>}
-          {resources.map((resource, i) => (
-            <span key={resource.id} className="flex items-center gap-1">
-              {i > 0 && <span className="text-neutral-subtle">or</span>}
-              <Badge size="sm" variant="surface" color="brand">
-                <Icon iconName={RESOURCE_ICONS[resource.kind]} iconStyle="regular" className="mr-1" />
-                {resource.kind === 'service' || resource.kind === 'environment'
-                  ? resourcePath(resource)
-                  : resource.name}
-              </Badge>
-            </span>
-          ))}
-        </span>
-      ))}
+      {parts.map((part, index) => relationPart(part, index > 0))}
       {conditions.length > 0 && (
         <span className={twMerge('text-neutral-subtle', parts.length > 0 && '-ml-1')}>
           {parts.length > 0 ? ', tagged' : 'tagged'}
@@ -160,6 +175,7 @@ export function SelectionSentence({ permission }: { permission: TargetedPermissi
           <TagConditionBadge condition={condition} />
         </span>
       ))}
+      {narrowParts.map((part) => relationPart(part, parts.length > 0 || conditions.length > 0))}
     </span>
   )
 }
@@ -291,7 +307,78 @@ function TargetedPermissionEditor({
 }) {
   const [showCapabilities, setShowCapabilities] = useState(true)
   const { openModal } = useModal()
-  const setSelection = (selection: RoleScope) => onChange({ ...permission, selection })
+  const [removedNote, setRemovedNote] = useState<string | undefined>()
+
+  // Narrow filters only keep what the broader ones still allow: environments in the selected projects, on the selected
+  // clusters and matching the tags; services of those environments
+  const allowedEnvironments = (selection: RoleScope) => environmentsMatchingFilters(selection)
+  const allowedServices = (selection: RoleScope) => {
+    const selectedEnvironments = selectedIdsOfKind(selection, 'environment')
+    const environments = allowedEnvironments(selection).filter(
+      (environment) => selectedEnvironments.length === 0 || selectedEnvironments.includes(environment.id)
+    )
+    return RESOURCES.filter(
+      (resource) => resource.kind === 'service' && environments.some((e) => e.id === resource.parentId)
+    )
+  }
+
+  const setSelection = (selection: RoleScope) => {
+    if (permission.target !== 'environment') return onChange({ ...permission, selection })
+    const environmentIds = allowedEnvironments(selection).map((resource) => resource.id)
+    const keepEnvironments = selection.resourceIds.filter(
+      (id) => resourceById(id)?.kind !== 'environment' || environmentIds.includes(id)
+    )
+    const serviceIds = allowedServices({ ...selection, resourceIds: keepEnvironments }).map((resource) => resource.id)
+    const kept = keepEnvironments.filter((id) => resourceById(id)?.kind !== 'service' || serviceIds.includes(id))
+    const removed = selection.resourceIds.filter((id) => !kept.includes(id)).map((id) => resourceById(id))
+    setRemovedNote(
+      removed.length > 0
+        ? `Removed ${removed.map((resource) => resource && resourcePath(resource)).join(', ')}: no longer matches the filters above.`
+        : undefined
+    )
+    onChange({ ...permission, selection: { ...selection, resourceIds: kept } })
+  }
+
+  const optionsOf = (kind: Resource['kind']) =>
+    kind === 'environment'
+      ? allowedEnvironments(permission.selection)
+      : kind === 'service'
+        ? allowedServices(permission.selection)
+        : RESOURCES.filter((resource) => resource.kind === kind)
+
+  const relationFields = (narrow: boolean) => {
+    const relations = RELATIONS[permission.target].filter((relation) => Boolean(relation.narrow) === narrow)
+    return (
+      relations.length > 0 && (
+        <div className={twMerge('grid gap-3', relations.length > 1 ? 'grid-cols-2' : 'grid-cols-1')}>
+          {relations.map((relation) => (
+            <InputSelect
+              key={relation.kind}
+              label={relation.label}
+              isMulti
+              portal
+              isSearchable
+              placeholder={relation.placeholder}
+              value={selectedOfKind(permission.selection, relation.kind).map((resource) => resource.id)}
+              onChange={(value) =>
+                setSelection({
+                  ...permission.selection,
+                  resourceIds: [
+                    ...permission.selection.resourceIds.filter((id) => resourceById(id)?.kind !== relation.kind),
+                    ...(value as string[]),
+                  ],
+                })
+              }
+              options={optionsOf(relation.kind).map((resource) => ({
+                label: resourcePath(resource),
+                value: resource.id,
+              }))}
+            />
+          ))}
+        </div>
+      )
+    )
+  }
   const { objects, services } = matchTargetSelection(permission.target, permission.selection)
   const targetLabel = targetOf(permission.target)?.label.toLowerCase() ?? ''
   const noun = TARGET_NOUN[permission.target]
@@ -365,38 +452,13 @@ function TargetedPermissionEditor({
               <SelectionSentence permission={permission} />
             </div>
           </div>
-          <div
-            className={twMerge('grid gap-3', RELATIONS[permission.target].length > 1 ? 'grid-cols-2' : 'grid-cols-1')}
-          >
-            {RELATIONS[permission.target].map((relation) => (
-              <InputSelect
-                key={relation.kind}
-                label={relation.label}
-                isMulti
-                portal
-                isSearchable
-                placeholder={relation.placeholder}
-                value={selectedOfKind(permission.selection, relation.kind).map((resource) => resource.id)}
-                onChange={(value) =>
-                  setSelection({
-                    ...permission.selection,
-                    resourceIds: [
-                      ...permission.selection.resourceIds.filter((id) => resourceById(id)?.kind !== relation.kind),
-                      ...(value as string[]),
-                    ],
-                  })
-                }
-                options={RESOURCES.filter((resource) => resource.kind === relation.kind).map((resource) => ({
-                  label: resourcePath(resource),
-                  value: resource.id,
-                }))}
-              />
-            ))}
-          </div>
+          {relationFields(false)}
           <TagConditionsEditor
             conditions={permission.selection.conditions}
             onChange={(conditions) => setSelection({ ...permission.selection, conditions })}
           />
+          {relationFields(true)}
+          {removedNote && <p className="text-xs text-neutral-subtle">{removedNote}</p>}
         </div>
 
         <div className="flex flex-col gap-2">

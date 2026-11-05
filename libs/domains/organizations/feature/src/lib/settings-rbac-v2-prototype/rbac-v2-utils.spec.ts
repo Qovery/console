@@ -2,6 +2,7 @@ import {
   type Assignment,
   type Group,
   capabilitiesOfPreset,
+  environmentsMatchingFilters,
   matchTargetSelection,
   presetMatching,
 } from './rbac-v2-mock-data'
@@ -108,5 +109,32 @@ describe('presets', () => {
 
   it('should only bring the capabilities of the target', () => {
     expect(capabilitiesOfPreset('viewer', 'cluster')).toEqual(['cluster.view'])
+  })
+})
+
+describe('cascading filters', () => {
+  it('should combine projects and clusters with AND', () => {
+    const { objects } = matchTargetSelection('environment', {
+      resourceIds: ['p-payments', 'c-staging'],
+      conditions: [],
+    })
+
+    expect(objects.map((resource) => resource.id)).toEqual(['e-pay-dev'])
+  })
+
+  it('should only offer the environments allowed by the broader filters', () => {
+    const allowed = environmentsMatchingFilters({ resourceIds: ['p-payments'], conditions: [] }).map((r) => r.id)
+
+    expect(allowed.sort()).toEqual(['e-pay-dev', 'e-pay-prod'])
+    expect(allowed).not.toContain('e-dev-leo')
+  })
+
+  it('should narrow to the environments holding the selected services', () => {
+    const { objects } = matchTargetSelection('environment', {
+      resourceIds: ['c-prod-us', 's-primary-signal'],
+      conditions: [],
+    })
+
+    expect(objects.map((resource) => resource.id)).toEqual(['e-primary'])
   })
 })
