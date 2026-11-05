@@ -211,7 +211,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
   return (
     <FormProvider {...methods}>
       <OnboardingForm
-        title="Create your profile"
+        title="Create your organization"
         description="Tell us more about yourself"
         onSubmit={onSubmit}
         loading={submitting || methods.formState.isSubmitting}
