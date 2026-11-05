@@ -393,7 +393,6 @@ function TargetedPermissionEditor({
               />
             ))}
           </div>
-          <p className="text-xs font-medium text-neutral">Tagged</p>
           <TagConditionsEditor
             conditions={permission.selection.conditions}
             onChange={(conditions) => setSelection({ ...permission.selection, conditions })}
