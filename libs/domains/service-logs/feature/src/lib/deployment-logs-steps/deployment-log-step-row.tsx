@@ -150,6 +150,9 @@ function DeploymentLogLines({
     const element = scrollRef.current
     if (element && isScrolledToBottomRef.current) {
       element.scrollTop = element.scrollHeight
+      // The browser fires the scroll event of this programmatic scroll a frame later, after the first paint.
+      // Setting the state here instead renders the top gradient before that paint, so it doesn't pop in.
+      setIsScrolled(element.scrollTop > 0)
     }
   }, [visibleLines.length])
 
