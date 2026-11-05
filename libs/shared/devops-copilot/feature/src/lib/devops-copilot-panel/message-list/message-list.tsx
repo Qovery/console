@@ -70,9 +70,9 @@ export function MessageList({
           .with('user', () => (
             <div
               key={message.id}
-              className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-surface-brand-subtle px-5 py-2.5 text-sm text-neutral"
+              className="ml-auto max-w-[70%] shrink-0 rounded-[1.5rem] bg-surface-brand-subtle px-5 py-2.5 text-sm text-neutral"
             >
-              <div className="whitespace-pre-wrap">{message.text}</div>
+              <div className="whitespace-pre-wrap break-words">{message.text}</div>
             </div>
           ))
           .with('assistant', () => (
