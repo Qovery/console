@@ -243,6 +243,10 @@ export function ClusterCredentialsModal({
   allowedTypes,
 }: ClusterCredentialsModalProps) {
   const isEksAnywhereEnabled = Boolean(useFeatureFlagEnabled('eks-anywhere'))
+  const isWideCredentialsFeatureFlagEnabled = Boolean(useFeatureFlagEnabled('wide-credentials'))
+  // Passes the organization to the Qovery role template, which scopes role trust to this organization once published.
+  const awsRoleCloudformationUrl = `https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=${organizationId}`
+  const awsRestrictedRoleCloudformationUrl = `https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-restricted-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=${organizationId}`
   const { enableAlertClickOutside } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -673,13 +677,20 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                 <p className="text-sm text-neutral-subtle">
                   Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
                 </p>
-                {/* Passes the organization to the Qovery role template, which scopes role trust to this organization once published */}
-                <ExternalLink
-                  href={`https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=${organizationId}`}
-                  size="sm"
-                >
-                  Cloudformation stack
-                </ExternalLink>
+                {isWideCredentialsFeatureFlagEnabled && isAwsStsCredential ? (
+                  <div className="flex items-center gap-4">
+                    <ExternalLink href={awsRoleCloudformationUrl} size="sm">
+                      Extended permissions
+                    </ExternalLink>
+                    <ExternalLink href={awsRestrictedRoleCloudformationUrl} size="sm">
+                      Restricted permissions
+                    </ExternalLink>
+                  </div>
+                ) : (
+                  <ExternalLink href={awsRoleCloudformationUrl} size="sm">
+                    Cloudformation stack
+                  </ExternalLink>
+                )}
               </div>
               <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
                 <h2 className="text-sm font-medium text-neutral">3. Insert here the role ARN</h2>
