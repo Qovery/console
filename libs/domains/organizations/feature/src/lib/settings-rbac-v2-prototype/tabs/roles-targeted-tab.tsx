@@ -307,7 +307,7 @@ function TargetedPermissionEditor({
       </div>
       <div className="flex flex-col gap-4 p-4">
         <div className="flex flex-col gap-2">
-          <p className="text-xs font-medium text-neutral">On</p>
+          <p className="text-xs font-medium text-neutral">Define permissions for</p>
           <SegmentedControl.Root
             className="w-fit text-xs"
             value={permission.target}
@@ -332,7 +332,7 @@ function TargetedPermissionEditor({
         <div className="flex flex-col gap-3">
           <div>
             <div className="mb-1 flex items-center justify-between gap-3">
-              <p className="text-xs font-medium text-neutral">Applies to</p>
+              <p className="text-xs font-medium text-neutral">Filters</p>
               <div className="flex items-center gap-2 text-xs">
                 <span className="text-neutral-subtle">
                   Matches {count(objects.length, noun)}
