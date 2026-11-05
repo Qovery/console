@@ -1,7 +1,7 @@
 import { type Status } from 'qovery-typescript-axios'
 import { useDefaultAdvancedSettings, useService } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { DeploymentLogsSteps } from './deployment-logs-steps'
 
@@ -110,7 +110,7 @@ describe('DeploymentLogsSteps', () => {
     } as ReturnType<typeof useDefaultAdvancedSettings>)
     const [gitClone, build, deployment] = serviceStatus.steps?.details ?? []
 
-    const { userEvent } = renderWithProviders(
+    renderWithProviders(
       <DeploymentLogsSteps
         environment={environment}
         serviceStatus={{
@@ -133,7 +133,8 @@ describe('DeploymentLogsSteps', () => {
     )
 
     expect(screen.getByText('CPU')).toBeInTheDocument()
-    await userEvent.hover(screen.getByText('Memory'))
+    // Focus opens the tooltip without the hover delay, which a slow CI runner can push past the findBy timeout
+    act(() => screen.getByText('Memory').focus())
 
     expect(await screen.findAllByText('14.8 / 16 GiB (92%)')).not.toHaveLength(0)
   })
