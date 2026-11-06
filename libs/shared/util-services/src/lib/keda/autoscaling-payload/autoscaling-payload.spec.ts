@@ -219,6 +219,16 @@ describe('autoscaling-payload', () => {
       expect(result.autoscaling?.scalers[0].config_json).toBeUndefined()
     })
 
+    it.each([['["100"]'], ['null'], ['"100"']])(
+      'should fall back to config_yaml when a JSON-based scaler is valid JSON but not an object (%s)',
+      (config) => {
+        const result = extractAndProcessAutoscaling(buildRequest({ config, configFormat: 'json' }))
+
+        expect(result.autoscaling?.scalers[0]).toMatchObject({ config_yaml: config })
+        expect(result.autoscaling?.scalers[0].config_json).toBeUndefined()
+      }
+    )
+
     it('should send YAML-based scalers as config_yaml', () => {
       const result = extractAndProcessAutoscaling(buildRequest({ config: 'threshold: "100"', configFormat: 'yaml' }))
 

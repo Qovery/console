@@ -1,6 +1,7 @@
 import posthog from 'posthog-js'
 import { type Control, Controller, type UseFieldArrayReturn, useFormContext } from 'react-hook-form'
 import { Button, CodeEditor, ExternalLink, InputText } from '@qovery/shared/ui'
+import { parseScalerJsonConfig } from '@qovery/shared/util-services'
 
 export interface KedaScalersFieldsProps {
   control: Control
@@ -147,6 +148,7 @@ export function KedaScalersFields({
                 const displayLines = Math.min(Math.max(lineCount, 3), 5)
                 const height = `${displayLines * 19 + 10}px`
                 const isJson = watch(`scalers.${index}.configFormat`) === 'json'
+                const isInvalidJson = isJson && !!field.value?.trim() && !parseScalerJsonConfig(field.value)
 
                 return (
                   <div className="flex flex-col gap-1">
@@ -162,7 +164,15 @@ export function KedaScalersFields({
                         readOnly: disabled,
                       }}
                     />
-                    <p className="text-xs text-neutral-subtle">Paste raw {isJson ? 'JSON' : 'YAML'} for this scaler</p>
+                    {isInvalidJson ? (
+                      <p className="text-xs text-warning">
+                        Not a valid JSON object: this configuration will be saved as YAML
+                      </p>
+                    ) : (
+                      <p className="text-xs text-neutral-subtle">
+                        Paste raw {isJson ? 'JSON' : 'YAML'} for this scaler
+                      </p>
+                    )}
                   </div>
                 )
               }}

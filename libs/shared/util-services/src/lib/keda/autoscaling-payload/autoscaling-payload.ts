@@ -59,17 +59,24 @@ function toScalerConfigPayload(scaler: { config: string; configFormat?: 'yaml' |
   config_json?: Record<string, unknown>
   config_yaml?: string
 } {
-  if (scaler.configFormat === 'json') {
-    try {
-      const parsed: unknown = JSON.parse(scaler.config)
-      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        return { config_json: parsed as Record<string, unknown>, config_yaml: undefined }
-      }
-    } catch {
-      // Not valid JSON anymore: send as YAML below
-    }
+  const configJson = scaler.configFormat === 'json' ? parseScalerJsonConfig(scaler.config) : undefined
+  return configJson
+    ? { config_json: configJson, config_yaml: undefined }
+    : { config_json: undefined, config_yaml: scaler.config }
+}
+
+/**
+ * Returns the scaler config as a JSON object, or `undefined` when it isn't a valid JSON object.
+ */
+export function parseScalerJsonConfig(config: string): Record<string, unknown> | undefined {
+  try {
+    const parsed: unknown = JSON.parse(config)
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : undefined
+  } catch {
+    return undefined
   }
-  return { config_json: undefined, config_yaml: scaler.config }
 }
 
 /**
