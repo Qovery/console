@@ -36,6 +36,9 @@
         },
         {
           "env": "NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY"
+        },
+        {
+          "env": "NX_PUBLIC_SLACK_BOT_API_URL"
         }
       ],
       "cache": true

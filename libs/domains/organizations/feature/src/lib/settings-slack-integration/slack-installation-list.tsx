@@ -1,5 +1,6 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import posthog from 'posthog-js'
-import { type ReactNode, useCallback, useEffect, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { BlockContent, Button, Icon, Skeleton, Truncate, toast, useModal } from '@qovery/shared/ui'
 import { SLACK_BOT_API_URL } from '@qovery/shared/util-node-env'
@@ -7,17 +8,19 @@ import { AlertRuleForm } from './alert-rule-form'
 import { type AlertRule, type SlackChannel, type SlackInstallation } from './types'
 
 function formatScope(rule: AlertRule, projects: { id: string; name: string }[]): string {
-  if (rule.qovery_environment_ids?.length > 0) {
-    const projectNames = projects.filter((p) => rule.qovery_project_ids?.includes(p.id)).map((p) => p.name)
-    const count = rule.qovery_environment_ids.length
+  if (rule.environment_ids?.length > 0) {
+    const projectNames = projects.filter((p) => rule.project_ids?.includes(p.id)).map((p) => p.name)
+    const count = rule.environment_ids.length
     return `${count} env${count > 1 ? 's' : ''}${projectNames.length > 0 ? ` ${projectNames.join(', ')}` : ''}`
   }
-  if (rule.qovery_project_ids?.length > 0) {
-    const projectNames = projects.filter((p) => rule.qovery_project_ids.includes(p.id)).map((p) => p.name)
+  if (rule.project_ids?.length > 0) {
+    const projectNames = projects.filter((p) => rule.project_ids.includes(p.id)).map((p) => p.name)
     return projectNames.length > 0 ? projectNames.join(', ') : 'Selected projects'
   }
   return 'All projects'
 }
+
+type FetchStatus = 'loading' | 'success' | 'error'
 
 const SlackIntegrationSkeleton = () => (
   <BlockContent title="Alert rules" classNameContent="p-0">
@@ -41,21 +44,41 @@ export function SlackInstallationList({
   const [installations, setInstallations] = useState<SlackInstallation[]>([])
   const [alertRules, setAlertRules] = useState<AlertRule[]>([])
   const [channels, setChannels] = useState<SlackChannel[]>([])
-  const [loading, setLoading] = useState(true)
+  const [fetchStatus, setFetchStatus] = useState<FetchStatus>('loading')
   const { openModal, closeModal } = useModal()
   const { data: projects } = useProjects({ organizationId })
+  const { getAccessTokenSilently } = useAuth0()
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   const channelNameMap = new Map(channels.map((ch) => [ch.id, ch.name]))
 
   const fetchData = useCallback(async () => {
     if (!SLACK_BOT_API_URL) return
 
+    abortControllerRef.current?.abort()
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     try {
+      const token = await getAccessTokenSilently()
+      const authHeaders = { Authorization: `Bearer ${token}` }
+
       const [installsRes, rulesRes, channelsRes] = await Promise.all([
-        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/installations`),
-        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/alert-rules`),
-        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/channels`),
+        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/installations`, {
+          signal: controller.signal,
+          headers: authHeaders,
+        }),
+        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/alert-rules`, {
+          signal: controller.signal,
+          headers: authHeaders,
+        }),
+        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/channels`, {
+          signal: controller.signal,
+          headers: authHeaders,
+        }),
       ])
+
+      if (controller.signal.aborted) return
 
       if (installsRes.ok) {
         const data = await installsRes.json()
@@ -63,19 +86,26 @@ export function SlackInstallationList({
       }
       if (rulesRes.ok) setAlertRules(await rulesRes.json())
       if (channelsRes.ok) setChannels(await channelsRes.json())
+      setFetchStatus('success')
     } catch (error) {
+      if (controller.signal.aborted) return
       console.error('Failed to fetch Slack integration data:', error)
-    } finally {
-      setLoading(false)
+      setFetchStatus('error')
     }
-  }, [organizationId])
+  }, [organizationId, getAccessTokenSilently])
 
   useEffect(() => {
+    setInstallations([])
+    setAlertRules([])
+    setChannels([])
+    setFetchStatus('loading')
     fetchData()
+    return () => abortControllerRef.current?.abort()
   }, [fetchData])
 
-  const hasInstallation = installations.length > 0
-  const firstInstallation = installations[0]
+  const activeInstallations = installations.filter((i) => i.active && !i.error_state)
+  const hasInstallation = activeInstallations.length > 0
+  const firstInstallation = activeInstallations[0]
 
   const openAddRuleModal = () => {
     if (!firstInstallation) return
@@ -94,12 +124,35 @@ export function SlackInstallationList({
     })
   }
 
-  if (loading) {
+  if (fetchStatus === 'loading') {
     return (
       <>
         {children(false, openAddRuleModal)}
         <div className="max-w-content-with-navigation-left">
           <SlackIntegrationSkeleton />
+        </div>
+      </>
+    )
+  }
+
+  if (fetchStatus === 'error') {
+    return (
+      <>
+        {children(false, openAddRuleModal)}
+        <div className="max-w-content-with-navigation-left">
+          <div className="flex flex-col items-center justify-center overflow-hidden rounded border border-dashed border-neutral bg-surface-neutral p-10 text-center">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-dashed border-neutral">
+              <Icon iconName="triangle-exclamation" className="text-xl text-red-500" />
+            </div>
+            <p className="font-medium">Failed to load Slack integration</p>
+            <p className="mb-3 text-sm text-neutral-subtle">
+              Unable to reach the Slack service. Please try again later.
+            </p>
+            <Button size="md" variant="outline" color="neutral" onClick={fetchData}>
+              <Icon iconName="arrow-rotate-right" />
+              Retry
+            </Button>
+          </div>
         </div>
       </>
     )
@@ -155,9 +208,14 @@ export function SlackInstallationList({
                   onClick={async () => {
                     if (!SLACK_BOT_API_URL) return
                     try {
-                      const res = await fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/installations`, {
-                        method: 'DELETE',
-                      })
+                      const token = await getAccessTokenSilently()
+                      const res = await fetch(
+                        `${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/installations`,
+                        {
+                          method: 'DELETE',
+                          headers: { Authorization: `Bearer ${token}` },
+                        }
+                      )
                       if (res.ok) {
                         toast('success', 'Slack workspace disconnected')
                         posthog.capture('slack-workspace-disconnected', { organization_id: organizationId })
@@ -244,9 +302,10 @@ export function SlackInstallationList({
                           onClick={async () => {
                             if (!SLACK_BOT_API_URL) return
                             try {
+                              const token = await getAccessTokenSilently()
                               const res = await fetch(
                                 `${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/alert-rules/${rule.id}`,
-                                { method: 'DELETE' }
+                                { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }
                               )
                               if (res.ok) {
                                 toast('success', 'Alert rule deleted')

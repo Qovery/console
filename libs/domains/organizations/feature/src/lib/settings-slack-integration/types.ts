@@ -10,10 +10,10 @@ export interface SlackInstallation {
 export interface AlertRule {
   id: string
   installation_id: string
-  qovery_organization_id: string
+  organization_id: string
   name: string
-  qovery_project_ids: string[]
-  qovery_environment_ids: string[]
+  project_ids: string[]
+  environment_ids: string[]
   slack_channel_id: string
   alert_deployment_failed: boolean
   alert_failure_loop: boolean
