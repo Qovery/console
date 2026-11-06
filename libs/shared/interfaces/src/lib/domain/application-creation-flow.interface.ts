@@ -56,7 +56,7 @@ export interface ApplicationResourcesData {
 
   // KEDA fields
   autoscaling_enabled?: boolean
-  scalers?: Array<{ type: string; config: string; triggerAuthentication?: string }>
+  scalers?: Array<{ type: string; config: string; configFormat?: 'yaml' | 'json'; triggerAuthentication?: string }>
   autoscaling_polling_interval?: number
   autoscaling_cooldown_period?: number
 
