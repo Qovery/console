@@ -99,8 +99,9 @@ function getDefaultValues(
           autoscalingWithFields.scalers?.map((scaler) => ({
             type: scaler?.scaler_type || '',
             // Scalers created via the Terraform provider may only have `config_json` set
-            // (YAML is a superset of JSON, so the YAML editor can display it as-is).
-            config: scaler?.config_yaml || (scaler?.config_json ? JSON.stringify(scaler.config_json, null, 2) : ''),
+            ...(!scaler?.config_yaml && scaler?.config_json
+              ? { config: JSON.stringify(scaler.config_json, null, 2), configFormat: 'json' as const }
+              : { config: scaler?.config_yaml || '', configFormat: 'yaml' as const }),
             triggerAuthentication: scaler?.trigger_authentication?.config_yaml || '',
           })) || []
         )
