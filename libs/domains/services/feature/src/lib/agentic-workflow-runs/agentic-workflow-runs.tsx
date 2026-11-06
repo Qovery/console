@@ -17,6 +17,8 @@ import {
 import { dateFullFormat, formatDuration, timeAgo } from '@qovery/shared/util-dates'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
+import { useReplayAgenticWorkflowRun } from '../hooks/use-replay-agentic-workflow-run/use-replay-agentic-workflow-run'
+import { useService } from '../hooks/use-service/use-service'
 
 const { Table } = TablePrimitives
 
@@ -226,6 +228,31 @@ function PayloadEditor({ value }: { value: string }) {
   )
 }
 
+function ReplayRunButton({ serviceId, payload }: { serviceId: string; payload?: string | null }) {
+  const { data: service } = useService({ serviceId, serviceType: 'AGENTIC_WORKFLOW' })
+  const { mutate: replayRun, isLoading } = useReplayAgenticWorkflowRun({ serviceId })
+  const webhookUrl = service?.webhook.url
+
+  return (
+    <Button
+      type="button"
+      color="neutral"
+      variant="outline"
+      size="md"
+      className="gap-2"
+      disabled={!webhookUrl || isLoading}
+      loading={isLoading}
+      onClick={(event) => {
+        event.stopPropagation()
+        if (webhookUrl && !isLoading) replayRun({ webhookUrl, payload })
+      }}
+    >
+      <Icon iconName="rotate-right" iconStyle="regular" />
+      Replay
+    </Button>
+  )
+}
+
 function RunDetails({ run, onClose }: { run: RunWithLifecycle; onClose: () => void }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const formattedJson = run.payload ? formatJsonPayload(run.payload) : null
@@ -370,7 +397,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1204px] table-fixed text-ssm">
+      <Table.Root className="w-full min-w-[1324px] table-fixed text-ssm">
         <Table.Header>
           <Table.Row className="divide-x divide-neutral">
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
@@ -379,6 +406,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             <Table.ColumnHeaderCell className="w-[180px] font-medium">Payload</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[160px] font-medium">Duration</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[120px] font-medium">Cost</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[120px] font-medium">Actions</Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -450,6 +478,9 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
               </Table.Cell>
               <Table.Cell className="w-[120px] whitespace-nowrap font-mono">
                 <RunCost cost={run.cost} />
+              </Table.Cell>
+              <Table.Cell className="w-[120px]">
+                <ReplayRunButton serviceId={serviceId} payload={run.payload} />
               </Table.Cell>
             </Table.Row>
           ))}
