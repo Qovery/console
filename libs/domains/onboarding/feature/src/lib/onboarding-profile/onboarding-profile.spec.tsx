@@ -338,7 +338,7 @@ describe('OnboardingProfile', () => {
     expect(createProject).toHaveBeenCalledTimes(1)
     expect(createUserSignUp).toHaveBeenCalledTimes(1)
     expect(refreshToken).toHaveBeenCalledTimes(1)
-    expect(posthog.capture).toHaveBeenCalledTimes(2)
+    expect(posthog.capture).toHaveBeenCalledTimes(3)
     expect(toast).toHaveBeenCalledTimes(1)
   })
 
@@ -385,7 +385,10 @@ describe('OnboardingProfile', () => {
     )
     expect(createProject).toHaveBeenCalledWith({ organizationId: 'created-org', projectRequest: { name: 'main' } })
     expect(editOrganization).not.toHaveBeenCalled()
-    expect(useCreateUserSignUp).toHaveBeenLastCalledWith({ sendToCargo: false })
+    expect(posthog.capture).toHaveBeenCalledWith(
+      'user-signed-up',
+      expect.objectContaining({ organization_id: 'created-org', signup_source: 'Console' })
+    )
     expect(readPendingOnboarding('user-1')).toEqual(
       expect.objectContaining({
         organizationId: 'created-org',
@@ -470,7 +473,7 @@ describe('OnboardingProfile', () => {
     await waitFor(() => expect(navigate).toHaveBeenCalled())
     expect(createUserSignUp).toHaveBeenCalledTimes(1)
     expect(createUserSignUp).toHaveBeenCalledWith(expect.objectContaining(payload))
-    expect(useCreateUserSignUp).toHaveBeenLastCalledWith({ sendToCargo: false })
+    expect(posthog.capture).not.toHaveBeenCalledWith('user-signed-up', expect.anything())
     expect(editOrganization).not.toHaveBeenCalled()
     expect(createOrganization).not.toHaveBeenCalled()
     expect(createProject).not.toHaveBeenCalled()
@@ -555,10 +558,11 @@ describe('OnboardingProfile', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
     await second.userEvent.click(screen.getByRole('button', { name: 'Continue' }))
     await waitFor(() => expect(navigate).toHaveBeenCalledTimes(3))
-    expect(posthog.capture).toHaveBeenCalledTimes(2)
+    expect(posthog.capture).toHaveBeenCalledTimes(3)
     expect(jest.mocked(posthog.capture).mock.calls.map(([event]) => event)).toEqual([
       'onboarding-tailor-experience-completed',
       'onboarding-organization-created',
+      'user-signed-up',
     ])
     expect(window.dataLayer).toEqual([{ event: 'onboarding-organization-created', plan: PlanEnum.SCALE_2026 }])
     expect(createProject).toHaveBeenCalledTimes(1)
@@ -657,6 +661,23 @@ describe('OnboardingProfile', () => {
       'onboarding-organization-created',
       expect.objectContaining({ company_name: 'Acme Corp', plan: PlanEnum.SCALE_2026 })
     )
+    expect(posthog.capture).toHaveBeenCalledWith('user-signed-up', {
+      email: 'john@acme.com',
+      first_name: 'John',
+      last_name: 'van Doe',
+      company: 'Acme Corp',
+      job_title: '',
+      phone: '',
+      organization_id: 'created-org',
+      signup_source: 'Console',
+      utm_source: null,
+      utm_medium: null,
+      utm_campaign: null,
+      utm_term: null,
+      utm_content: null,
+      utm_landing_page: null,
+      gclid: null,
+    })
     expect(window.dataLayer).toContainEqual({ event: 'onboarding-organization-created', plan: PlanEnum.SCALE_2026 })
   })
 
