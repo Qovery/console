@@ -7,7 +7,7 @@ describe('mutations.exportTerraform', () => {
     jest.restoreAllMocks()
   })
 
-  it.each([true, false])('should exclude secrets even if a caller supplies exportSecrets=%s', async (exportSecrets) => {
+  it('should request the Terraform archive as a blob without a secret export option', async () => {
     const archive = new File(['terraform'], 'terraform.zip', { type: 'application/zip' })
     const exportConfiguration = jest
       .spyOn(EnvironmentExportApi.prototype, 'exportEnvironmentConfigurationIntoTerraform')
@@ -18,11 +18,11 @@ describe('mutations.exportTerraform', () => {
         headers: {},
         config: { headers: new AxiosHeaders() },
       })
-    const request = { environmentId: '111', exportSecrets }
+    const request = { environmentId: '111' }
 
     const result = await mutations.exportTerraform(request)
 
-    expect(exportConfiguration).toHaveBeenCalledWith('111', false, { responseType: 'blob' })
+    expect(exportConfiguration).toHaveBeenCalledWith('111', { responseType: 'blob' })
     expect(result).toBe(archive)
   })
 })
