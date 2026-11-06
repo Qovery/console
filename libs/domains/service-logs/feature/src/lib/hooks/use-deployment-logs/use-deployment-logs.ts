@@ -14,6 +14,10 @@ export interface UseDeploymentLogsProps {
   environmentId?: string
   serviceId?: string
   executionId?: string
+  // Keeps the pre-check lines, which the flat log list leaves to the environment pre-check page
+  includePreCheckLogs?: boolean
+  // Shows every line from the start instead of the last chunk only
+  showAllLogs?: boolean
 }
 
 export interface EnvironmentLogIds extends EnvironmentLogs {
@@ -30,6 +34,8 @@ export function useDeploymentLogs({
   environmentId,
   serviceId,
   executionId,
+  includePreCheckLogs = false,
+  showAllLogs = false,
 }: UseDeploymentLogsProps) {
   const { hash } = useLocation()
   const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId: environmentId ?? '', suspense: true })
@@ -37,7 +43,7 @@ export function useDeploymentLogs({
 
   // States for controlling log actions, showing new, previous or paused logs
   const [bufferedLogsCount, setBufferedLogsCount] = useState(0)
-  const [showPreviousLogs, setShowPreviousLogs] = useState(false)
+  const [showPreviousLogs, setShowPreviousLogs] = useState(showAllLogs)
   const [isScrollPaused, setIsScrollPaused] = useState(false)
   const isScrollPausedRef = useRef(false)
   const [debounceTime, setDebounceTime] = useState(1000)
@@ -131,14 +137,18 @@ export function useDeploymentLogs({
           // 1. The stage name is "delete".
           // 2. stageId is empty or equal with current stageId.
           // 3. The transmitter matches serviceId or has a type of "Environment" or "TaskManager".
-          // 4. Don't have step PreCheck
-          return (isDeleteStage || isEmptyOrEqualStageId) && isMatchingTransmitter && stage?.step !== 'PreCheck'
+          // 4. Don't have step PreCheck, unless pre-check lines are requested
+          return (
+            (isDeleteStage || isEmptyOrEqualStageId) &&
+            isMatchingTransmitter &&
+            (includePreCheckLogs || stage?.step !== 'PreCheck')
+          )
         })
         .map((log, index) => ({ ...log, id: index + 1 }))
         .filter((log, index, array) =>
           showPreviousLogs || index >= array.length - CHUNK_SIZE ? true : +log.timestamp > now
         ) as EnvironmentLogIds[],
-    [logs, stageId, serviceId, now, showPreviousLogs]
+    [logs, stageId, serviceId, now, showPreviousLogs, includePreCheckLogs]
   )
 
   return {

@@ -32,7 +32,7 @@ export interface HeaderLogsProps extends PropsWithChildren {
   environmentStatus?: EnvironmentStatus
 }
 
-function getOngoingDeploymentComputingDurationSec(serviceStatus: Status | null, nowMs: number) {
+export function getOngoingDeploymentComputingDurationSec(serviceStatus: Status | null, nowMs: number) {
   const steps = serviceStatus?.steps?.details ?? []
   const stepsComputingDurationSec = getServiceStepsComputingDurationSec(steps, nowMs)
   const recordedComputingDurationSec = serviceStatus?.steps?.total_computing_duration_sec ?? 0
