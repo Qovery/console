@@ -209,13 +209,10 @@ export function SlackInstallationList({
                     if (!SLACK_BOT_API_URL) return
                     try {
                       const token = await getAccessTokenSilently()
-                      const res = await fetch(
-                        `${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/installations`,
-                        {
-                          method: 'DELETE',
-                          headers: { Authorization: `Bearer ${token}` },
-                        }
-                      )
+                      const res = await fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/installations`, {
+                        method: 'DELETE',
+                        headers: { Authorization: `Bearer ${token}` },
+                      })
                       if (res.ok) {
                         toast('success', 'Slack workspace disconnected')
                         posthog.capture('slack-workspace-disconnected', { organization_id: organizationId })
