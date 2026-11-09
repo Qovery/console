@@ -42,6 +42,19 @@ export function useUtmParams(): UtmParams {
   return utmParams
 }
 
+// Attribution stored by useCaptureUtmParams on landing; null when missing or storage is unavailable
+export function getStoredUtmParams(): Record<keyof UtmParams, string | null> {
+  return Object.fromEntries(
+    UTM_KEYS.map((key) => {
+      try {
+        return [key, localStorage.getItem(key)]
+      } catch {
+        return [key, null]
+      }
+    })
+  ) as Record<keyof UtmParams, string | null>
+}
+
 export function useCaptureUtmParams() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)

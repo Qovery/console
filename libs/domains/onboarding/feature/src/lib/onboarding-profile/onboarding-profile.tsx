@@ -14,7 +14,7 @@ import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { InputText, toast, toastError } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { getStoredUtmParams, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { OnboardingForm } from '../onboarding-form/onboarding-form'
 import { pushToDataLayer } from '../utils/data-layer'
 import {
@@ -24,7 +24,6 @@ import {
   savePendingOnboarding,
 } from '../utils/pending-onboarding'
 import { isPersonalEmail } from '../utils/personal-email-domains'
-import { getUtmParams } from '../utils/utm-params'
 
 export function OnboardingProfile() {
   const auth = useAuth()
@@ -206,7 +205,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           phone: data.phone,
           organization_id: organizationId,
           signup_source: 'Console',
-          ...getUtmParams(),
+          ...getStoredUtmParams(),
         })
         pushToDataLayer({ event: 'onboarding-organization-created', plan: DEFAULT_PLAN })
         updatePending({ ...progress, completionTracked: true })
