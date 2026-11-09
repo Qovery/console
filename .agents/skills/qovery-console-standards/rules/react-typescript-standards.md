@@ -39,6 +39,17 @@ tags: [react, typescript, components, imports, state]
 - Prefer `ts-pattern` for branching logic
 - Use discriminated unions for complex flows
 
+## API Integrations
+
+Apply these rules when adding or reviewing API reads and mutations, including integrations with services outside the main Qovery API:
+
+- Before adding requests, inspect a comparable data-access client and its feature hooks. For ordinary CRUD, follow `libs/domains/organizations/data-access/src/lib/domains-organizations-data-access.ts` and `libs/domains/organizations/feature/src/lib/hooks/use-webhooks/use-webhooks.ts` / `use-create-webhook/use-create-webhook.ts`.
+- Keep request wiring, request/response types, and query definitions in the owning data-access library. Consume them through feature hooks using `useQuery` and `useMutation`, with query keys from `@qovery/state/util-queries`, targeted cache invalidation, and the existing notification metadata where applicable.
+- Reuse the existing authenticated client. For a separate service, follow the dedicated Axios instance in `libs/shared/devops-copilot/data-access/src/lib/domains-devops-copilot-data-access.ts` and its `useAuthInterceptor` registration in `apps/console/src/main.tsx`. A different base URL or missing generated SDK does not justify bypassing shared authentication and error handling.
+- Do not put ordinary CRUD `fetch`/Axios calls, token acquisition, or duplicated request/error handling in rendering components. Do not recreate query loading, error, or refetch behavior with `useEffect`, local server-data state, and manual reload callbacks; keep local state for form drafts and UI interactions.
+- Exceptions require a concrete transport need, such as streaming responses, or a browser flow such as an OAuth navigation or file download. Reuse a comparable implementation, keep transport logic in data-access and lifecycle logic in hooks, and document why the standard client/query flow does not fit. Preserve authentication, cancellation, and HTTP-error handling appropriate to that flow; a failed request must not become a successful empty result.
+- In review, flag parallel request/state machinery that bypasses this foundation and name the existing client/hooks to reuse. Check success, HTTP failure, authentication failure, and cache refresh after mutations when validating the integration.
+
 ## TypeScript
 
 - Avoid `any` and `as any`; keep types narrow
