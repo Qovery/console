@@ -1,18 +1,9 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
-import posthog from 'posthog-js'
+import { useQuery } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { type AlertRule, type AlertRulePayload, slackBotMutations } from '@qovery/shared/slack-bot/data-access'
-import {
-  Button,
-  InputSelect,
-  InputText,
-  InputTextArea,
-  InputToggle,
-  Skeleton,
-  toast,
-  useModal,
-} from '@qovery/shared/ui'
+import { type AlertRule, type AlertRulePayload } from '@qovery/shared/slack-bot/data-access'
+import { useCreateSlackAlertRule, useUpdateSlackAlertRule } from '@qovery/shared/slack-bot/feature'
+import { Button, InputSelect, InputText, InputTextArea, InputToggle, Skeleton, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import { ENV_TYPES } from './types'
 import { VariableDropdown } from './variable-dropdown'
@@ -66,59 +57,44 @@ export function AlertRuleForm({
     },
   })
 
-  const buildPayload = (): AlertRulePayload => ({
-    name: ruleName.trim(),
-    slack_channel_id: selectedChannel,
-    project_ids: selectedProjectIds,
-    environment_ids: selectedEnvironmentIds,
-    alert_deployment_failed: alertFailed,
-    alert_failure_loop: alertLoop,
-    alert_recovered: alertRecovered,
-    environment_types: envTypes,
-    message_template: customMessage.trim()
-      ? [
-          { block_type: 'custom_text', enabled: true, custom_text: customMessage.trim() },
-          { block_type: 'actions', enabled: true },
-        ]
-      : null,
-  })
-
-  const createMutation = useMutation({
-    mutationFn: (payload: AlertRulePayload) =>
-      slackBotMutations.createAlertRule({ organizationId, installationId, payload }),
+  const mutationOptions = {
     onMutate: () => setModalDismissible(false),
-    onSuccess: () => {
-      toast('success', 'Alert rule created')
-      posthog.capture('slack-alert-rule-created', { organization_id: organizationId })
-      onSaved()
-    },
-    onError: () => toast('error', 'Failed to create alert rule'),
     onSettled: () => setModalDismissible(true),
-  })
+    onSuccess: () => onSaved(),
+  }
 
-  const updateMutation = useMutation({
-    mutationFn: (payload: AlertRulePayload) =>
-      slackBotMutations.updateAlertRule({ organizationId, ruleId: existingRule!.id, payload }),
-    onMutate: () => setModalDismissible(false),
-    onSuccess: () => {
-      toast('success', 'Alert rule updated')
-      posthog.capture('slack-alert-rule-updated', { organization_id: organizationId })
-      onSaved()
-    },
-    onError: () => toast('error', 'Failed to update alert rule'),
-    onSettled: () => setModalDismissible(true),
+  const createMutation = useCreateSlackAlertRule({ organizationId, installationId })
+  const updateMutation = useUpdateSlackAlertRule({
+    organizationId,
+    ruleId: existingRule?.id ?? '',
   })
 
   const saving = createMutation.isLoading || updateMutation.isLoading
 
   const handleSave = () => {
     if (!selectedChannel || envTypes.length === 0) return
-    const payload = buildPayload()
+
+    const payload: AlertRulePayload = {
+      name: ruleName.trim(),
+      slack_channel_id: selectedChannel,
+      project_ids: selectedProjectIds,
+      environment_ids: selectedEnvironmentIds,
+      alert_deployment_failed: alertFailed,
+      alert_failure_loop: alertLoop,
+      alert_recovered: alertRecovered,
+      environment_types: envTypes,
+      message_template: customMessage.trim()
+        ? [
+            { block_type: 'custom_text', enabled: true, custom_text: customMessage.trim() },
+            { block_type: 'actions', enabled: true },
+          ]
+        : null,
+    }
 
     if (isEditing) {
-      updateMutation.mutate(payload)
+      updateMutation.mutate(payload, mutationOptions)
     } else {
-      createMutation.mutate(payload)
+      createMutation.mutate(payload, mutationOptions)
     }
   }
 

@@ -1,9 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import posthog from 'posthog-js'
+import { useQuery } from '@tanstack/react-query'
 import { type ReactNode } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { type AlertRule, slackBot, slackBotMutations } from '@qovery/shared/slack-bot/data-access'
-import { BlockContent, Button, Icon, Skeleton, Truncate, toast, useModal } from '@qovery/shared/ui'
+import { type AlertRule } from '@qovery/shared/slack-bot/data-access'
+import {
+  useCreateSlackAlertRule,
+  useDeleteSlackAlertRule,
+  useDeleteSlackInstallation,
+} from '@qovery/shared/slack-bot/feature'
+import { BlockContent, Button, Icon, Skeleton, Truncate, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import { AlertRuleForm } from './alert-rule-form'
 
@@ -41,7 +45,6 @@ export function SlackInstallationList({
 }) {
   const { openModal, closeModal } = useModal()
   const { data: projects } = useProjects({ organizationId })
-  const queryClient = useQueryClient()
 
   const {
     data: installations = [],
@@ -60,43 +63,14 @@ export function SlackInstallationList({
     ...queries.slackBot.channels({ organizationId }),
   })
 
-  const deleteInstallationMutation = useMutation({
-    mutationFn: () => slackBotMutations.deleteInstallation({ organizationId }),
-    onSuccess: () => {
-      toast('success', 'Slack workspace disconnected')
-      posthog.capture('slack-workspace-disconnected', { organization_id: organizationId })
-      queryClient.invalidateQueries({ queryKey: slackBot.installations({ organizationId }).queryKey })
-      queryClient.invalidateQueries({ queryKey: slackBot.alertRules({ organizationId }).queryKey })
-      queryClient.invalidateQueries({ queryKey: slackBot.channels({ organizationId }).queryKey })
-    },
-    onError: () => {
-      toast('error', 'Failed to disconnect workspace')
-    },
-  })
-
-  const deleteAlertRuleMutation = useMutation({
-    mutationFn: (ruleId: string) => slackBotMutations.deleteAlertRule({ organizationId, ruleId }),
-    onSuccess: () => {
-      toast('success', 'Alert rule deleted')
-      posthog.capture('slack-alert-rule-deleted', { organization_id: organizationId })
-      queryClient.invalidateQueries({ queryKey: slackBot.alertRules({ organizationId }).queryKey })
-    },
-    onError: () => {
-      toast('error', 'Failed to delete alert rule')
-    },
-  })
+  const deleteInstallation = useDeleteSlackInstallation({ organizationId })
+  const deleteAlertRule = useDeleteSlackAlertRule({ organizationId })
 
   const channelNameMap = new Map(channels.map((ch) => [ch.id, ch.name]))
 
   const activeInstallations = installations.filter((i) => i.active && !i.error_state)
   const hasInstallation = activeInstallations.length > 0
   const firstInstallation = activeInstallations[0]
-
-  const invalidateAll = () => {
-    queryClient.invalidateQueries({ queryKey: slackBot.installations({ organizationId }).queryKey })
-    queryClient.invalidateQueries({ queryKey: slackBot.alertRules({ organizationId }).queryKey })
-    queryClient.invalidateQueries({ queryKey: slackBot.channels({ organizationId }).queryKey })
-  }
 
   const openAddRuleModal = () => {
     if (!firstInstallation) return
@@ -105,10 +79,7 @@ export function SlackInstallationList({
         <AlertRuleForm
           organizationId={organizationId}
           installationId={firstInstallation.id}
-          onSaved={() => {
-            closeModal()
-            invalidateAll()
-          }}
+          onSaved={closeModal}
           onCancel={closeModal}
         />
       ),
@@ -198,7 +169,7 @@ export function SlackInstallationList({
                   color="neutral"
                   size="sm"
                   aria-label="Disconnect workspace"
-                  onClick={() => deleteInstallationMutation.mutate()}
+                  onClick={() => deleteInstallation.mutate()}
                 >
                   <Icon iconName="trash-can" iconStyle="regular" />
                 </Button>
@@ -253,10 +224,7 @@ export function SlackInstallationList({
                                   organizationId={organizationId}
                                   installationId={firstInstallation.id}
                                   existingRule={rule}
-                                  onSaved={() => {
-                                    closeModal()
-                                    invalidateAll()
-                                  }}
+                                  onSaved={closeModal}
                                   onCancel={closeModal}
                                 />
                               ),
@@ -271,7 +239,7 @@ export function SlackInstallationList({
                           color="neutral"
                           size="md"
                           aria-label="Delete alert rule"
-                          onClick={() => deleteAlertRuleMutation.mutate(rule.id)}
+                          onClick={() => deleteAlertRule.mutate({ ruleId: rule.id })}
                         >
                           <Icon iconName="trash-can" iconStyle="regular" />
                         </Button>
