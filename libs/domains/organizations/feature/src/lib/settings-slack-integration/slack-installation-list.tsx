@@ -2,11 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { type ReactNode } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { type AlertRule } from '@qovery/shared/slack-bot/data-access'
-import {
-  useCreateSlackAlertRule,
-  useDeleteSlackAlertRule,
-  useDeleteSlackInstallation,
-} from '@qovery/shared/slack-bot/feature'
+import { useDeleteSlackAlertRule, useDeleteSlackInstallation } from '@qovery/shared/slack-bot/feature'
 import { BlockContent, Button, Icon, Skeleton, Truncate, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import { AlertRuleForm } from './alert-rule-form'
