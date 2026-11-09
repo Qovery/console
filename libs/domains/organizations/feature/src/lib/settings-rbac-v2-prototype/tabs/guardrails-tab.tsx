@@ -46,7 +46,7 @@ function ResourceLimitRules({
         const tagKey = TAG_KEYS.find((tag) => tag.key === rule.condition?.key)
         return (
           <div key={rule.id} className="flex items-center gap-2">
-            <span className="w-14 text-xs font-medium text-neutral-subtle">If tag</span>
+            <span className="w-14 text-xs font-medium text-neutral-subtle">If label</span>
             <InputSelect
               className="w-40"
               label="Key"

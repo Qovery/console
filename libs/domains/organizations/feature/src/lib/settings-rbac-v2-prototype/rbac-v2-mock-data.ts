@@ -28,7 +28,7 @@ export const ORGANIZATION_AREAS = [
   'General',
   'Team',
   'Billing',
-  'Labels, annotations & tags',
+  'Labels & annotations',
   'Integrations',
   'AI',
   'Danger zone',
@@ -61,20 +61,8 @@ export const CAPABILITIES: Capability[] = [
   },
   { id: 'org.guardrails', label: 'Manage guardrails', level: 'organization', area: 'Team', since: 'target' },
   { id: 'org.billing', label: 'Manage billing and plans', level: 'organization', area: 'Billing' },
-  {
-    id: 'org.labels',
-    label: 'Manage labels and annotations',
-    level: 'organization',
-    area: 'Labels, annotations & tags',
-  },
-  {
-    id: 'org.tags',
-    label: 'Manage tags',
-    level: 'organization',
-    area: 'Labels, annotations & tags',
-    since: 'r1',
-    sensitive: true,
-  },
+  { id: 'org.labels', label: 'Manage labels', level: 'organization', area: 'Labels & annotations', sensitive: true },
+  { id: 'org.annotations', label: 'Manage annotations', level: 'organization', area: 'Labels & annotations' },
   { id: 'org.argocd', label: 'Manage ArgoCD integration', level: 'organization', area: 'Integrations' },
   { id: 'org.registries', label: 'Manage container registries', level: 'organization', area: 'Integrations' },
   { id: 'org.helm', label: 'Manage Helm repositories', level: 'organization', area: 'Integrations' },
@@ -96,7 +84,7 @@ export const CAPABILITIES: Capability[] = [
   { id: 'cluster.view', label: 'View cluster', level: 'cluster' },
   { id: 'cluster.deploy-on', label: 'Deploy on this cluster', level: 'cluster' },
   { id: 'cluster.update', label: 'Update cluster', level: 'cluster' },
-  { id: 'cluster.tags', label: 'Edit tags', level: 'cluster', sensitive: true },
+  { id: 'cluster.tags', label: 'Edit labels', level: 'cluster', sensitive: true },
   { id: 'cluster.delete', label: 'Delete cluster', level: 'cluster', sensitive: true },
   // Project
   { id: 'project.view', label: 'View project', level: 'project' },
@@ -104,14 +92,14 @@ export const CAPABILITIES: Capability[] = [
   { id: 'project.clone-env', label: 'Clone environments', level: 'project', since: 'target' },
   { id: 'project.settings', label: 'Edit project settings', level: 'project' },
   { id: 'project.variables', label: 'Edit project variables and secrets', level: 'project', sensitive: true },
-  { id: 'project.tags', label: 'Edit tags', level: 'project', sensitive: true },
+  { id: 'project.tags', label: 'Edit labels', level: 'project', sensitive: true },
   { id: 'project.delete', label: 'Delete project', level: 'project', sensitive: true },
   // Environment
   { id: 'env.view', label: 'View environment', level: 'environment' },
   { id: 'env.create-service', label: 'Create services', level: 'environment' },
   { id: 'env.settings', label: 'Edit environment settings', level: 'environment' },
   { id: 'env.variables', label: 'Edit environment variables and secrets', level: 'environment', sensitive: true },
-  { id: 'env.tags', label: 'Edit tags', level: 'environment', sensitive: true },
+  { id: 'env.tags', label: 'Edit labels', level: 'environment', sensitive: true },
   { id: 'env.deploy', label: 'Deploy', level: 'environment' },
   { id: 'env.restart', label: 'Restart', level: 'environment' },
   { id: 'env.stop', label: 'Stop', level: 'environment' },
@@ -128,7 +116,7 @@ export const CAPABILITIES: Capability[] = [
   { id: 'service.variables', label: 'Edit variables and secrets', level: 'service', sensitive: true },
   { id: 'service.shell', label: 'Open a shell', level: 'service', sensitive: true },
   { id: 'service.port-forward', label: 'Port-forward', level: 'service', sensitive: true },
-  { id: 'service.tags', label: 'Edit tags', level: 'service', sensitive: true },
+  { id: 'service.tags', label: 'Edit labels', level: 'service', sensitive: true },
   { id: 'service.delete', label: 'Delete service', level: 'service', sensitive: true },
 ]
 
@@ -218,21 +206,51 @@ export interface TagCondition {
   value: string
 }
 
-// Tags are a Qovery concept, separate from Kubernetes labels and annotations: they are set on clusters, projects,
-// environments and services (services inherit their environment's tags) and are used to scope roles
+// In Next, labels and tags are merged: a label is set on clusters, projects, environments and services (services
+// inherit their environment's labels), can scope roles, and is optionally propagated to Kubernetes workloads and as a
+// cloud provider tag. In code they keep the "tag" name to stay apart from today's Kubernetes label groups.
 export interface TagKey {
   key: string
   values: string[]
   builtIn?: boolean
+  // With neither, the label stays in Qovery (e.g. only used to scope roles)
+  propagateToKubernetes: boolean
+  propagateToCloudProvider: boolean
 }
 
 export const TAG_KEYS: TagKey[] = [
-  { key: 'env_type', values: ['dev', 'staging', 'prod'], builtIn: true },
-  { key: 'instance', values: ['primary', 'ares', 'eu', 'us-2'] },
-  { key: 'instance-type', values: ['standard', 'hipaa'] },
-  { key: 'team', values: ['payments', 'signal', 'learning'] },
-  { key: 'service', values: ['signal', 'course-proxy', 'api', 'worker'] },
-  { key: 'cost-center', values: ['cc-1042', 'cc-2077'] },
+  {
+    key: 'env_type',
+    values: ['dev', 'staging', 'prod'],
+    builtIn: true,
+    propagateToKubernetes: true,
+    propagateToCloudProvider: true,
+  },
+  {
+    key: 'instance',
+    values: ['primary', 'ares', 'eu', 'us-2'],
+    propagateToKubernetes: true,
+    propagateToCloudProvider: true,
+  },
+  {
+    key: 'instance-type',
+    values: ['standard', 'hipaa'],
+    propagateToKubernetes: false,
+    propagateToCloudProvider: false,
+  },
+  {
+    key: 'team',
+    values: ['payments', 'signal', 'learning'],
+    propagateToKubernetes: true,
+    propagateToCloudProvider: true,
+  },
+  {
+    key: 'service',
+    values: ['signal', 'course-proxy', 'api', 'worker'],
+    propagateToKubernetes: true,
+    propagateToCloudProvider: false,
+  },
+  { key: 'cost-center', values: ['cc-1042', 'cc-2077'], propagateToKubernetes: false, propagateToCloudProvider: true },
 ]
 
 export type ResourceKind = 'cluster' | 'project' | 'environment' | 'service'
@@ -464,7 +482,7 @@ export const INITIAL_ROLES: Role[] = [
       'org.git',
       'org.cloud',
       'org.labels',
-      'org.tags',
+      'org.annotations',
       'org.argocd',
       'org.webhooks',
     ],

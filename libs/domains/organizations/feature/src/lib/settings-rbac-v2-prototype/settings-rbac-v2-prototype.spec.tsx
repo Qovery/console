@@ -2,7 +2,7 @@ import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { RBAC_PROTOTYPE_MODE_KEY, RbacPrototypeProvider } from './rbac-v2-prototype-context'
 import { RbacV2ModeSwitch, type RbacV2PageId, SettingsRbacV2Page } from './settings-rbac-v2-prototype'
-import { SettingsTags } from './tabs/tags-page'
+import { SettingsLabelsV2 } from './tabs/labels-page'
 
 jest.mock('../settings-roles/settings-roles', () => ({
   SettingsRoles: () => <div>Roles page from production</div>,
@@ -177,8 +177,8 @@ describe('SettingsRbacV2Page', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Edit Backend Developer' }))
 
     expect(screen.getByText('Organization settings')).toBeInTheDocument()
-    expect(screen.getByText('Manage labels and annotations')).toBeInTheDocument()
-    expect(screen.getByText('Manage tags', { selector: 'label' })).toBeInTheDocument()
+    expect(screen.getByText('Manage labels', { selector: 'label' })).toBeInTheDocument()
+    expect(screen.getByText('Manage annotations', { selector: 'label' })).toBeInTheDocument()
     expect(screen.getByText('Danger zone')).toBeInTheDocument()
     // Groups and SSO come with the target solution
     expect(screen.queryByText('Manage groups')).not.toBeInTheDocument()
@@ -187,15 +187,17 @@ describe('SettingsRbacV2Page', () => {
     expect(screen.getByText(/selected$/)).toHaveTextContent(/^(\d+) of \1 selected$/)
   })
 
-  it('should manage tags apart from labels and annotations, with the roles using each tag', async () => {
+  it('should merge labels and tags, with their propagation and the roles using each label', async () => {
     const { userEvent } = renderWithProviders(
       <RbacPrototypeProvider>
-        <SettingsTags />
+        <SettingsLabelsV2 />
       </RbacPrototypeProvider>
     )
 
-    expect(screen.getByText('Tags organize your Qovery resources')).toBeInTheDocument()
-    expect(screen.queryByText(/Kubernetes$/)).not.toBeInTheDocument()
+    expect(screen.getByText('Labels and tags are now one concept')).toBeInTheDocument()
+    expect(screen.getAllByText('Kubernetes').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Cloud provider tag').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Qovery only').length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: 'Show roles using team' })).toBeDisabled()
 
     await userEvent.click(screen.getByRole('button', { name: 'Show roles using env_type' }))
@@ -237,14 +239,16 @@ describe('SettingsRbacV2Page', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit Developer' }))
 
-    // Each environment permission has an "In project" row and a "With tag" row
+    // Each environment permission has an "In project" row and a "With label" row
     expect(screen.getAllByText('In project').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('With tag').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('With label').length).toBeGreaterThan(0)
     expect(screen.getAllByText('in project').length).toBeGreaterThan(0)
 
-    const removeTagFilters = screen.getAllByRole('button', { name: 'Remove filter With tag' })
-    await userEvent.click(removeTagFilters[0])
-    expect(screen.getAllByRole('button', { name: 'Remove filter With tag' })).toHaveLength(removeTagFilters.length - 1)
+    const removeLabelFilters = screen.getAllByRole('button', { name: 'Remove filter With label' })
+    await userEvent.click(removeLabelFilters[0])
+    expect(screen.getAllByRole('button', { name: 'Remove filter With label' })).toHaveLength(
+      removeLabelFilters.length - 1
+    )
 
     expect(screen.getAllByRole('button', { name: /Add filter/ }).length).toBeGreaterThan(0)
   })

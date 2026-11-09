@@ -42,16 +42,16 @@ function SettingsLayout() {
     icon: 'gear' as const,
   }
 
+  // RBAC v2 prototype, from Next: labels merge with tags on their own page, this page keeps the annotations
   const labelsAnnotationsLink = {
-    title: 'Labels & annotations',
+    title: hasTags ? 'Annotations' : 'Labels & annotations',
     to: `${pathSettings}/labels-annotations`,
-    icon: 'tags' as const,
+    icon: hasTags ? ('note-sticky' as const) : ('tags' as const),
   }
 
-  // RBAC v2 prototype: Qovery tags, used to scope roles, in Next
-  const tagsLink = {
-    title: 'Tags',
-    to: `${pathSettings}/tags`,
+  const labelsLink = {
+    title: 'Labels',
+    to: `${pathSettings}/labels`,
     icon: 'tag' as const,
     badge: 'New',
   }
@@ -153,8 +153,8 @@ function SettingsLayout() {
     generalLink,
     teamLink,
     billingPlansLink,
+    ...(hasTags ? [labelsLink] : []),
     labelsAnnotationsLink,
-    ...(hasTags ? [tagsLink] : []),
     argoCdIntegrationLink,
     containerRegistriesLink,
     helmRepositoriesLink,

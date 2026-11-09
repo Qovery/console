@@ -32,13 +32,13 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsIndexRouteImpor
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport } from './routes/_authenticated/organization/$organizationId/settings/webhook'
-import { Route as AuthenticatedOrganizationOrganizationIdSettingsTagsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/tags'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsSkillsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/skills'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsServiceAccountsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/service-accounts'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRouteImport } from './routes/_authenticated/organization/$organizationId/settings/policy-api-token'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport } from './routes/_authenticated/organization/$organizationId/settings/members'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMcpServerRouteImport } from './routes/_authenticated/organization/$organizationId/settings/mcp-server'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/labels-annotations'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsLabelsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/labels'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRouteImport } from './routes/_authenticated/organization/$organizationId/settings/identity-provider'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/helm-repositories'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsGuardrailsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/guardrails'
@@ -363,13 +363,6 @@ const AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute =
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
   } as any)
-const AuthenticatedOrganizationOrganizationIdSettingsTagsRoute =
-  AuthenticatedOrganizationOrganizationIdSettingsTagsRouteImport.update({
-    id: '/tags',
-    path: '/tags',
-    getParentRoute: () =>
-      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
-  } as any)
 const AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute =
   AuthenticatedOrganizationOrganizationIdSettingsSkillsRouteImport.update({
     id: '/skills',
@@ -418,6 +411,13 @@ const AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute =
         AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdSettingsLabelsRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsLabelsRouteImport.update({
+    id: '/labels',
+    path: '/labels',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRoute =
   AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRouteImport.update(
     {
@@ -2082,13 +2082,13 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/guardrails': typeof AuthenticatedOrganizationOrganizationIdSettingsGuardrailsRoute
   '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   '/organization/$organizationId/settings/identity-provider': typeof AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRoute
+  '/organization/$organizationId/settings/labels': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsRoute
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
   '/organization/$organizationId/settings/policy-api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute
   '/organization/$organizationId/settings/service-accounts': typeof AuthenticatedOrganizationOrganizationIdSettingsServiceAccountsRoute
   '/organization/$organizationId/settings/skills': typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
-  '/organization/$organizationId/settings/tags': typeof AuthenticatedOrganizationOrganizationIdSettingsTagsRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/organization/$organizationId/alerts/': typeof AuthenticatedOrganizationOrganizationIdAlertsIndexRoute
@@ -2295,13 +2295,13 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/guardrails': typeof AuthenticatedOrganizationOrganizationIdSettingsGuardrailsRoute
   '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   '/organization/$organizationId/settings/identity-provider': typeof AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRoute
+  '/organization/$organizationId/settings/labels': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsRoute
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
   '/organization/$organizationId/settings/policy-api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute
   '/organization/$organizationId/settings/service-accounts': typeof AuthenticatedOrganizationOrganizationIdSettingsServiceAccountsRoute
   '/organization/$organizationId/settings/skills': typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
-  '/organization/$organizationId/settings/tags': typeof AuthenticatedOrganizationOrganizationIdSettingsTagsRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsIndexRoute
@@ -2497,13 +2497,13 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/guardrails': typeof AuthenticatedOrganizationOrganizationIdSettingsGuardrailsRoute
   '/_authenticated/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   '/_authenticated/organization/$organizationId/settings/identity-provider': typeof AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRoute
+  '/_authenticated/organization/$organizationId/settings/labels': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsRoute
   '/_authenticated/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/_authenticated/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/_authenticated/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
   '/_authenticated/organization/$organizationId/settings/policy-api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute
   '/_authenticated/organization/$organizationId/settings/service-accounts': typeof AuthenticatedOrganizationOrganizationIdSettingsServiceAccountsRoute
   '/_authenticated/organization/$organizationId/settings/skills': typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
-  '/_authenticated/organization/$organizationId/settings/tags': typeof AuthenticatedOrganizationOrganizationIdSettingsTagsRoute
   '/_authenticated/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/_authenticated/organization/$organizationId/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/_authenticated/organization/$organizationId/alerts/': typeof AuthenticatedOrganizationOrganizationIdAlertsIndexRoute
@@ -2718,13 +2718,13 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/guardrails'
     | '/organization/$organizationId/settings/helm-repositories'
     | '/organization/$organizationId/settings/identity-provider'
+    | '/organization/$organizationId/settings/labels'
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
     | '/organization/$organizationId/settings/policy-api-token'
     | '/organization/$organizationId/settings/service-accounts'
     | '/organization/$organizationId/settings/skills'
-    | '/organization/$organizationId/settings/tags'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
     | '/organization/$organizationId/alerts/'
@@ -2931,13 +2931,13 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/guardrails'
     | '/organization/$organizationId/settings/helm-repositories'
     | '/organization/$organizationId/settings/identity-provider'
+    | '/organization/$organizationId/settings/labels'
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
     | '/organization/$organizationId/settings/policy-api-token'
     | '/organization/$organizationId/settings/service-accounts'
     | '/organization/$organizationId/settings/skills'
-    | '/organization/$organizationId/settings/tags'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
     | '/organization/$organizationId/alerts'
@@ -3132,13 +3132,13 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/guardrails'
     | '/_authenticated/organization/$organizationId/settings/helm-repositories'
     | '/_authenticated/organization/$organizationId/settings/identity-provider'
+    | '/_authenticated/organization/$organizationId/settings/labels'
     | '/_authenticated/organization/$organizationId/settings/labels-annotations'
     | '/_authenticated/organization/$organizationId/settings/mcp-server'
     | '/_authenticated/organization/$organizationId/settings/members'
     | '/_authenticated/organization/$organizationId/settings/policy-api-token'
     | '/_authenticated/organization/$organizationId/settings/service-accounts'
     | '/_authenticated/organization/$organizationId/settings/skills'
-    | '/_authenticated/organization/$organizationId/settings/tags'
     | '/_authenticated/organization/$organizationId/settings/webhook'
     | '/_authenticated/organization/$organizationId/$clusterId/'
     | '/_authenticated/organization/$organizationId/alerts/'
@@ -3480,13 +3480,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
-    '/_authenticated/organization/$organizationId/settings/tags': {
-      id: '/_authenticated/organization/$organizationId/settings/tags'
-      path: '/tags'
-      fullPath: '/organization/$organizationId/settings/tags'
-      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsTagsRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
-    }
     '/_authenticated/organization/$organizationId/settings/skills': {
       id: '/_authenticated/organization/$organizationId/settings/skills'
       path: '/skills'
@@ -3527,6 +3520,13 @@ declare module '@tanstack/react-router' {
       path: '/labels-annotations'
       fullPath: '/organization/$organizationId/settings/labels-annotations'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/labels': {
+      id: '/_authenticated/organization/$organizationId/settings/labels'
+      path: '/labels'
+      fullPath: '/organization/$organizationId/settings/labels'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/identity-provider': {
@@ -4931,13 +4931,13 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsGuardrailsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGuardrailsRoute
   AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRoute
+  AuthenticatedOrganizationOrganizationIdSettingsLabelsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsRoute
   AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   AuthenticatedOrganizationOrganizationIdSettingsMembersRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
   AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute
   AuthenticatedOrganizationOrganizationIdSettingsServiceAccountsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsServiceAccountsRoute
   AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
-  AuthenticatedOrganizationOrganizationIdSettingsTagsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsTagsRoute
   AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   AuthenticatedOrganizationOrganizationIdSettingsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRoute
   AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
@@ -4980,6 +4980,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute,
     AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRoute:
       AuthenticatedOrganizationOrganizationIdSettingsIdentityProviderRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsLabelsRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsLabelsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute:
       AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute:
@@ -4992,8 +4994,6 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsServiceAccountsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute:
       AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute,
-    AuthenticatedOrganizationOrganizationIdSettingsTagsRoute:
-      AuthenticatedOrganizationOrganizationIdSettingsTagsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute:
       AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute,
     AuthenticatedOrganizationOrganizationIdSettingsIndexRoute:

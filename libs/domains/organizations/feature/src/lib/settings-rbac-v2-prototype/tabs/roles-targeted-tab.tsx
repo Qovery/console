@@ -167,7 +167,7 @@ export function SelectionSentence({ permission }: { permission: TargetedPermissi
       {allParts.map((part, index) => relationPart(part, index > 0))}
       {conditions.length > 0 && (
         <span className={twMerge('text-neutral-subtle', parts.length > 0 && '-ml-1')}>
-          {parts.length > 0 ? ', tagged' : 'tagged'}
+          {parts.length > 0 ? ', labeled' : 'labeled'}
         </span>
       )}
       {conditions.map((condition, index) => (
@@ -407,10 +407,10 @@ function TargetedPermissionEditor({
       ))}
       {permission.selection.conditions.map((condition, index) => (
         <div key={index} className="flex items-center gap-2">
-          <span className="w-36 shrink-0 text-xs font-medium text-neutral">With tag</span>
+          <span className="w-36 shrink-0 text-xs font-medium text-neutral">With label</span>
           <InputSelect
             className="w-44"
-            label="Tag"
+            label="Label"
             portal
             value={condition.key}
             onChange={(value) => updateCondition(index, { key: value as string, value: '' })}
@@ -435,7 +435,7 @@ function TargetedPermissionEditor({
               value,
             }))}
           />
-          {removeButton('Remove filter With tag', () =>
+          {removeButton('Remove filter With label', () =>
             setSelection({
               ...permission.selection,
               conditions: permission.selection.conditions.filter((_, i) => i !== index),
@@ -471,7 +471,7 @@ function TargetedPermissionEditor({
                 })
               }
             >
-              With tag
+              With label
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
@@ -482,10 +482,10 @@ function TargetedPermissionEditor({
           className="ml-auto text-xs"
           color="brand"
           size="xs"
-          to="/organization/$organizationId/settings/tags"
+          to="/organization/$organizationId/settings/labels"
           params={{ organizationId }}
         >
-          Manage tags
+          Manage labels
           <Icon iconName="arrow-up-right" className="ml-1" />
         </Link>
       </div>
@@ -710,7 +710,7 @@ function TargetedRoleEditor({
 
       <Panel
         title="Resource permissions"
-        description="Each permission targets clusters, projects, or environments and their services, and grants that target's capabilities on the objects matching the selected resources and tags. Permissions add up. Members also see the project and cluster of the environments they can access, as context only."
+        description="Each permission targets clusters, projects, or environments and their services, and grants that target's capabilities on the objects matching the selected resources and labels. Permissions add up. Members also see the project and cluster of the environments they can access, as context only."
         action={
           <Button
             type="button"

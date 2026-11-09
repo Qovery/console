@@ -10,6 +10,7 @@ import {
   Icon,
   InputSearch,
   InputText,
+  InputToggle,
   ModalCrud,
   Section,
   Tooltip,
@@ -22,14 +23,46 @@ import { type TargetedPermission } from '../rbac-v2-targeted-data'
 import { RESOURCE_ICONS } from '../rbac-v2-ui'
 import { PermissionSummary } from './roles-targeted-tab'
 
-// RBAC v2 prototype, in Next: tags are a Qovery concept, separate from the Kubernetes labels and annotations
-// (which keep their own page). They are set on clusters, projects, environments and services, and scope roles.
+// RBAC v2 prototype, in Next: labels and tags are merged. A label is set on clusters, projects, environments and
+// services, can scope roles, and is optionally propagated to Kubernetes workloads and as a cloud provider tag.
+// Annotations keep their own page.
 
 const usesTag = (permission: TargetedPermission, key: string) =>
   permission.selection.conditions.some((condition) => condition.key === key)
 
-// Resources carrying the tag, directly or inherited from their parent (a service inherits its environment's tags)
+// Resources carrying the label, directly or inherited from their parent (a service inherits its environment's labels)
 const taggedResources = (key: string) => RESOURCES.filter((resource) => key in effectiveTags(resource))
+
+function PropagationBadges({ tag }: { tag: TagKey }) {
+  if (!tag.propagateToKubernetes && !tag.propagateToCloudProvider) {
+    return (
+      <Tooltip content="Not propagated: only used in Qovery, e.g. to scope roles">
+        <span>
+          <Badge size="sm" variant="outline" color="neutral">
+            Qovery only
+          </Badge>
+        </span>
+      </Tooltip>
+    )
+  }
+
+  return (
+    <>
+      {tag.propagateToKubernetes && (
+        <Badge size="sm" variant="outline" color="neutral">
+          <Icon iconName="dharmachakra" iconStyle="regular" className="mr-1" />
+          Kubernetes
+        </Badge>
+      )}
+      {tag.propagateToCloudProvider && (
+        <Badge size="sm" variant="outline" color="neutral">
+          <Icon iconName="cloud" iconStyle="regular" className="mr-1" />
+          Cloud provider tag
+        </Badge>
+      )}
+    </>
+  )
+}
 
 // The modals render outside the prototype provider: they get their data as props
 function TagRolesModal({
@@ -47,8 +80,8 @@ function TagRolesModal({
         Roles using <span className="font-code">{tagKey}</span> ({roles.length})
       </Heading>
       <p className="mb-5 text-sm text-neutral-subtle">
-        Setting or editing this tag on a resource needs the Edit tags capability, so nobody can give themselves access
-        by tagging a resource.
+        Setting or editing this label on a resource needs the Edit labels capability, so nobody can give themselves
+        access by labeling a resource.
       </p>
       <ul className="flex flex-col gap-2">
         {roles.map((role) => (
@@ -77,7 +110,7 @@ function TagItemsModal({ tag }: { tag: TagKey }) {
   return (
     <Section className="p-6">
       <Heading className="mb-6 text-2xl text-neutral">
-        Resources tagged <span className="font-code">{tag.key}</span> ({taggedResources(tag.key).length})
+        Resources labeled <span className="font-code">{tag.key}</span> ({taggedResources(tag.key).length})
       </Heading>
       <InputSearch
         className="mb-3"
@@ -131,7 +164,12 @@ function TagEditModal({
 }) {
   const methods = useForm({
     mode: 'onChange',
-    defaultValues: { key: tag?.key ?? '', values: tag?.values.join(', ') ?? '' },
+    defaultValues: {
+      key: tag?.key ?? '',
+      values: tag?.values.join(', ') ?? '',
+      propagateToKubernetes: tag?.propagateToKubernetes ?? true,
+      propagateToCloudProvider: tag?.propagateToCloudProvider ?? false,
+    },
   })
 
   const submit = methods.handleSubmit((data) => {
@@ -142,6 +180,8 @@ function TagEditModal({
         .split(',')
         .map((value) => value.trim())
         .filter(Boolean),
+      propagateToKubernetes: data.propagateToKubernetes,
+      propagateToCloudProvider: data.propagateToCloudProvider,
     })
     onClose()
   })
@@ -149,8 +189,8 @@ function TagEditModal({
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title={tag ? `Edit tag ${tag.key}` : 'Create tag'}
-        description="Tags are set on clusters, projects, environments and services. Services inherit their environment's tags."
+        title={tag ? `Edit label ${tag.key}` : 'Create label'}
+        description="Labels are set on clusters, projects, environments and services. Services inherit their environment's labels."
         onClose={onClose}
         onSubmit={submit}
         isEdit={Boolean(tag)}
@@ -163,8 +203,8 @@ function TagEditModal({
               </Callout.Icon>
               <Callout.Text>
                 <Callout.TextDescription>
-                  Used by at least one role. Setting or editing this tag on a resource needs the Edit tags capability,
-                  so nobody can give themselves access by tagging a resource.
+                  Used by at least one role. Setting or editing this label on a resource needs the Edit labels
+                  capability, so nobody can give themselves access by labeling a resource.
                 </Callout.TextDescription>
               </Callout.Text>
             </Callout.Root>
@@ -198,13 +238,44 @@ function TagEditModal({
               />
             )}
           />
+          <div className="flex flex-col gap-3 rounded border border-neutral bg-surface-neutral-subtle p-4">
+            <Controller
+              name="propagateToKubernetes"
+              control={methods.control}
+              render={({ field }) => (
+                <InputToggle
+                  small
+                  value={field.value}
+                  onChange={field.onChange}
+                  title="Propagate to Kubernetes"
+                  description="Added as a label on the Kubernetes workloads of the resources carrying it. The key and values must follow the Kubernetes label format."
+                />
+              )}
+            />
+            <Controller
+              name="propagateToCloudProvider"
+              control={methods.control}
+              render={({ field }) => (
+                <InputToggle
+                  small
+                  value={field.value}
+                  onChange={field.onChange}
+                  title="Propagate as cloud provider tag"
+                  description="Added as a tag on the cloud resources created by Qovery (e.g. AWS tags), if the format is compliant."
+                />
+              )}
+            />
+            <p className="text-xs text-neutral-subtle">
+              With both off, the label stays in Qovery, e.g. a label only used to scope roles.
+            </p>
+          </div>
         </div>
       </ModalCrud>
     </FormProvider>
   )
 }
 
-export function SettingsTags() {
+export function SettingsLabelsV2() {
   const { roles, permissionsByRole } = useRbacPrototype()
   const { openModal, closeModal } = useModal()
   const [tags, setTags] = useState(TAG_KEYS)
@@ -230,12 +301,12 @@ export function SettingsTags() {
       <Section className="px-8 pb-16 pt-6">
         <div className="relative">
           <SettingsHeading
-            title="Tags"
-            description="Define the tags set on your clusters, projects, environments and services, and used to scope roles."
+            title="Labels"
+            description="Define the labels used within your organization: to scope roles, and optionally propagated to Kubernetes and as cloud provider tags."
           />
           <Button size="md" className="absolute right-0 top-0 shrink-0" onClick={() => openEdit()}>
             <Icon iconName="circle-plus" iconStyle="regular" />
-            Add tag
+            Add label
           </Button>
         </div>
         <div className="flex max-w-content-with-navigation-left flex-col gap-6">
@@ -244,14 +315,14 @@ export function SettingsTags() {
               <Icon iconName="circle-info" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
-              <Callout.TextHeading>Tags organize your Qovery resources</Callout.TextHeading>
+              <Callout.TextHeading>Labels and tags are now one concept</Callout.TextHeading>
               <Callout.TextDescription>
-                Unlike labels and annotations, tags are never applied to Kubernetes workloads: editing a service's
-                configuration never changes who can access it. Services inherit their environment's tags.
+                Set them on clusters, projects, environments and services, use them to scope roles, and choose for each
+                one whether it is propagated to Kubernetes, as a cloud provider tag, or kept in Qovery.
               </Callout.TextDescription>
             </Callout.Text>
           </Callout.Root>
-          <BlockContent title="Tags" classNameContent="p-0">
+          <BlockContent title="Labels" classNameContent="p-0">
             <ul>
               {tags.map((tag) => {
                 const count = taggedResources(tag.key).length
@@ -273,12 +344,15 @@ export function SettingsTags() {
                       <p className="text-xs text-neutral-subtle">
                         Values: <span className="font-code text-neutral">{tag.values.join(', ')}</span>
                       </p>
+                      <div className="flex flex-wrap gap-1">
+                        <PropagationBadges tag={tag} />
+                      </div>
                     </div>
                     <div className="flex gap-2">
                       <Tooltip
                         content={
                           usingRoles.length > 0
-                            ? `Used by ${usingRoles.length} ${pluralize(usingRoles.length, 'role')}: setting this tag needs the Edit tags capability`
+                            ? `Used by ${usingRoles.length} ${pluralize(usingRoles.length, 'role')}: setting this label needs the Edit labels capability`
                             : 'Used by no role'
                         }
                       >
@@ -308,14 +382,14 @@ export function SettingsTags() {
                           <Icon iconName="shield-halved" iconStyle="regular" />
                         </Button>
                       </Tooltip>
-                      <Tooltip content={`${count} tagged ${pluralize(count, 'resource')}`}>
+                      <Tooltip content={`${count} labeled ${pluralize(count, 'resource')}`}>
                         <Button
                           variant="outline"
                           color="neutral"
                           size="md"
                           iconOnly
                           className="relative"
-                          aria-label={`Show resources tagged ${tag.key}`}
+                          aria-label={`Show resources labeled ${tag.key}`}
                           disabled={count === 0}
                           onClick={() => openModal({ content: <TagItemsModal tag={tag} /> })}
                         >
@@ -335,7 +409,7 @@ export function SettingsTags() {
                       >
                         <Icon iconName="gear" iconStyle="regular" />
                       </Button>
-                      <Tooltip content="Tag still in use" disabled={count === 0 && usingRoles.length === 0}>
+                      <Tooltip content="Label still in use" disabled={count === 0 && usingRoles.length === 0}>
                         <Button
                           size="md"
                           variant="outline"
