@@ -31,4 +31,15 @@ describe('UTM params', () => {
 
     expect(getStoredUtmParams().utm_source).toBe('newsletter')
   })
+
+  it('does not throw when storage is unavailable', () => {
+    window.history.replaceState({}, '', '/signup?utm_source=google')
+    const setItem = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('QuotaExceededError')
+    })
+
+    expect(() => renderHook(() => useCaptureUtmParams())).not.toThrow()
+
+    setItem.mockRestore()
+  })
 })

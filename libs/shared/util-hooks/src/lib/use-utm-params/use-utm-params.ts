@@ -61,7 +61,12 @@ export function useCaptureUtmParams() {
     UTM_KEYS.forEach((key) => {
       const value = params.get(key)
       if (value) {
-        localStorage.setItem(key, value)
+        // Storage can be blocked (privacy mode) or full: attribution is best-effort, never break app startup
+        try {
+          localStorage.setItem(key, value)
+        } catch {
+          // ignore
+        }
       }
     })
   }, [])
