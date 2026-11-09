@@ -15,6 +15,7 @@ import { StrictMode, useEffect, useRef } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
+import { slackBotAxios } from '@qovery/shared/slack-bot/data-access'
 import { LoaderSpinner, type ToastStatus, toast, toastError } from '@qovery/shared/ui'
 import {
   DEVOPS_COPILOT_API_BASE_URL,
@@ -24,6 +25,7 @@ import {
   POSTHOG,
   POSTHOG_APIHOST,
   QOVERY_API,
+  SLACK_BOT_API_URL,
 } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 // TODO: Improve this import to use the shared/ui package
@@ -205,6 +207,7 @@ function App() {
 
   useAuthInterceptor(axios, QOVERY_API)
   useAuthInterceptor(devopsCopilotAxios, DEVOPS_COPILOT_API_BASE_URL)
+  useAuthInterceptor(slackBotAxios, SLACK_BOT_API_URL)
 
   if (auth.isLoading) {
     return (

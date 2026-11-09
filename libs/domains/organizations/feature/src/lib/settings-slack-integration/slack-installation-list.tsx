@@ -1,11 +1,11 @@
-import { useAuth0 } from '@auth0/auth0-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import posthog from 'posthog-js'
-import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { type ReactNode } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
+import { type AlertRule, slackBot, slackBotMutations } from '@qovery/shared/slack-bot/data-access'
 import { BlockContent, Button, Icon, Skeleton, Truncate, toast, useModal } from '@qovery/shared/ui'
-import { SLACK_BOT_API_URL } from '@qovery/shared/util-node-env'
+import { queries } from '@qovery/state/util-queries'
 import { AlertRuleForm } from './alert-rule-form'
-import { type AlertRule, type SlackChannel, type SlackInstallation } from './types'
 
 function formatScope(rule: AlertRule, projects: { id: string; name: string }[]): string {
   if (rule.environment_ids?.length > 0) {
@@ -19,8 +19,6 @@ function formatScope(rule: AlertRule, projects: { id: string; name: string }[]):
   }
   return 'All projects'
 }
-
-type FetchStatus = 'loading' | 'success' | 'error'
 
 const SlackIntegrationSkeleton = () => (
   <BlockContent title="Alert rules" classNameContent="p-0">
@@ -41,71 +39,64 @@ export function SlackInstallationList({
   onConnectSlack: () => void
   children: (hasInstallation: boolean, onAddRule: () => void) => ReactNode
 }) {
-  const [installations, setInstallations] = useState<SlackInstallation[]>([])
-  const [alertRules, setAlertRules] = useState<AlertRule[]>([])
-  const [channels, setChannels] = useState<SlackChannel[]>([])
-  const [fetchStatus, setFetchStatus] = useState<FetchStatus>('loading')
   const { openModal, closeModal } = useModal()
   const { data: projects } = useProjects({ organizationId })
-  const { getAccessTokenSilently } = useAuth0()
-  const abortControllerRef = useRef<AbortController | null>(null)
+  const queryClient = useQueryClient()
+
+  const {
+    data: installations = [],
+    isLoading: isLoadingInstallations,
+    isError: isInstallationsError,
+    refetch: refetchInstallations,
+  } = useQuery({
+    ...queries.slackBot.installations({ organizationId }),
+  })
+
+  const { data: alertRules = [], isLoading: isLoadingRules } = useQuery({
+    ...queries.slackBot.alertRules({ organizationId }),
+  })
+
+  const { data: channels = [] } = useQuery({
+    ...queries.slackBot.channels({ organizationId }),
+  })
+
+  const deleteInstallationMutation = useMutation({
+    mutationFn: () => slackBotMutations.deleteInstallation({ organizationId }),
+    onSuccess: () => {
+      toast('success', 'Slack workspace disconnected')
+      posthog.capture('slack-workspace-disconnected', { organization_id: organizationId })
+      queryClient.invalidateQueries({ queryKey: slackBot.installations({ organizationId }).queryKey })
+      queryClient.invalidateQueries({ queryKey: slackBot.alertRules({ organizationId }).queryKey })
+      queryClient.invalidateQueries({ queryKey: slackBot.channels({ organizationId }).queryKey })
+    },
+    onError: () => {
+      toast('error', 'Failed to disconnect workspace')
+    },
+  })
+
+  const deleteAlertRuleMutation = useMutation({
+    mutationFn: (ruleId: string) => slackBotMutations.deleteAlertRule({ organizationId, ruleId }),
+    onSuccess: () => {
+      toast('success', 'Alert rule deleted')
+      posthog.capture('slack-alert-rule-deleted', { organization_id: organizationId })
+      queryClient.invalidateQueries({ queryKey: slackBot.alertRules({ organizationId }).queryKey })
+    },
+    onError: () => {
+      toast('error', 'Failed to delete alert rule')
+    },
+  })
 
   const channelNameMap = new Map(channels.map((ch) => [ch.id, ch.name]))
-
-  const fetchData = useCallback(async () => {
-    if (!SLACK_BOT_API_URL) return
-
-    abortControllerRef.current?.abort()
-    const controller = new AbortController()
-    abortControllerRef.current = controller
-
-    try {
-      const token = await getAccessTokenSilently()
-      const authHeaders = { Authorization: `Bearer ${token}` }
-
-      const [installsRes, rulesRes, channelsRes] = await Promise.all([
-        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/installations`, {
-          signal: controller.signal,
-          headers: authHeaders,
-        }),
-        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/alert-rules`, {
-          signal: controller.signal,
-          headers: authHeaders,
-        }),
-        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/channels`, {
-          signal: controller.signal,
-          headers: authHeaders,
-        }),
-      ])
-
-      if (controller.signal.aborted) return
-
-      if (installsRes.ok) {
-        const data = await installsRes.json()
-        setInstallations(data)
-      }
-      if (rulesRes.ok) setAlertRules(await rulesRes.json())
-      if (channelsRes.ok) setChannels(await channelsRes.json())
-      setFetchStatus('success')
-    } catch (error) {
-      if (controller.signal.aborted) return
-      console.error('Failed to fetch Slack integration data:', error)
-      setFetchStatus('error')
-    }
-  }, [organizationId, getAccessTokenSilently])
-
-  useEffect(() => {
-    setInstallations([])
-    setAlertRules([])
-    setChannels([])
-    setFetchStatus('loading')
-    fetchData()
-    return () => abortControllerRef.current?.abort()
-  }, [fetchData])
 
   const activeInstallations = installations.filter((i) => i.active && !i.error_state)
   const hasInstallation = activeInstallations.length > 0
   const firstInstallation = activeInstallations[0]
+
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({ queryKey: slackBot.installations({ organizationId }).queryKey })
+    queryClient.invalidateQueries({ queryKey: slackBot.alertRules({ organizationId }).queryKey })
+    queryClient.invalidateQueries({ queryKey: slackBot.channels({ organizationId }).queryKey })
+  }
 
   const openAddRuleModal = () => {
     if (!firstInstallation) return
@@ -116,7 +107,7 @@ export function SlackInstallationList({
           installationId={firstInstallation.id}
           onSaved={() => {
             closeModal()
-            fetchData()
+            invalidateAll()
           }}
           onCancel={closeModal}
         />
@@ -124,7 +115,9 @@ export function SlackInstallationList({
     })
   }
 
-  if (fetchStatus === 'loading') {
+  const isLoading = isLoadingInstallations || isLoadingRules
+
+  if (isLoading) {
     return (
       <>
         {children(false, openAddRuleModal)}
@@ -135,7 +128,7 @@ export function SlackInstallationList({
     )
   }
 
-  if (fetchStatus === 'error') {
+  if (isInstallationsError) {
     return (
       <>
         {children(false, openAddRuleModal)}
@@ -148,7 +141,7 @@ export function SlackInstallationList({
             <p className="mb-3 text-sm text-neutral-subtle">
               Unable to reach the Slack service. Please try again later.
             </p>
-            <Button size="md" variant="outline" color="neutral" onClick={fetchData}>
+            <Button size="md" variant="outline" color="neutral" onClick={() => refetchInstallations()}>
               <Icon iconName="arrow-rotate-right" />
               Retry
             </Button>
@@ -205,25 +198,7 @@ export function SlackInstallationList({
                   color="neutral"
                   size="sm"
                   aria-label="Disconnect workspace"
-                  onClick={async () => {
-                    if (!SLACK_BOT_API_URL) return
-                    try {
-                      const token = await getAccessTokenSilently()
-                      const res = await fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/installations`, {
-                        method: 'DELETE',
-                        headers: { Authorization: `Bearer ${token}` },
-                      })
-                      if (res.ok) {
-                        toast('success', 'Slack workspace disconnected')
-                        posthog.capture('slack-workspace-disconnected', { organization_id: organizationId })
-                        fetchData()
-                      } else {
-                        toast('error', 'Failed to disconnect workspace')
-                      }
-                    } catch {
-                      toast('error', 'An error occurred')
-                    }
-                  }}
+                  onClick={() => deleteInstallationMutation.mutate()}
                 >
                   <Icon iconName="trash-can" iconStyle="regular" />
                 </Button>
@@ -280,7 +255,7 @@ export function SlackInstallationList({
                                   existingRule={rule}
                                   onSaved={() => {
                                     closeModal()
-                                    fetchData()
+                                    invalidateAll()
                                   }}
                                   onCancel={closeModal}
                                 />
@@ -296,25 +271,7 @@ export function SlackInstallationList({
                           color="neutral"
                           size="md"
                           aria-label="Delete alert rule"
-                          onClick={async () => {
-                            if (!SLACK_BOT_API_URL) return
-                            try {
-                              const token = await getAccessTokenSilently()
-                              const res = await fetch(
-                                `${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/alert-rules/${rule.id}`,
-                                { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }
-                              )
-                              if (res.ok) {
-                                toast('success', 'Alert rule deleted')
-                                posthog.capture('slack-alert-rule-deleted', { organization_id: organizationId })
-                                fetchData()
-                              } else {
-                                toast('error', 'Failed to delete alert rule')
-                              }
-                            } catch {
-                              toast('error', 'An error occurred')
-                            }
-                          }}
+                          onClick={() => deleteAlertRuleMutation.mutate(rule.id)}
                         >
                           <Icon iconName="trash-can" iconStyle="regular" />
                         </Button>

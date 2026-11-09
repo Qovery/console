@@ -1,8 +1,8 @@
-import { useAuth0 } from '@auth0/auth0-react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import posthog from 'posthog-js'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useProjects } from '@qovery/domains/projects/feature'
+import { type AlertRule, type AlertRulePayload, slackBotMutations } from '@qovery/shared/slack-bot/data-access'
 import {
   Button,
   InputSelect,
@@ -13,9 +13,8 @@ import {
   toast,
   useModal,
 } from '@qovery/shared/ui'
-import { SLACK_BOT_API_URL } from '@qovery/shared/util-node-env'
 import { queries } from '@qovery/state/util-queries'
-import { type AlertRule, ENV_TYPES, type SlackChannel } from './types'
+import { ENV_TYPES } from './types'
 import { VariableDropdown } from './variable-dropdown'
 
 export function AlertRuleForm({
@@ -34,8 +33,6 @@ export function AlertRuleForm({
   const isEditing = !!existingRule
   const customTextBlock = existingRule?.message_template?.find((b) => b.block_type === 'custom_text')
 
-  const [channels, setChannels] = useState<SlackChannel[]>([])
-  const [loadingChannels, setLoadingChannels] = useState(true)
   const [ruleName, setRuleName] = useState(existingRule?.name ?? '')
   const [nameManuallyEdited, setNameManuallyEdited] = useState(!!existingRule?.name)
   const [selectedChannel, setSelectedChannel] = useState(existingRule?.slack_channel_id ?? '')
@@ -45,9 +42,7 @@ export function AlertRuleForm({
   const [alertLoop, setAlertLoop] = useState(existingRule?.alert_failure_loop ?? true)
   const [alertRecovered, setAlertRecovered] = useState(existingRule?.alert_recovered ?? true)
   const [envTypes, setEnvTypes] = useState<string[]>(existingRule?.environment_types ?? ['PRODUCTION', 'STAGING'])
-  const [saving, setSaving] = useState(false)
   const { setModalDismissible } = useModal()
-  const { getAccessTokenSilently } = useAuth0()
   const DEFAULT_MESSAGE =
     '🚨 Deployment failed on {{environment_name}} ({{environment_type}}) in {{project_name}}. Failed services: {{failed_services}}. Triggered by {{triggered_by}}.'
   const [customMessage, setCustomMessage] = useState(customTextBlock?.custom_text ?? DEFAULT_MESSAGE)
@@ -60,84 +55,70 @@ export function AlertRuleForm({
     enabled: projectIdForEnvs !== '',
   })
 
-  useEffect(() => {
-    if (!SLACK_BOT_API_URL) return
-    getAccessTokenSilently()
-      .then((token) =>
-        fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/channels`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      )
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: SlackChannel[]) => {
-        setChannels(data)
-        if (!existingRule && data.length > 0) {
-          setSelectedChannel(data[0].id)
-          setRuleName(`#${data[0].name}`)
-        }
-      })
-      .catch(() => setChannels([]))
-      .finally(() => setLoadingChannels(false))
-  }, [organizationId, existingRule, getAccessTokenSilently])
-
-  const handleSave = async () => {
-    if (!SLACK_BOT_API_URL || !selectedChannel || envTypes.length === 0) return
-
-    setSaving(true)
-    setModalDismissible(false)
-    try {
-      const token = await getAccessTokenSilently()
-      const authHeaders = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
-
-      const payload = {
-        name: ruleName.trim(),
-        slack_channel_id: selectedChannel,
-        project_ids: selectedProjectIds,
-        environment_ids: selectedEnvironmentIds,
-        alert_deployment_failed: alertFailed,
-        alert_failure_loop: alertLoop,
-        alert_recovered: alertRecovered,
-        environment_types: envTypes,
-        message_template: customMessage.trim()
-          ? [
-              { block_type: 'custom_text', enabled: true, custom_text: customMessage.trim() },
-              { block_type: 'actions', enabled: true },
-            ]
-          : null,
+  const { data: channels = [], isLoading: loadingChannels } = useQuery({
+    ...queries.slackBot.channels({ organizationId }),
+    select(data) {
+      if (!existingRule && data.length > 0 && !selectedChannel) {
+        setSelectedChannel(data[0].id)
+        if (!nameManuallyEdited) setRuleName(`#${data[0].name}`)
       }
+      return data
+    },
+  })
 
-      if (isEditing) {
-        const res = await fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/alert-rules/${existingRule.id}`, {
-          method: 'PUT',
-          headers: authHeaders,
-          body: JSON.stringify(payload),
-        })
-        if (res.ok) {
-          toast('success', 'Alert rule updated')
-          posthog.capture('slack-alert-rule-updated', { organization_id: organizationId })
-          onSaved()
-        } else {
-          toast('error', 'Failed to update alert rule')
-        }
-      } else {
-        const res = await fetch(`${SLACK_BOT_API_URL}/api/v1/org/${organizationId}/alert-rules`, {
-          method: 'POST',
-          headers: authHeaders,
-          body: JSON.stringify({ installation_id: installationId, ...payload }),
-        })
-        if (res.ok) {
-          toast('success', 'Alert rule created')
-          posthog.capture('slack-alert-rule-created', { organization_id: organizationId })
-          onSaved()
-        } else {
-          toast('error', 'Failed to create alert rule')
-        }
-      }
-    } catch {
-      toast('error', 'An error occurred')
-    } finally {
-      setSaving(false)
-      setModalDismissible(true)
+  const buildPayload = (): AlertRulePayload => ({
+    name: ruleName.trim(),
+    slack_channel_id: selectedChannel,
+    project_ids: selectedProjectIds,
+    environment_ids: selectedEnvironmentIds,
+    alert_deployment_failed: alertFailed,
+    alert_failure_loop: alertLoop,
+    alert_recovered: alertRecovered,
+    environment_types: envTypes,
+    message_template: customMessage.trim()
+      ? [
+          { block_type: 'custom_text', enabled: true, custom_text: customMessage.trim() },
+          { block_type: 'actions', enabled: true },
+        ]
+      : null,
+  })
+
+  const createMutation = useMutation({
+    mutationFn: (payload: AlertRulePayload) =>
+      slackBotMutations.createAlertRule({ organizationId, installationId, payload }),
+    onMutate: () => setModalDismissible(false),
+    onSuccess: () => {
+      toast('success', 'Alert rule created')
+      posthog.capture('slack-alert-rule-created', { organization_id: organizationId })
+      onSaved()
+    },
+    onError: () => toast('error', 'Failed to create alert rule'),
+    onSettled: () => setModalDismissible(true),
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: (payload: AlertRulePayload) =>
+      slackBotMutations.updateAlertRule({ organizationId, ruleId: existingRule!.id, payload }),
+    onMutate: () => setModalDismissible(false),
+    onSuccess: () => {
+      toast('success', 'Alert rule updated')
+      posthog.capture('slack-alert-rule-updated', { organization_id: organizationId })
+      onSaved()
+    },
+    onError: () => toast('error', 'Failed to update alert rule'),
+    onSettled: () => setModalDismissible(true),
+  })
+
+  const saving = createMutation.isPending || updateMutation.isPending
+
+  const handleSave = () => {
+    if (!selectedChannel || envTypes.length === 0) return
+    const payload = buildPayload()
+
+    if (isEditing) {
+      updateMutation.mutate(payload)
+    } else {
+      createMutation.mutate(payload)
     }
   }
 

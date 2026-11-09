@@ -14,6 +14,7 @@ import { usersSignUp } from '@qovery/domains/users-sign-up/data-access'
 import { variables } from '@qovery/domains/variables/data-access'
 import { devopsCopilot } from '@qovery/shared/devops-copilot/data-access'
 import { user } from '@qovery/shared/iam/data-access'
+import { slackBot } from '@qovery/shared/slack-bot/data-access'
 import { webflow } from '@qovery/shared/webflow/data-access'
 
 export const queries = mergeQueryKeys(
@@ -30,6 +31,7 @@ export const queries = mergeQueryKeys(
   variables,
   customDomains,
   devopsCopilot,
+  slackBot,
   observability,
   serviceLogs,
   serviceTerraform,
