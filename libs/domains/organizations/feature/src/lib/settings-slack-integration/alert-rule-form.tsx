@@ -109,7 +109,7 @@ export function AlertRuleForm({
     onSettled: () => setModalDismissible(true),
   })
 
-  const saving = createMutation.isPending || updateMutation.isPending
+  const saving = createMutation.isLoading || updateMutation.isLoading
 
   const handleSave = () => {
     if (!selectedChannel || envTypes.length === 0) return
