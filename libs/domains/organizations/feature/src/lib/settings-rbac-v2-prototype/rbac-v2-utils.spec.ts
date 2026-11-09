@@ -5,6 +5,8 @@ import {
   environmentsMatchingFilters,
   matchTargetSelection,
   presetMatching,
+  resourceById,
+  servicesMatchingFilters,
 } from './rbac-v2-mock-data'
 import { TARGETED_PERMISSIONS } from './rbac-v2-targeted-data'
 import { getRoleSources } from './rbac-v2-utils'
@@ -72,7 +74,7 @@ describe('getRoleSources', () => {
 describe('matchTargetSelection', () => {
   const dev = { key: 'env_type', operator: '=' as const, value: 'dev' }
 
-  it('should match the dev environments running on a cluster, with their services', () => {
+  it('should match the dev environments running on a cluster', () => {
     const { objects } = matchTargetSelection('environment', { resourceIds: ['c-staging'], conditions: [dev] })
 
     expect(objects.map((resource) => resource.id).sort()).toEqual(['e-dev-leo', 'e-pay-dev'])
@@ -84,27 +86,33 @@ describe('matchTargetSelection', () => {
     expect(objects.map((resource) => resource.id)).toEqual(['c-prod-hipaa'])
   })
 
-  it('should narrow an environment permission to the selected services', () => {
-    const { objects, services } = matchTargetSelection('environment', { resourceIds: ['s-ares-proxy'], conditions: [] })
+  it('should match only the selected services when targeting services', () => {
+    const { objects } = matchTargetSelection('service', { resourceIds: ['s-ares-proxy'], conditions: [] })
 
-    expect(objects.map((resource) => resource.id)).toEqual(['e-ares'])
-    expect(services.map((resource) => resource.id)).toEqual(['s-ares-proxy'])
+    expect(objects.map((resource) => resource.id)).toEqual(['s-ares-proxy'])
+  })
+
+  it('should match services by their labels, inherited from their environment', () => {
+    const { objects } = matchTargetSelection('service', { resourceIds: ['p-core'], conditions: [dev] })
+
+    expect(objects.every((resource) => resource.kind === 'service')).toBe(true)
+    expect(objects.every((resource) => resourceById(resource.parentId ?? '')?.tags['env_type'] === 'dev')).toBe(true)
   })
 })
 
 describe('presets', () => {
   it('should not be stored: a permission only keeps its capabilities', () => {
-    const permission = TARGETED_PERMISSIONS['r-v1-developer'].find((p) => p.id === 't-dev-3')
+    const permission = TARGETED_PERMISSIONS['r-v1-developer'].find((p) => p.id === 't-dev-3-svc')
 
     expect(permission).not.toHaveProperty('preset')
     expect(permission?.capabilities).toContain('service.shell')
   })
 
   it('should be recognized only when the capabilities are exactly the preset ones', () => {
-    const deployer = capabilitiesOfPreset('deployer', 'environment')
+    const deployer = capabilitiesOfPreset('deployer', 'service')
 
-    expect(presetMatching(deployer, 'environment')?.id).toBe('deployer')
-    expect(presetMatching([...deployer, 'service.shell'], 'environment')).toBeUndefined()
+    expect(presetMatching(deployer, 'service')?.id).toBe('deployer')
+    expect(presetMatching([...deployer, 'service.shell'], 'service')).toBeUndefined()
   })
 
   it('should only bring the capabilities of the target', () => {
@@ -129,12 +137,10 @@ describe('cascading filters', () => {
     expect(allowed).not.toContain('e-dev-leo')
   })
 
-  it('should narrow to the environments holding the selected services', () => {
-    const { objects } = matchTargetSelection('environment', {
-      resourceIds: ['c-prod-us', 's-primary-signal'],
-      conditions: [],
-    })
+  it('should only offer the services of the selected environments', () => {
+    const allowed = servicesMatchingFilters({ resourceIds: ['e-primary'], conditions: [] })
 
-    expect(objects.map((resource) => resource.id)).toEqual(['e-primary'])
+    expect(allowed.length).toBeGreaterThan(0)
+    expect(allowed.every((resource) => resource.parentId === 'e-primary')).toBe(true)
   })
 })

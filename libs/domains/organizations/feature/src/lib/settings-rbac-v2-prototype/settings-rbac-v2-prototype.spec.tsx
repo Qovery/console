@@ -214,23 +214,28 @@ describe('SettingsRbacV2Page', () => {
     expect(screen.getByText('Migrated from v1')).toBeInTheDocument()
     expect(screen.getByText('Project Core app · Development · Deploy + Shell')).toBeInTheDocument()
     expect(screen.getByText('Nothing to migrate: no access')).toBeInTheDocument()
-    expect(screen.getByText('No permission needed: implied by the environment permissions')).toBeInTheDocument()
+    expect(
+      screen.getByText('No permission needed: implied by the environment and service permissions')
+    ).toBeInTheDocument()
     // The matches open in a modal, with the project and cluster shown as context, without a permission on them
     await userEvent.click(screen.getAllByRole('button', { name: 'View' })[3])
     expect(await screen.findByText('Also visible as context')).toBeInTheDocument()
   })
 
-  it('should target clusters, projects or environments in Next', async () => {
+  it('should target clusters, projects, environments or services in Next', async () => {
     localStorage.setItem(RBAC_PROTOTYPE_MODE_KEY, JSON.stringify('r1'))
     const { userEvent } = renderPage('roles')
 
     // The list stays simple: the permissions are in the editor
-    expect(screen.queryByText('Environments & services')).not.toBeInTheDocument()
+    expect(screen.queryByText('Services', { selector: 'button' })).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit Ares (HIPAA)' }))
 
-    expect(screen.getAllByText('Environments & services').length).toBeGreaterThan(0)
+    // "Define permissions for" offers environments and services as separate targets
+    expect(screen.getAllByText('Environments').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Services').length).toBeGreaterThan(0)
     expect(screen.getByText('Matches 1 cluster today', { exact: false })).toBeInTheDocument()
+    expect(screen.getByText(/Matches \d+ services? today/)).toBeInTheDocument()
   })
 
   it('should build the filters as typed rows, added from an Add filter menu', async () => {

@@ -38,6 +38,7 @@ import {
   resourceById,
   resourcePath,
   selectedIdsOfKind,
+  servicesMatchingFilters,
   stageAtLeast,
 } from '../rbac-v2-mock-data'
 import { useRbacPrototype } from '../rbac-v2-prototype-context'
@@ -56,26 +57,31 @@ const TARGET_NOUN: Record<PermissionTarget, string> = {
   cluster: 'cluster',
   project: 'project',
   environment: 'environment',
+  service: 'service',
 }
 
-// Visibility flows up: a permission on environments also shows their project and cluster, as context only (name and
-// status, no settings and no actions). Permissions never flow down: the other environments stay hidden.
-const impliedContext = (environments: Resource[]) => {
-  const ids = new Set(environments.flatMap((environment) => [environment.parentId, environment.clusterId]))
+// Visibility flows up: a permission on services also shows their environment, and a permission on environments or
+// services shows their project and cluster, as context only (name and status, no settings and no actions).
+// Permissions never flow down: the other environments and services stay hidden.
+const impliedContext = (objects: Resource[]) => {
+  const environments = objects.map((object) =>
+    object.kind === 'service' ? resourceById(object.parentId ?? '') : object.kind === 'environment' ? object : undefined
+  )
+  const ids = new Set(
+    environments.flatMap((environment) =>
+      environment
+        ? [environment.parentId, environment.clusterId, ...(objects.includes(environment) ? [] : [environment.id])]
+        : []
+    )
+  )
   return RESOURCES.filter((resource) => ids.has(resource.id))
 }
 
 const targetOf = (target: PermissionTarget) => PERMISSION_TARGETS.find((item) => item.target === target)
 
 function MatchSummary({ permission }: { permission: TargetedPermission }) {
-  const { objects, services } = matchTargetSelection(permission.target, permission.selection)
-  const kind = TARGET_NOUN[permission.target]
-  return (
-    <span className="text-xs text-neutral-subtle">
-      {count(objects.length, kind)}
-      {permission.target === 'environment' && ` · ${count(services.length, 'service')}`}
-    </span>
-  )
+  const { objects } = matchTargetSelection(permission.target, permission.selection)
+  return <span className="text-xs text-neutral-subtle">{count(objects.length, TARGET_NOUN[permission.target])}</span>
 }
 
 // The preset name when the capabilities are exactly a preset, otherwise how many were picked
@@ -101,8 +107,8 @@ function CapabilitiesBadge({ permission }: { permission: TargetedPermission }) {
   )
 }
 
-// Selected resources by how they relate to the target, e.g. for environments: the projects they are in, the clusters
-// they run on, specific environments, and specific services
+// Selected resources by how they relate to the target, e.g. for services: the projects they are in, the clusters they
+// run on, the environments they are in, and specific services
 const RELATIONS: Record<
   PermissionTarget,
   { kind: Resource['kind']; label: string; phrase: string; placeholder: string }[]
@@ -112,25 +118,20 @@ const RELATIONS: Record<
   environment: [
     { kind: 'project', label: 'In project', phrase: 'in project', placeholder: 'Select projects' },
     { kind: 'cluster', label: 'Running on cluster', phrase: 'running on cluster', placeholder: 'Select clusters' },
-    {
-      kind: 'environment',
-      label: 'Environment is',
-      phrase: 'only',
-      placeholder: 'Select environments',
-    },
-    {
-      kind: 'service',
-      label: 'Service is',
-      phrase: 'only service',
-      placeholder: 'Select services',
-    },
+    { kind: 'environment', label: 'Environment is', phrase: 'only', placeholder: 'Select environments' },
+  ],
+  service: [
+    { kind: 'project', label: 'In project', phrase: 'in project', placeholder: 'Select projects' },
+    { kind: 'cluster', label: 'Running on cluster', phrase: 'running on cluster', placeholder: 'Select clusters' },
+    { kind: 'environment', label: 'In environment', phrase: 'in environment', placeholder: 'Select environments' },
+    { kind: 'service', label: 'Service is', phrase: 'only', placeholder: 'Select services' },
   ],
 }
 
 const selectedOfKind = (selection: RoleScope, kind: Resource['kind']) =>
   selection.resourceIds.map(resourceById).filter((resource): resource is Resource => resource?.kind === kind)
 
-// "Environments & services in project Core app, tagged env_type = prod"
+// "Environments in project Core app, labeled env_type = prod"
 export function SelectionSentence({ permission }: { permission: TargetedPermission }) {
   const allParts = RELATIONS[permission.target]
     .map((relation) => ({ relation, resources: selectedOfKind(permission.selection, relation.kind) }))
@@ -163,7 +164,6 @@ export function SelectionSentence({ permission }: { permission: TargetedPermissi
       <span className="font-medium text-neutral">
         {isEverything ? `Every ${TARGET_NOUN[permission.target]}` : targetOf(permission.target)?.label}
       </span>
-      {permission.target === 'environment' && isEverything && <span className="text-neutral">and service</span>}
       {allParts.map((part, index) => relationPart(part, index > 0))}
       {conditions.length > 0 && (
         <span className={twMerge('text-neutral-subtle', parts.length > 0 && '-ml-1')}>
@@ -239,17 +239,7 @@ function TargetedCapabilities({
 }
 
 // Opens in a modal, which renders outside the prototype provider: it gets the matched objects as props
-function MatchesModal({
-  noun,
-  objects,
-  services,
-  context,
-}: {
-  noun: string
-  objects: Resource[]
-  services: Resource[]
-  context: Resource[]
-}) {
+function MatchesModal({ noun, objects, context }: { noun: string; objects: Resource[]; context: Resource[] }) {
   const list = (resources: Resource[], name = false) => (
     <ul className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2">
       {resources.map((resource) => (
@@ -272,14 +262,6 @@ function MatchesModal({
           </Heading>
           {list(objects)}
         </div>
-        {services.length > 0 && (
-          <div>
-            <Heading level={3} className="mb-2 text-neutral">
-              {count(services.length, 'service')}
-            </Heading>
-            {list(services)}
-          </div>
-        )}
         {context.length > 0 && (
           <div>
             <Heading level={3} className="mb-1 text-neutral">
@@ -311,21 +293,19 @@ function TargetedPermissionEditor({
   const { isTarget } = useRbacPrototype()
   const { organizationId = '' } = useParams({ strict: false })
 
-  // Narrow filters only keep what the broader ones still allow: environments in the selected projects, on the selected
-  // clusters and matching the tags; services of those environments
-  const allowedEnvironments = (selection: RoleScope) => environmentsMatchingFilters(selection)
-  const allowedServices = (selection: RoleScope) => {
-    const selectedEnvironments = selectedIdsOfKind(selection, 'environment')
-    const environments = allowedEnvironments(selection).filter(
-      (environment) => selectedEnvironments.length === 0 || selectedEnvironments.includes(environment.id)
-    )
-    return RESOURCES.filter(
-      (resource) => resource.kind === 'service' && environments.some((e) => e.id === resource.parentId)
-    )
-  }
+  // Narrow filters only keep what the broader ones still allow: environments in the selected projects and on the
+  // selected clusters (and matching the labels, for an environment permission); services in those environments and
+  // matching the labels
+  const allowedEnvironments = (selection: RoleScope) =>
+    permission.target === 'environment'
+      ? environmentsMatchingFilters(selection)
+      : environmentsMatchingFilters({ ...selection, conditions: [] })
+  const allowedServices = (selection: RoleScope) => servicesMatchingFilters(selection)
 
   const setSelection = (selection: RoleScope) => {
-    if (permission.target !== 'environment') return onChange({ ...permission, selection })
+    if (permission.target !== 'environment' && permission.target !== 'service') {
+      return onChange({ ...permission, selection })
+    }
     const environmentIds = allowedEnvironments(selection).map((resource) => resource.id)
     const keepEnvironments = selection.resourceIds.filter(
       (id) => resourceById(id)?.kind !== 'environment' || environmentIds.includes(id)
@@ -491,8 +471,7 @@ function TargetedPermissionEditor({
       </div>
     </div>
   )
-  const { objects, services } = matchTargetSelection(permission.target, permission.selection)
-  const targetLabel = targetOf(permission.target)?.label.toLowerCase() ?? ''
+  const { objects } = matchTargetSelection(permission.target, permission.selection)
   const noun = TARGET_NOUN[permission.target]
 
   return (
@@ -536,10 +515,7 @@ function TargetedPermissionEditor({
           <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-brand-subtle bg-surface-brand-subtle px-3 py-2">
             <SelectionSentence permission={permission} />
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-neutral-subtle">
-                Matches {count(objects.length, noun)}
-                {permission.target === 'environment' && ` and ${count(services.length, 'service')}`} today
-              </span>
+              <span className="text-neutral-subtle">Matches {count(objects.length, noun)} today</span>
               <Button
                 type="button"
                 size="xs"
@@ -548,14 +524,7 @@ function TargetedPermissionEditor({
                 disabled={objects.length === 0}
                 onClick={() =>
                   openModal({
-                    content: (
-                      <MatchesModal
-                        noun={noun}
-                        objects={objects}
-                        services={services}
-                        context={permission.target === 'environment' ? impliedContext(objects) : []}
-                      />
-                    ),
+                    content: <MatchesModal noun={noun} objects={objects} context={impliedContext(objects)} />,
                   })
                 }
               >
@@ -669,7 +638,7 @@ function TargetedRoleEditor({
         >
           <ul className="divide-y divide-neutral">
             {V1_MIGRATIONS[role.id].map((migration) => {
-              const permission = permissions.find((p) => p.id === migration.permissionId)
+              const migrated = permissions.filter((p) => migration.permissionIds?.includes(p.id))
               return (
                 <li
                   key={migration.v1}
@@ -680,15 +649,17 @@ function TargetedRoleEditor({
                   {migration.implied ? (
                     <span className="flex items-center gap-1.5 text-xs text-neutral-subtle">
                       <Icon iconName="eye" iconStyle="regular" />
-                      No permission needed: implied by the environment permissions
+                      No permission needed: implied by the environment and service permissions
                     </span>
-                  ) : permission ? (
-                    <ul>
-                      <PermissionSummary permission={permission} />
+                  ) : migrated.length > 0 ? (
+                    <ul className="flex flex-col gap-1.5">
+                      {migrated.map((permission) => (
+                        <PermissionSummary key={permission.id} permission={permission} />
+                      ))}
                     </ul>
                   ) : (
                     <span className="text-xs text-neutral-subtle">
-                      {migration.permissionId ? 'Permission removed since' : 'Nothing to migrate: no access'}
+                      {migration.permissionIds ? 'Permission removed since' : 'Nothing to migrate: no access'}
                     </span>
                   )}
                 </li>
@@ -710,7 +681,7 @@ function TargetedRoleEditor({
 
       <Panel
         title="Resource permissions"
-        description="Each permission targets clusters, projects, or environments and their services, and grants that target's capabilities on the objects matching the selected resources and labels. Permissions add up. Members also see the project and cluster of the environments they can access, as context only."
+        description="Each permission targets clusters, projects, environments or services, and grants that target's capabilities on the objects matching the selected resources and labels. Permissions add up. Members also see the environment, project and cluster of what they can access, as context only."
         action={
           <Button
             type="button"
@@ -840,7 +811,7 @@ export function RolesTargetedTab() {
       </Panel>
       <Panel
         title="Custom roles"
-        description="Each permission targets clusters, projects, or environments and their services."
+        description="Each permission targets clusters, projects, environments or services."
         action={
           <Button
             size="md"

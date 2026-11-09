@@ -369,13 +369,14 @@ export const matchesConditions = (resource: Resource, conditions: TagCondition[]
 }
 
 // Next (by target): a permission targets one kind of object and grants that target's capabilities on the objects
-// matching the selection. Environments include their services.
-export type PermissionTarget = 'cluster' | 'project' | 'environment'
+// matching the selection. Environments and services are separate targets.
+export type PermissionTarget = 'cluster' | 'project' | 'environment' | 'service'
 
 export const PERMISSION_TARGETS: { target: PermissionTarget; label: string; levels: CapabilityLevel[] }[] = [
   { target: 'cluster', label: 'Clusters', levels: ['cluster'] },
   { target: 'project', label: 'Projects', levels: ['project'] },
-  { target: 'environment', label: 'Environments & services', levels: ['environment', 'service'] },
+  { target: 'environment', label: 'Environments', levels: ['environment'] },
+  { target: 'service', label: 'Services', levels: ['service'] },
 ]
 
 // A preset's capabilities, limited to the kind of object a permission targets
@@ -394,50 +395,51 @@ export const presetMatching = (capabilities: string[], target: PermissionTarget)
   })
 
 // Filters of a permission, from broad to narrow. They combine with AND: in the selected projects, AND running on the
-// selected clusters, AND matching every tag condition, AND among the selected environments and services. An empty
-// filter does not restrict anything.
+// selected clusters, AND among the selected environments, AND among the selected services, AND matching every label
+// condition. An empty filter does not restrict anything.
 export const selectedIdsOfKind = (selection: RoleScope, kind: ResourceKind) =>
   selection.resourceIds.filter((id) => resourceById(id)?.kind === kind)
 
-// Environments allowed by the broad filters (projects, clusters, tags), before picking specific ones
-export const environmentsMatchingFilters = (selection: RoleScope) => {
+// Environments in the selected projects and on the selected clusters
+const environmentsInScope = (selection: RoleScope) => {
   const projects = selectedIdsOfKind(selection, 'project')
   const clusters = selectedIdsOfKind(selection, 'cluster')
   return RESOURCES.filter(
     (resource) =>
       resource.kind === 'environment' &&
       (projects.length === 0 || projects.includes(resource.parentId ?? '')) &&
-      (clusters.length === 0 || clusters.includes(resource.clusterId ?? '')) &&
+      (clusters.length === 0 || clusters.includes(resource.clusterId ?? ''))
+  )
+}
+
+// Environments allowed by the broad filters (projects, clusters, labels), before picking specific ones
+export const environmentsMatchingFilters = (selection: RoleScope) =>
+  environmentsInScope(selection).filter((environment) => matchesConditions(environment, selection.conditions))
+
+// Services allowed by the broad filters (projects, clusters, selected environments, labels), before picking specific
+// ones. A service's labels include its environment's.
+export const servicesMatchingFilters = (selection: RoleScope) => {
+  const selectedEnvironments = selectedIdsOfKind(selection, 'environment')
+  const environments = environmentsInScope(selection).filter(
+    (environment) => selectedEnvironments.length === 0 || selectedEnvironments.includes(environment.id)
+  )
+  return RESOURCES.filter(
+    (resource) =>
+      resource.kind === 'service' &&
+      environments.some((environment) => environment.id === resource.parentId) &&
       matchesConditions(resource, selection.conditions)
   )
 }
 
-export const matchTargetSelection = (target: PermissionTarget, selection: RoleScope) => {
-  if (target !== 'environment') {
-    const selected = selectedIdsOfKind(selection, target)
-    const objects = RESOURCES.filter(
-      (resource) =>
-        resource.kind === target &&
-        (selected.length === 0 || selected.includes(resource.id)) &&
-        matchesConditions(resource, selection.conditions)
-    )
-    return { objects, services: [] as Resource[] }
-  }
-
-  const selectedEnvironments = selectedIdsOfKind(selection, 'environment')
-  const selectedServices = selectedIdsOfKind(selection, 'service')
-  const objects = environmentsMatchingFilters(selection).filter(
-    (environment) =>
-      (selectedEnvironments.length === 0 || selectedEnvironments.includes(environment.id)) &&
-      (selectedServices.length === 0 || selectedServices.some((id) => resourceById(id)?.parentId === environment.id))
-  )
-  const services = RESOURCES.filter(
-    (resource) =>
-      resource.kind === 'service' &&
-      objects.some((environment) => environment.id === resource.parentId) &&
-      (selectedServices.length === 0 || selectedServices.includes(resource.id))
-  )
-  return { objects, services }
+export const matchTargetSelection = (target: PermissionTarget, selection: RoleScope): { objects: Resource[] } => {
+  const candidates =
+    target === 'environment'
+      ? environmentsMatchingFilters(selection)
+      : target === 'service'
+        ? servicesMatchingFilters(selection)
+        : RESOURCES.filter((resource) => resource.kind === target && matchesConditions(resource, selection.conditions))
+  const selected = selectedIdsOfKind(selection, target)
+  return { objects: candidates.filter((resource) => selected.length === 0 || selected.includes(resource.id)) }
 }
 
 // Roles
