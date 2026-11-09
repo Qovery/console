@@ -195,7 +195,6 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           phone: data.phone,
           use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
         })
-        // Feeds the PostHog → HubSpot destination (contact + company as inbound lead)
         posthog.capture('user-signed-up', {
           email: userEmail,
           first_name: firstName,

@@ -42,7 +42,6 @@ export function useUtmParams(): UtmParams {
   return utmParams
 }
 
-// Attribution stored by useCaptureUtmParams on landing; null when missing or storage is unavailable
 export function getStoredUtmParams(): Record<keyof UtmParams, string | null> {
   return Object.fromEntries(
     UTM_KEYS.map((key) => {
@@ -60,13 +59,11 @@ export function useCaptureUtmParams() {
     const params = new URLSearchParams(window.location.search)
     UTM_KEYS.forEach((key) => {
       const value = params.get(key)
-      if (value) {
-        // Storage can be blocked (privacy mode) or full: attribution is best-effort, never break app startup
-        try {
-          localStorage.setItem(key, value)
-        } catch {
-          // ignore
-        }
+      if (!value) return
+      try {
+        localStorage.setItem(key, value)
+      } catch {
+        return
       }
     })
   }, [])

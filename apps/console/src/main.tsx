@@ -186,7 +186,6 @@ function App() {
     initSentry()
   }, [])
 
-  // Store UTM/gclid from the landing URL before the Auth0 redirect drops them (read at sign-up)
   useCaptureUtmParams()
 
   // Keep PostHog's identified user in sync once Auth0 resolves the session
