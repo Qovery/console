@@ -211,6 +211,39 @@ describe('DeploymentLogsSteps', () => {
     expect(screen.queryByRole('heading', { name: 'Build' })).not.toBeInTheDocument()
   })
 
+  it('opens the step that logged an error when the API reports no failed step', () => {
+    // The engine stopped answering: the deployment failed, but its step got no status
+    mockLogs([
+      createLog(1, 'Cloning repository acme/web-app', 'Build', 'GIT_CLONE'),
+      createLog(2, 'Proceeding with up to 7 parallel deployment(s)', 'Deploy', 'DEPLOYMENT'),
+      {
+        ...createLog(3, '', 'Deploy', 'DEPLOYMENT'),
+        type: 'error',
+        error: { user_log_message: 'Failed to get an answer from the engine in 10 min' },
+      } as EnvironmentLogIds,
+    ])
+
+    renderWithProviders(
+      <DeploymentLogsSteps
+        environment={environment}
+        serviceStatus={{
+          ...serviceStatus,
+          status_details: { action: 'DEPLOY', status: 'ERROR', sub_action: 'NONE' },
+          steps: {
+            total_duration_sec: 7,
+            total_computing_duration_sec: 7,
+            details: [{ step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 }],
+          },
+        }}
+        deploymentHistory={[]}
+      />
+    )
+
+    expect(screen.getByRole('button', { name: /Deploying application/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('Failed to get an answer from the engine in 10 min')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Cloning repository/ })).toHaveAttribute('aria-expanded', 'false')
+  })
+
   it('opens the running step and lists only the steps that started', () => {
     mockLogs(logs.slice(0, 3))
 
