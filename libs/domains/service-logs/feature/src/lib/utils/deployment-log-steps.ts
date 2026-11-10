@@ -4,6 +4,7 @@ import {
   type PreCheckStepMetric,
   type ServiceActionEnum,
   type ServiceStepMetric,
+  type StageStepMetric,
   type StepMetricStatusEnum,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
@@ -52,9 +53,13 @@ interface StepMetric {
 
 const PHASE_IDS: DeploymentLogPhaseId[] = ['PRE_CHECK', 'BUILD', 'DEPLOY', 'EXECUTE']
 
+// Wait of the deployment stage before the engine runs it. It's not the queue of the build or of the deployment
+// (`BUILD_QUEUEING`, `DEPLOYMENT_QUEUEING`), which the engine times inside the stage.
+const STAGE_QUEUEING_STEP_NAME = 'STAGE_QUEUEING'
+
 // Display order of the steps of each phase. Step names the API adds later are shown after these ones.
 const PHASE_STEP_NAMES: Record<DeploymentLogPhaseId, string[]> = {
-  PRE_CHECK: ['CLOUD_CREDENTIALS_CHECK', 'GIT_CHECK'],
+  PRE_CHECK: ['CLOUD_CREDENTIALS_CHECK', 'GIT_CHECK', STAGE_QUEUEING_STEP_NAME],
   BUILD: [
     'REGISTRY_CREATE_REPOSITORY',
     'BUILD_QUEUEING',
@@ -97,17 +102,14 @@ function getPhaseFromStageStep(stageStep?: string): DeploymentLogPhaseId {
  * `step_name` names the step, `stage.step` gives the phase when the step name is generic, unknown or absent.
  */
 export function getDeploymentLogLineStep(log: EnvironmentLogs): { phase: DeploymentLogPhaseId; name: string } {
-  const stagePhase = getPhaseFromStageStep(log.details.stage?.step)
+  const stageStep = log.details.stage?.step
   const stepName = log.details.step_name
 
-  if (!stepName) return { phase: stagePhase, name: UNGROUPED_STEP_NAMES[stagePhase] }
+  // `QUEUEING` lines tell the wait of the stage for the engine, before its build and deployment start
+  if (stepName === 'QUEUEING' || stageStep === 'Queueing') return { phase: 'PRE_CHECK', name: STAGE_QUEUEING_STEP_NAME }
 
-  // Queueing lines share one name: their stage tells which queue they wait in
-  if (stepName === 'QUEUEING') {
-    return stagePhase === 'BUILD'
-      ? { phase: 'BUILD', name: 'BUILD_QUEUEING' }
-      : { phase: 'DEPLOY', name: 'DEPLOYMENT_QUEUEING' }
-  }
+  const stagePhase = getPhaseFromStageStep(stageStep)
+  if (!stepName) return { phase: stagePhase, name: UNGROUPED_STEP_NAMES[stagePhase] }
 
   return { phase: STEP_PHASES.get(stepName) ?? stagePhase, name: stepName }
 }
@@ -178,11 +180,15 @@ function getBuildStepMetric(build: ServiceStepMetric, nowMs: number): StepMetric
 function getStepMetrics({
   serviceSteps = [],
   preCheckSteps = [],
+  stageSteps = [],
+  linesByStep,
   serviceId,
   nowMs,
 }: {
   serviceSteps?: ServiceStepMetric[]
   preCheckSteps?: PreCheckStepMetric[]
+  stageSteps?: StageStepMetric[]
+  linesByStep: Map<string, DeploymentLogStepLines>
   serviceId: string
   nowMs: number
 }) {
@@ -194,6 +200,9 @@ function getStepMetrics({
     metrics.set(step.name, getStepMetric('PRE_CHECK', step, nowMs))
   }
 
+  const stageQueueing = stageSteps.find((step) => step.step_name === 'QUEUEING')
+  if (stageQueueing) metrics.set(STAGE_QUEUEING_STEP_NAME, getStepMetric('PRE_CHECK', stageQueueing, nowMs))
+
   for (const step of serviceSteps) {
     if (!step.step_name) continue
 
@@ -203,14 +212,16 @@ function getStepMetrics({
         metrics.set(subStep.name, getStepMetric('BUILD', subStep, nowMs))
       }
     } else {
-      metrics.set(step.step_name, getStepMetric(STEP_PHASES.get(step.step_name) ?? 'DEPLOY', step, nowMs))
+      // A step the API adds later goes in the phase its lines tell, so its metrics and lines stay on one row
+      const phase = STEP_PHASES.get(step.step_name) ?? linesByStep.get(step.step_name)?.phase ?? 'DEPLOY'
+      metrics.set(step.step_name, getStepMetric(phase, step, nowMs))
     }
   }
 
   return metrics
 }
 
-function getPhaseStatus(steps: DeploymentLogStep[]): DeploymentLogStepStatus | undefined {
+function getPhaseStatus(steps: Pick<DeploymentLogStep, 'status'>[]): DeploymentLogStepStatus | undefined {
   const statuses = new Set(steps.map((step) => step.status))
 
   if (statuses.has('ERROR')) return 'ERROR'
@@ -227,6 +238,8 @@ function getPhaseStatus(steps: DeploymentLogStep[]): DeploymentLogStepStatus | u
 export interface GetDeploymentLogPhasesProps<T extends EnvironmentLogs> {
   serviceSteps?: ServiceStepMetric[]
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
+  // Steps of the deployment stage of the service, for the wait of the stage
+  stageSteps?: StageStepMetric[]
   linesByStep: Map<string, DeploymentLogStepLines<T>>
   serviceId: string
   nowMs: number
@@ -240,11 +253,19 @@ export interface GetDeploymentLogPhasesProps<T extends EnvironmentLogs> {
 export function getDeploymentLogPhases<T extends EnvironmentLogs>({
   serviceSteps,
   preCheckStage,
+  stageSteps,
   linesByStep,
   serviceId,
   nowMs,
 }: GetDeploymentLogPhasesProps<T>): DeploymentLogPhase<T>[] {
-  const metrics = getStepMetrics({ serviceSteps, preCheckSteps: preCheckStage?.steps, serviceId, nowMs })
+  const metrics = getStepMetrics({
+    serviceSteps,
+    preCheckSteps: preCheckStage?.steps,
+    stageSteps,
+    linesByStep,
+    serviceId,
+    nowMs,
+  })
 
   const stepsByPhase = PHASE_IDS.map((phaseId) => {
     const knownStepNames = PHASE_STEP_NAMES[phaseId]
@@ -302,36 +323,55 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
     if (steps.length === 0 && ungroupedLines.length === 0) return []
 
     const timedSteps = steps.filter((step) => step.durationSec !== undefined)
-    // Pre-checks without step metrics (older deployments, or no check run) only have the status and time of the stage
+    // Pre-checks without step metrics (older deployments, or no check run) only have the status and time of the
+    // pre-check stage, which add up with the wait of the stage
     const preCheckStageMetric =
-      phaseId === 'PRE_CHECK' && steps.every((step) => !step.status) ? preCheckStage : undefined
+      phaseId === 'PRE_CHECK' && steps.every((step) => !step.status || step.name === STAGE_QUEUEING_STEP_NAME)
+        ? preCheckStage
+        : undefined
+    const stepsDurationSec =
+      timedSteps.length > 0
+        ? timedSteps.reduce((totalDurationSec, step) => totalDurationSec + (step.durationSec ?? 0), 0)
+        : undefined
+    const preCheckStageDurationSec = preCheckStageMetric?.total_duration_sec
     const phase = {
       id: phaseId,
-      status: getPhaseStatus(steps) ?? preCheckStageMetric?.status,
+      status: getPhaseStatus(preCheckStageMetric?.status ? [...steps, { status: preCheckStageMetric.status }] : steps),
       durationSec:
-        timedSteps.length > 0
-          ? timedSteps.reduce((totalDurationSec, step) => totalDurationSec + (step.durationSec ?? 0), 0)
-          : preCheckStageMetric?.total_duration_sec,
+        preCheckStageDurationSec !== undefined ? (stepsDurationSec ?? 0) + preCheckStageDurationSec : stepsDurationSec,
       isLive: steps.some((step) => step.isLive),
     }
 
     if (ungroupedLines.length === 0) return [{ ...phase, steps }]
+
+    // The step metrics may have missed the failure of the lines that name no step: an error line among them tells
+    // the phase failed once it no longer runs
+    const hasErrorLine = ungroupedLines.some((line) => line.type === LogsType.ERROR)
+    const ungroupedErrorStatus = hasErrorLine && phase.status !== 'ONGOING' ? ('ERROR' as const) : undefined
 
     // Some lines name their step: the others come after the steps
     if (steps.some((step) => step.lines.length > 0)) {
       return [
         {
           ...phase,
-          steps: [...steps, { name: ungroupedStepName, isLive: false, lines: ungroupedLines, isUngrouped: true }],
+          status: ungroupedErrorStatus ?? phase.status,
+          steps: [
+            ...steps,
+            {
+              name: ungroupedStepName,
+              status: ungroupedErrorStatus,
+              isLive: false,
+              lines: ungroupedLines,
+              isUngrouped: true,
+            },
+          ],
         },
       ]
     }
 
     // No line names its step (older deployments): the steps are replaced by all the lines of the phase, with its
-    // status and duration. Their metrics may have missed the failure, or time only the part that went through: an
-    // error line tells the phase failed once it no longer runs.
-    const hasErrorLine = ungroupedLines.some((line) => line.type === LogsType.ERROR)
-    const status = hasErrorLine && phase.status !== 'ONGOING' ? 'ERROR' : phase.status
+    // status and duration, which may also time only the part that went through
+    const status = ungroupedErrorStatus ?? phase.status
     return [
       {
         ...phase,
@@ -379,12 +419,13 @@ export function filterDeploymentLogPhases<T extends EnvironmentLogs>(phases: Dep
 
 /**
  * Returns the step that took the longest across every phase.
- * Rows of lines without step are left out: they time a whole phase, not a step.
+ * Rows of lines without step are left out: they time a whole phase, not a step. So is the wait of the stage, which
+ * waits for the other deployments and isn't work of the service to speed up.
  */
 export function getSlowestDeploymentLogStepName(phases: DeploymentLogPhase[]) {
   const timedSteps = phases
     .flatMap((phase) => phase.steps)
-    .filter((step) => !step.isUngrouped && (step.durationSec ?? 0) > 0)
+    .filter((step) => !step.isUngrouped && step.name !== STAGE_QUEUEING_STEP_NAME && (step.durationSec ?? 0) > 0)
   if (timedSteps.length < 2) return undefined
 
   return timedSteps.reduce((slowestStep, step) =>
@@ -409,6 +450,7 @@ const STEP_LABELS: Record<string, string> = {
   CLOUD_CREDENTIALS_CHECK: 'Checking cloud credentials',
   GIT_CHECK: 'Checking Git repository',
   REGISTRY_CREATE_REPOSITORY: 'Creating registry repository',
+  [STAGE_QUEUEING_STEP_NAME]: 'Waiting in stage queue',
   BUILD_QUEUEING: 'Waiting for a builder',
   GIT_CLONE: 'Cloning repository',
   PROVISION_BUILDER: 'Provisioning builder',
