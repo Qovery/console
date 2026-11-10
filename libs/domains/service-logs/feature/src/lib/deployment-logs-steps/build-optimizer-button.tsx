@@ -80,7 +80,10 @@ export function BuildOptimizerButton({
     }
   }, [isAwaitingResult, state, openAnalysis])
 
-  if (isError) return <DisabledOptimizeButton reason="The build analysis is unavailable" />
+  // React Query keeps the last data when a refetch fails: a finished analysis stays available to reopen
+  if (isError && state.type !== 'DONE') {
+    return <DisabledOptimizeButton reason="The build analysis is unavailable" />
+  }
 
   if (state.type === 'BUILD_NOT_SUCCEEDED') {
     return <DisabledOptimizeButton reason="Available once the build succeeded" />

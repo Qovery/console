@@ -155,6 +155,13 @@ describe('BuildOptimizerButton', () => {
     expect(screen.getByText('The dependency install step is not cached.')).toBeInTheDocument()
   })
 
+  it('still opens a finished analysis when reading it again fails', () => {
+    mockBuildAnalysisState({ latest_build_execution_id: 'exec-1', analysis: analysisOf('DONE') }, true)
+    renderButton()
+
+    expect(screen.getByRole('button', { name: 'Open analysis' })).toBeEnabled()
+  })
+
   it('opens the analysis of an older build', () => {
     mockBuildAnalysisState({ latest_build_execution_id: 'exec-2', analysis: analysisOf('DONE') })
     renderButton()
