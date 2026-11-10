@@ -104,10 +104,22 @@ describe('BuildOptimizerButton', () => {
     mockBuildAnalysisState({ latest_build_execution_id: 'exec-1', analysis: analysisOf('ANALYSING') })
     renderButton()
 
-    expect(screen.getByRole('button', { name: 'Analyzing' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Analyzing...' })).toBeInTheDocument()
     expect(useBuildAnalysisProgressMock).toHaveBeenLastCalledWith(
       expect.objectContaining({ serviceId: 'service-1', environmentId: environment.id, enabled: true })
     )
+  })
+
+  it('shows the current step of the analysis in the button', () => {
+    mockBuildAnalysisState({ latest_build_execution_id: 'exec-1', analysis: analysisOf('ANALYSING') })
+    useBuildAnalysisProgressMock.mockReturnValue({
+      status: 'ANALYSING',
+      step: 'Reading the Dockerfile',
+      terminal: false,
+    })
+    renderButton()
+
+    expect(screen.getByRole('button', { name: 'Reading the Dockerfile...' })).toBeInTheDocument()
   })
 
   it('opens the analysis it started once it is done', async () => {
@@ -125,7 +137,7 @@ describe('BuildOptimizerButton', () => {
     const { userEvent } = renderButton()
 
     await userEvent.click(screen.getByRole('button', { name: 'Optimize' }))
-    expect(screen.getByRole('button', { name: 'Analyzing' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Analyzing...' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Build optimization analysis' })).not.toBeInTheDocument()
 
     act(() => setBuildAnalysisState({ latest_build_execution_id: 'exec-1', analysis: analysisOf('DONE') }))

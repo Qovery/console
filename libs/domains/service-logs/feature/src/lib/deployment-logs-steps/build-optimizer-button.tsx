@@ -91,20 +91,14 @@ export function BuildOptimizerButton({
   }
 
   if (state.type === 'ANALYZING' || isStarting) {
-    const analyzingButton = (
-      <Button size="xs" className="pointer-events-none" aria-disabled="true">
-        <Icon iconName="spinner" iconStyle="regular" className="animate-spin" />
-        Analyzing
-      </Button>
-    )
+    // The current step of the analysis, once its progress comes in
     const step = progress && !progress.terminal ? progress.step : undefined
 
-    return step ? (
-      <Tooltip content={step}>
-        <span>{analyzingButton}</span>
-      </Tooltip>
-    ) : (
-      analyzingButton
+    return (
+      <Button size="xs" className="pointer-events-none" aria-disabled="true">
+        <Icon iconName="spinner" iconStyle="regular" className="animate-spin" />
+        {step ?? 'Analyzing'}...
+      </Button>
     )
   }
 
