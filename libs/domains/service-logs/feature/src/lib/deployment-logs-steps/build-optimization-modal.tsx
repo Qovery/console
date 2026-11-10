@@ -1,10 +1,21 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import {
+  type BuildAnalysisAsset,
+  type BuildAnalysisConfidence,
+  type BuildAnalysisResult,
+} from 'qovery-typescript-axios'
 import { type PropsWithChildren, useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Button, Heading, Icon } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { formatDeploymentLogDuration } from '../utils/deployment-log-steps'
-import { type BuildOptimizationAnalysis, type BuildOptimizationConfidence } from './build-optimization-analysis'
+
+const ASSET_LABELS: Record<BuildAnalysisAsset, string> = {
+  DOCKERFILE: 'Dockerfile',
+  DOCKERIGNORE: '.dockerignore',
+  BUILD_LOGS: 'Build logs',
+  BUILD_SETTINGS: 'Build settings',
+}
 
 function AnalysisLabel({ iconName, children }: PropsWithChildren<{ iconName: IconName }>) {
   return (
@@ -24,7 +35,7 @@ function AnalysisRow({ iconName, label, children }: PropsWithChildren<{ iconName
   )
 }
 
-function ConfidenceBadge({ confidence }: { confidence: BuildOptimizationConfidence }) {
+function ConfidenceBadge({ confidence }: { confidence: BuildAnalysisConfidence }) {
   const { color, label } = match(confidence)
     .with('HIGH', () => ({ color: 'green' as const, label: 'High' }))
     .with('MEDIUM', () => ({ color: 'yellow' as const, label: 'Medium' }))
@@ -38,7 +49,7 @@ function ConfidenceBadge({ confidence }: { confidence: BuildOptimizationConfiden
   )
 }
 
-function CopyPromptButton({ prompt }: { prompt: string }) {
+function CopyButton({ content }: { content: string }) {
   const [, copyToClipboard] = useCopyToClipboard()
   const [isCopied, setIsCopied] = useState(false)
 
@@ -54,7 +65,7 @@ function CopyPromptButton({ prompt }: { prompt: string }) {
       color="neutral"
       size="sm"
       onClick={() => {
-        copyToClipboard(prompt)
+        copyToClipboard(content)
         setIsCopied(true)
       }}
     >
@@ -64,14 +75,40 @@ function CopyPromptButton({ prompt }: { prompt: string }) {
   )
 }
 
+// A block to expand and copy, like a prompt or a file
+function CollapsibleCodeBlock({ title, content }: { title: string; content: string }) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div className="rounded-lg border border-neutral bg-surface-neutral-subtle">
+      <div className="flex items-center justify-between gap-4 py-2 pl-3 pr-2">
+        <button
+          type="button"
+          className="flex flex-1 items-center gap-1.5 text-left text-sm font-medium text-neutral-subtle"
+          aria-expanded={isOpen}
+          onClick={() => setIsOpen((isOpen) => !isOpen)}
+        >
+          <Icon iconName={isOpen ? 'angle-down' : 'angle-right'} iconStyle="regular" className="w-3.5" />
+          {title}
+        </button>
+        <CopyButton content={content} />
+      </div>
+      {isOpen && (
+        <p className="whitespace-pre-wrap border-t border-neutral px-3 py-2 font-code text-xs text-neutral">
+          {content}
+        </p>
+      )}
+    </div>
+  )
+}
+
 export interface BuildOptimizationModalProps {
-  analysis: BuildOptimizationAnalysis
+  analysis: BuildAnalysisResult
   onClose: () => void
 }
 
 export function BuildOptimizationModal({ analysis, onClose }: BuildOptimizationModalProps) {
-  const [isPromptOpen, setIsPromptOpen] = useState(false)
-  const { min, max } = analysis.estimatedTimeSavedSec
+  const timeSaved = analysis.estimated_time_saved
 
   return (
     <div className="flex flex-col">
@@ -82,16 +119,21 @@ export function BuildOptimizationModal({ analysis, onClose }: BuildOptimizationM
         <AnalysisRow iconName="gauge" label="Review confidence">
           <ConfidenceBadge confidence={analysis.confidence} />
         </AnalysisRow>
-        <AnalysisRow iconName="clock" label="Estimated time saved">
-          <span className="text-sm text-neutral">
-            {formatDeploymentLogDuration(min)} – {formatDeploymentLogDuration(max)}
-          </span>
-        </AnalysisRow>
+        {/* Nothing to save, or no timing to base it on */}
+        {timeSaved && (
+          <AnalysisRow iconName="clock" label="Estimated time saved">
+            <span className="text-sm text-neutral">
+              {timeSaved.min_seconds === timeSaved.max_seconds
+                ? formatDeploymentLogDuration(timeSaved.max_seconds)
+                : `${formatDeploymentLogDuration(timeSaved.min_seconds)} – ${formatDeploymentLogDuration(timeSaved.max_seconds)}`}
+            </span>
+          </AnalysisRow>
+        )}
         <AnalysisRow iconName="file" label="Assets reviewed">
           <ul className="flex flex-wrap justify-end gap-2">
-            {analysis.reviewedAssets.map((asset) => (
+            {analysis.assets_reviewed.map((asset) => (
               <li key={asset}>
-                <Badge className="bg-background text-ssm">{asset}</Badge>
+                <Badge className="bg-background text-ssm">{ASSET_LABELS[asset] ?? asset}</Badge>
               </li>
             ))}
           </ul>
@@ -101,31 +143,31 @@ export function BuildOptimizationModal({ analysis, onClose }: BuildOptimizationM
             <AnalysisLabel iconName="sparkles">Summary</AnalysisLabel>
             <p>{analysis.summary}</p>
             <Heading level={3}>Improvements target</Heading>
-            <ol className="list-decimal pl-5">
-              {analysis.improvements.map((improvement) => (
-                <li key={improvement}>{improvement}</li>
-              ))}
-            </ol>
-          </div>
-          <div className="rounded-lg border border-neutral bg-surface-neutral-subtle">
-            <div className="flex items-center justify-between gap-4 py-2 pl-3 pr-2">
-              <button
-                type="button"
-                className="flex flex-1 items-center gap-1.5 text-left text-sm font-medium text-neutral-subtle"
-                aria-expanded={isPromptOpen}
-                onClick={() => setIsPromptOpen((isOpen) => !isOpen)}
-              >
-                <Icon iconName={isPromptOpen ? 'angle-down' : 'angle-right'} iconStyle="regular" className="w-3.5" />
-                Prompt for AI agents
-              </button>
-              <CopyPromptButton prompt={analysis.agentPrompt} />
-            </div>
-            {isPromptOpen && (
-              <p className="whitespace-pre-wrap border-t border-neutral px-3 py-2 font-code text-xs text-neutral">
-                {analysis.agentPrompt}
-              </p>
+            {analysis.improvements.length > 0 ? (
+              <ol className="list-decimal pl-5">
+                {analysis.improvements.map((improvement) => (
+                  <li key={improvement}>{improvement}</li>
+                ))}
+              </ol>
+            ) : (
+              <p className="text-neutral-subtle">No improvement found: this build is already efficient.</p>
             )}
           </div>
+          {analysis.dockerfile && (
+            <div className="flex flex-col gap-2">
+              <CollapsibleCodeBlock title="Reworked Dockerfile" content={analysis.dockerfile} />
+              {analysis.dockerfile_rationale && (
+                <p className="text-sm text-neutral-subtle">{analysis.dockerfile_rationale}</p>
+              )}
+              {analysis.dockerfile.includes('<redacted>') && (
+                <p className="text-sm text-neutral-subtle">
+                  Values hidden from the analysis appear as <code className="font-code">&lt;redacted&gt;</code>: put
+                  them back before using this Dockerfile.
+                </p>
+              )}
+            </div>
+          )}
+          <CollapsibleCodeBlock title="Prompt for AI agents" content={analysis.agent_prompt} />
         </div>
       </div>
       <div className="flex justify-end border-t border-neutral px-5 py-4">

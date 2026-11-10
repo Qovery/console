@@ -4,6 +4,7 @@ import {
   AgenticWorkflowsApi,
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
+  ApplicationBuildAnalysisApi,
   ApplicationConfigurationApi,
   ApplicationCustomDomainApi,
   type DeployRequest as ApplicationDeployRequest,
@@ -57,6 +58,7 @@ import {
   HelmsApi,
   JobActionsApi,
   type JobAdvancedSettings,
+  JobBuildAnalysisApi,
   JobConfigurationApi,
   type JobDeployRequest,
   JobDeploymentHistoryApi,
@@ -153,6 +155,9 @@ const argoCdApi = new ArgoCDApi()
 
 const serviceMainCallsApi = new ServiceMainCallsApi()
 
+const applicationBuildAnalysisApi = new ApplicationBuildAnalysisApi()
+const jobBuildAnalysisApi = new JobBuildAnalysisApi()
+
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
 // ServiceTypeEnum still exist mainly for compatibility reason (to use redux and react-query fetched services in data-access).
@@ -167,6 +172,9 @@ export type HelmType = Extract<ServiceType, 'HELM'>
 export type TerraformType = Extract<ServiceType, 'TERRAFORM'>
 export type ArgoCdType = Extract<ServiceType, 'ARGOCD_APP'>
 export type AgenticWorkflowType = Extract<ServiceType, 'AGENTIC_WORKFLOW'>
+
+// Services whose latest build can be analysed to make it faster
+export type BuildAnalysisServiceType = Extract<ServiceType, 'APPLICATION' | 'JOB'>
 
 export const BUILD_SETTINGS_SERVICE_TYPES: readonly ServiceType[] = ['APPLICATION', 'JOB', 'TERRAFORM'] as const
 
@@ -698,6 +706,16 @@ export const services = createQueryKeys('services', {
         .exhaustive()
     },
   }),
+  buildAnalysis: ({ serviceId, serviceType }: { serviceId: string; serviceType: BuildAnalysisServiceType }) => ({
+    queryKey: [serviceId, serviceType],
+    async queryFn() {
+      const response = await match(serviceType)
+        .with('APPLICATION', () => applicationBuildAnalysisApi.getApplicationBuildAnalysis(serviceId))
+        .with('JOB', () => jobBuildAnalysisApi.getJobBuildAnalysis(serviceId))
+        .exhaustive()
+      return response.data
+    },
+  }),
   defaultAdvancedSettings: ({ serviceType }: { serviceType: AdvancedSettingsServiceType }) => ({
     queryKey: [serviceType],
     async queryFn() {
@@ -973,6 +991,22 @@ type EditAdvancedSettingsRequest = {
 }
 
 export const mutations = {
+  async startBuildAnalysis({
+    serviceId,
+    serviceType,
+    executionId,
+  }: {
+    serviceId: string
+    serviceType: BuildAnalysisServiceType
+    executionId: string
+  }) {
+    const request = { execution_id: executionId }
+    const response = await match(serviceType)
+      .with('APPLICATION', () => applicationBuildAnalysisApi.startApplicationBuildAnalysis(serviceId, request))
+      .with('JOB', () => jobBuildAnalysisApi.startJobBuildAnalysis(serviceId, request))
+      .exhaustive()
+    return response.data
+  },
   async deployAgenticWorkflow({ agenticWorkflowId }: { agenticWorkflowId: string }) {
     const response = await agenticWorkflowsApi.deployAgenticWorkflow(agenticWorkflowId)
     return response.data

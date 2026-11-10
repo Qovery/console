@@ -22,7 +22,7 @@ describe('mutations.exportTerraform', () => {
 
     const result = await mutations.exportTerraform(request)
 
-    expect(exportConfiguration).toHaveBeenCalledWith('111', false, { responseType: 'blob' })
+    expect(exportConfiguration).toHaveBeenCalledWith('111', { responseType: 'blob' })
     expect(result).toBe(archive)
   })
 })
