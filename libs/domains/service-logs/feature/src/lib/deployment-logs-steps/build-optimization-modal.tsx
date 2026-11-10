@@ -17,6 +17,29 @@ const ASSET_LABELS: Record<BuildAnalysisAsset, string> = {
   BUILD_SETTINGS: 'Build settings',
 }
 
+// Same style as the inline code of the rest of the console
+const INLINE_CODE_CLASS_NAME = 'rounded bg-surface-neutral-component px-1 py-0.5 font-mono text-xs'
+
+// The analysis wraps commands, paths and variable names in backticks, like Markdown inline code
+function TextWithInlineCode({ text }: { text: string }) {
+  const parts = text.split('`')
+  // An unmatched backtick stays as it is
+  if (parts.length % 2 === 0) {
+    const lastPart = parts.pop()
+    parts[parts.length - 1] += '`' + lastPart
+  }
+
+  return parts.map((part, index) =>
+    index % 2 === 1 && part ? (
+      <code key={index} className={INLINE_CODE_CLASS_NAME}>
+        {part}
+      </code>
+    ) : (
+      part
+    )
+  )
+}
+
 function AnalysisLabel({ iconName, children }: PropsWithChildren<{ iconName: IconName }>) {
   return (
     <span className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-neutral-subtle">
@@ -141,12 +164,16 @@ export function BuildOptimizationModal({ analysis, onClose }: BuildOptimizationM
         <div className="flex flex-col gap-4 p-4">
           <div className="flex flex-col gap-2 text-sm text-neutral">
             <AnalysisLabel iconName="sparkles">Summary</AnalysisLabel>
-            <p>{analysis.summary}</p>
+            <p>
+              <TextWithInlineCode text={analysis.summary} />
+            </p>
             <Heading level={3}>Improvements target</Heading>
             {analysis.improvements.length > 0 ? (
               <ol className="list-decimal pl-5">
                 {analysis.improvements.map((improvement) => (
-                  <li key={improvement}>{improvement}</li>
+                  <li key={improvement}>
+                    <TextWithInlineCode text={improvement} />
+                  </li>
                 ))}
               </ol>
             ) : (
@@ -157,12 +184,15 @@ export function BuildOptimizationModal({ analysis, onClose }: BuildOptimizationM
             <div className="flex flex-col gap-2">
               <CollapsibleCodeBlock title="Reworked Dockerfile" content={analysis.dockerfile} />
               {analysis.dockerfile_rationale && (
-                <p className="text-sm text-neutral-subtle">{analysis.dockerfile_rationale}</p>
+                <p className="text-sm text-neutral-subtle">
+                  <TextWithInlineCode text={analysis.dockerfile_rationale} />
+                </p>
               )}
               {analysis.dockerfile.includes('<redacted>') && (
                 <p className="text-sm text-neutral-subtle">
-                  Values hidden from the analysis appear as <code className="font-code">&lt;redacted&gt;</code>: put
-                  them back before using this Dockerfile.
+                  Values hidden from the analysis appear as{' '}
+                  <code className={INLINE_CODE_CLASS_NAME}>&lt;redacted&gt;</code>: put them back before using this
+                  Dockerfile.
                 </p>
               )}
             </div>

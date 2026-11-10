@@ -24,6 +24,26 @@ describe('BuildOptimizationModal', () => {
     expect(screen.getAllByRole('listitem')).toHaveLength(7)
   })
 
+  it('shows the text between backticks as inline code', () => {
+    renderWithProviders(
+      <BuildOptimizationModal
+        analysis={{
+          ...analysis,
+          summary: '`RUN yarn install` took 104.9 s and `/root/.yarn` is not used',
+          improvements: ['Move the `ARG` block', 'Keep the unmatched ` backtick'],
+          dockerfile_rationale: 'The `ARG` block moves after the install.',
+        }}
+        onClose={jest.fn()}
+      />
+    )
+
+    expect(screen.getByText('RUN yarn install', { selector: 'code' })).toBeInTheDocument()
+    expect(screen.getByText('/root/.yarn', { selector: 'code' })).toBeInTheDocument()
+    expect(screen.getAllByText('ARG', { selector: 'code' })).toHaveLength(2)
+    expect(screen.getByText('Keep the unmatched ` backtick')).toBeInTheDocument()
+    expect(screen.queryByText(/`/, { selector: 'code' })).not.toBeInTheDocument()
+  })
+
   it('shows the prompt for AI agents once expanded', async () => {
     const { userEvent } = renderWithProviders(<BuildOptimizationModal analysis={analysis} onClose={jest.fn()} />)
 
