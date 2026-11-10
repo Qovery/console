@@ -88,6 +88,7 @@ function getDefaultValues(
 
         const autoscalingWithFields = resourceService.autoscaling as {
           scalers?: Array<{
+            id?: string
             scaler_type?: string
             config_yaml?: string
             config_json?: Record<string, unknown>
@@ -97,6 +98,7 @@ function getDefaultValues(
 
         return (
           autoscalingWithFields.scalers?.map((scaler) => ({
+            id: scaler?.id,
             type: scaler?.scaler_type || '',
             // Scalers created via the Terraform provider may only have `config_json` set
             ...(!scaler?.config_yaml && scaler?.config_json

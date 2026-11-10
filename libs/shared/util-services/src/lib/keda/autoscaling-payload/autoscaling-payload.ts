@@ -6,6 +6,7 @@ import { P, match } from 'ts-pattern'
  */
 export interface KedaAutoscalingFields {
   scalers?: Array<{
+    id?: string
     type: string
     config: string
     configFormat?: 'yaml' | 'json'
@@ -20,6 +21,7 @@ type AutoscalingPolicyResponseWithFields = AutoscalingPolicyResponse & {
   polling_interval_seconds?: number
   cooldown_period_seconds?: number
   scalers: Array<{
+    id: string
     scaler_type: string
     enabled: boolean
     role: string
@@ -36,6 +38,7 @@ type AutoscalingPolicyRequestWithFields = AutoscalingPolicyRequest & {
   polling_interval_seconds?: number
   cooldown_period_seconds?: number
   scalers: Array<{
+    id?: string
     scaler_type: string
     enabled: boolean
     role: 'PRIMARY' | 'SAFETY'
@@ -96,6 +99,7 @@ export function convertAutoscalingResponseToRequest(
     polling_interval_seconds: responseWithFields.polling_interval_seconds,
     cooldown_period_seconds: responseWithFields.cooldown_period_seconds,
     scalers: scalers.map((scaler) => ({
+      id: scaler.id,
       scaler_type: scaler.scaler_type,
       enabled: scaler.enabled,
       role: scaler.role as 'PRIMARY' | 'SAFETY',
@@ -130,6 +134,7 @@ function processAutoscalingRequest(
         polling_interval_seconds: req.autoscaling_polling_interval ?? 30,
         cooldown_period_seconds: req.autoscaling_cooldown_period ?? 300,
         scalers: validScalers.map((scaler, index) => ({
+          id: scaler.id,
           scaler_type: scaler.type,
           enabled: true,
           role: index === 0 ? 'PRIMARY' : 'SAFETY',
@@ -192,6 +197,7 @@ export function extractAndProcessAutoscaling<T extends Record<string, unknown>>(
  * Form data type for scalers with trigger authentication
  */
 export type ScalerFormData = {
+  id?: string
   type: string
   config: string
   configFormat?: 'yaml' | 'json'
@@ -249,6 +255,7 @@ export function buildAutoscalingRequestFromForm(
       // KEDA mode: include trigger authentication directly in scaler payload
       const scalersWithAuth = ((formData['scalers'] || []) as ScalerFormData[]).map((scaler) => {
         const baseScaler = {
+          id: scaler.id,
           type: scaler.type,
           config: scaler.config,
           configFormat: scaler.configFormat,
