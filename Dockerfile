@@ -4,7 +4,16 @@ FROM node:24.14.0-alpine AS builder
 # Add a work directory
 WORKDIR /app
 
-# Define all build arguments and environment variables
+# Install dependencies with cache mount for faster rebuilds
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn .yarn
+RUN --mount=type=cache,target=/root/.yarn \
+    yarn install --immutable
+
+# Copy source files (use .dockerignore to exclude unnecessary files)
+COPY . .
+
+# Build arguments declared after the install so they do not invalidate its cache
 ARG NODE_ENV
 ARG NX_PUBLIC_QOVERY_API
 ARG NX_PUBLIC_QOVERY_WS
@@ -34,15 +43,6 @@ ENV NODE_ENV=$NODE_ENV \
     NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL=$NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL \
     NX_PUBLIC_MINTLIFY_API_KEY=$NX_PUBLIC_MINTLIFY_API_KEY \
     NX_PUBLIC_INSTATUS_APP_ID=$NX_PUBLIC_INSTATUS_APP_ID
-
-# Install dependencies with cache mount for faster rebuilds
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn .yarn
-RUN --mount=type=cache,target=/root/.yarn \
-    yarn install --immutable
-
-# Copy source files (use .dockerignore to exclude unnecessary files)
-COPY . .
 
 # Call Vite directly: `nx build` adds ~9 min of cold Nx daemon/executor overhead on the builder
 RUN sh scripts/build-console-direct.sh
