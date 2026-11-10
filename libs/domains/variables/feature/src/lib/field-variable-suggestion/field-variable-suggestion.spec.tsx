@@ -66,4 +66,10 @@ describe('FieldVariableSuggestion', () => {
 
     expect(mockUseVariables).toHaveBeenCalledWith({ parentId: 'service-1', scope: 'HELM' })
   })
+
+  it('should fall back to environment variables when serviceId is provided without scope', () => {
+    renderWithProviders(<FieldVariableSuggestion {...props} serviceId="service-1" />)
+
+    expect(mockUseVariables).toHaveBeenLastCalledWith({ parentId: '000', scope: 'ENVIRONMENT' })
+  })
 })
