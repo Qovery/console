@@ -149,6 +149,8 @@ const TerraformArgumentsSettingsContent = ({ service }: { service: Terraform }) 
                       rightElement={
                         <DropdownVariable
                           environmentId={environmentId}
+                          serviceId={service.id}
+                          scope="TERRAFORM"
                           onChange={(val) => {
                             const currentValue = field.value?.join(DELIMETER) || ''
                             const newValue = currentValue ? `${currentValue} {{${val}}}` : `{{${val}}}`
