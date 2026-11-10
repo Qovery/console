@@ -1,7 +1,13 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type DeploymentHistoryEnvironmentV2, type Status } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { useDeploymentStatus, useLinks, useService } from '@qovery/domains/services/feature'
+import {
+  useBuildAnalysis,
+  useDeploymentStatus,
+  useLinks,
+  useService,
+  useStartBuildAnalysis,
+} from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -147,6 +153,13 @@ describe('ListDeploymentLogs', () => {
         serviceType: 'APPLICATION',
       },
     })
+    jest.mocked(useBuildAnalysis).mockReturnValue({
+      data: { latest_build_execution_id: '4', analysis: null },
+      isError: false,
+    } as ReturnType<typeof useBuildAnalysis>)
+    jest
+      .mocked(useStartBuildAnalysis)
+      .mockReturnValue({ mutate: jest.fn(), isLoading: false } as unknown as ReturnType<typeof useStartBuildAnalysis>)
     useLinks.mockReturnValue({
       data: [{ id: 'link-1', url: 'https://example.com', is_default: false, is_qovery_domain: false }],
     })

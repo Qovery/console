@@ -209,7 +209,7 @@ export const mutations = {
     return result.data
   },
   async exportTerraform({ environmentId }: { environmentId: string }) {
-    const result = await environmentExportApi.exportEnvironmentConfigurationIntoTerraform(environmentId, false, {
+    const result = await environmentExportApi.exportEnvironmentConfigurationIntoTerraform(environmentId, {
       responseType: 'blob',
     })
     return result.data
