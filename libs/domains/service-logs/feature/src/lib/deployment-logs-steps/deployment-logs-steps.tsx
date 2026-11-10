@@ -11,6 +11,7 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { EmptyState, Heading, Icon, InputSearch } from '@qovery/shared/ui'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
@@ -88,8 +89,11 @@ export function DeploymentLogsSteps({
   const [searchQuery, setSearchQuery] = useState('')
   const deferredSearchQuery = useDeferredValue(searchQuery)
   const [openStepOverrides, setOpenStepOverrides] = useState<Record<string, boolean>>({})
-  // The build optimization analysis is a sample until the API serves it
   const isBuildOptimizerEnabled = useFeatureFlagEnabled('deployment-logs-build-optimizer') === true
+  // Only the builds of applications and jobs can be analysed
+  const buildAnalysisServiceType = match(service?.serviceType)
+    .with('APPLICATION', 'JOB', (serviceType) => serviceType)
+    .otherwise(() => undefined)
 
   // Lines linked from the URL hash: `#L12`, or `#L12-L20`
   const { hash } = useLocation()
@@ -208,8 +212,13 @@ export function DeploymentLogsSteps({
                     </Heading>
                     <DeploymentLogStatusIcon status={phase.status} />
                   </div>
-                  {phase.id === 'BUILD' && isBuildOptimizerEnabled && (
-                    <BuildOptimizerButton isBuildSucceeded={buildStep?.status === 'SUCCESS'} />
+                  {phase.id === 'BUILD' && isBuildOptimizerEnabled && buildAnalysisServiceType && (
+                    <BuildOptimizerButton
+                      environment={environment}
+                      serviceId={serviceId}
+                      serviceType={buildAnalysisServiceType}
+                      isBuildSucceeded={buildStep?.status === 'SUCCESS'}
+                    />
                   )}
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
