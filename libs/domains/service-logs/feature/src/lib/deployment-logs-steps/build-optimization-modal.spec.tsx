@@ -93,6 +93,12 @@ describe('BuildOptimizationModal', () => {
     expect(screen.getByText('No improvement found: this build is already efficient.')).toBeInTheDocument()
   })
 
+  it('shows the time saved as a share of the build duration', () => {
+    renderWithProviders(<BuildOptimizationModal analysis={analysis} buildDurationSec={180} onClose={jest.fn()} />)
+
+    expect(screen.getByText('50s – 1min 30s', { exact: false })).toHaveTextContent('50s – 1min 30s (28–50%)')
+  })
+
   it('shows a single duration when the estimate is not a range', () => {
     renderWithProviders(
       <BuildOptimizationModal
