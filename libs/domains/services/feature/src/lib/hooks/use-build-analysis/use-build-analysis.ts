@@ -17,6 +17,7 @@ export function useBuildAnalysis({ serviceId, serviceType, executionId, enabled 
   return useQuery({
     ...queries.services.buildAnalysis({ serviceId, serviceType, executionId }),
     enabled,
+    staleTime: 12,
   })
 }
 
