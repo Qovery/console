@@ -139,6 +139,46 @@ describe('DeploymentLogsSteps', () => {
     expect(await screen.findAllByText('14.8 / 16 GiB (92%)')).not.toHaveLength(0)
   })
 
+  it('lists the wait of the stage in the pre-check, apart from the deployment queue', async () => {
+    mockLogs([
+      createLog(1, 'Your deployment is 1 in the Queue', 'Queueing', 'QUEUEING'),
+      createLog(2, 'Cloning repository acme/web-app', 'Build', 'GIT_CLONE'),
+      createLog(3, 'Pod is ready', 'Deploy', 'DEPLOYMENT'),
+    ])
+
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps
+        environment={environment}
+        serviceStatus={{
+          ...serviceStatus,
+          steps: {
+            total_duration_sec: 18,
+            total_computing_duration_sec: 18,
+            details: [
+              { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
+              { step_name: 'DEPLOYMENT_QUEUEING', status: 'SUCCESS', duration_sec: 0 },
+              { step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 11 },
+            ],
+          },
+        }}
+        stage={{
+          id: 'stage-1',
+          name: 'DEFAULT',
+          description: '',
+          steps: { details: [{ step_name: 'QUEUEING', status: 'SUCCESS', duration_sec: 12 }] },
+        }}
+        deploymentHistory={[]}
+      />
+    )
+
+    expect(screen.getByRole('heading', { name: 'Pre-check' })).toBeInTheDocument()
+    // The longest step, but a wait for the other deployments rather than work of the service: not the slowest
+    await userEvent.click(screen.getByRole('button', { name: 'Waiting in stage queue 12s' }))
+    expect(screen.getByText('Your deployment is 1 in the Queue')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploying application Slowest 11s' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Waiting in deployment queue/ })).not.toBeInTheDocument()
+  })
+
   it('shows the lines of a step once expanded', async () => {
     const { userEvent } = renderWithProviders(
       <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
