@@ -38,9 +38,15 @@ describe('getDeploymentLogLineStep', () => {
     })
   })
 
-  it('tells the build queue from the deployment queue with the stage', () => {
-    expect(getDeploymentLogLineStep(createLog('Queued', 'Build', 'QUEUEING')).name).toBe('BUILD_QUEUEING')
-    expect(getDeploymentLogLineStep(createLog('Queued', 'Deploy', 'QUEUEING')).name).toBe('DEPLOYMENT_QUEUEING')
+  it('puts the queueing lines in the wait of the stage, whatever their stage', () => {
+    const stageQueueing = { phase: 'PRE_CHECK', name: 'STAGE_QUEUEING' }
+
+    expect(getDeploymentLogLineStep(createLog('Your deployment is 1 in the Queue', 'Queueing', 'QUEUEING'))).toEqual(
+      stageQueueing
+    )
+    expect(getDeploymentLogLineStep(createLog('Queued', 'Build', 'QUEUEING'))).toEqual(stageQueueing)
+    expect(getDeploymentLogLineStep(createLog('Queued', 'Deploy', 'QUEUEING'))).toEqual(stageQueueing)
+    expect(getDeploymentLogLineStep(createLog('Queued', 'Queueing'))).toEqual(stageQueueing)
   })
 
   it('keeps the lines without step name apart, in the phase of their stage', () => {
@@ -172,7 +178,7 @@ describe('getDeploymentLogPhases', () => {
       ],
       linesByStep: groupDeploymentLogsByStep([
         createLog('Registry ready', 'Build', 'REGISTRY_CREATE_REPOSITORY'),
-        createLog('Queued', 'Deploy', 'QUEUEING'),
+        createLog('Deploying', 'Deploy', 'DEPLOYMENT'),
       ]),
       serviceId: 'service-1',
       nowMs: NOW_MS,
@@ -183,7 +189,7 @@ describe('getDeploymentLogPhases', () => {
       ['REGISTRY_CREATE_REPOSITORY', undefined],
       ['GIT_CLONE', 'SUCCESS'],
       ['BUILD', 'ONGOING'],
-      ['DEPLOYMENT_QUEUEING', 'PENDING'],
+      ['DEPLOYMENT', 'PENDING'],
     ])
     expect(phases[1]).toMatchObject({ id: 'DEPLOY', status: 'PENDING' })
   })
@@ -242,6 +248,71 @@ describe('getDeploymentLogPhases', () => {
       ['IMAGE_PUSH', 'ERROR'],
     ])
     expect(phases[0].status).toBe('ERROR')
+  })
+
+  it('lists the wait of the stage after the pre-checks, with its own time, apart from the deployment queue', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [
+        { step_name: 'DEPLOYMENT_QUEUEING', status: 'SUCCESS', duration_sec: 0 },
+        { step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 20 },
+      ],
+      preCheckStage: {
+        status: 'SUCCESS',
+        total_duration_sec: 1,
+        steps: [{ name: 'CLOUD_CREDENTIALS_CHECK', status: 'SUCCESS', duration_sec: 1 }],
+      },
+      stageSteps: [
+        { step_name: 'QUEUEING', status: 'SUCCESS', duration_sec: 12 },
+        { step_name: 'TOTAL', status: 'SUCCESS', duration_sec: 33 },
+      ],
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Credentials checked', 'PreCheck', 'CLOUD_CREDENTIALS_CHECK'),
+        createLog('Deployment request sent to the engine', 'Queueing', 'QUEUEING'),
+        createLog('Your deployment is 1 in the Queue', 'Queueing', 'QUEUEING'),
+        createLog('Deploying', 'Deploy', 'DEPLOYMENT'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(
+      phases.map((phase) => [
+        phase.id,
+        phase.durationSec,
+        phase.steps.map((step) => [step.name, step.status, step.durationSec, step.lines.length]),
+      ])
+    ).toEqual([
+      [
+        'PRE_CHECK',
+        13,
+        [
+          ['CLOUD_CREDENTIALS_CHECK', 'SUCCESS', 1, 1],
+          ['STAGE_QUEUEING', 'SUCCESS', 12, 2],
+        ],
+      ],
+      // The deployment queue took no time and logged nothing
+      ['DEPLOY', 20, [['DEPLOYMENT', 'SUCCESS', 20, 1]]],
+    ])
+    expect(getDeploymentLogStepLabel('STAGE_QUEUEING')).toBe('Waiting in stage queue')
+  })
+
+  it('adds the wait of the stage to the time of a pre-check stage without step metrics', () => {
+    const phases = getDeploymentLogPhases({
+      preCheckStage: { status: 'SUCCESS', total_duration_sec: 2 },
+      stageSteps: [{ step_name: 'QUEUEING', status: 'SUCCESS', duration_sec: 12 }],
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Checking credentials', 'PreCheck'),
+        createLog('Your deployment is 1 in the Queue', 'Queueing', 'QUEUEING'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases[0]).toMatchObject({ id: 'PRE_CHECK', status: 'SUCCESS', durationSec: 14 })
+    expect(phases[0].steps.map((step) => [step.name, step.status, step.durationSec])).toEqual([
+      ['STAGE_QUEUEING', 'SUCCESS', 12],
+      ['PRE_CHECK_UNGROUPED', undefined, undefined],
+    ])
   })
 
   it('keeps the Git check of this service only', () => {
@@ -388,6 +459,58 @@ describe('getDeploymentLogPhases', () => {
       ['DEPLOY_UNGROUPED', 1, true],
     ])
     expect(getDeploymentLogUngroupedStepLabel(phases[0], 'STOP')).toBe('Other logs')
+  })
+
+  it('fails a phase whose lines without step report an error, next to steps that went through', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [{ step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 30 }],
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Deploying', 'Deploy', 'DEPLOYMENT'),
+        createErrorLog('Failed to expose the application', 'DeployedError'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases.map((phase) => [phase.status, phase.steps.map((step) => [step.name, step.status])])).toEqual([
+      [
+        'ERROR',
+        [
+          ['DEPLOYMENT', 'SUCCESS'],
+          ['DEPLOY_UNGROUPED', 'ERROR'],
+        ],
+      ],
+    ])
+  })
+
+  it('keeps running a phase whose lines without step report an error while it runs', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [{ step_name: 'DEPLOYMENT', status: 'ONGOING', duration_sec: 30 }],
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Deploying', 'Deploy', 'DEPLOYMENT'),
+        createErrorLog('Readiness probe failed, retrying', 'Deploy'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases[0]).toMatchObject({ status: 'ONGOING', steps: [{ status: 'ONGOING' }, { status: undefined }] })
+  })
+
+  it('puts the metrics of a step the API adds later in the phase of its lines', () => {
+    const phases = getDeploymentLogPhases({
+      // A step name the generated client doesn't know yet
+      serviceSteps: [
+        { step_name: 'IMAGE_SCAN' as ServiceStepMetric['step_name'], status: 'SUCCESS', duration_sec: 12 },
+      ],
+      linesByStep: groupDeploymentLogsByStep([createLog('Scanning', 'Build', 'IMAGE_SCAN')]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(
+      phases.map((phase) => [phase.id, phase.steps.map((step) => [step.name, step.status, step.durationSec])])
+    ).toEqual([['BUILD', [['IMAGE_SCAN', 'SUCCESS', 12]]]])
   })
 
   it('lists step names the API adds later after the known ones', () => {

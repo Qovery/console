@@ -7,12 +7,15 @@ export function useStartBuildAnalysis() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.startBuildAnalysis, {
-    onSuccess(analysis, { serviceId, serviceType, executionId }) {
+    async onSuccess(analysis, { serviceId, serviceType, executionId }) {
+      const { queryKey } = queries.services.buildAnalysis({ serviceId, serviceType, executionId })
+      // A read sent before the start would answer with the state from before and replace the started analysis
+      await queryClient.cancelQueries({ queryKey })
       // The started analysis replaces the previous one right away, so its progress can be followed
-      queryClient.setQueryData<BuildAnalysisState>(
-        queries.services.buildAnalysis({ serviceId, serviceType, executionId }).queryKey,
-        (state) => ({ latest_build_execution_id: state?.latest_build_execution_id ?? executionId, analysis })
-      )
+      queryClient.setQueryData<BuildAnalysisState>(queryKey, (state) => ({
+        latest_build_execution_id: state?.latest_build_execution_id ?? executionId,
+        analysis,
+      }))
     },
     onError(_, { serviceId, serviceType }) {
       // A conflict means the build is no longer the latest, or an analysis already runs: read the current state,
