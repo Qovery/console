@@ -71,13 +71,6 @@ describe('ClusterAdd', () => {
     expect(screen.getByRole('button', { name: 'Local machine (Demo)' })).toBeInTheDocument()
   })
 
-  it('hides only the demo for the onboarding admin path', () => {
-    renderWithProviders(<ClusterAdd hideDemo />)
-    expect(screen.queryByRole('button', { name: 'Local machine (Demo)' })).not.toBeInTheDocument()
-    expect(screen.getByText('Amazon Web Services')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'AWS', exact: true })).toBeInTheDocument()
-  })
-
   it('names each provider card once for assistive technologies', () => {
     const { container } = renderWithProviders(<ClusterAdd />)
 

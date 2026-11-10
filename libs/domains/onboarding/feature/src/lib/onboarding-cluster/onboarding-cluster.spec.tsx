@@ -92,7 +92,6 @@ describe('OnboardingCluster', () => {
     expect(navigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/cluster/new',
       params: { organizationId: 'created-org' },
-      search: { 'no-demo': true },
     })
     expect(posthog.capture).toHaveBeenCalledTimes(1)
     expect(posthog.capture).toHaveBeenCalledWith('onboarding-cluster-selected', {

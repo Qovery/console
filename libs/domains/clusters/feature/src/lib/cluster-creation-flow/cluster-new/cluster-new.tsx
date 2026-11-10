@@ -409,7 +409,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
   }
 }
 
-export function ClusterNew({ hideDemo = false }: { hideDemo?: boolean }) {
+export function ClusterNew() {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { isClusterCreationRestricted } = useClusterCreationRestriction({
@@ -616,22 +616,18 @@ export function ClusterNew({ hideDemo = false }: { hideDemo?: boolean }) {
 
   return (
     <div className="mt-8 flex w-full flex-col gap-10">
-      {!hideDemo && (
-        <Section>
-          <div className="mb-5 flex flex-col gap-0.5">
-            <Heading>Qovery on your local machine</Heading>
-            <p className="text-sm text-neutral-subtle">
-              Quickly test and validate the Qovery solution on your computer.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-4">
-            <CardCluster {...cloudProviders[0]} />
-          </div>
-        </Section>
-      )}
+      <Section>
+        <div className="mb-5 flex flex-col gap-0.5">
+          <Heading>Qovery on your local machine</Heading>
+          <p className="text-sm text-neutral-subtle">Quickly test and validate the Qovery solution on your computer.</p>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <CardCluster {...cloudProviders[0]} />
+        </div>
+      </Section>
       <Section>
         <div className="mb-5 flex flex-col gap-1">
-          <Heading>{hideDemo ? 'Choose your hosting mode' : 'Or choose your hosting mode'}</Heading>
+          <Heading>Or choose your hosting mode</Heading>
           <p className="text-sm text-neutral-subtle">Manage your infrastructure across different hosting mode.</p>
         </div>
         {isClusterCreationRestricted && (
