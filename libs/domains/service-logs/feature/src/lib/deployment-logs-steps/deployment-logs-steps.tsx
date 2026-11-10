@@ -13,6 +13,7 @@ import {
 import { useCallback, useContext, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
+import { LogsType } from '@qovery/shared/enums'
 import { EmptyState, Heading, Icon, InputSearch } from '@qovery/shared/ui'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
@@ -47,13 +48,15 @@ const PHASE_ICONS: Record<DeploymentLogPhaseId, IconName> = {
   EXECUTE: 'play',
 }
 
-// Step opened by default: the one running, or the one that failed
+// Step opened by default: the one running, the one that failed, or else the first one that logged an error, as
+// the API may not report the failed step, like when the engine stopped answering
 function getDefaultOpenStepName(phases: DeploymentLogPhase[]) {
   const steps = phases.flatMap((phase) => phase.steps).filter((step) => step.lines.length > 0)
 
   return (
     [...steps].reverse().find((step) => step.status === 'ONGOING')?.name ??
-    steps.find((step) => step.status === 'ERROR')?.name
+    steps.find((step) => step.status === 'ERROR')?.name ??
+    steps.find((step) => step.lines.some((line) => line.type === LogsType.ERROR))?.name
   )
 }
 
