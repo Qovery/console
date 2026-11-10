@@ -228,7 +228,9 @@ jobs:
 
   staging-smoke-test:
     name: Staging smoke test
-    runs-on: ubuntu-latest
+    # Pinned: `ubuntu-latest` now resolves to Ubuntu 26.04, which Playwright 1.60 can't install browser deps for.
+    # Move back to `ubuntu-latest` once Playwright is upgraded to a version that supports it.
+    runs-on: ubuntu-24.04
     needs: [deploy]
     if: ${{ inputs.flow == 'deploy-staging' }}
     steps:
