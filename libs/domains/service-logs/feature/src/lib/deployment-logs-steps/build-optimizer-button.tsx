@@ -9,7 +9,7 @@ import { BuildOptimizationModal } from './build-optimization-modal'
 
 function DisabledOptimizeButton({ reason }: { reason?: ReactNode }) {
   const button = (
-    <Button variant="outline" color="neutral" size="xs" disabled>
+    <Button size="xs" disabled>
       <Icon iconName="bolt" iconStyle="regular" />
       Optimize
     </Button>
@@ -92,7 +92,7 @@ export function BuildOptimizerButton({
 
   if (state.type === 'ANALYZING' || isStarting) {
     const analyzingButton = (
-      <Button variant="outline" color="neutral" size="xs" className="pointer-events-none" aria-disabled="true">
+      <Button size="xs" className="pointer-events-none" aria-disabled="true">
         <Icon iconName="spinner" iconStyle="regular" className="animate-spin" />
         Analyzing
       </Button>
@@ -110,7 +110,7 @@ export function BuildOptimizerButton({
 
   if (state.type === 'DONE') {
     return (
-      <Button variant="outline" color="neutral" size="xs" onClick={() => openAnalysis(state.result)}>
+      <Button size="xs" onClick={() => openAnalysis(state.result)}>
         <Icon iconName="bolt" iconStyle="regular" />
         Open analysis
       </Button>
@@ -119,8 +119,6 @@ export function BuildOptimizerButton({
 
   const optimizeButton = (
     <Button
-      variant="outline"
-      color="neutral"
       size="xs"
       onClick={() =>
         startBuildAnalysis({ serviceId, serviceType, executionId }, { onSuccess: () => setIsAwaitingResult(true) })
