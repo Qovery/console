@@ -94,9 +94,10 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
 export interface ClusterCardProps {
   cluster: Cluster
   clusterDeploymentStatus?: ClusterStatus
+  isDeploymentStatusSuccess?: boolean
 }
 
-export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardProps) {
+export function ClusterCard({ cluster, clusterDeploymentStatus, isDeploymentStatusSuccess = false }: ClusterCardProps) {
   useClusterRunningStatusSocket({ organizationId: cluster.organization.id, clusterId: cluster.id })
   const { buildLocation } = useRouter()
   const overviewHref = buildLocation({
@@ -136,6 +137,22 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
                   {cluster.name}
                 </Link>
               </Tooltip>
+              {cluster.wide_permissions?.require_wide_access_to_deploy === true &&
+                isDeploymentStatusSuccess &&
+                Boolean(clusterDeploymentStatus?.status) &&
+                clusterDeploymentStatus?.status !== 'DEPLOYING' && (
+                  <LinkUI
+                    to="/organization/$organizationId/cluster/$clusterId/settings/credentials"
+                    params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
+                    color="neutral"
+                    underline
+                    size="sm"
+                    className="pointer-events-auto self-start text-warning hover:text-warning"
+                  >
+                    <span>Extended credentials required</span>
+                    <Icon iconName="arrow-up-right" className="shrink-0" />
+                  </LinkUI>
+                )}
               <Subtitle cluster={cluster} clusterDeploymentStatus={clusterDeploymentStatus} />
             </div>
           </div>

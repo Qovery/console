@@ -85,6 +85,7 @@ export function handleApplicationContainerPortSubmit<
 
     const livenessProbe = cloneService.healthchecks?.liveness_probe
     const readinessProbe = cloneService.healthchecks?.readiness_probe
+    const startupProbe = cloneService.healthchecks?.startup_probe
 
     type PortProtocol = keyof typeof PortProtocolEnum
     const getProbeProtocol = (probeType: ProbeType | undefined) =>
@@ -114,6 +115,7 @@ export function handleApplicationContainerPortSubmit<
       ...cloneService.healthchecks,
       liveness_probe: updateProbe(livenessProbe),
       readiness_probe: updateProbe(readinessProbe),
+      startup_probe: updateProbe(startupProbe),
     }
   } else {
     cloneService.ports = [...ports, nextPort] as ServicePort[]
@@ -154,6 +156,7 @@ export function ApplicationContainerPortSettingsModal({
 
   const livenessType = service.healthchecks?.liveness_probe?.type
   const readinessType = service.healthchecks?.readiness_probe?.type
+  const startupType = service.healthchecks?.startup_probe?.type
 
   const methods = useForm<ApplicationContainerPortFormData>({
     defaultValues: {
@@ -207,7 +210,9 @@ export function ApplicationContainerPortSettingsModal({
         currentProtocol={port?.protocol}
         isEdit={Boolean(port)}
         isMatchingHealthCheck={
-          isMatchingPortHealthCheck(port, livenessType) || isMatchingPortHealthCheck(port, readinessType)
+          isMatchingPortHealthCheck(port, livenessType) ||
+          isMatchingPortHealthCheck(port, readinessType) ||
+          isMatchingPortHealthCheck(port, startupType)
         }
         loading={isLoadingEditService}
         onClose={onClose}

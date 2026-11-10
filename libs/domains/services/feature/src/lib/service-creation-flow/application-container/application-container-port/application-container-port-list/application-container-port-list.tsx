@@ -8,6 +8,7 @@ export interface ApplicationContainerPortListProps {
   ports?: PortData[]
   livenessProbeType?: ProbeType
   readinessProbeType?: ProbeType
+  startupProbeType?: ProbeType
   onAddPort: () => void
   onEditPort: (port: PortData) => void
   onRemovePort: (port: PortData) => void
@@ -21,6 +22,7 @@ export function ApplicationContainerPortList({
   ports,
   livenessProbeType,
   readinessProbeType,
+  startupProbeType,
   onAddPort,
   onEditPort,
   onRemovePort,
@@ -48,7 +50,9 @@ export function ApplicationContainerPortList({
             hidePortName={hidePortName}
             getKey={(port) => `${port.protocol}-${port.name}-${port.external_port}`}
             hasHealthcheck={(port) =>
-              isMatchingHealthCheck(port, livenessProbeType) || isMatchingHealthCheck(port, readinessProbeType)
+              [livenessProbeType, readinessProbeType, startupProbeType].some((probeType) =>
+                isMatchingHealthCheck(port, probeType)
+              )
             }
             getApplicationPort={(port) => port.application_port}
             getIsPublic={(port) => port.is_public}

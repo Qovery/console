@@ -8,6 +8,7 @@ import {
   buildHealthchecksPayload,
   defaultLivenessProbe,
   defaultReadinessProbe,
+  defaultStartupProbe,
   getProbeType,
   resetHealthchecksFormFromValue,
   useEditService,
@@ -55,6 +56,11 @@ function ApplicationContainerHealthchecksSettingsContent() {
         type: {},
         ...defaultLivenessProbe,
       },
+      startup_probe: {
+        current_type: getProbeType(),
+        type: {},
+        ...defaultStartupProbe,
+      },
     },
   })
 
@@ -63,6 +69,7 @@ function ApplicationContainerHealthchecksSettingsContent() {
       resetHealthchecksFormFromValue(methods, {
         readiness_probe: service.healthchecks?.readiness_probe ?? undefined,
         liveness_probe: service.healthchecks?.liveness_probe ?? undefined,
+        startup_probe: service.healthchecks?.startup_probe ?? undefined,
       })
     }
   }, [methods, service])
@@ -102,7 +109,7 @@ function ApplicationContainerHealthchecksSettingsContent() {
       <div className="space-y-6">
         <SettingsHeading
           title="Health checks"
-          description="Health checks define how Kubernetes verifies if your service is alive and ready to receive traffic."
+          description="Health checks define how Kubernetes verifies if your service has started, is alive and is ready to receive traffic."
         />
         <div className="max-w-content-with-navigation-left space-y-6">
           {'min_running_instances' in service && service.min_running_instances === 1 ? (

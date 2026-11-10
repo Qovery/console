@@ -173,11 +173,13 @@ function hasOnlyAvailableUpdates(groupedIssues: { kind: ClusterHealthIssueKind }
 export interface ClusterProductionHealthSummaryCardProps {
   clusters: Cluster[]
   clusterStatuses: ClusterStatus[]
+  isDeploymentStatusSuccess?: boolean
 }
 
 export function ClusterProductionHealthSummaryCard({
   clusters,
   clusterStatuses,
+  isDeploymentStatusSuccess = true,
 }: ClusterProductionHealthSummaryCardProps) {
   const { openModal, closeModal } = useModal()
   const isRunningStatusIssueEnabled = Boolean(useFeatureFlagVariantKey('cluster-running-status'))
@@ -211,6 +213,7 @@ export function ClusterProductionHealthSummaryCard({
         const issues = getClusterHealthIssues({
           cluster,
           deploymentStatus,
+          isDeploymentStatusSuccess,
           runningStatus,
           isRunningStatusIssueEnabled,
           hasRunningStatusTimedOut,
@@ -218,7 +221,14 @@ export function ClusterProductionHealthSummaryCard({
         return { cluster, deploymentStatus, issues }
       })
       .filter((entry) => entry.issues.length > 0)
-  }, [clusters, clusterStatuses, runningStatusQueries, isRunningStatusIssueEnabled, hasRunningStatusTimedOut])
+  }, [
+    clusters,
+    clusterStatuses,
+    isDeploymentStatusSuccess,
+    runningStatusQueries,
+    isRunningStatusIssueEnabled,
+    hasRunningStatusTimedOut,
+  ])
 
   const issuesCount = clustersWithIssues.length
   const hasIssues = issuesCount > 0

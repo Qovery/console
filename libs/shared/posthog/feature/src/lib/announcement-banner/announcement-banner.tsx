@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Banner, Button, Icon, Tooltip } from '@qovery/shared/ui'
+import { Banner, BannerNavigation, Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 import {
   type AnnouncementBannerPayload,
@@ -112,30 +112,13 @@ export function AnnouncementBanner() {
         </span>
       </Tooltip>
       {hasMultiple && (
-        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center">
-          <Button
-            type="button"
-            className={BANNER_ICON_BUTTON_CLASSNAME}
-            variant="plain"
-            color={color}
-            onClick={handlePrev}
-            aria-label="Previous"
-          >
-            <Icon iconName="chevron-left" />
-          </Button>
-          <span className="min-w-[28px] text-center text-xs">
-            {currentIndex + 1}/{visibleBanners.length}
-          </span>
-          <Button
-            type="button"
-            className={BANNER_ICON_BUTTON_CLASSNAME}
-            variant="plain"
-            color={color}
-            onClick={handleNext}
-            aria-label="Next"
-          >
-            <Icon iconName="chevron-right" />
-          </Button>
+        <BannerNavigation
+          currentIndex={currentIndex}
+          count={visibleBanners.length}
+          color={color}
+          onPrevious={handlePrev}
+          onNext={handleNext}
+        >
           {dismissible && <div className="mx-3 h-4 w-px bg-current opacity-20" />}
           {dismissible && (
             <Button
@@ -149,7 +132,7 @@ export function AnnouncementBanner() {
               <Icon iconName="xmark" />
             </Button>
           )}
-        </div>
+        </BannerNavigation>
       )}
     </Banner>
   )

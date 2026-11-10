@@ -228,6 +228,9 @@ describe('MessageList', () => {
       expect(userMessage).toBeInTheDocument()
       expect(userMessage).toHaveClass('rounded-[1.5rem]')
       expect(userMessage).toHaveClass('bg-surface-brand-subtle')
+      // The bubble must not shrink in the fixed-height scroll area, otherwise its text gets cut off
+      expect(userMessage).toHaveClass('shrink-0')
+      expect(userMessage).not.toHaveClass('overflow-hidden')
     })
   })
 })

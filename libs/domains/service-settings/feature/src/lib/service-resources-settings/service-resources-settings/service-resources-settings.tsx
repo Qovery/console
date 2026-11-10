@@ -90,6 +90,7 @@ function getDefaultValues(
           scalers?: Array<{
             scaler_type?: string
             config_yaml?: string
+            config_json?: Record<string, unknown>
             trigger_authentication?: { config_yaml?: string }
           }>
         }
@@ -97,7 +98,10 @@ function getDefaultValues(
         return (
           autoscalingWithFields.scalers?.map((scaler) => ({
             type: scaler?.scaler_type || '',
-            config: scaler?.config_yaml || '',
+            // Scalers created via the Terraform provider may only have `config_json` set
+            ...(!scaler?.config_yaml && scaler?.config_json
+              ? { config: JSON.stringify(scaler.config_json, null, 2), configFormat: 'json' as const }
+              : { config: scaler?.config_yaml || '', configFormat: 'yaml' as const }),
             triggerAuthentication: scaler?.trigger_authentication?.config_yaml || '',
           })) || []
         )

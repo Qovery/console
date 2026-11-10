@@ -35,6 +35,56 @@ export interface BannerProps extends BannerDivProps, VariantProps<typeof bannerV
   onDismiss?: () => void
 }
 
+export interface BannerNavigationProps extends PropsWithChildren {
+  currentIndex: number
+  count: number
+  onPrevious: () => void
+  onNext: () => void
+  color?: BannerColor
+}
+
+export function BannerNavigation({
+  currentIndex,
+  count,
+  onPrevious,
+  onNext,
+  color = 'yellow',
+  children,
+}: BannerNavigationProps) {
+  if (count <= 1) return null
+
+  const buttonColor = BANNER_TO_BUTTON_COLOR[color]
+
+  return (
+    <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center">
+      <Button
+        type="button"
+        className="flex h-7 w-7 items-center justify-center p-0"
+        variant="plain"
+        color={buttonColor}
+        onClick={onPrevious}
+        aria-label="Previous"
+      >
+        <Icon iconName="chevron-left" />
+      </Button>
+      <span className="min-w-[28px] text-center text-xs" aria-live="polite" aria-atomic="true">
+        {currentIndex + 1}/{count}
+      </span>
+      <Button
+        type="button"
+        className="flex h-7 w-7 items-center justify-center p-0"
+        variant="plain"
+        color={buttonColor}
+        onClick={onNext}
+        aria-label="Next"
+      >
+        <Icon iconName="chevron-right" />
+      </Button>
+      {children}
+    </div>
+  )
+}
+
 export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>(function Banner(
   {
     children,

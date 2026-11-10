@@ -7,4 +7,11 @@ describe('CopyButton', () => {
     const copyButton = screen.getByText('Copy')
     expect(copyButton).toBeInTheDocument()
   })
+
+  test('should render an accessible icon-only copy button without a visible label', () => {
+    renderWithProviders(<CopyButton content="Hello, world!" iconOnly />)
+
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument()
+    expect(screen.queryByText('Copy')).not.toBeInTheDocument()
+  })
 })

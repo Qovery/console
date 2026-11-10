@@ -2,7 +2,7 @@ import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { match } from 'ts-pattern'
-import { useCluster } from '@qovery/domains/clusters/feature'
+import { ClusterWideCredentialsBanner, useCluster } from '@qovery/domains/clusters/feature'
 import { Sidebar } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -138,27 +138,30 @@ function RouteComponent() {
     .otherwise(() => [])
 
   return (
-    <div className="flex min-h-0 flex-1">
-      <aside
-        className={twMerge(
-          clsx('relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral', {
-            'w-60': eksAnywhereCluster,
-          })
-        )}
-      >
-        <div className="sticky top-16">
-          <Sidebar.Root className="mt-6">
-            {LINKS_SETTINGS.map((link) => (
-              <Sidebar.Item key={link.to} to={link.to} icon={link.icon}>
-                {link.title}
-              </Sidebar.Item>
-            ))}
-          </Sidebar.Root>
-        </div>
-      </aside>
-      <div className="min-w-0 flex-1">
-        <div className="container mx-auto px-0">
-          <Outlet />
+    <div className="group/cluster-settings flex min-h-0 flex-1 flex-col">
+      <ClusterWideCredentialsBanner />
+      <div className="flex min-h-0 flex-1">
+        <aside
+          className={twMerge(
+            clsx('relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral', {
+              'w-60': eksAnywhereCluster,
+            })
+          )}
+        >
+          <div className="sticky top-16">
+            <Sidebar.Root className="mt-6 group-has-[[data-wide-credentials-banner]]/cluster-settings:mt-0">
+              {LINKS_SETTINGS.map((link) => (
+                <Sidebar.Item key={link.to} to={link.to} icon={link.icon}>
+                  {link.title}
+                </Sidebar.Item>
+              ))}
+            </Sidebar.Root>
+          </div>
+        </aside>
+        <div className="min-w-0 flex-1">
+          <div className="container mx-auto px-0 group-has-[[data-wide-credentials-banner]]/cluster-settings:[&>div>:first-child]:pt-4 group-has-[[data-wide-credentials-banner]]/cluster-settings:[&>section]:pt-4">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>

@@ -11,7 +11,10 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 const Clusters = () => {
   const { organizationId = '' } = useParams({ strict: false })
   const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
-  const { data: clusterStatuses = [] } = useClusterStatuses({ organizationId, suspense: true })
+  const { data: clusterStatuses = [], isSuccess: isDeploymentStatusSuccess } = useClusterStatuses({
+    organizationId,
+    suspense: true,
+  })
 
   if (clusters.length === 0) {
     return (
@@ -43,6 +46,7 @@ const Clusters = () => {
           key={cluster.id}
           cluster={cluster}
           clusterDeploymentStatus={clusterStatuses.find((c) => c.cluster_id === cluster.id)}
+          isDeploymentStatusSuccess={isDeploymentStatusSuccess}
         />
       ))}
     </div>

@@ -8,6 +8,7 @@ export interface KedaAutoscalingFields {
   scalers?: Array<{
     type: string
     config: string
+    configFormat?: 'yaml' | 'json'
     trigger_authentication?: { name?: string; config_yaml: string }
   }>
   autoscaling_polling_interval?: number
@@ -47,6 +48,35 @@ type AutoscalingPolicyRequestWithFields = AutoscalingPolicyRequest & {
       config_yaml?: string
     }
   }>
+}
+
+/**
+ * Keeps JSON-based scalers (e.g. created via the Terraform provider) in `config_json` so saving
+ * from the Console doesn't switch them to `config_yaml`. Falls back to YAML if the JSON is invalid
+ * (YAML is a superset of JSON, so the backend can still parse it).
+ */
+function toScalerConfigPayload(scaler: { config: string; configFormat?: 'yaml' | 'json' }): {
+  config_json?: Record<string, unknown>
+  config_yaml?: string
+} {
+  const configJson = scaler.configFormat === 'json' ? parseScalerJsonConfig(scaler.config) : undefined
+  return configJson
+    ? { config_json: configJson, config_yaml: undefined }
+    : { config_json: undefined, config_yaml: scaler.config }
+}
+
+/**
+ * Returns the scaler config as a JSON object, or `undefined` when it isn't a valid JSON object.
+ */
+export function parseScalerJsonConfig(config: string): Record<string, unknown> | undefined {
+  try {
+    const parsed: unknown = JSON.parse(config)
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : undefined
+  } catch {
+    return undefined
+  }
 }
 
 /**
@@ -103,8 +133,7 @@ function processAutoscalingRequest(
           scaler_type: scaler.type,
           enabled: true,
           role: index === 0 ? 'PRIMARY' : 'SAFETY',
-          config_json: undefined,
-          config_yaml: scaler.config,
+          ...toScalerConfigPayload(scaler),
           trigger_authentication: scaler.trigger_authentication
             ? {
                 // Inline trigger authentication must not have a name (will be auto-generated)
@@ -165,6 +194,7 @@ export function extractAndProcessAutoscaling<T extends Record<string, unknown>>(
 export type ScalerFormData = {
   type: string
   config: string
+  configFormat?: 'yaml' | 'json'
   triggerAuthentication?: string
 }
 
@@ -221,6 +251,7 @@ export function buildAutoscalingRequestFromForm(
         const baseScaler = {
           type: scaler.type,
           config: scaler.config,
+          configFormat: scaler.configFormat,
         }
 
         // If scaler has triggerAuthentication YAML, include it inline

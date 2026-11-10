@@ -96,9 +96,12 @@ export function ApplicationContainerPortModal({
 
   const livenessProbeType = portData.healthchecks?.item?.liveness_probe?.type
   const readinessProbeType = portData.healthchecks?.item?.readiness_probe?.type
+  const startupProbeType = portData.healthchecks?.item?.startup_probe?.type
 
   const hasMatchingHealthcheck =
-    isMatchingHealthCheck(port, livenessProbeType) || isMatchingHealthCheck(port, readinessProbeType)
+    isMatchingHealthCheck(port, livenessProbeType) ||
+    isMatchingHealthCheck(port, readinessProbeType) ||
+    isMatchingHealthCheck(port, startupProbeType)
 
   return (
     <FormProvider {...methods}>

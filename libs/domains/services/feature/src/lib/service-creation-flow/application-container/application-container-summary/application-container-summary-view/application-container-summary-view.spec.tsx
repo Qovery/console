@@ -105,6 +105,41 @@ describe('ApplicationContainerSummaryView', () => {
     expect(screen.getByText('External secret')).toBeInTheDocument()
   })
 
+  it('shows the selected JSON path, reference and variable name before service creation', () => {
+    const keyName = String.raw`accounts.0.database\.password`
+    renderWithProviders(
+      <ApplicationContainerSummaryView
+        {...defaultProps}
+        externalSecretsData={[
+          {
+            name: 'APP_PASSWORD',
+            reference: 'production/config',
+            isJson: true,
+            keyName,
+            scope: 'APPLICATION',
+          },
+        ]}
+      />
+    )
+
+    expect(screen.getByText('APP_PASSWORD = production/config')).toBeInTheDocument()
+    expect(screen.getByText(`JSON path: ${keyName}`)).toBeInTheDocument()
+    expect(screen.getByText('JSON external secret')).toBeInTheDocument()
+  })
+
+  it('keeps file secrets identified as files without showing a JSON path', () => {
+    renderWithProviders(
+      <ApplicationContainerSummaryView
+        {...defaultProps}
+        externalSecretsData={[{ name: 'APP_CONFIG', reference: 'production/config', isFile: true }]}
+      />
+    )
+
+    expect(screen.getByText('External secret file')).toBeInTheDocument()
+    expect(screen.queryByText(/JSON path:/)).not.toBeInTheDocument()
+    expect(screen.queryByText('JSON external secret')).not.toBeInTheDocument()
+  })
+
   it('calls edit and submit actions', async () => {
     const { userEvent } = renderWithProviders(<ApplicationContainerSummaryView {...defaultProps} />)
 
@@ -132,6 +167,39 @@ describe('ApplicationContainerSummaryView', () => {
     expect(screen.getByText('No port declared')).toBeInTheDocument()
     expect(screen.getByText('No variable declared')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Health checks' })).not.toBeInTheDocument()
+  })
+
+  it('renders the startup probe only when one is configured', () => {
+    const { rerender } = renderWithProviders(<ApplicationContainerSummaryView {...defaultProps} />)
+
+    expect(screen.getByText('Liveness')).toBeInTheDocument()
+    expect(screen.queryByText('Startup')).not.toBeInTheDocument()
+
+    rerender(
+      <ApplicationContainerSummaryView
+        {...defaultProps}
+        portsData={{
+          ...defaultProps.portsData,
+          healthchecks: {
+            typeStartup: 'EXEC',
+            item: {
+              startup_probe: {
+                initial_delay_seconds: 10,
+                period_seconds: 10,
+                timeout_seconds: 5,
+                success_threshold: 1,
+                failure_threshold: 30,
+                type: { exec: { command: ['true'] } },
+              },
+            },
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('Startup')).toBeInTheDocument()
+    expect(screen.getByText('EXEC')).toBeInTheDocument()
+    expect(screen.queryByText('Liveness')).not.toBeInTheDocument()
   })
 
   it('renders the selected CPU architecture when it is explicit', () => {

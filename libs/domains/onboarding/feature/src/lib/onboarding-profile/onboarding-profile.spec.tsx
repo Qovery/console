@@ -99,7 +99,7 @@ describe('OnboardingProfile', () => {
   it('shows the five profile fields and the first onboarding step', async () => {
     await renderFilledProfile()
 
-    expect(screen.getByRole('heading', { name: 'Create your profile' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Create your organization' })).toBeInTheDocument()
     expect(screen.getAllByRole('textbox')).toHaveLength(5)
     expect(screen.queryByLabelText('Professional email address')).not.toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: 'Onboarding progress' })).toHaveValue(1)

@@ -82,6 +82,7 @@ export function ApplicationContainerStepPort({ onBack, onSubmit, loading = false
             ports={ports}
             livenessProbeType={healthchecks?.item?.liveness_probe?.type}
             readinessProbeType={healthchecks?.item?.readiness_probe?.type}
+            startupProbeType={healthchecks?.item?.startup_probe?.type}
             onAddPort={() => openPortModal()}
             onEditPort={(port) => openPortModal(port)}
             onRemovePort={removePort}

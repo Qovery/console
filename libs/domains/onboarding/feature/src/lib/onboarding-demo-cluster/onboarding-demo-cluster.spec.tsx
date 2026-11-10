@@ -46,7 +46,7 @@ function installation(readyCluster?: Cluster, isError = false) {
 }
 function renderDemo() {
   return renderWithProviders(
-    <OnboardingCard step={3}>
+    <OnboardingCard step={2}>
       <OnboardingDemoCluster />
     </OnboardingCard>
   )
@@ -72,9 +72,9 @@ afterEach(() => {
   listProjects.mockRestore()
 })
 
-it('shows the third step, Docker Desktop prerequisite and macOS command', () => {
+it('shows the final step, Docker Desktop prerequisite and macOS command', () => {
   renderDemo()
-  expect(screen.getByRole('progressbar')).toHaveValue(3)
+  expect(screen.getByRole('progressbar')).toHaveValue(2)
   expect(screen.getByRole('heading', { name: 'Create a demo cluster' })).toBeInTheDocument()
   expect(screen.getByText('Install and open Docker Desktop')).toBeInTheDocument()
   expect(screen.getByRole('link', { name: 'Docker website' })).toHaveAttribute(

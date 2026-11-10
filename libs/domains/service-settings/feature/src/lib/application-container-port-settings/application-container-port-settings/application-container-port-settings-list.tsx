@@ -8,6 +8,7 @@ export interface ApplicationContainerPortSettingsListProps {
   ports?: ServicePort[]
   livenessProbeType?: ProbeType
   readinessProbeType?: ProbeType
+  startupProbeType?: ProbeType
   onAddPort: () => void
   onEditPort: (port: ServicePort) => void
   onRemovePort: (port: ServicePort, warning?: string) => void
@@ -17,10 +18,16 @@ export function ApplicationContainerPortSettingsList({
   ports,
   livenessProbeType,
   readinessProbeType,
+  startupProbeType,
   onAddPort,
   onEditPort,
   onRemovePort,
 }: ApplicationContainerPortSettingsListProps) {
+  const hasHealthcheck = (port: ServicePort) =>
+    [livenessProbeType, readinessProbeType, startupProbeType].some((probeType) =>
+      isMatchingPortHealthCheck(port, probeType)
+    )
+
   return (
     <>
       <div className="flex justify-between">
@@ -41,10 +48,7 @@ export function ApplicationContainerPortSettingsList({
             <PortListRows
               ports={ports}
               getKey={(port) => port.id ?? `${port.protocol}-${port.name}-${port.external_port ?? port.internal_port}`}
-              hasHealthcheck={(port) =>
-                isMatchingPortHealthCheck(port, livenessProbeType) ||
-                isMatchingPortHealthCheck(port, readinessProbeType)
-              }
+              hasHealthcheck={hasHealthcheck}
               getApplicationPort={(port) => port.internal_port}
               getIsPublic={(port) => port.publicly_accessible}
               getProtocol={(port) => port.protocol}
@@ -56,10 +60,7 @@ export function ApplicationContainerPortSettingsList({
               onRemovePort={(port) =>
                 onRemovePort(
                   port,
-                  isMatchingPortHealthCheck(port, livenessProbeType) ||
-                    isMatchingPortHealthCheck(port, readinessProbeType)
-                    ? 'The health check pointing to this port will be deleted as well.'
-                    : undefined
+                  hasHealthcheck(port) ? 'The health check pointing to this port will be deleted as well.' : undefined
                 )
               }
             />
