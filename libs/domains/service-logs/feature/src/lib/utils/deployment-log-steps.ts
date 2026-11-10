@@ -178,11 +178,13 @@ function getBuildStepMetric(build: ServiceStepMetric, nowMs: number): StepMetric
 function getStepMetrics({
   serviceSteps = [],
   preCheckSteps = [],
+  linesByStep,
   serviceId,
   nowMs,
 }: {
   serviceSteps?: ServiceStepMetric[]
   preCheckSteps?: PreCheckStepMetric[]
+  linesByStep: Map<string, DeploymentLogStepLines>
   serviceId: string
   nowMs: number
 }) {
@@ -203,7 +205,9 @@ function getStepMetrics({
         metrics.set(subStep.name, getStepMetric('BUILD', subStep, nowMs))
       }
     } else {
-      metrics.set(step.step_name, getStepMetric(STEP_PHASES.get(step.step_name) ?? 'DEPLOY', step, nowMs))
+      // A step the API adds later goes in the phase its lines tell, so its metrics and lines stay on one row
+      const phase = STEP_PHASES.get(step.step_name) ?? linesByStep.get(step.step_name)?.phase ?? 'DEPLOY'
+      metrics.set(step.step_name, getStepMetric(phase, step, nowMs))
     }
   }
 
@@ -244,7 +248,7 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
   serviceId,
   nowMs,
 }: GetDeploymentLogPhasesProps<T>): DeploymentLogPhase<T>[] {
-  const metrics = getStepMetrics({ serviceSteps, preCheckSteps: preCheckStage?.steps, serviceId, nowMs })
+  const metrics = getStepMetrics({ serviceSteps, preCheckSteps: preCheckStage?.steps, linesByStep, serviceId, nowMs })
 
   const stepsByPhase = PHASE_IDS.map((phaseId) => {
     const knownStepNames = PHASE_STEP_NAMES[phaseId]
@@ -317,21 +321,34 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
 
     if (ungroupedLines.length === 0) return [{ ...phase, steps }]
 
+    // The step metrics may have missed the failure of the lines that name no step: an error line among them tells
+    // the phase failed once it no longer runs
+    const hasErrorLine = ungroupedLines.some((line) => line.type === LogsType.ERROR)
+    const ungroupedErrorStatus = hasErrorLine && phase.status !== 'ONGOING' ? ('ERROR' as const) : undefined
+
     // Some lines name their step: the others come after the steps
     if (steps.some((step) => step.lines.length > 0)) {
       return [
         {
           ...phase,
-          steps: [...steps, { name: ungroupedStepName, isLive: false, lines: ungroupedLines, isUngrouped: true }],
+          status: ungroupedErrorStatus ?? phase.status,
+          steps: [
+            ...steps,
+            {
+              name: ungroupedStepName,
+              status: ungroupedErrorStatus,
+              isLive: false,
+              lines: ungroupedLines,
+              isUngrouped: true,
+            },
+          ],
         },
       ]
     }
 
     // No line names its step (older deployments): the steps are replaced by all the lines of the phase, with its
-    // status and duration. Their metrics may have missed the failure, or time only the part that went through: an
-    // error line tells the phase failed once it no longer runs.
-    const hasErrorLine = ungroupedLines.some((line) => line.type === LogsType.ERROR)
-    const status = hasErrorLine && phase.status !== 'ONGOING' ? 'ERROR' : phase.status
+    // status and duration, which may also time only the part that went through
+    const status = ungroupedErrorStatus ?? phase.status
     return [
       {
         ...phase,

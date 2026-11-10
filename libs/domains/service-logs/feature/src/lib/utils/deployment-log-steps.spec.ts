@@ -390,6 +390,58 @@ describe('getDeploymentLogPhases', () => {
     expect(getDeploymentLogUngroupedStepLabel(phases[0], 'STOP')).toBe('Other logs')
   })
 
+  it('fails a phase whose lines without step report an error, next to steps that went through', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [{ step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 30 }],
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Deploying', 'Deploy', 'DEPLOYMENT'),
+        createErrorLog('Failed to expose the application', 'DeployedError'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases.map((phase) => [phase.status, phase.steps.map((step) => [step.name, step.status])])).toEqual([
+      [
+        'ERROR',
+        [
+          ['DEPLOYMENT', 'SUCCESS'],
+          ['DEPLOY_UNGROUPED', 'ERROR'],
+        ],
+      ],
+    ])
+  })
+
+  it('keeps running a phase whose lines without step report an error while it runs', () => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [{ step_name: 'DEPLOYMENT', status: 'ONGOING', duration_sec: 30 }],
+      linesByStep: groupDeploymentLogsByStep([
+        createLog('Deploying', 'Deploy', 'DEPLOYMENT'),
+        createErrorLog('Readiness probe failed, retrying', 'Deploy'),
+      ]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases[0]).toMatchObject({ status: 'ONGOING', steps: [{ status: 'ONGOING' }, { status: undefined }] })
+  })
+
+  it('puts the metrics of a step the API adds later in the phase of its lines', () => {
+    const phases = getDeploymentLogPhases({
+      // A step name the generated client doesn't know yet
+      serviceSteps: [
+        { step_name: 'IMAGE_SCAN' as ServiceStepMetric['step_name'], status: 'SUCCESS', duration_sec: 12 },
+      ],
+      linesByStep: groupDeploymentLogsByStep([createLog('Scanning', 'Build', 'IMAGE_SCAN')]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(
+      phases.map((phase) => [phase.id, phase.steps.map((step) => [step.name, step.status, step.durationSec])])
+    ).toEqual([['BUILD', [['IMAGE_SCAN', 'SUCCESS', 12]]]])
+  })
+
   it('lists step names the API adds later after the known ones', () => {
     const phases = getDeploymentLogPhases({
       linesByStep: groupDeploymentLogsByStep([
