@@ -30,7 +30,11 @@ describe('BuildOptimizationModal', () => {
         analysis={{
           ...analysis,
           summary: '`RUN yarn install` took 104.9 s and `/root/.yarn` is not used',
-          improvements: ['Move the `ARG` block', 'Keep the unmatched ` backtick'],
+          improvements: [
+            'Move the `ARG` block',
+            'Keep the unmatched ` backtick',
+            'Use `--frozen-lockfile and `yarn ci` instead',
+          ],
           dockerfile_rationale: 'The `ARG` block moves after the install.',
         }}
         onClose={jest.fn()}
@@ -41,6 +45,9 @@ describe('BuildOptimizationModal', () => {
     expect(screen.getByText('/root/.yarn', { selector: 'code' })).toBeInTheDocument()
     expect(screen.getAllByText('ARG', { selector: 'code' })).toHaveLength(2)
     expect(screen.getByText('Keep the unmatched ` backtick')).toBeInTheDocument()
+    // An unmatched backtick before a code span doesn't pair with its opening backtick
+    expect(screen.getByText('yarn ci', { selector: 'code' })).toBeInTheDocument()
+    expect(screen.getByText(/Use `--frozen-lockfile and/)).toBeInTheDocument()
     expect(screen.queryByText(/`/, { selector: 'code' })).not.toBeInTheDocument()
   })
 

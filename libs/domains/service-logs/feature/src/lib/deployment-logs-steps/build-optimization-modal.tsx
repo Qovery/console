@@ -20,17 +20,15 @@ const ASSET_LABELS: Record<BuildAnalysisAsset, string> = {
 // Same style as the inline code of the rest of the console
 const INLINE_CODE_CLASS_NAME = 'rounded bg-surface-neutral-component px-1 py-0.5 font-mono text-xs'
 
+// Code between backticks, which neither starts nor ends with a space. A stray backtick, wherever it is in
+// the text, can't open a span then: "Use `foo and `bar`" shows only `bar` as code.
+const INLINE_CODE_PATTERN = /`([^`\s](?:[^`]*[^`\s])?)`/
+
 // The analysis wraps commands, paths and variable names in backticks, like Markdown inline code
 function TextWithInlineCode({ text }: { text: string }) {
-  const parts = text.split('`')
-  // An unmatched backtick stays as it is
-  if (parts.length % 2 === 0) {
-    const lastPart = parts.pop()
-    parts[parts.length - 1] += '`' + lastPart
-  }
-
-  return parts.map((part, index) =>
-    index % 2 === 1 && part ? (
+  // Splitting on a capturing pattern alternates the text around the code spans and their content
+  return text.split(INLINE_CODE_PATTERN).map((part, index) =>
+    index % 2 === 1 ? (
       <code key={index} className={INLINE_CODE_CLASS_NAME}>
         {part}
       </code>
