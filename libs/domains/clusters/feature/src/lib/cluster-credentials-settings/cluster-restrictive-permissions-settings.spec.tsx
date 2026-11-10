@@ -5,14 +5,6 @@ import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ClusterRestrictivePermissionsSettings } from './cluster-restrictive-permissions-settings'
 
-jest.mock('@qovery/shared/ui', () => ({
-  ...jest.requireActual('@qovery/shared/ui'),
-  useModal: () => ({
-    openModal: jest.fn(),
-    closeModal: jest.fn(),
-  }),
-}))
-
 jest.mock('@tanstack/react-router', () => {
   const React = jest.requireActual('react')
   return {

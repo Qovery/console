@@ -1,7 +1,9 @@
-import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum, type APIVariableTypeEnum } from 'qovery-typescript-axios'
 import { useId, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { type VariableResponse } from '@qovery/domains/variables/data-access'
+import { isExternalSecretVariable } from '@qovery/domains/variables/util'
 import {
   Button,
   Callout,
@@ -91,6 +93,9 @@ export type VariableFormModalProps = {
   type: keyof typeof APIVariableTypeEnum
   isSecret?: boolean
   hasClusterSecretManagerConfigured?: boolean
+  // Prefill used when the modal is opened from another flow, e.g. an override proposed after a creation conflict
+  defaultValue?: string | null
+  defaultScope?: keyof typeof APIVariableScopeEnum
   scope: Scope
   projectId?: string
   environmentId?: string
@@ -108,6 +113,8 @@ export function VariableFormModal(props: VariableFormModalProps) {
     type,
     isSecret,
     hasClusterSecretManagerConfigured = false,
+    defaultValue,
+    defaultScope: initialScope,
   } = props
   const isCreateValue = mode === 'CREATE' && type === 'VALUE'
   const [isFileVariable, setIsFileVariable] = useState(() =>
@@ -147,8 +154,9 @@ export function VariableFormModal(props: VariableFormModalProps) {
   const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]
 
   const defaultScope =
+    availableScopes.find((availableScope) => availableScope === initialScope) ??
     // Check if it's a file and the scope is one of services and assign the default scope to 'ENVIRONMENT'
-    isFileVariable && ['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(scope)
+    (isFileVariable && ['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(scope)
       ? 'ENVIRONMENT'
       : variable?.scope === 'BUILT_IN'
         ? undefined
@@ -156,7 +164,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
           ? availableScopes[0]
           : variable?.scope
             ? variable.scope
-            : availableScopes[availableScopes.length - 1]
+            : availableScopes[availableScopes.length - 1])
 
   const mountPath = getEnvironmentVariableFileMountPath(variable)
 
@@ -172,7 +180,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
     defaultValues: {
       key: variable?.key,
       scope: defaultScope,
-      value: variable?.value,
+      value: defaultValue !== undefined ? defaultValue : variable?.value,
       isSecret: isSecretVariable,
       description: variable?.description,
       enable_interpolation_in_file: isFileVariable ? variable?.enable_interpolation_in_file ?? true : undefined,
@@ -561,6 +569,8 @@ export type CreateUpdateVariableModalProps = {
   type: keyof typeof APIVariableTypeEnum
   isSecret?: boolean
   hasClusterSecretManagerConfigured?: boolean
+  defaultValue?: string | null
+  defaultScope?: keyof typeof APIVariableScopeEnum
 } & CreateUpdateVariableModalScopeProps
 
 // API-backed wrapper around VariableFormModal. Use VariableFormModal directly when a flow needs to collect variable data
@@ -568,8 +578,33 @@ export type CreateUpdateVariableModalProps = {
 export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
   const { onSubmit, variable } = props
   const [loading, setLoading] = useState(false)
+  const { openModal, enableAlertClickOutside } = useModal()
 
-  const { mutateAsync: createVariable } = useCreateVariable()
+  const { mutateAsync: createVariable } = useCreateVariable({
+    // Swap this modal for the override flow, keeping the value and scope the user picked
+    onCreateOverride: ({ parentVariable, variableRequest }) => {
+      // The creation form may have armed the unsaved-changes guard; the override form starts clean
+      enableAlertClickOutside(false)
+      openModal({
+        content: (
+          <CreateUpdateVariableModal
+            {...props}
+            // The modal provider renders this at the same position as the current modal: a new key forces a
+            // remount so the override form starts from the parent variable, not from this form's state
+            key={`override-${parentVariable.id}`}
+            mode="CREATE"
+            type="OVERRIDE"
+            variable={parentVariable}
+            defaultValue={variableRequest.value}
+            defaultScope={variableRequest.variable_scope}
+          />
+        ),
+        options: {
+          fakeModal: true,
+        },
+      })
+    },
+  })
   const { mutateAsync: createVariableAlias } = useCreateVariableAlias()
   const { mutateAsync: createVariableOverride } = useCreateVariableOverride()
   const { mutateAsync: editVariable } = useEditVariable()
@@ -670,6 +705,12 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             variableId: variable.id,
             variableEditRequest: {
               key: data.key,
+              ...(isExternalSecretVariable(variable)
+                ? {
+                    secret_manager_access_id: variable.secret_manager_access_id,
+                    json_target_key: variable.json_target_key ?? null,
+                  }
+                : {}),
               value: variable.aliased_variable?.key || data.value,
               description: data.description,
               enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,

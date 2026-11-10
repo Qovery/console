@@ -9,6 +9,9 @@ const meta: Meta<typeof CopyButton> = {
 export default meta
 type Story = StoryObj<typeof CopyButton>
 export const Default: Story = {}
+export const IconOnly: Story = {
+  args: { iconOnly: true, size: 'sm' },
+}
 export const Terminal: Story = {
   args: {
     size: 'md',

@@ -55,6 +55,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRouteIm
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/demo-cluster'
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/cluster'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents/route'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/route'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRouteImport } from './routes/_authenticated/organization/$organizationId/settings/roles/index'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/index'
@@ -535,6 +536,14 @@ const AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRoute =
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteImport.update(
+    {
+      id: '/cluster/$clusterId',
+      path: '/cluster/$clusterId',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute =
   AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRouteImport.update({
     id: '/roles/',
@@ -560,9 +569,10 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute =
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport.update(
     {
-      id: '/cluster/$clusterId/',
-      path: '/cluster/$clusterId/',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+      id: '/',
+      path: '/',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRoute =
@@ -600,33 +610,37 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute =
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRouteImport.update(
     {
-      id: '/cluster/$clusterId/workloads',
-      path: '/cluster/$clusterId/workloads',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+      id: '/workloads',
+      path: '/workloads',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRouteImport.update(
     {
-      id: '/cluster/$clusterId/overview',
-      path: '/cluster/$clusterId/overview',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+      id: '/overview',
+      path: '/overview',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRouteImport.update(
     {
-      id: '/cluster/$clusterId/cluster-logs',
-      path: '/cluster/$clusterId/cluster-logs',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+      id: '/cluster-logs',
+      path: '/cluster-logs',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRouteImport.update(
     {
-      id: '/cluster/$clusterId/cloud-shell',
-      path: '/cluster/$clusterId/cloud-shell',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+      id: '/cloud-shell',
+      path: '/cloud-shell',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRoute =
@@ -648,17 +662,19 @@ const AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute =
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteImport.update(
     {
-      id: '/cluster/$clusterId/settings',
-      path: '/cluster/$clusterId/settings',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+      id: '/settings',
+      path: '/settings',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRouteImport.update(
     {
-      id: '/cluster/$clusterId/profile',
-      path: '/cluster/$clusterId/profile',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+      id: '/profile',
+      path: '/profile',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute =
@@ -708,9 +724,10 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileIndexRoute =
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRouteImport.update(
     {
-      id: '/cluster/$clusterId/deployments/',
-      path: '/cluster/$clusterId/deployments/',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+      id: '/deployments/',
+      path: '/deployments/',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute =
@@ -945,9 +962,10 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEdit
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute =
   AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRouteImport.update(
     {
-      id: '/cluster/$clusterId/deployments/logs/$deploymentId',
-      path: '/cluster/$clusterId/deployments/logs/$deploymentId',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+      id: '/deployments/logs/$deploymentId',
+      path: '/deployments/logs/$deploymentId',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRoute =
@@ -1978,6 +1996,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   '/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
+  '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
   '/organization/$organizationId/settings/agents': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteWithChildren
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
@@ -2017,7 +2036,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
   '/organization/$organizationId/settings/agents/tokens': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRoute
-  '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
+  '/organization/$organizationId/cluster/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/organization/$organizationId/project/$projectId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   '/organization/$organizationId/settings/agents/': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsIndexRoute
   '/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
@@ -2378,6 +2397,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/_authenticated/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   '/_authenticated/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
+  '/_authenticated/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/settings/agents': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteWithChildren
   '/_authenticated/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/_authenticated/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
@@ -2591,6 +2611,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/clusters'
     | '/organization/$organizationId/overview'
     | '/organization/$organizationId/'
+    | '/organization/$organizationId/cluster/$clusterId'
     | '/organization/$organizationId/settings/agents'
     | '/onboarding/organization/$organizationId/cluster'
     | '/onboarding/organization/$organizationId/demo-cluster'
@@ -2630,7 +2651,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/variables'
     | '/organization/$organizationId/settings/agents/mcps'
     | '/organization/$organizationId/settings/agents/tokens'
-    | '/organization/$organizationId/cluster/$clusterId'
+    | '/organization/$organizationId/cluster/$clusterId/'
     | '/organization/$organizationId/project/$projectId'
     | '/organization/$organizationId/settings/agents/'
     | '/organization/$organizationId/settings/roles'
@@ -2990,6 +3011,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/clusters'
     | '/_authenticated/organization/$organizationId/overview'
     | '/_authenticated/organization/$organizationId/'
+    | '/_authenticated/organization/$organizationId/cluster/$clusterId'
     | '/_authenticated/organization/$organizationId/settings/agents'
     | '/_authenticated/onboarding/organization/$organizationId/cluster'
     | '/_authenticated/onboarding/organization/$organizationId/demo-cluster'
@@ -3515,6 +3537,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
+    '/_authenticated/organization/$organizationId/cluster/$clusterId': {
+      id: '/_authenticated/organization/$organizationId/cluster/$clusterId'
+      path: '/cluster/$clusterId'
+      fullPath: '/organization/$organizationId/cluster/$clusterId'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
     '/_authenticated/organization/$organizationId/settings/roles/': {
       id: '/_authenticated/organization/$organizationId/settings/roles/'
       path: '/roles'
@@ -3538,10 +3567,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/'
-      path: '/cluster/$clusterId'
-      fullPath: '/organization/$organizationId/cluster/$clusterId'
+      path: '/'
+      fullPath: '/organization/$organizationId/cluster/$clusterId/'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/agents/tokens': {
       id: '/_authenticated/organization/$organizationId/settings/agents/tokens'
@@ -3573,31 +3602,31 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/workloads': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/workloads'
-      path: '/cluster/$clusterId/workloads'
+      path: '/workloads'
       fullPath: '/organization/$organizationId/cluster/$clusterId/workloads'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/overview': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview'
-      path: '/cluster/$clusterId/overview'
+      path: '/overview'
       fullPath: '/organization/$organizationId/cluster/$clusterId/overview'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs'
-      path: '/cluster/$clusterId/cluster-logs'
+      path: '/cluster-logs'
       fullPath: '/organization/$organizationId/cluster/$clusterId/cluster-logs'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell'
-      path: '/cluster/$clusterId/cloud-shell'
+      path: '/cloud-shell'
       fullPath: '/organization/$organizationId/cluster/$clusterId/cloud-shell'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/settings': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/settings'
@@ -3615,17 +3644,17 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/settings': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/settings'
-      path: '/cluster/$clusterId/settings'
+      path: '/settings'
       fullPath: '/organization/$organizationId/cluster/$clusterId/settings'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/profile': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/profile'
-      path: '/cluster/$clusterId/profile'
+      path: '/profile'
       fullPath: '/organization/$organizationId/cluster/$clusterId/profile'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/settings/': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/settings/'
@@ -3664,10 +3693,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/'
-      path: '/cluster/$clusterId/deployments'
+      path: '/deployments'
       fullPath: '/organization/$organizationId/cluster/$clusterId/deployments'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId': {
       id: '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId'
@@ -3853,10 +3882,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId': {
       id: '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
-      path: '/cluster/$clusterId/deployments/logs/$deploymentId'
+      path: '/deployments/logs/$deploymentId'
       fullPath: '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
@@ -4869,6 +4898,45 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteW
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteChildren,
   )
 
+interface AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRouteWithChildren
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteWithChildren
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute
+}
+
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteChildren: AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteChildren =
+  {
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRouteWithChildren,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteWithChildren,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute,
+  }
+
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute._addFileChildren(
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteChildren,
+  )
+
 interface AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdClusterCreateSlugAddonsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugAddonsRoute
   AuthenticatedOrganizationOrganizationIdClusterCreateSlugEksRoute: typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugEksRoute
@@ -5389,27 +5457,19 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdClustersRoute: typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   AuthenticatedOrganizationOrganizationIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   AuthenticatedOrganizationOrganizationIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdIndexRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdClusterNewRoute: typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
   AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRouteWithChildren
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute: typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRouteWithChildren
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRouteWithChildren
-  AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
@@ -5454,38 +5514,24 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdOverviewRoute,
     AuthenticatedOrganizationOrganizationIdIndexRoute:
       AuthenticatedOrganizationOrganizationIdIndexRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdClusterNewRoute:
       AuthenticatedOrganizationOrganizationIdClusterNewRoute,
     AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute:
       AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute,
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRoute:
-      AuthenticatedOrganizationOrganizationIdClusterClusterIdProfileRouteRouteWithChildren,
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute:
-      AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRoute:
       AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRouteWithChildren,
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute:
-      AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute,
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute:
-      AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute,
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute:
-      AuthenticatedOrganizationOrganizationIdClusterClusterIdOverviewRoute,
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute:
-      AuthenticatedOrganizationOrganizationIdClusterClusterIdWorkloadsRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdOverviewRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute,
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute:
-      AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute,
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute:
-      AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRoute:
@@ -5494,8 +5540,6 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRouteWithChildren,
-    AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute:
-      AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationRoute:

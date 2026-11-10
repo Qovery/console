@@ -197,6 +197,58 @@ describe('autoscaling-payload', () => {
     })
   })
 
+  describe('KEDA scaler config format', () => {
+    const buildRequest = (scaler: Record<string, unknown>) => ({
+      scalers: [{ type: 'prometheus', ...scaler }],
+      autoscaling_mode: 'KEDA',
+    })
+
+    it('should send JSON-based scalers back as config_json', () => {
+      const result = extractAndProcessAutoscaling(
+        buildRequest({ config: '{\n  "threshold": "100"\n}', configFormat: 'json' })
+      )
+
+      expect(result.autoscaling?.scalers[0]).toMatchObject({ config_json: { threshold: '100' } })
+      expect(result.autoscaling?.scalers[0].config_yaml).toBeUndefined()
+    })
+
+    it('should fall back to config_yaml when a JSON-based scaler is no longer valid JSON', () => {
+      const result = extractAndProcessAutoscaling(buildRequest({ config: 'threshold: "100"', configFormat: 'json' }))
+
+      expect(result.autoscaling?.scalers[0]).toMatchObject({ config_yaml: 'threshold: "100"' })
+      expect(result.autoscaling?.scalers[0].config_json).toBeUndefined()
+    })
+
+    it.each([['["100"]'], ['null'], ['"100"']])(
+      'should fall back to config_yaml when a JSON-based scaler is valid JSON but not an object (%s)',
+      (config) => {
+        const result = extractAndProcessAutoscaling(buildRequest({ config, configFormat: 'json' }))
+
+        expect(result.autoscaling?.scalers[0]).toMatchObject({ config_yaml: config })
+        expect(result.autoscaling?.scalers[0].config_json).toBeUndefined()
+      }
+    )
+
+    it('should send YAML-based scalers as config_yaml', () => {
+      const result = extractAndProcessAutoscaling(buildRequest({ config: 'threshold: "100"', configFormat: 'yaml' }))
+
+      expect(result.autoscaling?.scalers[0]).toMatchObject({ config_yaml: 'threshold: "100"' })
+      expect(result.autoscaling?.scalers[0].config_json).toBeUndefined()
+    })
+
+    it('should keep configFormat when building the form request', () => {
+      const result = buildAutoscalingRequestFromForm(
+        {
+          autoscaling_mode: 'KEDA',
+          scalers: [{ type: 'prometheus', config: '{}', configFormat: 'json' }],
+        },
+        { memory: 512, cpu: 250, gpu: 0 }
+      )
+
+      expect(result['scalers']).toEqual([{ type: 'prometheus', config: '{}', configFormat: 'json' }])
+    })
+  })
+
   describe('buildAutoscalingRequestFromForm', () => {
     it('should build request for NONE mode', () => {
       const formData = {

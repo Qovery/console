@@ -75,9 +75,24 @@ export function ApplicationContainerSummaryView({
     .with('APPLICATION', () => 'Application')
     .otherwise(() => 'Container')
 
-  const hasHealthchecks = Boolean(
-    portsData.healthchecks?.item?.liveness_probe || portsData.healthchecks?.item?.readiness_probe
-  )
+  const configuredProbes = [
+    {
+      label: 'Liveness',
+      type: portsData.healthchecks?.typeLiveness,
+      probe: portsData.healthchecks?.item?.liveness_probe,
+    },
+    {
+      label: 'Readiness',
+      type: portsData.healthchecks?.typeReadiness,
+      probe: portsData.healthchecks?.item?.readiness_probe,
+    },
+    {
+      label: 'Startup',
+      type: portsData.healthchecks?.typeStartup,
+      probe: portsData.healthchecks?.item?.startup_probe,
+    },
+  ].flatMap(({ label, type, probe }) => (type && probe ? [{ label, type, probe }] : []))
+  const hasHealthchecks = configuredProbes.length > 0
   const selectedCpuArchitecture = getCpuArchitectureSummaryValue(resourcesData.cpu_architecture)
 
   return (
@@ -246,77 +261,39 @@ export function ApplicationContainerSummaryView({
               />
             </div>
             <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
-              {portsData.healthchecks?.item?.liveness_probe && portsData.healthchecks.typeLiveness ? (
-                <li className="my-2 grid grid-cols-1 gap-2 md:grid-cols-2">
-                  <div>
-                    <strong className="font-medium text-neutral">Liveness</strong>
-                  </div>
-                  <div className="space-y-2">
-                    <p>
-                      <strong className="font-medium text-neutral">Type:</strong> {portsData.healthchecks.typeLiveness}
-                    </p>
-                    <p>
-                      <strong className="font-medium text-neutral">Initial Delay:</strong>{' '}
-                      {portsData.healthchecks.item.liveness_probe.initial_delay_seconds} seconds
-                    </p>
-                    <p>
-                      <strong className="font-medium text-neutral">Period:</strong>{' '}
-                      {portsData.healthchecks.item.liveness_probe.period_seconds} seconds
-                    </p>
-                    <p>
-                      <strong className="font-medium text-neutral">Timeout:</strong>{' '}
-                      {portsData.healthchecks.item.liveness_probe.timeout_seconds} seconds
-                    </p>
-                    <p>
-                      <strong className="font-medium text-neutral">Success Threshold:</strong>{' '}
-                      {portsData.healthchecks.item.liveness_probe.success_threshold}
-                    </p>
-                    <p>
-                      <strong className="font-medium text-neutral">Failure Threshold:</strong>{' '}
-                      {portsData.healthchecks.item.liveness_probe.failure_threshold}
-                    </p>
-                  </div>
-                </li>
-              ) : null}
-
-              {portsData.healthchecks?.item?.readiness_probe && portsData.healthchecks.typeReadiness ? (
-                <>
-                  {portsData.healthchecks?.item?.liveness_probe && (
-                    <hr className="border-t border-dashed border-neutral" />
-                  )}
+              {configuredProbes.map(({ label, type, probe }, index) => (
+                <Fragment key={label}>
+                  {index > 0 && <hr className="border-t border-dashed border-neutral" />}
                   <li className="my-2 grid grid-cols-1 gap-2 md:grid-cols-2">
                     <div>
-                      <strong className="font-medium text-neutral">Readiness</strong>
+                      <strong className="font-medium text-neutral">{label}</strong>
                     </div>
                     <div className="space-y-2">
                       <p>
-                        <strong className="font-medium text-neutral">Type:</strong>{' '}
-                        {portsData.healthchecks.typeReadiness}
+                        <strong className="font-medium text-neutral">Type:</strong> {type}
                       </p>
                       <p>
                         <strong className="font-medium text-neutral">Initial Delay:</strong>{' '}
-                        {portsData.healthchecks.item.readiness_probe.initial_delay_seconds} seconds
+                        {probe.initial_delay_seconds} seconds
                       </p>
                       <p>
-                        <strong className="font-medium text-neutral">Period:</strong>{' '}
-                        {portsData.healthchecks.item.readiness_probe.period_seconds} seconds
+                        <strong className="font-medium text-neutral">Period:</strong> {probe.period_seconds} seconds
                       </p>
                       <p>
-                        <strong className="font-medium text-neutral">Timeout:</strong>{' '}
-                        {portsData.healthchecks.item.readiness_probe.timeout_seconds} seconds
+                        <strong className="font-medium text-neutral">Timeout:</strong> {probe.timeout_seconds} seconds
                       </p>
                       <p>
                         <strong className="font-medium text-neutral">Success Threshold:</strong>{' '}
-                        {portsData.healthchecks.item.readiness_probe.success_threshold}
+                        {probe.success_threshold}
                       </p>
                       <p>
                         <strong className="font-medium text-neutral">Failure Threshold:</strong>{' '}
-                        {portsData.healthchecks.item.readiness_probe.failure_threshold}
+                        {probe.failure_threshold}
                       </p>
                     </div>
                   </li>
-                </>
-              ) : null}
+                </Fragment>
+              ))}
             </ul>
           </Section>
         ) : null}
@@ -355,16 +332,24 @@ export function ApplicationContainerSummaryView({
                 ))}
                 {externalSecretsData.map((secret, index) => (
                   <li className="grid grid-cols-1 gap-2 md:grid-cols-[2fr_1fr_1fr]" key={`${secret.name}-${index}`}>
-                    <Tooltip content={`${secret.name} = ${secret.reference}`} align="start">
-                      <strong className="truncate font-medium text-neutral">
-                        {secret.name} = {secret.reference}
-                      </strong>
-                    </Tooltip>
+                    <div className="flex min-w-0 flex-col gap-1">
+                      <Tooltip content={`${secret.name} = ${secret.reference}`} align="start">
+                        <strong className="truncate font-medium text-neutral">
+                          {secret.name} = {secret.reference}
+                        </strong>
+                      </Tooltip>
+                      {secret.isJson && <span className="break-all text-xs">JSON path: {secret.keyName}</span>}
+                    </div>
                     <span>
                       <strong className="font-medium text-neutral">Scope:</strong>{' '}
                       {secret.scope ? generateScopeLabel(secret.scope) : '-'}
                     </span>
-                    <span>{secret.isFile ? 'External secret file' : 'External secret'}</span>
+                    <span>
+                      {match(secret)
+                        .with({ isJson: true }, () => 'JSON external secret')
+                        .with({ isFile: true }, () => 'External secret file')
+                        .otherwise(() => 'External secret')}
+                    </span>
                   </li>
                 ))}
               </>

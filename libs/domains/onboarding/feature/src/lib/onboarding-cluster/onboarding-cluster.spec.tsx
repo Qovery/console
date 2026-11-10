@@ -88,32 +88,31 @@ describe('OnboardingCluster', () => {
     const { userEvent } = renderCluster()
     expect(screen.getByRole('progressbar')).toHaveValue(2)
     expect(screen.queryByRole('button', { name: 'Need help? Ask Qopilot' })).not.toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: /I have a cloud admin account/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Create a cluster/ }))
     expect(navigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/cluster/new',
       params: { organizationId: 'created-org' },
       search: { 'no-demo': true },
     })
     expect(posthog.capture).toHaveBeenCalledTimes(1)
-    expect(posthog.capture).toHaveBeenCalledWith('onboarding-cloud-admin-selected', {
-      has_cloud_admin_access: true,
-      option: 'cloud-admin',
+    expect(posthog.capture).toHaveBeenCalledWith('onboarding-cluster-selected', {
+      option: 'create-cluster',
       organization_id: 'created-org',
       $groups: { organization_id: 'created-org' },
     })
     expect(readPendingOnboarding('user-1')).toEqual(progress)
   })
-  it('opens the demo installation step without discarding profile progress', async () => {
+  it('links to the hosted demo platform without discarding profile progress', async () => {
     const { userEvent } = renderCluster()
-    await userEvent.click(screen.getByRole('button', { name: /I don’t have a cloud admin account/ }))
-    expect(navigate).toHaveBeenCalledWith({
-      to: '/onboarding/organization/$organizationId/demo-cluster',
-      params: { organizationId: 'created-org' },
-    })
+    const demoLink = screen.getByRole('link', { name: /Test the platform/ })
+    expect(demoLink).toHaveAttribute('href', 'https://console-demo.qovery.com')
+    expect(demoLink).toHaveAttribute('target', '_self')
+    demoLink.addEventListener('click', (event) => event.preventDefault())
+    await userEvent.click(demoLink)
+    expect(navigate).not.toHaveBeenCalled()
     expect(posthog.capture).toHaveBeenCalledTimes(1)
     expect(posthog.capture).toHaveBeenCalledWith('onboarding-demo-selected', {
-      has_cloud_admin_access: false,
-      option: 'local-demo',
+      option: 'platform-demo',
       organization_id: 'created-org',
       $groups: { organization_id: 'created-org' },
     })
@@ -121,7 +120,7 @@ describe('OnboardingCluster', () => {
   })
   it('does not show the redundant explore link', () => {
     renderCluster()
-    expect(screen.queryByRole('link', { name: /explore.*platform/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /^explore.*platform/i })).not.toBeInTheDocument()
   })
   it('goes back to the saved profile without discarding created resources', async () => {
     const { userEvent } = renderCluster()

@@ -14,7 +14,7 @@ import {
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 import { Fragment, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { isExternalSecretVariable } from '@qovery/domains/variables/util'
+import { getOverridesByParentId, isExternalSecretVariable } from '@qovery/domains/variables/util'
 import { ExternalServiceEnum, IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import {
@@ -67,6 +67,10 @@ function isServiceScopeServiceType(serviceType: VariableResponse['service_type']
       () => true
     )
     .otherwise(() => false)
+}
+
+function getScopeLabelForSentence(scope: APIVariableScopeEnum): string {
+  return generateScopeLabel(scope).toLowerCase()
 }
 
 function getVariableScopeLabel(variable: VariableResponse): string {
@@ -147,6 +151,7 @@ export function VariableList({
   )
   const builtInVariables = useMemo(() => variables.filter((variable) => variable.scope === 'BUILT_IN'), [variables])
   const variablesById = useMemo(() => new Map(variables.map((variable) => [variable.id, variable])), [variables])
+  const overridesByParentId = useMemo(() => getOverridesByParentId(variables), [variables])
   const scrollToVariable = useCallback((variableId: string) => {
     document.getElementById(getVariableRowId(variableId))?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }, [])
@@ -304,6 +309,7 @@ export function VariableList({
           const showFilePathUnderName = isServiceScope && showOnly === 'custom' && isFileVariable
           const aliasedVariable = variable.aliased_variable
           const overriddenVariable = variable.overridden_variable
+          const overridingVariable = overridesByParentId.get(variable.id)
 
           return (
             <div className="flex flex-col justify-center gap-1">
@@ -370,7 +376,32 @@ export function VariableList({
                       {aliasedVariable.key}
                     </button>
                   )}
-                  {overriddenVariable && <span>{overriddenVariable.key}</span>}
+                  {overriddenVariable &&
+                    (variablesById.has(overriddenVariable.id) ? (
+                      <button
+                        type="button"
+                        aria-label={`Scroll to overridden ${overriddenVariable.key} variable`}
+                        className="max-w-full truncate rounded-sm text-left hover:underline focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text"
+                        onClick={() => scrollToVariable(overriddenVariable.id)}
+                      >
+                        Overrides {getScopeLabelForSentence(overriddenVariable.scope)}
+                      </button>
+                    ) : (
+                      <span>Overrides {getScopeLabelForSentence(overriddenVariable.scope)}</span>
+                    ))}
+                </div>
+              )}
+              {overridingVariable && (
+                <div className="flex min-w-0 flex-row gap-1 text-2xs text-neutral-subtle">
+                  <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="text-2xs text-neutral-subtle" />
+                  <button
+                    type="button"
+                    aria-label={`Scroll to ${overridingVariable.key} override`}
+                    className="max-w-full truncate rounded-sm text-left hover:underline focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text"
+                    onClick={() => scrollToVariable(overridingVariable.id)}
+                  >
+                    Overridden in {getScopeLabelForSentence(overridingVariable.scope)}
+                  </button>
                 </div>
               )}
             </div>
@@ -722,6 +753,7 @@ export function VariableList({
   }, [
     variables,
     variablesById,
+    overridesByParentId,
     props,
     scrollToVariable,
     showServiceLinkColumn,
@@ -993,6 +1025,10 @@ export function VariableList({
                       key={cell.id}
                       className={twMerge(
                         'flex h-full min-w-0 items-center first:relative',
+                        // Mute the value that does not apply because a lower scope overrides it
+                        overridesByParentId.has(row.original.id) &&
+                          (cell.column.id === 'key' || cell.column.id === 'variable_kind') &&
+                          'opacity-60',
                         cell.column.id === 'actions' && 'justify-end',
                         !isServiceScope && cell.column.id === 'actions' && 'border-r border-neutral pl-0',
                         isServiceScope && cell.column.id === 'key' && 'border-r border-neutral'

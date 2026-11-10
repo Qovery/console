@@ -1,5 +1,5 @@
-import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { InputToggle, ModalCrud, useModal } from '@qovery/shared/ui'
+import { FormProvider, useForm } from 'react-hook-form'
+import { ModalCrud, useModal } from '@qovery/shared/ui'
 import useExportTerraform from '../hooks/use-export-terraform/use-export-terraform'
 
 export interface TerraformExportModalProps {
@@ -14,9 +14,9 @@ export function TerraformExportModal({ environmentId }: TerraformExportModalProp
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit(async ({ exportSecrets }) => {
+  const onSubmit = methods.handleSubmit(async () => {
     try {
-      await downloadTerraformConfiguration({ environmentId: environmentId, exportSecrets: exportSecrets })
+      await downloadTerraformConfiguration({ environmentId })
       closeModal()
     } catch (error) {
       console.error(error)
@@ -27,27 +27,13 @@ export function TerraformExportModal({ environmentId }: TerraformExportModalProp
     <FormProvider {...methods}>
       <ModalCrud
         title="Export as Terraform"
-        description="Export full environment & resources into Terraform manifests (only for Admin)."
+        description="Export your environment and resources as Terraform manifests. Secret values will not be exposed."
         submitLabel="Export"
         onClose={closeModal}
         onSubmit={onSubmit}
         loading={isLoading}
-      >
-        <Controller
-          name="exportSecrets"
-          control={methods.control}
-          render={({ field }) => (
-            <InputToggle
-              value={field.value}
-              onChange={field.onChange}
-              title="Export secrets"
-              description="An optional toggle for secure secrets."
-              align="top"
-              small
-            />
-          )}
-        />
-      </ModalCrud>
+        children={null}
+      />
     </FormProvider>
   )
 }

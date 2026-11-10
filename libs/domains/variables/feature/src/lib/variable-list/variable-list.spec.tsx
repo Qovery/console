@@ -185,6 +185,48 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
         owned_by: 'QOVERY',
         is_secret: false,
       },
+      {
+        id: 'b5a0f1de-3c2e-4d7a-9f61-2e7c1c0d4a11',
+        created_at: '2024-06-10T12:53:23.97647Z',
+        updated_at: '2024-06-10T12:53:23.976472Z',
+        key: 'LOG_LEVEL',
+        value: 'info',
+        mount_path: null,
+        scope: 'ENVIRONMENT',
+        overridden_variable: null,
+        aliased_variable: null,
+        variable_type: 'VALUE',
+        variable_kind: 'Public',
+        service_id: null,
+        service_name: null,
+        service_type: null,
+        owned_by: 'QOVERY',
+        is_secret: false,
+      },
+      {
+        id: 'c6b1e2ef-4d3f-4e8b-8a72-3f8d2d1e5b22',
+        created_at: '2024-06-11T12:53:23.97647Z',
+        updated_at: '2024-06-11T12:53:23.976472Z',
+        key: 'LOG_LEVEL',
+        value: 'debug',
+        mount_path: null,
+        scope: 'APPLICATION',
+        overridden_variable: {
+          id: 'b5a0f1de-3c2e-4d7a-9f61-2e7c1c0d4a11',
+          key: 'LOG_LEVEL',
+          value: 'info',
+          mount_path: null,
+          scope: 'ENVIRONMENT',
+        },
+        aliased_variable: null,
+        variable_type: 'OVERRIDE',
+        variable_kind: 'Public',
+        service_id: null,
+        service_name: null,
+        service_type: null,
+        owned_by: 'QOVERY',
+        is_secret: false,
+      },
     ],
   }),
 }))
@@ -226,7 +268,7 @@ describe('VariableList', () => {
     const builtInSection = screen.getByRole('heading', { name: /built-in variables/i }).closest('section')
     expect(customSection).toBeTruthy()
     expect(builtInSection).toBeTruthy()
-    expect(within(customSection as HTMLElement).getAllByRole('row')).toHaveLength(9)
+    expect(within(customSection as HTMLElement).getAllByRole('row')).toHaveLength(11)
     expect(within(builtInSection as HTMLElement).getAllByRole('row')).toHaveLength(2)
     expect(screen.getAllByTestId('doppler-tag')).toHaveLength(1)
   })
@@ -304,5 +346,25 @@ describe('VariableList', () => {
     await userEvent.type(within(customSection as HTMLElement).getByRole('textbox'), 'BAR')
     const rows = within(customSection as HTMLElement).getAllByRole('row')
     expect(rows).toHaveLength(3)
+  })
+  it('should mark the variable overridden at a lower scope and the override that wins', async () => {
+    const { userEvent } = renderWithProviders(<VariableList {...variableListProps} />)
+    const [parentRow, overrideRow] = screen.getAllByText('LOG_LEVEL').map((element) => element.closest('tr'))
+
+    expect(within(parentRow as HTMLElement).getByText('Overridden in service')).toBeInTheDocument()
+    expect(within(parentRow as HTMLElement).getAllByRole('cell')[1]).toHaveClass('opacity-60')
+    expect(within(overrideRow as HTMLElement).getByText('Overrides environment')).toBeInTheDocument()
+    expect(within(overrideRow as HTMLElement).queryByText(/overridden in/i)).not.toBeInTheDocument()
+    expect(within(overrideRow as HTMLElement).getAllByRole('cell')[1]).not.toHaveClass('opacity-60')
+
+    await userEvent.click(
+      within(parentRow as HTMLElement).getByRole('button', { name: /scroll to LOG_LEVEL override/i })
+    )
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' })
+  })
+  it('should not mark variables that are not overridden', () => {
+    renderWithProviders(<VariableList {...variableListProps} />)
+    const row = screen.getByText('grafana_config').closest('tr')
+    expect(within(row as HTMLElement).queryByText(/overridden in/i)).not.toBeInTheDocument()
   })
 })

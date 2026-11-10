@@ -59,6 +59,7 @@ export function removePortFromProbes<T extends Application | Container>(service:
     ...cloneService.healthchecks,
     liveness_probe: removePortFromProbe(cloneService.healthchecks?.liveness_probe),
     readiness_probe: removePortFromProbe(cloneService.healthchecks?.readiness_probe),
+    startup_probe: removePortFromProbe(cloneService.healthchecks?.startup_probe),
   }
 
   return cloneService
@@ -196,6 +197,7 @@ function ApplicationContainerPortSettingsContent() {
             ports={service.ports}
             livenessProbeType={service.healthchecks?.liveness_probe?.type}
             readinessProbeType={service.healthchecks?.readiness_probe?.type}
+            startupProbeType={service.healthchecks?.startup_probe?.type}
             onAddPort={() => openPortModal()}
             onEditPort={(port) => openPortModal(port)}
             onRemovePort={onDeletePort}
