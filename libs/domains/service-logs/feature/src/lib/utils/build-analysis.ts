@@ -1,4 +1,9 @@
-import { type BuildAnalysisResponse, type BuildAnalysisResult, type BuildAnalysisState } from 'qovery-typescript-axios'
+import {
+  type BuildAnalysisResponse,
+  type BuildAnalysisResult,
+  type BuildAnalysisState,
+  type BuildAnalysisTimeSaved,
+} from 'qovery-typescript-axios'
 
 export type BuildOptimizerState =
   // The build is analysed once it went through
@@ -37,4 +42,17 @@ export function getBuildOptimizerState({
   if (buildAnalysisState.latest_build_execution_id !== executionId) return { type: 'NOT_LATEST_BUILD' }
 
   return { type: 'READY', failedAnalysis: analysis?.status === 'FAILED' ? analysis : undefined }
+}
+
+/**
+ * Share of the build duration the estimated time saved stands for, e.g. "44–54%", or undefined without a duration.
+ */
+export function formatBuildTimeSavedPercentage(timeSaved: BuildAnalysisTimeSaved, buildDurationSec?: number) {
+  if (!buildDurationSec) return undefined
+
+  const toPercentage = (seconds: number) => Math.min(100, Math.round((seconds / buildDurationSec) * 100))
+  const minPercentage = toPercentage(timeSaved.min_seconds)
+  const maxPercentage = toPercentage(timeSaved.max_seconds)
+
+  return minPercentage === maxPercentage ? `${maxPercentage}%` : `${minPercentage}–${maxPercentage}%`
 }

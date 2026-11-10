@@ -55,6 +55,7 @@ function renderButton(isBuildSucceeded = true) {
       serviceId="service-1"
       serviceType="APPLICATION"
       isBuildSucceeded={isBuildSucceeded}
+      buildDurationSec={180}
     />
   )
 }
@@ -162,6 +163,8 @@ describe('BuildOptimizerButton', () => {
 
     expect(screen.getByRole('heading', { name: 'Build optimization analysis' })).toBeInTheDocument()
     expect(screen.getByText('The dependency install step is not cached.')).toBeInTheDocument()
+    // Compared to the duration of the build the button belongs to
+    expect(screen.getByText('(28–50%)', { exact: false })).toBeInTheDocument()
   })
 
   it('still opens a finished analysis when reading it again fails', () => {

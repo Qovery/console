@@ -218,6 +218,7 @@ export function DeploymentLogsSteps({
                       serviceId={serviceId}
                       serviceType={buildAnalysisServiceType}
                       isBuildSucceeded={buildStep?.status === 'SUCCESS'}
+                      buildDurationSec={phase.durationSec}
                     />
                   )}
                 </div>

@@ -8,6 +8,7 @@ import { type PropsWithChildren, useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Button, Heading, Icon } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import { formatBuildTimeSavedPercentage } from '../utils/build-analysis'
 import { formatDeploymentLogDuration } from '../utils/deployment-log-steps'
 
 const ASSET_LABELS: Record<BuildAnalysisAsset, string> = {
@@ -125,11 +126,14 @@ function CollapsibleCodeBlock({ title, content }: { title: string; content: stri
 
 export interface BuildOptimizationModalProps {
   analysis: BuildAnalysisResult
+  // Duration of the analysed build, which the time saved is compared to
+  buildDurationSec?: number
   onClose: () => void
 }
 
-export function BuildOptimizationModal({ analysis, onClose }: BuildOptimizationModalProps) {
+export function BuildOptimizationModal({ analysis, buildDurationSec, onClose }: BuildOptimizationModalProps) {
   const timeSaved = analysis.estimated_time_saved
+  const timeSavedPercentage = timeSaved ? formatBuildTimeSavedPercentage(timeSaved, buildDurationSec) : undefined
 
   return (
     <div className="flex flex-col">
@@ -147,6 +151,7 @@ export function BuildOptimizationModal({ analysis, onClose }: BuildOptimizationM
               {timeSaved.min_seconds === timeSaved.max_seconds
                 ? formatDeploymentLogDuration(timeSaved.max_seconds)
                 : `${formatDeploymentLogDuration(timeSaved.min_seconds)} – ${formatDeploymentLogDuration(timeSaved.max_seconds)}`}
+              {timeSavedPercentage && <span className="text-neutral-subtle"> ({timeSavedPercentage})</span>}
             </span>
           </AnalysisRow>
         )}

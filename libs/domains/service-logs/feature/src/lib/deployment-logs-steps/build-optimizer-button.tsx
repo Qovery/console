@@ -30,6 +30,8 @@ export interface BuildOptimizerButtonProps {
   serviceType: BuildAnalysisServiceType
   // The build is analyzed once it went through
   isBuildSucceeded: boolean
+  // Duration of the build, which the estimated time saved is compared to
+  buildDurationSec?: number
 }
 
 export function BuildOptimizerButton({
@@ -37,6 +39,7 @@ export function BuildOptimizerButton({
   serviceId,
   serviceType,
   isBuildSucceeded,
+  buildDurationSec,
 }: BuildOptimizerButtonProps) {
   const { organizationId = '', projectId = '', executionId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
@@ -64,10 +67,12 @@ export function BuildOptimizerButton({
   const openAnalysis = useCallback(
     (analysis: BuildAnalysisResult) =>
       openModal({
-        content: <BuildOptimizationModal analysis={analysis} onClose={closeModal} />,
+        content: (
+          <BuildOptimizationModal analysis={analysis} buildDurationSec={buildDurationSec} onClose={closeModal} />
+        ),
         options: { width: 676 },
       }),
-    [openModal, closeModal]
+    [openModal, closeModal, buildDurationSec]
   )
 
   useEffect(() => {

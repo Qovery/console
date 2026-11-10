@@ -1,5 +1,5 @@
 import { type BuildAnalysisResponse, type BuildAnalysisResult } from 'qovery-typescript-axios'
-import { getBuildOptimizerState } from './build-analysis'
+import { formatBuildTimeSavedPercentage, getBuildOptimizerState } from './build-analysis'
 
 const result: BuildAnalysisResult = {
   confidence: 'HIGH',
@@ -110,5 +110,25 @@ describe('getBuildOptimizerState', () => {
         isBuildSucceeded: true,
       })
     ).toEqual({ type: 'READY', failedAnalysis })
+  })
+})
+
+describe('formatBuildTimeSavedPercentage', () => {
+  it('formats the range as a share of the build duration', () => {
+    expect(formatBuildTimeSavedPercentage({ min_seconds: 90, max_seconds: 110 }, 204)).toBe('44–54%')
+  })
+
+  it('shows a single percentage when both ends round to it', () => {
+    expect(formatBuildTimeSavedPercentage({ min_seconds: 30, max_seconds: 30 }, 120)).toBe('25%')
+    expect(formatBuildTimeSavedPercentage({ min_seconds: 100, max_seconds: 101 }, 1000)).toBe('10%')
+  })
+
+  it('never goes over the whole build', () => {
+    expect(formatBuildTimeSavedPercentage({ min_seconds: 60, max_seconds: 150 }, 120)).toBe('50–100%')
+  })
+
+  it('leaves it out without a build duration', () => {
+    expect(formatBuildTimeSavedPercentage({ min_seconds: 30, max_seconds: 60 }, undefined)).toBeUndefined()
+    expect(formatBuildTimeSavedPercentage({ min_seconds: 30, max_seconds: 60 }, 0)).toBeUndefined()
   })
 })
