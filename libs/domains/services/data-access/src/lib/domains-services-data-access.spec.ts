@@ -49,7 +49,9 @@ describe('build analysis', () => {
       .mockReturnValue(response(state))
 
     await expect(
-      services.buildAnalysis({ serviceId: 'service-1', serviceType: 'APPLICATION' }).queryFn({} as never)
+      services
+        .buildAnalysis({ serviceId: 'service-1', serviceType: 'APPLICATION', executionId: 'exec-1' })
+        .queryFn({} as never)
     ).resolves.toBe(state)
     expect(getAnalysis).toHaveBeenCalledWith('service-1')
   })
@@ -59,9 +61,9 @@ describe('build analysis', () => {
       .spyOn(JobBuildAnalysisApi.prototype, 'getJobBuildAnalysis')
       .mockReturnValue(response(state))
 
-    await expect(services.buildAnalysis({ serviceId: 'job-1', serviceType: 'JOB' }).queryFn({} as never)).resolves.toBe(
-      state
-    )
+    await expect(
+      services.buildAnalysis({ serviceId: 'job-1', serviceType: 'JOB', executionId: 'exec-1' }).queryFn({} as never)
+    ).resolves.toBe(state)
     expect(getAnalysis).toHaveBeenCalledWith('job-1')
   })
 

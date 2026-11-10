@@ -706,8 +706,18 @@ export const services = createQueryKeys('services', {
         .exhaustive()
     },
   }),
-  buildAnalysis: ({ serviceId, serviceType }: { serviceId: string; serviceType: BuildAnalysisServiceType }) => ({
-    queryKey: [serviceId, serviceType],
+  buildAnalysis: ({
+    serviceId,
+    serviceType,
+    executionId,
+  }: {
+    serviceId: string
+    serviceType: BuildAnalysisServiceType
+    // The deployment the state is read for: the API answers for the service, but its latest build changes with
+    // each deployment, so a newer deployment page doesn't reuse the state cached for an older one
+    executionId: string
+  }) => ({
+    queryKey: [serviceId, serviceType, executionId],
     async queryFn() {
       const response = await match(serviceType)
         .with('APPLICATION', () => applicationBuildAnalysisApi.getApplicationBuildAnalysis(serviceId))

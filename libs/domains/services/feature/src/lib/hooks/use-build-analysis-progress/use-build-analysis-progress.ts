@@ -40,9 +40,10 @@ export function useBuildAnalysisProgress({
 }: UseBuildAnalysisProgressProps) {
   const [lastEvent, setLastEvent] = useState<BuildAnalysisEvent>()
 
-  // Once the analysis ended, or the route closed early because its progress is unavailable or timed out
+  // Once the analysis ended, or the route closed early because its progress is unavailable or timed out.
+  // The state belongs to the service, so it's read again for each of its deployment pages.
   const refetchBuildAnalysis = (queryClient: QueryClient) =>
-    queryClient.invalidateQueries({ queryKey: queries.services.buildAnalysis({ serviceId, serviceType }).queryKey })
+    queryClient.invalidateQueries({ queryKey: [...queries.services.buildAnalysis._def, serviceId, serviceType] })
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/build/analysis',

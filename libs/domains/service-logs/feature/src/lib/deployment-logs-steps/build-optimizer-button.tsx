@@ -43,6 +43,7 @@ export function BuildOptimizerButton({
   const { data: buildAnalysisState, isError } = useBuildAnalysis({
     serviceId,
     serviceType,
+    executionId,
     enabled: isBuildSucceeded,
   })
   const { mutate: startBuildAnalysis, isLoading: isStarting } = useStartBuildAnalysis()

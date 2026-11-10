@@ -82,6 +82,15 @@ describe('BuildOptimizerButton', () => {
     expect(screen.getByRole('button', { name: 'Optimize' })).toBeDisabled()
   })
 
+  it('reads the build analysis for the deployment being viewed', () => {
+    mockBuildAnalysisState({ latest_build_execution_id: 'exec-1', analysis: null })
+    renderButton()
+
+    expect(useBuildAnalysisMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ serviceId: 'service-1', serviceType: 'APPLICATION', executionId: 'exec-1' })
+    )
+  })
+
   it('is disabled when the build analysis cannot be read', () => {
     mockBuildAnalysisState(undefined, true)
     renderButton()
