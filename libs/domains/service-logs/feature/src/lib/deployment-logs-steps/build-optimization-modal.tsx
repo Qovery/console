@@ -180,6 +180,7 @@ export function BuildOptimizationModal({ analysis, onClose }: BuildOptimizationM
               <p className="text-neutral-subtle">No improvement found: this build is already efficient.</p>
             )}
           </div>
+          <CollapsibleCodeBlock title="Prompt for AI agents" content={analysis.agent_prompt} />
           {analysis.dockerfile && (
             <div className="flex flex-col gap-2">
               <CollapsibleCodeBlock title="Reworked Dockerfile" content={analysis.dockerfile} />
@@ -197,7 +198,6 @@ export function BuildOptimizationModal({ analysis, onClose }: BuildOptimizationM
               )}
             </div>
           )}
-          <CollapsibleCodeBlock title="Prompt for AI agents" content={analysis.agent_prompt} />
         </div>
       </div>
       <div className="flex justify-end border-t border-neutral px-5 py-4">
