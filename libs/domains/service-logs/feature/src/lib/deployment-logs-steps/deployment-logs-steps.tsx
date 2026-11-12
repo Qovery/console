@@ -188,7 +188,10 @@ export function DeploymentLogsSteps({
             placeholder="Search logs"
             ariaLabel="Search logs"
             value={searchQuery}
-            onChange={setSearchQuery}
+            onChange={(query) => {
+              setSearchQuery(query)
+              setOpenStepOverrides({})
+            }}
           />
         </div>
         {isSearching && phases.length === 0 && (

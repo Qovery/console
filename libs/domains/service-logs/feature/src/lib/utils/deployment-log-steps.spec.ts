@@ -250,6 +250,50 @@ describe('getDeploymentLogPhases', () => {
     expect(phases[0].status).toBe('ERROR')
   })
 
+  it.each(['ERROR', 'CANCEL'] as const)('skips the image build when provisioning ends with %s', (status) => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [
+        {
+          step_name: 'BUILD',
+          status,
+          duration_sec: 30,
+          sub_steps: [{ name: 'PROVISION_BUILDER', status, duration_sec: 30 }],
+        },
+      ],
+      linesByStep: new Map(),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases[0].steps.map((step) => [step.name, step.status])).toEqual([
+      ['PROVISION_BUILDER', status],
+      ['BUILD', 'SKIP'],
+    ])
+    expect(phases[0].status).toBe(status)
+  })
+
+  it.each(['IMAGE_PUSH', 'CACHE_EXPORT'] as const)('keeps the image build successful when %s is canceled', (name) => {
+    const phases = getDeploymentLogPhases({
+      serviceSteps: [
+        {
+          step_name: 'BUILD',
+          status: 'CANCEL',
+          duration_sec: 40,
+          sub_steps: [{ name, status: 'CANCEL', duration_sec: 10 }],
+        },
+      ],
+      linesByStep: new Map(),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases[0].steps.map((step) => [step.name, step.status])).toEqual([
+      ['BUILD', 'SUCCESS'],
+      [name, 'CANCEL'],
+    ])
+    expect(phases[0].status).toBe('CANCEL')
+  })
+
   it('lists the wait of the stage after the pre-checks, with its own time, apart from the deployment queue', () => {
     const phases = getDeploymentLogPhases({
       serviceSteps: [
