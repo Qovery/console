@@ -6,6 +6,7 @@ import { P, match } from 'ts-pattern'
  */
 export interface KedaAutoscalingFields {
   scalers?: Array<{
+    id?: string
     type: string
     config: string
     configFormat?: 'yaml' | 'json'
@@ -16,26 +17,11 @@ export interface KedaAutoscalingFields {
   autoscaling_mode?: 'NONE' | 'HPA' | 'KEDA'
 }
 
-type AutoscalingPolicyResponseWithFields = AutoscalingPolicyResponse & {
-  polling_interval_seconds?: number
-  cooldown_period_seconds?: number
-  scalers: Array<{
-    scaler_type: string
-    enabled: boolean
-    role: string
-    config_json?: Record<string, unknown>
-    config_yaml?: string
-    trigger_authentication?: {
-      name?: string
-      config_yaml?: string
-    }
-  }>
-}
-
 type AutoscalingPolicyRequestWithFields = AutoscalingPolicyRequest & {
   polling_interval_seconds?: number
   cooldown_period_seconds?: number
   scalers: Array<{
+    id?: string
     scaler_type: string
     enabled: boolean
     role: 'PRIMARY' | 'SAFETY'
@@ -87,18 +73,15 @@ export function convertAutoscalingResponseToRequest(
 ): AutoscalingPolicyRequestWithFields | undefined {
   if (!response) return undefined
 
-  const responseWithFields = response as AutoscalingPolicyResponseWithFields
-
-  const scalers = responseWithFields.scalers ?? []
-
   return {
     mode: response.mode,
-    polling_interval_seconds: responseWithFields.polling_interval_seconds,
-    cooldown_period_seconds: responseWithFields.cooldown_period_seconds,
-    scalers: scalers.map((scaler) => ({
+    polling_interval_seconds: response.polling_interval_seconds,
+    cooldown_period_seconds: response.cooldown_period_seconds,
+    scalers: (response.scalers ?? []).map((scaler) => ({
+      id: scaler.id,
       scaler_type: scaler.scaler_type,
       enabled: scaler.enabled,
-      role: scaler.role as 'PRIMARY' | 'SAFETY',
+      role: scaler.role,
       config_json: scaler.config_json as Record<string, unknown> | undefined,
       config_yaml: scaler.config_yaml ?? undefined,
       trigger_authentication: scaler.trigger_authentication
@@ -130,6 +113,7 @@ function processAutoscalingRequest(
         polling_interval_seconds: req.autoscaling_polling_interval ?? 30,
         cooldown_period_seconds: req.autoscaling_cooldown_period ?? 300,
         scalers: validScalers.map((scaler, index) => ({
+          id: scaler.id,
           scaler_type: scaler.type,
           enabled: true,
           role: index === 0 ? 'PRIMARY' : 'SAFETY',
@@ -192,6 +176,7 @@ export function extractAndProcessAutoscaling<T extends Record<string, unknown>>(
  * Form data type for scalers with trigger authentication
  */
 export type ScalerFormData = {
+  id?: string
   type: string
   config: string
   configFormat?: 'yaml' | 'json'
@@ -249,6 +234,7 @@ export function buildAutoscalingRequestFromForm(
       // KEDA mode: include trigger authentication directly in scaler payload
       const scalersWithAuth = ((formData['scalers'] || []) as ScalerFormData[]).map((scaler) => {
         const baseScaler = {
+          id: scaler.id,
           type: scaler.type,
           config: scaler.config,
           configFormat: scaler.configFormat,

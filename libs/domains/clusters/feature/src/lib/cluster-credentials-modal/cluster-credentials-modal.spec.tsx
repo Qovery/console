@@ -82,18 +82,37 @@ describe('ClusterCredentialsModal', () => {
     expect(screen.getByLabelText('Name')).toBeInTheDocument()
   })
 
-  it('should pass the organization id to the Qovery role Cloudformation stack', () => {
-    renderWithProviders(
-      wrapWithReactHookForm(
-        <ClusterCredentialsModal {...props} organizationId="3f2b7c1e-8d4a-4b6e-9f0a-1c2d3e4f5a6b" />
+  it.each([true, false, undefined])(
+    'should show the expected Cloudformation links with the organization id when wide-credentials is %s',
+    (isWideCredentialsEnabled) => {
+      mockUseFeatureFlagEnabled.mockImplementation((flag) =>
+        flag === 'wide-credentials' ? isWideCredentialsEnabled : true
       )
-    )
+      renderWithProviders(
+        wrapWithReactHookForm(
+          <ClusterCredentialsModal {...props} organizationId="3f2b7c1e-8d4a-4b6e-9f0a-1c2d3e4f5a6b" />
+        )
+      )
 
-    expect(screen.getByRole('link', { name: /Cloudformation stack/ })).toHaveAttribute(
-      'href',
-      'https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fcloudformation-qovery-role-creation.s3.amazonaws.com%2Ftemplate.json&stackName=qovery-role-creation&param_OrganizationId=3f2b7c1e-8d4a-4b6e-9f0a-1c2d3e4f5a6b'
-    )
-  })
+      const links = screen.getAllByRole('link', {
+        name: /^(Cloudformation stack|Extended permissions|Restricted permissions)$/,
+      })
+      expect(links.map((link) => link.textContent)).toEqual(
+        isWideCredentialsEnabled ? ['Extended permissions', 'Restricted permissions'] : ['Cloudformation stack']
+      )
+      for (const link of links) {
+        const [templateBucket, stackName] = !isWideCredentialsEnabled
+          ? ['cloudformation-qovery-role-creation', 'qovery-role-creation']
+          : link.textContent === 'Restricted permissions'
+            ? ['qovery-restricted-user-role', 'qovery-restricted-user-role']
+            : ['qovery-extended-user-role', 'qovery-extended-user-role']
+        expect(link).toHaveAttribute(
+          'href',
+          `https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2F${templateBucket}.s3.amazonaws.com%2Ftemplate.json&stackName=${stackName}&param_OrganizationId=3f2b7c1e-8d4a-4b6e-9f0a-1c2d3e4f5a6b`
+        )
+      }
+    }
+  )
 
   it('should get default credential type by object type', () => {
     expect(
