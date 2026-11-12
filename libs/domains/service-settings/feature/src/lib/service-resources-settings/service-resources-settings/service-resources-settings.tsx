@@ -23,6 +23,7 @@ import {
   buildHpaAdvancedSettingsPayload,
   loadHpaSettingsFromAdvancedSettings,
   toCpuArchitectureRequest,
+  toKedaScaledObjectSettingsFields,
 } from '@qovery/shared/util-services'
 
 type ServiceResourcesService = Exclude<EditableService, Database | Helm>
@@ -109,6 +110,13 @@ function getDefaultValues(
         return resourceService.autoscaling.cooldown_period_seconds
       })
       .otherwise(() => undefined),
+    ...toKedaScaledObjectSettingsFields(
+      match(service)
+        .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, ({ autoscaling }) =>
+          autoscaling?.mode === 'KEDA' ? autoscaling : undefined
+        )
+        .otherwise(() => undefined)
+    ),
     ...loadHpaSettingsFromAdvancedSettings(advancedSettings),
     ...defaultInstances,
   }

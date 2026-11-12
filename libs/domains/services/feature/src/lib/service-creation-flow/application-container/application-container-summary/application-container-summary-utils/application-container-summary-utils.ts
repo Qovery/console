@@ -12,7 +12,7 @@ import {
   type ApplicationResourcesData,
   type FlowPortData,
 } from '@qovery/shared/interfaces'
-import { toCpuArchitectureRequest } from '@qovery/shared/util-services'
+import { toCpuArchitectureRequest, toKedaScaledObjectSettingsPayload } from '@qovery/shared/util-services'
 
 export type ApplicationContainerCreatePayload =
   | { serviceType: 'APPLICATION'; payload: ApplicationRequest }
@@ -47,6 +47,7 @@ export function buildAutoscalingPolicy(resourcesData: ApplicationResourcesData):
     cooldown_period_seconds: resourcesData.autoscaling_cooldown_period
       ? Number(resourcesData.autoscaling_cooldown_period)
       : 300,
+    ...toKedaScaledObjectSettingsPayload(resourcesData),
     scalers: validScalers.map((scaler, index) => {
       const baseScaler = {
         scaler_type: scaler.type,
