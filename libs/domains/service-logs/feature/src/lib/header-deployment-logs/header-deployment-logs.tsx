@@ -70,7 +70,7 @@ export function HeaderDeploymentLogs({ serviceStatus, deploymentDate, children }
             <Tooltip content={dateFullFormat(deploymentDate)}>
               <Badge className="gap-1 text-ssm text-neutral-subtle">
                 <Icon iconName="calendar-day" iconStyle="regular" />
-                <span>{dateFullFormat(deploymentDate, undefined, 'dd/MM')}</span>
+                <span>{dateFullFormat(deploymentDate, undefined, 'dd/MM HH:mm')}</span>
               </Badge>
             </Tooltip>
           )}
