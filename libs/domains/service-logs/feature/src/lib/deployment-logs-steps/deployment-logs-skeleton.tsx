@@ -27,16 +27,15 @@ export function DeploymentLogsSkeleton() {
             </div>
             <div className="-mx-px -mb-px overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               {rowWidths.map((width, rowIndex) => (
-                <div
-                  key={rowIndex}
-                  className="flex h-12 items-center justify-between gap-4 border-b border-neutral px-4 last:border-b-0"
-                >
-                  <div className="flex min-w-0 items-center gap-2">
-                    <Skeleton width={14} height={14} className="shrink-0" />
-                    <Skeleton width={width} height={16} className="max-w-full" />
-                    <Skeleton width={14} height={14} rounded className="shrink-0" />
+                <div key={rowIndex} className="border-b border-neutral last:border-b-0">
+                  <div className="flex h-12 items-center justify-between gap-4 px-4">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <Skeleton width={14} height={14} className="shrink-0" />
+                      <Skeleton width={width} height={16} className="max-w-full" />
+                      <Skeleton width={14} height={14} rounded className="shrink-0" />
+                    </div>
+                    <Skeleton width={32} height={16} className="shrink-0" />
                   </div>
-                  <Skeleton width={32} height={16} className="shrink-0" />
                 </div>
               ))}
             </div>
