@@ -16,6 +16,7 @@ import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { LoaderSpinner, type ToastStatus, toast, toastError } from '@qovery/shared/ui'
+import { useCaptureUtmParams } from '@qovery/shared/util-hooks'
 import {
   DEVOPS_COPILOT_API_BASE_URL,
   GIT_SHA,
@@ -184,6 +185,8 @@ function App() {
   useEffect(() => {
     initSentry()
   }, [])
+
+  useCaptureUtmParams()
 
   // Keep PostHog's identified user in sync once Auth0 resolves the session
   useEffect(() => {

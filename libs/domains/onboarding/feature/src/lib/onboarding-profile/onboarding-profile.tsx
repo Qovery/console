@@ -14,7 +14,7 @@ import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { InputText, toast, toastError } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { getStoredUtmParams, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { OnboardingForm } from '../onboarding-form/onboarding-form'
 import { pushToDataLayer } from '../utils/data-layer'
 import {
@@ -53,7 +53,7 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
   })
   const { refetch: refetchOrganizations } = useOrganizations({ enabled: false })
   const { data: userSignUp, refetch: refetchUserSignUp } = useUserSignUp()
-  const { mutateAsync: createUserSignUp } = useCreateUserSignUp({ sendToCargo: !pending?.organizationId })
+  const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
   const defaultEmail = user?.email?.trim() || userSignUp?.user_email?.trim() || ''
 
@@ -194,6 +194,17 @@ function OnboardingProfileForm({ auth }: { auth: ReturnType<typeof useAuth> }) {
           company_name: data.company_name.trim(),
           phone: data.phone,
           use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
+        })
+        posthog.capture('user-signed-up', {
+          email: userEmail,
+          first_name: firstName,
+          last_name: lastName.join(' '),
+          company: data.company_name.trim(),
+          job_title: userSignUp?.user_role ?? '',
+          phone: data.phone,
+          organization_id: organizationId,
+          signup_source: 'Console',
+          ...getStoredUtmParams(),
         })
         pushToDataLayer({ event: 'onboarding-organization-created', plan: DEFAULT_PLAN })
         updatePending({ ...progress, completionTracked: true })

@@ -123,7 +123,7 @@
     "@nx/web": "23.2.1",
     "@nx/webpack": "23.2.1",
     "@nx/workspace": "23.2.1",
-    "@playwright/test": "1.60.0",
+    "@playwright/test": "1.65.0",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.11",
     "@semantic-release/github": "8.0.7",
     "@storybook/addon-docs": "9.1.10",
