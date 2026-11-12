@@ -79,6 +79,16 @@ export function LoaderPlaceholder({ title, description }: { title?: string; desc
 
 // Page loader: the header skeleton keeps the loader where it stays once the header shows up
 export function DeploymentLogsLoader() {
+  const isDeploymentLogsV2Enabled = useFeatureFlagEnabled('deployment-logs-v2') === true
+
+  if (!isDeploymentLogsV2Enabled) {
+    return (
+      <div className="flex h-page-container w-full flex-col justify-center">
+        <LoaderPlaceholder />
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-page-container flex-col">
       <div className="flex h-12 shrink-0 items-center gap-3 border-b border-neutral px-4">

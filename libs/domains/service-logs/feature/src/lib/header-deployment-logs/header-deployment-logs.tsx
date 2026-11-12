@@ -38,8 +38,10 @@ export function HeaderDeploymentLogs({ serviceStatus, deploymentDate, children }
   const router = useRouter()
   const { executionId = '' } = useParams({ strict: false })
 
-  const triggerAction = getTriggerAction(serviceStatus?.status_details)
-  const actionStatus = serviceStatus?.status_details?.status
+  // The status tells the last deployment of the service: it only describes this page's one when the service is part of it
+  const isPartOfDeployment = serviceStatus?.is_part_last_deployment === true
+  const triggerAction = isPartOfDeployment ? getTriggerAction(serviceStatus.status_details) : undefined
+  const actionStatus = isPartOfDeployment ? serviceStatus.status_details?.status : undefined
 
   const isOngoing = match(actionStatus)
     .with('ONGOING', 'CANCELING', () => true)
@@ -59,10 +61,12 @@ export function HeaderDeploymentLogs({ serviceStatus, deploymentDate, children }
           <Button onClick={() => router.history.back()} variant="plain" iconOnly aria-label="Back">
             <Icon className="text-base" iconName="arrow-left" iconStyle="regular" />
           </Button>
-          <div className="flex items-center gap-2">
-            <DeploymentAction status={triggerAction} iconClassName="hidden" textClassName="text-base font-medium" />
-            <StatusChip status={actionStatus} className="h-4 w-4" />
-          </div>
+          {isPartOfDeployment && (
+            <div className="flex items-center gap-2">
+              <DeploymentAction status={triggerAction} iconClassName="hidden" textClassName="text-base font-medium" />
+              <StatusChip status={actionStatus} className="h-4 w-4" />
+            </div>
+          )}
         </div>
         <span className="h-full border-l border-neutral" aria-hidden="true" />
         <div className="flex items-center gap-2">
@@ -74,12 +78,14 @@ export function HeaderDeploymentLogs({ serviceStatus, deploymentDate, children }
               </Badge>
             </Tooltip>
           )}
-          <Tooltip content="Deployment duration">
-            <Badge className="gap-1 text-ssm text-neutral-subtle">
-              <Icon iconName="clock" iconStyle="regular" />
-              <span>{formatDeploymentDurationClock(computingDurationSec)}</span>
-            </Badge>
-          </Tooltip>
+          {isPartOfDeployment && (
+            <Tooltip content="Deployment duration">
+              <Badge className="gap-1 text-ssm text-neutral-subtle">
+                <Icon iconName="clock" iconStyle="regular" />
+                <span>{formatDeploymentDurationClock(computingDurationSec)}</span>
+              </Badge>
+            </Tooltip>
+          )}
           {executionId && (
             <Badge className="gap-1 text-ssm text-neutral-subtle">
               <Icon iconName="code" iconStyle="regular" />

@@ -38,6 +38,21 @@ describe('HeaderDeploymentLogs', () => {
     expect(screen.getByRole('button', { name: 'Latest' })).toBeInTheDocument()
   })
 
+  it("leaves out the status and duration of a deployment the service isn't part of", () => {
+    const deploymentDate = '2026-11-15T08:38:00Z'
+    renderWithProviders(
+      <HeaderDeploymentLogs
+        serviceStatus={{ ...serviceStatus, is_part_last_deployment: false }}
+        deploymentDate={deploymentDate}
+      />
+    )
+
+    expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
+    expect(screen.queryByText('03:58')).not.toBeInTheDocument()
+    expect(screen.getByText(dateFullFormat(deploymentDate, undefined, 'dd/MM HH:mm'))).toBeInTheDocument()
+    expect(screen.getByText('0518c…824')).toBeInTheDocument()
+  })
+
   it('goes back to the previous page', async () => {
     const { userEvent } = renderWithProviders(<HeaderDeploymentLogs serviceStatus={serviceStatus} />)
 
