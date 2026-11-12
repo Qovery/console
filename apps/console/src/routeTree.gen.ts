@@ -24,6 +24,7 @@ import { Route as AuthenticatedOnboardingProfileRouteImport } from './routes/_au
 import { Route as AuthenticatedOrganizationOrganizationIdRouteRouteImport } from './routes/_authenticated/organization/$organizationId/route'
 import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
+import { Route as AuthenticatedOrganizationOrganizationIdCostControlRouteImport } from './routes/_authenticated/organization/$organizationId/cost-control'
 import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } from './routes/_authenticated/organization/$organizationId/clusters'
 import { Route as AuthenticatedOrganizationOrganizationIdAuditLogsRouteImport } from './routes/_authenticated/organization/$organizationId/audit-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/settings/route'
@@ -41,6 +42,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsHelmRepositorie
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRouteImport } from './routes/_authenticated/organization/$organizationId/settings/git-repository-access'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/settings/general'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/settings/danger-zone'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsCostDataRouteImport } from './routes/_authenticated/organization/$organizationId/settings/cost-data'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/container-registries'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/cloud-credentials'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-summary'
@@ -81,6 +83,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploym
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRouteImport } from './routes/_authenticated/organization/$organizationId/settings/roles/edit/$roleId'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/general'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/cost-budget'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/create'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/resources'
@@ -305,6 +308,12 @@ const AuthenticatedOrganizationOrganizationIdOverviewRoute =
     path: '/overview',
     getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdCostControlRoute =
+  AuthenticatedOrganizationOrganizationIdCostControlRouteImport.update({
+    id: '/cost-control',
+    path: '/cost-control',
+    getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdClustersRoute =
   AuthenticatedOrganizationOrganizationIdClustersRouteImport.update({
     id: '/clusters',
@@ -424,6 +433,13 @@ const AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute =
   AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRouteImport.update({
     id: '/danger-zone',
     path: '/danger-zone',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsCostDataRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsCostDataRouteImport.update({
+    id: '/cost-data',
+    path: '/cost-data',
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
   } as any)
@@ -753,6 +769,15 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneR
     {
       id: '/danger-zone',
       path: '/danger-zone',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRouteImport.update(
+    {
+      id: '/cost-budget',
+      path: '/cost-budget',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRoute,
     } as any,
@@ -1994,6 +2019,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
+  '/organization/$organizationId/cost-control': typeof AuthenticatedOrganizationOrganizationIdCostControlRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   '/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
@@ -2011,6 +2037,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
   '/organization/$organizationId/settings/container-registries': typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
+  '/organization/$organizationId/settings/cost-data': typeof AuthenticatedOrganizationOrganizationIdSettingsCostDataRoute
   '/organization/$organizationId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute
   '/organization/$organizationId/settings/general': typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
   '/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
@@ -2059,6 +2086,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/cluster/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute
   '/organization/$organizationId/cluster/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRoute
   '/organization/$organizationId/project/$projectId/deployment-rules/create': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute
+  '/organization/$organizationId/project/$projectId/settings/cost-budget': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRoute
   '/organization/$organizationId/project/$projectId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   '/organization/$organizationId/project/$projectId/settings/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
   '/organization/$organizationId/settings/roles/edit/$roleId': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
@@ -2202,6 +2230,7 @@ export interface FileRoutesByTo {
   '/organization': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
+  '/organization/$organizationId/cost-control': typeof AuthenticatedOrganizationOrganizationIdCostControlRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
@@ -2217,6 +2246,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
   '/organization/$organizationId/settings/container-registries': typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
+  '/organization/$organizationId/settings/cost-data': typeof AuthenticatedOrganizationOrganizationIdSettingsCostDataRoute
   '/organization/$organizationId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute
   '/organization/$organizationId/settings/general': typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
   '/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
@@ -2261,6 +2291,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/cluster/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute
   '/organization/$organizationId/cluster/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRoute
   '/organization/$organizationId/project/$projectId/deployment-rules/create': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute
+  '/organization/$organizationId/project/$projectId/settings/cost-budget': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRoute
   '/organization/$organizationId/project/$projectId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   '/organization/$organizationId/project/$projectId/settings/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
   '/organization/$organizationId/settings/roles/edit/$roleId': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
@@ -2395,6 +2426,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/_authenticated/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
+  '/_authenticated/organization/$organizationId/cost-control': typeof AuthenticatedOrganizationOrganizationIdCostControlRoute
   '/_authenticated/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   '/_authenticated/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
@@ -2412,6 +2444,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/_authenticated/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
   '/_authenticated/organization/$organizationId/settings/container-registries': typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
+  '/_authenticated/organization/$organizationId/settings/cost-data': typeof AuthenticatedOrganizationOrganizationIdSettingsCostDataRoute
   '/_authenticated/organization/$organizationId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute
   '/_authenticated/organization/$organizationId/settings/general': typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
   '/_authenticated/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
@@ -2460,6 +2493,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/cluster/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugResourcesRoute
   '/_authenticated/organization/$organizationId/cluster/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugSummaryRoute
   '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/create': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/settings/cost-budget': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRoute
   '/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   '/_authenticated/organization/$organizationId/project/$projectId/settings/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
   '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
@@ -2609,6 +2643,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings'
     | '/organization/$organizationId/audit-logs'
     | '/organization/$organizationId/clusters'
+    | '/organization/$organizationId/cost-control'
     | '/organization/$organizationId/overview'
     | '/organization/$organizationId/'
     | '/organization/$organizationId/cluster/$clusterId'
@@ -2626,6 +2661,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/billing-summary'
     | '/organization/$organizationId/settings/cloud-credentials'
     | '/organization/$organizationId/settings/container-registries'
+    | '/organization/$organizationId/settings/cost-data'
     | '/organization/$organizationId/settings/danger-zone'
     | '/organization/$organizationId/settings/general'
     | '/organization/$organizationId/settings/git-repository-access'
@@ -2674,6 +2710,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/create/$slug/resources'
     | '/organization/$organizationId/cluster/create/$slug/summary'
     | '/organization/$organizationId/project/$projectId/deployment-rules/create'
+    | '/organization/$organizationId/project/$projectId/settings/cost-budget'
     | '/organization/$organizationId/project/$projectId/settings/danger-zone'
     | '/organization/$organizationId/project/$projectId/settings/general'
     | '/organization/$organizationId/settings/roles/edit/$roleId'
@@ -2817,6 +2854,7 @@ export interface FileRouteTypes {
     | '/organization'
     | '/organization/$organizationId/audit-logs'
     | '/organization/$organizationId/clusters'
+    | '/organization/$organizationId/cost-control'
     | '/organization/$organizationId/overview'
     | '/organization/$organizationId'
     | '/onboarding/organization/$organizationId/cluster'
@@ -2832,6 +2870,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/billing-summary'
     | '/organization/$organizationId/settings/cloud-credentials'
     | '/organization/$organizationId/settings/container-registries'
+    | '/organization/$organizationId/settings/cost-data'
     | '/organization/$organizationId/settings/danger-zone'
     | '/organization/$organizationId/settings/general'
     | '/organization/$organizationId/settings/git-repository-access'
@@ -2876,6 +2915,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/create/$slug/resources'
     | '/organization/$organizationId/cluster/create/$slug/summary'
     | '/organization/$organizationId/project/$projectId/deployment-rules/create'
+    | '/organization/$organizationId/project/$projectId/settings/cost-budget'
     | '/organization/$organizationId/project/$projectId/settings/danger-zone'
     | '/organization/$organizationId/project/$projectId/settings/general'
     | '/organization/$organizationId/settings/roles/edit/$roleId'
@@ -3009,6 +3049,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings'
     | '/_authenticated/organization/$organizationId/audit-logs'
     | '/_authenticated/organization/$organizationId/clusters'
+    | '/_authenticated/organization/$organizationId/cost-control'
     | '/_authenticated/organization/$organizationId/overview'
     | '/_authenticated/organization/$organizationId/'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId'
@@ -3026,6 +3067,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/billing-summary'
     | '/_authenticated/organization/$organizationId/settings/cloud-credentials'
     | '/_authenticated/organization/$organizationId/settings/container-registries'
+    | '/_authenticated/organization/$organizationId/settings/cost-data'
     | '/_authenticated/organization/$organizationId/settings/danger-zone'
     | '/_authenticated/organization/$organizationId/settings/general'
     | '/_authenticated/organization/$organizationId/settings/git-repository-access'
@@ -3074,6 +3116,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/cluster/create/$slug/resources'
     | '/_authenticated/organization/$organizationId/cluster/create/$slug/summary'
     | '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/create'
+    | '/_authenticated/organization/$organizationId/project/$projectId/settings/cost-budget'
     | '/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone'
     | '/_authenticated/organization/$organizationId/project/$projectId/settings/general'
     | '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId'
@@ -3320,6 +3363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdOverviewRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
+    '/_authenticated/organization/$organizationId/cost-control': {
+      id: '/_authenticated/organization/$organizationId/cost-control'
+      path: '/cost-control'
+      fullPath: '/organization/$organizationId/cost-control'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdCostControlRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
     '/_authenticated/organization/$organizationId/clusters': {
       id: '/_authenticated/organization/$organizationId/clusters'
       path: '/clusters'
@@ -3437,6 +3487,13 @@ declare module '@tanstack/react-router' {
       path: '/danger-zone'
       fullPath: '/organization/$organizationId/settings/danger-zone'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/cost-data': {
+      id: '/_authenticated/organization/$organizationId/settings/cost-data'
+      path: '/cost-data'
+      fullPath: '/organization/$organizationId/settings/cost-data'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsCostDataRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/container-registries': {
@@ -3717,6 +3774,13 @@ declare module '@tanstack/react-router' {
       path: '/danger-zone'
       fullPath: '/organization/$organizationId/project/$projectId/settings/danger-zone'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/settings/cost-budget': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/settings/cost-budget'
+      path: '/cost-budget'
+      fullPath: '/organization/$organizationId/project/$projectId/settings/cost-budget'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/create': {
@@ -4769,6 +4833,7 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
   AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
+  AuthenticatedOrganizationOrganizationIdSettingsCostDataRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsCostDataRoute
   AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute
   AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
   AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
@@ -4802,6 +4867,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute:
       AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsCostDataRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsCostDataRoute,
     AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute:
       AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute,
     AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute:
@@ -4974,6 +5041,7 @@ const AuthenticatedOrganizationOrganizationIdClusterCreateSlugRouteRouteWithChil
   )
 
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute
@@ -4981,6 +5049,8 @@ interface AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRo
 
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRouteChildren: AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsRouteRouteChildren =
   {
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsCostBudgetRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute:
@@ -5455,6 +5525,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdAuditLogsRoute: typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   AuthenticatedOrganizationOrganizationIdClustersRoute: typeof AuthenticatedOrganizationOrganizationIdClustersRoute
+  AuthenticatedOrganizationOrganizationIdCostControlRoute: typeof AuthenticatedOrganizationOrganizationIdCostControlRoute
   AuthenticatedOrganizationOrganizationIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   AuthenticatedOrganizationOrganizationIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
@@ -5510,6 +5581,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdAuditLogsRoute,
     AuthenticatedOrganizationOrganizationIdClustersRoute:
       AuthenticatedOrganizationOrganizationIdClustersRoute,
+    AuthenticatedOrganizationOrganizationIdCostControlRoute:
+      AuthenticatedOrganizationOrganizationIdCostControlRoute,
     AuthenticatedOrganizationOrganizationIdOverviewRoute:
       AuthenticatedOrganizationOrganizationIdOverviewRoute,
     AuthenticatedOrganizationOrganizationIdIndexRoute:

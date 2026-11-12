@@ -1,0 +1,8 @@
+{
+  "name": "domains-cost-management-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/cost-management/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:domain", "type:data-access", "slice:cost-management"],
+  "targets": {}
+}
