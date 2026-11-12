@@ -39,7 +39,7 @@ export function DeploymentLogStatusIcon({ status }: { status?: DeploymentLogStep
     )
   }
 
-  return <StatusChip status={status} />
+  return <StatusChip status={status === 'SKIP' ? 'SKIPPED' : status} />
 }
 
 // Highlights the matches the way `HighlightText` does, keeping the colors of the rest of the message
@@ -249,6 +249,7 @@ export function DeploymentLogStepRow({
 }: DeploymentLogStepRowProps) {
   const linesCount = step.lines.length
   const hasLines = linesCount > 0
+  const canExpand = hasLines && step.status !== 'SKIP'
   const isNotStarted = step.status === 'PENDING' || step.status === 'SKIP'
 
   const isSearching = searchQuery.trim() !== ''
@@ -263,12 +264,12 @@ export function DeploymentLogStepRow({
         type="button"
         className="flex h-12 w-full items-center justify-between gap-4 px-4 text-left text-sm enabled:hover:bg-surface-neutral-subtle disabled:cursor-default"
         onClick={onToggle}
-        disabled={!hasLines}
-        aria-expanded={hasLines ? isOpen : undefined}
+        disabled={!canExpand}
+        aria-expanded={canExpand ? isOpen : undefined}
       >
         <span className="flex min-w-0 items-center gap-2">
           <Icon
-            iconName={isOpen && hasLines ? 'angle-down' : 'angle-right'}
+            iconName={isOpen && canExpand ? 'angle-down' : 'angle-right'}
             iconStyle="regular"
             className={clsx('w-3.5 text-xs', hasLines && !isNotStarted ? 'text-neutral' : 'text-neutral-disabled')}
           />
@@ -287,7 +288,7 @@ export function DeploymentLogStepRow({
           )}
         </span>
       </button>
-      {isOpen && hasLines && (
+      {isOpen && canExpand && (
         <DeploymentLogLines
           lines={step.lines}
           isStreaming={step.status === 'ONGOING'}

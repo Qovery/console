@@ -1,7 +1,11 @@
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
-import { act, render, screen } from '@qovery/shared/util-tests'
+import { act, render, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { type EnvironmentLogIds } from '../hooks/use-deployment-logs/use-deployment-logs'
-import { DeploymentLogStepRow, type DeploymentLogStepRowProps } from './deployment-log-step-row'
+import {
+  DeploymentLogStatusIcon,
+  DeploymentLogStepRow,
+  type DeploymentLogStepRowProps,
+} from './deployment-log-step-row'
 
 function createLines(count: number): EnvironmentLogIds[] {
   return Array.from({ length: count }, (_, index) => ({
@@ -41,6 +45,32 @@ function pauseViewer(container: HTMLElement) {
 }
 
 describe('DeploymentLogStepRow', () => {
+  it('does not expand a skipped step even when it has logs and is marked open', async () => {
+    const onToggle = jest.fn()
+    const { userEvent } = renderWithProviders(
+      renderRow(1, {
+        step: { name: 'BUILD', status: 'SKIP', isLive: false, lines: createLines(1) },
+        onToggle,
+      })
+    )
+    const row = screen.getByRole('button', { name: 'Building image' })
+
+    await userEvent.click(row)
+
+    expect(row).toBeDisabled()
+    expect(row).not.toHaveAttribute('aria-expanded')
+    expect(onToggle).not.toHaveBeenCalled()
+    expect(screen.queryByText('Building layer 1')).not.toBeInTheDocument()
+  })
+
+  it('labels the skipped status as Skipped', async () => {
+    const { container, userEvent } = renderWithProviders(<DeploymentLogStatusIcon status="SKIP" />)
+
+    await userEvent.hover(container.firstElementChild as HTMLElement)
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Skipped')
+  })
+
   it('keeps the paused window when selecting a line that is already visible', () => {
     const { container, rerender } = render(renderRow(1001), { wrapper: TooltipProvider })
     const viewer = pauseViewer(container)
