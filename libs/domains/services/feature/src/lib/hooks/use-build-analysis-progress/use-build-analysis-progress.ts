@@ -62,7 +62,10 @@ export function useBuildAnalysisProgress({
       setLastEvent({ serviceId, event })
       if (event.terminal) refetchBuildAnalysis(queryClient)
     },
-    onClose: refetchBuildAnalysis,
+    onClose: (queryClient) => {
+      setLastEvent(undefined)
+      refetchBuildAnalysis(queryClient)
+    },
   })
 
   return enabled && lastEvent?.serviceId === serviceId ? lastEvent.event : undefined

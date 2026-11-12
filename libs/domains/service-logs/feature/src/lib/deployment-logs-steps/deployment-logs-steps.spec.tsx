@@ -108,6 +108,30 @@ describe('DeploymentLogsSteps', () => {
     expect(screen.queryByText('Building layer 1')).not.toBeInTheDocument()
   })
 
+  it('expands repeated step names independently and opens only the phase of a linked line', async () => {
+    mockLogs([
+      createLog(1, 'Build output', 'Build', 'OUTPUT_UPLOAD'),
+      createLog(2, 'Deploy output', 'Deploy', 'OUTPUT_UPLOAD'),
+    ])
+    const { userEvent, rerender } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+    const [buildRow, deployRow] = screen.getAllByRole('button', { name: 'Output upload' })
+
+    await userEvent.click(buildRow)
+
+    expect(screen.getByText('Build output')).toBeInTheDocument()
+    expect(screen.queryByText('Deploy output')).not.toBeInTheDocument()
+    expect(deployRow).toHaveAttribute('aria-expanded', 'false')
+
+    await userEvent.click(buildRow)
+    mockHash = 'L2'
+    rerender(<DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />)
+
+    expect(screen.queryByText('Build output')).not.toBeInTheDocument()
+    expect(screen.getByText('Deploy output')).toBeInTheDocument()
+  })
+
   it('shows the CPU and memory the builder used against the build limits', async () => {
     useDefaultAdvancedSettingsMock.mockReturnValue({
       data: { 'build.cpu_max_in_milli': 8000, 'build.ram_max_in_gib': 16 },

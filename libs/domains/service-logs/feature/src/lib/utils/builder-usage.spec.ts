@@ -23,6 +23,17 @@ describe('getBuilderUsageSummary', () => {
     expect(summary?.memory).toEqual({ peak: '14.8 / 16 GiB (92%)', level: 'WARNING' })
   })
 
+  it.each([
+    [89.4, '89%', 'OK'],
+    [89.5, '90%', 'WARNING'],
+    [90, '90%', 'WARNING'],
+  ])('uses the displayed memory percentage for the warning at %s%%', (percentage, label, level) => {
+    const summary = getBuilderUsageSummary({ ...usage, memory_mib_max: (16384 * percentage) / 100 }, { memoryGib: 16 })
+
+    expect(summary?.memory.peak).toContain(`(${label})`)
+    expect(summary?.memory.level).toBe(level)
+  })
+
   it('flags a builder killed for running out of memory', () => {
     const summary = getBuilderUsageSummary({ ...usage, memory_mib_max: 16384, oom_killed: true }, { memoryGib: 16 })
 

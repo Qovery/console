@@ -33,9 +33,10 @@ import {
   formatDeploymentLogDuration,
   getDeploymentLogPhaseLabel,
   getDeploymentLogPhases,
+  getDeploymentLogStepKey,
   getDeploymentLogStepLabel,
   getDeploymentLogUngroupedStepLabel,
-  getSlowestDeploymentLogStepName,
+  getSlowestDeploymentLogStepKey,
   groupDeploymentLogsByStep,
 } from '../utils/deployment-log-steps'
 import { BuildOptimizerButton } from './build-optimizer-button'
@@ -51,13 +52,15 @@ const PHASE_ICONS: Record<DeploymentLogPhaseId, IconName> = {
 
 // Step opened by default: the one running, the one that failed, or else the first one that logged an error, as
 // the API may not report the failed step, like when the engine stopped answering
-function getDefaultOpenStepName(phases: DeploymentLogPhase[]) {
-  const steps = phases.flatMap((phase) => phase.steps).filter((step) => step.lines.length > 0)
+function getDefaultOpenStepKey(phases: DeploymentLogPhase[]) {
+  const steps = phases
+    .flatMap((phase) => phase.steps.map((step) => ({ ...step, key: getDeploymentLogStepKey(phase.id, step.name) })))
+    .filter((step) => step.lines.length > 0)
 
   return (
-    [...steps].reverse().find((step) => step.status === 'ONGOING')?.name ??
-    steps.find((step) => step.status === 'ERROR')?.name ??
-    steps.find((step) => step.lines.some((line) => line.type === LogsType.ERROR))?.name
+    [...steps].reverse().find((step) => step.status === 'ONGOING')?.key ??
+    steps.find((step) => step.status === 'ERROR')?.key ??
+    steps.find((step) => step.lines.some((line) => line.type === LogsType.ERROR))?.key
   )
 }
 
@@ -171,22 +174,24 @@ export function DeploymentLogsSteps({
     )
   }
 
-  const defaultOpenStepName = getDefaultOpenStepName(phases)
+  const defaultOpenStepKey = getDefaultOpenStepKey(phases)
   // Once the deployment went through, the slowest step shows where time can be saved
-  const slowestStepName = actionStatus === 'SUCCESS' ? getSlowestDeploymentLogStepName(allPhases) : undefined
+  const slowestStepKey = actionStatus === 'SUCCESS' ? getSlowestDeploymentLogStepKey(allPhases) : undefined
   const buildStep = serviceStatus.steps?.details?.find((step) => step.step_name === 'BUILD')
   const builderUsage = buildStep?.builder_usage
-  const stepNamesWithSelectedLines = new Set(
+  const stepKeysWithSelectedLines = new Set(
     selectedLineRange
       ? allPhases
-          .flatMap((phase) => phase.steps)
+          .flatMap((phase) =>
+            phase.steps.map((step) => ({ ...step, key: getDeploymentLogStepKey(phase.id, step.name) }))
+          )
           .filter((step) => step.lines.some((line) => isDeploymentLogLineSelected(selectedLineRange, line.id)))
-          .map((step) => step.name)
+          .map((step) => step.key)
       : []
   )
   const isStepOpen = (name: string, linesCount: number) =>
     openStepOverrides[name] ??
-    (isSearching ? linesCount > 0 : name === defaultOpenStepName || stepNamesWithSelectedLines.has(name))
+    (isSearching ? linesCount > 0 : name === defaultOpenStepKey || stepKeysWithSelectedLines.has(name))
 
   return (
     <div className="min-h-0 w-full flex-1 overflow-y-auto">
@@ -253,11 +258,12 @@ export function DeploymentLogsSteps({
               {/* The steps sit on their own card, its borders over the ones of the phase */}
               <div className="-mx-px -mb-px overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
                 {phase.steps.map((step) => {
-                  const isOpen = isStepOpen(step.name, step.lines.length)
+                  const stepKey = getDeploymentLogStepKey(phase.id, step.name)
+                  const isOpen = isStepOpen(stepKey, step.lines.length)
 
                   return (
                     <DeploymentLogStepRow
-                      key={step.name}
+                      key={stepKey}
                       step={step}
                       label={
                         step.isUngrouped
@@ -266,8 +272,8 @@ export function DeploymentLogsSteps({
                       }
                       isOpen={isOpen}
                       searchQuery={deferredSearchQuery}
-                      isSlowest={step.name === slowestStepName}
-                      onToggle={() => setOpenStepOverrides((overrides) => ({ ...overrides, [step.name]: !isOpen }))}
+                      isSlowest={stepKey === slowestStepKey}
+                      onToggle={() => setOpenStepOverrides((overrides) => ({ ...overrides, [stepKey]: !isOpen }))}
                       selectedLineRange={selectedLineRange}
                       onSelectLine={selectLine}
                       lineIdToScrollTo={lineIdToScrollTo}
