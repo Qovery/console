@@ -1,7 +1,14 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactNode } from 'react'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { DeploymentLogsPlaceholder, type DeploymentLogsPlaceholderProps } from './deployment-logs-placeholder'
+import {
+  DeploymentLogsLoader,
+  DeploymentLogsPlaceholder,
+  type DeploymentLogsPlaceholderProps,
+} from './deployment-logs-placeholder'
+
+jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
 
 const mockEnvironment = environmentFactoryMock(1)[0]
 const mockApplication = applicationFactoryMock(1)[0]
@@ -27,6 +34,48 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 describe('DeploymentLogsPlaceholder', () => {
+  beforeEach(() => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
+  })
+
+  it.each([false, undefined])('preserves the current page loader when the flag is %s', (flag) => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(flag)
+
+    renderWithProviders(<DeploymentLogsLoader />)
+
+    expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
+    expect(screen.queryByRole('status', { name: 'Loading deployment logs' })).not.toBeInTheDocument()
+  })
+
+  it('shows the page skeleton when the flag is enabled', () => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
+
+    renderWithProviders(<DeploymentLogsLoader />)
+
+    expect(screen.getByRole('status', { name: 'Loading deployment logs' })).toBeInTheDocument()
+    expect(screen.queryByText('Deployment logs are loading…')).not.toBeInTheDocument()
+  })
+
+  it('shows the skeleton while the log lines are loading with the flag enabled', () => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
+
+    renderWithProviders(
+      <DeploymentLogsPlaceholder
+        environment={mockEnvironment}
+        itemsLength={0}
+        serviceStatus={{
+          id: 'serv-123',
+          state: 'DEPLOYED',
+          service_deployment_status: 'UP_TO_DATE',
+          is_part_last_deployment: true,
+        }}
+      />
+    )
+
+    expect(screen.getByRole('status', { name: 'Loading deployment logs' })).toBeInTheDocument()
+    expect(screen.queryByText('Deployment logs are loading…')).not.toBeInTheDocument()
+  })
+
   const props: DeploymentLogsPlaceholderProps = {
     serviceStatus: undefined,
     itemsLength: 0,
@@ -131,7 +180,8 @@ describe('DeploymentLogsPlaceholder', () => {
     expect(screen.getByText('No logs to display.')).toBeInTheDocument()
   })
 
-  it('should render queued state', () => {
+  it.each([true, false])('preserves the queued state when the flag is %s', (flag) => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(flag)
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={0}

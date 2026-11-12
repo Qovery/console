@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type DeploymentHistoryEnvironmentV2,
   type Environment,
@@ -10,6 +11,7 @@ import {
 import { useService } from '@qovery/domains/services/feature'
 import { Icon, Link, LoaderDots, Skeleton } from '@qovery/shared/ui'
 import { mergeDeploymentServices } from '@qovery/shared/util-js'
+import { DeploymentLogsSkeleton } from '../../deployment-logs-steps/deployment-logs-skeleton'
 
 function ErrorIcon() {
   return (
@@ -59,18 +61,16 @@ function HistoryUnavailableIcon() {
   )
 }
 
-export function LoaderPlaceholder({
-  title = 'Deployment logs are loading…',
-  description,
-}: {
-  title?: string
-  description?: string
-}) {
+export function LoaderPlaceholder({ title, description }: { title?: string; description?: string }) {
+  const isDeploymentLogsV2Enabled = useFeatureFlagEnabled('deployment-logs-v2') === true
+
+  if (isDeploymentLogsV2Enabled && title === undefined) return <DeploymentLogsSkeleton />
+
   return (
     <div className="flex w-full flex-col items-center justify-center gap-5 text-center">
       <LoaderDots />
       <div className="flex flex-col gap-2">
-        <p className="text-neutral">{title}</p>
+        <p className="text-neutral">{title ?? 'Deployment logs are loading…'}</p>
         <span className="text-sm text-neutral-subtle">{description}</span>
       </div>
     </div>
