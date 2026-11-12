@@ -66,6 +66,36 @@ describe('getDeploymentLogLineStep', () => {
       name: 'IMAGE_SCAN',
     })
   })
+
+  it('leaves the phase out when neither the step name nor the stage tells it', () => {
+    expect(getDeploymentLogLineStep(createLog('Engine failure', 'GlobalError'))).toEqual({ name: undefined })
+    expect(getDeploymentLogLineStep(createLog('Output', 'JobOutput', 'OUTPUT_UPLOAD'))).toEqual({
+      name: 'OUTPUT_UPLOAD',
+    })
+  })
+})
+
+describe('groupDeploymentLogsByStep', () => {
+  it('puts the lines without phase in the phase running when they were logged', () => {
+    const linesByStep = groupDeploymentLogsByStep([
+      createLog('Starting', 'Unknown'),
+      createLog('Building', 'Build', 'BUILD'),
+      createErrorLog('Engine failure', 'GlobalError'),
+      createLog('Output', 'JobOutput', 'OUTPUT_UPLOAD'),
+    ])
+
+    expect([...linesByStep].map(([name, { phase, lines }]) => [name, phase, lines.length])).toEqual([
+      ['BUILD_UNGROUPED', 'BUILD', 2],
+      ['BUILD', 'BUILD', 1],
+      ['OUTPUT_UPLOAD', 'BUILD', 1],
+    ])
+  })
+
+  it('puts the lines in the deployment when no line tells the phase', () => {
+    const linesByStep = groupDeploymentLogsByStep([createLog('Engine failure', 'GlobalError')])
+
+    expect([...linesByStep].map(([name, { phase }]) => [name, phase])).toEqual([['DEPLOY_UNGROUPED', 'DEPLOY']])
+  })
 })
 
 describe('filterDeploymentLogPhases', () => {

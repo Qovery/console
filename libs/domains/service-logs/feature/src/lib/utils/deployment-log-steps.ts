@@ -88,40 +88,46 @@ const STEP_PHASES = new Map<string, DeploymentLogPhaseId>(
 // Sub-steps of BUILD that run before the image build itself
 const BUILD_SUB_STEPS_BEFORE_IMAGE_BUILD = new Set(['PROVISION_BUILDER'])
 
-function getPhaseFromStageStep(stageStep?: string): DeploymentLogPhaseId {
+function getPhaseFromStageStep(stageStep?: string): DeploymentLogPhaseId | undefined {
   if (stageStep === 'PreCheck') return 'PRE_CHECK'
 
   return match(getFilterStep(stageStep as EnvironmentEngineStep))
     .with('BUILD', () => 'BUILD' as const)
+    .with('DEPLOY', () => 'DEPLOY' as const)
     .with('EXECUTING', () => 'EXECUTE' as const)
-    .otherwise(() => 'DEPLOY' as const)
+    .otherwise(() => undefined)
 }
 
 /**
  * Returns the phase and step a log line belongs to.
  * `step_name` names the step, `stage.step` gives the phase when the step name is generic, unknown or absent.
+ * The phase is missing when neither tells it, like for a `GlobalError` line without a step name.
  */
-export function getDeploymentLogLineStep(log: EnvironmentLogs): { phase: DeploymentLogPhaseId; name: string } {
+export function getDeploymentLogLineStep(log: EnvironmentLogs): { phase?: DeploymentLogPhaseId; name?: string } {
   const stageStep = log.details.stage?.step
   const stepName = log.details.step_name
 
   // `QUEUEING` lines tell the wait of the stage for the engine, before its build and deployment start
   if (stepName === 'QUEUEING' || stageStep === 'Queueing') return { phase: 'PRE_CHECK', name: STAGE_QUEUEING_STEP_NAME }
 
-  const stagePhase = getPhaseFromStageStep(stageStep)
-  if (!stepName) return { phase: stagePhase, name: UNGROUPED_STEP_NAMES[stagePhase] }
+  const phase = (stepName ? STEP_PHASES.get(stepName) : undefined) ?? getPhaseFromStageStep(stageStep)
+  if (!phase) return { name: stepName || undefined }
 
-  return { phase: STEP_PHASES.get(stepName) ?? stagePhase, name: stepName }
+  return { phase, name: stepName || UNGROUPED_STEP_NAMES[phase] }
 }
 
 /**
  * Groups log lines by step name, keeping their order.
+ * A line whose phase is unknown belongs to the phase running when it was logged: the phase of the line before it,
+ * or of the first line after it with a phase when it comes first.
  */
 export function groupDeploymentLogsByStep<T extends EnvironmentLogs>(logs: T[]) {
   const groups = new Map<string, DeploymentLogStepLines<T>>()
+  let currentPhase: DeploymentLogPhaseId | undefined
+  // Lines logged before any phase is known
+  let linesWithoutPhase: { log: T; name?: string }[] = []
 
-  for (const log of logs) {
-    const { phase, name } = getDeploymentLogLineStep(log)
+  const addLine = (log: T, phase: DeploymentLogPhaseId, name = UNGROUPED_STEP_NAMES[phase]) => {
     const group = groups.get(name)
     if (group) {
       group.lines.push(log)
@@ -129,6 +135,28 @@ export function groupDeploymentLogsByStep<T extends EnvironmentLogs>(logs: T[]) 
       groups.set(name, { phase, lines: [log] })
     }
   }
+
+  const addLinesWithoutPhase = (phase: DeploymentLogPhaseId) => {
+    for (const { log, name } of linesWithoutPhase) addLine(log, phase, name)
+    linesWithoutPhase = []
+  }
+
+  for (const log of logs) {
+    const { phase, name } = getDeploymentLogLineStep(log)
+
+    if (phase) {
+      currentPhase = phase
+      addLinesWithoutPhase(phase)
+      addLine(log, phase, name)
+    } else if (currentPhase) {
+      addLine(log, currentPhase, name)
+    } else {
+      linesWithoutPhase.push({ log, name })
+    }
+  }
+
+  // No line tells the phase: they're listed in the deployment
+  addLinesWithoutPhase('DEPLOY')
 
   return groups
 }

@@ -165,7 +165,8 @@ function DeploymentLogLines({
     // and none at all when lines arrive while the user reads older ones. Updating the gradients here
     // renders them before that paint, so they don't pop in.
     updateScrollEdges(element)
-  }, [visibleLines.length])
+    // Past the cap, a new line hides an older one: the count of visible lines no longer changes
+  }, [lines.length, visibleLines.length])
 
   useEffect(() => {
     if (lineIdToScrollTo === undefined) return
@@ -174,7 +175,7 @@ function DeploymentLogLines({
 
     lineElement.scrollIntoView?.({ block: 'center' })
     onScrolledToLine()
-  }, [lineIdToScrollTo, visibleLines.length, onScrolledToLine])
+  }, [lineIdToScrollTo, lines.length, visibleLines.length, onScrolledToLine])
 
   return (
     <div className="relative border-t border-neutral bg-surface-neutral-subtle">
