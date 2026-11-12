@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { LogsType } from '@qovery/shared/enums'
-import { Ansi, Badge, Button, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { AnimatedGradientText, Ansi, Badge, Button, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import {
   LOG_COPY_EXCLUDE_DATA_ATTRIBUTE,
@@ -211,7 +211,9 @@ function DeploymentLogLines({
           />
         ))}
         {isStreaming && (
-          <p className="py-0.5 font-sans text-sm font-medium text-neutral-subtle">Streaming deployment logs…</p>
+          <AnimatedGradientText className="w-fit py-0.5 font-sans text-sm font-medium">
+            Streaming deployment logs…
+          </AnimatedGradientText>
         )}
       </div>
     </div>
