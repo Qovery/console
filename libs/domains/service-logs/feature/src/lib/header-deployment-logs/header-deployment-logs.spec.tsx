@@ -1,4 +1,5 @@
 import { type Status } from 'qovery-typescript-axios'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { HeaderDeploymentLogs, formatDeploymentDurationClock } from './header-deployment-logs'
 
@@ -23,14 +24,15 @@ const serviceStatus: Status = {
 
 describe('HeaderDeploymentLogs', () => {
   it('shows the action, its date, its duration and the execution id', () => {
+    const deploymentDate = '2026-11-15T08:38:00Z'
     renderWithProviders(
-      <HeaderDeploymentLogs serviceStatus={serviceStatus} deploymentDate="2026-11-15T08:38:00Z">
+      <HeaderDeploymentLogs serviceStatus={serviceStatus} deploymentDate={deploymentDate}>
         <button type="button">Latest</button>
       </HeaderDeploymentLogs>
     )
 
     expect(screen.getByText('Deploy')).toBeInTheDocument()
-    expect(screen.getByText('15/11 08:38')).toBeInTheDocument()
+    expect(screen.getByText(dateFullFormat(deploymentDate, undefined, 'dd/MM HH:mm'))).toBeInTheDocument()
     expect(screen.getByText('03:58')).toBeInTheDocument()
     expect(screen.getByText('0518c…824')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Latest' })).toBeInTheDocument()
