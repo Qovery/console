@@ -86,41 +86,27 @@ function getDefaultValues(
       .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (resourceService) => {
         if (resourceService.autoscaling?.mode !== 'KEDA') return []
 
-        const autoscalingWithFields = resourceService.autoscaling as {
-          scalers?: Array<{
-            id?: string
-            scaler_type?: string
-            config_yaml?: string
-            config_json?: Record<string, unknown>
-            trigger_authentication?: { config_yaml?: string }
-          }>
-        }
-
-        return (
-          autoscalingWithFields.scalers?.map((scaler) => ({
-            id: scaler?.id,
-            type: scaler?.scaler_type || '',
-            // Scalers created via the Terraform provider may only have `config_json` set
-            ...(!scaler?.config_yaml && scaler?.config_json
-              ? { config: JSON.stringify(scaler.config_json, null, 2), configFormat: 'json' as const }
-              : { config: scaler?.config_yaml || '', configFormat: 'yaml' as const }),
-            triggerAuthentication: scaler?.trigger_authentication?.config_yaml || '',
-          })) || []
-        )
+        return resourceService.autoscaling.scalers.map((scaler) => ({
+          id: scaler.id,
+          type: scaler.scaler_type,
+          // Scalers created via the Terraform provider may only have `config_json` set
+          ...(!scaler.config_yaml && scaler.config_json
+            ? { config: JSON.stringify(scaler.config_json, null, 2), configFormat: 'json' as const }
+            : { config: scaler.config_yaml || '', configFormat: 'yaml' as const }),
+          triggerAuthentication: scaler.trigger_authentication?.config_yaml || '',
+        }))
       })
       .otherwise(() => []),
     autoscaling_polling_interval: match(service)
       .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (resourceService) => {
         if (resourceService.autoscaling?.mode !== 'KEDA') return undefined
-        const autoscalingWithFields = resourceService.autoscaling as { polling_interval_seconds?: number } | undefined
-        return autoscalingWithFields?.polling_interval_seconds
+        return resourceService.autoscaling.polling_interval_seconds
       })
       .otherwise(() => undefined),
     autoscaling_cooldown_period: match(service)
       .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (resourceService) => {
         if (resourceService.autoscaling?.mode !== 'KEDA') return undefined
-        const autoscalingWithFields = resourceService.autoscaling as { cooldown_period_seconds?: number } | undefined
-        return autoscalingWithFields?.cooldown_period_seconds
+        return resourceService.autoscaling.cooldown_period_seconds
       })
       .otherwise(() => undefined),
     ...loadHpaSettingsFromAdvancedSettings(advancedSettings),
