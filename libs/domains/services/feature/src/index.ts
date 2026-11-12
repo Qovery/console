@@ -160,3 +160,6 @@ export * from './lib/service-variables-tabs/service-variables-utils'
 export * from './lib/agentic-workflow-execution-mode-selector/agentic-workflow-execution-mode-selector'
 
 export * from './lib/agentic-workflow-service-list/environment-automation'
+export * from './lib/hooks/use-build-analysis/use-build-analysis'
+export * from './lib/hooks/use-build-analysis-progress/use-build-analysis-progress'
+export * from './lib/hooks/use-start-build-analysis/use-start-build-analysis'

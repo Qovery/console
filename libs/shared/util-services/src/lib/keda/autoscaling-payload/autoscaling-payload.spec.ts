@@ -249,6 +249,82 @@ describe('autoscaling-payload', () => {
     })
   })
 
+  describe('KEDA scaler id', () => {
+    const response = {
+      mode: 'KEDA',
+      polling_interval_seconds: 30,
+      cooldown_period_seconds: 300,
+      scalers: [
+        {
+          id: 'scaler-1',
+          scaler_type: 'prometheus',
+          enabled: true,
+          role: 'PRIMARY',
+          config_yaml: 'threshold: "100"',
+          trigger_authentication: { config_yaml: 'secretTargetRef: []' },
+        },
+        {
+          id: 'scaler-2',
+          scaler_type: 'cpu',
+          enabled: true,
+          role: 'SAFETY',
+          config_yaml: 'value: "80"',
+        },
+      ],
+    } as unknown as AutoscalingPolicyResponse
+
+    it('should keep each scaler id when converting the response to a request', () => {
+      const result = convertAutoscalingResponseToRequest(response)
+
+      expect(result?.scalers.map((scaler) => scaler.id)).toEqual(['scaler-1', 'scaler-2'])
+    })
+
+    it('should keep each scaler id when other service settings are saved', () => {
+      const result = extractAndProcessAutoscaling({ name: 'my-app' }, response)
+
+      expect(result.autoscaling?.scalers.map((scaler) => scaler.id)).toEqual(['scaler-1', 'scaler-2'])
+    })
+
+    it('should send the id of an edited scaler, no id for a new one and drop a removed one', () => {
+      const formRequest = buildAutoscalingRequestFromForm(
+        {
+          autoscaling_mode: 'KEDA',
+          scalers: [
+            {
+              id: 'scaler-1',
+              type: 'prometheus',
+              config: 'threshold: "200"',
+              configFormat: 'yaml',
+              triggerAuthentication: 'secretTargetRef: []',
+            },
+            { type: 'memory', config: 'value: "70"', configFormat: 'yaml', triggerAuthentication: '' },
+          ],
+        },
+        { memory: 512, cpu: 250, gpu: 0 }
+      )
+
+      const result = extractAndProcessAutoscaling(formRequest, response)
+
+      expect(result.autoscaling?.scalers).toEqual([
+        {
+          id: 'scaler-1',
+          scaler_type: 'prometheus',
+          enabled: true,
+          role: 'PRIMARY',
+          config_yaml: 'threshold: "200"',
+          trigger_authentication: { config_yaml: 'secretTargetRef: []' },
+        },
+        {
+          scaler_type: 'memory',
+          enabled: true,
+          role: 'SAFETY',
+          config_yaml: 'value: "70"',
+        },
+      ])
+      expect(result.autoscaling?.scalers[1].id).toBeUndefined()
+    })
+  })
+
   describe('buildAutoscalingRequestFromForm', () => {
     it('should build request for NONE mode', () => {
       const formData = {
