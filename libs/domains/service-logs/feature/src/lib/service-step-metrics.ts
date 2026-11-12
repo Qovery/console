@@ -1,5 +1,8 @@
 import { type ServiceStepMetric } from 'qovery-typescript-axios'
 
+// Sub-steps and pre-check steps share these fields, so the duration helpers below accept them too
+type StepTiming = Pick<ServiceStepMetric, 'status' | 'started_at' | 'duration_sec'>
+
 const NON_COMPUTING_STEP_NAMES = new Set<ServiceStepMetric['step_name']>(['BUILD_QUEUEING', 'DEPLOYMENT_QUEUEING'])
 
 /**
@@ -14,7 +17,7 @@ export function isServiceStepIncludedInComputingDuration(step: ServiceStepMetric
  * Returns whether an individual step should advance from its backend `started_at` timestamp.
  * Completed steps may retain this timestamp, so the `ONGOING` status is essential to keep their final duration frozen.
  */
-export function isServiceStepDurationLive(step: ServiceStepMetric) {
+export function isServiceStepDurationLive(step: StepTiming) {
   if (step.status !== 'ONGOING' || !step.started_at) return false
 
   return Number.isFinite(Date.parse(step.started_at))
@@ -24,7 +27,7 @@ export function isServiceStepDurationLive(step: ServiceStepMetric) {
  * Returns an individual step's live elapsed time while ongoing, or its backend-recorded duration otherwise.
  * This also provides a stable fallback when `started_at` is missing or malformed.
  */
-export function getServiceStepDurationSec(step: ServiceStepMetric, nowMs: number) {
+export function getServiceStepDurationSec(step: StepTiming, nowMs: number) {
   if (!isServiceStepDurationLive(step)) return step.duration_sec || 0
 
   const startedAtMs = Date.parse(step.started_at ?? '')

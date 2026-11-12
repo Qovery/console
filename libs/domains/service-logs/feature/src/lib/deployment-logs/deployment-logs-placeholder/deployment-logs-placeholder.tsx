@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type DeploymentHistoryEnvironmentV2,
   type Environment,
@@ -8,8 +9,9 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { useService } from '@qovery/domains/services/feature'
-import { Icon, Link, LoaderDots } from '@qovery/shared/ui'
+import { Icon, Link, LoaderDots, Skeleton } from '@qovery/shared/ui'
 import { mergeDeploymentServices } from '@qovery/shared/util-js'
+import { DeploymentLogsSkeleton } from '../../deployment-logs-steps/deployment-logs-skeleton'
 
 function ErrorIcon() {
   return (
@@ -59,19 +61,44 @@ function HistoryUnavailableIcon() {
   )
 }
 
-export function LoaderPlaceholder({
-  title = 'Deployment logs are loading…',
-  description,
-}: {
-  title?: string
-  description?: string
-}) {
+export function LoaderPlaceholder({ title, description }: { title?: string; description?: string }) {
+  const isDeploymentLogsV2Enabled = useFeatureFlagEnabled('deployment-logs-v2') === true
+
+  if (isDeploymentLogsV2Enabled && title === undefined) return <DeploymentLogsSkeleton />
+
   return (
     <div className="flex w-full flex-col items-center justify-center gap-5 text-center">
       <LoaderDots />
       <div className="flex flex-col gap-2">
-        <p className="text-neutral">{title}</p>
+        <p className="text-neutral">{title ?? 'Deployment logs are loading…'}</p>
         <span className="text-sm text-neutral-subtle">{description}</span>
+      </div>
+    </div>
+  )
+}
+
+// Page loader: the header skeleton keeps the loader where it stays once the header shows up
+export function DeploymentLogsLoader() {
+  const isDeploymentLogsV2Enabled = useFeatureFlagEnabled('deployment-logs-v2') === true
+
+  if (!isDeploymentLogsV2Enabled) {
+    return (
+      <div className="flex h-page-container w-full flex-col justify-center">
+        <LoaderPlaceholder />
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex h-page-container flex-col">
+      <div className="flex h-12 shrink-0 items-center gap-3 border-b border-neutral px-4">
+        <Skeleton width={105} height={28} />
+        <Skeleton width={124} height={28} />
+        <Skeleton width={80} height={28} />
+        <Skeleton width={305} height={28} />
+      </div>
+      <div className="flex min-h-0 flex-1 items-center justify-center bg-background">
+        <LoaderPlaceholder />
       </div>
     </div>
   )

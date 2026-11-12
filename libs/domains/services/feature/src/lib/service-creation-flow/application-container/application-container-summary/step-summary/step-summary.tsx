@@ -6,8 +6,9 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
-import { FunnelFlowBody } from '@qovery/shared/ui'
+import { getJsonTargetKey, useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
+import { type ExternalSecretData } from '@qovery/shared/interfaces'
+import { FunnelFlowBody, toastError } from '@qovery/shared/ui'
 import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { buildHpaAdvancedSettingsPayload } from '@qovery/shared/util-services'
 import { useCreateService } from '../../../../hooks/use-create-service/use-create-service'
@@ -79,6 +80,17 @@ export function ApplicationContainerStepSummary({
   }
 
   const handleSubmit = async (withDeploy: boolean) => {
+    let preparedExternalSecrets: { secret: ExternalSecretData; jsonTargetKey: string | null }[]
+    try {
+      preparedExternalSecrets = externalSecretsData.map((secret) => ({
+        secret,
+        jsonTargetKey: getJsonTargetKey(secret),
+      }))
+    } catch (error) {
+      toastError(error instanceof Error ? error : new Error('Could not validate the external secrets.'))
+      return
+    }
+
     setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')
 
     try {
@@ -114,7 +126,7 @@ export function ApplicationContainerStepSummary({
 
       // External secret creation errors are surfaced by the mutation notifications but should not block the service creation flow.
       await Promise.allSettled(
-        externalSecretsData.map(async (externalSecret) => {
+        preparedExternalSecrets.map(async ({ secret: externalSecret, jsonTargetKey }) => {
           const scope = externalSecret.scope ?? createPayload.serviceType
           return createVariable({
             variableRequest: {
@@ -132,6 +144,7 @@ export function ApplicationContainerStepSummary({
               mount_path: externalSecret.isFile ? externalSecret.filePath ?? null : null,
               description: externalSecret.description ?? null,
               secret_manager_access_id: externalSecret.secretManagerAccessId ?? null,
+              json_target_key: jsonTargetKey,
             },
           })
         })

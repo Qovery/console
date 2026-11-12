@@ -42,13 +42,28 @@ export function useUtmParams(): UtmParams {
   return utmParams
 }
 
+export function getStoredUtmParams(): Record<keyof UtmParams, string | null> {
+  return Object.fromEntries(
+    UTM_KEYS.map((key) => {
+      try {
+        return [key, localStorage.getItem(key)]
+      } catch {
+        return [key, null]
+      }
+    })
+  ) as Record<keyof UtmParams, string | null>
+}
+
 export function useCaptureUtmParams() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     UTM_KEYS.forEach((key) => {
       const value = params.get(key)
-      if (value) {
+      if (!value) return
+      try {
         localStorage.setItem(key, value)
+      } catch {
+        return
       }
     })
   }, [])

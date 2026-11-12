@@ -14,55 +14,11 @@ exports[`TerraformExportModal should match with snapshots 1`] = `
       <p
         class="mt-2 text-sm text-neutral-subtle"
       >
-        Export full environment & resources into Terraform manifests (only for Admin).
+        Export your environment and resources as Terraform manifests. Secret values will not be exposed.
       </p>
       <form
         class="mt-6"
       >
-        <div
-          class="flex text-sm items-start"
-          data-testid="input-toggle"
-        >
-          <button
-            aria-checked="false"
-            aria-label="Export secrets"
-            class="w-8 h-4.5 outline-brand-11 inline-flex shrink-0 items-center rounded-full border-0 p-0.5 outline-0 disabled:pointer-events-none focus-visible:[&:active]:outline-0 focus-visible:[&:not(:active)]:outline-2 focus-visible:[&:not(:active)]:outline-offset-2 cursor-pointer bg-surface-neutral-componentActive"
-            data-state="unchecked"
-            data-testid="input-toggle-button"
-            id="_r_6_"
-            role="switch"
-            type="button"
-            value="false"
-          >
-            <span
-              aria-label="circle"
-              class="w-3.5 h-3.5 block transform rounded-full bg-surface-neutral shadow-lg  "
-              data-state="unchecked"
-            />
-          </button>
-          <input
-            aria-hidden="true"
-            style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
-            tabindex="-1"
-            type="checkbox"
-            value="false"
-          />
-          <label
-            class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
-            for="_r_6_"
-          >
-            <p
-              class="font-medium text-neutral"
-            >
-              Export secrets
-            </p>
-            <div
-              class="text-neutral-subtle"
-            >
-              An optional toggle for secure secrets.
-            </div>
-          </label>
-        </div>
         <div
           class="mt-6 flex justify-end gap-3"
         >

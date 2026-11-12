@@ -107,10 +107,14 @@ function SettingsLayout() {
     iconStyle: 'brands' as const,
   }
 
-  const webhookLink = {
-    title: 'Webhook',
-    to: `${pathSettings}/webhook`,
-    icon: 'webhook' as const,
+  const notificationsLink = {
+    type: 'group',
+    title: 'Notifications',
+    icon: 'bell' as const,
+    children: [
+      { title: 'Slack', to: `${pathSettings}/notifications/slack` },
+      { title: 'Webhook', to: `${pathSettings}/webhook` },
+    ],
   }
 
   const apiTokenLink = {
@@ -160,7 +164,7 @@ function SettingsLayout() {
     helmRepositoriesLink,
     cloudCredentialsLink,
     gitRepositoriesAccessLink,
-    webhookLink,
+    notificationsLink,
     // RBAC v2 prototype: in the target solution, service accounts and personal tokens replace the API tokens
     ...(isTarget ? [] : [apiTokenLink]),
     aiLink,

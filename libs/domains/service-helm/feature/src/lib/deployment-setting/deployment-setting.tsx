@@ -22,7 +22,7 @@ export function DeploymentSetting() {
         <Controller
           name="arguments"
           control={control}
-          defaultValue="--wait --atomic --debug"
+          defaultValue="--wait --atomic"
           rules={{
             required: 'Please enter an command.',
           }}

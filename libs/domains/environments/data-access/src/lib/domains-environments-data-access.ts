@@ -208,14 +208,10 @@ export const mutations = {
     const result = await environmentMainCallsApi.deleteEnvironment(environmentId)
     return result.data
   },
-  async exportTerraform({ environmentId, exportSecrets }: { environmentId: string; exportSecrets: boolean }) {
-    const result = await environmentExportApi.exportEnvironmentConfigurationIntoTerraform(
-      environmentId,
-      exportSecrets,
-      {
-        responseType: 'blob',
-      }
-    )
+  async exportTerraform({ environmentId }: { environmentId: string }) {
+    const result = await environmentExportApi.exportEnvironmentConfigurationIntoTerraform(environmentId, {
+      responseType: 'blob',
+    })
     return result.data
   },
   async attachServiceToDeploymentStage({

@@ -124,4 +124,28 @@ describe('application-container-summary-utils', () => {
       })
     )
   })
+
+  it('should build keda autoscaling policy with the ScaledObject settings', () => {
+    expect(
+      buildAutoscalingPolicy({
+        cpu: 500,
+        memory: 512,
+        gpu: 0,
+        min_running_instances: 1,
+        max_running_instances: 4,
+        autoscaling_mode: 'KEDA',
+        scalers: [{ type: 'cpu', config: 'targetValue: "70"' }],
+        autoscaling_initial_cooldown_period: '60',
+        autoscaling_idle_scale_to_zero: true,
+        autoscaling_advanced_enabled: true,
+        autoscaling_advanced_yaml: 'restoreToOriginalReplicaCount: true',
+      })
+    ).toEqual(
+      expect.objectContaining({
+        initial_cooldown_period_seconds: 60,
+        idle_replica_count: 0,
+        advanced_yaml: 'restoreToOriginalReplicaCount: true',
+      })
+    )
+  })
 })

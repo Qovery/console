@@ -1,0 +1,453 @@
+import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { type Status } from 'qovery-typescript-axios'
+import { type PropsWithChildren } from 'react'
+import { useDefaultAdvancedSettings, useService } from '@qovery/domains/services/feature'
+import { environmentFactoryMock } from '@qovery/shared/factories'
+import { ModalProvider } from '@qovery/shared/ui'
+import { act, render, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { DeploymentLogsSteps } from './deployment-logs-steps'
+
+jest.mock('../hooks/use-deployment-logs/use-deployment-logs')
+jest.mock('@qovery/domains/services/feature')
+
+const mockNavigate = jest.fn()
+let mockHash = ''
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: '1', projectId: '2', serviceId: 'service-1', executionId: '4' }),
+  useLocation: () => ({ hash: mockHash }),
+  useNavigate: () => mockNavigate,
+}))
+
+const useDeploymentLogsMock = useDeploymentLogs as jest.MockedFunction<typeof useDeploymentLogs>
+const useServiceMock = useService as jest.MockedFunction<typeof useService>
+const useDefaultAdvancedSettingsMock = useDefaultAdvancedSettings as jest.MockedFunction<
+  typeof useDefaultAdvancedSettings
+>
+
+function createLog(id: number, message: string, stageStep: string, stepName?: string): EnvironmentLogIds {
+  return {
+    id,
+    type: 'info',
+    timestamp: `2026-10-26T08:38:${id.toString().padStart(2, '0')}Z`,
+    details: { stage: { step: stageStep }, step_name: stepName },
+    message: { safe_message: message },
+  }
+}
+
+const serviceStatus: Status = {
+  id: 'service-1',
+  state: 'DEPLOYED',
+  service_deployment_status: 'UP_TO_DATE',
+  is_part_last_deployment: true,
+  deployment_request_id: null,
+  deployment_requests_count: 0,
+  status_details: { action: 'DEPLOY', status: 'SUCCESS', sub_action: 'NONE' },
+  steps: {
+    total_duration_sec: 90,
+    total_computing_duration_sec: 90,
+    details: [
+      { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
+      {
+        step_name: 'BUILD',
+        status: 'SUCCESS',
+        duration_sec: 70,
+        sub_steps: [{ name: 'IMAGE_PUSH', status: 'SUCCESS', duration_sec: 13 }],
+      },
+      { step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 11 },
+    ],
+  },
+}
+
+const logs = [
+  createLog(1, 'Cloning repository acme/web-app', 'Build', 'GIT_CLONE'),
+  createLog(2, 'Building layer 1', 'Build', 'BUILD'),
+  createLog(3, 'Building layer 2', 'Build', 'BUILD'),
+  createLog(4, 'Pushing manifest', 'Build', 'IMAGE_PUSH'),
+  createLog(5, 'Pod is ready', 'Deploy', 'DEPLOYMENT'),
+]
+
+function mockLogs(data: EnvironmentLogIds[]) {
+  useDeploymentLogsMock.mockReturnValue({
+    data,
+    isScrollPaused: false,
+    setPauseLogs: jest.fn(),
+    bufferedLogsCount: 0,
+    showPreviousLogs: true,
+    setShowPreviousLogs: jest.fn(),
+  })
+}
+
+describe('DeploymentLogsSteps', () => {
+  const environment = environmentFactoryMock(1)[0]
+
+  beforeEach(() => {
+    mockHash = ''
+    mockNavigate.mockClear()
+    mockLogs(logs)
+    useServiceMock.mockReturnValue({
+      data: { id: 'service-1', name: 'web-app', serviceType: 'APPLICATION' },
+    } as ReturnType<typeof useService>)
+  })
+
+  it('groups steps under their phase', () => {
+    renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    expect(screen.getByRole('heading', { name: 'Logs' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Build' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Deploy' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cloning repository 7s' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Building image Slowest 57s' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Pushing image 13s' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploying application 11s' })).toBeInTheDocument()
+    expect(screen.queryByText('Building layer 1')).not.toBeInTheDocument()
+  })
+
+  it('expands repeated step names independently and opens only the phase of a linked line', async () => {
+    mockLogs([
+      createLog(1, 'Build output', 'Build', 'OUTPUT_UPLOAD'),
+      createLog(2, 'Deploy output', 'Deploy', 'OUTPUT_UPLOAD'),
+    ])
+    const { userEvent, rerender } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+    const [buildRow, deployRow] = screen.getAllByRole('button', { name: 'Output upload' })
+
+    await userEvent.click(buildRow)
+
+    expect(screen.getByText('Build output')).toBeInTheDocument()
+    expect(screen.queryByText('Deploy output')).not.toBeInTheDocument()
+    expect(deployRow).toHaveAttribute('aria-expanded', 'false')
+
+    await userEvent.click(buildRow)
+    mockHash = 'L2'
+    rerender(<DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />)
+
+    expect(screen.queryByText('Build output')).not.toBeInTheDocument()
+    expect(screen.getByText('Deploy output')).toBeInTheDocument()
+  })
+
+  it('shows the CPU and memory the builder used against the build limits', async () => {
+    useDefaultAdvancedSettingsMock.mockReturnValue({
+      data: { 'build.cpu_max_in_milli': 8000, 'build.ram_max_in_gib': 16 },
+    } as ReturnType<typeof useDefaultAdvancedSettings>)
+    const [gitClone, build, deployment] = serviceStatus.steps?.details ?? []
+
+    renderWithProviders(
+      <DeploymentLogsSteps
+        environment={environment}
+        serviceStatus={{
+          ...serviceStatus,
+          steps: {
+            total_duration_sec: 90,
+            total_computing_duration_sec: 90,
+            details: [
+              gitClone,
+              {
+                ...build,
+                builder_usage: { cpu_milli_avg: 1200, cpu_milli_max: 3800, memory_mib_max: 15155, samples: 20 },
+              },
+              deployment,
+            ],
+          },
+        }}
+        deploymentHistory={[]}
+      />
+    )
+
+    expect(screen.getByText('CPU')).toBeInTheDocument()
+    // Focus opens the tooltip without the hover delay, which a slow CI runner can push past the findBy timeout
+    act(() => screen.getByText('Memory').focus())
+
+    expect(await screen.findAllByText('14.8 / 16 GiB (92%)')).not.toHaveLength(0)
+  })
+
+  it('reads the default build limits for a limit cleared on the service', () => {
+    useDefaultAdvancedSettingsMock.mockReturnValue({ data: undefined } as ReturnType<typeof useDefaultAdvancedSettings>)
+    useServiceMock.mockReturnValue({
+      data: {
+        id: 'service-1',
+        name: 'web-app',
+        serviceType: 'APPLICATION',
+        // A cleared limit comes back as `null`
+        build_settings: { cpu_max_in_milli: 4000, ram_max_in_gib: null },
+      },
+    } as unknown as ReturnType<typeof useService>)
+    const [gitClone, build, deployment] = serviceStatus.steps?.details ?? []
+
+    renderWithProviders(
+      <DeploymentLogsSteps
+        environment={environment}
+        serviceStatus={{
+          ...serviceStatus,
+          steps: {
+            total_duration_sec: 90,
+            total_computing_duration_sec: 90,
+            details: [
+              gitClone,
+              {
+                ...build,
+                builder_usage: { cpu_milli_avg: 1200, cpu_milli_max: 3800, memory_mib_max: 15155, samples: 20 },
+              },
+              deployment,
+            ],
+          },
+        }}
+        deploymentHistory={[]}
+      />
+    )
+
+    expect(useDefaultAdvancedSettingsMock).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: true }))
+  })
+
+  it('lists the wait of the stage in the pre-check, apart from the deployment queue', async () => {
+    mockLogs([
+      createLog(1, 'Your deployment is 1 in the Queue', 'Queueing', 'QUEUEING'),
+      createLog(2, 'Cloning repository acme/web-app', 'Build', 'GIT_CLONE'),
+      createLog(3, 'Pod is ready', 'Deploy', 'DEPLOYMENT'),
+    ])
+
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps
+        environment={environment}
+        serviceStatus={{
+          ...serviceStatus,
+          steps: {
+            total_duration_sec: 18,
+            total_computing_duration_sec: 18,
+            details: [
+              { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
+              { step_name: 'DEPLOYMENT_QUEUEING', status: 'SUCCESS', duration_sec: 0 },
+              { step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 11 },
+            ],
+          },
+        }}
+        stage={{
+          id: 'stage-1',
+          name: 'DEFAULT',
+          description: '',
+          steps: { details: [{ step_name: 'QUEUEING', status: 'SUCCESS', duration_sec: 12 }] },
+        }}
+        deploymentHistory={[]}
+      />
+    )
+
+    expect(screen.getByRole('heading', { name: 'Pre-check' })).toBeInTheDocument()
+    // The longest step, but a wait for the other deployments rather than work of the service: not the slowest
+    await userEvent.click(screen.getByRole('button', { name: 'Waiting in stage queue 12s' }))
+    expect(screen.getByText('Your deployment is 1 in the Queue')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploying application Slowest 11s' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Waiting in deployment queue/ })).not.toBeInTheDocument()
+  })
+
+  it('shows the lines of a step once expanded', async () => {
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    const buildingImage = screen.getByRole('button', { name: /Building image/ })
+    await userEvent.click(buildingImage)
+
+    expect(buildingImage).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('Building layer 1')).toBeInTheDocument()
+    expect(screen.getByText('Building layer 2')).toBeInTheDocument()
+
+    await userEvent.click(buildingImage)
+
+    expect(screen.queryByText('Building layer 1')).not.toBeInTheDocument()
+  })
+
+  it('links to the clicked line, and to the lines in between with shift', async () => {
+    const { userEvent, rerender } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+    await userEvent.click(screen.getByRole('button', { name: /Building image/ }))
+
+    await userEvent.click(screen.getAllByRole('link', { name: '08:38:02' })[0])
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ hash: 'L2', replace: true }))
+
+    mockHash = 'L2'
+    rerender(<DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />)
+    await userEvent.keyboard('{Shift>}')
+    await userEvent.click(screen.getByRole('link', { name: '08:38:03' }))
+    await userEvent.keyboard('{/Shift}')
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ hash: 'L2-L3' }))
+  })
+
+  it('scrolls to the lines of a link followed once the page is open, not to a clicked line', async () => {
+    const scrollIntoView = jest.fn()
+    const elementScrollIntoView = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scrollIntoView
+    // Unlike the one of `renderWithProviders`, this wrapper keeps the page mounted across renders
+    const queryClient = new QueryClient()
+    const Wrapper = ({ children }: PropsWithChildren) => (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    )
+    const renderPage = () => (
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+    const { rerender } = render(renderPage(), { wrapper: Wrapper })
+
+    mockHash = 'L3'
+    rerender(renderPage())
+
+    expect(screen.getByRole('button', { name: /Building image/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
+
+    act(() => screen.getByRole('link', { name: '08:38:02' }).click())
+    mockHash = 'L2'
+    rerender(renderPage())
+
+    expect(screen.getByRole('link', { name: '08:38:02' })).toHaveClass('text-brand')
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
+
+    Element.prototype.scrollIntoView = elementScrollIntoView
+  })
+
+  it('opens the steps of the linked lines and highlights them', () => {
+    mockHash = 'L3-L4'
+
+    renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    expect(screen.getByRole('button', { name: /Building image/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: /Pushing image/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('link', { name: '08:38:03' })).toHaveClass('text-brand')
+    expect(screen.getByRole('link', { name: '08:38:02' })).not.toHaveClass('text-brand')
+  })
+
+  it('shows only the phases and steps matching the search, opened', async () => {
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Search logs' }), 'layer 2')
+
+    expect(await screen.findByText('layer 2', { selector: 'mark' })).toBeInTheDocument()
+    expect(screen.queryByText(/Building layer 1/)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Building image 1 match/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.queryByRole('button', { name: /Cloning repository/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Deploy' })).not.toBeInTheDocument()
+  })
+
+  it('reopens collapsed matching steps when the search changes', async () => {
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+    const buildingImage = screen.getByRole('button', { name: /Building image/ })
+    await userEvent.click(buildingImage)
+    await userEvent.click(buildingImage)
+    expect(buildingImage).toHaveAttribute('aria-expanded', 'false')
+
+    const search = screen.getByRole('textbox', { name: 'Search logs' })
+    await userEvent.type(search, 'layer')
+
+    expect(buildingImage).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: /Building image 2 matches/ })).toBeInTheDocument()
+
+    await userEvent.click(buildingImage)
+    expect(buildingImage).toHaveAttribute('aria-expanded', 'false')
+
+    await userEvent.type(search, ' 2')
+
+    expect(buildingImage).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('layer 2', { selector: 'mark' })).toBeInTheDocument()
+  })
+
+  it('tells when no line matches the search', async () => {
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Search logs' }), 'nowhere')
+
+    expect(await screen.findByText('No matching logs')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Build' })).not.toBeInTheDocument()
+  })
+
+  it('opens the step that logged an error when the API reports no failed step', () => {
+    // The engine stopped answering: the deployment failed, but its step got no status
+    mockLogs([
+      createLog(1, 'Cloning repository acme/web-app', 'Build', 'GIT_CLONE'),
+      createLog(2, 'Proceeding with up to 7 parallel deployment(s)', 'Deploy', 'DEPLOYMENT'),
+      {
+        ...createLog(3, '', 'Deploy', 'DEPLOYMENT'),
+        type: 'error',
+        error: { user_log_message: 'Failed to get an answer from the engine in 10 min' },
+      } as EnvironmentLogIds,
+    ])
+
+    renderWithProviders(
+      <DeploymentLogsSteps
+        environment={environment}
+        serviceStatus={{
+          ...serviceStatus,
+          status_details: { action: 'DEPLOY', status: 'ERROR', sub_action: 'NONE' },
+          steps: {
+            total_duration_sec: 7,
+            total_computing_duration_sec: 7,
+            details: [{ step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 }],
+          },
+        }}
+        deploymentHistory={[]}
+      />
+    )
+
+    expect(screen.getByRole('button', { name: /Deploying application/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('Failed to get an answer from the engine in 10 min')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Cloning repository/ })).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('opens the running step and lists only the steps that started', () => {
+    mockLogs(logs.slice(0, 3))
+
+    renderWithProviders(
+      <DeploymentLogsSteps
+        environment={environment}
+        serviceStatus={{
+          ...serviceStatus,
+          status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
+          steps: {
+            total_duration_sec: null,
+            total_computing_duration_sec: 7,
+            details: [
+              { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
+              { step_name: 'BUILD', status: 'ONGOING', duration_sec: 20 },
+            ],
+          },
+        }}
+        deploymentHistory={[]}
+      />
+    )
+
+    expect(screen.getByRole('button', { name: /Building image/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('Streaming deployment logs…')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Saving build cache/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Deploy' })).not.toBeInTheDocument()
+  })
+
+  it('shows the lines of an older deployment, by phase, when they carry no step', async () => {
+    mockLogs([createLog(1, 'Cloning acme/web-app', 'Build'), createLog(2, 'Pod is ready', 'Deploy')])
+
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    expect(screen.queryByRole('button', { name: /Cloning repository/ })).not.toBeInTheDocument()
+    const buildLogs = screen.getByRole('button', { name: 'Build logs 1min 17s' })
+    await userEvent.click(buildLogs)
+
+    expect(screen.getByText('Cloning acme/web-app')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploy logs 11s' })).toBeInTheDocument()
+  })
+})

@@ -163,21 +163,21 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info"
+                          class="mr-2 inline-flex h-4 shrink-0 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info"
                         >
                           ALIAS
                         </span>
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           DB_USERNAME
@@ -312,21 +312,21 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info"
+                          class="mr-2 inline-flex h-4 shrink-0 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info"
                         >
                           ALIAS
                         </span>
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           DB_HOST
@@ -461,21 +461,21 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-accent1-component px-1 text-2xs font-bold text-accent1"
+                          class="mr-2 inline-flex h-4 shrink-0 items-center rounded bg-surface-accent1-component px-1 text-2xs font-bold text-accent1"
                         >
                           FILE
                         </span>
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           grafana_config
@@ -588,16 +588,16 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           myvar_project
@@ -717,16 +717,16 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           variable_name
@@ -845,28 +845,28 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral"
+                          class="mr-2 inline-flex h-4 shrink-0 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral"
                           data-testid="doppler-tag"
                         >
                           DOPPLER
                         </span>
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           DOPPLER_PROJECT
                         </span>
                         <span
-                          class="ml-2"
+                          class="ml-2 shrink-0"
                           data-state="closed"
                         >
                           <svg
@@ -1023,16 +1023,16 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           FOO
@@ -1161,21 +1161,21 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info"
+                          class="mr-2 inline-flex h-4 shrink-0 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info"
                         >
                           ALIAS
                         </span>
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           BAR
@@ -1310,16 +1310,16 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative opacity-60 border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           LOG_LEVEL
@@ -1455,21 +1455,21 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="mr-2 inline-flex h-4 items-center rounded bg-surface-brand-component px-1 text-2xs font-bold text-brand"
+                          class="mr-2 inline-flex h-4 shrink-0 items-center rounded bg-surface-brand-component px-1 text-2xs font-bold text-brand"
                         >
                           OVERRIDE
                         </span>
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           LOG_LEVEL
@@ -1705,16 +1705,16 @@ exports[`VariableList should match snapshot 1`] = `
                   class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
-                    class="flex flex-col justify-center gap-1"
+                    class="flex min-w-0 flex-col justify-center gap-1"
                   >
                     <div
-                      class="flex items-center gap-2"
+                      class="flex min-w-0 items-center gap-2"
                     >
                       <div
-                        class="flex items-center truncate"
+                        class="flex min-w-0 items-center truncate"
                       >
                         <span
-                          class="truncate text-sm font-medium"
+                          class="min-w-0 truncate text-sm font-medium"
                           data-state="closed"
                         >
                           QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME

@@ -26,7 +26,6 @@ export function OnboardingCluster() {
     await navigate({
       to: '/organization/$organizationId/cluster/new',
       params: { organizationId },
-      search: { 'no-demo': true },
     })
   }
 
