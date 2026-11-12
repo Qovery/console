@@ -240,6 +240,30 @@ describe('DeploymentLogsSteps', () => {
     expect(screen.queryByRole('heading', { name: 'Deploy' })).not.toBeInTheDocument()
   })
 
+  it('reopens collapsed matching steps when the search changes', async () => {
+    const { userEvent } = renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+    const buildingImage = screen.getByRole('button', { name: /Building image/ })
+    await userEvent.click(buildingImage)
+    await userEvent.click(buildingImage)
+    expect(buildingImage).toHaveAttribute('aria-expanded', 'false')
+
+    const search = screen.getByRole('textbox', { name: 'Search logs' })
+    await userEvent.type(search, 'layer')
+
+    expect(buildingImage).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: /Building image 2 matches/ })).toBeInTheDocument()
+
+    await userEvent.click(buildingImage)
+    expect(buildingImage).toHaveAttribute('aria-expanded', 'false')
+
+    await userEvent.type(search, ' 2')
+
+    expect(buildingImage).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('layer 2', { selector: 'mark' })).toBeInTheDocument()
+  })
+
   it('tells when no line matches the search', async () => {
     const { userEvent } = renderWithProviders(
       <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />

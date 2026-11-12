@@ -157,7 +157,7 @@ function getBuildStepMetric(build: ServiceStepMetric, nowMs: number): StepMetric
   const isProvisioningBuilder = subSteps.some(
     (subStep) => BUILD_SUB_STEPS_BEFORE_IMAGE_BUILD.has(subStep.name) && subStep.status === 'ONGOING'
   )
-  const hasSubStepWithBuildStatus = subSteps.some((subStep) => subStep.status === build.status)
+  const subStepWithBuildStatus = subSteps.find((subStep) => subStep.status === build.status)
 
   const status = match(build.status)
     .with('ONGOING', (status) => {
@@ -165,8 +165,13 @@ function getBuildStepMetric(build: ServiceStepMetric, nowMs: number): StepMetric
       if (isProvisioningBuilder) return 'PENDING' as const
       return status
     })
-    // The sub-step that failed or was canceled carries the status, the image build itself went through
-    .with('ERROR', 'CANCEL', (status) => (hasSubStepWithBuildStatus ? ('SUCCESS' as const) : status))
+    .with('ERROR', 'CANCEL', (status) => {
+      if (!subStepWithBuildStatus) return status
+      // A provisioning failure prevents the image build; later sub-steps run only after it succeeded
+      return BUILD_SUB_STEPS_BEFORE_IMAGE_BUILD.has(subStepWithBuildStatus.name)
+        ? ('SKIP' as const)
+        : ('SUCCESS' as const)
+    })
     .otherwise((status) => status)
 
   return {
