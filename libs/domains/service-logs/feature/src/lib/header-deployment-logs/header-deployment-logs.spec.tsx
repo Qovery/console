@@ -30,7 +30,7 @@ describe('HeaderDeploymentLogs', () => {
     )
 
     expect(screen.getByText('Deploy')).toBeInTheDocument()
-    expect(screen.getByText('15/11')).toBeInTheDocument()
+    expect(screen.getByText('15/11 08:38')).toBeInTheDocument()
     expect(screen.getByText('03:58')).toBeInTheDocument()
     expect(screen.getByText('0518c…824')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Latest' })).toBeInTheDocument()
