@@ -73,7 +73,8 @@ export function BuilderUsageBadges({ usage, service }: BuilderUsageBadgesProps) 
     serviceType: advancedSettingsServiceType ?? 'APPLICATION',
     enabled:
       advancedSettingsServiceType !== undefined &&
-      (buildSettings?.cpu_max_in_milli === undefined || buildSettings?.ram_max_in_gib === undefined),
+      // A cleared limit comes back as `null`
+      (buildSettings?.cpu_max_in_milli == null || buildSettings?.ram_max_in_gib == null),
   })
   const defaultBuildLimits = defaultAdvancedSettings as DefaultBuildLimits | undefined
 

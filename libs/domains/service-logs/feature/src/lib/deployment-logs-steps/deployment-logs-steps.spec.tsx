@@ -1,7 +1,11 @@
+import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type Status } from 'qovery-typescript-axios'
+import { type PropsWithChildren } from 'react'
 import { useDefaultAdvancedSettings, useService } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { ModalProvider } from '@qovery/shared/ui'
+import { act, render, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { DeploymentLogsSteps } from './deployment-logs-steps'
 
@@ -139,6 +143,44 @@ describe('DeploymentLogsSteps', () => {
     expect(await screen.findAllByText('14.8 / 16 GiB (92%)')).not.toHaveLength(0)
   })
 
+  it('reads the default build limits for a limit cleared on the service', () => {
+    useDefaultAdvancedSettingsMock.mockReturnValue({ data: undefined } as ReturnType<typeof useDefaultAdvancedSettings>)
+    useServiceMock.mockReturnValue({
+      data: {
+        id: 'service-1',
+        name: 'web-app',
+        serviceType: 'APPLICATION',
+        // A cleared limit comes back as `null`
+        build_settings: { cpu_max_in_milli: 4000, ram_max_in_gib: null },
+      },
+    } as unknown as ReturnType<typeof useService>)
+    const [gitClone, build, deployment] = serviceStatus.steps?.details ?? []
+
+    renderWithProviders(
+      <DeploymentLogsSteps
+        environment={environment}
+        serviceStatus={{
+          ...serviceStatus,
+          steps: {
+            total_duration_sec: 90,
+            total_computing_duration_sec: 90,
+            details: [
+              gitClone,
+              {
+                ...build,
+                builder_usage: { cpu_milli_avg: 1200, cpu_milli_max: 3800, memory_mib_max: 15155, samples: 20 },
+              },
+              deployment,
+            ],
+          },
+        }}
+        deploymentHistory={[]}
+      />
+    )
+
+    expect(useDefaultAdvancedSettingsMock).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: true }))
+  })
+
   it('lists the wait of the stage in the pre-check, apart from the deployment queue', async () => {
     mockLogs([
       createLog(1, 'Your deployment is 1 in the Queue', 'Queueing', 'QUEUEING'),
@@ -211,6 +253,40 @@ describe('DeploymentLogsSteps', () => {
     await userEvent.click(screen.getByRole('link', { name: '08:38:03' }))
     await userEvent.keyboard('{/Shift}')
     expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ hash: 'L2-L3' }))
+  })
+
+  it('scrolls to the lines of a link followed once the page is open, not to a clicked line', async () => {
+    const scrollIntoView = jest.fn()
+    const elementScrollIntoView = Element.prototype.scrollIntoView
+    Element.prototype.scrollIntoView = scrollIntoView
+    // Unlike the one of `renderWithProviders`, this wrapper keeps the page mounted across renders
+    const queryClient = new QueryClient()
+    const Wrapper = ({ children }: PropsWithChildren) => (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    )
+    const renderPage = () => (
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+    const { rerender } = render(renderPage(), { wrapper: Wrapper })
+
+    mockHash = 'L3'
+    rerender(renderPage())
+
+    expect(screen.getByRole('button', { name: /Building image/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
+
+    act(() => screen.getByRole('link', { name: '08:38:02' }).click())
+    mockHash = 'L2'
+    rerender(renderPage())
+
+    expect(screen.getByRole('link', { name: '08:38:02' })).toHaveClass('text-brand')
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
+
+    Element.prototype.scrollIntoView = elementScrollIntoView
   })
 
   it('opens the steps of the linked lines and highlights them', () => {

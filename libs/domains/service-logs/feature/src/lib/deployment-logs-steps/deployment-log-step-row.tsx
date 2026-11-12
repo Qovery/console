@@ -141,9 +141,9 @@ function DeploymentLogLines({
 
   const overflowLinesCount = Math.max(0, lines.length - MAX_VISIBLE_LINES)
   // Selected lines are never hidden behind "Show previous lines"
-  const hasHiddenSelectedLine = lines
-    .slice(0, overflowLinesCount)
-    .some((line) => isDeploymentLogLineSelected(selectedLineRange, line.id))
+  const hasHiddenSelectedLine =
+    selectedLineRange !== undefined &&
+    lines.slice(0, overflowLinesCount).some((line) => isDeploymentLogLineSelected(selectedLineRange, line.id))
   const hiddenLinesCount = showAllLines || hasHiddenSelectedLine ? 0 : overflowLinesCount
   const visibleLines = hiddenLinesCount > 0 ? lines.slice(hiddenLinesCount) : lines
 

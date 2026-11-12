@@ -195,15 +195,24 @@ describe('ListDeploymentLogs', () => {
     })
   })
 
-  it('should display logs grouped by step behind the deployment-logs-v2 flag', () => {
+  it('should display logs grouped by step behind the deployment-logs-v2 flag', async () => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
 
-    renderWithProviders(<ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />)
+    const { userEvent } = renderWithProviders(
+      <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
+    )
 
     expect(useFeatureFlagEnabled).toHaveBeenCalledWith('deployment-logs-v2')
     expect(screen.getByRole('heading', { name: 'Logs' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Search logs' })).toBeInTheDocument()
+    // The lines carry no step: each phase shows them in one row, the failed one open
+    expect(screen.getByRole('heading', { name: 'Build' })).toBeInTheDocument()
     expect(screen.queryByText('Log 1')).not.toBeInTheDocument()
+    expect(screen.getByText('Log 2')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /Build logs/ }))
+
+    expect(screen.getByText('Log 1')).toBeInTheDocument()
 
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
   })
