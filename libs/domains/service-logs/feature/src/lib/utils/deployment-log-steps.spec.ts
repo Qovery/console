@@ -617,7 +617,27 @@ describe('getDeploymentLogPhases', () => {
 })
 
 describe('getSlowestDeploymentLogStepKey', () => {
-  it('returns the step that took the longest across the phases', () => {
+  it.each([
+    { buildDuration: 12, deployDuration: 5, expected: 'BUILD:OUTPUT_UPLOAD' },
+    { buildDuration: 5, deployDuration: 12, expected: 'DEPLOY:OUTPUT_UPLOAD' },
+  ])('returns $expected when phases share a step name', ({ buildDuration, deployDuration, expected }) => {
+    expect(
+      getSlowestDeploymentLogStepKey([
+        {
+          id: 'BUILD',
+          isLive: false,
+          steps: [{ name: 'OUTPUT_UPLOAD', durationSec: buildDuration, isLive: false, lines: [] }],
+        },
+        {
+          id: 'DEPLOY',
+          isLive: false,
+          steps: [{ name: 'OUTPUT_UPLOAD', durationSec: deployDuration, isLive: false, lines: [] }],
+        },
+      ])
+    ).toBe(expected)
+  })
+
+  it('returns the key of the step that took the longest across the phases', () => {
     const phases = getDeploymentLogPhases({
       serviceSteps: [
         { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
