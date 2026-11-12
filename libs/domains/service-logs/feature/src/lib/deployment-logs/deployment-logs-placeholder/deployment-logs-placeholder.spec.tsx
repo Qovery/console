@@ -38,18 +38,22 @@ describe('DeploymentLogsPlaceholder', () => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
   })
 
-  it.each([true, false, undefined])('uses the expected page loader when the flag is %s', (flag) => {
+  it.each([false, undefined])('preserves the current page loader when the flag is %s', (flag) => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(flag)
 
     renderWithProviders(<DeploymentLogsLoader />)
 
-    if (flag) {
-      expect(screen.getByRole('status', { name: 'Loading deployment logs' })).toBeInTheDocument()
-      expect(screen.queryByText('Deployment logs are loading…')).not.toBeInTheDocument()
-    } else {
-      expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
-      expect(screen.queryByRole('status', { name: 'Loading deployment logs' })).not.toBeInTheDocument()
-    }
+    expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
+    expect(screen.queryByRole('status', { name: 'Loading deployment logs' })).not.toBeInTheDocument()
+  })
+
+  it('shows the page skeleton when the flag is enabled', () => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
+
+    renderWithProviders(<DeploymentLogsLoader />)
+
+    expect(screen.getByRole('status', { name: 'Loading deployment logs' })).toBeInTheDocument()
+    expect(screen.queryByText('Deployment logs are loading…')).not.toBeInTheDocument()
   })
 
   it('shows the skeleton while the log lines are loading with the flag enabled', () => {
