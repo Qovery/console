@@ -23,7 +23,9 @@ function formatAmount(value: number) {
 
 // `1.2 / 8 cores`, or `1.2 cores` when the limit is unknown
 function formatUsage(value: number, limit: number | undefined, singularUnit: string, pluralUnit: string) {
-  const unit = pluralize(limit ?? value, singularUnit, pluralUnit)
+  // The unit agrees with the amount shown: `1 core`, but `0 cores` and `1.04` shown as `1 core`
+  const count = Number(formatAmount(limit || value))
+  const unit = count === 0 ? pluralUnit : pluralize(count, singularUnit, pluralUnit)
   return limit ? `${formatAmount(value)} / ${formatAmount(limit)} ${unit}` : `${formatAmount(value)} ${unit}`
 }
 
@@ -35,7 +37,12 @@ export function getBuilderUsageSummary(
   usage: BuilderUsage | undefined,
   { cpuMilli, memoryGib }: BuilderUsageLimits
 ): BuilderUsageSummary | undefined {
-  if (usage?.cpu_milli_avg === undefined || usage.cpu_milli_max === undefined || usage.memory_mib_max === undefined) {
+  if (
+    usage?.samples === 0 ||
+    usage?.cpu_milli_avg === undefined ||
+    usage.cpu_milli_max === undefined ||
+    usage.memory_mib_max === undefined
+  ) {
     return undefined
   }
 
