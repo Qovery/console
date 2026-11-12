@@ -122,7 +122,7 @@ export function getDeploymentLogStepKey(phase: DeploymentLogPhaseId, name: strin
 }
 
 /**
- * Groups log lines by step name, keeping their order.
+ * Groups log lines by phase and step name, keeping their order.
  * A line whose phase is unknown belongs to the phase running when it was logged: the phase of the line before it,
  * or of the first line after it with a phase when it comes first.
  */
@@ -459,7 +459,7 @@ export function filterDeploymentLogPhases<T extends EnvironmentLogs>(phases: Dep
 }
 
 /**
- * Returns the step that took the longest across every phase.
+ * Returns the `phase:name` key of the step that took the longest across every phase.
  * Rows of lines without step are left out: they time a whole phase, not a step. So is the wait of the stage, which
  * waits for the other deployments and isn't work of the service to speed up.
  */
