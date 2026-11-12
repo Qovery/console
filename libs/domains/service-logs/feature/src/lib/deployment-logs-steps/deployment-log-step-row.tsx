@@ -211,7 +211,7 @@ function DeploymentLogLines({
           />
         ))}
         {isStreaming && (
-          <AnimatedGradientText className="w-fit py-0.5 font-sans text-sm font-medium">
+          <AnimatedGradientText className="w-fit from-[var(--neutral-10)] via-[var(--neutral-11)] to-[var(--neutral-10)] py-0.5 font-sans text-sm font-medium">
             Streaming deployment logs…
           </AnimatedGradientText>
         )}
