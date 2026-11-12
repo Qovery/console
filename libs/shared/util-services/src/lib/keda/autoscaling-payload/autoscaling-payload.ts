@@ -1,4 +1,8 @@
-import { type AutoscalingPolicyRequest, type AutoscalingPolicyResponse } from 'qovery-typescript-axios'
+import {
+  type AutoscalingPolicyRequest,
+  type AutoscalingPolicyResponse,
+  type KedaAutoscalingRequest,
+} from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
 
 /**
@@ -15,6 +19,79 @@ export interface KedaAutoscalingFields {
   autoscaling_polling_interval?: number
   autoscaling_cooldown_period?: number
   autoscaling_mode?: 'NONE' | 'HPA' | 'KEDA'
+}
+
+/**
+ * Form fields for the optional KEDA ScaledObject settings
+ */
+export interface KedaScaledObjectSettingsFields {
+  // Number inputs hold a string once edited, and an empty string once cleared
+  autoscaling_initial_cooldown_period?: number | string | null
+  autoscaling_idle_scale_to_zero?: boolean | null
+  autoscaling_advanced_enabled?: boolean | null
+  autoscaling_advanced_yaml?: string | null
+}
+
+export type KedaScaledObjectSettingsPayload = Pick<
+  KedaAutoscalingRequest,
+  'initial_cooldown_period_seconds' | 'idle_replica_count' | 'advanced_yaml'
+>
+
+// KEDA only supports an idle replica count of 0
+const IDLE_REPLICA_COUNT = 0
+
+// Same bounds as the API
+const MAX_INITIAL_COOLDOWN_PERIOD_SECONDS = 3600
+
+/**
+ * Form rule for the initial cooldown period: empty, or whole seconds between 0 and 3600.
+ * The API reads it as an integer, so a fractional value would otherwise be truncated.
+ */
+export function validateInitialCooldownPeriod(
+  value: KedaScaledObjectSettingsFields['autoscaling_initial_cooldown_period']
+) {
+  if (value === undefined || value === null || value === '') return true
+
+  const seconds = Number(value)
+  return (
+    (Number.isInteger(seconds) && seconds >= 0 && seconds <= MAX_INITIAL_COOLDOWN_PERIOD_SECONDS) ||
+    `Must be a whole number of seconds between 0 and ${MAX_INITIAL_COOLDOWN_PERIOD_SECONDS}`
+  )
+}
+
+/**
+ * Converts the ScaledObject settings form fields to the API fields.
+ * The advanced YAML is sent only while its toggle is on: turning the toggle off removes it.
+ */
+export function toKedaScaledObjectSettingsPayload(
+  fields: KedaScaledObjectSettingsFields
+): KedaScaledObjectSettingsPayload {
+  const initialCooldownPeriod = fields.autoscaling_initial_cooldown_period
+  const advancedYaml = fields.autoscaling_advanced_yaml
+
+  return {
+    initial_cooldown_period_seconds:
+      initialCooldownPeriod === undefined || initialCooldownPeriod === null || initialCooldownPeriod === ''
+        ? null
+        : Number(initialCooldownPeriod),
+    idle_replica_count: fields.autoscaling_idle_scale_to_zero ? IDLE_REPLICA_COUNT : null,
+    advanced_yaml: fields.autoscaling_advanced_enabled && advancedYaml?.trim() ? advancedYaml : null,
+  }
+}
+
+/**
+ * Converts the ScaledObject settings of an existing policy to form fields.
+ * The advanced YAML toggle starts on only when the policy has advanced YAML.
+ */
+export function toKedaScaledObjectSettingsFields(
+  autoscaling: KedaScaledObjectSettingsPayload | undefined
+): Required<KedaScaledObjectSettingsFields> {
+  return {
+    autoscaling_initial_cooldown_period: autoscaling?.initial_cooldown_period_seconds ?? null,
+    autoscaling_idle_scale_to_zero: autoscaling?.idle_replica_count === IDLE_REPLICA_COUNT,
+    autoscaling_advanced_enabled: Boolean(autoscaling?.advanced_yaml?.trim()),
+    autoscaling_advanced_yaml: autoscaling?.advanced_yaml ?? '',
+  }
 }
 
 type AutoscalingPolicyRequestWithFields = AutoscalingPolicyRequest & {
@@ -77,6 +154,9 @@ export function convertAutoscalingResponseToRequest(
     mode: response.mode,
     polling_interval_seconds: response.polling_interval_seconds,
     cooldown_period_seconds: response.cooldown_period_seconds,
+    initial_cooldown_period_seconds: response.initial_cooldown_period_seconds,
+    idle_replica_count: response.idle_replica_count,
+    advanced_yaml: response.advanced_yaml,
     scalers: (response.scalers ?? []).map((scaler) => ({
       id: scaler.id,
       scaler_type: scaler.scaler_type,
@@ -100,7 +180,7 @@ export function convertAutoscalingResponseToRequest(
  * Processes autoscaling request and returns the appropriate autoscaling policy
  */
 function processAutoscalingRequest(
-  request: Partial<KedaAutoscalingFields>,
+  request: Partial<KedaAutoscalingFields & KedaScaledObjectSettingsFields>,
   currentAutoscaling?: AutoscalingPolicyResponse
 ): AutoscalingPolicyRequestWithFields | undefined {
   return match(request)
@@ -112,6 +192,7 @@ function processAutoscalingRequest(
         mode: 'KEDA',
         polling_interval_seconds: req.autoscaling_polling_interval ?? 30,
         cooldown_period_seconds: req.autoscaling_cooldown_period ?? 300,
+        ...toKedaScaledObjectSettingsPayload(req),
         scalers: validScalers.map((scaler, index) => ({
           id: scaler.id,
           scaler_type: scaler.type,
@@ -142,15 +223,25 @@ export function extractAndProcessAutoscaling<T extends Record<string, unknown>>(
   currentAutoscaling?: AutoscalingPolicyResponse
 ): {
   autoscaling: AutoscalingPolicyRequestWithFields | undefined
-  cleanedRequest: Omit<T, keyof KedaAutoscalingFields>
+  cleanedRequest: Omit<T, keyof KedaAutoscalingFields | keyof KedaScaledObjectSettingsFields>
 } {
-  const { scalers, autoscaling_polling_interval, autoscaling_cooldown_period, autoscaling_mode, ...rest } =
-    request as T &
-      KedaAutoscalingFields & {
-        hpa_metric_type?: unknown
-        hpa_cpu_average_utilization_percent?: unknown
-        hpa_memory_average_utilization_percent?: unknown
-      }
+  const {
+    scalers,
+    autoscaling_polling_interval,
+    autoscaling_cooldown_period,
+    autoscaling_mode,
+    autoscaling_initial_cooldown_period,
+    autoscaling_idle_scale_to_zero,
+    autoscaling_advanced_enabled,
+    autoscaling_advanced_yaml,
+    ...rest
+  } = request as T &
+    KedaAutoscalingFields &
+    KedaScaledObjectSettingsFields & {
+      hpa_metric_type?: unknown
+      hpa_cpu_average_utilization_percent?: unknown
+      hpa_memory_average_utilization_percent?: unknown
+    }
 
   const {
     hpa_metric_type,
@@ -165,10 +256,19 @@ export function extractAndProcessAutoscaling<T extends Record<string, unknown>>(
 
   return {
     autoscaling: processAutoscalingRequest(
-      { scalers, autoscaling_polling_interval, autoscaling_cooldown_period, autoscaling_mode },
+      {
+        scalers,
+        autoscaling_polling_interval,
+        autoscaling_cooldown_period,
+        autoscaling_mode,
+        autoscaling_initial_cooldown_period,
+        autoscaling_idle_scale_to_zero,
+        autoscaling_advanced_enabled,
+        autoscaling_advanced_yaml,
+      },
       currentAutoscaling
     ),
-    cleanedRequest: cleanedRequest as Omit<T, keyof KedaAutoscalingFields>,
+    cleanedRequest: cleanedRequest as Omit<T, keyof KedaAutoscalingFields | keyof KedaScaledObjectSettingsFields>,
   }
 }
 
@@ -181,6 +281,13 @@ export type ScalerFormData = {
   config: string
   configFormat?: 'yaml' | 'json'
   triggerAuthentication?: string
+}
+
+const NO_KEDA_SCALED_OBJECT_SETTINGS: Required<KedaScaledObjectSettingsFields> = {
+  autoscaling_initial_cooldown_period: null,
+  autoscaling_idle_scale_to_zero: null,
+  autoscaling_advanced_enabled: null,
+  autoscaling_advanced_yaml: null,
 }
 
 /**
@@ -203,6 +310,7 @@ export function buildAutoscalingRequestFromForm(
         scalers: null,
         autoscaling_polling_interval: null,
         autoscaling_cooldown_period: null,
+        ...NO_KEDA_SCALED_OBJECT_SETTINGS,
         autoscaling_mode: 'NONE',
         hpa_metric_type: undefined,
         hpa_cpu_average_utilization_percent: undefined,
@@ -221,6 +329,7 @@ export function buildAutoscalingRequestFromForm(
         scalers: null,
         autoscaling_polling_interval: null,
         autoscaling_cooldown_period: null,
+        ...NO_KEDA_SCALED_OBJECT_SETTINGS,
         autoscaling_mode: 'HPA',
         hpa_metric_type: metricChoice,
         hpa_cpu_average_utilization_percent: cpuAverageUtilization,
@@ -265,6 +374,10 @@ export function buildAutoscalingRequestFromForm(
         autoscaling_cooldown_period: formData['autoscaling_cooldown_period']
           ? Number(formData['autoscaling_cooldown_period'])
           : undefined,
+        autoscaling_initial_cooldown_period: formData['autoscaling_initial_cooldown_period'],
+        autoscaling_idle_scale_to_zero: formData['autoscaling_idle_scale_to_zero'],
+        autoscaling_advanced_enabled: formData['autoscaling_advanced_enabled'],
+        autoscaling_advanced_yaml: formData['autoscaling_advanced_yaml'],
         autoscaling_mode: 'KEDA',
         hpa_metric_type: undefined,
         hpa_cpu_average_utilization_percent: undefined,
