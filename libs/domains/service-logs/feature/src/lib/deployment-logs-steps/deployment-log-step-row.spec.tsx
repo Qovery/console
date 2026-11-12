@@ -13,7 +13,7 @@ function createLines(count: number): EnvironmentLogIds[] {
   }))
 }
 
-function renderRow(linesCount: number) {
+function renderRow(linesCount: number, overrides: Partial<DeploymentLogStepRowProps> = {}) {
   const props: DeploymentLogStepRowProps = {
     step: { name: 'BUILD', status: 'ONGOING', isLive: true, lines: createLines(linesCount) },
     label: 'Building image',
@@ -22,22 +22,68 @@ function renderRow(linesCount: number) {
     onToggle: jest.fn(),
     onSelectLine: jest.fn(),
     onScrolledToLine: jest.fn(),
+    ...overrides,
   }
 
   return <DeploymentLogStepRow {...props} />
 }
 
+function pauseViewer(container: HTMLElement) {
+  const viewer = container.querySelector('[data-line-id]')?.parentElement as HTMLElement
+  Object.defineProperties(viewer, {
+    scrollHeight: { configurable: true, value: 20000 },
+    clientHeight: { configurable: true, value: 400 },
+  })
+  viewer.scrollTop = 200
+  // userEvent cannot dispatch scrolling; jsdom has no layout or native scroll events.
+  act(() => viewer.dispatchEvent(new Event('scroll', { bubbles: true })))
+  return viewer
+}
+
 describe('DeploymentLogStepRow', () => {
+  it('keeps the paused window when selecting a line that is already visible', () => {
+    const { container, rerender } = render(renderRow(1001), { wrapper: TooltipProvider })
+    const viewer = pauseViewer(container)
+    rerender(renderRow(1003))
+
+    rerender(renderRow(1003, { selectedLineRange: { start: 2, end: 2 } }))
+
+    expect(screen.queryByText('Building layer 1')).not.toBeInTheDocument()
+    expect(screen.getByText('Building layer 2')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Show 1 previous line' })).toBeInTheDocument()
+    expect(viewer.scrollTop).toBe(200)
+  })
+
+  it('reveals a selected line that is actually hidden by the paused window', () => {
+    const { container, rerender } = render(renderRow(1001), { wrapper: TooltipProvider })
+    pauseViewer(container)
+    rerender(renderRow(1003))
+
+    rerender(renderRow(1003, { selectedLineRange: { start: 1, end: 1 } }))
+
+    expect(screen.getByText('Building layer 1')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /previous line/ })).not.toBeInTheDocument()
+  })
+
+  it.each([1, 1001])('keeps matches visible when filtering a paused viewer down to %i lines', (matchesCount) => {
+    const { container, rerender } = render(renderRow(2000), { wrapper: TooltipProvider })
+    pauseViewer(container)
+    const matches = createLines(2000).slice(-matchesCount)
+
+    rerender(
+      renderRow(2000, {
+        searchQuery: 'Building layer',
+        step: { name: 'BUILD', status: 'ONGOING', isLive: true, lines: matches },
+      })
+    )
+
+    expect(container.querySelector('[data-line-id="2000"]')).toHaveTextContent('Building layer 2000')
+    expect(container.querySelectorAll('[data-line-id]')).toHaveLength(Math.min(matchesCount, 1000))
+  })
+
   it('keeps the rendered window while reading older output and resumes the cap at the bottom', () => {
     const { container, rerender } = render(renderRow(1001), { wrapper: TooltipProvider })
-    const viewer = container.querySelector('[data-line-id]')?.parentElement as HTMLElement
-    Object.defineProperties(viewer, {
-      scrollHeight: { configurable: true, value: 20000 },
-      clientHeight: { configurable: true, value: 400 },
-    })
-    viewer.scrollTop = 200
-    // userEvent cannot dispatch scrolling; jsdom has no layout or native scroll events.
-    act(() => viewer.dispatchEvent(new Event('scroll', { bubbles: true })))
+    const viewer = pauseViewer(container)
 
     rerender(renderRow(1003))
 
