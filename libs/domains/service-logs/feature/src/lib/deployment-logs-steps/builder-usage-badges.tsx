@@ -47,7 +47,7 @@ function UsageBadge({
         className={clsx('gap-1 font-medium', level === 'OK' && 'bg-surface-neutral')}
         tabIndex={0}
       >
-        <Icon iconName={iconName} iconStyle="regular" />
+        <Icon iconName={iconName} iconStyle="regular" className="fa-width-auto" />
         {label}
       </Badge>
     </Tooltip>

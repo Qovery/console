@@ -50,7 +50,7 @@ function AnalysisLabel({ iconName, children }: PropsWithChildren<{ iconName: Ico
 
 function AnalysisRow({ iconName, label, children }: PropsWithChildren<{ iconName: IconName; label: string }>) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-neutral p-4">
+    <div className="flex items-center justify-between gap-4 border-b border-neutral p-4">
       <AnalysisLabel iconName={iconName}>{label}</AnalysisLabel>
       {children}
     </div>
