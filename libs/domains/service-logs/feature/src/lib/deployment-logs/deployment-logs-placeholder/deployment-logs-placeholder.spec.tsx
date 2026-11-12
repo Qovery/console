@@ -41,10 +41,12 @@ describe('DeploymentLogsPlaceholder', () => {
   it.each([false, undefined])('preserves the current page loader when the flag is %s', (flag) => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(flag)
 
-    renderWithProviders(<DeploymentLogsLoader />)
+    const { container } = renderWithProviders(<DeploymentLogsLoader />)
 
     expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
     expect(screen.queryByRole('status', { name: 'Loading deployment logs' })).not.toBeInTheDocument()
+    // No header skeleton either
+    expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
   })
 
   it('shows the page skeleton when the flag is enabled', () => {
