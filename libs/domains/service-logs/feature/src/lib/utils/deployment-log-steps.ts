@@ -39,6 +39,7 @@ export interface DeploymentLogPhase<T extends EnvironmentLogs = EnvironmentLogs>
 
 export interface DeploymentLogStepLines<T extends EnvironmentLogs = EnvironmentLogs> {
   phase: DeploymentLogPhaseId
+  name: string
   lines: T[]
 }
 
@@ -116,6 +117,10 @@ export function getDeploymentLogLineStep(log: EnvironmentLogs): { phase?: Deploy
   return { phase, name: stepName || UNGROUPED_STEP_NAMES[phase] }
 }
 
+export function getDeploymentLogStepKey(phase: DeploymentLogPhaseId, name: string) {
+  return `${phase}:${name}`
+}
+
 /**
  * Groups log lines by step name, keeping their order.
  * A line whose phase is unknown belongs to the phase running when it was logged: the phase of the line before it,
@@ -128,11 +133,12 @@ export function groupDeploymentLogsByStep<T extends EnvironmentLogs>(logs: T[]) 
   let linesWithoutPhase: { log: T; name?: string }[] = []
 
   const addLine = (log: T, phase: DeploymentLogPhaseId, name = UNGROUPED_STEP_NAMES[phase]) => {
-    const group = groups.get(name)
+    const key = getDeploymentLogStepKey(phase, name)
+    const group = groups.get(key)
     if (group) {
       group.lines.push(log)
     } else {
-      groups.set(name, { phase, lines: [log] })
+      groups.set(key, { phase, name, lines: [log] })
     }
   }
 
@@ -246,7 +252,10 @@ function getStepMetrics({
       }
     } else {
       // A step the API adds later goes in the phase its lines tell, so its metrics and lines stay on one row
-      const phase = STEP_PHASES.get(step.step_name) ?? linesByStep.get(step.step_name)?.phase ?? 'DEPLOY'
+      const phase =
+        STEP_PHASES.get(step.step_name) ??
+        [...linesByStep.values()].find((group) => group.name === step.step_name)?.phase ??
+        'DEPLOY'
       metrics.set(step.step_name, getStepMetric(phase, step, nowMs))
     }
   }
@@ -304,16 +313,15 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
     const knownStepNames = PHASE_STEP_NAMES[phaseId]
     const ungroupedStepName = UNGROUPED_STEP_NAMES[phaseId]
     const otherStepNames = new Set(
-      [...metrics, ...linesByStep]
-        .filter(
-          ([name, { phase }]) => phase === phaseId && !knownStepNames.includes(name) && name !== ungroupedStepName
-        )
-        .map(([name]) => name)
+      [...[...metrics].map(([name, { phase }]) => ({ name, phase })), ...linesByStep.values()]
+        .filter(({ name, phase }) => phase === phaseId && !knownStepNames.includes(name) && name !== ungroupedStepName)
+        .map(({ name }) => name)
     )
 
     const steps = [...knownStepNames, ...otherStepNames].flatMap((name): DeploymentLogStep<T>[] => {
-      const metric = metrics.get(name)
-      const lines = linesByStep.get(name)?.lines ?? []
+      const stepMetric = metrics.get(name)
+      const metric = stepMetric?.phase === phaseId ? stepMetric : undefined
+      const lines = linesByStep.get(getDeploymentLogStepKey(phaseId, name))?.lines ?? []
 
       if (metric || lines.length > 0) {
         // A step that went through in no time and logged nothing is noise, like a queue without wait
@@ -352,7 +360,7 @@ export function getDeploymentLogPhases<T extends EnvironmentLogs>({
 
   return stepsByPhase.flatMap(({ phaseId, steps }) => {
     const ungroupedStepName = UNGROUPED_STEP_NAMES[phaseId]
-    const ungroupedLines = linesByStep.get(ungroupedStepName)?.lines ?? []
+    const ungroupedLines = linesByStep.get(getDeploymentLogStepKey(phaseId, ungroupedStepName))?.lines ?? []
     if (steps.length === 0 && ungroupedLines.length === 0) return []
 
     const timedSteps = steps.filter((step) => step.durationSec !== undefined)
@@ -455,15 +463,15 @@ export function filterDeploymentLogPhases<T extends EnvironmentLogs>(phases: Dep
  * Rows of lines without step are left out: they time a whole phase, not a step. So is the wait of the stage, which
  * waits for the other deployments and isn't work of the service to speed up.
  */
-export function getSlowestDeploymentLogStepName(phases: DeploymentLogPhase[]) {
+export function getSlowestDeploymentLogStepKey(phases: DeploymentLogPhase[]) {
   const timedSteps = phases
-    .flatMap((phase) => phase.steps)
+    .flatMap((phase) => phase.steps.map((step) => ({ ...step, key: getDeploymentLogStepKey(phase.id, step.name) })))
     .filter((step) => !step.isUngrouped && step.name !== STAGE_QUEUEING_STEP_NAME && (step.durationSec ?? 0) > 0)
   if (timedSteps.length < 2) return undefined
 
   return timedSteps.reduce((slowestStep, step) =>
     (step.durationSec ?? 0) > (slowestStep.durationSec ?? 0) ? step : slowestStep
-  ).name
+  ).key
 }
 
 /**

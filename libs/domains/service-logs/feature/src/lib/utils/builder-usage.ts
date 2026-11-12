@@ -2,7 +2,7 @@ import { type BuilderUsage } from 'qovery-typescript-axios'
 import { pluralize } from '@qovery/shared/util-js'
 
 // Share of the build memory limit from which the builder is close to running out of memory
-const MEMORY_WARNING_RATIO = 0.9
+const MEMORY_WARNING_PERCENTAGE = 90
 
 export type BuilderMemoryLevel = 'OK' | 'WARNING' | 'OOM'
 
@@ -48,11 +48,11 @@ export function getBuilderUsageSummary(
 
   const cpuLimitCores = cpuMilli ? cpuMilli / 1000 : undefined
   const memoryPeakGib = usage.memory_mib_max / 1024
-  const memoryRatio = memoryGib ? memoryPeakGib / memoryGib : undefined
+  const memoryPercentage = memoryGib ? Math.round((memoryPeakGib / memoryGib) * 100) : undefined
 
   const memoryLevel: BuilderMemoryLevel = usage.oom_killed
     ? 'OOM'
-    : memoryRatio !== undefined && memoryRatio >= MEMORY_WARNING_RATIO
+    : memoryPercentage !== undefined && memoryPercentage >= MEMORY_WARNING_PERCENTAGE
       ? 'WARNING'
       : 'OK'
 
@@ -63,7 +63,7 @@ export function getBuilderUsageSummary(
     },
     memory: {
       peak: `${formatUsage(memoryPeakGib, memoryGib, 'GiB', 'GiB')}${
-        memoryRatio !== undefined ? ` (${Math.round(memoryRatio * 100)}%)` : ''
+        memoryPercentage !== undefined ? ` (${memoryPercentage}%)` : ''
       }`,
       level: memoryLevel,
     },

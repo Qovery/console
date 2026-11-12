@@ -1,5 +1,5 @@
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
-import { render, screen } from '@qovery/shared/util-tests'
+import { act, render, screen } from '@qovery/shared/util-tests'
 import { type EnvironmentLogIds } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { DeploymentLogStepRow, type DeploymentLogStepRowProps } from './deployment-log-step-row'
 
@@ -28,6 +28,31 @@ function renderRow(linesCount: number) {
 }
 
 describe('DeploymentLogStepRow', () => {
+  it('keeps the rendered window while reading older output and resumes the cap at the bottom', () => {
+    const { container, rerender } = render(renderRow(1001), { wrapper: TooltipProvider })
+    const viewer = container.querySelector('[data-line-id]')?.parentElement as HTMLElement
+    Object.defineProperties(viewer, {
+      scrollHeight: { configurable: true, value: 20000 },
+      clientHeight: { configurable: true, value: 400 },
+    })
+    viewer.scrollTop = 200
+    // userEvent cannot dispatch scrolling; jsdom has no layout or native scroll events.
+    act(() => viewer.dispatchEvent(new Event('scroll', { bubbles: true })))
+
+    rerender(renderRow(1003))
+
+    expect(screen.getByText('Building layer 2')).toBeInTheDocument()
+    expect(screen.getByText('Building layer 1003')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Show 1 previous line' })).toBeInTheDocument()
+    expect(viewer.scrollTop).toBe(200)
+
+    viewer.scrollTop = 19600
+    act(() => viewer.dispatchEvent(new Event('scroll', { bubbles: true })))
+
+    expect(screen.queryByText('Building layer 2')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Show 3 previous lines' })).toBeInTheDocument()
+  })
+
   it('keeps following the streamed lines once older ones are hidden', () => {
     // jsdom doesn't scroll: the setter tells when the lines scroll to the bottom
     let scrollTop = 0
