@@ -1,6 +1,8 @@
 import posthog from 'posthog-js'
+import { useEffect } from 'react'
 import { type Control, Controller, type UseFieldArrayReturn, useFormContext } from 'react-hook-form'
-import { Button, CodeEditor, ExternalLink, InputText } from '@qovery/shared/ui'
+import { Button, CodeEditor, ExternalLink, InputText, InputToggle } from '@qovery/shared/ui'
+import { parseScalerJsonConfig, validateInitialCooldownPeriod } from '@qovery/shared/util-services'
 
 export interface KedaScalersFieldsProps {
   control: Control
@@ -18,13 +20,22 @@ export function KedaScalersFields({
   cooldownPeriod,
 }: KedaScalersFieldsProps) {
   const { fields: scalers, append, remove } = scalersFieldArray
-  const { watch } = useFormContext()
+  const { watch, trigger } = useFormContext()
 
   const minRunningInstances = watch('min_running_instances')
   const maxRunningInstances = watch('max_running_instances')
+  const idleScaleToZero = watch('autoscaling_idle_scale_to_zero')
+  const advancedEnabled = watch('autoscaling_advanced_enabled')
+
+  // Scaling to 0 when idle depends on the minimum instances, which is set in another field
+  useEffect(() => {
+    if (idleScaleToZero) {
+      trigger('autoscaling_idle_scale_to_zero')
+    }
+  }, [minRunningInstances, idleScaleToZero, trigger])
 
   const handleAddScaler = () => {
-    append({ type: '', config: '', triggerAuthentication: '' })
+    append({ type: '', config: '', configFormat: 'yaml', triggerAuthentication: '' })
 
     posthog.capture('service-keda-scaler-added', {
       min_running_instances: minRunningInstances,
@@ -73,6 +84,104 @@ export function KedaScalersFields({
             />
           )}
         />
+        <Controller
+          name="autoscaling_initial_cooldown_period"
+          control={control}
+          rules={{ validate: validateInitialCooldownPeriod }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              type="number"
+              name={field.name}
+              label="Initial Cooldown Period (seconds)"
+              value={field.value ?? ''}
+              onChange={field.onChange}
+              disabled={disabled}
+              hint="Delay after creation before scaling to 0. Default: 0 seconds"
+              error={error?.message}
+            />
+          )}
+        />
+      </div>
+
+      <Controller
+        name="autoscaling_idle_scale_to_zero"
+        control={control}
+        rules={{
+          validate: (value, formValues) =>
+            !value ||
+            Number(formValues['min_running_instances']) > 0 ||
+            'Scaling to 0 when idle requires a minimum of at least 1 instance',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <div className="flex flex-col gap-1">
+            <InputToggle
+              small
+              align="top"
+              name={field.name}
+              value={Boolean(field.value)}
+              onChange={field.onChange}
+              disabled={disabled}
+              title="Scale to 0 when idle"
+              description="When no scaler is active, scale down to 0 instances instead of the minimum (KEDA idleReplicaCount)."
+            />
+            {error?.message && <p className="ml-11 text-xs text-negative">{error.message}</p>}
+          </div>
+        )}
+      />
+
+      {/* Advanced ScaledObject settings, hidden unless enabled */}
+      <div className="mt-6 flex flex-col gap-3">
+        <Controller
+          name="autoscaling_advanced_enabled"
+          control={control}
+          render={({ field }) => (
+            <InputToggle
+              small
+              align="top"
+              name={field.name}
+              value={Boolean(field.value)}
+              onChange={field.onChange}
+              disabled={disabled}
+              title="Advanced configuration"
+              description="Set the KEDA ScaledObject advanced field in YAML, e.g. horizontalPodAutoscalerConfig.behavior to tune how fast instances scale down."
+            />
+          )}
+        />
+
+        {advancedEnabled && (
+          <Controller
+            name="autoscaling_advanced_yaml"
+            control={control}
+            render={({ field }) => {
+              const lineCount = (field.value ?? '').split('\n').length
+              const displayLines = Math.min(Math.max(lineCount, 5), 15)
+              const height = `${displayLines * 19 + 10}px`
+
+              return (
+                <div className="flex flex-col gap-1">
+                  <label className="text-sm font-medium text-neutral" htmlFor={field.name}>
+                    Advanced configuration (YAML)
+                  </label>
+                  <CodeEditor
+                    height={height}
+                    language="yaml"
+                    value={field.value ?? ''}
+                    onChange={(value) => field.onChange(value ?? '')}
+                    options={{
+                      readOnly: disabled,
+                    }}
+                  />
+                  <p className="text-xs text-neutral-subtle">
+                    Allowed keys: horizontalPodAutoscalerConfig, restoreToOriginalReplicaCount and scalingModifiers.{' '}
+                    <ExternalLink size="xs" href="https://keda.sh/docs/2.19/reference/scaledobject-spec/#advanced">
+                      Learn more about advanced settings
+                    </ExternalLink>
+                  </p>
+                </div>
+              )
+            }}
+          />
+        )}
       </div>
 
       {/* Scalers list */}
@@ -146,22 +255,32 @@ export function KedaScalersFields({
                 const lineCount = (field.value ?? '').split('\n').length
                 const displayLines = Math.min(Math.max(lineCount, 3), 5)
                 const height = `${displayLines * 19 + 10}px`
+                const isJson = watch(`scalers.${index}.configFormat`) === 'json'
+                const isInvalidJson = isJson && !!field.value?.trim() && !parseScalerJsonConfig(field.value)
 
                 return (
                   <div className="flex flex-col gap-1">
                     <label className="text-sm font-medium text-neutral" htmlFor={field.name}>
-                      Configuration (YAML)
+                      Configuration ({isJson ? 'JSON' : 'YAML'})
                     </label>
                     <CodeEditor
                       height={height}
-                      language="yaml"
+                      language={isJson ? 'json' : 'yaml'}
                       value={field.value ?? ''}
                       onChange={(value) => field.onChange(value ?? '')}
                       options={{
                         readOnly: disabled,
                       }}
                     />
-                    <p className="text-xs text-neutral-subtle">Paste raw YAML for this scaler</p>
+                    {isInvalidJson ? (
+                      <p className="text-xs text-warning">
+                        Not a valid JSON object: this configuration will be saved as YAML
+                      </p>
+                    ) : (
+                      <p className="text-xs text-neutral-subtle">
+                        Paste raw {isJson ? 'JSON' : 'YAML'} for this scaler
+                      </p>
+                    )}
                   </div>
                 )
               }}

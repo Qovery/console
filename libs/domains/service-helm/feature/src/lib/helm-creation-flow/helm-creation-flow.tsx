@@ -51,7 +51,7 @@ export function HelmCreationFlow({ children, creationFlowUrl }: HelmCreationFlow
     defaultValues: {
       name: template ?? '',
       icon_uri: templateMatch.iconUri ?? 'app://qovery-console/helm',
-      arguments: '--wait --atomic --debug',
+      arguments: '--wait --atomic',
       timeout_sec: 600,
       labels_groups: [],
       annotations_groups: [],

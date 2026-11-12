@@ -1,5 +1,5 @@
-import { type VariableResponse } from 'qovery-typescript-axios'
 import { type ReactElement, type ReactNode, useState } from 'react'
+import { type VariableResponse } from '@qovery/domains/variables/data-access'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { type UseCreateVariableProps } from '../hooks/use-create-variable/use-create-variable'
 import { CreateUpdateVariableModal, VariableFormModal } from './create-update-variable-modal'
@@ -51,11 +51,12 @@ jest.mock('../hooks/use-create-variable-override/use-create-variable-override', 
 
 jest.mock('../hooks/use-edit-variable/use-edit-variable', () => ({
   useEditVariable: () => ({
-    mutateAsync: jest.fn(),
+    mutateAsync: mockEditVariable,
   }),
 }))
 
 const closeModal = jest.fn()
+const mockEditVariable = jest.fn()
 
 const baseProps = {
   closeModal,
@@ -90,6 +91,7 @@ describe('CreateUpdateVariableModal', () => {
     mockOpenModal.mockReset()
     mockEnableAlertClickOutside.mockReset()
     mockUseCreateVariable.mockReset()
+    mockEditVariable.mockReset()
   })
 
   it('should render the open editor button when the value field is available', () => {
@@ -197,6 +199,39 @@ describe('CreateUpdateVariableModal', () => {
     // Wait for the initial form validation to settle
     await waitFor(() => expect(screen.getByRole('button', { name: /confirm/i })).toBeEnabled())
   })
+
+  it.each(['accounts.0.password', null, undefined])(
+    'preserves the selector %s and manager when the generic editor changes a description',
+    async (jsonTargetKey) => {
+      const { userEvent } = renderWithProviders(
+        <CreateUpdateVariableModal
+          {...baseProps}
+          mode="UPDATE"
+          type="EXTERNAL_SECRET"
+          variable={{
+            ...baseVariable,
+            variable_type: 'EXTERNAL_SECRET',
+            value: 'production/config',
+            secret_manager_access_id: 'manager-id',
+            json_target_key: jsonTargetKey,
+          }}
+        />
+      )
+      await userEvent.type(screen.getByLabelText('Description (optional)'), 'Updated description')
+      await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
+      await waitFor(() =>
+        expect(mockEditVariable).toHaveBeenCalledWith({
+          variableId: 'variable-id',
+          variableEditRequest: expect.objectContaining({
+            value: 'production/config',
+            description: 'Updated description',
+            secret_manager_access_id: 'manager-id',
+            json_target_key: jsonTargetKey ?? null,
+          }),
+        })
+      )
+    }
+  )
 
   it('should open the fullscreen editor modal when clicking the button', async () => {
     const { userEvent } = renderWithProviders(

@@ -13,7 +13,7 @@ import { useService, useDeploymentStatus as useServiceDeploymentStatus } from '@
 import { Banner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ListDeploymentLogs } from '../../list-deployment-logs/list-deployment-logs'
-import { LoaderPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
+import { DeploymentLogsLoader } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 
 export interface DeploymentLogsContentProps {
   environment: Environment
@@ -136,11 +136,7 @@ export function DeploymentLogsContent({
   const serviceStatus = (getServiceStatusesById(deploymentStages, serviceId) as Status | null) ?? fallbackServiceStatus
 
   if (!serviceStatus) {
-    return (
-      <div className="flex h-full w-full items-center justify-center bg-background">
-        <LoaderPlaceholder />
-      </div>
-    )
+    return <DeploymentLogsLoader />
   }
 
   const stageFromServiceId = getStageFromServiceId(deploymentStages ?? [], serviceId)

@@ -312,38 +312,38 @@ export function VariableList({
           const overridingVariable = overridesByParentId.get(variable.id)
 
           return (
-            <div className="flex flex-col justify-center gap-1">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center truncate">
+            <div className="flex min-w-0 flex-col justify-center gap-1">
+              <div className="flex min-w-0 items-center gap-2">
+                <div className="flex min-w-0 items-center truncate">
                   {variable.owned_by === ExternalServiceEnum.DOPPLER && (
                     <span
                       data-testid="doppler-tag"
-                      className="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral"
+                      className="mr-2 inline-flex h-4 shrink-0 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral"
                     >
                       {variable.owned_by}
                     </span>
                   )}
                   {aliasedVariable && (
-                    <span className="mr-2 inline-flex h-4 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info">
+                    <span className="mr-2 inline-flex h-4 shrink-0 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info">
                       ALIAS
                     </span>
                   )}
                   {overriddenVariable && (
-                    <span className="mr-2 inline-flex h-4 items-center rounded bg-surface-brand-component px-1 text-2xs font-bold text-brand">
+                    <span className="mr-2 inline-flex h-4 shrink-0 items-center rounded bg-surface-brand-component px-1 text-2xs font-bold text-brand">
                       OVERRIDE
                     </span>
                   )}
                   {variable.mount_path && !showFilePathUnderName && (
-                    <span className="mr-2 inline-flex h-4 items-center rounded bg-surface-accent1-component px-1 text-2xs font-bold text-accent1">
+                    <span className="mr-2 inline-flex h-4 shrink-0 items-center rounded bg-surface-accent1-component px-1 text-2xs font-bold text-accent1">
                       FILE
                     </span>
                   )}
                   <Tooltip align="start" content={variable.key || ''}>
-                    <span className="truncate text-sm font-medium">{variable.key}</span>
+                    <span className="min-w-0 truncate text-sm font-medium">{variable.key}</span>
                   </Tooltip>
                   {variable.owned_by === ExternalServiceEnum.DOPPLER && (
                     <Tooltip content="Sync with Doppler">
-                      <span className="ml-2">
+                      <span className="ml-2 shrink-0">
                         <Icon name={IconEnum.DOPPLER} width="11px" height="11px" />
                       </span>
                     </Tooltip>
