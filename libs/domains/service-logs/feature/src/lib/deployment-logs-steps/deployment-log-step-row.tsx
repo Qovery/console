@@ -138,13 +138,18 @@ function DeploymentLogLines({
   const [canScrollUp, setCanScrollUp] = useState(false)
   const [canScrollDown, setCanScrollDown] = useState(false)
   const [showAllLines, setShowAllLines] = useState(false)
+  // Freeze the start of the rendered window while the reader scrolls through older output.
+  const [pausedHiddenLinesCount, setPausedHiddenLinesCount] = useState<number>()
 
   const overflowLinesCount = Math.max(0, lines.length - MAX_VISIBLE_LINES)
+  const windowHiddenLinesCount = showAllLines
+    ? 0
+    : Math.min(pausedHiddenLinesCount ?? overflowLinesCount, overflowLinesCount)
   // Selected lines are never hidden behind "Show previous lines"
   const hasHiddenSelectedLine =
     selectedLineRange !== undefined &&
-    lines.slice(0, overflowLinesCount).some((line) => isDeploymentLogLineSelected(selectedLineRange, line.id))
-  const hiddenLinesCount = showAllLines || hasHiddenSelectedLine ? 0 : overflowLinesCount
+    lines.slice(0, windowHiddenLinesCount).some((line) => isDeploymentLogLineSelected(selectedLineRange, line.id))
+  const hiddenLinesCount = hasHiddenSelectedLine ? 0 : windowHiddenLinesCount
   const visibleLines = hiddenLinesCount > 0 ? lines.slice(hiddenLinesCount) : lines
 
   const updateScrollEdges = (element: HTMLDivElement) => {
@@ -189,7 +194,10 @@ function DeploymentLogLines({
         ref={scrollRef}
         className="flex max-h-[400px] flex-col overflow-y-auto px-4 py-1.5 font-code text-xs leading-5"
         onCopy={copySelectedLogMessages}
-        onScroll={(event) => updateScrollEdges(event.currentTarget)}
+        onScroll={(event) => {
+          updateScrollEdges(event.currentTarget)
+          setPausedHiddenLinesCount(isScrolledToBottomRef.current ? undefined : hiddenLinesCount)
+        }}
       >
         {hiddenLinesCount > 0 && (
           <Button

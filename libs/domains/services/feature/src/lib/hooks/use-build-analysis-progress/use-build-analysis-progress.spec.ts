@@ -41,6 +41,20 @@ describe('useBuildAnalysisProgress', () => {
     expect(result.current).toEqual(event)
   })
 
+  it('clears progress and refreshes analysis when the socket closes before completion', () => {
+    const { result } = renderHook(() => useBuildAnalysisProgress(props))
+    receive(event)
+    const invalidateQueries = jest.fn()
+    const { onClose } = jest.mocked(useReactQueryWsSubscription).mock.lastCall?.[0] ?? {}
+
+    act(() => onClose?.({ invalidateQueries } as unknown as QueryClient, new CloseEvent('close')))
+
+    expect(result.current).toBeUndefined()
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ['services', 'buildAnalysis', props.serviceId, props.serviceType],
+    })
+  })
+
   it("doesn't show the progress of the previous service", () => {
     const { result, rerender } = renderHook((serviceId: string) => useBuildAnalysisProgress({ ...props, serviceId }), {
       initialProps: 'service-1',

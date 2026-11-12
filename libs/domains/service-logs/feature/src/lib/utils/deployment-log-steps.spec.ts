@@ -7,7 +7,7 @@ import {
   getDeploymentLogPhases,
   getDeploymentLogStepLabel,
   getDeploymentLogUngroupedStepLabel,
-  getSlowestDeploymentLogStepName,
+  getSlowestDeploymentLogStepKey,
   groupDeploymentLogsByStep,
 } from './deployment-log-steps'
 
@@ -84,7 +84,7 @@ describe('groupDeploymentLogsByStep', () => {
       createLog('Output', 'JobOutput', 'OUTPUT_UPLOAD'),
     ])
 
-    expect([...linesByStep].map(([name, { phase, lines }]) => [name, phase, lines.length])).toEqual([
+    expect([...linesByStep].map(([, { name, phase, lines }]) => [name, phase, lines.length])).toEqual([
       ['BUILD_UNGROUPED', 'BUILD', 2],
       ['BUILD', 'BUILD', 1],
       ['OUTPUT_UPLOAD', 'BUILD', 1],
@@ -94,7 +94,7 @@ describe('groupDeploymentLogsByStep', () => {
   it('puts the lines in the deployment when no line tells the phase', () => {
     const linesByStep = groupDeploymentLogsByStep([createLog('Engine failure', 'GlobalError')])
 
-    expect([...linesByStep].map(([name, { phase }]) => [name, phase])).toEqual([['DEPLOY_UNGROUPED', 'DEPLOY']])
+    expect([...linesByStep].map(([, { name, phase }]) => [name, phase])).toEqual([['DEPLOY_UNGROUPED', 'DEPLOY']])
   })
 })
 
@@ -127,6 +127,21 @@ describe('filterDeploymentLogPhases', () => {
 })
 
 describe('getDeploymentLogPhases', () => {
+  it('keeps repeated step names in their own phases', () => {
+    const buildLine = createLog('Build output', 'Build', 'OUTPUT_UPLOAD')
+    const deployLine = createLog('Deploy output', 'Deploy', 'OUTPUT_UPLOAD')
+    const phases = getDeploymentLogPhases({
+      linesByStep: groupDeploymentLogsByStep([buildLine, deployLine]),
+      serviceId: 'service-1',
+      nowMs: NOW_MS,
+    })
+
+    expect(phases.map((phase) => [phase.id, phase.steps.map((step) => step.lines)])).toEqual([
+      ['BUILD', [[buildLine]]],
+      ['DEPLOY', [[deployLine]]],
+    ])
+  })
+
   const serviceSteps: ServiceStepMetric[] = [
     { step_name: 'BUILD_QUEUEING', status: 'SUCCESS', duration_sec: 0 },
     { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
@@ -601,8 +616,28 @@ describe('getDeploymentLogPhases', () => {
   })
 })
 
-describe('getSlowestDeploymentLogStepName', () => {
-  it('returns the step that took the longest across the phases', () => {
+describe('getSlowestDeploymentLogStepKey', () => {
+  it.each([
+    { buildDuration: 12, deployDuration: 5, expected: 'BUILD:OUTPUT_UPLOAD' },
+    { buildDuration: 5, deployDuration: 12, expected: 'DEPLOY:OUTPUT_UPLOAD' },
+  ])('returns $expected when phases share a step name', ({ buildDuration, deployDuration, expected }) => {
+    expect(
+      getSlowestDeploymentLogStepKey([
+        {
+          id: 'BUILD',
+          isLive: false,
+          steps: [{ name: 'OUTPUT_UPLOAD', durationSec: buildDuration, isLive: false, lines: [] }],
+        },
+        {
+          id: 'DEPLOY',
+          isLive: false,
+          steps: [{ name: 'OUTPUT_UPLOAD', durationSec: deployDuration, isLive: false, lines: [] }],
+        },
+      ])
+    ).toBe(expected)
+  })
+
+  it('returns the key of the step that took the longest across the phases', () => {
     const phases = getDeploymentLogPhases({
       serviceSteps: [
         { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 7 },
@@ -619,7 +654,7 @@ describe('getSlowestDeploymentLogStepName', () => {
       nowMs: NOW_MS,
     })
 
-    expect(getSlowestDeploymentLogStepName(phases)).toBe('BUILD')
+    expect(getSlowestDeploymentLogStepKey(phases)).toBe('BUILD:BUILD')
   })
 
   it('returns nothing without at least two timed steps', () => {
@@ -630,7 +665,7 @@ describe('getSlowestDeploymentLogStepName', () => {
       nowMs: NOW_MS,
     })
 
-    expect(getSlowestDeploymentLogStepName(phases)).toBeUndefined()
+    expect(getSlowestDeploymentLogStepKey(phases)).toBeUndefined()
   })
 })
 
