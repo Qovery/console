@@ -38,7 +38,10 @@ export function useBuildAnalysisProgress({
   serviceType,
   enabled = true,
 }: UseBuildAnalysisProgressProps) {
-  const [lastEvent, setLastEvent] = useState<BuildAnalysisEvent>()
+  // The event belongs to the service it came for: the hook keeps running when the page moves to another service
+  const [lastEvent, setLastEvent] = useState<{ serviceId: string; event: BuildAnalysisEvent }>()
+  // A run that ended leaves nothing for the next one to show
+  if (!enabled && lastEvent) setLastEvent(undefined)
 
   // Once the analysis ended, or the route closed early because its progress is unavailable or timed out.
   // The state belongs to the service, so it's read again for each of its deployment pages.
@@ -56,13 +59,13 @@ export function useBuildAnalysisProgress({
     },
     enabled: enabled && Boolean(organizationId && clusterId && projectId && environmentId && serviceId),
     onMessage: (queryClient: QueryClient, event: BuildAnalysisEvent) => {
-      setLastEvent(event)
+      setLastEvent({ serviceId, event })
       if (event.terminal) refetchBuildAnalysis(queryClient)
     },
     onClose: refetchBuildAnalysis,
   })
 
-  return enabled ? lastEvent : undefined
+  return enabled && lastEvent?.serviceId === serviceId ? lastEvent.event : undefined
 }
 
 export default useBuildAnalysisProgress

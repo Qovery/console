@@ -20,6 +20,7 @@ import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-pl
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 import {
+  type DeploymentLogLineRange,
   formatDeploymentLogLineHash,
   getNextDeploymentLogLineRange,
   isDeploymentLogLineSelected,
@@ -105,9 +106,20 @@ export function DeploymentLogsSteps({
   // The page opened on a link scrolls to its lines once they're loaded
   const [lineIdToScrollTo, setLineIdToScrollTo] = useState(selectedLineRange?.start)
   const clearLineIdToScrollTo = useCallback(() => setLineIdToScrollTo(undefined), [])
+  // So does a link followed once the page is open, like with back and forward, unlike a click on a line
+  const [previousHash, setPreviousHash] = useState(hash)
+  const [clickedLineRange, setClickedLineRange] = useState<DeploymentLogLineRange>()
+  if (hash !== previousHash) {
+    setPreviousHash(hash)
+    const isClickedLineRange =
+      selectedLineRange?.start === clickedLineRange?.start && selectedLineRange?.end === clickedLineRange?.end
+    if (!isClickedLineRange) setLineIdToScrollTo(selectedLineRange?.start)
+    setClickedLineRange(undefined)
+  }
   const selectLine = useCallback(
     (lineId: number, isExtending: boolean) => {
       const nextRange = getNextDeploymentLogLineRange(selectedLineRange, lineId, isExtending)
+      setClickedLineRange(nextRange)
       navigate({
         hash: nextRange ? formatDeploymentLogLineHash(nextRange) : undefined,
         search: true,

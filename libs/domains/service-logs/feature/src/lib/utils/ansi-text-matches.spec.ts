@@ -27,6 +27,20 @@ describe('splitAnsiTextOnMatches', () => {
     ])
   })
 
+  it('highlights the matches of the text shown when lowercasing changes its length', () => {
+    // `İ` lowercases to two characters
+    expect(splitAnsiTextOnMatches('İzmir port', 'PORT')).toEqual([
+      { text: 'İzmir ', isMatch: false },
+      { text: 'port', isMatch: true },
+    ])
+    expect(splitAnsiTextOnMatches('İzmir, İstanbul', 'İ')).toEqual([
+      { text: 'İ', isMatch: true },
+      { text: 'zmir, ', isMatch: false },
+      { text: 'İ', isMatch: true },
+      { text: 'stanbul', isMatch: false },
+    ])
+  })
+
   it('returns the whole text without query', () => {
     expect(splitAnsiTextOnMatches(`${GREEN}done`, ' ')).toEqual([{ text: `${GREEN}done`, isMatch: false }])
   })
