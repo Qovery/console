@@ -32,5 +32,13 @@ describe('getBuilderUsageSummary', () => {
   it('returns nothing when the builder was not sampled', () => {
     expect(getBuilderUsageSummary(undefined, {})).toBeUndefined()
     expect(getBuilderUsageSummary({ samples: 0 }, {})).toBeUndefined()
+    expect(getBuilderUsageSummary({ ...usage, samples: 0 }, {})).toBeUndefined()
+  })
+
+  it('agrees the unit with the amount shown', () => {
+    expect(getBuilderUsageSummary({ ...usage, cpu_milli_avg: 0, cpu_milli_max: 1040 }, {})?.cpu).toEqual({
+      average: '0 cores',
+      peak: '1 core',
+    })
   })
 })

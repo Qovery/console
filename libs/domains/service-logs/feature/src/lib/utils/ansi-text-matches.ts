@@ -31,11 +31,27 @@ export function splitAnsiTextOnMatches(message: string, query: string): AnsiText
   const normalizedQuery = query.trim().toLowerCase()
   const matchRanges: [start: number, end: number][] = []
   if (normalizedQuery) {
-    const normalizedText = plainText.toLowerCase()
+    // Lowercasing can change the length of a character, like `İ`: the offsets of the matches in the lowercased
+    // text are brought back to the text shown, character by character
+    let normalizedText = ''
+    const textOffsets: number[] = []
+    let textOffset = 0
+    for (const character of plainText) {
+      const normalizedCharacter = character.toLowerCase()
+      normalizedText += normalizedCharacter
+      for (let index = 0; index < normalizedCharacter.length; index++) textOffsets.push(textOffset)
+      textOffset += character.length
+    }
+    textOffsets.push(plainText.length)
+
     let matchIndex = normalizedText.indexOf(normalizedQuery)
     while (matchIndex >= 0) {
-      matchRanges.push([matchIndex, matchIndex + normalizedQuery.length])
-      matchIndex = normalizedText.indexOf(normalizedQuery, matchIndex + normalizedQuery.length)
+      const matchEnd = matchIndex + normalizedQuery.length
+      // A match ending within a character covers all of it
+      let endIndex = matchEnd
+      while (textOffsets[endIndex] === textOffsets[matchEnd - 1]) endIndex++
+      matchRanges.push([textOffsets[matchIndex], textOffsets[endIndex]])
+      matchIndex = normalizedText.indexOf(normalizedQuery, matchEnd)
     }
   }
 
