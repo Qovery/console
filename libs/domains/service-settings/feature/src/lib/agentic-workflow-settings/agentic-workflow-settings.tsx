@@ -15,6 +15,7 @@ import {
   areAgenticWorkflowResourcesValid,
   createAgenticWorkflowAutomation,
   formatAgenticWorkflowAutomationOutputs,
+  getAgenticWorkflowModelType,
   isGitRepositoryComplete,
   replaceContextServicesInPrompt,
   useAgenticWorkflowContextServices,
@@ -38,7 +39,7 @@ export interface AgenticWorkflowSettingsFormValues {
   enabled: boolean
   executionMode: AgenticWorkflowExecutionMode
   llmProviderId: string
-  modelType: AgenticWorkflowModelType
+  modelType?: AgenticWorkflowModelType
   modelSettings: string
   agentPrompt: string
   repositories: AgenticWorkflowGitRepository[]
@@ -144,7 +145,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
     isLoading: contextServicesLoading,
   } = useAgenticWorkflowContextServices(environmentId)
   const { mutateAsync: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
-  const { data: llmProviders = [] } = useLlmProviders({ organizationId, enabled: page === 'ai-configuration' })
+  const { data: llmProviders = [] } = useLlmProviders({ organizationId })
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
   const workflow = service && isAgenticWorkflow(service) ? service : undefined
@@ -152,6 +153,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
     organizationId,
     enabled: page === 'connections' && workflow?.project_repositories.some(({ git_token_id }) => git_token_id != null),
   })
+  // The saved provider is the source of the model type. Older backends also return `model.type`, which covers a
+  // workflow without a provider and the time the provider list is loading.
+  const savedProvider = llmProviders.find(({ id }) => id === workflow?.model.llm_provider_id)
   const form = useForm<AgenticWorkflowSettingsFormValues>({
     mode: 'onChange',
     values: workflow
@@ -161,7 +165,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           enabled: workflow.enabled,
           executionMode: workflow.execution_mode ?? AgenticWorkflowExecutionMode.IN_PLACE,
           llmProviderId: workflow.model.llm_provider_id ?? '',
-          modelType: workflow.model.type,
+          modelType: savedProvider ? getAgenticWorkflowModelType(savedProvider.type) : workflow.model.type,
           modelSettings: workflow.model.settings,
           agentPrompt: workflow.agent_prompt,
           repositories: workflow.project_repositories.map(({ url, branch, git_token_id }) => {
@@ -205,12 +209,12 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const persistSettings: SaveAgenticWorkflowSettings = async (updatedValues) => {
     const data = { ...form.getValues(), ...updatedValues }
     const schedule = data.automation.triggers.find((trigger) => trigger.type === 'schedule')
-    const model: AgenticWorkflowRequest['model'] = {
-      // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
+    // Older backends require `type`. They also return it, so it is only missing from a newer backend, which ignores it.
+    const model = {
       type: data.modelType,
       settings: data.modelSettings,
       llm_provider_id: data.llmProviderId,
-    }
+    } as AgenticWorkflowRequest['model']
     const selectedContextServices = contextServices.filter(({ id }) => data.contextServiceIds.includes(id))
     const preserveContextServices = contextServicesError || contextServicesLoading
     const contextServiceIds = preserveContextServices
@@ -275,7 +279,6 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           <AgenticWorkflowAiConfigurationSettings
             form={form}
             llmProviders={llmProviders.filter(({ has_credential }) => has_credential)}
-            modelType={workflow.model.type}
           />
         ) : null}
         {page === 'connections' ? (

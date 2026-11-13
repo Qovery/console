@@ -939,6 +939,33 @@ describe('AgenticWorkflowConfiguration', () => {
     )
   }, 30000)
 
+  it.each([
+    ['CLAUDE', 'CLAUDE'],
+    ['ANTHROPIC_COMPATIBLE', 'CLAUDE'],
+    ['BEDROCK', 'BEDROCK'],
+  ])(
+    'should send the workflow model type of a %s token on creation',
+    async (providerType, expectedType) => {
+      mockLlmProviders = [{ id: 'provider-1', has_credential: true, type: providerType }]
+      const { userEvent } = renderConfiguration({ seed: { ...validSeed, llmProviderId: '' } })
+
+      await userEvent.click(screen.getByRole('button', { name: 'Add provider' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+      await waitFor(() => expect(mockCreateService).toHaveBeenCalledTimes(1))
+      expect(mockCreateService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            model: expect.objectContaining({ type: expectedType, llm_provider_id: 'provider-1' }),
+          }),
+        })
+      )
+    },
+    30000
+  )
+
   it('should track a failed agent task creation', async () => {
     mockCreateService.mockRejectedValueOnce(new Error('Creation failed'))
     const { userEvent } = renderConfiguration({ seed: validSeed })

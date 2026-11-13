@@ -1,4 +1,4 @@
-import { type AgenticWorkflowModelType, type LlmProviderResponse } from 'qovery-typescript-axios'
+import { type LlmProviderResponse } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { LlmProviderSetting } from '@qovery/domains/organizations/feature'
 import {
@@ -12,11 +12,9 @@ import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 export function AgenticWorkflowAiConfigurationSettings({
   form,
   llmProviders,
-  modelType,
 }: {
   form: UseFormReturn<AgenticWorkflowSettingsFormValues>
   llmProviders: LlmProviderResponse[]
-  modelType: AgenticWorkflowModelType
 }) {
   const llmProviderId = form.watch('llmProviderId')
   const currentModelType = form.watch('modelType')
@@ -51,7 +49,7 @@ export function AgenticWorkflowAiConfigurationSettings({
           render={({ field }) => (
             <AgenticWorkflowModelSetting
               llmProviderId={llmProviderId}
-              providerType={currentModelType ?? modelType}
+              providerType={currentModelType}
               providerRegion={providerRegion}
               settings={field.value}
               onChange={field.onChange}

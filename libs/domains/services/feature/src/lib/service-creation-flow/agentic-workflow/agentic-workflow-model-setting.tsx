@@ -54,7 +54,7 @@ export function AgenticWorkflowModelSetting({
   onChange,
 }: AgenticWorkflowModelSettingProps) {
   const initializedDefaults = useRef(new Set<string>())
-  const activeProviderKey = useRef(`${llmProviderId}:${providerType ?? ''}`)
+  const activeProviderId = useRef(llmProviderId)
   const hasLlmProvider = Boolean(llmProviderId)
   const hasModelProvider = hasLlmProvider && Boolean(providerType)
   const {
@@ -78,10 +78,11 @@ export function AgenticWorkflowModelSetting({
 
     if (isLoading || isError) return
 
-    if (activeProviderKey.current !== initializationKey) {
+    // Only a different provider id is a switch. The type of a saved provider can resolve or change for the same id.
+    if (activeProviderId.current !== llmProviderId) {
       if (!firstModelId) return
 
-      activeProviderKey.current = initializationKey
+      activeProviderId.current = llmProviderId
       initializedDefaults.current.add(initializationKey)
       onChange(updateAgenticWorkflowModel(settings, firstModelId))
       return
