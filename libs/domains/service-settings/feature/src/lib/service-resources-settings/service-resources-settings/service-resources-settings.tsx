@@ -129,19 +129,7 @@ function ServiceResourcesSettingsForm({
   displayWarningCpu,
   advancedSettings,
 }: ServiceResourcesSettingsFormProps) {
-  const { formState, watch } = useFormContext<ServiceResourcesFormData>()
-  const autoscalingMode = watch('autoscaling_mode') || 'NONE'
-
-  const currentAutoscalingMode = match(service)
-    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (resourceService) => {
-      if (resourceService.autoscaling?.mode === 'KEDA') return 'KEDA'
-      if (resourceService.min_running_instances === resourceService.max_running_instances) return 'NONE'
-      if (resourceService.min_running_instances !== resourceService.max_running_instances) return 'HPA'
-      return 'NONE'
-    })
-    .otherwise(() => 'NONE')
-
-  const isHpaToKedaMigration = currentAutoscalingMode === 'HPA' && autoscalingMode === 'KEDA'
+  const { formState } = useFormContext<ServiceResourcesFormData>()
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -155,7 +143,7 @@ function ServiceResourcesSettingsForm({
               advancedSettings={advancedSettings}
             />
             <div className="flex justify-end">
-              <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid || isHpaToKedaMigration}>
+              <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
                 Save
               </Button>
             </div>
