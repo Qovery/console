@@ -1,5 +1,5 @@
+import { useLocation } from '@tanstack/react-router'
 import { type ReactNode, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import Icon from '../../icon/icon'
 import { LinkContent, type NavigationLeftLinkProps, linkClassName } from '../navigation-left'
 

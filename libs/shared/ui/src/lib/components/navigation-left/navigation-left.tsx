@@ -1,6 +1,6 @@
 import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
+import { Link, useLocation } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { Link, useLocation } from 'react-router-dom'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
 import NavigationLeftSubLink from './navigation-left-sub-link/navigation-left-sub-link'

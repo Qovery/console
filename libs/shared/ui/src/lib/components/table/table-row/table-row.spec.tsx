@@ -1,6 +1,8 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import TableRow, { type TableRowProps } from './table-row'
 
+jest.unmock('@tanstack/react-router')
+
 describe('TableRow', () => {
   let props: TableRowProps
 

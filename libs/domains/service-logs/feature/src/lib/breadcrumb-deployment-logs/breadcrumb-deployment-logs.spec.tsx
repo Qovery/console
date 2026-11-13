@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   BreadcrumbDeploymentLogs,
@@ -5,14 +6,9 @@ import {
   mergeServices,
 } from './breadcrumb-deployment-logs'
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: () => ({
-    organizationId: 'org-123',
-    projectId: 'proj-456',
-    environmentId: 'env-789',
-  }),
-}))
+beforeEach(() => {
+  jest.mocked(useParams).mockReturnValue({ organizationId: 'org-123', projectId: 'proj-456', environmentId: 'env-789' })
+})
 
 const mockProps: BreadcrumbDeploymentLogsProps = {
   serviceId: 'service-1',

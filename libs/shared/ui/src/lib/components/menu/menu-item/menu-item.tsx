@@ -1,6 +1,6 @@
 import { type ClickEvent, FocusableItem, MenuItem as Item } from '@szhsin/react-menu'
+import { Link } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
 import { CopyToClipboardButtonIcon } from '../../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
 import { Tooltip } from '../../tooltip/tooltip'
 import { Truncate } from '../../truncate/truncate'

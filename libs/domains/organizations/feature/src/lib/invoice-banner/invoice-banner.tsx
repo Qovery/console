@@ -1,7 +1,7 @@
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { InvoiceStatusEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { SETTINGS_BILLING_SUMMARY_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Banner } from '@qovery/shared/ui'
@@ -9,7 +9,7 @@ import useInvoices from '../hooks/use-invoices/use-invoices'
 
 export const InvoiceBanner = () => {
   const navigate = useNavigate()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const hideInvoiceBanner = useFeatureFlagEnabled('hide_invoice_banner')
   const { roles } = useUserRole()
   const { data: invoices, isLoading } = useInvoices({ organizationId })
@@ -25,7 +25,7 @@ export const InvoiceBanner = () => {
   )
 
   const onClick = () => {
-    navigate(SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL)
+    navigate({ to: SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL })
   }
 
   if (unpaidInvoices?.length === 0 || isLoading || !isAdminOrOwnerOfCompany || hideInvoiceBanner) {
