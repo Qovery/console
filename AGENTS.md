@@ -23,6 +23,7 @@ Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 - Conventional commits: `feat|fix|chore(scope): message`.
 - Before commit: format -> test -> snapshot review -> lint.
 - `ts-pattern` for branching logic. React Query for server state.
+- For API integrations, reuse the existing data-access clients and React Query hooks, including shared authentication and error handling. A separate service URL is not a reason to use component-level `fetch` and manual server state. See `.agents/skills/qovery-console-standards/rules/react-typescript-standards.md#api-integrations` for examples and exceptions.
 - Shared utilities live in `@qovery/shared/util-js`.
 
 ## Testing
