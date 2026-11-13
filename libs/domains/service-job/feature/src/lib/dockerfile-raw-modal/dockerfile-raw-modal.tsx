@@ -4,6 +4,7 @@ import { BlockContent, CodeEditor, CopyToClipboardButtonIcon, ModalCrud } from '
 
 export interface DockerfileRawModalProps {
   environmentId: string
+  serviceId?: string
   onSubmit: (value?: string) => void
   onClose: () => void
   content?: string
@@ -13,6 +14,7 @@ export interface DockerfileRawModalProps {
 
 export function DockerfileRawModal({
   environmentId,
+  serviceId,
   onClose,
   onSubmit,
   content,
@@ -54,6 +56,8 @@ ENTRYPOINT [ "/bin/sh" ]`,
               render={({ field }) => (
                 <CodeEditorVariable
                   environmentId={environmentId}
+                  serviceId={serviceId}
+                  scope="JOB"
                   width="100%"
                   height="calc(100vh  - 254px)"
                   value={field.value}

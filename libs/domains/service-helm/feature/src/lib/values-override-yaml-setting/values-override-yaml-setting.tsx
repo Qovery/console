@@ -11,10 +11,12 @@ export interface ValuesOverrideYamlSettingProps {
 
 export interface ValuesOverrideYamlSettingBaseProps extends ValuesOverrideYamlSettingProps {
   environmentId: string
+  serviceId?: string
 }
 
 export function ValuesOverrideYamlSettingBase({
   environmentId,
+  serviceId,
   onSubmit,
   content,
   source,
@@ -27,6 +29,7 @@ export function ValuesOverrideYamlSettingBase({
         <ValuesOverrideYamlModal
           content={content}
           environmentId={environmentId}
+          serviceId={serviceId}
           source={source}
           onClose={closeModal}
           onSubmit={onSubmit}
@@ -53,9 +56,9 @@ export function ValuesOverrideYamlSettingBase({
 }
 
 export function ValuesOverrideYamlSetting(props: ValuesOverrideYamlSettingProps) {
-  const { environmentId = '' } = useParams({ strict: false })
+  const { environmentId = '', serviceId } = useParams({ strict: false })
 
-  return <ValuesOverrideYamlSettingBase environmentId={environmentId} {...props} />
+  return <ValuesOverrideYamlSettingBase environmentId={environmentId} serviceId={serviceId} {...props} />
 }
 
 export default ValuesOverrideYamlSetting

@@ -64,7 +64,7 @@ const SourceCell = ({ variable }: { variable: UIVariable }) => {
 const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const { updateKey, updateValue, toggleSecret, revertValue, isRowSelected, selectRow, hoveredRow, errors } =
     useTerraformVariablesContext()
-  const { environmentId = '' } = useParams({ strict: false })
+  const { environmentId = '', serviceId } = useParams({ strict: false })
   const [isCellHovered, setIsCellHovered] = useState(false)
   const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
   const error = errors.get(variable.id)
@@ -224,6 +224,8 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
               {!isSecretPlaceholder && (
                 <DropdownVariable
                   environmentId={environmentId}
+                  serviceId={serviceId}
+                  scope="TERRAFORM"
                   onChange={(val) => {
                     updateValue(variable.id, `{{${val}}}`)
                   }}
