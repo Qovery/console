@@ -1,6 +1,6 @@
 import { TooltipProvider } from '@radix-ui/react-tooltip'
 import { withThemeByClassName } from '@storybook/addon-themes'
-import { type Decorator, type Preview } from '@storybook/react'
+import { type Decorator, type Preview } from '@storybook/react-webpack5'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider, createHashHistory, createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
 import '../src/lib/styles/main.scss'
