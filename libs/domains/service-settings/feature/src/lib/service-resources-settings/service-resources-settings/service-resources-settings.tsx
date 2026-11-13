@@ -129,7 +129,12 @@ function ServiceResourcesSettingsForm({
   displayWarningCpu,
   advancedSettings,
 }: ServiceResourcesSettingsFormProps) {
-  const { formState } = useFormContext<ServiceResourcesFormData>()
+  const { formState, watch } = useFormContext<ServiceResourcesFormData>()
+  // Without a scaler that has a type and a config, the payload falls back to the current policy and
+  // the switch to KEDA would be silently dropped.
+  const isKedaWithoutValidScaler =
+    watch('autoscaling_mode') === 'KEDA' &&
+    !(watch('scalers') ?? []).some((scaler) => scaler.type?.trim() && scaler.config?.trim())
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -143,7 +148,12 @@ function ServiceResourcesSettingsForm({
               advancedSettings={advancedSettings}
             />
             <div className="flex justify-end">
-              <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
+              <Button
+                type="submit"
+                size="lg"
+                loading={loading}
+                disabled={!formState.isValid || isKedaWithoutValidScaler}
+              >
                 Save
               </Button>
             </div>
