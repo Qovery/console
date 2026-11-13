@@ -233,7 +233,12 @@ function AnnotationsGroupsList({ organizationId, onOpenItems, onEdit, onDelete }
   )
 }
 
-export function SettingsLabelsAnnotations() {
+export interface SettingsLabelsAnnotationsProps {
+  // RBAC v2 prototype (Next): labels merge with tags on their own page, this page only keeps the annotations
+  annotationsOnly?: boolean
+}
+
+export function SettingsLabelsAnnotations({ annotationsOnly = false }: SettingsLabelsAnnotationsProps) {
   useDocumentTitle('Annotations - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
   const { mutateAsync: deleteAnnotationsGroup } = useDeleteAnnotationsGroup()
@@ -247,91 +252,112 @@ export function SettingsLabelsAnnotations() {
       <Section className="px-8 pb-8 pt-6">
         <div className="relative">
           <SettingsHeading
-            title="Labels & annotations"
-            description="Define and manage the labels & annotations to be used within your organization."
+            title={annotationsOnly ? 'Annotations' : 'Labels & annotations'}
+            description={
+              annotationsOnly
+                ? 'Define and manage the annotations to be used within your organization.'
+                : 'Define and manage the labels & annotations to be used within your organization.'
+            }
           />
 
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-              <Button size="md" className="absolute right-0 top-0 shrink-0">
-                <Icon iconName="circle-plus" iconStyle="regular" />
-                Add new
-              </Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content align="end">
-              <DropdownMenu.Item
-                icon={<Icon iconName="plus" />}
-                onClick={() => {
-                  openModal({
-                    content: <LabelCreateEditModal organizationId={organizationId} onClose={closeModal} />,
-                  })
-                }}
-              >
-                Add labels group
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                icon={<Icon iconName="plus" />}
-                onClick={() => {
-                  openModal({
-                    content: <AnnotationCreateEditModal organizationId={organizationId} onClose={closeModal} />,
-                  })
-                }}
-              >
-                Add annotations group
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+          {annotationsOnly ? (
+            <Button
+              size="md"
+              className="absolute right-0 top-0 shrink-0"
+              onClick={() => {
+                openModal({
+                  content: <AnnotationCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+                })
+              }}
+            >
+              <Icon iconName="circle-plus" iconStyle="regular" />
+              Add annotations group
+            </Button>
+          ) : (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <Button size="md" className="absolute right-0 top-0 shrink-0">
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                  Add new
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content align="end">
+                <DropdownMenu.Item
+                  icon={<Icon iconName="plus" />}
+                  onClick={() => {
+                    openModal({
+                      content: <LabelCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+                    })
+                  }}
+                >
+                  Add labels group
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  icon={<Icon iconName="plus" />}
+                  onClick={() => {
+                    openModal({
+                      content: <AnnotationCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+                    })
+                  }}
+                >
+                  Add annotations group
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          )}
         </div>
         <div className="max-w-content-with-navigation-left ">
-          <BlockContent title="Labels groups" classNameContent="p-0">
-            <Suspense fallback={<LabelsAnnotationsRowsSkeleton />}>
-              <LabelsGroupsList
-                organizationId={organizationId}
-                onOpenItems={(labelsGroup) => {
-                  openModal({
-                    content: (
-                      <LabelAnnotationItemsListModal
-                        type="label"
-                        organizationId={organizationId}
-                        groupId={labelsGroup.id}
-                        onClose={closeModal}
-                        associatedItemsCount={labelsGroup.associated_items_count ?? 0}
-                      />
-                    ),
-                  })
-                }}
-                onEdit={(labelsGroup) => {
-                  openModal({
-                    content: (
-                      <LabelCreateEditModal
-                        isEdit
-                        organizationId={organizationId}
-                        labelsGroup={labelsGroup}
-                        onClose={closeModal}
-                      />
-                    ),
-                  })
-                }}
-                onDelete={(labelsGroup) => {
-                  openModalConfirmation({
-                    title: 'Delete labels group',
-                    confirmationMethod: 'action',
-                    name: labelsGroup.name,
-                    action: () => {
-                      if ((labelsGroup.associated_items_count ?? 0) !== 0) {
-                        return
-                      }
-                      try {
-                        deleteLabelsGroup({ organizationId, labelsGroupId: labelsGroup.id })
-                      } catch (error) {
-                        console.error(error)
-                      }
-                    },
-                  })
-                }}
-              />
-            </Suspense>
-          </BlockContent>
+          {!annotationsOnly && (
+            <BlockContent title="Labels groups" classNameContent="p-0">
+              <Suspense fallback={<LabelsAnnotationsRowsSkeleton />}>
+                <LabelsGroupsList
+                  organizationId={organizationId}
+                  onOpenItems={(labelsGroup) => {
+                    openModal({
+                      content: (
+                        <LabelAnnotationItemsListModal
+                          type="label"
+                          organizationId={organizationId}
+                          groupId={labelsGroup.id}
+                          onClose={closeModal}
+                          associatedItemsCount={labelsGroup.associated_items_count ?? 0}
+                        />
+                      ),
+                    })
+                  }}
+                  onEdit={(labelsGroup) => {
+                    openModal({
+                      content: (
+                        <LabelCreateEditModal
+                          isEdit
+                          organizationId={organizationId}
+                          labelsGroup={labelsGroup}
+                          onClose={closeModal}
+                        />
+                      ),
+                    })
+                  }}
+                  onDelete={(labelsGroup) => {
+                    openModalConfirmation({
+                      title: 'Delete labels group',
+                      confirmationMethod: 'action',
+                      name: labelsGroup.name,
+                      action: () => {
+                        if ((labelsGroup.associated_items_count ?? 0) !== 0) {
+                          return
+                        }
+                        try {
+                          deleteLabelsGroup({ organizationId, labelsGroupId: labelsGroup.id })
+                        } catch (error) {
+                          console.error(error)
+                        }
+                      },
+                    })
+                  }}
+                />
+              </Suspense>
+            </BlockContent>
+          )}
           <BlockContent title="Annotations groups" classNameContent="p-0">
             <Suspense fallback={<LabelsAnnotationsRowsSkeleton />}>
               <AnnotationsGroupsList
