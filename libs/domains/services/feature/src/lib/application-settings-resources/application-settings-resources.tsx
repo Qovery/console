@@ -111,15 +111,6 @@ export function ApplicationSettingsResources({
     previousAutoscalingModeRef.current = autoscalingMode
   }, [autoscalingMode, minRunningInstances, maxRunningInstances, hpaMetricTypeRaw, advancedSettings, setValue])
 
-  const currentAutoscalingMode = match(service)
-    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => {
-      if (s.autoscaling?.mode === 'KEDA') return 'KEDA'
-      if (s.min_running_instances === s.max_running_instances) return 'NONE'
-      if (s.min_running_instances !== s.max_running_instances) return 'HPA'
-      return 'NONE'
-    })
-    .otherwise(() => 'NONE')
-
   const minVCpu = match(cloudProvider)
     .with('GCP', () => 250)
     .otherwise(() => 10)
@@ -388,20 +379,6 @@ export function ApplicationSettingsResources({
                 )
               }}
             />
-            {currentAutoscalingMode === 'HPA' && autoscalingMode === 'KEDA' && (
-              <Callout.Root color="yellow">
-                <Callout.Icon>
-                  <Icon iconName="circle-info" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <Callout.TextHeading>KEDA migration restriction</Callout.TextHeading>
-                  <Callout.TextDescription className="text-xs">
-                    You cannot migrate directly from HPA to KEDA. Please first switch to "No autoscaling" mode, save the
-                    changes and deploy your service, and then you can configure KEDA autoscaling.
-                  </Callout.TextDescription>
-                </Callout.Text>
-              </Callout.Root>
-            )}
           </>
 
           {autoscalingMode === 'NONE' && (
@@ -436,7 +413,6 @@ export function ApplicationSettingsResources({
               minInstances={effectiveMinInstances}
               maxInstances={maxInstances}
               minRunningInstances={minRunningInstances}
-              disabled={currentAutoscalingMode === 'HPA'}
               runningPods={runningStatuses?.pods?.length}
             />
           )}
