@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { Navigate, useLocation } from '@tanstack/react-router'
 import { type PropsWithChildren } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
 import { LOGIN_URL } from '@qovery/shared/routes'
 
 export const ProtectedRoute = ({ children }: PropsWithChildren) => {

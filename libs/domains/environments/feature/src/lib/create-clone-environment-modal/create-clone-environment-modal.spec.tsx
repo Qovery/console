@@ -19,10 +19,6 @@ const useCreateEnvironmentMockSpy = jest.spyOn(useCreateEnvironment, 'useCreateE
 
 const mockClusters = clusterFactoryMock(3, 'AWS')
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: () => ({ projectId: '1', organizationId: '0' }),
-}))
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => jest.fn(),

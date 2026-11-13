@@ -13,11 +13,9 @@ import { type RenderOptions, queries, render, screen, within } from '@testing-li
 import userEvent from '@testing-library/user-event'
 import { type PropsWithChildren, type ReactElement } from 'react'
 import { useChainProviders } from 'react-flat-providers'
-import { MemoryRouter } from 'react-router-dom'
-import { QueryParamProvider } from 'use-query-params'
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ModalProvider } from '@qovery/shared/ui'
+import { TestRouter } from './test-router'
 
 const allQueries = {
   ...queries,
@@ -50,17 +48,15 @@ function renderWithProviders(
   ui: ReactElement,
   { ...renderOptions }: RenderOptions = {}
 ): { userEvent: ReturnType<typeof userEvent.setup> } & ReturnType<typeof render> {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+
   function Wrapper({ children }: PropsWithChildren) {
-    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
     const FlatChainedProviders = useChainProviders()
       .add(Auth0Provider, { clientId: '__test_client_id__', domain: '__test_domain__' })
       .add(QueryClientProvider, { client: queryClient })
       .add(TooltipProvider)
       .add(ModalProvider)
-      .add(MemoryRouter)
-      .add(QueryParamProvider, {
-        adapter: ReactRouter6Adapter,
-      })
+      .add(TestRouter)
       .make()
 
     return <FlatChainedProviders>{children}</FlatChainedProviders>

@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import {
   CloudProviderEnum,
   type DatabaseTypeEnum,
@@ -5,7 +6,6 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCloudProviderDatabaseInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -140,7 +140,7 @@ export function DatabaseSettingsResources({
     control,
     formState: { defaultValues },
   } = useFormContext()
-  const { organizationId = '', environmentId = '' } = useParams()
+  const { organizationId = '', environmentId = '' } = useParams({ strict: false })
   const { data: environment } = useEnvironment({ environmentId })
 
   const resolvedDatabaseType = database?.type ?? databaseType

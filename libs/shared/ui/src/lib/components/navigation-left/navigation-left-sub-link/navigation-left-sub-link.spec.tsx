@@ -1,8 +1,8 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import NavigationLeftSubLink, { type NavigationLeftSubLinkProps } from './navigation-left-sub-link'
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useLocation: () => ({
     pathname: '/general-second',
   }),
