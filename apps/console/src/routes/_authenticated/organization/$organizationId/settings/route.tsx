@@ -82,10 +82,14 @@ function RouteComponent() {
     iconStyle: 'brands' as const,
   }
 
-  const webhookLink = {
-    title: 'Webhook',
-    to: `${pathSettings}/webhook`,
-    icon: 'webhook' as const,
+  const notificationsLink = {
+    type: 'group',
+    title: 'Notifications',
+    icon: 'bell' as const,
+    children: [
+      { title: 'Slack', to: `${pathSettings}/notifications/slack` },
+      { title: 'Webhook', to: `${pathSettings}/webhook` },
+    ],
   }
 
   const apiTokenLink = {
@@ -134,7 +138,7 @@ function RouteComponent() {
     helmRepositoriesLink,
     cloudCredentialsLink,
     gitRepositoriesAccessLink,
-    webhookLink,
+    notificationsLink,
     apiTokenLink,
     aiLink,
     ...(isAgenticWorkflowEnabled ? [agentsLink] : []),

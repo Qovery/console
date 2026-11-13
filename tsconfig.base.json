@@ -55,6 +55,8 @@
       "@qovery/shared/console-shared": ["libs/shared/console-shared/src/index.ts"],
       "@qovery/shared/devops-copilot/context": ["libs/shared/devops-copilot/context/src/index.ts"],
       "@qovery/shared/devops-copilot/data-access": ["libs/shared/devops-copilot/data-access/src/index.ts"],
+      "@qovery/shared/slack-bot/data-access": ["libs/shared/slack-bot/data-access/src/index.ts"],
+      "@qovery/shared/slack-bot/feature": ["libs/shared/slack-bot/feature/src/index.ts"],
       "@qovery/shared/devops-copilot/feature": ["libs/shared/devops-copilot/feature/src/index.ts"],
       "@qovery/shared/enums": ["libs/shared/enums/src/index.ts"],
       "@qovery/shared/factories": ["libs/shared/factories/src/index.ts"],

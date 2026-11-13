@@ -34,7 +34,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
                   id="Helm arguments"
                   name="arguments"
                   type="text"
-                  value="--wait --atomic --debug"
+                  value="--wait --atomic"
                 />
               </div>
             </div>

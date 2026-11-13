@@ -54,12 +54,14 @@ import { Route as AuthenticatedOrganizationOrganizationIdAlertsIssuesRouteImport
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/alert-rules'
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/demo-cluster'
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/cluster'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/settings/notifications/route'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents/route'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/route'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRouteImport } from './routes/_authenticated/organization/$organizationId/settings/roles/index'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/index'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRouteImport } from './routes/_authenticated/organization/$organizationId/settings/notifications/slack'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents/tokens'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents/mcps'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/variables'
@@ -529,6 +531,15 @@ const AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute =
     path: '/organization/$organizationId/cluster',
     getParentRoute: () => AuthenticatedOnboardingRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteImport.update(
+    {
+      id: '/notifications',
+      path: '/notifications',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRoute =
   AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteImport.update({
     id: '/agents',
@@ -573,6 +584,15 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute =
       path: '/',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRouteImport.update(
+    {
+      id: '/slack',
+      path: '/slack',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRoute =
@@ -1998,6 +2018,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
   '/organization/$organizationId/settings/agents': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteWithChildren
+  '/organization/$organizationId/settings/notifications': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
   '/organization/$organizationId/alerts/alert-rules': typeof AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRoute
@@ -2036,6 +2057,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
   '/organization/$organizationId/settings/agents/tokens': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRoute
+  '/organization/$organizationId/settings/notifications/slack': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute
   '/organization/$organizationId/cluster/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/organization/$organizationId/project/$projectId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   '/organization/$organizationId/settings/agents/': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsIndexRoute
@@ -2204,6 +2226,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
+  '/organization/$organizationId/settings/notifications': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
   '/organization/$organizationId/alerts/alert-rules': typeof AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRoute
@@ -2238,6 +2261,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
   '/organization/$organizationId/settings/agents/tokens': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRoute
+  '/organization/$organizationId/settings/notifications/slack': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute
   '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/organization/$organizationId/project/$projectId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   '/organization/$organizationId/settings/agents': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsIndexRoute
@@ -2399,6 +2423,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/settings/agents': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteWithChildren
+  '/_authenticated/organization/$organizationId/settings/notifications': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren
   '/_authenticated/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/_authenticated/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
   '/_authenticated/organization/$organizationId/alerts/alert-rules': typeof AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRoute
@@ -2437,6 +2462,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/_authenticated/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
   '/_authenticated/organization/$organizationId/settings/agents/tokens': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRoute
+  '/_authenticated/organization/$organizationId/settings/notifications/slack': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   '/_authenticated/organization/$organizationId/settings/agents/': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsIndexRoute
@@ -2613,6 +2639,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/'
     | '/organization/$organizationId/cluster/$clusterId'
     | '/organization/$organizationId/settings/agents'
+    | '/organization/$organizationId/settings/notifications'
     | '/onboarding/organization/$organizationId/cluster'
     | '/onboarding/organization/$organizationId/demo-cluster'
     | '/organization/$organizationId/alerts/alert-rules'
@@ -2651,6 +2678,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/variables'
     | '/organization/$organizationId/settings/agents/mcps'
     | '/organization/$organizationId/settings/agents/tokens'
+    | '/organization/$organizationId/settings/notifications/slack'
     | '/organization/$organizationId/cluster/$clusterId/'
     | '/organization/$organizationId/project/$projectId'
     | '/organization/$organizationId/settings/agents/'
@@ -2819,6 +2847,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/clusters'
     | '/organization/$organizationId/overview'
     | '/organization/$organizationId'
+    | '/organization/$organizationId/settings/notifications'
     | '/onboarding/organization/$organizationId/cluster'
     | '/onboarding/organization/$organizationId/demo-cluster'
     | '/organization/$organizationId/alerts/alert-rules'
@@ -2853,6 +2882,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/variables'
     | '/organization/$organizationId/settings/agents/mcps'
     | '/organization/$organizationId/settings/agents/tokens'
+    | '/organization/$organizationId/settings/notifications/slack'
     | '/organization/$organizationId/cluster/$clusterId'
     | '/organization/$organizationId/project/$projectId'
     | '/organization/$organizationId/settings/agents'
@@ -3013,6 +3043,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId'
     | '/_authenticated/organization/$organizationId/settings/agents'
+    | '/_authenticated/organization/$organizationId/settings/notifications'
     | '/_authenticated/onboarding/organization/$organizationId/cluster'
     | '/_authenticated/onboarding/organization/$organizationId/demo-cluster'
     | '/_authenticated/organization/$organizationId/alerts/alert-rules'
@@ -3051,6 +3082,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/variables'
     | '/_authenticated/organization/$organizationId/settings/agents/mcps'
     | '/_authenticated/organization/$organizationId/settings/agents/tokens'
+    | '/_authenticated/organization/$organizationId/settings/notifications/slack'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/'
     | '/_authenticated/organization/$organizationId/project/$projectId/'
     | '/_authenticated/organization/$organizationId/settings/agents/'
@@ -3530,6 +3562,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRouteImport
       parentRoute: typeof AuthenticatedOnboardingRouteRoute
     }
+    '/_authenticated/organization/$organizationId/settings/notifications': {
+      id: '/_authenticated/organization/$organizationId/settings/notifications'
+      path: '/notifications'
+      fullPath: '/organization/$organizationId/settings/notifications'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
     '/_authenticated/organization/$organizationId/settings/agents': {
       id: '/_authenticated/organization/$organizationId/settings/agents'
       path: '/agents'
@@ -3571,6 +3610,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/$organizationId/cluster/$clusterId/'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/notifications/slack': {
+      id: '/_authenticated/organization/$organizationId/settings/notifications/slack'
+      path: '/slack'
+      fullPath: '/organization/$organizationId/settings/notifications/slack'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/agents/tokens': {
       id: '/_authenticated/organization/$organizationId/settings/agents/tokens'
@@ -4760,8 +4806,24 @@ const AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteWithChildre
     AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteChildren,
   )
 
+interface AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute
+}
+
+const AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteChildren: AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteChildren =
+  {
+    AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute,
+  }
+
+const AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren =
+  AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute._addFileChildren(
+    AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteChildren,
+  )
+
 interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteWithChildren
+  AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
   AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
@@ -4788,6 +4850,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
   {
     AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRoute:
       AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteWithChildren,
+    AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute:
       AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute,
     AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute:

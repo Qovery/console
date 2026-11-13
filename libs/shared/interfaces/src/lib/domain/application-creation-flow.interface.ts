@@ -65,6 +65,10 @@ export interface ApplicationResourcesData {
   }>
   autoscaling_polling_interval?: number
   autoscaling_cooldown_period?: number
+  autoscaling_initial_cooldown_period?: number | string | null
+  autoscaling_idle_scale_to_zero?: boolean | null
+  autoscaling_advanced_enabled?: boolean | null
+  autoscaling_advanced_yaml?: string | null
 
   // Legacy KEDA fields (backward compatibility)
   autoscaling_scaler_type?: string
