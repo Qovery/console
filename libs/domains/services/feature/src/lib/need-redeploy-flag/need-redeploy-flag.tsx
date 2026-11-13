@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { isEditableService } from '@qovery/domains/services/data-access'
-import { Banner } from '@qovery/shared/ui'
+import { Banner, Icon } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useService } from '../hooks/use-service/use-service'
@@ -54,6 +54,7 @@ export function NeedRedeployFlag() {
       buttonLabel={buttonLabel}
       onClickButton={mutationDeployService}
     >
+      <Icon iconName="triangle-exclamation" iconStyle="regular" className="mr-2" />
       {serviceDeploymentStatusState === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ? (
         <p>This service is not running</p>
       ) : (
