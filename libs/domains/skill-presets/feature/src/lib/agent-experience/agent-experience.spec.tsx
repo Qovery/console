@@ -177,37 +177,68 @@ describe('AgentExperienceCopilot', () => {
 })
 
 describe('AgentExperienceAutomate', () => {
-  it('lists the jobs safest first, with what each can never do, and lets admins create the token', async () => {
+  it('lists the jobs as compact cards, safest first, with no actions in the list', () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperienceAutomate />)
 
-    const levels = within(screen.getByTestId('agent-job-ladder'))
-      .getAllByRole('heading', { level: 2 })
-      .map((heading) => heading.textContent)
-    expect(levels).toEqual(['Investigate', 'Hygiene', 'Cost', 'Reliability', 'Change'])
-    const incident = screen.getByTestId('agent-job-investigate-production-incident')
-    expect(within(incident).getByText('Deploy, redeploy, restart or stop anything')).toBeInTheDocument()
-    expect(within(incident).getByRole('link', { name: /Read the example/ })).toHaveAttribute(
-      'href',
-      'https://www.qovery.com/docs/configuration/organization/policy-examples/investigate-production-incident'
-    )
-    expect(
-      within(incident).getByRole('button', { name: 'Copy the prompt for Investigate an incident' })
-    ).toBeInTheDocument()
-    expect(await within(incident).findByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
+    const ladder = within(screen.getByTestId('agent-job-ladder'))
+    expect(ladder.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent)).toEqual([
+      'Investigate',
+      'Hygiene',
+      'Cost',
+      'Reliability',
+      'Change',
+    ])
+    expect(ladder.getAllByRole('button', { name: /: view details/ })).toHaveLength(9)
+    expect(ladder.queryByText('It can never')).not.toBeInTheDocument()
+    expect(ladder.queryByRole('button', { name: /Create policy token|Copy prompt/ })).not.toBeInTheDocument()
     expect(screen.getByText('Incident Analyzer with incident.io')).toBeInTheDocument()
     expect(screen.getByTestId('policy-token-skill-line')).toHaveTextContent(
       'qovery-policy-token skill writes and tests'
     )
   })
 
-  it('shows members the catalog read-only, with prompts to copy', async () => {
-    useScenario('member')
-    renderWithProviders(<AgentExperienceAutomate />)
+  it('filters the jobs with the search', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
 
-    expect(screen.getAllByRole('button', { name: /Copy the prompt/ })).toHaveLength(9)
-    await screen.findByText('Hygiene')
-    expect(screen.queryByRole('button', { name: /Create policy token/ })).not.toBeInTheDocument()
+    await userEvent.type(screen.getByRole('textbox', { name: 'Search jobs' }), 'preview')
+    const cards = within(screen.getByTestId('agent-job-ladder')).getAllByRole('button', { name: /: view details/ })
+    expect(cards.map((card) => card.getAttribute('data-testid'))).toEqual([
+      'agent-job-fix-in-preview-environment',
+      'agent-job-clean-up-preview-environments',
+    ])
+  })
+
+  it('opens the details in a side sheet, with what it can never do, the prompt, the policy and the actions', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByTestId('agent-job-investigate-production-incident'))
+    const details = within(await screen.findByRole('dialog'))
+    expect(details.getByRole('heading', { name: 'Investigate an incident' })).toBeInTheDocument()
+    expect(details.getByText('Level 1 of 5: Investigate')).toBeInTheDocument()
+    expect(details.getByText('Deploy, redeploy, restart or stop anything')).toBeInTheDocument()
+    expect(details.getByText(/Our production checkout service started failing/)).toBeInTheDocument()
+    expect(
+      details.getByText(/production_environment_id := "REPLACE_WITH_PRODUCTION_ENVIRONMENT_ID"/)
+    ).toBeInTheDocument()
+    expect(details.getByRole('link', { name: /Read the example/ })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/configuration/organization/policy-examples/investigate-production-incident'
+    )
+    expect(details.getByRole('button', { name: /Copy prompt/ })).toBeInTheDocument()
+    expect(await details.findByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
+  })
+
+  it('shows members the same list and details, without Create policy token', async () => {
+    useScenario('member')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByTestId('agent-job-stop-idle-environments'))
+    const details = within(await screen.findByRole('dialog'))
+    expect(details.getByRole('button', { name: /Copy prompt/ })).toBeInTheDocument()
+    expect(details.queryByRole('button', { name: /Create policy token/ })).not.toBeInTheDocument()
   })
 })
 
