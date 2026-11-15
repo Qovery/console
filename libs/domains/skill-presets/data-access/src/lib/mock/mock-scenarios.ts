@@ -49,6 +49,8 @@ export interface MockSeed {
   policyTokens?: MockPolicyToken[]
   /** AI features start off (ai-features-off, agent-experience-empty). */
   aiFeaturesOff?: boolean
+  /** The Copilot starts off. It is on in the other scenarios, read-only. */
+  copilotOff?: boolean
   /** Agent actions on top of the skill loads: MCP tool calls, the policy token, refused requests. */
   agentExtras?: { mcp: boolean; policyToken: boolean; denials: boolean }
 }
@@ -474,12 +476,15 @@ export function buildMockSeed(scenario: SkillPresetsMockScenario): MockSeed {
     case 'agent-activity':
     case 'agent-experience-active':
       return { ...typicalSeed(), loads: buildLoads(420, 24 * 30), policyTokens: mockPolicyTokens() }
+    case 'ai-features-off':
+      return { ...typicalSeed(), aiFeaturesOff: true, copilotOff: true }
     case 'agent-experience-empty':
       return {
         ...typicalSeed(),
         presets: [],
         loads: [],
         aiFeaturesOff: true,
+        copilotOff: true,
         agentExtras: { mcp: false, policyToken: false, denials: false },
       }
     case 'agent-experience-partial':
@@ -488,6 +493,7 @@ export function buildMockSeed(scenario: SkillPresetsMockScenario): MockSeed {
         ...typicalSeed(),
         presets: [],
         loads: buildLoads(90, 24 * 7),
+        copilotOff: true,
         agentExtras: { mcp: true, policyToken: false, denials: false },
       }
     case 'agent-activity-empty':

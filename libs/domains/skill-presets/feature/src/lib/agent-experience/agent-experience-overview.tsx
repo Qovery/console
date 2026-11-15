@@ -12,6 +12,7 @@ import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity
 import { useAgentExperiencePolicyTokens } from '../hooks/use-agent-experience-policy-tokens/use-agent-experience-policy-tokens'
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
+import { useCopilotStatus } from '../hooks/use-copilot-status/use-copilot-status'
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { LoadError } from '../load-error/load-error'
@@ -23,6 +24,7 @@ import {
   type AgentExperienceStepId,
   computeAgentExperienceSetup,
 } from '../utils/agent-experience'
+import { OnOffBadge, copilotStateLabel } from './agent-experience-copilot'
 import { PresetSummary } from './preset-summary'
 
 const DAY_MS = 24 * 3_600_000
@@ -61,9 +63,15 @@ const STEPS: Record<AgentExperienceStepId, { title: string; description: string;
   },
   'ai-features': {
     title: 'Turn on AI features',
-    description: 'Presets are checked by a model before they reach your team. This needs AI features on.',
+    description: 'The organization’s opt-in to AI. The Copilot and the review of every preset need it.',
     done: 'AI features are on.',
     action: 'Turn on AI features',
+  },
+  copilot: {
+    title: 'Turn on the Copilot',
+    description: 'Qovery’s assistant in the Console. It answers, troubleshoots, and acts only if you allow it.',
+    done: 'The Copilot is on.',
+    action: 'Set up the Copilot',
   },
   activity: {
     title: 'Watch what agents do',
@@ -78,12 +86,99 @@ type AgentExperiencePath =
   | '/organization/$organizationId/agent-experience/skill-presets'
   | '/organization/$organizationId/agent-experience/policy-tokens'
   | '/organization/$organizationId/agent-experience/agent-activity'
+  | '/organization/$organizationId/agent-experience/copilot'
 
 const STEP_PATHS: Record<Exclude<AgentExperienceStepId, 'ai-features'>, AgentExperiencePath> = {
   connect: '/organization/$organizationId/agent-experience/connect',
   preset: '/organization/$organizationId/agent-experience/skill-presets',
   'policy-token': '/organization/$organizationId/agent-experience/policy-tokens',
   activity: '/organization/$organizationId/agent-experience/agent-activity',
+  copilot: '/organization/$organizationId/agent-experience/copilot',
+}
+
+const PIECES = [
+  {
+    icon: 'robot',
+    name: 'Copilot',
+    text: 'Qovery’s assistant in the Console. It answers, troubleshoots, and acts when you allow it.',
+    to: STEP_PATHS.copilot,
+  },
+  {
+    icon: 'sparkles',
+    name: 'Skills',
+    text: 'Teach your coding agents how to deploy and fix things on Qovery.',
+    to: STEP_PATHS.connect,
+  },
+  {
+    icon: 'sliders',
+    name: 'Skill presets',
+    text: 'Choose which skills agents load, and add your team’s rules.',
+    to: STEP_PATHS.preset,
+  },
+  {
+    icon: 'key',
+    name: 'Policy tokens',
+    text: 'Give each agent a token that can only do what its policy allows.',
+    to: STEP_PATHS['policy-token'],
+  },
+  {
+    icon: 'wave-pulse',
+    name: 'Agent activity',
+    text: 'See what agents did on Qovery, and what was blocked.',
+    to: STEP_PATHS.activity,
+  },
+] as const
+
+/**
+ * The first thing an admin reads when nothing is set up: what Agent Experience is, what each piece
+ * does, and one action to start with.
+ */
+function AgentFirstIntro({
+  organizationId,
+  aiFeaturesEnabled,
+}: {
+  organizationId: string
+  aiFeaturesEnabled: boolean
+}) {
+  return (
+    <Section
+      aria-labelledby="agent-first"
+      className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral-subtle p-5"
+      data-testid="agent-first-intro"
+    >
+      <div className="flex flex-col gap-1">
+        <Heading level={2} id="agent-first">
+          Qovery is agent first
+        </Heading>
+        <p className="max-w-3xl text-sm text-neutral-subtle">
+          Agent Experience is where coding agents and the Qovery Copilot work on your infrastructure, under your rules.
+          You decide what they know, what they can do, and you see what they did.
+        </p>
+      </div>
+      <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+        {PIECES.map((piece) => (
+          <li key={piece.name} className="flex flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-3">
+            <span className="inline-flex items-center gap-2 text-sm font-medium text-neutral">
+              <Icon iconName={piece.icon} iconStyle="regular" className="text-brand" aria-hidden="true" />
+              {piece.name}
+            </span>
+            <span className="text-xs text-neutral-subtle">{piece.text}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="flex flex-wrap items-center gap-3">
+        {aiFeaturesEnabled ? (
+          <StepAction step="copilot" primary organizationId={organizationId} />
+        ) : (
+          <StepAction step="ai-features" primary organizationId={organizationId} />
+        )}
+        <span className="text-xs text-neutral-subtle">
+          AI features and the Copilot are two switches: AI features are the organization’s opt-in to AI, then the
+          Copilot has its own terms and modes.
+        </span>
+      </div>
+    </Section>
+  )
 }
 
 function StepAction({
@@ -211,15 +306,20 @@ function Card({
   title,
   link,
   children,
+  className,
 }: {
   id: string
   title: string
   link: { label: string; to: AgentExperiencePath }
   children: ReactNode
+  className?: string
 }) {
   const { organizationId = '' } = useParams({ strict: false })
   return (
-    <Section aria-labelledby={id} className="flex flex-col gap-3 rounded-md border border-neutral p-4">
+    <Section
+      aria-labelledby={id}
+      className={clsx('flex flex-col gap-3 rounded-md border border-neutral p-4', className)}
+    >
       <div className="flex items-center justify-between gap-3">
         <Heading level={2} id={id}>
           {title}
@@ -264,6 +364,7 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
   const tokens = useAgentExperiencePolicyTokens({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
+  const copilot = useCopilotStatus({ organizationId })
 
   const isLoading = activity.isLoading || presets.isLoading || tokens.isLoading
   const error = activity.error ?? presets.error ?? tokens.error
@@ -298,11 +399,15 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
     presets: activePresets.length,
     policyTokens: policyTokens.length,
     aiFeaturesEnabled,
+    copilotEnabled: copilot.enabled,
   })
 
   if (setup.state !== 'active') {
     return (
       <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state={setup.state}>
+        {setup.state === 'empty' && (
+          <AgentFirstIntro organizationId={organizationId} aiFeaturesEnabled={aiFeaturesEnabled} />
+        )}
         <SetupChecklist setup={setup} organizationId={organizationId} />
         {setup.state === 'partial' && week.data && (
           <Section aria-labelledby="week-activity" className="flex flex-col gap-2">
@@ -357,6 +462,30 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
           </ul>
         </Card>
         <Card
+          id="overview-copilot"
+          title="Copilot"
+          link={{ label: 'Copilot settings', to: '/organization/$organizationId/agent-experience/copilot' }}
+        >
+          <dl className="flex flex-col divide-y divide-neutral text-sm" data-testid="overview-copilot-state">
+            <div className="flex items-center justify-between gap-2 pb-2">
+              <dt className="text-neutral">Copilot</dt>
+              <dd>
+                {copilot.isLoading ? (
+                  <Skeleton width={64} height={20} show />
+                ) : (
+                  <OnOffBadge on={copilot.enabled} label={copilotStateLabel(copilot.enabled, copilot.readOnly)} />
+                )}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-2 pt-2">
+              <dt className="text-neutral">AI features</dt>
+              <dd>
+                <OnOffBadge on={aiFeaturesEnabled} />
+              </dd>
+            </div>
+          </dl>
+        </Card>
+        <Card
           id="overview-denied-title"
           title="Latest denied actions"
           link={{ label: 'Agent activity', to: '/organization/$organizationId/agent-experience/agent-activity' }}
@@ -364,6 +493,7 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
           <DeniedList activity={week.data ?? activity.data} />
         </Card>
         <Card
+          className="xl:col-span-2"
           id="overview-suggestions"
           title="Suggestions"
           link={{ label: 'Agent activity', to: '/organization/$organizationId/agent-experience/agent-activity' }}
@@ -400,8 +530,32 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
 function MemberOverview({ organizationId }: { organizationId: string }) {
   const weekRange = useRange(7)
   const week = useAgentActivity({ organizationId, scope: 'me', ...weekRange })
+  const copilot = useCopilotStatus({ organizationId })
   return (
     <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state="member">
+      <Section
+        aria-labelledby="member-copilot"
+        className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"
+      >
+        <div className="flex items-center gap-3">
+          <Heading level={2} id="member-copilot">
+            Copilot
+          </Heading>
+          {copilot.isLoading ? (
+            <Skeleton width={64} height={20} show />
+          ) : (
+            <OnOffBadge on={copilot.enabled} label={copilotStateLabel(copilot.enabled, copilot.readOnly)} />
+          )}
+        </div>
+        <Link
+          to="/organization/$organizationId/agent-experience/copilot"
+          params={{ organizationId }}
+          color="brand"
+          size="sm"
+        >
+          What the Copilot does
+        </Link>
+      </Section>
       <Section aria-labelledby="member-receives" className="flex flex-col gap-2 rounded-md border border-neutral p-4">
         <Heading level={2} id="member-receives">
           What your agent receives
@@ -472,7 +626,7 @@ export function AgentExperienceOverview() {
           isLoading
             ? undefined
             : canManage
-              ? 'Set up how coding agents work with Qovery, limit what they can do, and see what they did.'
+              ? 'Coding agents and the Qovery Copilot, working on your infrastructure under your rules: set them up, limit what they can do, and see what they did.'
               : 'What your coding agent receives from Qovery, and what it did. Only you and your organization’s owners and admins see your activity.'
         }
       />

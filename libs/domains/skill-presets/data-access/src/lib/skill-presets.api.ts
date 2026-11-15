@@ -166,6 +166,7 @@ const httpSkillPresetsApi: SkillPresetsApi = {
 type MockSkillPresetsApi = SkillPresetsApi & {
   listAssignees: () => Promise<SkillPresetAssignees>
   listPolicyTokens: () => Promise<OrganizationPolicyApiToken[]>
+  copilotRequest: (method: string, url: string, body?: string) => Promise<unknown>
   aiFeaturesEnabled: () => Promise<boolean>
 }
 
@@ -209,6 +210,26 @@ export async function listMockPolicyTokens(): Promise<OrganizationPolicyApiToken
   const api = await resolveMockApi()
   if (!api) throw new Error('The skill presets mock is not active')
   return api.listPolicyTokens()
+}
+
+/**
+ * Mock mode only: routes the DevOps Copilot service calls (config and recurring tasks) to the mock,
+ * so the Copilot settings can be played without that service. Resolves to false outside mock mode.
+ */
+export async function installSkillPresetsCopilotMock(): Promise<boolean> {
+  if (!resolveMockApi()) return false
+  const { devopsCopilotAxios } = await import('@qovery/shared/devops-copilot/data-access')
+  devopsCopilotAxios.defaults.adapter = async (config) => {
+    const api = await resolveMockApi()
+    if (!api) throw new Error('The skill presets mock is not active')
+    const data = await api.copilotRequest(
+      (config.method ?? 'get').toLowerCase(),
+      `${config.baseURL ?? ''}${config.url ?? ''}`,
+      typeof config.data === 'string' ? config.data : undefined
+    )
+    return { data, status: 200, statusText: 'OK', headers: {}, config }
+  }
+  return true
 }
 
 /** Mock mode only: whether the mock organization has AI features on. It changes when they are turned on. */

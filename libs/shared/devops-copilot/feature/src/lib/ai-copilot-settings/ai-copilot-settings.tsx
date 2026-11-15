@@ -14,10 +14,12 @@ import SectionScheduledTasks from './section-scheduled-tasks/section-scheduled-t
 
 export interface AICopilotSettingsProps {
   organization: Organization
+  /** Rendered inside another page (Agent Experience): no page heading and no page padding. */
+  embedded?: boolean
 }
 
 export function AICopilotSettings(props: AICopilotSettingsProps) {
-  const { organization } = props
+  const { organization, embedded = false } = props
 
   const { data: userAccount } = useUserAccount()
   const { user: authUser } = useAuth()
@@ -50,8 +52,10 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
 
   return (
     <div className="w-full justify-between">
-      <Section className="px-8 pb-8 pt-6">
-        <SettingsHeading title="Copilot configuration" description="Configure Copilot" showNeedHelp={false} />
+      <Section className={embedded ? undefined : 'px-8 pb-8 pt-6'}>
+        {!embedded && (
+          <SettingsHeading title="Copilot configuration" description="Configure Copilot" showNeedHelp={false} />
+        )}
         <div className="max-w-content-with-navigation-left">
           <Callout.Root color="sky" className="mb-4">
             <Callout.Icon>

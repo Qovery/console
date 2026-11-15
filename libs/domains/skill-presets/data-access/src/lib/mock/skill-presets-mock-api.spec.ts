@@ -550,6 +550,27 @@ describe('createSkillPresetsMockApi', () => {
       expect(tokens?.map(({ name }) => name)).toEqual(['ci-deployer', 'review-agent'])
     })
 
+    it('plays the Copilot config: off until AI features and then the Copilot are turned on', async () => {
+      const api = createSkillPresetsMockApi('agent-experience-empty')
+      const config = async () =>
+        (
+          (await settle(api.copilotRequest('get', 'https://copilot.example/organization/o/config'))).value as {
+            org_config: { enabled: boolean }
+          }
+        ).org_config.enabled
+      const turnOn = () =>
+        settle(
+          api.copilotRequest('put', '/organization/o/config/org', JSON.stringify({ enabled: true, read_only: true }))
+        )
+
+      expect(await config()).toBe(false)
+      expect(getSkillPresetErrorStatus((await turnOn()).error)).toBe(403)
+      await settle(api.enableAiFeatures(ORGANIZATION_ID))
+      await turnOn()
+      expect(await config()).toBe(true)
+      expect(getSkillPresetErrorStatus((await settle(api.copilotRequest('get', '/other'))).error)).toBe(404)
+    })
+
     it('is empty in the agent-activity-empty scenario', async () => {
       const { value } = await settle(
         createSkillPresetsMockApi('agent-activity-empty').getAgentActivity(ORGANIZATION_ID, range())
