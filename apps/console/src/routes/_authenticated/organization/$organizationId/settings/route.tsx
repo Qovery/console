@@ -110,6 +110,7 @@ function RouteComponent() {
       { title: 'Copilot', to: `${pathSettings}/ai-copilot` },
       { title: 'Skills', to: `${pathSettings}/skills` },
       { title: 'Skill presets', to: `${pathSettings}/skill-presets` },
+      { title: 'Agent activity', to: `${pathSettings}/agent-activity` },
     ],
   }
 

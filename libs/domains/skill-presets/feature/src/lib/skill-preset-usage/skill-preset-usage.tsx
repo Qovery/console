@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
@@ -8,6 +8,7 @@ import {
   Button,
   Chart,
   Heading,
+  Icon,
   InputSelect,
   SegmentedControl,
   Skeleton,
@@ -120,6 +121,17 @@ function UsageContent({ organizationId }: { organizationId: string }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <p className="flex items-center gap-2 text-sm text-neutral-subtle">
+        <Icon iconName="robot" iconStyle="regular" aria-hidden="true" />
+        Skill loads tell you what agents read.{' '}
+        <Link
+          to="/organization/$organizationId/settings/agent-activity"
+          params={{ organizationId }}
+          className="font-medium text-brand hover:underline"
+        >
+          See what they did next in Agent activity
+        </Link>
+      </p>
       <div className="flex flex-wrap items-end gap-3">
         <div className="flex flex-col gap-1">
           <span className="text-xs text-neutral-subtle" id="usage-range-label">

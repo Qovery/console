@@ -11,6 +11,8 @@ export const SKILL_PRESETS_MOCK_SCENARIOS = [
   'slow',
   'member',
   'member-no-preset',
+  'agent-activity',
+  'agent-activity-empty',
 ] as const
 export type SkillPresetsMockScenario = (typeof SKILL_PRESETS_MOCK_SCENARIOS)[number]
 

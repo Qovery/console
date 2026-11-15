@@ -1,4 +1,5 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
+import { type AgentActivityParams } from './agent-activity.types'
 import {
   type SkillLoadsParams,
   getMockAiFeaturesEnabled,
@@ -39,6 +40,17 @@ export const skillPresets = createQueryKeys('skillPresets', {
   resolved: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     queryFn: () => skillPresetsApi.getResolvedSkillPreset(organizationId),
+  }),
+  agentActivity: ({ organizationId, ...params }: { organizationId: string } & AgentActivityParams) => ({
+    queryKey: [organizationId, params],
+    queryFn: () => skillPresetsApi.getAgentActivity(organizationId, params),
+  }),
+  myAgentActivity: ({
+    organizationId,
+    ...params
+  }: { organizationId: string } & Omit<AgentActivityParams, 'userSub'>) => ({
+    queryKey: [organizationId, params],
+    queryFn: () => skillPresetsApi.getMyAgentActivity(organizationId, params),
   }),
   resolvedSkill: ({ organizationId, skillName }: { organizationId: string; skillName: string }) => ({
     queryKey: [organizationId, skillName],

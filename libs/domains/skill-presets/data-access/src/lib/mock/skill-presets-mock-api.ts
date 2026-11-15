@@ -30,6 +30,7 @@ import {
   type SkillPresetRevisionResponse,
   type SkillPresetUsageResponse,
 } from '../skill-presets.types'
+import { type MockAgentAction, aggregateAgentActivity, buildMockAgentActions } from './mock-agent-activity'
 import { inspectSkillPresetContent } from './mock-content-inspector'
 import { MOCK_REVIEW_MODEL, MOCK_REVIEW_PROMPT_VERSION, reviewSkillPresetContent } from './mock-model-review'
 import { type SkillPresetsMockScenario } from './mock-scenario-names'
@@ -401,6 +402,10 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
 
   const findPreset = (skillPresetId: string) => presets.find(({ id }) => id === skillPresetId)
   const forbidden = () => fail(403, ADMIN_ONLY)
+  let mockActions: MockAgentAction[] | null = null
+  const agentActions = () =>
+    (mockActions ??=
+      scenario === 'agent-activity-empty' ? [] : buildMockAgentActions(loadRecords, members, { withDenials: true }))
   let concurrentSaveDone = false
   let listFailedOnce = false
 
@@ -577,6 +582,14 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       if (!seed.isAdmin) return forbidden()
       aiFeaturesOn = true
       return respond(undefined)
+    },
+    getAgentActivity(_organizationId, params) {
+      if (!seed.isAdmin) return forbidden()
+      return respond(aggregateAgentActivity(agentActions(), loadRecords, params))
+    },
+    getMyAgentActivity(_organizationId, params) {
+      // Only the caller's own actions and loads: the member view never shows other people.
+      return respond(aggregateAgentActivity(agentActions(), loadRecords, { ...params, userSub: currentUser.id }))
     },
     getSkillPresetUsage(_organizationId, { from, to, bucket, skillName, userSub, skillPresetId }) {
       if (!seed.isAdmin) return forbidden()

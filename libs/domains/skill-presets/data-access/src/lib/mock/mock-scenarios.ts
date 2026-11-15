@@ -423,9 +423,13 @@ export function buildMockSeed(scenario: SkillPresetsMockScenario): MockSeed {
       return conflictsSeed()
     case 'large':
       return largeSeed()
+    case 'agent-activity':
+      return { ...typicalSeed(), loads: buildLoads(420, 24 * 30) }
+    case 'agent-activity-empty':
+      return { ...typicalSeed(), loads: [] }
     case 'member':
       // Taylor is a backend engineer: the organization default applies to them.
-      return { ...typicalSeed(), currentUserId: 'auth0|mock-taylor', isAdmin: false }
+      return { ...typicalSeed(), currentUserId: 'auth0|mock-taylor', isAdmin: false, loads: buildLoads(420, 24 * 30) }
     case 'member-no-preset': {
       // Same organization without an organization default: nothing applies to Taylor.
       const seed = typicalSeed()

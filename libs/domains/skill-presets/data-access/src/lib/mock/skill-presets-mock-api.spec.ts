@@ -440,4 +440,65 @@ describe('createSkillPresetsMockApi', () => {
     expect(api.auditEvents().at(-1)?.event_type).toBe('LOAD')
     expect((await usage()).value?.totals.loads).toBe((before ?? 0) + 1)
   })
+
+  describe('agent activity', () => {
+    const range = () => {
+      const to = new Date(Date.now() + 60_000)
+      return {
+        from: new Date(to.getTime() - 30 * 24 * 3_600_000).toISOString(),
+        to: to.toISOString(),
+        bucket: 'DAY' as const,
+      }
+    }
+
+    it('links actions to the skills that led to them, with denials in production', async () => {
+      const { value } = await settle(
+        createSkillPresetsMockApi('agent-activity').getAgentActivity(ORGANIZATION_ID, range())
+      )
+
+      expect(value?.coverage.note).toContain('Commands run directly on your cluster are not visible here')
+      expect(value?.totals.actions).toBeGreaterThan(50)
+      expect(value?.totals.denials).toBe(6)
+      expect(value?.by_skill.find(({ skill_name }) => skill_name === 'qovery-deploy')?.actions).toBeGreaterThan(0)
+      expect(value?.by_skill.some(({ skill_name }) => skill_name === null)).toBe(true)
+      expect(value?.recent.length).toBeLessThanOrEqual(100)
+      expect(value?.recent.some(({ origin }) => origin === 'MCP')).toBe(true)
+      expect(
+        value?.recent.some(
+          ({ outcome, event, environment_name }) =>
+            outcome === 'DENIED' && event === 'TRIGGER_DELETE' && environment_name === 'payments-production'
+        )
+      ).toBe(true)
+    })
+
+    it('filters on a member and a skill', async () => {
+      const api = createSkillPresetsMockApi('agent-activity')
+      const { value } = await settle(
+        api.getAgentActivity(ORGANIZATION_ID, { ...range(), userSub: 'auth0|mock-jordan' })
+      )
+      expect(value?.by_member.map(({ user_sub }) => user_sub)).toEqual(['auth0|mock-jordan'])
+      const { value: bySkill } = await settle(
+        api.getAgentActivity(ORGANIZATION_ID, { ...range(), skillName: 'qovery-deploy' })
+      )
+      expect(bySkill?.recent.every(({ skill_name }) => skill_name === 'qovery-deploy')).toBe(true)
+    })
+
+    it('is empty in the agent-activity-empty scenario', async () => {
+      const { value } = await settle(
+        createSkillPresetsMockApi('agent-activity-empty').getAgentActivity(ORGANIZATION_ID, range())
+      )
+      expect(value?.totals).toEqual({ skill_loads: 0, actions: 0, denials: 0, members: 0 })
+      expect(value?.recent).toEqual([])
+    })
+
+    it('shows a member only their own activity, and refuses them the organization view', async () => {
+      const api = createSkillPresetsMockApi('member')
+      const { value } = await settle(api.getMyAgentActivity(ORGANIZATION_ID, range()))
+      const { error } = await settle(api.getAgentActivity(ORGANIZATION_ID, range()))
+
+      expect(new Set(value?.recent.map(({ user_sub }) => user_sub))).toEqual(new Set(['auth0|mock-taylor']))
+      expect(value?.by_member.every(({ user_sub }) => user_sub === 'auth0|mock-taylor')).toBe(true)
+      expect(getSkillPresetErrorStatus(error)).toBe(403)
+    })
+  })
 })

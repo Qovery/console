@@ -19,6 +19,9 @@ export const SKILL_PRESETS_MOCK_SCENARIO_DESCRIPTIONS: Record<SkillPresetsMockSc
   slow: 'Every response takes 2 seconds',
   member: 'You are a member without admin rights: you see what your agent receives',
   'member-no-preset': 'You are a member and no preset applies to you',
+  'agent-activity':
+    '30 days of agent actions: deploys, restarts, variable changes, MCP actions, denied deletes in production',
+  'agent-activity-empty': 'No agent activity yet',
 }
 
 /** Text that the mock inspector rejects, one finding per line, to try the 422 flow. */

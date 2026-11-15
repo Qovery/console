@@ -6,6 +6,7 @@ import {
   type OrganizationEventType,
   OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
+import { type AgentActivityParams, type AgentActivityResponse } from './agent-activity.types'
 import { getSkillPresetsMockScenario } from './skill-presets-mock-mode'
 import {
   type InjectedSkillResponse,
@@ -65,6 +66,13 @@ export interface SkillPresetsApi {
    * Not a skill presets endpoint: it goes through this module only so the mock can play it.
    */
   enableAiFeatures(organizationId: string): Promise<void>
+  /** What coding agents did on Qovery, for the whole organization (owners and admins). */
+  getAgentActivity(organizationId: string, params: AgentActivityParams): Promise<AgentActivityResponse>
+  /** The caller's own agent activity, for any member. Never includes other people. */
+  getMyAgentActivity(
+    organizationId: string,
+    params: Omit<AgentActivityParams, 'userSub'>
+  ): Promise<AgentActivityResponse>
 }
 
 const eventsApi = new OrganizationEventApi()
@@ -133,6 +141,18 @@ const httpSkillPresetsApi: SkillPresetsApi = {
   },
   async enableAiFeatures(organizationId) {
     await organizationApi.editOrganizationAiFeatures(organizationId, { enabled: true })
+  },
+  async getAgentActivity(organizationId, params) {
+    const response = await axios.get<AgentActivityResponse>(`/organization/${organizationId}/agentActivity`, {
+      params,
+    })
+    return response.data
+  },
+  async getMyAgentActivity(organizationId, params) {
+    const response = await axios.get<AgentActivityResponse>(`/organization/${organizationId}/agentActivity/me`, {
+      params,
+    })
+    return response.data
   },
   async getSkillPresetUsage(organizationId, params) {
     const response = await axios.get<SkillPresetUsageResponse>(`/organization/${organizationId}/skillPreset/usage`, {
@@ -203,4 +223,6 @@ export const skillPresetsApi: SkillPresetsApi = {
   listSkillLoads: async (...args) => (await resolveApi()).listSkillLoads(...args),
   getSkillPresetUsage: async (...args) => (await resolveApi()).getSkillPresetUsage(...args),
   enableAiFeatures: async (...args) => (await resolveApi()).enableAiFeatures(...args),
+  getAgentActivity: async (...args) => (await resolveApi()).getAgentActivity(...args),
+  getMyAgentActivity: async (...args) => (await resolveApi()).getMyAgentActivity(...args),
 }
