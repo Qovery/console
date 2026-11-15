@@ -210,4 +210,17 @@ describe('RowEvent', () => {
 
     expect(screen.getByRole('link', { name: 'Acme' })).toHaveAttribute('href', '/organization/1/settings/skill-presets')
   })
+
+  it('should mark a skill preset save refused by the security review', () => {
+    const blocked = {
+      ...mockEvent,
+      event_type: OrganizationEventType.CREATE,
+      target_type: OrganizationEventTargetType.ORGANIZATION,
+      sub_target_type: 'SKILL_PRESET',
+      change: JSON.stringify({ name: 'Backend team', review_verdict: 'BLOCK', review_findings: [] }),
+    } as unknown as OrganizationEventResponse
+    renderWithProviders(<RowEvent {...props} event={blocked} />)
+
+    expect(screen.getByText(/Rejected by the security review/)).toBeInTheDocument()
+  })
 })

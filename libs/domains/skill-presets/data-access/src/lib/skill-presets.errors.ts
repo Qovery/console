@@ -32,6 +32,22 @@ export function isSkillPresetConcurrentModification(error: unknown) {
   )
 }
 
+/** 503: the model security review could not run (provider down, timeout, unreadable answer). Nothing was saved. */
+export function isSkillPresetReviewUnavailable(error: unknown) {
+  return getSkillPresetErrorStatus(error) === 503
+}
+
+/** 403 or 409 because the organization turned AI features off: presets can be read but not written. */
+export function isSkillPresetAiFeaturesOff(error: unknown) {
+  const status = getSkillPresetErrorStatus(error)
+  return (status === 403 || status === 409) && /AI features/i.test(getSkillPresetErrorDetail(error) ?? '')
+}
+
+export const SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE =
+  'The security review is unavailable. Nothing was saved. Try again in a minute.'
+export const SKILL_PRESET_AI_FEATURES_OFF_MESSAGE =
+  'Turn on AI features for this organization to use skill presets: every preset is reviewed by a model before it reaches members.'
+
 /** The findings of a 422 security rejection, or an empty list for any other error. */
 export function getSkillPresetFindings(error: unknown): SkillPresetFinding[] {
   if (getSkillPresetErrorStatus(error) !== 422) return []

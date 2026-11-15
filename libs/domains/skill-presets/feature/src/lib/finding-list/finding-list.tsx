@@ -1,5 +1,6 @@
 import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 import { Button, Icon } from '@qovery/shared/ui'
+import { FindingSourceLabel } from './finding-source-label'
 
 export interface FindingListProps {
   findings: SkillPresetFinding[]
@@ -11,9 +12,13 @@ export function FindingList({ findings, onSelectLine }: FindingListProps) {
   return (
     <ul className="mt-1 flex flex-col gap-1" aria-label="Lines to fix">
       {findings.map((finding) => (
-        <li key={`${finding.rule_id}-${finding.line}`} className="flex items-start gap-2 text-xs text-negative">
+        <li
+          key={`${finding.source ?? 'RULES'}-${finding.rule_id}-${finding.line}`}
+          className="flex items-start gap-2 text-xs text-negative"
+        >
           <Icon iconName="shield-exclamation" iconStyle="regular" className="mt-0.5" aria-hidden="true" />
-          <span>
+          <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+            <FindingSourceLabel finding={finding} />
             {onSelectLine ? (
               <Button
                 type="button"
@@ -28,7 +33,9 @@ export function FindingList({ findings, onSelectLine }: FindingListProps) {
             ) : (
               <span className="font-medium">Line {finding.line}</span>
             )}
-            : {finding.reason}. <span className="font-code text-neutral-subtle">{finding.rule_id}</span>
+            <span>
+              : {finding.reason}. <span className="font-code text-neutral-subtle">{finding.rule_id}</span>
+            </span>
           </span>
         </li>
       ))}

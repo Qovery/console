@@ -1,6 +1,10 @@
 import { type OrganizationEventResponse, type OrganizationEventResponseList } from 'qovery-typescript-axios'
 import { type SkillLoadsParams, type SkillPresetsApi } from '../skill-presets.api'
-import { buildSkillPresetApiError } from '../skill-presets.errors'
+import {
+  SKILL_PRESET_AI_FEATURES_OFF_MESSAGE,
+  SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
+  buildSkillPresetApiError,
+} from '../skill-presets.errors'
 import { SKILL_NAME_PATTERN, SKILL_PRESET_LIMITS, approxTokens, isQoverySkillName } from '../skill-presets.limits'
 import {
   type InjectedSkillResponse,
@@ -18,6 +22,7 @@ import {
   type SkillPresetUsageResponse,
 } from '../skill-presets.types'
 import { inspectSkillPresetContent } from './mock-content-inspector'
+import { MOCK_REVIEW_MODEL, MOCK_REVIEW_PROMPT_VERSION, reviewSkillPresetContent } from './mock-model-review'
 import { type SkillPresetsMockScenario } from './mock-scenario-names'
 import { type MockPresetState, buildMockSeed } from './mock-scenarios'
 
@@ -118,8 +123,8 @@ function validate(state: MockPresetState): string | null {
   return null
 }
 
-function inspect(state: MockPresetState) {
-  return inspectSkillPresetContent([
+function fieldsOf(state: MockPresetState) {
+  return [
     { location: 'description', text: state.description },
     ...(state.team_context ? [{ location: 'team context', text: state.team_context }] : []),
     ...state.skills.flatMap((skill) => [
@@ -128,7 +133,13 @@ function inspect(state: MockPresetState) {
         : []),
       ...(skill.content ? [{ location: `content of skill '${skill.skill_name}'`, text: skill.content }] : []),
     ]),
-  ])
+  ]
+}
+
+/** The rule check, then the model review, as q-core runs them. */
+function inspect(state: MockPresetState) {
+  const fields = fieldsOf(state)
+  return [...inspectSkillPresetContent(fields), ...reviewSkillPresetContent(fields)]
 }
 
 const HOUR_MS = 3_600_000
@@ -204,6 +215,10 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   ) => {
     revisions.push({
       skill_preset_id: preset.id,
+      review_verdict: 'ALLOW',
+      review_model: MOCK_REVIEW_MODEL,
+      review_prompt_version: MOCK_REVIEW_PROMPT_VERSION,
+      review_findings: [],
       revision: preset.revision,
       change_type,
       edited_by,
@@ -283,10 +298,12 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     })
   }
 
-  const respond = <T>(value: T): Promise<T> =>
-    new Promise((resolve) => setTimeout(() => resolve(clone(value)), latency))
-  const fail = (status: number, detail: string, extra?: Record<string, unknown>): Promise<never> =>
-    new Promise((_, reject) => setTimeout(() => reject(buildSkillPresetApiError(status, detail, extra)), latency))
+  // Saves wait for the model review: about 1.5 seconds, so the progress state shows.
+  const writeLatency = Math.max(latency, 1500)
+  const respond = <T>(value: T, delay = latency): Promise<T> =>
+    new Promise((resolve) => setTimeout(() => resolve(clone(value)), delay))
+  const fail = (status: number, detail: string, extra?: Record<string, unknown>, delay = latency): Promise<never> =>
+    new Promise((_, reject) => setTimeout(() => reject(buildSkillPresetApiError(status, detail, extra)), delay))
 
   const toResponse = (preset: StoredPreset): SkillPresetResponse => ({
     id: preset.id,
@@ -312,7 +329,10 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
           assignedTo.user_ids.some((userId) => preset.assigned_to.user_ids.includes(userId)))
     )
 
+  const now = () => new Date().toISOString()
+  let reviewFailedOnce = false
   const checkWrite = (state: MockPresetState, exceptId?: string): Promise<never> | null => {
+    if (scenario === 'ai-features-off') return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
     const invalid = validate(state)
     if (invalid) return fail(400, invalid)
     if (presets.some((preset) => preset.id !== exceptId && preset.name === state.name)) {
@@ -320,14 +340,34 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     }
     const unknownRole = state.assigned_to.role_ids.find((id) => !seed.assignees.roles.some((role) => role.id === id))
     if (unknownRole) return fail(404, `Role ${unknownRole} does not exist in this organization`)
+    if (scenario === 'review-unavailable' && !reviewFailedOnce) {
+      reviewFailedOnce = true
+      return fail(503, SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE, undefined, writeLatency)
+    }
     const findings = inspect(state)
     if (findings.length > 0) {
+      // A blocked attempt leaves an audit trace: hashes and findings, never the text.
+      pushEvent(exceptId ? 'UPDATE' : 'CREATE', currentUser.email, now(), {
+        id: exceptId ?? null,
+        name: state.name,
+        review_verdict: 'BLOCK',
+        review_model: MOCK_REVIEW_MODEL,
+        review_prompt_version: MOCK_REVIEW_PROMPT_VERSION,
+        review_findings: findings,
+        team_context_sha256: state.team_context ? mockHash(state.team_context) : null,
+        skills: state.skills.map(({ skill_name, mode, content }) => ({
+          skill_name,
+          mode,
+          content_sha256: content ? mockHash(content) : null,
+        })),
+      })
       return fail(
         422,
         `This preset was rejected to protect the members it applies to. ${findings
           .map((finding) => `${finding.location}, line ${finding.line}: ${finding.reason} [${finding.rule_id}]`)
           .join('; ')}.`,
-        { type: 'about:blank', title: 'Skill preset rejected for security', findings }
+        { type: 'about:blank', title: 'Skill preset rejected for security', findings },
+        writeLatency
       )
     }
     if (assignmentConflict(state.assigned_to, exceptId)) {
@@ -337,7 +377,6 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   }
 
   const findPreset = (skillPresetId: string) => presets.find(({ id }) => id === skillPresetId)
-  const now = () => new Date().toISOString()
   const forbidden = () => fail(403, ADMIN_ONLY)
   let concurrentSaveDone = false
   let listFailedOnce = false
@@ -380,7 +419,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       presets.push(preset)
       recordRevision(preset, 'CREATE', currentUser.email, timestamp)
       pushEvent('CREATE', currentUser.email, timestamp, auditView(preset))
-      return respond(toResponse(preset))
+      return respond(toResponse(preset), writeLatency)
     },
     editSkillPreset(skillPresetId, body) {
       if (!seed.isAdmin) return forbidden()
@@ -399,7 +438,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       presets = presets.map((item) => (item.id === skillPresetId ? preset : item))
       recordRevision(preset, 'UPDATE', currentUser.email, timestamp)
       pushEvent('UPDATE', currentUser.email, timestamp, auditView(preset), auditView(previous))
-      return respond(toResponse(preset))
+      return respond(toResponse(preset), writeLatency)
     },
     deleteSkillPreset(skillPresetId) {
       if (!seed.isAdmin) return forbidden()

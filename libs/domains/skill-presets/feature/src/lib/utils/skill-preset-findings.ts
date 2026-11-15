@@ -50,3 +50,13 @@ export function findingLocationLabel(finding: SkillPresetFinding) {
 export function findingFieldId(target: FindingTarget) {
   return `skill-preset-field-${findingTargetKey(target).replace(/[^a-zA-Z0-9-]/g, '-')}`
 }
+
+/** Where a finding came from, as text: never shown by color alone. */
+export const findingSourceLabel = (finding: SkillPresetFinding) =>
+  finding.source === 'MODEL' ? 'Model review' : 'Rule check'
+
+/** One line of text per finding, for fields that only take a text error (inputs, text areas). */
+export const findingsAsText = (findings: SkillPresetFinding[]) =>
+  findings.length > 0
+    ? findings.map((finding) => `${findingSourceLabel(finding)}, line ${finding.line}: ${finding.reason}.`).join(' ')
+    : undefined

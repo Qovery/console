@@ -52,8 +52,15 @@ export interface SkillPresetResponse {
   assigned_to: SkillPresetAssignedTo
 }
 
+export type SkillPresetReviewVerdict = 'ALLOW' | 'BLOCK'
+
 export interface SkillPresetRevisionResponse {
   skill_preset_id: string
+  /** The model security review of this save. Absent on revisions saved before the review existed. */
+  review_verdict?: SkillPresetReviewVerdict | null
+  review_model?: string | null
+  review_prompt_version?: string | null
+  review_findings?: SkillPresetFinding[] | null
   revision: number
   change_type: SkillPresetChangeType
   edited_by: string
@@ -110,7 +117,24 @@ export interface InjectedSkillResponse {
 }
 
 /** One security finding of a 422. The offending text is never echoed. */
+export type SkillPresetFindingSource = 'RULES' | 'MODEL'
+
+/** Model findings use `rule_id` as a category. */
+export const SKILL_PRESET_MODEL_CATEGORIES = [
+  'prompt-injection',
+  'concealment',
+  'credential-access',
+  'data-exfiltration',
+  'unsafe-execution',
+  'approval-bypass',
+  'social-engineering',
+  'other',
+] as const
+
 export interface SkillPresetFinding {
+  /** RULES: the deterministic checks. MODEL: the review by a model on AWS Bedrock. Absent on older answers: rules. */
+  source?: SkillPresetFindingSource
+  /** A rule id for RULES, a category for MODEL. */
   rule_id: string
   /** `description`, `team context`, `description of skill '<name>'` or `content of skill '<name>'`. */
   location: string

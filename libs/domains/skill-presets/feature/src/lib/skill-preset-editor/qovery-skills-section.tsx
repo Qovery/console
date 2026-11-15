@@ -4,7 +4,7 @@ import { SKILL_PRESET_LIMITS, type SkillPresetFinding } from '@qovery/domains/sk
 import { Button, Checkbox, Icon, InputText, SegmentedControl } from '@qovery/shared/ui'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { qoverySkillDescription } from '../utils/qovery-skills'
-import { findingFieldId, findingsFor } from '../utils/skill-preset-findings'
+import { findingFieldId, findingsAsText, findingsFor } from '../utils/skill-preset-findings'
 import { type QoverySkillChoice, type SkillPresetFormValues } from '../utils/skill-preset-form'
 import { QOVERY_SKILL_SIZES, formatTokens } from '../utils/token-budget'
 
@@ -111,12 +111,7 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
                   value={field.value}
                   onChange={field.onChange}
                   hint="Agents read it to decide when to load the skill."
-                  error={
-                    fieldState.error?.message ??
-                    (descriptionFindings.length > 0
-                      ? descriptionFindings.map((finding) => `Line ${finding.line}: ${finding.reason}.`).join(' ')
-                      : undefined)
-                  }
+                  error={fieldState.error?.message ?? findingsAsText(descriptionFindings)}
                 />
               </div>
             )}

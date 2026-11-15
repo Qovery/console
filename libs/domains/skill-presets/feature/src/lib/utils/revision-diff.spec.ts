@@ -1,5 +1,5 @@
 import { type SkillPresetRevisionResponse } from '@qovery/domains/skill-presets/data-access'
-import { diffRevisions, revisionToRequest, summarizeDiff } from './revision-diff'
+import { diffRevisions, reviewSummary, revisionToRequest, summarizeDiff } from './revision-diff'
 
 const revision = (overrides: Partial<SkillPresetRevisionResponse>): SkillPresetRevisionResponse => ({
   skill_preset_id: 'preset-1',
@@ -53,5 +53,12 @@ describe('diffRevisions', () => {
       skills: [{ skill_name: 'qovery-deploy', mode: 'OVERLAY', content: 'Wait.' }],
       assigned_to: { organization_default: true, role_ids: [], user_ids: [] },
     })
+  })
+
+  it('summarizes the security review of a revision', () => {
+    expect(
+      reviewSummary(revision({ review_verdict: 'ALLOW', review_model: 'review-model', review_prompt_version: 'v1' }))
+    ).toBe('Reviewed by review-model, prompt v1: allowed')
+    expect(reviewSummary(revision({}))).toBeNull()
   })
 })

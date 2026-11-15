@@ -2,7 +2,7 @@ import { Controller, useFieldArray, useFormContext, useFormState, useWatch } fro
 import { SKILL_PRESET_LIMITS, type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 import { Button, Icon, InputText, InputTextArea, useModal } from '@qovery/shared/ui'
 import { MarkdownField } from '../markdown-field/markdown-field'
-import { findingFieldId, findingsFor } from '../utils/skill-preset-findings'
+import { findingFieldId, findingsAsText, findingsFor } from '../utils/skill-preset-findings'
 import { type SkillPresetFormValues, effectiveQoverySkills } from '../utils/skill-preset-form'
 import { type LibrarySkill, SkillLibraryModal } from './skill-library-modal'
 
@@ -63,12 +63,7 @@ function CustomSkillRow({ index, findings, onRemove }: CustomSkillRowProps) {
               value={field.value}
               onChange={field.onChange}
               hint="Agents only see this description until a task needs the skill. Say what it does and when to use it."
-              error={
-                fieldState.error?.message ??
-                (descriptionFindings.length > 0
-                  ? descriptionFindings.map((finding) => `Line ${finding.line}: ${finding.reason}.`).join(' ')
-                  : undefined)
-              }
+              error={fieldState.error?.message ?? findingsAsText(descriptionFindings)}
             />
           </div>
         )}

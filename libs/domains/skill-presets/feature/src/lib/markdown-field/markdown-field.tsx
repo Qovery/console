@@ -38,9 +38,9 @@ function applyFindings({ editor: editorInstance, monaco, decorations }: MonacoHa
   monaco.editor.setModelMarkers(
     model,
     'skill-preset-findings',
-    lines.map(({ line, reason, rule_id }) => ({
+    lines.map(({ line, reason, rule_id, source }) => ({
       severity: monaco.MarkerSeverity.Error,
-      message: `${reason} (${rule_id})`,
+      message: `${source === 'MODEL' ? 'Model review' : 'Rule check'}: ${reason} (${rule_id})`,
       startLineNumber: line,
       startColumn: 1,
       endLineNumber: line,
@@ -93,7 +93,7 @@ export function MarkdownField({
   const feedbackId = `${id}-feedback`
   const describedBy = [hint ? hintId : null, error || hasFindings ? feedbackId : null].filter(Boolean).join(' ')
   // A stable key: the parent rebuilds the findings array on every render.
-  const findingsKey = findings.map(({ line, rule_id }) => `${line}:${rule_id}`).join(',')
+  const findingsKey = findings.map(({ line, rule_id, source }) => `${source}:${line}:${rule_id}`).join(',')
 
   useEffect(() => {
     if (handlesRef.current) applyFindings(handlesRef.current, findingsRef.current)

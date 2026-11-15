@@ -1,5 +1,6 @@
 import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
+import { FindingSourceLabel } from '../finding-list/finding-source-label'
 import { scrollToElement } from '../utils/scroll'
 import { findingFieldId, findingLocationLabel, findingTarget } from '../utils/skill-preset-findings'
 
@@ -34,13 +35,18 @@ export function SecurityFindingsSummary({ findings }: SecurityFindingsSummaryPro
         </Callout.TextHeading>
         <Callout.TextDescription>
           <p className="mb-2">
-            Everything in a preset runs in your members’ agents, on their machines. Qovery checks it on save and refuses
-            text that could expose secrets, send data out or act without the member knowing. This is often a pasted
-            snippet or a phrase that reads like an instruction. Rephrase or remove these lines, then save again.
+            Everything in a preset runs in your members’ agents, on their machines. Every save is checked by rules and
+            by a model review, which refuse text that could expose secrets, send data out or act without the member
+            knowing. This is often a pasted snippet or a phrase that reads like an instruction. Rephrase or remove these
+            lines, then save again.
           </p>
           <ul className="flex flex-col gap-1">
             {findings.map((finding) => (
-              <li key={`${finding.location}-${finding.line}-${finding.rule_id}`}>
+              <li
+                key={`${finding.source ?? 'RULES'}-${finding.location}-${finding.line}-${finding.rule_id}`}
+                className="flex flex-wrap items-baseline gap-x-1.5"
+              >
+                <FindingSourceLabel finding={finding} />
                 <Button
                   type="button"
                   variant="plain"

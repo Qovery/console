@@ -240,3 +240,14 @@ describe('create flow', () => {
     expect(screen.getByRole('textbox', { name: 'Team instructions for qovery-deploy' })).toBeInTheDocument()
   })
 })
+
+describe('AI features off', () => {
+  it('explains why and disables creating, while the list stays readable', async () => {
+    useScenario('ai-features-off')
+    renderWithProviders(<SettingsSkillPresets />)
+
+    expect(await screen.findByTestId('ai-features-notice')).toHaveTextContent('Skill presets need AI features')
+    expect(screen.getByRole('button', { name: /Create preset/ })).toBeDisabled()
+    expect(await screen.findByText('Backend team')).toBeInTheDocument()
+  })
+})

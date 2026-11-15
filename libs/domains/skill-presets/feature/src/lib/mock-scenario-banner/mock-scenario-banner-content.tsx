@@ -9,10 +9,16 @@ export interface MockScenarioBannerContentProps {
   scenario: SkillPresetsMockScenario
   descriptions: Record<SkillPresetsMockScenario, string>
   unsafeSample: string
+  modelOnlySample: string
 }
 
 /** Loaded only when the mock is active, with the mock tools: see `MockScenarioBanner`. */
-export function MockScenarioBannerContent({ scenario, descriptions, unsafeSample }: MockScenarioBannerContentProps) {
+export function MockScenarioBannerContent({
+  scenario,
+  descriptions,
+  unsafeSample,
+  modelOnlySample,
+}: MockScenarioBannerContentProps) {
   return (
     <div
       role="status"
@@ -38,10 +44,12 @@ export function MockScenarioBannerContent({ scenario, descriptions, unsafeSample
         </span>
       )}
       <span className="text-neutral-subtle">{descriptions[scenario]}. Data resets on reload.</span>
-      {scenario === 'security-rejection' && (
+      {(scenario === 'security-rejection' || scenario === 'model-rejection') && (
         <span className="flex items-center gap-1">
-          <span className="text-neutral-subtle">Unsafe sample:</span>
-          <CopyButton content={unsafeSample} size="xs" />
+          <span className="text-neutral-subtle">
+            {scenario === 'security-rejection' ? 'Unsafe sample:' : 'Reworded sample:'}
+          </span>
+          <CopyButton content={scenario === 'security-rejection' ? unsafeSample : modelOnlySample} size="xs" />
         </span>
       )}
       <span className="ml-auto flex items-center gap-1">

@@ -53,6 +53,16 @@ const containerRegistriesSettingsUrl = (organizationId: string) =>
 const helmRepositoriesSettingsUrl = (organizationId: string) =>
   `${organizationSettingsUrl(organizationId)}/helm-repositories`
 
+/** A skill preset save the security review refused: its audit entry holds hashes and findings, no text. */
+const isBlockedSkillPresetSave = (event: OrganizationEventResponse) => {
+  if ((event.sub_target_type as string | null | undefined) !== SKILL_PRESET_SUB_TARGET_TYPE) return false
+  try {
+    return JSON.parse(event.change ?? '{}')?.review_verdict === 'BLOCK'
+  } catch {
+    return false
+  }
+}
+
 const skillPresetsSettingsUrl = (organizationId: string) => `${organizationSettingsUrl(organizationId)}/skill-presets`
 
 export function RowEvent(props: RowEventProps) {
@@ -260,6 +270,9 @@ export function RowEvent(props: RowEventProps) {
                   {' '}
                   : {upperCaseFirstLetter(event.sub_target_type)?.replace(/_/g, ' ')}
                 </span>
+              )}
+              {isBlockedSkillPresetSave(event) && (
+                <span className="text-neutral-subtle"> · Rejected by the security review</span>
               )}
             </span>
           </Skeleton>

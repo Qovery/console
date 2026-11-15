@@ -3,14 +3,17 @@ import { getSkillPresetsMockScenario, loadSkillPresetsMockTools } from '@qovery/
 
 // The mock tools hold an unsafe text sample for testing: they load only when the mock is active.
 const LazyBanner = lazy(async () => {
-  const [{ SKILL_PRESETS_MOCK_SCENARIO_DESCRIPTIONS, MOCK_UNSAFE_SAMPLE }, { MockScenarioBannerContent }] =
-    await Promise.all([loadSkillPresetsMockTools(), import('./mock-scenario-banner-content')])
+  const [
+    { SKILL_PRESETS_MOCK_SCENARIO_DESCRIPTIONS, MOCK_UNSAFE_SAMPLE, MOCK_MODEL_ONLY_SAMPLE },
+    { MockScenarioBannerContent },
+  ] = await Promise.all([loadSkillPresetsMockTools(), import('./mock-scenario-banner-content')])
   return {
     default: ({ scenario }: { scenario: NonNullable<ReturnType<typeof getSkillPresetsMockScenario>> }) => (
       <MockScenarioBannerContent
         scenario={scenario}
         descriptions={SKILL_PRESETS_MOCK_SCENARIO_DESCRIPTIONS}
         unsafeSample={MOCK_UNSAFE_SAMPLE}
+        modelOnlySample={MOCK_MODEL_ONLY_SAMPLE}
       />
     ),
   }

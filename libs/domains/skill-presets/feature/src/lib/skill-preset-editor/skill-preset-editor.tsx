@@ -4,17 +4,22 @@ import { type ReactNode, useDeferredValue, useEffect, useMemo, useRef, useState 
 import { Controller, FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import {
   SKILL_PRESET_LIMITS,
+  SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
   type SkillPresetAssignees,
   type SkillPresetFinding,
   type SkillPresetResponse,
   getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
   getSkillPresetFindings,
+  isSkillPresetAiFeaturesOff,
   isSkillPresetConcurrentModification,
+  isSkillPresetReviewUnavailable,
 } from '@qovery/domains/skill-presets/data-access'
-import { Badge, Button, Callout, Heading, Icon, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Heading, Icon, InputText, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
+import { AI_FEATURES_OFF_TOOLTIP, AiFeaturesNotice } from '../ai-features-notice/ai-features-notice'
+import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
 import { useCreateSkillPreset } from '../hooks/use-create-skill-preset/use-create-skill-preset'
 import { useEditSkillPreset } from '../hooks/use-edit-skill-preset/use-edit-skill-preset'
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
@@ -35,6 +40,7 @@ import {
   findingFieldId,
   findingTarget,
   findingTargetKey,
+  findingsAsText,
   findingsFor,
 } from '../utils/skill-preset-findings'
 import { type SkillPresetFormValues, toSkillPresetFormValues, toSkillPresetRequest } from '../utils/skill-preset-form'
@@ -149,7 +155,7 @@ function AgentContextPanel({ draftId, otherPresets, assignees }: AgentContextPan
         </Heading>
         <p className="text-xs text-neutral-subtle">
           Agents read a short skill list first, then load only the skills a task needs. Members can read every piece in
-          full, with its SHA-256.
+          full, with its SHA-256. Every save is checked by rules and by a model review before it reaches members.
         </p>
       </div>
       <PreviewAsMemberSelect
@@ -208,11 +214,17 @@ export function SkillPresetEditorForm({
   })
   const base = useWatch({ control: methods.control, name: 'base' })
   const { errors, isDirty, isSubmitted } = methods.formState
-  const { mutateAsync: createSkillPreset, isLoading: isCreating } = useCreateSkillPreset()
+  const { mutateAsync: createSkillPreset } = useCreateSkillPreset()
   const { mutateAsync: editSkillPreset, isLoading: isEditing } = useEditSkillPreset()
   const [rejection, setRejection] = useState<Rejection | null>(null)
   const [conflictDetail, setConflictDetail] = useState<string | null>(null)
   const [serverError, setServerError] = useState<string | null>(null)
+  // 'review-unavailable': the model review could not run (503). 'ai-off': AI features are off.
+  const [blockedBy, setBlockedBy] = useState<'review-unavailable' | 'ai-off' | null>(null)
+  // A save is a security review (a few seconds), then the write. One at a time: a double click sends once.
+  const [savePhase, setSavePhase] = useState<'checking' | 'saving' | null>(null)
+  const saving = useRef(false)
+  const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId }) && blockedBy !== 'ai-off'
   // The revision this draft started from. A newer one on the server means someone else saved meanwhile.
   const [baseRevision, setBaseRevision] = useState(preset?.revision)
   // q-core answered 409 because the preset changed between its read and its write.
@@ -225,7 +237,8 @@ export function SkillPresetEditorForm({
   const errorCount = Object.keys(flatErrors).length
   const changedElsewhere =
     preset !== undefined &&
-    (savedElsewhere || (baseRevision !== undefined && preset.revision > baseRevision && !isEditing))
+    (savedElsewhere ||
+      (baseRevision !== undefined && preset.revision > baseRevision && !isEditing && savePhase === null))
 
   useBlocker({
     disabled: !isDirty,
@@ -308,24 +321,37 @@ export function SkillPresetEditorForm({
   }
 
   const onValid = async (submitted: SkillPresetFormValues) => {
+    if (saving.current) return
+    saving.current = true
     setRejection(null)
     setConflictDetail(null)
     setServerError(null)
+    setBlockedBy(null)
     setSavedElsewhere(false)
+    setSavePhase('checking')
     const body = toSkillPresetRequest({ ...submitted, isTemplate: asTemplate })
     try {
       if (preset) {
         const saved = await editSkillPreset({ organizationId, skillPresetId: preset.id, body })
+        // The review passed and the revision is stored: refresh what the page shows from it.
+        setSavePhase('saving')
+        await queryClient.invalidateQueries({ queryKey: queries.skillPresets._def })
         methods.reset(toSkillPresetFormValues(saved))
         setBaseRevision(saved.revision)
       } else {
         await createSkillPreset({ organizationId, body })
+        setSavePhase('saving')
         leavingAfterSave.current = true
         navigate({ to: '/organization/$organizationId/settings/skill-presets', params: { organizationId } })
       }
     } catch (error) {
       const status = getSkillPresetErrorStatus(error)
-      if (status === 422) {
+      if (isSkillPresetReviewUnavailable(error)) {
+        // Nothing was saved and the draft stays as is: Retry sends the same draft again.
+        setBlockedBy('review-unavailable')
+      } else if (isSkillPresetAiFeaturesOff(error)) {
+        setBlockedBy('ai-off')
+      } else if (status === 422) {
         const rejectedFindings = getSkillPresetFindings(error)
         const snapshot: Record<string, string | undefined> = {}
         rejectedFindings.forEach((finding) => {
@@ -344,20 +370,20 @@ export function SkillPresetEditorForm({
       } else {
         setServerError(getSkillPresetErrorDetail(error) ?? 'The preset could not be saved. Try again.')
       }
+    } finally {
+      saving.current = false
+      setSavePhase(null)
     }
   }
+
+  const submit = methods.handleSubmit(onValid, onInvalid)
 
   const descriptionFindings = findingsFor(findings, { field: 'description' })
 
   return (
     <FormProvider {...methods}>
       <Section>
-        <form
-          id="skill-preset-editor-top"
-          onSubmit={methods.handleSubmit(onValid, onInvalid)}
-          noValidate
-          className="flex flex-col gap-6 px-8 pt-6"
-        >
+        <form id="skill-preset-editor-top" onSubmit={submit} noValidate className="flex flex-col gap-6 px-8 pt-6">
           <div className="flex flex-col gap-3">
             <Link
               to="/organization/$organizationId/settings/skill-presets"
@@ -414,6 +440,32 @@ export function SkillPresetEditorForm({
             </Callout.Root>
           )}
           {findings.length > 0 && <SecurityFindingsSummary findings={findings} />}
+          {blockedBy === 'review-unavailable' && (
+            <Callout.Root color="yellow" role="alert">
+              <Callout.Icon>
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>{SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE}</Callout.TextHeading>
+                <Callout.TextDescription>
+                  Your changes are still here. Retry sends the same draft to the review again.
+                </Callout.TextDescription>
+              </Callout.Text>
+              <Button
+                type="button"
+                size="md"
+                variant="outline"
+                color="neutral"
+                className="self-center"
+                disabled={savePhase !== null}
+                onClick={() => submit()}
+              >
+                <Icon iconName="rotate-right" iconStyle="regular" />
+                Retry
+              </Button>
+            </Callout.Root>
+          )}
+          {!aiFeaturesEnabled && <AiFeaturesNotice />}
           {serverError && (
             <Callout.Root color="red" role="alert">
               <Callout.Icon>
@@ -454,12 +506,7 @@ export function SkillPresetEditorForm({
                         value={field.value}
                         onChange={field.onChange}
                         hint="Shown to admins in the list and to members in their agent."
-                        error={
-                          fieldState.error?.message ??
-                          (descriptionFindings.length > 0
-                            ? descriptionFindings.map((finding) => `Line ${finding.line}: ${finding.reason}.`).join(' ')
-                            : undefined)
-                        }
+                        error={fieldState.error?.message ?? findingsAsText(descriptionFindings)}
                       />
                     </div>
                   )}
@@ -558,9 +605,30 @@ export function SkillPresetEditorForm({
             >
               Cancel
             </Button>
-            <Button type="submit" size="lg" loading={isCreating || isEditing} disabled={preset && !isDirty}>
-              {preset ? 'Save changes' : asTemplate ? 'Save template' : 'Create preset'}
-            </Button>
+            <span className="sr-only" aria-live="polite">
+              {savePhase === 'checking' ? 'Checking for security' : savePhase === 'saving' ? 'Saving' : ''}
+            </span>
+            <Tooltip content={AI_FEATURES_OFF_TOOLTIP} disabled={aiFeaturesEnabled}>
+              {/* A disabled button gets no pointer or focus events: the wrapper carries the tooltip. */}
+              <span tabIndex={aiFeaturesEnabled ? undefined : 0} className="inline-flex">
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={savePhase !== null || !aiFeaturesEnabled || (preset && !isDirty)}
+                >
+                  {savePhase && <LoaderSpinner className="w-4" />}
+                  {savePhase === 'checking'
+                    ? 'Checking for security…'
+                    : savePhase === 'saving'
+                      ? 'Saving…'
+                      : preset
+                        ? 'Save changes'
+                        : asTemplate
+                          ? 'Save template'
+                          : 'Create preset'}
+                </Button>
+              </span>
+            </Tooltip>
           </div>
         </form>
       </Section>

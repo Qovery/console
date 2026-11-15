@@ -1,7 +1,9 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type ReactElement, type ReactNode } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Icon, Navbar, Section, Skeleton } from '@qovery/shared/ui'
+import { Button, Icon, Navbar, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { AI_FEATURES_OFF_TOOLTIP, AiFeaturesNotice } from '../ai-features-notice/ai-features-notice'
+import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { MemberAgentView } from '../member-agent-view/member-agent-view'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
@@ -14,7 +16,7 @@ export interface SkillPresetsLayoutProps {
 }
 
 const ADMIN_DESCRIPTION =
-  'Decide how your members’ coding agents use Qovery: which Qovery skills they load, your team’s instructions on top, and skills of your own. Every save is checked for unsafe content and recorded in the audit logs.'
+  'Decide how your members’ coding agents use Qovery: which Qovery skills they load, your team’s instructions on top, and skills of your own. Every save is checked by rules and by a model review before it reaches members, and recorded in the audit logs.'
 const MEMBER_DESCRIPTION =
   'What your coding agent receives from Qovery: the skills it can load and your team’s instructions, readable in full.'
 
@@ -36,6 +38,7 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
+  const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
   const basePath = `/organization/${organizationId}/settings/skill-presets`
 
   return (
@@ -45,19 +48,29 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
         description={isLoading ? undefined : canManage ? ADMIN_DESCRIPTION : MEMBER_DESCRIPTION}
       >
         {!isLoading && canManage && (
-          <Button
-            size="md"
-            onClick={() =>
-              navigate({ to: '/organization/$organizationId/settings/skill-presets/new', params: { organizationId } })
-            }
-          >
-            <Icon iconName="circle-plus" iconStyle="regular" />
-            Create preset
-          </Button>
+          <Tooltip content={AI_FEATURES_OFF_TOOLTIP} disabled={aiFeaturesEnabled}>
+            {/* A disabled button gets no pointer or focus events: the wrapper carries the tooltip. */}
+            <span tabIndex={aiFeaturesEnabled ? undefined : 0} className="inline-flex">
+              <Button
+                size="md"
+                disabled={!aiFeaturesEnabled}
+                onClick={() =>
+                  navigate({
+                    to: '/organization/$organizationId/settings/skill-presets/new',
+                    params: { organizationId },
+                  })
+                }
+              >
+                <Icon iconName="circle-plus" iconStyle="regular" />
+                Create preset
+              </Button>
+            </span>
+          </Tooltip>
         )}
       </SettingsHeading>
       <div className="flex flex-col gap-6">
         <MockScenarioBanner />
+        {!isLoading && canManage && !aiFeaturesEnabled && <AiFeaturesNotice />}
         {isLoading ? (
           <AccessSkeleton />
         ) : canManage ? (

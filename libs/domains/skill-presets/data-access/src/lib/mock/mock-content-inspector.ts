@@ -140,7 +140,7 @@ export function inspectSkillPresetContent(fields: InspectedField[]): SkillPreset
       const add = (ruleId: string, reason: string) => {
         if (seen.has(ruleId)) return
         seen.add(ruleId)
-        findings.push({ rule_id: ruleId, location, line, reason })
+        findings.push({ source: 'RULES', rule_id: ruleId, location, line, reason })
       }
 
       RULES.filter(({ pattern }) => pattern.test(lineText)).forEach(({ id, reason }) => add(id, reason))

@@ -33,7 +33,7 @@ import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner
 import { AssignmentChips } from '../settings-skill-presets/assignment-chips'
 import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
 import { baseLabel } from '../utils/qovery-skills'
-import { diffRevisions, revisionToRequest, skillAsText, summarizeDiff } from '../utils/revision-diff'
+import { diffRevisions, reviewSummary, revisionToRequest, skillAsText, summarizeDiff } from '../utils/revision-diff'
 import { findingLocationLabel } from '../utils/skill-preset-findings'
 
 const CHANGE_LABELS = { CREATE: 'Created', UPDATE: 'Updated', DELETE: 'Deleted' } as const
@@ -330,6 +330,12 @@ function SkillPresetHistoryPage() {
                 {dateFullFormat(selected.edited_at)} · {baseLabel(selected.base)}
                 {previous ? ` · compared with revision ${previous.revision}` : ''}
               </p>
+              {reviewSummary(selected) && (
+                <p className="flex items-center gap-1.5 text-xs text-neutral-subtle">
+                  <Icon iconName="shield-check" iconStyle="regular" aria-hidden="true" />
+                  {reviewSummary(selected)}
+                </p>
+              )}
             </div>
             {selected.change_type !== 'DELETE' && (!isLatest || isDeleted || !presetExists) && (
               <Button

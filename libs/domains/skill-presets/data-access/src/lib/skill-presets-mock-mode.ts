@@ -73,6 +73,16 @@ export function getSkillPresetsMockCanManage(): boolean | null {
   return !SKILL_PRESETS_MOCK_MEMBER_SCENARIOS.includes(scenario)
 }
 
+/**
+ * In mock mode, whether the mock organization has AI features on: false in the ai-features-off
+ * scenario. Null outside mock mode, where the organization's own setting decides.
+ */
+export function getSkillPresetsMockAiFeaturesEnabled(): boolean | null {
+  const scenario = getSkillPresetsMockScenario()
+  if (!scenario) return null
+  return scenario !== 'ai-features-off'
+}
+
 /** Switches scenario and reloads, so the in-memory data starts from the new scenario's seed. */
 export function switchSkillPresetsMockScenario(scenario: SkillPresetsMockScenario | 'off') {
   const url = new URL(window.location.href)

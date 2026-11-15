@@ -1,11 +1,13 @@
 import {
   getSkillPresetErrorStatus,
   getSkillPresetFindings,
+  isSkillPresetAiFeaturesOff,
   isSkillPresetConcurrentModification,
+  isSkillPresetReviewUnavailable,
 } from '../skill-presets.errors'
 import { type SkillLoadChange, type SkillPresetRequest } from '../skill-presets.types'
 import { MOCK_ROLE_IDS } from './mock-scenarios'
-import { MOCK_UNSAFE_SAMPLE } from './mock-tools'
+import { MOCK_MODEL_ONLY_SAMPLE, MOCK_UNSAFE_SAMPLE } from './mock-tools'
 import { createSkillPresetsMockApi } from './skill-presets-mock-api'
 
 const ORGANIZATION_ID = 'organization-1'
@@ -86,7 +88,14 @@ describe('createSkillPresetsMockApi', () => {
     const findings = getSkillPresetFindings(error)
     expect(findings).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ rule_id: 'dump-secrets', location: 'team context', line: 2 }),
+        expect.objectContaining({ source: 'RULES', rule_id: 'dump-secrets', location: 'team context', line: 2 }),
+        expect.objectContaining({
+          source: 'MODEL',
+          rule_id: 'data-exfiltration',
+          location: 'team context',
+          line: 6,
+          reason: 'Asks the agent to send environment data to an outside address',
+        }),
         expect.objectContaining({ rule_id: 'read-credentials', location: 'team context', line: 3 }),
         expect.objectContaining({ rule_id: 'override-instructions', location: 'team context', line: 4 }),
         expect.objectContaining({ rule_id: 'conceal-from-user', location: 'team context', line: 5 }),
@@ -214,28 +223,35 @@ describe('createSkillPresetsMockApi', () => {
     expect(retry.value?.length).toBeGreaterThan(0)
   })
 
-  it.each(['empty', 'typical', 'conflicts', 'security-rejection', 'large', 'slow'] as const)(
-    'never answers an error on reads in the %s scenario',
-    async (scenario) => {
-      const api = createSkillPresetsMockApi(scenario)
-      const to = new Date()
-      const from = new Date(to.getTime() - 30 * 24 * 3_600_000)
-      for (let attempt = 0; attempt < 3; attempt++) {
-        const results = await Promise.all([
-          settle(api.listSkillPresets(ORGANIZATION_ID)),
-          settle(api.listSkillPresetRevisions(ORGANIZATION_ID)),
-          settle(api.listSkillLoads(ORGANIZATION_ID, { pageSize: 30 })),
-          settle(
-            api.getSkillPresetUsage(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
-          ),
-          settle(api.getResolvedSkillPreset(ORGANIZATION_ID)),
-          settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy')),
-          settle(api.listAssignees()),
-        ])
-        expect(results.map(({ error }) => error)).toEqual(results.map(() => undefined))
-      }
+  it.each([
+    'empty',
+    'typical',
+    'conflicts',
+    'security-rejection',
+    'model-rejection',
+    'large',
+    'slow',
+    'ai-features-off',
+    'review-unavailable',
+  ] as const)('never answers an error on reads in the %s scenario', async (scenario) => {
+    const api = createSkillPresetsMockApi(scenario)
+    const to = new Date()
+    const from = new Date(to.getTime() - 30 * 24 * 3_600_000)
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const results = await Promise.all([
+        settle(api.listSkillPresets(ORGANIZATION_ID)),
+        settle(api.listSkillPresetRevisions(ORGANIZATION_ID)),
+        settle(api.listSkillLoads(ORGANIZATION_ID, { pageSize: 30 })),
+        settle(
+          api.getSkillPresetUsage(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
+        ),
+        settle(api.getResolvedSkillPreset(ORGANIZATION_ID)),
+        settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy')),
+        settle(api.listAssignees()),
+      ])
+      expect(results.map(({ error }) => error)).toEqual(results.map(() => undefined))
     }
-  )
+  })
 
   it('resolves no preset for the member in the member-no-preset scenario', async () => {
     const api = createSkillPresetsMockApi('member-no-preset')
@@ -305,5 +321,49 @@ describe('createSkillPresetsMockApi', () => {
     await settle(api.deleteSkillPreset(admins.id))
     const again = await settle(api.deleteSkillPreset(admins.id))
     expect(getSkillPresetErrorStatus(again.error)).toBe(404)
+  })
+
+  it('blocks a reworded line by the model review alone, and keeps a trace without the text', async () => {
+    const api = createSkillPresetsMockApi('model-rejection')
+    const { error } = await settle(
+      api.createSkillPreset(ORGANIZATION_ID, request({ team_context: MOCK_MODEL_ONLY_SAMPLE }))
+    )
+
+    expect(getSkillPresetFindings(error)).toEqual([
+      expect.objectContaining({ source: 'MODEL', rule_id: 'data-exfiltration', location: 'team context', line: 1 }),
+    ])
+    const trace = JSON.parse(api.auditEvents().at(-1)?.change ?? '{}')
+    expect(trace.review_verdict).toBe('BLOCK')
+    expect(JSON.stringify(trace)).not.toContain('collector.example.net')
+  })
+
+  it('answers 503 once when the review is unavailable, then saves the same draft', async () => {
+    const api = createSkillPresetsMockApi('review-unavailable')
+    const first = await settle(api.createSkillPreset(ORGANIZATION_ID, request()))
+    const retry = await settle(api.createSkillPreset(ORGANIZATION_ID, request()))
+
+    expect(isSkillPresetReviewUnavailable(first.error)).toBe(true)
+    expect(retry.value?.name).toBe('Release team')
+  })
+
+  it('refuses writes when AI features are off, but keeps reads', async () => {
+    const api = createSkillPresetsMockApi('ai-features-off')
+    const { error } = await settle(api.createSkillPreset(ORGANIZATION_ID, request()))
+    const { value } = await settle(api.listSkillPresets(ORGANIZATION_ID))
+
+    expect(isSkillPresetAiFeaturesOff(error)).toBe(true)
+    expect(value?.length).toBeGreaterThan(0)
+  })
+
+  it('records the review on every saved revision', async () => {
+    const api = createSkillPresetsMockApi('typical')
+    const { value } = await settle(api.listSkillPresetRevisions(ORGANIZATION_ID))
+    expect(value?.[0]).toEqual(
+      expect.objectContaining({
+        review_verdict: 'ALLOW',
+        review_model: expect.any(String),
+        review_prompt_version: 'v1',
+      })
+    )
   })
 })

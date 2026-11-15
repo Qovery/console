@@ -254,4 +254,91 @@ describe('SkillPresetEditorForm', () => {
     expect(await screen.findByText('This preset was changed by someone else')).toBeInTheDocument()
     expect(screen.queryByText('Not saved: a target already receives another preset')).not.toBeInTheDocument()
   })
+
+  it('shows the review in progress and sends a double click once', async () => {
+    let finish: (value: unknown) => void = () => undefined
+    mockEditSkillPreset.mockReturnValue(new Promise((resolve) => (finish = resolve)))
+    const { userEvent } = renderEdit()
+    await userEvent.type(screen.getByLabelText('Description (optional)'), 'x')
+    const save = screen.getByRole('button', { name: 'Save changes' })
+
+    await userEvent.dblClick(save)
+
+    const checking = await screen.findByRole('button', { name: /Checking for security…/ })
+    expect(checking).toBeDisabled()
+    expect(mockEditSkillPreset).toHaveBeenCalledTimes(1)
+    expect(screen.getByLabelText('Description (optional)')).toHaveValue('x')
+    finish({ ...savedPreset, description: 'x', revision: 4 })
+    expect(await screen.findByText('Revision 4')).toBeInTheDocument()
+  })
+
+  it('labels model findings and shows their reason in full', async () => {
+    mockCreateSkillPreset.mockRejectedValue(
+      buildSkillPresetApiError(422, 'Rejected', {
+        findings: [
+          {
+            source: 'RULES',
+            rule_id: 'dump-secrets',
+            location: 'team context',
+            line: 1,
+            reason: 'Asks the agent to print or collect secrets',
+          },
+          {
+            source: 'MODEL',
+            rule_id: 'data-exfiltration',
+            location: 'team context',
+            line: 2,
+            reason: 'Asks the agent to send environment data to an outside address',
+          },
+        ],
+      })
+    )
+    const { userEvent } = renderEditor()
+    await userEvent.type(screen.getByRole('textbox', { name: 'Team context' }), 'x')
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+
+    const summary = await screen.findByRole('alert')
+    expect(within(summary).getByText('Rule check')).toBeInTheDocument()
+    expect(within(summary).getByText('Model review')).toBeInTheDocument()
+    expect(
+      within(summary).getByText(/Asks the agent to send environment data to an outside address/)
+    ).toBeInTheDocument()
+    const lines = screen.getByRole('list', { name: 'Lines to fix' })
+    expect(within(lines).getAllByText(/Rule check|Model review/)).toHaveLength(2)
+  })
+
+  it('keeps the draft when the review is unavailable and retries the same draft', async () => {
+    mockCreateSkillPreset
+      .mockRejectedValueOnce(
+        buildSkillPresetApiError(503, 'The security review is unavailable. Nothing was saved. Try again in a minute.')
+      )
+      .mockResolvedValueOnce(savedPreset)
+    const { userEvent } = renderEditor()
+    await userEvent.type(screen.getByRole('textbox', { name: 'Team context' }), 'Deploy to staging first.')
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+
+    expect(
+      await screen.findByText('The security review is unavailable. Nothing was saved. Try again in a minute.')
+    ).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Team context' })).toHaveValue('Deploy to staging first.')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+
+    expect(mockCreateSkillPreset).toHaveBeenCalledTimes(2)
+    expect(mockCreateSkillPreset.mock.calls[1][0]).toEqual(mockCreateSkillPreset.mock.calls[0][0])
+  })
+
+  it('disables saving when the API says AI features are off', async () => {
+    mockCreateSkillPreset.mockRejectedValue(
+      buildSkillPresetApiError(
+        403,
+        'Turn on AI features for this organization to use skill presets: every preset is reviewed by a model before it reaches members.'
+      )
+    )
+    const { userEvent } = renderEditor()
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+
+    expect(await screen.findByTestId('ai-features-notice')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Create preset' })).toBeDisabled()
+  })
 })

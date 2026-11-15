@@ -102,3 +102,12 @@ export function skillAsText(skill: SkillPresetSkill | null) {
     .filter((line) => line !== null)
     .join('\n')
 }
+
+/** "Reviewed by <model>, prompt v1: allowed", or null for revisions saved before the review existed. */
+export function reviewSummary(revision: SkillPresetRevisionResponse) {
+  if (!revision.review_verdict) return null
+  const verdict = revision.review_verdict === 'ALLOW' ? 'allowed' : 'blocked'
+  const model = revision.review_model ?? 'a model'
+  const prompt = revision.review_prompt_version ? `, prompt ${revision.review_prompt_version}` : ''
+  return `Reviewed by ${model}${prompt}: ${verdict}`
+}
