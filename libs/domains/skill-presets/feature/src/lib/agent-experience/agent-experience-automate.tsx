@@ -20,6 +20,7 @@ import {
 import { useCopyToClipboard, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { AGENT_JOBS, AGENT_JOB_LEVELS, type AgentJob, policyExampleUrl } from '../utils/agent-jobs'
+import { NEW_JOB_TITLE, NewJobModal } from './new-job-modal'
 import { AgentExperiencePage } from './ui/agent-experience-ui'
 
 /** The Agent Tasks templates that run an agent on Qovery itself. */
@@ -119,6 +120,7 @@ function JobDetailsPanel({
   organizationId,
   onOpenChange,
   onExitComplete,
+  onNewJob,
 }: {
   job: AgentJob | null
   open: boolean
@@ -126,6 +128,7 @@ function JobDetailsPanel({
   organizationId: string
   onOpenChange: (open: boolean) => void
   onExitComplete: () => void
+  onNewJob: () => void
 }) {
   const { openModal, closeModal } = useModal()
   const [, copy] = useCopyToClipboard()
@@ -210,6 +213,22 @@ function JobDetailsPanel({
                 <CodeSection id="agent-job-policy" title="Policy (Rego)" code={job.policy} maxHeight="max-h-80" />
                 <p className="text-xs text-neutral-subtle">
                   Replace each REPLACE_WITH_... value with an ID from your organization before you create the token.
+                </p>
+                <p className="flex flex-wrap items-center gap-1 text-sm text-neutral-subtle">
+                  Need a different job?
+                  <Button
+                    type="button"
+                    variant="plain"
+                    color="brand"
+                    size="xs"
+                    className="h-auto px-0 text-sm"
+                    onClick={() => {
+                      onOpenChange(false)
+                      onNewJob()
+                    }}
+                  >
+                    Describe it
+                  </Button>
                 </p>
               </div>
             </div>
@@ -298,6 +317,13 @@ export function AgentExperienceAutomate() {
     jobs: AGENT_JOBS.filter((job) => job.level === level.level && matches(job)),
   })).filter(({ jobs }) => jobs.length > 0)
 
+  const { openModal: openNewJobModal, closeModal: closeNewJobModal } = useModal()
+  const openNewJob = () =>
+    openNewJobModal({
+      content: <NewJobModal onClose={closeNewJobModal} canManage={canManage} />,
+      options: { width: 680 },
+    })
+
   const openDetails = (job: AgentJob) => {
     setSelectedJob(job)
     setIsDetailsOpen(true)
@@ -312,14 +338,20 @@ export function AgentExperienceAutomate() {
         <Section className="gap-4">
           <div className="flex items-center justify-between gap-3">
             <Heading level={2}>Jobs for agents</Heading>
-            <InputSearch
-              placeholder="Search jobs..."
-              className="w-60"
-              customSize="h-9 text-sm"
-              value={search}
-              onChange={setSearch}
-              ariaLabel="Search jobs"
-            />
+            <div className="flex items-center gap-2">
+              <InputSearch
+                placeholder="Search jobs..."
+                className="w-60"
+                customSize="h-9 text-sm"
+                value={search}
+                onChange={setSearch}
+                ariaLabel="Search jobs"
+              />
+              <Button type="button" size="md" className="h-9 gap-1.5" onClick={openNewJob}>
+                <Icon iconName="circle-plus" iconStyle="regular" />
+                {NEW_JOB_TITLE}
+              </Button>
+            </div>
           </div>
           {levels.length > 0 ? (
             <div className="flex flex-col gap-8" data-testid="agent-job-ladder">
@@ -392,6 +424,7 @@ export function AgentExperienceAutomate() {
         organizationId={organizationId}
         onOpenChange={setIsDetailsOpen}
         onExitComplete={() => setSelectedJob(null)}
+        onNewJob={openNewJob}
       />
     </AgentExperiencePage>
   )

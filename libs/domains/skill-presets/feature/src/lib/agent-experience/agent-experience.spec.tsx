@@ -242,6 +242,57 @@ describe('AgentExperienceAutomate', () => {
   })
 })
 
+describe('Automate a new job', () => {
+  it('turns an intent into a qovery-policy-token command, from the Automate header', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Automate a new job' }))
+    const modal = within(await screen.findByTestId('new-job-modal'))
+    expect(modal.getByTestId('new-job-command')).toHaveTextContent('/qovery-policy-token <describe the job>')
+    expect(screen.getByTestId('submit-button')).toBeDisabled()
+
+    await userEvent.click(modal.getByRole('button', { name: /restart crashed services in staging/ }))
+    expect(modal.getByTestId('new-job-command')).toHaveTextContent(
+      '/qovery-policy-token Let my agent restart crashed services in staging, and nothing else'
+    )
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
+    expect(modal.getByText(/refuses everything by default/)).toBeInTheDocument()
+    expect(modal.getByText(/Works in Claude Code, Codex, Cursor/)).toBeInTheDocument()
+    expect(modal.queryByTestId('new-job-member-note')).not.toBeInTheDocument()
+  })
+
+  it('puts a typed intent on one line', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Automate a new job' }))
+    await userEvent.type(screen.getByTestId('new-job-intent'), 'Scale the api{enter}before Black Friday')
+    expect(screen.getByTestId('new-job-command')).toHaveTextContent(
+      '/qovery-policy-token Scale the api before Black Friday'
+    )
+  })
+
+  it('tells members an owner or admin must create the token', async () => {
+    useScenario('member')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Automate a new job' }))
+    expect(await screen.findByTestId('new-job-member-note')).toHaveTextContent(
+      'Creating the token needs an organization owner or admin'
+    )
+  })
+
+  it('opens from a job’s details', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByTestId('agent-job-stop-idle-environments'))
+    await userEvent.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Describe it' }))
+    expect(await screen.findByTestId('new-job-modal')).toBeInTheDocument()
+  })
+})
+
 describe('AgentExperiencePolicyTokens', () => {
   it('shows each token’s last 7 days, links to its activity, and the deleted tokens with history', async () => {
     useScenario('agent-experience-active')
