@@ -83,7 +83,7 @@ function LoadsContent({ organizationId }: { organizationId: string }) {
                 <Table.Cell>
                   {load?.skill_preset_id ? (
                     <Link
-                      to="/organization/$organizationId/settings/skill-presets/$skillPresetId/history"
+                      to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history"
                       params={{ organizationId, skillPresetId: load.skill_preset_id }}
                       className="text-neutral hover:text-brand"
                     >

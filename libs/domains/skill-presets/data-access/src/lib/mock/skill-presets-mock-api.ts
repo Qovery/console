@@ -39,7 +39,7 @@ import {
 import { inspectSkillPresetContent } from './mock-content-inspector'
 import { MOCK_REVIEW_MODEL, MOCK_REVIEW_PROMPT_VERSION, reviewSkillPresetContent } from './mock-model-review'
 import { type SkillPresetsMockScenario } from './mock-scenario-names'
-import { type MockPresetState, buildMockSeed } from './mock-scenarios'
+import { type MockPolicyToken, type MockPresetState, buildMockSeed } from './mock-scenarios'
 
 /** Deterministic stand-in for SHA-256: 64 hex characters, clearly not a real hash of the content. */
 export function mockHash(text: string) {
@@ -355,7 +355,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   const now = () => new Date().toISOString()
   let reviewFailedOnce = false
   // Off in the ai-features-off scenario until an admin turns them on. Resets on reload.
-  let aiFeaturesOn = scenario !== 'ai-features-off'
+  let aiFeaturesOn = scenario !== 'ai-features-off' && !seed.aiFeaturesOff
   const checkWrite = (state: MockPresetState, exceptId?: string): Promise<never> | null => {
     if (!aiFeaturesOn) return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
     const invalid = validate(state)
@@ -409,13 +409,17 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   const forbidden = () => fail(403, ADMIN_ONLY)
   let mockActions: MockAgentAction[] | null = null
   const agentActions = () =>
-    (mockActions ??=
-      scenario === 'agent-activity-empty' ? [] : buildMockAgentActions(loadRecords, members, { withDenials: true }))
+    (mockActions ??= buildMockAgentActions(loadRecords, members, {
+      withDenials: seed.agentExtras?.denials ?? true,
+      withMcp: seed.agentExtras?.mcp ?? true,
+      withPolicyToken: seed.agentExtras?.policyToken ?? true,
+    }))
   let concurrentSaveDone = false
   let listFailedOnce = false
 
   const api: SkillPresetsApi & {
     listAssignees: () => Promise<SkillPresetAssignees>
+    listPolicyTokens: () => Promise<MockPolicyToken[]>
     aiFeaturesEnabled: () => Promise<boolean>
   } = {
     listSkillPresets(_organizationId, { isTemplate } = {}) {
@@ -579,6 +583,10 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     },
     listAssignees() {
       return respond(seed.assignees)
+    },
+    listPolicyTokens() {
+      if (!seed.isAdmin) return forbidden()
+      return respond(seed.policyTokens ?? [])
     },
     aiFeaturesEnabled() {
       return respond(aiFeaturesOn)

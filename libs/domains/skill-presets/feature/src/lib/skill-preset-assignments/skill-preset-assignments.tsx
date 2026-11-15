@@ -61,7 +61,7 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
   const presetLink = (preset: { id: string; name: string } | null) =>
     preset ? (
       <Link
-        to="/organization/$organizationId/settings/skill-presets/$skillPresetId"
+        to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId"
         params={{ organizationId, skillPresetId: preset.id }}
         className="font-medium text-neutral hover:text-brand"
       >

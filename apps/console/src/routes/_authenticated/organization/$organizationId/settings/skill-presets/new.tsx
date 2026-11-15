@@ -1,6 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { z } from 'zod'
-import { SkillPresetCreate } from '@qovery/domains/skill-presets/feature'
 
 const searchSchema = z.object({
   template: z.string().optional(),
@@ -8,11 +7,15 @@ const searchSchema = z.object({
   asTemplate: z.boolean().optional(),
 })
 
+// Moved to Agent Experience. Kept so old links and bookmarks still work.
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/skill-presets/new')({
   validateSearch: searchSchema,
-  component: RouteComponent,
+  beforeLoad: ({ params: { organizationId }, search }) => {
+    throw redirect({
+      to: '/organization/$organizationId/agent-experience/skill-presets/new',
+      params: { organizationId },
+      search,
+      replace: true,
+    })
+  },
 })
-
-function RouteComponent() {
-  return <SkillPresetCreate />
-}

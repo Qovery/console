@@ -109,6 +109,7 @@ function RouteComponent() {
     children: [
       { title: 'Copilot', to: `${pathSettings}/ai-copilot` },
       { title: 'Skills', to: `${pathSettings}/skills` },
+      // Moved to Agent Experience: these old paths redirect there.
       { title: 'Skill presets', to: `${pathSettings}/skill-presets` },
       { title: 'Agent activity', to: `${pathSettings}/agent-activity` },
     ],

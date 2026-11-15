@@ -208,7 +208,10 @@ describe('RowEvent', () => {
     } as unknown as OrganizationEventResponse
     renderWithProviders(<RowEvent {...props} event={skillLoad} />)
 
-    expect(screen.getByRole('link', { name: 'Acme' })).toHaveAttribute('href', '/organization/1/settings/skill-presets')
+    expect(screen.getByRole('link', { name: 'Acme' })).toHaveAttribute(
+      'href',
+      '/organization/1/agent-experience/skill-presets'
+    )
   })
 
   it('should describe a skill preset save refused by the security review', () => {

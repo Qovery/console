@@ -1,12 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SkillPresetAssignments } from '@qovery/domains/skill-presets/feature'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
+// Moved to Agent Experience. Kept so old links and bookmarks still work.
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/skill-presets/assignments')(
   {
-    component: RouteComponent,
+    beforeLoad: ({ params: { organizationId } }) => {
+      throw redirect({
+        to: '/organization/$organizationId/agent-experience/skill-presets/assignments',
+        params: { organizationId },
+        replace: true,
+      })
+    },
   }
 )
-
-function RouteComponent() {
-  return <SkillPresetAssignments />
-}

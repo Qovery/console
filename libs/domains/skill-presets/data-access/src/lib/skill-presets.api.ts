@@ -5,6 +5,7 @@ import {
   type OrganizationEventSubTargetType,
   type OrganizationEventType,
   OrganizationMainCallsApi,
+  type OrganizationPolicyApiToken,
 } from 'qovery-typescript-axios'
 import { type AgentActivityParams, type AgentActivityResponse } from './agent-activity.types'
 import { getSkillPresetsMockScenario } from './skill-presets-mock-mode'
@@ -164,6 +165,7 @@ const httpSkillPresetsApi: SkillPresetsApi = {
 
 type MockSkillPresetsApi = SkillPresetsApi & {
   listAssignees: () => Promise<SkillPresetAssignees>
+  listPolicyTokens: () => Promise<OrganizationPolicyApiToken[]>
   aiFeaturesEnabled: () => Promise<boolean>
 }
 
@@ -197,6 +199,16 @@ export async function listMockSkillPresetAssignees(): Promise<SkillPresetAssigne
   const api = await resolveMockApi()
   if (!api) throw new Error('The skill presets mock is not active')
   return api.listAssignees()
+}
+
+/**
+ * Mock mode only: the mock organization's policy tokens. Outside mock mode the Console's own policy
+ * token query is used, so the mock never shows real tokens.
+ */
+export async function listMockPolicyTokens(): Promise<OrganizationPolicyApiToken[]> {
+  const api = await resolveMockApi()
+  if (!api) throw new Error('The skill presets mock is not active')
+  return api.listPolicyTokens()
 }
 
 /** Mock mode only: whether the mock organization has AI features on. It changes when they are turned on. */

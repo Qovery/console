@@ -51,13 +51,17 @@ export function TemplateGallery() {
   useDocumentTitle('Create skill preset - Organization settings')
 
   const open = (search: { template?: string; from?: string }) =>
-    navigate({ to: '/organization/$organizationId/settings/skill-presets/new', params: { organizationId }, search })
+    navigate({
+      to: '/organization/$organizationId/agent-experience/skill-presets/new',
+      params: { organizationId },
+      search,
+    })
 
   return (
     <Section className="flex flex-col gap-6 px-8 pb-8 pt-6">
       <div className="flex flex-col gap-3">
         <Link
-          to="/organization/$organizationId/settings/skill-presets"
+          to="/organization/$organizationId/agent-experience/skill-presets"
           params={{ organizationId }}
           className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
         >

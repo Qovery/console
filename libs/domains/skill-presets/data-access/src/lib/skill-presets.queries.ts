@@ -3,6 +3,7 @@ import { type AgentActivityParams } from './agent-activity.types'
 import {
   type SkillLoadsParams,
   getMockAiFeaturesEnabled,
+  listMockPolicyTokens,
   listMockSkillPresetAssignees,
   skillPresetsApi,
 } from './skill-presets.api'
@@ -65,6 +66,11 @@ export const skillPresets = createQueryKeys('skillPresets', {
   mockAiFeatures: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     queryFn: () => getMockAiFeaturesEnabled(),
+  }),
+  /** Mock mode only: see `listMockPolicyTokens`. */
+  mockPolicyTokens: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    queryFn: () => listMockPolicyTokens(),
   }),
   /** Mock mode only: see `listMockSkillPresetAssignees`. */
   mockAssignees: ({ organizationId }: { organizationId: string }) => ({

@@ -45,6 +45,54 @@ export interface MockSeed {
   memberRoles: Record<string, string>
   presets: MockPresetSeed[]
   loads: MockLoadSeed[]
+  /** The organization's policy tokens. None unless the scenario sets them. */
+  policyTokens?: MockPolicyToken[]
+  /** AI features start off (ai-features-off, agent-experience-empty). */
+  aiFeaturesOff?: boolean
+  /** Agent actions on top of the skill loads: MCP tool calls, the policy token, refused requests. */
+  agentExtras?: { mcp: boolean; policyToken: boolean; denials: boolean }
+}
+
+/** A policy token, shaped like `OrganizationPolicyApiToken` in qovery-typescript-axios. */
+export interface MockPolicyToken {
+  id: string
+  created_at: string
+  name: string
+  description?: string
+  role_name: string
+  role_id: string
+  creator_name: string
+  expires_at?: string
+  last_used_at?: string
+}
+
+const daysFromNow = (days: number) => new Date(Date.now() + days * 24 * 3_600_000).toISOString()
+
+/** The CI token matches the `policy:<id>:ci-deployer` actor of the agent activity mock. */
+function mockPolicyTokens(): MockPolicyToken[] {
+  return [
+    {
+      id: '3f1c9a2e-0000-4000-8000-00000000c1d0',
+      created_at: daysFromNow(-41),
+      name: 'ci-deployer',
+      description: 'CI pipeline: deploys staging environments only.',
+      role_name: 'devops',
+      role_id: MOCK_ROLE_IDS.devops,
+      creator_name: 'Alex Martin',
+      expires_at: daysFromNow(49),
+      last_used_at: daysFromNow(-0.4),
+    },
+    {
+      id: '3f1c9a2e-0000-4000-8000-00000000a9e1',
+      created_at: daysFromNow(-12),
+      name: 'review-agent',
+      description: 'Reads logs and statuses, never deploys.',
+      role_name: 'viewer',
+      role_id: MOCK_ROLE_IDS.viewer,
+      creator_name: 'Sam Lee',
+      last_used_at: daysFromNow(-2),
+    },
+  ]
 }
 
 // Fixed ids: the default roles have fixed ids in q-core, these are stand-ins.
@@ -424,12 +472,35 @@ export function buildMockSeed(scenario: SkillPresetsMockScenario): MockSeed {
     case 'large':
       return largeSeed()
     case 'agent-activity':
-      return { ...typicalSeed(), loads: buildLoads(420, 24 * 30) }
+    case 'agent-experience-active':
+      return { ...typicalSeed(), loads: buildLoads(420, 24 * 30), policyTokens: mockPolicyTokens() }
+    case 'agent-experience-empty':
+      return {
+        ...typicalSeed(),
+        presets: [],
+        loads: [],
+        aiFeaturesOff: true,
+        agentExtras: { mcp: false, policyToken: false, denials: false },
+      }
+    case 'agent-experience-partial':
+      // Agents already load the Qovery skills, but nobody has set up a preset or a policy token.
+      return {
+        ...typicalSeed(),
+        presets: [],
+        loads: buildLoads(90, 24 * 7),
+        agentExtras: { mcp: true, policyToken: false, denials: false },
+      }
     case 'agent-activity-empty':
-      return { ...typicalSeed(), loads: [] }
+      return { ...typicalSeed(), loads: [], agentExtras: { mcp: false, policyToken: false, denials: false } }
     case 'member':
       // Taylor is a backend engineer: the organization default applies to them.
-      return { ...typicalSeed(), currentUserId: 'auth0|mock-taylor', isAdmin: false, loads: buildLoads(420, 24 * 30) }
+      return {
+        ...typicalSeed(),
+        currentUserId: 'auth0|mock-taylor',
+        isAdmin: false,
+        loads: buildLoads(420, 24 * 30),
+        policyTokens: mockPolicyTokens(),
+      }
     case 'member-no-preset': {
       // Same organization without an organization default: nothing applies to Taylor.
       const seed = typicalSeed()

@@ -137,7 +137,7 @@ function SkillName({ name }: { name: string | null }) {
   return name ? <span className="font-code">{name}</span> : <span className="text-neutral-subtle">No skill</span>
 }
 
-function HintLine({
+export function HintLine({
   hint,
   organizationId,
   onShowMember,
@@ -148,7 +148,7 @@ function HintLine({
 }) {
   const policyTokensLink = (
     <Link
-      to="/organization/$organizationId/settings/policy-api-token"
+      to="/organization/$organizationId/agent-experience/policy-tokens"
       params={{ organizationId }}
       className="font-medium text-brand hover:underline"
     >
@@ -157,7 +157,7 @@ function HintLine({
   )
   const presetsLink = (
     <Link
-      to="/organization/$organizationId/settings/skill-presets"
+      to="/organization/$organizationId/agent-experience/skill-presets"
       params={{ organizationId }}
       className="font-medium text-brand hover:underline"
     >
@@ -410,7 +410,7 @@ function ActivityContent({
             Never loaded in this period: <span className="font-code">{unused.join(', ')}</span>. Consider turning them
             off in the preset.{' '}
             <Link
-              to="/organization/$organizationId/settings/skill-presets"
+              to="/organization/$organizationId/agent-experience/skill-presets"
               params={{ organizationId }}
               className="font-medium text-brand hover:underline"
             >
@@ -484,7 +484,7 @@ function ActivityContent({
               <p className="text-xs text-neutral-subtle">
                 Denied by the member’s role or the policy token the agent used. Adjust them in{' '}
                 <Link
-                  to="/organization/$organizationId/settings/policy-api-token"
+                  to="/organization/$organizationId/agent-experience/policy-tokens"
                   params={{ organizationId }}
                   className="font-medium text-brand hover:underline"
                 >
@@ -492,7 +492,7 @@ function ActivityContent({
                 </Link>{' '}
                 or{' '}
                 <Link
-                  to="/organization/$organizationId/settings/skill-presets"
+                  to="/organization/$organizationId/agent-experience/skill-presets"
                   params={{ organizationId }}
                   className="font-medium text-brand hover:underline"
                 >

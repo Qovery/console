@@ -88,7 +88,11 @@ function target(random: () => number, effect: Effect) {
 export function buildMockAgentActions(
   loads: MockSkillLoad[],
   people: { id: string; name: string }[],
-  { withDenials }: { withDenials: boolean }
+  {
+    withDenials,
+    withMcp = true,
+    withPolicyToken = true,
+  }: { withDenials: boolean; withMcp?: boolean; withPolicyToken?: boolean }
 ): MockAgentAction[] {
   const random = seeded(11)
   const actions: MockAgentAction[] = []
@@ -135,7 +139,7 @@ export function buildMockAgentActions(
   }
 
   // Tool calls through the Qovery MCP server: no skill in the user agent.
-  extra(14, person('auth0|mock-priya'), 5, (index) => ({
+  extra(withMcp ? 14 : 0, person('auth0|mock-priya'), 5, (index) => ({
     origin: 'MCP_TOOL_CALL',
     skill_name: null,
     event: 'MCP',
@@ -145,7 +149,7 @@ export function buildMockAgentActions(
     environment_name: 'payments-staging',
   }))
   // A CI pipeline using a policy token through MCP.
-  extra(8, policyToken, 9, () => ({
+  extra(withPolicyToken ? 8 : 0, policyToken, 9, () => ({
     origin: 'MCP_TOOL_CALL',
     skill_name: null,
     event: 'MCP',
@@ -176,7 +180,7 @@ export function buildMockAgentActions(
       environment_name: 'storefront-production',
     }))
     // Refused by the policy token's rules: it may only touch staging.
-    extra(3, policyToken, 11, () => ({
+    extra(withPolicyToken ? 3 : 0, policyToken, 11, () => ({
       origin: 'POLICY_DENIAL',
       skill_name: null,
       event: 'POLICY_FAILED',

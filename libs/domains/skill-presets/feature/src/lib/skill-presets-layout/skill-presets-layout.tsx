@@ -39,7 +39,7 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
   const navigate = useNavigate()
   const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
-  const basePath = `/organization/${organizationId}/settings/skill-presets`
+  const basePath = `/organization/${organizationId}/agent-experience/skill-presets`
 
   return (
     <Section className="px-8 pb-8 pt-6">
@@ -56,7 +56,7 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
                 disabled={!aiFeaturesEnabled}
                 onClick={() =>
                   navigate({
-                    to: '/organization/$organizationId/settings/skill-presets/new',
+                    to: '/organization/$organizationId/agent-experience/skill-presets/new',
                     params: { organizationId },
                   })
                 }

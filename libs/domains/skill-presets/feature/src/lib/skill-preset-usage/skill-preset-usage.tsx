@@ -125,7 +125,7 @@ function UsageContent({ organizationId }: { organizationId: string }) {
         <Icon iconName="robot" iconStyle="regular" aria-hidden="true" />
         Skill loads tell you what agents read.{' '}
         <Link
-          to="/organization/$organizationId/settings/agent-activity"
+          to="/organization/$organizationId/agent-experience/agent-activity"
           params={{ organizationId }}
           className="font-medium text-brand hover:underline"
         >

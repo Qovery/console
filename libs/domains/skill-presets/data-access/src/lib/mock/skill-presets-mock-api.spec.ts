@@ -531,6 +531,25 @@ describe('createSkillPresetsMockApi', () => {
       expect(bySkill?.recent.every(({ skill_name }) => skill_name === 'qovery-deploy')).toBe(true)
     })
 
+    it('plays the three Agent Experience states', async () => {
+      const empty = createSkillPresetsMockApi('agent-experience-empty')
+      const { value: emptyActivity } = await settle(empty.getAgentActivity(ORGANIZATION_ID, range()))
+      expect(emptyActivity?.totals).toEqual({ skill_loads: 0, actions: 0, denials: 0, members: 0 })
+      expect((await settle(empty.listPolicyTokens())).value).toEqual([])
+      expect((await settle(empty.aiFeaturesEnabled())).value).toBe(false)
+
+      const partial = createSkillPresetsMockApi('agent-experience-partial')
+      const { value: partialActivity } = await settle(partial.getAgentActivity(ORGANIZATION_ID, range()))
+      expect(partialActivity?.totals.skill_loads).toBeGreaterThan(0)
+      expect(partialActivity?.totals.denials).toBe(0)
+      expect(partialActivity?.by_member.some(({ user_sub }) => user_sub === null)).toBe(false)
+      expect((await settle(partial.listSkillPresets(ORGANIZATION_ID, { isTemplate: false }))).value).toEqual([])
+
+      const active = createSkillPresetsMockApi('agent-experience-active')
+      const { value: tokens } = await settle(active.listPolicyTokens())
+      expect(tokens?.map(({ name }) => name)).toEqual(['ci-deployer', 'review-agent'])
+    })
+
     it('is empty in the agent-activity-empty scenario', async () => {
       const { value } = await settle(
         createSkillPresetsMockApi('agent-activity-empty').getAgentActivity(ORGANIZATION_ID, range())

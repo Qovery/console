@@ -80,7 +80,7 @@ function PresetRow({
         <div className="flex flex-col gap-0.5">
           <span className="flex items-center gap-2">
             <Link
-              to="/organization/$organizationId/settings/skill-presets/$skillPresetId"
+              to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId"
               params={{ organizationId, skillPresetId: preset.id }}
               className="font-medium text-neutral hover:text-brand"
             >
@@ -109,7 +109,7 @@ function PresetRow({
       </Table.Cell>
       <Table.Cell>
         <Link
-          to="/organization/$organizationId/settings/skill-presets/$skillPresetId/history"
+          to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history"
           params={{ organizationId, skillPresetId: preset.id }}
           className="whitespace-nowrap text-neutral hover:text-brand"
         >
@@ -138,7 +138,7 @@ function PresetRow({
               icon={<Icon iconName="pen" iconStyle="regular" />}
               onSelect={() =>
                 navigate({
-                  to: '/organization/$organizationId/settings/skill-presets/$skillPresetId',
+                  to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
                   params: { organizationId, skillPresetId: preset.id },
                 })
               }
@@ -149,7 +149,7 @@ function PresetRow({
               icon={<Icon iconName="clock-rotate-left" iconStyle="regular" />}
               onSelect={() =>
                 navigate({
-                  to: '/organization/$organizationId/settings/skill-presets/$skillPresetId/history',
+                  to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history',
                   params: { organizationId, skillPresetId: preset.id },
                 })
               }
@@ -160,7 +160,7 @@ function PresetRow({
               icon={<Icon iconName="copy" iconStyle="regular" />}
               onSelect={() =>
                 navigate({
-                  to: '/organization/$organizationId/settings/skill-presets/new',
+                  to: '/organization/$organizationId/agent-experience/skill-presets/new',
                   params: { organizationId },
                   search: { from: preset.id },
                 })
@@ -173,7 +173,7 @@ function PresetRow({
                 icon={<Icon iconName="bookmark" iconStyle="regular" />}
                 onSelect={() =>
                   navigate({
-                    to: '/organization/$organizationId/settings/skill-presets/new',
+                    to: '/organization/$organizationId/agent-experience/skill-presets/new',
                     params: { organizationId },
                     search: { from: preset.id, asTemplate: true },
                   })
@@ -230,7 +230,10 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
           <Button
             size="md"
             onClick={() =>
-              navigate({ to: '/organization/$organizationId/settings/skill-presets/new', params: { organizationId } })
+              navigate({
+                to: '/organization/$organizationId/agent-experience/skill-presets/new',
+                params: { organizationId },
+              })
             }
           >
             <Icon iconName="grid-2" iconStyle="regular" />
@@ -242,7 +245,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
             color="neutral"
             onClick={() =>
               navigate({
-                to: '/organization/$organizationId/settings/skill-presets/new',
+                to: '/organization/$organizationId/agent-experience/skill-presets/new',
                 params: { organizationId },
                 search: { template: 'blank' },
               })

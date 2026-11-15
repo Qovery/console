@@ -343,7 +343,7 @@ export function SkillPresetEditorForm({
         await createSkillPreset({ organizationId, body })
         setSavePhase('saving')
         leavingAfterSave.current = true
-        navigate({ to: '/organization/$organizationId/settings/skill-presets', params: { organizationId } })
+        navigate({ to: '/organization/$organizationId/agent-experience/skill-presets', params: { organizationId } })
       }
     } catch (error) {
       const status = getSkillPresetErrorStatus(error)
@@ -387,7 +387,7 @@ export function SkillPresetEditorForm({
         <form id="skill-preset-editor-top" onSubmit={submit} noValidate className="flex flex-col gap-6 px-8 pt-6">
           <div className="flex flex-col gap-3">
             <Link
-              to="/organization/$organizationId/settings/skill-presets"
+              to="/organization/$organizationId/agent-experience/skill-presets"
               params={{ organizationId }}
               className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
             >
@@ -402,7 +402,7 @@ export function SkillPresetEditorForm({
               </div>
               {preset && (
                 <Link
-                  to="/organization/$organizationId/settings/skill-presets/$skillPresetId/history"
+                  to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history"
                   params={{ organizationId, skillPresetId: preset.id }}
                   className="flex items-center gap-1.5 text-sm font-medium text-brand hover:underline"
                 >
@@ -606,7 +606,10 @@ export function SkillPresetEditorForm({
               color="neutral"
               className="ml-auto"
               onClick={() =>
-                navigate({ to: '/organization/$organizationId/settings/skill-presets', params: { organizationId } })
+                navigate({
+                  to: '/organization/$organizationId/agent-experience/skill-presets',
+                  params: { organizationId },
+                })
               }
             >
               Cancel

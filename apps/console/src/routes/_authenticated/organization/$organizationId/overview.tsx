@@ -2,6 +2,7 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { SectionProductionHealth, useClusters } from '@qovery/domains/clusters/feature'
 import { OrganizationOverview } from '@qovery/domains/organizations/feature'
 import { ProjectList } from '@qovery/domains/projects/feature'
+import { AgentExperienceEntryCard } from '@qovery/domains/skill-presets/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { SectionAgentTasksHighlight } from '../../../../app/components/section-agent-tasks-highlight/section-agent-tasks-highlight'
 import { SectionOnboarding } from '../../../../app/components/section-onboarding/section-onboarding'
@@ -18,7 +19,14 @@ function RouteComponent() {
 
   return (
     <div className="mt-6">
-      <OrganizationOverview sidebarContent={<SectionAgentTasksHighlight />}>
+      <OrganizationOverview
+        sidebarContent={
+          <>
+            <AgentExperienceEntryCard />
+            <SectionAgentTasksHighlight />
+          </>
+        }
+      >
         <SectionOnboarding />
         <SectionProductionHealth />
         {hasClusters ? <ProjectList /> : null}
