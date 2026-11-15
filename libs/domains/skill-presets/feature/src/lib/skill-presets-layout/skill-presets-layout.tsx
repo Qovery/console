@@ -70,5 +70,3 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
     </Section>
   )
 }
-
-export default SkillPresetsLayout

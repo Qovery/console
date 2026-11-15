@@ -140,5 +140,3 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
     </div>
   )
 }
-
-export default TokenBudgetView

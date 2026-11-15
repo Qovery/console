@@ -212,5 +212,3 @@ export function QoverySkillsSection({ errors, findings }: QoverySkillsSectionPro
     </div>
   )
 }
-
-export default QoverySkillsSection

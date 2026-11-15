@@ -110,5 +110,3 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
     </div>
   )
 }
-
-export default MemberAgentView

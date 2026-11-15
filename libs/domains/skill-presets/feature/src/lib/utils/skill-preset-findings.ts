@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern'
 import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 
 /** The editor field a 422 finding points at, from its `location` string. */
@@ -35,15 +36,13 @@ export function findingsFor(findings: SkillPresetFinding[], target: FindingTarge
 /** "team context, line 3" reads better as "Team context, line 3". */
 export function findingLocationLabel(finding: SkillPresetFinding) {
   const target = findingTarget(finding.location)
-  const where = !target
-    ? finding.location
-    : target.field === 'description'
-      ? 'Preset description'
-      : target.field === 'teamContext'
-        ? 'Team context'
-        : target.field === 'skillDescription'
-          ? `${target.skillName}, description`
-          : `${target.skillName}, content`
+  const where = match(target)
+    .with(null, () => finding.location)
+    .with({ field: 'description' }, () => 'Preset description')
+    .with({ field: 'teamContext' }, () => 'Team context')
+    .with({ field: 'skillDescription' }, ({ skillName }) => `${skillName}, description`)
+    .with({ field: 'skillContent' }, ({ skillName }) => `${skillName}, content`)
+    .exhaustive()
   return `${where}, line ${finding.line}`
 }
 

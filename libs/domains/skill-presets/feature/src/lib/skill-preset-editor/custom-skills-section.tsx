@@ -153,5 +153,3 @@ export function CustomSkillsSection({ errors, findings, librarySkills }: CustomS
     </div>
   )
 }
-
-export default CustomSkillsSection

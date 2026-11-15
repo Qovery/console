@@ -192,5 +192,3 @@ export function SkillPresetAssignments() {
     </SkillPresetsLayout>
   )
 }
-
-export default SkillPresetAssignments

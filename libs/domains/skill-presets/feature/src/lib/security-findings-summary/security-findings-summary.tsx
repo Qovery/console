@@ -43,7 +43,7 @@ export function SecurityFindingsSummary({ findings }: SecurityFindingsSummaryPro
               <li key={`${finding.location}-${finding.line}-${finding.rule_id}`}>
                 <button
                   type="button"
-                  className="text-left font-medium text-neutral underline underline-offset-2 hover:no-underline"
+                  className="text-left font-medium text-neutral underline underline-offset-2 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
                   onClick={() => focusField(finding)}
                 >
                   {findingLocationLabel(finding)}
@@ -57,5 +57,3 @@ export function SecurityFindingsSummary({ findings }: SecurityFindingsSummaryPro
     </Callout.Root>
   )
 }
-
-export default SecurityFindingsSummary

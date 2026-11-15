@@ -361,5 +361,3 @@ export function SettingsSkillPresets() {
     </SkillPresetsLayout>
   )
 }
-
-export default SettingsSkillPresets

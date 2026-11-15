@@ -52,5 +52,3 @@ export function AssignmentChips({ assignedTo, assignees, max = 3 }: AssignmentCh
     </ul>
   )
 }
-
-export default AssignmentChips

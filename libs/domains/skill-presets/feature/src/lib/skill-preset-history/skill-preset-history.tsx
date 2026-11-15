@@ -251,7 +251,7 @@ export function SkillPresetHistory() {
                     onClick={() => setSelectedRevision(revision.revision)}
                     aria-current={isSelected ? 'true' : undefined}
                     className={twMerge(
-                      'relative flex w-full gap-3 rounded-md p-2 text-left hover:bg-surface-neutral-subtle',
+                      'relative flex w-full gap-3 rounded-md p-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong',
                       isSelected && 'ring-brand-strong bg-surface-neutral-subtle ring-1'
                     )}
                   >
@@ -374,5 +374,3 @@ export function SkillPresetHistory() {
     </Section>
   )
 }
-
-export default SkillPresetHistory

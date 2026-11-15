@@ -156,5 +156,3 @@ export function MarkdownField({
     </div>
   )
 }
-
-export default MarkdownField

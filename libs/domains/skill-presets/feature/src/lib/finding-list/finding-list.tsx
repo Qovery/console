@@ -17,7 +17,7 @@ export function FindingList({ findings, onSelectLine }: FindingListProps) {
             {onSelectLine ? (
               <button
                 type="button"
-                className="font-medium underline underline-offset-2 hover:no-underline"
+                className="font-medium underline underline-offset-2 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
                 onClick={() => onSelectLine(finding.line)}
               >
                 Line {finding.line}
@@ -32,5 +32,3 @@ export function FindingList({ findings, onSelectLine }: FindingListProps) {
     </ul>
   )
 }
-
-export default FindingList

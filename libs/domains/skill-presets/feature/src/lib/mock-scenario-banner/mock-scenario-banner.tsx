@@ -49,5 +49,3 @@ export function MockScenarioBanner() {
     </div>
   )
 }
-
-export default MockScenarioBanner

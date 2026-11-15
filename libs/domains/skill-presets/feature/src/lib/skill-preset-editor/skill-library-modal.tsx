@@ -131,5 +131,3 @@ export function SkillLibraryModal({ skills, base, presentSkillNames, onAdd, onCl
     </Section>
   )
 }
-
-export default SkillLibraryModal

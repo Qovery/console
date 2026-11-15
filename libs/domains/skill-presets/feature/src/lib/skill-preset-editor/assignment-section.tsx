@@ -185,5 +185,3 @@ export function AssignmentSection({
     </div>
   )
 }
-
-export default AssignmentSection

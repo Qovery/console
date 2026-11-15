@@ -141,5 +141,3 @@ export function SkillPresetCreate() {
   const search = useSearch({ strict: false }) as { template?: string; from?: string }
   return search.template || search.from ? <SkillPresetEditor /> : <TemplateGallery />
 }
-
-export default TemplateGallery

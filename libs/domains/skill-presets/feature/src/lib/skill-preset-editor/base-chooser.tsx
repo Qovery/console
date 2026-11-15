@@ -50,5 +50,3 @@ export function BaseChooser({ value, onChange }: BaseChooserProps) {
     </RadioGroup.Root>
   )
 }
-
-export default BaseChooser

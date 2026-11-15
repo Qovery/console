@@ -560,5 +560,3 @@ export function SkillPresetEditor() {
     />
   )
 }
-
-export default SkillPresetEditor

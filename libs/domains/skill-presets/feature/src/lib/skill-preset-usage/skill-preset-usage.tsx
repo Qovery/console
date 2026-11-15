@@ -63,7 +63,7 @@ function DrillButton({ label, onClick, active }: { label: string; onClick: () =>
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className="text-left font-medium text-neutral underline-offset-2 hover:text-brand hover:underline"
+      className="text-left font-medium text-neutral underline-offset-2 hover:text-brand hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
     >
       {label}
     </button>
@@ -386,5 +386,3 @@ export function SkillPresetUsage() {
     </SkillPresetsLayout>
   )
 }
-
-export default SkillPresetUsage

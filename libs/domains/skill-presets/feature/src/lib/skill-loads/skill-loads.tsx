@@ -158,5 +158,3 @@ export function SkillLoads() {
     </SkillPresetsLayout>
   )
 }
-
-export default SkillLoads
