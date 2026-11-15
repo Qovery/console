@@ -267,7 +267,7 @@ describe('Automate, recurring agents', () => {
     // First and recommended: the coding agent the team already uses, with the supported agents' logos.
     const codingAgent = within(run.getByTestId('route-coding-agent'))
     expect(codingAgent.getByText('From your coding agent')).toBeInTheDocument()
-    expect(codingAgent.getByText('Recommended')).toBeInTheDocument()
+    expect(codingAgent.queryByText('Recommended')).not.toBeInTheDocument()
     expect(codingAgent.getAllByTestId('coding-agent').map((item) => item.textContent)).toEqual([
       'Claude Code',
       'Codex',
@@ -282,6 +282,8 @@ describe('Automate, recurring agents', () => {
     // Then the Agent Task on Qovery.
     const agentTask = within(run.getByTestId('route-agent-task'))
     expect(agentTask.getByText('As an Agent Task on Qovery')).toBeInTheDocument()
+    expect(agentTask.getByText('Recommended')).toBeInTheDocument()
+    expect(agentTask.getByText(/with no laptop or CI to keep running/)).toBeInTheDocument()
     expect(agentTask.getByText('https://mcp.qovery.com/mcp')).toBeInTheDocument()
     expect(run.getByTestId('route-coding-agent').compareDocumentPosition(run.getByTestId('route-agent-task'))).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING
@@ -319,7 +321,7 @@ describe('Automate a new job', () => {
     expect(modal.getAllByTestId('coding-agent')).toHaveLength(6)
     expect(modal.getByText(/Works in these coding agents/)).toBeInTheDocument()
     expect(modal.getByTestId('new-job-schedule')).toHaveTextContent(
-      'Then schedule it: run it from your coding agent on a schedule, or as an Agent Task on Qovery'
+      'Then schedule it: as an Agent Task on Qovery (recommended), or from your coding agent, with that token.'
     )
     expect(modal.queryByTestId('new-job-member-note')).not.toBeInTheDocument()
   })

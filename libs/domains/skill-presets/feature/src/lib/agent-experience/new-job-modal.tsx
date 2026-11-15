@@ -139,8 +139,7 @@ export function NewJobModal({ onClose, canManage }: { onClose: () => void; canMa
               ))}
             </ol>
             <p className="text-sm text-neutral" data-testid="new-job-schedule">
-              Then schedule it: run it from your coding agent on a schedule, or as an Agent Task on Qovery, with that
-              token.
+              Then schedule it: as an Agent Task on Qovery (recommended), or from your coding agent, with that token.
             </p>
             <p className="text-xs text-neutral-subtle">
               A policy cannot be edited after the token is created: to change it, the skill creates a new token. Every

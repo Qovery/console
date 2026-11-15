@@ -187,15 +187,10 @@ function RunOnItsOwn({
             </span>
             <span className="grid grid-cols-1 gap-3 lg:grid-cols-2">
               <span
-                className="flex flex-col gap-2 rounded-md border border-brand-strong bg-surface-neutral p-3"
+                className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-3"
                 data-testid="route-coding-agent"
               >
-                <span className="flex items-center gap-2 font-medium">
-                  From your coding agent
-                  <Badge size="sm" variant="surface" color="brand">
-                    Recommended
-                  </Badge>
-                </span>
+                <span className="font-medium">From your coding agent</span>
                 <CodingAgentLogos />
                 <span className="text-xs text-neutral-subtle">
                   Run the job from the coding agent you already use, with the Qovery skills or the Qovery MCP server,
@@ -218,13 +213,21 @@ function RunOnItsOwn({
                 )}
               </span>
               <span
-                className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-3"
+                className="flex flex-col gap-2 rounded-md border border-brand-strong bg-surface-neutral p-3"
                 data-testid="route-agent-task"
               >
-                <span className="font-medium">As an Agent Task on Qovery</span>
+                <span className="flex items-center gap-2 font-medium">
+                  As an Agent Task on Qovery
+                  <Badge size="sm" variant="surface" color="brand">
+                    Recommended
+                  </Badge>
+                </span>
+                <span className="text-xs text-neutral">
+                  Runs next to your services on its own schedule or webhook, with no laptop or CI to keep running.
+                </span>
                 <span className="text-xs text-neutral-subtle">
-                  An agent that runs next to your services. Create it from the Automations tab of the environment where
-                  it should run, with the prompt below, this trigger, and the Qovery MCP server set up with the token.
+                  Create it from the Automations tab of the environment where it should run, with the prompt below, this
+                  trigger, and the Qovery MCP server set up with the token.
                 </span>
                 {job.trigger.kind === 'schedule' && job.trigger.cron ? (
                   <CopyValue label="On a schedule" value={job.trigger.cron} />
@@ -555,9 +558,9 @@ export function AgentExperienceAutomate() {
               Or run agents on Qovery
             </Heading>
             <p className="text-sm text-neutral-subtle">
-              Most teams run these jobs from the coding agent they already use. Agent Tasks are the other way: an agent
-              that runs next to your services, on a schedule or a webhook, created from an environment’s Automations
-              tab.
+              Agent Tasks are the recommended way to run these jobs on their own: an agent that runs next to your
+              services, on a schedule or a webhook, created from an environment’s Automations tab. Your coding agent
+              works too.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
