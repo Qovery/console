@@ -359,7 +359,9 @@ describe('SkillPresetEditorForm', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
 
     expect(await screen.findByTestId('ai-features-notice')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Turn on AI features' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Create preset' })).toBeDisabled()
+    expect(screen.getByLabelText('Name')).toHaveValue('Backend team')
   })
 
   it('counts all the text and refuses to save above 200,000 characters', async () => {

@@ -347,8 +347,10 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
 
   const now = () => new Date().toISOString()
   let reviewFailedOnce = false
+  // Off in the ai-features-off scenario until an admin turns them on. Resets on reload.
+  let aiFeaturesOn = scenario !== 'ai-features-off'
   const checkWrite = (state: MockPresetState, exceptId?: string): Promise<never> | null => {
-    if (scenario === 'ai-features-off') return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
+    if (!aiFeaturesOn) return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
     const invalid = validate(state)
     if (invalid) return fail(400, invalid)
     if (presets.some((preset) => preset.id !== exceptId && preset.name === state.name)) {
@@ -401,7 +403,10 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   let concurrentSaveDone = false
   let listFailedOnce = false
 
-  const api: SkillPresetsApi & { listAssignees: () => Promise<SkillPresetAssignees> } = {
+  const api: SkillPresetsApi & {
+    listAssignees: () => Promise<SkillPresetAssignees>
+    aiFeaturesEnabled: () => Promise<boolean>
+  } = {
     listSkillPresets(_organizationId, { isTemplate } = {}) {
       if (!seed.isAdmin) return forbidden()
       // Fails once, so the error state and its retry can both be shown.
@@ -538,6 +543,14 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     },
     listAssignees() {
       return respond(seed.assignees)
+    },
+    aiFeaturesEnabled() {
+      return respond(aiFeaturesOn)
+    },
+    enableAiFeatures() {
+      if (!seed.isAdmin) return forbidden()
+      aiFeaturesOn = true
+      return respond(undefined)
     },
     getSkillPresetUsage(_organizationId, { from, to, bucket, skillName, userSub, skillPresetId }) {
       if (!seed.isAdmin) return forbidden()

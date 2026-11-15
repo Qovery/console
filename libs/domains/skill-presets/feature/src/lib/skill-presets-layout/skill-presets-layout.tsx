@@ -70,7 +70,9 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
       </SettingsHeading>
       <div className="flex flex-col gap-6">
         <MockScenarioBanner />
-        {!isLoading && canManage && !aiFeaturesEnabled && <AiFeaturesNotice />}
+        {!isLoading && canManage && !aiFeaturesEnabled && (
+          <AiFeaturesNotice organizationId={organizationId} canEnable={canManage} />
+        )}
         {isLoading ? (
           <AccessSkeleton />
         ) : canManage ? (

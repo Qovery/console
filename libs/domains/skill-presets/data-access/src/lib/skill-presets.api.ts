@@ -4,6 +4,7 @@ import {
   type OrganizationEventResponseList,
   type OrganizationEventSubTargetType,
   type OrganizationEventType,
+  OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 import { getSkillPresetsMockScenario } from './skill-presets-mock-mode'
 import {
@@ -51,9 +52,15 @@ export interface SkillPresetsApi {
   /** Skill loads are audit log entries: event LOAD, sub-target SKILL_PRESET. */
   listSkillLoads(organizationId: string, params?: SkillLoadsParams): Promise<OrganizationEventResponseList>
   getSkillPresetUsage(organizationId: string, params: SkillPresetUsageParams): Promise<SkillPresetUsageResponse>
+  /**
+   * Turns AI features on for the organization (`PUT /organization/{id}/aiFeatures`, owners and admins).
+   * Not a skill presets endpoint: it goes through this module only so the mock can play it.
+   */
+  enableAiFeatures(organizationId: string): Promise<void>
 }
 
 const eventsApi = new OrganizationEventApi()
+const organizationApi = new OrganizationMainCallsApi()
 
 const httpSkillPresetsApi: SkillPresetsApi = {
   async listSkillPresets(organizationId, { isTemplate } = {}) {
@@ -115,6 +122,9 @@ const httpSkillPresetsApi: SkillPresetsApi = {
     )
     return response.data
   },
+  async enableAiFeatures(organizationId) {
+    await organizationApi.editOrganizationAiFeatures(organizationId, { enabled: true })
+  },
   async getSkillPresetUsage(organizationId, params) {
     const response = await axios.get<SkillPresetUsageResponse>(`/organization/${organizationId}/skillPreset/usage`, {
       params,
@@ -123,7 +133,10 @@ const httpSkillPresetsApi: SkillPresetsApi = {
   },
 }
 
-type MockSkillPresetsApi = SkillPresetsApi & { listAssignees: () => Promise<SkillPresetAssignees> }
+type MockSkillPresetsApi = SkillPresetsApi & {
+  listAssignees: () => Promise<SkillPresetAssignees>
+  aiFeaturesEnabled: () => Promise<boolean>
+}
 
 let mockApi: { scenario: string; api: Promise<MockSkillPresetsApi> } | undefined
 
@@ -157,6 +170,13 @@ export async function listMockSkillPresetAssignees(): Promise<SkillPresetAssigne
   return api.listAssignees()
 }
 
+/** Mock mode only: whether the mock organization has AI features on. It changes when they are turned on. */
+export async function getMockAiFeaturesEnabled(): Promise<boolean> {
+  const api = await resolveMockApi()
+  if (!api) throw new Error('The skill presets mock is not active')
+  return api.aiFeaturesEnabled()
+}
+
 /** Test helper: drop the in-memory mock so the next call starts from the scenario's seed. */
 export function resetSkillPresetsMockApi() {
   mockApi = undefined
@@ -173,4 +193,5 @@ export const skillPresetsApi: SkillPresetsApi = {
   getResolvedSkill: async (...args) => (await resolveApi()).getResolvedSkill(...args),
   listSkillLoads: async (...args) => (await resolveApi()).listSkillLoads(...args),
   getSkillPresetUsage: async (...args) => (await resolveApi()).getSkillPresetUsage(...args),
+  enableAiFeatures: async (...args) => (await resolveApi()).enableAiFeatures(...args),
 }

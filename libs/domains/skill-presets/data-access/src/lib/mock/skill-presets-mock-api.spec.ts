@@ -400,4 +400,19 @@ describe('createSkillPresetsMockApi', () => {
     const { value: afterDelete } = await settle(api.listSkillPresetRevisions(ORGANIZATION_ID))
     expect(afterDelete?.[0]).toEqual(expect.objectContaining({ change_type: 'DELETE', security_review: null }))
   })
+
+  it('turns AI features on in the ai-features-off scenario, then saves', async () => {
+    const api = createSkillPresetsMockApi('ai-features-off')
+    expect((await settle(api.aiFeaturesEnabled())).value).toBe(false)
+
+    await settle(api.enableAiFeatures(ORGANIZATION_ID))
+
+    expect((await settle(api.aiFeaturesEnabled())).value).toBe(true)
+    expect((await settle(api.createSkillPreset(ORGANIZATION_ID, request()))).error).toBeUndefined()
+  })
+
+  it('refuses to turn AI features on for a member', async () => {
+    const { error } = await settle(createSkillPresetsMockApi('member').enableAiFeatures(ORGANIZATION_ID))
+    expect(getSkillPresetErrorStatus(error)).toBe(403)
+  })
 })

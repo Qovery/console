@@ -251,6 +251,18 @@ describe('AI features off', () => {
     expect(await screen.findByText('Backend team')).toBeInTheDocument()
   })
 
+  it('turns AI features on, then enables creating', async () => {
+    useScenario('ai-features-off')
+    const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
+    await screen.findByTestId('ai-features-notice')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Turn on AI features' }))
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    await waitForElementToBeRemoved(() => screen.queryByTestId('ai-features-notice'))
+    expect(screen.getByRole('button', { name: /Create preset/ })).toBeEnabled()
+  })
+
   it('still lets an admin delete a preset', async () => {
     useScenario('ai-features-off')
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)

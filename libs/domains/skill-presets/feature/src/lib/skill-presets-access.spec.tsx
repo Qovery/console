@@ -15,6 +15,11 @@ const mockUserRole = jest.fn()
 const mockUseSkillPresets = jest.fn()
 const mockUseSkillPreset = jest.fn()
 const mockUseRevisions = jest.fn()
+const mockAiFeaturesEnabled = jest.fn()
+
+jest.mock('./hooks/use-ai-features-enabled/use-ai-features-enabled', () => ({
+  useAiFeaturesEnabled: () => mockAiFeaturesEnabled(),
+}))
 
 jest.mock('@qovery/shared/iam/feature', () => ({ useUserRole: () => mockUserRole() }))
 jest.mock('@tanstack/react-router', () => ({
@@ -71,6 +76,7 @@ beforeEach(() => {
   mockUseSkillPresets.mockReset().mockReturnValue({ data: [], isLoading: false })
   mockUseSkillPreset.mockReset().mockReturnValue({ data: undefined, isLoading: false })
   mockUseRevisions.mockReset().mockReturnValue({ data: [], isLoading: false })
+  mockAiFeaturesEnabled.mockReset().mockReturnValue(true)
 })
 
 describe('skill presets access', () => {
@@ -127,5 +133,23 @@ describe('skill presets access', () => {
     expect(screen.queryByRole('button', { name: /Create preset|Save changes|Restore/ })).not.toBeInTheDocument()
     expect(mockUseSkillPreset).not.toHaveBeenCalled()
     expect(mockUseRevisions).not.toHaveBeenCalled()
+  })
+
+  it.each(['owner', 'admin'])('offers an organization %s to turn AI features on', (role) => {
+    asRole(role)
+    mockAiFeaturesEnabled.mockReturnValue(false)
+    renderWithProviders(<SettingsSkillPresets />)
+
+    expect(screen.getByRole('button', { name: 'Turn on AI features' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Create preset/ })).toBeDisabled()
+  })
+
+  it.each(['devops', 'viewer'])('never shows the AI features button to the %s role', (role) => {
+    asRole(role)
+    mockAiFeaturesEnabled.mockReturnValue(false)
+    renderWithProviders(<SettingsSkillPresets />)
+
+    expect(screen.queryByRole('button', { name: 'Turn on AI features' })).not.toBeInTheDocument()
+    expect(screen.queryByTestId('ai-features-notice')).not.toBeInTheDocument()
   })
 })

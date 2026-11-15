@@ -466,7 +466,10 @@ export function SkillPresetEditorForm({
               </Button>
             </Callout.Root>
           )}
-          {!aiFeaturesEnabled && <AiFeaturesNotice />}
+          {!aiFeaturesEnabled && (
+            // The editor is admin-only, so the button always applies here. Turning AI features on keeps the draft.
+            <AiFeaturesNotice organizationId={organizationId} canEnable onEnabled={() => setBlockedBy(null)} />
+          )}
           {serverError && (
             <Callout.Root color="red" role="alert">
               <Callout.Icon>

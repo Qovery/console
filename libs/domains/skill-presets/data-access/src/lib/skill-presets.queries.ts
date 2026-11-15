@@ -1,5 +1,10 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { type SkillLoadsParams, listMockSkillPresetAssignees, skillPresetsApi } from './skill-presets.api'
+import {
+  type SkillLoadsParams,
+  getMockAiFeaturesEnabled,
+  listMockSkillPresetAssignees,
+  skillPresetsApi,
+} from './skill-presets.api'
 import { getSkillPresetErrorStatus } from './skill-presets.errors'
 import { type SkillPresetRequest, type SkillPresetUsageParams } from './skill-presets.types'
 
@@ -43,6 +48,11 @@ export const skillPresets = createQueryKeys('skillPresets', {
     queryKey: [organizationId, params],
     queryFn: () => skillPresetsApi.getSkillPresetUsage(organizationId, params),
   }),
+  /** Mock mode only: see `getMockAiFeaturesEnabled`. */
+  mockAiFeatures: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    queryFn: () => getMockAiFeaturesEnabled(),
+  }),
   /** Mock mode only: see `listMockSkillPresetAssignees`. */
   mockAssignees: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
@@ -51,6 +61,8 @@ export const skillPresets = createQueryKeys('skillPresets', {
 })
 
 export const mutations = {
+  enableAiFeatures: ({ organizationId }: { organizationId: string }) =>
+    skillPresetsApi.enableAiFeatures(organizationId),
   createSkillPreset: ({ organizationId, body }: { organizationId: string; body: SkillPresetRequest }) =>
     skillPresetsApi.createSkillPreset(organizationId, body),
   editSkillPreset: ({
