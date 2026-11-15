@@ -52,6 +52,7 @@ import { BaseChooser } from './base-chooser'
 import { CustomSkillsSection } from './custom-skills-section'
 import { QoverySkillsSection } from './qovery-skills-section'
 import { type LibrarySkill } from './skill-library-modal'
+import { TotalTextCounter } from './total-text-counter'
 
 const NEW_PRESET_ID = 'new-preset'
 const LEAVE_UNSAVED_CHANGES_MESSAGE = 'You have unsaved changes on this preset. Leave the page and discard them?'
@@ -588,8 +589,9 @@ export function SkillPresetEditorForm({
           </div>
 
           <div className="sticky bottom-0 z-10 flex items-center justify-end gap-3 border-t border-neutral bg-background py-3">
+            <TotalTextCounter />
             {isSubmitted && errorCount > 0 && (
-              <span className="mr-auto flex items-center gap-1.5 text-sm text-negative">
+              <span className="flex items-center gap-1.5 text-sm text-negative">
                 <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
                 {errorCount === 1 ? '1 field needs' : `${errorCount} fields need`} a change
               </span>
@@ -599,6 +601,7 @@ export function SkillPresetEditorForm({
               size="lg"
               variant="plain"
               color="neutral"
+              className="ml-auto"
               onClick={() =>
                 navigate({ to: '/organization/$organizationId/settings/skill-presets', params: { organizationId } })
               }

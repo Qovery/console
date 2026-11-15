@@ -332,8 +332,18 @@ describe('createSkillPresetsMockApi', () => {
     expect(getSkillPresetFindings(error)).toEqual([
       expect.objectContaining({ source: 'MODEL', rule_id: 'data-exfiltration', location: 'team context', line: 1 }),
     ])
-    const trace = JSON.parse(api.auditEvents().at(-1)?.change ?? '{}')
-    expect(trace.review_verdict).toBe('BLOCK')
+    const event = api.auditEvents().at(-1)
+    const trace = JSON.parse(event?.change ?? '{}')
+    expect(event?.event_type).toBe('REJECTED')
+    expect(event?.sub_target_type).toBe('SKILL_PRESET')
+    expect(trace).toEqual(
+      expect.objectContaining({
+        attempted_change: 'CREATE',
+        skill_preset_id: null,
+        team_context_sha256: expect.stringMatching(/^[0-9a-f]{64}$/),
+        findings: [expect.objectContaining({ source: 'MODEL', rule_id: 'data-exfiltration' })],
+      })
+    )
     expect(JSON.stringify(trace)).not.toContain('collector.example.net')
   })
 
@@ -346,24 +356,48 @@ describe('createSkillPresetsMockApi', () => {
     expect(retry.value?.name).toBe('Release team')
   })
 
-  it('refuses writes when AI features are off, but keeps reads', async () => {
+  it('refuses writes with 403 when AI features are off, but keeps reads and deletes', async () => {
     const api = createSkillPresetsMockApi('ai-features-off')
     const { error } = await settle(api.createSkillPreset(ORGANIZATION_ID, request()))
     const { value } = await settle(api.listSkillPresets(ORGANIZATION_ID))
+    const deleted = await settle(api.deleteSkillPreset(value?.[0]?.id ?? ''))
 
+    expect(getSkillPresetErrorStatus(error)).toBe(403)
     expect(isSkillPresetAiFeaturesOff(error)).toBe(true)
     expect(value?.length).toBeGreaterThan(0)
+    expect(deleted.error).toBeUndefined()
+  })
+
+  it('refuses more than 200,000 characters of text in total', async () => {
+    const api = createSkillPresetsMockApi('typical')
+    const { error } = await settle(
+      api.createSkillPreset(
+        ORGANIZATION_ID,
+        request({
+          team_context: 'x'.repeat(30000),
+          skills: Array.from({ length: 3 }, (_, index) => ({
+            skill_name: `runbook-${index}`,
+            mode: 'ADD' as const,
+            description: 'Runbook. Use when on call.',
+            content: 'y'.repeat(60000),
+          })),
+        })
+      )
+    )
+    expect(getSkillPresetErrorStatus(error)).toBe(400)
   })
 
   it('records the review on every saved revision', async () => {
     const api = createSkillPresetsMockApi('typical')
     const { value } = await settle(api.listSkillPresetRevisions(ORGANIZATION_ID))
-    expect(value?.[0]).toEqual(
-      expect.objectContaining({
-        review_verdict: 'ALLOW',
-        review_model: expect.any(String),
-        review_prompt_version: 'v1',
-      })
-    )
+    expect(value?.[0].security_review).toEqual({
+      verdict: 'ALLOW',
+      model: expect.any(String),
+      prompt_version: 'v1',
+      findings: [],
+    })
+    await settle(api.deleteSkillPreset(value?.[0]?.skill_preset_id ?? ''))
+    const { value: afterDelete } = await settle(api.listSkillPresetRevisions(ORGANIZATION_ID))
+    expect(afterDelete?.[0]).toEqual(expect.objectContaining({ change_type: 'DELETE', security_review: null }))
   })
 })

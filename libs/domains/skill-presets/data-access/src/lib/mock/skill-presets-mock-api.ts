@@ -5,16 +5,24 @@ import {
   SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
   buildSkillPresetApiError,
 } from '../skill-presets.errors'
-import { SKILL_NAME_PATTERN, SKILL_PRESET_LIMITS, approxTokens, isQoverySkillName } from '../skill-presets.limits'
+import {
+  SKILL_NAME_PATTERN,
+  SKILL_PRESET_LIMITS,
+  approxTokens,
+  isQoverySkillName,
+  totalPresetTextLength,
+} from '../skill-presets.limits'
 import {
   type InjectedSkillResponse,
   SKILL_LOAD_EVENT_TYPE,
+  SKILL_PRESET_REJECTED_EVENT_TYPE,
   SKILL_PRESET_SUB_TARGET_TYPE,
   type SkillLoadChange,
   type SkillPresetAssignedTo,
   type SkillPresetAssignees,
   type SkillPresetChangeType,
   type SkillPresetManifestResponse,
+  type SkillPresetRejectedChange,
   type SkillPresetRequest,
   type SkillPresetResolutionSource,
   type SkillPresetResponse,
@@ -113,6 +121,9 @@ function validate(state: MockPresetState): string | null {
       return `Skill '${name}' needs a description: agents decide when to load a skill from it`
     }
   }
+  if (totalPresetTextLength(state) > limits.totalTextMaxLength) {
+    return `A preset holds at most ${limits.totalTextMaxLength} characters of text in total, so that it can be reviewed before it reaches members`
+  }
   const isAssigned =
     state.assigned_to.organization_default ||
     state.assigned_to.role_ids.length > 0 ||
@@ -143,6 +154,13 @@ function inspect(state: MockPresetState) {
 }
 
 const HOUR_MS = 3_600_000
+
+const PASSED_REVIEW = {
+  verdict: 'ALLOW' as const,
+  model: MOCK_REVIEW_MODEL,
+  prompt_version: MOCK_REVIEW_PROMPT_VERSION,
+  findings: [],
+}
 
 const ADMIN_ONLY = 'You need the permission to manage organization data to do this'
 
@@ -205,6 +223,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     })),
     assigned_to: preset.assigned_to,
     content_omitted: false,
+    security_review: PASSED_REVIEW,
   })
 
   const recordRevision = (
@@ -215,10 +234,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   ) => {
     revisions.push({
       skill_preset_id: preset.id,
-      review_verdict: 'ALLOW',
-      review_model: MOCK_REVIEW_MODEL,
-      review_prompt_version: MOCK_REVIEW_PROMPT_VERSION,
-      review_findings: [],
+      security_review: change_type === 'DELETE' ? null : PASSED_REVIEW,
       revision: preset.revision,
       change_type,
       edited_by,
@@ -346,21 +362,25 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     }
     const findings = inspect(state)
     if (findings.length > 0) {
-      // A blocked attempt leaves an audit trace: hashes and findings, never the text.
-      pushEvent(exceptId ? 'UPDATE' : 'CREATE', currentUser.email, now(), {
-        id: exceptId ?? null,
+      // A refused save leaves a REJECTED audit entry: hashes and findings, never the text.
+      const rejected: SkillPresetRejectedChange = {
+        attempted_change: exceptId ? 'UPDATE' : 'CREATE',
+        skill_preset_id: exceptId ?? null,
         name: state.name,
-        review_verdict: 'BLOCK',
-        review_model: MOCK_REVIEW_MODEL,
-        review_prompt_version: MOCK_REVIEW_PROMPT_VERSION,
-        review_findings: findings,
+        base: state.base,
+        is_template: Boolean(state.is_template),
+        description_sha256: mockHash(state.description),
         team_context_sha256: state.team_context ? mockHash(state.team_context) : null,
-        skills: state.skills.map(({ skill_name, mode, content }) => ({
+        skills: state.skills.map(({ skill_name, mode, description, content }) => ({
           skill_name,
           mode,
+          description_sha256: description ? mockHash(description) : null,
           content_sha256: content ? mockHash(content) : null,
         })),
-      })
+        assigned_to: state.assigned_to,
+        findings,
+      }
+      pushEvent(SKILL_PRESET_REJECTED_EVENT_TYPE, currentUser.email, now(), rejected)
       return fail(
         422,
         `This preset was rejected to protect the members it applies to. ${findings
@@ -447,7 +467,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       const timestamp = now()
       presets = presets.filter(({ id }) => id !== skillPresetId)
       recordRevision({ ...preset, revision: preset.revision + 1 }, 'DELETE', currentUser.email, timestamp)
-      pushEvent('DELETE', currentUser.email, timestamp, auditView(preset))
+      pushEvent('DELETE', currentUser.email, timestamp, { ...auditView(preset), security_review: null })
       return respond(undefined)
     },
     listSkillPresetRevisions(_organizationId, { skillPresetId, limit = 50 } = {}) {

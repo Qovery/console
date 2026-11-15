@@ -26,6 +26,7 @@ const REVISIONS = [
     skill_preset_id: 'preset-1',
     revision: 2,
     change_type: 'UPDATE',
+    security_review: { verdict: 'ALLOW', model: 'example-model-id', prompt_version: 'v1', findings: [] },
     edited_by: 'sam.lee@example.com',
     edited_at: '2026-11-10T00:00:00Z',
     name: 'Backend team',
@@ -96,5 +97,11 @@ describe('SkillPresetHistory', () => {
 
     expect(screen.getByText('Changes not shown: the revision before is not loaded')).toBeInTheDocument()
     expect(screen.queryByTestId('diff')).not.toBeInTheDocument()
+  })
+
+  it('names the review in plain words, with the model id in a tooltip', () => {
+    renderWithProviders(<SkillPresetHistory />)
+    expect(screen.getByText('Model review on AWS Bedrock, prompt v1: allowed')).toBeInTheDocument()
+    expect(screen.queryByText(/example-model-id/)).not.toBeInTheDocument()
   })
 })

@@ -8,7 +8,11 @@ import {
 import { useState } from 'react'
 import { match } from 'ts-pattern'
 import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
-import { SKILL_LOAD_EVENT_TYPE, SKILL_PRESET_SUB_TARGET_TYPE } from '@qovery/domains/skill-presets/data-access'
+import {
+  SKILL_LOAD_EVENT_TYPE,
+  SKILL_PRESET_REJECTED_EVENT_TYPE,
+  SKILL_PRESET_SUB_TARGET_TYPE,
+} from '@qovery/domains/skill-presets/data-access'
 import { CodeDiffEditor, CodeEditor, type DiffStats, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { EventOriginIcon } from '@qovery/shared/util-icons'
@@ -53,14 +57,24 @@ const containerRegistriesSettingsUrl = (organizationId: string) =>
 const helmRepositoriesSettingsUrl = (organizationId: string) =>
   `${organizationSettingsUrl(organizationId)}/helm-repositories`
 
-/** A skill preset save the security review refused: its audit entry holds hashes and findings, no text. */
-const isBlockedSkillPresetSave = (event: OrganizationEventResponse) => {
-  if ((event.sub_target_type as string | null | undefined) !== SKILL_PRESET_SUB_TARGET_TYPE) return false
+/**
+ * A skill preset save the security review refused (event REJECTED, not in the generated enum yet):
+ * "Rejected by the security review · 2 findings (rule check, model review)". Null for other events.
+ */
+const securityRejectionSummary = (event: OrganizationEventResponse) => {
+  if ((event.event_type as string | undefined) !== SKILL_PRESET_REJECTED_EVENT_TYPE) return null
+  let findings: { source?: string }[] = []
   try {
-    return JSON.parse(event.change ?? '{}')?.review_verdict === 'BLOCK'
+    findings = JSON.parse(event.change ?? '{}')?.findings ?? []
   } catch {
-    return false
+    // An unreadable payload still shows as a rejection.
   }
+  const sources = [
+    findings.some(({ source }) => source !== 'MODEL') && 'rule check',
+    findings.some(({ source }) => source === 'MODEL') && 'model review',
+  ].filter(Boolean)
+  const count = `${findings.length} ${findings.length === 1 ? 'finding' : 'findings'}`
+  return `Rejected by the security review · ${count}${sources.length ? ` (${sources.join(', ')})` : ''}`
 }
 
 const skillPresetsSettingsUrl = (organizationId: string) => `${organizationSettingsUrl(organizationId)}/skill-presets`
@@ -215,6 +229,11 @@ export function RowEvent(props: RowEventProps) {
       (type) => (type as string | undefined) === SKILL_LOAD_EVENT_TYPE,
       () => <Icon iconName="file-import" className="text-neutral-subtle" />
     )
+    // A skill preset save the security review refused: nothing was saved.
+    .when(
+      (type) => (type as string | undefined) === SKILL_PRESET_REJECTED_EVENT_TYPE,
+      () => <Icon iconName="shield-exclamation" className="text-neutral-subtle" />
+    )
     .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-negative" /> : null))
 
   const isSuccess = match(event.event_type)
@@ -271,8 +290,8 @@ export function RowEvent(props: RowEventProps) {
                   : {upperCaseFirstLetter(event.sub_target_type)?.replace(/_/g, ' ')}
                 </span>
               )}
-              {isBlockedSkillPresetSave(event) && (
-                <span className="text-neutral-subtle"> · Rejected by the security review</span>
+              {securityRejectionSummary(event) && (
+                <span className="text-neutral-subtle"> · {securityRejectionSummary(event)}</span>
               )}
             </span>
           </Skeleton>

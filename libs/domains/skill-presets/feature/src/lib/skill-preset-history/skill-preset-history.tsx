@@ -18,6 +18,7 @@ import {
   ModalCrud,
   Section,
   Skeleton,
+  Tooltip,
   useModal,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
@@ -224,6 +225,7 @@ function SkillPresetHistoryPage() {
     ? diffRevisions(previous, selected)
     : { template: null, name: null, description: null, base: null, teamContext: null, skills: [], assignments: null }
   const isLatest = selected.revision === latest.revision
+  const review = reviewSummary(selected)
 
   return (
     <Section className="flex flex-col gap-6 px-8 pb-8 pt-6">
@@ -330,10 +332,12 @@ function SkillPresetHistoryPage() {
                 {dateFullFormat(selected.edited_at)} · {baseLabel(selected.base)}
                 {previous ? ` · compared with revision ${previous.revision}` : ''}
               </p>
-              {reviewSummary(selected) && (
+              {review && (
                 <p className="flex items-center gap-1.5 text-xs text-neutral-subtle">
                   <Icon iconName="shield-check" iconStyle="regular" aria-hidden="true" />
-                  {reviewSummary(selected)}
+                  <Tooltip content={`Model: ${review.model}`}>
+                    <span tabIndex={0}>{review.text}</span>
+                  </Tooltip>
                 </p>
               )}
             </div>

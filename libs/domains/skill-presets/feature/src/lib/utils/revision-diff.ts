@@ -103,11 +103,16 @@ export function skillAsText(skill: SkillPresetSkill | null) {
     .join('\n')
 }
 
-/** "Reviewed by <model>, prompt v1: allowed", or null for revisions saved before the review existed. */
+/** The friendly name shown for the reviewer: the model id changes with releases, the screen should not. */
+export const SECURITY_REVIEW_NAME = 'Model review on AWS Bedrock'
+
+/**
+ * "Model review on AWS Bedrock, prompt v1: allowed", with the model id for a tooltip. Null on DELETE
+ * revisions, when the review was off, and for revisions saved before it existed.
+ */
 export function reviewSummary(revision: SkillPresetRevisionResponse) {
-  if (!revision.review_verdict) return null
-  const verdict = revision.review_verdict === 'ALLOW' ? 'allowed' : 'blocked'
-  const model = revision.review_model ?? 'a model'
-  const prompt = revision.review_prompt_version ? `, prompt ${revision.review_prompt_version}` : ''
-  return `Reviewed by ${model}${prompt}: ${verdict}`
+  const review = revision.security_review
+  if (!review) return null
+  const verdict = review.verdict === 'ALLOW' ? 'allowed' : 'blocked'
+  return { text: `${SECURITY_REVIEW_NAME}, prompt ${review.prompt_version}: ${verdict}`, model: review.model }
 }

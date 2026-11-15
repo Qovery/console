@@ -123,6 +123,26 @@ describe('SkillPresetEditorForm', () => {
     expect(mockCreateSkillPreset).not.toHaveBeenCalled()
   })
 
+  it('sends the organization’s own skills', async () => {
+    mockCreateSkillPreset.mockResolvedValue(savedPreset)
+    const { userEvent } = renderWithProviders(
+      <SkillPresetEditorForm
+        organizationId="organization-1"
+        initialValues={{
+          ...toSkillPresetFormValues(),
+          name: 'Runbooks',
+          customSkills: [{ skillName: 'runbook-a', description: 'Runbook. Use when on call.', content: 'Steps.' }],
+        }}
+        presets={[]}
+        assignees={assignees}
+      />
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+    expect(mockCreateSkillPreset.mock.calls[0][0].body.skills).toEqual([
+      { skill_name: 'runbook-a', mode: 'ADD', description: 'Runbook. Use when on call.', content: 'Steps.' },
+    ])
+  })
+
   it('shows a 422 rejection as a summary and next to the exact line', async () => {
     mockCreateSkillPreset.mockRejectedValue(
       buildSkillPresetApiError(422, 'This preset was rejected to protect the members it applies to.', {
@@ -340,5 +360,29 @@ describe('SkillPresetEditorForm', () => {
 
     expect(await screen.findByTestId('ai-features-notice')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Create preset' })).toBeDisabled()
+  })
+
+  it('counts all the text and refuses to save above 200,000 characters', async () => {
+    const { userEvent } = renderWithProviders(
+      <SkillPresetEditorForm
+        organizationId="organization-1"
+        initialValues={{
+          ...toSkillPresetFormValues(),
+          name: 'Runbooks',
+          customSkills: Array.from({ length: 4 }, (_, index) => ({
+            skillName: `runbook-${index}`,
+            description: 'Runbook. Use when on call.',
+            content: 'y'.repeat(60000),
+          })),
+        }}
+        presets={[]}
+        assignees={assignees}
+      />
+    )
+
+    expect(screen.getByTestId('total-text-counter')).toHaveTextContent('240,104 / 200,000 characters')
+    expect(screen.getByTestId('total-text-counter')).toHaveTextContent('over the limit a model can review')
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+    expect(mockCreateSkillPreset).not.toHaveBeenCalled()
   })
 })

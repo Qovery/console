@@ -57,8 +57,12 @@ describe('diffRevisions', () => {
 
   it('summarizes the security review of a revision', () => {
     expect(
-      reviewSummary(revision({ review_verdict: 'ALLOW', review_model: 'review-model', review_prompt_version: 'v1' }))
-    ).toBe('Reviewed by review-model, prompt v1: allowed')
+      reviewSummary(
+        revision({
+          security_review: { verdict: 'ALLOW', model: 'example-model-id', prompt_version: 'v1', findings: [] },
+        })
+      )
+    ).toEqual({ text: 'Model review on AWS Bedrock, prompt v1: allowed', model: 'example-model-id' })
     expect(reviewSummary(revision({}))).toBeNull()
   })
 })

@@ -1,5 +1,6 @@
 import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 import { Button, Icon } from '@qovery/shared/ui'
+import { findingKindLabel } from '../utils/skill-preset-findings'
 import { FindingSourceLabel } from './finding-source-label'
 
 export interface FindingListProps {
@@ -34,7 +35,10 @@ export function FindingList({ findings, onSelectLine }: FindingListProps) {
               <span className="font-medium">Line {finding.line}</span>
             )}
             <span>
-              : {finding.reason}. <span className="font-code text-neutral-subtle">{finding.rule_id}</span>
+              : {finding.reason}.{' '}
+              <span className={finding.source === 'MODEL' ? 'text-neutral-subtle' : 'font-code text-neutral-subtle'}>
+                {findingKindLabel(finding)}
+              </span>
             </span>
           </span>
         </li>

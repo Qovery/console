@@ -24,7 +24,8 @@ export function getSkillPresetErrorDetail(error: unknown): string | undefined {
 
 /**
  * A 409 can mean two things: an assignment target already held by another preset, or someone else
- * saving the preset between this read and write. Only the message tells them apart.
+ * saving the preset between this read and write, including while the security review ran. q-core
+ * uses one message for both concurrent cases ("...was changed by someone else: reload it and try again").
  */
 export function isSkillPresetConcurrentModification(error: unknown) {
   return (
@@ -37,10 +38,9 @@ export function isSkillPresetReviewUnavailable(error: unknown) {
   return getSkillPresetErrorStatus(error) === 503
 }
 
-/** 403 or 409 because the organization turned AI features off: presets can be read but not written. */
+/** 403 because the organization turned AI features off: presets can be read and deleted, not written. */
 export function isSkillPresetAiFeaturesOff(error: unknown) {
-  const status = getSkillPresetErrorStatus(error)
-  return (status === 403 || status === 409) && /AI features/i.test(getSkillPresetErrorDetail(error) ?? '')
+  return getSkillPresetErrorStatus(error) === 403 && /AI features/i.test(getSkillPresetErrorDetail(error) ?? '')
 }
 
 export const SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE =

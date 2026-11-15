@@ -250,4 +250,18 @@ describe('AI features off', () => {
     expect(screen.getByRole('button', { name: /Create preset/ })).toBeDisabled()
     expect(await screen.findByText('Backend team')).toBeInTheDocument()
   })
+
+  it('still lets an admin delete a preset', async () => {
+    useScenario('ai-features-off')
+    const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
+    const row = await screen.findByTestId('skill-preset-0193f1c2-5a7e-7b10-9a0e-3d1f2c4b5a02')
+
+    await userEvent.click(within(row).getByRole('button', { name: 'Actions for Platform (CLI-first)' }))
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Delete' }))
+    await userEvent.type(screen.getByRole('textbox'), 'Platform (CLI-first)')
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    await waitForElementToBeRemoved(() => screen.queryByTestId('skill-preset-0193f1c2-5a7e-7b10-9a0e-3d1f2c4b5a02'))
+    expect(screen.getByText('Backend team')).toBeInTheDocument()
+  })
 })

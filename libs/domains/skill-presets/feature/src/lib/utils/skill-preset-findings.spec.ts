@@ -1,4 +1,4 @@
-import { findingLocationLabel, findingTarget, findingsFor } from './skill-preset-findings'
+import { findingKindLabel, findingLocationLabel, findingTarget, findingsFor } from './skill-preset-findings'
 
 describe('skill preset findings', () => {
   it('maps every location q-core sends to an editor field', () => {
@@ -31,5 +31,20 @@ describe('skill preset findings', () => {
     expect(findingLocationLabel({ rule_id: 'a', location: "content of skill 'x'", line: 1, reason: 'A' })).toBe(
       'x, content, line 1'
     )
+  })
+
+  it('names model categories and keeps rule ids', () => {
+    expect(
+      findingKindLabel({
+        source: 'MODEL',
+        rule_id: 'data-exfiltration',
+        location: 'team context',
+        line: 1,
+        reason: 'r',
+      })
+    ).toBe('Data exfiltration')
+    expect(
+      findingKindLabel({ source: 'RULES', rule_id: 'dump-secrets', location: 'team context', line: 1, reason: 'r' })
+    ).toBe('dump-secrets')
   })
 })

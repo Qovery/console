@@ -1,6 +1,10 @@
 import { type FieldErrors, type Resolver } from 'react-hook-form'
-import { SKILL_NAME_PATTERN, SKILL_PRESET_LIMITS } from '@qovery/domains/skill-presets/data-access'
-import { type SkillPresetFormValues, effectiveQoverySkills } from './skill-preset-form'
+import {
+  SKILL_NAME_PATTERN,
+  SKILL_PRESET_LIMITS,
+  totalPresetTextLength,
+} from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetFormValues, effectiveQoverySkills, toSkillPresetRequest } from './skill-preset-form'
 
 const formatCount = (value: number) => value.toLocaleString('en-US')
 
@@ -98,6 +102,13 @@ export function validateSkillPresetForm(values: SkillPresetFormValues): Record<s
     else if (skill.content.length > limits.skillContentMaxLength)
       errors[`${path}.content`] = tooLong(limits.skillContentMaxLength)
   })
+
+  const totalText = totalPresetTextLength(toSkillPresetRequest(values))
+  if (totalText > limits.totalTextMaxLength) {
+    // Not under `root`: react-hook-form ignores root errors when it decides whether a submit is valid.
+    errors['totalText'] =
+      `This preset holds ${formatCount(totalText)} characters of text, over the ${formatCount(limits.totalTextMaxLength)} a model can review. Shorten the team context or your skills.`
+  }
 
   const skillCount = effectiveQoverySkills(values).length + values.customSkills.length
   if (skillCount > limits.maxSkills) {

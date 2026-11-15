@@ -60,3 +60,18 @@ export const findingsAsText = (findings: SkillPresetFinding[]) =>
   findings.length > 0
     ? findings.map((finding) => `${findingSourceLabel(finding)}, line ${finding.line}: ${finding.reason}.`).join(' ')
     : undefined
+
+const MODEL_CATEGORY_LABELS: Record<string, string> = {
+  'prompt-injection': 'Prompt injection',
+  concealment: 'Concealment',
+  'credential-access': 'Credential access',
+  'data-exfiltration': 'Data exfiltration',
+  'unsafe-execution': 'Unsafe execution',
+  'approval-bypass': 'Approval bypass',
+  'social-engineering': 'Social engineering',
+  other: 'Other',
+}
+
+/** Rules keep their id (it names the exact rule); model categories get a readable name. */
+export const findingKindLabel = (finding: SkillPresetFinding) =>
+  finding.source === 'MODEL' ? MODEL_CATEGORY_LABELS[finding.rule_id] ?? finding.rule_id : finding.rule_id

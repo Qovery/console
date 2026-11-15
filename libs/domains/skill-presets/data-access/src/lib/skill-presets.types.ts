@@ -54,13 +54,20 @@ export interface SkillPresetResponse {
 
 export type SkillPresetReviewVerdict = 'ALLOW' | 'BLOCK'
 
+/** The model review a saved state passed. */
+export interface SkillPresetSecurityReview {
+  verdict: SkillPresetReviewVerdict
+  /** The model id, for example a Bedrock inference profile. Shown in a tooltip only. */
+  model: string
+  prompt_version: string
+  /** Notes the model raised without blocking. Usually empty. */
+  findings: SkillPresetFinding[]
+}
+
 export interface SkillPresetRevisionResponse {
   skill_preset_id: string
-  /** The model security review of this save. Absent on revisions saved before the review existed. */
-  review_verdict?: SkillPresetReviewVerdict | null
-  review_model?: string | null
-  review_prompt_version?: string | null
-  review_findings?: SkillPresetFinding[] | null
+  /** Null on DELETE revisions, when the review is off, and on revisions saved before it existed. */
+  security_review?: SkillPresetSecurityReview | null
   revision: number
   change_type: SkillPresetChangeType
   edited_by: string
@@ -204,3 +211,25 @@ export interface SkillPresetUsageResponse {
 /** Same as the audit log page: the generated client's enums do not list these values yet. */
 export const SKILL_PRESET_SUB_TARGET_TYPE = 'SKILL_PRESET'
 export const SKILL_LOAD_EVENT_TYPE = 'LOAD'
+/** A create or an update the security review refused: nothing was saved. */
+export const SKILL_PRESET_REJECTED_EVENT_TYPE = 'REJECTED'
+
+/** The `change` of a REJECTED audit entry: hashes and findings, never the text. */
+export interface SkillPresetRejectedChange {
+  attempted_change: 'CREATE' | 'UPDATE'
+  /** Null on a create. */
+  skill_preset_id: string | null
+  name: string
+  base: SkillPresetBase
+  is_template: boolean
+  description_sha256: string
+  team_context_sha256: string | null
+  skills: {
+    skill_name: string
+    mode: SkillPresetSkillMode
+    description_sha256: string | null
+    content_sha256: string | null
+  }[]
+  assigned_to: SkillPresetAssignedTo
+  findings: SkillPresetFinding[]
+}

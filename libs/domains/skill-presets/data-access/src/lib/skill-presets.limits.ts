@@ -6,7 +6,22 @@ export const SKILL_PRESET_LIMITS = {
   skillContentMaxLength: 65536,
   maxSkills: 50,
   skillNameMaxLength: 64,
+  /** All the text of a preset together (description, team context, skill descriptions and content), so a model can review it. */
+  totalTextMaxLength: 200000,
 } as const
+
+/** The text q-core counts against `totalTextMaxLength`: everything the review reads. */
+export function totalPresetTextLength(preset: {
+  description?: string | null
+  team_context?: string | null
+  skills: { description?: string | null; content?: string | null }[]
+}) {
+  return (
+    (preset.description?.length ?? 0) +
+    (preset.team_context?.length ?? 0) +
+    preset.skills.reduce((sum, skill) => sum + (skill.description?.length ?? 0) + (skill.content?.length ?? 0), 0)
+  )
+}
 
 /** Agent Skills naming rule: lowercase letters, digits and hyphens, at most 64 characters. */
 export const SKILL_NAME_PATTERN = /^[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$/
