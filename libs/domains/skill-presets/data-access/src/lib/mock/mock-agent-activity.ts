@@ -1,10 +1,25 @@
-import { type AgentActivityParams, type AgentActivityResponse } from '../agent-activity.types'
+import {
+  AGENT_ACTIVITY_LIMITS,
+  type AgentActivityParams,
+  type AgentActivityResponse,
+  type AgentActivitySource,
+} from '../agent-activity.types'
 
 /*
- * Agent activity for the mock: actions follow from the skill loads (a load of qovery-deploy often
- * leads to a deploy), plus actions through MCP with no skill, and a few denied deletes in production.
- * Seeded, so every run and every test sees the same data.
+ * Agent activity for the mock, shaped like q-core's: actions follow from the skill loads (a load of
+ * qovery-deploy often leads to a deploy), plus MCP tool calls with no skill, a policy token acting
+ * through MCP, and refused requests in production. Seeded, so every run and every test sees the same data.
  */
+
+/** q-core's fixed coverage note. */
+export const MOCK_AGENT_ACTIVITY_COVERAGE_NOTE =
+  'Only actions taken through Qovery (its API, CLI, skills and MCP server) are visible. ' +
+  'What an agent does elsewhere, such as in a shell, in git or in a cloud console, is not.'
+
+const SOURCES: AgentActivitySource[] = ['SKILL_LOAD', 'SKILL_API_ACTION', 'MCP_TOOL_CALL', 'POLICY_DENIAL']
+
+/** How the audit log names an actor that is a policy token. */
+export const MOCK_POLICY_TOKEN_ACTOR = 'policy:3f1c9a2e:ci-deployer'
 
 export type MockAgentAction = AgentActivityResponse['recent'][number]
 
@@ -27,7 +42,7 @@ type Effect = { event: string; target_type: string; environment: 'staging' | 'pr
 /** What an agent usually does after loading a skill. Skills not listed lead to no Qovery action. */
 const EFFECTS: Record<string, Effect[]> = {
   'qovery-deploy': [
-    { event: 'TRIGGER_DEPLOY', target_type: 'APPLICATION', environment: 'staging', chance: 0.6 },
+    { event: 'DEPLOY_QUEUED', target_type: 'APPLICATION', environment: 'staging', chance: 0.6 },
     { event: 'UPDATE', target_type: 'VARIABLE', environment: 'staging', chance: 0.2 },
   ],
   qovery: [
@@ -37,7 +52,7 @@ const EFFECTS: Record<string, Effect[]> = {
   'qovery-troubleshoot': [
     { event: 'TRIGGER_RESTART', target_type: 'APPLICATION', environment: 'production', chance: 0.4 },
   ],
-  'qovery-preview': [{ event: 'CREATE', target_type: 'ENVIRONMENT', environment: 'preview', chance: 0.7 }],
+  'qovery-preview': [{ event: 'TRIGGER_DEPLOY', target_type: 'ENVIRONMENT', environment: 'preview', chance: 0.7 }],
   'qovery-optimize': [{ event: 'UPDATE', target_type: 'APPLICATION', environment: 'staging', chance: 0.3 }],
   'release-checklist': [
     { event: 'TRIGGER_DEPLOY', target_type: 'APPLICATION', environment: 'production', chance: 0.5 },
@@ -86,7 +101,7 @@ export function buildMockAgentActions(
         at: new Date(new Date(load.timestamp).getTime() + 2 * 60_000).toISOString(),
         user_sub: load.user_sub,
         user_name: load.user_name,
-        origin: 'SKILL',
+        origin: 'SKILL_API_ACTION',
         skill_name: load.skill_name,
         event: effect.event,
         target_type: effect.target_type,
@@ -96,56 +111,79 @@ export function buildMockAgentActions(
     }
   }
 
-  const person = (id: string) => people.find((item) => item.id === id) ?? people[0]
+  const person = (id: string) => {
+    const found = people.find((item) => item.id === id) ?? people[0]
+    return { user_sub: found.id, user_name: found.name }
+  }
+  // A policy token has no user sub: the audit log names it `policy:<id>:<name>`.
+  const policyToken = { user_sub: null, user_name: MOCK_POLICY_TOKEN_ACTOR }
   const extra = (
     count: number,
-    userId: string,
-    make: (index: number) => Omit<MockAgentAction, 'at' | 'user_sub' | 'user_name'>
+    actor: { user_sub: string | null; user_name: string },
+    offsetHours: number,
+    make: (index: number) => Omit<MockAgentAction, 'at' | 'user_sub' | 'user_name' | 'outcome'>
   ) => {
     for (let index = 0; index < count; index++) {
-      const { id, name } = person(userId)
+      const action = make(index)
       actions.push({
-        at: new Date(Date.now() - (index * 37 + 5) * HOUR).toISOString(),
-        user_sub: id,
-        user_name: name,
-        ...make(index),
+        at: new Date(Date.now() - (index * 37 + offsetHours) * HOUR).toISOString(),
+        ...actor,
+        ...action,
+        outcome: action.origin === 'POLICY_DENIAL' ? 'DENIED' : 'ALLOWED',
       })
     }
   }
 
-  // Through the Qovery MCP server: no skill in the user agent.
-  extra(14, 'auth0|mock-priya', (index) => ({
-    origin: 'MCP',
+  // Tool calls through the Qovery MCP server: no skill in the user agent.
+  extra(14, person('auth0|mock-priya'), 5, (index) => ({
+    origin: 'MCP_TOOL_CALL',
     skill_name: null,
-    event: index % 2 ? 'TRIGGER_RESTART' : 'UPDATE',
-    target_type: index % 2 ? 'APPLICATION' : 'VARIABLE',
-    target_name: index % 2 ? 'worker' : 'worker: QUEUE_CONCURRENCY',
+    event: 'MCP',
+    target_type: index % 2 ? 'APPLICATION' : 'ENVIRONMENT',
+    target_name: index % 2 ? 'worker' : 'payments-staging',
     project_name: 'payments',
     environment_name: 'payments-staging',
-    outcome: 'ALLOWED',
+  }))
+  // A CI pipeline using a policy token through MCP.
+  extra(8, policyToken, 9, () => ({
+    origin: 'MCP_TOOL_CALL',
+    skill_name: null,
+    event: 'MCP',
+    target_type: 'ENVIRONMENT',
+    target_name: 'storefront-staging',
+    project_name: 'storefront',
+    environment_name: 'storefront-staging',
   }))
 
   if (withDenials) {
-    // Refused by the member's role or policy token: deletes in production.
-    extra(4, 'auth0|mock-jordan', () => ({
-      origin: 'SKILL',
+    // Refused by the member's role, asked from a skill.
+    extra(4, person('auth0|mock-jordan'), 3, () => ({
+      origin: 'POLICY_DENIAL',
       skill_name: 'qovery',
-      event: 'TRIGGER_DELETE',
+      event: 'ACCESS_DENIED',
       target_type: 'ENVIRONMENT',
       target_name: 'payments-production',
       project_name: 'payments',
       environment_name: 'payments-production',
-      outcome: 'DENIED',
     }))
-    extra(2, 'auth0|mock-jamie', () => ({
-      origin: 'SKILL',
+    extra(2, person('auth0|mock-jamie'), 7, () => ({
+      origin: 'POLICY_DENIAL',
       skill_name: 'qovery-deploy',
-      event: 'TRIGGER_DEPLOY',
+      event: 'ACCESS_DENIED',
       target_type: 'APPLICATION',
       target_name: 'checkout',
       project_name: 'storefront',
       environment_name: 'storefront-production',
-      outcome: 'DENIED',
+    }))
+    // Refused by the policy token's rules: it may only touch staging.
+    extra(3, policyToken, 11, () => ({
+      origin: 'POLICY_DENIAL',
+      skill_name: null,
+      event: 'POLICY_FAILED',
+      target_type: 'ENVIRONMENT',
+      target_name: 'payments-production',
+      project_name: 'payments',
+      environment_name: 'payments-production',
     }))
   }
 
@@ -164,10 +202,13 @@ export function aggregateAgentActivity(
     const time = new Date(at).getTime()
     return time >= fromTime && time <= toTime
   }
-  const matches = (user: string, skill: string | null) =>
+  const matches = (user: string | null, skill: string | null) =>
     (!userSub || user === userSub) && (!skillName || skill === skillName)
   const scopedActions = actions.filter((action) => inRange(action.at) && matches(action.user_sub, action.skill_name))
   const scopedLoads = loads.filter((load) => inRange(load.timestamp) && matches(load.user_sub, load.skill_name))
+  const isDenied = ({ outcome }: MockAgentAction) => outcome === 'DENIED'
+  const allowedCount = (list: MockAgentAction[]) => list.filter((action) => !isDenied(action)).length
+  const deniedCount = (list: MockAgentAction[]) => list.filter(isDenied).length
 
   const step = bucket === 'HOUR' ? HOUR : 24 * HOUR
   const firstBucket = Math.floor(fromTime / step) * step
@@ -185,8 +226,8 @@ export function aggregateAgentActivity(
   scopedActions.forEach((action) => {
     const bucketed = slot(action.at)
     if (!bucketed) return
-    bucketed.actions += 1
-    if (action.outcome === 'DENIED') bucketed.denials += 1
+    if (isDenied(action)) bucketed.denials += 1
+    else bucketed.actions += 1
   })
 
   const byType = new Map<string, { event: string; target_type: string; count: number; denied: number }>()
@@ -198,26 +239,31 @@ export function aggregateAgentActivity(
     byType.set(key, row)
   })
 
-  const memberIds = [
-    ...new Set([...scopedLoads.map(({ user_sub }) => user_sub), ...scopedActions.map(({ user_sub }) => user_sub)]),
+  // Like q-core, a person is keyed by name (the audit log's `triggered_by`); the sub comes from the loads.
+  const subByName = new Map(scopedLoads.map(({ user_name, user_sub }) => [user_name, user_sub]))
+  const memberNames = [
+    ...new Set([...scopedLoads.map(({ user_name }) => user_name), ...scopedActions.map(({ user_name }) => user_name)]),
   ]
-  const byMember = memberIds.map((id) => {
-    const memberLoads = scopedLoads.filter(({ user_sub }) => user_sub === id)
-    const memberActions = scopedActions.filter(({ user_sub }) => user_sub === id)
+  const byMember = memberNames.map((name) => {
+    const memberLoads = scopedLoads.filter(({ user_name }) => user_name === name)
+    const memberActions = scopedActions.filter(({ user_name }) => user_name === name)
     const skillCounts = new Map<string, number>()
     memberLoads.forEach(({ skill_name }) => skillCounts.set(skill_name, (skillCounts.get(skill_name) ?? 0) + 1))
+    memberActions.forEach(({ skill_name }) => {
+      if (skill_name) skillCounts.set(skill_name, (skillCounts.get(skill_name) ?? 0) + 1)
+    })
     const last =
       [...memberLoads.map(({ timestamp }) => timestamp), ...memberActions.map(({ at }) => at)].sort().at(-1) ?? from
     return {
-      user_sub: id,
-      user_name: memberLoads[0]?.user_name ?? memberActions[0]?.user_name ?? id,
+      user_sub: subByName.get(name) ?? null,
+      user_name: name,
       skill_loads: memberLoads.length,
-      actions: memberActions.length,
-      denials: memberActions.filter(({ outcome }) => outcome === 'DENIED').length,
+      actions: allowedCount(memberActions),
+      denials: deniedCount(memberActions),
       top_skills: [...skillCounts.entries()]
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map(([name]) => name),
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .slice(0, AGENT_ACTIVITY_LIMITS.maxTopSkills)
+        .map(([skill]) => skill),
       last_activity_at: last,
     }
   })
@@ -234,28 +280,49 @@ export function aggregateAgentActivity(
     return {
       skill_name: name,
       loads: skillLoads.length,
-      actions: skillActions.length,
-      denials: skillActions.filter(({ outcome }) => outcome === 'DENIED').length,
-      members: new Set([...skillLoads.map(({ user_sub }) => user_sub), ...skillActions.map(({ user_sub }) => user_sub)])
-        .size,
+      actions: allowedCount(skillActions),
+      denials: deniedCount(skillActions),
+      members: new Set([
+        ...skillLoads.map(({ user_name }) => user_name),
+        ...skillActions.map(({ user_name }) => user_name),
+      ]).size,
     }
   })
 
+  const activity = (row: { skill_loads?: number; loads?: number; actions: number; denials: number }) =>
+    (row.skill_loads ?? row.loads ?? 0) + row.actions + row.denials
+
   return {
-    coverage: {
-      sources: ['API', 'CLI', 'MCP'],
-      note: 'Shows actions coding agents took through Qovery (API, CLI, MCP). Commands run directly on your cluster are not visible here.',
-    },
+    from,
+    to,
+    bucket,
+    coverage: { sources: SOURCES, note: MOCK_AGENT_ACTIVITY_COVERAGE_NOTE },
     totals: {
       skill_loads: scopedLoads.length,
-      actions: scopedActions.length,
-      denials: scopedActions.filter(({ outcome }) => outcome === 'DENIED').length,
-      members: memberIds.length,
+      actions: allowedCount(scopedActions),
+      denials: deniedCount(scopedActions),
+      members: memberNames.length,
     },
     timeline,
     actions_by_type: [...byType.values()].sort((a, b) => b.count - a.count),
-    by_member: byMember.sort((a, b) => a.user_name.localeCompare(b.user_name)),
-    by_skill: bySkill.sort((a, b) => b.loads + b.actions - (a.loads + a.actions)),
-    recent: scopedActions.slice(0, 100),
+    by_member: byMember
+      .sort((a, b) => activity(b) - activity(a) || a.user_name.localeCompare(b.user_name))
+      .slice(0, AGENT_ACTIVITY_LIMITS.maxMembers),
+    by_skill: bySkill
+      .sort((a, b) => activity(b) - activity(a) || (a.skill_name ?? '').localeCompare(b.skill_name ?? ''))
+      .slice(0, AGENT_ACTIVITY_LIMITS.maxSkills),
+    recent: scopedActions.slice(0, AGENT_ACTIVITY_LIMITS.maxRecent),
   }
+}
+
+/** q-core's 400s: a range that is empty or over 90 days, an unknown bucket, a malformed skill name. */
+export function agentActivityParamsError({ from, to, bucket, skillName }: AgentActivityParams): string | null {
+  const fromTime = new Date(from).getTime()
+  const toTime = new Date(to).getTime()
+  if (Number.isNaN(fromTime) || Number.isNaN(toTime) || fromTime >= toTime) return '"from" must be before "to"'
+  if (toTime - fromTime > AGENT_ACTIVITY_LIMITS.maxRangeDays * 24 * HOUR + 60_000)
+    return `The range must not exceed ${AGENT_ACTIVITY_LIMITS.maxRangeDays} days`
+  if (bucket !== 'DAY' && bucket !== 'HOUR') return 'The bucket must be DAY or HOUR'
+  if (skillName !== undefined && !AGENT_ACTIVITY_LIMITS.skillNamePattern.test(skillName)) return 'Invalid skill name'
+  return null
 }

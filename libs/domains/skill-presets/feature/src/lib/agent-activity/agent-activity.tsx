@@ -2,7 +2,11 @@ import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { type AgentActivityBucket, type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
+import {
+  type AgentActivityBucket,
+  type AgentActivityResponse,
+  type AgentActivitySource,
+} from '@qovery/domains/skill-presets/data-access'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   Badge,
@@ -28,8 +32,9 @@ import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner
 import {
   type AgentActivityHint,
   actionLabel,
-  actionTypeLabel,
+  actorLabel,
   computeAgentActivityHints,
+  groupActionsByType,
   neverLoadedSkills,
   targetLabel,
 } from '../utils/agent-activity'
@@ -45,7 +50,17 @@ const RANGES: { value: string; label: string; hours: number; bucket: AgentActivi
 
 const ALL = 'all'
 const NO_SKILL = 'none'
-const ATTRIBUTION_NOTE = 'Skill attribution comes from the agent’s user agent and is indicative.'
+const ATTRIBUTION_NOTE =
+  'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
+const NO_SKILL_LABEL = 'No skill (MCP or API)'
+const DEFAULT_COVERAGE_NOTE =
+  'Only actions taken through Qovery (its API, CLI, skills and MCP server) are visible. What an agent does elsewhere, such as in a shell, in git or in a cloud console, is not.'
+const SOURCE_LABELS: Record<AgentActivitySource, string> = {
+  SKILL_LOAD: 'skill loads',
+  SKILL_API_ACTION: 'API calls from skills',
+  MCP_TOOL_CALL: 'MCP tool calls',
+  POLICY_DENIAL: 'refused requests',
+}
 
 type Scope = 'organization' | 'me'
 
@@ -105,6 +120,19 @@ function OutcomeBadge({ outcome }: { outcome: 'ALLOWED' | 'DENIED' }) {
   )
 }
 
+/** A member's name, or "Policy token <name>" with a key for an actor that is a policy token. */
+function Actor({ userName }: { userName: string }) {
+  const { kind, label } = actorLabel(userName)
+  return kind === 'policy-token' ? (
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+      <Icon iconName="key" iconStyle="regular" className="text-neutral-subtle" aria-hidden="true" />
+      {label}
+    </span>
+  ) : (
+    <>{label}</>
+  )
+}
+
 function SkillName({ name }: { name: string | null }) {
   return name ? <span className="font-code">{name}</span> : <span className="text-neutral-subtle">No skill</span>
 }
@@ -118,6 +146,15 @@ function HintLine({
   organizationId: string
   onShowMember: (userSub: string) => void
 }) {
+  const policyTokensLink = (
+    <Link
+      to="/organization/$organizationId/settings/policy-api-token"
+      params={{ organizationId }}
+      className="font-medium text-brand hover:underline"
+    >
+      Review policy tokens
+    </Link>
+  )
   const presetsLink = (
     <Link
       to="/organization/$organizationId/settings/skill-presets"
@@ -144,16 +181,21 @@ function HintLine({
           <span>
             {hint.count} agent actions were denied in <span className="font-code">{hint.environment}</span>.
           </span>
-          <Link
-            to="/organization/$organizationId/settings/policy-api-token"
-            params={{ organizationId }}
-            className="font-medium text-brand hover:underline"
-          >
-            Review policy tokens
-          </Link>
+          {policyTokensLink}
         </>
       )
     case 'member-denials':
+      // A policy token has no user sub: name it and point to its rules instead of drilling in.
+      if (!hint.userSub) {
+        return (
+          <>
+            <span>
+              <Actor userName={hint.userName} /> had {hint.count} actions denied.
+            </span>
+            {policyTokensLink}
+          </>
+        )
+      }
       return (
         <>
           <span>
@@ -165,7 +207,7 @@ function HintLine({
             color="brand"
             size="xs"
             className="h-auto px-0 text-sm"
-            onClick={() => onShowMember(hint.userSub)}
+            onClick={() => hint.userSub && onShowMember(hint.userSub)}
           >
             Show their activity
           </Button>
@@ -208,7 +250,8 @@ function ActivityContent({
   const unused = useMemo(() => neverLoadedSkills(activity), [activity])
   const timeline = activity.timeline.map((point) => ({
     label: dateFullFormat(point.start, undefined, bucket === 'HOUR' ? 'HH:mm' : 'dd MMM'),
-    allowed: point.actions - point.denials,
+    // q-core counts allowed actions in `actions` and refused ones in `denials`.
+    allowed: point.actions,
     denied: point.denials,
   }))
   const denied = activity.recent.filter(({ outcome }) => outcome === 'DENIED')
@@ -218,7 +261,7 @@ function ActivityContent({
   }
   const toggleMember = (userSub: string) => setFilters({ userSub: filters.userSub === userSub ? ALL : userSub })
 
-  if (activity.totals.skill_loads + activity.totals.actions === 0) {
+  if (activity.totals.skill_loads + activity.totals.actions + activity.totals.denials === 0) {
     return (
       <EmptyState
         icon="robot"
@@ -237,7 +280,7 @@ function ActivityContent({
         )}
       >
         <Stat label="Skill loads" value={activity.totals.skill_loads} />
-        <Stat label="Actions on Qovery" value={activity.totals.actions} />
+        <Stat label="Allowed actions" value={activity.totals.actions} />
         <Stat label="Denied actions" value={activity.totals.denials} />
         {isOrganization && <Stat label="Members with activity" value={activity.totals.members} />}
       </dl>
@@ -262,7 +305,7 @@ function ActivityContent({
           </div>
           <Chart.Container
             className="h-52"
-            isEmpty={activity.totals.actions === 0}
+            isEmpty={activity.totals.actions + activity.totals.denials === 0}
             aria-label="Agent actions over time, allowed and denied"
           >
             <BarChart data={timeline} margin={{ top: 8, bottom: 0, left: 0, right: 0 }}>
@@ -297,7 +340,7 @@ function ActivityContent({
               <ul className="flex flex-col gap-3 text-sm text-neutral" data-testid="activity-suggestions">
                 {hints.map((hint) => (
                   <li
-                    key={`${hint.kind}-${'environment' in hint ? hint.environment : 'userSub' in hint ? hint.userSub : 'skillName' in hint ? hint.skillName : ''}`}
+                    key={`${hint.kind}-${'environment' in hint ? hint.environment : 'userName' in hint ? hint.userName : 'skillName' in hint ? hint.skillName : ''}`}
                     className="flex flex-col gap-1"
                   >
                     <HintLine hint={hint} organizationId={organizationId} onShowMember={toggleMember} />
@@ -339,7 +382,7 @@ function ActivityContent({
               <Table.Row key={row.skill_name ?? NO_SKILL}>
                 <Table.Cell>
                   <DrillButton
-                    label={row.skill_name ?? 'No skill (MCP or unattributed)'}
+                    label={row.skill_name ?? NO_SKILL_LABEL}
                     mono={Boolean(row.skill_name)}
                     active={filters.skillName === (row.skill_name ?? NO_SKILL)}
                     onClick={() => toggleSkill(row.skill_name)}
@@ -383,12 +426,9 @@ function ActivityContent({
             Actions by type
           </Heading>
           <ul className="flex flex-col divide-y divide-neutral rounded-md border border-neutral text-sm">
-            {activity.actions_by_type.map((row) => (
-              <li
-                key={`${row.event}-${row.target_type}`}
-                className="flex items-center justify-between gap-3 px-4 py-2.5"
-              >
-                <span className="text-neutral">{actionTypeLabel(row.event, row.target_type)}</span>
+            {groupActionsByType(activity.actions_by_type).map((row) => (
+              <li key={row.label} className="flex items-center justify-between gap-3 px-4 py-2.5">
+                <span className="text-neutral">{row.label}</span>
                 <span className="flex items-center gap-3 tabular-nums">
                   <span className="text-neutral">{row.count}</span>
                   {row.denied > 0 && (
@@ -416,12 +456,12 @@ function ActivityContent({
               <ul className="flex flex-col gap-1.5" data-testid="denied-actions">
                 {denied.slice(0, 6).map((action) => (
                   <li
-                    key={`${action.at}-${action.user_sub}`}
+                    key={`${action.at}-${action.user_name}-${action.target_name}`}
                     className="flex flex-wrap items-center gap-x-2 text-neutral"
                   >
                     <Icon iconName="ban" iconStyle="regular" className="text-negative" aria-hidden="true" />
                     <span>
-                      {actionLabel(action.event, action.target_type)} {targetLabel(action.target_type)}{' '}
+                      {actionLabel(action.event, action.target_type)} on {targetLabel(action.target_type)}{' '}
                       <span className="font-code">{action.target_name}</span>
                       {action.environment_name && action.environment_name !== action.target_name ? (
                         <>
@@ -431,7 +471,11 @@ function ActivityContent({
                       ) : null}
                     </span>
                     <span className="text-xs text-neutral-subtle">
-                      {isOrganization ? `${action.user_name}, ` : ''}
+                      {isOrganization && (
+                        <>
+                          <Actor userName={action.user_name} />,{' '}
+                        </>
+                      )}
                       {timeAgo(new Date(action.at))} ago
                     </span>
                   </li>
@@ -479,19 +523,27 @@ function ActivityContent({
             </Table.Header>
             <Table.Body>
               {activity.by_member.map((row) => (
-                <Table.Row key={row.user_sub}>
+                <Table.Row key={row.user_sub ?? row.user_name}>
                   <Table.Cell>
-                    <DrillButton
-                      label={row.user_name}
-                      active={filters.userSub === row.user_sub}
-                      onClick={() => toggleMember(row.user_sub)}
-                    />
+                    {row.user_sub ? (
+                      <DrillButton
+                        label={row.user_name}
+                        active={filters.userSub === row.user_sub}
+                        onClick={() => row.user_sub && toggleMember(row.user_sub)}
+                      />
+                    ) : (
+                      // No user sub (a policy token): it cannot be filtered on.
+                      <span className="text-sm text-neutral">
+                        <Actor userName={row.user_name} />
+                      </span>
+                    )}
                   </Table.Cell>
                   <Table.Cell className="text-right tabular-nums">{row.skill_loads}</Table.Cell>
                   <Table.Cell className="text-right tabular-nums">{row.actions}</Table.Cell>
                   <Table.Cell className="text-right tabular-nums">{row.denials}</Table.Cell>
                   <Table.Cell className="h-auto py-2">
                     <span className="flex flex-wrap gap-1">
+                      {row.top_skills.length === 0 && <span className="text-neutral-subtle">None</span>}
                       {row.top_skills.map((skill) => (
                         <Badge key={skill} variant="surface" className="font-code">
                           {skill}
@@ -530,17 +582,21 @@ function ActivityContent({
           </Table.Header>
           <Table.Body>
             {activity.recent.slice(0, 25).map((action) => (
-              <Table.Row key={`${action.at}-${action.user_sub}-${action.target_name}`}>
+              <Table.Row key={`${action.at}-${action.user_name}-${action.target_name}`}>
                 <Table.Cell className="whitespace-nowrap">
                   <Tooltip content={dateFullFormat(action.at)}>
                     <span tabIndex={0}>{timeAgo(new Date(action.at))} ago</span>
                   </Tooltip>
                 </Table.Cell>
-                {isOrganization && <Table.Cell>{action.user_name}</Table.Cell>}
+                {isOrganization && (
+                  <Table.Cell>
+                    <Actor userName={action.user_name} />
+                  </Table.Cell>
+                )}
                 <Table.Cell className="h-auto py-2">
                   <span className="flex items-center gap-1.5">
                     <SkillName name={action.skill_name} />
-                    {action.origin === 'MCP' && <Badge variant="outline">MCP</Badge>}
+                    {action.origin === 'MCP_TOOL_CALL' && <Badge variant="outline">MCP</Badge>}
                   </span>
                 </Table.Cell>
                 <Table.Cell>{actionLabel(action.event, action.target_type)}</Table.Cell>
@@ -619,9 +675,12 @@ export function AgentActivity() {
           </Callout.Icon>
           <Callout.Text>
             <Callout.TextDescription>
-              {data?.coverage.note ??
-                'Shows actions coding agents took through Qovery (API, CLI, MCP). Commands run directly on your cluster are not visible here.'}{' '}
-              Prompts and code are never collected.
+              {data?.coverage.note ?? DEFAULT_COVERAGE_NOTE} Prompts and code are never collected.
+              {data && data.coverage.sources.length > 0 && (
+                <span className="mt-1 block text-xs text-neutral-subtle" data-testid="coverage-sources">
+                  Sources: {data.coverage.sources.map((source) => SOURCE_LABELS[source] ?? source).join(', ')}.
+                </span>
+              )}
             </Callout.TextDescription>
           </Callout.Text>
         </Callout.Root>
@@ -652,10 +711,10 @@ export function AgentActivity() {
               onChange={(value) => setFilters({ userSub: value as string })}
               options={[
                 { value: ALL, label: 'All members' },
-                ...(unfiltered?.by_member ?? []).map(({ user_sub, user_name }) => ({
-                  value: user_sub,
-                  label: user_name,
-                })),
+                // Policy tokens have no user sub, so they cannot be a filter.
+                ...(unfiltered?.by_member ?? []).flatMap(({ user_sub, user_name }) =>
+                  user_sub ? [{ value: user_sub, label: user_name }] : []
+                ),
               ]}
             />
           )}

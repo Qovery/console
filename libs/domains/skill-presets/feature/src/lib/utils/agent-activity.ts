@@ -1,30 +1,44 @@
 import { type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
 import { QOVERY_SKILLS } from './qovery-skills'
 
-/** Plain words for an audit event on a target: "Deploy", "Variable change"... */
+/**
+ * Plain words for a raw audit event on a target, as q-core returns them. Anything not listed shows
+ * as "Other (<raw event>)", so a new event type is never hidden or mislabelled.
+ */
 export function actionLabel(event: string, targetType: string) {
-  if (targetType === 'VARIABLE') return 'Variable change'
+  if (targetType === 'VARIABLE' && ['CREATE', 'UPDATE', 'DELETE'].includes(event)) return 'Variable change'
   switch (event) {
+    case 'DEPLOY_QUEUED':
     case 'TRIGGER_DEPLOY':
       return 'Deploy'
     case 'TRIGGER_RESTART':
       return 'Restart'
     case 'TRIGGER_STOP':
       return 'Stop'
-    case 'TRIGGER_DELETE':
     case 'DELETE':
+    case 'TRIGGER_DELETE':
       return 'Delete'
-    case 'CREATE':
-      return 'Create'
-    case 'UPDATE':
-      return 'Update'
+    case 'MCP':
+      return 'MCP tool call'
+    case 'POLICY_FAILED':
+    case 'ACCESS_DENIED':
+      return 'Denied'
     default:
-      return event
-        .toLowerCase()
-        .replace(/^trigger_/, '')
-        .replace(/_/g, ' ')
-        .replace(/^\w/, (letter) => letter.toUpperCase())
+      return `Other (${event})`
   }
+}
+
+const POLICY_TOKEN_ACTOR = /^policy:[^:]*:(.+)$/
+
+/**
+ * Who acted. The audit log names a policy token `policy:<id>:<name>`; it has no user sub, so it
+ * cannot be filtered on, only shown.
+ */
+export function actorLabel(userName: string): { kind: 'policy-token' | 'member'; label: string } {
+  const policyToken = userName.match(POLICY_TOKEN_ACTOR)
+  return policyToken
+    ? { kind: 'policy-token', label: `Policy token ${policyToken[1]}` }
+    : { kind: 'member', label: userName }
 }
 
 const TARGET_LABELS: Record<string, string> = {
@@ -41,10 +55,28 @@ const TARGET_LABELS: Record<string, string> = {
 
 export const targetLabel = (targetType: string) => TARGET_LABELS[targetType] ?? targetType.toLowerCase()
 
-/** "Deploy a service", "Variable change", for the actions by type list. */
+/** "Deploy (service)", "Variable change", "Other (UPDATE, service)", for the actions by type list. */
 export const actionTypeLabel = (event: string, targetType: string) => {
   const action = actionLabel(event, targetType)
-  return targetType === 'VARIABLE' ? action : `${action} (${targetLabel(targetType)})`
+  if (action === 'Variable change') return action
+  if (action.startsWith('Other (')) return `Other (${event}, ${targetLabel(targetType)})`
+  return `${action} (${targetLabel(targetType)})`
+}
+
+/**
+ * The actions by type list, one row per label: DEPLOY_QUEUED and TRIGGER_DEPLOY on a service are
+ * both "Deploy (service)". Most frequent first.
+ */
+export function groupActionsByType(rows: AgentActivityResponse['actions_by_type']) {
+  const grouped = new Map<string, { label: string; count: number; denied: number }>()
+  rows.forEach(({ event, target_type, count, denied }) => {
+    const label = actionTypeLabel(event, target_type)
+    const row = grouped.get(label) ?? { label, count: 0, denied: 0 }
+    row.count += count
+    row.denied += denied
+    grouped.set(label, row)
+  })
+  return [...grouped.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
 }
 
 /** Qovery skills nobody loaded in the period: candidates to turn off in a preset. */
@@ -56,7 +88,8 @@ export function neverLoadedSkills(activity: AgentActivityResponse) {
 export type AgentActivityHint =
   | { kind: 'unused-skills'; skills: string[] }
   | { kind: 'environment-denials'; environment: string; count: number }
-  | { kind: 'member-denials'; userSub: string; userName: string; count: number }
+  /** `userSub` is null for a policy token: it can be named but not drilled into. */
+  | { kind: 'member-denials'; userSub: string | null; userName: string; count: number }
   | { kind: 'loads-without-actions'; skillName: string; loads: number }
 
 const REPEATED = 3
@@ -69,7 +102,7 @@ export function computeAgentActivityHints(
   activity: AgentActivityResponse,
   { filtered = false }: { filtered?: boolean } = {}
 ): AgentActivityHint[] {
-  if (activity.totals.skill_loads + activity.totals.actions === 0) return []
+  if (activity.totals.skill_loads + activity.totals.actions + activity.totals.denials === 0) return []
   const hints: AgentActivityHint[] = []
 
   // Only meaningful for the whole organization: one member not loading a skill says nothing.

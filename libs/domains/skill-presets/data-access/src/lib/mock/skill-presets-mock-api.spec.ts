@@ -456,19 +456,67 @@ describe('createSkillPresetsMockApi', () => {
         createSkillPresetsMockApi('agent-activity').getAgentActivity(ORGANIZATION_ID, range())
       )
 
-      expect(value?.coverage.note).toContain('Commands run directly on your cluster are not visible here')
+      expect(value?.coverage).toEqual({
+        sources: ['SKILL_LOAD', 'SKILL_API_ACTION', 'MCP_TOOL_CALL', 'POLICY_DENIAL'],
+        note: expect.stringContaining('Only actions taken through Qovery'),
+      })
+      expect(value?.bucket).toBe('DAY')
       expect(value?.totals.actions).toBeGreaterThan(50)
-      expect(value?.totals.denials).toBe(6)
+      expect(value?.totals.denials).toBe(9)
       expect(value?.by_skill.find(({ skill_name }) => skill_name === 'qovery-deploy')?.actions).toBeGreaterThan(0)
       expect(value?.by_skill.some(({ skill_name }) => skill_name === null)).toBe(true)
       expect(value?.recent.length).toBeLessThanOrEqual(100)
-      expect(value?.recent.some(({ origin }) => origin === 'MCP')).toBe(true)
+      expect(value?.recent.some(({ origin, event }) => origin === 'MCP_TOOL_CALL' && event === 'MCP')).toBe(true)
       expect(
         value?.recent.some(
-          ({ outcome, event, environment_name }) =>
-            outcome === 'DENIED' && event === 'TRIGGER_DELETE' && environment_name === 'payments-production'
+          ({ origin, outcome, event, environment_name }) =>
+            origin === 'POLICY_DENIAL' &&
+            outcome === 'DENIED' &&
+            event === 'POLICY_FAILED' &&
+            environment_name === 'payments-production'
         )
       ).toBe(true)
+    })
+
+    it('counts allowed actions and denials apart, as q-core does', async () => {
+      const { value } = await settle(
+        createSkillPresetsMockApi('agent-activity').getAgentActivity(ORGANIZATION_ID, range())
+      )
+      const allowed = value?.recent.filter(({ outcome }) => outcome === 'ALLOWED') ?? []
+      const sum = (key: 'actions' | 'denials') => value?.timeline.reduce((total, point) => total + point[key], 0)
+
+      expect(sum('actions')).toBe(value?.totals.actions)
+      expect(sum('denials')).toBe(value?.totals.denials)
+      expect(allowed.every(({ origin }) => origin !== 'POLICY_DENIAL')).toBe(true)
+      expect(value?.actions_by_type.reduce((total, row) => total + row.count, 0)).toBe(
+        (value?.totals.actions ?? 0) + (value?.totals.denials ?? 0)
+      )
+    })
+
+    it('lists a policy token as an actor with no user sub', async () => {
+      const { value } = await settle(
+        createSkillPresetsMockApi('agent-activity').getAgentActivity(ORGANIZATION_ID, range())
+      )
+      const token = value?.by_member.find(({ user_name }) => user_name.startsWith('policy:'))
+
+      expect(token).toMatchObject({ user_sub: null, skill_loads: 0, denials: 3, top_skills: [] })
+      expect(token?.actions).toBeGreaterThan(0)
+    })
+
+    it('refuses an invalid range, bucket or skill name with a 400', async () => {
+      const api = createSkillPresetsMockApi('agent-activity')
+      const to = new Date().toISOString()
+      const tooLong = new Date(Date.now() - 91 * 24 * 3_600_000).toISOString()
+
+      for (const params of [
+        { from: to, to: tooLong, bucket: 'DAY' as const },
+        { from: tooLong, to, bucket: 'DAY' as const },
+        { ...range(), bucket: 'WEEK' as unknown as 'DAY' },
+        { ...range(), skillName: 'Not A Skill!' },
+      ]) {
+        const { error } = await settle(api.getAgentActivity(ORGANIZATION_ID, params))
+        expect(getSkillPresetErrorStatus(error)).toBe(400)
+      }
     })
 
     it('filters on a member and a skill', async () => {

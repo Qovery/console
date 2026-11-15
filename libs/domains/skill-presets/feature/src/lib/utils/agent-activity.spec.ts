@@ -1,5 +1,12 @@
 import { type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
-import { actionLabel, actionTypeLabel, computeAgentActivityHints, neverLoadedSkills } from './agent-activity'
+import {
+  actionLabel,
+  actionTypeLabel,
+  actorLabel,
+  computeAgentActivityHints,
+  groupActionsByType,
+  neverLoadedSkills,
+} from './agent-activity'
 
 const action = (
   overrides: Partial<AgentActivityResponse['recent'][number]>
@@ -7,9 +14,9 @@ const action = (
   at: '2026-11-14T10:00:00Z',
   user_sub: 'user-jordan',
   user_name: 'Jordan Kim',
-  origin: 'SKILL',
+  origin: 'POLICY_DENIAL',
   skill_name: 'qovery',
-  event: 'TRIGGER_DELETE',
+  event: 'ACCESS_DENIED',
   target_type: 'ENVIRONMENT',
   target_name: 'payments-production',
   project_name: 'payments',
@@ -19,7 +26,10 @@ const action = (
 })
 
 const activity = (overrides: Partial<AgentActivityResponse> = {}): AgentActivityResponse => ({
-  coverage: { sources: ['API'], note: '' },
+  from: '2026-10-15T10:00:00Z',
+  to: '2026-11-14T10:00:00Z',
+  bucket: 'DAY',
+  coverage: { sources: ['SKILL_LOAD', 'SKILL_API_ACTION', 'MCP_TOOL_CALL', 'POLICY_DENIAL'], note: '' },
   totals: { skill_loads: 20, actions: 10, denials: 3, members: 2 },
   timeline: [],
   actions_by_type: [],
@@ -53,11 +63,43 @@ const activity = (overrides: Partial<AgentActivityResponse> = {}): AgentActivity
 })
 
 describe('agent activity helpers', () => {
-  it('names actions in plain words', () => {
-    expect(actionLabel('TRIGGER_DEPLOY', 'APPLICATION')).toBe('Deploy')
-    expect(actionLabel('UPDATE', 'VARIABLE')).toBe('Variable change')
+  it('names raw audit events in plain words', () => {
+    expect(actionLabel('DEPLOY_QUEUED', 'APPLICATION')).toBe('Deploy')
+    expect(actionLabel('TRIGGER_DEPLOY', 'ENVIRONMENT')).toBe('Deploy')
+    expect(actionLabel('TRIGGER_RESTART', 'APPLICATION')).toBe('Restart')
+    expect(actionLabel('TRIGGER_STOP', 'ENVIRONMENT')).toBe('Stop')
+    expect(actionLabel('DELETE', 'APPLICATION')).toBe('Delete')
     expect(actionLabel('TRIGGER_DELETE', 'ENVIRONMENT')).toBe('Delete')
+    expect(actionLabel('CREATE', 'VARIABLE')).toBe('Variable change')
+    expect(actionLabel('UPDATE', 'VARIABLE')).toBe('Variable change')
+    expect(actionLabel('DELETE', 'VARIABLE')).toBe('Variable change')
+    expect(actionLabel('MCP', 'APPLICATION')).toBe('MCP tool call')
+    expect(actionLabel('POLICY_FAILED', 'ENVIRONMENT')).toBe('Denied')
+    expect(actionLabel('ACCESS_DENIED', 'APPLICATION')).toBe('Denied')
+    expect(actionLabel('UPDATE', 'APPLICATION')).toBe('Other (UPDATE)')
     expect(actionTypeLabel('TRIGGER_RESTART', 'APPLICATION')).toBe('Restart (service)')
+    expect(actionTypeLabel('UPDATE', 'APPLICATION')).toBe('Other (UPDATE, service)')
+  })
+
+  it('merges action types that share a label', () => {
+    expect(
+      groupActionsByType([
+        { event: 'TRIGGER_DEPLOY', target_type: 'APPLICATION', count: 3, denied: 0 },
+        { event: 'POLICY_FAILED', target_type: 'ENVIRONMENT', count: 4, denied: 4 },
+        { event: 'DEPLOY_QUEUED', target_type: 'APPLICATION', count: 2, denied: 0 },
+      ])
+    ).toEqual([
+      { label: 'Deploy (service)', count: 5, denied: 0 },
+      { label: 'Denied (environment)', count: 4, denied: 4 },
+    ])
+  })
+
+  it('names a policy token from its audit actor name', () => {
+    expect(actorLabel('policy:3f1c9a2e:ci-deployer')).toEqual({
+      kind: 'policy-token',
+      label: 'Policy token ci-deployer',
+    })
+    expect(actorLabel('jane@example.com')).toEqual({ kind: 'member', label: 'jane@example.com' })
   })
 
   it('lists the Qovery skills nobody loaded', () => {

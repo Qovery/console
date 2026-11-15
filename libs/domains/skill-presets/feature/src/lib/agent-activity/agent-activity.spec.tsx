@@ -47,20 +47,36 @@ describe('AgentActivity', () => {
     expect(await screen.findByRole('heading', { name: 'Skills and what followed' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Agent activity', level: 1 })).toBeInTheDocument()
     expect(screen.getByTestId('coverage-note')).toHaveTextContent(
-      'Commands run directly on your cluster are not visible here. Prompts and code are never collected.'
+      'such as in a shell, in git or in a cloud console, is not. Prompts and code are never collected.'
+    )
+    expect(screen.getByTestId('coverage-sources')).toHaveTextContent(
+      'Sources: skill loads, API calls from skills, MCP tool calls, refused requests.'
     )
     expect(
-      screen.getByText('Skill attribution comes from the agent’s user agent and is indicative.')
+      screen.getByText(
+        'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
+      )
     ).toBeInTheDocument()
-    expect(screen.getByText('Actions on Qovery')).toBeInTheDocument()
+    expect(screen.getByText('Allowed actions')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'No skill (MCP or API)' })).toBeInTheDocument()
     expect(screen.getByText('Deploy (service)')).toBeInTheDocument()
     expect(screen.getByTestId('never-loaded')).toHaveTextContent('Consider turning them off in the preset')
     expect(screen.getByRole('heading', { name: 'By member' })).toBeInTheDocument()
     expect(within(screen.getByTestId('denied-actions')).getAllByText(/payments-production/).length).toBeGreaterThan(0)
     const suggestions = screen.getByTestId('activity-suggestions')
     expect(within(suggestions).getByText(/actions were denied in/)).toBeInTheDocument()
-    expect(within(suggestions).getByRole('link', { name: 'Review policy tokens' })).toBeInTheDocument()
+    expect(within(suggestions).getAllByRole('link', { name: 'Review policy tokens' }).length).toBeGreaterThan(0)
     expect(screen.getAllByText('MCP').length).toBeGreaterThan(0)
+  })
+
+  it('names a policy token, without letting it be drilled into', async () => {
+    useScenario('agent-activity')
+    renderWithProviders(<AgentActivity />)
+    const members = (await screen.findByRole('heading', { name: 'By member' })).parentElement as HTMLElement
+
+    expect(within(members).getByText('Policy token ci-deployer')).toBeInTheDocument()
+    expect(within(members).queryByRole('button', { name: /ci-deployer/ })).not.toBeInTheDocument()
+    expect(within(screen.getByTestId('activity-suggestions')).getByText(/had 3 actions denied/)).toBeInTheDocument()
   })
 
   it('drills into one member from the table', async () => {
