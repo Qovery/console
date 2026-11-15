@@ -20,8 +20,8 @@ const SHAPES: { category: string; reason: string; pattern: RegExp }[] = [
   },
 ]
 
-/** A Bedrock inference profile id, as q-core records it. The Console shows a friendly name instead. */
-export const MOCK_REVIEW_MODEL = 'us.anthropic.claude-haiku-4-5-20251001-v1:0'
+/** A neutral stand-in for the model id q-core records. The Console shows a friendly name instead. */
+export const MOCK_REVIEW_MODEL = 'mock-review-model'
 export const MOCK_REVIEW_PROMPT_VERSION = 'v1'
 
 export function reviewSkillPresetContent(fields: InspectedField[]): SkillPresetFinding[] {
