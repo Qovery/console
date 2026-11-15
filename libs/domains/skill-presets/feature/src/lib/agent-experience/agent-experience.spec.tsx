@@ -264,12 +264,28 @@ describe('Automate, recurring agents', () => {
     const run = within(await screen.findByTestId('agent-job-run'))
     expect(run.getByText('Create its policy token.')).toBeInTheDocument()
     expect(await run.findByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
-    expect(run.getByText('As an Agent Task on Qovery')).toBeInTheDocument()
-    expect(run.getByText('0 8,20 * * 1-5')).toBeInTheDocument()
-    expect(run.getByText('https://mcp.qovery.com/mcp')).toBeInTheDocument()
-    expect(run.getByText('Authorization: Token <policy token>')).toBeInTheDocument()
-    expect(run.getByText('From your own scheduler')).toBeInTheDocument()
-    expect(run.getByText('QOVERY_CLI_ACCESS_TOKEN=<policy token>')).toBeInTheDocument()
+    // First and recommended: the coding agent the team already uses, with the supported agents' logos.
+    const codingAgent = within(run.getByTestId('route-coding-agent'))
+    expect(codingAgent.getByText('From your coding agent')).toBeInTheDocument()
+    expect(codingAgent.getByText('Recommended')).toBeInTheDocument()
+    expect(codingAgent.getAllByTestId('coding-agent').map((item) => item.textContent)).toEqual([
+      'Claude Code',
+      'Codex',
+      'Cursor',
+      'OpenCode',
+      'Gemini CLI',
+      'VS Code Copilot',
+    ])
+    expect(codingAgent.getByText('QOVERY_CLI_ACCESS_TOKEN=<policy token>')).toBeInTheDocument()
+    expect(codingAgent.getByText('Authorization: Token <policy token>')).toBeInTheDocument()
+    expect(codingAgent.getByText('0 8,20 * * 1-5')).toBeInTheDocument()
+    // Then the Agent Task on Qovery.
+    const agentTask = within(run.getByTestId('route-agent-task'))
+    expect(agentTask.getByText('As an Agent Task on Qovery')).toBeInTheDocument()
+    expect(agentTask.getByText('https://mcp.qovery.com/mcp')).toBeInTheDocument()
+    expect(run.getByTestId('route-coding-agent').compareDocumentPosition(run.getByTestId('route-agent-task'))).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    )
   })
 
   it('points webhook jobs to the Agent Task’s webhook, and tells members who creates the token', async () => {
@@ -300,8 +316,11 @@ describe('Automate a new job', () => {
     )
     expect(screen.getByTestId('submit-button')).toBeEnabled()
     expect(modal.getByText(/refuses everything by default/)).toBeInTheDocument()
-    expect(modal.getByText(/Works in Claude Code, Codex, Cursor/)).toBeInTheDocument()
-    expect(modal.getByTestId('new-job-schedule')).toHaveTextContent('Then schedule it')
+    expect(modal.getAllByTestId('coding-agent')).toHaveLength(6)
+    expect(modal.getByText(/Works in these coding agents/)).toBeInTheDocument()
+    expect(modal.getByTestId('new-job-schedule')).toHaveTextContent(
+      'Then schedule it: run it from your coding agent on a schedule, or as an Agent Task on Qovery'
+    )
     expect(modal.queryByTestId('new-job-member-note')).not.toBeInTheDocument()
   })
 

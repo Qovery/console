@@ -4,7 +4,7 @@ import { ExternalLink, Heading, Icon, Link, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { CommandBlock } from './command-block'
 import { PresetSummary } from './preset-summary'
-import { AgentExperiencePage } from './ui/agent-experience-ui'
+import { AgentExperiencePage, CodingAgentLogos } from './ui/agent-experience-ui'
 
 export const SKILLS_INSTALL_COMMAND = 'curl -fsSL https://skill.qovery.com/install.sh | bash'
 export const CLI_INSTALL_COMMAND = 'curl -s https://get.qovery.com | bash'
@@ -72,6 +72,7 @@ export function AgentExperienceConnect() {
           }
         >
           <CommandBlock command={SKILLS_INSTALL_COMMAND} />
+          <CodingAgentLogos />
         </ConnectStep>
         <ConnectStep
           id="connect-cli"

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { CopyButton, ExternalLink, Heading, Icon, InputTextArea, Link, ModalCrud } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import { CodingAgentLogos } from './ui/agent-experience-ui'
 
 export const NEW_JOB_TITLE = 'Automate a new job'
 
@@ -107,10 +108,10 @@ export function NewJobModal({ onClose, canManage }: { onClose: () => void; canMa
               </code>
               {hasIntent && <CopyButton content={command} />}
             </div>
+            <CodingAgentLogos />
             <p className="text-xs text-neutral-subtle">
-              Works in Claude Code, Codex, Cursor, OpenCode, Gemini CLI, VS Code Copilot and any agent with the Qovery
-              skills. Where slash commands are not available, ask your agent to use the qovery-policy-token skill with
-              the same words. Skills not installed yet?{' '}
+              Works in these coding agents and any agent with the Qovery skills. Where slash commands are not available,
+              ask your agent to use the qovery-policy-token skill with the same words. Skills not installed yet?{' '}
               <Link
                 to="/organization/$organizationId/agent-experience/connect"
                 params={{ organizationId }}
@@ -138,7 +139,8 @@ export function NewJobModal({ onClose, canManage }: { onClose: () => void; canMa
               ))}
             </ol>
             <p className="text-sm text-neutral" data-testid="new-job-schedule">
-              Then schedule it: run the agent as an Agent Task on Qovery, or from your own scheduler, with that token.
+              Then schedule it: run it from your coding agent on a schedule, or as an Agent Task on Qovery, with that
+              token.
             </p>
             <p className="text-xs text-neutral-subtle">
               A policy cannot be edited after the token is created: to change it, the skill creates a new token. Every

@@ -22,7 +22,7 @@ import { useCopyToClipboard, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { AGENT_JOBS, AGENT_JOB_LEVELS, type AgentJob, policyExampleUrl } from '../utils/agent-jobs'
 import { NEW_JOB_TITLE, NewJobModal } from './new-job-modal'
-import { AgentExperiencePage } from './ui/agent-experience-ui'
+import { AgentExperiencePage, CodingAgentLogos } from './ui/agent-experience-ui'
 
 /** The Agent Tasks templates that run an agent on Qovery itself. */
 const AGENT_TASK_IDS = [
@@ -186,11 +186,45 @@ function RunOnItsOwn({
               {job.trigger.note && <span className="text-neutral-subtle">. {job.trigger.note}</span>}
             </span>
             <span className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-              <span className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-3">
+              <span
+                className="flex flex-col gap-2 rounded-md border border-brand-strong bg-surface-neutral p-3"
+                data-testid="route-coding-agent"
+              >
+                <span className="flex items-center gap-2 font-medium">
+                  From your coding agent
+                  <Badge size="sm" variant="surface" color="brand">
+                    Recommended
+                  </Badge>
+                </span>
+                <CodingAgentLogos />
+                <span className="text-xs text-neutral-subtle">
+                  Run the job from the coding agent you already use, with the Qovery skills or the Qovery MCP server,
+                  signed in with the policy token. Give it the token outside the prompt, never in it:
+                </span>
+                <CopyValue label="Skills and CLI" value="QOVERY_CLI_ACCESS_TOKEN=<policy token>" />
+                <CopyValue label="Or MCP header" value="Authorization: Token <policy token>" />
+                <span className="text-xs text-neutral-subtle">
+                  To make it recurring, use your coding agent’s own scheduling if it has one, or start it from a CI cron
+                  job, with the prompt below.
+                </span>
+                {job.trigger.kind === 'schedule' && job.trigger.cron ? (
+                  <CopyValue label="Schedule" value={job.trigger.cron} />
+                ) : (
+                  <span className="text-xs text-neutral">
+                    {job.trigger.note
+                      ? `Start it when it happens, ${job.trigger.note.charAt(0).toLowerCase()}${job.trigger.note.slice(1)}`
+                      : `Start it ${job.trigger.label.toLowerCase()}.`}
+                  </span>
+                )}
+              </span>
+              <span
+                className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-3"
+                data-testid="route-agent-task"
+              >
                 <span className="font-medium">As an Agent Task on Qovery</span>
                 <span className="text-xs text-neutral-subtle">
-                  Create it from the Automations tab of the environment where it should run, with the prompt below, this
-                  trigger, and the Qovery MCP server set up with the token.
+                  An agent that runs next to your services. Create it from the Automations tab of the environment where
+                  it should run, with the prompt below, this trigger, and the Qovery MCP server set up with the token.
                 </span>
                 {job.trigger.kind === 'schedule' && job.trigger.cron ? (
                   <CopyValue label="On a schedule" value={job.trigger.cron} />
@@ -212,17 +246,9 @@ function RunOnItsOwn({
                     Choose an environment
                   </Link>
                   <ExternalLink href="https://www.qovery.com/docs/configuration/agent-tasks/overview" size="xs">
-                    Agent Tasks
+                    Agent Tasks docs
                   </ExternalLink>
                 </span>
-              </span>
-              <span className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-3">
-                <span className="font-medium">From your own scheduler</span>
-                <span className="text-xs text-neutral-subtle">
-                  A CI cron job, or a coding agent run on a schedule with the Qovery skills: give it the token through
-                  the environment, never in the prompt, and the prompt below.
-                </span>
-                <CopyValue label="Environment" value="QOVERY_CLI_ACCESS_TOKEN=<policy token>" />
               </span>
             </span>
           </span>
@@ -526,11 +552,12 @@ export function AgentExperienceAutomate() {
         <Section aria-labelledby="run-agents-on-qovery" className="gap-2">
           <div className="flex flex-col gap-0.5">
             <Heading level={2} id="run-agents-on-qovery">
-              Run agents on Qovery
+              Or run agents on Qovery
             </Heading>
             <p className="text-sm text-neutral-subtle">
-              Agent Tasks run an agent next to your services, on a schedule or on an event. Create one from an
-              environment’s Automations tab.
+              Most teams run these jobs from the coding agent they already use. Agent Tasks are the other way: an agent
+              that runs next to your services, on a schedule or a webhook, created from an environment’s Automations
+              tab.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
