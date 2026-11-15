@@ -13,6 +13,7 @@ import {
   Heading,
   Icon,
   InputSearch,
+  Link,
   Section,
   Sheet,
   useModal,
@@ -90,7 +91,144 @@ function JobCard({ job, onViewDetails }: { job: AgentJob; onViewDetails: (job: A
         <span className="text-sm font-medium text-neutral">{job.title}</span>
         <span className="line-clamp-2 text-xs leading-5 text-neutral-subtle">{job.does}</span>
       </span>
+      <TriggerLine trigger={job.trigger} />
     </button>
+  )
+}
+
+const TRIGGER_ICONS = { schedule: 'calendar-clock', webhook: 'webhook' } as const
+
+/** When the job runs: a schedule or a webhook, the two triggers Agent Tasks support. */
+function TriggerLine({ trigger }: { trigger: AgentJob['trigger'] }) {
+  return (
+    <span className="mt-auto inline-flex items-center gap-1.5 text-xs text-neutral" data-testid="agent-job-trigger">
+      <Icon iconName={TRIGGER_ICONS[trigger.kind]} iconStyle="regular" className="text-brand" aria-hidden="true" />
+      {trigger.label}
+    </span>
+  )
+}
+
+const MCP_URL = 'https://mcp.qovery.com/mcp'
+
+function CopyValue({ label, value }: { label: string; value: string }) {
+  return (
+    <span className="flex items-center justify-between gap-2 rounded border border-neutral bg-surface-neutral-subtle px-2 py-1">
+      <span className="min-w-0 truncate text-xs">
+        <span className="text-neutral-subtle">{label}: </span>
+        <code className="font-code text-neutral">{value}</code>
+      </span>
+      <CopyButton content={value} />
+    </span>
+  )
+}
+
+/**
+ * How the job runs without anyone: first its policy token, then a scheduler. The Agent Task form is
+ * not prefilled from here: it only takes its own templates, and the Qovery MCP server needs the token
+ * value, shown once at creation. So the steps give each value to copy.
+ */
+function RunOnItsOwn({
+  job,
+  canManage,
+  organizationId,
+  onCreateToken,
+}: {
+  job: AgentJob
+  canManage: boolean
+  organizationId: string
+  onCreateToken: () => void
+}) {
+  return (
+    <Section
+      aria-labelledby="agent-job-run"
+      className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral-subtle p-4"
+      data-testid="agent-job-run"
+    >
+      <Heading level={3} id="agent-job-run">
+        Run it on its own
+      </Heading>
+      <ol className="flex flex-col gap-4 text-sm text-neutral">
+        <li className="flex items-start gap-3">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface-brand-subtle text-xs font-medium text-brand">
+            1
+          </span>
+          <span className="flex flex-col gap-2">
+            <span>
+              <span className="font-medium">Create its policy token.</span> It allows exactly this job. The token is
+              shown once: keep it for the next step.
+            </span>
+            {canManage ? (
+              <Button type="button" size="md" className="w-fit gap-1.5" onClick={onCreateToken}>
+                <Icon iconName="key" iconStyle="regular" />
+                Create policy token
+              </Button>
+            ) : (
+              <span className="text-xs text-neutral-subtle">An organization owner or admin creates it.</span>
+            )}
+          </span>
+        </li>
+        <li className="flex items-start gap-3">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface-brand-subtle text-xs font-medium text-brand">
+            2
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col gap-3">
+            <span>
+              <span className="font-medium">Schedule the agent.</span> Suggested trigger:{' '}
+              <span className="inline-flex items-center gap-1">
+                <Icon
+                  iconName={TRIGGER_ICONS[job.trigger.kind]}
+                  iconStyle="regular"
+                  className="text-brand"
+                  aria-hidden="true"
+                />
+                {job.trigger.label}
+              </span>
+              {job.trigger.note && <span className="text-neutral-subtle">. {job.trigger.note}</span>}
+            </span>
+            <span className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+              <span className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-3">
+                <span className="font-medium">As an Agent Task on Qovery</span>
+                <span className="text-xs text-neutral-subtle">
+                  Create it from the Automations tab of the environment where it should run, with the prompt below, this
+                  trigger, and the Qovery MCP server set up with the token.
+                </span>
+                {job.trigger.kind === 'schedule' && job.trigger.cron ? (
+                  <CopyValue label="On a schedule" value={job.trigger.cron} />
+                ) : (
+                  <span className="text-xs text-neutral">From a webhook: use the URL the Agent Task gets.</span>
+                )}
+                <CopyValue label="MCP server URL" value={MCP_URL} />
+                <CopyValue label="Header" value="Authorization: Token <policy token>" />
+                <span className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+                  <Link
+                    to="/organization/$organizationId/settings/agents/mcps"
+                    params={{ organizationId }}
+                    color="brand"
+                    size="xs"
+                  >
+                    Add the MCP server
+                  </Link>
+                  <Link to="/organization/$organizationId/overview" params={{ organizationId }} color="brand" size="xs">
+                    Choose an environment
+                  </Link>
+                  <ExternalLink href="https://www.qovery.com/docs/configuration/agent-tasks/overview" size="xs">
+                    Agent Tasks
+                  </ExternalLink>
+                </span>
+              </span>
+              <span className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-3">
+                <span className="font-medium">From your own scheduler</span>
+                <span className="text-xs text-neutral-subtle">
+                  A CI cron job, or a coding agent run on a schedule with the Qovery skills: give it the token through
+                  the environment, never in the prompt, and the prompt below.
+                </span>
+                <CopyValue label="Environment" value="QOVERY_CLI_ACCESS_TOKEN=<policy token>" />
+              </span>
+            </span>
+          </span>
+        </li>
+      </ol>
+    </Section>
   )
 }
 
@@ -134,6 +272,20 @@ function JobDetailsPanel({
   const [, copy] = useCopyToClipboard()
   const [copied, setCopied] = useState(false)
   if (!job) return null
+  const createToken = () => {
+    // The sheet is a modal dialog: close it first so the create form gets the focus.
+    onOpenChange(false)
+    openModal({
+      content: (
+        <PolicyApiTokenCrudModal
+          organizationId={organizationId}
+          onClose={closeModal}
+          // The example policy, ready to edit: its REPLACE_WITH_... values still need real IDs.
+          defaultValues={{ name: job.slug, description: job.does, opa_policy: job.policy }}
+        />
+      ),
+    })
+  }
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -160,6 +312,10 @@ function JobDetailsPanel({
                     Level {levelNumber(job)} of {AGENT_JOB_LEVELS.length}: {levelTitle(job)}
                   </Badge>
                   <Badge size="sm" color="neutral" variant="outline" className="gap-1">
+                    <Icon iconName={TRIGGER_ICONS[job.trigger.kind]} iconStyle="regular" aria-hidden="true" />
+                    {job.trigger.label}
+                  </Badge>
+                  <Badge size="sm" color="neutral" variant="outline" className="gap-1">
                     <Icon iconName="key" iconStyle="regular" aria-hidden="true" />
                     Policy token
                   </Badge>
@@ -167,6 +323,12 @@ function JobDetailsPanel({
               </div>
 
               <div className="flex flex-col gap-8">
+                <RunOnItsOwn
+                  job={job}
+                  canManage={canManage}
+                  organizationId={organizationId}
+                  onCreateToken={createToken}
+                />
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Section aria-labelledby="agent-job-can" className="flex flex-col gap-2">
                     <Heading level={3} id="agent-job-can">
@@ -263,25 +425,7 @@ function JobDetailsPanel({
                 {copied ? 'Copied' : 'Copy prompt'}
               </Button>
               {canManage && (
-                <Button
-                  type="button"
-                  size="lg"
-                  className="gap-1.5"
-                  onClick={() => {
-                    // The sheet is a modal dialog: close it first so the create form gets the focus.
-                    onOpenChange(false)
-                    openModal({
-                      content: (
-                        <PolicyApiTokenCrudModal
-                          organizationId={organizationId}
-                          onClose={closeModal}
-                          // The example policy, ready to edit: its REPLACE_WITH_... values still need real IDs.
-                          defaultValues={{ name: job.slug, description: job.does, opa_policy: job.policy }}
-                        />
-                      ),
-                    })
-                  }}
-                >
+                <Button type="button" size="lg" className="gap-1.5" onClick={createToken}>
                   <Icon iconName="key" iconStyle="regular" />
                   Create policy token
                 </Button>
@@ -332,7 +476,7 @@ export function AgentExperienceAutomate() {
   return (
     <AgentExperiencePage
       title="Automate"
-      description="Jobs agents can run on their own, safest first. Each comes with a policy token that allows exactly what the job needs. Anything else is refused at the API, and every call is logged."
+      description="Agents that run on their own, on a schedule or on an event. Each one gets a policy token that allows exactly its job. Anything else is refused at the API, and every call is logged. Safest jobs first."
     >
       <div className="flex flex-col gap-8">
         <Section className="gap-4">

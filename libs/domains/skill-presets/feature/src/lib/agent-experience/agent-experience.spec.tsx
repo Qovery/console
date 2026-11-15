@@ -228,7 +228,8 @@ describe('AgentExperienceAutomate', () => {
       'https://www.qovery.com/docs/configuration/organization/policy-examples/investigate-production-incident'
     )
     expect(details.getByRole('button', { name: /Copy prompt/ })).toBeInTheDocument()
-    expect(await details.findByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
+    // In the run steps (step 1) and in the footer.
+    expect(await details.findAllByRole('button', { name: /Create policy token/ })).toHaveLength(2)
   })
 
   it('shows members the same list and details, without Create policy token', async () => {
@@ -242,6 +243,47 @@ describe('AgentExperienceAutomate', () => {
   })
 })
 
+describe('Automate, recurring agents', () => {
+  it('shows each job’s suggested trigger on its card', () => {
+    useScenario('agent-experience-active')
+    renderWithProviders(<AgentExperienceAutomate />)
+
+    expect(
+      within(screen.getByTestId('agent-job-stop-idle-environments')).getByTestId('agent-job-trigger')
+    ).toHaveTextContent('Weekdays at 8 PM and 8 AM')
+    expect(
+      within(screen.getByTestId('agent-job-investigate-production-incident')).getByTestId('agent-job-trigger')
+    ).toHaveTextContent('When an incident fires')
+  })
+
+  it('leads the details with running the job on its own: token first, then a scheduler', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByTestId('agent-job-stop-idle-environments'))
+    const run = within(await screen.findByTestId('agent-job-run'))
+    expect(run.getByText('Create its policy token.')).toBeInTheDocument()
+    expect(await run.findByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
+    expect(run.getByText('As an Agent Task on Qovery')).toBeInTheDocument()
+    expect(run.getByText('0 8,20 * * 1-5')).toBeInTheDocument()
+    expect(run.getByText('https://mcp.qovery.com/mcp')).toBeInTheDocument()
+    expect(run.getByText('Authorization: Token <policy token>')).toBeInTheDocument()
+    expect(run.getByText('From your own scheduler')).toBeInTheDocument()
+    expect(run.getByText('QOVERY_CLI_ACCESS_TOKEN=<policy token>')).toBeInTheDocument()
+  })
+
+  it('points webhook jobs to the Agent Task’s webhook, and tells members who creates the token', async () => {
+    useScenario('member')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByTestId('agent-job-roll-back-bad-release'))
+    const run = within(await screen.findByTestId('agent-job-run'))
+    expect(run.getByText(/From a webhook: use the URL the Agent Task gets/)).toBeInTheDocument()
+    expect(run.getByText('An organization owner or admin creates it.')).toBeInTheDocument()
+    expect(run.queryByRole('button', { name: /Create policy token/ })).not.toBeInTheDocument()
+  })
+})
+
 describe('Automate a new job', () => {
   it('turns an intent into a qovery-policy-token command, from the Automate header', async () => {
     useScenario('agent-experience-active')
@@ -252,13 +294,14 @@ describe('Automate a new job', () => {
     expect(modal.getByTestId('new-job-command')).toHaveTextContent('/qovery-policy-token <describe the job>')
     expect(screen.getByTestId('submit-button')).toBeDisabled()
 
-    await userEvent.click(modal.getByRole('button', { name: /restart crashed services in staging/ }))
+    await userEvent.click(modal.getByRole('button', { name: /stop dev and QA environments/ }))
     expect(modal.getByTestId('new-job-command')).toHaveTextContent(
-      '/qovery-policy-token Let my agent restart crashed services in staging, and nothing else'
+      '/qovery-policy-token Every weeknight at 8 PM, stop dev and QA environments nobody used today'
     )
     expect(screen.getByTestId('submit-button')).toBeEnabled()
     expect(modal.getByText(/refuses everything by default/)).toBeInTheDocument()
     expect(modal.getByText(/Works in Claude Code, Codex, Cursor/)).toBeInTheDocument()
+    expect(modal.getByTestId('new-job-schedule')).toHaveTextContent('Then schedule it')
     expect(modal.queryByTestId('new-job-member-note')).not.toBeInTheDocument()
   })
 

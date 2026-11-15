@@ -123,7 +123,7 @@ const PILLARS: {
     id: 'control',
     icon: 'shield-check',
     title: 'Control',
-    text: 'Each agent gets exactly the permissions its job needs, checked on every API call. Deny by default.',
+    text: 'Recurring agents run on their own with exactly the permissions their job needs, checked on every API call. Deny by default.',
     pieces: [
       { icon: 'key', name: 'Policy tokens', to: STEP_PATHS['policy-token'] },
       { icon: 'stairs', name: 'Automate', to: '/organization/$organizationId/agent-experience/automate' },

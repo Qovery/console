@@ -6,11 +6,11 @@ import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 
 export const NEW_JOB_TITLE = 'Automate a new job'
 
-/** Intents a platform team would type. Clicking one fills the field. */
+/** Recurring jobs a platform team would type. Clicking one fills the field. */
 export const NEW_JOB_EXAMPLES = [
-  'Let my agent restart crashed services in staging, and nothing else',
-  'Allow my agent to set CPU and memory of my production apps from real usage, within limits',
-  'Let my agent delete preview environments once their pull request is merged',
+  'Every weeknight at 8 PM, stop dev and QA environments nobody used today',
+  'Every Monday, set CPU and memory of my production apps from last week’s usage, within limits',
+  'Every hour, delete preview environments whose pull request is merged',
 ]
 
 /** The slash command the qovery-policy-token skill answers to, with the intent on one line. */
@@ -137,6 +137,9 @@ export function NewJobModal({ onClose, canManage }: { onClose: () => void; canMa
                 </li>
               ))}
             </ol>
+            <p className="text-sm text-neutral" data-testid="new-job-schedule">
+              Then schedule it: run the agent as an Agent Task on Qovery, or from your own scheduler, with that token.
+            </p>
             <p className="text-xs text-neutral-subtle">
               A policy cannot be edited after the token is created: to change it, the skill creates a new token. Every
               call the token makes shows in Activity.
