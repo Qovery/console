@@ -11,26 +11,33 @@ const nothing = {
 }
 
 describe('computeAgentExperienceSetup', () => {
-  it('is empty the first time, and asks to turn on AI features first', () => {
+  it('is empty the first time, and asks to turn on AI first', () => {
     const setup = computeAgentExperienceSetup(nothing)
     expect(setup.state).toBe('empty')
+    expect(setup.steps.map(({ id }) => id)).toEqual(['ai', 'connect', 'preset', 'policy-token', 'activity'])
     expect(setup.doneCount).toBe(0)
-    expect(setup.nextStep).toBe('ai-features')
-    expect(computeAgentExperienceSetup({ ...nothing, aiFeaturesEnabled: true }).nextStep).toBe('connect')
+    expect(setup.nextStep).toBe('ai')
   })
 
-  it('counts the Copilot as on only with AI features on', () => {
-    const copilotOnly = computeAgentExperienceSetup({ ...nothing, copilotEnabled: true })
-    expect(copilotOnly.steps.find(({ id }) => id === 'copilot')?.done).toBe(false)
-    const both = computeAgentExperienceSetup({ ...nothing, copilotEnabled: true, aiFeaturesEnabled: true })
-    expect(both.steps.find(({ id }) => id === 'copilot')?.done).toBe(true)
+  it('counts AI as on only when AI features and the Copilot are both on', () => {
+    const ai = (input: Partial<typeof nothing>) =>
+      computeAgentExperienceSetup({ ...nothing, ...input }).steps.find(({ id }) => id === 'ai')?.done
+    expect(ai({ aiFeaturesEnabled: true })).toBe(false)
+    expect(ai({ copilotEnabled: true })).toBe(false)
+    expect(ai({ aiFeaturesEnabled: true, copilotEnabled: true })).toBe(true)
+    expect(computeAgentExperienceSetup({ ...nothing, aiFeaturesEnabled: true, copilotEnabled: true }).nextStep).toBe(
+      'connect'
+    )
   })
 
   it('is partial once agents load skills, and asks for AI features before a preset', () => {
     const setup = computeAgentExperienceSetup({ ...nothing, skillLoads: 12 })
     expect(setup.state).toBe('partial')
-    expect(setup.nextStep).toBe('ai-features')
-    expect(computeAgentExperienceSetup({ ...nothing, skillLoads: 12, aiFeaturesEnabled: true }).nextStep).toBe('preset')
+    expect(setup.nextStep).toBe('ai')
+    expect(
+      computeAgentExperienceSetup({ ...nothing, skillLoads: 12, aiFeaturesEnabled: true, copilotEnabled: true })
+        .nextStep
+    ).toBe('preset')
   })
 
   it('counts a preset or a policy token alone as partial', () => {
@@ -49,7 +56,7 @@ describe('computeAgentExperienceSetup', () => {
       copilotEnabled: true,
     })
     expect(setup.state).toBe('active')
-    expect(setup.doneCount).toBe(6)
+    expect(setup.doneCount).toBe(5)
     expect(setup.nextStep).toBeNull()
   })
 })

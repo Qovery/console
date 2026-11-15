@@ -3,7 +3,7 @@
  * "connected" means agents have loaded a skill or acted on Qovery, as agent activity reports it.
  */
 
-export type AgentExperienceStepId = 'ai-features' | 'connect' | 'preset' | 'policy-token' | 'copilot' | 'activity'
+export type AgentExperienceStepId = 'ai' | 'connect' | 'preset' | 'policy-token' | 'activity'
 export type AgentExperienceState = 'empty' | 'partial' | 'active'
 
 export interface AgentExperienceSetupInput {
@@ -15,7 +15,7 @@ export interface AgentExperienceSetupInput {
   presets: number
   policyTokens: number
   aiFeaturesEnabled: boolean
-  /** The Copilot's own switch, separate from AI features. */
+  /** The Copilot's own switch. "Turn on AI" turns on both. */
   copilotEnabled: boolean
 }
 
@@ -28,8 +28,8 @@ export interface AgentExperienceSetup {
   nextStep: AgentExperienceStepId | null
 }
 
-// AI features come first: the Copilot and saving a preset both need them on.
-const ORDER: AgentExperienceStepId[] = ['ai-features', 'connect', 'preset', 'policy-token', 'copilot', 'activity']
+// AI comes first: the Copilot and saving a preset both need AI features on.
+const ORDER: AgentExperienceStepId[] = ['ai', 'connect', 'preset', 'policy-token', 'activity']
 
 export function computeAgentExperienceSetup(input: AgentExperienceSetupInput): AgentExperienceSetup {
   const connected = input.skillLoads + input.actions + input.denials > 0
@@ -37,8 +37,8 @@ export function computeAgentExperienceSetup(input: AgentExperienceSetupInput): A
     connect: connected,
     preset: input.presets > 0,
     'policy-token': input.policyTokens > 0,
-    'ai-features': input.aiFeaturesEnabled,
-    copilot: input.aiFeaturesEnabled && input.copilotEnabled,
+    // One step for two switches: AI features and the Copilot.
+    ai: input.aiFeaturesEnabled && input.copilotEnabled,
     activity: input.actions + input.denials > 0,
   }
   const state: AgentExperienceState =

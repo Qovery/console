@@ -140,7 +140,7 @@ describe('skill presets access', () => {
     mockAiFeaturesEnabled.mockReturnValue(false)
     renderWithProviders(<SettingsSkillPresets />)
 
-    expect(screen.getByRole('button', { name: 'Turn on AI features' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Turn on AI' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Create preset/ })).toBeDisabled()
   })
 
@@ -149,7 +149,7 @@ describe('skill presets access', () => {
     mockAiFeaturesEnabled.mockReturnValue(false)
     renderWithProviders(<SettingsSkillPresets />)
 
-    expect(screen.queryByRole('button', { name: 'Turn on AI features' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
     expect(screen.queryByTestId('ai-features-notice')).not.toBeInTheDocument()
   })
 })

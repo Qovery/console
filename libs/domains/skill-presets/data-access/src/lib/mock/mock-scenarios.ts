@@ -51,6 +51,8 @@ export interface MockSeed {
   aiFeaturesOff?: boolean
   /** The Copilot starts off. It is on in the other scenarios, read-only. */
   copilotOff?: boolean
+  /** The first request to turn the Copilot on fails (agent-experience-copilot-error). */
+  copilotFailsOnce?: boolean
   /** Agent actions on top of the skill loads: MCP tool calls, the policy token, refused requests. */
   agentExtras?: { mcp: boolean; policyToken: boolean; denials: boolean }
 }
@@ -479,7 +481,9 @@ export function buildMockSeed(scenario: SkillPresetsMockScenario): MockSeed {
     case 'ai-features-off':
       return { ...typicalSeed(), aiFeaturesOff: true, copilotOff: true }
     case 'agent-experience-empty':
+    case 'agent-experience-copilot-error':
       return {
+        copilotFailsOnce: scenario === 'agent-experience-copilot-error',
         ...typicalSeed(),
         presets: [],
         loads: [],
@@ -493,7 +497,6 @@ export function buildMockSeed(scenario: SkillPresetsMockScenario): MockSeed {
         ...typicalSeed(),
         presets: [],
         loads: buildLoads(90, 24 * 7),
-        copilotOff: true,
         agentExtras: { mcp: true, policyToken: false, denials: false },
       }
     case 'agent-activity-empty':

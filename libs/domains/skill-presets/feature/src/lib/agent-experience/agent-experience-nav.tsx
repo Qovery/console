@@ -17,7 +17,7 @@ export function AgentExperienceNav() {
       <Sidebar.Item to={base} icon="table-layout" iconStyle="regular" active={pathname.replace(/\/$/, '') === base}>
         Overview
       </Sidebar.Item>
-      <Sidebar.Item to={`${base}/copilot`} icon="robot" iconStyle="regular">
+      <Sidebar.Item to={`${base}/copilot`} icon="message-bot" iconStyle="regular">
         Copilot
       </Sidebar.Item>
       <Sidebar.Item to={`${base}/connect`} icon="plug" iconStyle="regular">

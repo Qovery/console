@@ -26,6 +26,8 @@ export const SKILL_PRESETS_MOCK_SCENARIO_DESCRIPTIONS: Record<SkillPresetsMockSc
   'agent-experience-partial':
     'Agent Experience, partly set up: agents load skills, but no preset and no policy token yet',
   'agent-experience-active': 'Agent Experience in use: presets, policy tokens and 30 days of agent activity',
+  'agent-experience-copilot-error':
+    'First time, and turning on the Copilot fails once after AI features are on: Retry turns on the Copilot only',
 }
 
 /** Text that the mock inspector rejects, one finding per line, to try the 422 flow. */

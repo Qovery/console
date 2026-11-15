@@ -357,6 +357,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   // Off in the ai-features-off scenario until an admin turns them on. Resets on reload.
   let aiFeaturesOn = scenario !== 'ai-features-off' && !seed.aiFeaturesOff
   // The Copilot's organization config, as the DevOps Copilot service returns it.
+  let copilotFailedOnce = false
   const copilot = { enabled: !seed.copilotOff, read_only: true, instructions: '', token_mode: 'jwt' as const }
   const checkWrite = (state: MockPresetState, exceptId?: string): Promise<never> | null => {
     if (!aiFeaturesOn) return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
@@ -600,6 +601,10 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
         if (!seed.isAdmin) return forbidden()
         const request = (body ? JSON.parse(body) : {}) as { enabled?: boolean; read_only?: boolean; token_mode?: 'jwt' }
         if (request.enabled && !aiFeaturesOn) return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
+        if (request.enabled && seed.copilotFailsOnce && !copilotFailedOnce) {
+          copilotFailedOnce = true
+          return fail(503, 'The Copilot service did not answer')
+        }
         copilot.enabled = request.enabled ?? copilot.enabled
         copilot.read_only = request.read_only ?? copilot.read_only
         return respond({ org_config: { ...copilot } })

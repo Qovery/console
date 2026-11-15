@@ -251,12 +251,15 @@ describe('AI features off', () => {
     expect(await screen.findByText('Backend team')).toBeInTheDocument()
   })
 
-  it('turns AI features on, then enables creating', async () => {
+  it('turns AI on, then enables creating', async () => {
     useScenario('ai-features-off')
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
     await screen.findByTestId('ai-features-notice')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Turn on AI features' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Turn on AI' }))
+    await userEvent.click(
+      await screen.findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
+    )
     await userEvent.click(screen.getByTestId('submit-button'))
 
     await waitForElementToBeRemoved(() => screen.queryByTestId('ai-features-notice'))

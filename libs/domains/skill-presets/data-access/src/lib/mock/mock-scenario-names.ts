@@ -16,6 +16,7 @@ export const SKILL_PRESETS_MOCK_SCENARIOS = [
   'agent-experience-empty',
   'agent-experience-partial',
   'agent-experience-active',
+  'agent-experience-copilot-error',
 ] as const
 export type SkillPresetsMockScenario = (typeof SKILL_PRESETS_MOCK_SCENARIOS)[number]
 

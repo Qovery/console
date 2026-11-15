@@ -7,7 +7,7 @@ import { Badge, Button, Heading, Icon, Link, ProgressBar, Section, Skeleton, use
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { HintLine } from '../agent-activity/agent-activity'
-import { TurnOnAiFeaturesModal } from '../ai-features-notice/ai-features-notice'
+import { TURN_ON_AI_LABEL, TurnOnAiModal } from '../ai-features-notice/ai-features-notice'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useAgentExperiencePolicyTokens } from '../hooks/use-agent-experience-policy-tokens/use-agent-experience-policy-tokens'
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
@@ -43,6 +43,12 @@ function useRange(days: number) {
 }
 
 const STEPS: Record<AgentExperienceStepId, { title: string; description: string; done: string; action: string }> = {
+  ai: {
+    title: 'Turn on AI',
+    description: 'AI features and the Copilot, in one step. The Copilot starts read-only.',
+    done: 'AI features and the Copilot are on.',
+    action: TURN_ON_AI_LABEL,
+  },
   connect: {
     title: 'Connect an agent',
     description: 'Install the Qovery skills, the CLI or the MCP server where your team codes.',
@@ -61,18 +67,6 @@ const STEPS: Record<AgentExperienceStepId, { title: string; description: string;
     done: 'A policy token is set up.',
     action: 'Create a policy token',
   },
-  'ai-features': {
-    title: 'Turn on AI features',
-    description: 'The organization’s opt-in to AI. The Copilot and the review of every preset need it.',
-    done: 'AI features are on.',
-    action: 'Turn on AI features',
-  },
-  copilot: {
-    title: 'Turn on the Copilot',
-    description: 'Qovery’s assistant in the Console. It answers, troubleshoots, and acts only if you allow it.',
-    done: 'The Copilot is on.',
-    action: 'Set up the Copilot',
-  },
   activity: {
     title: 'Watch what agents do',
     description: 'See what agents did on Qovery, and what was blocked.',
@@ -88,20 +82,21 @@ type AgentExperiencePath =
   | '/organization/$organizationId/agent-experience/agent-activity'
   | '/organization/$organizationId/agent-experience/copilot'
 
-const STEP_PATHS: Record<Exclude<AgentExperienceStepId, 'ai-features'>, AgentExperiencePath> = {
+const COPILOT_PATH: AgentExperiencePath = '/organization/$organizationId/agent-experience/copilot'
+
+const STEP_PATHS: Record<Exclude<AgentExperienceStepId, 'ai'>, AgentExperiencePath> = {
   connect: '/organization/$organizationId/agent-experience/connect',
   preset: '/organization/$organizationId/agent-experience/skill-presets',
   'policy-token': '/organization/$organizationId/agent-experience/policy-tokens',
   activity: '/organization/$organizationId/agent-experience/agent-activity',
-  copilot: '/organization/$organizationId/agent-experience/copilot',
 }
 
 const PIECES = [
   {
-    icon: 'robot',
+    icon: 'message-bot',
     name: 'Copilot',
     text: 'Qovery’s assistant in the Console. It answers, troubleshoots, and acts when you allow it.',
-    to: STEP_PATHS.copilot,
+    to: COPILOT_PATH,
   },
   {
     icon: 'sparkles',
@@ -133,13 +128,7 @@ const PIECES = [
  * The first thing an admin reads when nothing is set up: what Agent Experience is, what each piece
  * does, and one action to start with.
  */
-function AgentFirstIntro({
-  organizationId,
-  aiFeaturesEnabled,
-}: {
-  organizationId: string
-  aiFeaturesEnabled: boolean
-}) {
+function AgentFirstIntro({ organizationId, aiOn }: { organizationId: string; aiOn: boolean }) {
   return (
     <Section
       aria-labelledby="agent-first"
@@ -167,15 +156,7 @@ function AgentFirstIntro({
         ))}
       </ul>
       <div className="flex flex-wrap items-center gap-3">
-        {aiFeaturesEnabled ? (
-          <StepAction step="copilot" primary organizationId={organizationId} />
-        ) : (
-          <StepAction step="ai-features" primary organizationId={organizationId} />
-        )}
-        <span className="text-xs text-neutral-subtle">
-          AI features and the Copilot are two switches: AI features are the organization’s opt-in to AI, then the
-          Copilot has its own terms and modes.
-        </span>
+        <StepAction step={aiOn ? 'connect' : 'ai'} primary organizationId={organizationId} />
       </div>
     </Section>
   )
@@ -193,16 +174,14 @@ function StepAction({
   const { openModal, closeModal } = useModal()
   const variant = primary ? 'solid' : 'outline'
   const color = primary ? 'brand' : 'neutral'
-  if (step === 'ai-features') {
+  if (step === 'ai') {
     return (
       <Button
         type="button"
         size="md"
         variant={variant}
         color={color}
-        onClick={() =>
-          openModal({ content: <TurnOnAiFeaturesModal organizationId={organizationId} onClose={closeModal} /> })
-        }
+        onClick={() => openModal({ content: <TurnOnAiModal organizationId={organizationId} onClose={closeModal} /> })}
       >
         {STEPS[step].action}
       </Button>
@@ -215,7 +194,19 @@ function StepAction({
   )
 }
 
-function SetupChecklist({ setup, organizationId }: { setup: AgentExperienceSetup; organizationId: string }) {
+/**
+ * `actionAbove`: the step whose action the intro already shows. It gets a status here instead of a
+ * second identical button.
+ */
+function SetupChecklist({
+  setup,
+  organizationId,
+  actionAbove,
+}: {
+  setup: AgentExperienceSetup
+  organizationId: string
+  actionAbove?: AgentExperienceStepId
+}) {
   const percent = Math.round((setup.doneCount / setup.steps.length) * 100)
   return (
     <Section aria-labelledby="setup-checklist" className="flex flex-col gap-4 rounded-md border border-neutral p-4">
@@ -266,7 +257,15 @@ function SetupChecklist({ setup, organizationId }: { setup: AgentExperienceSetup
                   <span className="text-xs text-neutral-subtle">{done ? step.done : step.description}</span>
                 </div>
               </div>
-              {!done && <StepAction step={id} primary={isNext} organizationId={organizationId} />}
+              {!done &&
+                (id === actionAbove ? (
+                  <Badge variant="outline" color="neutral" className="gap-1" data-testid={`setup-step-${id}-status`}>
+                    <Icon iconName="circle" iconStyle="regular" aria-hidden="true" />
+                    {id === 'ai' ? 'Off' : 'Not yet'}
+                  </Badge>
+                ) : (
+                  <StepAction step={id} primary={isNext} organizationId={organizationId} />
+                ))}
             </li>
           )
         })}
@@ -402,13 +401,16 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
     copilotEnabled: copilot.enabled,
   })
 
+  const aiOn = setup.steps.find(({ id }) => id === 'ai')?.done ?? false
   if (setup.state !== 'active') {
     return (
       <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state={setup.state}>
-        {setup.state === 'empty' && (
-          <AgentFirstIntro organizationId={organizationId} aiFeaturesEnabled={aiFeaturesEnabled} />
-        )}
-        <SetupChecklist setup={setup} organizationId={organizationId} />
+        {setup.state === 'empty' && <AgentFirstIntro organizationId={organizationId} aiOn={aiOn} />}
+        <SetupChecklist
+          setup={setup}
+          organizationId={organizationId}
+          actionAbove={setup.state === 'empty' ? (aiOn ? 'connect' : 'ai') : undefined}
+        />
         {setup.state === 'partial' && week.data && (
           <Section aria-labelledby="week-activity" className="flex flex-col gap-2">
             <Heading level={2} id="week-activity">

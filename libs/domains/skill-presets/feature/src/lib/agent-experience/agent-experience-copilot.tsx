@@ -6,7 +6,7 @@ import { SettingsHeading } from '@qovery/shared/console-shared'
 import { AICopilotSettings } from '@qovery/shared/devops-copilot/feature'
 import { Badge, Button, Callout, Heading, Icon, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { TurnOnAiFeaturesModal } from '../ai-features-notice/ai-features-notice'
+import { TURN_ON_AI_LABEL, TurnOnAiModal } from '../ai-features-notice/ai-features-notice'
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { useCopilotStatus } from '../hooks/use-copilot-status/use-copilot-status'
@@ -33,14 +33,23 @@ export function OnOffBadge({ on, label }: { on: boolean; label?: string }) {
   )
 }
 
+/** "AI on, Copilot read-only", "AI features on, Copilot off", "Off"... */
+export function aiStatusLabel(aiFeaturesEnabled: boolean, copilotEnabled: boolean, readOnly: boolean) {
+  if (aiFeaturesEnabled && copilotEnabled) return `AI on, Copilot ${readOnly ? 'read-only' : 'read-write'}`
+  if (aiFeaturesEnabled) return 'AI features on, Copilot off'
+  if (copilotEnabled) return 'AI features off, Copilot on'
+  return 'Off'
+}
+
 /** "On, read-only", "On, read-write" or "Off". */
 export const copilotStateLabel = (enabled: boolean, readOnly: boolean) =>
   enabled ? `On, ${readOnly ? 'read-only' : 'read-write'}` : 'Off'
 
 /**
- * The Copilot, inside Agent Experience. It needs two switches, both owners and admins only: the
- * organization's AI features (`ai_features_enabled`), then the Copilot itself (the DevOps Copilot
- * service's organization config). Members see the state, read-only.
+ * The Copilot, inside Agent Experience. "Turn on AI" turns on both existing switches at once: the
+ * organization's AI features (`ai_features_enabled`) and the Copilot (the DevOps Copilot service's
+ * organization config). Turning off stays in the Copilot settings and only turns the Copilot off.
+ * Members see the state, read-only.
  */
 export function AgentExperienceCopilot() {
   const { organizationId = '' } = useParams({ strict: false })
@@ -48,6 +57,7 @@ export function AgentExperienceCopilot() {
   const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
   const copilot = useCopilotStatus({ organizationId })
+  const aiOn = aiFeaturesEnabled && copilot.enabled
   const { data: organizationData } = useOrganization({ organizationId, enabled: !isMock })
   // The mock never reads the real organization.
   const organization: Organization | undefined = isMock
@@ -79,33 +89,20 @@ export function AgentExperienceCopilot() {
           </ul>
         </Section>
 
-        <dl
-          className="grid grid-cols-1 divide-y divide-neutral rounded-md border border-neutral md:grid-cols-2 md:divide-x md:divide-y-0"
+        <div
+          className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral px-4 py-3"
           data-testid="copilot-state"
         >
-          <div className="flex items-center justify-between gap-3 px-4 py-3">
-            <dt className="flex flex-col">
-              <span className="text-sm font-medium text-neutral">AI features</span>
-              <span className="text-xs text-neutral-subtle">The organization’s opt-in to AI, Copilot included</span>
-            </dt>
-            <dd>
-              <OnOffBadge on={aiFeaturesEnabled} />
-            </dd>
-          </div>
-          <div className="flex items-center justify-between gap-3 px-4 py-3">
-            <dt className="flex flex-col">
-              <span className="text-sm font-medium text-neutral">Copilot</span>
-              <span className="text-xs text-neutral-subtle">Its own switch, with its terms and modes</span>
-            </dt>
-            <dd>
-              {copilot.isLoading ? (
-                <Skeleton width={64} height={20} show />
-              ) : (
-                <OnOffBadge on={copilot.enabled} label={copilotStateLabel(copilot.enabled, copilot.readOnly)} />
-              )}
-            </dd>
-          </div>
-        </dl>
+          <span className="flex flex-col">
+            <span className="text-sm font-medium text-neutral">Status</span>
+            <span className="text-xs text-neutral-subtle">AI features and the Copilot</span>
+          </span>
+          {copilot.isLoading ? (
+            <Skeleton width={160} height={20} show />
+          ) : (
+            <OnOffBadge on={aiOn} label={aiStatusLabel(aiFeaturesEnabled, copilot.enabled, copilot.readOnly)} />
+          )}
+        </div>
 
         {isRoleLoading ? (
           <Skeleton height={160} className="w-full" show />
@@ -116,39 +113,42 @@ export function AgentExperienceCopilot() {
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextDescription>
-                Only your organization’s owners and admins turn AI features and the Copilot on or off.
+                Only your organization’s owners and admins turn AI and the Copilot on or off.
               </Callout.TextDescription>
             </Callout.Text>
           </Callout.Root>
-        ) : !aiFeaturesEnabled ? (
-          <Section
-            aria-labelledby="copilot-ai-off"
-            className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"
-          >
-            <div className="flex flex-col gap-0.5">
-              <Heading level={2} id="copilot-ai-off">
-                Turn on AI features first
-              </Heading>
-              <p className="text-sm text-neutral-subtle">
-                The Copilot is one of the organization’s AI features. Once they are on, you can turn the Copilot on
-                here.
-              </p>
-            </div>
-            <Button
-              type="button"
-              size="md"
-              onClick={() =>
-                openModal({ content: <TurnOnAiFeaturesModal organizationId={organizationId} onClose={closeModal} /> })
-              }
-            >
-              Turn on AI features
-            </Button>
-          </Section>
-        ) : !organization || !copilot.ready ? (
-          <Skeleton height={160} className="w-full" show />
         ) : (
-          // The existing Copilot settings: terms and opt-in, mode, token mode, scheduled tasks, turn off.
-          <AICopilotSettings organization={organization} embedded />
+          <>
+            {!copilot.isLoading && !aiOn && (
+              <Section
+                aria-labelledby="copilot-turn-on"
+                className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"
+              >
+                <div className="flex flex-col gap-0.5">
+                  <Heading level={2} id="copilot-turn-on">
+                    {TURN_ON_AI_LABEL}
+                  </Heading>
+                  <p className="text-sm text-neutral-subtle">
+                    One step turns on AI features and the Copilot. The Copilot starts read-only, and you can change it
+                    here afterwards.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  size="md"
+                  onClick={() =>
+                    openModal({ content: <TurnOnAiModal organizationId={organizationId} onClose={closeModal} /> })
+                  }
+                >
+                  {TURN_ON_AI_LABEL}
+                </Button>
+              </Section>
+            )}
+            {copilot.enabled && organization && copilot.ready && (
+              // The existing Copilot settings: access source, access mode, scheduled tasks, and turning it off.
+              <AICopilotSettings organization={organization} embedded />
+            )}
+          </>
         )}
       </div>
     </Section>
