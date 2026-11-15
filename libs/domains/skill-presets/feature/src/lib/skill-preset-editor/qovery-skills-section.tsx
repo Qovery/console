@@ -90,7 +90,7 @@ export function QoverySkillsSection({ errors, findings }: QoverySkillsSectionPro
                   onCheckedChange={(checked) => toggle(skill.skillName, checked === true)}
                   aria-label={`Select ${skill.skillName}`}
                 />
-                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <div className="flex min-w-0 flex-1 flex-col">
                   <span className="flex items-center gap-2">
                     <span className="font-code text-sm font-medium text-neutral">{skill.skillName}</span>
                     {hasIssue && (
@@ -98,12 +98,6 @@ export function QoverySkillsSection({ errors, findings }: QoverySkillsSectionPro
                         <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
                         Needs a change
                       </span>
-                    )}
-                  </span>
-                  <span className="text-xs text-neutral-subtle">
-                    {qoverySkillDescription(skill.skillName)}
-                    {size && skill.choice !== 'DISABLE' && skill.choice !== 'REPLACE' && (
-                      <> · {formatTokens(size.skillMd)} tokens when loaded</>
                     )}
                   </span>
                 </div>
@@ -131,6 +125,13 @@ export function QoverySkillsSection({ errors, findings }: QoverySkillsSectionPro
                   )}
                 />
               </div>
+
+              <p className="-mt-2 pl-7 text-xs text-neutral-subtle">
+                {qoverySkillDescription(skill.skillName)}
+                {size && skill.choice !== 'DISABLE' && skill.choice !== 'REPLACE' && (
+                  <> · {formatTokens(size.skillMd)} tokens when loaded</>
+                )}
+              </p>
 
               {skill.choice === 'DISABLE' && (
                 <p className="pl-7 text-xs text-neutral-subtle">

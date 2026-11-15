@@ -232,8 +232,28 @@ const QOVERY_SKILLS_LOADED = ['qovery', 'qovery-deploy', 'qovery-troubleshoot', 
 
 function buildLoads(count: number, spanHours: number): MockLoadSeed[] {
   const loaders = MEMBERS.filter(({ id }) => id !== 'auth0|mock-robin' && id !== 'auth0|mock-quinn')
-  return Array.from({ length: count }, (_, index) => {
-    const member = loaders[(index * 7) % loaders.length]
+  // Uneven on purpose: a few heavy users, a long tail, quieter weekends.
+  const weights = loaders.map((_, index) => Math.max(1, 9 - index))
+  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0)
+  let seed = 7
+  const random = () => {
+    seed = (seed * 16807) % 2147483647
+    return seed / 2147483647
+  }
+  const pick = () => {
+    let roll = random() * totalWeight
+    for (let index = 0; index < loaders.length; index++) {
+      roll -= weights[index]
+      if (roll <= 0) return loaders[index]
+    }
+    return loaders[0]
+  }
+  const loads: MockLoadSeed[] = []
+  while (loads.length < count) {
+    const hoursAgo = random() * spanHours + 0.2
+    const day = new Date(Date.now() - hoursAgo * HOUR).getDay()
+    if ((day === 0 || day === 6) && random() < 0.7) continue
+    const member = pick()
     const isContractor = member.id === 'auth0|mock-jamie' || member.id === 'auth0|mock-avery'
     const isDevops = MEMBER_ROLES[member.id] === MOCK_ROLE_IDS.devops
     const pool = isContractor
@@ -241,13 +261,14 @@ function buildLoads(count: number, spanHours: number): MockLoadSeed[] {
       : isDevops
         ? ['qovery', 'release-checklist']
         : QOVERY_SKILLS_LOADED
-    return {
-      timestamp: at((index / count) * spanHours + 0.2),
+    loads.push({
+      timestamp: at(hoursAgo),
       member_id: member.id,
-      skill_name: pool[(index * 3) % pool.length],
-      from_cache: index % 3 !== 0,
-    }
-  })
+      skill_name: pool[Math.floor(random() * pool.length)],
+      from_cache: random() < 0.68,
+    })
+  }
+  return loads.sort((a, b) => b.timestamp.localeCompare(a.timestamp))
 }
 
 function typicalSeed(): MockSeed {

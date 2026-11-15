@@ -1,8 +1,10 @@
+import type * as MockMode from './skill-presets-mock-mode'
+
 const loadWithFlag = (flag?: string) => {
-  let module: typeof import('./skill-presets-mock-mode') | undefined
+  let module: typeof MockMode | undefined
   jest.isolateModules(() => {
     jest.doMock('@qovery/shared/util-node-env', () => ({ SKILL_PRESETS_MOCK: flag }))
-    module = jest.requireActual<typeof import('./skill-presets-mock-mode')>('./skill-presets-mock-mode')
+    module = jest.requireActual<typeof MockMode>('./skill-presets-mock-mode')
   })
   if (!module) throw new Error('module not loaded')
   return module

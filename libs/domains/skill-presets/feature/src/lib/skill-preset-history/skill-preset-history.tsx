@@ -80,17 +80,23 @@ function TextDiff({ title, before, after }: { title: string; before: string; aft
   return (
     <section className="flex flex-col gap-2" aria-label={title}>
       <Heading level={3}>{title}</Heading>
-      <div className="flex justify-between text-xs text-neutral-subtle">
+      <div className="grid grid-cols-2 text-xs text-neutral-subtle" aria-hidden="true">
         <span>Before</span>
-        <span className="w-1/2">After</span>
+        <span>After</span>
       </div>
       <div className="overflow-hidden rounded-md border border-neutral">
         <CodeDiffEditor
           original={before}
           modified={after}
           language="markdown"
-          height={`${Math.min(lines * 19 + 16, 420)}px`}
-          options={{ wordWrap: 'on', diffWordWrap: 'on', scrollBeyondLastLine: false }}
+          height={`${Math.min(lines * 26 + 24, 480)}px`}
+          options={{
+            wordWrap: 'on',
+            diffWordWrap: 'on',
+            scrollBeyondLastLine: false,
+            useInlineViewWhenSpaceIsLimited: false,
+            hideUnchangedRegions: { enabled: true, contextLineCount: 2, minimumLineCount: 4 },
+          }}
         />
       </div>
     </section>
