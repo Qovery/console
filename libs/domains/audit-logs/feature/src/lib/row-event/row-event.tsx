@@ -52,6 +52,12 @@ const containerRegistriesSettingsUrl = (organizationId: string) =>
 const helmRepositoriesSettingsUrl = (organizationId: string) =>
   `${organizationSettingsUrl(organizationId)}/helm-repositories`
 
+const skillPresetsSettingsUrl = (organizationId: string) => `${organizationSettingsUrl(organizationId)}/skill-presets`
+
+// Not in the generated client enums yet: skill preset edits and the skill loads of members' agents.
+const SKILL_PRESET_SUB_TARGET = 'SKILL_PRESET'
+const SKILL_LOAD_EVENT = 'LOAD'
+
 export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth, validTargetIds } = props
   const { organizationId = '' } = useParams({ strict: false })
@@ -107,7 +113,12 @@ export function RowEvent(props: RowEventProps) {
       [OrganizationEventTargetType.HELM]: generateServiceLink,
       [OrganizationEventTargetType.TERRAFORM]: generateServiceLink,
       [OrganizationEventTargetType.AGENTIC_WORKFLOW]: generateServiceLink,
-      [OrganizationEventTargetType.ORGANIZATION]: () => customLink(organizationSettingsUrl(organizationId)),
+      [OrganizationEventTargetType.ORGANIZATION]: () =>
+        customLink(
+          (event.sub_target_type as string | null | undefined) === SKILL_PRESET_SUB_TARGET
+            ? skillPresetsSettingsUrl(organizationId)
+            : organizationSettingsUrl(organizationId)
+        ),
       [OrganizationEventTargetType.MEMBERS_AND_ROLES]: () => customLink(membersSettingsUrl(organizationId)),
       [OrganizationEventTargetType.PROJECT]: () => customLink(projectSettingsUrl(organizationId, target_id!)),
       [OrganizationEventTargetType.ENVIRONMENT]: () =>
@@ -132,66 +143,74 @@ export function RowEvent(props: RowEventProps) {
   const isEventTypeFailed =
     event.event_type === OrganizationEventType.ACCESS_DENIED || event.event_type?.toLowerCase().includes('fail')
 
-  const eventIcon = match(event.event_type)
-    .with(
-      OrganizationEventType.CREATE,
-      OrganizationEventType.ACCEPT,
-      OrganizationEventType.DEPLOYED,
-      OrganizationEventType.STOPPED,
-      OrganizationEventType.RESTARTED,
-      OrganizationEventType.UPDATE,
-      OrganizationEventType.DEPLOYED,
-      OrganizationEventType.STOPPED,
-      OrganizationEventType.DEPLOYED_DRY_RUN,
-      OrganizationEventType.TERRAFORM_FORCE_UNLOCK_SUCCEEDED,
-      OrganizationEventType.TERRAFORM_MIGRATE_STATE_SUCCEEDED,
-      () => <Icon iconName="circle-check" className="text-positive" />
-    )
-    .with(
-      OrganizationEventType.DELETE_QUEUED,
-      OrganizationEventType.STOP_QUEUED,
-      OrganizationEventType.RESTART_QUEUED,
-      OrganizationEventType.DEPLOY_QUEUED,
-      OrganizationEventType.UNINSTALL_QUEUED,
-      OrganizationEventType.FORCE_RUN_QUEUED,
-      OrganizationEventType.FORCE_RUN_QUEUED_DELETE,
-      OrganizationEventType.FORCE_RUN_QUEUED_DEPLOY,
-      OrganizationEventType.FORCE_RUN_QUEUED_STOP,
-      () => <Icon iconName="hourglass-start" className="text-neutral-subtle" />
-    )
-    .with(
-      OrganizationEventType.TRIGGER_CANCEL,
-      OrganizationEventType.TRIGGER_DELETE,
-      OrganizationEventType.TRIGGER_CANCEL,
-      OrganizationEventType.TRIGGER_DEPLOY,
-      OrganizationEventType.TRIGGER_UNINSTALL,
-      OrganizationEventType.TRIGGER_DEPLOY_DRY_RUN,
-      OrganizationEventType.TRIGGER_FORCE_RUN,
-      OrganizationEventType.TRIGGER_FORCE_RUN_DELETE,
-      OrganizationEventType.TRIGGER_FORCE_RUN_DEPLOY,
-      OrganizationEventType.TRIGGER_FORCE_RUN_STOP,
-      OrganizationEventType.TRIGGER_REDEPLOY,
-      OrganizationEventType.TRIGGER_RESTART,
-      OrganizationEventType.TRIGGER_STOP,
-      OrganizationEventType.TRIGGER_TERRAFORM_FORCE_UNLOCK,
-      OrganizationEventType.TRIGGER_TERRAFORM_MIGRATE_STATE,
-      OrganizationEventType.OPERATOR_UPDATE,
-      () => <Icon iconName="rocket-launch" className="text-neutral-subtle" />
-    )
-    .with(OrganizationEventType.DELETE, OrganizationEventType.DELETED, () => (
-      <Icon iconName="trash-can" className="text-neutral-subtle" />
-    ))
-    .with(OrganizationEventType.CLONE, () => <Icon iconName="copy" className="text-neutral-subtle" />)
-    .with(OrganizationEventType.DRY_RUN, () => <Icon iconName="rotate-right" className="text-neutral-subtle" />)
-    .with(OrganizationEventType.MAINTENANCE, OrganizationEventType.MAINTENANCE_OPERATOR, () => (
-      <Icon iconName="wrench" className="text-neutral-subtle" />
-    ))
-    .with(OrganizationEventType.FORCE_RUN_SUCCEEDED, () => (
-      <Icon iconName="circle-check" className="text-neutral-subtle" />
-    ))
-    .with(OrganizationEventType.REMOTE_DEBUG, () => <Icon iconName="cloud-arrow-up" className="text-neutral-subtle" />)
-    .with(OrganizationEventType.SHELL, () => <Icon iconName="terminal" className="text-neutral-subtle" />)
-    .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-negative" /> : null))
+  const isSkillLoad = (event.event_type as string | undefined) === SKILL_LOAD_EVENT
+
+  const eventIcon = isSkillLoad ? (
+    <Icon iconName="file-import" className="text-neutral-subtle" />
+  ) : (
+    match(event.event_type)
+      .with(
+        OrganizationEventType.CREATE,
+        OrganizationEventType.ACCEPT,
+        OrganizationEventType.DEPLOYED,
+        OrganizationEventType.STOPPED,
+        OrganizationEventType.RESTARTED,
+        OrganizationEventType.UPDATE,
+        OrganizationEventType.DEPLOYED,
+        OrganizationEventType.STOPPED,
+        OrganizationEventType.DEPLOYED_DRY_RUN,
+        OrganizationEventType.TERRAFORM_FORCE_UNLOCK_SUCCEEDED,
+        OrganizationEventType.TERRAFORM_MIGRATE_STATE_SUCCEEDED,
+        () => <Icon iconName="circle-check" className="text-positive" />
+      )
+      .with(
+        OrganizationEventType.DELETE_QUEUED,
+        OrganizationEventType.STOP_QUEUED,
+        OrganizationEventType.RESTART_QUEUED,
+        OrganizationEventType.DEPLOY_QUEUED,
+        OrganizationEventType.UNINSTALL_QUEUED,
+        OrganizationEventType.FORCE_RUN_QUEUED,
+        OrganizationEventType.FORCE_RUN_QUEUED_DELETE,
+        OrganizationEventType.FORCE_RUN_QUEUED_DEPLOY,
+        OrganizationEventType.FORCE_RUN_QUEUED_STOP,
+        () => <Icon iconName="hourglass-start" className="text-neutral-subtle" />
+      )
+      .with(
+        OrganizationEventType.TRIGGER_CANCEL,
+        OrganizationEventType.TRIGGER_DELETE,
+        OrganizationEventType.TRIGGER_CANCEL,
+        OrganizationEventType.TRIGGER_DEPLOY,
+        OrganizationEventType.TRIGGER_UNINSTALL,
+        OrganizationEventType.TRIGGER_DEPLOY_DRY_RUN,
+        OrganizationEventType.TRIGGER_FORCE_RUN,
+        OrganizationEventType.TRIGGER_FORCE_RUN_DELETE,
+        OrganizationEventType.TRIGGER_FORCE_RUN_DEPLOY,
+        OrganizationEventType.TRIGGER_FORCE_RUN_STOP,
+        OrganizationEventType.TRIGGER_REDEPLOY,
+        OrganizationEventType.TRIGGER_RESTART,
+        OrganizationEventType.TRIGGER_STOP,
+        OrganizationEventType.TRIGGER_TERRAFORM_FORCE_UNLOCK,
+        OrganizationEventType.TRIGGER_TERRAFORM_MIGRATE_STATE,
+        OrganizationEventType.OPERATOR_UPDATE,
+        () => <Icon iconName="rocket-launch" className="text-neutral-subtle" />
+      )
+      .with(OrganizationEventType.DELETE, OrganizationEventType.DELETED, () => (
+        <Icon iconName="trash-can" className="text-neutral-subtle" />
+      ))
+      .with(OrganizationEventType.CLONE, () => <Icon iconName="copy" className="text-neutral-subtle" />)
+      .with(OrganizationEventType.DRY_RUN, () => <Icon iconName="rotate-right" className="text-neutral-subtle" />)
+      .with(OrganizationEventType.MAINTENANCE, OrganizationEventType.MAINTENANCE_OPERATOR, () => (
+        <Icon iconName="wrench" className="text-neutral-subtle" />
+      ))
+      .with(OrganizationEventType.FORCE_RUN_SUCCEEDED, () => (
+        <Icon iconName="circle-check" className="text-neutral-subtle" />
+      ))
+      .with(OrganizationEventType.REMOTE_DEBUG, () => (
+        <Icon iconName="cloud-arrow-up" className="text-neutral-subtle" />
+      ))
+      .with(OrganizationEventType.SHELL, () => <Icon iconName="terminal" className="text-neutral-subtle" />)
+      .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-negative" /> : null))
+  )
 
   const isSuccess = match(event.event_type)
     .with(

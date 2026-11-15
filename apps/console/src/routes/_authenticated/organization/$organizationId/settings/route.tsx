@@ -109,6 +109,7 @@ function RouteComponent() {
     children: [
       { title: 'Copilot', to: `${pathSettings}/ai-copilot` },
       { title: 'Skills', to: `${pathSettings}/skills` },
+      { title: 'Skill presets', to: `${pathSettings}/skill-presets` },
     ],
   }
 

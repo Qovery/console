@@ -10,6 +10,7 @@ import { serviceHelm } from '@qovery/domains/service-helm/data-access'
 import { serviceLogs } from '@qovery/domains/service-logs/data-access'
 import { serviceTerraform } from '@qovery/domains/service-terraform/data-access'
 import { services } from '@qovery/domains/services/data-access'
+import { skillPresets } from '@qovery/domains/skill-presets/data-access'
 import { usersSignUp } from '@qovery/domains/users-sign-up/data-access'
 import { variables } from '@qovery/domains/variables/data-access'
 import { devopsCopilot } from '@qovery/shared/devops-copilot/data-access'
@@ -26,6 +27,7 @@ export const queries = mergeQueryKeys(
   projects,
   serviceHelm,
   services,
+  skillPresets,
   user,
   usersSignUp,
   variables,

@@ -1,0 +1,510 @@
+import { type OrganizationEventResponse, type OrganizationEventResponseList } from 'qovery-typescript-axios'
+import { type SkillLoadsParams, type SkillPresetsApi } from '../skill-presets.api'
+import { buildSkillPresetApiError } from '../skill-presets.errors'
+import { SKILL_NAME_PATTERN, SKILL_PRESET_LIMITS, approxTokens, isQoverySkillName } from '../skill-presets.limits'
+import {
+  SKILL_LOAD_EVENT_TYPE,
+  SKILL_PRESET_SUB_TARGET_TYPE,
+  type SkillLoadChange,
+  type SkillPresetAssignedTo,
+  type SkillPresetChangeType,
+  type SkillPresetManifestResponse,
+  type SkillPresetRequest,
+  type SkillPresetResolutionSource,
+  type SkillPresetResponse,
+  type SkillPresetRevisionResponse,
+  type SkillPresetUsageResponse,
+} from '../skill-presets.types'
+import { inspectSkillPresetContent } from './mock-content-inspector'
+import { type SkillPresetsMockScenario } from './mock-scenario-names'
+import { type MockPresetState, buildMockSeed } from './mock-scenarios'
+
+/** Deterministic stand-in for SHA-256: 64 hex characters, clearly not a real hash of the content. */
+export function mockHash(text: string) {
+  let hash = ''
+  for (let round = 0; round < 8; round++) {
+    let value = 0x811c9dc5 ^ round
+    for (let index = 0; index < text.length; index++) {
+      value ^= text.charCodeAt(index)
+      value = Math.imul(value, 0x01000193) >>> 0
+    }
+    hash += value.toString(16).padStart(8, '0')
+  }
+  return hash
+}
+
+const clone = <T>(value: T): T => (value === undefined ? value : JSON.parse(JSON.stringify(value)))
+
+const toState = (body: SkillPresetRequest): MockPresetState => ({
+  name: body.name.trim(),
+  description: body.description ?? '',
+  base: body.base,
+  team_context: body.team_context?.trim() ? body.team_context : null,
+  skills: (body.skills ?? []).map((skill) => ({
+    skill_name: skill.skill_name.trim(),
+    mode: skill.mode,
+    description: skill.description ?? null,
+    content: skill.mode === 'DISABLE' ? null : skill.content ?? null,
+  })),
+  assigned_to: {
+    organization_default: Boolean(body.assigned_to?.organization_default),
+    role_ids: body.assigned_to?.role_ids ?? [],
+    user_ids: body.assigned_to?.user_ids ?? [],
+  },
+})
+
+interface StoredPreset extends MockPresetState {
+  id: string
+  created_at: string
+  updated_at: string
+  revision: number
+  creator_name: string
+}
+
+function validate(state: MockPresetState): string | null {
+  const limits = SKILL_PRESET_LIMITS
+  if (!state.name || state.name.length > limits.nameMaxLength) {
+    return `The name must be between 1 and ${limits.nameMaxLength} characters`
+  }
+  if (state.description.length > limits.descriptionMaxLength) {
+    return `The description must not exceed ${limits.descriptionMaxLength} characters`
+  }
+  if ((state.team_context?.length ?? 0) > limits.teamContextMaxLength) {
+    return `The team context must not exceed ${limits.teamContextMaxLength} characters`
+  }
+  if (state.skills.length > limits.maxSkills) return `A preset holds at most ${limits.maxSkills} skills`
+  const names = state.skills.map(({ skill_name }) => skill_name)
+  const duplicates = names.filter((name, index) => names.indexOf(name) !== index)
+  if (duplicates.length > 0) return `Each skill may appear once, found duplicates: ${duplicates.join(', ')}`
+  for (const skill of state.skills) {
+    const name = skill.skill_name
+    if (!SKILL_NAME_PATTERN.test(name)) {
+      return `Skill name '${name}' must be lowercase letters, digits and hyphens, at most 64 characters`
+    }
+    if (skill.mode === 'ADD' && isQoverySkillName(name)) {
+      return `Skill name '${name}' is reserved for Qovery skills: use OVERLAY or REPLACE, or another name`
+    }
+    if (skill.mode !== 'ADD' && !isQoverySkillName(name)) {
+      return `Skill '${name}' is not a Qovery skill: only ADD applies to the organization's own skills`
+    }
+    if (skill.mode !== 'ADD' && state.base !== 'QOVERY_FULL') {
+      return `Skill '${name}' uses ${skill.mode}, which only applies to the QOVERY_FULL base. Put team instructions in the team context instead.`
+    }
+    if (skill.mode === 'DISABLE') continue
+    if (!skill.content?.trim()) return `Skill '${name}' needs content`
+    if (skill.content.length > limits.skillContentMaxLength) {
+      return `Skill '${name}' content must not exceed ${limits.skillContentMaxLength} characters`
+    }
+    if ((skill.mode === 'ADD' || skill.mode === 'REPLACE') && !skill.description?.trim()) {
+      return `Skill '${name}' needs a description: agents decide when to load a skill from it`
+    }
+  }
+  return null
+}
+
+function inspect(state: MockPresetState) {
+  return inspectSkillPresetContent([
+    { location: 'description', text: state.description },
+    ...(state.team_context ? [{ location: 'team context', text: state.team_context }] : []),
+    ...state.skills.flatMap((skill) => [
+      ...(skill.description
+        ? [{ location: `description of skill '${skill.skill_name}'`, text: skill.description }]
+        : []),
+      ...(skill.content ? [{ location: `content of skill '${skill.skill_name}'`, text: skill.content }] : []),
+    ]),
+  ])
+}
+
+const HOUR_MS = 3_600_000
+
+const ADMIN_ONLY = 'You need the permission to manage organization data to do this'
+
+export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, organizationName = 'Acme (mock)') {
+  const seed = buildMockSeed(scenario)
+  const latency = scenario === 'slow' ? 2000 : 250
+  const members = seed.assignees.members
+  const memberEmail = (id: string) => members.find((member) => member.id === id)?.email ?? id
+  const currentUser = members.find(({ id }) => id === seed.currentUserId) ?? members[0]
+
+  let presets: StoredPreset[] = []
+  const revisions: SkillPresetRevisionResponse[] = []
+  const events: OrganizationEventResponse[] = []
+  let idCounter = 0
+  const loadRecords: {
+    timestamp: string
+    user_sub: string
+    user_name: string
+    skill_name: string
+    skill_preset_id: string | null
+    skill_preset_name: string | null
+    from_cache: boolean
+    tokens: number
+  }[] = []
+
+  const pushEvent = (
+    event_type: string,
+    triggered_by: string,
+    timestamp: string,
+    change: unknown,
+    original_change?: unknown
+  ) => {
+    idCounter += 1
+    events.push({
+      id: `mock-event-${idCounter}`,
+      timestamp,
+      event_type: event_type as OrganizationEventResponse['event_type'],
+      target_type: 'ORGANIZATION',
+      target_id: 'mock-organization',
+      target_name: organizationName,
+      sub_target_type: SKILL_PRESET_SUB_TARGET_TYPE as OrganizationEventResponse['sub_target_type'],
+      change: JSON.stringify(change),
+      original_change: original_change ? JSON.stringify(original_change) : null,
+      origin: event_type === SKILL_LOAD_EVENT_TYPE ? 'CLI' : 'CONSOLE',
+      triggered_by,
+    })
+  }
+
+  const auditView = (preset: StoredPreset) => ({
+    id: preset.id,
+    name: preset.name,
+    base: preset.base,
+    revision: preset.revision,
+    team_context: preset.team_context,
+    team_context_sha256: preset.team_context ? mockHash(preset.team_context) : null,
+    skills: preset.skills.map((skill) => ({
+      ...skill,
+      content_sha256: skill.content ? mockHash(skill.content) : null,
+    })),
+    assigned_to: preset.assigned_to,
+    content_omitted: false,
+  })
+
+  const recordRevision = (
+    preset: StoredPreset,
+    change_type: SkillPresetChangeType,
+    edited_by: string,
+    edited_at: string
+  ) => {
+    revisions.push({
+      skill_preset_id: preset.id,
+      revision: preset.revision,
+      change_type,
+      edited_by,
+      edited_at,
+      name: preset.name,
+      description: preset.description,
+      base: preset.base,
+      team_context: preset.team_context,
+      skills: clone(preset.skills),
+      assigned_to: clone(preset.assigned_to),
+    })
+  }
+
+  // Replay the seed through the same code paths the mutations use, so its revisions and audit
+  // entries have exactly the shapes a save produces.
+  for (const presetSeed of seed.presets) {
+    let previous: StoredPreset | undefined
+    presetSeed.revisions.forEach((revisionSeed, index) => {
+      const preset: StoredPreset = {
+        ...clone(revisionSeed.state),
+        id: presetSeed.id,
+        created_at: presetSeed.created_at,
+        updated_at: revisionSeed.edited_at,
+        revision: index + 1,
+        creator_name: presetSeed.creator_name,
+      }
+      recordRevision(preset, revisionSeed.change_type, revisionSeed.edited_by, revisionSeed.edited_at)
+      pushEvent(
+        revisionSeed.change_type,
+        revisionSeed.edited_by,
+        revisionSeed.edited_at,
+        auditView(preset),
+        revisionSeed.change_type === 'UPDATE' && previous ? auditView(previous) : undefined
+      )
+      previous = preset
+    })
+    if (previous) presets.push(previous)
+  }
+
+  const resolveFor = (userId: string): { source: SkillPresetResolutionSource; preset?: StoredPreset } => {
+    const byUser = presets.find(({ assigned_to }) => assigned_to.user_ids.includes(userId))
+    if (byUser) return { source: 'USER', preset: byUser }
+    const roleId = seed.memberRoles[userId]
+    const byRole = presets.find(({ assigned_to }) => assigned_to.role_ids.includes(roleId))
+    if (byRole) return { source: 'ROLE', preset: byRole }
+    const byDefault = presets.find(({ assigned_to }) => assigned_to.organization_default)
+    if (byDefault) return { source: 'ORGANIZATION', preset: byDefault }
+    return { source: 'QOVERY_DEFAULT' }
+  }
+
+  for (const load of seed.loads) {
+    const { source, preset } = resolveFor(load.member_id)
+    const skill = preset?.skills.find(({ skill_name }) => skill_name === load.skill_name)
+    const change: SkillLoadChange = {
+      skill_name: load.skill_name,
+      source,
+      skill_preset_id: preset?.id ?? null,
+      skill_preset_name: preset?.name ?? null,
+      revision: preset?.revision ?? null,
+      mode: skill?.mode ?? null,
+      content_sha256: skill?.content ? mockHash(skill.content) : null,
+      team_context_sha256: preset?.team_context ? mockHash(preset.team_context) : null,
+      from_cache: load.from_cache,
+    }
+    pushEvent(SKILL_LOAD_EVENT_TYPE, memberEmail(load.member_id), load.timestamp, change)
+    loadRecords.push({
+      timestamp: load.timestamp,
+      user_sub: load.member_id,
+      user_name: members.find(({ id }) => id === load.member_id)?.name ?? load.member_id,
+      skill_name: load.skill_name,
+      skill_preset_id: preset?.id ?? null,
+      skill_preset_name: preset?.name ?? null,
+      from_cache: load.from_cache,
+      tokens: load.from_cache ? 0 : approxTokens(skill?.content) + approxTokens(preset?.team_context),
+    })
+  }
+
+  const respond = <T>(value: T): Promise<T> =>
+    new Promise((resolve) => setTimeout(() => resolve(clone(value)), latency))
+  const fail = (status: number, detail: string, extra?: Record<string, unknown>): Promise<never> =>
+    new Promise((_, reject) => setTimeout(() => reject(buildSkillPresetApiError(status, detail, extra)), latency))
+
+  const toResponse = (preset: StoredPreset): SkillPresetResponse => ({
+    id: preset.id,
+    created_at: preset.created_at,
+    updated_at: preset.updated_at,
+    name: preset.name,
+    description: preset.description,
+    base: preset.base,
+    team_context: preset.team_context,
+    skills: preset.skills,
+    revision: preset.revision,
+    creator_name: preset.creator_name,
+    assigned_to: preset.assigned_to,
+  })
+
+  const assignmentConflict = (assignedTo: SkillPresetAssignedTo, exceptId?: string) =>
+    presets.some(
+      (preset) =>
+        preset.id !== exceptId &&
+        ((assignedTo.organization_default && preset.assigned_to.organization_default) ||
+          assignedTo.role_ids.some((roleId) => preset.assigned_to.role_ids.includes(roleId)) ||
+          assignedTo.user_ids.some((userId) => preset.assigned_to.user_ids.includes(userId)))
+    )
+
+  const checkWrite = (state: MockPresetState, exceptId?: string): Promise<never> | null => {
+    const invalid = validate(state)
+    if (invalid) return fail(400, invalid)
+    if (presets.some((preset) => preset.id !== exceptId && preset.name === state.name)) {
+      return fail(409, `Skill preset name '${state.name}' already exists`)
+    }
+    const unknownRole = state.assigned_to.role_ids.find((id) => !seed.assignees.roles.some((role) => role.id === id))
+    if (unknownRole) return fail(404, `Role ${unknownRole} does not exist in this organization`)
+    const findings = inspect(state)
+    if (findings.length > 0) {
+      return fail(
+        422,
+        `This preset was rejected to protect the members it applies to. ${findings
+          .map((finding) => `${finding.location}, line ${finding.line}: ${finding.reason} [${finding.rule_id}]`)
+          .join('; ')}.`,
+        { type: 'about:blank', title: 'Skill preset rejected for security', findings }
+      )
+    }
+    if (assignmentConflict(state.assigned_to, exceptId)) {
+      return fail(409, 'One of the assignment targets already receives another skill preset: unassign it there first')
+    }
+    return null
+  }
+
+  const findPreset = (skillPresetId: string) => presets.find(({ id }) => id === skillPresetId)
+  const now = () => new Date().toISOString()
+  const forbidden = () => fail(403, ADMIN_ONLY)
+
+  const api: SkillPresetsApi = {
+    listSkillPresets() {
+      if (!seed.isAdmin) return forbidden()
+      if (scenario === 'errors') return fail(500, 'Internal server error')
+      return respond([...presets].sort((a, b) => a.name.localeCompare(b.name)).map(toResponse))
+    },
+    getSkillPreset(skillPresetId) {
+      if (!seed.isAdmin) return forbidden()
+      const preset = findPreset(skillPresetId)
+      return preset ? respond(toResponse(preset)) : fail(404, `Skill preset ${skillPresetId} does not exist`)
+    },
+    createSkillPreset(_organizationId, body) {
+      if (!seed.isAdmin) return forbidden()
+      const state = toState(body)
+      const rejection = checkWrite(state)
+      if (rejection) return rejection
+      idCounter += 1
+      const timestamp = now()
+      const preset: StoredPreset = {
+        ...state,
+        id: `0193f1c2-mock-7000-8000-${idCounter.toString().padStart(12, '0')}`,
+        created_at: timestamp,
+        updated_at: timestamp,
+        revision: 1,
+        creator_name: currentUser.name,
+      }
+      presets.push(preset)
+      recordRevision(preset, 'CREATE', currentUser.email, timestamp)
+      pushEvent('CREATE', currentUser.email, timestamp, auditView(preset))
+      return respond(toResponse(preset))
+    },
+    editSkillPreset(skillPresetId, body) {
+      if (!seed.isAdmin) return forbidden()
+      const previous = findPreset(skillPresetId)
+      if (!previous) return fail(404, `Skill preset ${skillPresetId} does not exist`)
+      const state = toState(body)
+      const rejection = checkWrite(state, skillPresetId)
+      if (rejection) return rejection
+      const timestamp = now()
+      const preset: StoredPreset = { ...previous, ...state, updated_at: timestamp, revision: previous.revision + 1 }
+      presets = presets.map((item) => (item.id === skillPresetId ? preset : item))
+      recordRevision(preset, 'UPDATE', currentUser.email, timestamp)
+      pushEvent('UPDATE', currentUser.email, timestamp, auditView(preset), auditView(previous))
+      return respond(toResponse(preset))
+    },
+    deleteSkillPreset(skillPresetId) {
+      if (!seed.isAdmin) return forbidden()
+      const preset = findPreset(skillPresetId)
+      if (!preset) return fail(404, `Skill preset ${skillPresetId} does not exist`)
+      const timestamp = now()
+      presets = presets.filter(({ id }) => id !== skillPresetId)
+      recordRevision({ ...preset, revision: preset.revision + 1 }, 'DELETE', currentUser.email, timestamp)
+      pushEvent('DELETE', currentUser.email, timestamp, auditView(preset))
+      return respond(undefined)
+    },
+    listSkillPresetRevisions(_organizationId, { skillPresetId, limit = 50 } = {}) {
+      if (!seed.isAdmin) return forbidden()
+      const results = revisions
+        .filter((revision) => !skillPresetId || revision.skill_preset_id === skillPresetId)
+        .sort((a, b) => b.edited_at.localeCompare(a.edited_at) || b.revision - a.revision)
+        .slice(0, Math.min(Math.max(limit, 1), 100))
+      return respond(results)
+    },
+    getResolvedSkillPreset() {
+      const { source, preset } = resolveFor(currentUser.id)
+      const summary = (text?: string | null) =>
+        text ? { approx_tokens: approxTokens(text), sha256: mockHash(text) } : null
+      const manifest: SkillPresetManifestResponse = {
+        source,
+        skill_preset: preset
+          ? {
+              id: preset.id,
+              name: preset.name,
+              base: preset.base,
+              revision: preset.revision,
+              updated_at: preset.updated_at,
+              team_context: summary(preset.team_context),
+              skills: preset.skills.map((skill) => ({
+                skill_name: skill.skill_name,
+                mode: skill.mode,
+                description: skill.description ?? null,
+                content: summary(skill.content),
+              })),
+            }
+          : null,
+      }
+      return respond(manifest)
+    },
+    listSkillLoads(_organizationId, { pageSize = 30, continueToken, stepBackToken }: SkillLoadsParams = {}) {
+      if (!seed.isAdmin) return forbidden()
+      const loads = events
+        .filter(({ event_type }) => (event_type as string) === SKILL_LOAD_EVENT_TYPE)
+        .sort((a, b) => (b.timestamp ?? '').localeCompare(a.timestamp ?? ''))
+      const start = continueToken ? Number(continueToken) : stepBackToken ? Math.max(Number(stepBackToken), 0) : 0
+      const end = start + pageSize
+      const response: OrganizationEventResponseList = {
+        events: loads.slice(start, end),
+        links: {
+          next: end < loads.length ? `/organization/mock/events?continueToken=${end}` : undefined,
+          previous: start > 0 ? `/organization/mock/events?stepBackToken=${start - pageSize}` : undefined,
+        },
+      }
+      return respond(response)
+    },
+    listAssignees() {
+      return respond(seed.assignees)
+    },
+    getSkillPresetUsage(_organizationId, { from, to, bucket, skillName, userSub, skillPresetId }) {
+      if (!seed.isAdmin) return forbidden()
+      const fromTime = new Date(from).getTime()
+      const toTime = new Date(to).getTime()
+      if (toTime - fromTime > 90 * 24 * HOUR_MS + 60_000) return fail(400, 'The range must not exceed 90 days')
+      const records = loadRecords.filter((record) => {
+        const time = new Date(record.timestamp).getTime()
+        return (
+          time >= fromTime &&
+          time <= toTime &&
+          (!skillName || record.skill_name === skillName) &&
+          (!userSub || record.user_sub === userSub) &&
+          (!skillPresetId || record.skill_preset_id === skillPresetId)
+        )
+      })
+      const step = bucket === 'HOUR' ? HOUR_MS : 24 * HOUR_MS
+      const firstBucket = Math.floor(fromTime / step) * step
+      const timeline = Array.from({ length: Math.max(Math.ceil((toTime - firstBucket) / step), 1) }, (_, index) => ({
+        start: new Date(firstBucket + index * step).toISOString(),
+        loads: 0,
+        cached_loads: 0,
+      }))
+      const groupBy = <K extends string | null>(key: (record: (typeof records)[number]) => K) => {
+        const groups = new Map<K, typeof records>()
+        records.forEach((record) => groups.set(key(record), [...(groups.get(key(record)) ?? []), record]))
+        return groups
+      }
+      const latest = (items: typeof records) =>
+        items.reduce((max, { timestamp }) => (timestamp > max ? timestamp : max), '')
+      records.forEach((record) => {
+        const slot = timeline[Math.floor((new Date(record.timestamp).getTime() - firstBucket) / step)]
+        if (!slot) return
+        slot.loads += 1
+        if (record.from_cache) slot.cached_loads += 1
+      })
+      const response: SkillPresetUsageResponse = {
+        from,
+        to,
+        bucket,
+        totals: {
+          loads: records.length,
+          cached_loads: records.filter(({ from_cache }) => from_cache).length,
+          members: new Set(records.map(({ user_sub }) => user_sub)).size,
+          approx_injected_tokens: records.reduce((sum, { tokens }) => sum + tokens, 0),
+        },
+        timeline,
+        by_skill: [...groupBy((record) => record.skill_name).entries()]
+          .map(([skill_name, items]) => ({
+            skill_name,
+            loads: items.length,
+            cached_loads: items.filter(({ from_cache }) => from_cache).length,
+            members: new Set(items.map(({ user_sub }) => user_sub)).size,
+            last_loaded_at: latest(items),
+          }))
+          .sort((a, b) => b.loads - a.loads),
+        by_member: [...groupBy((record) => record.user_sub).entries()]
+          .map(([user_sub, items]) => ({
+            user_sub,
+            user_name: items[0].user_name,
+            loads: items.length,
+            skills: new Set(items.map(({ skill_name }) => skill_name)).size,
+            last_loaded_at: latest(items),
+          }))
+          .sort((a, b) => b.loads - a.loads),
+        by_preset: [...groupBy((record) => record.skill_preset_id).entries()]
+          .map(([skill_preset_id, items]) => ({
+            skill_preset_id,
+            skill_preset_name: items[0].skill_preset_name,
+            loads: items.length,
+          }))
+          .sort((a, b) => b.loads - a.loads),
+      }
+      return respond(response)
+    },
+  }
+
+  return Object.assign(api, {
+    /** Test helper: every audit entry recorded so far, oldest first. */
+    auditEvents: () => clone(events),
+  })
+}
