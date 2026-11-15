@@ -4,11 +4,11 @@ import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { PolicyApiTokenCrudModal } from '@qovery/domains/organizations/feature'
 import { AGENTIC_WORKFLOW_TEMPLATES } from '@qovery/domains/services/feature'
-import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   Badge,
   Button,
   CopyButton,
+  EmptyState,
   ExternalLink,
   Heading,
   Icon,
@@ -19,8 +19,8 @@ import {
 } from '@qovery/shared/ui'
 import { useCopyToClipboard, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
-import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { AGENT_JOBS, AGENT_JOB_LEVELS, type AgentJob, policyExampleUrl } from '../utils/agent-jobs'
+import { AgentExperiencePage } from './ui/agent-experience-ui'
 
 /** The Agent Tasks templates that run an agent on Qovery itself. */
 const AGENT_TASK_IDS = [
@@ -304,13 +304,11 @@ export function AgentExperienceAutomate() {
   }
 
   return (
-    <Section className="px-8 pb-8 pt-6">
-      <SettingsHeading
-        title="Automate"
-        description="Jobs agents can run on their own, safest first. Each comes with a policy token that allows exactly what the job needs. Anything else is refused at the API, and every call is logged."
-      />
+    <AgentExperiencePage
+      title="Automate"
+      description="Jobs agents can run on their own, safest first. Each comes with a policy token that allows exactly what the job needs. Anything else is refused at the API, and every call is logged."
+    >
       <div className="flex flex-col gap-8">
-        <MockScenarioBanner />
         <Section className="gap-4">
           <div className="flex items-center justify-between gap-3">
             <Heading level={2}>Jobs for agents</Heading>
@@ -345,10 +343,7 @@ export function AgentExperienceAutomate() {
               ))}
             </div>
           ) : (
-            <div className="flex min-h-[186px] flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral px-3 py-6 text-center">
-              <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-              <p className="mt-1 text-xs font-medium text-neutral-subtle">No job found</p>
-            </div>
+            <EmptyState icon="magnifying-glass" title="No job found" description="Try another word." />
           )}
         </Section>
 
@@ -398,6 +393,6 @@ export function AgentExperienceAutomate() {
         onOpenChange={setIsDetailsOpen}
         onExitComplete={() => setSelectedJob(null)}
       />
-    </Section>
+    </AgentExperiencePage>
   )
 }

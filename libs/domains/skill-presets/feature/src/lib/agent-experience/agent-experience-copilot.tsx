@@ -2,7 +2,6 @@ import { useParams } from '@tanstack/react-router'
 import { type Organization } from 'qovery-typescript-axios'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { getSkillPresetsMockScenario } from '@qovery/domains/skill-presets/data-access'
-import { SettingsHeading } from '@qovery/shared/console-shared'
 import { AICopilotSettings } from '@qovery/shared/devops-copilot/feature'
 import { Badge, Button, Callout, Heading, Icon, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -10,7 +9,7 @@ import { TURN_ON_AI_LABEL, TurnOnAiModal } from '../ai-features-notice/ai-featur
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { useCopilotStatus } from '../hooks/use-copilot-status/use-copilot-status'
-import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
+import { AgentExperiencePage } from './ui/agent-experience-ui'
 
 const COPILOT_DOES = [
   { icon: 'comments', text: 'Answers questions about your services, deployments and clusters, right in the Console.' },
@@ -67,14 +66,11 @@ export function AgentExperienceCopilot() {
   useDocumentTitle('Copilot - Agent Experience')
 
   return (
-    <Section className="px-8 pb-8 pt-6">
-      <SettingsHeading
-        title="Copilot"
-        description="Qovery’s AI assistant in the Console. It works on your infrastructure with what you allow it to do."
-      />
+    <AgentExperiencePage
+      title="Copilot"
+      description="Qovery’s AI assistant in the Console. It works on your infrastructure with what you allow it to do."
+    >
       <div className="flex max-w-content-with-navigation-left flex-col gap-6">
-        <MockScenarioBanner />
-
         <Section aria-labelledby="copilot-does" className="flex flex-col gap-3 rounded-md border border-neutral p-4">
           <Heading level={2} id="copilot-does">
             What the Copilot does
@@ -151,6 +147,6 @@ export function AgentExperienceCopilot() {
           </>
         )}
       </div>
-    </Section>
+    </AgentExperiencePage>
   )
 }

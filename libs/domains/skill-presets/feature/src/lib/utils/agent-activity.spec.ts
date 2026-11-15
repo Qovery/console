@@ -15,6 +15,8 @@ const action = (
   user_sub: 'user-jordan',
   user_name: 'Jordan Kim',
   origin: 'POLICY_DENIAL',
+  actor_kind: 'MEMBER',
+  policy_token_id: null,
   skill_name: 'qovery',
   event: 'ACCESS_DENIED',
   target_type: 'ENVIRONMENT',
@@ -30,13 +32,15 @@ const activity = (overrides: Partial<AgentActivityResponse> = {}): AgentActivity
   to: '2026-11-14T10:00:00Z',
   bucket: 'DAY',
   coverage: { sources: ['SKILL_LOAD', 'SKILL_API_ACTION', 'MCP_TOOL_CALL', 'POLICY_DENIAL'], note: '' },
-  totals: { skill_loads: 20, actions: 10, denials: 3, members: 2 },
+  totals: { skill_loads: 20, actions: 10, denials: 3, members: 2, policy_tokens: 0 },
   timeline: [],
   actions_by_type: [],
   by_member: [
     {
       user_sub: 'user-jordan',
       user_name: 'Jordan Kim',
+      actor_kind: 'MEMBER',
+      policy_token_id: null,
       skill_loads: 10,
       actions: 5,
       denials: 3,
@@ -46,6 +50,8 @@ const activity = (overrides: Partial<AgentActivityResponse> = {}): AgentActivity
     {
       user_sub: 'user-sam',
       user_name: 'Sam Lee',
+      actor_kind: 'MEMBER',
+      policy_token_id: null,
       skill_loads: 10,
       actions: 5,
       denials: 0,
@@ -58,6 +64,7 @@ const activity = (overrides: Partial<AgentActivityResponse> = {}): AgentActivity
     { skill_name: 'qovery-deploy', loads: 4, actions: 2, denials: 0, members: 1 },
     { skill_name: 'incident-handoff', loads: 6, actions: 0, denials: 0, members: 1 },
   ],
+  by_policy_token: [],
   recent: [action({}), action({}), action({})],
   ...overrides,
 })
@@ -119,7 +126,9 @@ describe('agent activity helpers', () => {
 
   it('suggests nothing without activity', () => {
     expect(
-      computeAgentActivityHints(activity({ totals: { skill_loads: 0, actions: 0, denials: 0, members: 0 } }))
+      computeAgentActivityHints(
+        activity({ totals: { skill_loads: 0, actions: 0, denials: 0, members: 0, policy_tokens: 0 } })
+      )
     ).toEqual([])
   })
 })

@@ -1,11 +1,10 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { SettingsHeading } from '@qovery/shared/console-shared'
 import { ExternalLink, Heading, Icon, Link, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { CommandBlock } from './command-block'
 import { PresetSummary } from './preset-summary'
+import { AgentExperiencePage } from './ui/agent-experience-ui'
 
 export const SKILLS_INSTALL_COMMAND = 'curl -fsSL https://skill.qovery.com/install.sh | bash'
 export const CLI_INSTALL_COMMAND = 'curl -s https://get.qovery.com | bash'
@@ -51,13 +50,11 @@ export function AgentExperienceConnect() {
   useDocumentTitle('Connect your agent - Agent Experience')
 
   return (
-    <Section className="px-8 pb-8 pt-6">
-      <SettingsHeading
-        title="Connect your agent"
-        description="Three ways for a coding agent to work with Qovery. Most teams install the skills; add the CLI or the MCP server if your agent uses them."
-      />
+    <AgentExperiencePage
+      title="Connect your agent"
+      description="Three ways for a coding agent to work with Qovery. Most teams install the skills; add the CLI or the MCP server if your agent uses them."
+    >
       <div className="flex max-w-content-with-navigation-left flex-col gap-6">
-        <MockScenarioBanner />
         <ConnectStep
           id="connect-skills"
           icon="sparkles"
@@ -118,6 +115,6 @@ export function AgentExperienceConnect() {
           <PresetSummary />
         </Section>
       </div>
-    </Section>
+    </AgentExperiencePage>
   )
 }

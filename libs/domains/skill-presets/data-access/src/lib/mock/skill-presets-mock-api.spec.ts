@@ -457,12 +457,12 @@ describe('createSkillPresetsMockApi', () => {
       )
 
       expect(value?.coverage).toEqual({
-        sources: ['SKILL_LOAD', 'SKILL_API_ACTION', 'MCP_TOOL_CALL', 'POLICY_DENIAL'],
+        sources: ['SKILL_LOAD', 'SKILL_API_ACTION', 'MCP_TOOL_CALL', 'POLICY_DENIAL', 'POLICY_TOKEN_API_ACTION'],
         note: expect.stringContaining('Only actions taken through Qovery'),
       })
       expect(value?.bucket).toBe('DAY')
       expect(value?.totals.actions).toBeGreaterThan(50)
-      expect(value?.totals.denials).toBe(9)
+      expect(value?.totals.denials).toBe(14)
       expect(value?.by_skill.find(({ skill_name }) => skill_name === 'qovery-deploy')?.actions).toBeGreaterThan(0)
       expect(value?.by_skill.some(({ skill_name }) => skill_name === null)).toBe(true)
       expect(value?.recent.length).toBeLessThanOrEqual(100)
@@ -493,14 +493,79 @@ describe('createSkillPresetsMockApi', () => {
       )
     })
 
-    it('lists a policy token as an actor with no user sub', async () => {
+    it('breaks policy tokens down, a deleted one and older unnamed records included', async () => {
       const { value } = await settle(
         createSkillPresetsMockApi('agent-activity').getAgentActivity(ORGANIZATION_ID, range())
       )
-      const token = value?.by_member.find(({ user_name }) => user_name.startsWith('policy:'))
+      const tokens = value?.by_policy_token ?? []
 
-      expect(token).toMatchObject({ user_sub: null, skill_loads: 0, denials: 3, top_skills: [] })
-      expect(token?.actions).toBeGreaterThan(0)
+      expect(tokens.map(({ token_name }) => token_name ?? 'legacy').sort()).toEqual([
+        'ci-deployer',
+        'cleanup-bot',
+        'legacy',
+        'review-agent',
+      ])
+      expect(tokens.find(({ token_name }) => token_name === 'cleanup-bot')).toMatchObject({
+        deleted: true,
+        denials: 1,
+        role_name: 'devops',
+      })
+      expect(tokens.find(({ policy_token_id }) => policy_token_id === null)).toMatchObject({ token_name: null })
+      const ciDeployer = tokens.find(({ token_name }) => token_name === 'ci-deployer')
+      expect(ciDeployer?.top_actions.length).toBeLessThanOrEqual(3)
+      expect(ciDeployer?.timeline.every(({ actions, denials }) => actions + denials > 0)).toBe(true)
+      expect(value?.totals.policy_tokens).toBe(4)
+      // by_member still lists tokens, with their kind, and totals.members counts them, as in q-core.
+      expect(value?.by_member.filter(({ actor_kind }) => actor_kind === 'POLICY_TOKEN').length).toBe(4)
+      expect(value?.coverage.sources).toContain('POLICY_TOKEN_API_ACTION')
+    })
+
+    it('filters on actor kind, a token, the outcome and the source', async () => {
+      const api = createSkillPresetsMockApi('agent-activity')
+      const ciDeployer = '3f1c9a2e-0000-4000-8000-00000000c1d0'
+      const { value: tokens } = await settle(
+        api.getAgentActivity(ORGANIZATION_ID, { ...range(), actorType: 'POLICY_TOKEN' })
+      )
+      expect(tokens?.recent.every(({ actor_kind }) => actor_kind === 'POLICY_TOKEN')).toBe(true)
+      expect(tokens?.totals.skill_loads).toBe(0)
+
+      const { value: one } = await settle(
+        api.getAgentActivity(ORGANIZATION_ID, { ...range(), policyTokenId: ciDeployer })
+      )
+      expect(new Set(one?.recent.map(({ policy_token_id }) => policy_token_id))).toEqual(new Set([ciDeployer]))
+      expect(one?.by_policy_token.map(({ token_name }) => token_name)).toEqual(['ci-deployer'])
+
+      const { value: denied } = await settle(api.getAgentActivity(ORGANIZATION_ID, { ...range(), outcome: 'DENIED' }))
+      expect(denied?.totals.actions).toBe(0)
+
+      const { value: calls } = await settle(
+        api.getAgentActivity(ORGANIZATION_ID, { ...range(), source: 'POLICY_TOKEN_API_ACTION' })
+      )
+      expect(calls?.recent.every(({ origin }) => origin === 'POLICY_TOKEN_API_ACTION')).toBe(true)
+      expect(calls?.recent.length).toBeGreaterThan(0)
+    })
+
+    it('refuses the filter combinations q-core refuses', async () => {
+      const api = createSkillPresetsMockApi('agent-activity')
+      for (const params of [
+        { ...range(), policyTokenId: 'not-a-uuid' },
+        { ...range(), policyTokenId: '3f1c9a2e-0000-4000-8000-00000000c1d0', actorType: 'MEMBER' as const },
+        { ...range(), userSub: 'auth0|mock-jordan', actorType: 'POLICY_TOKEN' as const },
+      ]) {
+        const { error } = await settle(api.getAgentActivity(ORGANIZATION_ID, params))
+        expect(getSkillPresetErrorStatus(error)).toBe(400)
+      }
+    })
+
+    it('never lists policy tokens on /me, and ignores the actor filters there', async () => {
+      const { value } = await settle(
+        createSkillPresetsMockApi('member').getMyAgentActivity(ORGANIZATION_ID, {
+          ...range(),
+          actorType: 'POLICY_TOKEN',
+        } as never)
+      )
+      expect(value?.by_policy_token).toEqual([])
+      expect(value?.recent.length).toBeGreaterThan(0)
     })
 
     it('refuses an invalid range, bucket or skill name with a 400', async () => {
@@ -534,7 +599,7 @@ describe('createSkillPresetsMockApi', () => {
     it('plays the three Agent Experience states', async () => {
       const empty = createSkillPresetsMockApi('agent-experience-empty')
       const { value: emptyActivity } = await settle(empty.getAgentActivity(ORGANIZATION_ID, range()))
-      expect(emptyActivity?.totals).toEqual({ skill_loads: 0, actions: 0, denials: 0, members: 0 })
+      expect(emptyActivity?.totals).toEqual({ skill_loads: 0, actions: 0, denials: 0, members: 0, policy_tokens: 0 })
       expect((await settle(empty.listPolicyTokens())).value).toEqual([])
       expect((await settle(empty.aiFeaturesEnabled())).value).toBe(false)
 
@@ -575,7 +640,7 @@ describe('createSkillPresetsMockApi', () => {
       const { value } = await settle(
         createSkillPresetsMockApi('agent-activity-empty').getAgentActivity(ORGANIZATION_ID, range())
       )
-      expect(value?.totals).toEqual({ skill_loads: 0, actions: 0, denials: 0, members: 0 })
+      expect(value?.totals).toEqual({ skill_loads: 0, actions: 0, denials: 0, members: 0, policy_tokens: 0 })
       expect(value?.recent).toEqual([])
     })
 

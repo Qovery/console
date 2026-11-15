@@ -1,4 +1,4 @@
-import { type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
+import { type AgentActivityBucket, type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
 import { QOVERY_SKILLS } from './qovery-skills'
 
 /**
@@ -79,6 +79,40 @@ export function groupActionsByType(rows: AgentActivityResponse['actions_by_type'
   return [...grouped.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
 }
 
+export const LEGACY_TOKEN_LABEL = 'Unknown policy token (older records)'
+
+/** The people in `by_member`: q-core lists policy tokens there too, marked by `actor_kind`. */
+export const peopleRows = (activity: AgentActivityResponse) =>
+  activity.by_member.filter(({ actor_kind, user_name }) =>
+    actor_kind ? actor_kind === 'MEMBER' : actorLabel(user_name).kind === 'member'
+  )
+
+/** Members using agents. `totals.members` still counts policy tokens, for older clients. */
+export const memberCount = (activity: AgentActivityResponse) => peopleRows(activity).length
+
+/** A token's name; older audit rows grouped under a null token have none. */
+export const policyTokenName = (row: { token_name: string | null }) => row.token_name ?? LEGACY_TOKEN_LABEL
+
+/**
+ * q-core returns only the buckets with activity: add the empty ones between `from` and `to`, so a
+ * chart shows quiet days as zero instead of skipping them.
+ */
+export function fillTimeline<T extends { start: string }>(
+  points: T[],
+  { from, to, bucket }: { from: string; to: string; bucket: AgentActivityBucket },
+  empty: (start: string) => T
+): T[] {
+  const step = bucket === 'HOUR' ? 3_600_000 : 24 * 3_600_000
+  const first = Math.floor(new Date(from).getTime() / step) * step
+  const last = new Date(to).getTime()
+  const byStart = new Map(points.map((point) => [Math.floor(new Date(point.start).getTime() / step) * step, point]))
+  const filled: T[] = []
+  for (let start = first; start < last; start += step) {
+    filled.push(byStart.get(start) ?? empty(new Date(start).toISOString()))
+  }
+  return filled
+}
+
 /** Qovery skills nobody loaded in the period: candidates to turn off in a preset. */
 export function neverLoadedSkills(activity: AgentActivityResponse) {
   const loaded = new Set(activity.by_skill.filter(({ loads }) => loads > 0).map(({ skill_name }) => skill_name))
@@ -90,6 +124,8 @@ export type AgentActivityHint =
   | { kind: 'environment-denials'; environment: string; count: number }
   /** `userSub` is null for a policy token: it can be named but not drilled into. */
   | { kind: 'member-denials'; userSub: string | null; userName: string; count: number }
+  /** `tokenId` is null for older records that named no token: they can be shown, not filtered on. */
+  | { kind: 'token-denials'; tokenId: string | null; tokenName: string; deleted: boolean; count: number }
   | { kind: 'loads-without-actions'; skillName: string; loads: number }
 
 const REPEATED = 3
@@ -120,11 +156,22 @@ export function computeAgentActivityHints(
     .sort(([a], [b]) => a.localeCompare(b))
     .forEach(([environment, count]) => hints.push({ kind: 'environment-denials', environment, count }))
 
-  activity.by_member
+  peopleRows(activity)
     // A drill into one member already shows their activity.
     .filter(({ denials }) => !filtered && denials >= REPEATED)
     .forEach(({ user_sub, user_name, denials }) =>
       hints.push({ kind: 'member-denials', userSub: user_sub, userName: user_name, count: denials })
+    )
+  ;(activity.by_policy_token ?? [])
+    .filter(({ denials }) => !filtered && denials >= REPEATED)
+    .forEach((row) =>
+      hints.push({
+        kind: 'token-denials',
+        tokenId: row.policy_token_id,
+        tokenName: policyTokenName(row),
+        deleted: row.deleted,
+        count: row.denials,
+      })
     )
 
   activity.by_skill

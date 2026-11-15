@@ -40,7 +40,7 @@ export function AgentExperienceNav() {
         </Sidebar.Item>
       )}
       <Sidebar.Item to={`${base}/agent-activity`} icon="wave-pulse" iconStyle="regular">
-        Agent activity
+        Activity
       </Sidebar.Item>
     </Sidebar.Root>
   )

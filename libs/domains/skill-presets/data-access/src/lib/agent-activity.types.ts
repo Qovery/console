@@ -12,11 +12,19 @@ export type AgentActivityBucket = 'DAY' | 'HOUR'
  * - `MCP_TOOL_CALL`: a tool call through the Qovery MCP server.
  * - `POLICY_DENIAL`: a request refused (by a policy token, or the member's role from a skill).
  */
-export type AgentActivitySource = 'SKILL_LOAD' | 'SKILL_API_ACTION' | 'MCP_TOOL_CALL' | 'POLICY_DENIAL'
+export type AgentActivitySource =
+  | 'SKILL_LOAD'
+  | 'SKILL_API_ACTION'
+  | 'MCP_TOOL_CALL'
+  | 'POLICY_DENIAL'
+  /** A call made with a policy token from any client, when no skill or MCP user agent names it. */
+  | 'POLICY_TOKEN_API_ACTION'
 /** The source of one action in `recent`. A skill load is not an action. */
 export type AgentActionOrigin = Exclude<AgentActivitySource, 'SKILL_LOAD'>
 /** `DENIED` for a `POLICY_DENIAL`, `ALLOWED` otherwise. */
 export type AgentActionOutcome = 'ALLOWED' | 'DENIED'
+/** Who acted: a member (through a skill or MCP), or a policy token. */
+export type AgentActorType = 'MEMBER' | 'POLICY_TOKEN'
 
 /** Range and limits of the endpoints: 30 days by default, 90 at most. Anything else is a 400. */
 export const AGENT_ACTIVITY_LIMITS = {
@@ -36,6 +44,14 @@ export interface AgentActivityParams {
   /** Admin endpoint only. */
   userSub?: string
   skillName?: string
+  /**
+   * Admin endpoint only (`/me` ignores them). `policyTokenId` implies POLICY_TOKEN. A 400 answers a
+   * token with `actorType=MEMBER`, or `userSub` with a token or `actorType=POLICY_TOKEN`.
+   */
+  actorType?: AgentActorType
+  policyTokenId?: string
+  outcome?: AgentActionOutcome
+  source?: AgentActivitySource
 }
 
 export interface AgentActivityResponse {
@@ -46,8 +62,12 @@ export interface AgentActivityResponse {
   /** What the numbers can and cannot see: a fixed set of sources and a fixed note. */
   coverage: { sources: AgentActivitySource[]; note: string }
   /** `actions` counts allowed agent actions only; `denials` counts the refused ones. */
-  totals: { skill_loads: number; actions: number; denials: number; members: number }
-  /** Same split as the totals: `actions` allowed only. */
+  /**
+   * `members` still counts policy tokens too, for older clients: count people from `by_member` rows
+   * whose `actor_kind` is MEMBER instead.
+   */
+  totals: { skill_loads: number; actions: number; denials: number; members: number; policy_tokens: number }
+  /** Same split as the totals: `actions` allowed only. Fill missing buckets before charting. */
   timeline: { start: string; skill_loads: number; actions: number; denials: number }[]
   /**
    * `event` and `target_type` are raw audit values (TRIGGER_DEPLOY, MCP, POLICY_FAILED...), for the
@@ -59,11 +79,34 @@ export interface AgentActivityResponse {
     /** Null for an actor that loaded no skill in the range, such as a policy token (`policy:<id>:<name>`). */
     user_sub: string | null
     user_name: string
+    actor_kind: AgentActorType
+    policy_token_id: string | null
     skill_loads: number
     actions: number
     denials: number
     top_skills: string[]
     last_activity_at: string
+  }[]
+  /**
+   * One row per policy token that acted in the range, deleted ones included, at most 100. Always empty
+   * on `/me`. A row with a null id and a null name groups older records that named no token.
+   */
+  by_policy_token: {
+    policy_token_id: string | null
+    token_name: string | null
+    deleted: boolean
+    role_id: string | null
+    role_name: string | null
+    expires_at: string | null
+    skill_loads: number
+    actions: number
+    denials: number
+    last_activity_at: string
+    /** At most 3. `count` includes the denied ones. */
+    top_actions: { event: string; target_type: string; count: number; denied: number }[]
+    top_skills: string[]
+    /** Only buckets with activity: DAY, or HOUR when filtered on this token. Fill the gaps to chart it. */
+    timeline: { start: string; actions: number; denials: number }[]
   }[]
   /** At most 100. A null skill groups actions that name no skill (MCP, or a plain API call). */
   by_skill: { skill_name: string | null; loads: number; actions: number; denials: number; members: number }[]
@@ -73,6 +116,8 @@ export interface AgentActivityResponse {
     user_sub: string | null
     user_name: string
     origin: AgentActionOrigin
+    actor_kind: AgentActorType
+    policy_token_id: string | null
     skill_name: string | null
     event: string
     target_type: string

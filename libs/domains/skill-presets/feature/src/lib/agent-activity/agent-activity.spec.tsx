@@ -7,6 +7,7 @@ import {
   skillPresetsApi,
 } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { type ActivitySearch } from './activity-search'
 import { AgentActivity } from './agent-activity'
 
 // The page goes through the real hooks and the in-browser mock API.
@@ -14,10 +15,33 @@ jest.mock('@qovery/shared/util-node-env', () => ({
   ...jest.requireActual('@qovery/shared/util-node-env'),
   SKILL_PRESETS_MOCK: 'true',
 }))
+
+// A small in-memory URL: the filters live in the search params.
+const mockUrl = {
+  search: {} as ActivitySearch,
+  listeners: new Set<() => void>(),
+  set(search: ActivitySearch) {
+    mockUrl.search = search
+    mockUrl.listeners.forEach((listener) => listener())
+  },
+}
+const mockNavigate = jest.fn()
+
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(),
-  Link: ({ children }: { children: ReactNode }) => <a href="/">{children}</a>,
+  useSearch: () =>
+    jest.requireActual('react').useSyncExternalStore(
+      (listener: () => void) => {
+        mockUrl.listeners.add(listener)
+        return () => mockUrl.listeners.delete(listener)
+      },
+      () => mockUrl.search
+    ),
+  useNavigate: () => mockNavigate,
+  Link: ({ children, search }: { children: ReactNode; search?: object }) => (
+    <a href={`/?${new URLSearchParams(search as Record<string, string>).toString()}`}>{children}</a>
+  ),
 }))
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
@@ -25,9 +49,14 @@ const useScenario = (scenario: SkillPresetsMockScenario) => {
   resetSkillPresetsMockApi()
 }
 
+const CI_DEPLOYER = '3f1c9a2e-0000-4000-8000-00000000c1d0'
+
 beforeEach(() => {
   window.sessionStorage.clear()
   resetSkillPresetsMockApi()
+  mockUrl.search = {}
+  // Set in each test: restoreAllMocks clears implementations between tests.
+  mockNavigate.mockReset().mockImplementation(({ search }: { search: ActivitySearch }) => mockUrl.set(search))
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
 })
 
@@ -40,70 +69,90 @@ describe('AgentActivity', () => {
     expect(screen.getByLabelText('Loading agent activity')).toBeInTheDocument()
   })
 
-  it('answers what agents did, which skills led to it, who, and what was blocked', async () => {
+  it('shows members, skills and policy tokens in one view, with what was blocked', async () => {
     useScenario('agent-activity')
     renderWithProviders(<AgentActivity />)
 
-    expect(await screen.findByRole('heading', { name: 'Skills and what followed' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Agent activity', level: 1 })).toBeInTheDocument()
-    expect(screen.getByTestId('coverage-note')).toHaveTextContent(
-      'such as in a shell, in git or in a cloud console, is not. Prompts and code are never collected.'
-    )
-    expect(screen.getByTestId('coverage-sources')).toHaveTextContent(
-      'Sources: skill loads, API calls from skills, MCP tool calls, refused requests.'
-    )
+    expect(await screen.findByRole('heading', { name: 'Breakdown' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Activity', level: 1 })).toBeInTheDocument()
+    expect(screen.getByTestId('coverage-note')).toHaveTextContent('Prompts and code are never collected.')
     expect(
       screen.getByText(
         'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
       )
     ).toBeInTheDocument()
-    expect(screen.getByText('Allowed actions')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'No skill (MCP or API)' })).toBeInTheDocument()
+    expect(screen.getByText('Policy tokens with activity')).toBeInTheDocument()
     expect(screen.getByText('Deploy (service)')).toBeInTheDocument()
-    expect(screen.getByTestId('never-loaded')).toHaveTextContent('Consider turning them off in the preset')
-    expect(screen.getByRole('heading', { name: 'By member' })).toBeInTheDocument()
     expect(within(screen.getByTestId('denied-actions')).getAllByText(/payments-production/).length).toBeGreaterThan(0)
+    // Denied rows stand out, and both kinds of actors appear in the feed.
+    expect(document.querySelectorAll('tr[data-outcome="DENIED"]').length).toBeGreaterThan(0)
+    expect(document.querySelectorAll('[data-actor-kind="policy-token"]').length).toBeGreaterThan(0)
     const suggestions = screen.getByTestId('activity-suggestions')
     expect(within(suggestions).getByText(/actions were denied in/)).toBeInTheDocument()
-    expect(within(suggestions).getAllByRole('link', { name: 'Review policy tokens' }).length).toBeGreaterThan(0)
-    expect(screen.getAllByText('MCP').length).toBeGreaterThan(0)
+    expect(within(suggestions).getByText(/calls\s+denied by its policy/)).toBeInTheDocument()
   })
 
-  it('names a policy token, without letting it be drilled into', async () => {
-    useScenario('agent-activity')
-    renderWithProviders(<AgentActivity />)
-    const members = (await screen.findByRole('heading', { name: 'By member' })).parentElement as HTMLElement
-
-    expect(within(members).getByText('Policy token ci-deployer')).toBeInTheDocument()
-    expect(within(members).queryByRole('button', { name: /ci-deployer/ })).not.toBeInTheDocument()
-    expect(within(screen.getByTestId('activity-suggestions')).getByText(/had 3 actions denied/)).toBeInTheDocument()
-  })
-
-  it('drills into one member from the table', async () => {
+  it('switches the breakdown between members, tokens and skills', async () => {
     useScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
-    const members = (await screen.findByRole('heading', { name: 'By member' })).parentElement as HTMLElement
+    await screen.findByTestId('breakdown-member')
 
-    await userEvent.click(within(members).getByRole('button', { name: 'Jordan Kim' }))
+    await userEvent.click(screen.getByRole('radio', { name: /By token/ }))
+    const tokens = within(screen.getByTestId('breakdown-token'))
+    expect(tokens.getByRole('button', { name: 'Policy token ci-deployer' })).toBeInTheDocument()
+    expect(tokens.getByText('Deleted')).toBeInTheDocument()
+    // Older records with no token id: named, not drillable.
+    expect(tokens.getByText('Unknown policy token (older records)')).toBeInTheDocument()
+    expect(tokens.queryByRole('button', { name: /Unknown policy token/ })).not.toBeInTheDocument()
 
-    expect(await screen.findByTestId('activity-drill')).toHaveTextContent('Jordan Kim')
+    await userEvent.click(screen.getByRole('radio', { name: /By skill/ }))
+    expect(
+      within(screen.getByTestId('breakdown-skill')).getByRole('button', { name: 'No skill (MCP or API)' })
+    ).toBeInTheDocument()
+  })
+
+  it('filters the whole page to a token from its row, in the URL', async () => {
+    useScenario('agent-activity')
+    const { userEvent } = renderWithProviders(<AgentActivity />)
+    await screen.findByTestId('breakdown-member')
+
+    await userEvent.click(screen.getByRole('radio', { name: /By token/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Policy token ci-deployer' }))
+
+    expect(mockNavigate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ search: { actor: `token:${CI_DEPLOYER}` }, replace: true })
+    )
+    expect(await screen.findByTestId('activity-drill')).toHaveTextContent('Policy token ci-deployer')
     await waitFor(() =>
       expect(
-        within(screen.getByRole('heading', { name: 'By member' }).parentElement as HTMLElement).getAllByRole('row')
-      ).toHaveLength(2)
+        Array.from(document.querySelectorAll('[data-actor-kind]')).every(
+          (chip) => chip.getAttribute('data-actor-kind') === 'policy-token'
+        )
+      ).toBe(true)
     )
-    expect(screen.queryByTestId('never-loaded')).not.toBeInTheDocument()
+  })
+
+  it('reads its filters from the URL, and removes one from its chip', async () => {
+    useScenario('agent-activity')
+    mockUrl.search = { outcome: 'DENIED', range: '7d' }
+    const { userEvent } = renderWithProviders(<AgentActivity />)
+
+    expect(await screen.findByTestId('activity-drill')).toHaveTextContent('Denied')
+    await waitFor(() => expect(document.querySelectorAll('tr[data-outcome="ALLOWED"]')).toHaveLength(0))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Remove the outcome filter' }))
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { range: '7d' } }))
   })
 
   it('shows a member only their own activity', async () => {
     useScenario('member')
     renderWithProviders(<AgentActivity />)
 
-    expect(await screen.findByRole('heading', { name: 'Your agent activity', level: 1 })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Your activity', level: 1 })).toBeInTheDocument()
     await screen.findByRole('heading', { name: 'Recent actions' })
-    expect(screen.queryByRole('heading', { name: 'By member' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('radio', { name: /By token/ })).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Suggestions' })).not.toBeInTheDocument()
-    expect(screen.queryByLabelText('Member')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Actor')).not.toBeInTheDocument()
     expect(screen.queryByText('Jordan Kim')).not.toBeInTheDocument()
   })
 

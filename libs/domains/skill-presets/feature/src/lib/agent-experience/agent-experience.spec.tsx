@@ -243,6 +243,16 @@ describe('AgentExperienceAutomate', () => {
 })
 
 describe('AgentExperiencePolicyTokens', () => {
+  it('shows each token’s last 7 days, links to its activity, and the deleted tokens with history', async () => {
+    useScenario('agent-experience-active')
+    renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
+    expect(await within(ciDeployer).findByTestId('token-usage')).toHaveTextContent(/\d+ allowed/)
+    expect(within(ciDeployer).getByText('See activity')).toBeInTheDocument()
+    expect(await screen.findByTestId('deleted-tokens')).toHaveTextContent('cleanup-bot')
+  })
+
   it('lists the organization’s tokens with their role, last use and expiry', async () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperiencePolicyTokens />)
@@ -279,7 +289,7 @@ describe('AgentExperienceNav', () => {
 
     useScenario('member')
     renderWithProviders(<AgentExperienceNav />)
-    expect(await screen.findByText('Agent activity')).toBeInTheDocument()
+    expect(await screen.findByText('Activity')).toBeInTheDocument()
     expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
   })
 })

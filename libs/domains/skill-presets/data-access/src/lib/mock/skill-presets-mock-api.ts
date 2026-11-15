@@ -631,10 +631,13 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       return respond(aggregateAgentActivity(agentActions(), loadRecords, params))
     },
     getMyAgentActivity(_organizationId, params) {
-      const invalid = agentActivityParamsError(params)
+      const invalid = agentActivityParamsError({ ...params, actorType: undefined, policyTokenId: undefined })
       if (invalid) return fail(400, invalid)
-      // Only the caller's own actions and loads: the member view never shows other people.
-      return respond(aggregateAgentActivity(agentActions(), loadRecords, { ...params, userSub: currentUser.id }))
+      // Only the caller's own actions and loads: the member view never shows other people. Like q-core,
+      // /me ignores the actor filters and never lists policy tokens.
+      const { actorType: _actorType, policyTokenId: _policyTokenId, ...own } = params
+      const activity = aggregateAgentActivity(agentActions(), loadRecords, { ...own, userSub: currentUser.id })
+      return respond({ ...activity, by_policy_token: [] })
     },
     getSkillPresetUsage(_organizationId, { from, to, bucket, skillName, userSub, skillPresetId }) {
       if (!seed.isAdmin) return forbidden()

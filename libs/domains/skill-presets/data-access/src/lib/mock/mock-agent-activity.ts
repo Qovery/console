@@ -16,10 +16,47 @@ export const MOCK_AGENT_ACTIVITY_COVERAGE_NOTE =
   'Only actions taken through Qovery (its API, CLI, skills and MCP server) are visible. ' +
   'What an agent does elsewhere, such as in a shell, in git or in a cloud console, is not.'
 
-const SOURCES: AgentActivitySource[] = ['SKILL_LOAD', 'SKILL_API_ACTION', 'MCP_TOOL_CALL', 'POLICY_DENIAL']
+const SOURCES: AgentActivitySource[] = [
+  'SKILL_LOAD',
+  'SKILL_API_ACTION',
+  'MCP_TOOL_CALL',
+  'POLICY_DENIAL',
+  'POLICY_TOKEN_API_ACTION',
+]
 
-/** How the audit log names an actor that is a policy token. */
-export const MOCK_POLICY_TOKEN_ACTOR = 'policy:3f1c9a2e:ci-deployer'
+/** The mock organization's policy tokens. The last one was deleted, but its calls stay in the audit log. */
+export const MOCK_POLICY_TOKENS = [
+  {
+    id: '3f1c9a2e-0000-4000-8000-00000000c1d0',
+    name: 'ci-deployer',
+    deleted: false,
+    role_id: '00000000-0000-4000-8000-000000000003',
+    role_name: 'devops',
+    expires_in_days: 49,
+  },
+  {
+    id: '3f1c9a2e-0000-4000-8000-00000000a9e1',
+    name: 'review-agent',
+    deleted: false,
+    role_id: '00000000-0000-4000-8000-000000000005',
+    role_name: 'viewer',
+    expires_in_days: null,
+  },
+  {
+    id: '3f1c9a2e-0000-4000-8000-00000000b7f2',
+    name: 'cleanup-bot',
+    deleted: true,
+    role_id: '00000000-0000-4000-8000-000000000003',
+    role_name: 'devops',
+    expires_in_days: null,
+  },
+] as const
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/** How the audit log names an actor that is a policy token: `policy:<id>:<name>`. */
+export const policyTokenActor = ({ id, name }: { id: string; name: string }) => `policy:${id}:${name}`
+export const MOCK_POLICY_TOKEN_ACTOR = policyTokenActor(MOCK_POLICY_TOKENS[0])
 
 export type MockAgentAction = AgentActivityResponse['recent'][number]
 
@@ -105,6 +142,8 @@ export function buildMockAgentActions(
         at: new Date(new Date(load.timestamp).getTime() + 2 * 60_000).toISOString(),
         user_sub: load.user_sub,
         user_name: load.user_name,
+        actor_kind: 'MEMBER',
+        policy_token_id: null,
         origin: 'SKILL_API_ACTION',
         skill_name: load.skill_name,
         event: effect.event,
@@ -115,22 +154,32 @@ export function buildMockAgentActions(
     }
   }
 
-  const person = (id: string) => {
+  type Actor = Pick<MockAgentAction, 'user_sub' | 'user_name' | 'actor_kind' | 'policy_token_id'>
+  const person = (id: string): Actor => {
     const found = people.find((item) => item.id === id) ?? people[0]
-    return { user_sub: found.id, user_name: found.name }
+    return { user_sub: found.id, user_name: found.name, actor_kind: 'MEMBER', policy_token_id: null }
   }
   // A policy token has no user sub: the audit log names it `policy:<id>:<name>`.
-  const policyToken = { user_sub: null, user_name: MOCK_POLICY_TOKEN_ACTOR }
+  const token = (index: number): Actor => ({
+    user_sub: null,
+    user_name: policyTokenActor(MOCK_POLICY_TOKENS[index]),
+    actor_kind: 'POLICY_TOKEN',
+    policy_token_id: MOCK_POLICY_TOKENS[index].id,
+  })
+  const policyToken = token(0)
+  // Older audit rows named a policy token without its id: q-core groups them under a null token.
+  const legacyToken: Actor = { user_sub: null, user_name: 'policy', actor_kind: 'POLICY_TOKEN', policy_token_id: null }
   const extra = (
     count: number,
-    actor: { user_sub: string | null; user_name: string },
+    actor: Actor,
     offsetHours: number,
-    make: (index: number) => Omit<MockAgentAction, 'at' | 'user_sub' | 'user_name' | 'outcome'>
+    make: (index: number) => Omit<MockAgentAction, 'at' | 'outcome' | keyof Actor>,
+    spacingHours = 37
   ) => {
     for (let index = 0; index < count; index++) {
       const action = make(index)
       actions.push({
-        at: new Date(Date.now() - (index * 37 + offsetHours) * HOUR).toISOString(),
+        at: new Date(Date.now() - (index * spacingHours + offsetHours) * HOUR).toISOString(),
         ...actor,
         ...action,
         outcome: action.origin === 'POLICY_DENIAL' ? 'DENIED' : 'ALLOWED',
@@ -158,6 +207,51 @@ export function buildMockAgentActions(
     project_name: 'storefront',
     environment_name: 'storefront-staging',
   }))
+
+  if (withPolicyToken) {
+    // The CI token also deploys staging from the pipeline, through the CLI.
+    extra(
+      18,
+      policyToken,
+      2,
+      (index) => ({
+        origin: 'POLICY_TOKEN_API_ACTION',
+        skill_name: null,
+        event: 'TRIGGER_DEPLOY',
+        target_type: 'APPLICATION',
+        target_name: index % 2 ? 'web' : 'checkout',
+        project_name: 'storefront',
+        environment_name: 'storefront-staging',
+      }),
+      38
+    )
+    // A read-only review agent: its reads are not audited, its MCP tool calls are.
+    extra(6, token(1), 6, (index) => ({
+      origin: 'MCP_TOOL_CALL',
+      skill_name: null,
+      event: 'MCP',
+      target_type: 'APPLICATION',
+      target_name: index % 2 ? 'api' : 'worker',
+      project_name: 'payments',
+      environment_name: 'payments-production',
+    }))
+    // A cleanup token, deleted since: it stopped idle previews through Terraform.
+    extra(
+      10,
+      token(2),
+      18 * 24,
+      (index) => ({
+        origin: 'POLICY_TOKEN_API_ACTION',
+        skill_name: null,
+        event: 'TRIGGER_STOP',
+        target_type: 'ENVIRONMENT',
+        target_name: `storefront-pr-${410 + index}`,
+        project_name: 'storefront',
+        environment_name: `storefront-pr-${410 + index}`,
+      }),
+      22
+    )
+  }
 
   if (withDenials) {
     // Refused by the member's role, asked from a skill.
@@ -189,6 +283,36 @@ export function buildMockAgentActions(
       project_name: 'payments',
       environment_name: 'payments-production',
     }))
+    // The review agent tried to restart a service: its viewer policy refuses it.
+    extra(withPolicyToken ? 2 : 0, token(1), 30, () => ({
+      origin: 'POLICY_DENIAL',
+      skill_name: null,
+      event: 'POLICY_FAILED',
+      target_type: 'APPLICATION',
+      target_name: 'api',
+      project_name: 'payments',
+      environment_name: 'payments-production',
+    }))
+    // Older records, from before tokens were named in the audit log.
+    extra(withPolicyToken ? 2 : 0, legacyToken, 26 * 24, () => ({
+      origin: 'POLICY_DENIAL',
+      skill_name: null,
+      event: 'POLICY_FAILED',
+      target_type: 'PROJECT',
+      target_name: 'payments',
+      project_name: 'payments',
+      environment_name: null,
+    }))
+    // The cleanup token was refused a production delete, before it was deleted.
+    extra(withPolicyToken ? 1 : 0, token(2), 21 * 24, () => ({
+      origin: 'POLICY_DENIAL',
+      skill_name: null,
+      event: 'POLICY_FAILED',
+      target_type: 'ENVIRONMENT',
+      target_name: 'storefront-production',
+      project_name: 'storefront',
+      environment_name: 'storefront-production',
+    }))
   }
 
   return actions.sort((a, b) => b.at.localeCompare(a.at))
@@ -198,7 +322,7 @@ export function buildMockAgentActions(
 export function aggregateAgentActivity(
   actions: MockAgentAction[],
   loads: MockSkillLoad[],
-  { from, to, bucket, userSub, skillName }: AgentActivityParams
+  { from, to, bucket, userSub, skillName, actorType, policyTokenId, outcome, source }: AgentActivityParams
 ): AgentActivityResponse {
   const fromTime = new Date(from).getTime()
   const toTime = new Date(to).getTime()
@@ -208,8 +332,21 @@ export function aggregateAgentActivity(
   }
   const matches = (user: string | null, skill: string | null) =>
     (!userSub || user === userSub) && (!skillName || skill === skillName)
-  const scopedActions = actions.filter((action) => inRange(action.at) && matches(action.user_sub, action.skill_name))
-  const scopedLoads = loads.filter((load) => inRange(load.timestamp) && matches(load.user_sub, load.skill_name))
+  const tokenOnly = actorType === 'POLICY_TOKEN' || Boolean(policyTokenId)
+  const scopedActions = actions.filter(
+    (action) =>
+      inRange(action.at) &&
+      matches(action.user_sub, action.skill_name) &&
+      (!actorType || action.actor_kind === actorType) &&
+      (!policyTokenId || action.policy_token_id === policyTokenId) &&
+      (!outcome || action.outcome === outcome) &&
+      (!source || action.origin === source)
+  )
+  // Skill loads are a member's: a token filter or an action source leaves them out.
+  const scopedLoads =
+    tokenOnly || source
+      ? []
+      : loads.filter((load) => inRange(load.timestamp) && matches(load.user_sub, load.skill_name))
   const isDenied = ({ outcome }: MockAgentAction) => outcome === 'DENIED'
   const allowedCount = (list: MockAgentAction[]) => list.filter((action) => !isDenied(action)).length
   const deniedCount = (list: MockAgentAction[]) => list.filter(isDenied).length
@@ -245,25 +382,30 @@ export function aggregateAgentActivity(
 
   // Like q-core, a person is keyed by name (the audit log's `triggered_by`); the sub comes from the loads.
   const subByName = new Map(scopedLoads.map(({ user_name, user_sub }) => [user_name, user_sub]))
+  // Like q-core, by_member still lists policy tokens too, with their actor kind.
+  const memberActions = scopedActions
   const memberNames = [
-    ...new Set([...scopedLoads.map(({ user_name }) => user_name), ...scopedActions.map(({ user_name }) => user_name)]),
+    ...new Set([...scopedLoads.map(({ user_name }) => user_name), ...memberActions.map(({ user_name }) => user_name)]),
   ]
   const byMember = memberNames.map((name) => {
     const memberLoads = scopedLoads.filter(({ user_name }) => user_name === name)
-    const memberActions = scopedActions.filter(({ user_name }) => user_name === name)
+    const ownActions = memberActions.filter(({ user_name }) => user_name === name)
     const skillCounts = new Map<string, number>()
     memberLoads.forEach(({ skill_name }) => skillCounts.set(skill_name, (skillCounts.get(skill_name) ?? 0) + 1))
-    memberActions.forEach(({ skill_name }) => {
+    ownActions.forEach(({ skill_name }) => {
       if (skill_name) skillCounts.set(skill_name, (skillCounts.get(skill_name) ?? 0) + 1)
     })
     const last =
-      [...memberLoads.map(({ timestamp }) => timestamp), ...memberActions.map(({ at }) => at)].sort().at(-1) ?? from
+      [...memberLoads.map(({ timestamp }) => timestamp), ...ownActions.map(({ at }) => at)].sort().at(-1) ?? from
+    const first = ownActions[0]
     return {
       user_sub: subByName.get(name) ?? null,
       user_name: name,
+      actor_kind: first?.actor_kind ?? ('MEMBER' as const),
+      policy_token_id: first?.policy_token_id ?? null,
       skill_loads: memberLoads.length,
-      actions: allowedCount(memberActions),
-      denials: deniedCount(memberActions),
+      actions: allowedCount(ownActions),
+      denials: deniedCount(ownActions),
       top_skills: [...skillCounts.entries()]
         .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
         .slice(0, AGENT_ACTIVITY_LIMITS.maxTopSkills)
@@ -293,6 +435,53 @@ export function aggregateAgentActivity(
     }
   })
 
+  // One row per token, deleted ones included; older records with no token id grouped under null.
+  const tokenActions = scopedActions.filter(({ actor_kind }) => actor_kind === 'POLICY_TOKEN')
+  const tokenKeys = [...new Set(tokenActions.map(({ policy_token_id }) => policy_token_id))]
+  const tokenStep = bucket === 'HOUR' && policyTokenId ? HOUR : 24 * HOUR
+  const byPolicyToken = tokenKeys.map((id) => {
+    const own = tokenActions.filter(({ policy_token_id }) => policy_token_id === id)
+    const known = MOCK_POLICY_TOKENS.find((token) => token.id === id)
+    const actionTypes = new Map<string, { event: string; target_type: string; count: number; denied: number }>()
+    own.forEach((action) => {
+      const key = `${action.event}|${action.target_type}`
+      const row = actionTypes.get(key) ?? { event: action.event, target_type: action.target_type, count: 0, denied: 0 }
+      row.count += 1
+      if (isDenied(action)) row.denied += 1
+      actionTypes.set(key, row)
+    })
+    const buckets = new Map<number, { start: string; actions: number; denials: number }>()
+    own.forEach((action) => {
+      const start = Math.floor(new Date(action.at).getTime() / tokenStep) * tokenStep
+      const point = buckets.get(start) ?? { start: new Date(start).toISOString(), actions: 0, denials: 0 }
+      if (isDenied(action)) point.denials += 1
+      else point.actions += 1
+      buckets.set(start, point)
+    })
+    return {
+      policy_token_id: id,
+      token_name: known?.name ?? null,
+      deleted: known?.deleted ?? false,
+      role_id: known?.role_id ?? null,
+      role_name: known?.role_name ?? null,
+      expires_at: known?.expires_in_days
+        ? new Date(Date.now() + known.expires_in_days * 24 * HOUR).toISOString()
+        : null,
+      skill_loads: 0,
+      actions: allowedCount(own),
+      denials: deniedCount(own),
+      last_activity_at:
+        own
+          .map(({ at }) => at)
+          .sort()
+          .at(-1) ?? from,
+      top_actions: [...actionTypes.values()].sort((a, b) => b.count - a.count).slice(0, 3),
+      top_skills: [],
+      // Only buckets with activity, as q-core returns them.
+      timeline: [...buckets.entries()].sort(([a], [b]) => a - b).map(([, point]) => point),
+    }
+  })
+
   const activity = (row: { skill_loads?: number; loads?: number; actions: number; denials: number }) =>
     (row.skill_loads ?? row.loads ?? 0) + row.actions + row.denials
 
@@ -305,13 +494,18 @@ export function aggregateAgentActivity(
       skill_loads: scopedLoads.length,
       actions: allowedCount(scopedActions),
       denials: deniedCount(scopedActions),
+      // Counts tokens too, as q-core does for older clients.
       members: memberNames.length,
+      policy_tokens: tokenKeys.length,
     },
     timeline,
     actions_by_type: [...byType.values()].sort((a, b) => b.count - a.count),
     by_member: byMember
       .sort((a, b) => activity(b) - activity(a) || a.user_name.localeCompare(b.user_name))
       .slice(0, AGENT_ACTIVITY_LIMITS.maxMembers),
+    by_policy_token: byPolicyToken
+      .sort((a, b) => b.actions + b.denials - (a.actions + a.denials))
+      .slice(0, AGENT_ACTIVITY_LIMITS.maxSkills),
     by_skill: bySkill
       .sort((a, b) => activity(b) - activity(a) || (a.skill_name ?? '').localeCompare(b.skill_name ?? ''))
       .slice(0, AGENT_ACTIVITY_LIMITS.maxSkills),
@@ -320,7 +514,15 @@ export function aggregateAgentActivity(
 }
 
 /** q-core's 400s: a range that is empty or over 90 days, an unknown bucket, a malformed skill name. */
-export function agentActivityParamsError({ from, to, bucket, skillName }: AgentActivityParams): string | null {
+export function agentActivityParamsError({
+  from,
+  to,
+  bucket,
+  skillName,
+  userSub,
+  actorType,
+  policyTokenId,
+}: AgentActivityParams): string | null {
   const fromTime = new Date(from).getTime()
   const toTime = new Date(to).getTime()
   if (Number.isNaN(fromTime) || Number.isNaN(toTime) || fromTime >= toTime) return '"from" must be before "to"'
@@ -328,5 +530,9 @@ export function agentActivityParamsError({ from, to, bucket, skillName }: AgentA
     return `The range must not exceed ${AGENT_ACTIVITY_LIMITS.maxRangeDays} days`
   if (bucket !== 'DAY' && bucket !== 'HOUR') return 'The bucket must be DAY or HOUR'
   if (skillName !== undefined && !AGENT_ACTIVITY_LIMITS.skillNamePattern.test(skillName)) return 'Invalid skill name'
+  if (policyTokenId !== undefined && !UUID.test(policyTokenId)) return 'Invalid policy token id'
+  if (policyTokenId && actorType === 'MEMBER') return 'A policy token cannot be filtered with actorType=MEMBER'
+  if (userSub && (policyTokenId || actorType === 'POLICY_TOKEN'))
+    return 'userSub cannot be combined with a policy token filter'
   return null
 }
