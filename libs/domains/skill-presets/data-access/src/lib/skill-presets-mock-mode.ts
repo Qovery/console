@@ -1,5 +1,9 @@
 import { SKILL_PRESETS_MOCK } from '@qovery/shared/util-node-env'
-import { SKILL_PRESETS_MOCK_SCENARIOS, type SkillPresetsMockScenario } from './mock/mock-scenario-names'
+import {
+  SKILL_PRESETS_MOCK_MEMBER_SCENARIOS,
+  SKILL_PRESETS_MOCK_SCENARIOS,
+  type SkillPresetsMockScenario,
+} from './mock/mock-scenario-names'
 
 export const SKILL_PRESETS_MOCK_QUERY_PARAM = 'mockSkillPresets'
 const STORAGE_KEY = 'qovery-mock-skill-presets'
@@ -57,6 +61,16 @@ export function getSkillPresetsMockScenario(): SkillPresetsMockScenario | null {
   const chosen = fromUrl === 'off' || isScenario(fromUrl) ? fromUrl : readStorage()
   if (chosen === 'off') return null
   return isScenario(chosen) ? chosen : 'typical'
+}
+
+/**
+ * In mock mode, whether the mock user may manage skill presets: false in the member scenarios. Null
+ * outside mock mode, where the user's organization role decides.
+ */
+export function getSkillPresetsMockCanManage(): boolean | null {
+  const scenario = getSkillPresetsMockScenario()
+  if (!scenario) return null
+  return !SKILL_PRESETS_MOCK_MEMBER_SCENARIOS.includes(scenario)
 }
 
 /** Switches scenario and reloads, so the in-memory data starts from the new scenario's seed. */

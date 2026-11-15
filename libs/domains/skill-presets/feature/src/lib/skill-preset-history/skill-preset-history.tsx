@@ -31,6 +31,7 @@ import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { LoadError } from '../load-error/load-error'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { AssignmentChips } from '../settings-skill-presets/assignment-chips'
+import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
 import { baseLabel } from '../utils/qovery-skills'
 import { diffRevisions, revisionToRequest, skillAsText, summarizeDiff } from '../utils/revision-diff'
 import { findingLocationLabel } from '../utils/skill-preset-findings'
@@ -98,7 +99,7 @@ function TextDiff({ title, before, after }: { title: string; before: string; aft
   )
 }
 
-export function SkillPresetHistory() {
+function SkillPresetHistoryPage() {
   const { organizationId = '', skillPresetId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const { data: revisions = [], isLoading, error, refetch } = useSkillPresetRevisions({ organizationId, skillPresetId })
@@ -404,5 +405,14 @@ export function SkillPresetHistory() {
         </article>
       </div>
     </Section>
+  )
+}
+
+/** Owners and admins only: anyone else sees what their own agent receives. */
+export function SkillPresetHistory() {
+  return (
+    <SkillPresetsAdminOnly>
+      <SkillPresetHistoryPage />
+    </SkillPresetsAdminOnly>
   )
 }

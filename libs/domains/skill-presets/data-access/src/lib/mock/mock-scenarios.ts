@@ -424,7 +424,18 @@ export function buildMockSeed(scenario: SkillPresetsMockScenario): MockSeed {
     case 'large':
       return largeSeed()
     case 'member':
+      // Taylor is a backend engineer: the organization default applies to them.
       return { ...typicalSeed(), currentUserId: 'auth0|mock-taylor', isAdmin: false }
+    case 'member-no-preset': {
+      // Same organization without an organization default: nothing applies to Taylor.
+      const seed = typicalSeed()
+      return {
+        ...seed,
+        currentUserId: 'auth0|mock-taylor',
+        isAdmin: false,
+        presets: seed.presets.filter(({ revisions }) => !revisions.at(-1)?.state.assigned_to.organization_default),
+      }
+    }
     default:
       return typicalSeed()
   }

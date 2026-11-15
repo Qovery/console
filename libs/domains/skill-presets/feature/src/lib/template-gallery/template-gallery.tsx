@@ -5,6 +5,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SkillPresetEditor } from '../skill-preset-editor/skill-preset-editor'
+import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
 import { baseLabel } from '../utils/qovery-skills'
 import { SKILL_PRESET_TEMPLATES } from '../utils/skill-preset-templates'
 
@@ -135,7 +136,16 @@ export function TemplateGallery() {
 }
 
 /** `/new`: the gallery first, then the editor once a starting point is chosen. */
-export function SkillPresetCreate() {
+function SkillPresetCreatePage() {
   const search = useSearch({ strict: false }) as { template?: string; from?: string }
   return search.template || search.from ? <SkillPresetEditor /> : <TemplateGallery />
+}
+
+/** Owners and admins only: anyone else sees what their own agent receives. */
+export function SkillPresetCreate() {
+  return (
+    <SkillPresetsAdminOnly>
+      <SkillPresetCreatePage />
+    </SkillPresetsAdminOnly>
+  )
 }

@@ -89,12 +89,30 @@ describe('mock scenario banner', () => {
 })
 
 describe('presets list', () => {
-  it('shows a retry when the list fails', async () => {
+  it('fails once in the errors scenario, says it is simulated, and loads on retry', async () => {
     useScenario('errors')
-    renderWithProviders(<SettingsSkillPresets />)
+    const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
 
-    expect(await screen.findByText('Skill presets could not be loaded')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
+    const alert = await screen.findByRole('alert')
+    expect(within(alert).getByText('Skill presets could not be loaded')).toBeInTheDocument()
+    expect(
+      within(alert).getByText(
+        'Qovery could not reach the server. Your members’ agents keep working with the preset they last loaded.'
+      )
+    ).toBeInTheDocument()
+    expect(within(alert).getByText('Details: HTTP 500, Internal server error')).toBeInTheDocument()
+    expect(within(alert).getByText('Simulated by the errors mock scenario.')).toBeInTheDocument()
+
+    await userEvent.click(within(alert).getByRole('button', { name: 'Try again' }))
+
+    expect(await screen.findByText('Backend team')).toBeInTheDocument()
+  })
+
+  it('shows the scenario and a reset in the mock bar for any scenario but typical', async () => {
+    useScenario('errors')
+    renderWithProviders(<MockScenarioBanner />)
+    expect(await screen.findByTestId('mock-scenario-name')).toHaveTextContent('Scenario: errors')
+    expect(screen.getByRole('button', { name: 'Reset to typical' })).toBeInTheDocument()
   })
 
   it('deletes a preset after typing its name', async () => {
@@ -115,8 +133,9 @@ describe('presets list', () => {
     useScenario('member')
     renderWithProviders(<SettingsSkillPresets />)
 
-    expect(await screen.findByText('Only admins can change skill presets')).toBeInTheDocument()
+    expect(await screen.findByText(/Only organization owners and admins can change skill presets/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Create preset/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Assignments' })).not.toBeInTheDocument()
   })
 })
 
@@ -126,9 +145,33 @@ describe('member view', () => {
     renderWithProviders(<MemberAgentView organizationId="organization-1" />)
 
     expect(await screen.findByText('Backend team')).toBeInTheDocument()
-    expect(screen.getByText('Organization default')).toBeInTheDocument()
-    expect(screen.getByText('qovery-deploy')).toBeInTheDocument()
-    expect(screen.getByText('Team context')).toBeInTheDocument()
+    expect(screen.getByText('The organization default')).toBeInTheDocument()
+    const [pieces] = screen.getAllByRole('table')
+    expect(within(pieces).getByText('qovery-deploy')).toBeInTheDocument()
+    expect(within(pieces).getByText('Team context')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'What it costs your agent in context' })).toBeInTheDocument()
+  })
+
+  it('reads the full text of a skill on demand', async () => {
+    useScenario('member')
+    const { userEvent } = renderWithProviders(<MemberAgentView organizationId="organization-1" />)
+    await screen.findByText('Backend team')
+    const [pieces] = screen.getAllByRole('table')
+    const row = within(pieces).getByText('qovery-deploy').closest('tr') as HTMLElement
+
+    await userEvent.click(within(row).getByRole('button', { name: /Read/ }))
+
+    expect(await screen.findByText(/Deploy to the `staging` environment first/)).toBeInTheDocument()
+    expect(screen.getByText(/^SHA-256 [0-9a-f]{64}$/)).toBeInTheDocument()
+  })
+
+  it('says when no preset applies', async () => {
+    useScenario('member-no-preset')
+    renderWithProviders(<MemberAgentView organizationId="organization-1" />)
+
+    expect(await screen.findByTestId('member-no-preset')).toHaveTextContent(
+      'No preset applies. Your agent uses the Qovery skills as published.'
+    )
   })
 })
 

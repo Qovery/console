@@ -1,4 +1,9 @@
-import { type SkillPresetBase, type SkillPresetSkill, approxTokens } from '@qovery/domains/skill-presets/data-access'
+import {
+  type SkillPresetBase,
+  type SkillPresetManifestResponse,
+  type SkillPresetSkill,
+  approxTokens,
+} from '@qovery/domains/skill-presets/data-access'
 import { QOVERY_SKILLS } from './qovery-skills'
 
 /**
@@ -54,22 +59,25 @@ export interface TokenBudget {
   disabled: string[]
 }
 
-/**
- * Estimated context cost of a preset for one member. Estimates only: characters / 4, and published
- * Qovery sizes measured on one version of qovery-skills.
- */
-export function computeTokenBudget(preset: PresetLikeForBudget | null): TokenBudget {
-  const teamContextTokens = approxTokens(preset?.team_context)
-  const skills = preset?.skills ?? []
+/** Sizes only: what both a draft (from its text) and a resolved manifest (from its counts) can give. */
+interface BudgetInput {
+  base: SkillPresetBase
+  teamContextTokens: number
+  skills: { skillName: string; mode: SkillPresetSkill['mode']; descriptionTokens: number; contentTokens: number }[]
+}
+
+function budgetOf(input: BudgetInput | null): TokenBudget {
+  const teamContextTokens = input?.teamContextTokens ?? 0
+  const skills = input?.skills ?? []
   const manifest = skills.reduce(
-    (sum, skill) => sum + MANIFEST_TOKENS_PER_SKILL + approxTokens(skill.description),
-    preset ? MANIFEST_TOKENS_PER_SKILL : 0
+    (sum, skill) => sum + MANIFEST_TOKENS_PER_SKILL + skill.descriptionTokens,
+    input ? MANIFEST_TOKENS_PER_SKILL : 0
   )
-  const entryOf = (skillName: string) => skills.find((skill) => skill.skill_name === skillName)
+  const entryOf = (skillName: string) => skills.find((skill) => skill.skillName === skillName)
   const onDemand: OnDemandBudgetRow[] = []
   const disabled: string[] = []
 
-  const base = preset?.base ?? 'QOVERY_FULL'
+  const base = input?.base ?? 'QOVERY_FULL'
   if (base === 'QOVERY_FULL') {
     for (const { name } of QOVERY_SKILLS) {
       const entry = entryOf(name)
@@ -78,7 +86,7 @@ export function computeTokenBudget(preset: PresetLikeForBudget | null): TokenBud
         continue
       }
       const qoveryTokens = entry?.mode === 'REPLACE' ? 0 : QOVERY_SKILL_SIZES[name]?.skillMd ?? 0
-      const organizationTokens = approxTokens(entry?.content)
+      const organizationTokens = entry?.contentTokens ?? 0
       onDemand.push({
         skillName: name,
         qoveryTokens,
@@ -100,24 +108,59 @@ export function computeTokenBudget(preset: PresetLikeForBudget | null): TokenBud
   }
 
   for (const skill of skills.filter(({ mode }) => mode === 'ADD')) {
-    const organizationTokens = approxTokens(skill.content)
     onDemand.push({
-      skillName: skill.skill_name,
+      skillName: skill.skillName,
       qoveryTokens: 0,
-      organizationTokens,
+      organizationTokens: skill.contentTokens,
       teamContextTokens,
-      total: organizationTokens + teamContextTokens,
+      total: skill.contentTokens + teamContextTokens,
       todayTokens: null,
     })
   }
 
-  const loader = preset ? LOADER_SKILL_TOKENS : 0
+  const loader = input ? LOADER_SKILL_TOKENS : 0
   return {
-    alwaysInContext: { loader, manifest, total: preset ? loader + manifest : TODAY_ALWAYS_TOKENS },
+    alwaysInContext: { loader, manifest, total: input ? loader + manifest : TODAY_ALWAYS_TOKENS },
     todayAlwaysInContext: TODAY_ALWAYS_TOKENS,
     onDemand,
     disabled,
   }
+}
+
+/**
+ * Estimated context cost of a preset for one member. Estimates only: characters / 4, and published
+ * Qovery sizes measured on one version of qovery-skills.
+ */
+export function computeTokenBudget(preset: PresetLikeForBudget | null): TokenBudget {
+  return budgetOf(
+    preset && {
+      base: preset.base,
+      teamContextTokens: approxTokens(preset.team_context),
+      skills: preset.skills.map((skill) => ({
+        skillName: skill.skill_name,
+        mode: skill.mode,
+        descriptionTokens: approxTokens(skill.description),
+        contentTokens: approxTokens(skill.content),
+      })),
+    }
+  )
+}
+
+/** Same estimate from the resolved manifest a member's agent reads: it carries sizes, not text. */
+export function computeTokenBudgetFromManifest(manifest: SkillPresetManifestResponse): TokenBudget {
+  const preset = manifest.skill_preset
+  return budgetOf(
+    preset && {
+      base: preset.base,
+      teamContextTokens: preset.team_context?.approx_tokens ?? 0,
+      skills: preset.skills.map((skill) => ({
+        skillName: skill.skill_name,
+        mode: skill.mode,
+        descriptionTokens: approxTokens(skill.description),
+        contentTokens: skill.content?.approx_tokens ?? 0,
+      })),
+    }
+  )
 }
 
 export const formatTokens = (tokens: number) => `~${Math.round(tokens).toLocaleString('en-US')}`

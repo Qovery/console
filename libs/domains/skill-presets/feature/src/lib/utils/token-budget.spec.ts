@@ -1,4 +1,10 @@
-import { LOADER_SKILL_TOKENS, QOVERY_SKILL_SIZES, TODAY_ALWAYS_TOKENS, computeTokenBudget } from './token-budget'
+import {
+  LOADER_SKILL_TOKENS,
+  QOVERY_SKILL_SIZES,
+  TODAY_ALWAYS_TOKENS,
+  computeTokenBudget,
+  computeTokenBudgetFromManifest,
+} from './token-budget'
 
 describe('computeTokenBudget', () => {
   it('compares with today: all 11 descriptions always in context', () => {
@@ -39,5 +45,40 @@ describe('computeTokenBudget', () => {
       'qovery',
     ])
     expect(computeTokenBudget({ base: 'NONE', skills: [] }).onDemand).toEqual([])
+  })
+
+  it('gives the same estimate from a resolved manifest as from the draft text', () => {
+    const draft = {
+      base: 'QOVERY_FULL' as const,
+      team_context: 'x'.repeat(400),
+      skills: [
+        { skill_name: 'qovery-deploy', mode: 'OVERLAY' as const, content: 'y'.repeat(200) },
+        { skill_name: 'qovery-assess', mode: 'DISABLE' as const },
+      ],
+    }
+    const fromManifest = computeTokenBudgetFromManifest({
+      source: 'ROLE',
+      skill_preset: {
+        id: 'preset-1',
+        name: 'Backend team',
+        base: 'QOVERY_FULL',
+        revision: 2,
+        updated_at: '2026-11-15T00:00:00Z',
+        team_context: { approx_tokens: 100, sha256: 'a' },
+        skills: [
+          {
+            skill_name: 'qovery-deploy',
+            mode: 'OVERLAY',
+            description: null,
+            content: { approx_tokens: 50, sha256: 'b' },
+          },
+          { skill_name: 'qovery-assess', mode: 'DISABLE', description: null, content: null },
+        ],
+      },
+    })
+    expect(fromManifest).toEqual(computeTokenBudget(draft))
+    expect(computeTokenBudgetFromManifest({ source: 'QOVERY_DEFAULT', skill_preset: null })).toEqual(
+      computeTokenBudget(null)
+    )
   })
 })

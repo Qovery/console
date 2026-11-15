@@ -3,6 +3,7 @@ import { type SkillLoadsParams, type SkillPresetsApi } from '../skill-presets.ap
 import { buildSkillPresetApiError } from '../skill-presets.errors'
 import { SKILL_NAME_PATTERN, SKILL_PRESET_LIMITS, approxTokens, isQoverySkillName } from '../skill-presets.limits'
 import {
+  type InjectedSkillResponse,
   SKILL_LOAD_EVENT_TYPE,
   SKILL_PRESET_SUB_TARGET_TYPE,
   type SkillLoadChange,
@@ -339,11 +340,16 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   const now = () => new Date().toISOString()
   const forbidden = () => fail(403, ADMIN_ONLY)
   let concurrentSaveDone = false
+  let listFailedOnce = false
 
   const api: SkillPresetsApi & { listAssignees: () => Promise<SkillPresetAssignees> } = {
     listSkillPresets(_organizationId, { isTemplate } = {}) {
       if (!seed.isAdmin) return forbidden()
-      if (scenario === 'errors') return fail(500, 'Internal server error')
+      // Fails once, so the error state and its retry can both be shown.
+      if (scenario === 'errors' && !listFailedOnce) {
+        listFailedOnce = true
+        return fail(500, 'Internal server error')
+      }
       return respond(
         [...presets]
           .filter((preset) => isTemplate === undefined || Boolean(preset.is_template) === isTemplate)
@@ -437,6 +443,23 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
           : null,
       }
       return respond(manifest)
+    },
+    getResolvedSkill(_organizationId, skillName) {
+      const { source, preset } = resolveFor(currentUser.id)
+      const skill = preset?.skills.find(({ skill_name }) => skill_name === skillName)
+      if (!skill && !isQoverySkillName(skillName)) return fail(404, `There is no skill '${skillName}' to load`)
+      const response: InjectedSkillResponse = {
+        source,
+        skill_name: skillName,
+        skill_preset: preset ? { id: preset.id, name: preset.name, revision: preset.revision } : null,
+        mode: skill?.mode ?? null,
+        description: skill?.description ?? null,
+        content: skill?.content ?? null,
+        content_sha256: skill?.content ? mockHash(skill.content) : null,
+        team_context: preset?.team_context ?? null,
+        team_context_sha256: preset?.team_context ? mockHash(preset.team_context) : null,
+      }
+      return respond(response)
     },
     listSkillLoads(_organizationId, { pageSize = 30, continueToken, stepBackToken }: SkillLoadsParams = {}) {
       if (!seed.isAdmin) return forbidden()

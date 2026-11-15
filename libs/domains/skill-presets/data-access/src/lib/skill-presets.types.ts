@@ -92,6 +92,23 @@ export interface SkillPresetManifestResponse {
   } | null
 }
 
+/**
+ * GET /organization/{organizationId}/skillPreset/resolved/skill/{skillName}: what the caller's agent
+ * gets for one skill, with the team context. q-core records every call as a LOAD audit entry.
+ */
+export interface InjectedSkillResponse {
+  source: SkillPresetResolutionSource
+  skill_name: string
+  skill_preset: { id: string; name: string; revision: number } | null
+  /** Null when the preset leaves the Qovery skill as published. */
+  mode: SkillPresetSkillMode | null
+  description: string | null
+  content: string | null
+  content_sha256: string | null
+  team_context: string | null
+  team_context_sha256: string | null
+}
+
 /** One security finding of a 422. The offending text is never echoed. */
 export interface SkillPresetFinding {
   rule_id: string

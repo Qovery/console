@@ -15,6 +15,8 @@ export interface MockScenarioBannerContentProps {
 export function MockScenarioBannerContent({ scenario, descriptions, unsafeSample }: MockScenarioBannerContentProps) {
   return (
     <div
+      role="status"
+      aria-label="Mock data"
       className="flex flex-wrap items-center gap-3 rounded-md border border-dashed border-neutral bg-surface-neutral-subtle px-3 py-2 text-xs text-neutral"
       data-testid="mock-scenario-banner"
     >
@@ -30,23 +32,40 @@ export function MockScenarioBannerContent({ scenario, descriptions, unsafeSample
         items={SKILL_PRESETS_MOCK_SCENARIOS.map((value) => ({ label: value, value }))}
         onChange={(value) => value && switchSkillPresetsMockScenario(value as SkillPresetsMockScenario)}
       />
-      <span className="text-neutral-subtle">{descriptions[scenario]}. Resets on reload.</span>
+      {scenario !== 'typical' && (
+        <span className="font-medium text-neutral" data-testid="mock-scenario-name">
+          Scenario: {scenario}
+        </span>
+      )}
+      <span className="text-neutral-subtle">{descriptions[scenario]}. Data resets on reload.</span>
       {scenario === 'security-rejection' && (
         <span className="flex items-center gap-1">
           <span className="text-neutral-subtle">Unsafe sample:</span>
           <CopyButton content={unsafeSample} size="xs" />
         </span>
       )}
-      <Button
-        type="button"
-        size="xs"
-        variant="plain"
-        color="neutral"
-        className="ml-auto"
-        onClick={() => switchSkillPresetsMockScenario('off')}
-      >
-        Use the API
-      </Button>
+      <span className="ml-auto flex items-center gap-1">
+        {scenario !== 'typical' && (
+          <Button
+            type="button"
+            size="xs"
+            variant="outline"
+            color="neutral"
+            onClick={() => switchSkillPresetsMockScenario('typical')}
+          >
+            Reset to typical
+          </Button>
+        )}
+        <Button
+          type="button"
+          size="xs"
+          variant="plain"
+          color="neutral"
+          onClick={() => switchSkillPresetsMockScenario('off')}
+        >
+          Use the API
+        </Button>
+      </span>
     </div>
   )
 }

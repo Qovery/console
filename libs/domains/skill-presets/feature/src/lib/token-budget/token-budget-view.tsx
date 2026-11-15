@@ -36,6 +36,8 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
   const max = Math.max(alwaysInContext.total, todayAlwaysInContext)
   const rows = [...onDemand].sort((a, b) => b.total - a.total)
   const id = useId()
+  // No preset: the agent keeps today's install, so only that line applies.
+  const hasPreset = alwaysInContext.loader > 0
 
   return (
     <div className={twMerge('flex flex-col gap-4 text-xs', className)}>
@@ -57,25 +59,27 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
             </Button>
           </Tooltip>
         </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between text-neutral">
-            <span>With this preset</span>
-            <span className="tabular-nums">{formatTokens(alwaysInContext.total)} tokens</span>
+        {hasPreset && (
+          <div className="flex flex-col gap-1">
+            <div className="flex justify-between text-neutral">
+              <span>With this preset</span>
+              <span className="tabular-nums">{formatTokens(alwaysInContext.total)} tokens</span>
+            </div>
+            <Bar
+              max={max}
+              segments={[
+                { label: 'Loader skill', tokens: alwaysInContext.loader, className: 'bg-surface-brand-solid' },
+                { label: 'Skill list', tokens: alwaysInContext.manifest, className: 'bg-surface-brand-component' },
+              ]}
+            />
+            <span className="text-neutral-subtle">
+              Loader skill {formatTokens(alwaysInContext.loader)} + skill list {formatTokens(alwaysInContext.manifest)}
+            </span>
           </div>
-          <Bar
-            max={max}
-            segments={[
-              { label: 'Loader skill', tokens: alwaysInContext.loader, className: 'bg-surface-brand-solid' },
-              { label: 'Skill list', tokens: alwaysInContext.manifest, className: 'bg-surface-brand-component' },
-            ]}
-          />
-          <span className="text-neutral-subtle">
-            Loader skill {formatTokens(alwaysInContext.loader)} + skill list {formatTokens(alwaysInContext.manifest)}
-          </span>
-        </div>
+        )}
         <div className="flex flex-col gap-1">
           <div className="flex justify-between text-neutral-subtle">
-            <span>Today, with no preset</span>
+            <span>{hasPreset ? 'Today, with no preset' : 'No preset: the Qovery skills as published'}</span>
             <span className="tabular-nums">{formatTokens(todayAlwaysInContext)} tokens</span>
           </div>
           <Bar

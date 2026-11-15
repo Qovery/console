@@ -7,6 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { getSkillPresetsMockScenario } from './skill-presets-mock-mode'
 import {
+  type InjectedSkillResponse,
   SKILL_LOAD_EVENT_TYPE,
   SKILL_PRESET_SUB_TARGET_TYPE,
   type SkillPresetAssignees,
@@ -45,6 +46,8 @@ export interface SkillPresetsApi {
     params?: { skillPresetId?: string; limit?: number }
   ): Promise<SkillPresetRevisionResponse[]>
   getResolvedSkillPreset(organizationId: string): Promise<SkillPresetManifestResponse>
+  /** Recorded by q-core as a LOAD in the audit logs, like an agent's load. */
+  getResolvedSkill(organizationId: string, skillName: string): Promise<InjectedSkillResponse>
   /** Skill loads are audit log entries: event LOAD, sub-target SKILL_PRESET. */
   listSkillLoads(organizationId: string, params?: SkillLoadsParams): Promise<OrganizationEventResponseList>
   getSkillPresetUsage(organizationId: string, params: SkillPresetUsageParams): Promise<SkillPresetUsageResponse>
@@ -83,6 +86,12 @@ const httpSkillPresetsApi: SkillPresetsApi = {
       { params: { skillPresetId, limit } }
     )
     return response.data.results
+  },
+  async getResolvedSkill(organizationId, skillName) {
+    const response = await axios.get<InjectedSkillResponse>(
+      `/organization/${organizationId}/skillPreset/resolved/skill/${encodeURIComponent(skillName)}`
+    )
+    return response.data
   },
   async getResolvedSkillPreset(organizationId) {
     const response = await axios.get<SkillPresetManifestResponse>(
@@ -161,6 +170,7 @@ export const skillPresetsApi: SkillPresetsApi = {
   deleteSkillPreset: async (...args) => (await resolveApi()).deleteSkillPreset(...args),
   listSkillPresetRevisions: async (...args) => (await resolveApi()).listSkillPresetRevisions(...args),
   getResolvedSkillPreset: async (...args) => (await resolveApi()).getResolvedSkillPreset(...args),
+  getResolvedSkill: async (...args) => (await resolveApi()).getResolvedSkill(...args),
   listSkillLoads: async (...args) => (await resolveApi()).listSkillLoads(...args),
   getSkillPresetUsage: async (...args) => (await resolveApi()).getSkillPresetUsage(...args),
 }

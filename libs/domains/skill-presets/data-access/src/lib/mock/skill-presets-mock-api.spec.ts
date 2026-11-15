@@ -204,9 +204,59 @@ describe('createSkillPresetsMockApi', () => {
     expect(manifest?.skill_preset?.team_context?.sha256).toHaveLength(64)
   })
 
-  it('answers 500 on the list in the errors scenario', async () => {
-    const { error } = await settle(createSkillPresetsMockApi('errors').listSkillPresets(ORGANIZATION_ID))
-    expect(getSkillPresetErrorStatus(error)).toBe(500)
+  it('fails the list once in the errors scenario, then loads on retry', async () => {
+    const api = createSkillPresetsMockApi('errors')
+    const first = await settle(api.listSkillPresets(ORGANIZATION_ID))
+    const retry = await settle(api.listSkillPresets(ORGANIZATION_ID))
+
+    expect(getSkillPresetErrorStatus(first.error)).toBe(500)
+    expect(retry.error).toBeUndefined()
+    expect(retry.value?.length).toBeGreaterThan(0)
+  })
+
+  it.each(['empty', 'typical', 'conflicts', 'security-rejection', 'large', 'slow'] as const)(
+    'never answers an error on reads in the %s scenario',
+    async (scenario) => {
+      const api = createSkillPresetsMockApi(scenario)
+      const to = new Date()
+      const from = new Date(to.getTime() - 30 * 24 * 3_600_000)
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const results = await Promise.all([
+          settle(api.listSkillPresets(ORGANIZATION_ID)),
+          settle(api.listSkillPresetRevisions(ORGANIZATION_ID)),
+          settle(api.listSkillLoads(ORGANIZATION_ID, { pageSize: 30 })),
+          settle(
+            api.getSkillPresetUsage(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
+          ),
+          settle(api.getResolvedSkillPreset(ORGANIZATION_ID)),
+          settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy')),
+          settle(api.listAssignees()),
+        ])
+        expect(results.map(({ error }) => error)).toEqual(results.map(() => undefined))
+      }
+    }
+  )
+
+  it('resolves no preset for the member in the member-no-preset scenario', async () => {
+    const api = createSkillPresetsMockApi('member-no-preset')
+    const { value: manifest } = await settle(api.getResolvedSkillPreset(ORGANIZATION_ID))
+    const { value: skill } = await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy'))
+
+    expect(manifest).toEqual({ source: 'QOVERY_DEFAULT', skill_preset: null })
+    expect(skill).toEqual(expect.objectContaining({ source: 'QOVERY_DEFAULT', mode: null, team_context: null }))
+  })
+
+  it('serves the full text of one skill with its hashes', async () => {
+    const api = createSkillPresetsMockApi('member')
+    const { value } = await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy'))
+    expect(value).toEqual(
+      expect.objectContaining({
+        mode: 'OVERLAY',
+        content: expect.stringContaining('staging'),
+        content_sha256: expect.stringMatching(/^[0-9a-f]{64}$/),
+        team_context: expect.stringContaining('How we run Qovery'),
+      })
+    )
   })
 
   it('filters templates and refuses an assigned template', async () => {

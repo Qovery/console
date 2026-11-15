@@ -213,7 +213,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
         title="Skill presets could not be loaded"
         error={error}
         onRetry={() => refetch()}
-        note="Your members’ agents keep working with their last known preset."
+        note="Your members’ agents keep working with the preset they last loaded."
       />
     )
   }

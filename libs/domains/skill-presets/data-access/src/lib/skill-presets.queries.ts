@@ -35,6 +35,10 @@ export const skillPresets = createQueryKeys('skillPresets', {
     queryKey: [organizationId],
     queryFn: () => skillPresetsApi.getResolvedSkillPreset(organizationId),
   }),
+  resolvedSkill: ({ organizationId, skillName }: { organizationId: string; skillName: string }) => ({
+    queryKey: [organizationId, skillName],
+    queryFn: () => skillPresetsApi.getResolvedSkill(organizationId, skillName),
+  }),
   usage: ({ organizationId, ...params }: { organizationId: string } & SkillPresetUsageParams) => ({
     queryKey: [organizationId, params],
     queryFn: () => skillPresetsApi.getSkillPresetUsage(organizationId, params),

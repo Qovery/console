@@ -23,6 +23,7 @@ import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SecurityFindingsSummary } from '../security-findings-summary/security-findings-summary'
+import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
 import { PreviewAsMemberSelect } from '../token-budget/preview-as-member'
 import { TokenBudgetView } from '../token-budget/token-budget-view'
 import { PREVIEW_ANYONE, describeResolution, resolvePreviewTarget } from '../utils/preview-target'
@@ -568,7 +569,7 @@ export function SkillPresetEditorForm({
 }
 
 /** Route component: create (blank, from a template, or a copy) and edit. */
-export function SkillPresetEditor() {
+function SkillPresetEditorPage() {
   const { organizationId = '', skillPresetId } = useParams({ strict: false })
   const search = useSearch({ strict: false }) as EditorSearch
   const asTemplate = search.asTemplate === true || search.asTemplate === 'true'
@@ -647,5 +648,14 @@ export function SkillPresetEditor() {
       origin={origin}
       asTemplate={preset ? preset.is_template : asTemplate}
     />
+  )
+}
+
+/** Owners and admins only: anyone else sees what their own agent receives. */
+export function SkillPresetEditor() {
+  return (
+    <SkillPresetsAdminOnly>
+      <SkillPresetEditorPage />
+    </SkillPresetsAdminOnly>
   )
 }

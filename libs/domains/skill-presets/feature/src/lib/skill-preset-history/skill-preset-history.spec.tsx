@@ -4,6 +4,10 @@ import { SkillPresetHistory } from './skill-preset-history'
 
 const mockEditSkillPreset = jest.fn()
 
+jest.mock('@qovery/shared/iam/feature', () => ({
+  useUserRole: () => ({ roles: ['organization:organization-1:admin'], loading: false, isQoveryAdminUser: false }),
+}))
+
 const REVISIONS = [
   {
     skill_preset_id: 'preset-1',

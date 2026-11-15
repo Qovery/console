@@ -4,6 +4,11 @@ import { SettingsSkillPresets } from './settings-skill-presets'
 
 const mockUseSkillPresets = jest.fn()
 
+// An organization admin: the role gate is covered by skill-presets-access.spec.tsx.
+jest.mock('@qovery/shared/iam/feature', () => ({
+  useUserRole: () => ({ roles: ['organization:organization-1:admin'], loading: false, isQoveryAdminUser: false }),
+}))
+
 jest.mock('../hooks/use-skill-presets/use-skill-presets', () => ({
   useSkillPresets: () => mockUseSkillPresets(),
 }))
@@ -71,13 +76,5 @@ describe('SettingsSkillPresets', () => {
     renderWithProviders(<SettingsSkillPresets />)
 
     expect(screen.getByText(/Platform \(CLI-first\) \(assigned to the member\)/)).toBeInTheDocument()
-  })
-
-  it('shows the member view on 403', () => {
-    mockUseSkillPresets.mockReturnValue({ data: undefined, isLoading: false, error: { response: { status: 403 } } })
-    renderWithProviders(<SettingsSkillPresets />)
-
-    expect(screen.getByText('Only admins can change skill presets')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /Create preset/ })).not.toBeInTheDocument()
   })
 })
