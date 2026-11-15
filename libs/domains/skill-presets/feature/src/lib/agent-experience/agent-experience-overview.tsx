@@ -24,6 +24,7 @@ import {
   type AgentExperienceStepId,
   computeAgentExperienceSetup,
 } from '../utils/agent-experience'
+import { AGENT_JOBS } from '../utils/agent-jobs'
 import { OnOffBadge, copilotStateLabel } from './agent-experience-copilot'
 import { PresetSummary } from './preset-summary'
 
@@ -91,73 +92,152 @@ const STEP_PATHS: Record<Exclude<AgentExperienceStepId, 'ai'>, AgentExperiencePa
   activity: '/organization/$organizationId/agent-experience/agent-activity',
 }
 
-const PIECES = [
+type HeroPath =
+  | AgentExperiencePath
+  | '/organization/$organizationId/agent-experience/automate'
+  | '/organization/$organizationId/audit-logs'
+
+const PILLARS: {
+  id: string
+  icon: 'compass' | 'shield-check' | 'binoculars'
+  title: string
+  text: string
+  pieces: {
+    icon: 'message-bot' | 'sparkles' | 'sliders' | 'key' | 'stairs' | 'wave-pulse' | 'lock-keyhole'
+    name: string
+    to: HeroPath
+  }[]
+}[] = [
   {
-    icon: 'message-bot',
-    name: 'Copilot',
-    text: 'Qovery’s assistant in the Console. It answers, troubleshoots, and acts when you allow it.',
-    to: COPILOT_PATH,
+    id: 'guide',
+    icon: 'compass',
+    title: 'Guide',
+    text: 'The Copilot and skills, tailored per team and per person with skill presets.',
+    pieces: [
+      { icon: 'message-bot', name: 'Copilot', to: COPILOT_PATH },
+      { icon: 'sparkles', name: 'Skills', to: STEP_PATHS.connect },
+      { icon: 'sliders', name: 'Skill presets', to: STEP_PATHS.preset },
+    ],
   },
   {
-    icon: 'sparkles',
-    name: 'Skills',
-    text: 'Teach your coding agents how to deploy and fix things on Qovery.',
-    to: STEP_PATHS.connect,
+    id: 'control',
+    icon: 'shield-check',
+    title: 'Control',
+    text: 'Each agent gets exactly the permissions its job needs, checked on every API call. Deny by default.',
+    pieces: [
+      { icon: 'key', name: 'Policy tokens', to: STEP_PATHS['policy-token'] },
+      { icon: 'stairs', name: 'Automate', to: '/organization/$organizationId/agent-experience/automate' },
+    ],
   },
   {
-    icon: 'sliders',
-    name: 'Skill presets',
-    text: 'Choose which skills agents load, and add your team’s rules.',
-    to: STEP_PATHS.preset,
+    id: 'observe',
+    icon: 'binoculars',
+    title: 'Observe',
+    text: 'What agents did, and what was blocked.',
+    pieces: [
+      { icon: 'wave-pulse', name: 'Agent activity', to: STEP_PATHS.activity },
+      { icon: 'lock-keyhole', name: 'Audit logs', to: '/organization/$organizationId/audit-logs' },
+    ],
   },
-  {
-    icon: 'key',
-    name: 'Policy tokens',
-    text: 'Give each agent a token that can only do what its policy allows.',
-    to: STEP_PATHS['policy-token'],
-  },
-  {
-    icon: 'wave-pulse',
-    name: 'Agent activity',
-    text: 'See what agents did on Qovery, and what was blocked.',
-    to: STEP_PATHS.activity,
-  },
-] as const
+]
+
+export const HERO_TITLE = 'The future of infrastructure is agentic'
+export const HERO_SUBTITLE =
+  'Agents can do real infrastructure work on their own when every operation is checked at the API. Set that up here.'
 
 /**
- * The first thing an admin reads when nothing is set up: what Agent Experience is, what each piece
- * does, and one action to start with.
+ * The story of Agent Experience, on every Overview. Full the first times, with one action; compact
+ * once it is in use, so the numbers stay on top.
  */
-function AgentFirstIntro({ organizationId, aiOn }: { organizationId: string; aiOn: boolean }) {
+function AgentExperienceHero({
+  organizationId,
+  compact,
+  action,
+}: {
+  organizationId: string
+  compact: boolean
+  action?: AgentExperienceStepId
+}) {
+  if (compact) {
+    return (
+      <Section
+        aria-labelledby="agent-experience-hero"
+        className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral-subtle px-4 py-3"
+        data-testid="agent-experience-hero"
+        data-compact="true"
+      >
+        <p className="text-sm text-neutral">
+          <Heading level={2} id="agent-experience-hero" className="inline text-sm">
+            {HERO_TITLE}.
+          </Heading>{' '}
+          <span className="text-neutral-subtle">{HERO_SUBTITLE}</span>
+        </p>
+        <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+          {PILLARS.map((pillar) => (
+            <li key={pillar.id} className="inline-flex items-center gap-1.5">
+              <Icon iconName={pillar.icon} iconStyle="regular" className="text-brand" aria-hidden="true" />
+              <span className="font-medium text-neutral">{pillar.title}:</span>
+              {pillar.pieces.map((piece, index) => (
+                <span key={piece.name}>
+                  <Link to={piece.to} params={{ organizationId }} color="brand" size="xs">
+                    {piece.name}
+                  </Link>
+                  {index < pillar.pieces.length - 1 ? ',' : ''}
+                </span>
+              ))}
+            </li>
+          ))}
+        </ul>
+      </Section>
+    )
+  }
   return (
     <Section
-      aria-labelledby="agent-first"
+      aria-labelledby="agent-experience-hero"
       className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral-subtle p-5"
-      data-testid="agent-first-intro"
+      data-testid="agent-experience-hero"
     >
       <div className="flex flex-col gap-1">
-        <Heading level={2} id="agent-first">
-          Qovery is agent first
+        <Heading level={2} id="agent-experience-hero" className="text-xl">
+          {HERO_TITLE}
         </Heading>
-        <p className="max-w-3xl text-sm text-neutral-subtle">
-          Agent Experience is where coding agents and the Qovery Copilot work on your infrastructure, under your rules.
-          You decide what they know, what they can do, and you see what they did.
-        </p>
+        <p className="max-w-3xl text-sm text-neutral-subtle">{HERO_SUBTITLE}</p>
       </div>
-      <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
-        {PIECES.map((piece) => (
-          <li key={piece.name} className="flex flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-3">
+      <ul className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+        {PILLARS.map((pillar) => (
+          <li
+            key={pillar.id}
+            className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4"
+            data-testid={`hero-pillar-${pillar.id}`}
+          >
             <span className="inline-flex items-center gap-2 text-sm font-medium text-neutral">
-              <Icon iconName={piece.icon} iconStyle="regular" className="text-brand" aria-hidden="true" />
-              {piece.name}
+              <Icon iconName={pillar.icon} iconStyle="regular" className="text-brand" aria-hidden="true" />
+              {pillar.title}
             </span>
-            <span className="text-xs text-neutral-subtle">{piece.text}</span>
+            <span className="text-xs text-neutral-subtle">{pillar.text}</span>
+            <span className="mt-auto flex flex-wrap gap-x-3 gap-y-1 pt-1">
+              {pillar.pieces.map((piece) => (
+                <Link
+                  key={piece.name}
+                  to={piece.to}
+                  params={{ organizationId }}
+                  color="brand"
+                  size="xs"
+                  className="inline-flex items-center gap-1"
+                >
+                  <Icon iconName={piece.icon} iconStyle="regular" aria-hidden="true" />
+                  {piece.name}
+                </Link>
+              ))}
+            </span>
           </li>
         ))}
       </ul>
-      <div className="flex flex-wrap items-center gap-3">
-        <StepAction step={aiOn ? 'connect' : 'ai'} primary organizationId={organizationId} />
-      </div>
+      {action && (
+        <div className="flex flex-wrap items-center gap-3">
+          <StepAction step={action} primary organizationId={organizationId} />
+        </div>
+      )}
     </Section>
   )
 }
@@ -405,7 +485,11 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
   if (setup.state !== 'active') {
     return (
       <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state={setup.state}>
-        {setup.state === 'empty' && <AgentFirstIntro organizationId={organizationId} aiOn={aiOn} />}
+        <AgentExperienceHero
+          organizationId={organizationId}
+          compact={false}
+          action={setup.state === 'empty' ? (aiOn ? 'connect' : 'ai') : undefined}
+        />
         <SetupChecklist
           setup={setup}
           organizationId={organizationId}
@@ -427,6 +511,7 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
   const tokensByUse = [...policyTokens].sort((a, b) => (b.last_used_at ?? '').localeCompare(a.last_used_at ?? ''))
   return (
     <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state="active">
+      <AgentExperienceHero organizationId={organizationId} compact />
       {week.data && <WeekKpis week={week.data} showMembers />}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <Card
@@ -462,6 +547,18 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
               </li>
             ))}
           </ul>
+          <p className="text-xs text-neutral-subtle" data-testid="next-job-to-automate">
+            Next job to automate: {AGENT_JOBS.length} jobs agents can run on their own, safest first, each with a ready
+            policy.{' '}
+            <Link
+              to="/organization/$organizationId/agent-experience/automate"
+              params={{ organizationId }}
+              color="brand"
+              size="xs"
+            >
+              See what agents can do
+            </Link>
+          </p>
         </Card>
         <Card
           id="overview-copilot"
@@ -535,6 +632,7 @@ function MemberOverview({ organizationId }: { organizationId: string }) {
   const copilot = useCopilotStatus({ organizationId })
   return (
     <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state="member">
+      <AgentExperienceHero organizationId={organizationId} compact />
       <Section
         aria-labelledby="member-copilot"
         className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"

@@ -58,6 +58,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRouteIm
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/policy-tokens'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/copilot'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/connect'
+import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/automate'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/agent-activity'
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/demo-cluster'
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/cluster'
@@ -587,6 +588,15 @@ const AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute =
     {
       id: '/connect',
       path: '/connect',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute =
+  AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRouteImport.update(
+    {
+      id: '/automate',
+      path: '/automate',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
     } as any,
@@ -2232,6 +2242,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
   '/organization/$organizationId/agent-experience/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
+  '/organization/$organizationId/agent-experience/automate': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
   '/organization/$organizationId/agent-experience/connect': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   '/organization/$organizationId/agent-experience/copilot': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
   '/organization/$organizationId/agent-experience/policy-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute
@@ -2460,6 +2471,7 @@ export interface FileRoutesByTo {
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
   '/organization/$organizationId/agent-experience/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
+  '/organization/$organizationId/agent-experience/automate': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
   '/organization/$organizationId/agent-experience/connect': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   '/organization/$organizationId/agent-experience/copilot': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
   '/organization/$organizationId/agent-experience/policy-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute
@@ -2678,6 +2690,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/_authenticated/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
   '/_authenticated/organization/$organizationId/agent-experience/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
+  '/_authenticated/organization/$organizationId/agent-experience/automate': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
   '/_authenticated/organization/$organizationId/agent-experience/connect': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   '/_authenticated/organization/$organizationId/agent-experience/copilot': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
   '/_authenticated/organization/$organizationId/agent-experience/policy-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute
@@ -2915,6 +2928,7 @@ export interface FileRouteTypes {
     | '/onboarding/organization/$organizationId/cluster'
     | '/onboarding/organization/$organizationId/demo-cluster'
     | '/organization/$organizationId/agent-experience/agent-activity'
+    | '/organization/$organizationId/agent-experience/automate'
     | '/organization/$organizationId/agent-experience/connect'
     | '/organization/$organizationId/agent-experience/copilot'
     | '/organization/$organizationId/agent-experience/policy-tokens'
@@ -3143,6 +3157,7 @@ export interface FileRouteTypes {
     | '/onboarding/organization/$organizationId/cluster'
     | '/onboarding/organization/$organizationId/demo-cluster'
     | '/organization/$organizationId/agent-experience/agent-activity'
+    | '/organization/$organizationId/agent-experience/automate'
     | '/organization/$organizationId/agent-experience/connect'
     | '/organization/$organizationId/agent-experience/copilot'
     | '/organization/$organizationId/agent-experience/policy-tokens'
@@ -3360,6 +3375,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding/organization/$organizationId/cluster'
     | '/_authenticated/onboarding/organization/$organizationId/demo-cluster'
     | '/_authenticated/organization/$organizationId/agent-experience/agent-activity'
+    | '/_authenticated/organization/$organizationId/agent-experience/automate'
     | '/_authenticated/organization/$organizationId/agent-experience/connect'
     | '/_authenticated/organization/$organizationId/agent-experience/copilot'
     | '/_authenticated/organization/$organizationId/agent-experience/policy-tokens'
@@ -3921,6 +3937,13 @@ declare module '@tanstack/react-router' {
       path: '/connect'
       fullPath: '/organization/$organizationId/agent-experience/connect'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/agent-experience/automate': {
+      id: '/_authenticated/organization/$organizationId/agent-experience/automate'
+      path: '/automate'
+      fullPath: '/organization/$organizationId/agent-experience/automate'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
     }
     '/_authenticated/organization/$organizationId/agent-experience/agent-activity': {
@@ -5243,6 +5266,7 @@ const AuthenticatedOnboardingRouteRouteWithChildren =
 
 interface AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
+  AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
   AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute
@@ -5260,6 +5284,8 @@ const AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren: 
   {
     AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute,
+    AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute:
+      AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute:
