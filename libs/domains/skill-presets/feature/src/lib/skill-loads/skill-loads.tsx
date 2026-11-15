@@ -1,11 +1,10 @@
 import { Link, useParams } from '@tanstack/react-router'
-import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { type SkillLoadChange, getSkillPresetErrorDetail } from '@qovery/domains/skill-presets/data-access'
-import { Badge, Callout, EmptyState, Icon, Pagination, Skeleton, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Badge, EmptyState, Icon, Pagination, Skeleton, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useSkillLoads } from '../hooks/use-skill-loads/use-skill-loads'
+import { LoadError } from '../load-error/load-error'
 import { SkillPresetsLayout } from '../skill-presets-layout/skill-presets-layout'
 
 const { Table } = TablePrimitives
@@ -17,44 +16,23 @@ const MODE_LABELS: Record<string, string> = {
   DISABLE: 'Disabled',
 }
 
-export function parseSkillLoad(event: OrganizationEventResponse): SkillLoadChange | null {
-  try {
-    return JSON.parse(event.change ?? '') as SkillLoadChange
-  } catch {
-    return null
-  }
-}
-
-const tokenFrom = (link?: string, name = 'continueToken') =>
-  link ? new URLSearchParams(link.split('?')[1]).get(name) : null
-
 function LoadsContent({ organizationId }: { organizationId: string }) {
   const [pageSize, setPageSize] = useState(30)
   const [cursor, setCursor] = useState<{ continueToken?: string | null; stepBackToken?: string | null }>({})
-  const { data, isLoading, isFetching, error } = useSkillLoads({ organizationId, pageSize, ...cursor })
+  const { data, isLoading, isFetching, error, refetch } = useSkillLoads({ organizationId, pageSize, ...cursor })
 
   if (isLoading) return <Skeleton height={320} className="w-full" show />
   if (error) {
-    return (
-      <Callout.Root color="red" role="alert">
-        <Callout.Icon>
-          <Icon iconName="circle-exclamation" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          <Callout.TextHeading>Skill loads could not be loaded</Callout.TextHeading>
-          <Callout.TextDescription>{getSkillPresetErrorDetail(error)}</Callout.TextDescription>
-        </Callout.Text>
-      </Callout.Root>
-    )
+    return <LoadError title="Skill loads could not be loaded" error={error} onRetry={() => refetch()} />
   }
 
-  const events = data?.events ?? []
-  if (events.length === 0 && !cursor.continueToken && !cursor.stepBackToken) {
+  const rows = data?.rows ?? []
+  if (rows.length === 0 && !cursor.continueToken && !cursor.stepBackToken) {
     return (
       <EmptyState
         icon="clock-rotate-left"
         title="No skill loads yet"
-        description="Every time a member's agent loads a Qovery skill or one of yours, it shows here with the preset and revision it used."
+        description="Every time a member’s agent loads a Qovery skill or one of yours, it shows here with the preset and revision it used."
       />
     )
   }
@@ -83,21 +61,20 @@ function LoadsContent({ organizationId }: { organizationId: string }) {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {events.map((event) => {
-            const load = parseSkillLoad(event)
+          {rows.map(({ event, load }) => {
             return (
               <Table.Row key={event.id}>
                 <Table.Cell className="whitespace-nowrap">
                   {event.timestamp && (
                     <Tooltip content={dateUTCString(event.timestamp)}>
-                      <span>{dateFullFormat(event.timestamp, undefined, 'dd MMM, HH:mm')}</span>
+                      <span tabIndex={0}>{dateFullFormat(event.timestamp, undefined, 'dd MMM, HH:mm')}</span>
                     </Tooltip>
                   )}
                 </Table.Cell>
                 <Table.Cell className="max-w-[220px] truncate">{event.triggered_by}</Table.Cell>
                 <Table.Cell className="h-auto py-2">
                   <span className="flex flex-col">
-                    <span className="font-code">{load?.skill_name ?? '-'}</span>
+                    <span className="font-code">{load?.skill_name ?? 'Unreadable entry'}</span>
                     <span className="text-xs text-neutral-subtle">
                       {load?.mode ? MODE_LABELS[load.mode] : 'Qovery skill as published'}
                     </span>
@@ -110,7 +87,7 @@ function LoadsContent({ organizationId }: { organizationId: string }) {
                       params={{ organizationId, skillPresetId: load.skill_preset_id }}
                       className="text-neutral hover:text-brand"
                     >
-                      {load.skill_preset_name} <span className="text-neutral-subtle">rev. {load.revision}</span>
+                      {load.skill_preset_name} <span className="text-neutral-subtle">revision {load.revision}</span>
                     </Link>
                   ) : (
                     <span className="text-neutral-subtle">No preset</span>
@@ -135,10 +112,10 @@ function LoadsContent({ organizationId }: { organizationId: string }) {
         </Table.Body>
       </Table.Root>
       <Pagination
-        previousDisabled={!data?.links?.previous}
-        nextDisabled={!data?.links?.next}
-        onPrevious={() => setCursor({ stepBackToken: tokenFrom(data?.links?.previous, 'stepBackToken') })}
-        onNext={() => setCursor({ continueToken: tokenFrom(data?.links?.next) })}
+        previousDisabled={!data?.previousToken}
+        nextDisabled={!data?.nextToken}
+        onPrevious={() => setCursor({ stepBackToken: data?.previousToken })}
+        onNext={() => setCursor({ continueToken: data?.nextToken })}
         pageSize={String(pageSize)}
         onPageSizeChange={(value) => {
           setPageSize(Number(value))

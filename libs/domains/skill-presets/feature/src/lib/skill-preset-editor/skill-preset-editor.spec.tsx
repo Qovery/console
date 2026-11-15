@@ -1,16 +1,27 @@
 import { useParams } from '@tanstack/react-router'
+import { type ReactNode, useState } from 'react'
 import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { toSkillPresetFormValues } from '../utils/skill-preset-form'
 import { SkillPresetEditorForm } from './skill-preset-editor'
 
 const mockCreateSkillPreset = jest.fn()
+const mockEditSkillPreset = jest.fn()
+const mockUseBlocker = jest.fn()
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: jest.fn(),
+  useNavigate: () => jest.fn(),
+  useBlocker: (options: unknown) => mockUseBlocker(options),
+  Link: ({ children }: { children: ReactNode }) => <a href="/">{children}</a>,
+}))
 
 jest.mock('../hooks/use-create-skill-preset/use-create-skill-preset', () => ({
   useCreateSkillPreset: () => ({ mutateAsync: mockCreateSkillPreset, isLoading: false }),
 }))
 jest.mock('../hooks/use-edit-skill-preset/use-edit-skill-preset', () => ({
-  useEditSkillPreset: () => ({ mutateAsync: jest.fn(), isLoading: false }),
+  useEditSkillPreset: () => ({ mutateAsync: mockEditSkillPreset, isLoading: false }),
 }))
 jest.mock('@monaco-editor/react', () => {
   const { forwardRef } = jest.requireActual('react')
@@ -38,12 +49,38 @@ const assignees = {
   ],
 }
 
+const savedPreset = {
+  id: 'preset-1',
+  created_at: '2026-11-01T00:00:00Z',
+  updated_at: '2026-11-02T00:00:00Z',
+  name: 'Backend team',
+  description: '',
+  base: 'QOVERY_FULL' as const,
+  team_context: null,
+  skills: [],
+  revision: 3,
+  is_template: false,
+  creator_name: 'Alex Martin',
+  assigned_to: { organization_default: true, role_ids: [], user_ids: [] },
+}
+
 const renderEditor = (initialName = 'Backend team') =>
   renderWithProviders(
     <SkillPresetEditorForm
       organizationId="organization-1"
       initialValues={{ ...toSkillPresetFormValues(), name: initialName, organizationDefault: true }}
       presets={[]}
+      assignees={assignees}
+    />
+  )
+
+const renderEdit = (preset = savedPreset) =>
+  renderWithProviders(
+    <SkillPresetEditorForm
+      organizationId="organization-1"
+      initialValues={toSkillPresetFormValues(preset)}
+      preset={preset}
+      presets={[preset]}
       assignees={assignees}
     />
   )
@@ -55,6 +92,8 @@ beforeEach(() => {
 describe('SkillPresetEditorForm', () => {
   beforeEach(() => {
     mockCreateSkillPreset.mockReset()
+    mockEditSkillPreset.mockReset()
+    mockUseBlocker.mockReset()
   })
 
   it('lists the Qovery skills on the Full base and hides them on the Lean base', async () => {
@@ -143,5 +182,76 @@ describe('SkillPresetEditorForm', () => {
   it('says how many members receive the draft', () => {
     renderEditor()
     expect(screen.getByText('2 members')).toBeInTheDocument()
+  })
+
+  it('saves an edit and keeps the form on the saved state', async () => {
+    mockEditSkillPreset.mockResolvedValue({ ...savedPreset, description: 'For backend engineers', revision: 4 })
+    const { userEvent } = renderEdit()
+    expect(screen.getByRole('button', { name: 'Save changes' })).toBeDisabled()
+
+    await userEvent.type(screen.getByLabelText('Description (optional)'), 'For backend engineers')
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    expect(mockEditSkillPreset).toHaveBeenCalledWith(
+      expect.objectContaining({
+        skillPresetId: 'preset-1',
+        body: expect.objectContaining({ description: 'For backend engineers' }),
+      })
+    )
+    expect(await screen.findByText('Revision 4')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save changes' })).toBeDisabled()
+  })
+
+  it('guards leaving the page only while there are unsaved changes', async () => {
+    const { userEvent } = renderEdit()
+    expect(mockUseBlocker).toHaveBeenLastCalledWith(expect.objectContaining({ disabled: true }))
+
+    await userEvent.type(screen.getByLabelText('Description (optional)'), 'x')
+
+    expect(mockUseBlocker).toHaveBeenLastCalledWith(expect.objectContaining({ disabled: false }))
+  })
+
+  it('keeps the draft and warns when someone else saves a newer revision', async () => {
+    // Simulates a background refetch that brings a newer revision while the admin types.
+    function WithRefetch() {
+      const [revision, setRevision] = useState(savedPreset.revision)
+      const preset = { ...savedPreset, revision }
+      return (
+        <>
+          <button type="button" onClick={() => setRevision(4)}>
+            Refetch
+          </button>
+          <SkillPresetEditorForm
+            organizationId="organization-1"
+            initialValues={toSkillPresetFormValues(savedPreset)}
+            preset={preset}
+            presets={[preset]}
+            assignees={assignees}
+          />
+        </>
+      )
+    }
+    const { userEvent } = renderWithProviders(<WithRefetch />)
+    await userEvent.type(screen.getByLabelText('Description (optional)'), 'draft')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Refetch' }))
+
+    expect(screen.getByText('This preset was changed by someone else')).toBeInTheDocument()
+    expect(screen.getByLabelText('Description (optional)')).toHaveValue('draft')
+    await userEvent.click(screen.getByRole('button', { name: 'Reload latest revision' }))
+    expect(screen.getByLabelText('Description (optional)')).toHaveValue('')
+  })
+
+  it('shows a concurrent save (409) as a change by someone else, not as an assignment conflict', async () => {
+    mockEditSkillPreset.mockRejectedValue(
+      buildSkillPresetApiError(409, 'Skill preset preset-1 was changed by someone else: reload it and try again')
+    )
+    const { userEvent } = renderEdit()
+    await userEvent.type(screen.getByLabelText('Description (optional)'), 'x')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    expect(await screen.findByText('This preset was changed by someone else')).toBeInTheDocument()
+    expect(screen.queryByText('Not saved: a target already receives another preset')).not.toBeInTheDocument()
   })
 })

@@ -18,8 +18,6 @@ export interface QoverySkillFormValue {
 }
 
 export interface CustomSkillFormValue {
-  /** Stable key for the list: the name is editable. */
-  key: string
   skillName: string
   description: string
   content: string
@@ -27,6 +25,7 @@ export interface CustomSkillFormValue {
 
 export interface SkillPresetFormValues {
   name: string
+  isTemplate: boolean
   description: string
   base: SkillPresetBase
   teamContext: string
@@ -37,10 +36,12 @@ export interface SkillPresetFormValues {
   userIds: string[]
 }
 
-type PresetLike = Pick<SkillPresetResponse, 'name' | 'description' | 'base' | 'team_context' | 'skills' | 'assigned_to'>
-
-let customSkillKey = 0
-export const newCustomSkillKey = () => `custom-skill-${++customSkillKey}`
+type PresetLike = Pick<
+  SkillPresetResponse,
+  'name' | 'description' | 'base' | 'team_context' | 'skills' | 'assigned_to'
+> & {
+  is_template?: boolean
+}
 
 export function toSkillPresetFormValues(preset?: PresetLike): SkillPresetFormValues {
   const skills = preset?.skills ?? []
@@ -54,6 +55,7 @@ export function toSkillPresetFormValues(preset?: PresetLike): SkillPresetFormVal
 
   return {
     name: preset?.name ?? '',
+    isTemplate: Boolean(preset?.is_template),
     description: preset?.description ?? '',
     base: preset?.base ?? 'QOVERY_FULL',
     teamContext: preset?.team_context ?? '',
@@ -69,7 +71,6 @@ export function toSkillPresetFormValues(preset?: PresetLike): SkillPresetFormVal
     customSkills: skills
       .filter((skill) => skill.mode === 'ADD')
       .map((skill) => ({
-        key: newCustomSkillKey(),
         skillName: skill.skill_name,
         description: skill.description ?? '',
         content: skill.content ?? '',
@@ -84,6 +85,11 @@ export function toSkillPresetFormValues(preset?: PresetLike): SkillPresetFormVal
 export const effectiveQoverySkills = (values: Pick<SkillPresetFormValues, 'base' | 'qoverySkills'>) =>
   values.base === 'QOVERY_FULL' ? values.qoverySkills.filter(({ choice }) => choice !== 'AS_IS') : []
 
+/**
+ * The request q-core accepts. DISABLE carries no content or description and OVERLAY no description
+ * (q-core answers 400 otherwise), even when the draft still holds text from another mode. A template
+ * is never assigned.
+ */
 export function toSkillPresetRequest(values: SkillPresetFormValues): SkillPresetRequest {
   const qoverySkills: SkillPresetSkill[] = effectiveQoverySkills(values).map(
     ({ skillName, choice, description, content }) => {
@@ -101,14 +107,13 @@ export function toSkillPresetRequest(values: SkillPresetFormValues): SkillPreset
 
   return {
     name: values.name.trim(),
+    is_template: values.isTemplate,
     description: values.description,
     base: values.base,
     team_context: values.teamContext.trim() ? values.teamContext : null,
     skills: [...qoverySkills, ...customSkills],
-    assigned_to: {
-      organization_default: values.organizationDefault,
-      role_ids: values.roleIds,
-      user_ids: values.userIds,
-    },
+    assigned_to: values.isTemplate
+      ? { organization_default: false, role_ids: [], user_ids: [] }
+      : { organization_default: values.organizationDefault, role_ids: values.roleIds, user_ids: values.userIds },
   }
 }

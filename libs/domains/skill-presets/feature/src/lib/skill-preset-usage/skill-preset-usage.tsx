@@ -1,18 +1,13 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import {
-  type SkillPresetUsageBucket,
-  type SkillPresetUsageResponse,
-  getSkillPresetErrorDetail,
-} from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetUsageBucket, type SkillPresetUsageResponse } from '@qovery/domains/skill-presets/data-access'
 import {
   Badge,
   Button,
-  Callout,
   Chart,
   Heading,
-  Icon,
   InputSelect,
   SegmentedControl,
   Skeleton,
@@ -23,6 +18,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPresetUsage } from '../hooks/use-skill-preset-usage/use-skill-preset-usage'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
+import { LoadError } from '../load-error/load-error'
 import { SkillPresetsLayout } from '../skill-presets-layout/skill-presets-layout'
 import { formatTokens } from '../utils/token-budget'
 
@@ -51,7 +47,7 @@ function Stat({ label, value, detail }: { label: string; value: string; detail?:
   return (
     <div className="flex flex-col gap-0.5 px-4 py-3">
       <dt className="text-xs text-neutral-subtle">{label}</dt>
-      <dd className="text-lg font-medium tabular-nums text-neutral">{value}</dd>
+      <dd className="text-base font-medium tabular-nums text-neutral">{value}</dd>
       {detail && <dd className="text-xs text-neutral-subtle">{detail}</dd>}
     </div>
   )
@@ -59,14 +55,17 @@ function Stat({ label, value, detail }: { label: string; value: string; detail?:
 
 function DrillButton({ label, onClick, active }: { label: string; onClick: () => void; active: boolean }) {
   return (
-    <button
+    <Button
       type="button"
+      variant="plain"
+      color="neutral"
+      size="xs"
       onClick={onClick}
       aria-pressed={active}
-      className="text-left font-medium text-neutral underline-offset-2 hover:text-brand hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
+      className="h-auto px-0 text-left text-sm underline-offset-2 hover:underline"
     >
       {label}
-    </button>
+    </Button>
   )
 }
 
@@ -89,7 +88,7 @@ function UsageContent({ organizationId }: { organizationId: string }) {
     userSub: filters.userSub === ALL ? undefined : filters.userSub,
     skillPresetId: filters.skillPresetId === ALL ? undefined : filters.skillPresetId,
   }
-  const { data, isLoading, isFetching, error } = useSkillPresetUsage({ organizationId, ...params })
+  const { data, isLoading, isFetching, error, refetch } = useSkillPresetUsage({ organizationId, ...params })
   // Unfiltered lists feed the filter menus, so a filter never hides its own alternatives.
   const { data: unfiltered } = useSkillPresetUsage({
     organizationId,
@@ -104,17 +103,7 @@ function UsageContent({ organizationId }: { organizationId: string }) {
   const hasFilter = filters.skillName !== ALL || filters.userSub !== ALL || filters.skillPresetId !== ALL
 
   if (error) {
-    return (
-      <Callout.Root color="red" role="alert">
-        <Callout.Icon>
-          <Icon iconName="circle-exclamation" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          <Callout.TextHeading>Usage could not be loaded</Callout.TextHeading>
-          <Callout.TextDescription>{getSkillPresetErrorDetail(error)}</Callout.TextDescription>
-        </Callout.Text>
-      </Callout.Root>
-    )
+    return <LoadError title="Usage could not be loaded" error={error} onRetry={() => refetch()} />
   }
 
   const usage: SkillPresetUsageResponse | undefined = data
@@ -196,7 +185,7 @@ function UsageContent({ organizationId }: { organizationId: string }) {
       {isLoading || !usage ? (
         <Skeleton height={360} className="w-full" show />
       ) : (
-        <div className={`flex flex-col gap-6 ${isFetching ? 'opacity-70' : ''}`} aria-busy={isFetching}>
+        <div className={clsx('flex flex-col gap-6', isFetching && 'opacity-70')} aria-busy={isFetching}>
           <dl className="grid grid-cols-2 divide-x divide-neutral rounded-md border border-neutral lg:grid-cols-4">
             <Stat label="Skill loads" value={usage.totals.loads.toLocaleString('en-US')} />
             <Stat

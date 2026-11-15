@@ -12,6 +12,7 @@ export interface SkillChange {
 }
 
 export interface RevisionDiff {
+  template: { before: boolean; after: boolean } | null
   name: { before: string; after: string } | null
   description: { before: string; after: string } | null
   base: { before: string; after: string } | null
@@ -41,6 +42,10 @@ export function diffRevisions(
   const names = [...new Set([...beforeSkills.keys(), ...afterSkills.keys()])].sort()
 
   return {
+    template:
+      previous && previous.is_template !== current.is_template
+        ? { before: previous.is_template, after: current.is_template }
+        : null,
     name: field(previous?.name ?? '', current.name),
     description: field(previous?.description ?? '', current.description),
     base: previous ? field(previous.base, current.base) : null,
@@ -61,6 +66,7 @@ export function diffRevisions(
 /** One line per revision, for the timeline: "Team context, qovery-deploy added". */
 export function summarizeDiff(diff: RevisionDiff) {
   const parts: string[] = []
+  if (diff.template) parts.push(diff.template.after ? 'Made a template' : 'No longer a template')
   if (diff.name) parts.push('Renamed')
   if (diff.base) parts.push('Base changed')
   if (diff.description) parts.push('Description')
@@ -77,6 +83,7 @@ export function summarizeDiff(diff: RevisionDiff) {
 
 export const revisionToRequest = (revision: SkillPresetRevisionResponse): SkillPresetRequest => ({
   name: revision.name,
+  is_template: revision.is_template,
   description: revision.description,
   base: revision.base,
   team_context: revision.team_context,

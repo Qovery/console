@@ -1,5 +1,5 @@
 import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
-import { Icon } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 
 export interface FindingListProps {
   findings: SkillPresetFinding[]
@@ -15,13 +15,16 @@ export function FindingList({ findings, onSelectLine }: FindingListProps) {
           <Icon iconName="shield-exclamation" iconStyle="regular" className="mt-0.5" aria-hidden="true" />
           <span>
             {onSelectLine ? (
-              <button
+              <Button
                 type="button"
-                className="font-medium underline underline-offset-2 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
+                variant="plain"
+                color="current"
+                size="xs"
+                className="h-auto px-0 align-baseline underline underline-offset-2"
                 onClick={() => onSelectLine(finding.line)}
               >
                 Line {finding.line}
-              </button>
+              </Button>
             ) : (
               <span className="font-medium">Line {finding.line}</span>
             )}

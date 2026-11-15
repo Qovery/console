@@ -7,6 +7,7 @@ import {
   SKILL_PRESET_SUB_TARGET_TYPE,
   type SkillLoadChange,
   type SkillPresetAssignedTo,
+  type SkillPresetAssignees,
   type SkillPresetChangeType,
   type SkillPresetManifestResponse,
   type SkillPresetRequest,
@@ -37,6 +38,7 @@ const clone = <T>(value: T): T => (value === undefined ? value : JSON.parse(JSON
 
 const toState = (body: SkillPresetRequest): MockPresetState => ({
   name: body.name.trim(),
+  is_template: Boolean(body.is_template),
   description: body.description ?? '',
   base: body.base,
   team_context: body.team_context?.trim() ? body.team_context : null,
@@ -44,7 +46,7 @@ const toState = (body: SkillPresetRequest): MockPresetState => ({
     skill_name: skill.skill_name.trim(),
     mode: skill.mode,
     description: skill.description ?? null,
-    content: skill.mode === 'DISABLE' ? null : skill.content ?? null,
+    content: skill.content ?? null,
   })),
   assigned_to: {
     organization_default: Boolean(body.assigned_to?.organization_default),
@@ -90,7 +92,13 @@ function validate(state: MockPresetState): string | null {
     if (skill.mode !== 'ADD' && state.base !== 'QOVERY_FULL') {
       return `Skill '${name}' uses ${skill.mode}, which only applies to the QOVERY_FULL base. Put team instructions in the team context instead.`
     }
-    if (skill.mode === 'DISABLE') continue
+    if ((skill.mode === 'DISABLE' || skill.mode === 'OVERLAY') && skill.description) {
+      return `Skill '${name}' uses ${skill.mode}, which takes no description`
+    }
+    if (skill.mode === 'DISABLE') {
+      if (skill.content) return `Skill '${name}' uses DISABLE, which takes no content`
+      continue
+    }
     if (!skill.content?.trim()) return `Skill '${name}' needs content`
     if (skill.content.length > limits.skillContentMaxLength) {
       return `Skill '${name}' content must not exceed ${limits.skillContentMaxLength} characters`
@@ -98,6 +106,13 @@ function validate(state: MockPresetState): string | null {
     if ((skill.mode === 'ADD' || skill.mode === 'REPLACE') && !skill.description?.trim()) {
       return `Skill '${name}' needs a description: agents decide when to load a skill from it`
     }
+  }
+  const isAssigned =
+    state.assigned_to.organization_default ||
+    state.assigned_to.role_ids.length > 0 ||
+    state.assigned_to.user_ids.length > 0
+  if (state.is_template && isAssigned) {
+    return 'A template cannot be assigned: copy it into a preset and assign that one'
   }
   return null
 }
@@ -167,6 +182,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   const auditView = (preset: StoredPreset) => ({
     id: preset.id,
     name: preset.name,
+    is_template: Boolean(preset.is_template),
     base: preset.base,
     revision: preset.revision,
     team_context: preset.team_context,
@@ -192,6 +208,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       edited_by,
       edited_at,
       name: preset.name,
+      is_template: Boolean(preset.is_template),
       description: preset.description,
       base: preset.base,
       team_context: preset.team_context,
@@ -227,12 +244,13 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   }
 
   const resolveFor = (userId: string): { source: SkillPresetResolutionSource; preset?: StoredPreset } => {
-    const byUser = presets.find(({ assigned_to }) => assigned_to.user_ids.includes(userId))
+    const candidates = presets.filter(({ is_template }) => !is_template)
+    const byUser = candidates.find(({ assigned_to }) => assigned_to.user_ids.includes(userId))
     if (byUser) return { source: 'USER', preset: byUser }
     const roleId = seed.memberRoles[userId]
-    const byRole = presets.find(({ assigned_to }) => assigned_to.role_ids.includes(roleId))
+    const byRole = candidates.find(({ assigned_to }) => assigned_to.role_ids.includes(roleId))
     if (byRole) return { source: 'ROLE', preset: byRole }
-    const byDefault = presets.find(({ assigned_to }) => assigned_to.organization_default)
+    const byDefault = candidates.find(({ assigned_to }) => assigned_to.organization_default)
     if (byDefault) return { source: 'ORGANIZATION', preset: byDefault }
     return { source: 'QOVERY_DEFAULT' }
   }
@@ -279,6 +297,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     team_context: preset.team_context,
     skills: preset.skills,
     revision: preset.revision,
+    is_template: Boolean(preset.is_template),
     creator_name: preset.creator_name,
     assigned_to: preset.assigned_to,
   })
@@ -319,12 +338,18 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   const findPreset = (skillPresetId: string) => presets.find(({ id }) => id === skillPresetId)
   const now = () => new Date().toISOString()
   const forbidden = () => fail(403, ADMIN_ONLY)
+  let concurrentSaveDone = false
 
-  const api: SkillPresetsApi = {
-    listSkillPresets() {
+  const api: SkillPresetsApi & { listAssignees: () => Promise<SkillPresetAssignees> } = {
+    listSkillPresets(_organizationId, { isTemplate } = {}) {
       if (!seed.isAdmin) return forbidden()
       if (scenario === 'errors') return fail(500, 'Internal server error')
-      return respond([...presets].sort((a, b) => a.name.localeCompare(b.name)).map(toResponse))
+      return respond(
+        [...presets]
+          .filter((preset) => isTemplate === undefined || Boolean(preset.is_template) === isTemplate)
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(toResponse)
+      )
     },
     getSkillPreset(skillPresetId) {
       if (!seed.isAdmin) return forbidden()
@@ -355,6 +380,11 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       if (!seed.isAdmin) return forbidden()
       const previous = findPreset(skillPresetId)
       if (!previous) return fail(404, `Skill preset ${skillPresetId} does not exist`)
+      // The conflicts scenario plays a concurrent save once, on the Admins preset.
+      if (scenario === 'conflicts' && previous.name === 'Admins' && !concurrentSaveDone) {
+        concurrentSaveDone = true
+        return fail(409, `Skill preset ${skillPresetId} was changed by someone else: reload it and try again`)
+      }
       const state = toState(body)
       const rejection = checkWrite(state, skillPresetId)
       if (rejection) return rejection

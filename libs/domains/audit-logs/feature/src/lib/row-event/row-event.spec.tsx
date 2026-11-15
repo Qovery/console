@@ -196,4 +196,18 @@ describe('RowEvent', () => {
 
     expect(screen.getByText('target-name')).toHaveAttribute('href', href)
   })
+
+  it('should link skill preset events to the skill presets settings', () => {
+    const skillLoad = {
+      ...mockEvent,
+      event_type: 'LOAD',
+      target_type: OrganizationEventTargetType.ORGANIZATION,
+      sub_target_type: 'SKILL_PRESET',
+      target_name: 'Acme',
+      change: JSON.stringify({ skill_name: 'qovery-deploy', source: 'ROLE', from_cache: true }),
+    } as unknown as OrganizationEventResponse
+    renderWithProviders(<RowEvent {...props} event={skillLoad} />)
+
+    expect(screen.getByRole('link', { name: 'Acme' })).toHaveAttribute('href', '/organization/1/settings/skill-presets')
+  })
 })

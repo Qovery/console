@@ -9,6 +9,7 @@ import { type SkillPresetsMockScenario } from './mock-scenario-names'
 
 export interface MockPresetState {
   name: string
+  is_template?: boolean
   description: string
   base: SkillPresetBase
   team_context: string | null
@@ -295,6 +296,27 @@ function typicalSeed(): MockSeed {
         created_at: at(24 * 9),
         creator_name: 'Alex Martin',
         revisions: contractorsRevisions(),
+      },
+      {
+        id: '0193f1c2-5a7e-7b10-9a0e-3d1f2c4b5a05',
+        created_at: at(24 * 4),
+        creator_name: 'Sam Lee',
+        revisions: [
+          {
+            change_type: 'CREATE',
+            edited_by: 'sam.lee@example.com',
+            edited_at: at(24 * 4),
+            state: {
+              name: 'New team starter',
+              is_template: true,
+              description: 'Our starting point for a new team: copy it, then assign the copy.',
+              base: 'QOVERY_FULL',
+              team_context: BACKEND_TEAM_CONTEXT.split('\n## Naming')[0],
+              skills: [{ skill_name: 'qovery-deploy', mode: 'OVERLAY', content: DEPLOY_OVERLAY }],
+              assigned_to: { organization_default: false, role_ids: [], user_ids: [] },
+            },
+          },
+        ],
       },
     ],
     loads: buildLoads(36, 24 * 4),

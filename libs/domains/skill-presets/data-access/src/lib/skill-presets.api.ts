@@ -1,11 +1,9 @@
 import axios from 'axios'
 import {
-  MembersApi,
   OrganizationEventApi,
   type OrganizationEventResponseList,
   type OrganizationEventSubTargetType,
   type OrganizationEventType,
-  OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 import { getSkillPresetsMockScenario } from './skill-presets-mock-mode'
 import {
@@ -36,7 +34,8 @@ export interface SkillLoadsParams {
 }
 
 export interface SkillPresetsApi {
-  listSkillPresets(organizationId: string): Promise<SkillPresetResponse[]>
+  /** `isTemplate` filters on the template flag; omit it to list every preset, templates included. */
+  listSkillPresets(organizationId: string, params?: { isTemplate?: boolean }): Promise<SkillPresetResponse[]>
   getSkillPreset(skillPresetId: string): Promise<SkillPresetResponse>
   createSkillPreset(organizationId: string, body: SkillPresetRequest): Promise<SkillPresetResponse>
   editSkillPreset(skillPresetId: string, body: SkillPresetRequest): Promise<SkillPresetResponse>
@@ -48,17 +47,19 @@ export interface SkillPresetsApi {
   getResolvedSkillPreset(organizationId: string): Promise<SkillPresetManifestResponse>
   /** Skill loads are audit log entries: event LOAD, sub-target SKILL_PRESET. */
   listSkillLoads(organizationId: string, params?: SkillLoadsParams): Promise<OrganizationEventResponseList>
-  listAssignees(organizationId: string): Promise<SkillPresetAssignees>
   getSkillPresetUsage(organizationId: string, params: SkillPresetUsageParams): Promise<SkillPresetUsageResponse>
 }
 
 const eventsApi = new OrganizationEventApi()
-const organizationApi = new OrganizationMainCallsApi()
-const membersApi = new MembersApi()
 
 const httpSkillPresetsApi: SkillPresetsApi = {
-  async listSkillPresets(organizationId) {
-    const response = await axios.get<{ results: SkillPresetResponse[] }>(`/organization/${organizationId}/skillPreset`)
+  async listSkillPresets(organizationId, { isTemplate } = {}) {
+    const response = await axios.get<{ results: SkillPresetResponse[] }>(
+      `/organization/${organizationId}/skillPreset`,
+      {
+        params: { isTemplate },
+      }
+    )
     return response.data.results
   },
   async getSkillPreset(skillPresetId) {
@@ -78,7 +79,7 @@ const httpSkillPresetsApi: SkillPresetsApi = {
   },
   async listSkillPresetRevisions(organizationId, { skillPresetId, limit } = {}) {
     const response = await axios.get<{ results: SkillPresetRevisionResponse[] }>(
-      `/organization/${organizationId}/skillPresetRevision`,
+      `/organization/${organizationId}/skillPreset/revision`,
       { params: { skillPresetId, limit } }
     )
     return response.data.results
@@ -105,21 +106,6 @@ const httpSkillPresetsApi: SkillPresetsApi = {
     )
     return response.data
   },
-  async listAssignees(organizationId) {
-    const [roles, members] = await Promise.all([
-      organizationApi.listOrganizationAvailableRoles(organizationId),
-      membersApi.getOrganizationMembers(organizationId),
-    ])
-    return {
-      roles: (roles.data.results ?? []).map(({ id, name }) => ({ id, name })),
-      members: (members.data.results ?? []).map(({ id, name, nickname, email, role_id }) => ({
-        id,
-        name: name || nickname || email,
-        email,
-        role_id,
-      })),
-    }
-  },
   async getSkillPresetUsage(organizationId, params) {
     const response = await axios.get<SkillPresetUsageResponse>(`/organization/${organizationId}/skillPreset/usage`, {
       params,
@@ -128,11 +114,13 @@ const httpSkillPresetsApi: SkillPresetsApi = {
   },
 }
 
-let mockApi: { scenario: string; api: Promise<SkillPresetsApi> } | undefined
+type MockSkillPresetsApi = SkillPresetsApi & { listAssignees: () => Promise<SkillPresetAssignees> }
 
-async function resolveApi(): Promise<SkillPresetsApi> {
+let mockApi: { scenario: string; api: Promise<MockSkillPresetsApi> } | undefined
+
+function resolveMockApi(): Promise<MockSkillPresetsApi> | null {
   const scenario = getSkillPresetsMockScenario()
-  if (!scenario) return httpSkillPresetsApi
+  if (!scenario) return null
   if (mockApi?.scenario !== scenario) {
     // Loaded on demand so the mock data never ships in the main bundle.
     const api = import('./mock/skill-presets-mock-api').then(({ createSkillPresetsMockApi }) =>
@@ -141,6 +129,23 @@ async function resolveApi(): Promise<SkillPresetsApi> {
     mockApi = { scenario, api }
   }
   return mockApi.api
+}
+
+async function resolveApi(): Promise<SkillPresetsApi> {
+  return (await resolveMockApi()) ?? httpSkillPresetsApi
+}
+
+/** Descriptions and the unsafe sample of the mock scenarios, loaded only when the mock is active. */
+export const loadSkillPresetsMockTools = () => import('./mock/mock-tools')
+
+/**
+ * Members and roles of the mock organization. Outside mock mode the Console's own members and roles
+ * queries are used instead, so the mock never sees real people.
+ */
+export async function listMockSkillPresetAssignees(): Promise<SkillPresetAssignees> {
+  const api = await resolveMockApi()
+  if (!api) throw new Error('The skill presets mock is not active')
+  return api.listAssignees()
 }
 
 /** Test helper: drop the in-memory mock so the next call starts from the scenario's seed. */
@@ -157,6 +162,5 @@ export const skillPresetsApi: SkillPresetsApi = {
   listSkillPresetRevisions: async (...args) => (await resolveApi()).listSkillPresetRevisions(...args),
   getResolvedSkillPreset: async (...args) => (await resolveApi()).getResolvedSkillPreset(...args),
   listSkillLoads: async (...args) => (await resolveApi()).listSkillLoads(...args),
-  listAssignees: async (...args) => (await resolveApi()).listAssignees(...args),
   getSkillPresetUsage: async (...args) => (await resolveApi()).getSkillPresetUsage(...args),
 }

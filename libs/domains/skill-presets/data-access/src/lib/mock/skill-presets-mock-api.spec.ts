@@ -1,13 +1,18 @@
-import { getSkillPresetErrorStatus, getSkillPresetFindings } from '../skill-presets.errors'
+import {
+  getSkillPresetErrorStatus,
+  getSkillPresetFindings,
+  isSkillPresetConcurrentModification,
+} from '../skill-presets.errors'
 import { type SkillLoadChange, type SkillPresetRequest } from '../skill-presets.types'
-import { MOCK_UNSAFE_SAMPLE } from './mock-scenario-names'
 import { MOCK_ROLE_IDS } from './mock-scenarios'
+import { MOCK_UNSAFE_SAMPLE } from './mock-tools'
 import { createSkillPresetsMockApi } from './skill-presets-mock-api'
 
 const ORGANIZATION_ID = 'organization-1'
 
 const request = (overrides: Partial<SkillPresetRequest> = {}): SkillPresetRequest => ({
   name: 'Release team',
+  is_template: false,
   description: 'For release managers.',
   base: 'QOVERY_FULL',
   team_context: 'Deploy to staging first.',
@@ -37,8 +42,13 @@ describe('createSkillPresetsMockApi', () => {
     const api = createSkillPresetsMockApi('typical')
     const { value: presets } = await settle(api.listSkillPresets(ORGANIZATION_ID))
 
-    expect(presets).toHaveLength(3)
-    expect(presets?.map(({ base }) => base).sort()).toEqual(['NONE', 'QOVERY_FULL', 'QOVERY_LEAN'])
+    expect(presets).toHaveLength(4)
+    expect(
+      presets
+        ?.filter(({ is_template }) => !is_template)
+        .map(({ base }) => base)
+        .sort()
+    ).toEqual(['NONE', 'QOVERY_FULL', 'QOVERY_LEAN'])
     expect(presets?.[0]).toEqual(
       expect.objectContaining({
         id: expect.any(String),
@@ -149,7 +159,7 @@ describe('createSkillPresetsMockApi', () => {
     const { value: remaining } = await settle(api.listSkillPresets(ORGANIZATION_ID))
 
     expect(revisions?.[0].change_type).toBe('DELETE')
-    expect(remaining).toHaveLength(2)
+    expect(remaining).toHaveLength(3)
   })
 
   it('pages skill loads as LOAD audit entries', async () => {
@@ -197,5 +207,53 @@ describe('createSkillPresetsMockApi', () => {
   it('answers 500 on the list in the errors scenario', async () => {
     const { error } = await settle(createSkillPresetsMockApi('errors').listSkillPresets(ORGANIZATION_ID))
     expect(getSkillPresetErrorStatus(error)).toBe(500)
+  })
+
+  it('filters templates and refuses an assigned template', async () => {
+    const api = createSkillPresetsMockApi('typical')
+    const { value: templates } = await settle(api.listSkillPresets(ORGANIZATION_ID, { isTemplate: true }))
+    const { error } = await settle(
+      api.createSkillPreset(
+        ORGANIZATION_ID,
+        request({ is_template: true, assigned_to: { organization_default: true, role_ids: [], user_ids: [] } })
+      )
+    )
+
+    expect(templates?.map(({ name }) => name)).toEqual(['New team starter'])
+    expect(getSkillPresetErrorStatus(error)).toBe(400)
+  })
+
+  it('refuses content on DISABLE and a description on OVERLAY', async () => {
+    const api = createSkillPresetsMockApi('typical')
+    const disable = await settle(
+      api.createSkillPreset(
+        ORGANIZATION_ID,
+        request({ skills: [{ skill_name: 'qovery-assess', mode: 'DISABLE', content: 'x' }] })
+      )
+    )
+    const overlay = await settle(
+      api.createSkillPreset(
+        ORGANIZATION_ID,
+        request({ skills: [{ skill_name: 'qovery-deploy', mode: 'OVERLAY', description: 'x', content: 'y' }] })
+      )
+    )
+    expect(getSkillPresetErrorStatus(disable.error)).toBe(400)
+    expect(getSkillPresetErrorStatus(overlay.error)).toBe(400)
+  })
+
+  it('answers 404 when deleting a preset twice, and 409 on a concurrent save in the conflicts scenario', async () => {
+    const api = createSkillPresetsMockApi('conflicts')
+    const { value: presets } = await settle(api.listSkillPresets(ORGANIZATION_ID))
+    const admins = presets?.find(({ name }) => name === 'Admins')
+    if (!admins) throw new Error('missing preset')
+
+    const concurrent = await settle(
+      api.editSkillPreset(admins.id, request({ name: 'Admins', assigned_to: admins.assigned_to }))
+    )
+    expect(isSkillPresetConcurrentModification(concurrent.error)).toBe(true)
+
+    await settle(api.deleteSkillPreset(admins.id))
+    const again = await settle(api.deleteSkillPreset(admins.id))
+    expect(getSkillPresetErrorStatus(again.error)).toBe(404)
   })
 })

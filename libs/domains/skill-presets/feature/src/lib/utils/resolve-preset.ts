@@ -71,10 +71,5 @@ export function assignmentConflicts(
   }
 }
 
-/** Presets kept as templates by the organization: a name prefix until q-core has an `is_template` flag. */
-export const ORG_TEMPLATE_PREFIX = 'Template: '
-export const isOrganizationTemplate = (preset: { name: string; assigned_to: SkillPresetAssignedTo }) =>
-  preset.name.startsWith(ORG_TEMPLATE_PREFIX) &&
-  !preset.assigned_to.organization_default &&
-  preset.assigned_to.role_ids.length === 0 &&
-  preset.assigned_to.user_ids.length === 0
+/** Templates are starting points admins copy: q-core never resolves them for anyone. */
+export const isTemplate = (preset: { is_template?: boolean }) => Boolean(preset.is_template)

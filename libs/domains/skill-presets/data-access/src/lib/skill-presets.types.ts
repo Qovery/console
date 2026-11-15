@@ -28,6 +28,8 @@ export interface SkillPresetSkill {
 
 export interface SkillPresetRequest {
   name: string
+  /** A starting point admins copy. Never assigned: q-core answers 400 for an assigned template. */
+  is_template: boolean
   description: string
   base: SkillPresetBase
   team_context?: string | null
@@ -45,6 +47,7 @@ export interface SkillPresetResponse {
   team_context: string | null
   skills: SkillPresetSkill[]
   revision: number
+  is_template: boolean
   creator_name: string | null
   assigned_to: SkillPresetAssignedTo
 }
@@ -56,6 +59,7 @@ export interface SkillPresetRevisionResponse {
   edited_by: string
   edited_at: string
   name: string
+  is_template: boolean
   description: string
   base: SkillPresetBase
   team_context: string | null

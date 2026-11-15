@@ -1,10 +1,14 @@
-import { Icon, Tooltip } from '@qovery/shared/ui'
+import { useId } from 'react'
+import { Button, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { QOVERY_SKILLS } from '../utils/qovery-skills'
 import { type TokenBudget, formatTokens } from '../utils/token-budget'
+
+const { Table } = TablePrimitives
 
 export interface TokenBudgetViewProps {
   budget: TokenBudget
-  /** Rows to show before "Show all". */
+  /** Shows the six heaviest skills only. */
   compact?: boolean
   className?: string
 }
@@ -31,23 +35,28 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
   const { alwaysInContext, todayAlwaysInContext, onDemand, disabled } = budget
   const max = Math.max(alwaysInContext.total, todayAlwaysInContext)
   const rows = [...onDemand].sort((a, b) => b.total - a.total)
+  const id = useId()
 
   return (
     <div className={twMerge('flex flex-col gap-4 text-xs', className)}>
-      <section aria-labelledby="budget-always" className="flex flex-col gap-2">
-        <h3 id="budget-always" className="flex items-center gap-1.5 text-sm font-medium text-neutral">
-          Always in context
+      <Section aria-labelledby={`${id}-always`} className="flex flex-col gap-2">
+        <div className="flex items-center gap-1">
+          <Heading level={3} id={`${id}-always`} className="text-sm">
+            Always in context
+          </Heading>
           <Tooltip content="Read at the start of every session, before any task.">
-            <span>
-              <Icon
-                iconName="circle-info"
-                iconStyle="regular"
-                className="text-neutral-subtle"
-                aria-label="About this"
-              />
-            </span>
+            <Button
+              type="button"
+              variant="plain"
+              color="neutral"
+              size="xs"
+              iconOnly
+              aria-label="About always in context"
+            >
+              <Icon iconName="circle-info" iconStyle="regular" />
+            </Button>
           </Tooltip>
-        </h3>
+        </div>
         <div className="flex flex-col gap-1">
           <div className="flex justify-between text-neutral">
             <span>With this preset</span>
@@ -75,33 +84,29 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
               { label: 'Qovery descriptions', tokens: todayAlwaysInContext, className: 'bg-surface-neutral-solid' },
             ]}
           />
-          <span className="text-neutral-subtle">All 11 Qovery skill descriptions</span>
+          <span className="text-neutral-subtle">All {QOVERY_SKILLS.length} Qovery skill descriptions</span>
         </div>
-      </section>
+      </Section>
 
-      <section aria-labelledby="budget-on-demand" className="flex flex-col gap-2">
-        <h3 id="budget-on-demand" className="text-sm font-medium text-neutral">
+      <Section aria-labelledby={`${id}-on-demand`} className="flex flex-col gap-2">
+        <Heading level={3} id={`${id}-on-demand`} className="text-sm">
           Loaded only when a task needs it
-        </h3>
+        </Heading>
         {rows.length === 0 ? (
           <p className="text-neutral-subtle">Nothing: this preset loads no skill.</p>
         ) : (
-          <table className="w-full text-left">
+          <Table.Root className="text-xs" containerClassName="border-0 bg-transparent">
             <caption className="sr-only">Tokens added per skill when a task loads it</caption>
-            <thead className="text-neutral-subtle">
-              <tr>
-                <th scope="col" className="pb-1 font-normal">
-                  Skill
-                </th>
-                <th scope="col" className="pb-1 text-right font-normal">
-                  Per task
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral">
+            <Table.Header className="text-neutral-subtle">
+              <Table.Row>
+                <Table.ColumnHeaderCell className="h-7 px-0 font-sans">Skill</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="h-7 px-0 text-right font-sans">Per task</Table.ColumnHeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
               {(compact ? rows.slice(0, 6) : rows).map((row) => (
-                <tr key={row.skillName} className="align-top">
-                  <td className="py-1.5 pr-2">
+                <Table.Row key={row.skillName} className="align-top">
+                  <Table.Cell className="h-auto px-0 py-1.5 pr-2">
                     <span className="block font-code text-neutral">{row.skillName}</span>
                     <span className="block text-neutral-subtle">
                       {[
@@ -112,17 +117,17 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
                         .filter(Boolean)
                         .join(' + ')}
                     </span>
-                  </td>
-                  <td className="py-1.5 text-right tabular-nums text-neutral">
+                  </Table.Cell>
+                  <Table.Cell className="h-auto px-0 py-1.5 text-right tabular-nums text-neutral">
                     {formatTokens(row.total)}
                     {row.todayTokens !== null && row.todayTokens !== row.total && (
                       <span className="block text-neutral-subtle">today {formatTokens(row.todayTokens)}</span>
                     )}
-                  </td>
-                </tr>
+                  </Table.Cell>
+                </Table.Row>
               ))}
-            </tbody>
-          </table>
+            </Table.Body>
+          </Table.Root>
         )}
         {compact && rows.length > 6 && <p className="text-neutral-subtle">And {rows.length - 6} more skills.</p>}
         {disabled.length > 0 && (
@@ -131,7 +136,7 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
             Never loaded: <span className="font-code">{disabled.join(', ')}</span>
           </p>
         )}
-      </section>
+      </Section>
 
       <p className="text-neutral-subtle">
         Estimates: characters divided by 4. Qovery skill sizes are measured on one release of the Qovery skills. Their

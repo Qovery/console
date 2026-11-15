@@ -1,4 +1,4 @@
-import { assignmentConflicts, isOrganizationTemplate, membersReceiving, resolvePresetFor } from './resolve-preset'
+import { assignmentConflicts, isTemplate, membersReceiving, resolvePresetFor } from './resolve-preset'
 
 const preset = (
   id: string,
@@ -52,10 +52,8 @@ describe('resolvePresetFor', () => {
     expect(conflicts.users.map(({ userId }) => userId)).toEqual(['user-jamie'])
   })
 
-  it('recognizes organization templates by prefix and lack of assignment', () => {
-    expect(isOrganizationTemplate({ name: 'Template: QA', assigned_to: preset('x', {}).assigned_to })).toBe(true)
-    expect(
-      isOrganizationTemplate({ name: 'Template: QA', assigned_to: preset('x', { role_ids: ['r'] }).assigned_to })
-    ).toBe(false)
+  it('recognizes templates by their flag', () => {
+    expect(isTemplate({ is_template: true })).toBe(true)
+    expect(isTemplate({ is_template: false })).toBe(false)
   })
 })

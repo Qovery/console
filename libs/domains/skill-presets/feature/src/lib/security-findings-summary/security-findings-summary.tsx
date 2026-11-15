@@ -1,5 +1,6 @@
 import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
-import { Callout, Icon } from '@qovery/shared/ui'
+import { Button, Callout, Icon } from '@qovery/shared/ui'
+import { scrollToElement } from '../utils/scroll'
 import { findingFieldId, findingLocationLabel, findingTarget } from '../utils/skill-preset-findings'
 
 export interface SecurityFindingsSummaryProps {
@@ -10,10 +11,9 @@ const focusField = (finding: SkillPresetFinding) => {
   const target = findingTarget(finding.location)
   if (!target) return
   const field = document.getElementById(findingFieldId(target))
-  field?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
+  scrollToElement(field)
   // Monaco renders a textarea for keyboard input: focus it so screen readers land in the field.
-  const input = field?.querySelector<HTMLElement>('textarea, input')
-  input?.focus({ preventScroll: true })
+  field?.querySelector<HTMLElement>('textarea, input')?.focus({ preventScroll: true })
 }
 
 /**
@@ -34,20 +34,23 @@ export function SecurityFindingsSummary({ findings }: SecurityFindingsSummaryPro
         </Callout.TextHeading>
         <Callout.TextDescription>
           <p className="mb-2">
-            Everything in a preset runs in your members' agents, on their machines. Qovery checks it on save and refuses
+            Everything in a preset runs in your members’ agents, on their machines. Qovery checks it on save and refuses
             text that could expose secrets, send data out or act without the member knowing. This is often a pasted
             snippet or a phrase that reads like an instruction. Rephrase or remove these lines, then save again.
           </p>
           <ul className="flex flex-col gap-1">
             {findings.map((finding) => (
               <li key={`${finding.location}-${finding.line}-${finding.rule_id}`}>
-                <button
+                <Button
                   type="button"
-                  className="text-left font-medium text-neutral underline underline-offset-2 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
+                  variant="plain"
+                  color="neutral"
+                  size="xs"
+                  className="h-auto px-0 align-baseline text-sm underline underline-offset-2"
                   onClick={() => focusField(finding)}
                 >
                   {findingLocationLabel(finding)}
-                </button>
+                </Button>
                 <span className="text-neutral-subtle">: {finding.reason}.</span>
               </li>
             ))}

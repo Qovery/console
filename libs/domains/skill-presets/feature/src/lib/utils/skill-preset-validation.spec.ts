@@ -1,5 +1,10 @@
 import { toSkillPresetFormValues } from './skill-preset-form'
-import { validateSkillPresetForm } from './skill-preset-validation'
+import {
+  flattenFieldErrors,
+  skillPresetResolver,
+  toFieldErrors,
+  validateSkillPresetForm,
+} from './skill-preset-validation'
 
 const base = () => ({ ...toSkillPresetFormValues(), name: 'Backend team' })
 
@@ -17,10 +22,10 @@ describe('validateSkillPresetForm', () => {
     const values = {
       ...base(),
       customSkills: [
-        { key: '1', skillName: 'qovery-mine', description: 'd', content: 'c' },
-        { key: '2', skillName: 'Bad_Name', description: 'd', content: 'c' },
-        { key: '3', skillName: 'ok-name', description: '', content: '' },
-        { key: '4', skillName: 'ok-name', description: 'd', content: 'c' },
+        { skillName: 'qovery-mine', description: 'd', content: 'c' },
+        { skillName: 'Bad_Name', description: 'd', content: 'c' },
+        { skillName: 'ok-name', description: '', content: '' },
+        { skillName: 'ok-name', description: 'd', content: 'c' },
       ],
     }
     const errors = validateSkillPresetForm(values)
@@ -44,5 +49,24 @@ describe('validateSkillPresetForm', () => {
     expect(validateSkillPresetForm({ ...base(), teamContext: 'x'.repeat(32769) })['teamContext']).toBe(
       'At most 32,768 characters.'
     )
+  })
+})
+
+describe('react-hook-form bridge', () => {
+  it('nests errors by path and flattens them back', () => {
+    const flat = {
+      name: 'Enter a name.',
+      'customSkills.1.content': 'Write the skill content.',
+      'customSkills.root': 'Too many',
+    }
+    expect(flattenFieldErrors(toFieldErrors(flat))).toEqual(flat)
+  })
+
+  it('resolves valid values without errors', async () => {
+    const values = { ...toSkillPresetFormValues(), name: 'Backend team' }
+    await expect(Promise.resolve(skillPresetResolver(values, undefined, {} as never))).resolves.toEqual({
+      values,
+      errors: {},
+    })
   })
 })

@@ -8,6 +8,7 @@ const revision = (overrides: Partial<SkillPresetRevisionResponse>): SkillPresetR
   edited_by: 'alex.martin@example.com',
   edited_at: '2026-11-01T00:00:00Z',
   name: 'Backend team',
+  is_template: false,
   description: '',
   base: 'QOVERY_FULL',
   team_context: 'Deploy to staging first.',
@@ -45,6 +46,7 @@ describe('diffRevisions', () => {
   it('builds the restore request from a revision', () => {
     expect(revisionToRequest(revision({}))).toEqual({
       name: 'Backend team',
+      is_template: false,
       description: '',
       base: 'QOVERY_FULL',
       team_context: 'Deploy to staging first.',

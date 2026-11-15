@@ -35,6 +35,7 @@ const preset = {
   team_context: 'Ask before deleting anything.',
   skills: [],
   revision: 2,
+  is_template: false,
   creator_name: 'Priya Shah',
   assigned_to: { organization_default: true, role_ids: ['role-devops'], user_ids: ['user-jamie'] },
 }
@@ -62,7 +63,7 @@ describe('SettingsSkillPresets', () => {
     expect(within(chips).getByText('Organization default')).toBeInTheDocument()
     expect(within(chips).getByText('Role: Devops')).toBeInTheDocument()
     expect(within(chips).getByText('Jamie Rossi')).toBeInTheDocument()
-    expect(within(row).getByText('Rev. 2')).toBeInTheDocument()
+    expect(within(row).getByText('Revision 2')).toBeInTheDocument()
   })
 
   it('previews what a member gets', () => {

@@ -22,6 +22,16 @@ export function getSkillPresetErrorDetail(error: unknown): string | undefined {
   return apiError.response?.data?.detail ?? apiError.message
 }
 
+/**
+ * A 409 can mean two things: an assignment target already held by another preset, or someone else
+ * saving the preset between this read and write. Only the message tells them apart.
+ */
+export function isSkillPresetConcurrentModification(error: unknown) {
+  return (
+    getSkillPresetErrorStatus(error) === 409 && /changed by someone else/i.test(getSkillPresetErrorDetail(error) ?? '')
+  )
+}
+
 /** The findings of a 422 security rejection, or an empty list for any other error. */
 export function getSkillPresetFindings(error: unknown): SkillPresetFinding[] {
   if (getSkillPresetErrorStatus(error) !== 422) return []

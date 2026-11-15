@@ -6,7 +6,6 @@ import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SkillPresetEditor } from '../skill-preset-editor/skill-preset-editor'
 import { baseLabel } from '../utils/qovery-skills'
-import { ORG_TEMPLATE_PREFIX, isOrganizationTemplate } from '../utils/resolve-preset'
 import { SKILL_PRESET_TEMPLATES } from '../utils/skill-preset-templates'
 
 function TemplateOption({
@@ -46,8 +45,7 @@ function TemplateOption({
 export function TemplateGallery() {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
-  const { data: presets = [] } = useSkillPresets({ organizationId })
-  const organizationTemplates = presets.filter(isOrganizationTemplate)
+  const { data: organizationTemplates = [] } = useSkillPresets({ organizationId, isTemplate: true })
 
   useDocumentTitle('Create skill preset - Organization settings')
 
@@ -115,14 +113,14 @@ export function TemplateGallery() {
         </Heading>
         {organizationTemplates.length === 0 ? (
           <p className="text-sm text-neutral-subtle">
-            None yet. Use "Save as template" on any preset to reuse it here.
+            None yet. Use “Save as template” on any preset to reuse it here.
           </p>
         ) : (
           <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
             {organizationTemplates.map((preset) => (
               <TemplateOption
                 key={preset.id}
-                title={preset.name.replace(ORG_TEMPLATE_PREFIX, '')}
+                title={preset.name}
                 summary={preset.description || 'No description.'}
                 meta={`${baseLabel(preset.base)} · ${preset.skills.length} skill changes`}
                 icon={<Icon iconName="bookmark" iconStyle="regular" />}

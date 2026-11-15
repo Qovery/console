@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/skill-presets/data-access/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:domain", "type:data-access", "slice:skill-presets"],
   "targets": {
     "test": {
       "options": {

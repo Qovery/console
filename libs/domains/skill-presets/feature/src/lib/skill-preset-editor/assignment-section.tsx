@@ -7,20 +7,13 @@ import { type SkillPresetFormValues } from '../utils/skill-preset-form'
 
 export interface AssignmentSectionProps {
   draftId: string
-  draftName: string
   otherPresets: AssignablePreset[]
   assignees?: SkillPresetAssignees
   /** The 409 answer of the last save, if any. */
   conflictDetail?: string | null
 }
 
-export function AssignmentSection({
-  draftId,
-  draftName,
-  otherPresets,
-  assignees,
-  conflictDetail,
-}: AssignmentSectionProps) {
+export function AssignmentSection({ draftId, otherPresets, assignees, conflictDetail }: AssignmentSectionProps) {
   const { control } = useFormContext<SkillPresetFormValues>()
   const [organizationDefault, roleIds, userIds] = useWatch({
     control,
@@ -58,13 +51,13 @@ export function AssignmentSection({
       membersReceiving(
         {
           id: draftId,
-          name: draftName,
+          name: 'This preset',
           assigned_to: { organization_default: organizationDefault, role_ids: roleIds, user_ids: userIds },
         },
         otherPresets,
         assignees?.members ?? []
       ),
-    [draftId, draftName, organizationDefault, roleIds, userIds, otherPresets, assignees]
+    [draftId, organizationDefault, roleIds, userIds, otherPresets, assignees]
   )
 
   const roleName = (roleId?: string) => assignees?.roles.find(({ id }) => id === roleId)?.name ?? 'No role'
@@ -74,7 +67,7 @@ export function AssignmentSection({
     <div className="flex flex-col gap-4">
       <p className="text-sm text-neutral-subtle">
         When several presets match a member, the most specific one wins: a preset assigned to the member, then their
-        role's, then the organization default. Members with none use the Qovery skills as published.
+        role’s, then the organization default. Members with none use the Qovery skills as published.
       </p>
 
       <Controller
@@ -166,7 +159,7 @@ export function AssignmentSection({
               aria-expanded={showMembers}
               onClick={() => setShowMembers((value) => !value)}
             >
-              {showMembers ? 'Hide' : 'Show'}
+              {showMembers ? 'Hide members' : 'Show members'}
               <Icon iconName={showMembers ? 'chevron-up' : 'chevron-down'} iconStyle="regular" />
             </Button>
           )}

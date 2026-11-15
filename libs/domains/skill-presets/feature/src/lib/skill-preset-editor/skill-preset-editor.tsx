@@ -1,6 +1,7 @@
-import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
-import { type ReactNode, useMemo, useState } from 'react'
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form'
+import { useQueryClient } from '@tanstack/react-query'
+import { Link, useBlocker, useNavigate, useParams, useSearch } from '@tanstack/react-router'
+import { type ReactNode, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import { Controller, FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import {
   SKILL_PRESET_LIMITS,
   type SkillPresetAssignees,
@@ -9,9 +10,11 @@ import {
   getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
   getSkillPresetFindings,
+  isSkillPresetConcurrentModification,
 } from '@qovery/domains/skill-presets/data-access'
 import { Badge, Button, Callout, Heading, Icon, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { queries } from '@qovery/state/util-queries'
 import { useCreateSkillPreset } from '../hooks/use-create-skill-preset/use-create-skill-preset'
 import { useEditSkillPreset } from '../hooks/use-edit-skill-preset/use-edit-skill-preset'
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
@@ -20,15 +23,12 @@ import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SecurityFindingsSummary } from '../security-findings-summary/security-findings-summary'
-import {
-  PREVIEW_ANYONE,
-  PreviewAsMemberSelect,
-  describeResolution,
-  resolvePreviewTarget,
-} from '../token-budget/preview-as-member'
+import { PreviewAsMemberSelect } from '../token-budget/preview-as-member'
 import { TokenBudgetView } from '../token-budget/token-budget-view'
+import { PREVIEW_ANYONE, describeResolution, resolvePreviewTarget } from '../utils/preview-target'
 import { QOVERY_SKILLS } from '../utils/qovery-skills'
-import { ORG_TEMPLATE_PREFIX, RESOLUTION_SOURCE_LABELS, isOrganizationTemplate } from '../utils/resolve-preset'
+import { RESOLUTION_SOURCE_LABELS, isTemplate } from '../utils/resolve-preset'
+import { scrollToElement } from '../utils/scroll'
 import {
   type FindingTarget,
   findingFieldId,
@@ -36,14 +36,9 @@ import {
   findingTargetKey,
   findingsFor,
 } from '../utils/skill-preset-findings'
-import {
-  type SkillPresetFormValues,
-  effectiveQoverySkills,
-  toSkillPresetFormValues,
-  toSkillPresetRequest,
-} from '../utils/skill-preset-form'
+import { type SkillPresetFormValues, toSkillPresetFormValues, toSkillPresetRequest } from '../utils/skill-preset-form'
 import { SKILL_PRESET_TEMPLATES, findTemplate } from '../utils/skill-preset-templates'
-import { validateSkillPresetForm } from '../utils/skill-preset-validation'
+import { flattenFieldErrors, skillPresetResolver } from '../utils/skill-preset-validation'
 import { computeTokenBudget } from '../utils/token-budget'
 import { AssignmentSection } from './assignment-section'
 import { BaseChooser } from './base-chooser'
@@ -52,6 +47,7 @@ import { QoverySkillsSection } from './qovery-skills-section'
 import { type LibrarySkill } from './skill-library-modal'
 
 const NEW_PRESET_ID = 'new-preset'
+const LEAVE_UNSAVED_CHANGES_MESSAGE = 'You have unsaved changes on this preset. Leave the page and discard them?'
 
 interface EditorSearch {
   template?: string
@@ -94,6 +90,87 @@ function fieldValue(values: SkillPresetFormValues, target: FindingTarget) {
   return target.field === 'skillDescription' ? skill.description : skill.content
 }
 
+/** Tells the admin their Qovery skill changes are kept in the draft but not saved on the lean and empty bases. */
+function HiddenQoveryChangesNotice() {
+  const { control } = useFormContext<SkillPresetFormValues>()
+  const [base, qoverySkills] = useWatch({ control, name: ['base', 'qoverySkills'] })
+  const count = base !== 'QOVERY_FULL' ? qoverySkills.filter(({ choice }) => choice !== 'AS_IS').length : 0
+  if (count === 0) return null
+  return (
+    <Callout.Root color="neutral">
+      <Callout.Icon>
+        <Icon iconName="circle-info" iconStyle="regular" />
+      </Callout.Icon>
+      <Callout.Text>
+        <Callout.TextDescription>
+          Your changes to {count} Qovery {count === 1 ? 'skill stay' : 'skills stay'} in this draft but are not saved
+          with this base. Switch back to Full Qovery skills to keep them.
+        </Callout.TextDescription>
+      </Callout.Text>
+    </Callout.Root>
+  )
+}
+
+interface AgentContextPanelProps {
+  draftId: string
+  otherPresets: SkillPresetResponse[]
+  assignees?: SkillPresetAssignees
+}
+
+/**
+ * The side panel. It is the only part that reads the whole draft, and it reads a deferred copy, so
+ * typing stays fast while the budget catches up.
+ */
+function AgentContextPanel({ draftId, otherPresets, assignees }: AgentContextPanelProps) {
+  const { control } = useFormContext<SkillPresetFormValues>()
+  const values = useWatch({ control }) as SkillPresetFormValues
+  const deferredValues = useDeferredValue(values)
+  const [previewTarget, setPreviewTarget] = useState(PREVIEW_ANYONE)
+
+  const { previewed, budget } = useMemo(() => {
+    const request = toSkillPresetRequest(deferredValues)
+    const resolved =
+      previewTarget === PREVIEW_ANYONE
+        ? null
+        : resolvePreviewTarget(previewTarget, [{ ...request, id: draftId }, ...otherPresets], assignees)
+    const previewedPreset = !resolved || resolved.preset?.id === draftId ? request : resolved.preset ?? null
+    return { previewed: resolved, budget: computeTokenBudget(previewedPreset) }
+  }, [deferredValues, previewTarget, draftId, otherPresets, assignees])
+
+  return (
+    <Section
+      aria-labelledby="agent-context-title"
+      className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4 xl:sticky xl:top-4"
+    >
+      <div className="flex flex-col gap-1">
+        <Heading level={2} id="agent-context-title">
+          What members’ agents receive
+        </Heading>
+        <p className="text-xs text-neutral-subtle">
+          Agents read a short skill list first, then load only the skills a task needs. Members can read every piece in
+          full, with its SHA-256.
+        </p>
+      </div>
+      <PreviewAsMemberSelect
+        value={previewTarget}
+        onChange={setPreviewTarget}
+        assignees={assignees}
+        anyoneLabel="Anyone who receives this preset"
+      />
+      {previewed && (
+        <p className="text-xs text-neutral" aria-live="polite">
+          {previewed.preset?.id === draftId
+            ? `${previewed.targetLabel} gets this preset (${RESOLUTION_SOURCE_LABELS[previewed.source].toLowerCase()}).`
+            : previewed.preset
+              ? `${previewed.targetLabel} gets ${describeResolution(previewed)}, not this one. Showing that preset.`
+              : `${previewed.targetLabel} gets no preset: Qovery skills as published. Showing today’s cost.`}
+        </p>
+      )}
+      <TokenBudgetView budget={budget} compact />
+    </Section>
+  )
+}
+
 export interface SkillPresetEditorFormProps {
   organizationId: string
   initialValues: SkillPresetFormValues
@@ -102,6 +179,12 @@ export interface SkillPresetEditorFormProps {
   assignees?: SkillPresetAssignees
   origin?: string
   asTemplate?: boolean
+}
+
+interface Rejection {
+  findings: SkillPresetFinding[]
+  /** The text of each field as it was rejected, to drop a finding once the admin edits its field. */
+  snapshot: Record<string, string | undefined>
 }
 
 export function SkillPresetEditorForm({
@@ -114,42 +197,59 @@ export function SkillPresetEditorForm({
   asTemplate = false,
 }: SkillPresetEditorFormProps) {
   const navigate = useNavigate()
-  const methods = useForm<SkillPresetFormValues>({ defaultValues: initialValues })
-  const values = useWatch({ control: methods.control }) as SkillPresetFormValues
+  const queryClient = useQueryClient()
+  const methods = useForm<SkillPresetFormValues>({
+    defaultValues: initialValues,
+    resolver: skillPresetResolver,
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
+    shouldFocusError: false,
+  })
+  const base = useWatch({ control: methods.control, name: 'base' })
+  const { errors, isDirty, isSubmitted } = methods.formState
   const { mutateAsync: createSkillPreset, isLoading: isCreating } = useCreateSkillPreset()
   const { mutateAsync: editSkillPreset, isLoading: isEditing } = useEditSkillPreset()
-  const [attempted, setAttempted] = useState(false)
-  const [rejection, setRejection] = useState<{
-    findings: SkillPresetFinding[]
-    snapshot: Record<string, string | undefined>
-  } | null>(null)
+  const [rejection, setRejection] = useState<Rejection | null>(null)
   const [conflictDetail, setConflictDetail] = useState<string | null>(null)
   const [serverError, setServerError] = useState<string | null>(null)
-  const [previewTarget, setPreviewTarget] = useState(PREVIEW_ANYONE)
+  // The revision this draft started from. A newer one on the server means someone else saved meanwhile.
+  const [baseRevision, setBaseRevision] = useState(preset?.revision)
+  // q-core answered 409 because the preset changed between its read and its write.
+  const [savedElsewhere, setSavedElsewhere] = useState(false)
+  const leavingAfterSave = useRef(false)
 
   const draftId = preset?.id ?? NEW_PRESET_ID
   const otherPresets = useMemo(() => presets.filter(({ id }) => id !== draftId), [presets, draftId])
-  const errors = attempted ? validateSkillPresetForm(values) : {}
+  const flatErrors = flattenFieldErrors(errors)
+  const errorCount = Object.keys(flatErrors).length
+  const changedElsewhere =
+    preset !== undefined &&
+    (savedElsewhere || (baseRevision !== undefined && preset.revision > baseRevision && !isEditing))
 
-  // A finding stays visible until the admin edits the field it points at.
-  const findings = useMemo(
-    () =>
-      (rejection?.findings ?? []).filter((finding) => {
+  useBlocker({
+    disabled: !isDirty,
+    shouldBlockFn: () => !leavingAfterSave.current && !window.confirm(LEAVE_UNSAVED_CHANGES_MESSAGE),
+    enableBeforeUnload: isDirty,
+  })
+
+  // A finding stays visible until the admin edits the field it points at. Subscribing to the form
+  // store (an external system for React) avoids re-rendering the whole editor on every keystroke.
+  useEffect(() => {
+    if (!rejection) return
+    const subscription = methods.watch((values) => {
+      const remaining = rejection.findings.filter((finding) => {
         const target = findingTarget(finding.location)
-        return !target || fieldValue(values, target) === rejection?.snapshot[findingTargetKey(target)]
-      }),
-    [rejection, values]
-  )
+        return (
+          !target ||
+          fieldValue(values as SkillPresetFormValues, target) === rejection.snapshot[findingTargetKey(target)]
+        )
+      })
+      if (remaining.length !== rejection.findings.length) setRejection({ ...rejection, findings: remaining })
+    })
+    return () => subscription.unsubscribe()
+  }, [methods, rejection])
 
-  const request = toSkillPresetRequest(values)
-  const draftForResolution = { ...request, id: draftId }
-  const previewed =
-    previewTarget === PREVIEW_ANYONE
-      ? null
-      : resolvePreviewTarget(previewTarget, [draftForResolution, ...otherPresets], assignees)
-  const previewedPreset =
-    previewed === null ? request : previewed.preset?.id === draftId ? request : previewed.preset ?? null
-  const budget = computeTokenBudget(previewedPreset)
+  const findings = rejection?.findings ?? []
 
   const librarySkills: LibrarySkill[] = useMemo(
     () => [
@@ -189,30 +289,37 @@ export function SkillPresetEditorForm({
     [otherPresets]
   )
 
-  const hiddenQoveryChanges =
-    values.base !== 'QOVERY_FULL' ? values.qoverySkills.filter(({ choice }) => choice !== 'AS_IS').length : 0
+  const reloadFromServer = () => {
+    if (!preset) return
+    methods.reset(toSkillPresetFormValues(preset))
+    setBaseRevision(preset.revision)
+    setSavedElsewhere(false)
+    setRejection(null)
+    setConflictDetail(null)
+  }
 
-  const onSubmit = methods.handleSubmit(async (submitted) => {
-    setAttempted(true)
-    const validationErrors = validateSkillPresetForm(submitted)
-    const firstError = Object.keys(validationErrors)[0]
-    if (firstError) {
-      document.querySelector(`[name="${firstError}"]`)?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
-      return
-    }
+  const onInvalid = () => {
+    const [firstError] = Object.keys(flattenFieldErrors(methods.formState.errors))
+    if (!firstError) return
+    // Text inputs take focus through react-hook-form; Monaco fields are scrolled to.
+    methods.setFocus(firstError as Parameters<typeof methods.setFocus>[0])
+    scrollToElement(document.querySelector(`[name="${firstError}"]`))
+  }
+
+  const onValid = async (submitted: SkillPresetFormValues) => {
     setRejection(null)
     setConflictDetail(null)
     setServerError(null)
-    const body = toSkillPresetRequest(
-      asTemplate ? { ...submitted, organizationDefault: false, roleIds: [], userIds: [] } : submitted
-    )
+    setSavedElsewhere(false)
+    const body = toSkillPresetRequest({ ...submitted, isTemplate: asTemplate })
     try {
       if (preset) {
         const saved = await editSkillPreset({ organizationId, skillPresetId: preset.id, body })
         methods.reset(toSkillPresetFormValues(saved))
-        setAttempted(false)
+        setBaseRevision(saved.revision)
       } else {
         await createSkillPreset({ organizationId, body })
+        leavingAfterSave.current = true
         navigate({ to: '/organization/$organizationId/settings/skill-presets', params: { organizationId } })
       }
     } catch (error) {
@@ -225,22 +332,31 @@ export function SkillPresetEditorForm({
           if (target) snapshot[findingTargetKey(target)] = fieldValue(submitted, target)
         })
         setRejection({ findings: rejectedFindings, snapshot })
-        document.getElementById('skill-preset-editor-top')?.scrollIntoView?.({ behavior: 'smooth' })
+        scrollToElement(document.getElementById('skill-preset-editor-top'), 'start')
+      } else if (isSkillPresetConcurrentModification(error)) {
+        setSavedElsewhere(true)
+        // Fetch the newer revision, so "Reload" starts from it.
+        queryClient.invalidateQueries({ queryKey: queries.skillPresets._def })
+        scrollToElement(document.getElementById('skill-preset-editor-top'), 'start')
       } else if (status === 409) {
         setConflictDetail(getSkillPresetErrorDetail(error) ?? 'Conflict')
       } else {
         setServerError(getSkillPresetErrorDetail(error) ?? 'The preset could not be saved. Try again.')
       }
     }
-  })
+  }
 
-  const skillChangeCount = effectiveQoverySkills(values).length + values.customSkills.length
   const descriptionFindings = findingsFor(findings, { field: 'description' })
 
   return (
     <FormProvider {...methods}>
       <Section>
-        <form id="skill-preset-editor-top" onSubmit={onSubmit} noValidate className="flex flex-col gap-6 px-8 pt-6">
+        <form
+          id="skill-preset-editor-top"
+          onSubmit={methods.handleSubmit(onValid, onInvalid)}
+          noValidate
+          className="flex flex-col gap-6 px-8 pt-6"
+        >
           <div className="flex flex-col gap-3">
             <Link
               to="/organization/$organizationId/settings/skill-presets"
@@ -253,7 +369,8 @@ export function SkillPresetEditorForm({
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <Heading>{preset ? preset.name : asTemplate ? 'Save as template' : 'Create preset'}</Heading>
-                {preset && <Badge variant="surface">Revision {preset.revision}</Badge>}
+                {preset && <Badge variant="surface">Revision {baseRevision}</Badge>}
+                {preset?.is_template && <Badge variant="outline">Template</Badge>}
               </div>
               {preset && (
                 <Link
@@ -271,6 +388,30 @@ export function SkillPresetEditorForm({
 
           <MockScenarioBanner />
 
+          {changedElsewhere && (
+            <Callout.Root color="yellow" role="status">
+              <Callout.Icon>
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>This preset was changed by someone else</Callout.TextHeading>
+                <Callout.TextDescription>
+                  Revision {preset.revision} was saved while you were editing revision {baseRevision}. Saving now
+                  replaces it with your version. Reload to start from the latest revision, which discards your changes.
+                </Callout.TextDescription>
+                <Button
+                  type="button"
+                  className="mt-3"
+                  size="md"
+                  variant="outline"
+                  color="neutral"
+                  onClick={reloadFromServer}
+                >
+                  Reload latest revision
+                </Button>
+              </Callout.Text>
+            </Callout.Root>
+          )}
           {findings.length > 0 && <SecurityFindingsSummary findings={findings} />}
           {serverError && (
             <Callout.Root color="red" role="alert">
@@ -290,25 +431,21 @@ export function SkillPresetEditorForm({
                 <Controller
                   control={methods.control}
                   name="name"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <InputText
                       name={field.name}
                       label="Name"
                       value={field.value}
                       onChange={field.onChange}
-                      error={errors['name']}
-                      hint={
-                        asTemplate
-                          ? `Starts with "${ORG_TEMPLATE_PREFIX.trim()}" so it shows in the template gallery.`
-                          : undefined
-                      }
+                      error={fieldState.error?.message}
+                      hint={asTemplate ? 'Shown in the template gallery when creating a preset.' : undefined}
                     />
                   )}
                 />
                 <Controller
                   control={methods.control}
                   name="description"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <div id={findingFieldId({ field: 'description' })}>
                       <InputText
                         name={field.name}
@@ -317,7 +454,7 @@ export function SkillPresetEditorForm({
                         onChange={field.onChange}
                         hint="Shown to admins in the list and to members in their agent."
                         error={
-                          errors['description'] ??
+                          fieldState.error?.message ??
                           (descriptionFindings.length > 0
                             ? descriptionFindings.map((finding) => `Line ${finding.line}: ${finding.reason}.`).join(' ')
                             : undefined)
@@ -331,36 +468,23 @@ export function SkillPresetEditorForm({
               <EditorSection
                 id="section-base"
                 title="Start from"
-                description="The Qovery skills members' agents can load. Your team context and your own skills apply on top of any choice."
+                description="The Qovery skills members’ agents can load. Your team context and your own skills apply on top of any choice."
               >
                 <Controller
                   control={methods.control}
                   name="base"
                   render={({ field }) => <BaseChooser value={field.value} onChange={field.onChange} />}
                 />
-                {hiddenQoveryChanges > 0 && (
-                  <Callout.Root color="neutral">
-                    <Callout.Icon>
-                      <Icon iconName="circle-info" iconStyle="regular" />
-                    </Callout.Icon>
-                    <Callout.Text>
-                      <Callout.TextDescription>
-                        Your changes to {hiddenQoveryChanges} Qovery{' '}
-                        {hiddenQoveryChanges === 1 ? 'skill stay' : 'skills stay'} in this draft but are not saved with
-                        this base. Switch back to Full Qovery skills to keep them.
-                      </Callout.TextDescription>
-                    </Callout.Text>
-                  </Callout.Root>
-                )}
+                <HiddenQoveryChangesNotice />
               </EditorSection>
 
-              {values.base === 'QOVERY_FULL' && (
+              {base === 'QOVERY_FULL' && (
                 <EditorSection
                   id="section-qovery-skills"
                   title="Qovery skills"
-                  description="Use a skill as Qovery publishes it, add your team's instructions after it, replace it with your own text, or turn it off."
+                  description="Use a skill as Qovery publishes it, add your team’s instructions after it, replace it with your own text, or turn it off."
                 >
-                  <QoverySkillsSection errors={errors} findings={findings} />
+                  <QoverySkillsSection findings={findings} />
                 </EditorSection>
               )}
 
@@ -369,10 +493,7 @@ export function SkillPresetEditorForm({
                 title="Your skills"
                 description="Skills your organization writes. Agents load one when its description matches the task."
               >
-                <CustomSkillsSection errors={errors} findings={findings} librarySkills={librarySkills} />
-                <p className="text-xs text-neutral-subtle">
-                  {skillChangeCount} of {SKILL_PRESET_LIMITS.maxSkills} skill changes used.
-                </p>
+                <CustomSkillsSection findings={findings} librarySkills={librarySkills} />
               </EditorSection>
 
               <EditorSection
@@ -383,7 +504,7 @@ export function SkillPresetEditorForm({
                 <Controller
                   control={methods.control}
                   name="teamContext"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <MarkdownField
                       id={findingFieldId({ field: 'teamContext' })}
                       label="Team context"
@@ -391,7 +512,7 @@ export function SkillPresetEditorForm({
                       onChange={field.onChange}
                       maxLength={SKILL_PRESET_LIMITS.teamContextMaxLength}
                       hint="Keep it short: it is added to every skill load."
-                      error={errors['teamContext']}
+                      error={fieldState.error?.message}
                       findings={findingsFor(findings, { field: 'teamContext' })}
                       minLines={8}
                     />
@@ -407,8 +528,7 @@ export function SkillPresetEditorForm({
                 ) : (
                   <AssignmentSection
                     draftId={draftId}
-                    draftName={values.name || 'This preset'}
-                    otherPresets={otherPresets.filter((item) => !isOrganizationTemplate(item))}
+                    otherPresets={otherPresets.filter((item) => !isTemplate(item))}
                     assignees={assignees}
                     conflictDetail={conflictDetail}
                   />
@@ -416,44 +536,14 @@ export function SkillPresetEditorForm({
               </EditorSection>
             </div>
 
-            <aside
-              aria-labelledby="agent-context-title"
-              className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4 xl:sticky xl:top-4"
-            >
-              <div className="flex flex-col gap-1">
-                <Heading level={2} id="agent-context-title">
-                  What members' agents receive
-                </Heading>
-                <p className="text-xs text-neutral-subtle">
-                  Agents read a short skill list first, then load only the skills a task needs. Members can read every
-                  piece in full, with its SHA-256.
-                </p>
-              </div>
-              <PreviewAsMemberSelect
-                value={previewTarget}
-                onChange={setPreviewTarget}
-                assignees={assignees}
-                anyoneLabel="Anyone who receives this preset"
-              />
-              {previewed && (
-                <p className="text-xs text-neutral" aria-live="polite">
-                  {previewed.preset?.id === draftId
-                    ? `${previewed.targetLabel} gets this preset (${RESOLUTION_SOURCE_LABELS[previewed.source].toLowerCase()}).`
-                    : previewed.preset
-                      ? `${previewed.targetLabel} gets ${describeResolution(previewed)}, not this one. Showing that preset.`
-                      : `${previewed.targetLabel} gets no preset: Qovery skills as published. Showing today's cost.`}
-                </p>
-              )}
-              <TokenBudgetView budget={budget} compact />
-            </aside>
+            <AgentContextPanel draftId={draftId} otherPresets={otherPresets} assignees={assignees} />
           </div>
 
-          <div className="sticky bottom-0 z-10 -mx-8 flex items-center justify-end gap-3 border-t border-neutral bg-background px-8 py-3">
-            {attempted && Object.keys(errors).length > 0 && (
+          <div className="sticky bottom-0 z-10 flex items-center justify-end gap-3 border-t border-neutral bg-background py-3">
+            {isSubmitted && errorCount > 0 && (
               <span className="mr-auto flex items-center gap-1.5 text-sm text-negative">
-                <Icon iconName="circle-exclamation" iconStyle="regular" />
-                {Object.keys(errors).length === 1 ? '1 field needs' : `${Object.keys(errors).length} fields need`} a
-                change
+                <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
+                {errorCount === 1 ? '1 field needs' : `${errorCount} fields need`} a change
               </span>
             )}
             <Button
@@ -467,12 +557,7 @@ export function SkillPresetEditorForm({
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              size="lg"
-              loading={isCreating || isEditing}
-              disabled={preset && !methods.formState.isDirty}
-            >
+            <Button type="submit" size="lg" loading={isCreating || isEditing} disabled={preset && !isDirty}>
               {preset ? 'Save changes' : asTemplate ? 'Save template' : 'Create preset'}
             </Button>
           </div>
@@ -532,10 +617,13 @@ export function SkillPresetEditor() {
       ...source,
       assigned_to: { organization_default: false, role_ids: [], user_ids: [] },
     })
-    const baseName = source.name.replace(ORG_TEMPLATE_PREFIX, '')
-    initialValues = { ...copy, name: asTemplate ? `${ORG_TEMPLATE_PREFIX}${baseName}` : `${baseName} (copy)` }
-    origin = isOrganizationTemplate(source)
-      ? `Started from your template ${baseName}.`
+    initialValues = {
+      ...copy,
+      isTemplate: asTemplate,
+      name: asTemplate ? `${source.name} template` : isTemplate(source) ? source.name : `${source.name} (copy)`,
+    }
+    origin = isTemplate(source)
+      ? `Started from your template ${source.name}.`
       : `Copied from ${source.name}, without its assignments.`
   } else if (template) {
     initialValues = toSkillPresetFormValues({
@@ -549,14 +637,15 @@ export function SkillPresetEditor() {
 
   return (
     <SkillPresetEditorForm
-      key={preset ? `${preset.id}-${preset.revision}` : `${search.template ?? ''}-${search.from ?? ''}`}
+      // Keyed on the preset only: a background refetch must not remount the form and drop the draft.
+      key={preset ? preset.id : `${search.template ?? ''}-${search.from ?? ''}`}
       organizationId={organizationId}
       initialValues={initialValues}
       preset={preset}
       presets={presets}
       assignees={assignees}
       origin={origin}
-      asTemplate={asTemplate}
+      asTemplate={preset ? preset.is_template : asTemplate}
     />
   )
 }

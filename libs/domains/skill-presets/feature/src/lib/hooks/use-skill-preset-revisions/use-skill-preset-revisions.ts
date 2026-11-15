@@ -5,17 +5,14 @@ export interface UseSkillPresetRevisionsProps {
   organizationId: string
   /** Omit to get the latest revisions of every preset, deleted ones included. */
   skillPresetId?: string
-  enabled?: boolean
+  /** 1 to 100. Defaults to the API maximum. */
+  limit?: number
 }
 
-export function useSkillPresetRevisions({
-  organizationId,
-  skillPresetId,
-  enabled = true,
-}: UseSkillPresetRevisionsProps) {
+export function useSkillPresetRevisions({ organizationId, skillPresetId, limit }: UseSkillPresetRevisionsProps) {
   return useQuery({
-    ...queries.skillPresets.revisions({ organizationId, skillPresetId }),
-    enabled: enabled && Boolean(organizationId),
+    ...queries.skillPresets.revisions({ organizationId, skillPresetId, limit }),
+    enabled: Boolean(organizationId),
     retry: false,
   })
 }

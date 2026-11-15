@@ -1,19 +1,14 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
-import {
-  type SkillPresetResponse,
-  type SkillPresetRevisionResponse,
-  getSkillPresetErrorDetail,
-  getSkillPresetErrorStatus,
-} from '@qovery/domains/skill-presets/data-access'
+import { useState } from 'react'
+import { type SkillPresetResponse, getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/data-access'
 import {
   Badge,
   Button,
-  Callout,
   DropdownMenu,
   EmptyState,
   Heading,
   Icon,
+  Section,
   Skeleton,
   TablePrimitives,
   Tooltip,
@@ -25,16 +20,13 @@ import { useDeleteSkillPreset } from '../hooks/use-delete-skill-preset/use-delet
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPresetRevisions } from '../hooks/use-skill-preset-revisions/use-skill-preset-revisions'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
+import { LoadError } from '../load-error/load-error'
 import { SkillPresetsLayout } from '../skill-presets-layout/skill-presets-layout'
-import {
-  PreviewAsMemberSelect,
-  describeResolution,
-  previewTargets,
-  resolvePreviewTarget,
-} from '../token-budget/preview-as-member'
+import { PreviewAsMemberSelect } from '../token-budget/preview-as-member'
 import { TokenBudgetView } from '../token-budget/token-budget-view'
+import { describeResolution, previewTargets, resolvePreviewTarget } from '../utils/preview-target'
 import { baseLabel } from '../utils/qovery-skills'
-import { isOrganizationTemplate } from '../utils/resolve-preset'
+import { isTemplate } from '../utils/resolve-preset'
 import { computeTokenBudget } from '../utils/token-budget'
 import { AssignmentChips } from './assignment-chips'
 
@@ -61,21 +53,25 @@ function ListSkeleton() {
 
 function PresetRow({
   preset,
-  lastRevision,
   organizationId,
   assignees,
   onDelete,
 }: {
   preset: SkillPresetResponse
-  lastRevision?: SkillPresetRevisionResponse
   organizationId: string
   assignees: ReturnType<typeof useSkillPresetAssignees>['data']
   onDelete: (preset: SkillPresetResponse) => void
 }) {
   const navigate = useNavigate()
+  // One small request per row: the organization-wide history is capped and would miss older presets.
+  const { data: [lastRevision] = [] } = useSkillPresetRevisions({
+    organizationId,
+    skillPresetId: preset.id,
+    limit: 1,
+  })
   const editedAt = lastRevision?.edited_at ?? preset.updated_at
   const editedBy = lastRevision?.edited_by ?? preset.creator_name ?? 'Unknown'
-  const isTemplate = isOrganizationTemplate(preset)
+  const template = isTemplate(preset)
   const skillChanges = preset.skills.length
 
   return (
@@ -90,7 +86,7 @@ function PresetRow({
             >
               {preset.name}
             </Link>
-            {isTemplate && <Badge variant="outline">Template</Badge>}
+            {template && <Badge variant="outline">Template</Badge>}
           </span>
           {preset.description && (
             <span className="max-w-sm truncate text-xs text-neutral-subtle">{preset.description}</span>
@@ -105,7 +101,7 @@ function PresetRow({
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap">{baseLabel(preset.base)}</Table.Cell>
       <Table.Cell className="h-auto py-3">
-        {isTemplate ? (
+        {template ? (
           <span className="text-sm text-neutral-subtle">Templates are not assigned</span>
         ) : (
           <AssignmentChips assignedTo={preset.assigned_to} assignees={assignees} />
@@ -117,14 +113,16 @@ function PresetRow({
           params={{ organizationId, skillPresetId: preset.id }}
           className="whitespace-nowrap text-neutral hover:text-brand"
         >
-          Rev. {preset.revision}
+          Revision {preset.revision}
         </Link>
       </Table.Cell>
       <Table.Cell className="h-auto py-3">
         <span className="flex flex-col text-xs">
           <span className="truncate text-neutral">{editedBy}</span>
           <Tooltip content={dateFullFormat(editedAt)}>
-            <span className="w-fit text-neutral-subtle">{timeAgo(new Date(editedAt))} ago</span>
+            <span tabIndex={0} className="w-fit text-neutral-subtle">
+              {timeAgo(new Date(editedAt))} ago
+            </span>
           </Tooltip>
         </span>
       </Table.Cell>
@@ -170,7 +168,7 @@ function PresetRow({
             >
               Duplicate
             </DropdownMenu.Item>
-            {!isTemplate && (
+            {!template && (
               <DropdownMenu.Item
                 icon={<Icon iconName="bookmark" iconStyle="regular" />}
                 onSelect={() =>
@@ -202,40 +200,21 @@ function PresetRow({
 function PresetsContent({ organizationId }: { organizationId: string }) {
   const navigate = useNavigate()
   const { data: presets, isLoading, error, refetch } = useSkillPresets({ organizationId })
-  const { data: revisions = [] } = useSkillPresetRevisions({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
   const { mutateAsync: deleteSkillPreset } = useDeleteSkillPreset()
   const { openModalConfirmation } = useModalConfirmation()
   const [previewTarget, setPreviewTarget] = useState<string>('')
 
-  const lastRevisionOf = useMemo(() => {
-    const latest = new Map<string, SkillPresetRevisionResponse>()
-    revisions.forEach((revision) => {
-      const current = latest.get(revision.skill_preset_id)
-      if (!current || revision.revision > current.revision) latest.set(revision.skill_preset_id, revision)
-    })
-    return latest
-  }, [revisions])
-
   if (isLoading) return <ListSkeleton />
 
   if (error && getSkillPresetErrorStatus(error) !== 403) {
     return (
-      <Callout.Root color="red" role="alert">
-        <Callout.Icon>
-          <Icon iconName="circle-exclamation" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          <Callout.TextHeading>Skill presets could not be loaded</Callout.TextHeading>
-          <Callout.TextDescription>
-            {getSkillPresetErrorDetail(error) ?? 'Something went wrong on our side.'} Your members' agents keep working
-            with their last known preset.
-          </Callout.TextDescription>
-          <Button className="mt-3" size="md" variant="outline" color="neutral" onClick={() => refetch()}>
-            Try again
-          </Button>
-        </Callout.Text>
-      </Callout.Root>
+      <LoadError
+        title="Skill presets could not be loaded"
+        error={error}
+        onRetry={() => refetch()}
+        note="Your members’ agents keep working with their last known preset."
+      />
     )
   }
 
@@ -245,7 +224,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
       <EmptyState
         icon="wand-magic-sparkles"
         title="No skill presets yet"
-        description="A preset decides which Qovery skills your members' agents load, adds your team's instructions and your own skills, and applies to the whole organization, a role or specific members. Until you create one, agents use the Qovery skills as published."
+        description="A preset decides which Qovery skills your members’ agents load, adds your team’s instructions and your own skills, and applies to the whole organization, a role or specific members. Until you create one, agents use the Qovery skills as published."
       >
         <div className="flex gap-2">
           <Button
@@ -276,8 +255,8 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
     )
   }
 
-  const assigned = all.filter((preset) => !isOrganizationTemplate(preset))
-  const templates = all.filter(isOrganizationTemplate)
+  const assigned = all.filter((preset) => !isTemplate(preset))
+  const templates = all.filter(isTemplate)
   const ordered = [...assigned, ...templates]
   const target = previewTarget || previewTargets(assignees)[0]?.value || ''
   const resolved = target ? resolvePreviewTarget(target, assigned, assignees) : null
@@ -287,7 +266,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
       title: 'Delete skill preset',
       name: preset.name,
       confirmationMethod: 'name',
-      description: `Members who receive ${preset.name} fall back to their role's preset, the organization default, or the Qovery skills as published. Its history stays in the audit logs.`,
+      description: `Members who receive ${preset.name} fall back to their role’s preset, the organization default, or the Qovery skills as published. Its history stays in the audit logs.`,
       action: async () => {
         await deleteSkillPreset({ organizationId, skillPresetId: preset.id })
       },
@@ -295,37 +274,38 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <Table.Root>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeaderCell>Preset</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Starts from</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Assigned to</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Revision</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Last edited</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>
-              <span className="sr-only">Actions</span>
-            </Table.ColumnHeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {ordered.map((preset) => (
-            <PresetRow
-              key={preset.id}
-              preset={preset}
-              lastRevision={lastRevisionOf.get(preset.id)}
-              organizationId={organizationId}
-              assignees={assignees}
-              onDelete={onDelete}
-            />
-          ))}
-        </Table.Body>
-      </Table.Root>
-      <p className="-mt-6 text-xs text-neutral-subtle">
-        A member gets the preset assigned to them, otherwise their role's, otherwise the organization default.
-      </p>
+      <div className="flex flex-col gap-2">
+        <Table.Root>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeaderCell>Preset</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Starts from</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Assigned to</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Revision</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Last edited</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                <span className="sr-only">Actions</span>
+              </Table.ColumnHeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {ordered.map((preset) => (
+              <PresetRow
+                key={preset.id}
+                preset={preset}
+                organizationId={organizationId}
+                assignees={assignees}
+                onDelete={onDelete}
+              />
+            ))}
+          </Table.Body>
+        </Table.Root>
+        <p className="text-xs text-neutral-subtle">
+          A member gets the preset assigned to them, otherwise their role’s, otherwise the organization default.
+        </p>
+      </div>
 
-      <section
+      <Section
         aria-labelledby="preview-member-title"
         className="grid grid-cols-1 gap-6 rounded-md border border-neutral p-4 lg:grid-cols-[280px_minmax(0,1fr)]"
       >
@@ -346,7 +326,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
           )}
         </div>
         {resolved && <TokenBudgetView budget={computeTokenBudget(resolved.preset)} />}
-      </section>
+      </Section>
     </div>
   )
 }

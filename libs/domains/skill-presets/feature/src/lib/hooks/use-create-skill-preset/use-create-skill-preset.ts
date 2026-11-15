@@ -7,9 +7,8 @@ export function useCreateSkillPreset() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.createSkillPreset, {
-    onSuccess(_, { organizationId }) {
+    onSuccess() {
       queryClient.invalidateQueries({ queryKey: queries.skillPresets._def })
-      queryClient.invalidateQueries({ queryKey: queries.skillPresets.list({ organizationId }).queryKey })
     },
     meta: {
       notifyOnSuccess: {

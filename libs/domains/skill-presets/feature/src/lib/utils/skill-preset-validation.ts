@@ -1,9 +1,43 @@
+import { type FieldErrors, type Resolver } from 'react-hook-form'
 import { SKILL_NAME_PATTERN, SKILL_PRESET_LIMITS } from '@qovery/domains/skill-presets/data-access'
 import { type SkillPresetFormValues, effectiveQoverySkills } from './skill-preset-form'
 
 const formatCount = (value: number) => value.toLocaleString('en-US')
 
 export const tooLong = (max: number) => `At most ${formatCount(max)} characters.`
+
+/** Error map shape react-hook-form expects, built from the flat `path: message` map below. */
+export function toFieldErrors(flat: Record<string, string>): FieldErrors<SkillPresetFormValues> {
+  const nested: Record<string, unknown> = {}
+  Object.entries(flat).forEach(([path, message]) => {
+    const keys = path.split('.')
+    let node = nested
+    keys.slice(0, -1).forEach((key) => {
+      node[key] = (node[key] as Record<string, unknown> | undefined) ?? {}
+      node = node[key] as Record<string, unknown>
+    })
+    node[keys[keys.length - 1]] = { type: 'validate', message }
+  })
+  return nested as FieldErrors<SkillPresetFormValues>
+}
+
+/** The reverse, for sections that look errors up by path. */
+export function flattenFieldErrors(errors: object, prefix = ''): Record<string, string> {
+  const flat: Record<string, string> = {}
+  Object.entries(errors).forEach(([key, value]) => {
+    if (!value || typeof value !== 'object' || key === 'ref') return
+    const path = prefix ? `${prefix}.${key}` : key
+    if ('message' in value && typeof value.message === 'string') flat[path] = value.message
+    else Object.assign(flat, flattenFieldErrors(value, path))
+  })
+  return flat
+}
+
+/** Runs the client-side checks through react-hook-form, so errors live in its form state. */
+export const skillPresetResolver: Resolver<SkillPresetFormValues> = (values) => {
+  const errors = validateSkillPresetForm(values)
+  return Object.keys(errors).length > 0 ? { values: {}, errors: toFieldErrors(errors) } : { values, errors: {} }
+}
 
 /** Client-side mirror of the q-core limits. Field paths match the form so errors land on the right field. */
 export function validateSkillPresetForm(values: SkillPresetFormValues): Record<string, string> {
@@ -67,7 +101,8 @@ export function validateSkillPresetForm(values: SkillPresetFormValues): Record<s
 
   const skillCount = effectiveQoverySkills(values).length + values.customSkills.length
   if (skillCount > limits.maxSkills) {
-    errors['customSkills'] = `A preset holds at most ${limits.maxSkills} skill changes. This one has ${skillCount}.`
+    errors['customSkills.root'] =
+      `A preset holds at most ${limits.maxSkills} skill changes. This one has ${skillCount}.`
   }
 
   return errors

@@ -37,6 +37,7 @@ describe('SKILL_PRESET_TEMPLATES', () => {
     async (_, template) => {
       const save = skillPresetsApi.createSkillPreset('organization-1', {
         ...template.preset,
+        is_template: false,
         assigned_to: { organization_default: false, role_ids: [], user_ids: [] },
       })
       await expect(save.catch((error) => getSkillPresetFindings(error))).resolves.toEqual(

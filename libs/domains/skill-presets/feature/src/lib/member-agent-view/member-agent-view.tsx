@@ -70,7 +70,7 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
                     </Table.Cell>
                     <Table.Cell>
                       <Tooltip content={manifest.skill_preset.team_context.sha256}>
-                        <span className="font-code text-xs">
+                        <span tabIndex={0} className="font-code text-xs">
                           {manifest.skill_preset.team_context.sha256.slice(0, 12)}
                         </span>
                       </Tooltip>
@@ -85,15 +85,17 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
                       {skill.description && <span className="block text-xs">{skill.description}</span>}
                     </Table.Cell>
                     <Table.Cell className="text-right tabular-nums">
-                      {skill.content ? `${formatTokens(skill.content.approx_tokens)} tokens` : '-'}
+                      {skill.content ? `${formatTokens(skill.content.approx_tokens)} tokens` : 'None'}
                     </Table.Cell>
                     <Table.Cell>
                       {skill.content ? (
                         <Tooltip content={skill.content.sha256}>
-                          <span className="font-code text-xs">{skill.content.sha256.slice(0, 12)}</span>
+                          <span tabIndex={0} className="font-code text-xs">
+                            {skill.content.sha256.slice(0, 12)}
+                          </span>
                         </Tooltip>
                       ) : (
-                        '-'
+                        <span className="text-neutral-subtle">None</span>
                       )}
                     </Table.Cell>
                   </Table.Row>
@@ -101,7 +103,7 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
               </Table.Body>
             </Table.Root>
             <p className="text-xs text-neutral-subtle">
-              Say "show Qovery preset" to your agent to read any of these in full. The hashes match what your agent
+              Say “show Qovery preset” to your agent to read any of these in full. The hashes match what your agent
               loads and what the audit logs record.
             </p>
           </>

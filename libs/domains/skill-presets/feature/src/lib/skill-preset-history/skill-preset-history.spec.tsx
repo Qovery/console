@@ -4,38 +4,39 @@ import { SkillPresetHistory } from './skill-preset-history'
 
 const mockEditSkillPreset = jest.fn()
 
+const REVISIONS = [
+  {
+    skill_preset_id: 'preset-1',
+    revision: 1,
+    change_type: 'CREATE',
+    edited_by: 'alex.martin@example.com',
+    edited_at: '2026-11-01T00:00:00Z',
+    name: 'Backend team',
+    description: '',
+    base: 'QOVERY_FULL',
+    team_context: 'Deploy to staging first.',
+    skills: [],
+    assigned_to: { organization_default: true, role_ids: [], user_ids: [] },
+  },
+  {
+    skill_preset_id: 'preset-1',
+    revision: 2,
+    change_type: 'UPDATE',
+    edited_by: 'sam.lee@example.com',
+    edited_at: '2026-11-10T00:00:00Z',
+    name: 'Backend team',
+    description: '',
+    base: 'QOVERY_FULL',
+    team_context: 'Deploy to staging first.\nNever deploy to production.',
+    skills: [{ skill_name: 'qovery-assess', mode: 'DISABLE' }],
+    assigned_to: { organization_default: true, role_ids: [], user_ids: [] },
+  },
+]
+
+let mockRevisions = REVISIONS
+
 jest.mock('../hooks/use-skill-preset-revisions/use-skill-preset-revisions', () => ({
-  useSkillPresetRevisions: () => ({
-    isLoading: false,
-    data: [
-      {
-        skill_preset_id: 'preset-1',
-        revision: 1,
-        change_type: 'CREATE',
-        edited_by: 'alex.martin@example.com',
-        edited_at: '2026-11-01T00:00:00Z',
-        name: 'Backend team',
-        description: '',
-        base: 'QOVERY_FULL',
-        team_context: 'Deploy to staging first.',
-        skills: [],
-        assigned_to: { organization_default: true, role_ids: [], user_ids: [] },
-      },
-      {
-        skill_preset_id: 'preset-1',
-        revision: 2,
-        change_type: 'UPDATE',
-        edited_by: 'sam.lee@example.com',
-        edited_at: '2026-11-10T00:00:00Z',
-        name: 'Backend team',
-        description: '',
-        base: 'QOVERY_FULL',
-        team_context: 'Deploy to staging first.\nNever deploy to production.',
-        skills: [{ skill_name: 'qovery-assess', mode: 'DISABLE' }],
-        assigned_to: { organization_default: true, role_ids: [], user_ids: [] },
-      },
-    ],
-  }),
+  useSkillPresetRevisions: () => ({ isLoading: false, data: mockRevisions }),
 }))
 jest.mock('../hooks/use-skill-presets/use-skill-presets', () => ({
   useSkillPresets: () => ({ data: [{ id: 'preset-1', name: 'Backend team' }] }),
@@ -56,6 +57,7 @@ jest.mock('@monaco-editor/react', () => ({
 }))
 
 beforeEach(() => {
+  mockRevisions = REVISIONS
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1', skillPresetId: 'preset-1' })
 })
 
@@ -71,7 +73,7 @@ describe('SkillPresetHistory', () => {
   it('restores an older revision as a new one after confirmation', async () => {
     const { userEvent } = renderWithProviders(<SkillPresetHistory />)
 
-    await userEvent.click(screen.getByRole('button', { name: /Rev\. 1/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Revision 1 · Created/ }))
     await userEvent.click(screen.getByRole('button', { name: /Restore this revision/ }))
     expect(screen.getByText(/as revision 3/)).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Restore revision 1' }))
@@ -82,5 +84,13 @@ describe('SkillPresetHistory', () => {
         body: expect.objectContaining({ team_context: 'Deploy to staging first.', skills: [] }),
       })
     )
+  })
+
+  it('does not diff a revision whose previous one is not loaded', () => {
+    mockRevisions = REVISIONS.filter(({ revision }) => revision === 2)
+    renderWithProviders(<SkillPresetHistory />)
+
+    expect(screen.getByText('Changes not shown: the revision before is not loaded')).toBeInTheDocument()
+    expect(screen.queryByTestId('diff')).not.toBeInTheDocument()
   })
 })

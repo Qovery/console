@@ -1,6 +1,8 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import {
+  SKILL_PRESET_REVISIONS_PAGE_SIZE,
   type SkillPresetRevisionResponse,
   getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
@@ -13,9 +15,9 @@ import {
   CodeDiffEditor,
   Heading,
   Icon,
+  ModalCrud,
   Section,
   Skeleton,
-  Tooltip,
   useModal,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
@@ -26,6 +28,7 @@ import { useEditSkillPreset } from '../hooks/use-edit-skill-preset/use-edit-skil
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPresetRevisions } from '../hooks/use-skill-preset-revisions/use-skill-preset-revisions'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
+import { LoadError } from '../load-error/load-error'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { AssignmentChips } from '../settings-skill-presets/assignment-chips'
 import { baseLabel } from '../utils/qovery-skills'
@@ -48,30 +51,22 @@ function RestoreModal({
   onConfirm: () => Promise<void>
   onClose: () => void
 }) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const methods = useForm()
   return (
-    <Section className="flex flex-col gap-4 p-6">
-      <Heading className="text-2xl">{title}</Heading>
-      <p className="text-sm text-neutral-subtle">{description}</p>
-      <div className="flex justify-end gap-3">
-        <Button type="button" size="lg" variant="plain" color="neutral" onClick={onClose} disabled={isSubmitting}>
-          Cancel
-        </Button>
-        <Button
-          type="button"
-          size="lg"
-          loading={isSubmitting}
-          onClick={async () => {
-            setIsSubmitting(true)
-            await onConfirm()
-            setIsSubmitting(false)
-            onClose()
-          }}
-        >
-          {confirmLabel}
-        </Button>
-      </div>
-    </Section>
+    <FormProvider {...methods}>
+      <ModalCrud
+        title={title}
+        submitLabel={confirmLabel}
+        loading={methods.formState.isSubmitting}
+        onClose={onClose}
+        onSubmit={methods.handleSubmit(async () => {
+          await onConfirm()
+          onClose()
+        })}
+      >
+        <p className="text-sm text-neutral-subtle">{description}</p>
+      </ModalCrud>
+    </FormProvider>
   )
 }
 
@@ -106,7 +101,7 @@ function TextDiff({ title, before, after }: { title: string; before: string; aft
 export function SkillPresetHistory() {
   const { organizationId = '', skillPresetId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
-  const { data: revisions = [], isLoading, error } = useSkillPresetRevisions({ organizationId, skillPresetId })
+  const { data: revisions = [], isLoading, error, refetch } = useSkillPresetRevisions({ organizationId, skillPresetId })
   const { data: presets = [] } = useSkillPresets({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
   const { mutateAsync: editSkillPreset, isLoading: isRestoring } = useEditSkillPreset({
@@ -117,10 +112,32 @@ export function SkillPresetHistory() {
   const [selectedRevision, setSelectedRevision] = useState<number | null>(null)
   const [restoreError, setRestoreError] = useState<string | null>(null)
 
-  const sorted = useMemo(() => [...revisions].sort((a, b) => b.revision - a.revision), [revisions])
-  const latest = sorted[0]
-  const selected = sorted.find(({ revision }) => revision === selectedRevision) ?? latest
-  const previous = selected ? sorted.find(({ revision }) => revision < selected.revision) : undefined
+  // Newest first, each with the revision just before it when it is loaded. The API returns at most
+  // SKILL_PRESET_REVISIONS_PAGE_SIZE revisions, so the oldest loaded one may have no previous here.
+  const entries = useMemo(() => {
+    const sorted = [...revisions].sort((a, b) => b.revision - a.revision)
+    return sorted.map((revision, index) => {
+      const previous = sorted[index + 1]
+      // Revision 1 is the creation: diffing it against nothing is right. Any other revision without
+      // its previous one loaded cannot be diffed.
+      const comparable = previous !== undefined || revision.revision === 1
+      return {
+        revision,
+        previous,
+        comparable,
+        summary: !comparable
+          ? 'Changes not shown: the revision before is not loaded'
+          : revision.change_type === 'UPDATE'
+            ? summarizeDiff(diffRevisions(previous, revision))
+            : null,
+      }
+    })
+  }, [revisions])
+  const isCapped = revisions.length >= SKILL_PRESET_REVISIONS_PAGE_SIZE
+  const latest = entries[0]?.revision
+  const selectedEntry = entries.find(({ revision }) => revision.revision === selectedRevision) ?? entries[0]
+  const selected = selectedEntry?.revision
+  const previous = selectedEntry?.previous
   const isDeleted = latest?.change_type === 'DELETE'
   const presetExists = presets.some(({ id }) => id === skillPresetId)
 
@@ -145,7 +162,7 @@ export function SkillPresetHistory() {
         const findings = getSkillPresetFindings(restoreFailure)
         setRestoreError(
           getSkillPresetErrorStatus(restoreFailure) === 422
-            ? `Qovery's checks changed since this revision was saved, and it no longer passes: ${findings
+            ? `Qovery’s checks changed since this revision was saved, and it no longer passes: ${findings
                 .map((finding) => `${findingLocationLabel(finding)} (${finding.reason})`)
                 .join('; ')}. Fix these lines in the editor instead.`
             : getSkillPresetErrorDetail(restoreFailure) ?? 'The revision could not be restored.'
@@ -159,7 +176,7 @@ export function SkillPresetHistory() {
           description={
             recreate
               ? `This creates a new preset with the content and assignments of revision ${revision.revision}.`
-              : `This saves the content and assignments of revision ${revision.revision} as revision ${(latest?.revision ?? 0) + 1}. Nothing is lost: the current revision stays in the history. Members' agents pick it up on their next skill load.`
+              : `This saves the content and assignments of revision ${revision.revision} as revision ${(latest?.revision ?? 0) + 1}. Nothing is lost: the current revision stays in the history. Members’ agents pick it up on their next skill load.`
           }
           confirmLabel={recreate ? 'Recreate preset' : `Restore revision ${revision.revision}`}
           onConfirm={confirm}
@@ -178,25 +195,33 @@ export function SkillPresetHistory() {
     )
   }
 
-  if (error || !latest || !selected) {
+  if (error) {
     return (
       <Section className="px-8 pt-6">
-        <Callout.Root color="red" role="alert">
+        <LoadError title="The history could not be loaded" error={error} onRetry={() => refetch()} />
+      </Section>
+    )
+  }
+
+  if (!latest || !selected || !selectedEntry) {
+    return (
+      <Section className="px-8 pt-6">
+        <Callout.Root color="neutral">
           <Callout.Icon>
-            <Icon iconName="circle-exclamation" iconStyle="regular" />
+            <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text>
             <Callout.TextHeading>No history found for this preset</Callout.TextHeading>
-            <Callout.TextDescription>
-              {getSkillPresetErrorDetail(error) ?? 'It may belong to another organization.'}
-            </Callout.TextDescription>
+            <Callout.TextDescription>It may belong to another organization.</Callout.TextDescription>
           </Callout.Text>
         </Callout.Root>
       </Section>
     )
   }
 
-  const diff = diffRevisions(previous, selected)
+  const diff = selectedEntry.comparable
+    ? diffRevisions(previous, selected)
+    : { template: null, name: null, description: null, base: null, teamContext: null, skills: [], assignments: null }
   const isLatest = selected.revision === latest.revision
 
   return (
@@ -241,8 +266,7 @@ export function SkillPresetHistory() {
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
         <nav aria-label="Revisions" className="lg:sticky lg:top-4">
           <ol className="relative flex flex-col gap-1 before:absolute before:bottom-3 before:left-[15px] before:top-3 before:w-px before:bg-surface-neutral-component">
-            {sorted.map((revision) => {
-              const revisionPrevious = sorted.find(({ revision: number }) => number < revision.revision)
+            {entries.map(({ revision, summary }) => {
               const isSelected = revision.revision === selected.revision
               return (
                 <li key={revision.revision}>
@@ -265,28 +289,30 @@ export function SkillPresetHistory() {
                     </span>
                     <span className="flex min-w-0 flex-col gap-0.5 pl-2">
                       <span className="text-sm font-medium text-neutral">
-                        Rev. {revision.revision} · {CHANGE_LABELS[revision.change_type]}
+                        Revision {revision.revision} · {CHANGE_LABELS[revision.change_type]}
                         {revision.revision === latest.revision && revision.change_type !== 'DELETE' && (
                           <span className="font-normal text-neutral-subtle"> (current)</span>
                         )}
                       </span>
                       <span className="truncate text-xs text-neutral">{revision.edited_by}</span>
-                      <Tooltip content={dateFullFormat(revision.edited_at)}>
-                        <span className="w-fit text-xs text-neutral-subtle">
-                          {timeAgo(new Date(revision.edited_at))} ago
-                        </span>
-                      </Tooltip>
-                      {revision.change_type === 'UPDATE' && (
-                        <span className="text-xs text-neutral-subtle">
-                          {summarizeDiff(diffRevisions(revisionPrevious, revision))}
-                        </span>
-                      )}
+                      {/* Inside a button, so no tooltip: the full date is read out and shown in the panel. */}
+                      <span className="w-fit text-xs text-neutral-subtle">
+                        {timeAgo(new Date(revision.edited_at))} ago
+                        <span className="sr-only">, {dateFullFormat(revision.edited_at)}</span>
+                      </span>
+                      {summary && <span className="text-xs text-neutral-subtle">{summary}</span>}
                     </span>
                   </button>
                 </li>
               )
             })}
           </ol>
+          {isCapped && (
+            <p className="mt-3 px-2 text-xs text-neutral-subtle">
+              Older revisions are not shown: only the latest {SKILL_PRESET_REVISIONS_PAGE_SIZE} can be listed here. All
+              of them stay in the audit logs.
+            </p>
+          )}
         </nav>
 
         <article
@@ -322,6 +348,12 @@ export function SkillPresetHistory() {
           {selected.change_type === 'DELETE' && (
             <p className="text-sm text-neutral-subtle">
               The preset was deleted. This revision holds its last state, shown against the revision before.
+            </p>
+          )}
+
+          {!selectedEntry.comparable && (
+            <p className="text-sm text-neutral-subtle">
+              The revision before this one is not loaded, so its changes can’t be shown. You can still restore it.
             </p>
           )}
 

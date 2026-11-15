@@ -22,18 +22,25 @@ describe('getSkillPresetsMockScenario', () => {
     setSearch('?mockSkillPresets=typical')
     expect(loadWithFlag(undefined).getSkillPresetsMockScenario()).toBeNull()
     expect(loadWithFlag('false').getSkillPresetsMockScenario()).toBeNull()
+    expect(window.sessionStorage.length).toBe(0)
   })
 
   it('serves the typical scenario by default when the flag is on', () => {
     expect(loadWithFlag('true').getSkillPresetsMockScenario()).toBe('typical')
   })
 
-  it('picks the scenario from the URL and remembers it for the tab', () => {
-    const { getSkillPresetsMockScenario } = loadWithFlag('true')
+  it('remembers the scenario of the page the tab was opened on', () => {
     setSearch('?mockSkillPresets=large')
-    expect(getSkillPresetsMockScenario()).toBe('large')
+    const { getSkillPresetsMockScenario } = loadWithFlag('true')
     setSearch('')
     expect(getSkillPresetsMockScenario()).toBe('large')
+  })
+
+  it('does not write to storage while rendering', () => {
+    const { getSkillPresetsMockScenario } = loadWithFlag('true')
+    setSearch('?mockSkillPresets=slow')
+    expect(getSkillPresetsMockScenario()).toBe('slow')
+    expect(window.sessionStorage.length).toBe(0)
   })
 
   it('ignores unknown scenarios', () => {
@@ -42,9 +49,8 @@ describe('getSkillPresetsMockScenario', () => {
   })
 
   it('goes back to the API with ?mockSkillPresets=off, for the rest of the tab', () => {
-    const { getSkillPresetsMockScenario } = loadWithFlag('true')
     setSearch('?mockSkillPresets=off')
-    expect(getSkillPresetsMockScenario()).toBeNull()
+    const { getSkillPresetsMockScenario } = loadWithFlag('true')
     setSearch('')
     expect(getSkillPresetsMockScenario()).toBeNull()
   })

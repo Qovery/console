@@ -5,8 +5,9 @@ import { Badge, Heading, Icon, InputSearch, Skeleton, TablePrimitives } from '@q
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
+import { LoadError } from '../load-error/load-error'
 import { SkillPresetsLayout } from '../skill-presets-layout/skill-presets-layout'
-import { RESOLUTION_SOURCE_LABELS, isOrganizationTemplate, resolvePresetFor } from '../utils/resolve-preset'
+import { RESOLUTION_SOURCE_LABELS, isTemplate, resolvePresetFor } from '../utils/resolve-preset'
 
 const { Table } = TablePrimitives
 
@@ -18,10 +19,14 @@ const SOURCE_ICONS: Record<SkillPresetResolutionSource, 'user' | 'user-group' | 
 }
 
 function AssignmentsContent({ organizationId }: { organizationId: string }) {
-  const { data: allPresets = [], isLoading } = useSkillPresets({ organizationId })
-  const { data: assignees, isLoading: isAssigneesLoading } = useSkillPresetAssignees({ organizationId })
+  const { data: allPresets = [], isLoading, error, refetch } = useSkillPresets({ organizationId })
+  const {
+    data: assignees,
+    isLoading: isAssigneesLoading,
+    error: assigneesError,
+  } = useSkillPresetAssignees({ organizationId })
   const [search, setSearch] = useState('')
-  const presets = useMemo(() => allPresets.filter((preset) => !isOrganizationTemplate(preset)), [allPresets])
+  const presets = useMemo(() => allPresets.filter((preset) => !isTemplate(preset)), [allPresets])
 
   const rows = useMemo(
     () =>
@@ -32,6 +37,12 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
       })),
     [assignees, presets]
   )
+
+  if (error || assigneesError) {
+    return (
+      <LoadError title="Assignments could not be loaded" error={error ?? assigneesError} onRetry={() => refetch()} />
+    )
+  }
 
   if (isLoading || isAssigneesLoading) {
     return <Skeleton height={240} className="w-full" show />
@@ -68,7 +79,7 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
             Roles and default
           </Heading>
           <p className="text-sm text-neutral-subtle">
-            A member's own preset wins over their role's, which wins over the organization default.
+            A member’s own preset wins over their role’s, which wins over the organization default.
           </p>
         </div>
         <Table.Root>
@@ -117,7 +128,7 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
                     )}
                   </Table.Cell>
                   <Table.Cell className="text-right tabular-nums">
-                    {preset ? `${effective} of ${members.length}` : '-'}
+                    {preset ? `${effective} of ${members.length}` : <span className="text-neutral-subtle">None</span>}
                   </Table.Cell>
                 </Table.Row>
               )
@@ -177,7 +188,7 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
             ))}
           </Table.Body>
         </Table.Root>
-        {filteredRows.length === 0 && <p className="text-sm text-neutral-subtle">No member matches "{search}".</p>}
+        {filteredRows.length === 0 && <p className="text-sm text-neutral-subtle">No member matches “{search}”.</p>}
       </section>
     </div>
   )

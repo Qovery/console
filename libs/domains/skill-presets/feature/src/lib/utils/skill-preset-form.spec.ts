@@ -16,6 +16,7 @@ const preset: SkillPresetResponse = {
     { skill_name: 'release-checklist', mode: 'ADD', description: 'Use when cutting a release.', content: '1. Tag.' },
   ],
   revision: 3,
+  is_template: false,
   creator_name: 'Alex Martin',
   assigned_to: { organization_default: true, role_ids: ['role-1'], user_ids: [] },
 }
@@ -54,5 +55,28 @@ describe('skill preset form mapping', () => {
     expect(
       toSkillPresetRequest({ ...toSkillPresetFormValues(), name: 'x', teamContext: '  \n' }).team_context
     ).toBeNull()
+  })
+
+  it('never sends content on DISABLE or a description on DISABLE and OVERLAY', () => {
+    const values = toSkillPresetFormValues(preset)
+    values.qoverySkills = values.qoverySkills.map((skill) =>
+      skill.skillName === 'qovery-assess'
+        ? { ...skill, choice: 'DISABLE', description: 'left over', content: 'left over' }
+        : skill.skillName === 'qovery-deploy'
+          ? { ...skill, choice: 'OVERLAY', description: 'left over' }
+          : skill
+    )
+    const skills = toSkillPresetRequest(values).skills
+    expect(skills.find(({ skill_name }) => skill_name === 'qovery-assess')).toEqual({
+      skill_name: 'qovery-assess',
+      mode: 'DISABLE',
+    })
+    expect(skills.find(({ skill_name }) => skill_name === 'qovery-deploy')).not.toHaveProperty('description')
+  })
+
+  it('never assigns a template', () => {
+    const body = toSkillPresetRequest({ ...toSkillPresetFormValues(preset), isTemplate: true })
+    expect(body.is_template).toBe(true)
+    expect(body.assigned_to).toEqual({ organization_default: false, role_ids: [], user_ids: [] })
   })
 })

@@ -1,24 +1,120 @@
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import { Controller, useFieldArray, useFormContext, useFormState, useWatch } from 'react-hook-form'
 import { SKILL_PRESET_LIMITS, type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 import { Button, Icon, InputText, InputTextArea, useModal } from '@qovery/shared/ui'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { findingFieldId, findingsFor } from '../utils/skill-preset-findings'
-import { type SkillPresetFormValues, newCustomSkillKey } from '../utils/skill-preset-form'
+import { type SkillPresetFormValues, effectiveQoverySkills } from '../utils/skill-preset-form'
 import { type LibrarySkill, SkillLibraryModal } from './skill-library-modal'
 
+interface CustomSkillRowProps {
+  index: number
+  findings: SkillPresetFinding[]
+  onRemove: () => void
+}
+
+/** One skill of the organization. It watches only its own name, so typing elsewhere does not re-render it. */
+function CustomSkillRow({ index, findings, onRemove }: CustomSkillRowProps) {
+  const { control } = useFormContext<SkillPresetFormValues>()
+  const skillName = useWatch({ control, name: `customSkills.${index}.skillName` }) ?? ''
+  const descriptionFindings = findingsFor(findings, { field: 'skillDescription', skillName })
+  const contentFindings = findingsFor(findings, { field: 'skillContent', skillName })
+
+  return (
+    <fieldset
+      className="flex flex-col gap-3 rounded-md border border-neutral p-3"
+      aria-label={skillName ? `Skill ${skillName}` : `New skill ${index + 1}`}
+    >
+      <div className="flex items-start gap-2">
+        <Controller
+          control={control}
+          name={`customSkills.${index}.skillName`}
+          render={({ field, fieldState }) => (
+            <InputText
+              className="flex-1"
+              name={field.name}
+              label="Skill name"
+              value={field.value}
+              onChange={(event) => field.onChange(event.target.value.toLowerCase())}
+              hint="Lowercase letters, digits and hyphens. Can’t start with qovery."
+              error={fieldState.error?.message}
+            />
+          )}
+        />
+        <Button
+          type="button"
+          size="lg"
+          variant="outline"
+          color="neutral"
+          iconOnly
+          aria-label={`Remove ${skillName || 'this skill'}`}
+          onClick={onRemove}
+        >
+          <Icon iconName="trash-can" iconStyle="regular" />
+        </Button>
+      </div>
+      <Controller
+        control={control}
+        name={`customSkills.${index}.description`}
+        render={({ field, fieldState }) => (
+          <div id={findingFieldId({ field: 'skillDescription', skillName })}>
+            <InputTextArea
+              name={field.name}
+              label="When should agents use it?"
+              value={field.value}
+              onChange={field.onChange}
+              hint="Agents only see this description until a task needs the skill. Say what it does and when to use it."
+              error={
+                fieldState.error?.message ??
+                (descriptionFindings.length > 0
+                  ? descriptionFindings.map((finding) => `Line ${finding.line}: ${finding.reason}.`).join(' ')
+                  : undefined)
+              }
+            />
+          </div>
+        )}
+      />
+      <Controller
+        control={control}
+        name={`customSkills.${index}.content`}
+        render={({ field, fieldState }) => (
+          <MarkdownField
+            id={findingFieldId({ field: 'skillContent', skillName })}
+            label="Content"
+            value={field.value}
+            onChange={field.onChange}
+            maxLength={SKILL_PRESET_LIMITS.skillContentMaxLength}
+            error={fieldState.error?.message}
+            findings={contentFindings}
+          />
+        )}
+      />
+    </fieldset>
+  )
+}
+
+/** "5 of 50 skill changes used", recomputed only when skills are added, removed or switched. */
+function SkillChangeCount() {
+  const { control } = useFormContext<SkillPresetFormValues>()
+  const [base, qoverySkills, customSkills] = useWatch({ control, name: ['base', 'qoverySkills', 'customSkills'] })
+  const count = effectiveQoverySkills({ base, qoverySkills }).length + customSkills.length
+  return (
+    <p className="text-xs text-neutral-subtle">
+      {count} of {SKILL_PRESET_LIMITS.maxSkills} skill changes used.
+    </p>
+  )
+}
+
 export interface CustomSkillsSectionProps {
-  errors: Record<string, string>
   findings: SkillPresetFinding[]
   librarySkills: LibrarySkill[]
 }
 
-export function CustomSkillsSection({ errors, findings, librarySkills }: CustomSkillsSectionProps) {
-  const { control, watch, setValue, getValues } = useFormContext<SkillPresetFormValues>()
+export function CustomSkillsSection({ findings, librarySkills }: CustomSkillsSectionProps) {
+  const { control, setValue, getValues } = useFormContext<SkillPresetFormValues>()
   const { fields, append, remove } = useFieldArray({ control, name: 'customSkills', keyName: 'fieldKey' })
+  const { errors } = useFormState({ control, name: 'customSkills' })
   const { openModal, closeModal } = useModal()
-  const customSkills = watch('customSkills')
-
-  const addBlank = () => append({ key: newCustomSkillKey(), skillName: '', description: '', content: '' })
+  const limitError = errors.customSkills?.root?.message
 
   const openLibrary = () =>
     openModal({
@@ -41,107 +137,34 @@ export function CustomSkillsSection({ errors, findings, librarySkills }: CustomS
                 if (index >= 0) setValue(`qoverySkills.${index}.choice`, 'AS_IS', { shouldDirty: true })
                 return
               }
-              append({
-                key: newCustomSkillKey(),
-                skillName: skill.skillName,
-                description: skill.description,
-                content: skill.content,
-              })
+              append({ skillName: skill.skillName, description: skill.description, content: skill.content })
             })
             closeModal()
           }}
         />
       ),
-      options: { width: 640, fakeModal: true },
+      options: { width: 640 },
     })
 
   return (
     <div className="flex flex-col gap-3">
       {fields.length === 0 && (
         <p className="rounded-md border border-dashed border-neutral p-4 text-sm text-neutral-subtle">
-          No skills of your own yet. Add one to teach agents a process Qovery can't know, like your release checklist.
+          No skills of your own yet. Add one to teach agents a process Qovery can’t know, like your release checklist.
         </p>
       )}
-      {fields.map((field, index) => {
-        const skillName = customSkills[index]?.skillName ?? ''
-        const descriptionFindings = findingsFor(findings, { field: 'skillDescription', skillName })
-        const contentFindings = findingsFor(findings, { field: 'skillContent', skillName })
-        return (
-          <fieldset
-            key={field.fieldKey}
-            className="flex flex-col gap-3 rounded-md border border-neutral p-3"
-            aria-label={skillName ? `Skill ${skillName}` : `New skill ${index + 1}`}
-          >
-            <div className="flex items-start gap-2">
-              <Controller
-                control={control}
-                name={`customSkills.${index}.skillName`}
-                render={({ field: nameField }) => (
-                  <InputText
-                    className="flex-1"
-                    name={nameField.name}
-                    label="Skill name"
-                    value={nameField.value}
-                    onChange={(event) => nameField.onChange(event.target.value.toLowerCase())}
-                    hint="Lowercase letters, digits and hyphens. Can't start with qovery."
-                    error={errors[`customSkills.${index}.skillName`]}
-                  />
-                )}
-              />
-              <Button
-                type="button"
-                size="lg"
-                variant="outline"
-                color="neutral"
-                iconOnly
-                aria-label={`Remove ${skillName || 'this skill'}`}
-                onClick={() => remove(index)}
-              >
-                <Icon iconName="trash-can" iconStyle="regular" />
-              </Button>
-            </div>
-            <Controller
-              control={control}
-              name={`customSkills.${index}.description`}
-              render={({ field: descriptionField }) => (
-                <div id={findingFieldId({ field: 'skillDescription', skillName })}>
-                  <InputTextArea
-                    name={descriptionField.name}
-                    label="When should agents use it?"
-                    value={descriptionField.value}
-                    onChange={descriptionField.onChange}
-                    hint="Agents only see this description until a task needs the skill. Say what it does and when to use it."
-                    error={
-                      errors[`customSkills.${index}.description`] ??
-                      (descriptionFindings.length > 0
-                        ? descriptionFindings.map((finding) => `Line ${finding.line}: ${finding.reason}.`).join(' ')
-                        : undefined)
-                    }
-                  />
-                </div>
-              )}
-            />
-            <Controller
-              control={control}
-              name={`customSkills.${index}.content`}
-              render={({ field: contentField }) => (
-                <MarkdownField
-                  id={findingFieldId({ field: 'skillContent', skillName })}
-                  label="Content"
-                  value={contentField.value}
-                  onChange={contentField.onChange}
-                  maxLength={SKILL_PRESET_LIMITS.skillContentMaxLength}
-                  error={errors[`customSkills.${index}.content`]}
-                  findings={contentFindings}
-                />
-              )}
-            />
-          </fieldset>
-        )
-      })}
-      {errors['customSkills'] && <p className="text-xs text-negative">{errors['customSkills']}</p>}
+      {fields.map((field, index) => (
+        <CustomSkillRow key={field.fieldKey} index={index} findings={findings} onRemove={() => remove(index)} />
+      ))}
+      {limitError && <p className="text-xs text-negative">{limitError}</p>}
       <div className="flex gap-2">
-        <Button type="button" size="md" variant="outline" color="neutral" onClick={addBlank}>
+        <Button
+          type="button"
+          size="md"
+          variant="outline"
+          color="neutral"
+          onClick={() => append({ skillName: '', description: '', content: '' })}
+        >
           <Icon iconName="plus" iconStyle="regular" />
           New skill
         </Button>
@@ -150,6 +173,7 @@ export function CustomSkillsSection({ errors, findings, librarySkills }: CustomS
           Add from library
         </Button>
       </div>
+      <SkillChangeCount />
     </div>
   )
 }

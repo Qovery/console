@@ -17,17 +17,19 @@ export interface SkillPresetsLayoutProps {
 export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
-  const { error } = useSkillPresets({ organizationId })
+  const { error, isLoading } = useSkillPresets({ organizationId })
   const basePath = `/organization/${organizationId}/settings/skill-presets`
   const isMember = getSkillPresetErrorStatus(error) === 403
+  // Only admins can create presets: wait until the list tells whether this user is one.
+  const canCreate = !isLoading && !isMember
 
   return (
     <Section className="px-8 pb-8 pt-6">
       <SettingsHeading
         title="Skill presets"
-        description="Decide how your members' coding agents use Qovery: which Qovery skills they load, your team's instructions on top, and skills of your own. Every save is checked for unsafe content and recorded in the audit logs."
+        description="Decide how your members’ coding agents use Qovery: which Qovery skills they load, your team’s instructions on top, and skills of your own. Every save is checked for unsafe content and recorded in the audit logs."
       >
-        {!isMember && (
+        {canCreate && (
           <Button
             size="md"
             onClick={() =>
@@ -45,11 +47,7 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
           <MemberAgentView organizationId={organizationId} />
         ) : (
           <>
-            <Navbar.Root
-              activeId={activeTab}
-              ariaLabel="Skill presets sections"
-              className="-mt-4 border-b border-neutral"
-            >
+            <Navbar.Root activeId={activeTab} ariaLabel="Skill presets sections" className="border-b border-neutral">
               <Navbar.Item id="presets" to={basePath}>
                 Presets
               </Navbar.Item>
