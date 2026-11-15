@@ -232,4 +232,17 @@ describe('RowEvent', () => {
       screen.getByText('· Rejected by the security review · 2 findings (rule check, model review)', { exact: false })
     ).toBeInTheDocument()
   })
+
+  it('should render a skill viewed in the Console', () => {
+    const viewed = {
+      ...mockEvent,
+      event_type: 'VIEW',
+      target_type: OrganizationEventTargetType.ORGANIZATION,
+      sub_target_type: 'SKILL_PRESET',
+      change: JSON.stringify({ skill_name: 'qovery-deploy', source: 'ROLE', from_cache: false }),
+    } as unknown as OrganizationEventResponse
+    renderWithProviders(<RowEvent {...props} event={viewed} />)
+
+    expect(screen.getByText('Viewed in the Console')).toBeInTheDocument()
+  })
 })

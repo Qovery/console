@@ -211,6 +211,11 @@ export interface SkillPresetUsageResponse {
 /** Same as the audit log page: the generated client's enums do not list these values yet. */
 export const SKILL_PRESET_SUB_TARGET_TYPE = 'SKILL_PRESET'
 export const SKILL_LOAD_EVENT_TYPE = 'LOAD'
+/** A resolved skill read for display (the Console's member view): audited, not counted in usage. */
+export const SKILL_VIEW_EVENT_TYPE = 'VIEW'
+
+/** LOAD: an agent loads the skill (the API default). VIEW: someone reads it, for example in the Console. */
+export type ResolvedSkillPurpose = 'LOAD' | 'VIEW'
 /** A create or an update the security review refused: nothing was saved. */
 export const SKILL_PRESET_REJECTED_EVENT_TYPE = 'REJECTED'
 

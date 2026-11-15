@@ -9,6 +9,7 @@ import {
 import { getSkillPresetsMockScenario } from './skill-presets-mock-mode'
 import {
   type InjectedSkillResponse,
+  type ResolvedSkillPurpose,
   SKILL_LOAD_EVENT_TYPE,
   SKILL_PRESET_SUB_TARGET_TYPE,
   type SkillPresetAssignees,
@@ -47,8 +48,15 @@ export interface SkillPresetsApi {
     params?: { skillPresetId?: string; limit?: number }
   ): Promise<SkillPresetRevisionResponse[]>
   getResolvedSkillPreset(organizationId: string): Promise<SkillPresetManifestResponse>
-  /** Recorded by q-core as a LOAD in the audit logs, like an agent's load. */
-  getResolvedSkill(organizationId: string, skillName: string): Promise<InjectedSkillResponse>
+  /**
+   * Audited by q-core as `purpose`: LOAD (an agent's load, counted in usage) or VIEW (a read for
+   * display, not counted). The Console only ever reads for display, so it sends VIEW.
+   */
+  getResolvedSkill(
+    organizationId: string,
+    skillName: string,
+    params: { purpose: ResolvedSkillPurpose }
+  ): Promise<InjectedSkillResponse>
   /** Skill loads are audit log entries: event LOAD, sub-target SKILL_PRESET. */
   listSkillLoads(organizationId: string, params?: SkillLoadsParams): Promise<OrganizationEventResponseList>
   getSkillPresetUsage(organizationId: string, params: SkillPresetUsageParams): Promise<SkillPresetUsageResponse>
@@ -94,9 +102,10 @@ const httpSkillPresetsApi: SkillPresetsApi = {
     )
     return response.data.results
   },
-  async getResolvedSkill(organizationId, skillName) {
+  async getResolvedSkill(organizationId, skillName, { purpose }) {
     const response = await axios.get<InjectedSkillResponse>(
-      `/organization/${organizationId}/skillPreset/resolved/skill/${encodeURIComponent(skillName)}`
+      `/organization/${organizationId}/skillPreset/resolved/skill/${encodeURIComponent(skillName)}`,
+      { params: { purpose } }
     )
     return response.data
   },

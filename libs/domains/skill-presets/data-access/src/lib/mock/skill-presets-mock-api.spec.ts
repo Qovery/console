@@ -246,7 +246,7 @@ describe('createSkillPresetsMockApi', () => {
           api.getSkillPresetUsage(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
         ),
         settle(api.getResolvedSkillPreset(ORGANIZATION_ID)),
-        settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy')),
+        settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'VIEW' })),
         settle(api.listAssignees()),
       ])
       expect(results.map(({ error }) => error)).toEqual(results.map(() => undefined))
@@ -256,7 +256,7 @@ describe('createSkillPresetsMockApi', () => {
   it('resolves no preset for the member in the member-no-preset scenario', async () => {
     const api = createSkillPresetsMockApi('member-no-preset')
     const { value: manifest } = await settle(api.getResolvedSkillPreset(ORGANIZATION_ID))
-    const { value: skill } = await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy'))
+    const { value: skill } = await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'VIEW' }))
 
     expect(manifest).toEqual({ source: 'QOVERY_DEFAULT', skill_preset: null })
     expect(skill).toEqual(expect.objectContaining({ source: 'QOVERY_DEFAULT', mode: null, team_context: null }))
@@ -264,7 +264,7 @@ describe('createSkillPresetsMockApi', () => {
 
   it('serves the full text of one skill with its hashes', async () => {
     const api = createSkillPresetsMockApi('member')
-    const { value } = await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy'))
+    const { value } = await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'VIEW' }))
     expect(value).toEqual(
       expect.objectContaining({
         mode: 'OVERLAY',
@@ -414,5 +414,30 @@ describe('createSkillPresetsMockApi', () => {
   it('refuses to turn AI features on for a member', async () => {
     const { error } = await settle(createSkillPresetsMockApi('member').enableAiFeatures(ORGANIZATION_ID))
     expect(getSkillPresetErrorStatus(error)).toBe(403)
+  })
+
+  it('audits a read for display as VIEW and keeps it out of usage and skill loads', async () => {
+    const api = createSkillPresetsMockApi('typical')
+    const to = new Date(Date.now() + 60_000)
+    const from = new Date(to.getTime() - 30 * 24 * 3_600_000)
+    const usage = () =>
+      settle(
+        api.getSkillPresetUsage(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
+      )
+    const before = (await usage()).value?.totals.loads
+
+    await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'VIEW' }))
+    const event = api.auditEvents().at(-1)
+    expect(event?.event_type).toBe('VIEW')
+    expect(JSON.parse(event?.change ?? '{}')).toEqual(
+      expect.objectContaining({ skill_name: 'qovery-deploy', from_cache: false })
+    )
+    expect((await usage()).value?.totals.loads).toBe(before)
+    const { value: loads } = await settle(api.listSkillLoads(ORGANIZATION_ID, { pageSize: 100 }))
+    expect(loads?.events?.every(({ event_type }) => (event_type as string) === 'LOAD')).toBe(true)
+
+    await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'LOAD' }))
+    expect(api.auditEvents().at(-1)?.event_type).toBe('LOAD')
+    expect((await usage()).value?.totals.loads).toBe((before ?? 0) + 1)
   })
 })

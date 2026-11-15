@@ -42,7 +42,8 @@ export const skillPresets = createQueryKeys('skillPresets', {
   }),
   resolvedSkill: ({ organizationId, skillName }: { organizationId: string; skillName: string }) => ({
     queryKey: [organizationId, skillName],
-    queryFn: () => skillPresetsApi.getResolvedSkill(organizationId, skillName),
+    // Displayed, not loaded by an agent: audited as a VIEW, never counted in usage.
+    queryFn: () => skillPresetsApi.getResolvedSkill(organizationId, skillName, { purpose: 'VIEW' }),
   }),
   usage: ({ organizationId, ...params }: { organizationId: string } & SkillPresetUsageParams) => ({
     queryKey: [organizationId, params],

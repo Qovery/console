@@ -229,9 +229,9 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
               </Table.Body>
             </Table.Root>
             <p className="text-xs text-neutral-subtle">
-              Qovery skills not listed here load as Qovery publishes them, with the team context. Opening a piece is
-              recorded in the audit logs, like a load by your agent. Say “show Qovery preset” to your agent to see the
-              same text there.
+              Qovery skills not listed here load as Qovery publishes them, with the team context. Opening a piece here
+              is recorded in the audit logs as a view; it does not count as an agent load. Say “show Qovery preset” to
+              your agent to see the same text there.
             </p>
           </>
         )}

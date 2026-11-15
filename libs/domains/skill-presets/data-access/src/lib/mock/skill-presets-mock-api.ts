@@ -17,6 +17,7 @@ import {
   SKILL_LOAD_EVENT_TYPE,
   SKILL_PRESET_REJECTED_EVENT_TYPE,
   SKILL_PRESET_SUB_TARGET_TYPE,
+  SKILL_VIEW_EVENT_TYPE,
   type SkillLoadChange,
   type SkillPresetAssignedTo,
   type SkillPresetAssignees,
@@ -508,7 +509,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       }
       return respond(manifest)
     },
-    getResolvedSkill(_organizationId, skillName) {
+    getResolvedSkill(_organizationId, skillName, { purpose }) {
       const { source, preset } = resolveFor(currentUser.id)
       const skill = preset?.skills.find(({ skill_name }) => skill_name === skillName)
       if (!skill && !isQoverySkillName(skillName)) return fail(404, `There is no skill '${skillName}' to load`)
@@ -522,6 +523,31 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
         content_sha256: skill?.content ? mockHash(skill.content) : null,
         team_context: preset?.team_context ?? null,
         team_context_sha256: preset?.team_context ? mockHash(preset.team_context) : null,
+      }
+      const change: SkillLoadChange = {
+        skill_name: skillName,
+        source,
+        skill_preset_id: preset?.id ?? null,
+        skill_preset_name: preset?.name ?? null,
+        revision: preset?.revision ?? null,
+        mode: skill?.mode ?? null,
+        content_sha256: response.content_sha256,
+        team_context_sha256: response.team_context_sha256,
+        from_cache: false,
+      }
+      // Same change shape for both. Only an agent's LOAD counts in usage.
+      pushEvent(purpose === 'VIEW' ? SKILL_VIEW_EVENT_TYPE : SKILL_LOAD_EVENT_TYPE, currentUser.email, now(), change)
+      if (purpose === 'LOAD') {
+        loadRecords.push({
+          timestamp: now(),
+          user_sub: currentUser.id,
+          user_name: currentUser.name,
+          skill_name: skillName,
+          skill_preset_id: preset?.id ?? null,
+          skill_preset_name: preset?.name ?? null,
+          from_cache: false,
+          tokens: approxTokens(skill?.content) + approxTokens(preset?.team_context),
+        })
       }
       return respond(response)
     },

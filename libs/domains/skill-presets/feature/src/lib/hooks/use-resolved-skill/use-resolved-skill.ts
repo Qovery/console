@@ -3,7 +3,7 @@ import { queries } from '@qovery/state/util-queries'
 
 /**
  * The full text the member's agent gets for one skill, with the team context. Fetched only when the
- * member opens it: q-core records each call as a LOAD in the audit logs.
+ * member opens it, as a VIEW: q-core audits it but does not count it as an agent load.
  */
 export function useResolvedSkill({
   organizationId,

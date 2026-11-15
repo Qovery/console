@@ -12,6 +12,7 @@ import {
   SKILL_LOAD_EVENT_TYPE,
   SKILL_PRESET_REJECTED_EVENT_TYPE,
   SKILL_PRESET_SUB_TARGET_TYPE,
+  SKILL_VIEW_EVENT_TYPE,
 } from '@qovery/domains/skill-presets/data-access'
 import { CodeDiffEditor, CodeEditor, type DiffStats, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
@@ -29,9 +30,12 @@ export interface RowEventProps {
 }
 
 const formatEventName = (eventType?: OrganizationEventType) =>
-  match(eventType)
-    .with(OrganizationEventType.MAINTENANCE_OPERATOR, () => 'Maintenance · Operator Update')
-    .otherwise((type) => (type ?? '').split('_').map(upperCaseFirstLetter).join(' '))
+  // VIEW is not in the generated enum yet.
+  (eventType as string | undefined) === SKILL_VIEW_EVENT_TYPE
+    ? 'Viewed in the Console'
+    : match(eventType)
+        .with(OrganizationEventType.MAINTENANCE_OPERATOR, () => 'Maintenance · Operator Update')
+        .otherwise((type) => (type ?? '').split('_').map(upperCaseFirstLetter).join(' '))
 
 const serviceOverviewUrl = (organizationId: string, projectId: string, environmentId: string, serviceId: string) =>
   `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}/overview`
@@ -228,6 +232,11 @@ export function RowEvent(props: RowEventProps) {
     .when(
       (type) => (type as string | undefined) === SKILL_LOAD_EVENT_TYPE,
       () => <Icon iconName="file-import" className="text-neutral-subtle" />
+    )
+    // Someone read a resolved skill in the Console. Audited, not an agent load.
+    .when(
+      (type) => (type as string | undefined) === SKILL_VIEW_EVENT_TYPE,
+      () => <Icon iconName="eye" className="text-neutral-subtle" />
     )
     // A skill preset save the security review refused: nothing was saved.
     .when(
