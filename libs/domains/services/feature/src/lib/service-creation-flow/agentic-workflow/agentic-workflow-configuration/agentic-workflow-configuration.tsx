@@ -614,7 +614,11 @@ export function AgenticWorkflowConfiguration() {
           environmentId,
           payload: {
             serviceType: 'AGENTIC_WORKFLOW',
-            ...formatAgenticWorkflowRequest(form.getValues(), requiredMcpServerIds),
+            ...formatAgenticWorkflowRequest(
+              form.getValues(),
+              requiredMcpServerIds,
+              llmProviders.find(({ id }) => id === form.getValues('llmProviderId'))
+            ),
           },
         })
         createdServiceIdRef.current = service.id

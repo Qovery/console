@@ -1,6 +1,13 @@
-import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
+import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType, LlmProviderType } from 'qovery-typescript-axios'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
-import { formatAgenticWorkflowRequest, replaceContextServicesInPrompt } from './agentic-workflow-request'
+import {
+  addLlmProviderHosts,
+  formatAgenticWorkflowRequest,
+  getLlmProviderHosts,
+  replaceContextServicesInPrompt,
+} from './agentic-workflow-request'
+
+const BEDROCK_HOSTS = ['bedrock-runtime.*.amazonaws.com', '51.45.40.194', '13.37.114.98', '15.188.250.162']
 
 const values: AgenticWorkflowFormData = {
   name: 'Review pull requests',
@@ -22,7 +29,61 @@ const values: AgenticWorkflowFormData = {
   agentPrompt: 'Review the pull request',
 }
 
+describe('getLlmProviderHosts', () => {
+  it.each([
+    [LlmProviderType.CLAUDE, null, ['api.anthropic.com']],
+    [LlmProviderType.BEDROCK, null, BEDROCK_HOSTS],
+    [LlmProviderType.ANTHROPIC_COMPATIBLE, 'https://llm.example.com:8443/v1', ['llm.example.com']],
+    [LlmProviderType.ANTHROPIC_COMPATIBLE, null, []],
+    [LlmProviderType.ANTHROPIC_COMPATIBLE, 'not a url', []],
+  ])('returns the hosts of a %s provider with base URL %s', (type, base_url, expected) => {
+    expect(getLlmProviderHosts({ type, base_url }, AgenticWorkflowModelType.CLAUDE)).toEqual(expected)
+  })
+
+  it('falls back on the model type when the provider is unknown', () => {
+    expect(getLlmProviderHosts(undefined, AgenticWorkflowModelType.CLAUDE)).toEqual(['api.anthropic.com'])
+    expect(getLlmProviderHosts(undefined, AgenticWorkflowModelType.BEDROCK)).toEqual(BEDROCK_HOSTS)
+  })
+})
+
+describe('addLlmProviderHosts', () => {
+  it('appends missing hosts after the user hosts', () => {
+    expect(addLlmProviderHosts(['api.incident.io'], ['api.anthropic.com'])).toEqual([
+      'api.incident.io',
+      'api.anthropic.com',
+    ])
+  })
+
+  it('does not duplicate a host already allowed, whatever its case', () => {
+    expect(addLlmProviderHosts(['API.Anthropic.com'], ['api.anthropic.com'])).toEqual(['API.Anthropic.com'])
+  })
+
+  it('keeps a wildcard allowlist unchanged', () => {
+    expect(addLlmProviderHosts(['*'], ['api.anthropic.com'])).toEqual(['*'])
+  })
+
+  it('allows the LLM hosts when the allowlist is empty', () => {
+    expect(addLlmProviderHosts([], ['api.anthropic.com'])).toEqual(['api.anthropic.com'])
+  })
+})
+
 describe('formatAgenticWorkflowRequest', () => {
+  it('adds the selected provider hosts to the allowlist', () => {
+    expect(
+      formatAgenticWorkflowRequest({ ...values, whitelistHosts: 'api.incident.io, ' }, [], {
+        type: LlmProviderType.ANTHROPIC_COMPATIBLE,
+        base_url: 'https://gateway.example.com/anthropic',
+      }).governance.host_allowlist
+    ).toEqual(['api.incident.io', 'gateway.example.com'])
+  })
+
+  it('sends a wildcard allowlist as is', () => {
+    expect(
+      formatAgenticWorkflowRequest(values, [], { type: LlmProviderType.CLAUDE, base_url: null }).governance
+        .host_allowlist
+    ).toEqual(['*'])
+  })
+
   it('enables newly created agent tasks', () => {
     expect(formatAgenticWorkflowRequest(values).enabled).toBe(true)
   })
