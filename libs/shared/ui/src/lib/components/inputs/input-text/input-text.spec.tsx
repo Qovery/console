@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import InputText, { type InputTextProps } from './input-text'
 
 describe('InputText', () => {
@@ -12,14 +12,14 @@ describe('InputText', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<InputText name={props.name} label={props.label} />)
+    const { baseElement } = renderWithProviders(<InputText name={props.name} label={props.label} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should apply the accurate classes as input actions', () => {
+  it('should apply the accurate classes as input actions', async () => {
     props.error = 'some error'
 
-    const { rerender } = render(<InputText {...props} />)
+    const { rerender, userEvent } = renderWithProviders(<InputText {...props} />)
 
     let inputContainer = screen.getByLabelText('input-container')
 
@@ -32,24 +32,24 @@ describe('InputText', () => {
     inputContainer = screen.getByLabelText('input-container')
     const input = screen.getByRole('textbox')
 
-    fireEvent.change(input, { target: { value: 'some new text value' } })
+    await userEvent.type(input, 'some new text value')
 
     expect(inputContainer).not.toHaveClass('input--error')
   })
 
-  it('should set the text value when the input event is emitted', async () => {
-    render(<InputText {...props} />)
+  it('should update the value when typing', async () => {
+    const { userEvent } = renderWithProviders(<InputText {...props} />)
 
     const input = screen.getByRole('textbox')
 
-    fireEvent.input(input, { target: { value: 'some new text value' } })
+    await userEvent.type(input, 'some new text value')
 
-    expect(input as HTMLInputElement).toHaveValue('some new text value')
+    expect(input).toHaveValue('some new text value')
   })
 
   it('should display a floating component on the right', async () => {
     props.rightElement = <div>GB</div>
-    render(<InputText {...props} />)
+    renderWithProviders(<InputText {...props} />)
 
     screen.getByText('GB')
 
@@ -63,7 +63,7 @@ describe('InputText', () => {
   it('should keep the label up when the field is prefilled', () => {
     props.value = 'prefilled value'
 
-    render(<InputText {...props} />)
+    renderWithProviders(<InputText {...props} />)
 
     expect(screen.getByLabelText('input-container')).toHaveClass('input--label-up')
     expect(screen.getByRole('textbox')).toHaveValue('prefilled value')
@@ -72,7 +72,7 @@ describe('InputText', () => {
   it('should disable the label transition while syncing a prefilled value', async () => {
     props.value = 'prefilled value'
 
-    render(<InputText {...props} />)
+    renderWithProviders(<InputText {...props} />)
 
     const label = screen.getByText(props.label)
 
@@ -82,9 +82,11 @@ describe('InputText', () => {
   })
 
   it('should disable the label transition when a value is injected after focus', async () => {
-    const { rerender } = render(<InputText {...props} value="" />)
+    const { rerender, userEvent } = renderWithProviders(<InputText {...props} value="" />)
 
-    fireEvent.focus(screen.getByRole('textbox'))
+    await userEvent.tab()
+
+    expect(screen.getByRole('textbox')).toHaveFocus()
 
     rerender(<InputText {...props} value="prefilled value" />)
 

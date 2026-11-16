@@ -1,4 +1,10 @@
-import { type AgenticWorkflowRequest } from 'qovery-typescript-axios'
+import {
+  AgenticWorkflowModelType,
+  type AgenticWorkflowRequest,
+  type LlmProviderResponse,
+  LlmProviderType,
+} from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 import { parseAgenticWorkflowHeaders } from './agentic-workflow-headers'
 
@@ -9,7 +15,47 @@ const DELIMITED_CONTEXT_SERVICES_BLOCK_PATTERN =
 const LEGACY_CONTEXT_SERVICES_BLOCK_PATTERN =
   /\n\n## Context services\n(?:- [^\n]+ — service ID: [^\n]+\n)*(?:- [^\n]+ — service ID: [^\n]+)(?=\n\n|$)/g
 
-function formatWhitelistHosts(value: string) {
+const BEDROCK_HOSTS = ['bedrock-runtime.*.amazonaws.com', '51.45.40.194', '13.37.114.98', '15.188.250.162']
+const CLAUDE_HOSTS = ['api.anthropic.com']
+
+export type AgenticWorkflowLlmProvider = Pick<LlmProviderResponse, 'type' | 'base_url'>
+
+function getBaseUrlHostname(baseUrl?: string | null) {
+  if (!baseUrl) return undefined
+  try {
+    return new URL(baseUrl).hostname || undefined
+  } catch {
+    return undefined
+  }
+}
+
+// The agent's egress is limited to the allowlist, including calls to its own model.
+export function getLlmProviderHosts(
+  provider: AgenticWorkflowLlmProvider | undefined,
+  modelType: AgenticWorkflowModelType
+): string[] {
+  // Without the provider (list not loaded), fall back on the model type. A gateway cannot be resolved this way.
+  if (!provider) return modelType === AgenticWorkflowModelType.BEDROCK ? BEDROCK_HOSTS : CLAUDE_HOSTS
+
+  return match(provider.type)
+    .with(LlmProviderType.CLAUDE, () => CLAUDE_HOSTS)
+    .with(LlmProviderType.BEDROCK, () => BEDROCK_HOSTS)
+    .with(LlmProviderType.ANTHROPIC_COMPATIBLE, () => {
+      const hostname = getBaseUrlHostname(provider.base_url)
+      return hostname ? [hostname] : []
+    })
+    .exhaustive()
+}
+
+export function addLlmProviderHosts(hosts: string[], llmProviderHosts: string[]): string[] {
+  if (hosts.includes('*')) return hosts
+
+  const known = new Set(hosts.map((host) => host.toLowerCase()))
+  const missing = llmProviderHosts.filter((host) => !known.has(host.toLowerCase()))
+  return [...hosts, ...missing]
+}
+
+export function parseHostAllowlist(value: string) {
   return value
     .split(',')
     .map((host) => host.trim())
@@ -38,7 +84,8 @@ export function replaceContextServicesInPrompt(
 
 export function formatAgenticWorkflowRequest(
   values: AgenticWorkflowFormData,
-  requiredMcpServerIds: string[] = []
+  requiredMcpServerIds: string[] = [],
+  llmProvider?: AgenticWorkflowLlmProvider
 ): AgenticWorkflowRequest {
   const scheduleTrigger = values.automations
     .flatMap((automation) => automation.triggers)
@@ -78,7 +125,10 @@ export function formatAgenticWorkflowRequest(
     })),
     agent_prompt: replaceContextServicesInPrompt(values.agentPrompt, values.contextServices),
     governance: {
-      host_allowlist: formatWhitelistHosts(values.whitelistHosts),
+      host_allowlist: addLlmProviderHosts(
+        parseHostAllowlist(values.whitelistHosts),
+        getLlmProviderHosts(llmProvider, values.aiModel)
+      ),
     },
     resources: {
       cpu_milli: Number(values.cpu),
