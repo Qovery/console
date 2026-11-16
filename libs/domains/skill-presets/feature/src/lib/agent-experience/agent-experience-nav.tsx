@@ -60,7 +60,10 @@ export function AgentExperienceNav() {
       <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
         Automate
       </Sidebar.Item>
-      <Sidebar.SubItem to={`${base}/build-optimizer`}>Optimize builds</Sidebar.SubItem>
+      {/* Under Automate: indented like a sub-entry, with the icon of its page. */}
+      <Sidebar.Item to={`${base}/build-optimizer`} icon="gauge-high" iconStyle="regular" className="pl-[39px]">
+        Optimize builds
+      </Sidebar.Item>
       <Sidebar.Item
         to={`${base}/agent-activity`}
         icon="wave-pulse"
