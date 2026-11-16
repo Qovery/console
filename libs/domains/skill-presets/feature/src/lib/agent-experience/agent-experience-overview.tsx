@@ -1,12 +1,11 @@
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ReactNode, useMemo, useState } from 'react'
 import { type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
 import { Badge, Button, Heading, Icon, Link, ProgressBar, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { type ActivitySearch, memberActor, tokenActor } from '../agent-activity/activity-search'
-import { HintLine } from '../agent-activity/agent-activity'
+import { type ActivitySearch } from '../agent-activity/activity-search'
 import { TURN_ON_AI_LABEL, TurnOnAiModal } from '../ai-features-notice/ai-features-notice'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useAgentExperiencePolicyTokens } from '../hooks/use-agent-experience-policy-tokens/use-agent-experience-policy-tokens'
@@ -23,10 +22,9 @@ import {
   type AgentExperienceStepId,
   computeAgentExperienceSetup,
 } from '../utils/agent-experience'
-import { AGENT_JOBS } from '../utils/agent-jobs'
 import { OnOffBadge, copilotStateLabel } from './agent-experience-copilot'
 import { PresetSummary } from './preset-summary'
-import { ActorChip, AgentExperiencePage } from './ui/agent-experience-ui'
+import { ActorChip, AgentExperiencePage, Stat, StatGrid } from './ui/agent-experience-ui'
 
 const DAY_MS = 24 * 3_600_000
 
@@ -41,6 +39,15 @@ function useRange(days: number) {
     }),
     [to, days]
   )
+}
+
+/** The same length of time just before `range`, to compare with. */
+function usePreviousRange(range: { from: string; to: string; bucket: 'DAY' | 'HOUR' }) {
+  return useMemo(() => {
+    const from = new Date(range.from).getTime()
+    const length = new Date(range.to).getTime() - from
+    return { from: new Date(from - length).toISOString(), to: range.from, bucket: range.bucket }
+  }, [range])
 }
 
 const STEPS: Record<AgentExperienceStepId, { title: string; description: string; done: string; action: string }> = {
@@ -68,12 +75,6 @@ const STEPS: Record<AgentExperienceStepId, { title: string; description: string;
     done: 'A policy token is set up.',
     action: 'Create a policy token',
   },
-  activity: {
-    title: 'Watch what agents do',
-    description: 'See what agents did on Qovery, and what was blocked.',
-    done: 'Agents acted on Qovery in the last 30 days.',
-    action: 'Open Activity',
-  },
 }
 
 type AgentExperiencePath =
@@ -89,8 +90,8 @@ const STEP_PATHS: Record<Exclude<AgentExperienceStepId, 'ai'>, AgentExperiencePa
   connect: '/organization/$organizationId/agent-experience/connect',
   preset: '/organization/$organizationId/agent-experience/skill-presets',
   'policy-token': '/organization/$organizationId/agent-experience/policy-tokens',
-  activity: '/organization/$organizationId/agent-experience/agent-activity',
 }
+const ACTIVITY_PATH: AgentExperiencePath = '/organization/$organizationId/agent-experience/agent-activity'
 
 type HeroPath =
   | AgentExperiencePath
@@ -115,7 +116,7 @@ const PILLARS: {
     text: 'The Copilot and skills, tailored per team and per person with skill presets.',
     pieces: [
       { icon: 'message-bot', name: 'Copilot', to: COPILOT_PATH },
-      { icon: 'sparkles', name: 'Skills', to: STEP_PATHS.connect },
+      { icon: 'sparkles', name: 'Install skills', to: STEP_PATHS.connect },
       { icon: 'sliders', name: 'Skill presets', to: STEP_PATHS.preset },
     ],
   },
@@ -135,7 +136,7 @@ const PILLARS: {
     title: 'Observe',
     text: 'What agents did, and what was blocked.',
     pieces: [
-      { icon: 'wave-pulse', name: 'Activity', to: STEP_PATHS.activity },
+      { icon: 'wave-pulse', name: 'Activity', to: ACTIVITY_PATH },
       { icon: 'lock-keyhole', name: 'Audit logs', to: '/organization/$organizationId/audit-logs' },
     ],
   },
@@ -146,49 +147,16 @@ export const HERO_SUBTITLE =
   'Agents can do real infrastructure work on their own when every operation is checked at the API. Set that up here.'
 
 /**
- * The story of Agents, on every Overview. Full the first times, with one action; compact
- * once it is in use, so the numbers stay on top.
+ * The story of Agents, for the first steps only: the full version with its three pillars when nothing
+ * is set up, one sentence once a step is done, nothing once it is in use (the numbers come first).
+ * It holds no action: the checklist's Next row does.
  */
-function AgentExperienceHero({
-  organizationId,
-  compact,
-  action,
-}: {
-  organizationId: string
-  compact: boolean
-  action?: AgentExperienceStepId
-}) {
-  if (compact) {
+function AgentExperienceHero({ organizationId, variant }: { organizationId: string; variant: 'full' | 'sentence' }) {
+  if (variant === 'sentence') {
     return (
-      <Section
-        aria-labelledby="agent-experience-hero"
-        className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral-subtle px-4 py-3"
-        data-testid="agent-experience-hero"
-        data-compact="true"
-      >
-        <p className="text-sm text-neutral">
-          <Heading level={2} id="agent-experience-hero" className="inline text-sm">
-            {HERO_TITLE}.
-          </Heading>{' '}
-          <span className="text-neutral-subtle">{HERO_SUBTITLE}</span>
-        </p>
-        <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-          {PILLARS.map((pillar) => (
-            <li key={pillar.id} className="inline-flex items-center gap-1.5">
-              <Icon iconName={pillar.icon} iconStyle="regular" className="text-brand" aria-hidden="true" />
-              <span className="font-medium text-neutral">{pillar.title}:</span>
-              {pillar.pieces.map((piece, index) => (
-                <span key={piece.name}>
-                  <Link to={piece.to} params={{ organizationId }} color="brand" size="xs">
-                    {piece.name}
-                  </Link>
-                  {index < pillar.pieces.length - 1 ? ',' : ''}
-                </span>
-              ))}
-            </li>
-          ))}
-        </ul>
-      </Section>
+      <p className="text-sm text-neutral-subtle" data-testid="agent-experience-hero" data-variant="sentence">
+        {HERO_SUBTITLE}
+      </p>
     )
   }
   return (
@@ -196,6 +164,7 @@ function AgentExperienceHero({
       aria-labelledby="agent-experience-hero"
       className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral-subtle p-5"
       data-testid="agent-experience-hero"
+      data-variant="full"
     >
       <div className="flex flex-col gap-1">
         <Heading level={2} id="agent-experience-hero" className="text-xl">
@@ -233,11 +202,6 @@ function AgentExperienceHero({
           </li>
         ))}
       </ul>
-      {action && (
-        <div className="flex flex-wrap items-center gap-3">
-          <StepAction step={action} primary organizationId={organizationId} />
-        </div>
-      )}
     </Section>
   )
 }
@@ -274,19 +238,8 @@ function StepAction({
   )
 }
 
-/**
- * `actionAbove`: the step whose action the intro already shows. It gets a status here instead of a
- * second identical button.
- */
-function SetupChecklist({
-  setup,
-  organizationId,
-  actionAbove,
-}: {
-  setup: AgentExperienceSetup
-  organizationId: string
-  actionAbove?: AgentExperienceStepId
-}) {
+/** The setup steps. The Next row holds the only primary button; the others get an outline one. */
+function SetupChecklist({ setup, organizationId }: { setup: AgentExperienceSetup; organizationId: string }) {
   const percent = Math.round((setup.doneCount / setup.steps.length) * 100)
   return (
     <Section aria-labelledby="setup-checklist" className="flex flex-col gap-4 rounded-md border border-neutral p-4">
@@ -337,15 +290,7 @@ function SetupChecklist({
                   <span className="text-xs text-neutral-subtle">{done ? step.done : step.description}</span>
                 </div>
               </div>
-              {!done &&
-                (id === actionAbove ? (
-                  <Badge variant="outline" color="neutral" className="gap-1" data-testid={`setup-step-${id}-status`}>
-                    <Icon iconName="circle" iconStyle="regular" aria-hidden="true" />
-                    {id === 'ai' ? 'Off' : 'Not yet'}
-                  </Badge>
-                ) : (
-                  <StepAction step={id} primary={isNext} organizationId={organizationId} />
-                ))}
+              {!done && <StepAction step={id} primary={isNext} organizationId={organizationId} />}
             </li>
           )
         })}
@@ -354,61 +299,53 @@ function SetupChecklist({
   )
 }
 
-/** A number that opens Activity with the matching filters. */
-function Kpi({
-  label,
-  value,
-  search,
-  tone,
+/**
+ * The last 7 days, compared with the 7 days before. Each number opens Activity with the matching
+ * filters. Denials are not red on their own: only a rise is.
+ */
+function WeekKpis({
+  week,
+  previous,
+  showMembers,
 }: {
-  label: string
-  value: number
-  search: ActivitySearch
-  tone?: 'denied'
+  week: AgentActivityResponse
+  previous?: AgentActivityResponse
+  showMembers: boolean
 }) {
-  const { organizationId = '' } = useParams({ strict: false })
+  const delta = (current: number, before?: number) => (before === undefined ? undefined : current - before)
   return (
-    <Link
-      to="/organization/$organizationId/agent-experience/agent-activity"
-      params={{ organizationId }}
-      search={search}
-      className="flex flex-col gap-0.5 px-4 py-3 hover:bg-surface-neutral-subtle"
-      aria-label={`${label}: ${value}. Open in Activity`}
-    >
-      <dt className="text-xs text-neutral-subtle">{label}</dt>
-      <dd
-        className={clsx(
-          'text-base font-medium tabular-nums',
-          tone === 'denied' && value > 0 ? 'text-negative' : 'text-neutral'
+    <div data-testid="week-kpis">
+      <StatGrid columns={showMembers ? 4 : 3} period="Last 7 days">
+        <Stat
+          label="Allowed actions"
+          value={week.totals.actions}
+          delta={delta(week.totals.actions, previous?.totals.actions)}
+          search={{ range: '7d', outcome: 'ALLOWED' }}
+        />
+        <Stat
+          label="Denied actions"
+          icon="ban"
+          value={week.totals.denials}
+          delta={delta(week.totals.denials, previous?.totals.denials)}
+          riseIsBad
+          search={{ range: '7d', outcome: 'DENIED' }}
+        />
+        {showMembers && (
+          <Stat
+            label="Members with agents"
+            value={memberCount(week)}
+            delta={previous ? memberCount(week) - memberCount(previous) : undefined}
+            search={{ range: '7d', actor: 'members' }}
+          />
         )}
-      >
-        {value.toLocaleString('en-US')}
-      </dd>
-    </Link>
-  )
-}
-
-function WeekKpis({ week, showMembers }: { week: AgentActivityResponse; showMembers: boolean }) {
-  return (
-    <dl
-      className={clsx(
-        'grid grid-cols-2 divide-x divide-neutral overflow-hidden rounded-md border border-neutral',
-        showMembers ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
-      )}
-      data-testid="week-kpis"
-    >
-      <Kpi label="Allowed actions this week" value={week.totals.actions} search={{ range: '7d', outcome: 'ALLOWED' }} />
-      <Kpi
-        label="Denied this week"
-        value={week.totals.denials}
-        search={{ range: '7d', outcome: 'DENIED' }}
-        tone="denied"
-      />
-      {showMembers && (
-        <Kpi label="Members using agents" value={memberCount(week)} search={{ range: '7d', actor: 'members' }} />
-      )}
-      <Kpi label="Skill loads this week" value={week.totals.skill_loads} search={{ range: '7d' }} />
-    </dl>
+        <Stat
+          label="Skill loads"
+          value={week.totals.skill_loads}
+          delta={delta(week.totals.skill_loads, previous?.totals.skill_loads)}
+          search={{ range: '7d' }}
+        />
+      </StatGrid>
+    </div>
   )
 }
 
@@ -477,11 +414,12 @@ function DeniedList({ activity }: { activity: AgentActivityResponse }) {
 }
 
 function AdminOverview({ organizationId }: { organizationId: string }) {
-  const navigate = useNavigate()
   const month = useRange(30)
   const weekRange = useRange(7)
   const activity = useAgentActivity({ organizationId, scope: 'organization', ...month })
   const week = useAgentActivity({ organizationId, scope: 'organization', ...weekRange })
+  const previousRange = usePreviousRange(weekRange)
+  const previousWeek = useAgentActivity({ organizationId, scope: 'organization', ...previousRange })
   const presets = useSkillPresets({ organizationId, isTemplate: false })
   const tokens = useAgentExperiencePolicyTokens({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
@@ -524,27 +462,13 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
     copilotEnabled: copilot.enabled,
   })
 
-  const aiOn = setup.steps.find(({ id }) => id === 'ai')?.done ?? false
   if (setup.state !== 'active') {
     return (
       <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state={setup.state}>
-        <AgentExperienceHero
-          organizationId={organizationId}
-          compact={false}
-          action={setup.state === 'empty' ? (aiOn ? 'connect' : 'ai') : undefined}
-        />
-        <SetupChecklist
-          setup={setup}
-          organizationId={organizationId}
-          actionAbove={setup.state === 'empty' ? (aiOn ? 'connect' : 'ai') : undefined}
-        />
+        <AgentExperienceHero organizationId={organizationId} variant={setup.state === 'empty' ? 'full' : 'sentence'} />
+        <SetupChecklist setup={setup} organizationId={organizationId} />
         {setup.state === 'partial' && week.data && (
-          <Section aria-labelledby="week-activity" className="flex flex-col gap-2">
-            <Heading level={2} id="week-activity">
-              What agents did this week
-            </Heading>
-            <WeekKpis week={week.data} showMembers />
-          </Section>
+          <WeekKpis week={week.data} previous={previousWeek.data} showMembers />
         )}
       </div>
     )
@@ -554,9 +478,45 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
   const tokensByUse = [...policyTokens].sort((a, b) => (b.last_used_at ?? '').localeCompare(a.last_used_at ?? ''))
   return (
     <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state="active">
-      <AgentExperienceHero organizationId={organizationId} compact />
-      {week.data && <WeekKpis week={week.data} showMembers />}
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+      {week.data && <WeekKpis week={week.data} previous={previousWeek.data} showMembers />}
+      <div
+        className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-md border border-neutral px-4 py-2.5 text-sm"
+        data-testid="overview-copilot-state"
+      >
+        <span className="inline-flex items-center gap-2">
+          <span className="text-neutral-subtle">Copilot</span>
+          {copilot.isLoading ? (
+            <Skeleton width={64} height={20} show />
+          ) : (
+            <OnOffBadge on={copilot.enabled} label={copilotStateLabel(copilot.enabled, copilot.readOnly)} />
+          )}
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="text-neutral-subtle">AI features</span>
+          <OnOffBadge on={aiFeaturesEnabled} />
+        </span>
+        {hints.length > 0 && (
+          <Link
+            to="/organization/$organizationId/agent-experience/agent-activity"
+            params={{ organizationId }}
+            color="brand"
+            size="sm"
+            data-testid="overview-suggestions-link"
+          >
+            {hints.length} {hints.length === 1 ? 'suggestion' : 'suggestions'} in Activity
+          </Link>
+        )}
+        <Link
+          to="/organization/$organizationId/agent-experience/copilot"
+          params={{ organizationId }}
+          color="brand"
+          size="sm"
+          className="ml-auto"
+        >
+          Copilot settings
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">
         <Card
           id="overview-presets"
           title="Active presets"
@@ -590,44 +550,9 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
               </li>
             ))}
           </ul>
-          <p className="text-xs text-neutral-subtle" data-testid="next-job-to-automate">
-            Next job to automate: {AGENT_JOBS.length} jobs agents can run on their own, safest first, each with a ready
-            policy.{' '}
-            <Link
-              to="/organization/$organizationId/agent-experience/automate"
-              params={{ organizationId }}
-              color="brand"
-              size="xs"
-            >
-              See what agents can do
-            </Link>
-          </p>
         </Card>
         <Card
-          id="overview-copilot"
-          title="Copilot"
-          link={{ label: 'Copilot settings', to: '/organization/$organizationId/agent-experience/copilot' }}
-        >
-          <dl className="flex flex-col divide-y divide-neutral text-sm" data-testid="overview-copilot-state">
-            <div className="flex items-center justify-between gap-2 pb-2">
-              <dt className="text-neutral">Copilot</dt>
-              <dd>
-                {copilot.isLoading ? (
-                  <Skeleton width={64} height={20} show />
-                ) : (
-                  <OnOffBadge on={copilot.enabled} label={copilotStateLabel(copilot.enabled, copilot.readOnly)} />
-                )}
-              </dd>
-            </div>
-            <div className="flex items-center justify-between gap-2 pt-2">
-              <dt className="text-neutral">AI features</dt>
-              <dd>
-                <OnOffBadge on={aiFeaturesEnabled} />
-              </dd>
-            </div>
-          </dl>
-        </Card>
-        <Card
+          className="xl:col-span-2"
           id="overview-denied-title"
           title="Latest denied actions"
           link={{
@@ -638,44 +563,6 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
         >
           <DeniedList activity={week.data ?? activity.data} />
         </Card>
-        <Card
-          className="xl:col-span-2"
-          id="overview-suggestions"
-          title="Suggestions"
-          link={{ label: 'Activity', to: '/organization/$organizationId/agent-experience/agent-activity' }}
-        >
-          {hints.length === 0 ? (
-            <p className="text-sm text-neutral-subtle">Nothing to adjust in the last 30 days.</p>
-          ) : (
-            <ul className="flex flex-col gap-3 text-sm text-neutral">
-              {hints.slice(0, 4).map((hint) => (
-                <li
-                  key={`${hint.kind}-${'environment' in hint ? hint.environment : 'tokenId' in hint ? hint.tokenId : 'userName' in hint ? hint.userName : 'skillName' in hint ? hint.skillName : ''}`}
-                  className="flex flex-col gap-1"
-                >
-                  <HintLine
-                    hint={hint}
-                    organizationId={organizationId}
-                    onShowMember={(userSub) =>
-                      navigate({
-                        to: '/organization/$organizationId/agent-experience/agent-activity',
-                        params: { organizationId },
-                        search: { actor: memberActor(userSub) },
-                      })
-                    }
-                    onShowToken={(tokenId) =>
-                      navigate({
-                        to: '/organization/$organizationId/agent-experience/agent-activity',
-                        params: { organizationId },
-                        search: { actor: tokenActor(tokenId) },
-                      })
-                    }
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
       </div>
     </div>
   )
@@ -684,10 +571,10 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
 function MemberOverview({ organizationId }: { organizationId: string }) {
   const weekRange = useRange(7)
   const week = useAgentActivity({ organizationId, scope: 'me', ...weekRange })
+  const previousWeek = useAgentActivity({ organizationId, scope: 'me', ...usePreviousRange(weekRange) })
   const copilot = useCopilotStatus({ organizationId })
   return (
     <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state="member">
-      <AgentExperienceHero organizationId={organizationId} compact />
       <Section
         aria-labelledby="member-copilot"
         className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"
@@ -702,14 +589,6 @@ function MemberOverview({ organizationId }: { organizationId: string }) {
             <OnOffBadge on={copilot.enabled} label={copilotStateLabel(copilot.enabled, copilot.readOnly)} />
           )}
         </div>
-        <Link
-          to="/organization/$organizationId/agent-experience/copilot"
-          params={{ organizationId }}
-          color="brand"
-          size="sm"
-        >
-          What the Copilot does
-        </Link>
       </Section>
       <Section aria-labelledby="member-receives" className="flex flex-col gap-2 rounded-md border border-neutral p-4">
         <Heading level={2} id="member-receives">
@@ -719,8 +598,8 @@ function MemberOverview({ organizationId }: { organizationId: string }) {
       </Section>
       <Section aria-labelledby="member-week" className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-3">
-          <Heading level={2} id="member-week">
-            Your agent this week
+          <Heading level={2} id="member-week" className="sr-only">
+            Your agent
           </Heading>
           <Link
             to="/organization/$organizationId/agent-experience/agent-activity"
@@ -734,7 +613,7 @@ function MemberOverview({ organizationId }: { organizationId: string }) {
         {week.isLoading ? (
           <Skeleton height={72} className="w-full" show />
         ) : week.data ? (
-          <WeekKpis week={week.data} showMembers={false} />
+          <WeekKpis week={week.data} previous={previousWeek.data} showMembers={false} />
         ) : (
           <p className="text-sm text-neutral-subtle">Your agent activity could not be loaded.</p>
         )}
@@ -780,9 +659,10 @@ export function AgentExperienceOverview() {
         isLoading
           ? undefined
           : canManage
-            ? 'Coding agents and the Qovery Copilot, working on your infrastructure under your rules: set them up, limit what they can do, and see what they did.'
-            : 'What your coding agent receives from Qovery, and what it did. Only you and your organization’s owners and admins see your activity.'
+            ? 'Coding agents and the Copilot on your infrastructure, under your rules.'
+            : 'What your coding agent receives from Qovery, and what it did.'
       }
+      showHelp
     >
       {isLoading ? (
         <Skeleton height={240} className="w-full" show />

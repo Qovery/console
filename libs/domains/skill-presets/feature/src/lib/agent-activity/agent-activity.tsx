@@ -728,14 +728,14 @@ function ActivityContent({
         // Skill loads and members are people's: they say nothing about policy tokens.
         <StatGrid columns={3}>
           <Stat label="Allowed actions" value={activity.totals.actions} />
-          <Stat label="Denied actions" value={activity.totals.denials} tone="denied" />
+          <Stat label="Denied actions" value={activity.totals.denials} />
           <Stat label="Policy tokens with activity" value={activity.totals.policy_tokens ?? 0} />
         </StatGrid>
       ) : (
         <StatGrid columns={isOrganization ? 5 : 3}>
           <Stat label="Skill loads" value={activity.totals.skill_loads} />
           <Stat label="Allowed actions" value={activity.totals.actions} />
-          <Stat label="Denied actions" value={activity.totals.denials} tone="denied" />
+          <Stat label="Denied actions" value={activity.totals.denials} />
           {isOrganization && <Stat label="Members with activity" value={memberCount(activity)} />}
           {isOrganization && <Stat label="Policy tokens with activity" value={activity.totals.policy_tokens ?? 0} />}
         </StatGrid>

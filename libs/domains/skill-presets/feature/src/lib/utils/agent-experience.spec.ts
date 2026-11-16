@@ -14,7 +14,7 @@ describe('computeAgentExperienceSetup', () => {
   it('is empty the first time, and asks to turn on AI first', () => {
     const setup = computeAgentExperienceSetup(nothing)
     expect(setup.state).toBe('empty')
-    expect(setup.steps.map(({ id }) => id)).toEqual(['ai', 'connect', 'preset', 'policy-token', 'activity'])
+    expect(setup.steps.map(({ id }) => id)).toEqual(['ai', 'connect', 'preset', 'policy-token'])
     expect(setup.doneCount).toBe(0)
     expect(setup.nextStep).toBe('ai')
   })
@@ -56,7 +56,7 @@ describe('computeAgentExperienceSetup', () => {
       copilotEnabled: true,
     })
     expect(setup.state).toBe('active')
-    expect(setup.doneCount).toBe(5)
+    expect(setup.doneCount).toBe(4)
     expect(setup.nextStep).toBeNull()
   })
 })

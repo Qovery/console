@@ -1,6 +1,9 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { Link, useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Badge, Icon, Section } from '@qovery/shared/ui'
+import { Badge, Heading, Icon, Section } from '@qovery/shared/ui'
+import { type ActivitySearch } from '../../agent-activity/activity-search'
 import { MockScenarioBanner } from '../../mock-scenario-banner/mock-scenario-banner'
 
 /*
@@ -93,24 +96,84 @@ export function ActorChip({
   )
 }
 
-/** A row of numbers above a page or a section. */
-export function StatGrid({ children, columns }: { children: ReactNode; columns: 3 | 4 | 5 }) {
+/** A row of numbers, with the period said once above it ("Last 7 days"). */
+export function StatGrid({ children, columns, period }: { children: ReactNode; columns: 3 | 4 | 5; period?: string }) {
   const lg = { 3: 'lg:grid-cols-3', 4: 'lg:grid-cols-4', 5: 'lg:grid-cols-5' }[columns]
   return (
-    <dl className={`grid grid-cols-2 divide-x divide-neutral rounded-md border border-neutral ${lg}`}>{children}</dl>
+    <div className="flex flex-col gap-2">
+      {period && (
+        <Heading level={2} className="text-sm" data-testid="stat-period">
+          {period}
+        </Heading>
+      )}
+      <dl className={`grid grid-cols-2 gap-3 ${lg}`} data-testid="stat-grid">
+        {children}
+      </dl>
+    </div>
   )
 }
 
-export function Stat({ label, value, tone }: { label: string; value: number; tone?: 'denied' }) {
-  return (
-    <div className="flex flex-col gap-0.5 px-4 py-3">
-      <dt className="text-xs text-neutral-subtle">{label}</dt>
-      <dd
-        className={`text-base font-medium tabular-nums ${tone === 'denied' && value > 0 ? 'text-negative' : 'text-neutral'}`}
-      >
-        {value.toLocaleString('en-US')}
+/**
+ * One number. With `search`, a card that opens Activity with those filters, and looks clickable (hover
+ * border, chevron). `delta` compares with the previous period, in neutral text; it turns red only when
+ * denials rise (`riseIsBad`), which is a real signal, while a denied count on its own is not.
+ */
+export function Stat({
+  label,
+  value,
+  icon,
+  delta,
+  riseIsBad = false,
+  search,
+}: {
+  label: string
+  value: number
+  icon?: IconName
+  delta?: number
+  riseIsBad?: boolean
+  search?: ActivitySearch
+}) {
+  const { organizationId = '' } = useParams({ strict: false })
+  const content = (
+    <>
+      <dt className="flex items-center gap-1.5 text-xs text-neutral-subtle">
+        {icon && <Icon iconName={icon} iconStyle="regular" aria-hidden="true" />}
+        {label}
+      </dt>
+      <dd className="flex items-baseline gap-2">
+        <span className="text-base font-medium tabular-nums text-neutral">{value.toLocaleString('en-US')}</span>
+        {delta !== undefined && delta !== 0 && (
+          <span
+            className={`text-xs ${riseIsBad && delta > 0 ? 'text-negative' : 'text-neutral-subtle'}`}
+            data-testid="stat-delta"
+          >
+            {delta > 0 ? '+' : ''}
+            {delta} vs previous period
+          </span>
+        )}
       </dd>
-    </div>
+    </>
+  )
+  if (!search) {
+    return <div className="flex flex-col gap-0.5 rounded-md border border-neutral px-4 py-3">{content}</div>
+  }
+  return (
+    <Link
+      to="/organization/$organizationId/agent-experience/agent-activity"
+      params={{ organizationId }}
+      search={search}
+      className="group relative flex flex-col gap-0.5 rounded-md border border-neutral px-4 py-3 pr-8 transition-colors hover:border-brand-strong hover:bg-surface-neutral-subtle focus-visible:border-brand-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
+      aria-label={`${label}: ${value.toLocaleString('en-US')}. Open in Activity`}
+      data-testid="stat-link"
+    >
+      {content}
+      <Icon
+        iconName="chevron-right"
+        iconStyle="regular"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle group-hover:text-neutral"
+        aria-hidden="true"
+      />
+    </Link>
   )
 }
 

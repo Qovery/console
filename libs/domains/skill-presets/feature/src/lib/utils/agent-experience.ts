@@ -3,7 +3,7 @@
  * "connected" means agents have loaded a skill or acted on Qovery, as agent activity reports it.
  */
 
-export type AgentExperienceStepId = 'ai' | 'connect' | 'preset' | 'policy-token' | 'activity'
+export type AgentExperienceStepId = 'ai' | 'connect' | 'preset' | 'policy-token'
 export type AgentExperienceState = 'empty' | 'partial' | 'active'
 
 export interface AgentExperienceSetupInput {
@@ -29,7 +29,8 @@ export interface AgentExperienceSetup {
 }
 
 // AI comes first: the Copilot and saving a preset both need AI features on.
-const ORDER: AgentExperienceStepId[] = ['ai', 'connect', 'preset', 'policy-token', 'activity']
+// Only steps the user does: agents acting is shown on Activity, not as a step to complete.
+const ORDER: AgentExperienceStepId[] = ['ai', 'connect', 'preset', 'policy-token']
 
 export function computeAgentExperienceSetup(input: AgentExperienceSetupInput): AgentExperienceSetup {
   const connected = input.skillLoads + input.actions + input.denials > 0
@@ -39,7 +40,6 @@ export function computeAgentExperienceSetup(input: AgentExperienceSetupInput): A
     'policy-token': input.policyTokens > 0,
     // One step for two switches: AI features and the Copilot.
     ai: input.aiFeaturesEnabled && input.copilotEnabled,
-    activity: input.actions + input.denials > 0,
   }
   const state: AgentExperienceState =
     connected && done.preset && done['policy-token']

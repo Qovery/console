@@ -48,47 +48,46 @@ describe('AgentExperienceOverview', () => {
     useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperienceOverview />)
 
-    expect(await screen.findByTestId('setup-progress')).toHaveTextContent('0 of 5 done')
+    expect(await screen.findByTestId('setup-progress')).toHaveTextContent('0 of 4 done')
     expect(screen.getByTestId('agent-experience-state')).toHaveAttribute('data-state', 'empty')
     const intro = screen.getByTestId('agent-experience-hero')
     expect(within(intro).getByRole('heading', { name: 'The future of infrastructure is agentic' })).toBeInTheDocument()
     expect(within(intro).getByText(/every operation is checked at the API/)).toBeInTheDocument()
-    expect(within(screen.getByTestId('hero-pillar-guide')).getByText('Skill presets')).toBeInTheDocument()
+    expect(within(screen.getByTestId('hero-pillar-guide')).getByText('Install skills')).toBeInTheDocument()
     expect(within(screen.getByTestId('hero-pillar-control')).getByText(/Deny by default/)).toBeInTheDocument()
     expect(within(screen.getByTestId('hero-pillar-observe')).getByText('Audit logs')).toBeInTheDocument()
     expect(screen.queryByText(/two switches/)).not.toBeInTheDocument()
-    // One "Turn on AI" button: the checklist step shows a status instead of a second one.
+    // One "Turn on AI" button, on the Next row; none in the hero.
     expect(screen.getAllByRole('button', { name: 'Turn on AI' })).toHaveLength(1)
+    expect(within(screen.getByTestId('setup-step-ai')).getByRole('button', { name: 'Turn on AI' })).toBeInTheDocument()
+    expect(within(intro).queryByRole('button')).not.toBeInTheDocument()
     expect(stepState('ai')).toBe('next')
-    expect(screen.getByTestId('setup-step-ai-status')).toHaveTextContent('Off')
     expect(screen.queryByTestId('week-kpis')).not.toBeInTheDocument()
   })
 
   it('turns on AI features and the Copilot in one action, then leads to connecting an agent', async () => {
     useScenario('agent-experience-empty')
     const { userEvent } = renderWithProviders(<AgentExperienceOverview />)
-    const intro = await screen.findByTestId('agent-experience-hero')
+    const aiStep = await screen.findByTestId('setup-step-ai')
 
-    await userEvent.click(within(intro).getByRole('button', { name: 'Turn on AI' }))
+    await userEvent.click(within(aiStep).getByRole('button', { name: 'Turn on AI' }))
     const dialog = await screen.findByRole('dialog')
     await userEvent.click(
       await within(dialog).findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
     )
     await userEvent.click(within(dialog).getByTestId('submit-button'))
 
-    expect(
-      await within(screen.getByTestId('agent-experience-hero')).findByText('Connect your agent')
-    ).toBeInTheDocument()
     await waitFor(() => expect(stepState('ai')).toBe('done'))
-    expect(screen.getByTestId('setup-step-connect-status')).toBeInTheDocument()
+    expect(stepState('connect')).toBe('next')
+    expect(within(screen.getByTestId('setup-step-connect')).getByText('Connect your agent')).toBeInTheDocument()
   })
 
   it('keeps AI features on when the Copilot step fails, and Retry only turns on the Copilot', async () => {
     useScenario('agent-experience-copilot-error')
     const { userEvent } = renderWithProviders(<AgentExperienceOverview />)
-    const intro = await screen.findByTestId('agent-experience-hero')
+    const aiStep = await screen.findByTestId('setup-step-ai')
 
-    await userEvent.click(within(intro).getByRole('button', { name: 'Turn on AI' }))
+    await userEvent.click(within(aiStep).getByRole('button', { name: 'Turn on AI' }))
     const dialog = await screen.findByRole('dialog')
     await userEvent.click(
       await within(dialog).findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
@@ -108,9 +107,9 @@ describe('AgentExperienceOverview', () => {
     renderWithProviders(<AgentExperienceOverview />)
 
     // The Copilot state arrives after the first render.
-    await waitFor(() => expect(screen.getByTestId('setup-progress')).toHaveTextContent('3 of 5 done'))
-    // The hero stays, without its own action: the checklist holds the next one.
-    expect(within(screen.getByTestId('agent-experience-hero')).queryByRole('button')).not.toBeInTheDocument()
+    await waitFor(() => expect(screen.getByTestId('setup-progress')).toHaveTextContent('2 of 4 done'))
+    // The hero folds to one sentence once a step is done.
+    expect(screen.getByTestId('agent-experience-hero')).toHaveAttribute('data-variant', 'sentence')
     expect(stepState('connect')).toBe('done')
     expect(stepState('preset')).toBe('next')
     expect(stepState('policy-token')).toBe('todo')
@@ -124,14 +123,17 @@ describe('AgentExperienceOverview', () => {
     expect(await screen.findByRole('heading', { name: 'Active presets' })).toBeInTheDocument()
     expect(screen.getByTestId('agent-experience-state')).toHaveAttribute('data-state', 'active')
     expect(screen.queryByTestId('setup-steps')).not.toBeInTheDocument()
-    expect(await screen.findByTestId('week-kpis')).toHaveTextContent('Members using agents')
+    const kpis = await screen.findByTestId('week-kpis')
+    expect(kpis).toHaveTextContent('Last 7 days')
+    expect(kpis).toHaveTextContent('Members with agents')
+    expect(within(kpis).getAllByRole('link')).toHaveLength(4)
     const tokens = screen.getByRole('heading', { name: 'Policy tokens in use' }).closest('section') as HTMLElement
     expect(within(tokens).getByText('ci-deployer')).toBeInTheDocument()
     expect(screen.getByTestId('overview-denied')).toHaveTextContent('payments-production')
-    // Compact hero, so the numbers stay on top, and a pointer to the next jobs to automate.
-    expect(screen.getByTestId('agent-experience-hero')).toHaveAttribute('data-compact', 'true')
-    expect(screen.getByTestId('next-job-to-automate')).toHaveTextContent('9 jobs agents can run on their own')
-    expect(screen.getByRole('heading', { name: 'Suggestions' })).toBeInTheDocument()
+    // No hero once in use: the numbers come first. Suggestions live on Activity, linked from here.
+    expect(screen.queryByTestId('agent-experience-hero')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Suggestions' })).not.toBeInTheDocument()
+    expect(screen.getByTestId('overview-copilot-state')).toHaveTextContent(/\d+ suggestions? in Activity/)
     expect(await screen.findByTestId('overview-copilot-state')).toHaveTextContent('On, read-only')
   })
 
@@ -142,8 +144,12 @@ describe('AgentExperienceOverview', () => {
     expect(await screen.findByRole('heading', { name: 'Your agent setup', level: 1 })).toBeInTheDocument()
     expect(await screen.findByTestId('preset-summary')).toHaveTextContent('Your agent gets the')
     expect(screen.queryByTestId('setup-steps')).not.toBeInTheDocument()
-    expect(screen.queryByText('Members using agents')).not.toBeInTheDocument()
+    expect(screen.queryByText('Members with agents')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
+    // Nothing that leads to a page a member cannot use.
+    expect(screen.queryByTestId('agent-experience-hero')).not.toBeInTheDocument()
+    expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
+    expect(screen.queryByText('What the Copilot does')).not.toBeInTheDocument()
   })
 })
 
