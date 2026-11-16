@@ -1140,7 +1140,7 @@ export function AgentActivity() {
       title={isRoleLoading ? 'Activity' : isOrganization ? 'Activity' : 'Your activity'}
       description={
         isOrganization
-          ? 'What agents did on Qovery, through skills, MCP and policy tokens, and what was refused.'
+          ? 'What agents did on Qovery, and what was refused.'
           : 'What your coding agent did on Qovery. Only you and your owners and admins see this.'
       }
     >

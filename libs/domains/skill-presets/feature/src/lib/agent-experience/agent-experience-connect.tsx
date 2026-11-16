@@ -216,10 +216,13 @@ export function AgentExperienceConnect() {
         <CodingAgentLogos />
         <Accordion.Root type="single" collapsible>
           <Accordion.Item value="skills" className="border-0">
-            <Accordion.Trigger className="text-sm font-medium text-brand">
+            <Accordion.Trigger
+              className="min-h-0 cursor-pointer gap-2 bg-transparent px-0 text-sm font-medium text-brand"
+              iconClassName="text-brand"
+            >
               See the {QOVERY_SKILLS.length} skills
             </Accordion.Trigger>
-            <Accordion.Content>
+            <Accordion.Content className="bg-transparent">
               <ul className="flex flex-col gap-2 pt-2" data-testid="connect-skill-list">
                 {QOVERY_SKILLS.map(({ name, description }) => (
                   <li key={name} className="flex flex-col gap-0.5 text-sm md:flex-row md:gap-3">

@@ -650,7 +650,7 @@ function MemberOverview({ organizationId }: { organizationId: string }) {
 export function AgentExperienceOverview() {
   const { organizationId = '' } = useParams({ strict: false })
   const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
-  useDocumentTitle('Agents')
+  useDocumentTitle(!isLoading && !canManage ? 'Your agent setup - Agents' : 'Agents')
 
   return (
     <AgentExperiencePage
