@@ -18,6 +18,7 @@ export function Pagination(props: PaginationProps) {
       <div className="flex items-center gap-0.5">
         <Button
           data-testid="button-previous-page"
+          aria-label="Previous page"
           className="w-8 justify-center"
           variant="surface"
           color="neutral"
@@ -30,6 +31,7 @@ export function Pagination(props: PaginationProps) {
         </Button>
         <Button
           data-testid="button-next-page"
+          aria-label="Next page"
           className="w-8 justify-center"
           variant="surface"
           color="neutral"
@@ -44,6 +46,7 @@ export function Pagination(props: PaginationProps) {
       <div className="flex items-center gap-3">
         <InputSelectSmall
           dataTestId="select-page-size"
+          ariaLabel="Rows per page"
           name="pageSize"
           className="!w-16"
           defaultValue={props.pageSize || '30'}

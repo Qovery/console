@@ -1,6 +1,7 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import {
   type AgentActionOrigin,
@@ -18,11 +19,11 @@ import {
   Heading,
   Icon,
   InputSelect,
+  Pagination,
   Section,
   SegmentedControl,
   Skeleton,
   TablePrimitives,
-  Tooltip,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -43,7 +44,6 @@ import {
   actorLabel,
   computeAgentActivityHints,
   fillTimeline,
-  groupActionsByType,
   memberCount,
   neverLoadedSkills,
   peopleRows,
@@ -68,6 +68,7 @@ import { useActivitySearch } from './use-activity-search'
 const { Table } = TablePrimitives
 
 const ALL = 'all'
+const NOTE_SEEN_KEY = 'agents-activity-coverage-note-seen'
 const ATTRIBUTION_NOTE =
   'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
 const NO_SKILL_LABEL = 'No skill (MCP or API)'
@@ -256,7 +257,10 @@ export function HintLine({
   }
 }
 
-/** Period, actor, skill, outcome and source. Every change goes to the URL. */
+/**
+ * One toolbar row, as on Audit logs: the period on the left, then actor, skill, source and outcome,
+ * then Clear filters on the right. Every change goes to the URL.
+ */
 function FilterBar({
   search,
   setSearch,
@@ -287,15 +291,22 @@ function FilterBar({
         : []
     ),
   ]
+  // A filter change starts the recent actions back on their first page.
+  const set = (patch: Partial<ActivitySearch>) => setSearch({ ...patch, page: undefined })
   return (
-    <div className="flex flex-wrap items-end gap-3" data-testid="activity-filters">
+    <div
+      className="flex flex-wrap items-end gap-2 xl:flex-nowrap"
+      data-testid="activity-filters"
+      role="toolbar"
+      aria-label="Filters"
+    >
       <div className="flex flex-col gap-1">
         <span className="text-xs text-neutral-subtle" id="activity-range-label">
           Period
         </span>
         <SegmentedControl.Root
           value={search.range ?? DEFAULT_RANGE}
-          onValueChange={(value) => setSearch({ range: value === DEFAULT_RANGE ? undefined : value })}
+          onValueChange={(value) => set({ range: value === DEFAULT_RANGE ? undefined : value })}
           aria-labelledby="activity-range-label"
         >
           {ACTIVITY_RANGES.map((item) => (
@@ -307,20 +318,20 @@ function FilterBar({
       </div>
       {scope === 'organization' && (
         <InputSelect
-          className="w-56"
+          className="w-48 shrink-0"
           label="Actor"
           isSearchable
           value={search.actor ?? ALL}
-          onChange={(value) => setSearch({ actor: value === ALL ? undefined : (value as string) })}
+          onChange={(value) => set({ actor: value === ALL ? undefined : (value as string) })}
           options={actorOptions}
         />
       )}
       <InputSelect
-        className="w-48"
+        className="w-44 shrink-0"
         label="Skill"
         isSearchable
         value={search.skill ?? ALL}
-        onChange={(value) => setSearch({ skill: value === ALL ? undefined : (value as string) })}
+        onChange={(value) => set({ skill: value === ALL ? undefined : (value as string) })}
         options={[
           { value: ALL, label: 'All skills' },
           { value: NO_SKILL, label: NO_SKILL_LABEL },
@@ -330,44 +341,34 @@ function FilterBar({
         ]}
       />
       <InputSelect
-        className="w-56"
+        className="w-44 shrink-0"
         label="Source"
         value={search.via ?? ALL}
-        onChange={(value) => setSearch({ via: value === ALL ? undefined : (value as ActivitySearch['via']) })}
+        onChange={(value) => set({ via: value === ALL ? undefined : (value as ActivitySearch['via']) })}
         options={[
           { value: ALL, label: 'All sources' },
           ...Object.entries(SOURCE_FILTER_LABELS).map(([value, label]) => ({ value, label: label ?? value })),
         ]}
       />
-      <div className="flex flex-col gap-1">
-        <span className="text-xs text-neutral-subtle" id="activity-outcome-label">
-          Outcome
-        </span>
-        <SegmentedControl.Root
-          value={search.outcome ?? ALL}
-          onValueChange={(value) =>
-            setSearch({ outcome: value === ALL ? undefined : (value as ActivitySearch['outcome']) })
-          }
-          aria-labelledby="activity-outcome-label"
-        >
-          <SegmentedControl.Item value={ALL} className="text-xs">
-            All
-          </SegmentedControl.Item>
-          <SegmentedControl.Item value="ALLOWED" className="text-xs">
-            Allowed
-          </SegmentedControl.Item>
-          <SegmentedControl.Item value="DENIED" className="text-xs">
-            Denied
-          </SegmentedControl.Item>
-        </SegmentedControl.Root>
-      </div>
+      <InputSelect
+        className="w-36 shrink-0"
+        label="Outcome"
+        value={search.outcome ?? ALL}
+        onChange={(value) => set({ outcome: value === ALL ? undefined : (value as ActivitySearch['outcome']) })}
+        options={[
+          { value: ALL, label: 'All outcomes' },
+          { value: 'ALLOWED', label: 'Allowed' },
+          { value: 'DENIED', label: 'Denied' },
+        ]}
+      />
       {hasActivityFilters(search) && (
         <Button
           type="button"
           size="md"
           variant="plain"
           color="neutral"
-          onClick={() => setSearch({ actor: undefined, skill: undefined, outcome: undefined, via: undefined })}
+          className="ml-auto"
+          onClick={() => set({ actor: undefined, skill: undefined, outcome: undefined, via: undefined })}
         >
           Clear filters
         </Button>
@@ -453,11 +454,11 @@ function BreakdownTable({
     : actor.policyTokenId || actor.actorType === 'POLICY_TOKEN'
       ? 'token'
       : 'member'
-  const [choice, setChoice] = useState<Breakdown | null>(null)
-  const breakdown = isOrganization ? choice ?? automatic : 'skill'
-  const setBreakdown = setChoice
+  // The chosen breakdown is in the URL (`view`), so a shared link keeps it.
+  const breakdown: Breakdown = isOrganization ? search.view ?? automatic : 'skill'
+  const setBreakdown = (view: Breakdown) => setSearch({ view: view === automatic ? undefined : view })
   const toggle = (key: 'actor' | 'skill', value: string) =>
-    setSearch({ [key]: search[key] === value ? undefined : value })
+    setSearch({ [key]: search[key] === value ? undefined : value, page: undefined })
   const unused = neverLoadedSkills(activity)
   const tokens = activity.by_policy_token ?? []
   const people = peopleRows(activity)
@@ -666,23 +667,50 @@ function BreakdownTable({
   )
 }
 
+const PAGE_SIZE_DEFAULT = 30
+const HINT_ICONS: Record<AgentActivityHint['kind'], IconName> = {
+  'unused-skills': 'sliders',
+  'environment-denials': 'ban',
+  'member-denials': 'user',
+  'token-denials': 'key',
+  'loads-without-actions': 'sparkles',
+}
+
+/** "197 allowed, 14 denied, busiest day 25 Oct with 12": the chart, for screen readers. */
+function chartSummary(points: { label: string; allowed: number; denied: number }[]) {
+  const allowed = points.reduce((total, point) => total + point.allowed, 0)
+  const denied = points.reduce((total, point) => total + point.denied, 0)
+  const peak = points.reduce(
+    (best, point) =>
+      point.allowed + point.denied > best.count ? { label: point.label, count: point.allowed + point.denied } : best,
+    { label: '', count: 0 }
+  )
+  return `${allowed} allowed and ${denied} denied actions${peak.count > 0 ? `, busiest ${peak.label} with ${peak.count}` : ''}.`
+}
+
 function ActivityContent({
   activity,
+  previous,
   scope,
   organizationId,
   search,
   setSearch,
   bucket,
+  periodLabel,
 }: {
   activity: AgentActivityResponse
+  previous?: AgentActivityResponse
   scope: Scope
   organizationId: string
   search: ActivitySearch
   setSearch: (patch: Partial<ActivitySearch>) => void
   bucket: AgentActivityBucket
+  periodLabel: string
 }) {
   const isOrganization = scope === 'organization'
   const filtered = hasActivityFilters(search)
+  const [pageSize, setPageSize] = useState(PAGE_SIZE_DEFAULT)
+  const [actionType, setActionType] = useState(ALL)
   const hints = useMemo(
     () => (isOrganization ? computeAgentActivityHints(activity, { filtered }) : []),
     [activity, isOrganization, filtered]
@@ -701,6 +729,23 @@ function ActivityContent({
   const denied = activity.recent.filter(({ outcome }) => outcome === 'DENIED')
   const actorFilter = parseActor(search.actor)
   const tokensOnly = isOrganization && Boolean(actorFilter.policyTokenId || actorFilter.actorType === 'POLICY_TOKEN')
+  const delta = (current: number, before?: number) => (before === undefined ? undefined : current - before)
+
+  // Recent actions: an action type filter on the table, then pages.
+  // Types of action only: a refused request is an outcome, filtered with Outcome.
+  const actionTypes = [
+    ...new Set(
+      activity.recent
+        .filter(({ outcome }) => outcome === 'ALLOWED')
+        .map(({ event, target_type }) => actionLabel(event, target_type))
+    ),
+  ]
+  const rows = activity.recent.filter(
+    ({ event, target_type }) => actionType === ALL || actionLabel(event, target_type) === actionType
+  )
+  const pageCount = Math.max(Math.ceil(rows.length / pageSize), 1)
+  const page = Math.min(search.page ?? 1, pageCount)
+  const pageRows = rows.slice((page - 1) * pageSize, page * pageSize)
 
   if (activity.totals.skill_loads + activity.totals.actions + activity.totals.denials === 0) {
     return (
@@ -726,22 +771,54 @@ function ActivityContent({
     <div className="flex flex-col gap-6">
       {tokensOnly ? (
         // Skill loads and members are people's: they say nothing about policy tokens.
-        <StatGrid columns={3}>
-          <Stat label="Allowed actions" value={activity.totals.actions} />
-          <Stat label="Denied actions" value={activity.totals.denials} />
+        <StatGrid columns={3} period={periodLabel}>
+          <Stat
+            label="Allowed actions"
+            value={activity.totals.actions}
+            delta={delta(activity.totals.actions, previous?.totals.actions)}
+          />
+          <Stat
+            label="Denied actions"
+            icon="ban"
+            value={activity.totals.denials}
+            delta={delta(activity.totals.denials, previous?.totals.denials)}
+            riseIsBad
+          />
           <Stat label="Policy tokens with activity" value={activity.totals.policy_tokens ?? 0} />
         </StatGrid>
       ) : (
-        <StatGrid columns={isOrganization ? 5 : 3}>
-          <Stat label="Skill loads" value={activity.totals.skill_loads} />
-          <Stat label="Allowed actions" value={activity.totals.actions} />
-          <Stat label="Denied actions" value={activity.totals.denials} />
-          {isOrganization && <Stat label="Members with activity" value={memberCount(activity)} />}
+        <StatGrid columns={isOrganization ? 5 : 3} period={periodLabel}>
+          <Stat
+            label="Skill loads"
+            value={activity.totals.skill_loads}
+            delta={delta(activity.totals.skill_loads, previous?.totals.skill_loads)}
+          />
+          <Stat
+            label="Allowed actions"
+            value={activity.totals.actions}
+            delta={delta(activity.totals.actions, previous?.totals.actions)}
+          />
+          <Stat
+            label="Denied actions"
+            icon="ban"
+            value={activity.totals.denials}
+            delta={delta(activity.totals.denials, previous?.totals.denials)}
+            riseIsBad
+          />
+          {isOrganization && (
+            <Stat
+              label="Members with agents"
+              value={memberCount(activity)}
+              delta={previous ? memberCount(activity) - memberCount(previous) : undefined}
+            />
+          )}
           {isOrganization && <Stat label="Policy tokens with activity" value={activity.totals.policy_tokens ?? 0} />}
         </StatGrid>
       )}
 
-      <div className={clsx('grid grid-cols-1 gap-6', isOrganization && 'xl:grid-cols-[minmax(0,1fr)_360px]')}>
+      <div
+        className={clsx('grid grid-cols-1 items-start gap-6', isOrganization && 'xl:grid-cols-[minmax(0,1fr)_400px]')}
+      >
         <Section
           aria-labelledby="activity-timeline"
           className="flex flex-col gap-2 rounded-md border border-neutral p-4"
@@ -755,16 +832,36 @@ function ActivityContent({
                 <span className="h-2 w-3 rounded-sm bg-surface-brand-solid" /> Allowed
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-2 w-3 rounded-sm bg-surface-negative-solid" /> Denied
+                <svg width="12" height="8" aria-hidden="true">
+                  <rect width="12" height="8" rx="1" fill="url(#denied-hatch)" />
+                </svg>
+                <Icon iconName="ban" iconStyle="regular" className="text-negative" />
+                Denied
               </span>
             </span>
           </div>
+          <p className="sr-only" data-testid="chart-summary">
+            {chartSummary(timeline)}
+          </p>
           <Chart.Container
             className="h-52"
             isEmpty={activity.totals.actions + activity.totals.denials === 0}
-            aria-label="Agent actions over time, allowed and denied"
+            aria-hidden="true"
           >
             <BarChart data={timeline} margin={{ top: 8, bottom: 0, left: 0, right: 0 }}>
+              {/* Denied bars are hatched as well as red, so they read without color too. */}
+              <defs>
+                <pattern
+                  id="denied-hatch"
+                  width="4"
+                  height="4"
+                  patternUnits="userSpaceOnUse"
+                  patternTransform="rotate(45)"
+                >
+                  <rect width="4" height="4" fill="var(--negative-9)" />
+                  <line x1="0" y1="0" x2="0" y2="4" stroke="var(--negative-11)" strokeWidth="1.5" />
+                </pattern>
+              </defs>
               <CartesianGrid horizontal vertical={false} stroke="var(--neutral-4)" />
               <XAxis dataKey="label" tickLine={false} minTickGap={24} />
               <YAxis allowDecimals={false} width={32} tickLine={false} axisLine={false} />
@@ -777,7 +874,7 @@ function ActivityContent({
                 }
               />
               <Bar dataKey="allowed" stackId="actions" fill="var(--brand-9)" isAnimationActive={false} />
-              <Bar dataKey="denied" stackId="actions" fill="var(--negative-9)" isAnimationActive={false} />
+              <Bar dataKey="denied" stackId="actions" fill="url(#denied-hatch)" isAnimationActive={false} />
             </BarChart>
           </Chart.Container>
         </Section>
@@ -793,18 +890,29 @@ function ActivityContent({
             {hints.length === 0 ? (
               <p className="text-sm text-neutral-subtle">Nothing to adjust in this period.</p>
             ) : (
-              <ul className="flex flex-col gap-3 text-sm text-neutral" data-testid="activity-suggestions">
+              <ul
+                className="flex flex-col divide-y divide-neutral text-sm text-neutral"
+                data-testid="activity-suggestions"
+              >
                 {hints.map((hint) => (
                   <li
                     key={`${hint.kind}-${'environment' in hint ? hint.environment : 'tokenId' in hint ? hint.tokenId : 'userName' in hint ? hint.userName : 'skillName' in hint ? hint.skillName : ''}`}
-                    className="flex flex-col gap-1"
+                    className="flex items-start gap-2.5 py-2.5 first:pt-0 last:pb-0"
                   >
-                    <HintLine
-                      hint={hint}
-                      organizationId={organizationId}
-                      onShowMember={(userSub) => setSearch({ actor: memberActor(userSub) })}
-                      onShowToken={(tokenId) => setSearch({ actor: tokenActor(tokenId) })}
+                    <Icon
+                      iconName={HINT_ICONS[hint.kind]}
+                      iconStyle="regular"
+                      className="mt-0.5 text-neutral-subtle"
+                      aria-hidden="true"
                     />
+                    <span className="flex min-w-0 flex-1 items-start justify-between gap-3 [&>*:last-child]:shrink-0 [&>*:last-child]:whitespace-nowrap">
+                      <HintLine
+                        hint={hint}
+                        organizationId={organizationId}
+                        onShowMember={(userSub) => setSearch({ actor: memberActor(userSub), page: undefined })}
+                        onShowToken={(tokenId) => setSearch({ actor: tokenActor(tokenId), page: undefined })}
+                      />
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -814,107 +922,28 @@ function ActivityContent({
         )}
       </div>
 
-      <BreakdownTable activity={activity} scope={scope} search={search} setSearch={setSearch} />
-
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <Section aria-labelledby="activity-types" className="flex flex-col gap-2">
-          <Heading level={2} id="activity-types">
-            Actions by type
-          </Heading>
-          <ul className="flex flex-col divide-y divide-neutral rounded-md border border-neutral text-sm">
-            {groupActionsByType(activity.actions_by_type).map((row) => (
-              <li key={row.label} className="flex items-center justify-between gap-3 px-4 py-2.5">
-                <span className="text-neutral">{row.label}</span>
-                <span className="flex items-center gap-3 tabular-nums">
-                  <span className="text-neutral">{row.count}</span>
-                  {row.denied > 0 && (
-                    <span className="inline-flex items-center gap-1 text-xs text-negative">
-                      <Icon iconName="ban" iconStyle="regular" aria-hidden="true" />
-                      {row.denied} denied
-                    </span>
-                  )}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        <Section aria-labelledby="activity-denied" className="flex flex-col gap-2">
-          <div className="flex items-center justify-between gap-2">
-            <Heading level={2} id="activity-denied">
-              What was blocked
-            </Heading>
-            {denied.length > 0 && search.outcome !== 'DENIED' && (
-              <Button
-                type="button"
-                variant="plain"
-                color="brand"
-                size="xs"
-                className="h-auto px-0 text-sm"
-                onClick={() => setSearch({ outcome: 'DENIED' })}
-              >
-                Show only denied
-              </Button>
-            )}
-          </div>
-          {denied.length === 0 ? (
-            <p className="rounded-md border border-neutral p-4 text-sm text-neutral-subtle">
-              No agent action was denied in this period.
-            </p>
-          ) : (
-            <div className="flex flex-col gap-2 rounded-md border border-neutral p-4 text-sm">
-              <ul className="flex flex-col gap-2" data-testid="denied-actions">
-                {denied.slice(0, 6).map((action) => (
-                  <li key={`${action.at}-${action.user_name}-${action.target_name}`} className="flex flex-col">
-                    <span className="inline-flex flex-wrap items-center gap-x-1.5 text-neutral">
-                      <Icon iconName="ban" iconStyle="regular" className="text-negative" aria-hidden="true" />
-                      {actionLabel(action.event, action.target_type)} on {targetLabel(action.target_type)}
-                      <span className="font-code">{action.target_name}</span>
-                      {action.environment_name && action.environment_name !== action.target_name ? (
-                        <>
-                          in <span className="font-code">{action.environment_name}</span>
-                        </>
-                      ) : null}
-                    </span>
-                    <span className="flex items-center gap-1.5 pl-5 text-xs text-neutral-subtle">
-                      {isOrganization && <Actor userName={action.user_name} kind={action.actor_kind} />}
-                      <span>{timeAgo(new Date(action.at))} ago</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-xs text-neutral-subtle">
-                Denied by the member’s role or the policy token the agent used. Adjust them in{' '}
-                <Link
-                  to="/organization/$organizationId/agent-experience/policy-tokens"
-                  params={{ organizationId }}
-                  className="font-medium text-brand hover:underline"
-                >
-                  policy tokens
-                </Link>{' '}
-                or{' '}
-                <Link
-                  to="/organization/$organizationId/agent-experience/skill-presets"
-                  params={{ organizationId }}
-                  className="font-medium text-brand hover:underline"
-                >
-                  skill presets
-                </Link>
-                .
-              </p>
-            </div>
-          )}
-        </Section>
-      </div>
-
       <Section aria-labelledby="activity-recent" className="flex flex-col gap-2">
-        <div className="flex flex-col gap-1">
-          <Heading level={2} id="activity-recent">
-            Recent actions
-          </Heading>
-          <p className="text-xs text-neutral-subtle">
-            The latest {activity.recent.length} actions. What the agent did, never the prompt or the code.
-          </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="flex flex-col gap-1">
+            <Heading level={2} id="activity-recent">
+              Recent actions
+            </Heading>
+            <p className="text-xs text-neutral-subtle" data-testid="recent-count">
+              {rows.length === 0
+                ? 'No action of this type in this period.'
+                : `Showing ${(page - 1) * pageSize + 1} to ${Math.min(page * pageSize, rows.length)} of ${rows.length} actions in this period. What the agent did, never the prompt or the code.`}
+            </p>
+          </div>
+          <InputSelect
+            className="w-52"
+            label="Action"
+            value={actionType}
+            onChange={(value) => {
+              setActionType(value as string)
+              setSearch({ page: undefined })
+            }}
+            options={[{ value: ALL, label: 'All actions' }, ...actionTypes.map((label) => ({ value: label, label }))]}
+          />
         </div>
         <Table.Root>
           <Table.Header>
@@ -929,16 +958,13 @@ function ActivityContent({
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {activity.recent.slice(0, 25).map((action) => (
-              <Table.Row
-                key={`${action.at}-${action.user_name}-${action.target_name}`}
-                className={clsx(action.outcome === 'DENIED' && 'bg-surface-negative-subtle')}
-                data-outcome={action.outcome}
-              >
+            {pageRows.map((action) => (
+              <Table.Row key={`${action.at}-${action.user_name}-${action.target_name}`} data-outcome={action.outcome}>
                 <Table.Cell className="whitespace-nowrap">
-                  <Tooltip content={dateFullFormat(action.at)}>
-                    <span tabIndex={0}>{timeAgo(new Date(action.at))} ago</span>
-                  </Tooltip>
+                  {/* The full date on hover, without a tab stop on every row. */}
+                  <time dateTime={action.at} title={dateFullFormat(action.at)}>
+                    {timeAgo(new Date(action.at))} ago
+                  </time>
                 </Table.Cell>
                 {isOrganization && (
                   <Table.Cell>
@@ -966,6 +992,92 @@ function ActivityContent({
             ))}
           </Table.Body>
         </Table.Root>
+        {rows.length > pageSize || page > 1 ? (
+          <Pagination
+            className="pt-2"
+            previousDisabled={page <= 1}
+            nextDisabled={page >= pageCount}
+            onPrevious={() => setSearch({ page: page - 1 > 1 ? page - 1 : undefined })}
+            onNext={() => setSearch({ page: page + 1 })}
+            pageSize={String(pageSize)}
+            onPageSizeChange={(size) => {
+              setPageSize(Number(size) || PAGE_SIZE_DEFAULT)
+              setSearch({ page: undefined })
+            }}
+          />
+        ) : null}
+      </Section>
+
+      <BreakdownTable activity={activity} scope={scope} search={search} setSearch={setSearch} />
+
+      <Section aria-labelledby="activity-denied" className="flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <Heading level={2} id="activity-denied">
+            What was blocked
+          </Heading>
+          {denied.length > 0 && search.outcome !== 'DENIED' && (
+            <span className="text-xs text-neutral-subtle" data-testid="denied-count">
+              {Math.min(denied.length, 6)} of {activity.totals.denials} shown.{' '}
+              <Button
+                type="button"
+                variant="plain"
+                color="brand"
+                size="xs"
+                className="h-auto px-0 text-xs"
+                onClick={() => setSearch({ outcome: 'DENIED', page: undefined })}
+              >
+                Show all denied
+              </Button>
+            </span>
+          )}
+        </div>
+        {denied.length === 0 ? (
+          <p className="rounded-md border border-neutral p-4 text-sm text-neutral-subtle">
+            No agent action was denied in this period.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-2 rounded-md border border-neutral p-4 text-sm">
+            <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2" data-testid="denied-actions">
+              {denied.slice(0, 6).map((action) => (
+                <li key={`${action.at}-${action.user_name}-${action.target_name}`} className="flex flex-col">
+                  <span className="inline-flex flex-wrap items-center gap-x-1.5 text-neutral">
+                    <Icon iconName="ban" iconStyle="regular" className="text-negative" aria-hidden="true" />
+                    {actionLabel(action.event, action.target_type)} on {targetLabel(action.target_type)}
+                    <span className="font-code">{action.target_name}</span>
+                    {action.environment_name && action.environment_name !== action.target_name ? (
+                      <>
+                        in <span className="font-code">{action.environment_name}</span>
+                      </>
+                    ) : null}
+                  </span>
+                  <span className="flex items-center gap-1.5 pl-5 text-xs text-neutral-subtle">
+                    {isOrganization && <Actor userName={action.user_name} kind={action.actor_kind} />}
+                    <span>{timeAgo(new Date(action.at))} ago</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs text-neutral-subtle">
+              Denied by the member’s role or the policy token the agent used. Adjust them in{' '}
+              <Link
+                to="/organization/$organizationId/agent-experience/policy-tokens"
+                params={{ organizationId }}
+                className="font-medium text-brand hover:underline"
+              >
+                policy tokens
+              </Link>{' '}
+              or{' '}
+              <Link
+                to="/organization/$organizationId/agent-experience/skill-presets"
+                params={{ organizationId }}
+                className="font-medium text-brand hover:underline"
+              >
+                skill presets
+              </Link>
+              .
+            </p>
+          </div>
+        )}
       </Section>
     </div>
   )
@@ -999,7 +1111,20 @@ export function AgentActivity() {
     to: params.to,
     bucket: params.bucket,
   })
+  // The same length of time just before, to compare the numbers with.
+  const length = new Date(params.to).getTime() - new Date(params.from).getTime()
+  const { data: previous } = useAgentActivity({
+    organizationId,
+    scope,
+    enabled: !isRoleLoading,
+    ...params,
+    from: new Date(new Date(params.from).getTime() - length).toISOString(),
+    to: params.from,
+  })
   const isOrganization = scope === 'organization'
+  // The privacy note in full the first time, then in one line.
+  const [noteSeen] = useState(() => window.localStorage.getItem(NOTE_SEEN_KEY) === 'true')
+  useEffect(() => window.localStorage.setItem(NOTE_SEEN_KEY, 'true'), [])
   const activity =
     data && search.skill === NO_SKILL
       ? {
@@ -1016,27 +1141,34 @@ export function AgentActivity() {
       description={
         isOrganization
           ? 'What agents did on Qovery, through skills, MCP and policy tokens, and what was refused.'
-          : 'What your coding agent did on Qovery, and what was refused. Only you and your organization’s owners and admins see this.'
+          : 'What your coding agent did on Qovery. Only you and your owners and admins see this.'
       }
     >
-      <Callout.Root color="neutral" data-testid="coverage-note">
-        <Callout.Icon>
-          <Icon iconName="eye" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text>
-          <Callout.TextDescription>
-            {data?.coverage.note ?? DEFAULT_COVERAGE_NOTE} Prompts and code are never collected.
-            {data && data.coverage.sources.length > 0 && (
-              <span className="mt-1 block text-xs text-neutral-subtle" data-testid="coverage-sources">
-                Sources: {data.coverage.sources.map((source) => SOURCE_LABELS[source] ?? source).join(', ')}.
-              </span>
-            )}
-          </Callout.TextDescription>
-        </Callout.Text>
-      </Callout.Root>
-
       <FilterBar search={search} setSearch={setSearch} scope={scope} lists={lists} />
       <ActiveFilters search={search} setSearch={setSearch} lists={lists} />
+
+      {noteSeen ? (
+        <p className="flex items-center gap-2 text-xs text-neutral-subtle" data-testid="coverage-note">
+          <Icon iconName="eye" iconStyle="regular" aria-hidden="true" />
+          Only actions taken through Qovery are visible. Prompts and code are never collected.
+        </p>
+      ) : (
+        <Callout.Root color="neutral" data-testid="coverage-note">
+          <Callout.Icon>
+            <Icon iconName="eye" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextDescription>
+              {data?.coverage.note ?? DEFAULT_COVERAGE_NOTE} Prompts and code are never collected.
+              {data && data.coverage.sources.length > 0 && (
+                <span className="mt-1 block text-xs text-neutral-subtle" data-testid="coverage-sources">
+                  Sources: {data.coverage.sources.map((source) => SOURCE_LABELS[source] ?? source).join(', ')}.
+                </span>
+              )}
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
+      )}
 
       {isRoleLoading || isLoading ? (
         <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading agent activity">
@@ -1049,6 +1181,8 @@ export function AgentActivity() {
         <div className={clsx(isFetching && 'opacity-70')} aria-busy={isFetching}>
           <ActivityContent
             activity={activity}
+            previous={previous}
+            periodLabel={`Last ${range.label}`}
             scope={scope}
             organizationId={organizationId}
             search={search}

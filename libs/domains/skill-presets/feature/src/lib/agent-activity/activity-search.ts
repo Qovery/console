@@ -18,6 +18,10 @@ export interface ActivitySearch {
   outcome?: AgentActionOutcome
   /** The source of the actions. Named `via` in the URL, as `source` is used by another route. */
   via?: AgentActivitySource
+  /** The breakdown shown: by member, by token or by skill. */
+  view?: 'member' | 'token' | 'skill'
+  /** The page of recent actions, from 1. */
+  page?: number
 }
 
 export const ACTIVITY_RANGES: { value: string; label: string; hours: number; bucket: AgentActivityBucket }[] = [

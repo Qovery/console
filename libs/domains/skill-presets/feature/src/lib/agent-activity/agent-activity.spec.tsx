@@ -82,7 +82,7 @@ describe('AgentActivity', () => {
       )
     ).toBeInTheDocument()
     expect(screen.getByText('Policy tokens with activity')).toBeInTheDocument()
-    expect(screen.getByText('Deploy (service)')).toBeInTheDocument()
+    expect(screen.getByTestId('chart-summary')).toHaveTextContent(/\d+ allowed and \d+ denied actions/)
     expect(within(screen.getByTestId('denied-actions')).getAllByText(/payments-production/).length).toBeGreaterThan(0)
     // Denied rows stand out, and both kinds of actors appear in the feed.
     expect(document.querySelectorAll('tr[data-outcome="DENIED"]').length).toBeGreaterThan(0)
@@ -120,7 +120,7 @@ describe('AgentActivity', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Policy token ci-deployer' }))
 
     expect(mockNavigate).toHaveBeenLastCalledWith(
-      expect.objectContaining({ search: { actor: `token:${CI_DEPLOYER}` }, replace: true })
+      expect.objectContaining({ search: expect.objectContaining({ actor: `token:${CI_DEPLOYER}` }), replace: true })
     )
     expect(await screen.findByTestId('activity-drill')).toHaveTextContent('Policy token ci-deployer')
     await waitFor(() =>
@@ -142,6 +142,28 @@ describe('AgentActivity', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Remove the outcome filter' }))
     expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { range: '7d' } }))
+  })
+
+  it('pages the recent actions, with counts that match what is shown, in the URL', async () => {
+    useScenario('agent-activity')
+    const { userEvent } = renderWithProviders(<AgentActivity />)
+
+    const count = await screen.findByTestId('recent-count')
+    expect(count).toHaveTextContent(/^Showing 1 to 30 of 100 actions in this period/)
+    // The time is not a tab stop on every row.
+    expect(document.querySelector('time[datetime]')).not.toHaveAttribute('tabindex')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next page' }))
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { page: 2 } }))
+    expect(await screen.findByTestId('recent-count')).toHaveTextContent(/^Showing 31 to 60 of 100/)
+  })
+
+  it('keeps the breakdown in the URL', async () => {
+    useScenario('agent-activity')
+    mockUrl.search = { view: 'skill' }
+    renderWithProviders(<AgentActivity />)
+
+    expect(await screen.findByTestId('breakdown-skill')).toBeInTheDocument()
   })
 
   it('shows a member only their own activity', async () => {
