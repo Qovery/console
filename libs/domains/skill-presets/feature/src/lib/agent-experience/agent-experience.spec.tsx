@@ -3,6 +3,7 @@ import { type ReactNode } from 'react'
 import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgentExperienceAutomate } from './agent-experience-automate'
+import { AgentExperienceBuildOptimizer } from './agent-experience-build-optimizer'
 import { AgentExperienceConnect } from './agent-experience-connect'
 import { AgentExperienceCopilot } from './agent-experience-copilot'
 import { AGENT_EXPERIENCE_ENTRY_DISMISSED_KEY, AgentExperienceEntryCard } from './agent-experience-entry-card'
@@ -153,7 +154,37 @@ describe('AgentExperienceOverview', () => {
   })
 })
 
+describe('AgentExperienceBuildOptimizer', () => {
+  it('is on with AI features, says how to use it and what it never does', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceBuildOptimizer />)
+
+    expect(await within(screen.getByTestId('build-optimizer-state')).findByText('On')).toBeInTheDocument()
+    expect(screen.getByText(/On the Build step, click Optimize/)).toBeInTheDocument()
+    expect(screen.getByText('It never changes your Dockerfile, your build settings or your image.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'See an example result' }))
+    expect(await screen.findByText('Build optimization analysis')).toBeInTheDocument()
+  })
+
+  it('offers Turn on AI when AI is off', async () => {
+    useScenario('agent-experience-empty')
+    renderWithProviders(<AgentExperienceBuildOptimizer />)
+    expect(await screen.findByRole('button', { name: 'Turn on AI' })).toBeInTheDocument()
+    expect(within(screen.getByTestId('build-optimizer-state')).getByText('Off')).toBeInTheDocument()
+  })
+})
+
 describe('AgentExperienceCopilot', () => {
+  it('says the Copilot will change', () => {
+    useScenario('agent-experience-active')
+    renderWithProviders(<AgentExperienceCopilot />)
+    expect(screen.getByTestId('copilot-will-change')).toHaveTextContent(
+      'The Copilot will change. Troubleshooting and optimization are moving into dedicated features, starting with Optimize builds.'
+    )
+  })
+
   it('shows one combined status and the Copilot settings to admins', async () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperienceCopilot />)

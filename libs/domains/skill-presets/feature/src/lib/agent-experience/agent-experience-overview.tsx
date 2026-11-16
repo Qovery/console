@@ -96,6 +96,7 @@ const ACTIVITY_PATH: AgentExperiencePath = '/organization/$organizationId/agent-
 type HeroPath =
   | AgentExperiencePath
   | '/organization/$organizationId/agent-experience/automate'
+  | '/organization/$organizationId/agent-experience/build-optimizer'
   | '/organization/$organizationId/audit-logs'
 
 const PILLARS: {
@@ -104,7 +105,7 @@ const PILLARS: {
   title: string
   text: string
   pieces: {
-    icon: 'message-bot' | 'sparkles' | 'sliders' | 'key' | 'stairs' | 'wave-pulse' | 'lock-keyhole'
+    icon: 'message-bot' | 'sparkles' | 'sliders' | 'key' | 'stairs' | 'gauge-high' | 'wave-pulse' | 'lock-keyhole'
     name: string
     to: HeroPath
   }[]
@@ -113,11 +114,16 @@ const PILLARS: {
     id: 'guide',
     icon: 'compass',
     title: 'Guide',
-    text: 'The Copilot and skills, tailored per team and per person with skill presets.',
+    text: 'The Copilot, skills tailored per team with skill presets, and agents with one job, such as optimizing builds.',
     pieces: [
       { icon: 'message-bot', name: 'Copilot', to: COPILOT_PATH },
       { icon: 'sparkles', name: 'Install skills', to: STEP_PATHS.connect },
       { icon: 'sliders', name: 'Skill presets', to: STEP_PATHS.preset },
+      {
+        icon: 'gauge-high',
+        name: 'Optimize builds',
+        to: '/organization/$organizationId/agent-experience/build-optimizer',
+      },
     ],
   },
   {
@@ -495,6 +501,18 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
           <span className="text-neutral-subtle">AI features</span>
           <OnOffBadge on={aiFeaturesEnabled} />
         </span>
+        {aiFeaturesEnabled && (
+          <Link
+            to="/organization/$organizationId/agent-experience/build-optimizer"
+            params={{ organizationId }}
+            color="brand"
+            size="sm"
+            className="inline-flex items-center gap-1.5"
+          >
+            <Icon iconName="gauge-high" iconStyle="regular" aria-hidden="true" />
+            AI capability on: Build Optimizer
+          </Link>
+        )}
         {hints.length > 0 && (
           <Link
             to="/organization/$organizationId/agent-experience/agent-activity"

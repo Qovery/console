@@ -24,7 +24,7 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 
 /**
  * The side list of Agents, in the order of the setup: connect, choose presets, limit with policy
- * tokens, automate, watch the activity. Copilot, a separate surface, comes last. Policy tokens are
+ * tokens, automate, then the named use cases (Optimize builds), and watch the activity. Copilot, a separate surface, comes last. Policy tokens are
  * for owners and admins only. The Agent Tasks pages (model tokens, MCP servers) follow their feature flag.
  */
 export function AgentExperienceNav() {
@@ -58,6 +58,9 @@ export function AgentExperienceNav() {
       )}
       <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
         Automate
+      </Sidebar.Item>
+      <Sidebar.Item to={`${base}/build-optimizer`} icon="gauge-high" iconStyle="regular">
+        Optimize builds
       </Sidebar.Item>
       <Sidebar.Item
         to={`${base}/agent-activity`}
