@@ -1,9 +1,20 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { Accordion, Badge, ExternalLink, Heading, Icon, Link, Section, TabsPrimitives } from '@qovery/shared/ui'
+import {
+  Accordion,
+  Badge,
+  ExternalLink,
+  Heading,
+  Icon,
+  Link,
+  Section,
+  Skeleton,
+  TabsPrimitives,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { useResolvedSkillPreset } from '../hooks/use-resolved-skill-preset/use-resolved-skill-preset'
+import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { QOVERY_SKILLS } from '../utils/qovery-skills'
 import { CommandBlock } from './command-block'
 import { PresetSummary } from './preset-summary'
@@ -176,15 +187,58 @@ function McpTabs() {
   )
 }
 
-/** The heading of the preset box: the preset that applies to the reader, by name. */
-function YourPresetHeading({ id }: { id: string }) {
+/**
+ * The first thing on the page: the installed skills load the organization's preset. A member sees the
+ * preset that applies to them; an admin sees the organization default, with a link to the presets.
+ */
+export function YourPresetLine() {
   const { organizationId = '' } = useParams({ strict: false })
-  const { data } = useResolvedSkillPreset({ organizationId })
-  const name = data?.skill_preset?.name
+  const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
+  const resolved = useResolvedSkillPreset({ organizationId })
+  const presets = useSkillPresets({ organizationId, isTemplate: false, enabled: canManage })
+
+  if (isRoleLoading || resolved.isLoading || (canManage && presets.isLoading)) {
+    return <Skeleton height={44} className="w-full" show />
+  }
+
+  const all = presets.data ?? []
+  const organizationDefault = all.find((preset) => preset.assigned_to.organization_default)
+  const name = canManage ? organizationDefault?.name : resolved.data?.skill_preset?.name
+  const presetsLink = (
+    to:
+      | '/organization/$organizationId/agent-experience/skill-presets'
+      | '/organization/$organizationId/agent-experience/skill-presets/new',
+    label: string
+  ) => (
+    <Link to={to} params={{ organizationId }} color="brand" size="sm" className="ml-auto">
+      {label}
+    </Link>
+  )
+
   return (
-    <Heading level={2} id={id}>
-      {name ? `Your preset: ${name}` : data ? 'Your preset: none' : 'Your preset'}
-    </Heading>
+    <div
+      className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-brand-subtle bg-surface-brand-subtle px-4 py-3 text-sm text-neutral"
+      data-testid="connect-your-preset"
+    >
+      <Icon iconName="sliders" iconStyle="regular" className="text-brand" aria-hidden="true" />
+      {name ? (
+        <span>
+          Your agent loads your organization’s preset: <span className="font-medium">{name}</span>
+          {canManage && <span className="text-neutral-subtle"> (organization default)</span>}
+        </span>
+      ) : canManage && all.length > 0 ? (
+        <span>No organization default yet: agents without a role or member preset get the full Qovery skills.</span>
+      ) : (
+        <span>No preset yet: agents get the full Qovery skills.</span>
+      )}
+      {canManage &&
+        (all.length > 0
+          ? presetsLink('/organization/$organizationId/agent-experience/skill-presets', 'Custom skill presets')
+          : presetsLink(
+              '/organization/$organizationId/agent-experience/skill-presets/new',
+              'Create a custom skill preset'
+            ))}
+    </div>
   )
 }
 
@@ -198,9 +252,10 @@ export function AgentExperienceConnect() {
   return (
     <AgentExperiencePage
       title="Connect your agent"
-      description="Three ways for a coding agent to work with Qovery, in the order most teams need them."
+      description="Set up each machine once, laptop or CI. Most teams only need the skills."
       width="reading"
     >
+      <YourPresetLine />
       <ConnectStep
         id="connect-skills"
         icon="sparkles"
@@ -210,7 +265,7 @@ export function AgentExperienceConnect() {
             Start here
           </Badge>
         }
-        description="Teaches your agent to deploy, troubleshoot and optimize on Qovery. Run it once per machine."
+        description="Teaches your agent to deploy, troubleshoot and optimize on Qovery, with your organization’s preset. Run it once per machine."
       >
         <CommandBlock command={SKILLS_INSTALL_COMMAND} copyLabel="Copy the skills install command" />
         <CodingAgentLogos />
@@ -261,7 +316,9 @@ export function AgentExperienceConnect() {
         aria-labelledby="connect-preset"
         className="flex flex-col gap-2 rounded-md bg-surface-neutral-subtle p-4"
       >
-        <YourPresetHeading id="connect-preset" />
+        <Heading level={2} id="connect-preset">
+          What your agent receives
+        </Heading>
         <PresetSummary />
       </Section>
     </AgentExperiencePage>

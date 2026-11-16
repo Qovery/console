@@ -240,7 +240,7 @@ function SkillPresetHistoryPage() {
           className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
         >
           <Icon iconName="arrow-left" iconStyle="regular" />
-          {presetExists ? latest.name : 'Skill presets'}
+          {presetExists ? latest.name : 'Custom skill presets'}
         </Link>
         <div className="flex items-center gap-3">
           <Heading>History of {latest.name}</Heading>

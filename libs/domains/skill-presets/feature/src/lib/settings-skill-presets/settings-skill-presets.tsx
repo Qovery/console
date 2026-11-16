@@ -310,7 +310,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
 
 export function SettingsSkillPresets() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Skill presets - Agents')
+  useDocumentTitle('Custom skill presets - Agents')
 
   return (
     <SkillPresetsLayout activeTab="presets">

@@ -2,7 +2,18 @@ import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ReactNode, useMemo, useState } from 'react'
 import { type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
-import { Badge, Button, Heading, Icon, Link, ProgressBar, Section, Skeleton, useModal } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Callout,
+  Heading,
+  Icon,
+  Link,
+  ProgressBar,
+  Section,
+  Skeleton,
+  useModal,
+} from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type ActivitySearch } from '../agent-activity/activity-search'
@@ -51,22 +62,11 @@ function usePreviousRange(range: { from: string; to: string; bucket: 'DAY' | 'HO
 }
 
 const STEPS: Record<AgentExperienceStepId, { title: string; description: string; done: string; action: string }> = {
-  ai: {
-    title: 'Turn on AI',
-    description: 'AI features and the Copilot, in one step. The Copilot starts read-only.',
-    done: 'AI features and the Copilot are on.',
-    action: TURN_ON_AI_LABEL,
-  },
-  connect: {
-    title: 'Connect an agent',
-    description: 'Install the Qovery skills, the CLI or the MCP server where your team codes.',
-    done: 'Agents loaded skills or acted on Qovery in the last 30 days.',
-    action: 'Connect your agent',
-  },
   preset: {
-    title: 'Choose how agents behave',
-    description: 'Create a preset, or start from a template: which skills agents load, and your team’s rules.',
-    done: 'A preset is set up.',
+    title: 'Create a custom skill preset',
+    description:
+      'Start from a template for your team’s profile: which Qovery skills agents load, and your team’s rules.',
+    done: 'A custom skill preset is set up. Every agent you connect loads it.',
     action: 'Create a preset',
   },
   'policy-token': {
@@ -75,20 +75,26 @@ const STEPS: Record<AgentExperienceStepId, { title: string; description: string;
     done: 'A policy token is set up.',
     action: 'Create a policy token',
   },
+  connect: {
+    title: 'Connect your agent',
+    description: 'Install the Qovery skills where your team codes. They load your organization’s preset.',
+    done: 'Agents loaded skills or acted on Qovery in the last 30 days.',
+    action: 'Connect your agent',
+  },
 }
 
 type AgentExperiencePath =
   | '/organization/$organizationId/agent-experience/connect'
   | '/organization/$organizationId/agent-experience/skill-presets'
+  | '/organization/$organizationId/agent-experience/skill-presets/new'
   | '/organization/$organizationId/agent-experience/policy-tokens'
   | '/organization/$organizationId/agent-experience/agent-activity'
   | '/organization/$organizationId/agent-experience/copilot'
 
-const COPILOT_PATH: AgentExperiencePath = '/organization/$organizationId/agent-experience/copilot'
-
-const STEP_PATHS: Record<Exclude<AgentExperienceStepId, 'ai'>, AgentExperiencePath> = {
+const STEP_PATHS: Record<AgentExperienceStepId, AgentExperiencePath> = {
   connect: '/organization/$organizationId/agent-experience/connect',
-  preset: '/organization/$organizationId/agent-experience/skill-presets',
+  // The template gallery: one template per profile.
+  preset: '/organization/$organizationId/agent-experience/skill-presets/new',
   'policy-token': '/organization/$organizationId/agent-experience/policy-tokens',
 }
 const ACTIVITY_PATH: AgentExperiencePath = '/organization/$organizationId/agent-experience/agent-activity'
@@ -114,11 +120,14 @@ const PILLARS: {
     id: 'guide',
     icon: 'compass',
     title: 'Guide',
-    text: 'The Copilot, skills tailored per team with skill presets, and agents with one job, such as optimizing builds.',
+    text: 'Your custom skill presets, loaded by every agent you connect, and agents with one job, such as optimizing builds.',
     pieces: [
-      { icon: 'message-bot', name: 'Copilot', to: COPILOT_PATH },
+      {
+        icon: 'sliders',
+        name: 'Custom skill presets',
+        to: '/organization/$organizationId/agent-experience/skill-presets',
+      },
       { icon: 'sparkles', name: 'Install skills', to: STEP_PATHS.connect },
-      { icon: 'sliders', name: 'Skill presets', to: STEP_PATHS.preset },
       {
         icon: 'gauge-high',
         name: 'Optimize builds',
@@ -221,26 +230,44 @@ function StepAction({
   primary: boolean
   organizationId: string
 }) {
-  const { openModal, closeModal } = useModal()
   const variant = primary ? 'solid' : 'outline'
   const color = primary ? 'brand' : 'neutral'
-  if (step === 'ai') {
-    return (
-      <Button
-        type="button"
-        size="md"
-        variant={variant}
-        color={color}
-        onClick={() => openModal({ content: <TurnOnAiModal organizationId={organizationId} onClose={closeModal} /> })}
-      >
-        {STEPS[step].action}
-      </Button>
-    )
-  }
   return (
     <Link as="button" to={STEP_PATHS[step]} params={{ organizationId }} size="md" variant={variant} color={color}>
       {STEPS[step].action}
     </Link>
+  )
+}
+
+/**
+ * AI features are on by default for new organizations. Older ones may still have them off: one
+ * notice, with the one-action Turn on AI modal, instead of a setup step.
+ */
+function AiOffCallout({ organizationId, canEnable }: { organizationId: string; canEnable: boolean }) {
+  const { openModal, closeModal } = useModal()
+  return (
+    <Callout.Root color="sky" data-testid="overview-ai-off">
+      <Callout.Icon>
+        <Icon iconName="circle-info" iconStyle="regular" />
+      </Callout.Icon>
+      <Callout.Text>
+        <Callout.TextHeading>AI features are off for this organization</Callout.TextHeading>
+        <Callout.TextDescription>
+          Custom skill presets, the Copilot and Optimize builds need them.{' '}
+          {canEnable ? 'One step turns them on, with the Copilot read-only.' : 'Ask an owner or admin to turn them on.'}
+        </Callout.TextDescription>
+      </Callout.Text>
+      {canEnable && (
+        <Button
+          type="button"
+          size="md"
+          className="self-center"
+          onClick={() => openModal({ content: <TurnOnAiModal organizationId={organizationId} onClose={closeModal} /> })}
+        >
+          {TURN_ON_AI_LABEL}
+        </Button>
+      )}
+    </Callout.Root>
   )
 }
 
@@ -464,13 +491,12 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
     denials: activity.data.totals.denials,
     presets: activePresets.length,
     policyTokens: policyTokens.length,
-    aiFeaturesEnabled,
-    copilotEnabled: copilot.enabled,
   })
 
   if (setup.state !== 'active') {
     return (
       <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state={setup.state}>
+        {!aiFeaturesEnabled && <AiOffCallout organizationId={organizationId} canEnable />}
         <AgentExperienceHero organizationId={organizationId} variant={setup.state === 'empty' ? 'full' : 'sentence'} />
         <SetupChecklist setup={setup} organizationId={organizationId} />
         {setup.state === 'partial' && week.data && (
@@ -484,6 +510,7 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
   const tokensByUse = [...policyTokens].sort((a, b) => (b.last_used_at ?? '').localeCompare(a.last_used_at ?? ''))
   return (
     <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state="active">
+      {!aiFeaturesEnabled && <AiOffCallout organizationId={organizationId} canEnable />}
       {week.data && <WeekKpis week={week.data} previous={previousWeek.data} showMembers />}
       <div
         className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-md border border-neutral px-4 py-2.5 text-sm"
@@ -538,7 +565,7 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
         <Card
           id="overview-presets"
           title="Active presets"
-          link={{ label: 'Skill presets', to: '/organization/$organizationId/agent-experience/skill-presets' }}
+          link={{ label: 'Custom skill presets', to: '/organization/$organizationId/agent-experience/skill-presets' }}
         >
           <ul className="flex flex-col divide-y divide-neutral text-sm">
             {activePresets.slice(0, 5).map((preset) => (
@@ -591,8 +618,10 @@ function MemberOverview({ organizationId }: { organizationId: string }) {
   const week = useAgentActivity({ organizationId, scope: 'me', ...weekRange })
   const previousWeek = useAgentActivity({ organizationId, scope: 'me', ...usePreviousRange(weekRange) })
   const copilot = useCopilotStatus({ organizationId })
+  const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
   return (
     <div className="flex flex-col gap-6" data-testid="agent-experience-state" data-state="member">
+      {!aiFeaturesEnabled && <AiOffCallout organizationId={organizationId} canEnable={false} />}
       <Section
         aria-labelledby="member-copilot"
         className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"
@@ -636,28 +665,28 @@ function MemberOverview({ organizationId }: { organizationId: string }) {
           <p className="text-sm text-neutral-subtle">Your agent activity could not be loaded.</p>
         )}
       </Section>
-      <Section
-        aria-labelledby="member-connect"
-        className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md bg-surface-neutral-subtle p-4"
-      >
-        <div className="flex flex-col gap-0.5">
-          <Heading level={2} id="member-connect">
-            Connect your agent
-          </Heading>
-          <p className="text-sm text-neutral-subtle">Install the Qovery skills, the CLI or the MCP server.</p>
-        </div>
-        <Link
-          as="button"
-          to="/organization/$organizationId/agent-experience/connect"
-          params={{ organizationId }}
-          size="md"
-          variant="outline"
-          color="neutral"
-        >
-          How to connect
-        </Link>
-      </Section>
     </div>
+  )
+}
+
+/**
+ * Connecting is a one-time setup per machine, so it is not in the side menu. This button keeps it one
+ * click away for the next laptop or CI runner.
+ */
+function ConnectAgentButton({ organizationId }: { organizationId: string }) {
+  return (
+    <Link
+      as="button"
+      to="/organization/$organizationId/agent-experience/connect"
+      params={{ organizationId }}
+      size="md"
+      variant="outline"
+      color="neutral"
+      className="gap-1.5"
+    >
+      <Icon iconName="plug" iconStyle="regular" aria-hidden="true" />
+      Connect an agent
+    </Link>
   )
 }
 
@@ -681,6 +710,7 @@ export function AgentExperienceOverview() {
             : 'What your coding agent receives from Qovery, and what it did.'
       }
       showHelp
+      action={<ConnectAgentButton organizationId={organizationId} />}
     >
       {isLoading ? (
         <Skeleton height={240} className="w-full" show />

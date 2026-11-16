@@ -392,7 +392,7 @@ export function SkillPresetEditorForm({
               className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
             >
               <Icon iconName="arrow-left" iconStyle="regular" />
-              Skill presets
+              Custom skill presets
             </Link>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">

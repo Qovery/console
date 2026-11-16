@@ -66,7 +66,7 @@ export function TemplateGallery() {
           className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
         >
           <Icon iconName="arrow-left" iconStyle="regular" />
-          Skill presets
+          Custom skill presets
         </Link>
         <Heading>Create preset</Heading>
         <p className="max-w-2xl text-sm text-neutral-subtle">

@@ -601,7 +601,8 @@ describe('createSkillPresetsMockApi', () => {
       const { value: emptyActivity } = await settle(empty.getAgentActivity(ORGANIZATION_ID, range()))
       expect(emptyActivity?.totals).toEqual({ skill_loads: 0, actions: 0, denials: 0, members: 0, policy_tokens: 0 })
       expect((await settle(empty.listPolicyTokens())).value).toEqual([])
-      expect((await settle(empty.aiFeaturesEnabled())).value).toBe(false)
+      // New organizations have AI features on.
+      expect((await settle(empty.aiFeaturesEnabled())).value).toBe(true)
 
       const partial = createSkillPresetsMockApi('agent-experience-partial')
       const { value: partialActivity } = await settle(partial.getAgentActivity(ORGANIZATION_ID, range()))
@@ -616,7 +617,7 @@ describe('createSkillPresetsMockApi', () => {
     })
 
     it('plays the Copilot config: off until AI features and then the Copilot are turned on', async () => {
-      const api = createSkillPresetsMockApi('agent-experience-empty')
+      const api = createSkillPresetsMockApi('ai-features-off')
       const config = async () =>
         (
           (await settle(api.copilotRequest('get', 'https://copilot.example/organization/o/config'))).value as {

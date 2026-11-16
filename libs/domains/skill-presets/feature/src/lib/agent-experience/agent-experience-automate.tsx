@@ -25,6 +25,9 @@ import { AGENT_JOBS, AGENT_JOB_LEVELS, type AgentJob, policyExampleUrl } from '.
 import { NEW_JOB_TITLE, NewJobModal } from './new-job-modal'
 import { AgentExperiencePage, CodingAgentLogos } from './ui/agent-experience-ui'
 
+export const AGENT_JOB_WHERE =
+  'This agent runs where you start it: as an Agent Task on your Qovery infrastructure, or from a coding agent on a laptop or in CI.'
+
 /** The Agent Tasks templates that run an agent on Qovery itself. */
 const AGENT_TASK_IDS = [
   'incident-io-analyzer',
@@ -265,8 +268,8 @@ function RunOnItsOwn({
                   Runs next to your services on its own schedule or webhook, with no laptop or CI to keep running.
                 </span>
                 <span className="text-xs text-neutral-subtle">
-                  Create it from the Automations tab of the environment where it should run, with the prompt below, this
-                  trigger, and the Qovery MCP server set up with the token.
+                  This page creates nothing. In the environment where it should run, open Automations and add an Agent
+                  Task with the prompt below, this trigger, and the Qovery MCP server set up with the token.
                 </span>
                 {job.trigger.kind === 'schedule' && job.trigger.cron ? (
                   <CopyValue label="On a schedule" value={job.trigger.cron} copyLabel="Copy the Agent Task schedule" />
@@ -291,7 +294,7 @@ function RunOnItsOwn({
                     </Link>
                   )}
                   <Link to="/organization/$organizationId/overview" params={{ organizationId }} color="brand" size="xs">
-                    Choose an environment
+                    Open Automations in an environment
                   </Link>
                   <ExternalLink href="https://www.qovery.com/docs/configuration/agent-tasks/overview" size="xs">
                     Agent Tasks docs
@@ -398,6 +401,18 @@ function JobDetailsPanel({
                     <span>{job.title}</span>
                   </Dialog.Title>
                   <Dialog.Description className="text-sm leading-5 text-neutral-subtle">{job.does}</Dialog.Description>
+                  <p
+                    className="flex items-start gap-2 rounded-md bg-surface-neutral-subtle px-3 py-2 text-sm text-neutral"
+                    data-testid="agent-job-where"
+                  >
+                    <Icon
+                      iconName="location-dot"
+                      iconStyle="regular"
+                      className="mt-0.5 text-brand"
+                      aria-hidden="true"
+                    />
+                    {AGENT_JOB_WHERE}
+                  </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <LevelBadge job={job} />

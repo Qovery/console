@@ -23,9 +23,11 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 }
 
 /**
- * The side list of Agents, in the order of the setup: connect, choose presets, limit with policy
- * tokens, automate, then the named use cases (Optimize builds), and watch the activity. Copilot, a separate surface, comes last. Policy tokens are
- * for owners and admins only. The Agent Tasks pages (model tokens, MCP servers) follow their feature flag.
+ * The side list of Agents: five entries, then Settings. Custom skill presets come first so people see
+ * what their agents will get; Connect is a one-time setup per machine, reached from the Overview (its
+ * header button and the last setup step), not from here. Optimize builds sits under Automate as one
+ * of the jobs agents do. Settings holds the Copilot and, behind their flag, the Agent Tasks pages.
+ * Policy tokens and Settings are for owners and admins only.
  */
 export function AgentExperienceNav() {
   const { organizationId = '' } = useParams({ strict: false })
@@ -34,14 +36,13 @@ export function AgentExperienceNav() {
   const denied = useDeniedThisWeek(organizationId, canManage ? 'organization' : 'me', !isLoading)
   const base = `/organization/${organizationId}/agent-experience`
   const { pathname } = useLocation()
+  const isAdmin = !isLoading && canManage
+  const settingsPaths = [`${base}/copilot`, `${base}/agent-task-tokens`, `${base}/mcp-servers`]
 
   return (
     <Sidebar.Root className="mt-6" aria-label="Agents">
       <Sidebar.Item to={base} icon="table-layout" iconStyle="regular" active={pathname.replace(/\/$/, '') === base}>
         Overview
-      </Sidebar.Item>
-      <Sidebar.Item to={`${base}/connect`} icon="plug" iconStyle="regular">
-        Connect
       </Sidebar.Item>
       <Sidebar.Item
         to={`${base}/skill-presets`}
@@ -49,9 +50,9 @@ export function AgentExperienceNav() {
         iconStyle="regular"
         active={pathname.startsWith(`${base}/skill-presets`)}
       >
-        Skill presets
+        Custom skill presets
       </Sidebar.Item>
-      {!isLoading && canManage && (
+      {isAdmin && (
         <Sidebar.Item to={`${base}/policy-tokens`} icon="key" iconStyle="regular">
           Policy tokens
         </Sidebar.Item>
@@ -59,9 +60,7 @@ export function AgentExperienceNav() {
       <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
         Automate
       </Sidebar.Item>
-      <Sidebar.Item to={`${base}/build-optimizer`} icon="gauge-high" iconStyle="regular">
-        Optimize builds
-      </Sidebar.Item>
+      <Sidebar.SubItem to={`${base}/build-optimizer`}>Optimize builds</Sidebar.SubItem>
       <Sidebar.Item
         to={`${base}/agent-activity`}
         icon="wave-pulse"
@@ -71,18 +70,17 @@ export function AgentExperienceNav() {
       >
         Activity
       </Sidebar.Item>
-      <Sidebar.Item to={`${base}/copilot`} icon="message-bot" iconStyle="regular">
-        Copilot
-      </Sidebar.Item>
-      {isAgentTasksEnabled && canManage && (
+      {isAdmin && (
         <Sidebar.Group
-          title="Agent Tasks"
-          icon="robot"
+          title="Settings"
+          icon="gear"
           iconStyle="regular"
-          defaultOpen={pathname.startsWith(`${base}/agent-task-tokens`) || pathname.startsWith(`${base}/mcp-servers`)}
+          className="mt-4"
+          defaultOpen={settingsPaths.some((path) => pathname.startsWith(path))}
         >
-          <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>
-          <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>
+          <Sidebar.SubItem to={`${base}/copilot`}>Copilot settings</Sidebar.SubItem>
+          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>}
+          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>}
         </Sidebar.Group>
       )}
     </Sidebar.Root>

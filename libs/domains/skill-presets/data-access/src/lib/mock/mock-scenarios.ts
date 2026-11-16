@@ -47,7 +47,7 @@ export interface MockSeed {
   loads: MockLoadSeed[]
   /** The organization's policy tokens. None unless the scenario sets them. */
   policyTokens?: MockPolicyToken[]
-  /** AI features start off (ai-features-off, agent-experience-empty). */
+  /** AI features start off (ai-features-off, agent-experience-copilot-error). */
   aiFeaturesOff?: boolean
   /** The Copilot starts off. It is on in the other scenarios, read-only. */
   copilotOff?: boolean
@@ -481,16 +481,20 @@ export function buildMockSeed(scenario: SkillPresetsMockScenario): MockSeed {
     case 'ai-features-off':
       return { ...typicalSeed(), aiFeaturesOff: true, copilotOff: true }
     case 'agent-experience-empty':
-    case 'agent-experience-copilot-error':
+    case 'agent-experience-copilot-error': {
+      // New organizations have AI features on (terms accepted at sign-up). The Copilot error scenario
+      // keeps the older case, AI off, to show the Turn on AI notice and its Retry.
+      const isOlderOrganization = scenario === 'agent-experience-copilot-error'
       return {
-        copilotFailsOnce: scenario === 'agent-experience-copilot-error',
+        copilotFailsOnce: isOlderOrganization,
         ...typicalSeed(),
         presets: [],
         loads: [],
-        aiFeaturesOff: true,
-        copilotOff: true,
+        aiFeaturesOff: isOlderOrganization,
+        copilotOff: isOlderOrganization,
         agentExtras: { mcp: false, policyToken: false, denials: false },
       }
+    }
     case 'agent-experience-partial':
       // Agents already load the Qovery skills, but nobody has set up a preset or a policy token.
       return {

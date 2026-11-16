@@ -45,50 +45,42 @@ beforeEach(() => {
 })
 
 describe('AgentExperienceOverview', () => {
-  it('explains Agents the first time, leads with Turn on AI, and shows no numbers', async () => {
+  it('explains Agents the first time, starts with a custom preset, and shows no numbers', async () => {
     useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperienceOverview />)
 
-    expect(await screen.findByTestId('setup-progress')).toHaveTextContent('0 of 4 done')
+    expect(await screen.findByTestId('setup-progress')).toHaveTextContent('0 of 3 done')
     expect(screen.getByTestId('agent-experience-state')).toHaveAttribute('data-state', 'empty')
     const intro = screen.getByTestId('agent-experience-hero')
     expect(within(intro).getByRole('heading', { name: 'The future of infrastructure is agentic' })).toBeInTheDocument()
-    expect(within(intro).getByText(/every operation is checked at the API/)).toBeInTheDocument()
-    expect(within(screen.getByTestId('hero-pillar-guide')).getByText('Install skills')).toBeInTheDocument()
+    expect(within(screen.getByTestId('hero-pillar-guide')).getByText('Custom skill presets')).toBeInTheDocument()
     expect(within(screen.getByTestId('hero-pillar-control')).getByText(/Deny by default/)).toBeInTheDocument()
     expect(within(screen.getByTestId('hero-pillar-observe')).getByText('Audit logs')).toBeInTheDocument()
-    expect(screen.queryByText(/two switches/)).not.toBeInTheDocument()
-    // One "Turn on AI" button, on the Next row; none in the hero.
-    expect(screen.getAllByRole('button', { name: 'Turn on AI' })).toHaveLength(1)
-    expect(within(screen.getByTestId('setup-step-ai')).getByRole('button', { name: 'Turn on AI' })).toBeInTheDocument()
+    // The steps in order: value first, connecting last.
+    expect(
+      within(screen.getByTestId('setup-steps'))
+        .getAllByRole('listitem')
+        .map((item) => item.dataset.testid)
+    ).toEqual(['setup-step-preset', 'setup-step-policy-token', 'setup-step-connect'])
+    expect(stepState('preset')).toBe('next')
+    expect(
+      within(screen.getByTestId('setup-step-preset')).getByText('Create a custom skill preset')
+    ).toBeInTheDocument()
+    // New organizations have AI features on: no Turn on AI anywhere.
+    expect(screen.queryByTestId('overview-ai-off')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
     expect(within(intro).queryByRole('button')).not.toBeInTheDocument()
-    expect(stepState('ai')).toBe('next')
+    expect(screen.getByText('Connect an agent')).toBeInTheDocument()
     expect(screen.queryByTestId('week-kpis')).not.toBeInTheDocument()
   })
 
-  it('turns on AI features and the Copilot in one action, then leads to connecting an agent', async () => {
-    useScenario('agent-experience-empty')
-    const { userEvent } = renderWithProviders(<AgentExperienceOverview />)
-    const aiStep = await screen.findByTestId('setup-step-ai')
-
-    await userEvent.click(within(aiStep).getByRole('button', { name: 'Turn on AI' }))
-    const dialog = await screen.findByRole('dialog')
-    await userEvent.click(
-      await within(dialog).findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
-    )
-    await userEvent.click(within(dialog).getByTestId('submit-button'))
-
-    await waitFor(() => expect(stepState('ai')).toBe('done'))
-    expect(stepState('connect')).toBe('next')
-    expect(within(screen.getByTestId('setup-step-connect')).getByText('Connect your agent')).toBeInTheDocument()
-  })
-
-  it('keeps AI features on when the Copilot step fails, and Retry only turns on the Copilot', async () => {
+  it('shows Turn on AI as a notice when AI features are off, and keeps AI on when the Copilot step fails', async () => {
     useScenario('agent-experience-copilot-error')
     const { userEvent } = renderWithProviders(<AgentExperienceOverview />)
-    const aiStep = await screen.findByTestId('setup-step-ai')
+    const notice = await screen.findByTestId('overview-ai-off')
+    expect(notice).toHaveTextContent('AI features are off for this organization')
 
-    await userEvent.click(within(aiStep).getByRole('button', { name: 'Turn on AI' }))
+    await userEvent.click(within(notice).getByRole('button', { name: 'Turn on AI' }))
     const dialog = await screen.findByRole('dialog')
     await userEvent.click(
       await within(dialog).findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
@@ -100,15 +92,14 @@ describe('AgentExperienceOverview', () => {
     ).toBeInTheDocument()
     expect(within(dialog).getByTestId('submit-button')).toHaveTextContent('Retry')
     await userEvent.click(within(dialog).getByTestId('submit-button'))
-    await waitFor(() => expect(stepState('ai')).toBe('done'))
+    await waitFor(() => expect(screen.queryByTestId('overview-ai-off')).not.toBeInTheDocument())
   })
 
   it('highlights the next step when partly set up', async () => {
     useScenario('agent-experience-partial')
     renderWithProviders(<AgentExperienceOverview />)
 
-    // The Copilot state arrives after the first render.
-    await waitFor(() => expect(screen.getByTestId('setup-progress')).toHaveTextContent('2 of 4 done'))
+    await waitFor(() => expect(screen.getByTestId('setup-progress')).toHaveTextContent('1 of 3 done'))
     // The hero folds to one sentence once a step is done.
     expect(screen.getByTestId('agent-experience-hero')).toHaveAttribute('data-variant', 'sentence')
     expect(stepState('connect')).toBe('done')
@@ -169,7 +160,7 @@ describe('AgentExperienceBuildOptimizer', () => {
   })
 
   it('offers Turn on AI when AI is off', async () => {
-    useScenario('agent-experience-empty')
+    useScenario('ai-features-off')
     renderWithProviders(<AgentExperienceBuildOptimizer />)
     expect(await screen.findByRole('button', { name: 'Turn on AI' })).toBeInTheDocument()
     expect(within(screen.getByTestId('build-optimizer-state')).getByText('Off')).toBeInTheDocument()
@@ -195,7 +186,7 @@ describe('AgentExperienceCopilot', () => {
   })
 
   it('offers Turn on AI when AI is off', async () => {
-    useScenario('agent-experience-empty')
+    useScenario('ai-features-off')
     renderWithProviders(<AgentExperienceCopilot />)
 
     expect(await screen.findByRole('heading', { name: 'Turn on AI' })).toBeInTheDocument()
@@ -291,6 +282,12 @@ describe('Automate, recurring agents', () => {
     expect(agentTask.getByText('Recommended')).toBeInTheDocument()
     expect(agentTask.getByText(/with no laptop or CI to keep running/)).toBeInTheDocument()
     expect(agentTask.getByText('https://mcp.qovery.com/mcp')).toBeInTheDocument()
+    // Nothing is created from here: the action opens the environment's Automations.
+    expect(agentTask.getByText('Open Automations in an environment')).toBeInTheDocument()
+    expect(agentTask.getByText(/This page creates nothing/)).toBeInTheDocument()
+    expect(screen.getByTestId('agent-job-where')).toHaveTextContent(
+      'This agent runs where you start it: as an Agent Task on your Qovery infrastructure, or from a coding agent on a laptop or in CI.'
+    )
     expect(run.getByTestId('route-coding-agent').compareDocumentPosition(run.getByTestId('route-agent-task'))).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING
     )
@@ -422,17 +419,23 @@ describe('AgentExperiencePolicyTokens', () => {
 })
 
 describe('AgentExperienceNav', () => {
-  it('shows policy tokens to admins only', async () => {
+  it('has five entries and Settings, with policy tokens and Settings for admins only', async () => {
     useScenario('agent-experience-active')
     const { unmount } = renderWithProviders(<AgentExperienceNav />)
     expect(await screen.findByText('Policy tokens')).toBeInTheDocument()
-    expect(screen.getByText('Copilot')).toBeInTheDocument()
+    for (const label of ['Overview', 'Custom skill presets', 'Automate', 'Optimize builds', 'Activity', 'Settings']) {
+      expect(screen.getByText(label)).toBeInTheDocument()
+    }
+    // Connect is reached from the Overview, not from the menu.
+    expect(screen.queryByText('Connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('Copilot')).not.toBeInTheDocument()
     unmount()
 
     useScenario('member')
     renderWithProviders(<AgentExperienceNav />)
     expect(await screen.findByText('Activity')).toBeInTheDocument()
     expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
+    expect(screen.queryByText('Settings')).not.toBeInTheDocument()
   })
 })
 
@@ -462,10 +465,19 @@ describe('AgentExperienceConnect', () => {
     expect(screen.getByRole('button', { name: 'Copy the Gemini CLI command' })).toBeInTheDocument()
   })
 
-  it('names the preset that applies to the reader', async () => {
+  it('says which preset the installed skills load', async () => {
     useScenario('agent-experience-active')
+    const { unmount } = renderWithProviders(<AgentExperienceConnect />)
+    expect(await screen.findByTestId('connect-your-preset')).toHaveTextContent(
+      /^Your agent loads your organization’s preset: .+ \(organization default\)Custom skill presets$/
+    )
+    unmount()
+
+    useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperienceConnect />)
-    expect(await screen.findByRole('heading', { name: /^Your preset: / })).toBeInTheDocument()
+    expect(await screen.findByTestId('connect-your-preset')).toHaveTextContent(
+      'No preset yet: agents get the full Qovery skills.Create a custom skill preset'
+    )
   })
 })
 

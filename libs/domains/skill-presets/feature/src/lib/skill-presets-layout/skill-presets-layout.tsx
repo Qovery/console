@@ -16,7 +16,7 @@ export interface SkillPresetsLayoutProps {
 }
 
 const ADMIN_DESCRIPTION =
-  'Which Qovery skills your members’ agents load, plus your team’s instructions and your own skills.'
+  'Your organization’s own version of the Qovery skills: what agents load, your team’s rules and your own skills.'
 const MEMBER_DESCRIPTION = 'What your coding agent receives from Qovery, readable in full.'
 
 function AccessSkeleton() {
@@ -43,7 +43,7 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
   return (
     <Section className="px-8 pb-8 pt-6">
       <SettingsHeading
-        title="Skill presets"
+        title="Custom skill presets"
         description={isLoading ? undefined : canManage ? ADMIN_DESCRIPTION : MEMBER_DESCRIPTION}
       >
         {!isLoading && canManage && (
