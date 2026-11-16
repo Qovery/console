@@ -94,6 +94,15 @@ describe('formatAgenticWorkflowWebhookAuth', () => {
     ).toEqual({ mode: SECRET_HEADER, header_name: 'x-qovery-webhook-secret' })
   })
 
+  it('omits an unchanged header name whatever its case', () => {
+    expect(
+      formatAgenticWorkflowWebhookAuth(
+        { webhookAuthMode: SECRET_HEADER, webhookAuthHeaderName: 'X-Custom', webhookAuthSecret: '' },
+        { mode: SECRET_HEADER, header_name: 'X-Custom' }
+      )
+    ).toBeUndefined()
+  })
+
   it('omits an unchanged default header name', () => {
     expect(
       formatAgenticWorkflowWebhookAuth(

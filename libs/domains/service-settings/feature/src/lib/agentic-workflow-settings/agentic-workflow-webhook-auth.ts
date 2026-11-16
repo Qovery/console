@@ -88,7 +88,7 @@ export function formatAgenticWorkflowWebhookAuth(
   // The API keeps the stored name when it receives a blank one, so send the default explicitly
   // to let an emptied field restore it.
   const headerName = values.webhookAuthHeaderName.trim() || DEFAULT_WEBHOOK_AUTH_HEADER_NAME
-  const headerNameChanged = headerName.toLowerCase() !== saved?.header_name
+  const headerNameChanged = headerName.toLowerCase() !== saved?.header_name?.toLowerCase()
 
   if (mode === savedMode && !secret && !headerNameChanged) return undefined
 

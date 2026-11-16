@@ -474,7 +474,29 @@ describe('AgenticWorkflowSettings views', () => {
     await waitFor(() => expect(screen.getByLabelText('Secret')).toHaveValue(''))
   })
 
-  it('keeps the stored secret and allows switching back to no authentication', async () => {
+  it('keeps the stored secret when only the header name changes', async () => {
+    useServiceSpy.mockReturnValue({
+      data: { ...service, webhook_auth: { mode: 'SECRET_HEADER', header_name: 'x-custom-secret' } },
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="governance" />)
+
+    await userEvent.clear(screen.getByLabelText('Header name'))
+    await userEvent.type(screen.getByLabelText('Header name'), 'x-renamed-secret')
+    const saveButton = screen.getByRole('button', { name: 'Save' })
+    await waitFor(() => expect(saveButton).toBeEnabled())
+    await userEvent.click(saveButton)
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          webhook_auth: { mode: 'SECRET_HEADER', header_name: 'x-renamed-secret' },
+        }),
+      })
+    )
+  })
+
+  it('allows switching back to no authentication from a stored secret header', async () => {
     useServiceSpy.mockReturnValue({
       data: { ...service, webhook_auth: { mode: 'SECRET_HEADER', header_name: 'x-custom-secret' } },
     })
