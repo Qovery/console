@@ -37,6 +37,22 @@ export function getWebhookAuthModeLabel(mode: AgenticWorkflowWebhookAuthMode) {
     .exhaustive()
 }
 
+export function getWebhookAuthModeHint(mode: AgenticWorkflowWebhookAuthMode) {
+  return match(mode)
+    .with(AgenticWorkflowWebhookAuthMode.NONE, () => 'Anyone who knows the webhook URL can trigger the agent task.')
+    .with(
+      AgenticWorkflowWebhookAuthMode.SECRET_HEADER,
+      () => 'Callers must send the secret in the header below. Other calls are rejected with 401.'
+    )
+    .with(
+      AgenticWorkflowWebhookAuthMode.LINEAR,
+      AgenticWorkflowWebhookAuthMode.SENTRY,
+      AgenticWorkflowWebhookAuthMode.INCIDENT_IO,
+      () => undefined
+    )
+    .exhaustive()
+}
+
 export function validateWebhookAuthSecret(
   secret: string,
   mode: AgenticWorkflowWebhookAuthMode,

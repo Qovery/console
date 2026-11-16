@@ -6,6 +6,7 @@ import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 import {
   DEFAULT_WEBHOOK_AUTH_HEADER_NAME,
   SELECTABLE_WEBHOOK_AUTH_MODES,
+  getWebhookAuthModeHint,
   getWebhookAuthModeLabel,
   validateWebhookAuthHeaderName,
   validateWebhookAuthSecret,
@@ -21,6 +22,7 @@ export function AgenticWorkflowGovernanceSettings({
   const webhookAuthMode = form.watch('webhookAuthMode')
   const savedMode = savedWebhookAuth?.mode
   const hasStoredSecret = savedMode === AgenticWorkflowWebhookAuthMode.SECRET_HEADER
+  const webhookAuthModeHint = getWebhookAuthModeHint(webhookAuthMode)
   // Keep a provider mode set through the API visible instead of showing it as another mode.
   const modes = SELECTABLE_WEBHOOK_AUTH_MODES.includes(webhookAuthMode)
     ? SELECTABLE_WEBHOOK_AUTH_MODES
@@ -54,13 +56,7 @@ export function AgenticWorkflowGovernanceSettings({
               value={field.value}
               onChange={(value) => field.onChange(value as AgenticWorkflowWebhookAuthMode)}
               options={modes.map((mode) => ({ value: mode, label: getWebhookAuthModeLabel(mode) }))}
-              hint={
-                webhookAuthMode === AgenticWorkflowWebhookAuthMode.NONE
-                  ? 'Anyone who knows the webhook URL can trigger the agent task.'
-                  : webhookAuthMode === AgenticWorkflowWebhookAuthMode.SECRET_HEADER
-                    ? 'Callers must send the secret in the header below. Other calls are rejected with 401.'
-                    : undefined
-              }
+              hint={webhookAuthModeHint}
             />
           )}
         />
