@@ -1,4 +1,5 @@
 import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import * as servicesDomain from '@qovery/domains/services/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -91,6 +92,7 @@ const service = {
   outputs: [{ name: 'Audit log', url: null }],
   governance: { host_allowlist: ['api.github.com', 'status.example.com'] },
   webhook_ip_allowlist: ['10.0.0.0/8'],
+  webhook_auth: { mode: 'NONE' as const, header_name: null },
   resources: {
     cpu_milli: 1000,
     ram_mib: 2048,
@@ -220,6 +222,7 @@ describe('AgenticWorkflowSettings views', () => {
           mcp_servers: [{ id: 'mcp-1', required: true }],
           context_service_ids: [],
           webhook_ip_allowlist: ['10.0.0.0/8'],
+          webhook_auth: undefined,
           schedule: {
             cron_expression: '0 8 * * 1-5',
             timezone: 'Europe/Paris',
@@ -437,6 +440,62 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('heading', { name: 'Governance' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Domain allowlist' })).toHaveValue('api.github.com, status.example.com')
     expect(screen.queryByRole('textbox', { name: 'Webhook IP allowlist' })).not.toBeInTheDocument()
+  })
+
+  it('requires a secret before enabling the secret header authentication', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="governance" />)
+
+    expect(screen.getByText('None')).toBeInTheDocument()
+    await selectEvent.select(screen.getByLabelText('Authentication'), 'Secret header', {
+      container: document.body,
+    })
+
+    expect(screen.getByLabelText('Secret')).toHaveAttribute('type', 'password')
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+
+    await userEvent.type(screen.getByLabelText('Header name'), 'x-custom-secret')
+    await userEvent.type(screen.getByLabelText('Secret'), 'short')
+    await waitFor(() => expect(screen.getByText('The secret must be 16 to 1024 characters.')).toBeInTheDocument())
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+
+    await userEvent.type(screen.getByLabelText('Secret'), '-but-now-long-enough')
+    const saveButton = screen.getByRole('button', { name: 'Save' })
+    await waitFor(() => expect(saveButton).toBeEnabled())
+    await userEvent.click(saveButton)
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          webhook_auth: { mode: 'SECRET_HEADER', secret: 'short-but-now-long-enough', header_name: 'x-custom-secret' },
+        }),
+      })
+    )
+    await waitFor(() => expect(screen.getByLabelText('Secret')).toHaveValue(''))
+  })
+
+  it('keeps the stored secret and allows switching back to no authentication', async () => {
+    useServiceSpy.mockReturnValue({
+      data: { ...service, webhook_auth: { mode: 'SECRET_HEADER', header_name: 'x-custom-secret' } },
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="governance" />)
+
+    expect(screen.getByLabelText('Header name')).toHaveValue('x-custom-secret')
+    expect(screen.getByLabelText('New secret')).toHaveValue('')
+    expect(
+      screen.getByText('Leave empty to keep the current secret. Enter a new one to rotate it.')
+    ).toBeInTheDocument()
+
+    await selectEvent.select(screen.getByLabelText('Authentication'), 'None', { container: document.body })
+    expect(screen.queryByLabelText('New secret')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({ webhook_auth: { mode: 'NONE' } }),
+      })
+    )
   })
 
   it('deletes the Dockerfile fragment without a page-level save', async () => {
