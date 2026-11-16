@@ -146,7 +146,7 @@ export const HERO_SUBTITLE =
   'Agents can do real infrastructure work on their own when every operation is checked at the API. Set that up here.'
 
 /**
- * The story of Agent Experience, on every Overview. Full the first times, with one action; compact
+ * The story of Agents, on every Overview. Full the first times, with one action; compact
  * once it is in use, so the numbers stay on top.
  */
 function AgentExperienceHero({
@@ -492,7 +492,7 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
   const error = activity.error ?? presets.error ?? tokens.error
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading Agent Experience">
+      <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading Agents">
         <Skeleton height={72} className="w-full" show />
         <Skeleton height={240} className="w-full" show />
       </div>
@@ -501,7 +501,7 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
   if (error || !activity.data) {
     return (
       <LoadError
-        title="Agent Experience could not be loaded"
+        title="Agents could not be loaded"
         error={error}
         onRetry={() => {
           activity.refetch()
@@ -765,17 +765,17 @@ function MemberOverview({ organizationId }: { organizationId: string }) {
 }
 
 /**
- * The landing page of Agent Experience. Owners and admins get the setup checklist until agents, a
+ * The landing page of Agents. Owners and admins get the setup checklist until agents, a
  * preset and a policy token are all in place, then what agents did. Members get their own setup.
  */
 export function AgentExperienceOverview() {
   const { organizationId = '' } = useParams({ strict: false })
   const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
-  useDocumentTitle('Agent Experience')
+  useDocumentTitle('Agents')
 
   return (
     <AgentExperiencePage
-      title={isLoading || canManage ? 'Agent Experience' : 'Your agent setup'}
+      title={isLoading || canManage ? 'Agents' : 'Your agent setup'}
       description={
         isLoading
           ? undefined

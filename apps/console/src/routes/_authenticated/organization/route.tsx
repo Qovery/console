@@ -81,7 +81,7 @@ const ORGANIZATION_TABS: NavigationTab[] = [
   },
   {
     id: 'agent-experience',
-    label: 'Agent Experience',
+    label: 'Agents',
     isNew: true,
     iconName: 'robot',
     routeId: '/_authenticated/organization/$organizationId/agent-experience',

@@ -1,5 +1,5 @@
 /**
- * The setup state of Agent Experience, from what the organization already has. No new signal:
+ * The setup state of Agents, from what the organization already has. No new signal:
  * "connected" means agents have loaded a skill or acted on Qovery, as agent activity reports it.
  */
 

@@ -14,7 +14,7 @@ import SectionScheduledTasks from './section-scheduled-tasks/section-scheduled-t
 
 export interface AICopilotSettingsProps {
   organization: Organization
-  /** Rendered inside another page (Agent Experience): no page heading and no page padding. */
+  /** Rendered inside another page (Agents): no page heading and no page padding. */
   embedded?: boolean
 }
 

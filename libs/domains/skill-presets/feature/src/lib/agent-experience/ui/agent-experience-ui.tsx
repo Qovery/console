@@ -4,30 +4,40 @@ import { Badge, Icon, Section } from '@qovery/shared/ui'
 import { MockScenarioBanner } from '../../mock-scenario-banner/mock-scenario-banner'
 
 /*
- * The shared pieces of the Agent Experience pages, so every page reads the same way: one header
+ * The shared pieces of the Agents pages, so every page reads the same way: one header
  * pattern, one wording and color for allowed and denied, one chip for members and policy tokens.
  */
 
-/** Page frame: heading, description, an optional action, the mock banner, then the content. */
+/**
+ * Page frame: heading, a one-line description, an optional action, then the content. One width
+ * rule: reading pages (forms, instructions) are narrow, tables and dashboards use the full width.
+ * The help chip shows on the Overview only.
+ */
 export function AgentExperiencePage({
   title,
+  titleBadge,
   description,
   action,
+  width = 'full',
+  showHelp = false,
   children,
 }: {
   title: string
+  titleBadge?: ReactNode
   description?: ReactNode
   action?: ReactNode
+  width?: 'full' | 'reading'
+  showHelp?: boolean
   children: ReactNode
 }) {
   return (
     <Section className="px-8 pb-8 pt-6">
-      <SettingsHeading title={title} description={description}>
+      <SettingsHeading title={title} titleBadge={titleBadge} description={description} showNeedHelp={showHelp}>
         {action}
       </SettingsHeading>
-      <div className="flex flex-col gap-6">
-        <MockScenarioBanner />
+      <div className={`flex flex-col gap-6 ${width === 'reading' ? 'max-w-content-with-navigation-left' : ''}`}>
         {children}
+        <MockScenarioBanner />
       </div>
     </Section>
   )

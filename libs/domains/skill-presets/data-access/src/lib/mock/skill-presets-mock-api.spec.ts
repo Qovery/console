@@ -596,7 +596,7 @@ describe('createSkillPresetsMockApi', () => {
       expect(bySkill?.recent.every(({ skill_name }) => skill_name === 'qovery-deploy')).toBe(true)
     })
 
-    it('plays the three Agent Experience states', async () => {
+    it('plays the three Agents states', async () => {
       const empty = createSkillPresetsMockApi('agent-experience-empty')
       const { value: emptyActivity } = await settle(empty.getAgentActivity(ORGANIZATION_ID, range()))
       expect(emptyActivity?.totals).toEqual({ skill_loads: 0, actions: 0, denials: 0, members: 0, policy_tokens: 0 })

@@ -45,7 +45,7 @@ export const copilotStateLabel = (enabled: boolean, readOnly: boolean) =>
   enabled ? `On, ${readOnly ? 'read-only' : 'read-write'}` : 'Off'
 
 /**
- * The Copilot, inside Agent Experience. "Turn on AI" turns on both existing switches at once: the
+ * The Copilot, inside Agents. "Turn on AI" turns on both existing switches at once: the
  * organization's AI features (`ai_features_enabled`) and the Copilot (the DevOps Copilot service's
  * organization config). Turning off stays in the Copilot settings and only turns the Copilot off.
  * Members see the state, read-only.
@@ -63,7 +63,7 @@ export function AgentExperienceCopilot() {
     ? ({ id: organizationId, name: 'Acme (mock)' } as Organization)
     : organizationData
   const { openModal, closeModal } = useModal()
-  useDocumentTitle('Copilot - Agent Experience')
+  useDocumentTitle('Copilot - Agents')
 
   return (
     <AgentExperiencePage

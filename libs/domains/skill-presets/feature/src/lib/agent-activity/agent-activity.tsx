@@ -1008,7 +1008,7 @@ export function AgentActivity() {
           recent: data.recent.filter(({ skill_name }) => !skill_name),
         }
       : data
-  useDocumentTitle(`${isOrganization ? 'Activity' : 'Your activity'} - Agent Experience`)
+  useDocumentTitle(`${isOrganization ? 'Activity' : 'Your activity'} - Agents`)
 
   return (
     <AgentExperiencePage

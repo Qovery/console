@@ -56,9 +56,11 @@ import { Route as AuthenticatedOrganizationOrganizationIdAlertsNotificationChann
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsIssuesRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/issues'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/alert-rules'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/policy-tokens'
+import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/mcp-servers'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/copilot'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/connect'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/automate'
+import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/agent-task-tokens'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/agent-activity'
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/demo-cluster'
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/cluster'
@@ -574,6 +576,15 @@ const AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute =
         AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute =
+  AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRouteImport.update(
+    {
+      id: '/mcp-servers',
+      path: '/mcp-servers',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute =
   AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRouteImport.update(
     {
@@ -597,6 +608,15 @@ const AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute =
     {
       id: '/automate',
       path: '/automate',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute =
+  AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRouteImport.update(
+    {
+      id: '/agent-task-tokens',
+      path: '/agent-task-tokens',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
     } as any,
@@ -2242,9 +2262,11 @@ export interface FileRoutesByFullPath {
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
   '/organization/$organizationId/agent-experience/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
+  '/organization/$organizationId/agent-experience/agent-task-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute
   '/organization/$organizationId/agent-experience/automate': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
   '/organization/$organizationId/agent-experience/connect': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   '/organization/$organizationId/agent-experience/copilot': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
+  '/organization/$organizationId/agent-experience/mcp-servers': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute
   '/organization/$organizationId/agent-experience/policy-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute
   '/organization/$organizationId/alerts/alert-rules': typeof AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRoute
   '/organization/$organizationId/alerts/issues': typeof AuthenticatedOrganizationOrganizationIdAlertsIssuesRoute
@@ -2471,9 +2493,11 @@ export interface FileRoutesByTo {
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
   '/organization/$organizationId/agent-experience/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
+  '/organization/$organizationId/agent-experience/agent-task-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute
   '/organization/$organizationId/agent-experience/automate': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
   '/organization/$organizationId/agent-experience/connect': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   '/organization/$organizationId/agent-experience/copilot': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
+  '/organization/$organizationId/agent-experience/mcp-servers': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute
   '/organization/$organizationId/agent-experience/policy-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute
   '/organization/$organizationId/alerts/alert-rules': typeof AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRoute
   '/organization/$organizationId/alerts/issues': typeof AuthenticatedOrganizationOrganizationIdAlertsIssuesRoute
@@ -2690,9 +2714,11 @@ export interface FileRoutesById {
   '/_authenticated/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/_authenticated/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
   '/_authenticated/organization/$organizationId/agent-experience/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
+  '/_authenticated/organization/$organizationId/agent-experience/agent-task-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute
   '/_authenticated/organization/$organizationId/agent-experience/automate': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
   '/_authenticated/organization/$organizationId/agent-experience/connect': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   '/_authenticated/organization/$organizationId/agent-experience/copilot': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
+  '/_authenticated/organization/$organizationId/agent-experience/mcp-servers': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute
   '/_authenticated/organization/$organizationId/agent-experience/policy-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute
   '/_authenticated/organization/$organizationId/alerts/alert-rules': typeof AuthenticatedOrganizationOrganizationIdAlertsAlertRulesRoute
   '/_authenticated/organization/$organizationId/alerts/issues': typeof AuthenticatedOrganizationOrganizationIdAlertsIssuesRoute
@@ -2928,9 +2954,11 @@ export interface FileRouteTypes {
     | '/onboarding/organization/$organizationId/cluster'
     | '/onboarding/organization/$organizationId/demo-cluster'
     | '/organization/$organizationId/agent-experience/agent-activity'
+    | '/organization/$organizationId/agent-experience/agent-task-tokens'
     | '/organization/$organizationId/agent-experience/automate'
     | '/organization/$organizationId/agent-experience/connect'
     | '/organization/$organizationId/agent-experience/copilot'
+    | '/organization/$organizationId/agent-experience/mcp-servers'
     | '/organization/$organizationId/agent-experience/policy-tokens'
     | '/organization/$organizationId/alerts/alert-rules'
     | '/organization/$organizationId/alerts/issues'
@@ -3157,9 +3185,11 @@ export interface FileRouteTypes {
     | '/onboarding/organization/$organizationId/cluster'
     | '/onboarding/organization/$organizationId/demo-cluster'
     | '/organization/$organizationId/agent-experience/agent-activity'
+    | '/organization/$organizationId/agent-experience/agent-task-tokens'
     | '/organization/$organizationId/agent-experience/automate'
     | '/organization/$organizationId/agent-experience/connect'
     | '/organization/$organizationId/agent-experience/copilot'
+    | '/organization/$organizationId/agent-experience/mcp-servers'
     | '/organization/$organizationId/agent-experience/policy-tokens'
     | '/organization/$organizationId/alerts/alert-rules'
     | '/organization/$organizationId/alerts/issues'
@@ -3375,9 +3405,11 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding/organization/$organizationId/cluster'
     | '/_authenticated/onboarding/organization/$organizationId/demo-cluster'
     | '/_authenticated/organization/$organizationId/agent-experience/agent-activity'
+    | '/_authenticated/organization/$organizationId/agent-experience/agent-task-tokens'
     | '/_authenticated/organization/$organizationId/agent-experience/automate'
     | '/_authenticated/organization/$organizationId/agent-experience/connect'
     | '/_authenticated/organization/$organizationId/agent-experience/copilot'
+    | '/_authenticated/organization/$organizationId/agent-experience/mcp-servers'
     | '/_authenticated/organization/$organizationId/agent-experience/policy-tokens'
     | '/_authenticated/organization/$organizationId/alerts/alert-rules'
     | '/_authenticated/organization/$organizationId/alerts/issues'
@@ -3925,6 +3957,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
     }
+    '/_authenticated/organization/$organizationId/agent-experience/mcp-servers': {
+      id: '/_authenticated/organization/$organizationId/agent-experience/mcp-servers'
+      path: '/mcp-servers'
+      fullPath: '/organization/$organizationId/agent-experience/mcp-servers'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
+    }
     '/_authenticated/organization/$organizationId/agent-experience/copilot': {
       id: '/_authenticated/organization/$organizationId/agent-experience/copilot'
       path: '/copilot'
@@ -3944,6 +3983,13 @@ declare module '@tanstack/react-router' {
       path: '/automate'
       fullPath: '/organization/$organizationId/agent-experience/automate'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/agent-experience/agent-task-tokens': {
+      id: '/_authenticated/organization/$organizationId/agent-experience/agent-task-tokens'
+      path: '/agent-task-tokens'
+      fullPath: '/organization/$organizationId/agent-experience/agent-task-tokens'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
     }
     '/_authenticated/organization/$organizationId/agent-experience/agent-activity': {
@@ -5266,9 +5312,11 @@ const AuthenticatedOnboardingRouteRouteWithChildren =
 
 interface AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
+  AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
+  AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute
   AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceIndexRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceIndexRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsAssignmentsRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsAssignmentsRoute
@@ -5284,12 +5332,16 @@ const AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren: 
   {
     AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute,
+    AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute:
+      AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute,
+    AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute:
+      AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTokensRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceIndexRoute:

@@ -54,7 +54,7 @@ export function AgentExperienceEntryCard() {
         color="neutral"
         className="w-fit gap-1.5"
       >
-        Open Agent Experience
+        Open Agents
         <Icon iconName="arrow-right" iconStyle="regular" />
       </Link>
     </Section>

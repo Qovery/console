@@ -23,7 +23,8 @@ export function MockScenarioBannerContent({
     <div
       role="status"
       aria-label="Mock data"
-      className="flex flex-wrap items-center gap-3 rounded-md border border-dashed border-neutral bg-surface-neutral-subtle px-3 py-2 text-xs text-neutral"
+      // A dev bar fixed to the bottom of the window, so the page above keeps its real layout.
+      className="fixed bottom-0 left-0 right-0 z-10 flex flex-wrap items-center gap-3 border-t border-dashed border-neutral bg-surface-neutral-subtle px-4 py-2 text-xs text-neutral"
       data-testid="mock-scenario-banner"
     >
       <Badge variant="surface" className="gap-1">

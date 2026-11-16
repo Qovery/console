@@ -44,7 +44,7 @@ beforeEach(() => {
 })
 
 describe('AgentExperienceOverview', () => {
-  it('explains Agent Experience the first time, leads with Turn on AI, and shows no numbers', async () => {
+  it('explains Agents the first time, leads with Turn on AI, and shows no numbers', async () => {
     useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperienceOverview />)
 
@@ -420,10 +420,10 @@ describe('AgentExperienceConnect', () => {
 })
 
 describe('AgentExperienceEntryCard', () => {
-  it('leads to Agent Experience and can be dismissed for good', async () => {
+  it('leads to Agents and can be dismissed for good', async () => {
     const { userEvent, unmount } = renderWithProviders(<AgentExperienceEntryCard />)
     expect(screen.getByText('Set up how coding agents work with Qovery')).toBeInTheDocument()
-    expect(screen.getByText('Open Agent Experience')).toBeInTheDocument()
+    expect(screen.getByText('Open Agents')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
     expect(screen.queryByTestId('agent-experience-entry')).not.toBeInTheDocument()

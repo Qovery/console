@@ -19,13 +19,18 @@ const LazyBanner = lazy(async () => {
   }
 })
 
-/** Builds with `NX_PUBLIC_SKILL_PRESETS_MOCK=true` only: says the page shows mock data and switches scenario. */
+/**
+ * Builds with `NX_PUBLIC_SKILL_PRESETS_MOCK=true` only: a dev bar at the bottom of the window that says
+ * the page shows mock data and switches scenario.
+ */
 export function MockScenarioBanner() {
   const scenario = getSkillPresetsMockScenario()
   if (!scenario) return null
   return (
     <Suspense fallback={null}>
       <LazyBanner scenario={scenario} />
+      {/* Room for the fixed bar, so it never covers the end of the page. */}
+      <div aria-hidden="true" className="order-last h-12" />
     </Suspense>
   )
 }

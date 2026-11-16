@@ -238,7 +238,7 @@ function RunOnItsOwn({
                 <CopyValue label="Header" value="Authorization: Token <policy token>" />
                 <span className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
                   <Link
-                    to="/organization/$organizationId/settings/agents/mcps"
+                    to="/organization/$organizationId/agent-experience/mcp-servers"
                     params={{ organizationId }}
                     color="brand"
                     size="xs"
@@ -479,7 +479,7 @@ export function AgentExperienceAutomate() {
   const [selectedJob, setSelectedJob] = useState<AgentJob | null>(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const agentTasks = AGENT_TASK_IDS.flatMap((id) => AGENTIC_WORKFLOW_TEMPLATES.filter((item) => item.id === id))
-  useDocumentTitle('Automate - Agent Experience')
+  useDocumentTitle('Automate - Agents')
 
   const query = search.trim().toLowerCase()
   const matches = (job: AgentJob) =>

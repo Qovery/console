@@ -114,7 +114,7 @@ export function AgentExperiencePolicyTokens() {
     to: to.toISOString(),
     bucket: 'DAY' as const,
   }
-  useDocumentTitle('Policy tokens - Agent Experience')
+  useDocumentTitle('Policy tokens - Agents')
 
   return (
     <AgentExperiencePage

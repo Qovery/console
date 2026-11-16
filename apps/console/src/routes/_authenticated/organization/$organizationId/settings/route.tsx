@@ -1,5 +1,4 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
@@ -13,7 +12,6 @@ function RouteComponent() {
     location: { pathname },
   } = useRouterState()
   const { roles } = useUserRole()
-  const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
 
   const isOrganizationAdmin = roles.some((role) => role.includes(`organization:${organizationId}:admin`))
 
@@ -92,37 +90,12 @@ function RouteComponent() {
     ],
   }
 
+  // Policy tokens, the Copilot, skills, skill presets, agent activity and the Agent Tasks pages live
+  // in the Agents tab. Their old settings paths redirect there.
   const apiTokenLink = {
-    type: 'group',
     title: 'API token',
+    to: `${pathSettings}/api-token`,
     icon: 'rectangle-api' as const,
-    children: [
-      { title: 'Token', to: `${pathSettings}/api-token` },
-      { title: 'Policy token (New)', to: `${pathSettings}/policy-api-token` },
-    ],
-  }
-
-  const aiLink = {
-    type: 'group',
-    title: 'AI settings',
-    icon: 'sparkles' as const,
-    children: [
-      { title: 'Copilot', to: `${pathSettings}/ai-copilot` },
-      { title: 'Skills', to: `${pathSettings}/skills` },
-      // Moved to Agent Experience: these old paths redirect there.
-      { title: 'Skill presets', to: `${pathSettings}/skill-presets` },
-      { title: 'Agent activity', to: `${pathSettings}/agent-activity` },
-    ],
-  }
-
-  const agentsLink = {
-    type: 'group',
-    title: 'Agent',
-    icon: 'robot' as const,
-    children: [
-      { title: 'Token', to: `${pathSettings}/agents/tokens` },
-      { title: 'MCP', to: `${pathSettings}/agents/mcps` },
-    ],
   }
 
   const dangerZoneLink = {
@@ -143,8 +116,6 @@ function RouteComponent() {
     gitRepositoriesAccessLink,
     notificationsLink,
     apiTokenLink,
-    aiLink,
-    ...(isAgenticWorkflowEnabled ? [agentsLink] : []),
     ...(isOrganizationAdmin ? [dangerZoneLink] : []),
   ]
 

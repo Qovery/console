@@ -47,7 +47,7 @@ function ConnectStep({
 /** How to connect a coding agent to Qovery: skills, CLI and MCP server, each with a command to copy. */
 export function AgentExperienceConnect() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Connect your agent - Agent Experience')
+  useDocumentTitle('Connect your agent - Agents')
 
   return (
     <AgentExperiencePage
