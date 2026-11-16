@@ -26,6 +26,8 @@ export interface AgentJob {
   title: string
   /** What the agent does, in one sentence. */
   does: string
+  /** The card version, short enough for two lines, with the safety promise kept. */
+  summary: string
   can: string[]
   cannot: string[]
   /** The task to give the agent. The token goes in the environment, never in the prompt. */
@@ -64,6 +66,7 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'investigate-production-incident',
     level: 'investigate',
     title: 'Investigate an incident',
+    summary: 'Reads status, deployments and logs to find the cause. Changes nothing.',
     does: 'Reads production status, deployment history and logs to find the cause of an incident, and cannot change anything.',
     can: [
       'Find the organization, project and environment by name, as the Qovery CLI does',
@@ -89,6 +92,7 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'fix-in-preview-environment',
     level: 'investigate',
     title: 'Verify a fix in a preview',
+    summary: 'Tests a fix in preview environments. Never touches production or staging.',
     does: 'Reads production to find a bug, then deploys and checks its fix in preview environments, and cannot touch production or staging.',
     can: [
       'Find the organization, project and environment by name',
@@ -115,6 +119,7 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'stop-idle-environments',
     level: 'hygiene',
     title: 'Stop idle environments',
+    summary: 'Stops idle dev environments at night and starts them in the morning. Nothing else.',
     does: 'Stops development environments when nobody uses them and starts them again in the morning, and cannot touch anything else.',
     can: [
       'Find the organization, project and environment by name',
@@ -136,6 +141,7 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'clean-up-preview-environments',
     level: 'hygiene',
     title: 'Clean up previews',
+    summary: 'Deletes merged or idle previews. Never production or staging.',
     does: 'Deletes preview environments after the pull request is merged or idle, and can never delete production or staging.',
     can: [
       'Find the organization, project and environment by name',
@@ -163,6 +169,7 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'right-size-applications',
     level: 'cost',
     title: 'Right-size applications',
+    summary: 'Sets CPU and memory from real usage, within your bounds. Nothing else.',
     does: 'Sets CPU and memory from real usage within bounds you choose, and cannot change instances, branch or anything else.',
     can: [
       'Find the organization, project and environment by name',
@@ -187,6 +194,7 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'roll-back-bad-release',
     level: 'reliability',
     title: 'Roll back a bad release',
+    summary: 'Rolls production back to the last healthy version. No config changes, no deletes.',
     does: 'Reads errors after a deploy and rolls production services back to the last healthy version, and cannot change configuration or delete anything.',
     can: [
       'Find the organization, project and environment by name',
@@ -214,6 +222,7 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'scale-before-traffic-peak',
     level: 'reliability',
     title: 'Scale before a traffic peak',
+    summary: 'Adds instances before a known peak and removes them after, within your limits.',
     does: 'Adds instances before a known traffic peak and removes them after, within a floor and a ceiling, and cannot change anything else.',
     can: [
       'Find the organization, project and environment by name',
@@ -242,6 +251,7 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'patch-security-issue',
     level: 'change',
     title: 'Patch a security issue',
+    summary: 'Tests a fix on a copy of production, then deploys it. No config or secret changes.',
     does: 'Tests a security fix on a copy of production, then deploys the patched commit, and cannot change production configuration or secrets.',
     can: [
       'Find the organization, projects, environments and clusters by name',
@@ -271,6 +281,7 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'test-on-production-clone',
     level: 'change',
     title: 'Test on a copy of production',
+    summary: 'Runs tests on a copy of production, then deletes the copy. Never changes production.',
     does: 'Clones production into a sandbox project, runs tests on the copy and deletes it, and cannot change production.',
     can: [
       'Find the organization, projects, environments and clusters by name',

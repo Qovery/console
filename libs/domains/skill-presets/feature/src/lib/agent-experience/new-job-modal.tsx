@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { CopyButton, ExternalLink, Heading, Icon, InputTextArea, Link, ModalCrud } from '@qovery/shared/ui'
+import { Accordion, Button, ExternalLink, Heading, Icon, InputTextArea, Link, ModalCrud } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { CodingAgentLogos } from './ui/agent-experience-ui'
 
@@ -55,13 +55,10 @@ export function NewJobModal({ onClose, canManage }: { onClose: () => void; canMa
         bottomButtons={
           <ExternalLink
             href="https://www.qovery.com/docs/configuration/organization/api-policy-token"
-            as="button"
-            variant="plain"
-            color="neutral"
-            size="lg"
-            className="mr-auto"
+            size="sm"
+            className="mr-auto self-center"
           >
-            Read the docs
+            Docs
           </ExternalLink>
         }
       >
@@ -76,21 +73,25 @@ export function NewJobModal({ onClose, canManage }: { onClose: () => void; canMa
                 setCopied(false)
               }}
               dataTestId="new-job-intent"
+              hint={`For example: ${NEW_JOB_EXAMPLES[1]}`}
             />
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="text-neutral-subtle">Try:</span>
+            <div className="flex flex-col items-start gap-1 text-xs">
+              <span className="text-neutral-subtle">Or start from one of these:</span>
               {NEW_JOB_EXAMPLES.map((example) => (
-                <button
+                <Button
                   key={example}
                   type="button"
-                  className="rounded border border-neutral px-2 py-1 text-left text-neutral hover:bg-surface-neutral-subtle"
+                  variant="plain"
+                  color="brand"
+                  size="xs"
+                  className="h-auto px-0 text-left text-xs"
                   onClick={() => {
                     setIntent(example)
                     setCopied(false)
                   }}
                 >
                   {example}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -106,7 +107,6 @@ export function NewJobModal({ onClose, canManage }: { onClose: () => void; canMa
               >
                 {command}
               </code>
-              {hasIntent && <CopyButton content={command} />}
             </div>
             <CodingAgentLogos />
             <p className="text-xs text-neutral-subtle">
@@ -124,35 +124,40 @@ export function NewJobModal({ onClose, canManage }: { onClose: () => void; canMa
             </p>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <Heading level={3} className="text-sm">
-              What happens next
-            </Heading>
-            <ol className="flex flex-col gap-2 text-sm text-neutral">
-              {NEXT_STEPS.map((text, index) => (
-                <li key={text} className="flex items-start gap-2.5">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface-brand-subtle text-xs font-medium text-brand">
-                    {index + 1}
-                  </span>
-                  <span>{text}</span>
-                </li>
-              ))}
-            </ol>
-            <p className="text-sm text-neutral" data-testid="new-job-schedule">
-              Then schedule it: as an Agent Task on Qovery (recommended), or from your coding agent, with that token.
+          <Accordion.Root type="single" collapsible className="rounded border border-neutral">
+            <Accordion.Item value="next">
+              <Accordion.Trigger className="min-h-10 w-full px-3 text-sm font-medium text-neutral">
+                What happens next
+              </Accordion.Trigger>
+              <Accordion.Content className="flex flex-col gap-2 px-3 pb-3">
+                <ol className="flex flex-col gap-2 text-sm text-neutral">
+                  {NEXT_STEPS.map((text, index) => (
+                    <li key={text} className="flex items-start gap-2.5">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface-brand-subtle text-xs font-medium text-brand">
+                        {index + 1}
+                      </span>
+                      <span>{text}</span>
+                    </li>
+                  ))}
+                </ol>
+                <p className="text-sm text-neutral" data-testid="new-job-schedule">
+                  Then schedule it: as an Agent Task on Qovery (recommended), or from your coding agent, with that
+                  token.
+                </p>
+                <p className="text-xs text-neutral-subtle">
+                  A policy cannot be edited after the token is created: to change it, the skill creates a new token.
+                  Every call the token makes shows in Activity.
+                </p>
+              </Accordion.Content>
+            </Accordion.Item>
+          </Accordion.Root>
+          {!canManage && (
+            <p className="flex items-start gap-1.5 text-xs text-neutral" data-testid="new-job-member-note">
+              <Icon iconName="circle-info" iconStyle="regular" className="mt-0.5 text-neutral-subtle" />
+              Creating the token needs an organization owner or admin. Send them the command, or run it with one of
+              them.
             </p>
-            <p className="text-xs text-neutral-subtle">
-              A policy cannot be edited after the token is created: to change it, the skill creates a new token. Every
-              call the token makes shows in Activity.
-            </p>
-            {!canManage && (
-              <p className="flex items-start gap-1.5 text-xs text-neutral" data-testid="new-job-member-note">
-                <Icon iconName="circle-info" iconStyle="regular" className="mt-0.5 text-neutral-subtle" />
-                Creating the token needs an organization owner or admin. Send them the command, or run it with one of
-                them.
-              </p>
-            )}
-          </div>
+          )}
         </div>
       </ModalCrud>
     </FormProvider>

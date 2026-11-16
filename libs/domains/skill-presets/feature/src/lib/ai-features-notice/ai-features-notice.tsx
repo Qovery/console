@@ -7,7 +7,7 @@ import { useAuth } from '@qovery/shared/auth'
 import { mutations as copilotMutations } from '@qovery/shared/devops-copilot/data-access'
 import { CopilotTermsOfService } from '@qovery/shared/devops-copilot/feature'
 import { useUserAccount } from '@qovery/shared/iam/feature'
-import { Button, Callout, Checkbox, Icon, ModalCrud, useModal } from '@qovery/shared/ui'
+import { Accordion, Button, Callout, Checkbox, Icon, ModalCrud, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
 import { useCopilotStatus } from '../hooks/use-copilot-status/use-copilot-status'
@@ -125,7 +125,20 @@ export function TurnOnAiModal({ organizationId, onClose, onEnabled }: TurnOnAiMo
           </ul>
           {needsCopilot && (
             <div className="flex flex-col gap-2">
-              <CopilotTermsOfService className="max-h-48" />
+              <p>
+                The Copilot is an AI service run by Qovery, under the Copilot terms: it acts on your instructions, with
+                your permissions.
+              </p>
+              <Accordion.Root type="single" collapsible className="rounded border border-neutral">
+                <Accordion.Item value="terms">
+                  <Accordion.Trigger className="min-h-9 w-full px-3 text-sm font-medium text-neutral">
+                    Read the Copilot terms
+                  </Accordion.Trigger>
+                  <Accordion.Content className="px-3 pb-3">
+                    <CopilotTermsOfService className="max-h-48" />
+                  </Accordion.Content>
+                </Accordion.Item>
+              </Accordion.Root>
               <Controller
                 name="hasAcceptedTerms"
                 control={methods.control}
@@ -143,7 +156,11 @@ export function TurnOnAiModal({ organizationId, onClose, onEnabled }: TurnOnAiMo
               />
             </div>
           )}
-          <p>Only organization owners and admins can change this setting.</p>
+          {needsCopilot && !hasAcceptedTerms && (
+            <p className="text-xs text-neutral-subtle" data-testid="turn-on-ai-hint">
+              Accept the terms to continue.
+            </p>
+          )}
           {error && (
             <Callout.Root color="red" role="alert" data-testid="turn-on-ai-error">
               <Callout.Icon>

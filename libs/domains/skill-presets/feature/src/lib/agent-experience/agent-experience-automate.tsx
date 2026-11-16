@@ -7,19 +7,20 @@ import { AGENTIC_WORKFLOW_TEMPLATES } from '@qovery/domains/services/feature'
 import {
   Badge,
   Button,
+  Callout,
   CopyButton,
-  EmptyState,
   ExternalLink,
   Heading,
   Icon,
-  InputSearch,
   Link,
   Section,
+  SegmentedControl,
   Sheet,
   useModal,
 } from '@qovery/shared/ui'
-import { useCopyToClipboard, useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
+import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { AGENT_JOBS, AGENT_JOB_LEVELS, type AgentJob, policyExampleUrl } from '../utils/agent-jobs'
 import { NEW_JOB_TITLE, NewJobModal } from './new-job-modal'
 import { AgentExperiencePage, CodingAgentLogos } from './ui/agent-experience-ui'
@@ -45,15 +46,29 @@ const JOB_ICONS: Record<string, IconName> = {
   'test-on-production-clone': 'clone',
 }
 
-export const POLICY_TOKEN_SKILL_LINE =
-  'Describe the job in plain English, and the qovery-policy-token skill writes and tests the policy.'
-
 // Same card as a blueprint in the service catalog (BlueprintCard), clickable as a whole.
 const CARD_CLASS_NAME =
   'flex h-full flex-col gap-3 rounded-lg border border-neutral bg-surface-neutral p-4 text-left [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)]'
 
-const levelTitle = (job: AgentJob) => AGENT_JOB_LEVELS.find(({ level }) => level === job.level)?.title ?? job.level
-const levelNumber = (job: AgentJob) => AGENT_JOB_LEVELS.findIndex(({ level }) => level === job.level) + 1
+/**
+ * The safety level as a badge. "Investigate" rather than "Read-only": one of its jobs deploys to
+ * preview environments.
+ */
+const LEVEL_BADGES: Record<AgentJob['level'], string> = {
+  investigate: 'Investigate',
+  hygiene: 'Hygiene',
+  cost: 'Cost',
+  reliability: 'Reliability',
+  change: 'Changes production',
+}
+
+export function LevelBadge({ job }: { job: AgentJob }) {
+  return (
+    <Badge size="sm" color="neutral" variant="outline" data-testid="agent-job-level">
+      {LEVEL_BADGES[job.level]}
+    </Badge>
+  )
+}
 
 function JobIcon({ job, size = 'md' }: { job: AgentJob; size?: 'md' | 'lg' }) {
   return (
@@ -80,6 +95,9 @@ function JobCard({ job, onViewDetails }: { job: AgentJob; onViewDetails: (job: A
     >
       <span className="flex w-full items-start justify-between gap-2">
         <JobIcon job={job} />
+        <span className="ml-auto">
+          <LevelBadge job={job} />
+        </span>
         <Icon
           iconName="chevron-right"
           iconStyle="regular"
@@ -89,7 +107,7 @@ function JobCard({ job, onViewDetails }: { job: AgentJob; onViewDetails: (job: A
       </span>
       <span className="flex flex-col gap-1">
         <span className="text-sm font-medium text-neutral">{job.title}</span>
-        <span className="line-clamp-2 text-xs leading-5 text-neutral-subtle">{job.does}</span>
+        <span className="text-xs leading-5 text-neutral-subtle">{job.summary}</span>
       </span>
       <TriggerLine trigger={job.trigger} />
     </button>
@@ -110,14 +128,15 @@ function TriggerLine({ trigger }: { trigger: AgentJob['trigger'] }) {
 
 const MCP_URL = 'https://mcp.qovery.com/mcp'
 
-function CopyValue({ label, value }: { label: string; value: string }) {
+/** A value to copy, in full (it wraps instead of being cut), with a copy button named after it. */
+function CopyValue({ label, value, copyLabel }: { label: string; value: string; copyLabel: string }) {
   return (
-    <span className="flex items-center justify-between gap-2 rounded border border-neutral bg-surface-neutral-subtle px-2 py-1">
-      <span className="min-w-0 truncate text-xs">
+    <span className="flex items-start justify-between gap-2 rounded border border-neutral bg-surface-neutral-subtle px-2 py-1">
+      <span className="min-w-0 break-all py-1 text-xs">
         <span className="text-neutral-subtle">{label}: </span>
         <code className="font-code text-neutral">{value}</code>
       </span>
-      <CopyButton content={value} />
+      <CopyButton content={value} aria-label={copyLabel} />
     </span>
   )
 }
@@ -131,12 +150,12 @@ function RunOnItsOwn({
   job,
   canManage,
   organizationId,
-  onCreateToken,
+  adminNames,
 }: {
   job: AgentJob
   canManage: boolean
   organizationId: string
-  onCreateToken: () => void
+  adminNames: string[]
 }) {
   return (
     <Section
@@ -156,14 +175,22 @@ function RunOnItsOwn({
             <span>
               <span className="font-medium">Create its policy token.</span> It allows exactly this job. The token is
               shown once: keep it for the next step.
+              {canManage && ' Use Create policy token at the bottom of this panel.'}
             </span>
-            {canManage ? (
-              <Button type="button" size="md" className="w-fit gap-1.5" onClick={onCreateToken}>
-                <Icon iconName="key" iconStyle="regular" />
-                Create policy token
-              </Button>
-            ) : (
-              <span className="text-xs text-neutral-subtle">An organization owner or admin creates it.</span>
+            {!canManage && (
+              <Callout.Root color="neutral" data-testid="agent-job-member-note">
+                <Callout.Icon>
+                  <Icon iconName="lock-keyhole" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextDescription>
+                    Only owners and admins create policy tokens.
+                    {adminNames.length > 0
+                      ? ` Send this job to one of them: ${adminNames.join(', ')}.`
+                      : ' Send this job to one of them.'}
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
             )}
           </span>
         </li>
@@ -196,14 +223,26 @@ function RunOnItsOwn({
                   Run the job from the coding agent you already use, with the Qovery skills or the Qovery MCP server,
                   signed in with the policy token. Give it the token outside the prompt, never in it:
                 </span>
-                <CopyValue label="Skills and CLI" value="QOVERY_CLI_ACCESS_TOKEN=<policy token>" />
-                <CopyValue label="Or MCP header" value="Authorization: Token <policy token>" />
+                <CopyValue
+                  label="Skills and CLI"
+                  value="QOVERY_CLI_ACCESS_TOKEN=<policy token>"
+                  copyLabel="Copy the token variable for the coding agent"
+                />
+                <CopyValue
+                  label="Or MCP header"
+                  value="Authorization: Token <policy token>"
+                  copyLabel="Copy the MCP header for the coding agent"
+                />
                 <span className="text-xs text-neutral-subtle">
                   To make it recurring, use your coding agent’s own scheduling if it has one, or start it from a CI cron
                   job, with the prompt below.
                 </span>
                 {job.trigger.kind === 'schedule' && job.trigger.cron ? (
-                  <CopyValue label="Schedule" value={job.trigger.cron} />
+                  <CopyValue
+                    label="Schedule"
+                    value={job.trigger.cron}
+                    copyLabel="Copy the schedule for the coding agent"
+                  />
                 ) : (
                   <span className="text-xs text-neutral">
                     {job.trigger.note
@@ -230,21 +269,27 @@ function RunOnItsOwn({
                   trigger, and the Qovery MCP server set up with the token.
                 </span>
                 {job.trigger.kind === 'schedule' && job.trigger.cron ? (
-                  <CopyValue label="On a schedule" value={job.trigger.cron} />
+                  <CopyValue label="On a schedule" value={job.trigger.cron} copyLabel="Copy the Agent Task schedule" />
                 ) : (
                   <span className="text-xs text-neutral">From a webhook: use the URL the Agent Task gets.</span>
                 )}
-                <CopyValue label="MCP server URL" value={MCP_URL} />
-                <CopyValue label="Header" value="Authorization: Token <policy token>" />
+                <CopyValue label="MCP server URL" value={MCP_URL} copyLabel="Copy the MCP server URL" />
+                <CopyValue
+                  label="Header"
+                  value="Authorization: Token <policy token>"
+                  copyLabel="Copy the MCP header for the Agent Task"
+                />
                 <span className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-                  <Link
-                    to="/organization/$organizationId/agent-experience/mcp-servers"
-                    params={{ organizationId }}
-                    color="brand"
-                    size="xs"
-                  >
-                    Add the MCP server
-                  </Link>
+                  {canManage && (
+                    <Link
+                      to="/organization/$organizationId/agent-experience/mcp-servers"
+                      params={{ organizationId }}
+                      color="brand"
+                      size="xs"
+                    >
+                      Add the MCP server
+                    </Link>
+                  )}
                   <Link to="/organization/$organizationId/overview" params={{ organizationId }} color="brand" size="xs">
                     Choose an environment
                   </Link>
@@ -261,14 +306,26 @@ function RunOnItsOwn({
   )
 }
 
-function CodeSection({ id, title, code, maxHeight }: { id: string; title: string; code: string; maxHeight: string }) {
+function CodeSection({
+  id,
+  title,
+  code,
+  maxHeight,
+  copyLabel,
+}: {
+  id: string
+  title: string
+  code: string
+  maxHeight: string
+  copyLabel: string
+}) {
   return (
     <Section aria-labelledby={id} className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
         <Heading level={3} id={id}>
           {title}
         </Heading>
-        <CopyButton content={code} />
+        <CopyButton content={code} aria-label={copyLabel} />
       </div>
       <pre
         className={`${maxHeight} overflow-auto rounded border border-neutral bg-surface-neutral-subtle p-4 font-code text-xs leading-5 text-neutral`}
@@ -298,8 +355,14 @@ function JobDetailsPanel({
   onNewJob: () => void
 }) {
   const { openModal, closeModal } = useModal()
-  const [, copy] = useCopyToClipboard()
-  const [copied, setCopied] = useState(false)
+  const { data: assignees } = useSkillPresetAssignees({ organizationId })
+  // Who a member can send the job to: the organization's owners and admins.
+  const adminRoleIds = new Set(
+    (assignees?.roles ?? []).filter(({ name }) => ['owner', 'admin'].includes(name.toLowerCase())).map(({ id }) => id)
+  )
+  const adminNames = (assignees?.members ?? [])
+    .filter(({ role_id }) => adminRoleIds.has(role_id ?? ''))
+    .map(({ name }) => name)
   if (!job) return null
   const createToken = () => {
     // The sheet is a modal dialog: close it first so the create form gets the focus.
@@ -337,9 +400,7 @@ function JobDetailsPanel({
                   <Dialog.Description className="text-sm leading-5 text-neutral-subtle">{job.does}</Dialog.Description>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge size="sm" color="neutral" variant="outline">
-                    Level {levelNumber(job)} of {AGENT_JOB_LEVELS.length}: {levelTitle(job)}
-                  </Badge>
+                  <LevelBadge job={job} />
                   <Badge size="sm" color="neutral" variant="outline" className="gap-1">
                     <Icon iconName={TRIGGER_ICONS[job.trigger.kind]} iconStyle="regular" aria-hidden="true" />
                     {job.trigger.label}
@@ -352,11 +413,13 @@ function JobDetailsPanel({
               </div>
 
               <div className="flex flex-col gap-8">
-                <RunOnItsOwn
-                  job={job}
-                  canManage={canManage}
-                  organizationId={organizationId}
-                  onCreateToken={createToken}
+                {/* What people come for first: the prompt. */}
+                <CodeSection
+                  id="agent-job-prompt"
+                  title="Prompt for the agent"
+                  code={job.prompt}
+                  maxHeight="max-h-72"
+                  copyLabel="Copy prompt"
                 />
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Section aria-labelledby="agent-job-can" className="flex flex-col gap-2">
@@ -395,13 +458,14 @@ function JobDetailsPanel({
                   Anything the policy does not allow is refused by the Qovery API, from the Console, the CLI, Terraform
                   or MCP, and every call is in the audit logs.
                 </p>
+                <RunOnItsOwn job={job} canManage={canManage} organizationId={organizationId} adminNames={adminNames} />
                 <CodeSection
-                  id="agent-job-prompt"
-                  title="Prompt for the agent"
-                  code={job.prompt}
-                  maxHeight="max-h-72"
+                  id="agent-job-policy"
+                  title="Policy (Rego)"
+                  code={job.policy}
+                  maxHeight="max-h-80"
+                  copyLabel="Copy policy"
                 />
-                <CodeSection id="agent-job-policy" title="Policy (Rego)" code={job.policy} maxHeight="max-h-80" />
                 <p className="text-xs text-neutral-subtle">
                   Replace each REPLACE_WITH_... value with an ID from your organization before you create the token.
                 </p>
@@ -438,21 +502,6 @@ function JobDetailsPanel({
               <ExternalLink href={policyExampleUrl(job.slug)} size="sm" className="mr-auto">
                 Read the example
               </ExternalLink>
-              <Button
-                type="button"
-                variant="outline"
-                color="neutral"
-                size="lg"
-                className="gap-1.5"
-                onClick={() => {
-                  copy(job.prompt)
-                  setCopied(true)
-                  window.setTimeout(() => setCopied(false), 2000)
-                }}
-              >
-                <Icon iconName={copied ? 'check' : 'copy'} iconStyle="regular" />
-                {copied ? 'Copied' : 'Copy prompt'}
-              </Button>
               {canManage && (
                 <Button type="button" size="lg" className="gap-1.5" onClick={createToken}>
                   <Icon iconName="key" iconStyle="regular" />
@@ -475,20 +524,14 @@ function JobDetailsPanel({
 export function AgentExperienceAutomate() {
   const { organizationId = '' } = useParams({ strict: false })
   const { canManage } = useCanManageSkillPresets({ organizationId })
-  const [search, setSearch] = useState('')
+  const [level, setLevel] = useState<'all' | AgentJob['level']>('all')
   const [selectedJob, setSelectedJob] = useState<AgentJob | null>(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const agentTasks = AGENT_TASK_IDS.flatMap((id) => AGENTIC_WORKFLOW_TEMPLATES.filter((item) => item.id === id))
   useDocumentTitle('Automate - Agents')
 
-  const query = search.trim().toLowerCase()
-  const matches = (job: AgentJob) =>
-    !query || [job.title, job.does, levelTitle(job)].some((text) => text.toLowerCase().includes(query))
-  const levels = AGENT_JOB_LEVELS.map((level, index) => ({
-    ...level,
-    number: index + 1,
-    jobs: AGENT_JOBS.filter((job) => job.level === level.level && matches(job)),
-  })).filter(({ jobs }) => jobs.length > 0)
+  // One grid, safest first (the jobs are listed in level order).
+  const jobs = AGENT_JOBS.filter((job) => level === 'all' || job.level === level)
 
   const { openModal: openNewJobModal, closeModal: closeNewJobModal } = useModal()
   const openNewJob = () =>
@@ -505,67 +548,60 @@ export function AgentExperienceAutomate() {
   return (
     <AgentExperiencePage
       title="Automate"
-      description="Agents that run on their own, on a schedule or on an event. Each one gets a policy token that allows exactly its job. Anything else is refused at the API, and every call is logged. Safest jobs first."
+      description="Agents that run on their own, each with a token that allows only its job."
     >
-      <div className="flex flex-col gap-8">
-        <Section className="gap-4">
-          <div className="flex items-center justify-between gap-3">
-            <Heading level={2}>Jobs for agents</Heading>
-            <div className="flex items-center gap-2">
-              <InputSearch
-                placeholder="Search jobs..."
-                className="w-60"
-                customSize="h-9 text-sm"
-                value={search}
-                onChange={setSearch}
-                ariaLabel="Search jobs"
-              />
-              <Button type="button" size="md" className="h-9 gap-1.5" onClick={openNewJob}>
-                <Icon iconName="circle-plus" iconStyle="regular" />
-                {NEW_JOB_TITLE}
-              </Button>
-            </div>
-          </div>
-          {levels.length > 0 ? (
-            <div className="flex flex-col gap-8" data-testid="agent-job-ladder">
-              {levels.map(({ level, title, description, number, jobs }) => (
-                <section key={level} className="flex flex-col gap-2" aria-labelledby={`agent-job-level-${level}`}>
-                  <div className="flex items-baseline gap-2">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface-brand-subtle text-xs font-medium text-brand">
-                      {number}
-                    </span>
-                    <Heading id={`agent-job-level-${level}`} level={3}>
-                      {title}
-                    </Heading>
-                    <span className="text-xs text-neutral-subtle">{description}</span>
-                  </div>
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-                    {jobs.map((job) => (
-                      <JobCard key={job.slug} job={job} onViewDetails={openDetails} />
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </div>
-          ) : (
-            <EmptyState icon="magnifying-glass" title="No job found" description="Try another word." />
+      <Section className="gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <SegmentedControl.Root
+            value={level}
+            onValueChange={(value) => setLevel(value as typeof level)}
+            aria-label="Safety level"
+          >
+            <SegmentedControl.Item value="all" className="text-xs">
+              All
+            </SegmentedControl.Item>
+            {AGENT_JOB_LEVELS.map((item) => (
+              <SegmentedControl.Item key={item.level} value={item.level} className="text-xs">
+                {item.title}
+              </SegmentedControl.Item>
+            ))}
+          </SegmentedControl.Root>
+          {/* Members cannot create the policy token a job needs: no button for them. */}
+          {canManage && (
+            <Button type="button" size="md" variant="outline" color="neutral" className="gap-1.5" onClick={openNewJob}>
+              <Icon iconName="circle-plus" iconStyle="regular" />
+              {NEW_JOB_TITLE}
+            </Button>
           )}
-        </Section>
+        </div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" data-testid="agent-job-grid">
+          {jobs.map((job) => (
+            <JobCard key={job.slug} job={job} onViewDetails={openDetails} />
+          ))}
+        </div>
+      </Section>
 
-        <Section aria-labelledby="run-agents-on-qovery" className="gap-2">
-          <div className="flex flex-col gap-0.5">
-            <Heading level={2} id="run-agents-on-qovery">
-              Or run agents on Qovery
-            </Heading>
-            <p className="text-sm text-neutral-subtle">
-              Agent Tasks are the recommended way to run these jobs on their own: an agent that runs next to your
-              services, on a schedule or a webhook, created from an environment’s Automations tab. Your coding agent
-              works too.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {agentTasks.map((task) => (
-              <div key={task.id} className={CARD_CLASS_NAME}>
+      <Section aria-labelledby="run-agents-on-qovery" className="gap-2">
+        <div className="flex flex-col gap-0.5">
+          <Heading level={2} id="run-agents-on-qovery">
+            Agent Tasks templates
+          </Heading>
+          <p className="text-sm text-neutral-subtle">
+            Ready-made agents that run next to your services, on a schedule or a webhook. Create one from an
+            environment’s Automations tab.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {agentTasks.map((task) => (
+            <a
+              key={task.id}
+              href={task.docLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${CARD_CLASS_NAME} group transition-colors hover:border-neutral-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong`}
+              aria-label={`${task.title}: documentation, opens in a new tab`}
+            >
+              <span className="flex w-full items-start justify-between gap-2">
                 <span className="flex h-9 w-9 items-center justify-center">
                   {task.logoPath ? (
                     <img src={task.logoPath} alt="" className="h-6 w-6 object-contain" />
@@ -573,24 +609,21 @@ export function AgentExperienceAutomate() {
                     <Icon iconName={task.iconName ?? 'robot'} iconStyle="regular" className="text-xl text-brand" />
                   )}
                 </span>
-                <span className="flex flex-col gap-1">
-                  <span className="text-sm font-medium text-neutral">{task.title}</span>
-                  <span className="line-clamp-2 text-xs leading-5 text-neutral-subtle">{task.description}</span>
-                </span>
-                {task.docLink && (
-                  <ExternalLink href={task.docLink} size="xs" className="mt-auto">
-                    Documentation
-                  </ExternalLink>
-                )}
-              </div>
-            ))}
-          </div>
-          <p className="flex items-center gap-2 pt-1 text-sm text-neutral" data-testid="policy-token-skill-line">
-            <Icon iconName="sparkles" iconStyle="regular" className="text-brand" aria-hidden="true" />
-            {POLICY_TOKEN_SKILL_LINE}
-          </p>
-        </Section>
-      </div>
+                <Icon
+                  iconName="arrow-up-right-from-square"
+                  iconStyle="regular"
+                  className="text-xs text-neutral-subtle group-hover:text-neutral"
+                  aria-hidden="true"
+                />
+              </span>
+              <span className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-neutral">{task.title}</span>
+                <span className="text-xs leading-5 text-neutral-subtle">{task.description}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </Section>
       <JobDetailsPanel
         job={selectedJob}
         open={isDetailsOpen}
