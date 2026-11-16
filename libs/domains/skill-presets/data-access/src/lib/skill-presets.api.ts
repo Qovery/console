@@ -166,6 +166,7 @@ const httpSkillPresetsApi: SkillPresetsApi = {
 type MockSkillPresetsApi = SkillPresetsApi & {
   listAssignees: () => Promise<SkillPresetAssignees>
   listPolicyTokens: () => Promise<OrganizationPolicyApiToken[]>
+  deletePolicyToken: (policyTokenId: string) => Promise<void>
   copilotRequest: (method: string, url: string, body?: string) => Promise<unknown>
   aiFeaturesEnabled: () => Promise<boolean>
 }
@@ -210,6 +211,13 @@ export async function listMockPolicyTokens(): Promise<OrganizationPolicyApiToken
   const api = await resolveMockApi()
   if (!api) throw new Error('The skill presets mock is not active')
   return api.listPolicyTokens()
+}
+
+/** Mock mode only: deletes one of the mock organization's policy tokens. */
+export async function deleteMockPolicyToken(policyTokenId: string): Promise<void> {
+  const api = await resolveMockApi()
+  if (!api) throw new Error('The skill presets mock is not active')
+  return api.deletePolicyToken(policyTokenId)
 }
 
 /**

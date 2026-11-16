@@ -358,6 +358,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   let aiFeaturesOn = scenario !== 'ai-features-off' && !seed.aiFeaturesOff
   // The Copilot's organization config, as the DevOps Copilot service returns it.
   let copilotFailedOnce = false
+  let policyTokens = [...(seed.policyTokens ?? [])]
   const copilot = { enabled: !seed.copilotOff, read_only: true, instructions: '', token_mode: 'jwt' as const }
   const checkWrite = (state: MockPresetState, exceptId?: string): Promise<never> | null => {
     if (!aiFeaturesOn) return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
@@ -423,6 +424,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   const api: SkillPresetsApi & {
     listAssignees: () => Promise<SkillPresetAssignees>
     listPolicyTokens: () => Promise<MockPolicyToken[]>
+    deletePolicyToken: (policyTokenId: string) => Promise<void>
     copilotRequest: (method: string, url: string, body?: string) => Promise<unknown>
     aiFeaturesEnabled: () => Promise<boolean>
   } = {
@@ -614,7 +616,12 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     },
     listPolicyTokens() {
       if (!seed.isAdmin) return forbidden()
-      return respond(seed.policyTokens ?? [])
+      return respond(policyTokens)
+    },
+    deletePolicyToken(policyTokenId: string) {
+      if (!seed.isAdmin) return forbidden()
+      policyTokens = policyTokens.filter(({ id }) => id !== policyTokenId)
+      return respond(undefined)
     },
     aiFeaturesEnabled() {
       return respond(aiFeaturesOn)

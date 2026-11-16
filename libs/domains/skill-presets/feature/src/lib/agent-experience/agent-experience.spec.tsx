@@ -332,17 +332,37 @@ describe('Automate a new job', () => {
 })
 
 describe('AgentExperiencePolicyTokens', () => {
-  it('shows each token’s last 7 days, links to its activity, and the deleted tokens with history', async () => {
+  it('shows each token’s last 7 days, flags tokens with no expiry, and keeps deleted tokens as greyed rows', async () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperiencePolicyTokens />)
 
     const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
     expect(await within(ciDeployer).findByTestId('token-usage')).toHaveTextContent(/\d+ allowed/)
-    expect(within(ciDeployer).getByText('See activity')).toBeInTheDocument()
-    expect(await screen.findByTestId('deleted-tokens')).toHaveTextContent('cleanup-bot')
+    expect(within(ciDeployer).queryByTestId('no-expiry')).not.toBeInTheDocument()
+    expect(within(screen.getByTestId('policy-token-review-agent')).getByTestId('no-expiry')).toHaveTextContent(
+      'No expiry'
+    )
+    const deleted = await screen.findByTestId('deleted-token-cleanup-bot')
+    expect(within(deleted).getByText('Deleted', { selector: 'span' })).toBeInTheDocument()
+    expect(within(deleted).getByText('See activity')).toBeInTheDocument()
   })
 
-  it('lists the organization’s tokens with their role, last use and expiry', async () => {
+  it('manages each token from its row: see activity, view the policy, delete', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Actions for review-agent' }))
+    expect(await screen.findByRole('menuitem', { name: 'See activity' })).toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: 'View policy' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Delete token' }))
+    await userEvent.type(await screen.findByRole('textbox'), 'review-agent')
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    await waitFor(() => expect(screen.queryByTestId('policy-token-review-agent')).not.toBeInTheDocument())
+    expect(screen.getByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+  })
+
+  it('creates a token here, with the explanation once', async () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperiencePolicyTokens />)
 
@@ -350,14 +370,16 @@ describe('AgentExperiencePolicyTokens', () => {
       screen.getByText('Give each agent a token that can only do what its policy allows. A denied call never runs.')
     ).toBeInTheDocument()
     expect(await screen.findByText('ci-deployer')).toBeInTheDocument()
-    expect(screen.getByText('review-agent')).toBeInTheDocument()
-    expect(screen.getAllByText('Create policy token').length).toBeGreaterThan(0)
+    expect(screen.getAllByRole('button', { name: /Create policy token/ })).toHaveLength(1)
+    expect(screen.queryByText(/policy token settings/)).not.toBeInTheDocument()
   })
 
-  it('explains an empty list', async () => {
+  it('offers two ways to start when there is no token', async () => {
     useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperiencePolicyTokens />)
     expect(await screen.findByText('No policy token yet')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: /Create policy token/ }).length).toBeGreaterThan(0)
+    expect(screen.getByText('Start from a job')).toBeInTheDocument()
   })
 
   it('tells members only owners and admins manage tokens', async () => {
