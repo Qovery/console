@@ -419,16 +419,20 @@ describe('AgentExperiencePolicyTokens', () => {
 })
 
 describe('AgentExperienceNav', () => {
-  it('has five entries and Settings, with policy tokens and Settings for admins only', async () => {
+  it('has four entries, then Settings with policy tokens, for admins only', async () => {
     useScenario('agent-experience-active')
-    const { unmount } = renderWithProviders(<AgentExperienceNav />)
-    expect(await screen.findByText('Policy tokens')).toBeInTheDocument()
-    for (const label of ['Overview', 'Custom skill presets', 'Automate', 'Optimize builds', 'Activity', 'Settings']) {
+    const { userEvent, unmount } = renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Settings')).toBeInTheDocument()
+    for (const label of ['Overview', 'Custom skill presets', 'Automate', 'Optimize builds', 'Activity']) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
-    // Connect is reached from the Overview, not from the menu.
+    // Connect is reached from the Overview, not from the menu. Policy tokens sit in Settings.
     expect(screen.queryByText('Connect')).not.toBeInTheDocument()
-    expect(screen.queryByText('Copilot')).not.toBeInTheDocument()
+    expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByTestId('sidebar-group-trigger'))
+    const settings = within(screen.getByTestId('sidebar-group-content'))
+    expect(settings.getByText('Policy tokens')).toBeInTheDocument()
+    expect(settings.getByText('Copilot settings')).toBeInTheDocument()
     unmount()
 
     useScenario('member')
@@ -436,6 +440,15 @@ describe('AgentExperienceNav', () => {
     expect(await screen.findByText('Activity')).toBeInTheDocument()
     expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
     expect(screen.queryByText('Settings')).not.toBeInTheDocument()
+  })
+
+  it('opens Settings by itself on the policy tokens page', async () => {
+    useScenario('agent-experience-active')
+    jest
+      .mocked(useLocation)
+      .mockReturnValue({ pathname: '/organization/organization-1/agent-experience/policy-tokens' } as never)
+    renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Policy tokens')).toBeInTheDocument()
   })
 })
 
