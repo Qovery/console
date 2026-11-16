@@ -380,7 +380,7 @@ function UsageContent({ organizationId }: { organizationId: string }) {
 
 export function SkillPresetUsage() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Skill usage - Organization settings')
+  useDocumentTitle('Skill usage - Agents')
   return (
     <SkillPresetsLayout activeTab="usage">
       <UsageContent organizationId={organizationId} />

@@ -48,7 +48,7 @@ export function TemplateGallery() {
   const navigate = useNavigate()
   const { data: organizationTemplates = [] } = useSkillPresets({ organizationId, isTemplate: true })
 
-  useDocumentTitle('Create skill preset - Organization settings')
+  useDocumentTitle('Create skill preset - Agents')
 
   const open = (search: { template?: string; from?: string }) =>
     navigate({

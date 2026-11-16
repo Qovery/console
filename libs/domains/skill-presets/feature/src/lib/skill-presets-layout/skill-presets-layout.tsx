@@ -8,7 +8,7 @@ import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/
 import { MemberAgentView } from '../member-agent-view/member-agent-view'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 
-export type SkillPresetsTab = 'presets' | 'assignments' | 'loads' | 'usage'
+export type SkillPresetsTab = 'presets' | 'assignments' | 'preview' | 'loads' | 'usage'
 
 export interface SkillPresetsLayoutProps {
   activeTab: SkillPresetsTab
@@ -16,9 +16,8 @@ export interface SkillPresetsLayoutProps {
 }
 
 const ADMIN_DESCRIPTION =
-  'Decide how your members’ coding agents use Qovery: which Qovery skills they load, your team’s instructions on top, and skills of your own. Every save is checked by rules and by a model review before it reaches members, and recorded in the audit logs.'
-const MEMBER_DESCRIPTION =
-  'What your coding agent receives from Qovery: the skills it can load and your team’s instructions, readable in full.'
+  'Which Qovery skills your members’ agents load, plus your team’s instructions and your own skills.'
+const MEMBER_DESCRIPTION = 'What your coding agent receives from Qovery, readable in full.'
 
 function AccessSkeleton() {
   return (
@@ -83,6 +82,9 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
               </Navbar.Item>
               <Navbar.Item id="assignments" to={`${basePath}/assignments`}>
                 Assignments
+              </Navbar.Item>
+              <Navbar.Item id="preview" to={`${basePath}/preview`}>
+                Preview
               </Navbar.Item>
               <Navbar.Item id="loads" to={`${basePath}/loads`}>
                 Skill loads

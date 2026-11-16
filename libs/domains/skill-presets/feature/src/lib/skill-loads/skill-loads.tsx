@@ -128,7 +128,7 @@ function LoadsContent({ organizationId }: { organizationId: string }) {
 
 export function SkillLoads() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Skill loads - Organization settings')
+  useDocumentTitle('Skill loads - Agents')
   return (
     <SkillPresetsLayout activeTab="loads">
       <LoadsContent organizationId={organizationId} />

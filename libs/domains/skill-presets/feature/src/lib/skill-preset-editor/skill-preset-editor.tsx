@@ -614,6 +614,11 @@ export function SkillPresetEditorForm({
             >
               Cancel
             </Button>
+            {preset && !isDirty && savePhase === null && (
+              <span id="save-hint" className="text-sm text-neutral-subtle" data-testid="no-changes-hint">
+                No changes yet
+              </span>
+            )}
             <span className="sr-only" aria-live="polite">
               {savePhase === 'checking' ? 'Checking for security' : savePhase === 'saving' ? 'Saving' : ''}
             </span>
@@ -624,6 +629,7 @@ export function SkillPresetEditorForm({
                   type="submit"
                   size="lg"
                   disabled={savePhase !== null || !aiFeaturesEnabled || (preset && !isDirty)}
+                  aria-describedby={preset && !isDirty && savePhase === null ? 'save-hint' : undefined}
                 >
                   {savePhase && <LoaderSpinner className="w-4" />}
                   {savePhase === 'checking'
@@ -654,7 +660,7 @@ function SkillPresetEditorPage() {
   const { data: presets = [], isLoading: isListLoading } = useSkillPresets({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
 
-  useDocumentTitle(`${skillPresetId ? 'Edit' : 'Create'} skill preset - Organization settings`)
+  useDocumentTitle(`${skillPresetId ? 'Edit' : 'Create'} skill preset - Agents`)
 
   const source = search.from ? presets.find(({ id }) => id === search.from) : undefined
   const template = findTemplate(search.template)

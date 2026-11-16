@@ -1,8 +1,10 @@
 import { useParams } from '@tanstack/react-router'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { SkillPresetsPreview } from '../skill-presets-preview/skill-presets-preview'
 import { SettingsSkillPresets } from './settings-skill-presets'
 
 const mockUseSkillPresets = jest.fn()
+let mockRevisionData: { edited_by: string; edited_at: string }[] = []
 
 // An organization admin: the role gate is covered by skill-presets-access.spec.tsx.
 jest.mock('@qovery/shared/iam/feature', () => ({
@@ -13,7 +15,7 @@ jest.mock('../hooks/use-skill-presets/use-skill-presets', () => ({
   useSkillPresets: () => mockUseSkillPresets(),
 }))
 jest.mock('../hooks/use-skill-preset-revisions/use-skill-preset-revisions', () => ({
-  useSkillPresetRevisions: () => ({ data: [] }),
+  useSkillPresetRevisions: () => ({ data: mockRevisionData }),
 }))
 jest.mock('../hooks/use-skill-preset-assignees/use-skill-preset-assignees', () => ({
   useSkillPresetAssignees: () => ({
@@ -68,12 +70,26 @@ describe('SettingsSkillPresets', () => {
     expect(within(chips).getByText('Organization default')).toBeInTheDocument()
     expect(within(chips).getByText('Role: Devops')).toBeInTheDocument()
     expect(within(chips).getByText('Jamie Rossi')).toBeInTheDocument()
-    expect(within(row).getByText('Revision 2')).toBeInTheDocument()
+    expect(within(row).getByText('2')).toBeInTheDocument()
+    expect(within(row).queryByText('Revision 2')).not.toBeInTheDocument()
   })
 
-  it('previews what a member gets', () => {
+  it('names the last editor, with the email in a tooltip', () => {
+    mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
+    mockRevisionData = [{ edited_by: 'jamie.rossi@example.com', edited_at: '2026-11-01T10:00:00Z' }]
+    renderWithProviders(<SettingsSkillPresets />)
+    mockRevisionData = []
+
+    const row = screen.getByTestId('skill-preset-preset-1')
+    expect(within(row).getByTitle('jamie.rossi@example.com')).toHaveTextContent('Jamie Rossi')
+  })
+
+  it('previews what a member gets, in its own tab', () => {
     mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
     renderWithProviders(<SettingsSkillPresets />)
+    expect(screen.queryByTestId('skill-presets-preview')).not.toBeInTheDocument()
+
+    renderWithProviders(<SkillPresetsPreview />)
 
     expect(screen.getByText(/Platform \(CLI-first\) \(assigned to the member\)/)).toBeInTheDocument()
   })

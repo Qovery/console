@@ -208,8 +208,10 @@ describe('SkillPresetEditorForm', () => {
     mockEditSkillPreset.mockResolvedValue({ ...savedPreset, description: 'For backend engineers', revision: 4 })
     const { userEvent } = renderEdit()
     expect(screen.getByRole('button', { name: 'Save changes' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Save changes' })).toHaveAccessibleDescription('No changes yet')
 
     await userEvent.type(screen.getByLabelText('Description (optional)'), 'For backend engineers')
+    expect(screen.queryByTestId('no-changes-hint')).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Save changes' }))
 
     expect(mockEditSkillPreset).toHaveBeenCalledWith(

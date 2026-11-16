@@ -143,7 +143,7 @@ function SkillPresetHistoryPage() {
   const isDeleted = latest?.change_type === 'DELETE'
   const presetExists = presets.some(({ id }) => id === skillPresetId)
 
-  useDocumentTitle(`History of ${latest?.name ?? 'skill preset'} - Organization settings`)
+  useDocumentTitle(`History of ${latest?.name ?? 'skill preset'} - Agents`)
 
   const restore = (revision: SkillPresetRevisionResponse) => {
     const recreate = isDeleted || !presetExists

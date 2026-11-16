@@ -87,6 +87,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdOvervie
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/skill-presets/usage'
+import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/skill-presets/preview'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsNewRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/skill-presets/new'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsLoadsRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/skill-presets/loads'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsAssignmentsRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/skill-presets/assignments'
@@ -835,6 +836,15 @@ const AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRou
     {
       id: '/skill-presets/usage',
       path: '/skill-presets/usage',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRoute =
+  AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRouteImport.update(
+    {
+      id: '/skill-presets/preview',
+      path: '/skill-presets/preview',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
     } as any,
@@ -2301,6 +2311,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/agent-experience/skill-presets/assignments': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsAssignmentsRoute
   '/organization/$organizationId/agent-experience/skill-presets/loads': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsLoadsRoute
   '/organization/$organizationId/agent-experience/skill-presets/new': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsNewRoute
+  '/organization/$organizationId/agent-experience/skill-presets/preview': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRoute
   '/organization/$organizationId/agent-experience/skill-presets/usage': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRoute
   '/organization/$organizationId/cluster/$clusterId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute
   '/organization/$organizationId/cluster/$clusterId/cluster-logs': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
@@ -2528,6 +2539,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/agent-experience/skill-presets/assignments': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsAssignmentsRoute
   '/organization/$organizationId/agent-experience/skill-presets/loads': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsLoadsRoute
   '/organization/$organizationId/agent-experience/skill-presets/new': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsNewRoute
+  '/organization/$organizationId/agent-experience/skill-presets/preview': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRoute
   '/organization/$organizationId/agent-experience/skill-presets/usage': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRoute
   '/organization/$organizationId/cluster/$clusterId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute
   '/organization/$organizationId/cluster/$clusterId/cluster-logs': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
@@ -2753,6 +2765,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/agent-experience/skill-presets/assignments': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsAssignmentsRoute
   '/_authenticated/organization/$organizationId/agent-experience/skill-presets/loads': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsLoadsRoute
   '/_authenticated/organization/$organizationId/agent-experience/skill-presets/new': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsNewRoute
+  '/_authenticated/organization/$organizationId/agent-experience/skill-presets/preview': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRoute
   '/_authenticated/organization/$organizationId/agent-experience/skill-presets/usage': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdCloudShellRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdClusterLogsRoute
@@ -2993,6 +3006,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/agent-experience/skill-presets/assignments'
     | '/organization/$organizationId/agent-experience/skill-presets/loads'
     | '/organization/$organizationId/agent-experience/skill-presets/new'
+    | '/organization/$organizationId/agent-experience/skill-presets/preview'
     | '/organization/$organizationId/agent-experience/skill-presets/usage'
     | '/organization/$organizationId/cluster/$clusterId/cloud-shell'
     | '/organization/$organizationId/cluster/$clusterId/cluster-logs'
@@ -3220,6 +3234,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/agent-experience/skill-presets/assignments'
     | '/organization/$organizationId/agent-experience/skill-presets/loads'
     | '/organization/$organizationId/agent-experience/skill-presets/new'
+    | '/organization/$organizationId/agent-experience/skill-presets/preview'
     | '/organization/$organizationId/agent-experience/skill-presets/usage'
     | '/organization/$organizationId/cluster/$clusterId/cloud-shell'
     | '/organization/$organizationId/cluster/$clusterId/cluster-logs'
@@ -3444,6 +3459,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/agent-experience/skill-presets/assignments'
     | '/_authenticated/organization/$organizationId/agent-experience/skill-presets/loads'
     | '/_authenticated/organization/$organizationId/agent-experience/skill-presets/new'
+    | '/_authenticated/organization/$organizationId/agent-experience/skill-presets/preview'
     | '/_authenticated/organization/$organizationId/agent-experience/skill-presets/usage'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs'
@@ -4172,6 +4188,13 @@ declare module '@tanstack/react-router' {
       path: '/skill-presets/usage'
       fullPath: '/organization/$organizationId/agent-experience/skill-presets/usage'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/agent-experience/skill-presets/preview': {
+      id: '/_authenticated/organization/$organizationId/agent-experience/skill-presets/preview'
+      path: '/skill-presets/preview'
+      fullPath: '/organization/$organizationId/agent-experience/skill-presets/preview'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
     }
     '/_authenticated/organization/$organizationId/agent-experience/skill-presets/new': {
@@ -5322,6 +5345,7 @@ interface AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildr
   AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsAssignmentsRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsAssignmentsRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsLoadsRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsLoadsRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsNewRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsNewRoute
+  AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsIndexRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsSkillPresetIdHistoryRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsSkillPresetIdHistoryRoute
@@ -5352,6 +5376,8 @@ const AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren: 
       AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsLoadsRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsNewRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsNewRoute,
+    AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRoute:
+      AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsPreviewRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsUsageRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceSkillPresetsIndexRoute:

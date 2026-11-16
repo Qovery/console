@@ -1,4 +1,5 @@
 export * from './lib/settings-skill-presets/settings-skill-presets'
+export * from './lib/skill-presets-preview/skill-presets-preview'
 export * from './lib/skill-preset-assignments/skill-preset-assignments'
 export * from './lib/skill-loads/skill-loads'
 export * from './lib/skill-preset-usage/skill-preset-usage'

@@ -1,14 +1,11 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
-import { useState } from 'react'
 import { type SkillPresetResponse, getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/data-access'
 import {
   Badge,
   Button,
   DropdownMenu,
   EmptyState,
-  Heading,
   Icon,
-  Section,
   Skeleton,
   TablePrimitives,
   Tooltip,
@@ -22,12 +19,8 @@ import { useSkillPresetRevisions } from '../hooks/use-skill-preset-revisions/use
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { LoadError } from '../load-error/load-error'
 import { SkillPresetsLayout } from '../skill-presets-layout/skill-presets-layout'
-import { PreviewAsMemberSelect } from '../token-budget/preview-as-member'
-import { TokenBudgetView } from '../token-budget/token-budget-view'
-import { describeResolution, previewTargets, resolvePreviewTarget } from '../utils/preview-target'
 import { baseLabel } from '../utils/qovery-skills'
 import { isTemplate } from '../utils/resolve-preset'
-import { computeTokenBudget } from '../utils/token-budget'
 import { AssignmentChips } from './assignment-chips'
 
 const { Table } = TablePrimitives
@@ -71,6 +64,8 @@ function PresetRow({
   })
   const editedAt = lastRevision?.edited_at ?? preset.updated_at
   const editedBy = lastRevision?.edited_by ?? preset.creator_name ?? 'Unknown'
+  // Revisions name the editor by email: show the member's name, the email in a tooltip, like Audit logs.
+  const editor = assignees?.members.find(({ email }) => email === editedBy)
   const template = isTemplate(preset)
   const skillChanges = preset.skills.length
 
@@ -112,18 +107,25 @@ function PresetRow({
           to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history"
           params={{ organizationId, skillPresetId: preset.id }}
           className="whitespace-nowrap text-neutral hover:text-brand"
+          aria-label={`Revision ${preset.revision}, see the history`}
         >
-          Revision {preset.revision}
+          {preset.revision}
         </Link>
       </Table.Cell>
       <Table.Cell className="h-auto py-3">
         <span className="flex flex-col text-xs">
-          <span className="truncate text-neutral">{editedBy}</span>
-          <Tooltip content={dateFullFormat(editedAt)}>
-            <span tabIndex={0} className="w-fit text-neutral-subtle">
-              {timeAgo(new Date(editedAt))} ago
-            </span>
-          </Tooltip>
+          {editor && editor.name !== editedBy ? (
+            <Tooltip content={editedBy}>
+              <span className="w-fit truncate text-neutral" title={editedBy}>
+                {editor.name}
+              </span>
+            </Tooltip>
+          ) : (
+            <span className="truncate text-neutral">{editedBy}</span>
+          )}
+          <time dateTime={editedAt} title={dateFullFormat(editedAt)} className="w-fit text-neutral-subtle">
+            {timeAgo(new Date(editedAt))} ago
+          </time>
         </span>
       </Table.Cell>
       <Table.Cell className="text-right">
@@ -203,7 +205,6 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
   const { mutateAsync: deleteSkillPreset } = useDeleteSkillPreset()
   const { openModalConfirmation } = useModalConfirmation()
-  const [previewTarget, setPreviewTarget] = useState<string>('')
 
   if (isLoading) return <ListSkeleton />
 
@@ -261,8 +262,6 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
   const assigned = all.filter((preset) => !isTemplate(preset))
   const templates = all.filter(isTemplate)
   const ordered = [...assigned, ...templates]
-  const target = previewTarget || previewTargets(assignees)[0]?.value || ''
-  const resolved = target ? resolvePreviewTarget(target, assigned, assignees) : null
 
   const onDelete = (preset: SkillPresetResponse) =>
     openModalConfirmation({
@@ -276,67 +275,42 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
     })
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-2">
-        <Table.Root>
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell>Preset</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Starts from</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Assigned to</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Revision</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Last edited</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <span className="sr-only">Actions</span>
-              </Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {ordered.map((preset) => (
-              <PresetRow
-                key={preset.id}
-                preset={preset}
-                organizationId={organizationId}
-                assignees={assignees}
-                onDelete={onDelete}
-              />
-            ))}
-          </Table.Body>
-        </Table.Root>
-        <p className="text-xs text-neutral-subtle">
-          A member gets the preset assigned to them, otherwise their role’s, otherwise the organization default.
-        </p>
-      </div>
-
-      <Section
-        aria-labelledby="preview-member-title"
-        className="grid grid-cols-1 gap-6 rounded-md border border-neutral p-4 lg:grid-cols-[280px_minmax(0,1fr)]"
-      >
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <Heading level={2} id="preview-member-title">
-              Preview as member
-            </Heading>
-            <p className="text-xs text-neutral-subtle">
-              Which preset a member gets, and what it costs their agent in context.
-            </p>
-          </div>
-          <PreviewAsMemberSelect value={target} onChange={setPreviewTarget} assignees={assignees} />
-          {resolved && (
-            <p className="text-sm text-neutral" aria-live="polite">
-              {resolved.targetLabel} gets <span className="font-medium">{describeResolution(resolved)}</span>.
-            </p>
-          )}
-        </div>
-        {resolved && <TokenBudgetView budget={computeTokenBudget(resolved.preset)} />}
-      </Section>
+    <div className="flex flex-col gap-2">
+      <Table.Root>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeaderCell>Preset</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Starts from</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Assigned to</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Revision</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Last edited</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>
+              <span className="sr-only">Actions</span>
+            </Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {ordered.map((preset) => (
+            <PresetRow
+              key={preset.id}
+              preset={preset}
+              organizationId={organizationId}
+              assignees={assignees}
+              onDelete={onDelete}
+            />
+          ))}
+        </Table.Body>
+      </Table.Root>
+      <p className="text-xs text-neutral-subtle">
+        A member gets the preset assigned to them, otherwise their role’s, otherwise the organization default.
+      </p>
     </div>
   )
 }
 
 export function SettingsSkillPresets() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Skill presets - Organization settings')
+  useDocumentTitle('Skill presets - Agents')
 
   return (
     <SkillPresetsLayout activeTab="presets">
