@@ -2,7 +2,7 @@ import { type Organization } from 'qovery-typescript-axios'
 import { useAuth } from '@qovery/shared/auth'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserAccount } from '@qovery/shared/iam/feature'
-import { Callout, Icon, Section } from '@qovery/shared/ui'
+import { Badge, Icon, Section } from '@qovery/shared/ui'
 import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
 import { useAICopilotRecurringTasks } from '../hooks/use-ai-copilot-recurring-tasks/use-ai-copilot-recurring-tasks'
 import { useDeleteAICopilotRecurringTask } from '../hooks/use-delete-ai-copilot-recurring-task/use-delete-ai-copilot-recurring-task'
@@ -54,21 +54,23 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
     <div className="w-full justify-between">
       <Section className={embedded ? undefined : 'px-8 pb-8 pt-6'}>
         {!embedded && (
-          <SettingsHeading title="Copilot configuration" description="Configure Copilot" showNeedHelp={false} />
+          <SettingsHeading
+            title="Copilot configuration"
+            titleBadge={
+              <Badge variant="surface" color="brand" size="sm">
+                Beta
+              </Badge>
+            }
+            description="Configure Copilot"
+            showNeedHelp={false}
+          />
         )}
         <div className="max-w-content-with-navigation-left">
-          <Callout.Root color="sky" className="mb-4">
-            <Callout.Icon>
-              <Icon iconName="flask" />
-            </Callout.Icon>
-            <Callout.Text>
-              <Callout.TextHeading>New Feature</Callout.TextHeading>
-              <Callout.TextDescription>
-                Copilot is a new feature. This is an experimental feature and functionality may change. Billing terms
-                are not final and will be communicated before any charges apply.
-              </Callout.TextDescription>
-            </Callout.Text>
-          </Callout.Root>
+          {/* The page title carries a Beta badge; this line keeps the billing note. */}
+          <p className="mb-4 flex items-center gap-1.5 text-xs text-neutral-subtle" data-testid="copilot-beta-note">
+            <Icon iconName="flask" iconStyle="regular" aria-hidden="true" />
+            Functionality may change. Billing terms are not final and will be communicated before any charges apply.
+          </p>
           {!isEnabled && !isLoadingConfig ? (
             <SectionAICopilotOptIn
               organization={organization}

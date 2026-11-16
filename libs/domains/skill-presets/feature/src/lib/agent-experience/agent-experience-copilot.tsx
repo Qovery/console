@@ -68,9 +68,15 @@ export function AgentExperienceCopilot() {
   return (
     <AgentExperiencePage
       title="Copilot"
-      description="Qovery’s AI assistant in the Console. It works on your infrastructure with what you allow it to do."
+      titleBadge={
+        <Badge variant="surface" color="brand" size="sm">
+          Beta
+        </Badge>
+      }
+      description="Qovery’s AI assistant in the Console, limited to what you allow."
+      width="reading"
     >
-      <div className="flex max-w-content-with-navigation-left flex-col gap-6">
+      <div className="flex flex-col gap-6">
         <Section aria-labelledby="copilot-does" className="flex flex-col gap-3 rounded-md border border-neutral p-4">
           <Heading level={2} id="copilot-does">
             What the Copilot does
