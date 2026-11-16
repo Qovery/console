@@ -412,6 +412,29 @@ describe('AgentExperienceConnect', () => {
     expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
     expect(screen.getByText('curl -s https://get.qovery.com | bash')).toBeInTheDocument()
     expect(screen.getByText(/claude mcp add --transport http qovery/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Copy the skills install command' })).toBeInTheDocument()
+    expect(screen.getByText('Start here')).toBeInTheDocument()
+  })
+
+  it('has the MCP set-up of each coding agent in its own tab', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceConnect />)
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
+      'Claude Code',
+      'Codex',
+      'Cursor',
+      'Gemini CLI',
+      'VS Code',
+    ])
+    await userEvent.click(screen.getByRole('tab', { name: 'Gemini CLI' }))
+    expect(screen.getByText(/gemini mcp add --transport http/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Copy the Gemini CLI command' })).toBeInTheDocument()
+  })
+
+  it('names the preset that applies to the reader', async () => {
+    useScenario('agent-experience-active')
+    renderWithProviders(<AgentExperienceConnect />)
+    expect(await screen.findByRole('heading', { name: /^Your preset: / })).toBeInTheDocument()
   })
 })
 
