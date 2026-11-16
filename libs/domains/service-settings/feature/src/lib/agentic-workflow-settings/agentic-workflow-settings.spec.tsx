@@ -1,4 +1,4 @@
-import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
+import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType, LlmProviderType } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import * as servicesDomain from '@qovery/domains/services/feature'
@@ -101,6 +101,13 @@ const service = {
   },
 }
 
+const gatewayProvider = {
+  id: 'provider-1',
+  type: LlmProviderType.ANTHROPIC_COMPATIBLE,
+  base_url: 'https://gateway.example.com/v1',
+  has_credential: true,
+}
+
 describe('Agentic Workflow settings validation', () => {
   it.each([
     ['https://github.com/qovery/console.git', 'qovery/console'],
@@ -169,7 +176,7 @@ describe('AgenticWorkflowSettings views', () => {
     editService.mockReset()
     useServiceSpy.mockReturnValue({ data: service })
     useGitTokensSpy.mockReturnValue({ data: [{ id: 'token-1', type: 'GITHUB' }], isLoading: false })
-    useLlmProvidersSpy.mockReturnValue({ data: [] })
+    useLlmProvidersSpy.mockReturnValue({ data: [], isSuccess: true })
     useLlmProviderModelsSpy.mockReturnValue({
       data: [{ id: 'eu.anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null }],
       isError: false,
@@ -221,6 +228,17 @@ describe('AgenticWorkflowSettings views', () => {
           outputs: [{ name: 'Audit log', url: null }],
           mcp_servers: [{ id: 'mcp-1', required: true }],
           context_service_ids: [],
+          // The provider list is empty here, so the Bedrock hosts come from the model type.
+          governance: {
+            host_allowlist: [
+              'api.github.com',
+              'status.example.com',
+              'bedrock-runtime.*.amazonaws.com',
+              '51.45.40.194',
+              '13.37.114.98',
+              '15.188.250.162',
+            ],
+          },
           webhook_ip_allowlist: ['10.0.0.0/8'],
           webhook_auth: undefined,
           schedule: {
@@ -517,6 +535,62 @@ describe('AgenticWorkflowSettings views', () => {
         serviceId: 'workflow-1',
         payload: expect.objectContaining({ webhook_auth: { mode: 'NONE' } }),
       })
+    )
+  })
+
+  it('adds the selected provider host to the allowlist when saving Governance', async () => {
+    useLlmProvidersSpy.mockReturnValue({ data: [gatewayProvider], isSuccess: true })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="governance" />)
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Domain allowlist' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Domain allowlist' }), 'api.github.com')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          governance: { host_allowlist: ['api.github.com', 'gateway.example.com'] },
+        }),
+      })
+    )
+  })
+
+  it('waits for the providers before saving so a gateway host is not replaced by the Claude one', async () => {
+    const refetch = jest.fn().mockResolvedValue({ data: [gatewayProvider] })
+    useLlmProvidersSpy.mockReturnValue({ data: undefined, isSuccess: false, refetch })
+    useServiceSpy.mockReturnValue({
+      data: { ...service, model: { ...service.model, type: AgenticWorkflowModelType.CLAUDE } },
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="governance" />)
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Domain allowlist' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Domain allowlist' }), 'api.github.com')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          governance: { host_allowlist: ['api.github.com', 'gateway.example.com'] },
+        }),
+      })
+    )
+    expect(refetch).toHaveBeenCalledWith({ throwOnError: true })
+  })
+
+  it('does not save when the providers cannot be loaded', async () => {
+    const refetch = jest.fn().mockRejectedValue(new Error('Network error'))
+    useLlmProvidersSpy.mockReturnValue({ data: undefined, isSuccess: false, refetch })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="governance" />)
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Domain allowlist' }), ', slack.com')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => expect(refetch).toHaveBeenCalled())
+    expect(editService).not.toHaveBeenCalled()
+    expect(screen.getByRole('textbox', { name: 'Domain allowlist' })).toHaveValue(
+      'api.github.com, status.example.com, slack.com'
     )
   })
 
