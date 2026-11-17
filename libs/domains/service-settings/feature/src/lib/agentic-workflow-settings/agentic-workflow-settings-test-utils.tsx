@@ -1,4 +1,8 @@
-import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
+import {
+  AgenticWorkflowExecutionMode,
+  AgenticWorkflowModelType,
+  AgenticWorkflowWebhookAuthMode,
+} from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { type AgenticWorkflowSettingsFormValues } from './agentic-workflow-settings'
@@ -21,6 +25,9 @@ export const SETTINGS_FORM_VALUES: AgenticWorkflowSettingsFormValues = {
   automation: { id: 'automation', triggers: [{ id: 'webhook', type: 'webhook' }], outputs: [] },
   hostAllowlist: '*',
   webhookIpAllowlist: '10.0.0.0/8',
+  webhookAuthMode: AgenticWorkflowWebhookAuthMode.NONE,
+  webhookAuthHeaderName: '',
+  webhookAuthSecret: '',
   cpu: '2000',
   ram: '2048',
   gpu: '0',

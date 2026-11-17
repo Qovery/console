@@ -756,6 +756,22 @@ describe('AgenticWorkflowConfiguration', () => {
     )
   })
 
+  it('should add the selected provider host to a template allowlist', async () => {
+    const { userEvent } = renderConfiguration({ seed: { ...validSeed, whitelistHosts: 'api.incident.io' } })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() =>
+      expect(mockCreateService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            governance: { host_allowlist: ['api.incident.io', 'api.anthropic.com'] },
+          }),
+        })
+      )
+    )
+  })
+
   it('should prevent duplicate submissions while creation is pending', async () => {
     const creation = deferred<{ id: string }>()
     mockCreateService.mockReturnValue(creation.promise)

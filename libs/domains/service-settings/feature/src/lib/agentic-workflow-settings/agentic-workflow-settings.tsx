@@ -4,6 +4,7 @@ import {
   AgenticWorkflowExecutionMode,
   type AgenticWorkflowModelType,
   type AgenticWorkflowRequest,
+  AgenticWorkflowWebhookAuthMode,
   type GitTokenResponse,
 } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
@@ -12,17 +13,20 @@ import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
+  addLlmProviderHosts,
   areAgenticWorkflowResourcesValid,
   createAgenticWorkflowAutomation,
   formatAgenticWorkflowAutomationOutputs,
+  getLlmProviderHosts,
   isGitRepositoryComplete,
+  parseHostAllowlist,
   replaceContextServicesInPrompt,
   useAgenticWorkflowContextServices,
   useEditService,
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button, Section, toastError } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { AgenticWorkflowAdvancedSettings } from './agentic-workflow-advanced-settings/agentic-workflow-advanced-settings'
@@ -31,8 +35,13 @@ import { AgenticWorkflowAutomationsSettings } from './agentic-workflow-automatio
 import { AgenticWorkflowConnectionsSettings } from './agentic-workflow-connections-settings/agentic-workflow-connections-settings'
 import { AgenticWorkflowGeneralSettings } from './agentic-workflow-general-settings/agentic-workflow-general-settings'
 import { AgenticWorkflowGovernanceSettings } from './agentic-workflow-governance-settings/agentic-workflow-governance-settings'
+import {
+  type AgenticWorkflowWebhookAuthFormValues,
+  formatAgenticWorkflowWebhookAuth,
+  isWebhookAuthValid,
+} from './agentic-workflow-webhook-auth'
 
-export interface AgenticWorkflowSettingsFormValues {
+export interface AgenticWorkflowSettingsFormValues extends AgenticWorkflowWebhookAuthFormValues {
   name: string
   description: string
   enabled: boolean
@@ -103,7 +112,7 @@ const PAGE_CONTENT: Record<SettingsPage, { title: string; description: string }>
   },
   governance: {
     title: 'Governance',
-    description: 'Control the hosts and webhook source addresses allowed for this agent task.',
+    description: 'Control the hosts this agent task can reach and who can call its webhook.',
   },
   'advanced-settings': {
     title: 'Advanced settings',
@@ -144,7 +153,12 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
     isLoading: contextServicesLoading,
   } = useAgenticWorkflowContextServices(environmentId)
   const { mutateAsync: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
-  const { data: llmProviders = [] } = useLlmProviders({ organizationId, enabled: page === 'ai-configuration' })
+  // Every save sends the host allowlist, which must include the selected provider's hosts.
+  const {
+    data: llmProviders = [],
+    isSuccess: llmProvidersLoaded,
+    refetch: refetchLlmProviders,
+  } = useLlmProviders({ organizationId })
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
   const workflow = service && isAgenticWorkflow(service) ? service : undefined
@@ -185,6 +199,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           automation: createAgenticWorkflowAutomation(workflow.schedule, workflow.outputs),
           hostAllowlist: workflow.governance.host_allowlist.join(', '),
           webhookIpAllowlist: workflow.webhook_ip_allowlist.join(', '),
+          webhookAuthMode: workflow.webhook_auth?.mode ?? AgenticWorkflowWebhookAuthMode.NONE,
+          webhookAuthHeaderName: workflow.webhook_auth?.header_name ?? '',
+          webhookAuthSecret: '',
           cpu: String(workflow.resources.cpu_milli),
           ram: String(workflow.resources.ram_mib),
           gpu: String(workflow.resources.gpu),
@@ -201,9 +218,21 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
     Boolean(values.name.trim()) &&
     (page !== 'general' || areAgenticWorkflowResourcesValid(values.cpu, values.ram)) &&
     (page !== 'ai-configuration' || (Boolean(values.llmProviderId) && Boolean(values.agentPrompt.trim()))) &&
-    (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
+    (page !== 'connections' || values.repositories.every(isGitRepositoryComplete)) &&
+    (page !== 'governance' || isWebhookAuthValid(values, workflow.webhook_auth?.mode))
   const persistSettings: SaveAgenticWorkflowSettings = async (updatedValues) => {
     const data = { ...form.getValues(), ...updatedValues }
+    // Resolve the provider before building the allowlist: a gateway host only comes from its base URL.
+    let resolvedLlmProviders = llmProviders
+    if (!llmProvidersLoaded) {
+      try {
+        resolvedLlmProviders = (await refetchLlmProviders({ throwOnError: true })).data ?? []
+      } catch (error) {
+        // Notify, then reject like a failed edit so callers keep the user's edits.
+        toastError(error as Error)
+        throw error
+      }
+    }
     const schedule = data.automation.triggers.find((trigger) => trigger.type === 'schedule')
     const model: AgenticWorkflowRequest['model'] = {
       // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
@@ -240,15 +269,19 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         docker_fragment: data.dockerFragment,
         outputs: formatAgenticWorkflowAutomationOutputs(data.automation.outputs),
         governance: {
-          host_allowlist: data.hostAllowlist
-            .split(',')
-            .map((value) => value.trim())
-            .filter(Boolean),
+          host_allowlist: addLlmProviderHosts(
+            parseHostAllowlist(data.hostAllowlist),
+            getLlmProviderHosts(
+              resolvedLlmProviders.find(({ id }) => id === data.llmProviderId),
+              data.modelType
+            )
+          ),
         },
         webhook_ip_allowlist: data.webhookIpAllowlist
           .split(',')
           .map((value) => value.trim())
           .filter(Boolean),
+        webhook_auth: formatAgenticWorkflowWebhookAuth(data, workflow.webhook_auth),
         resources: {
           cpu_milli: Number(data.cpu),
           ram_mib: Number(data.ram),
@@ -257,13 +290,20 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         },
       },
     })
-    form.reset({ ...data, agentPrompt, contextServiceIds })
+    // Never keep the plain secret in the form once it is saved.
+    form.reset({ ...data, agentPrompt, contextServiceIds, webhookAuthSecret: '' })
   }
   const saveSettings: SaveAgenticWorkflowSettings = async (updatedValues) => {
     if (!hasAgenticWorkflowSettingsChanges(form.getValues(), updatedValues)) return
     await persistSettings(updatedValues)
   }
-  const submit = form.handleSubmit(persistSettings)
+  const submit = form.handleSubmit(async (updatedValues) => {
+    try {
+      await persistSettings(updatedValues)
+    } catch {
+      // Already notified; keep the form dirty so the user can retry.
+    }
+  })
   const hasOverlaySave = ['connections', 'automations', 'outputs', 'advanced-settings'].includes(page)
 
   return (
@@ -293,7 +333,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         {page === 'outputs' ? (
           <AgenticWorkflowAutomationsSettings form={form} section="outputs" onSave={saveSettings} />
         ) : null}
-        {page === 'governance' ? <AgenticWorkflowGovernanceSettings form={form} /> : null}
+        {page === 'governance' ? (
+          <AgenticWorkflowGovernanceSettings form={form} savedWebhookAuth={workflow.webhook_auth} />
+        ) : null}
         {page === 'advanced-settings' ? (
           <AgenticWorkflowAdvancedSettings form={form} isSaving={isLoading} onSave={saveSettings} />
         ) : null}
