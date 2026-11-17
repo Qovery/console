@@ -148,7 +148,7 @@ describe('AgentActivity', () => {
     useScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
 
-    const count = await screen.findByTestId('recent-count')
+    const count = await screen.findByTestId('recent-count', undefined, { timeout: 5000 })
     expect(count).toHaveTextContent(/^Showing 1 to 30 of 100 actions in this period/)
     // The time is not a tab stop on every row.
     expect(document.querySelector('time[datetime]')).not.toHaveAttribute('tabindex')

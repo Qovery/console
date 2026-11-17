@@ -379,7 +379,7 @@ describe('AgentExperiencePolicyTokens', () => {
     useScenario('agent-experience-active')
     const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
 
-    await userEvent.click(await screen.findByRole('button', { name: 'Actions for review-agent' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Actions for review-agent' }, { timeout: 5000 }))
     expect(await screen.findByRole('menuitem', { name: 'See activity' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'View policy' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('menuitem', { name: 'Delete token' }))

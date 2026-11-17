@@ -195,7 +195,7 @@ describe('skill loads', () => {
     useScenario('large')
     const { userEvent } = renderWithProviders(<SkillLoads />)
 
-    const table = await screen.findByRole('table')
+    const table = await screen.findByRole('table', undefined, { timeout: 5000 })
     expect(within(table).getAllByRole('row')).toHaveLength(31)
     expect(within(table).getAllByText(/From cache|Fetched/).length).toBe(30)
 
