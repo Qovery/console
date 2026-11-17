@@ -201,6 +201,9 @@ export function YourPresetLine() {
     return <Skeleton height={44} className="w-full" show />
   }
 
+  // Before the endpoints answer (or when they fail), say nothing rather than something wrong.
+  if (canManage ? presets.error : resolved.error) return null
+
   const all = presets.data ?? []
   const organizationDefault = all.find((preset) => preset.assigned_to.organization_default)
   const name = canManage ? organizationDefault?.name : resolved.data?.skill_preset?.name

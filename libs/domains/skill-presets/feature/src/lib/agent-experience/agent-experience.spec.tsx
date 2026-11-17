@@ -492,6 +492,14 @@ describe('AgentExperienceConnect', () => {
       'No preset yet: agents get the full Qovery skills.Create a custom skill preset'
     )
   })
+
+  it('says nothing about the preset when the presets cannot be loaded', async () => {
+    useScenario('errors')
+    renderWithProviders(<AgentExperienceConnect />)
+    expect(await screen.findByText('curl -s https://get.qovery.com | bash')).toBeInTheDocument()
+    await waitFor(() => expect(screen.queryByTestId('connect-your-preset')).not.toBeInTheDocument())
+    expect(screen.queryByText(/No preset yet/)).not.toBeInTheDocument()
+  })
 })
 
 describe('AgentExperienceEntryCard', () => {
