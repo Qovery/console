@@ -9,7 +9,7 @@ workflows:
     '.github/workflows/deploy-staging.yml': []
     '.github/workflows/enforce-source-branch.yml': []
     '.github/workflows/pr-title-lint.yml':
-        - 'amannn/action-semantic-pull-request@v5'
+        - 'amannn/action-semantic-pull-request@v6'
     '.github/workflows/promote-production.yml': []
     '.github/workflows/pull-request.yml': []
     '.github/workflows/semantic-release.yml':
@@ -48,9 +48,9 @@ dependencies:
         commit: 'sha1-ea165f8d65b6e75b540449e92b4886f43607fa02'
         owner_id: 44036562
         repo_id: 192625955
-    'amannn/action-semantic-pull-request@v5':
-        ref: 'v5'
-        commit: 'sha1-e32d7e603df1aa1ba07e981f2a23455dee596825'
+    'amannn/action-semantic-pull-request@v6':
+        ref: 'v6'
+        commit: 'sha1-2252a14e810aa9b85c2d560bd7070c802206ecf6'
         owner_id: 4038316
         repo_id: 220418983
     'codecov/codecov-action@v4.6.0':
