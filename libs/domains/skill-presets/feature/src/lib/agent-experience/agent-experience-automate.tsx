@@ -62,7 +62,7 @@ const LEVEL_BADGES: Record<AgentJob['level'], string> = {
   hygiene: 'Hygiene',
   cost: 'Cost',
   reliability: 'Reliability',
-  change: 'Changes production',
+  change: 'Change',
 }
 
 export function LevelBadge({ job }: { job: AgentJob }) {

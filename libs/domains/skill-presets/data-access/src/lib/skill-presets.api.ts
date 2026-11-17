@@ -26,9 +26,11 @@ import {
 /*
  * Temporary API module for skill presets.
  *
- * TODO: the skill presets endpoints are not in qovery-openapi-spec yet. Once they are released in
- * `qovery-typescript-axios`, replace `httpSkillPresetsApi` with the generated `SkillPresetsApi` (same
- * method names) and delete this file's axios calls. The paths have no `/api` prefix: the axios auth
+ * TODO: the skill presets and agent activity endpoints are added to qovery-openapi-spec by
+ * Qovery/qovery-openapi-spec#1261. Once it is released in `qovery-typescript-axios`, replace
+ * `httpSkillPresetsApi` with the generated `SkillPresetsApi` (same method names), swap the types in
+ * skill-presets.types.ts and agent-activity.types.ts for the generated ones, and delete this file's
+ * axios calls. The mock API stays: it implements the same interface. The paths have no `/api` prefix: the axios auth
  * interceptor adds the API base URL and the token, like it does for the generated client.
  */
 

@@ -216,7 +216,7 @@ describe('AgentExperienceAutomate', () => {
     expect(cards).toHaveLength(9)
     expect(cards[0]).toHaveAttribute('data-testid', 'agent-job-investigate-production-incident')
     expect(cards[8]).toHaveAttribute('data-testid', 'agent-job-test-on-production-clone')
-    expect(within(cards[8]).getByTestId('agent-job-level')).toHaveTextContent('Changes production')
+    expect(within(cards[8]).getByTestId('agent-job-level')).toHaveTextContent('Change')
     expect(
       within(screen.getByTestId('agent-job-stop-idle-environments')).getByTestId('agent-job-trigger')
     ).toHaveTextContent('Weekdays at 8 PM and 8 AM')
