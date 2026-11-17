@@ -9,3 +9,11 @@ updates:
     directory: '/' # Location of package manifests
     schedule:
       interval: 'weekly'
+  # Dependabot is lockfile-aware: for workflows already onboarded to
+  # .github/workflows/actions.lock it regenerates the matching lockfile entry
+  # in the same pull request, so the new commit SHA is reviewable in the diff.
+  # It does NOT onboard new workflows -- run `gh actions-lock` for those.
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'

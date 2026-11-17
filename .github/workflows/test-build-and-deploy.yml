@@ -87,12 +87,12 @@ jobs:
       NX_PUBLIC_SLACK_BOT_API_URL: ${{ vars.NX_PUBLIC_SLACK_BOT_API_URL }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.4.0
         with:
           node-version-file: '.nvmrc'
           cache: yarn
@@ -164,7 +164,7 @@ jobs:
 
       - name: Upload build and coverage artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: dist-and-coverage-artifacts
           path: |
@@ -185,15 +185,15 @@ jobs:
     name: Code Coverage
     needs: [nx-main]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4.4.0
+      - uses: actions/download-artifact@v4.3.0
         with:
           name: dist-and-coverage-artifacts
           path: coverage
           merge-multiple: true
       - name: Display structure of downloaded files
         run: ls -R
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v4.6.0
         with:
           directory: ./coverage/coverage
           flags: unittests # optional
@@ -211,8 +211,8 @@ jobs:
       CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.cloudfront-distribution-id }}
     steps:
       - name: Git clone the repository
-        uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+        uses: actions/checkout@v4.4.0
+      - uses: actions/download-artifact@v4.3.0
         with:
           name: dist-and-coverage-artifacts
           path: dist/
@@ -234,9 +234,9 @@ jobs:
     if: ${{ inputs.flow == 'deploy-staging' }}
     steps:
       - name: Git clone the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.4.0
         with:
           node-version-file: '.nvmrc'
           cache: yarn
@@ -257,7 +257,7 @@ jobs:
         run: yarn e2e:staging
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: console-staging-smoke-report
           path: |
