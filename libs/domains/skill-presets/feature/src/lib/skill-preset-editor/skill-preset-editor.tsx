@@ -392,7 +392,7 @@ export function SkillPresetEditorForm({
               className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
             >
               <Icon iconName="arrow-left" iconStyle="regular" />
-              Custom skill presets
+              Skills Registry
             </Link>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
@@ -660,7 +660,7 @@ function SkillPresetEditorPage() {
   const { data: presets = [], isLoading: isListLoading } = useSkillPresets({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
 
-  useDocumentTitle(`${skillPresetId ? 'Edit' : 'Create'} skill preset - Agents`)
+  useDocumentTitle(`${skillPresetId ? 'Edit' : 'Create'} preset - Skills Registry - Agents`)
 
   const source = search.from ? presets.find(({ id }) => id === search.from) : undefined
   const template = findTemplate(search.template)

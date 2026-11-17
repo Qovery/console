@@ -48,7 +48,7 @@ export function TemplateGallery() {
   const navigate = useNavigate()
   const { data: organizationTemplates = [] } = useSkillPresets({ organizationId, isTemplate: true })
 
-  useDocumentTitle('Create skill preset - Agents')
+  useDocumentTitle('Create preset - Skills Registry - Agents')
 
   const open = (search: { template?: string; from?: string }) =>
     navigate({
@@ -66,7 +66,7 @@ export function TemplateGallery() {
           className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
         >
           <Icon iconName="arrow-left" iconStyle="regular" />
-          Custom skill presets
+          Skills Registry
         </Link>
         <Heading>Create preset</Heading>
         <p className="max-w-2xl text-sm text-neutral-subtle">

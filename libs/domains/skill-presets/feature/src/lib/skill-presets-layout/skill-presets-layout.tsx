@@ -16,12 +16,12 @@ export interface SkillPresetsLayoutProps {
 }
 
 const ADMIN_DESCRIPTION =
-  'Your organization’s own version of the Qovery skills: what agents load, your team’s rules and your own skills.'
+  'Your organization’s skills: which Qovery skills agents load, your team’s rules and your own skills, as presets assigned to teams and people.'
 const MEMBER_DESCRIPTION = 'What your coding agent receives from Qovery, readable in full.'
 
 function AccessSkeleton() {
   return (
-    <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading skill presets">
+    <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading the Skills Registry">
       <Skeleton width={320} height={16} show />
       <Skeleton height={200} className="w-full" show />
     </div>
@@ -43,7 +43,7 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
   return (
     <Section className="px-8 pb-8 pt-6">
       <SettingsHeading
-        title="Custom skill presets"
+        title="Skills Registry"
         description={isLoading ? undefined : canManage ? ADMIN_DESCRIPTION : MEMBER_DESCRIPTION}
       >
         {!isLoading && canManage && (
@@ -76,7 +76,7 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
           <AccessSkeleton />
         ) : canManage ? (
           <>
-            <Navbar.Root activeId={activeTab} ariaLabel="Skill presets sections" className="border-b border-neutral">
+            <Navbar.Root activeId={activeTab} ariaLabel="Skills Registry sections" className="border-b border-neutral">
               <Navbar.Item id="presets" to={basePath}>
                 Presets
               </Navbar.Item>

@@ -179,7 +179,7 @@ export function HintLine({
       params={{ organizationId }}
       className="font-medium text-brand hover:underline"
     >
-      Open skill presets
+      Open the Skills Registry
     </Link>
   )
   const showButton = (label: string, onClick: () => void) => (
@@ -659,7 +659,7 @@ function BreakdownTable({
             params={{ organizationId }}
             className="font-medium text-brand hover:underline"
           >
-            Open skill presets
+            Open the Skills Registry
           </Link>
         </p>
       )}
@@ -1072,7 +1072,7 @@ function ActivityContent({
                 params={{ organizationId }}
                 className="font-medium text-brand hover:underline"
               >
-                skill presets
+                the Skills Registry
               </Link>
               .
             </p>

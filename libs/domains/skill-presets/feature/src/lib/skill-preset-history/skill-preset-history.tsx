@@ -143,7 +143,7 @@ function SkillPresetHistoryPage() {
   const isDeleted = latest?.change_type === 'DELETE'
   const presetExists = presets.some(({ id }) => id === skillPresetId)
 
-  useDocumentTitle(`History of ${latest?.name ?? 'skill preset'} - Agents`)
+  useDocumentTitle(`History of ${latest?.name ?? 'preset'} - Skills Registry - Agents`)
 
   const restore = (revision: SkillPresetRevisionResponse) => {
     const recreate = isDeleted || !presetExists
@@ -240,7 +240,7 @@ function SkillPresetHistoryPage() {
           className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
         >
           <Icon iconName="arrow-left" iconStyle="regular" />
-          {presetExists ? latest.name : 'Custom skill presets'}
+          {presetExists ? latest.name : 'Skills Registry'}
         </Link>
         <div className="flex items-center gap-3">
           <Heading>History of {latest.name}</Heading>

@@ -236,10 +236,10 @@ export function YourPresetLine() {
       )}
       {canManage &&
         (all.length > 0
-          ? presetsLink('/organization/$organizationId/agent-experience/skill-presets', 'Custom skill presets')
+          ? presetsLink('/organization/$organizationId/agent-experience/skill-presets', 'Skills Registry')
           : presetsLink(
               '/organization/$organizationId/agent-experience/skill-presets/new',
-              'Create a custom skill preset'
+              'Create a preset in the Skills Registry'
             ))}
     </div>
   )

@@ -42,7 +42,7 @@ describe('AiFeaturesNotice and the Turn on AI modal', () => {
   it('offers no button to people who cannot change the setting', () => {
     renderWithProviders(<AiFeaturesNotice organizationId="organization-1" canEnable={false} />)
 
-    expect(screen.getByText('Skill presets need AI features')).toBeInTheDocument()
+    expect(screen.getByText('The Skills Registry needs AI features')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
   })
 

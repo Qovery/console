@@ -63,10 +63,10 @@ function usePreviousRange(range: { from: string; to: string; bucket: 'DAY' | 'HO
 
 const STEPS: Record<AgentExperienceStepId, { title: string; description: string; done: string; action: string }> = {
   preset: {
-    title: 'Create a custom skill preset',
+    title: 'Set up your Skills Registry',
     description:
-      'Start from a template for your team’s profile: which Qovery skills agents load, and your team’s rules.',
-    done: 'A custom skill preset is set up. Every agent you connect loads it.',
+      'Create a preset from a template for your team’s profile: which Qovery skills agents load, and your team’s rules.',
+    done: 'Your Skills Registry has a preset. Every agent you connect loads it.',
     action: 'Create a preset',
   },
   'policy-token': {
@@ -120,11 +120,11 @@ const PILLARS: {
     id: 'guide',
     icon: 'compass',
     title: 'Guide',
-    text: 'Your custom skill presets, loaded by every agent you connect, and agents with one job, such as optimizing builds.',
+    text: 'Your Skills Registry, loaded by every agent you connect, and agents with one job, such as optimizing builds.',
     pieces: [
       {
         icon: 'sliders',
-        name: 'Custom skill presets',
+        name: 'Skills Registry',
         to: '/organization/$organizationId/agent-experience/skill-presets',
       },
       { icon: 'sparkles', name: 'Install skills', to: STEP_PATHS.connect },
@@ -253,7 +253,7 @@ function AiOffCallout({ organizationId, canEnable }: { organizationId: string; c
       <Callout.Text>
         <Callout.TextHeading>AI features are off for this organization</Callout.TextHeading>
         <Callout.TextDescription>
-          Custom skill presets, the Copilot and Optimize builds need them.{' '}
+          The Skills Registry, the Copilot and Optimize builds need them.{' '}
           {canEnable ? 'One step turns them on, with the Copilot read-only.' : 'Ask an owner or admin to turn them on.'}
         </Callout.TextDescription>
       </Callout.Text>
@@ -565,7 +565,7 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
         <Card
           id="overview-presets"
           title="Active presets"
-          link={{ label: 'Custom skill presets', to: '/organization/$organizationId/agent-experience/skill-presets' }}
+          link={{ label: 'Skills Registry', to: '/organization/$organizationId/agent-experience/skill-presets' }}
         >
           <ul className="flex flex-col divide-y divide-neutral text-sm">
             {activePresets.slice(0, 5).map((preset) => (

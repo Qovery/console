@@ -196,7 +196,7 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
 
 export function SkillPresetAssignments() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Skill preset assignments - Agents')
+  useDocumentTitle('Assignments - Skills Registry - Agents')
   return (
     <SkillPresetsLayout activeTab="assignments">
       <AssignmentsContent organizationId={organizationId} />

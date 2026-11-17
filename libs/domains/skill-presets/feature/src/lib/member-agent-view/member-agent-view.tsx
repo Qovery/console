@@ -144,8 +144,8 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextDescription>
-            Only organization owners and admins can change skill presets. Ask one of them if your agent needs something
-            different.
+            Only organization owners and admins can change the Skills Registry. Ask one of them if your agent needs
+            something different.
             <AdminNames organizationId={organizationId} />
           </Callout.TextDescription>
         </Callout.Text>

@@ -12,7 +12,7 @@ export function useCreateSkillPreset() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your skill preset has been created',
+        title: 'Your preset has been created',
       },
     },
   })

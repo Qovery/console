@@ -11,7 +11,7 @@ export function useDeleteSkillPreset() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your skill preset has been deleted',
+        title: 'Your preset has been deleted',
       },
       notifyOnError: true,
     },

@@ -25,7 +25,7 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 }
 
 /**
- * The side list of Agents: four entries, then Settings. Custom skill presets come first so people see
+ * The side list of Agents: four entries, then Settings. The Skills Registry comes first so people see
  * what their agents will get; Connect is a one-time setup per machine, reached from the Overview (its
  * header button and the last setup step), not from here. Optimize builds sits under Automate as one
  * of the jobs agents do. Settings holds policy tokens, the Copilot and, behind their flag, the Agent
@@ -52,7 +52,7 @@ export function AgentExperienceNav() {
         iconStyle="regular"
         active={pathname.startsWith(`${base}/skill-presets`)}
       >
-        Custom skill presets
+        Skills Registry
       </Sidebar.Item>
       <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
         Automate

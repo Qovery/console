@@ -13,7 +13,7 @@ import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-fe
 import { useCopilotStatus } from '../hooks/use-copilot-status/use-copilot-status'
 import { useEnableAiFeatures } from '../hooks/use-enable-ai-features/use-enable-ai-features'
 
-export const AI_FEATURES_OFF_TOOLTIP = 'Turn on AI for this organization to create or change skill presets'
+export const AI_FEATURES_OFF_TOOLTIP = 'Turn on AI for this organization to create or change presets'
 export const TURN_ON_AI_LABEL = 'Turn on AI'
 
 interface TurnOnAiModalProps {
@@ -202,7 +202,7 @@ export function AiFeaturesNotice({ organizationId, canEnable, onEnabled }: AiFea
         <Icon iconName="circle-info" iconStyle="regular" />
       </Callout.Icon>
       <Callout.Text>
-        <Callout.TextHeading>Skill presets need AI features</Callout.TextHeading>
+        <Callout.TextHeading>The Skills Registry needs AI features</Callout.TextHeading>
         <Callout.TextDescription>
           Every preset is reviewed by a model before it reaches members. While AI features are off for this
           organization, presets can’t be created or changed. Existing presets keep working and stay readable.

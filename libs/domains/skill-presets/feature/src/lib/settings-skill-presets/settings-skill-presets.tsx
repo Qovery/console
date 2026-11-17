@@ -211,7 +211,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
   if (error && getSkillPresetErrorStatus(error) !== 403) {
     return (
       <LoadError
-        title="Skill presets could not be loaded"
+        title="The Skills Registry could not be loaded"
         error={error}
         onRetry={() => refetch()}
         note="Your members’ agents keep working with the preset they last loaded."
@@ -224,7 +224,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
     return (
       <EmptyState
         icon="wand-magic-sparkles"
-        title="No skill presets yet"
+        title="No presets yet"
         description="A preset decides which Qovery skills your members’ agents load, adds your team’s instructions and your own skills, and applies to the whole organization, a role or specific members. Until you create one, agents use the Qovery skills as published."
       >
         <div className="flex gap-2">
@@ -265,7 +265,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
 
   const onDelete = (preset: SkillPresetResponse) =>
     openModalConfirmation({
-      title: 'Delete skill preset',
+      title: 'Delete preset',
       name: preset.name,
       confirmationMethod: 'name',
       description: `Members who receive ${preset.name} fall back to their role’s preset, the organization default, or the Qovery skills as published. Its history stays in the audit logs.`,
@@ -310,7 +310,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
 
 export function SettingsSkillPresets() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Custom skill presets - Agents')
+  useDocumentTitle('Skills Registry - Agents')
 
   return (
     <SkillPresetsLayout activeTab="presets">

@@ -56,7 +56,7 @@ describe('SettingsSkillPresets', () => {
     mockUseSkillPresets.mockReturnValue({ data: [], isLoading: false })
     renderWithProviders(<SettingsSkillPresets />)
 
-    expect(screen.getByText('No skill presets yet')).toBeInTheDocument()
+    expect(screen.getByText('No presets yet')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Start from a template/ })).toBeInTheDocument()
   })
 

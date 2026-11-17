@@ -13,7 +13,7 @@ export function useEnableAiFeatures() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'AI features are on. You can now create and edit skill presets.',
+        title: 'AI features are on. You can now create and edit presets.',
       },
       notifyOnError: true,
     },

@@ -52,7 +52,7 @@ function PreviewContent({ organizationId }: { organizationId: string }) {
 
 export function SkillPresetsPreview() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Preview skill presets - Agents')
+  useDocumentTitle('Preview - Skills Registry - Agents')
 
   return (
     <SkillPresetsLayout activeTab="preview">

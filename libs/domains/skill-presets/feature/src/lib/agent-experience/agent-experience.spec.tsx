@@ -53,7 +53,7 @@ describe('AgentExperienceOverview', () => {
     expect(screen.getByTestId('agent-experience-state')).toHaveAttribute('data-state', 'empty')
     const intro = screen.getByTestId('agent-experience-hero')
     expect(within(intro).getByRole('heading', { name: 'The future of infrastructure is agentic' })).toBeInTheDocument()
-    expect(within(screen.getByTestId('hero-pillar-guide')).getByText('Custom skill presets')).toBeInTheDocument()
+    expect(within(screen.getByTestId('hero-pillar-guide')).getByText('Skills Registry')).toBeInTheDocument()
     expect(within(screen.getByTestId('hero-pillar-control')).getByText(/Deny by default/)).toBeInTheDocument()
     expect(within(screen.getByTestId('hero-pillar-observe')).getByText('Audit logs')).toBeInTheDocument()
     // The steps in order: value first, connecting last.
@@ -63,9 +63,7 @@ describe('AgentExperienceOverview', () => {
         .map((item) => item.dataset.testid)
     ).toEqual(['setup-step-preset', 'setup-step-policy-token', 'setup-step-connect'])
     expect(stepState('preset')).toBe('next')
-    expect(
-      within(screen.getByTestId('setup-step-preset')).getByText('Create a custom skill preset')
-    ).toBeInTheDocument()
+    expect(within(screen.getByTestId('setup-step-preset')).getByText('Set up your Skills Registry')).toBeInTheDocument()
     // New organizations have AI features on: no Turn on AI anywhere.
     expect(screen.queryByTestId('overview-ai-off')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
@@ -423,7 +421,7 @@ describe('AgentExperienceNav', () => {
     useScenario('agent-experience-active')
     const { userEvent, unmount } = renderWithProviders(<AgentExperienceNav />)
     expect(await screen.findByText('Settings')).toBeInTheDocument()
-    for (const label of ['Overview', 'Custom skill presets', 'Automate', 'Optimize builds', 'Activity']) {
+    for (const label of ['Overview', 'Skills Registry', 'Automate', 'Optimize builds', 'Activity']) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
     // Connect is reached from the Overview, not from the menu. Policy tokens sit in Settings.
@@ -482,14 +480,14 @@ describe('AgentExperienceConnect', () => {
     useScenario('agent-experience-active')
     const { unmount } = renderWithProviders(<AgentExperienceConnect />)
     expect(await screen.findByTestId('connect-your-preset')).toHaveTextContent(
-      /^Your agent loads your organization’s preset: .+ \(organization default\)Custom skill presets$/
+      /^Your agent loads your organization’s preset: .+ \(organization default\)Skills Registry$/
     )
     unmount()
 
     useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperienceConnect />)
     expect(await screen.findByTestId('connect-your-preset')).toHaveTextContent(
-      'No preset yet: agents get the full Qovery skills.Create a custom skill preset'
+      'No preset yet: agents get the full Qovery skills.Create a preset in the Skills Registry'
     )
   })
 
