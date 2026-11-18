@@ -46,9 +46,9 @@ export interface AgentActivityParams {
   skillName?: string
   /**
    * Admin endpoint only (`/me` ignores them). `policyTokenId` implies POLICY_TOKEN. A 400 answers a
-   * token with `actorType=MEMBER`, or `userSub` with a token or `actorType=POLICY_TOKEN`.
+   * token with `actorKind=MEMBER`, or `userSub` with a token or `actorKind=POLICY_TOKEN`.
    */
-  actorType?: AgentActorType
+  actorKind?: AgentActorType
   policyTokenId?: string
   outcome?: AgentActionOutcome
   source?: AgentActivitySource
@@ -115,7 +115,7 @@ export interface AgentActivityResponse {
     at: string
     user_sub: string | null
     user_name: string
-    origin: AgentActionOrigin
+    source: AgentActionOrigin
     actor_kind: AgentActorType
     policy_token_id: string | null
     skill_name: string | null

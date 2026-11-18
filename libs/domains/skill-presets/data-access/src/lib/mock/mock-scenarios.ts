@@ -187,7 +187,7 @@ function backendTeamRevisions(): MockRevisionSeed[] {
   const v1: MockPresetState = {
     name: 'Backend team',
     description: 'Default for every engineer: our deployment rules on top of the Qovery skills.',
-    base: 'QOVERY_FULL',
+    base: 'FULL',
     team_context: TEAM_CONTEXT_V1,
     skills: [
       { skill_name: 'qovery-deploy', mode: 'OVERLAY', content: DEPLOY_OVERLAY.split('\n')[0] },
@@ -224,7 +224,7 @@ function platformRevisions(): MockRevisionSeed[] {
   const v1: MockPresetState = {
     name: 'Platform (CLI-first)',
     description: 'For the Devops role: a short CLI-first skill instead of the full Qovery skills.',
-    base: 'QOVERY_LEAN',
+    base: 'LEAN',
     team_context: PLATFORM_TEAM_CONTEXT,
     skills: [],
     assigned_to: { organization_default: false, role_ids: [MOCK_ROLE_IDS.devops], user_ids: [] },
@@ -362,7 +362,7 @@ function typicalSeed(): MockSeed {
               name: 'New team starter',
               is_template: true,
               description: 'Our starting point for a new team: copy it, then assign the copy.',
-              base: 'QOVERY_FULL',
+              base: 'FULL',
               team_context: BACKEND_TEAM_CONTEXT.split('\n## Naming')[0],
               skills: [{ skill_name: 'qovery-deploy', mode: 'OVERLAY', content: DEPLOY_OVERLAY }],
               assigned_to: { organization_default: false, role_ids: [], user_ids: [] },
@@ -389,7 +389,7 @@ function conflictsSeed(): MockSeed {
         state: {
           name: 'Admins',
           description: 'Admins and on-call engineers.',
-          base: 'QOVERY_FULL',
+          base: 'FULL',
           team_context: null,
           skills: [],
           assigned_to: {
@@ -454,7 +454,7 @@ function largeSeed(): MockSeed {
           state: {
             name: `Team ${team}`,
             description: `Preset for the ${team} team.`,
-            base: index % 3 === 0 ? 'QOVERY_LEAN' : 'QOVERY_FULL',
+            base: index % 3 === 0 ? 'LEAN' : 'FULL',
             team_context: `The ${team} team deploys from its own project. Ask before touching shared resources.`,
             skills: index % 2 === 0 ? [{ skill_name: 'qovery-assess', mode: 'DISABLE' }] : [],
             assigned_to: { organization_default: false, role_ids: [], user_ids: [] },
@@ -476,6 +476,7 @@ export function buildMockSeed(scenario: SkillPresetsMockScenario): MockSeed {
     case 'large':
       return largeSeed()
     case 'agent-activity':
+    case 'agent-activity-timeout':
     case 'agent-experience-active':
       return { ...typicalSeed(), loads: buildLoads(420, 24 * 30), policyTokens: mockPolicyTokens() }
     case 'ai-features-off':

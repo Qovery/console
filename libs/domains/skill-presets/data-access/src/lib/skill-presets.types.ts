@@ -5,7 +5,7 @@
  * released in qovery-openapi-spec. Keep the names aligned so the swap stays a search and replace.
  */
 
-export type SkillPresetBase = 'QOVERY_FULL' | 'QOVERY_LEAN' | 'NONE'
+export type SkillPresetBase = 'FULL' | 'LEAN' | 'NONE'
 
 export type SkillPresetSkillMode = 'DISABLE' | 'OVERLAY' | 'REPLACE' | 'ADD'
 
@@ -108,7 +108,7 @@ export interface SkillPresetManifestResponse {
 
 /**
  * GET /organization/{organizationId}/skillPreset/resolved/skill/{skillName}: what the caller's agent
- * gets for one skill, with the team context. q-core records every call as a LOAD audit entry.
+ * gets for one skill, with the team context. q-core records every call as a SKILL_LOAD audit entry, or SKILL_VIEW for purpose VIEW.
  */
 export interface InjectedSkillResponse {
   source: SkillPresetResolutionSource
@@ -158,7 +158,7 @@ export interface SkillPresetRejection {
   findings: SkillPresetFinding[]
 }
 
-/** The `change` of a LOAD audit entry (sub-target SKILL_PRESET). */
+/** The `change` of a SKILL_LOAD or SKILL_VIEW audit entry (sub-target SKILL_PRESET). */
 export interface SkillLoadChange {
   skill_name: string
   source: SkillPresetResolutionSource
@@ -210,16 +210,17 @@ export interface SkillPresetUsageResponse {
 
 /** Same as the audit log page: the generated client's enums do not list these values yet. */
 export const SKILL_PRESET_SUB_TARGET_TYPE = 'SKILL_PRESET'
-export const SKILL_LOAD_EVENT_TYPE = 'LOAD'
-/** A resolved skill read for display (the Console's member view): audited, not counted in usage. */
-export const SKILL_VIEW_EVENT_TYPE = 'VIEW'
+/** An agent loaded a skill (purpose LOAD). */
+export const SKILL_LOAD_EVENT_TYPE = 'SKILL_LOAD'
+/** A resolved skill read for display (purpose VIEW, the Console's member view): audited, not counted in usage. */
+export const SKILL_VIEW_EVENT_TYPE = 'SKILL_VIEW'
 
-/** LOAD: an agent loads the skill (the API default). VIEW: someone reads it, for example in the Console. */
+/** The `purpose` query value. LOAD: an agent loads the skill (the API default). VIEW: someone reads it. */
 export type ResolvedSkillPurpose = 'LOAD' | 'VIEW'
 /** A create or an update the security review refused: nothing was saved. */
-export const SKILL_PRESET_REJECTED_EVENT_TYPE = 'REJECTED'
+export const SKILL_PRESET_REJECTED_EVENT_TYPE = 'SKILL_PRESET_REJECTED'
 
-/** The `change` of a REJECTED audit entry: hashes and findings, never the text. */
+/** The `change` of a SKILL_PRESET_REJECTED audit entry: hashes and findings, never the text. */
 export interface SkillPresetRejectedChange {
   attempted_change: 'CREATE' | 'UPDATE'
   /** Null on a create. */
@@ -237,4 +238,17 @@ export interface SkillPresetRejectedChange {
   }[]
   assigned_to: SkillPresetAssignedTo
   findings: SkillPresetFinding[]
+}
+
+/**
+ * One skill in the audit entry of a preset create or update. The text can be left out of the audit log,
+ * so its hashes stay: a change of description or content remains visible.
+ */
+export interface SkillPresetSkillAuditView {
+  skill_name: string
+  mode: SkillPresetSkillMode
+  description: string | null
+  description_sha256: string | null
+  content: string | null
+  content_sha256: string | null
 }

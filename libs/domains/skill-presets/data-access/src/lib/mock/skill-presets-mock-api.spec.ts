@@ -1,4 +1,5 @@
 import {
+  getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
   getSkillPresetFindings,
   isSkillPresetAiFeaturesOff,
@@ -16,7 +17,7 @@ const request = (overrides: Partial<SkillPresetRequest> = {}): SkillPresetReques
   name: 'Release team',
   is_template: false,
   description: 'For release managers.',
-  base: 'QOVERY_FULL',
+  base: 'FULL',
   team_context: 'Deploy to staging first.',
   skills: [{ skill_name: 'qovery-deploy', mode: 'OVERLAY', content: 'Wait for the smoke tests.' }],
   assigned_to: { organization_default: false, role_ids: [], user_ids: [] },
@@ -50,7 +51,7 @@ describe('createSkillPresetsMockApi', () => {
         ?.filter(({ is_template }) => !is_template)
         .map(({ base }) => base)
         .sort()
-    ).toEqual(['NONE', 'QOVERY_FULL', 'QOVERY_LEAN'])
+    ).toEqual(['FULL', 'LEAN', 'NONE'])
     expect(presets?.[0]).toEqual(
       expect.objectContaining({
         id: expect.any(String),
@@ -134,13 +135,13 @@ describe('createSkillPresetsMockApi', () => {
   it('records a revision and an UPDATE audit entry with the previous state on edit', async () => {
     const api = createSkillPresetsMockApi('typical')
     const { value: presets } = await settle(api.listSkillPresets(ORGANIZATION_ID))
-    const preset = presets?.find(({ base }) => base === 'QOVERY_LEAN')
+    const preset = presets?.find(({ base }) => base === 'LEAN')
     if (!preset) throw new Error('missing preset')
 
     const { value: saved } = await settle(
       api.editSkillPreset(
         preset.id,
-        request({ name: preset.name, base: 'QOVERY_LEAN', skills: [], assigned_to: preset.assigned_to })
+        request({ name: preset.name, base: 'LEAN', skills: [], assigned_to: preset.assigned_to })
       )
     )
     const { value: revisions } = await settle(
@@ -171,7 +172,7 @@ describe('createSkillPresetsMockApi', () => {
     expect(remaining).toHaveLength(3)
   })
 
-  it('pages skill loads as LOAD audit entries', async () => {
+  it('pages skill loads as SKILL_LOAD audit entries', async () => {
     const api = createSkillPresetsMockApi('large')
     const { value: firstPage } = await settle(api.listSkillLoads(ORGANIZATION_ID, { pageSize: 50 }))
 
@@ -334,7 +335,7 @@ describe('createSkillPresetsMockApi', () => {
     ])
     const event = api.auditEvents().at(-1)
     const trace = JSON.parse(event?.change ?? '{}')
-    expect(event?.event_type).toBe('REJECTED')
+    expect(event?.event_type).toBe('SKILL_PRESET_REJECTED')
     expect(event?.sub_target_type).toBe('SKILL_PRESET')
     expect(trace).toEqual(
       expect.objectContaining({
@@ -366,6 +367,32 @@ describe('createSkillPresetsMockApi', () => {
     expect(isSkillPresetAiFeaturesOff(error)).toBe(true)
     expect(value?.length).toBeGreaterThan(0)
     expect(deleted.error).toBeUndefined()
+  })
+
+  it('refuses the Owner role as a target, and more than 200 assignments', async () => {
+    const api = createSkillPresetsMockApi('typical')
+    const owner = await settle(
+      api.createSkillPreset(
+        ORGANIZATION_ID,
+        request({ assigned_to: { organization_default: false, role_ids: [MOCK_ROLE_IDS.owner], user_ids: [] } })
+      )
+    )
+    expect(getSkillPresetErrorStatus(owner.error)).toBe(400)
+    expect(getSkillPresetErrorDetail(owner.error)).toMatch(/Assign the Admin role rather than the Owner role/)
+
+    const many = await settle(
+      api.createSkillPreset(
+        ORGANIZATION_ID,
+        request({
+          assigned_to: {
+            organization_default: false,
+            role_ids: [],
+            user_ids: Array.from({ length: 201 }, (_, index) => `user-${index}`),
+          },
+        })
+      )
+    )
+    expect(getSkillPresetErrorDetail(many.error)).toMatch(/at most 200 assignments/)
   })
 
   it('refuses more than 200,000 characters of text in total', async () => {
@@ -428,16 +455,16 @@ describe('createSkillPresetsMockApi', () => {
 
     await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'VIEW' }))
     const event = api.auditEvents().at(-1)
-    expect(event?.event_type).toBe('VIEW')
+    expect(event?.event_type).toBe('SKILL_VIEW')
     expect(JSON.parse(event?.change ?? '{}')).toEqual(
       expect.objectContaining({ skill_name: 'qovery-deploy', from_cache: false })
     )
     expect((await usage()).value?.totals.loads).toBe(before)
     const { value: loads } = await settle(api.listSkillLoads(ORGANIZATION_ID, { pageSize: 100 }))
-    expect(loads?.events?.every(({ event_type }) => (event_type as string) === 'LOAD')).toBe(true)
+    expect(loads?.events?.every(({ event_type }) => (event_type as string) === 'SKILL_LOAD')).toBe(true)
 
     await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'LOAD' }))
-    expect(api.auditEvents().at(-1)?.event_type).toBe('LOAD')
+    expect(api.auditEvents().at(-1)?.event_type).toBe('SKILL_LOAD')
     expect((await usage()).value?.totals.loads).toBe((before ?? 0) + 1)
   })
 
@@ -450,6 +477,21 @@ describe('createSkillPresetsMockApi', () => {
         bucket: 'DAY' as const,
       }
     }
+
+    it('times out beyond 7 days in the agent-activity-timeout scenario, and reads a shorter period', async () => {
+      const api = createSkillPresetsMockApi('agent-activity-timeout')
+      const month = await settle(api.getAgentActivity(ORGANIZATION_ID, range()))
+      expect(getSkillPresetErrorStatus(month.error)).toBe(503)
+      const to = new Date(Date.now() + 60_000)
+      const week = await settle(
+        api.getAgentActivity(ORGANIZATION_ID, {
+          from: new Date(to.getTime() - 7 * 24 * 3_600_000).toISOString(),
+          to: to.toISOString(),
+          bucket: 'DAY',
+        })
+      )
+      expect(week.value?.totals.actions).toBeGreaterThan(0)
+    })
 
     it('links actions to the skills that led to them, with denials in production', async () => {
       const { value } = await settle(
@@ -466,11 +508,11 @@ describe('createSkillPresetsMockApi', () => {
       expect(value?.by_skill.find(({ skill_name }) => skill_name === 'qovery-deploy')?.actions).toBeGreaterThan(0)
       expect(value?.by_skill.some(({ skill_name }) => skill_name === null)).toBe(true)
       expect(value?.recent.length).toBeLessThanOrEqual(100)
-      expect(value?.recent.some(({ origin, event }) => origin === 'MCP_TOOL_CALL' && event === 'MCP')).toBe(true)
+      expect(value?.recent.some(({ source, event }) => source === 'MCP_TOOL_CALL' && event === 'MCP')).toBe(true)
       expect(
         value?.recent.some(
-          ({ origin, outcome, event, environment_name }) =>
-            origin === 'POLICY_DENIAL' &&
+          ({ source, outcome, event, environment_name }) =>
+            source === 'POLICY_DENIAL' &&
             outcome === 'DENIED' &&
             event === 'POLICY_FAILED' &&
             environment_name === 'payments-production'
@@ -487,7 +529,7 @@ describe('createSkillPresetsMockApi', () => {
 
       expect(sum('actions')).toBe(value?.totals.actions)
       expect(sum('denials')).toBe(value?.totals.denials)
-      expect(allowed.every(({ origin }) => origin !== 'POLICY_DENIAL')).toBe(true)
+      expect(allowed.every(({ source }) => source !== 'POLICY_DENIAL')).toBe(true)
       expect(value?.actions_by_type.reduce((total, row) => total + row.count, 0)).toBe(
         (value?.totals.actions ?? 0) + (value?.totals.denials ?? 0)
       )
@@ -524,7 +566,7 @@ describe('createSkillPresetsMockApi', () => {
       const api = createSkillPresetsMockApi('agent-activity')
       const ciDeployer = '3f1c9a2e-0000-4000-8000-00000000c1d0'
       const { value: tokens } = await settle(
-        api.getAgentActivity(ORGANIZATION_ID, { ...range(), actorType: 'POLICY_TOKEN' })
+        api.getAgentActivity(ORGANIZATION_ID, { ...range(), actorKind: 'POLICY_TOKEN' })
       )
       expect(tokens?.recent.every(({ actor_kind }) => actor_kind === 'POLICY_TOKEN')).toBe(true)
       expect(tokens?.totals.skill_loads).toBe(0)
@@ -541,7 +583,7 @@ describe('createSkillPresetsMockApi', () => {
       const { value: calls } = await settle(
         api.getAgentActivity(ORGANIZATION_ID, { ...range(), source: 'POLICY_TOKEN_API_ACTION' })
       )
-      expect(calls?.recent.every(({ origin }) => origin === 'POLICY_TOKEN_API_ACTION')).toBe(true)
+      expect(calls?.recent.every(({ source }) => source === 'POLICY_TOKEN_API_ACTION')).toBe(true)
       expect(calls?.recent.length).toBeGreaterThan(0)
     })
 
@@ -549,8 +591,8 @@ describe('createSkillPresetsMockApi', () => {
       const api = createSkillPresetsMockApi('agent-activity')
       for (const params of [
         { ...range(), policyTokenId: 'not-a-uuid' },
-        { ...range(), policyTokenId: '3f1c9a2e-0000-4000-8000-00000000c1d0', actorType: 'MEMBER' as const },
-        { ...range(), userSub: 'auth0|mock-jordan', actorType: 'POLICY_TOKEN' as const },
+        { ...range(), policyTokenId: '3f1c9a2e-0000-4000-8000-00000000c1d0', actorKind: 'MEMBER' as const },
+        { ...range(), userSub: 'auth0|mock-jordan', actorKind: 'POLICY_TOKEN' as const },
       ]) {
         const { error } = await settle(api.getAgentActivity(ORGANIZATION_ID, params))
         expect(getSkillPresetErrorStatus(error)).toBe(400)
@@ -561,7 +603,7 @@ describe('createSkillPresetsMockApi', () => {
       const { value } = await settle(
         createSkillPresetsMockApi('member').getMyAgentActivity(ORGANIZATION_ID, {
           ...range(),
-          actorType: 'POLICY_TOKEN',
+          actorKind: 'POLICY_TOKEN',
         } as never)
       )
       expect(value?.by_policy_token).toEqual([])

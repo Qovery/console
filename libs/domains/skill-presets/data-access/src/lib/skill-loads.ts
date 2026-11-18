@@ -3,7 +3,7 @@ import { type SkillLoadChange } from './skill-presets.types'
 
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null
 
-/** The `change` of a LOAD audit entry, checked once here so the UI reads typed fields. */
+/** The `change` of a SKILL_LOAD or SKILL_VIEW audit entry, checked once here so the UI reads typed fields. */
 export function isSkillLoadChange(value: unknown): value is SkillLoadChange {
   return (
     isRecord(value) &&
