@@ -8,8 +8,8 @@ import { QOVERY_SKILLS } from './qovery-skills'
 
 /**
  * Approximate size of each published Qovery skill, in tokens (characters / 4), measured on
- * qovery-skills a56ca29: its SKILL.md, its description, and its reference files, which the agent
- * reads only when a step needs them. Update them when qovery-skills changes a lot.
+ * qovery-skills a56ca29 (qovery-support on 6717f3d): its SKILL.md, its description, and its reference
+ * files, which the agent reads only when a step needs them. Update them when qovery-skills changes a lot.
  */
 export const QOVERY_SKILL_SIZES: Record<string, { skillMd: number; description: number; references: number }> = {
   qovery: { skillMd: 3921, description: 80, references: 2650 },
@@ -21,6 +21,7 @@ export const QOVERY_SKILL_SIZES: Record<string, { skillMd: number; description: 
   'qovery-preview': { skillMd: 2247, description: 92, references: 10605 },
   'qovery-signup': { skillMd: 3553, description: 177, references: 7886 },
   'qovery-speedup': { skillMd: 2209, description: 140, references: 11561 },
+  'qovery-support': { skillMd: 3197, description: 196, references: 22279 },
   'qovery-terraform': { skillMd: 2426, description: 94, references: 9537 },
   'qovery-troubleshoot': { skillMd: 2927, description: 112, references: 16798 },
 }

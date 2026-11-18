@@ -20,7 +20,7 @@ describe('SKILL_PRESET_TEMPLATES', () => {
     resetSkillPresetsMockApi()
   })
 
-  it('covers the seven profiles', () => {
+  it('covers the eight profiles', () => {
     expect(SKILL_PRESET_TEMPLATES.map(({ id }) => id)).toEqual([
       'developer',
       'product-manager',
@@ -29,6 +29,7 @@ describe('SKILL_PRESET_TEMPLATES', () => {
       'data-ml-engineer',
       'security',
       'qa-tester',
+      'support-on-call',
     ])
   })
 

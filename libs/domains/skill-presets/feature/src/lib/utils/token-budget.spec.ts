@@ -7,8 +7,8 @@ import {
 } from './token-budget'
 
 describe('computeTokenBudget', () => {
-  it('compares with today: all 11 descriptions always in context', () => {
-    expect(TODAY_ALWAYS_TOKENS).toBe(1493)
+  it('compares with today: all 12 descriptions always in context', () => {
+    expect(TODAY_ALWAYS_TOKENS).toBe(1689)
     expect(computeTokenBudget(null).alwaysInContext.total).toBe(TODAY_ALWAYS_TOKENS)
   })
 

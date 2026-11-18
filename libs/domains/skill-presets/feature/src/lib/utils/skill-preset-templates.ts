@@ -46,6 +46,12 @@ export const SKILL_PRESET_TEMPLATES: SkillPresetTemplate[] = [
           content: `Deploy to a non-production environment first and check that it works.
 Only deploy to production when the user asks for it explicitly, and confirm the environment name with them first.`,
         },
+        {
+          skill_name: 'qovery-support',
+          mode: 'OVERLAY',
+          content: `Check the known fixes before opening a ticket. Try a fix on a non-production environment first.
+For production, explain the fix and let the user apply it, or ask the platform team.`,
+        },
         ...off('qovery-assess', 'qovery-terraform', 'qovery-policy-token', 'qovery-signup', 'qovery-onboard'),
       ],
     },
@@ -102,6 +108,12 @@ Never apply a plan yourself.`,
           mode: 'OVERLAY',
           content: `Before proposing to scale up, show the current usage and the estimated monthly cost change.
 Prefer schedules and right-sizing over bigger instances.`,
+        },
+        {
+          skill_name: 'qovery-support',
+          mode: 'OVERLAY',
+          content: `When the fix is a cluster change (cluster advanced settings, node pools, Kubernetes upgrade, static IP), make it through Terraform like any other change.
+Changes that redeploy every service go in a maintenance window. Say so before proposing them.`,
         },
       ],
     },
@@ -221,6 +233,44 @@ Never change staging or production. Stop a preview when the user is done testing
           'qovery-speedup',
           'qovery-signup',
           'qovery-onboard'
+        ),
+      ],
+    },
+  },
+  {
+    id: 'support-on-call',
+    title: 'Support / on-call',
+    summary: 'Known fixes and diagnosis first. Production changes need approval.',
+    assignmentHint: 'Suggested for: on-call engineers and support, by member',
+    icon: 'life-ring',
+    preset: {
+      name: 'On-call',
+      description: 'Answer support questions and diagnose incidents with known fixes. Read first, change last.',
+      base: 'QOVERY_FULL',
+      team_context: `## Our on-call rules
+
+- Production environments: <list them>
+- Escalation: <your on-call channel or pager>, then Qovery support from the Console help button
+- Changes to production need: <who approves, for example the incident lead>`,
+      skills: [
+        {
+          skill_name: 'qovery-support',
+          mode: 'OVERLAY',
+          content: `Start from the exact error text and match it to a known issue before guessing.
+When escalating, write the ticket for the user: Console URL, deployment ID or time window, error lines, what was tried. Never include secrets.`,
+        },
+        {
+          skill_name: 'qovery-troubleshoot',
+          mode: 'OVERLAY',
+          content: `Read logs, events and status first. In production, propose the fix and wait for an explicit approval before applying it, then confirm the result.`,
+        },
+        ...off(
+          'qovery-terraform',
+          'qovery-policy-token',
+          'qovery-signup',
+          'qovery-onboard',
+          'qovery-preview',
+          'qovery-assess'
         ),
       ],
     },

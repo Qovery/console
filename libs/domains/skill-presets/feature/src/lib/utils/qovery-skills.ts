@@ -17,6 +17,10 @@ export const QOVERY_SKILLS: { name: string; description: string }[] = [
   { name: 'qovery-signup', description: 'Creates a Qovery account and organization from the terminal.' },
   { name: 'qovery-onboard', description: 'Guides a new user through cluster and environment setup.' },
   { name: 'qovery-assess', description: 'Reviews an organization against production best practices.' },
+  {
+    name: 'qovery-support',
+    description: 'Answers common Qovery, Kubernetes and AWS questions with the fixes that worked.',
+  },
 ]
 
 export const qoverySkillDescription = (skillName: string) =>
