@@ -1,6 +1,11 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
+import {
+  type SkillPresetsMockScenario,
+  buildSkillPresetApiError,
+  resetSkillPresetsMockApi,
+  skillPresetsApi,
+} from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved, within } from '@qovery/shared/util-tests'
 import { MemberAgentView } from './member-agent-view/member-agent-view'
 import { MockScenarioBanner } from './mock-scenario-banner/mock-scenario-banner'
@@ -219,6 +224,38 @@ describe('usage', () => {
 
     expect(firstMember).toHaveAttribute('aria-pressed', 'true')
     expect(await screen.findByRole('button', { name: 'Clear filters' })).toBeInTheDocument()
+  })
+
+  it('drills into a skill, toggles it off again, and clears every filter at once', async () => {
+    useScenario('typical')
+    const { userEvent } = renderWithProviders(<SkillPresetUsage />)
+
+    const heading = await screen.findByRole('heading', { name: 'Top skills' })
+    const topSkills = heading.parentElement as HTMLElement
+    const [firstSkill] = within(topSkills).getAllByRole('button')
+    await userEvent.click(firstSkill)
+    expect(firstSkill).toHaveAttribute('aria-pressed', 'true')
+    await userEvent.click(firstSkill)
+    expect(firstSkill).toHaveAttribute('aria-pressed', 'false')
+
+    await userEvent.click(firstSkill)
+    await userEvent.click(await screen.findByRole('button', { name: 'Clear filters' }))
+    expect(firstSkill).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument()
+  })
+
+  it('shows a load error with a retry', async () => {
+    useScenario('typical')
+    const getUsage = jest
+      .spyOn(skillPresetsApi, 'getSkillPresetUsage')
+      .mockRejectedValue(buildSkillPresetApiError(503, 'Unavailable'))
+    const { userEvent } = renderWithProviders(<SkillPresetUsage />)
+
+    expect(await screen.findByText('Usage could not be loaded')).toBeInTheDocument()
+    const calls = getUsage.mock.calls.length
+    await userEvent.click(screen.getByRole('button', { name: /Try again/ }))
+    await waitFor(() => expect(getUsage.mock.calls.length).toBeGreaterThan(calls))
+    getUsage.mockRestore()
   })
 })
 
