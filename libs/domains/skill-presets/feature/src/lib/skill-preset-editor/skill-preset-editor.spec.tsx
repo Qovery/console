@@ -166,6 +166,10 @@ describe('SkillPresetEditorForm', () => {
     expect(within(summary).getByRole('button', { name: 'Team context, line 2' })).toBeInTheDocument()
     const lines = screen.getByRole('list', { name: 'Lines to fix' })
     expect(within(lines).getByText(/Asks the agent to print or collect secrets/)).toBeInTheDocument()
+
+    // The summary takes the keyboard to the field to fix.
+    await userEvent.click(within(summary).getByRole('button', { name: 'Team context, line 2' }))
+    expect(screen.getByRole('textbox', { name: 'Team context' })).toHaveFocus()
   })
 
   it('clears a finding once its field is edited', async () => {
@@ -388,5 +392,65 @@ describe('SkillPresetEditorForm', () => {
     expect(screen.getByTestId('total-text-counter')).toHaveTextContent('over the limit a model can review')
     await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
     expect(mockCreateSkillPreset).not.toHaveBeenCalled()
+  })
+
+  it('adds a skill of its own, then removes it', async () => {
+    const { userEvent } = renderEditor()
+    expect(screen.getByText(/No skills of your own yet/)).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'New skill' }))
+    const row = screen.getByRole('group', { name: 'New skill 1' })
+    await userEvent.type(within(row).getByLabelText('Skill name'), 'release-checklist')
+    expect(screen.getByRole('group', { name: 'Skill release-checklist' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Remove release-checklist' }))
+    expect(screen.getByText(/No skills of your own yet/)).toBeInTheDocument()
+  })
+
+  it('copies a skill from another preset through the library', async () => {
+    mockCreateSkillPreset.mockResolvedValue(savedPreset)
+    const other = {
+      ...savedPreset,
+      id: 'preset-2',
+      name: 'Ops team',
+      skills: [
+        { skill_name: 'runbook-a', mode: 'ADD' as const, description: 'Runbook. Use when on call.', content: 'Steps.' },
+      ],
+    }
+    const { userEvent } = renderWithProviders(
+      <SkillPresetEditorForm
+        organizationId="organization-1"
+        initialValues={{ ...toSkillPresetFormValues(), name: 'Backend team', organizationDefault: true }}
+        presets={[other]}
+        assignees={assignees}
+      />
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Add from library' }))
+    const dialog = await screen.findByRole('dialog')
+    await userEvent.click(within(dialog).getByRole('checkbox', { name: 'Add runbook-a from Ops team' }))
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Add skill' }))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+    expect(mockCreateSkillPreset.mock.calls[0][0].body.skills).toContainEqual({
+      skill_name: 'runbook-a',
+      mode: 'ADD',
+      description: 'Runbook. Use when on call.',
+      content: 'Steps.',
+    })
+  })
+
+  it('turns several Qovery skills off at once', async () => {
+    mockCreateSkillPreset.mockResolvedValue(savedPreset)
+    const { userEvent } = renderEditor()
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Select qovery-optimize' }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Select qovery-speedup' }))
+    const bulk = screen.getByRole('group', { name: 'Change the selected skills' })
+    expect(bulk).toHaveTextContent('2 selected')
+    await userEvent.click(within(bulk).getByRole('button', { name: 'Disable' }))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+    const skills = mockCreateSkillPreset.mock.calls[0][0].body.skills
+    expect(skills).toContainEqual({ skill_name: 'qovery-optimize', mode: 'DISABLE' })
+    expect(skills).toContainEqual({ skill_name: 'qovery-speedup', mode: 'DISABLE' })
   })
 })

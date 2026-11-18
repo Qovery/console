@@ -5,7 +5,7 @@ import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/uti
 import { AgentExperienceAutomate } from './agent-experience-automate'
 import { AgentExperienceBuildOptimizer } from './agent-experience-build-optimizer'
 import { AgentExperienceConnect } from './agent-experience-connect'
-import { AgentExperienceCopilot } from './agent-experience-copilot'
+import { AgentExperienceCopilot, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
 import { AGENT_EXPERIENCE_ENTRY_DISMISSED_KEY, AgentExperienceEntryCard } from './agent-experience-entry-card'
 import { AgentExperienceNav } from './agent-experience-nav'
 import { AgentExperienceOverview } from './agent-experience-overview'
@@ -159,8 +159,9 @@ describe('AgentExperienceBuildOptimizer', () => {
 
   it('offers Turn on AI when AI is off', async () => {
     useScenario('ai-features-off')
-    renderWithProviders(<AgentExperienceBuildOptimizer />)
-    expect(await screen.findByRole('button', { name: 'Turn on AI' })).toBeInTheDocument()
+    const { userEvent } = renderWithProviders(<AgentExperienceBuildOptimizer />)
+    await userEvent.click(await screen.findByRole('button', { name: 'Turn on AI' }))
+    expect(await screen.findByRole('dialog')).toBeInTheDocument()
     expect(within(screen.getByTestId('build-optimizer-state')).getByText('Off')).toBeInTheDocument()
   })
 })
@@ -190,6 +191,27 @@ describe('AgentExperienceCopilot', () => {
     expect(await screen.findByRole('heading', { name: 'Turn on AI' })).toBeInTheDocument()
     expect(within(screen.getByTestId('copilot-state')).getByText('Off')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Turn on AI' })).toBeInTheDocument()
+  })
+
+  it('opens the one-step Turn on AI dialog from the Copilot page', async () => {
+    useScenario('ai-features-off')
+    const { userEvent } = renderWithProviders(<AgentExperienceCopilot />)
+    await userEvent.click(await screen.findByRole('button', { name: 'Turn on AI' }))
+    const dialog = await screen.findByRole('dialog')
+    expect(
+      await within(dialog).findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
+    ).toBeInTheDocument()
+    expect(within(dialog).getByTestId('submit-button')).toBeDisabled()
+  })
+
+  it('names every state of AI features and the Copilot', () => {
+    expect(aiStatusLabel(true, true, true)).toBe('AI on, Copilot read-only')
+    expect(aiStatusLabel(true, true, false)).toBe('AI on, Copilot read-write')
+    expect(aiStatusLabel(true, false, true)).toBe('AI features on, Copilot off')
+    expect(aiStatusLabel(false, true, true)).toBe('AI features off, Copilot on')
+    expect(aiStatusLabel(false, false, true)).toBe('Off')
+    expect(copilotStateLabel(true, false)).toBe('On, read-write')
+    expect(copilotStateLabel(false, true)).toBe('Off')
   })
 
   it('shows members the state only, with no switch', async () => {
@@ -345,6 +367,18 @@ describe('Automate a new job', () => {
     expect(screen.getByTestId('new-job-command')).toHaveTextContent(
       '/qovery-policy-token Scale the api before Black Friday'
     )
+  })
+
+  it('copies the command, says Copied, and keeps the modal open', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /Automate a new job/ }))
+    await userEvent.type(screen.getByTestId('new-job-intent'), 'Restart the api when it stops answering')
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(screen.getByTestId('submit-button')).toHaveTextContent('Copied')
+    expect(screen.getByTestId('new-job-modal')).toBeInTheDocument()
   })
 
   it('opens from a job’s details', async () => {
