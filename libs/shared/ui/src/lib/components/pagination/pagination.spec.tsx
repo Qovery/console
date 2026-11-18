@@ -48,4 +48,10 @@ describe('Pagination', () => {
 
     expect(props.onPageSizeChange).toHaveBeenCalledWith('10')
   })
+
+  it('names the page buttons for screen readers', () => {
+    const { getByRole } = render(<Pagination {...props} />)
+    expect(getByRole('button', { name: 'Previous page' })).toBeInTheDocument()
+    expect(getByRole('button', { name: 'Next page' })).toBeInTheDocument()
+  })
 })
