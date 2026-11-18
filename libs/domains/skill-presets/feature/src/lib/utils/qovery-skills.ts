@@ -34,14 +34,14 @@ export const SKILL_PRESET_BASES: {
   icon: IconName
 }[] = [
   {
-    value: 'QOVERY_FULL',
+    value: 'FULL',
     title: 'Full Qovery skills',
     description: 'Every Qovery skill, with step-by-step guides. Best for teams new to Qovery.',
     weight: 'Heaviest. Each skill loads only when a task needs it.',
     icon: 'layer-group',
   },
   {
-    value: 'QOVERY_LEAN',
+    value: 'LEAN',
     title: 'Lean (CLI-first)',
     description: 'One short skill: use the qovery CLI and read its --help. For teams that know Kubernetes.',
     weight: 'Light. One short skill.',

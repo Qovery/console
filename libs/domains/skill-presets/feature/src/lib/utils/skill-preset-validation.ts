@@ -59,7 +59,7 @@ export function validateSkillPresetForm(values: SkillPresetFormValues): Record<s
     errors['teamContext'] = tooLong(limits.teamContextMaxLength)
   }
 
-  if (values.base === 'QOVERY_FULL') {
+  if (values.base === 'FULL') {
     values.qoverySkills.forEach((skill, index) => {
       if (skill.choice === 'AS_IS' || skill.choice === 'DISABLE') return
       const path = `qoverySkills.${index}`
@@ -116,5 +116,10 @@ export function validateSkillPresetForm(values: SkillPresetFormValues): Record<s
       `A preset holds at most ${limits.maxSkills} skill changes. This one has ${skillCount}.`
   }
 
+  const assignmentCount = values.roleIds.length + values.userIds.length
+  if (assignmentCount > limits.maxAssignments) {
+    errors['userIds'] =
+      `A preset holds at most ${limits.maxAssignments} roles and members. This one has ${assignmentCount}: assign a role rather than each member.`
+  }
   return errors
 }

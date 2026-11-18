@@ -9,6 +9,7 @@ import {
   SKILL_NAME_PATTERN,
   SKILL_PRESET_LIMITS,
   approxTokens,
+  isOwnerRole,
   isQoverySkillName,
   totalPresetTextLength,
 } from '../skill-presets.limits'
@@ -110,8 +111,8 @@ function validate(state: MockPresetState): string | null {
     if (skill.mode !== 'ADD' && !isQoverySkillName(name)) {
       return `Skill '${name}' is not a Qovery skill: only ADD applies to the organization's own skills`
     }
-    if (skill.mode !== 'ADD' && state.base !== 'QOVERY_FULL') {
-      return `Skill '${name}' uses ${skill.mode}, which only applies to the QOVERY_FULL base. Put team instructions in the team context instead.`
+    if (skill.mode !== 'ADD' && state.base !== 'FULL') {
+      return `Skill '${name}' uses ${skill.mode}, which only applies to the FULL base. Put team instructions in the team context instead.`
     }
     if ((skill.mode === 'DISABLE' || skill.mode === 'OVERLAY') && skill.description) {
       return `Skill '${name}' uses ${skill.mode}, which takes no description`
@@ -170,6 +171,9 @@ const PASSED_REVIEW = {
 }
 
 const ADMIN_ONLY = 'You need the permission to manage organization data to do this'
+
+const ACTIVITY_TIMED_OUT_DETAIL =
+  'This range holds too much activity to read in time. Narrow the range, or filter by member or skill.'
 
 export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, organizationName = 'Acme (mock)') {
   const seed = buildMockSeed(scenario)
@@ -360,12 +364,29 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   let copilotFailedOnce = false
   let policyTokens = [...(seed.policyTokens ?? [])]
   const copilot = { enabled: !seed.copilotOff, read_only: true, instructions: '', token_mode: 'jwt' as const }
+  // The timeout scenario reads at most 7 days in time, as a busy organization would.
+  const activityTimesOut = ({ from, to }: { from: string; to: string }) =>
+    scenario === 'agent-activity-timeout' &&
+    new Date(to).getTime() - new Date(from).getTime() > 7 * 24 * HOUR_MS + 60_000
   const checkWrite = (state: MockPresetState, exceptId?: string): Promise<never> | null => {
     if (!aiFeaturesOn) return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
     const invalid = validate(state)
     if (invalid) return fail(400, invalid)
     if (presets.some((preset) => preset.id !== exceptId && preset.name === state.name)) {
       return fail(409, `Skill preset name '${state.name}' already exists`)
+    }
+    const { role_ids, user_ids } = state.assigned_to
+    if (role_ids.length + user_ids.length > SKILL_PRESET_LIMITS.maxAssignments) {
+      return fail(
+        400,
+        `A preset holds at most ${SKILL_PRESET_LIMITS.maxAssignments} assignments: assign a role rather than each member`
+      )
+    }
+    if (role_ids.some((id) => seed.assignees.roles.some((role) => role.id === id && isOwnerRole(role)))) {
+      return fail(
+        400,
+        'Assign the Admin role rather than the Owner role: the organization owner is resolved as an admin'
+      )
     }
     const unknownRole = state.assigned_to.role_ids.find((id) => !seed.assignees.roles.some((role) => role.id === id))
     if (unknownRole) return fail(404, `Role ${unknownRole} does not exist in this organization`)
@@ -375,7 +396,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     }
     const findings = inspect(state)
     if (findings.length > 0) {
-      // A refused save leaves a REJECTED audit entry: hashes and findings, never the text.
+      // A refused save leaves a SKILL_PRESET_REJECTED audit entry: hashes and findings, never the text.
       const rejected: SkillPresetRejectedChange = {
         attempted_change: exceptId ? 'UPDATE' : 'CREATE',
         skill_preset_id: exceptId ?? null,
@@ -633,16 +654,18 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     },
     getAgentActivity(_organizationId, params) {
       if (!seed.isAdmin) return forbidden()
+      if (activityTimesOut(params)) return fail(503, ACTIVITY_TIMED_OUT_DETAIL)
       const invalid = agentActivityParamsError(params)
       if (invalid) return fail(400, invalid)
       return respond(aggregateAgentActivity(agentActions(), loadRecords, params))
     },
     getMyAgentActivity(_organizationId, params) {
-      const invalid = agentActivityParamsError({ ...params, actorType: undefined, policyTokenId: undefined })
+      if (activityTimesOut(params)) return fail(503, ACTIVITY_TIMED_OUT_DETAIL)
+      const invalid = agentActivityParamsError({ ...params, actorKind: undefined, policyTokenId: undefined })
       if (invalid) return fail(400, invalid)
       // Only the caller's own actions and loads: the member view never shows other people. Like q-core,
       // /me ignores the actor filters and never lists policy tokens.
-      const { actorType: _actorType, policyTokenId: _policyTokenId, ...own } = params
+      const { actorKind: _actorKind, policyTokenId: _policyTokenId, ...own } = params
       const activity = aggregateAgentActivity(agentActions(), loadRecords, { ...own, userSub: currentUser.id })
       return respond({ ...activity, by_policy_token: [] })
     },

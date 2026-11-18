@@ -33,7 +33,10 @@ export function isSkillPresetConcurrentModification(error: unknown) {
   )
 }
 
-/** 503: the model security review could not run (provider down, timeout, unreadable answer). Nothing was saved. */
+/**
+ * 503 on a save: the model security review could not run (provider down, timeout, unreadable answer, or
+ * no model reviewer configured). Nothing was saved.
+ */
 export function isSkillPresetReviewUnavailable(error: unknown) {
   return getSkillPresetErrorStatus(error) === 503
 }
@@ -42,6 +45,13 @@ export function isSkillPresetReviewUnavailable(error: unknown) {
 export function isSkillPresetAiFeaturesOff(error: unknown) {
   return getSkillPresetErrorStatus(error) === 403 && /AI features/i.test(getSkillPresetErrorDetail(error) ?? '')
 }
+
+/** 503 on agent activity (ActivityQueryTimedOut): the range holds too much activity to read in time. */
+export function isAgentActivityTimedOut(error: unknown) {
+  return getSkillPresetErrorStatus(error) === 503
+}
+
+export const AGENT_ACTIVITY_TIMED_OUT_MESSAGE = 'This range took too long. Pick a shorter period.'
 
 export const SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE =
   'The security review is unavailable. Nothing was saved. Try again in a minute.'

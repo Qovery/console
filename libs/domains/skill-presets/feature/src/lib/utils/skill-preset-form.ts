@@ -57,7 +57,7 @@ export function toSkillPresetFormValues(preset?: PresetLike): SkillPresetFormVal
     name: preset?.name ?? '',
     isTemplate: Boolean(preset?.is_template),
     description: preset?.description ?? '',
-    base: preset?.base ?? 'QOVERY_FULL',
+    base: preset?.base ?? 'FULL',
     teamContext: preset?.team_context ?? '',
     qoverySkills: [...knownNames, ...extraQoveryNames].map((skillName) => {
       const entry = entryOf(skillName)
@@ -83,7 +83,7 @@ export function toSkillPresetFormValues(preset?: PresetLike): SkillPresetFormVal
 
 /** Qovery skill entries only apply to the Full base. On other bases they stay in the draft but are not sent. */
 export const effectiveQoverySkills = (values: Pick<SkillPresetFormValues, 'base' | 'qoverySkills'>) =>
-  values.base === 'QOVERY_FULL' ? values.qoverySkills.filter(({ choice }) => choice !== 'AS_IS') : []
+  values.base === 'FULL' ? values.qoverySkills.filter(({ choice }) => choice !== 'AS_IS') : []
 
 /**
  * The request q-core accepts. DISABLE carries no content or description and OVERLAY no description

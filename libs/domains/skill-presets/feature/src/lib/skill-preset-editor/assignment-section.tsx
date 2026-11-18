@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { type SkillPresetAssignees } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetAssignees, isOwnerRole } from '@qovery/domains/skill-presets/data-access'
 import { Button, Callout, Icon, InputSelect, InputToggle } from '@qovery/shared/ui'
 import { type AssignablePreset, membersReceiving } from '../utils/resolve-preset'
 import { type SkillPresetFormValues } from '../utils/skill-preset-form'
@@ -24,7 +24,10 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
   const holderOf = (predicate: (preset: AssignablePreset) => boolean) => otherPresets.find(predicate)
   const defaultHolder = holderOf(({ assigned_to }) => assigned_to.organization_default)
 
-  const roleOptions = (assignees?.roles ?? []).map((role) => {
+  // The owner gets the Admin role's preset: q-core refuses Owner as a target. A preset that already
+  // holds it keeps showing it, so it can be removed.
+  const assignableRoles = (assignees?.roles ?? []).filter((role) => !isOwnerRole(role) || roleIds.includes(role.id))
+  const roleOptions = assignableRoles.map((role) => {
     const holder = holderOf(({ assigned_to }) => assigned_to.role_ids.includes(role.id))
     return {
       value: role.id,
@@ -87,7 +90,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
       <Controller
         control={control}
         name="roleIds"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <InputSelect
             isMulti
             isSearchable
@@ -95,7 +98,8 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
             options={roleOptions}
             value={field.value}
             onChange={(value) => field.onChange(value as string[])}
-            hint="Default and custom roles. A role holds one preset at a time."
+            hint="Default and custom roles, except Owner: the owner gets the Admin role's preset. A role holds one preset at a time."
+            error={fieldState.error?.message}
           />
         )}
       />
@@ -103,7 +107,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
       <Controller
         control={control}
         name="userIds"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <InputSelect
             isMulti
             isSearchable
@@ -112,6 +116,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
             value={field.value}
             onChange={(value) => field.onChange(value as string[])}
             hint="Overrides the member's role preset and the organization default."
+            error={fieldState.error?.message}
           />
         )}
       />
