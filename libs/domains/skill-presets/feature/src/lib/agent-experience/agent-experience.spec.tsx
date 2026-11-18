@@ -1,6 +1,11 @@
 import { useLocation, useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
+import {
+  type SkillPresetsMockScenario,
+  buildSkillPresetApiError,
+  resetSkillPresetsMockApi,
+  skillPresetsApi,
+} from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgentExperienceAutomate } from './agent-experience-automate'
 import { AgentExperienceConnect } from './agent-experience-connect'
@@ -129,6 +134,22 @@ describe('AgentExperienceOverview', () => {
     expect(screen.queryByRole('heading', { name: 'Suggestions' })).not.toBeInTheDocument()
     expect(screen.getByTestId('overview-copilot-state')).toHaveTextContent(/\d+ suggestions? in Activity/)
     expect(await screen.findByTestId('overview-copilot-state')).toHaveTextContent('On, read-only')
+  })
+
+  it('says when Agents cannot be loaded, and loads again on Try again', async () => {
+    useScenario('agent-experience-active')
+    const getActivity = jest
+      .spyOn(skillPresetsApi, 'getAgentActivity')
+      .mockRejectedValue(buildSkillPresetApiError(404, 'Not found'))
+    const { userEvent } = renderWithProviders(<AgentExperienceOverview />)
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('Agents could not be loaded')
+    expect(alert).toHaveTextContent('HTTP 404')
+    const calls = getActivity.mock.calls.length
+    await userEvent.click(within(alert).getByRole('button', { name: /Try again/ }))
+    await waitFor(() => expect(getActivity.mock.calls.length).toBeGreaterThan(calls))
+    getActivity.mockRestore()
   })
 
   it('shows a member their own setup, with no admin actions', async () => {
