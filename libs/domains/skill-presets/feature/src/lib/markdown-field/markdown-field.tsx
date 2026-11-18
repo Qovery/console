@@ -10,6 +10,7 @@ import { FindingList } from '../finding-list/finding-list'
 export interface MarkdownFieldProps {
   id: string
   label: string
+  hideLabel?: boolean
   value: string
   onChange: (value: string) => void
   maxLength: number
@@ -70,6 +71,7 @@ function describeTextarea(editorInstance: editor.IStandaloneCodeEditor, describe
 export function MarkdownField({
   id,
   label,
+  hideLabel = false,
   value,
   onChange,
   maxLength,
@@ -91,7 +93,9 @@ export function MarkdownField({
   const hasFindings = findings.length > 0
   const hintId = `${id}-hint`
   const feedbackId = `${id}-feedback`
-  const describedBy = [hint ? hintId : null, error || hasFindings ? feedbackId : null].filter(Boolean).join(' ')
+  const describedBy = [`${id}-counter`, hint ? hintId : null, error || hasFindings ? feedbackId : null]
+    .filter(Boolean)
+    .join(' ')
   // A stable key: the parent rebuilds the findings array on every render.
   const findingsKey = findings.map(({ line, rule_id, source }) => `${source}:${line}:${rule_id}`).join(',')
 
@@ -113,13 +117,9 @@ export function MarkdownField({
 
   return (
     <div className={twMerge('flex flex-col gap-1.5', className)} id={id} data-testid={id}>
-      <div className="flex items-baseline justify-between gap-4">
-        <span className="text-sm font-medium text-neutral" id={`${id}-label`}>
+      <div className={hideLabel ? 'sr-only' : undefined}>
+        <span className={hideLabel ? 'sr-only' : 'text-sm font-medium text-neutral'} id={`${id}-label`}>
           {label}
-        </span>
-        <span className={clsx('shrink-0 text-xs tabular-nums', isOverLimit ? 'text-negative' : 'text-neutral-subtle')}>
-          {value.length.toLocaleString('en-US')} / {maxLength.toLocaleString('en-US')} characters · ~
-          {approxTokens(value).toLocaleString('en-US')} tokens
         </span>
         {/* Announced once, when the limit is crossed, not on every keystroke. */}
         <span className="sr-only" aria-live="polite">
@@ -166,6 +166,13 @@ export function MarkdownField({
           }}
         />
       </div>
+      <p
+        id={`${id}-counter`}
+        className={clsx('text-xs tabular-nums', isOverLimit ? 'text-negative' : 'text-neutral-subtle')}
+      >
+        {value.length.toLocaleString('en-US')} / {maxLength.toLocaleString('en-US')} characters · ~
+        {approxTokens(value).toLocaleString('en-US')} tokens
+      </p>
       {hint && (
         <p id={hintId} className="text-xs text-neutral-subtle">
           {hint}

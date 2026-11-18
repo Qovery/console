@@ -1,6 +1,7 @@
 import { useLocation, useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { AgentExperienceNav } from './agent-experience-nav'
 
 jest.mock('@tanstack/react-router', () => ({
@@ -15,16 +16,35 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
+jest.mock('../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets')
+
 beforeEach(() => {
+  jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: true, isLoading: false })
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
 })
 
-describe('AgentExperienceNav, Skills Registry entry', () => {
-  it('marks the Skills Registry as the current page on any of its pages', () => {
-    jest
-      .mocked(useLocation)
-      .mockReturnValue({ pathname: '/organization/organization-1/agent-experience/skill-presets/assignments' } as never)
+describe('AgentExperienceNav, Skills registry group', () => {
+  it.each(['assignments', 'preview', 'loads', 'preset-1', 'preset-1/history', 'new'])(
+    'highlights the correct nested page for %s',
+    (path) => {
+      jest.mocked(useLocation).mockReturnValue({
+        pathname: `/organization/organization-1/agent-experience/skill-presets/${path}`,
+      } as never)
+      renderWithProviders(<AgentExperienceNav />)
+      const titles: Record<string, string> = { assignments: 'Assignments', loads: 'Skill loads' }
+      const title = titles[path] ?? 'Presets'
+      expect(screen.getByRole('link', { name: title })).toHaveAttribute('aria-current', 'page')
+      expect(screen.getAllByRole('link')).toHaveLength(3)
+    }
+  )
+
+  it('keeps member navigation read-only', () => {
+    jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: false })
+    jest.mocked(useLocation).mockReturnValue({
+      pathname: '/organization/organization-1/agent-experience/skill-presets',
+    } as never)
     renderWithProviders(<AgentExperienceNav />)
-    expect(screen.getByRole('link', { name: 'Skills Registry' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: 'Skills registry' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.queryByRole('link', { name: 'Assignments' })).not.toBeInTheDocument()
   })
 })

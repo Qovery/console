@@ -65,11 +65,6 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-neutral-subtle">
-        When several presets match a member, the most specific one wins: a preset assigned to the member, then their
-        role’s, then the organization default. Members with none use the Qovery skills as published.
-      </p>
-
       <Controller
         control={control}
         name="organizationDefault"

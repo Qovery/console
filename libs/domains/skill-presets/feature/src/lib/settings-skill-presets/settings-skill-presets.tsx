@@ -1,12 +1,26 @@
-import { Link, useNavigate, useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { useState } from 'react'
+import { match } from 'ts-pattern'
 import { type SkillPresetResponse, getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/data-access'
 import {
+  Avatar,
   Badge,
   Button,
   DropdownMenu,
   EmptyState,
   Icon,
   Skeleton,
+  TableFilter,
   TablePrimitives,
   Tooltip,
   useModalConfirmation,
@@ -19,11 +33,33 @@ import { useSkillPresetRevisions } from '../hooks/use-skill-preset-revisions/use
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { LoadError } from '../load-error/load-error'
 import { SkillPresetsLayout } from '../skill-presets-layout/skill-presets-layout'
+import { PresetPreviewPanel } from '../skill-presets-preview/preset-preview-panel'
 import { baseLabel } from '../utils/qovery-skills'
 import { isTemplate } from '../utils/resolve-preset'
 import { AssignmentChips } from './assignment-chips'
 
 const { Table } = TablePrimitives
+
+const EMPTY_PRESETS: SkillPresetResponse[] = []
+const columns: ColumnDef<SkillPresetResponse>[] = [
+  { accessorKey: 'name', header: 'Preset', sortingFn: 'alphanumeric', sortDescFirst: false },
+  {
+    id: 'base',
+    accessorFn: (preset) => baseLabel(preset.base),
+    header: 'Starts from',
+    enableSorting: false,
+    filterFn: (row, id, values: string[]) => !values?.length || values.includes(row.getValue(id)),
+  },
+  { id: 'assignments', header: 'Assigned to', enableSorting: false },
+  {
+    id: 'updated_at',
+    accessorFn: (preset) => new Date(preset.updated_at).getTime(),
+    header: 'Last edited',
+    sortingFn: 'basic',
+    sortDescFirst: true,
+  },
+  { id: 'actions', header: () => <span className="sr-only">Actions</span>, enableSorting: false },
+]
 
 function ListSkeleton() {
   return (
@@ -49,10 +85,12 @@ function PresetRow({
   organizationId,
   assignees,
   onDelete,
+  onPreview,
 }: {
   preset: SkillPresetResponse
   organizationId: string
   assignees: ReturnType<typeof useSkillPresetAssignees>['data']
+  onPreview: (preset: SkillPresetResponse) => void
   onDelete: (preset: SkillPresetResponse) => void
 }) {
   const navigate = useNavigate()
@@ -67,68 +105,83 @@ function PresetRow({
   // Revisions name the editor by email: show the member's name, the email in a tooltip, like Audit logs.
   const editor = assignees?.members.find(({ email }) => email === editedBy)
   const template = isTemplate(preset)
-  const skillChanges = preset.skills.length
+  const openPreset = () =>
+    navigate({
+      to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
+      params: { organizationId, skillPresetId: preset.id },
+    })
 
   return (
-    <Table.Row data-testid={`skill-preset-${preset.id}`} className="hover:bg-surface-neutral-subtle">
+    <Table.Row
+      data-testid={`skill-preset-${preset.id}`}
+      className="cursor-pointer hover:bg-surface-neutral-subtle"
+      tabIndex={0}
+      onClick={openPreset}
+      onKeyDown={(event) => {
+        if (event.target === event.currentTarget && event.key === 'Enter') openPreset()
+      }}
+    >
       <Table.Cell className="h-auto py-3">
         <div className="flex flex-col gap-0.5">
           <span className="flex items-center gap-2">
-            <Link
-              to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId"
-              params={{ organizationId, skillPresetId: preset.id }}
-              className="font-medium text-neutral hover:text-brand"
-            >
-              {preset.name}
-            </Link>
-            {template && <Badge variant="outline">Template</Badge>}
-          </span>
-          {preset.description && (
-            <span className="max-w-sm truncate text-xs text-neutral-subtle">{preset.description}</span>
-          )}
-          <span className="text-xs text-neutral-subtle">
-            {skillChanges === 0
-              ? 'No skill changes'
-              : `${skillChanges} skill ${skillChanges === 1 ? 'change' : 'changes'}`}
-            {preset.team_context ? ' · team context' : ''}
+            <span className="font-medium text-neutral">{preset.name}</span>
+            {preset.description && (
+              <Tooltip content={preset.description}>
+                <span
+                  tabIndex={0}
+                  aria-label={`Description of ${preset.name}`}
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                </span>
+              </Tooltip>
+            )}
+            {template && (
+              <Badge variant="surface" size="base" className="font-medium">
+                Template
+              </Badge>
+            )}
           </span>
         </div>
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap">{baseLabel(preset.base)}</Table.Cell>
       <Table.Cell className="h-auto py-3">
         {template ? (
-          <span className="text-sm text-neutral-subtle">Templates are not assigned</span>
+          <span className="text-neutral-subtle">Templates are not assigned</span>
         ) : (
           <AssignmentChips assignedTo={preset.assigned_to} assignees={assignees} />
         )}
       </Table.Cell>
-      <Table.Cell>
-        <Link
-          to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history"
-          params={{ organizationId, skillPresetId: preset.id }}
-          className="whitespace-nowrap text-neutral hover:text-brand"
-          aria-label={`Revision ${preset.revision}, see the history`}
-        >
-          {preset.revision}
-        </Link>
-      </Table.Cell>
       <Table.Cell className="h-auto py-3">
-        <span className="flex flex-col text-xs">
-          {editor && editor.name !== editedBy ? (
-            <Tooltip content={editedBy}>
-              <span className="w-fit truncate text-neutral" title={editedBy}>
-                {editor.name}
-              </span>
-            </Tooltip>
-          ) : (
-            <span className="truncate text-neutral">{editedBy}</span>
-          )}
-          <time dateTime={editedAt} title={dateFullFormat(editedAt)} className="w-fit text-neutral-subtle">
-            {timeAgo(new Date(editedAt))} ago
-          </time>
-        </span>
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <Tooltip content={editor ? `${editor.name} (${editor.email})` : editedBy}>
+            <span tabIndex={0} aria-label={editor?.name ?? editedBy} onClick={(event) => event.stopPropagation()}>
+              <Avatar
+                size="sm"
+                src={editor?.profile_picture_url}
+                alt={editor?.name ?? editedBy}
+                fallback={
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-neutral-component text-xs">
+                    {(editor?.name ?? editedBy)
+                      .split(' ')
+                      .map((part) => part.charAt(0))
+                      .slice(0, 2)
+                      .join('')
+                      .toUpperCase()}
+                  </span>
+                }
+              />
+            </span>
+          </Tooltip>
+          <div className="flex flex-col">
+            <span>{editor?.name ?? editedBy}</span>
+            <time className="text-xs text-neutral-subtle" dateTime={editedAt} title={dateFullFormat(editedAt)}>
+              {timeAgo(new Date(editedAt))} ago
+            </time>
+          </div>
+        </div>
       </Table.Cell>
-      <Table.Cell className="text-right">
+      <Table.Cell className="text-right" onClick={(event) => event.stopPropagation()}>
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <Button size="md" variant="outline" color="neutral" iconOnly aria-label={`Actions for ${preset.name}`}>
@@ -136,6 +189,9 @@ function PresetRow({
             </Button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content align="end">
+            <DropdownMenu.Item icon={<Icon iconName="eye" iconStyle="regular" />} onSelect={() => onPreview(preset)}>
+              Preview
+            </DropdownMenu.Item>
             <DropdownMenu.Item
               icon={<Icon iconName="pen" iconStyle="regular" />}
               onSelect={() =>
@@ -200,18 +256,31 @@ function PresetRow({
 }
 
 function PresetsContent({ organizationId }: { organizationId: string }) {
+  const [previewPreset, setPreviewPreset] = useState<SkillPresetResponse | null>(null)
   const navigate = useNavigate()
   const { data: presets, isLoading, error, refetch } = useSkillPresets({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
   const { mutateAsync: deleteSkillPreset } = useDeleteSkillPreset()
   const { openModalConfirmation } = useModalConfirmation()
 
+  const table = useReactTable({
+    data: presets ?? EMPTY_PRESETS,
+    columns,
+    initialState: { sorting: [{ id: 'updated_at', desc: true }] },
+    enableSortingRemoval: false,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+  })
+
   if (isLoading) return <ListSkeleton />
 
   if (error && getSkillPresetErrorStatus(error) !== 403) {
     return (
       <LoadError
-        title="The Skills Registry could not be loaded"
+        title="The Skills registry could not be loaded"
         error={error}
         onRetry={() => refetch()}
         note="Your members’ agents keep working with the preset they last loaded."
@@ -259,10 +328,6 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
     )
   }
 
-  const assigned = all.filter((preset) => !isTemplate(preset))
-  const templates = all.filter(isTemplate)
-  const ordered = [...assigned, ...templates]
-
   const onDelete = (preset: SkillPresetResponse) =>
     openModalConfirmation({
       title: 'Delete preset',
@@ -276,27 +341,69 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
 
   return (
     <div className="flex flex-col gap-2">
+      {previewPreset && (
+        <PresetPreviewPanel
+          preset={previewPreset}
+          open
+          onOpenChange={(open) => {
+            if (!open) setPreviewPreset(null)
+          }}
+        />
+      )}
       <Table.Root>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeaderCell>Preset</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Starts from</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Assigned to</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Revision</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>Last edited</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>
-              <span className="sr-only">Actions</span>
-            </Table.ColumnHeaderCell>
-          </Table.Row>
+        <Table.Header className="[&_th]:whitespace-nowrap [&_th]:text-xs [&_th]:font-medium">
+          {table.getHeaderGroups().map((group) => (
+            <Table.Row key={group.id}>
+              {group.headers.map((header) => (
+                <Table.ColumnHeaderCell
+                  key={header.id}
+                  className="group"
+                  aria-sort={
+                    header.column.getCanSort()
+                      ? match(header.column.getIsSorted())
+                          .with('asc', () => 'ascending' as const)
+                          .with('desc', () => 'descending' as const)
+                          .otherwise(() => 'none' as const)
+                      : undefined
+                  }
+                >
+                  {header.column.id === 'base' ? (
+                    <TableFilter column={header.column} />
+                  ) : header.column.getCanSort() ? (
+                    <button
+                      type="button"
+                      className="flex cursor-pointer select-none items-center gap-1"
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {match(header.column.getIsSorted())
+                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
+                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
+                        .with(false, () => (
+                          <Icon
+                            className="text-xs opacity-0 group-focus-within:opacity-100 group-hover:opacity-100"
+                            iconName="arrow-down-arrow-up"
+                          />
+                        ))
+                        .exhaustive()}
+                    </button>
+                  ) : (
+                    flexRender(header.column.columnDef.header, header.getContext())
+                  )}
+                </Table.ColumnHeaderCell>
+              ))}
+            </Table.Row>
+          ))}
         </Table.Header>
         <Table.Body>
-          {ordered.map((preset) => (
+          {table.getRowModel().rows.map(({ original: preset }) => (
             <PresetRow
               key={preset.id}
               preset={preset}
               organizationId={organizationId}
               assignees={assignees}
               onDelete={onDelete}
+              onPreview={setPreviewPreset}
             />
           ))}
         </Table.Body>
@@ -310,7 +417,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
 
 export function SettingsSkillPresets() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Skills Registry - Agents')
+  useDocumentTitle('Skills registry - Agents')
 
   return (
     <SkillPresetsLayout activeTab="presets">

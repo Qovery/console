@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type ReactElement, type ReactNode } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Icon, Navbar, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { AI_FEATURES_OFF_TOOLTIP, AiFeaturesNotice } from '../ai-features-notice/ai-features-notice'
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
@@ -21,7 +21,7 @@ const MEMBER_DESCRIPTION = 'What your coding agent receives from Qovery, readabl
 
 function AccessSkeleton() {
   return (
-    <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading the Skills Registry">
+    <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading the Skills registry">
       <Skeleton width={320} height={16} show />
       <Skeleton height={200} className="w-full" show />
     </div>
@@ -29,7 +29,7 @@ function AccessSkeleton() {
 }
 
 /**
- * The page frame. Owners and admins get the tabs and the admin pages; anyone else gets the read-only
+ * The page frame. Owners and admins get the admin pages; anyone else gets the read-only
  * view of what their agent receives. The role is known before anything renders, so admin controls
  * never flash for members, and admin pages never mount for them (their queries never run).
  */
@@ -38,12 +38,18 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
   const navigate = useNavigate()
   const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
-  const basePath = `/organization/${organizationId}/agent-experience/skill-presets`
+  const pageTitles: Record<SkillPresetsTab, string> = {
+    presets: 'Presets',
+    assignments: 'Assignments',
+    preview: 'Preview',
+    loads: 'Skill loads',
+    usage: 'Usage',
+  }
 
   return (
     <Section className="px-8 pb-8 pt-6">
       <SettingsHeading
-        title="Skills Registry"
+        title={canManage ? pageTitles[activeTab] : 'Skills registry'}
         description={isLoading ? undefined : canManage ? ADMIN_DESCRIPTION : MEMBER_DESCRIPTION}
       >
         {!isLoading && canManage && (
@@ -72,29 +78,7 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
         {!isLoading && canManage && !aiFeaturesEnabled && (
           <AiFeaturesNotice organizationId={organizationId} canEnable={canManage} />
         )}
-        {isLoading ? (
-          <AccessSkeleton />
-        ) : canManage ? (
-          <>
-            <Navbar.Root activeId={activeTab} ariaLabel="Skills Registry sections" className="border-b border-neutral">
-              <Navbar.Item id="presets" to={basePath}>
-                Presets
-              </Navbar.Item>
-              <Navbar.Item id="assignments" to={`${basePath}/assignments`}>
-                Assignments
-              </Navbar.Item>
-              <Navbar.Item id="preview" to={`${basePath}/preview`}>
-                Preview
-              </Navbar.Item>
-              <Navbar.Item id="loads" to={`${basePath}/loads`}>
-                Skill loads
-              </Navbar.Item>
-            </Navbar.Root>
-            {children}
-          </>
-        ) : (
-          <MemberAgentView organizationId={organizationId} />
-        )}
+        {isLoading ? <AccessSkeleton /> : canManage ? children : <MemberAgentView organizationId={organizationId} />}
       </div>
     </Section>
   )

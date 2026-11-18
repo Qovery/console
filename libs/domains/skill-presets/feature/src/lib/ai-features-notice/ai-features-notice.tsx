@@ -202,7 +202,7 @@ export function AiFeaturesNotice({ organizationId, canEnable, onEnabled }: AiFea
         <Icon iconName="circle-info" iconStyle="regular" />
       </Callout.Icon>
       <Callout.Text>
-        <Callout.TextHeading>The Skills Registry needs AI features</Callout.TextHeading>
+        <Callout.TextHeading>The Skills registry needs AI features</Callout.TextHeading>
         <Callout.TextDescription>
           Every preset is reviewed by a model before it reaches members. While AI features are off for this
           organization, presets can’t be created or changed. Existing presets keep working and stay readable.

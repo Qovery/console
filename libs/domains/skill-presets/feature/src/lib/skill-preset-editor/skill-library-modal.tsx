@@ -1,13 +1,12 @@
 import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { type SkillPresetBase } from '@qovery/domains/skill-presets/data-access'
 import { Checkbox, Heading, InputSearch, ModalCrud, Section } from '@qovery/shared/ui'
 
 export interface LibrarySkill {
   /** Unique across groups: the same name can exist in two presets. */
   id: string
-  group: 'qovery' | 'organization' | 'template'
+  group: 'organization' | 'template'
   skillName: string
   description: string
   content: string
@@ -17,19 +16,17 @@ export interface LibrarySkill {
 
 export interface SkillLibraryModalProps {
   skills: LibrarySkill[]
-  base: SkillPresetBase
   presentSkillNames: string[]
   onAdd: (skills: LibrarySkill[]) => void
   onClose: () => void
 }
 
 const GROUPS: { value: LibrarySkill['group']; title: string; hint: string }[] = [
-  { value: 'qovery', title: 'Qovery skills', hint: 'Turns a disabled Qovery skill back on.' },
   { value: 'organization', title: "Your organization's skills", hint: 'Copied from your other presets.' },
   { value: 'template', title: 'Template skills', hint: 'Copied from the Qovery templates.' },
 ]
 
-export function SkillLibraryModal({ skills, base, presentSkillNames, onAdd, onClose }: SkillLibraryModalProps) {
+export function SkillLibraryModal({ skills, presentSkillNames, onAdd, onClose }: SkillLibraryModalProps) {
   const methods = useForm()
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<string[]>([])
@@ -46,11 +43,7 @@ export function SkillLibraryModal({ skills, base, presentSkillNames, onAdd, onCl
   }, [skills, search])
 
   const unavailableReason = (skill: LibrarySkill) =>
-    skill.group === 'qovery' && base !== 'QOVERY_FULL'
-      ? 'Needs the Full base'
-      : presentSkillNames.includes(skill.skillName)
-        ? 'Already in this preset'
-        : null
+    presentSkillNames.includes(skill.skillName) ? 'Already in this preset' : null
 
   // One name per preset: picking two skills with the same name would be refused on save.
   const toggle = (skill: LibrarySkill, checked: boolean) =>
