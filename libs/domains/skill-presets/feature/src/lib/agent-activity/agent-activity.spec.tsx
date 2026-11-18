@@ -194,4 +194,54 @@ describe('AgentActivity', () => {
     expect(await screen.findByText('Agent activity could not be loaded')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Try again/ })).toBeInTheDocument()
   })
+
+  it('changes the period from the toolbar, back to the first page, and clears the other filters at once', async () => {
+    useScenario('agent-activity')
+    mockUrl.search = { outcome: 'DENIED', skill: 'qovery-deploy', page: 2 }
+    const { userEvent } = renderWithProviders(<AgentActivity />)
+    const toolbar = within(await screen.findByRole('toolbar', { name: 'Filters' }))
+
+    await userEvent.click(toolbar.getByRole('radio', { name: /7 days/ }))
+    expect(mockNavigate).toHaveBeenLastCalledWith(
+      expect.objectContaining({ search: { outcome: 'DENIED', skill: 'qovery-deploy', range: '7d' } })
+    )
+
+    await userEvent.click(toolbar.getByRole('button', { name: 'Clear filters' }))
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { range: '7d' } }))
+  })
+
+  it('goes back a page, and drops the page from the URL on the first one', async () => {
+    useScenario('agent-activity')
+    mockUrl.search = { page: 2 }
+    const { userEvent } = renderWithProviders(<AgentActivity />)
+    expect(await screen.findByTestId('recent-count', undefined, { timeout: 5000 })).toHaveTextContent(
+      /^Showing 31 to 60 of 100/
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Previous page' }))
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: {} }))
+  })
+
+  it('shows every denied action from the blocked list', async () => {
+    useScenario('agent-activity')
+    const { userEvent } = renderWithProviders(<AgentActivity />)
+    const count = await screen.findByTestId('denied-count', undefined, { timeout: 5000 })
+    expect(count).toHaveTextContent(/^6 of \d+ shown\./)
+
+    await userEvent.click(within(count).getByRole('button', { name: 'Show all denied' }))
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { outcome: 'DENIED' } }))
+  })
+
+  it('loads again when Try again is clicked', async () => {
+    useScenario('agent-activity')
+    const getActivity = jest
+      .spyOn(skillPresetsApi, 'getAgentActivity')
+      .mockRejectedValue(buildSkillPresetApiError(503, 'Unavailable'))
+    const { userEvent } = renderWithProviders(<AgentActivity />)
+    await screen.findByText('Agent activity could not be loaded')
+    const calls = getActivity.mock.calls.length
+
+    await userEvent.click(screen.getByRole('button', { name: /Try again/ }))
+    await waitFor(() => expect(getActivity.mock.calls.length).toBeGreaterThan(calls))
+  })
 })
