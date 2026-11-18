@@ -89,6 +89,9 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
               <Navbar.Item id="loads" to={`${basePath}/loads`}>
                 Skill loads
               </Navbar.Item>
+              <Navbar.Item id="usage" to={`${basePath}/usage`}>
+                Usage
+              </Navbar.Item>
             </Navbar.Root>
             {children}
           </>

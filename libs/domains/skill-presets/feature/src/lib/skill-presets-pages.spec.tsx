@@ -7,6 +7,7 @@ import { MockScenarioBanner } from './mock-scenario-banner/mock-scenario-banner'
 import { SettingsSkillPresets } from './settings-skill-presets/settings-skill-presets'
 import { SkillLoads } from './skill-loads/skill-loads'
 import { SkillPresetAssignments } from './skill-preset-assignments/skill-preset-assignments'
+import { SkillPresetUsage } from './skill-preset-usage/skill-preset-usage'
 import { SkillPresetCreate } from './template-gallery/template-gallery'
 
 /*
@@ -202,6 +203,22 @@ describe('skill loads', () => {
 
     await userEvent.click(screen.getByTestId('button-next-page'))
     await waitFor(() => expect(screen.getByTestId('button-previous-page')).toBeEnabled())
+  })
+})
+
+describe('usage', () => {
+  it('shows totals and drills into a member', async () => {
+    useScenario('typical')
+    const { userEvent } = renderWithProviders(<SkillPresetUsage />)
+
+    const heading = await screen.findByRole('heading', { name: 'Top members' })
+    expect(screen.getByText('Served from cache')).toBeInTheDocument()
+    const topMembers = heading.parentElement as HTMLElement
+    const [firstMember] = within(topMembers).getAllByRole('button')
+    await userEvent.click(firstMember)
+
+    expect(firstMember).toHaveAttribute('aria-pressed', 'true')
+    expect(await screen.findByRole('button', { name: 'Clear filters' })).toBeInTheDocument()
   })
 })
 

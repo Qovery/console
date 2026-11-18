@@ -92,14 +92,11 @@ function RouteComponent() {
     ],
   }
 
+  // Policy tokens live in the Agents tab. Their old settings path redirects there.
   const apiTokenLink = {
-    type: 'group',
     title: 'API token',
+    to: `${pathSettings}/api-token`,
     icon: 'rectangle-api' as const,
-    children: [
-      { title: 'Token', to: `${pathSettings}/api-token` },
-      { title: 'Policy token (New)', to: `${pathSettings}/policy-api-token` },
-    ],
   }
 
   const aiLink = {
