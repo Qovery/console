@@ -25,7 +25,7 @@ import {
   type Terraform,
   type TerraformType,
 } from '@qovery/domains/services/data-access'
-import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
+import { isContainerGitSource, isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
 import { extractAndProcessAutoscaling } from './keda/autoscaling-payload/autoscaling-payload'
 
 type applicationProps = {
@@ -202,6 +202,15 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     autoscaling,
     ...('cpu_architecture' in container ? { cpu_architecture: container.cpu_architecture } : {}),
     ...cleanedRequest,
+    // Without `source` the API keeps the stored one; a Git container rejects changed image fields and auto-deploy or auto-preview
+    source: undefined,
+    ...(isContainerGitSource(container.source) && {
+      registry_id: undefined,
+      image_name: undefined,
+      tag: undefined,
+      auto_deploy: undefined,
+      auto_preview: undefined,
+    }),
   }
 }
 

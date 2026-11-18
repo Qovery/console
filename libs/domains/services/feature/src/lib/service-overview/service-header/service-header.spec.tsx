@@ -1,6 +1,7 @@
 import { type Environment } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { containerFactoryMock, gitContainerFactoryMock } from '@qovery/shared/factories'
 import { toast } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceHeader } from './service-header'
@@ -427,6 +428,28 @@ describe('ServiceHeader', () => {
     expect(screen.getByText('Qovery/console')).toBeInTheDocument()
     expect(screen.getByText('staging')).toBeInTheDocument()
     expect(screen.getByText('auto-deploy-badge')).toBeInTheDocument()
+  })
+
+  it('renders the registry image of an image container', () => {
+    const container = containerFactoryMock(1)[0]
+
+    renderWithProviders(<ServiceHeader environment={environment} service={container} />)
+
+    expect(screen.getByText(container.image_name)).toBeInTheDocument()
+    expect(screen.getByText(container.tag)).toBeInTheDocument()
+    expect(screen.queryByText('GitHub')).not.toBeInTheDocument()
+  })
+
+  it('renders the Git source and the running image of a Git container', () => {
+    const container = gitContainerFactoryMock(1)[0]
+
+    renderWithProviders(<ServiceHeader environment={environment} service={container} />)
+
+    expect(screen.getByText('GitHub')).toBeInTheDocument()
+    expect(screen.getByText('qovery/console')).toBeInTheDocument()
+    expect(screen.getByText('main')).toBeInTheDocument()
+    expect(screen.getByText(container.image_name)).toBeInTheDocument()
+    expect(screen.getByText(container.tag)).toBeInTheDocument()
   })
 
   it('renders database badges and copies the connection URI', async () => {

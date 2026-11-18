@@ -23,7 +23,7 @@ import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } f
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
-import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
+import { isContainerGitSource, isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import {
   Button,
   CopyToClipboardButtonIcon,
@@ -420,6 +420,7 @@ function DeploymentLogsBody({
             </Button>
           )}
           {match(service)
+            .with({ serviceType: 'CONTAINER', source: P.when(isContainerGitSource) }, () => true)
             .with({ serviceType: 'CONTAINER' }, () => false)
             .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
             .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)

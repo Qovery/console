@@ -19,6 +19,7 @@ import {
 import {
   IconEnum,
   ServiceTypeEnum,
+  isContainerGitSource,
   isHelmGitSource,
   isHelmRepositorySource,
   isJobContainerSource,
@@ -200,6 +201,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
     ? undefined
     : match(service)
         .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+        .with({ serviceType: 'CONTAINER', source: P.when(isContainerGitSource) }, ({ source }) => source.git_repository)
         .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, ({ source }) => source.docker?.git_repository)
         .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, ({ source }) => source.git?.git_repository)
         .with({ serviceType: 'TERRAFORM' }, ({ terraform_files_source }) => terraform_files_source?.git?.git_repository)

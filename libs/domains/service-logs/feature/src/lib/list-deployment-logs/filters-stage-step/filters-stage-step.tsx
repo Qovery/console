@@ -4,7 +4,7 @@ import { type ServiceStepMetric, type StateEnum, type Status } from 'qovery-type
 import { useEffect, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
+import { isContainerGitSource, isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -172,6 +172,7 @@ export function FiltersStageStep({
   return (
     <div className="flex items-center">
       {match(service)
+        .with({ serviceType: 'CONTAINER', source: P.when(isContainerGitSource) }, () => true)
         .with({ serviceType: 'CONTAINER' }, () => false)
         .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
         .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)

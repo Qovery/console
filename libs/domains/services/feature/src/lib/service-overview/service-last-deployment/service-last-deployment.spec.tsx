@@ -1,5 +1,6 @@
 import { act } from '@testing-library/react'
 import { type ReactNode } from 'react'
+import { containerFactoryMock, gitContainerFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceLastDeployment } from './service-last-deployment'
 
@@ -237,6 +238,35 @@ describe('ServiceLastDeployment', () => {
     expect(screen.getByText('mocked-time ago')).toBeInTheDocument()
     expect(screen.queryByText(/Running since/i)).not.toBeInTheDocument()
     expect(mockLastCommit).toHaveBeenCalledWith(expect.objectContaining({ showDeployFromAnotherVersionButton: false }))
+  })
+
+  it('renders the image tag of the last deployment for an image container', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [baseDeployment],
+      isFetched: true,
+    })
+
+    renderWithProviders(
+      <ServiceLastDeployment serviceId="service-123" serviceType="CONTAINER" service={containerFactoryMock(1)[0]} />
+    )
+
+    expect(screen.getByRole('button', { name: 'v1.2.3' })).toBeInTheDocument()
+    expect(mockLastCommit).not.toHaveBeenCalled()
+  })
+
+  it('renders the deployed commit of a Git container without listing commits', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [baseDeployment],
+      isFetched: true,
+    })
+
+    renderWithProviders(
+      <ServiceLastDeployment serviceId="service-123" serviceType="CONTAINER" service={gitContainerFactoryMock(1)[0]} />
+    )
+
+    expect(screen.getByRole('button', { name: '4f3a1c2' })).toBeInTheDocument()
+    expect(screen.queryByText('mock-last-commit-author')).not.toBeInTheDocument()
+    expect(mockLastCommit).not.toHaveBeenCalled()
   })
 
   it('prevents the deployment link navigation when clicking the last commit button', () => {
