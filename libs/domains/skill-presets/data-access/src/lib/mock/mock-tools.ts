@@ -22,6 +22,7 @@ export const SKILL_PRESETS_MOCK_SCENARIO_DESCRIPTIONS: Record<SkillPresetsMockSc
   'agent-activity':
     '30 days of agent actions: deploys, restarts, variable changes, MCP tool calls, a policy token, refused requests in production',
   'agent-activity-empty': 'No agent activity yet',
+  'agent-activity-timeout': 'Agent activity that takes too long to read beyond 7 days: pick a shorter period',
   'agent-experience-empty': 'Agents, first time in a new organization: nothing set up, AI features on',
   'agent-experience-partial': 'Agents, partly set up: agents load skills, but no preset and no policy token yet',
   'agent-experience-active': 'Agents in use: presets, policy tokens and 30 days of agent activity',
