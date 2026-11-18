@@ -1,9 +1,9 @@
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
-import { SkillPresetsPreview } from '../skill-presets-preview/skill-presets-preview'
 import { SettingsSkillPresets } from './settings-skill-presets'
 
 const mockUseSkillPresets = jest.fn()
+const mockNavigate = jest.fn()
 let mockRevisionData: { edited_by: string; edited_at: string }[] = []
 
 // An organization admin: the role gate is covered by skill-presets-access.spec.tsx.
@@ -38,7 +38,7 @@ const preset = {
   updated_at: '2026-11-02T00:00:00Z',
   name: 'Platform (CLI-first)',
   description: 'For the Devops role',
-  base: 'QOVERY_LEAN',
+  base: 'LEAN',
   team_context: 'Ask before deleting anything.',
   skills: [],
   revision: 2,
@@ -48,6 +48,7 @@ const preset = {
 }
 
 beforeEach(() => {
+  jest.mocked(useNavigate).mockReturnValue(mockNavigate)
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
 })
 
@@ -60,7 +61,7 @@ describe('SettingsSkillPresets', () => {
     expect(screen.getByRole('button', { name: /Start from a template/ })).toBeInTheDocument()
   })
 
-  it('lists presets with their base, assignments and revision', () => {
+  it('lists presets with their base and assignments', () => {
     mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
     renderWithProviders(<SettingsSkillPresets />)
 
@@ -70,27 +71,95 @@ describe('SettingsSkillPresets', () => {
     expect(within(chips).getByText('Organization default')).toBeInTheDocument()
     expect(within(chips).getByText('Role: Devops')).toBeInTheDocument()
     expect(within(chips).getByText('Jamie Rossi')).toBeInTheDocument()
-    expect(within(row).getByText('2')).toBeInTheDocument()
-    expect(within(row).queryByText('Revision 2')).not.toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Revision' })).not.toBeInTheDocument()
   })
 
-  it('names the last editor, with the email in a tooltip', () => {
+  it('opens a preset from its row with a click or Enter', async () => {
+    mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
+    const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
+    const navigate = mockNavigate
+    navigate.mockClear()
+    const row = screen.getByTestId('skill-preset-preset-1')
+
+    await userEvent.click(within(row).getByText('Lean (CLI-first)'))
+    expect(navigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
+      params: { organizationId: 'organization-1', skillPresetId: 'preset-1' },
+    })
+    navigate.mockClear()
+    row.focus()
+    await userEvent.keyboard('{Enter}')
+    expect(navigate).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps description and row actions independent from row navigation', async () => {
+    mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
+    const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
+    const navigate = mockNavigate
+    navigate.mockClear()
+    const row = screen.getByTestId('skill-preset-preset-1')
+
+    await userEvent.click(within(row).getByLabelText('Description of Platform (CLI-first)'))
+    await userEvent.keyboard('{Enter}')
+    expect(navigate).not.toHaveBeenCalled()
+    await userEvent.click(within(row).getByRole('button', { name: 'Actions for Platform (CLI-first)' }))
+    expect(await screen.findByRole('menuitem', { name: 'Edit' })).toBeInTheDocument()
+    expect(navigate).not.toHaveBeenCalled()
+  })
+
+  it('shows the last editor avatar and identifies them in a tooltip', async () => {
     mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
     mockRevisionData = [{ edited_by: 'jamie.rossi@example.com', edited_at: '2026-11-01T10:00:00Z' }]
-    renderWithProviders(<SettingsSkillPresets />)
+    const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
     mockRevisionData = []
 
     const row = screen.getByTestId('skill-preset-preset-1')
-    expect(within(row).getByTitle('jamie.rossi@example.com')).toHaveTextContent('Jamie Rossi')
+    const editor = within(row).getByLabelText('Jamie Rossi')
+    expect(editor).toBeInTheDocument()
+    expect(within(row).getByText(/ago$/)).toBeInTheDocument()
+    await userEvent.hover(editor)
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Jamie Rossi (jamie.rossi@example.com)')
   })
 
-  it('previews what a member gets, in its own tab', () => {
+  it('sorts names and edit dates in both directions, and filters bases', async () => {
+    mockUseSkillPresets.mockReturnValue({
+      data: [
+        { ...preset, id: 'a', name: 'Alpha', revision: 2, updated_at: '2026-11-01T00:00:00Z' },
+        {
+          ...preset,
+          id: 'z',
+          name: 'Zulu',
+          revision: 10,
+          base: 'FULL',
+          updated_at: '2026-11-03T00:00:00Z',
+          is_template: true,
+        },
+        { ...preset, id: 'm', name: 'Middle', revision: 3, base: 'NONE', updated_at: '2026-11-02T00:00:00Z' },
+      ],
+      isLoading: false,
+    })
+    const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
+    const rowIds = () => screen.getAllByTestId(/^skill-preset-/).map((row) => row.dataset.testid)
+    expect(rowIds()).toEqual(['skill-preset-z', 'skill-preset-m', 'skill-preset-a'])
+    await userEvent.click(screen.getByRole('button', { name: 'Last edited' }))
+    expect(rowIds()).toEqual(['skill-preset-a', 'skill-preset-m', 'skill-preset-z'])
+    await userEvent.click(screen.getByRole('button', { name: 'Preset', exact: true }))
+    expect(rowIds()).toEqual(['skill-preset-a', 'skill-preset-m', 'skill-preset-z'])
+    await userEvent.click(screen.getByRole('button', { name: 'Preset', exact: true }))
+    expect(rowIds()).toEqual(['skill-preset-z', 'skill-preset-m', 'skill-preset-a'])
+    await userEvent.click(screen.getByRole('button', { name: 'Starts from' }))
+    await userEvent.click(await screen.findByRole('menuitem', { name: /Full Qovery skills/ }))
+    expect(rowIds()).toEqual(['skill-preset-z'])
+  })
+
+  it('opens the selected preset preview from its actions and closes it', async () => {
     mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
-    renderWithProviders(<SettingsSkillPresets />)
-    expect(screen.queryByTestId('skill-presets-preview')).not.toBeInTheDocument()
-
-    renderWithProviders(<SkillPresetsPreview />)
-
-    expect(screen.getByText(/Platform \(CLI-first\) \(assigned to the member\)/)).toBeInTheDocument()
+    const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
+    await userEvent.click(screen.getByRole('button', { name: 'Actions for Platform (CLI-first)' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Preview' }))
+    expect(screen.getByRole('dialog', { name: 'Preview: Platform (CLI-first)' })).toBeInTheDocument()
+    expect(screen.queryByText('Preview as member')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Close preview' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 })

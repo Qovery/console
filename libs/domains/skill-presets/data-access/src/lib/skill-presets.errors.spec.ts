@@ -3,6 +3,7 @@ import {
   getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
   getSkillPresetFindings,
+  isAgentActivityTimedOut,
   isSkillPresetAiFeaturesOff,
   isSkillPresetConcurrentModification,
   isSkillPresetReviewUnavailable,
@@ -37,5 +38,13 @@ describe('skill presets errors', () => {
     const findings = [{ field: 'team_context', line: 3 }]
     expect(getSkillPresetFindings(buildSkillPresetApiError(422, 'Rejected', { findings }))).toEqual(findings)
     expect(getSkillPresetFindings(buildSkillPresetApiError(400, 'Bad', { findings }))).toEqual([])
+  })
+
+  it('treats a missing model reviewer as an unavailable review, and a 503 on activity as a timeout', () => {
+    expect(isSkillPresetReviewUnavailable(buildSkillPresetApiError(503, 'No model reviewer is configured'))).toBe(true)
+    expect(
+      isAgentActivityTimedOut(buildSkillPresetApiError(503, 'This range holds too much activity to read in time.'))
+    ).toBe(true)
+    expect(isAgentActivityTimedOut(buildSkillPresetApiError(400, 'The range must not exceed 90 days'))).toBe(false)
   })
 })

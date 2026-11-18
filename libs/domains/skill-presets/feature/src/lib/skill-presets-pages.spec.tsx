@@ -99,7 +99,7 @@ describe('presets list', () => {
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
 
     const alert = await screen.findByRole('alert')
-    expect(within(alert).getByText('The Skills Registry could not be loaded')).toBeInTheDocument()
+    expect(within(alert).getByText('The Skills registry could not be loaded')).toBeInTheDocument()
     expect(
       within(alert).getByText(
         'Qovery could not reach the server. Your members’ agents keep working with the preset they last loaded.'
@@ -139,7 +139,7 @@ describe('presets list', () => {
     renderWithProviders(<SettingsSkillPresets />)
 
     expect(
-      await screen.findByText(/Only organization owners and admins can change the Skills Registry/)
+      await screen.findByText(/Only organization owners and admins can change the Skills registry/)
     ).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Create preset/ })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Assignments' })).not.toBeInTheDocument()
@@ -170,6 +170,23 @@ describe('member view', () => {
 
     expect(await screen.findByText(/Deploy to the `staging` environment first/)).toBeInTheDocument()
     expect(screen.getByText(/^SHA-256 [0-9a-f]{64}$/)).toBeInTheDocument()
+  })
+
+  it('says when a skill left the preset since the list loaded, with no retry', async () => {
+    useScenario('member')
+    const getSkill = jest
+      .spyOn(skillPresetsApi, 'getResolvedSkill')
+      .mockRejectedValue(buildSkillPresetApiError(404, "There is no skill 'qovery-deploy' to load"))
+    const { userEvent } = renderWithProviders(<MemberAgentView organizationId="organization-1" />)
+    await screen.findByText('Backend team')
+    const [pieces] = screen.getAllByRole('table')
+    const row = within(pieces).getByText('qovery-deploy').closest('tr') as HTMLElement
+
+    await userEvent.click(within(row).getByRole('button', { name: /Read/ }))
+
+    expect(await screen.findByTestId('skill-gone')).toHaveTextContent('qovery-deploy is no longer in your preset.')
+    expect(screen.queryByRole('button', { name: /Try again/ })).not.toBeInTheDocument()
+    getSkill.mockRestore()
   })
 
   it('says when no preset applies', async () => {
@@ -285,7 +302,7 @@ describe('AI features off', () => {
     useScenario('ai-features-off')
     renderWithProviders(<SettingsSkillPresets />)
 
-    expect(await screen.findByTestId('ai-features-notice')).toHaveTextContent('The Skills Registry needs AI features')
+    expect(await screen.findByTestId('ai-features-notice')).toHaveTextContent('The Skills registry needs AI features')
     expect(screen.getByRole('button', { name: /Create preset/ })).toBeDisabled()
     expect(await screen.findByText('Backend team')).toBeInTheDocument()
   })

@@ -71,16 +71,16 @@ describe('AgentActivity', () => {
 
   it('shows members, skills and policy tokens in one view, with what was blocked', async () => {
     useScenario('agent-activity')
-    renderWithProviders(<AgentActivity />)
+    const { userEvent } = renderWithProviders(<AgentActivity />)
 
     expect(await screen.findByRole('heading', { name: 'Breakdown' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Activity', level: 1 })).toBeInTheDocument()
     expect(screen.getByTestId('coverage-note')).toHaveTextContent('Prompts and code are never collected.')
-    expect(
-      screen.getByText(
-        'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
-      )
-    ).toBeInTheDocument()
+    await userEvent.hover(screen.getByLabelText('About activity attribution'))
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
+    )
+    await userEvent.unhover(screen.getByLabelText('About activity attribution'))
     expect(screen.getByText('Policy tokens with activity')).toBeInTheDocument()
     expect(screen.getByTestId('chart-summary')).toHaveTextContent(/\d+ allowed and \d+ denied actions/)
     expect(within(screen.getByTestId('denied-actions')).getAllByText(/payments-production/).length).toBeGreaterThan(0)
@@ -236,12 +236,36 @@ describe('AgentActivity', () => {
     useScenario('agent-activity')
     const getActivity = jest
       .spyOn(skillPresetsApi, 'getAgentActivity')
-      .mockRejectedValue(buildSkillPresetApiError(503, 'Unavailable'))
+      .mockRejectedValue(buildSkillPresetApiError(500, 'Internal server error'))
     const { userEvent } = renderWithProviders(<AgentActivity />)
     await screen.findByText('Agent activity could not be loaded')
     const calls = getActivity.mock.calls.length
 
     await userEvent.click(screen.getByRole('button', { name: /Try again/ }))
     await waitFor(() => expect(getActivity.mock.calls.length).toBeGreaterThan(calls))
+  })
+
+  it('asks for a shorter period when the range takes too long to read', async () => {
+    useScenario('agent-activity-timeout')
+    mockUrl.search = { range: '30d' }
+    const { userEvent } = renderWithProviders(<AgentActivity />)
+
+    const notice = await screen.findByTestId('activity-timed-out', undefined, { timeout: 5000 })
+    expect(notice).toHaveTextContent('This range took too long. Pick a shorter period.')
+    // The toolbar stays, so a shorter period is one click away.
+    await userEvent.click(
+      within(screen.getByRole('toolbar', { name: 'Filters' })).getByRole('radio', { name: /7 days/ })
+    )
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { range: '7d' } }))
+  })
+
+  it('sends the actor filter as actorKind', async () => {
+    useScenario('agent-activity')
+    const getActivity = jest.spyOn(skillPresetsApi, 'getAgentActivity')
+    mockUrl.search = { actor: 'tokens' }
+    renderWithProviders(<AgentActivity />)
+    await waitFor(() =>
+      expect(getActivity).toHaveBeenCalledWith('organization-1', expect.objectContaining({ actorKind: 'POLICY_TOKEN' }))
+    )
   })
 })

@@ -2,6 +2,7 @@ import { useId, useState } from 'react'
 import {
   type SkillPresetManifestSkill,
   type SkillPresetResolutionSource,
+  getSkillPresetErrorStatus,
 } from '@qovery/domains/skill-presets/data-access'
 import { Badge, Button, Callout, Heading, Icon, Section, Skeleton, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { useResolvedSkillPreset } from '../hooks/use-resolved-skill-preset/use-resolved-skill-preset'
@@ -71,7 +72,7 @@ function PieceRow({ organizationId, name, detail, tokens, sha256, skillName, pic
         <Table.Cell className="h-auto py-2">
           <span className="flex flex-col">
             <span className={pick === 'content' ? 'font-code text-neutral' : 'font-medium text-neutral'}>{name}</span>
-            <span className="text-xs text-neutral-subtle">{detail}</span>
+            <span className="text-neutral-subtle">{detail}</span>
           </span>
         </Table.Cell>
         <Table.Cell className="text-right tabular-nums">
@@ -99,7 +100,14 @@ function PieceRow({ organizationId, name, detail, tokens, sha256, skillName, pic
         <Table.Row>
           <Table.Cell colSpan={4} className="h-auto bg-surface-neutral-subtle py-3" id={panelId}>
             {isLoading && <Skeleton height={80} className="w-full" show />}
-            {error ? <LoadError title={`${name} could not be loaded`} error={error} onRetry={() => refetch()} /> : null}
+            {error && getSkillPresetErrorStatus(error) === 404 ? (
+              // The preset changed since the list loaded: retrying would not help.
+              <p className="text-sm text-neutral-subtle" data-testid="skill-gone">
+                {name} is no longer in your preset. Reload the page to see what your agent receives now.
+              </p>
+            ) : error ? (
+              <LoadError title={`${name} could not be loaded`} error={error} onRetry={() => refetch()} />
+            ) : null}
             {data && (
               <div className="flex flex-col gap-2">
                 <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-md border border-neutral bg-surface-neutral p-3 font-code text-xs text-neutral">
@@ -144,7 +152,7 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextDescription>
-            Only organization owners and admins can change the Skills Registry. Ask one of them if your agent needs
+            Only organization owners and admins can change the Skills registry. Ask one of them if your agent needs
             something different.
             <AdminNames organizationId={organizationId} />
           </Callout.TextDescription>
@@ -192,7 +200,7 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
               </div>
             </dl>
             <Table.Root>
-              <Table.Header>
+              <Table.Header className="[&_th]:whitespace-nowrap [&_th]:text-xs [&_th]:font-medium">
                 <Table.Row>
                   <Table.ColumnHeaderCell>What your agent can load</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell className="text-right">Size</Table.ColumnHeaderCell>

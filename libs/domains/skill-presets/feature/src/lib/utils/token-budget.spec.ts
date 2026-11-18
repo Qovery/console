@@ -14,7 +14,7 @@ describe('computeTokenBudget', () => {
 
   it('counts the loader, the manifest, and per-skill costs with the team context', () => {
     const budget = computeTokenBudget({
-      base: 'QOVERY_FULL',
+      base: 'FULL',
       team_context: 'x'.repeat(400),
       skills: [
         { skill_name: 'qovery-deploy', mode: 'OVERLAY', content: 'y'.repeat(200) },
@@ -41,7 +41,7 @@ describe('computeTokenBudget', () => {
   })
 
   it('loads one lean skill on the lean base and nothing from Qovery on the empty base', () => {
-    expect(computeTokenBudget({ base: 'QOVERY_LEAN', skills: [] }).onDemand.map(({ skillName }) => skillName)).toEqual([
+    expect(computeTokenBudget({ base: 'LEAN', skills: [] }).onDemand.map(({ skillName }) => skillName)).toEqual([
       'qovery',
     ])
     expect(computeTokenBudget({ base: 'NONE', skills: [] }).onDemand).toEqual([])
@@ -49,7 +49,7 @@ describe('computeTokenBudget', () => {
 
   it('gives the same estimate from a resolved manifest as from the draft text', () => {
     const draft = {
-      base: 'QOVERY_FULL' as const,
+      base: 'FULL' as const,
       team_context: 'x'.repeat(400),
       skills: [
         { skill_name: 'qovery-deploy', mode: 'OVERLAY' as const, content: 'y'.repeat(200) },
@@ -61,7 +61,7 @@ describe('computeTokenBudget', () => {
       skill_preset: {
         id: 'preset-1',
         name: 'Backend team',
-        base: 'QOVERY_FULL',
+        base: 'FULL',
         revision: 2,
         updated_at: '2026-11-15T00:00:00Z',
         team_context: { approx_tokens: 100, sha256: 'a' },

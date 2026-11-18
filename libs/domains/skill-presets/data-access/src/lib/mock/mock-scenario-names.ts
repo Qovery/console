@@ -13,6 +13,7 @@ export const SKILL_PRESETS_MOCK_SCENARIOS = [
   'member-no-preset',
   'agent-activity',
   'agent-activity-empty',
+  'agent-activity-timeout',
   'agent-experience-empty',
   'agent-experience-partial',
   'agent-experience-active',

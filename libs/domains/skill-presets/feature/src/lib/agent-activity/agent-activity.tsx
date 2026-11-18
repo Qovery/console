@@ -4,11 +4,13 @@ import clsx from 'clsx'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import {
+  AGENT_ACTIVITY_TIMED_OUT_MESSAGE,
   type AgentActionOrigin,
   type AgentActivityBucket,
   type AgentActivityResponse,
   type AgentActivitySource,
   type AgentActorType,
+  isAgentActivityTimedOut,
 } from '@qovery/domains/skill-presets/data-access'
 import {
   Badge,
@@ -24,6 +26,7 @@ import {
   SegmentedControl,
   Skeleton,
   TablePrimitives,
+  Tooltip,
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -96,13 +99,11 @@ function DrillButton({
   children,
   active,
   onClick,
-  mono,
   label,
 }: {
   children: ReactNode
   active: boolean
   onClick: () => void
-  mono?: boolean
   label?: string
 }) {
   return (
@@ -114,7 +115,7 @@ function DrillButton({
       aria-pressed={active}
       aria-label={label}
       onClick={onClick}
-      className={clsx('h-auto px-0 text-left text-sm underline-offset-2 hover:underline', mono && 'font-code')}
+      className="h-auto px-0 text-left text-sm underline-offset-2 hover:underline"
     >
       {children}
     </Button>
@@ -139,7 +140,7 @@ function Actor({ userName, kind }: { userName: string; kind?: AgentActorType }) 
 }
 
 function SkillName({ name }: { name: string | null }) {
-  return name ? <span className="font-code">{name}</span> : <span className="text-neutral-subtle">No skill</span>
+  return name ? <span className="font-sans">{name}</span> : <span className="text-neutral-subtle">No skill</span>
 }
 
 function DeniedCount({ value }: { value: number }) {
@@ -179,7 +180,7 @@ export function HintLine({
       params={{ organizationId }}
       className="font-medium text-brand hover:underline"
     >
-      Open the Skills Registry
+      Open the Skills registry
     </Link>
   )
   const showButton = (label: string, onClick: () => void) => (
@@ -193,7 +194,7 @@ export function HintLine({
         <>
           <span>
             {hint.skills.length} Qovery {hint.skills.length === 1 ? 'skill was' : 'skills were'} not loaded in this
-            period: <span className="font-code">{hint.skills.join(', ')}</span>. Consider turning them off in a preset.
+            period: <span className="font-sans">{hint.skills.join(', ')}</span>. Consider turning them off in a preset.
           </span>
           {presetsLink}
         </>
@@ -202,7 +203,7 @@ export function HintLine({
       return (
         <>
           <span>
-            {hint.count} agent actions were denied in <span className="font-code">{hint.environment}</span>.
+            {hint.count} agent actions were denied in <span className="font-sans">{hint.environment}</span>.
           </span>
           {policyTokensLink}
         </>
@@ -248,7 +249,7 @@ export function HintLine({
       return (
         <>
           <span>
-            <span className="font-code">{hint.skillName}</span> was loaded {hint.loads} times and led to no Qovery
+            <span className="font-sans">{hint.skillName}</span> was loaded {hint.loads} times and led to no Qovery
             action. That is expected for a checklist or a runbook.
           </span>
           {presetsLink}
@@ -294,12 +295,7 @@ function FilterBar({
   // A filter change starts the recent actions back on their first page.
   const set = (patch: Partial<ActivitySearch>) => setSearch({ ...patch, page: undefined })
   return (
-    <div
-      className="flex flex-wrap items-end gap-2 xl:flex-nowrap"
-      data-testid="activity-filters"
-      role="toolbar"
-      aria-label="Filters"
-    >
+    <div className="flex flex-wrap items-end gap-2" data-testid="activity-filters" role="toolbar" aria-label="Filters">
       <div className="flex flex-col gap-1">
         <span className="text-xs text-neutral-subtle" id="activity-range-label">
           Period
@@ -418,7 +414,7 @@ function ActiveFilters({
     >
       Showing
       {chips.map(({ key, label }) => (
-        <Badge key={key} variant="surface" className="gap-1.5">
+        <Badge key={key} variant="surface" size="base" className="gap-1 font-medium">
           {label}
           <button
             type="button"
@@ -451,7 +447,7 @@ function BreakdownTable({
   const actor = parseActor(search.actor)
   const automatic: Breakdown = !isOrganization
     ? 'skill'
-    : actor.policyTokenId || actor.actorType === 'POLICY_TOKEN'
+    : actor.policyTokenId || actor.actorKind === 'POLICY_TOKEN'
       ? 'token'
       : 'member'
   // The chosen breakdown is in the URL (`view`), so a shared link keeps it.
@@ -466,11 +462,15 @@ function BreakdownTable({
   return (
     <Section aria-labelledby="activity-breakdown" className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
           <Heading level={2} id="activity-breakdown">
             Breakdown
           </Heading>
-          <p className="text-xs text-neutral-subtle">{ATTRIBUTION_NOTE}</p>
+          <Tooltip content={ATTRIBUTION_NOTE}>
+            <span tabIndex={0} aria-label="About activity attribution">
+              <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+            </span>
+          </Tooltip>
         </div>
         {isOrganization && (
           <SegmentedControl.Root
@@ -493,7 +493,7 @@ function BreakdownTable({
       <Table.Root data-testid={`breakdown-${breakdown}`}>
         {breakdown === 'member' && (
           <>
-            <Table.Header>
+            <Table.Header className="[&_th]:text-xs">
               <Table.Row>
                 <Table.ColumnHeaderCell>Member</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="text-right">Skill loads</Table.ColumnHeaderCell>
@@ -531,11 +531,11 @@ function BreakdownTable({
                   <Table.Cell className="text-right tabular-nums">
                     <DeniedCount value={row.denials} />
                   </Table.Cell>
-                  <Table.Cell className="h-auto py-2">
+                  <Table.Cell className="h-auto py-3">
                     <span className="flex flex-wrap gap-1">
                       {row.top_skills.length === 0 && <span className="text-neutral-subtle">None</span>}
                       {row.top_skills.map((skill) => (
-                        <Badge key={skill} variant="surface" className="font-code">
+                        <Badge key={skill} variant="surface" size="base" className="font-medium">
                           {skill}
                         </Badge>
                       ))}
@@ -549,7 +549,7 @@ function BreakdownTable({
         )}
         {breakdown === 'token' && (
           <>
-            <Table.Header>
+            <Table.Header className="[&_th]:text-xs">
               <Table.Row>
                 <Table.ColumnHeaderCell>Policy token</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="text-right">Allowed</Table.ColumnHeaderCell>
@@ -594,7 +594,7 @@ function BreakdownTable({
                     <Table.Cell className="text-right tabular-nums">
                       <DeniedCount value={row.denials} />
                     </Table.Cell>
-                    <Table.Cell className="h-auto py-2 text-xs text-neutral-subtle">
+                    <Table.Cell className="h-auto py-3 text-sm text-neutral-subtle">
                       {row.top_actions
                         .map(({ event, target_type, count }) => `${actionLabel(event, target_type)} (${count})`)
                         .join(', ')}
@@ -610,7 +610,7 @@ function BreakdownTable({
         )}
         {breakdown === 'skill' && (
           <>
-            <Table.Header>
+            <Table.Header className="[&_th]:text-xs">
               <Table.Row>
                 <Table.ColumnHeaderCell>Skill</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="text-right">Loads</Table.ColumnHeaderCell>
@@ -631,7 +631,6 @@ function BreakdownTable({
                 <Table.Row key={row.skill_name ?? NO_SKILL}>
                   <Table.Cell>
                     <DrillButton
-                      mono={Boolean(row.skill_name)}
                       active={search.skill === (row.skill_name ?? NO_SKILL)}
                       onClick={() => toggle('skill', row.skill_name ?? NO_SKILL)}
                     >
@@ -652,14 +651,14 @@ function BreakdownTable({
       </Table.Root>
       {breakdown === 'skill' && isOrganization && !hasActivityFilters(search) && unused.length > 0 && (
         <p className="text-xs text-neutral-subtle" data-testid="never-loaded">
-          Never loaded in this period: <span className="font-code">{unused.join(', ')}</span>. Consider turning them off
+          Never loaded in this period: <span className="font-sans">{unused.join(', ')}</span>. Consider turning them off
           in the preset.{' '}
           <Link
             to="/organization/$organizationId/agent-experience/skill-presets"
             params={{ organizationId }}
             className="font-medium text-brand hover:underline"
           >
-            Open the Skills Registry
+            Open the Skills registry
           </Link>
         </p>
       )}
@@ -728,7 +727,7 @@ function ActivityContent({
   }))
   const denied = activity.recent.filter(({ outcome }) => outcome === 'DENIED')
   const actorFilter = parseActor(search.actor)
-  const tokensOnly = isOrganization && Boolean(actorFilter.policyTokenId || actorFilter.actorType === 'POLICY_TOKEN')
+  const tokensOnly = isOrganization && Boolean(actorFilter.policyTokenId || actorFilter.actorKind === 'POLICY_TOKEN')
   const delta = (current: number, before?: number) => (before === undefined ? undefined : current - before)
 
   // Recent actions: an action type filter on the table, then pages.
@@ -946,7 +945,7 @@ function ActivityContent({
           />
         </div>
         <Table.Root>
-          <Table.Header>
+          <Table.Header className="[&_th]:text-xs">
             <Table.Row>
               <Table.ColumnHeaderCell>When</Table.ColumnHeaderCell>
               {isOrganization && <Table.ColumnHeaderCell>Actor</Table.ColumnHeaderCell>}
@@ -971,20 +970,24 @@ function ActivityContent({
                     <Actor userName={action.user_name} kind={action.actor_kind} />
                   </Table.Cell>
                 )}
-                <Table.Cell className="h-auto py-2">
+                <Table.Cell className="h-auto py-3">
                   <span className="flex items-center gap-1.5">
                     <SkillName name={action.skill_name} />
-                    {ORIGIN_BADGES[action.origin] && <Badge variant="outline">{ORIGIN_BADGES[action.origin]}</Badge>}
+                    {ORIGIN_BADGES[action.source] && (
+                      <Badge variant="surface" size="base" className="font-medium">
+                        {ORIGIN_BADGES[action.source]}
+                      </Badge>
+                    )}
                   </span>
                 </Table.Cell>
                 <Table.Cell>{actionLabel(action.event, action.target_type)}</Table.Cell>
-                <Table.Cell className="h-auto py-2">
+                <Table.Cell className="h-auto py-3">
                   <span className="flex flex-col">
-                    <span className="font-code">{action.target_name}</span>
-                    <span className="text-xs text-neutral-subtle">{targetLabel(action.target_type)}</span>
+                    <span className="font-sans">{action.target_name}</span>
+                    <span className="text-ssm text-neutral-subtle">{targetLabel(action.target_type)}</span>
                   </span>
                 </Table.Cell>
-                <Table.Cell className="font-code text-xs">{action.environment_name ?? 'None'}</Table.Cell>
+                <Table.Cell className="text-sm">{action.environment_name ?? 'None'}</Table.Cell>
                 <Table.Cell>
                   <OutcomeBadge outcome={action.outcome} />
                 </Table.Cell>
@@ -1043,10 +1046,10 @@ function ActivityContent({
                   <span className="inline-flex flex-wrap items-center gap-x-1.5 text-neutral">
                     <Icon iconName="ban" iconStyle="regular" className="text-negative" aria-hidden="true" />
                     {actionLabel(action.event, action.target_type)} on {targetLabel(action.target_type)}
-                    <span className="font-code">{action.target_name}</span>
+                    <span className="font-sans">{action.target_name}</span>
                     {action.environment_name && action.environment_name !== action.target_name ? (
                       <>
-                        in <span className="font-code">{action.environment_name}</span>
+                        in <span className="font-sans">{action.environment_name}</span>
                       </>
                     ) : null}
                   </span>
@@ -1072,7 +1075,7 @@ function ActivityContent({
                 params={{ organizationId }}
                 className="font-medium text-brand hover:underline"
               >
-                the Skills Registry
+                the Skills registry
               </Link>
               .
             </p>
@@ -1175,6 +1178,28 @@ export function AgentActivity() {
           <Skeleton height={72} className="w-full" show />
           <Skeleton height={240} className="w-full" show />
         </div>
+      ) : error && isAgentActivityTimedOut(error) ? (
+        // A busy range can take too long to read (q-core answers 503): a shorter one, or a filter, works.
+        <Callout.Root color="yellow" role="alert" data-testid="activity-timed-out">
+          <Callout.Icon>
+            <Icon iconName="hourglass-end" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>{AGENT_ACTIVITY_TIMED_OUT_MESSAGE}</Callout.TextHeading>
+            <Callout.TextDescription>You can also filter by member or skill.</Callout.TextDescription>
+          </Callout.Text>
+          <Button
+            type="button"
+            size="md"
+            variant="outline"
+            color="neutral"
+            className="self-center"
+            onClick={() => refetch()}
+          >
+            <Icon iconName="rotate-right" iconStyle="regular" />
+            Try again
+          </Button>
+        </Callout.Root>
       ) : error ? (
         <LoadError title="Agent activity could not be loaded" error={error} onRetry={() => refetch()} />
       ) : activity ? (

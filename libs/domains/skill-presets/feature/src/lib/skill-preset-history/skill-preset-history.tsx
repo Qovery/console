@@ -143,7 +143,7 @@ function SkillPresetHistoryPage() {
   const isDeleted = latest?.change_type === 'DELETE'
   const presetExists = presets.some(({ id }) => id === skillPresetId)
 
-  useDocumentTitle(`History of ${latest?.name ?? 'preset'} - Skills Registry - Agents`)
+  useDocumentTitle(`History of ${latest?.name ?? 'preset'} - Skills registry - Agents`)
 
   const restore = (revision: SkillPresetRevisionResponse) => {
     const recreate = isDeleted || !presetExists
@@ -240,7 +240,7 @@ function SkillPresetHistoryPage() {
           className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
         >
           <Icon iconName="arrow-left" iconStyle="regular" />
-          {presetExists ? latest.name : 'Skills Registry'}
+          {presetExists ? latest.name : 'Skills registry'}
         </Link>
         <div className="flex items-center gap-3">
           <Heading>History of {latest.name}</Heading>
@@ -278,11 +278,16 @@ function SkillPresetHistoryPage() {
                     onClick={() => setSelectedRevision(revision.revision)}
                     aria-current={isSelected ? 'true' : undefined}
                     className={twMerge(
-                      'relative flex w-full gap-3 rounded-md p-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong',
-                      isSelected && 'ring-brand-strong bg-surface-neutral-subtle ring-1'
+                      'group relative flex w-full gap-3 rounded-md border border-transparent p-2 text-left hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong',
+                      isSelected && 'border-neutral-component bg-surface-neutral-subtle'
                     )}
                   >
-                    <span className="z-10 flex h-4 w-4 shrink-0 translate-x-[7px] translate-y-0.5 items-center justify-center rounded-full bg-background">
+                    <span
+                      className={twMerge(
+                        'z-10 flex h-4 w-4 shrink-0 translate-x-[7px] translate-y-0.5 items-center justify-center rounded-full bg-background group-hover:bg-surface-neutral-subtle',
+                        isSelected && 'bg-surface-neutral-subtle'
+                      )}
+                    >
                       <Icon
                         iconName={CHANGE_ICONS[revision.change_type]}
                         iconStyle="regular"

@@ -51,12 +51,12 @@ export const OUTCOME_LABELS = { ALLOWED: 'Allowed', DENIED: 'Denied' } as const
 /** Allowed or denied, the same everywhere: a check in neutral, a ban in red. */
 export function OutcomeBadge({ outcome }: { outcome: 'ALLOWED' | 'DENIED' }) {
   return outcome === 'DENIED' ? (
-    <Badge variant="surface" color="red" className="gap-1 whitespace-nowrap">
+    <Badge variant="surface" color="red" size="base" className="gap-1 whitespace-nowrap font-medium">
       <Icon iconName="ban" iconStyle="regular" aria-hidden="true" />
       {OUTCOME_LABELS.DENIED}
     </Badge>
   ) : (
-    <Badge variant="outline" className="gap-1 whitespace-nowrap">
+    <Badge variant="outline" size="base" className="gap-1 whitespace-nowrap font-medium">
       <Icon iconName="check" iconStyle="regular" aria-hidden="true" />
       {OUTCOME_LABELS.ALLOWED}
     </Badge>
@@ -88,7 +88,7 @@ export function ActorChip({
         {kind === 'policy-token' && prefix ? `Policy token ${name}` : name}
       </span>
       {deleted && (
-        <Badge variant="outline" size="sm" color="neutral">
+        <Badge variant="surface" size="base" color="neutral" className="font-medium">
           Deleted
         </Badge>
       )}
@@ -162,7 +162,7 @@ export function Stat({
       to="/organization/$organizationId/agent-experience/agent-activity"
       params={{ organizationId }}
       search={search}
-      className="group relative flex flex-col gap-0.5 rounded-md border border-neutral px-4 py-3 pr-8 transition-colors hover:border-brand-strong hover:bg-surface-neutral-subtle focus-visible:border-brand-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
+      className="group relative flex flex-col gap-0.5 rounded-md border border-neutral px-4 py-3 pr-8 transition-colors hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:border-neutral-component focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong"
       aria-label={`${label}: ${value.toLocaleString('en-US')}. Open in Activity`}
       data-testid="stat-link"
     >

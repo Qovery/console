@@ -68,7 +68,7 @@ const asRole = (role: string | null, loading = false) =>
     isQoveryAdminUser: false,
   })
 
-const memberNote = /Only organization owners and admins can change the Skills Registry/
+const memberNote = /Only organization owners and admins can change the Skills registry/
 
 beforeEach(() => {
   jest.mocked(useParams).mockReturnValue({ organizationId: ORGANIZATION_ID })
@@ -85,7 +85,7 @@ describe('skill presets access', () => {
     renderWithProviders(<SettingsSkillPresets />)
 
     expect(screen.getByRole('button', { name: /Create preset/ })).toBeInTheDocument()
-    expect(screen.getByText('Assignments')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Presets' })).toBeInTheDocument()
     expect(screen.queryByText(memberNote)).not.toBeInTheDocument()
   })
 
@@ -108,7 +108,7 @@ describe('skill presets access', () => {
     asRole('admin', true)
     renderWithProviders(<SettingsSkillPresets />)
 
-    expect(screen.getByLabelText('Loading the Skills Registry')).toBeInTheDocument()
+    expect(screen.getByLabelText('Loading the Skills registry')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Create preset/ })).not.toBeInTheDocument()
     expect(screen.queryByText('Assignments')).not.toBeInTheDocument()
     expect(mockUseSkillPresets).not.toHaveBeenCalled()

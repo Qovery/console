@@ -200,7 +200,7 @@ describe('RowEvent', () => {
   it('should link skill preset events to the skill presets settings', () => {
     const skillLoad = {
       ...mockEvent,
-      event_type: 'LOAD',
+      event_type: 'SKILL_LOAD',
       target_type: OrganizationEventTargetType.ORGANIZATION,
       sub_target_type: 'SKILL_PRESET',
       target_name: 'Acme',
@@ -217,7 +217,7 @@ describe('RowEvent', () => {
   it('should describe a skill preset save refused by the security review', () => {
     const rejected = {
       ...mockEvent,
-      event_type: 'REJECTED',
+      event_type: 'SKILL_PRESET_REJECTED',
       target_type: OrganizationEventTargetType.ORGANIZATION,
       sub_target_type: 'SKILL_PRESET',
       change: JSON.stringify({
@@ -239,7 +239,7 @@ describe('RowEvent', () => {
   it('should render a skill viewed in the Console', () => {
     const viewed = {
       ...mockEvent,
-      event_type: 'VIEW',
+      event_type: 'SKILL_VIEW',
       target_type: OrganizationEventTargetType.ORGANIZATION,
       sub_target_type: 'SKILL_PRESET',
       change: JSON.stringify({ skill_name: 'qovery-deploy', source: 'ROLE', from_cache: false }),

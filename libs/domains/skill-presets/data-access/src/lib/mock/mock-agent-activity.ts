@@ -144,7 +144,7 @@ export function buildMockAgentActions(
         user_name: load.user_name,
         actor_kind: 'MEMBER',
         policy_token_id: null,
-        origin: 'SKILL_API_ACTION',
+        source: 'SKILL_API_ACTION',
         skill_name: load.skill_name,
         event: effect.event,
         target_type: effect.target_type,
@@ -182,14 +182,14 @@ export function buildMockAgentActions(
         at: new Date(Date.now() - (index * spacingHours + offsetHours) * HOUR).toISOString(),
         ...actor,
         ...action,
-        outcome: action.origin === 'POLICY_DENIAL' ? 'DENIED' : 'ALLOWED',
+        outcome: action.source === 'POLICY_DENIAL' ? 'DENIED' : 'ALLOWED',
       })
     }
   }
 
   // Tool calls through the Qovery MCP server: no skill in the user agent.
   extra(withMcp ? 14 : 0, person('auth0|mock-priya'), 5, (index) => ({
-    origin: 'MCP_TOOL_CALL',
+    source: 'MCP_TOOL_CALL',
     skill_name: null,
     event: 'MCP',
     target_type: index % 2 ? 'APPLICATION' : 'ENVIRONMENT',
@@ -199,7 +199,7 @@ export function buildMockAgentActions(
   }))
   // A CI pipeline using a policy token through MCP.
   extra(withPolicyToken ? 8 : 0, policyToken, 9, () => ({
-    origin: 'MCP_TOOL_CALL',
+    source: 'MCP_TOOL_CALL',
     skill_name: null,
     event: 'MCP',
     target_type: 'ENVIRONMENT',
@@ -215,7 +215,7 @@ export function buildMockAgentActions(
       policyToken,
       2,
       (index) => ({
-        origin: 'POLICY_TOKEN_API_ACTION',
+        source: 'POLICY_TOKEN_API_ACTION',
         skill_name: null,
         event: 'TRIGGER_DEPLOY',
         target_type: 'APPLICATION',
@@ -227,7 +227,7 @@ export function buildMockAgentActions(
     )
     // A read-only review agent: its reads are not audited, its MCP tool calls are.
     extra(6, token(1), 6, (index) => ({
-      origin: 'MCP_TOOL_CALL',
+      source: 'MCP_TOOL_CALL',
       skill_name: null,
       event: 'MCP',
       target_type: 'APPLICATION',
@@ -241,7 +241,7 @@ export function buildMockAgentActions(
       token(2),
       18 * 24,
       (index) => ({
-        origin: 'POLICY_TOKEN_API_ACTION',
+        source: 'POLICY_TOKEN_API_ACTION',
         skill_name: null,
         event: 'TRIGGER_STOP',
         target_type: 'ENVIRONMENT',
@@ -256,7 +256,7 @@ export function buildMockAgentActions(
   if (withDenials) {
     // Refused by the member's role, asked from a skill.
     extra(4, person('auth0|mock-jordan'), 3, () => ({
-      origin: 'POLICY_DENIAL',
+      source: 'POLICY_DENIAL',
       skill_name: 'qovery',
       event: 'ACCESS_DENIED',
       target_type: 'ENVIRONMENT',
@@ -265,7 +265,7 @@ export function buildMockAgentActions(
       environment_name: 'payments-production',
     }))
     extra(2, person('auth0|mock-jamie'), 7, () => ({
-      origin: 'POLICY_DENIAL',
+      source: 'POLICY_DENIAL',
       skill_name: 'qovery-deploy',
       event: 'ACCESS_DENIED',
       target_type: 'APPLICATION',
@@ -275,7 +275,7 @@ export function buildMockAgentActions(
     }))
     // Refused by the policy token's rules: it may only touch staging.
     extra(withPolicyToken ? 3 : 0, policyToken, 11, () => ({
-      origin: 'POLICY_DENIAL',
+      source: 'POLICY_DENIAL',
       skill_name: null,
       event: 'POLICY_FAILED',
       target_type: 'ENVIRONMENT',
@@ -285,7 +285,7 @@ export function buildMockAgentActions(
     }))
     // The review agent tried to restart a service: its viewer policy refuses it.
     extra(withPolicyToken ? 2 : 0, token(1), 30, () => ({
-      origin: 'POLICY_DENIAL',
+      source: 'POLICY_DENIAL',
       skill_name: null,
       event: 'POLICY_FAILED',
       target_type: 'APPLICATION',
@@ -295,7 +295,7 @@ export function buildMockAgentActions(
     }))
     // Older records, from before tokens were named in the audit log.
     extra(withPolicyToken ? 2 : 0, legacyToken, 26 * 24, () => ({
-      origin: 'POLICY_DENIAL',
+      source: 'POLICY_DENIAL',
       skill_name: null,
       event: 'POLICY_FAILED',
       target_type: 'PROJECT',
@@ -305,7 +305,7 @@ export function buildMockAgentActions(
     }))
     // The cleanup token was refused a production delete, before it was deleted.
     extra(withPolicyToken ? 1 : 0, token(2), 21 * 24, () => ({
-      origin: 'POLICY_DENIAL',
+      source: 'POLICY_DENIAL',
       skill_name: null,
       event: 'POLICY_FAILED',
       target_type: 'ENVIRONMENT',
@@ -322,7 +322,7 @@ export function buildMockAgentActions(
 export function aggregateAgentActivity(
   actions: MockAgentAction[],
   loads: MockSkillLoad[],
-  { from, to, bucket, userSub, skillName, actorType, policyTokenId, outcome, source }: AgentActivityParams
+  { from, to, bucket, userSub, skillName, actorKind, policyTokenId, outcome, source }: AgentActivityParams
 ): AgentActivityResponse {
   const fromTime = new Date(from).getTime()
   const toTime = new Date(to).getTime()
@@ -332,15 +332,15 @@ export function aggregateAgentActivity(
   }
   const matches = (user: string | null, skill: string | null) =>
     (!userSub || user === userSub) && (!skillName || skill === skillName)
-  const tokenOnly = actorType === 'POLICY_TOKEN' || Boolean(policyTokenId)
+  const tokenOnly = actorKind === 'POLICY_TOKEN' || Boolean(policyTokenId)
   const scopedActions = actions.filter(
     (action) =>
       inRange(action.at) &&
       matches(action.user_sub, action.skill_name) &&
-      (!actorType || action.actor_kind === actorType) &&
+      (!actorKind || action.actor_kind === actorKind) &&
       (!policyTokenId || action.policy_token_id === policyTokenId) &&
       (!outcome || action.outcome === outcome) &&
-      (!source || action.origin === source)
+      (!source || action.source === source)
   )
   // Skill loads are a member's: a token filter or an action source leaves them out.
   const scopedLoads =
@@ -520,7 +520,7 @@ export function agentActivityParamsError({
   bucket,
   skillName,
   userSub,
-  actorType,
+  actorKind,
   policyTokenId,
 }: AgentActivityParams): string | null {
   const fromTime = new Date(from).getTime()
@@ -531,8 +531,8 @@ export function agentActivityParamsError({
   if (bucket !== 'DAY' && bucket !== 'HOUR') return 'The bucket must be DAY or HOUR'
   if (skillName !== undefined && !AGENT_ACTIVITY_LIMITS.skillNamePattern.test(skillName)) return 'Invalid skill name'
   if (policyTokenId !== undefined && !UUID.test(policyTokenId)) return 'Invalid policy token id'
-  if (policyTokenId && actorType === 'MEMBER') return 'A policy token cannot be filtered with actorType=MEMBER'
-  if (userSub && (policyTokenId || actorType === 'POLICY_TOKEN'))
+  if (policyTokenId && actorKind === 'MEMBER') return 'A policy token cannot be filtered with actorKind=MEMBER'
+  if (userSub && (policyTokenId || actorKind === 'POLICY_TOKEN'))
     return 'userSub cannot be combined with a policy token filter'
   return null
 }

@@ -7,7 +7,7 @@ import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/
 
 const AGENT_TASKS_FLAG = 'argentic-workflow'
 // Entries nested in a group: indented like a sub-entry, with their icon.
-const NESTED_ITEM = 'pl-[39px]'
+const NESTED_ITEM = 'pl-[41.5px]'
 const DAY_MS = 24 * 3_600_000
 
 /** Denied agent actions over the last 7 days, for the Activity badge (like open issues on Alerts). */
@@ -38,6 +38,16 @@ export function AgentExperienceNav() {
   const denied = useDeniedThisWeek(organizationId, canManage ? 'organization' : 'me', !isLoading)
   const base = `/organization/${organizationId}/agent-experience`
   const { pathname } = useLocation()
+  const registryPath = `${base}/skill-presets`
+  const sections = [
+    { title: 'Presets', to: registryPath },
+    { title: 'Assignments', to: `${registryPath}/assignments` },
+    { title: 'Skill loads', to: `${registryPath}/loads` },
+    { title: 'Usage', to: `${registryPath}/usage` },
+  ]
+  const activeSection = sections.slice(1).find(({ to }) => pathname === to || pathname.startsWith(`${to}/`))
+  const isRegistryPage = pathname === registryPath || pathname.startsWith(`${registryPath}/`)
+
   const isAdmin = !isLoading && canManage
   const settingsPaths = [`${base}/policy-tokens`, `${base}/copilot`, `${base}/agent-task-tokens`, `${base}/mcp-servers`]
 
@@ -46,14 +56,20 @@ export function AgentExperienceNav() {
       <Sidebar.Item to={base} icon="table-layout" iconStyle="regular" active={pathname.replace(/\/$/, '') === base}>
         Overview
       </Sidebar.Item>
-      <Sidebar.Item
-        to={`${base}/skill-presets`}
-        icon="sliders"
-        iconStyle="regular"
-        active={pathname.startsWith(`${base}/skill-presets`)}
-      >
-        Skills Registry
-      </Sidebar.Item>
+      {!isLoading && canManage ? (
+        <Sidebar.Group title="Skills registry" icon="sliders" iconStyle="regular" defaultOpen={isRegistryPage}>
+          {sections.map(({ title, to }) => (
+            <Sidebar.SubItem key={to} to={to} active={isRegistryPage && (activeSection?.to ?? registryPath) === to}>
+              {title}
+            </Sidebar.SubItem>
+          ))}
+        </Sidebar.Group>
+      ) : (
+        <Sidebar.Item to={registryPath} icon="sliders" iconStyle="regular" active={isRegistryPage}>
+          Skills registry
+        </Sidebar.Item>
+      )}
+
       <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
         Automate
       </Sidebar.Item>

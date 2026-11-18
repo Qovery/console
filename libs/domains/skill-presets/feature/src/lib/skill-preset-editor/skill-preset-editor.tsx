@@ -15,7 +15,18 @@ import {
   isSkillPresetConcurrentModification,
   isSkillPresetReviewUnavailable,
 } from '@qovery/domains/skill-presets/data-access'
-import { Badge, Button, Callout, Heading, Icon, InputText, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Link as ButtonLink,
+  Callout,
+  Heading,
+  Icon,
+  InputText,
+  LoaderSpinner,
+  Section,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { AI_FEATURES_OFF_TOOLTIP, AiFeaturesNotice } from '../ai-features-notice/ai-features-notice'
@@ -29,11 +40,8 @@ import { MarkdownField } from '../markdown-field/markdown-field'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SecurityFindingsSummary } from '../security-findings-summary/security-findings-summary'
 import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
-import { PreviewAsMemberSelect } from '../token-budget/preview-as-member'
-import { TokenBudgetView } from '../token-budget/token-budget-view'
-import { PREVIEW_ANYONE, describeResolution, resolvePreviewTarget } from '../utils/preview-target'
-import { QOVERY_SKILLS } from '../utils/qovery-skills'
-import { RESOLUTION_SOURCE_LABELS, isTemplate } from '../utils/resolve-preset'
+import { PresetPreviewPanel } from '../skill-presets-preview/preset-preview-panel'
+import { isTemplate } from '../utils/resolve-preset'
 import { scrollToElement } from '../utils/scroll'
 import {
   type FindingTarget,
@@ -46,13 +54,11 @@ import {
 import { type SkillPresetFormValues, toSkillPresetFormValues, toSkillPresetRequest } from '../utils/skill-preset-form'
 import { SKILL_PRESET_TEMPLATES, findTemplate } from '../utils/skill-preset-templates'
 import { flattenFieldErrors, skillPresetResolver } from '../utils/skill-preset-validation'
-import { computeTokenBudget } from '../utils/token-budget'
 import { AssignmentSection } from './assignment-section'
 import { BaseChooser } from './base-chooser'
 import { CustomSkillsSection } from './custom-skills-section'
 import { QoverySkillsSection } from './qovery-skills-section'
 import { type LibrarySkill } from './skill-library-modal'
-import { TotalTextCounter } from './total-text-counter'
 
 const NEW_PRESET_ID = 'new-preset'
 const LEAVE_UNSAVED_CHANGES_MESSAGE = 'You have unsaved changes on this preset. Leave the page and discard them?'
@@ -75,7 +81,7 @@ function EditorSection({
   id: string
 }) {
   return (
-    <Section aria-labelledby={id} className="flex flex-col gap-4 border-b border-neutral pb-8 last:border-b-0">
+    <Section aria-labelledby={id} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <Heading level={2} id={id}>
           {title}
@@ -102,7 +108,7 @@ function fieldValue(values: SkillPresetFormValues, target: FindingTarget) {
 function HiddenQoveryChangesNotice() {
   const { control } = useFormContext<SkillPresetFormValues>()
   const [base, qoverySkills] = useWatch({ control, name: ['base', 'qoverySkills'] })
-  const count = base !== 'QOVERY_FULL' ? qoverySkills.filter(({ choice }) => choice !== 'AS_IS').length : 0
+  const count = base !== 'FULL' ? qoverySkills.filter(({ choice }) => choice !== 'AS_IS').length : 0
   if (count === 0) return null
   return (
     <Callout.Root color="neutral">
@@ -119,63 +125,19 @@ function HiddenQoveryChangesNotice() {
   )
 }
 
-interface AgentContextPanelProps {
-  draftId: string
-  otherPresets: SkillPresetResponse[]
-  assignees?: SkillPresetAssignees
-}
-
-/**
- * The side panel. It is the only part that reads the whole draft, and it reads a deferred copy, so
- * typing stays fast while the budget catches up.
- */
-function AgentContextPanel({ draftId, otherPresets, assignees }: AgentContextPanelProps) {
+function DraftPreview() {
   const { control } = useFormContext<SkillPresetFormValues>()
   const values = useWatch({ control }) as SkillPresetFormValues
   const deferredValues = useDeferredValue(values)
-  const [previewTarget, setPreviewTarget] = useState(PREVIEW_ANYONE)
-
-  const { previewed, budget } = useMemo(() => {
-    const request = toSkillPresetRequest(deferredValues)
-    const resolved =
-      previewTarget === PREVIEW_ANYONE
-        ? null
-        : resolvePreviewTarget(previewTarget, [{ ...request, id: draftId }, ...otherPresets], assignees)
-    const previewedPreset = !resolved || resolved.preset?.id === draftId ? request : resolved.preset ?? null
-    return { previewed: resolved, budget: computeTokenBudget(previewedPreset) }
-  }, [deferredValues, previewTarget, draftId, otherPresets, assignees])
-
+  const [open, setOpen] = useState(false)
   return (
-    <Section
-      aria-labelledby="agent-context-title"
-      className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4 xl:sticky xl:top-4"
-    >
-      <div className="flex flex-col gap-1">
-        <Heading level={2} id="agent-context-title">
-          What members’ agents receive
-        </Heading>
-        <p className="text-xs text-neutral-subtle">
-          Agents read a short skill list first, then load only the skills a task needs. Members can read every piece in
-          full, with its SHA-256. Every save is checked by rules and by a model review before it reaches members.
-        </p>
-      </div>
-      <PreviewAsMemberSelect
-        value={previewTarget}
-        onChange={setPreviewTarget}
-        assignees={assignees}
-        anyoneLabel="Anyone who receives this preset"
-      />
-      {previewed && (
-        <p className="text-xs text-neutral" aria-live="polite">
-          {previewed.preset?.id === draftId
-            ? `${previewed.targetLabel} gets this preset (${RESOLUTION_SOURCE_LABELS[previewed.source].toLowerCase()}).`
-            : previewed.preset
-              ? `${previewed.targetLabel} gets ${describeResolution(previewed)}, not this one. Showing that preset.`
-              : `${previewed.targetLabel} gets no preset: Qovery skills as published. Showing today’s cost.`}
-        </p>
-      )}
-      <TokenBudgetView budget={budget} compact />
-    </Section>
+    <>
+      <Button type="button" size="md" variant="outline" color="neutral" onClick={() => setOpen(true)}>
+        <Icon iconName="eye" iconStyle="regular" />
+        Preview
+      </Button>
+      <PresetPreviewPanel preset={toSkillPresetRequest(deferredValues)} open={open} onOpenChange={setOpen} draft />
+    </>
   )
 }
 
@@ -268,14 +230,6 @@ export function SkillPresetEditorForm({
 
   const librarySkills: LibrarySkill[] = useMemo(
     () => [
-      ...QOVERY_SKILLS.map(({ name, description }) => ({
-        id: `qovery:${name}`,
-        group: 'qovery' as const,
-        skillName: name,
-        description,
-        content: '',
-        origin: 'Qovery',
-      })),
       ...otherPresets.flatMap((item) =>
         item.skills
           .filter(({ mode }) => mode === 'ADD')
@@ -385,31 +339,36 @@ export function SkillPresetEditorForm({
     <FormProvider {...methods}>
       <Section>
         <form id="skill-preset-editor-top" onSubmit={submit} noValidate className="flex flex-col gap-6 px-8 pt-6">
-          <div className="flex flex-col gap-3">
+          <div className="mb-2 flex flex-col gap-3 border-b border-neutral pb-6">
             <Link
               to="/organization/$organizationId/agent-experience/skill-presets"
               params={{ organizationId }}
               className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
             >
               <Icon iconName="arrow-left" iconStyle="regular" />
-              Skills Registry
+              Skills registry
             </Link>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <Heading>{preset ? preset.name : asTemplate ? 'Save as template' : 'Create preset'}</Heading>
-                {preset && <Badge variant="surface">Revision {baseRevision}</Badge>}
                 {preset?.is_template && <Badge variant="outline">Template</Badge>}
               </div>
-              {preset && (
-                <Link
-                  to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history"
-                  params={{ organizationId, skillPresetId: preset.id }}
-                  className="flex items-center gap-1.5 text-sm font-medium text-brand hover:underline"
-                >
-                  <Icon iconName="clock-rotate-left" iconStyle="regular" />
-                  History
-                </Link>
-              )}
+              <div className="flex items-center gap-2">
+                {preset && (
+                  <ButtonLink
+                    to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history"
+                    params={{ organizationId, skillPresetId: preset.id }}
+                    as="button"
+                    size="md"
+                    variant="outline"
+                    color="neutral"
+                  >
+                    <Icon iconName="clock-rotate-left" iconStyle="regular" />
+                    History
+                  </ButtonLink>
+                )}
+                <DraftPreview />
+              </div>
             </div>
             {origin && <p className="text-sm text-neutral-subtle">{origin} Everything below is editable.</p>}
           </div>
@@ -482,7 +441,7 @@ export function SkillPresetEditorForm({
             </Callout.Root>
           )}
 
-          <div className="grid grid-cols-1 items-start gap-8 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="max-w-content-with-navigation-left">
             <div className="flex min-w-0 flex-col gap-8">
               <EditorSection id="section-general" title="General">
                 <Controller
@@ -517,35 +476,29 @@ export function SkillPresetEditorForm({
                 />
               </EditorSection>
 
-              <EditorSection
-                id="section-base"
-                title="Start from"
-                description="The Qovery skills members’ agents can load. Your team context and your own skills apply on top of any choice."
-              >
-                <Controller
-                  control={methods.control}
-                  name="base"
-                  render={({ field }) => <BaseChooser value={field.value} onChange={field.onChange} />}
-                />
-                <HiddenQoveryChangesNotice />
-              </EditorSection>
-
-              {base === 'QOVERY_FULL' && (
-                <EditorSection
-                  id="section-qovery-skills"
-                  title="Qovery skills"
-                  description="Use a skill as Qovery publishes it, add your team’s instructions after it, replace it with your own text, or turn it off."
-                >
-                  <QoverySkillsSection findings={findings} />
-                </EditorSection>
-              )}
-
-              <EditorSection
-                id="section-custom-skills"
-                title="Your skills"
-                description="Skills your organization writes. Agents load one when its description matches the task."
-              >
-                <CustomSkillsSection findings={findings} librarySkills={librarySkills} />
+              <EditorSection id="section-skills" title="Skills">
+                <div className="flex flex-col gap-6">
+                  <Controller
+                    control={methods.control}
+                    name="base"
+                    render={({ field }) => <BaseChooser value={field.value} onChange={field.onChange} />}
+                  />
+                  <HiddenQoveryChangesNotice />
+                  {base === 'FULL' && (
+                    <Section aria-labelledby="section-qovery-skills" className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-1">
+                        <Heading level={3} id="section-qovery-skills">
+                          Qovery skills
+                        </Heading>
+                        <p className="text-sm text-neutral-subtle">Keep, customize or disable the built-in skills.</p>
+                      </div>
+                      <QoverySkillsSection findings={findings} />
+                    </Section>
+                  )}
+                  <Section aria-labelledby="section-custom-skills">
+                    <CustomSkillsSection findings={findings} librarySkills={librarySkills} />
+                  </Section>
+                </div>
               </EditorSection>
 
               <EditorSection
@@ -560,10 +513,10 @@ export function SkillPresetEditorForm({
                     <MarkdownField
                       id={findingFieldId({ field: 'teamContext' })}
                       label="Team context"
+                      hideLabel
                       value={field.value}
                       onChange={field.onChange}
                       maxLength={SKILL_PRESET_LIMITS.teamContextMaxLength}
-                      hint="Keep it short: it is added to every skill load."
                       error={fieldState.error?.message}
                       findings={findingsFor(findings, { field: 'teamContext' })}
                       minLines={8}
@@ -572,7 +525,15 @@ export function SkillPresetEditorForm({
                 />
               </EditorSection>
 
-              <EditorSection id="section-assignment" title="Who receives it">
+              <EditorSection
+                id="section-assignment"
+                title="Who receives it"
+                description={
+                  asTemplate
+                    ? undefined
+                    : 'When several presets match a member, the most specific one wins: a preset assigned to the member, then their role’s, then the organization default. Members with none use the Qovery skills as published.'
+                }
+              >
                 {asTemplate ? (
                   <p className="text-sm text-neutral-subtle">
                     Templates are not assigned. Start a new preset from it to give it to roles or members.
@@ -587,35 +548,17 @@ export function SkillPresetEditorForm({
                 )}
               </EditorSection>
             </div>
-
-            <AgentContextPanel draftId={draftId} otherPresets={otherPresets} assignees={assignees} />
           </div>
 
-          <div className="sticky bottom-0 z-10 flex items-center justify-end gap-3 border-t border-neutral bg-background py-3">
-            <TotalTextCounter />
+          <div className="mt-4 flex max-w-content-with-navigation-left items-center justify-end gap-3 pb-8">
             {isSubmitted && errorCount > 0 && (
               <span className="flex items-center gap-1.5 text-sm text-negative">
                 <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
                 {errorCount === 1 ? '1 field needs' : `${errorCount} fields need`} a change
               </span>
             )}
-            <Button
-              type="button"
-              size="lg"
-              variant="plain"
-              color="neutral"
-              className="ml-auto"
-              onClick={() =>
-                navigate({
-                  to: '/organization/$organizationId/agent-experience/skill-presets',
-                  params: { organizationId },
-                })
-              }
-            >
-              Cancel
-            </Button>
             {preset && !isDirty && savePhase === null && (
-              <span id="save-hint" className="text-sm text-neutral-subtle" data-testid="no-changes-hint">
+              <span id="save-hint" className="sr-only" data-testid="no-changes-hint">
                 No changes yet
               </span>
             )}
@@ -637,7 +580,7 @@ export function SkillPresetEditorForm({
                     : savePhase === 'saving'
                       ? 'Saving…'
                       : preset
-                        ? 'Save changes'
+                        ? 'Save'
                         : asTemplate
                           ? 'Save template'
                           : 'Create preset'}
@@ -660,7 +603,7 @@ function SkillPresetEditorPage() {
   const { data: presets = [], isLoading: isListLoading } = useSkillPresets({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
 
-  useDocumentTitle(`${skillPresetId ? 'Edit' : 'Create'} preset - Skills Registry - Agents`)
+  useDocumentTitle(`${skillPresetId ? 'Edit' : 'Create'} preset - Skills registry - Agents`)
 
   const source = search.from ? presets.find(({ id }) => id === search.from) : undefined
   const template = findTemplate(search.template)

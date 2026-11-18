@@ -481,18 +481,21 @@ describe('AgentExperiencePolicyTokens', () => {
 })
 
 describe('AgentExperienceNav', () => {
-  it('has four entries, then Settings with policy tokens, for admins only', async () => {
+  it('shows the registry group and Settings with policy tokens for admins only', async () => {
     useScenario('agent-experience-active')
     const { userEvent, unmount } = renderWithProviders(<AgentExperienceNav />)
     expect(await screen.findByText('Settings')).toBeInTheDocument()
-    for (const label of ['Overview', 'Skills Registry', 'Automate', 'Optimize builds', 'Activity']) {
+    for (const label of ['Overview', 'Skills registry', 'Automate', 'Optimize builds', 'Activity']) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
     // Connect is reached from the Overview, not from the menu. Policy tokens sit in Settings.
     expect(screen.queryByText('Connect')).not.toBeInTheDocument()
     expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
-    await userEvent.click(screen.getByTestId('sidebar-group-trigger'))
-    const settings = within(screen.getByTestId('sidebar-group-content'))
+    const settingsButton = screen.getByRole('button', { name: 'Settings' })
+    await userEvent.click(settingsButton)
+    const settingsContainer = settingsButton.parentElement
+    if (!settingsContainer) throw new Error('Settings group is missing')
+    const settings = within(settingsContainer)
     expect(settings.getByText('Policy tokens')).toBeInTheDocument()
     expect(settings.getByText('Copilot settings')).toBeInTheDocument()
     unmount()

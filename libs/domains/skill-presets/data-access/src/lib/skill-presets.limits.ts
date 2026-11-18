@@ -5,6 +5,8 @@ export const SKILL_PRESET_LIMITS = {
   teamContextMaxLength: 32768,
   skillContentMaxLength: 65536,
   maxSkills: 50,
+  /** Roles and members together: past that, assign a role rather than each member. */
+  maxAssignments: 200,
   skillNameMaxLength: 64,
   /** All the text of a preset together (description, team context, skill descriptions and content), so a model can review it. */
   totalTextMaxLength: 200000,
@@ -30,3 +32,9 @@ export const isQoverySkillName = (skillName: string) => skillName === 'qovery' |
 
 /** About 4 characters per token for English markdown, as q-core computes it. An estimate, not a bill. */
 export const approxTokens = (text?: string | null) => (text ? Math.floor((text.length + 3) / 4) : 0)
+
+/**
+ * q-core refuses the Owner role as a target (400): the organization owner is resolved as an admin, so a
+ * preset assigned to Owner would never apply. Default role names are fixed.
+ */
+export const isOwnerRole = (role: { name: string }) => role.name.toLowerCase() === 'owner'

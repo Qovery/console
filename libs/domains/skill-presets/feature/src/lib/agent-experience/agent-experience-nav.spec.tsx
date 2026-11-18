@@ -1,21 +1,18 @@
 import { useLocation, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactNode } from 'react'
-import { resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { AgentExperienceNav, AgentTasksGate } from './agent-experience-nav'
 
-jest.mock('@qovery/shared/util-node-env', () => ({
-  ...jest.requireActual('@qovery/shared/util-node-env'),
-  SKILL_PRESETS_MOCK: 'true',
-}))
-jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
 const mockNavigate = jest.fn()
+jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
+
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(),
-  useLocation: jest.fn(),
   useNavigate: () => mockNavigate,
+  useLocation: jest.fn(),
   useRouterState: () => ({ location: { pathname: '/organization/organization-1/agent-experience/skill-presets' } }),
   Link: ({ children, className, ...props }: { children: ReactNode; className?: string; 'aria-current'?: 'page' }) => (
     <a href="/" className={className} aria-current={props['aria-current']}>
@@ -24,25 +21,48 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
+jest.mock('../hooks/use-agent-activity/use-agent-activity', () => ({ useAgentActivity: () => ({ data: undefined }) }))
+
+jest.mock('../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets')
+
 const at = (path: string) =>
   jest
     .mocked(useLocation)
     .mockReturnValue({ pathname: `/organization/organization-1/agent-experience${path}` } as never)
 
 beforeEach(() => {
-  window.sessionStorage.setItem('qovery-mock-skill-presets', 'agent-experience-active')
-  resetSkillPresetsMockApi()
   mockNavigate.mockReset()
-  jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
   at('/skill-presets')
+  jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: true, isLoading: false })
+  jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
 })
 
-describe('AgentExperienceNav, Skills Registry entry', () => {
-  it('marks the Skills Registry as the current page on any of its pages', () => {
-    at('/skill-presets/assignments')
+describe('AgentExperienceNav, Skills registry group', () => {
+  it.each(['assignments', 'usage', 'loads', 'preset-1', 'preset-1/history', 'new'])(
+    'highlights the correct nested page for %s',
+    (path) => {
+      jest.mocked(useLocation).mockReturnValue({
+        pathname: `/organization/organization-1/agent-experience/skill-presets/${path}`,
+      } as never)
+      renderWithProviders(<AgentExperienceNav />)
+      const titles: Record<string, string> = { assignments: 'Assignments', loads: 'Skill loads', usage: 'Usage' }
+      const title = titles[path] ?? 'Presets'
+      expect(screen.getByRole('link', { name: title })).toHaveAttribute('aria-current', 'page')
+      expect(screen.getByRole('link', { name: 'Activity' })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Usage' })).toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: 'Preview' })).not.toBeInTheDocument()
+    }
+  )
+
+  it('keeps member navigation read-only', () => {
+    jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: false })
+    jest.mocked(useLocation).mockReturnValue({
+      pathname: '/organization/organization-1/agent-experience/skill-presets',
+    } as never)
     renderWithProviders(<AgentExperienceNav />)
-    expect(screen.getByRole('link', { name: 'Skills Registry' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: 'Skills registry' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.queryByRole('link', { name: 'Assignments' })).not.toBeInTheDocument()
   })
 })
 

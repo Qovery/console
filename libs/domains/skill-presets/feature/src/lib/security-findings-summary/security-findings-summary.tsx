@@ -12,6 +12,11 @@ const focusField = (finding: SkillPresetFinding) => {
   const target = findingTarget(finding.location)
   if (!target) return
   const field = document.getElementById(findingFieldId(target))
+  const editSkill = field?.closest('li')?.querySelector<HTMLButtonElement>('[data-edit-skill]')
+  if (editSkill) {
+    editSkill.click()
+    return
+  }
   scrollToElement(field)
   // Monaco renders a textarea for keyboard input: focus it so screen readers land in the field.
   field?.querySelector<HTMLElement>('textarea, input')?.focus({ preventScroll: true })
