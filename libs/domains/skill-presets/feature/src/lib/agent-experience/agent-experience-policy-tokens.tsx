@@ -175,7 +175,7 @@ export function AgentExperiencePolicyTokens() {
     from: new Date(to.getTime() - 7 * DAY_MS).toISOString(),
     to: to.toISOString(),
     bucket: 'DAY',
-    actorType: 'POLICY_TOKEN',
+    actorKind: 'POLICY_TOKEN',
   })
   // Deleted tokens are not in the list, but their calls stay in the audit log.
   const { data: month } = useAgentActivity({
@@ -185,7 +185,7 @@ export function AgentExperiencePolicyTokens() {
     from: new Date(to.getTime() - 30 * DAY_MS).toISOString(),
     to: to.toISOString(),
     bucket: 'DAY',
-    actorType: 'POLICY_TOKEN',
+    actorKind: 'POLICY_TOKEN',
   })
   const usageById = new Map((week?.by_policy_token ?? []).map((row) => [row.policy_token_id, row]))
   const deletedWithActivity = (month?.by_policy_token ?? []).filter(

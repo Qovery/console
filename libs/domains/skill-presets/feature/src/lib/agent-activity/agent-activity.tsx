@@ -4,11 +4,13 @@ import clsx from 'clsx'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import {
+  AGENT_ACTIVITY_TIMED_OUT_MESSAGE,
   type AgentActionOrigin,
   type AgentActivityBucket,
   type AgentActivityResponse,
   type AgentActivitySource,
   type AgentActorType,
+  isAgentActivityTimedOut,
 } from '@qovery/domains/skill-presets/data-access'
 import {
   Badge,
@@ -445,7 +447,7 @@ function BreakdownTable({
   const actor = parseActor(search.actor)
   const automatic: Breakdown = !isOrganization
     ? 'skill'
-    : actor.policyTokenId || actor.actorType === 'POLICY_TOKEN'
+    : actor.policyTokenId || actor.actorKind === 'POLICY_TOKEN'
       ? 'token'
       : 'member'
   // The chosen breakdown is in the URL (`view`), so a shared link keeps it.
@@ -725,7 +727,7 @@ function ActivityContent({
   }))
   const denied = activity.recent.filter(({ outcome }) => outcome === 'DENIED')
   const actorFilter = parseActor(search.actor)
-  const tokensOnly = isOrganization && Boolean(actorFilter.policyTokenId || actorFilter.actorType === 'POLICY_TOKEN')
+  const tokensOnly = isOrganization && Boolean(actorFilter.policyTokenId || actorFilter.actorKind === 'POLICY_TOKEN')
   const delta = (current: number, before?: number) => (before === undefined ? undefined : current - before)
 
   // Recent actions: an action type filter on the table, then pages.
@@ -971,9 +973,9 @@ function ActivityContent({
                 <Table.Cell className="h-auto py-3">
                   <span className="flex items-center gap-1.5">
                     <SkillName name={action.skill_name} />
-                    {ORIGIN_BADGES[action.origin] && (
+                    {ORIGIN_BADGES[action.source] && (
                       <Badge variant="surface" size="base" className="font-medium">
-                        {ORIGIN_BADGES[action.origin]}
+                        {ORIGIN_BADGES[action.source]}
                       </Badge>
                     )}
                   </span>
@@ -1176,6 +1178,28 @@ export function AgentActivity() {
           <Skeleton height={72} className="w-full" show />
           <Skeleton height={240} className="w-full" show />
         </div>
+      ) : error && isAgentActivityTimedOut(error) ? (
+        // A busy range can take too long to read (q-core answers 503): a shorter one, or a filter, works.
+        <Callout.Root color="yellow" role="alert" data-testid="activity-timed-out">
+          <Callout.Icon>
+            <Icon iconName="hourglass-end" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>{AGENT_ACTIVITY_TIMED_OUT_MESSAGE}</Callout.TextHeading>
+            <Callout.TextDescription>You can also filter by member or skill.</Callout.TextDescription>
+          </Callout.Text>
+          <Button
+            type="button"
+            size="md"
+            variant="outline"
+            color="neutral"
+            className="self-center"
+            onClick={() => refetch()}
+          >
+            <Icon iconName="rotate-right" iconStyle="regular" />
+            Try again
+          </Button>
+        </Callout.Root>
       ) : error ? (
         <LoadError title="Agent activity could not be loaded" error={error} onRetry={() => refetch()} />
       ) : activity ? (

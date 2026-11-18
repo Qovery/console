@@ -84,11 +84,16 @@ describe('skill presets API, over HTTP', () => {
     await skillPresetsApi.getMyAgentActivity(ORG, params)
     await skillPresetsApi.getSkillPresetUsage(ORG, params)
     expect(http.get).toHaveBeenCalledWith(`/organization/${ORG}/agentActivity`, { params })
+    // The actor filter goes out as actorKind.
+    await skillPresetsApi.getAgentActivity(ORG, { ...(params as object), actorKind: 'POLICY_TOKEN' } as never)
+    expect(http.get).toHaveBeenLastCalledWith(`/organization/${ORG}/agentActivity`, {
+      params: expect.objectContaining({ actorKind: 'POLICY_TOKEN' }),
+    })
     expect(http.get).toHaveBeenCalledWith(`/organization/${ORG}/agentActivity/me`, { params })
     expect(http.get).toHaveBeenCalledWith(`/organization/${ORG}/skillPreset/usage`, { params })
   })
 
-  it('reads skill loads from the audit logs, filtered on LOAD and SKILL_PRESET, with its cursors', async () => {
+  it('reads skill loads from the audit logs, filtered on SKILL_LOAD and SKILL_PRESET, with its cursors', async () => {
     mockGetOrganizationEvents.mockResolvedValue({ data: { events: [] } })
     await skillPresetsApi.listSkillLoads(ORG, { pageSize: 10, continueToken: 'next' })
     expect(mockGetOrganizationEvents).toHaveBeenCalledWith(
@@ -98,7 +103,7 @@ describe('skill presets API, over HTTP', () => {
       undefined,
       'next',
       undefined,
-      'LOAD',
+      'SKILL_LOAD',
       undefined,
       undefined,
       'SKILL_PRESET'

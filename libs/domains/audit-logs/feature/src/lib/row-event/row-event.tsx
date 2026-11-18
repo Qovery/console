@@ -30,7 +30,7 @@ export interface RowEventProps {
 }
 
 const formatEventName = (eventType?: OrganizationEventType) =>
-  // VIEW is not in the generated enum yet.
+  // SKILL_VIEW is not in the generated enum yet.
   (eventType as string | undefined) === SKILL_VIEW_EVENT_TYPE
     ? 'Viewed in the Console'
     : match(eventType)
@@ -62,7 +62,7 @@ const helmRepositoriesSettingsUrl = (organizationId: string) =>
   `${organizationSettingsUrl(organizationId)}/helm-repositories`
 
 /**
- * A skill preset save the security review refused (event REJECTED, not in the generated enum yet):
+ * A skill preset save the security review refused (event SKILL_PRESET_REJECTED, not in the generated enum yet):
  * "Rejected by the security review · 2 findings (rule check, model review)". Null for other events.
  */
 const securityRejectionSummary = (event: OrganizationEventResponse) => {
@@ -229,7 +229,7 @@ export function RowEvent(props: RowEventProps) {
     ))
     .with(OrganizationEventType.REMOTE_DEBUG, () => <Icon iconName="cloud-arrow-up" className="text-neutral-subtle" />)
     .with(OrganizationEventType.SHELL, () => <Icon iconName="terminal" className="text-neutral-subtle" />)
-    // A member's agent loaded a skill. LOAD is not in the generated enum yet, hence the predicate.
+    // A member's agent loaded a skill. SKILL_LOAD is not in the generated enum yet, hence the predicate.
     .when(
       (type) => (type as string | undefined) === SKILL_LOAD_EVENT_TYPE,
       () => <Icon iconName="file-import" className="text-neutral-subtle" />

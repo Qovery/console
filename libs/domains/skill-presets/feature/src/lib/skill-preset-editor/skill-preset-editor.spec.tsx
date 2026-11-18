@@ -58,7 +58,7 @@ const savedPreset = {
   updated_at: '2026-11-02T00:00:00Z',
   name: 'Backend team',
   description: '',
-  base: 'QOVERY_FULL' as const,
+  base: 'FULL' as const,
   team_context: null,
   skills: [],
   revision: 3,
@@ -519,5 +519,19 @@ describe('SkillPresetEditorForm', () => {
     const skills = mockCreateSkillPreset.mock.calls[0][0].body.skills
     expect(skills).toContainEqual({ skill_name: 'qovery-optimize', mode: 'DISABLE' })
     expect(skills).toContainEqual({ skill_name: 'qovery-speedup', mode: 'DISABLE' })
+  })
+
+  it('does not offer the Owner role as a target', async () => {
+    const { userEvent } = renderWithProviders(
+      <SkillPresetEditorForm
+        organizationId="organization-1"
+        initialValues={{ ...toSkillPresetFormValues(), name: 'Backend team' }}
+        presets={[]}
+        assignees={{ ...assignees, roles: [{ id: 'role-owner', name: 'Owner' }, ...assignees.roles] }}
+      />
+    )
+    await userEvent.click(screen.getByLabelText('Roles'))
+    expect(await screen.findByRole('option', { name: 'Devops' })).toBeInTheDocument()
+    expect(screen.queryByRole('option', { name: 'Owner' })).not.toBeInTheDocument()
   })
 })

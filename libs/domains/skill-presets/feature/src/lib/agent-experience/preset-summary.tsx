@@ -23,7 +23,7 @@ export function PresetSummary() {
       {preset ? (
         <p>
           Your agent gets the <span className="font-medium">{preset.name}</span> preset: the{' '}
-          {preset.base === 'QOVERY_LEAN' ? 'lean' : 'full'} Qovery skills
+          {preset.base === 'LEAN' ? 'lean' : 'full'} Qovery skills
           {changed > 0 ? `, with ${changed} changed, added or turned off by your organization` : ''}
           {preset.team_context ? ', and your team’s instructions' : ''}.
         </p>

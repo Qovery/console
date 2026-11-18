@@ -14,7 +14,7 @@ const action = (
   at: '2026-11-14T10:00:00Z',
   user_sub: 'user-jordan',
   user_name: 'Jordan Kim',
-  origin: 'POLICY_DENIAL',
+  source: 'POLICY_DENIAL',
   actor_kind: 'MEMBER',
   policy_token_id: null,
   skill_name: 'qovery',
