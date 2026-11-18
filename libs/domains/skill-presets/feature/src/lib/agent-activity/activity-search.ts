@@ -44,8 +44,8 @@ export const memberActor = (userSub: string) => `member:${userSub}`
 export const tokenActor = (tokenId: string) => `token:${tokenId}`
 
 export function parseActor(actor?: string) {
-  if (actor === 'members') return { actorType: 'MEMBER' as const }
-  if (actor === 'tokens') return { actorType: 'POLICY_TOKEN' as const }
+  if (actor === 'members') return { actorKind: 'MEMBER' as const }
+  if (actor === 'tokens') return { actorKind: 'POLICY_TOKEN' as const }
   if (actor?.startsWith('member:')) return { userSub: actor.slice('member:'.length) }
   if (actor?.startsWith('token:')) return { policyTokenId: actor.slice('token:'.length) }
   return {}
