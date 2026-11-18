@@ -195,7 +195,7 @@ describe('testing payload refactoring', () => {
           dockerfile_path: 'Dockerfile',
         },
       },
-      build_settings: {},
+      build_settings: { timeout_max_sec: 1800, cpu_max_in_milli: 4000, ram_max_in_gib: 8 },
     }
 
     it('should keep the flat image fields and send no source for an image container', () => {
@@ -220,6 +220,7 @@ describe('testing payload refactoring', () => {
       expect(payload).not.toHaveProperty('source')
       expect(payload).not.toHaveProperty('auto_deploy')
       expect(payload).not.toHaveProperty('auto_preview')
+      expect(payload).not.toHaveProperty('build_settings')
     })
 
     it('should drop the image fields and source of a Git container even when the request spreads the service', () => {
@@ -231,6 +232,7 @@ describe('testing payload refactoring', () => {
       expect(payload).not.toHaveProperty('tag')
       expect(payload).not.toHaveProperty('source')
       expect(payload).not.toHaveProperty('auto_preview')
+      expect(payload).not.toHaveProperty('build_settings')
     })
   })
 

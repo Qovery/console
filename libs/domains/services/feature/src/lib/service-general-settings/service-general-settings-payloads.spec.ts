@@ -53,5 +53,6 @@ describe('handleContainerSubmit', () => {
     expect(payload).not.toHaveProperty('source')
     expect(payload).not.toHaveProperty('auto_deploy')
     expect(payload).not.toHaveProperty('auto_preview')
+    expect(payload).not.toHaveProperty('build_settings')
   })
 })

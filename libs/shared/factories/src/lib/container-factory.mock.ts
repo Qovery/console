@@ -86,5 +86,5 @@ export const gitContainerFactoryMock = (howMany: number): Container[] =>
         dockerfile_path: 'Dockerfile',
       },
     },
-    build_settings: {},
+    build_settings: { timeout_max_sec: 1800, cpu_max_in_milli: 4000, ram_max_in_gib: 8 },
   }))

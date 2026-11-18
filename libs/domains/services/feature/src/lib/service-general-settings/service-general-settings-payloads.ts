@@ -180,8 +180,9 @@ export const handleContainerSubmit = (
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
     labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
     autoscaling: convertAutoscalingResponseToRequest(container.autoscaling),
-    // Without `source` the API keeps the stored one; a Git container rejects changed image fields and auto-deploy or auto-preview
+    // Without `source` and `build_settings` the API keeps the stored ones; a Git container rejects changed image fields and auto-deploy or auto-preview
     source: undefined,
+    build_settings: undefined,
     ...(isContainerGitSource(container.source) && {
       registry_id: undefined,
       image_name: undefined,

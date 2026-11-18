@@ -202,8 +202,9 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     autoscaling,
     ...('cpu_architecture' in container ? { cpu_architecture: container.cpu_architecture } : {}),
     ...cleanedRequest,
-    // Without `source` the API keeps the stored one; a Git container rejects changed image fields and auto-deploy or auto-preview
+    // Without `source` and `build_settings` the API keeps the stored ones; a Git container rejects changed image fields and auto-deploy or auto-preview
     source: undefined,
+    build_settings: undefined,
     ...(isContainerGitSource(container.source) && {
       registry_id: undefined,
       image_name: undefined,
