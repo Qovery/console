@@ -21,9 +21,9 @@ export interface SkillLibraryModalProps {
   onClose: () => void
 }
 
-const GROUPS: { value: LibrarySkill['group']; title: string; hint: string }[] = [
-  { value: 'organization', title: "Your organization's skills", hint: 'Copied from your other presets.' },
-  { value: 'template', title: 'Template skills', hint: 'Copied from the Qovery templates.' },
+const GROUPS: { value: LibrarySkill['group']; title: string }[] = [
+  { value: 'organization', title: "Your organization's skills" },
+  { value: 'template', title: 'Template skills' },
 ]
 
 export function SkillLibraryModal({ skills, presentSkillNames, onAdd, onClose }: SkillLibraryModalProps) {
@@ -76,9 +76,8 @@ export function SkillLibraryModal({ skills, presentSkillNames, onAdd, onClose }:
                     <Heading level={3} id={`library-${group.value}`}>
                       {group.title}
                     </Heading>
-                    <span className="text-xs text-neutral-subtle">{group.hint}</span>
                   </div>
-                  <ul className="divide-y divide-neutral rounded-md border border-neutral">
+                  <ul className="divide-y divide-neutral overflow-hidden rounded-md border border-neutral">
                     {groupSkills.map((skill) => {
                       const reason = unavailableReason(skill)
                       return (
@@ -98,10 +97,9 @@ export function SkillLibraryModal({ skills, presentSkillNames, onAdd, onClose }:
                               onCheckedChange={(checked) => toggle(skill, checked === true)}
                               aria-label={`Add ${skill.skillName} from ${skill.origin}`}
                             />
-                            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                              <span className="flex items-center gap-2">
-                                <span className="font-code text-sm font-medium text-neutral">{skill.skillName}</span>
-                                <span className="truncate text-xs text-neutral-subtle">{skill.origin}</span>
+                            <span className="flex min-w-0 flex-1 flex-col gap-0.5 break-words">
+                              <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
+                                <span className="min-w-0 text-sm font-normal text-neutral">{skill.skillName}</span>
                               </span>
                               <span className="text-xs text-neutral-subtle">{skill.description}</span>
                               {reason && <span className="text-xs font-medium text-neutral">{reason}</span>}
