@@ -22,6 +22,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { AGENT_JOBS, AGENT_JOB_LEVELS, type AgentJob, policyExampleUrl } from '../utils/agent-jobs'
+import { CopyLabelGroup } from './command-block'
 import { NEW_JOB_TITLE, NewJobModal } from './new-job-modal'
 import { AgentExperiencePage, CodingAgentLogos } from './ui/agent-experience-ui'
 
@@ -139,7 +140,9 @@ function CopyValue({ label, value, copyLabel }: { label: string; value: string; 
         <span className="text-neutral-subtle">{label}: </span>
         <code className="font-code text-neutral">{value}</code>
       </span>
-      <CopyButton content={value} aria-label={copyLabel} />
+      <CopyLabelGroup label={copyLabel}>
+        <CopyButton content={value} />
+      </CopyLabelGroup>
     </span>
   )
 }
@@ -328,7 +331,9 @@ function CodeSection({
         <Heading level={3} id={id}>
           {title}
         </Heading>
-        <CopyButton content={code} aria-label={copyLabel} />
+        <CopyLabelGroup label={copyLabel}>
+          <CopyButton content={code} />
+        </CopyLabelGroup>
       </div>
       <pre
         className={`${maxHeight} overflow-auto rounded border border-neutral bg-surface-neutral-subtle p-4 font-code text-xs leading-5 text-neutral`}

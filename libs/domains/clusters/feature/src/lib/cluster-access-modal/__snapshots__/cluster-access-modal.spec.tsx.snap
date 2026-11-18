@@ -73,11 +73,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
-              <span
-                aria-live="polite"
-              >
-                Copy
-              </span>
+              Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-sm"
@@ -115,11 +111,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
-              <span
-                aria-live="polite"
-              >
-                Copy
-              </span>
+              Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-sm"
@@ -152,11 +144,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
-              <span
-                aria-live="polite"
-              >
-                Copy
-              </span>
+              Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-sm"
@@ -178,11 +166,7 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
-              <span
-                aria-live="polite"
-              >
-                Copy
-              </span>
+              Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-sm"
@@ -270,11 +254,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
-              <span
-                aria-live="polite"
-              >
-                Copy
-              </span>
+              Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-sm"
@@ -307,11 +287,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
-              <span
-                aria-live="polite"
-              >
-                Copy
-              </span>
+              Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-sm"
@@ -333,11 +309,7 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
-              <span
-                aria-live="polite"
-              >
-                Copy
-              </span>
+              Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-sm"
