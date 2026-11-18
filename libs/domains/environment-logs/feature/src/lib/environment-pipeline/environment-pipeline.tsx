@@ -174,7 +174,8 @@ function PipelineContent({
                               projectId: environment.project.id,
                               environmentId: environment.id,
                               serviceId: service.id,
-                              executionId: deploymentHistory?.identifier.execution_id ?? '',
+                              // Use the route execution id: the deployment history may not include it yet
+                              executionId: deploymentId,
                             }}
                             className={clsx(
                               serviceItemClassName,
