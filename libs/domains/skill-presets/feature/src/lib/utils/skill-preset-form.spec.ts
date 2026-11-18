@@ -7,7 +7,7 @@ const preset: SkillPresetResponse = {
   updated_at: '2026-11-02T00:00:00Z',
   name: 'Backend team',
   description: 'Default preset',
-  base: 'QOVERY_FULL',
+  base: 'FULL',
   team_context: 'Deploy to staging first.',
   skills: [
     { skill_name: 'qovery-deploy', mode: 'OVERLAY', description: null, content: 'Wait for the smoke tests.' },
@@ -46,7 +46,7 @@ describe('skill preset form mapping', () => {
   })
 
   it('does not send Qovery skill entries on the lean and empty bases', () => {
-    const values = { ...toSkillPresetFormValues(preset), base: 'QOVERY_LEAN' as const }
+    const values = { ...toSkillPresetFormValues(preset), base: 'LEAN' as const }
     expect(effectiveQoverySkills(values)).toEqual([])
     expect(toSkillPresetRequest(values).skills.map(({ skill_name }) => skill_name)).toEqual(['release-checklist'])
   })

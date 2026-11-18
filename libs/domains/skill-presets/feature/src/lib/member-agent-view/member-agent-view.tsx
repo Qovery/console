@@ -2,6 +2,7 @@ import { useId, useState } from 'react'
 import {
   type SkillPresetManifestSkill,
   type SkillPresetResolutionSource,
+  getSkillPresetErrorStatus,
 } from '@qovery/domains/skill-presets/data-access'
 import { Badge, Button, Callout, Heading, Icon, Section, Skeleton, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { useResolvedSkillPreset } from '../hooks/use-resolved-skill-preset/use-resolved-skill-preset'
@@ -99,7 +100,14 @@ function PieceRow({ organizationId, name, detail, tokens, sha256, skillName, pic
         <Table.Row>
           <Table.Cell colSpan={4} className="h-auto bg-surface-neutral-subtle py-3" id={panelId}>
             {isLoading && <Skeleton height={80} className="w-full" show />}
-            {error ? <LoadError title={`${name} could not be loaded`} error={error} onRetry={() => refetch()} /> : null}
+            {error && getSkillPresetErrorStatus(error) === 404 ? (
+              // The preset changed since the list loaded: retrying would not help.
+              <p className="text-sm text-neutral-subtle" data-testid="skill-gone">
+                {name} is no longer in your preset. Reload the page to see what your agent receives now.
+              </p>
+            ) : error ? (
+              <LoadError title={`${name} could not be loaded`} error={error} onRetry={() => refetch()} />
+            ) : null}
             {data && (
               <div className="flex flex-col gap-2">
                 <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-md border border-neutral bg-surface-neutral p-3 font-code text-xs text-neutral">

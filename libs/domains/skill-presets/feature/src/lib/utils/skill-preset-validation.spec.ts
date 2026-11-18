@@ -13,6 +13,18 @@ describe('validateSkillPresetForm', () => {
     expect(validateSkillPresetForm(base())).toEqual({})
   })
 
+  it('refuses more than 200 roles and members, and points to roles', () => {
+    const values = {
+      ...base(),
+      roleIds: ['role-1'],
+      userIds: Array.from({ length: 200 }, (_, index) => `user-${index}`),
+    }
+    expect(validateSkillPresetForm(values)['userIds']).toBe(
+      'A preset holds at most 200 roles and members. This one has 201: assign a role rather than each member.'
+    )
+    expect(validateSkillPresetForm({ ...values, roleIds: [] })['userIds']).toBeUndefined()
+  })
+
   it('requires a name within the limit', () => {
     expect(validateSkillPresetForm({ ...base(), name: ' ' })['name']).toBe('Enter a name.')
     expect(validateSkillPresetForm({ ...base(), name: 'a'.repeat(101) })['name']).toBe('At most 100 characters.')

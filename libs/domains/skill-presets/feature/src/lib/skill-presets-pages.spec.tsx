@@ -172,6 +172,23 @@ describe('member view', () => {
     expect(screen.getByText(/^SHA-256 [0-9a-f]{64}$/)).toBeInTheDocument()
   })
 
+  it('says when a skill left the preset since the list loaded, with no retry', async () => {
+    useScenario('member')
+    const getSkill = jest
+      .spyOn(skillPresetsApi, 'getResolvedSkill')
+      .mockRejectedValue(buildSkillPresetApiError(404, "There is no skill 'qovery-deploy' to load"))
+    const { userEvent } = renderWithProviders(<MemberAgentView organizationId="organization-1" />)
+    await screen.findByText('Backend team')
+    const [pieces] = screen.getAllByRole('table')
+    const row = within(pieces).getByText('qovery-deploy').closest('tr') as HTMLElement
+
+    await userEvent.click(within(row).getByRole('button', { name: /Read/ }))
+
+    expect(await screen.findByTestId('skill-gone')).toHaveTextContent('qovery-deploy is no longer in your preset.')
+    expect(screen.queryByRole('button', { name: /Try again/ })).not.toBeInTheDocument()
+    getSkill.mockRestore()
+  })
+
   it('says when no preset applies', async () => {
     useScenario('member-no-preset')
     renderWithProviders(<MemberAgentView organizationId="organization-1" />)
