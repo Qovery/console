@@ -1,4 +1,5 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
+import { configure } from '@testing-library/react'
 import { type ReactNode } from 'react'
 import {
   type SkillPresetsMockScenario,
@@ -54,6 +55,9 @@ jest.mock('@monaco-editor/react', () => {
   )
   return { Editor: FakeEditor, DiffEditor: FakeEditor }
 })
+
+// These pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
+configure({ asyncUtilTimeout: 5000 })
 
 const mockNavigate = jest.fn()
 
@@ -270,7 +274,8 @@ describe('AI features off', () => {
     await userEvent.click(screen.getByTestId('submit-button'))
 
     await waitForElementToBeRemoved(() => screen.queryByTestId('ai-features-notice'))
-    expect(screen.getByRole('button', { name: /Create preset/ })).toBeEnabled()
+    // The dialog closes on its own after success: wait for the page to be reachable again.
+    expect(await screen.findByRole('button', { name: /Create preset/ })).toBeEnabled()
   })
 
   it('still lets an admin delete a preset', async () => {
