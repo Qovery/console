@@ -140,7 +140,8 @@ describe('AgentExperienceAutomate', () => {
     expect(
       grid.getByText('Stops idle dev environments at night and starts them in the morning. Nothing else.')
     ).toBeInTheDocument()
-    expect(grid.queryByRole('button', { name: /Create policy token|Copy prompt/ })).not.toBeInTheDocument()
+    expect(grid.queryByRole('button', { name: /Create policy token/ })).not.toBeInTheDocument()
+    expect(grid.queryByRole('group', { name: 'Copy prompt' })).not.toBeInTheDocument()
     expect(await screen.findByRole('button', { name: /Automate a new job/ })).toBeInTheDocument()
     expect(screen.getByText('Incident Analyzer with incident.io')).toBeInTheDocument()
   })
@@ -174,9 +175,15 @@ describe('AgentExperienceAutomate', () => {
     )
     // One primary action, and copy buttons named after what they copy.
     expect(await details.findAllByRole('button', { name: /Create policy token/ })).toHaveLength(1)
-    expect(details.getByRole('button', { name: 'Copy prompt' })).toBeInTheDocument()
-    expect(details.getByRole('button', { name: 'Copy policy' })).toBeInTheDocument()
-    expect(details.getByRole('button', { name: 'Copy the MCP server URL' })).toBeInTheDocument()
+    expect(
+      within(details.getByRole('group', { name: 'Copy prompt' })).getByRole('button', { name: 'Copy' })
+    ).toBeInTheDocument()
+    expect(
+      within(details.getByRole('group', { name: 'Copy policy' })).getByRole('button', { name: 'Copy' })
+    ).toBeInTheDocument()
+    expect(
+      within(details.getByRole('group', { name: 'Copy the MCP server URL' })).getByRole('button', { name: 'Copy' })
+    ).toBeInTheDocument()
   })
 })
 
@@ -224,7 +231,9 @@ describe('Automate, recurring agents', () => {
       )
     )
     expect(details.getByText(/From a webhook: use the URL the Agent Task gets/)).toBeInTheDocument()
-    expect(details.getByRole('button', { name: 'Copy prompt' })).toBeInTheDocument()
+    expect(
+      within(details.getByRole('group', { name: 'Copy prompt' })).getByRole('button', { name: 'Copy' })
+    ).toBeInTheDocument()
   })
 })
 
@@ -353,7 +362,11 @@ describe('AgentExperienceConnect', () => {
     expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
     expect(screen.getByText('curl -s https://get.qovery.com | bash')).toBeInTheDocument()
     expect(screen.getByText(/claude mcp add --transport http qovery/)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Copy the skills install command' })).toBeInTheDocument()
+    expect(
+      within(screen.getByRole('group', { name: 'Copy the skills install command' })).getByRole('button', {
+        name: 'Copy',
+      })
+    ).toBeInTheDocument()
     expect(screen.getByText('Start here')).toBeInTheDocument()
   })
 
@@ -369,7 +382,9 @@ describe('AgentExperienceConnect', () => {
     ])
     await userEvent.click(screen.getByRole('tab', { name: 'Gemini CLI' }))
     expect(screen.getByText(/gemini mcp add --transport http/)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Copy the Gemini CLI command' })).toBeInTheDocument()
+    expect(
+      within(screen.getByRole('group', { name: 'Copy the Gemini CLI command' })).getByRole('button', { name: 'Copy' })
+    ).toBeInTheDocument()
   })
 
   it('says which preset the installed skills load', async () => {
