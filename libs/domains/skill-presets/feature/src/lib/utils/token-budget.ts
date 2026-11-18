@@ -78,8 +78,8 @@ function budgetOf(input: BudgetInput | null): TokenBudget {
   const onDemand: OnDemandBudgetRow[] = []
   const disabled: string[] = []
 
-  const base = input?.base ?? 'QOVERY_FULL'
-  if (base === 'QOVERY_FULL') {
+  const base = input?.base ?? 'FULL'
+  if (base === 'FULL') {
     for (const { name } of QOVERY_SKILLS) {
       const entry = entryOf(name)
       if (entry?.mode === 'DISABLE') {
@@ -97,7 +97,7 @@ function budgetOf(input: BudgetInput | null): TokenBudget {
         todayTokens: QOVERY_SKILL_SIZES[name]?.skillMd ?? null,
       })
     }
-  } else if (base === 'QOVERY_LEAN') {
+  } else if (base === 'LEAN') {
     onDemand.push({
       skillName: 'qovery',
       qoveryTokens: LEAN_SKILL_TOKENS,

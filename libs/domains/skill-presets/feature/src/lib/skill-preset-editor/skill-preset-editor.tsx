@@ -108,7 +108,7 @@ function fieldValue(values: SkillPresetFormValues, target: FindingTarget) {
 function HiddenQoveryChangesNotice() {
   const { control } = useFormContext<SkillPresetFormValues>()
   const [base, qoverySkills] = useWatch({ control, name: ['base', 'qoverySkills'] })
-  const count = base !== 'QOVERY_FULL' ? qoverySkills.filter(({ choice }) => choice !== 'AS_IS').length : 0
+  const count = base !== 'FULL' ? qoverySkills.filter(({ choice }) => choice !== 'AS_IS').length : 0
   if (count === 0) return null
   return (
     <Callout.Root color="neutral">
@@ -484,7 +484,7 @@ export function SkillPresetEditorForm({
                     render={({ field }) => <BaseChooser value={field.value} onChange={field.onChange} />}
                   />
                   <HiddenQoveryChangesNotice />
-                  {base === 'QOVERY_FULL' && (
+                  {base === 'FULL' && (
                     <Section aria-labelledby="section-qovery-skills" className="flex flex-col gap-4">
                       <div className="flex flex-col gap-1">
                         <Heading level={3} id="section-qovery-skills">

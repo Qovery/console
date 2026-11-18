@@ -33,7 +33,7 @@ export const SKILL_PRESET_TEMPLATES: SkillPresetTemplate[] = [
     preset: {
       name: 'Developers',
       description: 'Day-to-day deploys and debugging, non-production first.',
-      base: 'QOVERY_FULL',
+      base: 'FULL',
       team_context: `## Our setup
 
 - Production environments: <list them, for example api-prod>
@@ -65,7 +65,7 @@ For production, explain the fix and let the user apply it, or ask the platform t
     preset: {
       name: 'Product managers',
       description: 'Check status, read logs and open previews. No changes to environments.',
-      base: 'QOVERY_LEAN',
+      base: 'LEAN',
       team_context: `You help a product manager follow the work. Stay read-only: show status, logs and links.
 Never deploy, stop, delete or change settings. If the user asks for a change, explain who can make it.`,
       skills: [
@@ -90,7 +90,7 @@ Never deploy, stop, delete or change settings. If the user asks for a change, ex
     preset: {
       name: 'Platform engineers',
       description: 'All Qovery skills, plus our infrastructure-as-code and cost rules.',
-      base: 'QOVERY_FULL',
+      base: 'FULL',
       team_context: `## Our infrastructure
 
 - Clusters: <list them and what runs on each>
@@ -127,7 +127,7 @@ Changes that redeploy every service go in a maintenance window. Say so before pr
     preset: {
       name: 'Engineering managers',
       description: 'Health, cost and best-practice reports for planning.',
-      base: 'QOVERY_LEAN',
+      base: 'LEAN',
       team_context: `You help an engineering manager understand the platform. Prefer summaries and tables over raw output.
 Stay read-only unless the user asks for a change and confirms it.`,
       skills: [
@@ -160,7 +160,7 @@ Report what is missing as a short list, ordered by risk. Do not fix anything you
     preset: {
       name: 'Data and ML',
       description: 'Deploy jobs and model services, and keep GPU costs in check.',
-      base: 'QOVERY_FULL',
+      base: 'FULL',
       team_context: `## Our setup
 
 - GPU node pools: <names and instance types>
@@ -191,7 +191,7 @@ Prefer jobs with a schedule over long-running services for batch work.`,
     preset: {
       name: 'Security reviewers',
       description: 'Read-only reviews and scoped tokens for automation.',
-      base: 'QOVERY_FULL',
+      base: 'FULL',
       team_context: `You help a security reviewer. Stay read-only: read configuration, never change it.
 When you find a risk, describe it, say where it is and how to fix it. Never print secret values, only their names.`,
       skills: [
@@ -216,7 +216,7 @@ When you find a risk, describe it, say where it is and how to fix it. Never prin
     preset: {
       name: 'QA',
       description: 'Create and use preview environments to test pull requests.',
-      base: 'QOVERY_FULL',
+      base: 'FULL',
       team_context: `You help a tester. Work in preview environments only, one per pull request.
 Never change staging or production. Stop a preview when the user is done testing.`,
       skills: [
@@ -246,7 +246,7 @@ Never change staging or production. Stop a preview when the user is done testing
     preset: {
       name: 'On-call',
       description: 'Answer support questions and diagnose incidents with known fixes. Read first, change last.',
-      base: 'QOVERY_FULL',
+      base: 'FULL',
       team_context: `## Our on-call rules
 
 - Production environments: <list them>

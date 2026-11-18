@@ -1,6 +1,11 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
+import {
+  type SkillPresetsMockScenario,
+  buildSkillPresetApiError,
+  resetSkillPresetsMockApi,
+  skillPresetsApi,
+} from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved, within } from '@qovery/shared/util-tests'
 import { MemberAgentView } from './member-agent-view/member-agent-view'
 import { MockScenarioBanner } from './mock-scenario-banner/mock-scenario-banner'
@@ -164,6 +169,23 @@ describe('member view', () => {
 
     expect(await screen.findByText(/Deploy to the `staging` environment first/)).toBeInTheDocument()
     expect(screen.getByText(/^SHA-256 [0-9a-f]{64}$/)).toBeInTheDocument()
+  })
+
+  it('says when a skill left the preset since the list loaded, with no retry', async () => {
+    useScenario('member')
+    const getSkill = jest
+      .spyOn(skillPresetsApi, 'getResolvedSkill')
+      .mockRejectedValue(buildSkillPresetApiError(404, "There is no skill 'qovery-deploy' to load"))
+    const { userEvent } = renderWithProviders(<MemberAgentView organizationId="organization-1" />)
+    await screen.findByText('Backend team')
+    const [pieces] = screen.getAllByRole('table')
+    const row = within(pieces).getByText('qovery-deploy').closest('tr') as HTMLElement
+
+    await userEvent.click(within(row).getByRole('button', { name: /Read/ }))
+
+    expect(await screen.findByTestId('skill-gone')).toHaveTextContent('qovery-deploy is no longer in your preset.')
+    expect(screen.queryByRole('button', { name: /Try again/ })).not.toBeInTheDocument()
+    getSkill.mockRestore()
   })
 
   it('says when no preset applies', async () => {
