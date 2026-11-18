@@ -23,7 +23,7 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 }
 
 /**
- * The side list of Agents: the Skills Registry, Connect, Automate, and
+ * The side list of Agents: Overview, the Skills Registry, Automate, and
  * Activity, then Settings. Settings holds policy tokens, the Copilot and, behind their flag, the Agent
  * Tasks pages; it is for owners and admins only, and opens by itself on its pages.
  */
@@ -49,6 +49,9 @@ export function AgentExperienceNav() {
 
   return (
     <Sidebar.Root className="mt-6" aria-label="Agents">
+      <Sidebar.Item to={base} icon="table-layout" iconStyle="regular" active={pathname.replace(/\/$/, '') === base}>
+        Overview
+      </Sidebar.Item>
       {!isLoading && canManage ? (
         <Sidebar.Group title="Skills registry" icon="sliders" iconStyle="regular" defaultOpen={isRegistryPage}>
           {sections.map(({ title, to }) => (
@@ -62,9 +65,6 @@ export function AgentExperienceNav() {
           Skills registry
         </Sidebar.Item>
       )}
-      <Sidebar.Item to={`${base}/connect`} icon="plug" iconStyle="regular">
-        Connect
-      </Sidebar.Item>
       <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
         Automate
       </Sidebar.Item>
