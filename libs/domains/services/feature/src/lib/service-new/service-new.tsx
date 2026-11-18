@@ -184,7 +184,8 @@ function BlueprintSection({
               <div className="grid grid-cols-3 gap-3">
                 {blueprints.map((blueprint) => (
                   <BlueprintCard
-                    key={`${blueprint.provider}-${blueprint.serviceFamily}`}
+                    // Several blueprints can share a provider and a service family; the name tells them apart.
+                    key={`${blueprint.provider}-${blueprint.name}`}
                     blueprint={blueprint}
                     onViewDetails={onViewDetails}
                   />
