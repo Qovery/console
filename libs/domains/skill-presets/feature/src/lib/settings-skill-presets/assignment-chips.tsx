@@ -25,7 +25,7 @@ export function AssignmentChips({ assignedTo, assignees, max = 3 }: AssignmentCh
     })),
   ]
 
-  if (chips.length === 0) return <span className="text-sm text-neutral-subtle">Not assigned</span>
+  if (chips.length === 0) return <span className="text-neutral-subtle">Not assigned</span>
 
   const visible = chips.slice(0, max)
   const hidden = chips.slice(max)
@@ -34,7 +34,7 @@ export function AssignmentChips({ assignedTo, assignees, max = 3 }: AssignmentCh
     <ul className="flex flex-wrap items-center gap-1" aria-label="Assigned to">
       {visible.map((chip) => (
         <li key={chip.key}>
-          <Badge variant="surface" className="gap-1">
+          <Badge variant="surface" size="base" className="gap-1 whitespace-nowrap font-medium">
             <Icon iconName={chip.icon} iconStyle="regular" className="text-neutral-subtle" aria-hidden="true" />
             {chip.label}
           </Badge>
@@ -43,7 +43,13 @@ export function AssignmentChips({ assignedTo, assignees, max = 3 }: AssignmentCh
       {hidden.length > 0 && (
         <li>
           <Tooltip content={hidden.map(({ label }) => label).join(', ')}>
-            <Badge variant="outline" tabIndex={0}>
+            <Badge
+              variant="surface"
+              size="base"
+              className="whitespace-nowrap font-medium"
+              tabIndex={0}
+              onClick={(event) => event.stopPropagation()}
+            >
               +{hidden.length} more
             </Badge>
           </Tooltip>

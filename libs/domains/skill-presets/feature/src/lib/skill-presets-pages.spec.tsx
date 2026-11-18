@@ -99,7 +99,7 @@ describe('presets list', () => {
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
 
     const alert = await screen.findByRole('alert')
-    expect(within(alert).getByText('The Skills Registry could not be loaded')).toBeInTheDocument()
+    expect(within(alert).getByText('The Skills registry could not be loaded')).toBeInTheDocument()
     expect(
       within(alert).getByText(
         'Qovery could not reach the server. Your members’ agents keep working with the preset they last loaded.'
@@ -139,7 +139,7 @@ describe('presets list', () => {
     renderWithProviders(<SettingsSkillPresets />)
 
     expect(
-      await screen.findByText(/Only organization owners and admins can change the Skills Registry/)
+      await screen.findByText(/Only organization owners and admins can change the Skills registry/)
     ).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Create preset/ })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Assignments' })).not.toBeInTheDocument()
@@ -285,7 +285,7 @@ describe('AI features off', () => {
     useScenario('ai-features-off')
     renderWithProviders(<SettingsSkillPresets />)
 
-    expect(await screen.findByTestId('ai-features-notice')).toHaveTextContent('The Skills Registry needs AI features')
+    expect(await screen.findByTestId('ai-features-notice')).toHaveTextContent('The Skills registry needs AI features')
     expect(screen.getByRole('button', { name: /Create preset/ })).toBeDisabled()
     expect(await screen.findByText('Backend team')).toBeInTheDocument()
   })

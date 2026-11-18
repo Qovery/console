@@ -1,7 +1,7 @@
-import { Link, useParams } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { type SkillPresetResolutionSource } from '@qovery/domains/skill-presets/data-access'
-import { Badge, Heading, Icon, InputSearch, Skeleton, TablePrimitives } from '@qovery/shared/ui'
+import { Badge, Heading, Icon, InputSearch, Link, Skeleton, TablePrimitives } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
@@ -63,7 +63,10 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
       <Link
         to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId"
         params={{ organizationId, skillPresetId: preset.id }}
-        className="font-medium text-neutral hover:text-brand"
+        as="button"
+        size="xs"
+        variant="surface"
+        color="neutral"
       >
         {preset.name}
       </Link>
@@ -83,7 +86,7 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
           </p>
         </div>
         <Table.Root>
-          <Table.Header>
+          <Table.Header className="[&_th]:whitespace-nowrap [&_th]:text-xs [&_th]:font-medium">
             <Table.Row>
               <Table.ColumnHeaderCell>Target</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Preset assigned</Table.ColumnHeaderCell>
@@ -93,7 +96,7 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
           <Table.Body>
             <Table.Row>
               <Table.Cell>
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2 font-medium">
                   <Icon iconName="building" iconStyle="regular" className="text-neutral-subtle" aria-hidden="true" />
                   Organization default
                 </span>
@@ -110,14 +113,14 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
               return (
                 <Table.Row key={role.id}>
                   <Table.Cell>
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 font-medium">
                       <Icon
                         iconName="user-group"
                         iconStyle="regular"
                         className="text-neutral-subtle"
                         aria-hidden="true"
                       />
-                      Role: {role.name}
+                      {role.name}
                     </span>
                   </Table.Cell>
                   <Table.Cell>
@@ -154,7 +157,7 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
           />
         </div>
         <Table.Root>
-          <Table.Header>
+          <Table.Header className="[&_th]:whitespace-nowrap [&_th]:text-xs [&_th]:font-medium">
             <Table.Row>
               <Table.ColumnHeaderCell>Member</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Role</Table.ColumnHeaderCell>
@@ -167,14 +170,14 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
               <Table.Row key={member.id}>
                 <Table.Cell className="h-auto py-2">
                   <span className="flex flex-col">
-                    <span className="text-neutral">{member.name}</span>
-                    <span className="text-xs text-neutral-subtle">{member.email}</span>
+                    <span className="font-medium text-neutral">{member.name}</span>
+                    <span className="text-neutral-subtle">{member.email}</span>
                   </span>
                 </Table.Cell>
                 <Table.Cell>{roleName}</Table.Cell>
                 <Table.Cell>{presetLink(preset)}</Table.Cell>
                 <Table.Cell>
-                  <Badge variant="surface" className="gap-1">
+                  <Badge variant="surface" size="base" className="gap-1 whitespace-nowrap font-medium">
                     <Icon
                       iconName={SOURCE_ICONS[source]}
                       iconStyle="regular"
@@ -196,7 +199,7 @@ function AssignmentsContent({ organizationId }: { organizationId: string }) {
 
 export function SkillPresetAssignments() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Assignments - Skills Registry - Agents')
+  useDocumentTitle('Assignments - Skills registry - Agents')
   return (
     <SkillPresetsLayout activeTab="assignments">
       <AssignmentsContent organizationId={organizationId} />

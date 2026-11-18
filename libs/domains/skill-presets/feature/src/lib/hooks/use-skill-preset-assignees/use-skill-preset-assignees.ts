@@ -21,11 +21,12 @@ export function useSkillPresetAssignees({ organizationId }: { organizationId: st
     members.data && roles.data
       ? {
           roles: roles.data.map(({ id, name }) => ({ id, name })),
-          members: members.data.map(({ id, name, nickname, email, role_id }) => ({
+          members: members.data.map(({ id, name, nickname, email, role_id, profile_picture_url }) => ({
             id,
             name: name || nickname || email,
             email,
             role_id,
+            profile_picture_url,
           })),
         }
       : undefined

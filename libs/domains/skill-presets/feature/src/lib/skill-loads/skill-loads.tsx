@@ -51,7 +51,7 @@ function LoadsContent({ organizationId }: { organizationId: string }) {
         , with the SHA-256 of what was injected.
       </p>
       <Table.Root className={isFetching ? 'opacity-60' : undefined} aria-busy={isFetching}>
-        <Table.Header>
+        <Table.Header className="[&_th]:whitespace-nowrap [&_th]:text-xs [&_th]:font-medium">
           <Table.Row>
             <Table.ColumnHeaderCell>When</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Member</Table.ColumnHeaderCell>
@@ -74,8 +74,8 @@ function LoadsContent({ organizationId }: { organizationId: string }) {
                 <Table.Cell className="max-w-[220px] truncate">{event.triggered_by}</Table.Cell>
                 <Table.Cell className="h-auto py-2">
                   <span className="flex flex-col">
-                    <span className="font-code">{load?.skill_name ?? 'Unreadable entry'}</span>
-                    <span className="text-xs text-neutral-subtle">
+                    <span>{load?.skill_name ?? 'Unreadable entry'}</span>
+                    <span className="text-neutral-subtle">
                       {load?.mode ? MODE_LABELS[load.mode] : 'Qovery skill as published'}
                     </span>
                   </span>
@@ -95,12 +95,12 @@ function LoadsContent({ organizationId }: { organizationId: string }) {
                 </Table.Cell>
                 <Table.Cell>
                   {load?.from_cache ? (
-                    <Badge variant="surface" className="gap-1">
+                    <Badge variant="surface" size="base" className="gap-1 whitespace-nowrap font-medium">
                       <Icon iconName="box-archive" iconStyle="regular" aria-hidden="true" />
                       From cache
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="gap-1">
+                    <Badge variant="surface" size="base" className="gap-1 whitespace-nowrap font-medium">
                       <Icon iconName="arrow-down-to-line" iconStyle="regular" aria-hidden="true" />
                       Fetched
                     </Badge>
