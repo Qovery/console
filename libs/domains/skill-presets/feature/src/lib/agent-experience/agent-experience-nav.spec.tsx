@@ -17,7 +17,7 @@ jest.mock('@tanstack/react-router', () => ({
   useLocation: jest.fn(),
   useNavigate: () => mockNavigate,
   useRouterState: () => ({ location: { pathname: '/organization/organization-1/agent-experience/skill-presets' } }),
-  Link: ({ children, className, ...props }: { children: ReactNode; className?: string; 'aria-current'?: string }) => (
+  Link: ({ children, className, ...props }: { children: ReactNode; className?: string; 'aria-current'?: 'page' }) => (
     <a href="/" className={className} aria-current={props['aria-current']}>
       {children}
     </a>
