@@ -1,29 +1,45 @@
-import { Controller, useFieldArray, useFormContext, useFormState, useWatch } from 'react-hook-form'
+import {
+  Controller,
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from 'react-hook-form'
 import { SKILL_PRESET_LIMITS, type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
-import { Button, Icon, InputText, InputTextArea, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  DropdownMenu,
+  Heading,
+  Icon,
+  InputText,
+  InputTextArea,
+  ModalCrud,
+  Tooltip,
+  toast,
+  useModal,
+} from '@qovery/shared/ui'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { findingFieldId, findingsAsText, findingsFor } from '../utils/skill-preset-findings'
 import { type SkillPresetFormValues, effectiveQoverySkills } from '../utils/skill-preset-form'
+import { toFieldErrors, validateSkillPresetForm } from '../utils/skill-preset-validation'
 import { type LibrarySkill, SkillLibraryModal } from './skill-library-modal'
 
 interface CustomSkillRowProps {
   index: number
   findings: SkillPresetFinding[]
-  onRemove: () => void
 }
 
 /** One skill of the organization. It watches only its own name, so typing elsewhere does not re-render it. */
-function CustomSkillRow({ index, findings, onRemove }: CustomSkillRowProps) {
+function CustomSkillRow({ index, findings }: CustomSkillRowProps) {
   const { control } = useFormContext<SkillPresetFormValues>()
   const skillName = useWatch({ control, name: `customSkills.${index}.skillName` }) ?? ''
   const descriptionFindings = findingsFor(findings, { field: 'skillDescription', skillName })
   const contentFindings = findingsFor(findings, { field: 'skillContent', skillName })
 
   return (
-    <fieldset
-      className="flex flex-col gap-3 rounded-md border border-neutral p-3"
-      aria-label={skillName ? `Skill ${skillName}` : `New skill ${index + 1}`}
-    >
+    <fieldset className="flex flex-col gap-3" aria-label={skillName ? `Skill ${skillName}` : `New skill ${index + 1}`}>
       <div className="flex items-start gap-2">
         <Controller
           control={control}
@@ -40,17 +56,6 @@ function CustomSkillRow({ index, findings, onRemove }: CustomSkillRowProps) {
             />
           )}
         />
-        <Button
-          type="button"
-          size="lg"
-          variant="outline"
-          color="neutral"
-          iconOnly
-          aria-label={`Remove ${skillName || 'this skill'}`}
-          onClick={onRemove}
-        >
-          <Icon iconName="trash-can" iconStyle="regular" />
-        </Button>
       </div>
       <Controller
         control={control}
@@ -87,15 +92,49 @@ function CustomSkillRow({ index, findings, onRemove }: CustomSkillRowProps) {
   )
 }
 
-/** "5 of 50 skill changes used", recomputed only when skills are added, removed or switched. */
-function SkillChangeCount() {
-  const { control } = useFormContext<SkillPresetFormValues>()
-  const [base, qoverySkills, customSkills] = useWatch({ control, name: ['base', 'qoverySkills', 'customSkills'] })
-  const count = effectiveQoverySkills({ base, qoverySkills }).length + customSkills.length
+type CustomSkill = SkillPresetFormValues['customSkills'][number]
+
+function CustomSkillModal({
+  values,
+  index,
+  creating,
+  findings,
+  onApply,
+  onClose,
+}: {
+  values: SkillPresetFormValues
+  index: number
+  creating: boolean
+  findings: SkillPresetFinding[]
+  onApply: (skill: CustomSkill) => void
+  onClose: () => void
+}) {
+  const methods = useForm<SkillPresetFormValues>({
+    defaultValues: values,
+    resolver: (draft) => {
+      const prefix = `customSkills.${index}.`
+      const errors = Object.fromEntries(
+        Object.entries(validateSkillPresetForm(draft)).filter(([path]) => path.startsWith(prefix))
+      )
+      const name = draft.customSkills[index].skillName.trim()
+      if (draft.customSkills.some((skill, position) => position !== index && skill.skillName.trim() === name)) {
+        errors[`${prefix}skillName`] = 'Another skill in this preset has this name.'
+      }
+      return Object.keys(errors).length ? { values: {}, errors: toFieldErrors(errors) } : { values: draft, errors: {} }
+    },
+  })
   return (
-    <p className="text-xs text-neutral-subtle">
-      {count} of {SKILL_PRESET_LIMITS.maxSkills} skill changes used.
-    </p>
+    <FormProvider {...methods}>
+      <ModalCrud
+        title={creating ? 'Create skill' : 'Edit skill'}
+        description="Changes are applied to the preset draft. Save the preset to publish them."
+        submitLabel={creating ? 'Add skill' : 'Apply changes'}
+        onClose={onClose}
+        onSubmit={methods.handleSubmit((draft) => onApply(draft.customSkills[index]))}
+      >
+        <CustomSkillRow index={index} findings={findings} />
+      </ModalCrud>
+    </FormProvider>
   )
 }
 
@@ -105,33 +144,61 @@ export interface CustomSkillsSectionProps {
 }
 
 export function CustomSkillsSection({ findings, librarySkills }: CustomSkillsSectionProps) {
-  const { control, setValue, getValues } = useFormContext<SkillPresetFormValues>()
-  const { fields, append, remove } = useFieldArray({ control, name: 'customSkills', keyName: 'fieldKey' })
+  const { control, getValues } = useFormContext<SkillPresetFormValues>()
+  const { fields, append, remove, update } = useFieldArray({ control, name: 'customSkills', keyName: 'fieldKey' })
   const { errors } = useFormState({ control, name: 'customSkills' })
   const { openModal, closeModal } = useModal()
   const limitError = errors.customSkills?.root?.message
+
+  const exceedsLimit = (values: SkillPresetFormValues) => {
+    if (effectiveQoverySkills(values).length + values.customSkills.length <= SKILL_PRESET_LIMITS.maxSkills) return false
+    toast(
+      'warning',
+      'Skill limit reached',
+      'Remove a skill before adding another. A preset supports up to 50 skill changes.'
+    )
+    return true
+  }
+
+  const editSkill = (index?: number) => {
+    const values = getValues()
+    const creating = index === undefined
+    const editIndex = index ?? values.customSkills.length
+    const customSkills = [...values.customSkills]
+    if (creating) customSkills.push({ skillName: '', description: '', content: '' })
+    if (creating && exceedsLimit({ ...values, customSkills })) return
+    openModal({
+      content: (
+        <CustomSkillModal
+          values={{ ...values, customSkills }}
+          index={editIndex}
+          creating={creating}
+          findings={findings}
+          onClose={closeModal}
+          onApply={(skill) => {
+            if (creating && exceedsLimit({ ...getValues(), customSkills: [...getValues('customSkills'), skill] }))
+              return
+            if (creating) append(skill)
+            else update(editIndex, skill)
+            closeModal()
+          }}
+        />
+      ),
+      options: { width: 720 },
+    })
+  }
 
   const openLibrary = () =>
     openModal({
       content: (
         <SkillLibraryModal
           skills={librarySkills}
-          base={getValues('base')}
-          presentSkillNames={[
-            ...getValues('customSkills').map(({ skillName }) => skillName),
-            ...getValues('qoverySkills')
-              .filter(({ choice }) => choice !== 'DISABLE')
-              .map(({ skillName }) => skillName),
-          ]}
+          presentSkillNames={getValues('customSkills').map(({ skillName }) => skillName)}
           onClose={closeModal}
           onAdd={(picked) => {
-            const qoverySkills = getValues('qoverySkills')
+            const values = getValues()
+            if (exceedsLimit({ ...values, customSkills: [...values.customSkills, ...picked] })) return
             picked.forEach((skill) => {
-              if (skill.group === 'qovery') {
-                const index = qoverySkills.findIndex(({ skillName }) => skillName === skill.skillName)
-                if (index >= 0) setValue(`qoverySkills.${index}.choice`, 'AS_IS', { shouldDirty: true })
-                return
-              }
               append({ skillName: skill.skillName, description: skill.description, content: skill.content })
             })
             closeModal()
@@ -142,33 +209,105 @@ export function CustomSkillsSection({ findings, librarySkills }: CustomSkillsSec
     })
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <Heading level={3} id="section-custom-skills">
+            Custom skills
+          </Heading>
+          <p className="text-sm text-neutral-subtle">
+            Skills your organization writes. Agents load one when its description matches the task.
+          </p>
+        </div>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
+            <Button type="button" size="md" variant="outline" color="neutral">
+              Add skill
+              <Icon iconName="chevron-down" iconStyle="regular" />
+            </Button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content align="end">
+            <DropdownMenu.Item icon={<Icon iconName="plus" iconStyle="regular" />} onSelect={() => editSkill()}>
+              New skill
+            </DropdownMenu.Item>
+            <DropdownMenu.Item icon={<Icon iconName="books" iconStyle="regular" />} onSelect={openLibrary}>
+              Add from library
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      </div>
       {fields.length === 0 && (
         <p className="rounded-md border border-dashed border-neutral p-4 text-sm text-neutral-subtle">
           No skills of your own yet. Add one to teach agents a process Qovery can’t know, like your release checklist.
         </p>
       )}
-      {fields.map((field, index) => (
-        <CustomSkillRow key={field.fieldKey} index={index} findings={findings} onRemove={() => remove(index)} />
-      ))}
+      {fields.length > 0 && (
+        <ul className="rounded border border-neutral bg-surface-neutral-subtle" aria-label="Custom skills">
+          {fields.map((field, index) => {
+            const issues = findings.filter(
+              (finding) =>
+                findingsFor([finding], { field: 'skillDescription', skillName: field.skillName }).length ||
+                findingsFor([finding], { field: 'skillContent', skillName: field.skillName }).length
+            )
+            const hasError = Boolean(errors.customSkills?.[index])
+            return (
+              <li
+                key={field.fieldKey}
+                className="flex items-center justify-between gap-3 border-b border-neutral px-4 py-3 last:border-0"
+              >
+                <div className="min-w-0" id={findingFieldId({ field: 'skillContent', skillName: field.skillName })}>
+                  <div
+                    className="flex items-center gap-2"
+                    id={findingFieldId({ field: 'skillDescription', skillName: field.skillName })}
+                  >
+                    <span className="break-all text-sm font-medium">{field.skillName || 'Untitled skill'}</span>
+                    {field.description && (
+                      <Tooltip content={field.description}>
+                        <span tabIndex={0} aria-label={`Description of ${field.skillName}`}>
+                          <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                        </span>
+                      </Tooltip>
+                    )}
+                  </div>
+                  {(hasError || issues.length > 0) && (
+                    <p className="text-xs text-negative">
+                      Review required: {hasError ? 'check the skill fields.' : findingsAsText(issues)}
+                    </p>
+                  )}
+                </div>
+                <div className="shrink-0">
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      type="button"
+                      size="md"
+                      variant="outline"
+                      color="neutral"
+                      iconOnly
+                      data-edit-skill
+                      aria-label={`Edit ${field.skillName}`}
+                      onClick={() => editSkill(index)}
+                    >
+                      <Icon iconName="pen" iconStyle="regular" />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="md"
+                      variant="outline"
+                      color="neutral"
+                      iconOnly
+                      aria-label={`Remove ${field.skillName}`}
+                      onClick={() => remove(index)}
+                    >
+                      <Icon iconName="trash-can" iconStyle="regular" />
+                    </Button>
+                  </div>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
+      )}
       {limitError && <p className="text-xs text-negative">{limitError}</p>}
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          size="md"
-          variant="outline"
-          color="neutral"
-          onClick={() => append({ skillName: '', description: '', content: '' })}
-        >
-          <Icon iconName="plus" iconStyle="regular" />
-          New skill
-        </Button>
-        <Button type="button" size="md" variant="outline" color="neutral" onClick={openLibrary}>
-          <Icon iconName="books" iconStyle="regular" />
-          Add from library
-        </Button>
-      </div>
-      <SkillChangeCount />
     </div>
   )
 }

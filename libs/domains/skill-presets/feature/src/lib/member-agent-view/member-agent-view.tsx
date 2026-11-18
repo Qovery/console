@@ -71,7 +71,7 @@ function PieceRow({ organizationId, name, detail, tokens, sha256, skillName, pic
         <Table.Cell className="h-auto py-2">
           <span className="flex flex-col">
             <span className={pick === 'content' ? 'font-code text-neutral' : 'font-medium text-neutral'}>{name}</span>
-            <span className="text-xs text-neutral-subtle">{detail}</span>
+            <span className="text-neutral-subtle">{detail}</span>
           </span>
         </Table.Cell>
         <Table.Cell className="text-right tabular-nums">
@@ -144,7 +144,7 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextDescription>
-            Only organization owners and admins can change the Skills Registry. Ask one of them if your agent needs
+            Only organization owners and admins can change the Skills registry. Ask one of them if your agent needs
             something different.
             <AdminNames organizationId={organizationId} />
           </Callout.TextDescription>
@@ -192,7 +192,7 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
               </div>
             </dl>
             <Table.Root>
-              <Table.Header>
+              <Table.Header className="[&_th]:whitespace-nowrap [&_th]:text-xs [&_th]:font-medium">
                 <Table.Row>
                   <Table.ColumnHeaderCell>What your agent can load</Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell className="text-right">Size</Table.ColumnHeaderCell>

@@ -99,20 +99,19 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
         {rows.length === 0 ? (
           <p className="text-neutral-subtle">Nothing: this preset loads no skill.</p>
         ) : (
-          <Table.Root className="text-xs" containerClassName="border-0 bg-transparent">
-            <caption className="sr-only">Tokens added per skill when a task loads it</caption>
-            <Table.Header className="text-neutral-subtle">
+          <Table.Root aria-label="Tokens added per skill when a task loads it">
+            <Table.Header className="text-xs">
               <Table.Row>
-                <Table.ColumnHeaderCell className="h-7 px-0 font-sans">Skill</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="h-7 px-0 text-right font-sans">Per task</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="font-sans font-medium">Skill</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="text-right font-sans font-medium">Per task</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
               {(compact ? rows.slice(0, 6) : rows).map((row) => (
                 <Table.Row key={row.skillName} className="align-top">
-                  <Table.Cell className="h-auto px-0 py-1.5 pr-2">
-                    <span className="block font-code text-neutral">{row.skillName}</span>
-                    <span className="block text-neutral-subtle">
+                  <Table.Cell className="h-auto py-3">
+                    <span className="block font-medium text-neutral">{row.skillName}</span>
+                    <span className="block text-ssm text-neutral-subtle">
                       {[
                         row.qoveryTokens > 0 && `Qovery ${formatTokens(row.qoveryTokens)}`,
                         row.organizationTokens > 0 && `yours ${formatTokens(row.organizationTokens)}`,
@@ -122,10 +121,10 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
                         .join(' + ')}
                     </span>
                   </Table.Cell>
-                  <Table.Cell className="h-auto px-0 py-1.5 text-right tabular-nums text-neutral">
+                  <Table.Cell className="h-auto whitespace-nowrap py-3 text-right tabular-nums text-neutral">
                     {formatTokens(row.total)}
                     {row.todayTokens !== null && row.todayTokens !== row.total && (
-                      <span className="block text-neutral-subtle">today {formatTokens(row.todayTokens)}</span>
+                      <span className="block text-ssm text-neutral-subtle">today {formatTokens(row.todayTokens)}</span>
                     )}
                   </Table.Cell>
                 </Table.Row>
@@ -137,7 +136,7 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
         {disabled.length > 0 && (
           <p className="text-neutral-subtle">
             <Icon iconName="ban" iconStyle="regular" className="mr-1" aria-hidden="true" />
-            Never loaded: <span className="font-code">{disabled.join(', ')}</span>
+            Never loaded: <span>{disabled.join(', ')}</span>
           </p>
         )}
       </Section>

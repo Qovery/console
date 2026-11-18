@@ -71,16 +71,16 @@ describe('AgentActivity', () => {
 
   it('shows members, skills and policy tokens in one view, with what was blocked', async () => {
     useScenario('agent-activity')
-    renderWithProviders(<AgentActivity />)
+    const { userEvent } = renderWithProviders(<AgentActivity />)
 
     expect(await screen.findByRole('heading', { name: 'Breakdown' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Activity', level: 1 })).toBeInTheDocument()
     expect(screen.getByTestId('coverage-note')).toHaveTextContent('Prompts and code are never collected.')
-    expect(
-      screen.getByText(
-        'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
-      )
-    ).toBeInTheDocument()
+    await userEvent.hover(screen.getByLabelText('About activity attribution'))
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
+    )
+    await userEvent.unhover(screen.getByLabelText('About activity attribution'))
     expect(screen.getByText('Policy tokens with activity')).toBeInTheDocument()
     expect(screen.getByTestId('chart-summary')).toHaveTextContent(/\d+ allowed and \d+ denied actions/)
     expect(within(screen.getByTestId('denied-actions')).getAllByText(/payments-production/).length).toBeGreaterThan(0)
