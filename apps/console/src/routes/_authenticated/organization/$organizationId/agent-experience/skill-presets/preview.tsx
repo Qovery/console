@@ -1,12 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SkillPresetsPreview } from '@qovery/domains/skill-presets/feature'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/agent-experience/skill-presets/preview'
 )({
-  component: RouteComponent,
+  beforeLoad: ({ params }) => {
+    throw redirect({ to: '/organization/$organizationId/agent-experience/skill-presets', params })
+  },
 })
-
-function RouteComponent() {
-  return <SkillPresetsPreview />
-}

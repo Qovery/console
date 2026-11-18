@@ -1,9 +1,12 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode, useState } from 'react'
 import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
+import { toast } from '@qovery/shared/ui'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { toSkillPresetFormValues } from '../utils/skill-preset-form'
 import { SkillPresetEditorForm } from './skill-preset-editor'
+
+jest.mock('@qovery/shared/ui', () => ({ ...jest.requireActual('@qovery/shared/ui'), toast: jest.fn() }))
 
 const mockCreateSkillPreset = jest.fn()
 const mockEditSkillPreset = jest.fn()
@@ -96,11 +99,26 @@ describe('SkillPresetEditorForm', () => {
     mockUseBlocker.mockReset()
   })
 
+  it('previews the unsaved draft without saving or discarding edits', async () => {
+    const { userEvent } = renderEdit()
+    const name = screen.getByRole('textbox', { name: 'Name', exact: true })
+    await userEvent.clear(name)
+    await userEvent.type(name, 'Unsaved preset')
+    await userEvent.click(screen.getByRole('button', { name: 'Preview', exact: true }))
+    expect(screen.getByRole('dialog', { name: 'Preview: Unsaved preset' })).toBeInTheDocument()
+    expect(screen.getByText('Preview of your current draft, including unsaved changes.')).toBeInTheDocument()
+    expect(mockEditSkillPreset).not.toHaveBeenCalled()
+    await userEvent.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(name).toHaveValue('Unsaved preset')
+  })
+
   it('lists the Qovery skills on the Full base and hides them on the Lean base', async () => {
     const { userEvent } = renderEditor()
 
     expect(screen.getByTestId('qovery-skill-qovery-deploy')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('radio', { name: 'Lean (CLI-first)' }))
+    await userEvent.click(screen.getByRole('combobox', { name: 'Qovery skills' }))
+    await userEvent.click(screen.getByText('Lean (CLI-first)', { exact: true }))
 
     expect(screen.queryByTestId('qovery-skill-qovery-deploy')).not.toBeInTheDocument()
   })
@@ -211,12 +229,12 @@ describe('SkillPresetEditorForm', () => {
   it('saves an edit and keeps the form on the saved state', async () => {
     mockEditSkillPreset.mockResolvedValue({ ...savedPreset, description: 'For backend engineers', revision: 4 })
     const { userEvent } = renderEdit()
-    expect(screen.getByRole('button', { name: 'Save changes' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Save changes' })).toHaveAccessibleDescription('No changes yet')
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Save' })).toHaveAccessibleDescription('No changes yet')
 
     await userEvent.type(screen.getByLabelText('Description (optional)'), 'For backend engineers')
     expect(screen.queryByTestId('no-changes-hint')).not.toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(mockEditSkillPreset).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -224,8 +242,8 @@ describe('SkillPresetEditorForm', () => {
         body: expect.objectContaining({ description: 'For backend engineers' }),
       })
     )
-    expect(await screen.findByText('Revision 4')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Save changes' })).toBeDisabled()
+    expect(await screen.findByTestId('no-changes-hint')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
   })
 
   it('guards leaving the page only while there are unsaved changes', async () => {
@@ -275,7 +293,7 @@ describe('SkillPresetEditorForm', () => {
     const { userEvent } = renderEdit()
     await userEvent.type(screen.getByLabelText('Description (optional)'), 'x')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Save changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(await screen.findByText('This preset was changed by someone else')).toBeInTheDocument()
     expect(screen.queryByText('Not saved: a target already receives another preset')).not.toBeInTheDocument()
@@ -286,7 +304,7 @@ describe('SkillPresetEditorForm', () => {
     mockEditSkillPreset.mockReturnValue(new Promise((resolve) => (finish = resolve)))
     const { userEvent } = renderEdit()
     await userEvent.type(screen.getByLabelText('Description (optional)'), 'x')
-    const save = screen.getByRole('button', { name: 'Save changes' })
+    const save = screen.getByRole('button', { name: 'Save' })
 
     await userEvent.dblClick(save)
 
@@ -295,7 +313,7 @@ describe('SkillPresetEditorForm', () => {
     expect(mockEditSkillPreset).toHaveBeenCalledTimes(1)
     expect(screen.getByLabelText('Description (optional)')).toHaveValue('x')
     finish({ ...savedPreset, description: 'x', revision: 4 })
-    expect(await screen.findByText('Revision 4')).toBeInTheDocument()
+    expect(await screen.findByTestId('no-changes-hint')).toBeInTheDocument()
   })
 
   it('labels model findings and shows their reason in full', async () => {
@@ -370,7 +388,7 @@ describe('SkillPresetEditorForm', () => {
     expect(screen.getByLabelText('Name')).toHaveValue('Backend team')
   })
 
-  it('counts all the text and refuses to save above 200,000 characters', async () => {
+  it('refuses to save above 200,000 characters without a permanent counter', async () => {
     const { userEvent } = renderWithProviders(
       <SkillPresetEditorForm
         organizationId="organization-1"
@@ -388,22 +406,68 @@ describe('SkillPresetEditorForm', () => {
       />
     )
 
-    expect(screen.getByTestId('total-text-counter')).toHaveTextContent('240,104 / 200,000 characters')
-    expect(screen.getByTestId('total-text-counter')).toHaveTextContent('over the limit a model can review')
+    expect(screen.queryByTestId('total-text-counter')).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
     expect(mockCreateSkillPreset).not.toHaveBeenCalled()
   })
 
-  it('adds a skill of its own, then removes it', async () => {
+  it('blocks a 51st skill with a toast and no permanent counter', async () => {
+    const { userEvent } = renderWithProviders(
+      <SkillPresetEditorForm
+        organizationId="organization-1"
+        initialValues={{
+          ...toSkillPresetFormValues(),
+          name: 'Full preset',
+          customSkills: Array.from({ length: 50 }, (_, index) => ({
+            skillName: `skill-${index}`,
+            description: 'Before releasing.',
+            content: 'Run checks.',
+          })),
+        }}
+        presets={[]}
+        assignees={assignees}
+      />
+    )
+    expect(screen.queryByText(/of 50 skill changes used/)).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Add skill', exact: true }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'New skill' }))
+    expect(toast).toHaveBeenCalledWith('warning', 'Skill limit reached', expect.any(String))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Remove skill-49', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add skill', exact: true }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'New skill' }))
+    expect(await screen.findByRole('dialog')).toBeInTheDocument()
+  })
+
+  it('adds, edits, cancels and removes a skill through the modal', async () => {
     const { userEvent } = renderEditor()
-    expect(screen.getByText(/No skills of your own yet/)).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Add skill', exact: true }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'New skill' }))
+    let dialog = await screen.findByRole('dialog')
+    expect(within(dialog).getByRole('button', { name: 'Add skill' })).toBeDisabled()
+    await userEvent.type(within(dialog).getByLabelText('Skill name'), 'release-checklist')
+    await userEvent.type(within(dialog).getByLabelText('When should agents use it?'), 'Before releasing.')
+    await userEvent.type(within(dialog).getByLabelText('Content'), 'Run checks.')
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Add skill' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(screen.getByText('release-checklist')).toBeInTheDocument()
+    expect(mockCreateSkillPreset).not.toHaveBeenCalled()
 
-    await userEvent.click(screen.getByRole('button', { name: 'New skill' }))
-    const row = screen.getByRole('group', { name: 'New skill 1' })
-    await userEvent.type(within(row).getByLabelText('Skill name'), 'release-checklist')
-    expect(screen.getByRole('group', { name: 'Skill release-checklist' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Edit release-checklist' }))
+    dialog = await screen.findByRole('dialog')
+    await userEvent.clear(within(dialog).getByLabelText('Skill name'))
+    await userEvent.type(within(dialog).getByLabelText('Skill name'), 'discarded-name')
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }))
+    expect(screen.getByText('release-checklist')).toBeInTheDocument()
+    expect(screen.queryByText('discarded-name')).not.toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('button', { name: 'Remove release-checklist' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Edit release-checklist' }))
+    dialog = await screen.findByRole('dialog')
+    await userEvent.clear(within(dialog).getByLabelText('Skill name'))
+    await userEvent.type(within(dialog).getByLabelText('Skill name'), 'release-checks')
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Apply changes' }))
+    expect(screen.getByText('release-checks')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Remove release-checks' }))
     expect(screen.getByText(/No skills of your own yet/)).toBeInTheDocument()
   })
 
@@ -425,8 +489,11 @@ describe('SkillPresetEditorForm', () => {
         assignees={assignees}
       />
     )
-    await userEvent.click(screen.getByRole('button', { name: 'Add from library' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add skill', exact: true }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Add from library' }))
     const dialog = await screen.findByRole('dialog')
+    expect(within(dialog).queryByRole('heading', { name: 'Qovery skills' })).not.toBeInTheDocument()
+    expect(within(dialog).queryByRole('checkbox', { name: /Add qovery/ })).not.toBeInTheDocument()
     await userEvent.click(within(dialog).getByRole('checkbox', { name: 'Add runbook-a from Ops team' }))
     await userEvent.click(within(dialog).getByRole('button', { name: 'Add skill' }))
 
