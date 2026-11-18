@@ -96,6 +96,18 @@ describe('ServiceResourcesSettings', () => {
       expect(screen.getByTestId('scaler-config')).toHaveTextContent('threshold: "50"', { normalizeWhitespace: false })
     })
 
+    it('should disable save in KEDA mode until a scaler has a type and a config', async () => {
+      const { userEvent } = renderWithProviders(
+        <ServiceResourcesSettings service={buildKedaService({ config_yaml: '' })} />
+      )
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled())
+
+      await userEvent.click(screen.getByRole('button', { name: 'Add scaler' }))
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled())
+    })
+
     it('should send the id of kept scalers on save, no id for a new scaler and drop a removed one', async () => {
       const kedaService = {
         ...service,
