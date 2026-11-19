@@ -290,8 +290,8 @@ export function AuditLogs({
           data={events}
           filter={filter}
           setFilter={setFilter}
-          className="min-w-[1140px] rounded border border-neutral"
-          classNameHead="z-dropdown rounded-t font-code top-[2.8rem] max-md:static"
+          className="rounded border border-neutral md:min-w-[1140px]"
+          classNameHead="z-dropdown rounded-t font-code top-[2.8rem] max-md:static max-md:![grid-template-columns:46%_22%_32%] max-md:text-xs max-md:[&>*:nth-child(n+4)]:hidden max-md:[&>*]:min-w-0 max-md:[&>*]:overflow-hidden"
           columnsWidth={columnsWidth}
         >
           <div>

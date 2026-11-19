@@ -21,8 +21,9 @@ import { useArgoCdServices } from '../hooks/use-argocd-services/use-argocd-servi
 
 const { Table } = TablePrimitives
 
+// Below md the list keeps the service and its actions; last operation and target version are hidden
 const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(350px,502px)_minmax(200px,275px)_minmax(280px,340px)_minmax(10px,50px)]'
+  'grid w-full grid-cols-[minmax(350px,502px)_minmax(200px,275px)_minmax(280px,340px)_minmax(10px,50px)] max-md:grid-cols-[minmax(0,1fr)_56px] max-md:[&>*:nth-child(2)]:hidden max-md:[&>*:nth-child(3)]:hidden'
 
 export interface ArgoCdServiceListProps {
   environment: Environment
@@ -77,7 +78,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
         </div>
         <Table.Root
           containerClassName="rounded-none border-t border-x-0 border-b-0"
-          className="w-full min-w-[1080px] overflow-x-scroll overflow-y-scroll text-xs xl:overflow-auto"
+          className="w-full overflow-x-scroll overflow-y-scroll text-xs md:min-w-[1080px] xl:overflow-auto"
         >
           <Table.Header className="border-t-none rounded-none border-neutral">
             <Table.Row className={`h-9 w-full ${tableGridLayoutClassName}`}>

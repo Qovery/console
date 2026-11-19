@@ -370,9 +370,10 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1204px] table-fixed text-ssm">
+      <Table.Root className="w-full table-fixed text-ssm md:min-w-[1204px]">
         <Table.Header>
-          <Table.Row className="divide-x divide-neutral">
+          {/* Below md the runs table keeps the date and the status; the other columns are hidden */}
+          <Table.Row className="divide-x divide-neutral max-md:[&>*:first-child]:!w-[65%] max-md:[&>*:first-child]:overflow-hidden max-md:[&>*:nth-child(2)]:!w-[35%] max-md:[&>*:nth-child(n+3)]:hidden">
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[128px] font-medium">Status</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
@@ -386,7 +387,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             <Table.Row
               key={run.id}
               role="button"
-              className="h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
+              className="h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle max-md:[&>*:first-child]:!w-[65%] max-md:[&>*:first-child]:overflow-hidden max-md:[&>*:nth-child(2)]:!w-[35%] max-md:[&>*:nth-child(n+3)]:hidden"
               tabIndex={0}
               onClick={() => setSelectedRun(run)}
               onKeyDown={(event) => openRunWithKeyboard(event, run)}

@@ -211,7 +211,9 @@ export function RowEvent(props: RowEventProps) {
         data-testid="row-event"
         className={twMerge(
           clsx(
-            'group grid h-12 cursor-pointer items-center border-b border-neutral py-2.5 text-sm font-normal text-neutral last:border-b-0 hover:bg-surface-neutral-subtle'
+            'group grid h-12 cursor-pointer items-center border-b border-neutral py-2.5 text-sm font-normal text-neutral last:border-b-0 hover:bg-surface-neutral-subtle',
+            // Below md the row keeps timestamp, event and target; the details stay one tap away
+            'max-md:text-xs max-md:![grid-template-columns:46%_22%_32%] max-md:[&>*:nth-child(n+4)]:hidden max-md:[&>*]:min-w-0 max-md:[&>*]:overflow-hidden'
           )
         )}
         style={{ gridTemplateColumns: columnsWidth }}

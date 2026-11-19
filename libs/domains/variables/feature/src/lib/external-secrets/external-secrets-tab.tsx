@@ -47,7 +47,9 @@ import { getJsonTargetKey } from './get-json-target-key'
 
 const { Table } = TablePrimitives
 
-const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220px_140px_104px]'
+// Below md the table keeps selection, name and actions; reference, source and scope (columns 3 to 5) are hidden
+const gridLayoutClassName =
+  'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220px_140px_104px] max-md:grid-cols-[32px_minmax(0,1fr)_104px] max-md:[&>*:nth-child(n+3):not(:last-child)]:hidden'
 
 type ExternalSecretRow = {
   id: string
@@ -536,7 +538,7 @@ export function ExternalSecretsTab({
           </EmptyState>
         </div>
       ) : (
-        <Table.Root className="w-full min-w-[1240px] text-xs" containerClassName="border-0 rounded-none">
+        <Table.Root className="w-full text-xs md:min-w-[1240px]" containerClassName="border-0 rounded-none">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
