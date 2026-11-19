@@ -100,15 +100,15 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
               </Tooltip>
             )}
           </h2>
-          <p className="text-xs text-neutral-subtle">
-            {registry.kind}{' '}
+          <p className="flex flex-wrap gap-x-3 text-xs text-neutral-subtle">
+            <span>{registry.kind}</span>
             {registry.updated_at && (
-              <span className="ml-3 inline-block" title={dateUTCString(registry.updated_at)}>
+              <span className="inline-block" title={dateUTCString(registry.updated_at)}>
                 Last updated {timeAgo(new Date(registry.updated_at))}
               </span>
             )}{' '}
             {registry.created_at && (
-              <span className="ml-3 inline-block" title={dateUTCString(registry.created_at)}>
+              <span className="inline-block" title={dateUTCString(registry.created_at)}>
                 Created since {dateMediumLocalFormat(registry.created_at)}
               </span>
             )}
@@ -272,7 +272,11 @@ export function SettingsContainerRegistries() {
             description="Define and manage the container registry to be used within your organization to deploy applications."
           />
 
-          <Button className="absolute right-0 top-0" size="md" onClick={() => onAddRegistry()}>
+          <Button
+            className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
+            size="md"
+            onClick={() => onAddRegistry()}
+          >
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add registry
           </Button>

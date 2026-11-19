@@ -41,7 +41,7 @@ export function SettingsPolicyApiToken() {
           />
 
           <Button
-            className="absolute right-0 top-0"
+            className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
             size="md"
             aria-label="Add new policy API token"
             onClick={() => {

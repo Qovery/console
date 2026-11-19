@@ -33,7 +33,7 @@ import { REMOTE_ACCESS_FLAGS, remoteAccessFormKey } from './utils/remote-access'
 
 const SettingsRolesEditSkeleton = () => (
   <div className="flex w-full flex-col justify-between">
-    <div className="p-8">
+    <div className="px-4 py-8 md:p-8">
       <div className="mb-8 flex justify-between">
         <div className="space-y-2">
           <Skeleton width={50} height={12} show={true} />
@@ -247,7 +247,7 @@ function SettingsRolesEditContent({
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <div className="p-8">
+      <div className="px-4 py-8 md:p-8">
         {customRole && (
           <>
             <div className="mb-8 flex justify-between">

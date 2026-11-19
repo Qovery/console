@@ -40,7 +40,11 @@ export function SettingsSlackIntegration() {
                 description="Get notified in Slack when deployments fail, detect failure loops, and know when environments recover."
               />
               {hasInstallation && (
-                <Button className="absolute right-0 top-0" size="md" onClick={onAddRule}>
+                <Button
+                  className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
+                  size="md"
+                  onClick={onAddRule}
+                >
                   <Icon iconName="circle-plus" iconStyle="regular" />
                   Add rule
                 </Button>

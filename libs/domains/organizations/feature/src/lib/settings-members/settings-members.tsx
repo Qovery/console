@@ -480,7 +480,11 @@ export function SettingsMembers() {
           />
 
           {canAddMember && (
-            <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
+            <Button
+              className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
+              size="md"
+              onClick={onAddMember}
+            >
               <Icon iconName="circle-plus" iconStyle="regular" />
               Add member
             </Button>

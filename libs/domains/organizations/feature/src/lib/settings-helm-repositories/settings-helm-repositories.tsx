@@ -77,7 +77,7 @@ function HelmRepositoriesList({
           className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
         >
           <div className="flex min-w-0 items-center">
-            <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" className="shrink-0" />
+            <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" />
             <div className="ml-4 min-w-0">
               <h2 className="mb-1 flex text-xs font-medium text-neutral">
                 <Truncate
@@ -143,7 +143,11 @@ export function PageOrganizationHelmRepositories({
             title="Helm repositories"
             description="Define and manage the helm repository to be used within your organization to deploy applications."
           />
-          <Button size="md" className="absolute right-0 top-0 shrink-0" onClick={() => onAddRepository()}>
+          <Button
+            size="md"
+            className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
+            onClick={() => onAddRepository()}
+          >
             Add repository
             <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>

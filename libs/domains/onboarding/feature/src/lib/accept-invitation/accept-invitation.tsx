@@ -25,7 +25,7 @@ function InviteDetails({ user_name = '', organization_name = '' }: InviteDetails
 export function AcceptInvitation({ inviteDetail, loading = false, onSubmit }: AcceptInvitationProps) {
   return (
     <div className="fixed inset-0 bg-background-secondary px-8">
-      <div className="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 rounded-xl border border-neutral bg-surface-neutral-subtle p-6 text-center shadow-lg md:max-w-[568px]">
+      <div className="absolute left-1/2 top-1/2 w-[calc(100%-32px)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-neutral bg-surface-neutral-subtle p-6 text-center shadow-lg md:w-full md:max-w-[568px]">
         <LogoBrandedIcon className="mx-auto block w-[207px] shrink-0 text-neutral" />
         {inviteDetail && (
           <InviteDetails user_name={inviteDetail.inviter} organization_name={inviteDetail.organization_name} />
