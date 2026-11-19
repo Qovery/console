@@ -34,13 +34,13 @@ export function OrganizationDomainHeaderFilter({
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content className="max-h-80 overflow-y-auto">
-        <DropdownMenu.Item onSelect={() => onChange('')}>
-          <span className="mr-2 w-4">{!value ? <Icon iconName="check" /> : null}</span>
+        <DropdownMenu.Item className="shrink-0" onSelect={() => onChange('')}>
+          <span className="mr-2 w-4 shrink-0">{!value ? <Icon iconName="check" /> : null}</span>
           All {label.toLowerCase()}s
         </DropdownMenu.Item>
         {options.map(({ id, name }) => (
-          <DropdownMenu.Item key={id} onSelect={() => onChange(id)}>
-            <span className="mr-2 w-4">{value === id ? <Icon iconName="check" /> : null}</span>
+          <DropdownMenu.Item key={id} className="shrink-0" onSelect={() => onChange(id)}>
+            <span className="mr-2 w-4 shrink-0">{value === id ? <Icon iconName="check" /> : null}</span>
             <span className="truncate">{name}</span>
           </DropdownMenu.Item>
         ))}
