@@ -1,6 +1,8 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
-import { type ComponentProps, type ElementRef, type ReactNode, forwardRef } from 'react'
-import { twMerge } from '@qovery/shared/util-js'
+import { type ComponentProps, type ElementRef, type MouseEvent, type ReactNode, forwardRef, useState } from 'react'
+import { isTouchScreen, twMerge } from '@qovery/shared/util-js'
+
+const INTERACTIVE_SELECTOR = 'button, a, input, select, textarea, [role="button"], [role="link"]'
 
 export interface TooltipProps extends TooltipPrimitive.TooltipProps {
   content: ReactNode
@@ -29,26 +31,44 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
   },
   forwardedRef
 ) {
+  // Touch screens have no hover, so Radix never opens the tooltip. There, a tap on a non-interactive trigger (an info
+  // icon, a truncated label) opens it and a tap elsewhere closes it; taps on buttons and links keep doing their action.
+  // Controlled tooltips and desktop behave as before.
+  const isControlled = open !== undefined
+  const [touchOpen, setTouchOpen] = useState(false)
+  const handleTouchOpen = !isControlled && isTouchScreen()
+
+  const handleTriggerClick = (event: MouseEvent<HTMLElement>) => {
+    if (!handleTouchOpen) return
+    const interactiveElement = (event.target as HTMLElement).closest(INTERACTIVE_SELECTOR)
+    if (interactiveElement && event.currentTarget.contains(interactiveElement)) return
+    setTouchOpen(true)
+  }
+
   return disabled ? (
     children
   ) : (
     <TooltipPrimitive.Root
-      open={open}
+      open={handleTouchOpen ? touchOpen : open}
       defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange}
+      onOpenChange={(value) => {
+        if (handleTouchOpen) setTouchOpen(value)
+        onOpenChange?.(value)
+      }}
       delayDuration={delayDuration}
     >
-      <TooltipPrimitive.Trigger asChild className={classNameTrigger} ref={forwardedRef}>
+      <TooltipPrimitive.Trigger asChild className={classNameTrigger} ref={forwardedRef} onClick={handleTriggerClick}>
         {children}
       </TooltipPrimitive.Trigger>
       <TooltipPrimitive.Portal container={container}>
         <TooltipPrimitive.Content
           className={twMerge(
-            'z-tooltip rounded bg-surface-neutralInvert-component px-2 py-1.5 text-xs font-medium text-neutralInvert',
+            'z-tooltip max-w-[calc(100vw-32px)] rounded bg-surface-neutralInvert-component px-2 py-1.5 text-xs font-medium text-neutralInvert',
             classNameContent
           )}
           side={side}
           sideOffset={6}
+          collisionPadding={8}
           align={align}
         >
           {content}
