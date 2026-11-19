@@ -294,7 +294,7 @@ describe('ServiceLastDeployment', () => {
     )
 
     expect(screen.getByRole('button', { name: 'v1.2.3' })).toBeInTheDocument()
-    expect(screen.queryByText('mocked-time')).not.toBeInTheDocument()
+    expect(screen.queryByText('mocked-time ago')).not.toBeInTheDocument()
   })
 
   it('prevents the deployment link navigation when clicking the last commit button', () => {
