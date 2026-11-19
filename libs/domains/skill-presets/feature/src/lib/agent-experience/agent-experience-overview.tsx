@@ -102,7 +102,6 @@ const ACTIVITY_PATH: AgentExperiencePath = '/organization/$organizationId/agent-
 type HeroPath =
   | AgentExperiencePath
   | '/organization/$organizationId/agent-experience/automate'
-  | '/organization/$organizationId/agent-experience/build-optimizer'
   | '/organization/$organizationId/audit-logs'
 
 const PILLARS: {
@@ -128,11 +127,6 @@ const PILLARS: {
         to: '/organization/$organizationId/agent-experience/skill-presets',
       },
       { icon: 'sparkles', name: 'Install skills', to: STEP_PATHS.connect },
-      {
-        icon: 'gauge-high',
-        name: 'Optimize builds',
-        to: '/organization/$organizationId/agent-experience/build-optimizer',
-      },
     ],
   },
   {
@@ -253,7 +247,7 @@ function AiOffCallout({ organizationId, canEnable }: { organizationId: string; c
       <Callout.Text>
         <Callout.TextHeading>AI features are off for this organization</Callout.TextHeading>
         <Callout.TextDescription>
-          The Skills Registry, the Copilot and Optimize builds need them.{' '}
+          The Skills Registry and the Copilot need them.{' '}
           {canEnable ? 'One step turns them on, with the Copilot read-only.' : 'Ask an owner or admin to turn them on.'}
         </Callout.TextDescription>
       </Callout.Text>
@@ -528,18 +522,6 @@ function AdminOverview({ organizationId }: { organizationId: string }) {
           <span className="text-neutral-subtle">AI features</span>
           <OnOffBadge on={aiFeaturesEnabled} />
         </span>
-        {aiFeaturesEnabled && (
-          <Link
-            to="/organization/$organizationId/agent-experience/build-optimizer"
-            params={{ organizationId }}
-            color="brand"
-            size="sm"
-            className="inline-flex items-center gap-1.5"
-          >
-            <Icon iconName="gauge-high" iconStyle="regular" aria-hidden="true" />
-            AI capability on: Build Optimizer
-          </Link>
-        )}
         {hints.length > 0 && (
           <Link
             to="/organization/$organizationId/agent-experience/agent-activity"
