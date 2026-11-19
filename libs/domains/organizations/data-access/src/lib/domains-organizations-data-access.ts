@@ -47,6 +47,7 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
+import { collectInvoice } from './collect-invoice'
 
 // Re-export PlanEnum for convenience
 export { PlanEnum }
@@ -825,6 +826,7 @@ export const mutations = {
     const response = await billingApi.getOrganizationInvoicePDF(organizationId, invoiceId)
     return response.data
   },
+  collectInvoice,
   async editBillingInfo({
     organizationId,
     billingInfoRequest,

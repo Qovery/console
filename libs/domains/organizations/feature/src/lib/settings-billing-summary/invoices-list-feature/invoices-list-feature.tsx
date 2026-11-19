@@ -9,8 +9,10 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Invoice } from 'qovery-typescript-axios'
-import { useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { useCanManageBilling } from '@qovery/shared/iam/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, Icon, InputSelectSmall, ProgressBar, TableFilter, TablePrimitives } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -21,10 +23,14 @@ import {
 } from '../../hooks/use-download-invoices/use-download-invoices'
 import { useInvoiceUrl } from '../../hooks/use-invoice-url/use-invoice-url'
 import { useInvoices } from '../../hooks/use-invoices/use-invoices'
+import { RetryInvoicePaymentButton } from '../../retry-invoice-payment/retry-invoice-payment-button'
+import { isInvoicePayable, useRetryInvoicePayment } from '../../retry-invoice-payment/use-retry-invoice-payment'
 import TableRowInvoice from './table-row-invoice/table-row-invoice'
 
 const { Table } = TablePrimitives
 const COLUMN_SIZES = [30, 30, 30, 10]
+// Leaves room for the payment button next to the download button
+const COLUMN_SIZES_WITH_PAYMENT = [25, 25, 20, 30]
 const columnHelper = createColumnHelper<Invoice>()
 const formatStatusLabel = (status: string) => upperCaseFirstLetter(status.toLowerCase()).replace(/_/g, ' ')
 
@@ -44,22 +50,24 @@ export interface InvoicesListProps {
   onDownloadAll?: (invoices: Invoice[]) => void
   onCancelDownloadAll?: () => void
   downloadAllProgress?: DownloadInvoicesProgress
+  renderPaymentAction?: (invoice: Invoice) => ReactNode
 }
 
 export function InvoicesList(props: InvoicesListProps) {
   const hasInvoices = (props.invoices?.length ?? 0) > 0
+  const columnSizes = props.renderPaymentAction ? COLUMN_SIZES_WITH_PAYMENT : COLUMN_SIZES
   const columns = useMemo(
     () => [
       columnHelper.accessor('created_at', {
         header: 'Date',
         enableColumnFilter: false,
-        size: COLUMN_SIZES[0],
+        size: columnSizes[0],
       }),
       columnHelper.accessor('status', {
         header: 'Status',
         enableColumnFilter: true,
         filterFn: statusFilter,
-        size: COLUMN_SIZES[1],
+        size: columnSizes[1],
         meta: {
           customFacetEntry({ value, count }) {
             return (
@@ -78,16 +86,16 @@ export function InvoicesList(props: InvoicesListProps) {
       columnHelper.accessor('total_in_cents', {
         header: 'Charge',
         enableColumnFilter: false,
-        size: COLUMN_SIZES[2],
+        size: columnSizes[2],
       }),
       columnHelper.display({
         id: 'download',
         header: '',
         enableColumnFilter: false,
-        size: COLUMN_SIZES[3],
+        size: columnSizes[3],
       }),
     ],
-    []
+    [columnSizes]
   )
 
   const table = useReactTable({
@@ -198,7 +206,8 @@ export function InvoicesList(props: InvoicesListProps) {
                 data={row.original}
                 isLoading={props.idOfInvoiceToDownload === row.original.id}
                 downloadInvoice={props.downloadOne}
-                columnSizes={COLUMN_SIZES}
+                columnSizes={columnSizes}
+                paymentAction={props.renderPaymentAction?.(row.original)}
               />
             ))}
           </Table.Body>
@@ -226,6 +235,20 @@ export function InvoicesListFeature() {
   const [invoices, setInvoices] = useState<Invoice[]>(dataInvoices)
   const { mutateAsync: mutateAsyncInvoice } = useInvoiceUrl()
   const { downloadAll, cancel, progress } = useDownloadInvoices({ organizationId })
+  const isRetryPaymentEnabled = Boolean(useFeatureFlagEnabled('billing-retry-payment'))
+  const { canManageBilling } = useCanManageBilling(organizationId)
+  const { requestPayment, pendingInvoiceId, getRetryAllowedAt } = useRetryInvoicePayment({ organizationId })
+  const canRetryPayment = isRetryPaymentEnabled && canManageBilling
+
+  const renderPaymentAction = (invoice: Invoice) =>
+    isInvoicePayable(invoice) ? (
+      <RetryInvoicePaymentButton
+        invoice={invoice}
+        onClick={requestPayment}
+        isLoading={pendingInvoiceId === invoice.id}
+        retryAllowedAt={getRetryAllowedAt(invoice.id)}
+      />
+    ) : null
 
   const downloadOne = async (invoiceId: string) => {
     if (organizationId && invoiceId) {
@@ -275,6 +298,7 @@ export function InvoicesListFeature() {
       onDownloadAll={downloadAll}
       onCancelDownloadAll={cancel}
       downloadAllProgress={progress}
+      renderPaymentAction={canRetryPayment ? renderPaymentAction : undefined}
     />
   )
 }

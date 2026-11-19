@@ -1,4 +1,5 @@
 import { type Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Button, Icon, TablePrimitives } from '@qovery/shared/ui'
 import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
@@ -11,10 +12,11 @@ export interface TableRowInvoiceProps {
   isLoading?: boolean
   downloadInvoice?: (invoiceId: string) => void
   columnSizes?: number[]
+  paymentAction?: ReactNode
 }
 
 export function TableRowInvoice(props: TableRowInvoiceProps) {
-  const { data, downloadInvoice, isLoading, columnSizes = [30, 30, 30, 10] } = props
+  const { data, downloadInvoice, isLoading, columnSizes = [30, 30, 30, 10], paymentAction } = props
 
   const statusLabel = data.status?.replace('_', ' ') ?? ''
   const badge = match(data.status)
@@ -53,21 +55,24 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
         {costToHuman(data.total_in_cents / 100, data.currency_code)}
       </Table.Cell>
       <Table.Cell style={{ width: `${columnSizes[3]}%` }} className="text-xs font-medium text-neutral">
-        <Button
-          data-testid="download-invoice-btn"
-          type="button"
-          variant="outline"
-          iconOnly
-          color="neutral"
-          size="md"
-          loading={isLoading}
-          onClick={() => {
-            if (!downloadInvoice) return
-            downloadInvoice(data?.id || '')
-          }}
-        >
-          <Icon iconName="download" iconStyle="regular" />
-        </Button>
+        <div className="flex items-center gap-2">
+          {paymentAction}
+          <Button
+            data-testid="download-invoice-btn"
+            type="button"
+            variant="outline"
+            iconOnly
+            color="neutral"
+            size="md"
+            loading={isLoading}
+            onClick={() => {
+              if (!downloadInvoice) return
+              downloadInvoice(data?.id || '')
+            }}
+          >
+            <Icon iconName="download" iconStyle="regular" />
+          </Button>
+        </div>
       </Table.Cell>
     </Table.Row>
   )

@@ -1,4 +1,5 @@
 import { type Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
+import * as iamFeature from '@qovery/shared/iam/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as invoiceUrlHooks from '../../hooks/use-invoice-url/use-invoice-url'
 import * as invoiceHooks from '../../hooks/use-invoices/use-invoices'
@@ -10,7 +11,21 @@ const useInvoiceUrlSpy = jest.spyOn(invoiceUrlHooks, 'useInvoiceUrl')
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: '1' }),
+  useNavigate: () => jest.fn(),
 }))
+
+let mockRetryPaymentFlag = false
+jest.mock('posthog-js/react', () => ({
+  ...jest.requireActual('posthog-js/react'),
+  useFeatureFlagEnabled: (flag: string) => (flag === 'billing-retry-payment' ? mockRetryPaymentFlag : false),
+}))
+
+const useCanManageBillingSpy = jest.spyOn(iamFeature, 'useCanManageBilling')
+
+beforeEach(() => {
+  mockRetryPaymentFlag = false
+  useCanManageBillingSpy.mockReturnValue({ canManageBilling: false, loading: false })
+})
 
 const invoicesMock: Invoice[] = [
   {
@@ -174,6 +189,45 @@ describe('InvoicesListFeature', () => {
     })
 
     linkClickSpy.mockRestore()
+  })
+})
+
+describe('InvoicesListFeature payment button', () => {
+  const unpaidInvoices: Invoice[] = [
+    { ...invoicesMock[0], id: 'due', status: InvoiceStatusEnum.PAYMENT_DUE },
+    { ...invoicesMock[1], id: 'not-paid', status: InvoiceStatusEnum.NOT_PAID },
+    { ...invoicesMock[2], id: 'paid', status: InvoiceStatusEnum.PAID },
+  ]
+
+  beforeEach(() => {
+    mockRetryPaymentFlag = true
+    useCanManageBillingSpy.mockReturnValue({ canManageBilling: true, loading: false })
+    useInvoicesSpy.mockReturnValue({ data: unpaidInvoices } as ReturnType<typeof invoiceHooks.useInvoices>)
+    useInvoiceUrlSpy.mockReturnValue({ mutateAsync: jest.fn() } as unknown as ReturnType<
+      typeof invoiceUrlHooks.useInvoiceUrl
+    >)
+  })
+
+  it('shows a payment button on payment due and unpaid invoices only', () => {
+    renderWithProviders(<InvoicesListFeature />)
+
+    expect(screen.getByRole('button', { name: 'Pay now' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Retry payment' })).toBeInTheDocument()
+    expect(screen.getAllByTestId('retry-invoice-payment-btn')).toHaveLength(2)
+  })
+
+  it('hides the payment button while the flag is off', () => {
+    mockRetryPaymentFlag = false
+    renderWithProviders(<InvoicesListFeature />)
+
+    expect(screen.queryByTestId('retry-invoice-payment-btn')).not.toBeInTheDocument()
+  })
+
+  it('hides the payment button for members without billing access', () => {
+    useCanManageBillingSpy.mockReturnValue({ canManageBilling: false, loading: false })
+    renderWithProviders(<InvoicesListFeature />)
+
+    expect(screen.queryByTestId('retry-invoice-payment-btn')).not.toBeInTheDocument()
   })
 })
 
