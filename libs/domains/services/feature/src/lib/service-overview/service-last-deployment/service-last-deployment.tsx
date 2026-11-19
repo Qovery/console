@@ -97,6 +97,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
   const isGitContainer = Boolean(service && isContainer(service) && isContainerGitSource(service.source))
   const showGitCommit =
     Boolean(gitRepository) &&
+    (!isGitContainer || Boolean(gitRepository?.deployed_commit_id)) &&
     Boolean(service?.id && service?.name && service?.serviceType && 'environment' in service && service.environment)
 
   const isOngoing = match(lastDeployment?.status_details?.status)

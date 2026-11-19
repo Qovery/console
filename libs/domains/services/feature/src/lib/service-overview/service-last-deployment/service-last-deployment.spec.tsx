@@ -269,6 +269,34 @@ describe('ServiceLastDeployment', () => {
     expect(mockLastCommit).not.toHaveBeenCalled()
   })
 
+  it('renders the last deployment version of a Git container that has no deployed commit yet', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [baseDeployment],
+      isFetched: true,
+    })
+    const notYetBuiltContainer = {
+      ...gitContainerFactoryMock(1)[0],
+      source: {
+        git_repository: {
+          provider: 'GITHUB' as const,
+          owner: 'qovery',
+          name: 'qovery/console',
+          url: 'https://github.com/qovery/console.git',
+          branch: 'main',
+          root_path: '/',
+          dockerfile_path: 'Dockerfile',
+        },
+      },
+    }
+
+    renderWithProviders(
+      <ServiceLastDeployment serviceId="service-123" serviceType="CONTAINER" service={notYetBuiltContainer} />
+    )
+
+    expect(screen.getByRole('button', { name: 'v1.2.3' })).toBeInTheDocument()
+    expect(screen.queryByText('mocked-time')).not.toBeInTheDocument()
+  })
+
   it('prevents the deployment link navigation when clicking the last commit button', () => {
     mockUseDeploymentHistory.mockReturnValue({
       data: [baseDeployment],
