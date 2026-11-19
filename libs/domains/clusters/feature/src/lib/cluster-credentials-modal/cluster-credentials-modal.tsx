@@ -10,6 +10,7 @@ import {
   useEditCloudProviderCredential,
 } from '@qovery/domains/cloud-providers/feature'
 import {
+  Accordion,
   Button,
   Callout,
   CopyButton,
@@ -679,12 +680,55 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
                 </p>
                 {isWideCredentialsFeatureFlagEnabled && isAwsStsCredential ? (
-                  <div className="flex items-center gap-4">
-                    <ExternalLink href={awsExtendedUserRoleCloudformationUrl} size="sm">
-                      Extended permissions
-                    </ExternalLink>
-                    <ExternalLink href={awsRestrictedUserRoleCloudformationUrl} size="sm">
-                      Restricted permissions
+                  <div className="flex flex-col gap-3">
+                    <Accordion.Root type="single" collapsible defaultValue="single" className="flex flex-col gap-2">
+                      <Accordion.Item value="single" className="rounded border border-neutral">
+                        <Accordion.Trigger className="min-h-10 w-full flex-row-reverse justify-between gap-3 px-3 py-2 text-left font-medium text-neutral">
+                          Single credential mode
+                        </Accordion.Trigger>
+                        <Accordion.Content>
+                          <div className="flex flex-col gap-2 px-3 pb-3">
+                            <p className="text-sm text-neutral-subtle">
+                              Use it as the only credential of your cluster.
+                            </p>
+                            <ExternalLink href={awsExtendedUserRoleCloudformationUrl} size="sm">
+                              Cloudformation extended permissions
+                            </ExternalLink>
+                          </div>
+                        </Accordion.Content>
+                      </Accordion.Item>
+                      <Accordion.Item value="restricted" className="rounded border border-neutral">
+                        <Accordion.Trigger className="min-h-10 w-full flex-row-reverse justify-between gap-3 px-3 py-2 text-left font-medium text-neutral">
+                          Extended & Restricted credentials mode
+                        </Accordion.Trigger>
+                        <Accordion.Content>
+                          <div className="flex flex-col gap-3 px-3 pb-3">
+                            <div className="flex flex-col gap-2">
+                              <p className="text-sm text-neutral-subtle">
+                                Create it first: the extended permissions stack asks for its role name.
+                              </p>
+                              <ExternalLink href={awsRestrictedUserRoleCloudformationUrl} size="sm">
+                                Cloudformation restricted permissions
+                              </ExternalLink>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              <p className="text-sm text-neutral-subtle">
+                                Create it second, and enter the restricted role name when the stack asks for it.
+                              </p>
+                              <ExternalLink href={awsExtendedUserRoleCloudformationUrl} size="sm">
+                                Cloudformation extended permissions
+                              </ExternalLink>
+                            </div>
+                          </div>
+                        </Accordion.Content>
+                      </Accordion.Item>
+                    </Accordion.Root>
+                    <ExternalLink
+                      className="mt-2"
+                      href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#restricted-credentials"
+                      size="sm"
+                    >
+                      How to configure restricted and extended credentials
                     </ExternalLink>
                   </div>
                 ) : (

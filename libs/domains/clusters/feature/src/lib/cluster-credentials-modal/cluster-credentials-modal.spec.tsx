@@ -84,26 +84,51 @@ describe('ClusterCredentialsModal', () => {
 
   it.each([true, false, undefined])(
     'should show the expected Cloudformation links with the organization id when wide-credentials is %s',
-    (isWideCredentialsEnabled) => {
+    async (isWideCredentialsEnabled) => {
       mockUseFeatureFlagEnabled.mockImplementation((flag) =>
         flag === 'wide-credentials' ? isWideCredentialsEnabled : true
       )
-      renderWithProviders(
+      const { userEvent } = renderWithProviders(
         wrapWithReactHookForm(
           <ClusterCredentialsModal {...props} organizationId="3f2b7c1e-8d4a-4b6e-9f0a-1c2d3e4f5a6b" />
         )
       )
 
-      const links = screen.getAllByRole('link', {
-        name: /^(Cloudformation stack|Extended permissions|Restricted permissions)$/,
-      })
+      const linkNames =
+        /^(Cloudformation stack|Cloudformation extended permissions|Cloudformation restricted permissions)$/
+      if (isWideCredentialsEnabled) {
+        // "Single credential mode" is open by default: only the extended link is visible
+        expect(screen.getByRole('button', { name: 'Single credential mode' })).toHaveAttribute(
+          'aria-expanded',
+          'true'
+        )
+        expect(
+          screen.getAllByRole('link', { name: linkNames }).map((link) => link.textContent)
+        ).toEqual(['Cloudformation extended permissions'])
+
+        // Opening restricted mode replaces the single credential section: restricted first, then extended
+        await userEvent.click(screen.getByRole('button', { name: 'Extended & Restricted credentials mode' }))
+      }
+
+      const links = screen.getAllByRole('link', { name: linkNames })
       expect(links.map((link) => link.textContent)).toEqual(
-        isWideCredentialsEnabled ? ['Extended permissions', 'Restricted permissions'] : ['Cloudformation stack']
+        isWideCredentialsEnabled
+          ? ['Cloudformation restricted permissions', 'Cloudformation extended permissions']
+          : ['Cloudformation stack']
       )
+      const docLink = screen.queryByRole('link', { name: 'How to configure restricted and extended credentials' })
+      if (isWideCredentialsEnabled) {
+        expect(docLink).toHaveAttribute(
+          'href',
+          'https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#restricted-credentials'
+        )
+      } else {
+        expect(docLink).not.toBeInTheDocument()
+      }
       for (const link of links) {
         const [templateBucket, stackName] = !isWideCredentialsEnabled
           ? ['cloudformation-qovery-role-creation', 'qovery-role-creation']
-          : link.textContent === 'Restricted permissions'
+          : link.textContent === 'Cloudformation restricted permissions'
             ? ['qovery-restricted-user-role', 'qovery-restricted-user-role']
             : ['qovery-extended-user-role', 'qovery-extended-user-role']
         expect(link).toHaveAttribute(
