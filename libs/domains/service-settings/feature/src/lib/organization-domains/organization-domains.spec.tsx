@@ -41,10 +41,16 @@ beforeEach(() => {
         data: [
           { id: 'project-1', name: 'Project one' },
           { id: 'project-2', name: 'Project two' },
+          { id: 'long-project', name: 'testprojectauditlogslongprojectname' },
         ],
       } as unknown as ReturnType<typeof useQuery>
     if (key[0] === 'environments')
-      return { data: [{ id: 'env-1', name: 'Production' }] } as unknown as ReturnType<typeof useQuery>
+      return {
+        data: [
+          { id: 'env-1', name: 'Production' },
+          { id: 'long-environment', name: 'production-environment-with-a-long-name' },
+        ],
+      } as unknown as ReturnType<typeof useQuery>
     return { data: [] } as unknown as ReturnType<typeof useQuery>
   })
 })
@@ -110,4 +116,21 @@ it('keeps the header filters available when there are no matching domains', () =
   const table = screen.getByRole('table')
   expect(within(table).getByRole('button', { name: 'Project' })).toBeInTheDocument()
   expect(within(table).getByText(/No domains configured/)).toBeInTheDocument()
+})
+
+it('truncates long selected labels while preserving the project and environment identifiers', async () => {
+  const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  await userEvent.click(screen.getByRole('button', { name: 'Project' }))
+  await userEvent.click(screen.getByRole('menuitem', { name: 'testprojectauditlogslongprojectname' }))
+  expect(screen.getByRole('button', { name: 'testprojecta…' })).toBeInTheDocument()
+  await userEvent.click(screen.getByRole('button', { name: 'Environment' }))
+  await userEvent.click(screen.getByRole('menuitem', { name: 'production-environment-with-a-long-name' }))
+  expect(screen.getByRole('button', { name: 'production-e…' })).toBeInTheDocument()
+  expect(mockList.mock.lastCall[0]).toEqual(
+    expect.arrayContaining([expect.objectContaining({ projectId: 'long-project', environmentId: 'long-environment' })])
+  )
+  await userEvent.click(screen.getByRole('button', { name: 'Clear Project filter' }))
+  expect(mockList.mock.lastCall[0]).toEqual(
+    expect.arrayContaining([expect.objectContaining({ projectId: undefined, environmentId: undefined })])
+  )
 })

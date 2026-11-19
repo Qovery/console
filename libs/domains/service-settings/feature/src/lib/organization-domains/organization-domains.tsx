@@ -22,6 +22,7 @@ import {
   TableFilter,
   TableFilterSearch,
   TablePrimitives,
+  Truncate,
   useModal,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -94,8 +95,9 @@ export function OrganizationDomainsContent() {
               {options.find((option) => option.id === value)?.name}
             </span>
           ),
-          customFilterValue: ({ filterValue }: { filterValue: string[] }) =>
-            options.find((option) => option.id === filterValue[0])?.name,
+          customFilterValue: ({ filterValue }: { filterValue: string[] }) => (
+            <Truncate text={options.find((option) => option.id === filterValue[0])?.name ?? ''} truncateLimit={12} />
+          ),
         },
       })),
       { id: 'routes', header: 'Routes', enableColumnFilter: false },
