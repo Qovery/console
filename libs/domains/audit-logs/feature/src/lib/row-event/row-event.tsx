@@ -286,7 +286,7 @@ export function RowEvent(props: RowEventProps) {
                     {targetExists && (
                       <Icon
                         iconName="arrow-right"
-                        className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                        className="opacity-0 transition-opacity duration-200 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                       />
                     )}
                     {event.target_type && renderLink(event.target_type)}

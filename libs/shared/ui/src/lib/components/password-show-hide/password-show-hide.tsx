@@ -52,7 +52,7 @@ export function PasswordShowHide({
       {canCopy && Boolean(value) && (
         <CopyToClipboardButtonIcon
           content={value!}
-          iconClassName="text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+          iconClassName="text-neutral-subtle opacity-0 [@media(hover:none)]:opacity-100 hover:text-neutral group-hover:opacity-100"
         />
       )}
     </span>

@@ -137,7 +137,7 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
                             <CopyToClipboardButtonIcon
                               content={deployment.identifier.execution_id}
                               tooltipContent="Copy execution id"
-                              className="opacity-0 transition-opacity group-hover:opacity-100"
+                              className="opacity-0 transition-opacity group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                               iconClassName="text-xs"
                             />
                           )}

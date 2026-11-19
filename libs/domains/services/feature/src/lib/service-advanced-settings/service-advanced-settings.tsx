@@ -181,7 +181,7 @@ export function AdvancedSettings({
                 <div>{defaultValue}</div>
               </Tooltip>
               <CopyToClipboardButtonIcon
-                className="invisible ml-2 text-neutral-subtle group-hover:visible"
+                className="invisible ml-2 text-neutral-subtle group-hover:visible [@media(hover:none)]:visible"
                 content={defaultValue}
               />
             </div>

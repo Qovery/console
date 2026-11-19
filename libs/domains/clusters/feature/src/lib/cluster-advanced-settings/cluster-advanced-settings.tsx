@@ -161,7 +161,7 @@ export function ClusterAdvancedSettings({
                             </div>
                           </Tooltip>
                           <CopyToClipboardButtonIcon
-                            className="invisible ml-2 text-neutral-subtle group-hover:visible"
+                            className="invisible ml-2 text-neutral-subtle group-hover:visible [@media(hover:none)]:visible"
                             content={row.defaultValue?.toString() ?? ''}
                           />
                         </div>
