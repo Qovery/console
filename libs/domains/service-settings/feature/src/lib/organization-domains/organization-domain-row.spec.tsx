@@ -80,3 +80,18 @@ it('checks DNS on demand and reports failures', async () => {
   await userEvent.click(screen.getByRole('button', { name: 'Check DNS for app.example.com' }))
   await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Unable to check DNS records'))
 })
+
+it('renders a controlled row checkbox and reports changes', async () => {
+  const onSelectionChange = jest.fn()
+  const { userEvent } = renderWithProviders(
+    <Table.Root>
+      <Table.Body>
+        <OrganizationDomainRow domain={domain} selected onSelectionChange={onSelectionChange} />
+      </Table.Body>
+    </Table.Root>
+  )
+  const checkbox = screen.getByRole('checkbox', { name: 'Select app.example.com in production' })
+  expect(checkbox).toBeChecked()
+  await userEvent.click(checkbox)
+  expect(onSelectionChange).toHaveBeenCalledWith(false)
+})

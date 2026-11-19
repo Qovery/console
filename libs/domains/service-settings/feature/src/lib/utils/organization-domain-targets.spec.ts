@@ -1,5 +1,6 @@
 import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
-import { getDomainTargets } from './organization-domain-targets'
+import { getDomainSelectionKey, getDomainTargets, getSelectedDomainTargets } from './organization-domain-targets'
+import { summarizeDomainDnsChecks } from './summarize-domain-dns-checks'
 
 const domain: OrganizationCustomDomainResponse = {
   domain: 'app.example.com',
@@ -53,4 +54,32 @@ describe('getDomainTargets', () => {
   it('accepts domains without routes', () => {
     expect(getDomainTargets({ ...domain, routes: [] })).toEqual([])
   })
+})
+
+it('keeps identical domain names in different environments independently selectable', () => {
+  expect(getDomainSelectionKey(domain)).not.toBe(getDomainSelectionKey({ ...domain, environment_id: 'other-env' }))
+})
+it('deduplicates repeated configurations across a domain selection', () => {
+  expect(getSelectedDomainTargets([domain, domain])).toHaveLength(1)
+})
+
+it('uses DNS status even when the API omits failure details', () => {
+  expect(
+    summarizeDomainDnsChecks(
+      [domain],
+      new Map([['app-1', [{ domain_name: domain.domain, status: 'DOMAIN_NOT_CONFIGURED' }]]])
+    )
+  ).toEqual({ valid: 0, failing: 1, unavailable: 0 })
+})
+it('requires a DNS result from every service serving a selected domain', () => {
+  const multiService = {
+    ...domain,
+    routes: [...domain.routes, { ...domain.routes[0], service: { ...domain.routes[0].service, id: 'app-2' } }],
+  }
+  expect(
+    summarizeDomainDnsChecks(
+      [multiService],
+      new Map([['app-1', [{ domain_name: domain.domain, status: 'RESOLVES_TO_IP' }]]])
+    )
+  ).toEqual({ valid: 0, failing: 0, unavailable: 1 })
 })

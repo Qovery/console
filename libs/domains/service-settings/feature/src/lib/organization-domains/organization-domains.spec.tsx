@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
+import { Checkbox as MockCheckbox } from '@qovery/shared/ui'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { OrganizationDomains, OrganizationDomainsContent } from './organization-domains'
 
@@ -12,15 +13,43 @@ jest.mock('@tanstack/react-router', () => ({
 jest.mock('@tanstack/react-query', () => ({ ...jest.requireActual('@tanstack/react-query'), useQuery: jest.fn() }))
 jest.mock('@qovery/shared/iam/feature', () => ({ useUserRole: () => ({ roles: mockRoles, loading: false }) }))
 jest.mock('./organization-domain-row', () => ({
-  OrganizationDomainRow: ({ domain }: { domain: OrganizationCustomDomainResponse }) => (
+  OrganizationDomainRow: ({
+    domain,
+    selected,
+    onSelectionChange,
+  }: {
+    domain: OrganizationCustomDomainResponse
+    selected: boolean
+    onSelectionChange: (selected: boolean) => void
+  }) => (
     <tr>
-      <td>{domain.domain}</td>
+      <td>
+        <MockCheckbox
+          aria-label={`Select ${domain.domain}`}
+          checked={selected}
+          onCheckedChange={(checked) => onSelectionChange(checked === true)}
+        />
+        {domain.domain}
+      </td>
     </tr>
   ),
 }))
 
 const result = {
-  results: [{ domain: 'app.example.com', environment_id: 'env', project: { id: 'project-1', name: 'Project one' } }],
+  results: [
+    {
+      domain: 'app.example.com',
+      environment_id: 'env',
+      project: { id: 'project-1', name: 'Project one' },
+      routes: [
+        {
+          id: 'route',
+          custom_domain_id: 'custom-domain',
+          service: { id: 'service', name: 'web', type: 'APPLICATION' },
+        },
+      ],
+    },
+  ],
   total_count: 61,
 }
 const refetch = jest.fn()
@@ -133,4 +162,34 @@ it('truncates long selected labels while preserving the project and environment 
   expect(mockList.mock.lastCall[0]).toEqual(
     expect.arrayContaining([expect.objectContaining({ projectId: undefined, environmentId: undefined })])
   )
+})
+
+it('selects visible rows, unselects them and clears selection on pagination or search changes', async () => {
+  const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  await userEvent.click(screen.getByRole('checkbox', { name: 'Select all domains on this page' }))
+  expect(screen.getByText('1 selected domain')).toBeInTheDocument()
+  await userEvent.click(screen.getByRole('button', { name: 'Unselect' }))
+  expect(screen.queryByRole('region', { name: 'Selected domain actions' })).not.toBeInTheDocument()
+  await userEvent.click(screen.getByRole('checkbox', { name: 'Select app.example.com' }))
+  await userEvent.click(screen.getByTestId('button-next-page'))
+  expect(screen.queryByRole('region', { name: 'Selected domain actions' })).not.toBeInTheDocument()
+  await userEvent.click(screen.getByRole('checkbox', { name: 'Select app.example.com' }))
+  await userEvent.type(screen.getByRole('textbox', { name: 'Search domains' }), 'example')
+  expect(screen.queryByRole('region', { name: 'Selected domain actions' })).not.toBeInTheDocument()
+})
+
+it('shows an indeterminate page checkbox for partial selection and selects only visible rows', async () => {
+  mockState = {
+    ...mockState,
+    data: { ...result, results: [result.results[0], { ...result.results[0], domain: 'other.example.com' }] },
+  }
+  const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  await userEvent.click(screen.getByRole('checkbox', { name: 'Select app.example.com' }))
+  const selectPage = screen.getByRole('checkbox', { name: 'Select all domains on this page' })
+  expect(selectPage).toBePartiallyChecked()
+  await userEvent.click(selectPage)
+  expect(screen.getByText('2 selected domains')).toBeInTheDocument()
+  expect(selectPage).toBeChecked()
+  await userEvent.click(selectPage)
+  expect(screen.queryByRole('region', { name: 'Selected domain actions' })).not.toBeInTheDocument()
 })

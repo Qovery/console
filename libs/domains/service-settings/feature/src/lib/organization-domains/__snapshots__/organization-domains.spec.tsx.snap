@@ -4,7 +4,7 @@ exports[`renders the domains list 1`] = `
 <body>
   <div>
     <div
-      class="container mx-auto mt-6 pb-10"
+      class="container mx-auto mt-6 pb-28"
     >
       <section
         class="flex flex-col gap-8"
@@ -86,7 +86,20 @@ exports[`renders the domains list 1`] = `
                     <th
                       class="h-11 border-neutral px-4 text-left font-code border-r font-medium text-neutral-subtle last:border-r-0"
                     >
-                      Domain
+                      <div
+                        class="flex items-center gap-3"
+                      >
+                        <button
+                          aria-checked="false"
+                          aria-label="Select all domains on this page"
+                          class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                          data-state="unchecked"
+                          role="checkbox"
+                          type="button"
+                          value="on"
+                        />
+                        Domain
+                      </div>
                     </th>
                     <th
                       class="h-11 border-neutral px-4 text-left font-code border-r font-medium text-neutral-subtle last:border-r-0"
@@ -148,6 +161,15 @@ exports[`renders the domains list 1`] = `
                 >
                   <tr>
                     <td>
+                      <button
+                        aria-checked="false"
+                        aria-label="Select app.example.com"
+                        class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                        data-state="unchecked"
+                        role="checkbox"
+                        type="button"
+                        value="on"
+                      />
                       app.example.com
                     </td>
                   </tr>

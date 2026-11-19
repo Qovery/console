@@ -12,3 +12,15 @@ export function getDomainTargets(domain: OrganizationCustomDomainResponse) {
     return [{ ...route, service: { ...route.service, type } }]
   })
 }
+
+export function getDomainSelectionKey(domain: OrganizationCustomDomainResponse) {
+  return `${domain.environment_id}:${domain.domain}`
+}
+
+export function getDomainTargetKey(target: ReturnType<typeof getDomainTargets>[number]) {
+  return `${target.service.id}:${target.custom_domain_id}`
+}
+
+export function getSelectedDomainTargets(domains: OrganizationCustomDomainResponse[]) {
+  return [...new Map(domains.flatMap(getDomainTargets).map((target) => [getDomainTargetKey(target), target])).values()]
+}

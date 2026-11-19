@@ -3,6 +3,7 @@ import { useParams } from '@tanstack/react-router'
 import {
   type ColumnDef,
   type ColumnFiltersState,
+  type RowSelectionState,
   flexRender,
   functionalUpdate,
   getCoreRowModel,
@@ -13,6 +14,7 @@ import { useMemo, useState } from 'react'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import {
   Button,
+  Checkbox,
   EmptyState,
   Heading,
   Icon,
@@ -27,6 +29,8 @@ import {
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
+import { getDomainSelectionKey, getDomainTargets } from '../utils/organization-domain-targets'
+import { OrganizationDomainActionBar } from './organization-domain-action-bar'
 import { OrganizationDomainCreateModal } from './organization-domain-create-modal'
 import { OrganizationDomainRow } from './organization-domain-row'
 
@@ -61,7 +65,12 @@ export function OrganizationDomains() {
 export function OrganizationDomainsContent() {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
-  const [filters, setFilters] = useState({ projectId: '', environmentId: '', search: '', page: 1, pageSize: 30 })
+  const [filters, setFiltersState] = useState({ projectId: '', environmentId: '', search: '', page: 1, pageSize: 30 })
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const setFilters: typeof setFiltersState = (next) => {
+    setRowSelection({})
+    setFiltersState(next)
+  }
   const { data: projects = [] } = useQuery(queries.projects.list({ organizationId }))
   const { data: environments = [] } = useQuery({
     ...queries.environments.list({ projectId: filters.projectId }),
@@ -112,7 +121,9 @@ export function OrganizationDomainsContent() {
   const table = useReactTable({
     data: data?.results ?? [],
     columns,
-    state: { columnFilters },
+    state: { columnFilters, rowSelection },
+    onRowSelectionChange: setRowSelection,
+    enableRowSelection: (row) => getDomainTargets(row.original).length > 0,
     onColumnFiltersChange: (updater) => {
       const nextFilters = functionalUpdate(updater, columnFilters)
       const projectId = (nextFilters.find(({ id }) => id === 'projectId')?.value as string[] | undefined)?.[0] ?? ''
@@ -125,13 +136,13 @@ export function OrganizationDomainsContent() {
         page: 1,
       }))
     },
-    getRowId: (domain) => `${domain.environment_id}:${domain.domain}`,
+    getRowId: getDomainSelectionKey,
     manualFiltering: true,
     manualPagination: true,
     getCoreRowModel: getCoreRowModel(),
   })
   return (
-    <div className="container mx-auto mt-6 pb-10">
+    <div className="container mx-auto mt-6 pb-28">
       <Section className="gap-8">
         <div className="flex items-center justify-between border-b border-neutral pb-6">
           <Heading>Domains</Heading>
@@ -175,7 +186,23 @@ export function OrganizationDomainsContent() {
                         key={header.id}
                         className="border-r font-medium text-neutral-subtle last:border-r-0"
                       >
-                        {header.column.getCanFilter() ? (
+                        {header.column.id === 'domain' ? (
+                          <div className="flex items-center gap-3">
+                            <Checkbox
+                              aria-label="Select all domains on this page"
+                              checked={
+                                table.getIsAllPageRowsSelected()
+                                  ? true
+                                  : table.getIsSomePageRowsSelected()
+                                    ? 'indeterminate'
+                                    : false
+                              }
+                              disabled={isFetching || !table.getRowModel().rows.some((row) => row.getCanSelect())}
+                              onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
+                            />
+                            Domain
+                          </div>
+                        ) : header.column.getCanFilter() ? (
                           <TableFilter
                             column={header.column}
                             multiple={false}
@@ -218,7 +245,15 @@ export function OrganizationDomainsContent() {
                 ) : (
                   table
                     .getRowModel()
-                    .rows.map(({ id, original }) => <OrganizationDomainRow key={id} domain={original} />)
+                    .rows.map((row) => (
+                      <OrganizationDomainRow
+                        key={row.id}
+                        domain={row.original}
+                        selected={row.getIsSelected()}
+                        selectionDisabled={isFetching || !row.getCanSelect()}
+                        onSelectionChange={(selected) => row.toggleSelected(selected)}
+                      />
+                    ))
                 )}
               </Table.Body>
             </Table.Root>
@@ -233,6 +268,16 @@ export function OrganizationDomainsContent() {
           />
         </div>
       </Section>
+      <OrganizationDomainActionBar
+        domains={table.getSelectedRowModel().rows.map(({ original }) => original)}
+        disabled={isFetching}
+        onUnselect={() => table.resetRowSelection()}
+        onDeleted={(keys) =>
+          setRowSelection((current) =>
+            Object.fromEntries(Object.entries(current).filter(([key]) => !keys.includes(key)))
+          )
+        }
+      />
     </div>
   )
 }
