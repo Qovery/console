@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { twMerge } from '@qovery/shared/util-js'
+import { isTouchScreen, twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputTextProps {
@@ -137,7 +137,8 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               readOnly={readOnly}
               value={currentValue}
               placeholder={placeholder}
-              autoFocus={autoFocus}
+              // On phones the keyboard would open over half the screen as soon as the form appears
+              autoFocus={autoFocus && !isTouchScreen()}
               autoComplete={autoComplete}
               onChange={(e) => {
                 if (onChange) onChange(e)
