@@ -46,6 +46,11 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
 export const tableGridLayoutClassName =
   'grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]'
 
+// Below md the list keeps selection, name, status and actions; last operation and target version (columns 3 and 4)
+// are hidden and remain available on the service page
+const MOBILE_GRID_CLASS_NAME = 'max-md:grid-cols-[36px_minmax(0,1fr)_44px_124px]'
+const MOBILE_HIDDEN_COLUMN_INDEXES = [3, 4]
+
 export const ServiceListSkeleton = () => {
   return (
     <div>
@@ -386,7 +391,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
       <div className="flex grow flex-col justify-between">
         <Table.Root
           className={twMerge(
-            'w-full min-w-[1080px] overflow-x-scroll overflow-y-scroll rounded-lg text-xs xl:overflow-auto',
+            'w-full overflow-x-scroll overflow-y-scroll rounded-lg text-xs md:min-w-[1080px] xl:overflow-auto',
             className
           )}
           containerClassName={twMerge('rounded-none border-none', containerClassName)}
@@ -394,7 +399,10 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         >
           <Table.Header className="border-t border-neutral">
             {table.getHeaderGroups().map((headerGroup) => (
-              <Table.Row key={headerGroup.id} className={`h-9 w-full ${tableGridLayoutClassName}`}>
+              <Table.Row
+                key={headerGroup.id}
+                className={`h-9 w-full ${tableGridLayoutClassName} ${MOBILE_GRID_CLASS_NAME}`}
+              >
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
@@ -409,7 +417,8 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                     }
                     className={twMerge(
                       'relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0',
-                      i === 1 || i === 0 ? 'border-none p-0' : ''
+                      i === 1 || i === 0 ? 'border-none p-0' : '',
+                      MOBILE_HIDDEN_COLUMN_INDEXES.includes(i) && 'max-md:hidden'
                     )}
                   >
                     {header.column.getCanFilter() ? (
@@ -442,7 +451,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <Table.Row
-                  className={`h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle ${tableGridLayoutClassName}`}
+                  className={`h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle ${tableGridLayoutClassName} ${MOBILE_GRID_CLASS_NAME}`}
                   tabIndex={0}
                   onClick={() => handleNavigateToService(row.original.id)}
                   onKeyDown={(e) => {
@@ -454,6 +463,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                       key={cell.id}
                       className={clsx('relative flex h-full items-center border-r border-neutral last:border-r-0', {
                         'border-none p-0': i === 1 || i === 0,
+                        'max-md:hidden': MOBILE_HIDDEN_COLUMN_INDEXES.includes(i),
                       })}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
