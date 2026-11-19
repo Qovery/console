@@ -1,40 +1,58 @@
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { InvoiceStatusEnum } from 'qovery-typescript-axios'
-import { useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useUserRole } from '@qovery/shared/iam/feature'
-import { SETTINGS_BILLING_SUMMARY_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { Banner } from '@qovery/shared/ui'
-import useInvoices from '../hooks/use-invoices/use-invoices'
+import { useCanManageBilling } from '@qovery/shared/iam/feature'
+import { Banner, Button } from '@qovery/shared/ui'
+import { useInvoices } from '../hooks/use-invoices/use-invoices'
+import { isInvoicePayable, useRetryInvoicePayment } from '../retry-invoice-payment/use-retry-invoice-payment'
 
-export const InvoiceBanner = () => {
+export function InvoiceBanner() {
+  const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
-  const { organizationId = '' } = useParams()
-  const hideInvoiceBanner = useFeatureFlagEnabled('hide_invoice_banner')
-  const { roles } = useUserRole()
-  const { data: invoices, isLoading } = useInvoices({ organizationId })
-  const unpaidInvoices = invoices?.filter(
-    ({ status }) => status === InvoiceStatusEnum.NOT_PAID || status === InvoiceStatusEnum.PAYMENT_DUE
-  )
+  const isRetryPaymentEnabled = Boolean(useFeatureFlagEnabled('billing-retry-payment'))
+  const hideInvoiceBanner = Boolean(useFeatureFlagEnabled('hide_invoice_banner'))
+  const { canManageBilling } = useCanManageBilling(organizationId)
+  const isEnabled = Boolean(organizationId) && isRetryPaymentEnabled && canManageBilling && !hideInvoiceBanner
+  // Members without billing access would get a 403 here, so the query only runs for billing roles
+  const { data: invoices = [] } = useInvoices({ organizationId, enabled: isEnabled })
+  const { requestPayment, pendingInvoiceId } = useRetryInvoicePayment({ organizationId })
+  const unpaidInvoices = invoices.filter(isInvoicePayable)
 
-  const isAdminOrOwnerOfCompany = useMemo(
-    () =>
-      roles.some((role) => role.includes(`organization:${organizationId}:admin`)) ||
-      roles.some((role) => role.includes(`organization:${organizationId}:owner`)),
-    [roles, organizationId]
-  )
-
-  const onClick = () => {
-    navigate(SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL)
-  }
-
-  if (unpaidInvoices?.length === 0 || isLoading || !isAdminOrOwnerOfCompany || hideInvoiceBanner) {
+  if (!isEnabled || unpaidInvoices.length === 0) {
     return null
   }
 
+  const goToBillingDetails = () =>
+    navigate({ to: '/organization/$organizationId/settings/billing-details', params: { organizationId } })
+
+  // With several unpaid invoices, the user picks which one to pay from the invoices list
+  const retryPayment = () =>
+    unpaidInvoices.length === 1
+      ? requestPayment(unpaidInvoices[0])
+      : navigate({ to: '/organization/$organizationId/settings/billing-summary', params: { organizationId } })
+
   return (
-    <Banner color="yellow" buttonIconRight="arrow-right" buttonLabel="View invoices" onClickButton={onClick}>
-      <p>You have overdue invoices. Please update your payment method to avoid service interruption</p>
+    <Banner
+      color="yellow"
+      buttonLabel="Update payment method"
+      buttonIconRight="arrow-right"
+      onClickButton={goToBillingDetails}
+    >
+      {unpaidInvoices.length === 1
+        ? 'You have an overdue invoice.'
+        : `You have ${unpaidInvoices.length} overdue invoices.`}{' '}
+      Update your payment method or retry the payment to avoid service interruption.
+      <Button
+        type="button"
+        className="ml-4"
+        variant="outline"
+        color="yellow"
+        loading={pendingInvoiceId !== undefined}
+        onClick={retryPayment}
+      >
+        Retry payment
+      </Button>
     </Banner>
   )
 }
+
+export default InvoiceBanner

@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { useOrganization } from '@qovery/domains/organizations/feature'
+import { InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { AnnouncementBanner } from '@qovery/shared/posthog/feature'
 import { Banner } from '@qovery/shared/ui'
@@ -28,6 +28,7 @@ export function OrganizationBanners() {
       ) : null}
       <AnnouncementBanner />
       <OrganizationFreeTrialBanner />
+      <InvoiceBanner />
     </>
   )
 }
