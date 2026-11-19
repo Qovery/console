@@ -74,6 +74,12 @@ const ORGANIZATION_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/clusters',
   },
   {
+    id: 'domains',
+    label: 'Domains',
+    iconName: 'globe',
+    routeId: '/_authenticated/organization/$organizationId/domains',
+  },
+  {
     id: 'audit-logs',
     label: 'Audit Logs',
     iconName: 'lock-keyhole',

@@ -17,6 +17,7 @@ export function useEditCustomDomain({
 
   return useMutation(mutations.editCustomDomain, {
     onSuccess(_, { serviceType, serviceId }) {
+      queryClient.invalidateQueries({ queryKey: queries.customDomains.organizationList._def })
       queryClient.invalidateQueries({
         queryKey: queries.services.customDomains({ serviceId, serviceType }).queryKey,
       })
