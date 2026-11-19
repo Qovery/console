@@ -22,6 +22,7 @@ import { useEditBillingInfo } from '../hooks/use-edit-billing-info/use-edit-bill
 import ActivationPlanSelection, {
   getDefaultActivationPlan,
 } from './activation-plan-selection/activation-plan-selection'
+import { AwsMarketplaceCard } from './aws-marketplace-card/aws-marketplace-card'
 import BillingDetails from './billing-details/billing-details'
 
 function formatBillingInfo(data: BillingInfoRequest): BillingInfoRequest {
@@ -448,6 +449,7 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
                 onSubmit={submitBillingDetails}
               />
             </BlockContent>
+            <AwsMarketplaceCard />
           </div>
         </Section>
       </div>
