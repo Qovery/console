@@ -38,7 +38,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -102,7 +102,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -243,7 +243,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
-                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
                         data-state="closed"
                         type="button"
                       >
@@ -430,7 +430,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         data-state="closed"
                       >
                         <button
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
+                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
                           type="button"
                         >
                           <i
@@ -442,7 +442,7 @@ exports[`ServiceList should match snapshot 1`] = `
                       </span>
                       <button
                         aria-label="Deploy from another version"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
                         data-state="closed"
                         type="button"
                       >
@@ -487,7 +487,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -628,7 +628,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
-                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
                         data-state="closed"
                         type="button"
                       >
@@ -805,7 +805,7 @@ exports[`ServiceList should match snapshot 1`] = `
                       class="flex"
                     >
                       <button
-                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-fit justify-center pl-1 rounded-r-none border-r-0"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-fit justify-center pl-1 rounded-r-none border-r-0"
                         type="button"
                       >
                         <i
@@ -816,7 +816,7 @@ exports[`ServiceList should match snapshot 1`] = `
                       </button>
                       <button
                         aria-label="Deploy from another version"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
                         data-state="closed"
                         type="button"
                       >
@@ -861,7 +861,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -1304,7 +1304,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
-                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
                         data-state="closed"
                         type="button"
                       >
@@ -1500,7 +1500,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         data-state="closed"
                       >
                         <button
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
+                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
                           type="button"
                         >
                           <i
@@ -1512,7 +1512,7 @@ exports[`ServiceList should match snapshot 1`] = `
                       </span>
                       <button
                         aria-label="Deploy from another version"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
                         data-state="closed"
                         type="button"
                       >
@@ -1557,7 +1557,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -1793,7 +1793,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
-                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
                         data-state="closed"
                         type="button"
                       >
@@ -1989,7 +1989,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         data-state="closed"
                       >
                         <button
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
+                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
                           type="button"
                         >
                           <i
@@ -2001,7 +2001,7 @@ exports[`ServiceList should match snapshot 1`] = `
                       </span>
                       <button
                         aria-label="Deploy from another version"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
                         data-state="closed"
                         type="button"
                       >
@@ -2060,7 +2060,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="flex gap-3"
             >
               <button
-                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert items-center"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-brand-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert items-center"
                 data-state="closed"
                 disabled=""
               >
@@ -2073,7 +2073,7 @@ exports[`ServiceList should match snapshot 1`] = `
               <button
                 aria-expanded="false"
                 aria-haspopup="menu"
-                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-1.5 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center"
                 data-state="closed"
                 id="radix-_r_2g_"
                 type="button"
