@@ -4,6 +4,7 @@ import {
   ContainerCustomDomainApi,
   type CustomDomainRequest,
   HelmCustomDomainApi,
+  OrganizationCustomDomainApi,
 } from 'qovery-typescript-axios'
 import { type ServiceType } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
@@ -12,7 +13,40 @@ const customDomainApplicationApi = new ApplicationCustomDomainApi()
 const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
 
+const organizationCustomDomainApi = new OrganizationCustomDomainApi()
+
+export interface OrganizationCustomDomainFilters {
+  organizationId: string
+  projectId?: string
+  environmentId?: string
+  search?: string
+  page: number
+  pageSize: number
+}
+
 export const customDomains = createQueryKeys('customDomains', {
+  organizationList: ({
+    organizationId,
+    projectId,
+    environmentId,
+    search,
+    page,
+    pageSize,
+  }: OrganizationCustomDomainFilters) => ({
+    queryKey: [organizationId, { projectId, environmentId, search, page, pageSize }],
+    async queryFn({ signal }: { signal?: AbortSignal }) {
+      const response = await organizationCustomDomainApi.listOrganizationCustomDomain(
+        organizationId,
+        projectId,
+        environmentId,
+        search,
+        page,
+        pageSize,
+        { signal }
+      )
+      return response.data
+    },
+  }),
   customDomains: ({
     serviceId,
     serviceType,

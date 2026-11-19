@@ -1,0 +1,376 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`renders the domains list 1`] = `
+<body>
+  <div>
+    <div
+      class="container mx-auto mt-6 pb-10"
+    >
+      <section
+        class="flex flex-col gap-8"
+      >
+        <div
+          class="flex items-center justify-between border-b border-neutral pb-6"
+        >
+          <h1
+            class="text-neutral text-2xl font-medium"
+          >
+            Domains
+          </h1>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-plus "
+            />
+            New domain
+          </button>
+        </div>
+        <div
+          aria-busy="false"
+          class="space-y-4"
+        >
+          <div
+            class="flex flex-wrap items-center gap-3 rounded-md border border-neutral bg-surface-neutral-subtle p-3"
+          >
+            <span
+              class="mr-auto text-sm text-neutral-subtle"
+            >
+              61
+               domains
+            </span>
+            <div
+              class="w-48"
+            >
+              <div
+                class="input input--select"
+                data-testid="select"
+              >
+                <label
+                  class="input__label translate-y-[7px] text-sm"
+                  for="Project"
+                >
+                  Project
+                </label>
+                <div
+                  class=" css-b62m3t-container"
+                >
+                  <span
+                    class="css-1f43avz-a11yText-A11yText"
+                    id="react-select-6-live-region"
+                  />
+                  <span
+                    aria-atomic="false"
+                    aria-live="polite"
+                    aria-relevant="additions text"
+                    class="css-1f43avz-a11yText-A11yText"
+                    role="log"
+                  />
+                  <div
+                    class="input-select__control css-13cymwt-control"
+                  >
+                    <div
+                      class="input-select__value-container css-1fdsijx-ValueContainer"
+                    >
+                      <div
+                        class="input-select__placeholder css-1jqq78o-placeholder"
+                        id="react-select-6-placeholder"
+                      >
+                        Select...
+                      </div>
+                      <input
+                        aria-activedescendant=""
+                        aria-autocomplete="list"
+                        aria-describedby="react-select-6-placeholder"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-readonly="true"
+                        class="css-mohuvp-dummyInput-DummyInput"
+                        id="Project"
+                        inputmode="none"
+                        role="combobox"
+                        tabindex="0"
+                        value=""
+                      />
+                    </div>
+                    <div
+                      class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-tj5bde-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="Project"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+                <input
+                  name="Project"
+                  type="hidden"
+                  value=""
+                />
+                <div
+                  class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-angle-down text-sm text-neutral-subtle"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="w-48"
+            >
+              <div
+                class="input input--select !pointer-events-none !border-neutral !bg-surface-neutral-subtle"
+                data-testid="select"
+              >
+                <label
+                  class="input__label translate-y-[7px] text-sm !text-neutral-subtle"
+                  for="Environment"
+                >
+                  Environment
+                </label>
+                <div
+                  class="input-select--is-disabled css-3iigni-container"
+                >
+                  <span
+                    class="css-1f43avz-a11yText-A11yText"
+                    id="react-select-7-live-region"
+                  />
+                  <span
+                    aria-atomic="false"
+                    aria-live="polite"
+                    aria-relevant="additions text"
+                    class="css-1f43avz-a11yText-A11yText"
+                    role="log"
+                  />
+                  <div
+                    aria-disabled="true"
+                    class="input-select__control input-select__control--is-disabled css-16xfy0z-control"
+                  >
+                    <div
+                      class="input-select__value-container css-1fdsijx-ValueContainer"
+                    >
+                      <div
+                        class="input-select__placeholder css-1jqq78o-placeholder"
+                        id="react-select-7-placeholder"
+                      >
+                        Select...
+                      </div>
+                      <input
+                        aria-activedescendant=""
+                        aria-autocomplete="list"
+                        aria-describedby="react-select-7-placeholder"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-readonly="true"
+                        class="css-mohuvp-dummyInput-DummyInput"
+                        disabled=""
+                        id="Environment"
+                        inputmode="none"
+                        role="combobox"
+                        tabindex="0"
+                        value=""
+                      />
+                    </div>
+                    <div
+                      class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                    >
+                      <span
+                        class="input-select__indicator-separator css-894a34-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          class="css-tj5bde-Svg"
+                          focusable="false"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          width="20"
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="Environment"
+                  type="hidden"
+                  value=""
+                />
+                <div
+                  class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-angle-down text-sm text-neutral-disabled"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="relative w-56"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle"
+              />
+              <input
+                aria-label="Search domains"
+                class="w-full rounded-md border border-neutral bg-surface-neutral pl-10 pr-6 text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color] h-9 text-sm"
+                data-testid="input-search"
+                name="search"
+                placeholder="Search domains..."
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
+          >
+            <table
+              class="min-w-full divide-y divide-neutral text-sm text-neutral"
+            >
+              <thead>
+                <tr>
+                  <th
+                    class="h-11 border-neutral px-4 text-left font-code font-normal border-r text-xs last:border-r-0"
+                  >
+                    Domain
+                  </th>
+                  <th
+                    class="h-11 border-neutral px-4 text-left font-code font-normal border-r text-xs last:border-r-0"
+                  >
+                    Project
+                  </th>
+                  <th
+                    class="h-11 border-neutral px-4 text-left font-code font-normal border-r text-xs last:border-r-0"
+                  >
+                    Environment
+                  </th>
+                  <th
+                    class="h-11 border-neutral px-4 text-left font-code font-normal border-r text-xs last:border-r-0"
+                  >
+                    Routes
+                  </th>
+                  <th
+                    class="h-11 border-neutral px-4 text-left font-code font-normal border-r text-xs last:border-r-0"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class="divide-y divide-neutral"
+              >
+                <tr>
+                  <td>
+                    app.example.com
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="flex justify-between "
+          >
+            <div
+              class="flex items-center gap-0.5"
+            >
+              <button
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-8 justify-center"
+                data-testid="button-previous-page"
+                disabled=""
+                type="button"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-chevron-left "
+                />
+              </button>
+              <button
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-8 justify-center"
+                data-testid="button-next-page"
+                type="button"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-chevron-right "
+                />
+              </button>
+            </div>
+            <div
+              class="flex items-center gap-3"
+            >
+              <div
+                class="!w-16 group relative flex items-center gap-4"
+              >
+                <select
+                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral bg-surface-neutral px-3 pr-6 text-sm text-neutral transition-colors hover:bg-surface-neutral-component focus:border-brand-strong focus:outline focus:outline-[2px] focus:outline-offset-0 focus:outline-brand-outline disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-neutral-subtle disabled:hover:bg-surface-neutral"
+                  data-testid="select-page-size"
+                  name="pageSize"
+                >
+                  <option
+                    value="10"
+                  >
+                    10
+                  </option>
+                  <option
+                    value="30"
+                  >
+                    30
+                  </option>
+                  <option
+                    value="50"
+                  >
+                    50
+                  </option>
+                  <option
+                    value="100"
+                  >
+                    100
+                  </option>
+                </select>
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-chevron-down pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+`;

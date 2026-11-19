@@ -1,0 +1,68 @@
+import { useQuery } from '@tanstack/react-query'
+import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { OrganizationDomains, OrganizationDomainsContent } from './organization-domains'
+
+const mockList = jest.fn()
+let mockRoles = ['organization:org-1:admin']
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: 'org-1' }),
+}))
+jest.mock('@tanstack/react-query', () => ({ ...jest.requireActual('@tanstack/react-query'), useQuery: jest.fn() }))
+jest.mock('@qovery/shared/iam/feature', () => ({ useUserRole: () => ({ roles: mockRoles, loading: false }) }))
+jest.mock('./organization-domain-row', () => ({
+  OrganizationDomainRow: ({ domain }: { domain: OrganizationCustomDomainResponse }) => (
+    <tr>
+      <td>{domain.domain}</td>
+    </tr>
+  ),
+}))
+
+const result = { results: [{ domain: 'app.example.com', environment_id: 'env' }], total_count: 61 }
+const refetch = jest.fn()
+let mockState = { data: result, isLoading: false, isFetching: false, isError: false, refetch }
+
+beforeEach(() => {
+  mockList.mockClear()
+  mockRoles = ['organization:org-1:admin']
+  mockState = { data: result, isLoading: false, isFetching: false, isError: false, refetch }
+  jest.mocked(useQuery).mockImplementation((options: unknown) => {
+    const key = (options as { queryKey: unknown[] }).queryKey
+    if (key[0] === 'customDomains') {
+      mockList(key)
+      return mockState as ReturnType<typeof useQuery>
+    }
+    return { data: [] } as unknown as ReturnType<typeof useQuery>
+  })
+})
+
+it('restricts organization domains to administrators', () => {
+  mockRoles = []
+  renderWithProviders(<OrganizationDomains />)
+  expect(screen.getByText('Administrator access required')).toBeInTheDocument()
+  expect(mockList).not.toHaveBeenCalled()
+})
+
+it('uses server pagination and resets to the first page when searching', async () => {
+  const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  await userEvent.click(screen.getByTestId('button-next-page'))
+  expect(mockList.mock.lastCall[0]).toEqual(expect.arrayContaining([expect.objectContaining({ page: 2 })]))
+  await userEvent.type(screen.getByRole('textbox', { name: 'Search domains' }), 'example')
+  expect(mockList.mock.lastCall[0]).toEqual(
+    expect.arrayContaining([expect.objectContaining({ page: 1, search: 'example' })])
+  )
+})
+
+it('offers retry when listing fails', async () => {
+  mockState = { ...mockState, isError: true }
+  const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+  expect(refetch).toHaveBeenCalled()
+})
+
+it('renders the domains list', () => {
+  const { baseElement } = renderWithProviders(<OrganizationDomainsContent />)
+  expect(screen.getByText('app.example.com')).toBeInTheDocument()
+  expect(baseElement).toMatchSnapshot()
+})
