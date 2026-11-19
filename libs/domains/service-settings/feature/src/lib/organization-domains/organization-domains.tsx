@@ -1,23 +1,32 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { useState } from 'react'
+import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  flexRender,
+  functionalUpdate,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
+import { useMemo, useState } from 'react'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import {
   Button,
   EmptyState,
   Heading,
   Icon,
-  InputSearch,
   LoaderSpinner,
   Pagination,
   Section,
+  TableFilter,
+  TableFilterSearch,
   TablePrimitives,
   useModal,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { OrganizationDomainCreateModal } from './organization-domain-create-modal'
-import { OrganizationDomainHeaderFilter } from './organization-domain-header-filter'
 import { OrganizationDomainRow } from './organization-domain-row'
 
 const { Table } = TablePrimitives
@@ -67,6 +76,58 @@ export function OrganizationDomainsContent() {
     }),
     keepPreviousData: true,
   })
+  const columns = useMemo<ColumnDef<OrganizationCustomDomainResponse>[]>(
+    () => [
+      { id: 'domain', header: 'Domain', enableColumnFilter: false },
+      ...[
+        { id: 'projectId', header: 'Project', options: projects },
+        { id: 'environmentId', header: 'Environment', options: environments },
+      ].map(({ id, header, options }) => ({
+        id,
+        header,
+        accessorFn: (domain: OrganizationCustomDomainResponse) =>
+          id === 'projectId' ? domain.project.id : domain.environment_id,
+        meta: {
+          facetedValues: new Map(options.map(({ id }) => [id, 1])),
+          customFacetEntry: ({ value }: { value: string }) => (
+            <span className="min-w-0 truncate text-sm font-medium">
+              {options.find((option) => option.id === value)?.name}
+            </span>
+          ),
+          customFilterValue: ({ filterValue }: { filterValue: string[] }) =>
+            options.find((option) => option.id === filterValue[0])?.name,
+        },
+      })),
+      { id: 'routes', header: 'Routes', enableColumnFilter: false },
+      { id: 'actions', header: 'Actions', enableColumnFilter: false },
+    ],
+    [projects, environments]
+  )
+  const columnFilters: ColumnFiltersState = [
+    ...(filters.projectId ? [{ id: 'projectId', value: [filters.projectId] }] : []),
+    ...(filters.environmentId ? [{ id: 'environmentId', value: [filters.environmentId] }] : []),
+  ]
+  const table = useReactTable({
+    data: data?.results ?? [],
+    columns,
+    state: { columnFilters },
+    onColumnFiltersChange: (updater) => {
+      const nextFilters = functionalUpdate(updater, columnFilters)
+      const projectId = (nextFilters.find(({ id }) => id === 'projectId')?.value as string[] | undefined)?.[0] ?? ''
+      const environmentId =
+        (nextFilters.find(({ id }) => id === 'environmentId')?.value as string[] | undefined)?.[0] ?? ''
+      setFilters((current) => ({
+        ...current,
+        projectId,
+        environmentId: projectId === current.projectId ? environmentId : '',
+        page: 1,
+      }))
+    },
+    getRowId: (domain) => `${domain.environment_id}:${domain.domain}`,
+    manualFiltering: true,
+    manualPagination: true,
+    getCoreRowModel: getCoreRowModel(),
+  })
   return (
     <div className="container mx-auto mt-6 pb-10">
       <Section className="gap-8">
@@ -86,13 +147,11 @@ export function OrganizationDomainsContent() {
           <div className="overflow-hidden rounded-lg border border-neutral">
             <div className="flex items-center justify-between gap-3 bg-surface-neutral-subtle px-4 py-3">
               <span className="text-xs text-neutral-subtle">{data?.total_count ?? 0} domains</span>
-              <InputSearch
-                size="sm"
-                className="w-52"
-                ariaLabel="Search domains"
+              <TableFilterSearch
+                aria-label="Search domains"
                 placeholder="Search..."
                 value={filters.search}
-                onChange={(search) => setFilters({ ...filters, search, page: 1 })}
+                onChange={(event) => setFilters({ ...filters, search: event.target.value, page: 1 })}
               />
             </div>
             <Table.Root
@@ -107,28 +166,26 @@ export function OrganizationDomainsContent() {
                 <col className="w-28" />
               </colgroup>
               <Table.Header>
-                <Table.Row>
-                  <Table.ColumnHeaderCell className="h-11 border-r text-xs">Domain</Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell className="h-11 border-r text-xs">
-                    <OrganizationDomainHeaderFilter
-                      label="Project"
-                      value={filters.projectId}
-                      options={projects}
-                      onChange={(projectId) => setFilters({ ...filters, projectId, environmentId: '', page: 1 })}
-                    />
-                  </Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell className="h-11 border-r text-xs">
-                    <OrganizationDomainHeaderFilter
-                      label="Environment"
-                      value={filters.environmentId}
-                      options={environments}
-                      disabled={!filters.projectId}
-                      onChange={(environmentId) => setFilters({ ...filters, environmentId, page: 1 })}
-                    />
-                  </Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell className="h-11 border-r text-xs">Routes</Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell className="h-11 text-xs">Actions</Table.ColumnHeaderCell>
-                </Table.Row>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <Table.Row key={headerGroup.id} className="text-xs">
+                    {headerGroup.headers.map((header) => (
+                      <Table.ColumnHeaderCell
+                        key={header.id}
+                        className="border-r font-medium text-neutral-subtle last:border-r-0"
+                      >
+                        {header.column.getCanFilter() ? (
+                          <TableFilter
+                            column={header.column}
+                            multiple={false}
+                            disabled={header.column.id === 'environmentId' && !filters.projectId}
+                          />
+                        ) : (
+                          flexRender(header.column.columnDef.header, header.getContext())
+                        )}
+                      </Table.ColumnHeaderCell>
+                    ))}
+                  </Table.Row>
+                ))}
               </Table.Header>
               <Table.Body>
                 {isError ? (
@@ -157,9 +214,9 @@ export function OrganizationDomainsContent() {
                     </Table.Cell>
                   </Table.Row>
                 ) : (
-                  data.results.map((domain) => (
-                    <OrganizationDomainRow key={`${domain.environment_id}:${domain.domain}`} domain={domain} />
-                  ))
+                  table
+                    .getRowModel()
+                    .rows.map(({ id, original }) => <OrganizationDomainRow key={id} domain={original} />)
                 )}
               </Table.Body>
             </Table.Root>

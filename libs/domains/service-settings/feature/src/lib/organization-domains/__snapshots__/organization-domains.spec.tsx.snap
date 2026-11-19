@@ -43,23 +43,20 @@ exports[`renders the domains list 1`] = `
                 61
                  domains
               </span>
-              <div
-                class="relative w-52"
+              <span
+                class="group relative"
               >
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-magnifying-glass pointer-events-none absolute left-2 top-1/2 block -translate-y-1/2 text-ssm leading-none text-neutral-subtle"
+                  class="fa-regular fa-magnifying-glass absolute left-2 top-1/2 block -translate-y-1/2 text-xs text-neutral-subtle transition-colors"
                 />
                 <input
                   aria-label="Search domains"
-                  class="w-full rounded-md border border-neutral bg-surface-neutral text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color] h-7 pl-7 pr-7 text-ssm"
-                  data-testid="input-search"
-                  name="search"
+                  class="w-36 rounded-md border border-neutral bg-background py-1.5 pl-7 text-sm outline-0 transition-colors placeholder:text-neutral-subtle hover:border-neutral-component focus:outline-none"
                   placeholder="Search..."
-                  type="text"
                   value=""
                 />
-              </div>
+              </span>
             </div>
             <div
               class="no-scrollbar overflow-y-hidden overflow-x-scroll border border-neutral bg-surface-neutral rounded-none border-x-0 border-b-0"
@@ -83,66 +80,64 @@ exports[`renders the domains list 1`] = `
                   />
                 </colgroup>
                 <thead>
-                  <tr>
+                  <tr
+                    class="text-xs"
+                  >
                     <th
-                      class="border-neutral px-4 text-left font-code font-normal h-11 border-r text-xs"
+                      class="h-11 border-neutral px-4 text-left font-code border-r font-medium text-neutral-subtle last:border-r-0"
                     >
                       Domain
                     </th>
                     <th
-                      class="border-neutral px-4 text-left font-code font-normal h-11 border-r text-xs"
+                      class="h-11 border-neutral px-4 text-left font-code border-r font-medium text-neutral-subtle last:border-r-0"
                     >
-                      <button
-                        aria-expanded="false"
-                        aria-haspopup="menu"
-                        aria-label="Filter by project"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral max-w-full font-code text-xs"
-                        data-state="closed"
-                        id="radix-_r_10_"
-                        type="button"
+                      <div
+                        class="relative inline-block"
                       >
-                        <span
-                          class="truncate"
+                        <button
+                          aria-expanded="false"
+                          aria-haspopup="dialog"
+                          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                          data-state="closed"
+                          type="button"
                         >
                           Project
-                        </span>
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-chevron-down "
-                        />
-                      </button>
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-chevron-down "
+                          />
+                        </button>
+                      </div>
                     </th>
                     <th
-                      class="border-neutral px-4 text-left font-code font-normal h-11 border-r text-xs"
+                      class="h-11 border-neutral px-4 text-left font-code border-r font-medium text-neutral-subtle last:border-r-0"
                     >
-                      <button
-                        aria-expanded="false"
-                        aria-haspopup="menu"
-                        aria-label="Filter by environment"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral max-w-full font-code text-xs"
-                        data-state="closed"
-                        disabled=""
-                        id="radix-_r_12_"
-                        type="button"
+                      <div
+                        class="relative inline-block"
                       >
-                        <span
-                          class="truncate"
+                        <button
+                          aria-expanded="false"
+                          aria-haspopup="dialog"
+                          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                          data-state="closed"
+                          disabled=""
+                          type="button"
                         >
                           Environment
-                        </span>
-                        <i
-                          aria-hidden="true"
-                          class="fa-regular fa-chevron-down "
-                        />
-                      </button>
+                          <i
+                            aria-hidden="true"
+                            class="fa-regular fa-chevron-down "
+                          />
+                        </button>
+                      </div>
                     </th>
                     <th
-                      class="border-neutral px-4 text-left font-code font-normal h-11 border-r text-xs"
+                      class="h-11 border-neutral px-4 text-left font-code border-r font-medium text-neutral-subtle last:border-r-0"
                     >
                       Routes
                     </th>
                     <th
-                      class="border-neutral px-4 text-left font-code font-normal h-11 text-xs"
+                      class="h-11 border-neutral px-4 text-left font-code border-r font-medium text-neutral-subtle last:border-r-0"
                     >
                       Actions
                     </th>

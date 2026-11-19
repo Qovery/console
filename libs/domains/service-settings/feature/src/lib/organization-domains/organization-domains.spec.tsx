@@ -19,7 +19,10 @@ jest.mock('./organization-domain-row', () => ({
   ),
 }))
 
-const result = { results: [{ domain: 'app.example.com', environment_id: 'env' }], total_count: 61 }
+const result = {
+  results: [{ domain: 'app.example.com', environment_id: 'env', project: { id: 'project-1', name: 'Project one' } }],
+  total_count: 61,
+}
 const refetch = jest.fn()
 let mockState = { data: result, isLoading: false, isFetching: false, isError: false, refetch }
 
@@ -78,9 +81,9 @@ it('renders the domains list', () => {
 
 it('filters from the column headers and clears the environment when changing projects', async () => {
   const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
-  const environmentFilter = screen.getByRole('button', { name: 'Filter by environment' })
+  const environmentFilter = screen.getByRole('button', { name: 'Environment' })
   expect(environmentFilter).toBeDisabled()
-  const projectFilter = screen.getByRole('button', { name: 'Filter by project' })
+  const projectFilter = screen.getByRole('button', { name: 'Project' })
   expect(projectFilter.closest('th')).toBeInTheDocument()
   await userEvent.click(projectFilter)
   await userEvent.click(screen.getByRole('menuitem', { name: 'Project one' }))
@@ -90,13 +93,12 @@ it('filters from the column headers and clears the environment when changing pro
   expect(mockList.mock.lastCall[0]).toEqual(
     expect.arrayContaining([expect.objectContaining({ projectId: 'project-1', environmentId: 'env-1', page: 2 })])
   )
-  await userEvent.click(screen.getByRole('button', { name: 'Filter by project: Project one' }))
+  await userEvent.click(screen.getByRole('button', { name: 'Project one' }))
   await userEvent.click(screen.getByRole('menuitem', { name: 'Project two' }))
   expect(mockList.mock.lastCall[0]).toEqual(
     expect.arrayContaining([expect.objectContaining({ projectId: 'project-2', environmentId: undefined, page: 1 })])
   )
-  await userEvent.click(screen.getByRole('button', { name: 'Filter by project: Project two' }))
-  await userEvent.click(screen.getByRole('menuitem', { name: 'All projects' }))
+  await userEvent.click(screen.getByRole('button', { name: 'Clear Project filter' }))
   expect(mockList.mock.lastCall[0]).toEqual(
     expect.arrayContaining([expect.objectContaining({ projectId: undefined, environmentId: undefined, page: 1 })])
   )
@@ -106,6 +108,6 @@ it('keeps the header filters available when there are no matching domains', () =
   mockState = { ...mockState, data: { results: [], total_count: 0 } }
   renderWithProviders(<OrganizationDomainsContent />)
   const table = screen.getByRole('table')
-  expect(within(table).getByRole('button', { name: 'Filter by project' })).toBeInTheDocument()
+  expect(within(table).getByRole('button', { name: 'Project' })).toBeInTheDocument()
   expect(within(table).getByText(/No domains configured/)).toBeInTheDocument()
 })
