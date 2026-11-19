@@ -97,6 +97,39 @@ describe('InvoicesList', () => {
     expect(listProps.onFilterByYear).toHaveBeenCalledWith('2018')
   })
 
+  it('should download every listed invoice', async () => {
+    const onDownloadAll = jest.fn()
+    const { userEvent } = renderWithProviders(<InvoicesList {...listProps} onDownloadAll={onDownloadAll} />)
+
+    await userEvent.click(screen.getByRole('button', { name: /Download 3 invoices/ }))
+
+    expect(onDownloadAll).toHaveBeenCalledWith(invoicesMock.slice(0, 3))
+  })
+
+  it('should not show the download all button without a handler', () => {
+    renderWithProviders(<InvoicesList {...listProps} />)
+    expect(screen.queryByTestId('download-all-invoices-btn')).not.toBeInTheDocument()
+  })
+
+  it('should show progress and allow cancelling a bulk download', async () => {
+    const onCancelDownloadAll = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <InvoicesList
+        {...listProps}
+        onDownloadAll={jest.fn()}
+        onCancelDownloadAll={onCancelDownloadAll}
+        downloadAllProgress={{ total: 3, completed: 1, failed: 0 }}
+      />
+    )
+
+    expect(screen.getByText('Downloading 2 of 3')).toBeInTheDocument()
+    expect(screen.queryByTestId('download-all-invoices-btn')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(onCancelDownloadAll).toHaveBeenCalled()
+  })
+
   it('should render empty state when there are no invoices', () => {
     renderWithProviders(<InvoicesList invoices={[]} />)
     screen.getByText("You don't have any invoices yet.")

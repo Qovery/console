@@ -1,6 +1,6 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { useUserRole } from '@qovery/shared/iam/feature'
+import { useCanManageBilling, useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings')({
@@ -14,6 +14,7 @@ function RouteComponent() {
   } = useRouterState()
   const { roles } = useUserRole()
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
+  const { canManageBilling } = useCanManageBilling(organizationId)
 
   const isOrganizationAdmin = roles.some((role) => role.includes(`organization:${organizationId}:admin`))
 
@@ -131,7 +132,7 @@ function RouteComponent() {
   const LINKS_SETTINGS = [
     generalLink,
     teamLink,
-    billingPlansLink,
+    ...(canManageBilling ? [billingPlansLink] : []),
     labelsAnnotationsLink,
     argoCdIntegrationLink,
     containerRegistriesLink,

@@ -12,8 +12,13 @@ import {
 import { type Invoice } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
-import { Icon, InputSelectSmall, TableFilter, TablePrimitives } from '@qovery/shared/ui'
+import { Button, Icon, InputSelectSmall, ProgressBar, TableFilter, TablePrimitives } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import {
+  type DownloadInvoicesProgress,
+  triggerFileDownload,
+  useDownloadInvoices,
+} from '../../hooks/use-download-invoices/use-download-invoices'
 import { useInvoiceUrl } from '../../hooks/use-invoice-url/use-invoice-url'
 import { useInvoices } from '../../hooks/use-invoices/use-invoices'
 import TableRowInvoice from './table-row-invoice/table-row-invoice'
@@ -36,6 +41,9 @@ export interface InvoicesListProps {
   yearsForSorting?: Value[]
   onFilterByYear?: (year?: string) => void
   idOfInvoiceToDownload?: string
+  onDownloadAll?: (invoices: Invoice[]) => void
+  onCancelDownloadAll?: () => void
+  downloadAllProgress?: DownloadInvoicesProgress
 }
 
 export function InvoicesList(props: InvoicesListProps) {
@@ -97,12 +105,31 @@ export function InvoicesList(props: InvoicesListProps) {
     },
   })
 
+  // Invoices left after the status and year filters, in the order shown
+  const listedInvoices = table.getRowModel().rows.map((row) => row.original)
+  const downloadAllProgress = props.downloadAllProgress
+
   return (
     <div className="mb-3">
       <div className="mb-4 mt-7 flex items-center justify-between">
         <h1 className="text-base font-medium text-neutral">Invoices</h1>
         {hasInvoices ? (
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
+            {props.onDownloadAll && !downloadAllProgress ? (
+              <Button
+                data-testid="download-all-invoices-btn"
+                type="button"
+                variant="outline"
+                color="neutral"
+                size="md"
+                className="h-9 gap-2"
+                disabled={listedInvoices.length === 0}
+                onClick={() => props.onDownloadAll?.(listedInvoices)}
+              >
+                <Icon iconName="download" iconStyle="regular" />
+                Download {listedInvoices.length} invoice{listedInvoices.length === 1 ? '' : 's'}
+              </Button>
+            ) : null}
             <InputSelectSmall
               dataTestId="year-select"
               items={props.yearsForSorting || []}
@@ -116,6 +143,33 @@ export function InvoicesList(props: InvoicesListProps) {
           </div>
         ) : null}
       </div>
+      {downloadAllProgress ? (
+        <div
+          data-testid="download-all-invoices-progress"
+          className="mb-4 flex items-center gap-4 rounded border border-neutral bg-surface-neutral-subtle px-4 py-3"
+        >
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <p className="text-sm text-neutral">
+              Downloading{' '}
+              {Math.min(downloadAllProgress.completed + downloadAllProgress.failed + 1, downloadAllProgress.total)} of{' '}
+              {downloadAllProgress.total}
+              {downloadAllProgress.failed > 0 ? ` (${downloadAllProgress.failed} failed)` : ''}
+            </p>
+            <ProgressBar.Root>
+              <ProgressBar.Cell
+                value={((downloadAllProgress.completed + downloadAllProgress.failed) / downloadAllProgress.total) * 100}
+                color="var(--brand-9)"
+              />
+            </ProgressBar.Root>
+            <p className="text-xs text-neutral-subtle">
+              Your browser may ask you to allow multiple downloads from this site.
+            </p>
+          </div>
+          <Button type="button" variant="outline" color="neutral" size="md" onClick={props.onCancelDownloadAll}>
+            Cancel
+          </Button>
+        </div>
+      ) : null}
       {hasInvoices ? (
         <Table.Root className="w-full text-xs">
           <Table.Header>
@@ -171,6 +225,7 @@ export function InvoicesListFeature() {
   const { data: dataInvoices = [] } = useInvoices({ organizationId, suspense: true })
   const [invoices, setInvoices] = useState<Invoice[]>(dataInvoices)
   const { mutateAsync: mutateAsyncInvoice } = useInvoiceUrl()
+  const { downloadAll, cancel, progress } = useDownloadInvoices({ organizationId })
 
   const downloadOne = async (invoiceId: string) => {
     if (organizationId && invoiceId) {
@@ -179,10 +234,7 @@ export function InvoicesListFeature() {
       try {
         const invoiceUrl = await mutateAsyncInvoice({ organizationId, invoiceId })
         if (invoiceUrl?.url) {
-          const link = document.createElement('a')
-          link.href = invoiceUrl.url
-          link.download = invoiceUrl.url.substring(invoiceUrl.url.lastIndexOf('/') + 1)
-          link.click()
+          triggerFileDownload(invoiceUrl.url)
           setIdOfInvoiceToDownload(undefined)
         }
       } catch (error) {
@@ -220,6 +272,9 @@ export function InvoicesListFeature() {
       yearsForSorting={yearsFilterOptions}
       onFilterByYear={filterByYear}
       idOfInvoiceToDownload={idOfInvoiceToDownload}
+      onDownloadAll={downloadAll}
+      onCancelDownloadAll={cancel}
+      downloadAllProgress={progress}
     />
   )
 }
