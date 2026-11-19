@@ -237,7 +237,7 @@ describe('usage', () => {
     useScenario('typical')
     const { userEvent } = renderWithProviders(<SkillPresetUsage />)
 
-    const heading = await screen.findByRole('heading', { name: 'Top members' })
+    const heading = await screen.findByRole('heading', { name: 'Top 5 members' })
     expect(screen.getByText('Served from cache')).toBeInTheDocument()
     const topMembers = heading.parentElement as HTMLElement
     const [firstMember] = within(topMembers).getAllByRole('button')
@@ -251,7 +251,7 @@ describe('usage', () => {
     useScenario('typical')
     const { userEvent } = renderWithProviders(<SkillPresetUsage />)
 
-    const heading = await screen.findByRole('heading', { name: 'Top skills' })
+    const heading = await screen.findByRole('heading', { name: 'Top 5 skills' })
     const topSkills = heading.parentElement as HTMLElement
     const [firstSkill] = within(topSkills).getAllByRole('button')
     await userEvent.click(firstSkill)

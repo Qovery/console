@@ -50,9 +50,11 @@ export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutPr
     <Section className="px-8 pb-8 pt-6">
       <SettingsHeading
         title={canManage ? pageTitles[activeTab] : 'Skills registry'}
-        description={isLoading ? undefined : canManage ? ADMIN_DESCRIPTION : MEMBER_DESCRIPTION}
+        description={
+          isLoading || activeTab === 'usage' ? undefined : canManage ? ADMIN_DESCRIPTION : MEMBER_DESCRIPTION
+        }
       >
-        {!isLoading && canManage && (
+        {!isLoading && canManage && activeTab !== 'usage' && (
           <Tooltip content={AI_FEATURES_OFF_TOOLTIP} disabled={aiFeaturesEnabled}>
             {/* A disabled button gets no pointer or focus events: the wrapper carries the tooltip. */}
             <span tabIndex={aiFeaturesEnabled ? undefined : 0} className="inline-flex">

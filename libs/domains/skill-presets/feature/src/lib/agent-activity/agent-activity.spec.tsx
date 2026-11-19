@@ -73,31 +73,34 @@ describe('AgentActivity', () => {
     useScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
 
-    expect(await screen.findByRole('heading', { name: 'Breakdown' })).toBeInTheDocument()
+    await userEvent.click(await screen.findByRole('tab', { name: 'Breakdown' }))
+    expect(screen.getByRole('heading', { name: 'Breakdown' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Activity', level: 1 })).toBeInTheDocument()
-    expect(screen.getByTestId('coverage-note')).toHaveTextContent('Prompts and code are never collected.')
+    expect(screen.queryByTestId('coverage-note')).not.toBeInTheDocument()
     await userEvent.hover(screen.getByLabelText('About activity attribution'))
     expect(await screen.findByRole('tooltip')).toHaveTextContent(
       'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
     )
     await userEvent.unhover(screen.getByLabelText('About activity attribution'))
-    expect(screen.getByText('Policy tokens with activity')).toBeInTheDocument()
+    expect(screen.queryByText('Policy tokens with activity')).not.toBeInTheDocument()
     expect(screen.getByTestId('chart-summary')).toHaveTextContent(/\d+ allowed and \d+ denied actions/)
     expect(within(screen.getByTestId('denied-actions')).getAllByText(/payments-production/).length).toBeGreaterThan(0)
     // Denied rows stand out, and both kinds of actors appear in the feed.
+    await userEvent.click(screen.getByRole('tab', { name: 'Recent actions' }))
     expect(document.querySelectorAll('tr[data-outcome="DENIED"]').length).toBeGreaterThan(0)
     expect(document.querySelectorAll('[data-actor-kind="policy-token"]').length).toBeGreaterThan(0)
     const suggestions = screen.getByTestId('activity-suggestions')
-    expect(within(suggestions).getByText(/actions were denied in/)).toBeInTheDocument()
-    expect(within(suggestions).getByText(/calls\s+denied by its policy/)).toBeInTheDocument()
+    expect(within(suggestions).getByText(/actions denied in/)).toBeInTheDocument()
+    expect(within(suggestions).getAllByRole('listitem')).toHaveLength(3)
   })
 
   it('switches the breakdown between members, tokens and skills', async () => {
     useScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
+    await userEvent.click(await screen.findByRole('tab', { name: 'Breakdown' }))
     await screen.findByTestId('breakdown-member')
 
-    await userEvent.click(screen.getByRole('radio', { name: /By token/ }))
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Breakdown' }), 'token')
     const tokens = within(screen.getByTestId('breakdown-token'))
     expect(tokens.getByRole('button', { name: 'Policy token ci-deployer' })).toBeInTheDocument()
     expect(tokens.getByText('Deleted')).toBeInTheDocument()
@@ -105,7 +108,7 @@ describe('AgentActivity', () => {
     expect(tokens.getByText('Unknown policy token (older records)')).toBeInTheDocument()
     expect(tokens.queryByRole('button', { name: /Unknown policy token/ })).not.toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('radio', { name: /By skill/ }))
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Breakdown' }), 'skill')
     expect(
       within(screen.getByTestId('breakdown-skill')).getByRole('button', { name: 'No skill (MCP or API)' })
     ).toBeInTheDocument()
@@ -114,15 +117,16 @@ describe('AgentActivity', () => {
   it('filters the whole page to a token from its row, in the URL', async () => {
     useScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
+    await userEvent.click(await screen.findByRole('tab', { name: 'Breakdown' }))
     await screen.findByTestId('breakdown-member')
 
-    await userEvent.click(screen.getByRole('radio', { name: /By token/ }))
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Breakdown' }), 'token')
     await userEvent.click(screen.getByRole('button', { name: 'Policy token ci-deployer' }))
 
     expect(mockNavigate).toHaveBeenLastCalledWith(
       expect.objectContaining({ search: expect.objectContaining({ actor: `token:${CI_DEPLOYER}` }), replace: true })
     )
-    expect(await screen.findByTestId('activity-drill')).toHaveTextContent('Policy token ci-deployer')
+    expect(screen.getByRole('combobox', { name: 'Actor' })).toHaveValue(`token:${CI_DEPLOYER}`)
     await waitFor(() =>
       expect(
         Array.from(document.querySelectorAll('[data-actor-kind]')).every(
@@ -132,15 +136,16 @@ describe('AgentActivity', () => {
     )
   })
 
-  it('reads its filters from the URL, and removes one from its chip', async () => {
+  it('reads its filters from the URL, and clears them from the filter bar', async () => {
     useScenario('agent-activity')
     mockUrl.search = { outcome: 'DENIED', range: '7d' }
     const { userEvent } = renderWithProviders(<AgentActivity />)
 
-    expect(await screen.findByTestId('activity-drill')).toHaveTextContent('Denied')
+    expect(await screen.findByRole('combobox', { name: 'Authorization' })).toHaveValue('DENIED')
+    expect(screen.queryByTestId('activity-drill')).not.toBeInTheDocument()
     await waitFor(() => expect(document.querySelectorAll('tr[data-outcome="ALLOWED"]')).toHaveLength(0))
 
-    await userEvent.click(screen.getByRole('button', { name: 'Remove the outcome filter' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
     expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { range: '7d' } }))
   })
 
@@ -149,13 +154,26 @@ describe('AgentActivity', () => {
     const { userEvent } = renderWithProviders(<AgentActivity />)
 
     const count = await screen.findByTestId('recent-count', undefined, { timeout: 5000 })
-    expect(count).toHaveTextContent(/^Showing 1 to 30 of 100 actions in this period/)
+    expect(count).toHaveTextContent(/^Showing 1 to 10 of 100 actions in this period/)
     // The time is not a tab stop on every row.
     expect(document.querySelector('time[datetime]')).not.toHaveAttribute('tabindex')
 
     await userEvent.click(screen.getByRole('button', { name: 'Next page' }))
     expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { page: 2 } }))
-    expect(await screen.findByTestId('recent-count')).toHaveTextContent(/^Showing 31 to 60 of 100/)
+    expect(await screen.findByTestId('recent-count')).toHaveTextContent(/^Showing 11 to 20 of 100/)
+  })
+
+  it('filters recent actions from the Action column and resets pagination', async () => {
+    useScenario('agent-activity')
+    mockUrl.search = { page: 2 }
+    const { userEvent } = renderWithProviders(<AgentActivity />)
+    const recent = within(await screen.findByRole('region', { name: 'Recent actions' }))
+    await userEvent.click(recent.getByRole('button', { name: 'Action' }))
+    await userEvent.click(await screen.findByRole('menuitem', { name: /^Deploy/ }))
+    expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: {} }))
+    const rows = recent.getAllByRole('row').slice(1)
+    expect(rows.length).toBeGreaterThan(0)
+    rows.forEach((row) => expect(within(row).getAllByRole('cell')[0]).toHaveTextContent('Deploy'))
   })
 
   it('keeps the breakdown in the URL', async () => {
@@ -170,9 +188,9 @@ describe('AgentActivity', () => {
     useScenario('member')
     renderWithProviders(<AgentActivity />)
 
-    expect(await screen.findByRole('heading', { name: 'Your activity', level: 1 })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Activity', level: 1 })).toBeInTheDocument()
     await screen.findByRole('heading', { name: 'Recent actions' })
-    expect(screen.queryByRole('radio', { name: /By token/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('combobox', { name: 'Breakdown' })).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Suggestions' })).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Actor')).not.toBeInTheDocument()
     expect(screen.queryByText('Jordan Kim')).not.toBeInTheDocument()
@@ -195,13 +213,13 @@ describe('AgentActivity', () => {
     expect(screen.getByRole('button', { name: /Try again/ })).toBeInTheDocument()
   })
 
-  it('changes the period from the toolbar, back to the first page, and clears the other filters at once', async () => {
+  it('changes the period from the filter row, back to the first page, and clears the other filters at once', async () => {
     useScenario('agent-activity')
     mockUrl.search = { outcome: 'DENIED', skill: 'qovery-deploy', page: 2 }
     const { userEvent } = renderWithProviders(<AgentActivity />)
     const toolbar = within(await screen.findByRole('toolbar', { name: 'Filters' }))
 
-    await userEvent.click(toolbar.getByRole('radio', { name: /7 days/ }))
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Period' }), '7d')
     expect(mockNavigate).toHaveBeenLastCalledWith(
       expect.objectContaining({ search: { outcome: 'DENIED', skill: 'qovery-deploy', range: '7d' } })
     )
@@ -215,7 +233,7 @@ describe('AgentActivity', () => {
     mockUrl.search = { page: 2 }
     const { userEvent } = renderWithProviders(<AgentActivity />)
     expect(await screen.findByTestId('recent-count', undefined, { timeout: 5000 })).toHaveTextContent(
-      /^Showing 31 to 60 of 100/
+      /^Showing 11 to 20 of 100/
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Previous page' }))
@@ -226,7 +244,7 @@ describe('AgentActivity', () => {
     useScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
     const count = await screen.findByTestId('denied-count', undefined, { timeout: 5000 })
-    expect(count).toHaveTextContent(/^6 of \d+ shown\./)
+    expect(count).toHaveTextContent('Show all denied')
 
     await userEvent.click(within(count).getByRole('button', { name: 'Show all denied' }))
     expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { outcome: 'DENIED' } }))
@@ -253,9 +271,7 @@ describe('AgentActivity', () => {
     const notice = await screen.findByTestId('activity-timed-out', undefined, { timeout: 5000 })
     expect(notice).toHaveTextContent('This range took too long. Pick a shorter period.')
     // The toolbar stays, so a shorter period is one click away.
-    await userEvent.click(
-      within(screen.getByRole('toolbar', { name: 'Filters' })).getByRole('radio', { name: /7 days/ })
-    )
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Period' }), '7d')
     expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { range: '7d' } }))
   })
 

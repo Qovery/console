@@ -88,12 +88,9 @@ export function AgentExperienceNav() {
           title="Settings"
           icon="gear"
           iconStyle="regular"
-          className="mt-4"
           defaultOpen={settingsPaths.some((path) => pathname.startsWith(path))}
         >
-          <Sidebar.Item to={`${base}/policy-tokens`} icon="key" iconStyle="regular" className={NESTED_ITEM}>
-            Policy tokens
-          </Sidebar.Item>
+          <Sidebar.SubItem to={`${base}/policy-tokens`}>Policy tokens</Sidebar.SubItem>
           <Sidebar.Item to={`${base}/copilot`} icon="message-bot" iconStyle="regular" className={NESTED_ITEM}>
             Copilot settings
           </Sidebar.Item>
