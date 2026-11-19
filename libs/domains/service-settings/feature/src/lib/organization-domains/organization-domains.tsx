@@ -8,7 +8,6 @@ import {
   Heading,
   Icon,
   InputSearch,
-  InputSelect,
   LoaderSpinner,
   Pagination,
   Section,
@@ -18,6 +17,7 @@ import {
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { OrganizationDomainCreateModal } from './organization-domain-create-modal'
+import { OrganizationDomainHeaderFilter } from './organization-domain-header-filter'
 import { OrganizationDomainRow } from './organization-domain-row'
 
 const { Table } = TablePrimitives
@@ -83,71 +83,87 @@ export function OrganizationDomainsContent() {
           </Button>
         </div>
         <div className="space-y-4" aria-busy={isFetching}>
-          <div className="flex flex-wrap items-center gap-3 rounded-md border border-neutral bg-surface-neutral-subtle p-3">
-            <span className="mr-auto text-sm text-neutral-subtle">{data?.total_count ?? 0} domains</span>
-            <InputSelect
-              className="w-48"
-              label="Project"
-              value={filters.projectId}
-              isClearable
-              options={projects.map(({ id, name }) => ({ label: name, value: id }))}
-              onChange={(value) =>
-                setFilters({ ...filters, projectId: String(value || ''), environmentId: '', page: 1 })
-              }
-            />
-            <InputSelect
-              className="w-48"
-              label="Environment"
-              value={filters.environmentId}
-              disabled={!filters.projectId}
-              isClearable
-              options={environments.map(({ id, name }) => ({ label: name, value: id }))}
-              onChange={(value) => setFilters({ ...filters, environmentId: String(value || ''), page: 1 })}
-            />
-            <InputSearch
-              className="w-56"
-              ariaLabel="Search domains"
-              placeholder="Search domains..."
-              value={filters.search}
-              onChange={(search) => setFilters({ ...filters, search, page: 1 })}
-            />
-          </div>
-          {isError ? (
-            <EmptyState
-              icon="triangle-exclamation"
-              title="Unable to load domains"
-              description="Try loading your organization domains again."
-            >
-              <Button onClick={() => refetch()}>Retry</Button>
-            </EmptyState>
-          ) : isLoading ? (
-            <div className="flex justify-center py-12">
-              <LoaderSpinner />
+          <div className="overflow-hidden rounded-lg border border-neutral">
+            <div className="flex items-center justify-between gap-3 bg-surface-neutral-subtle px-4 py-3">
+              <span className="text-xs text-neutral-subtle">{data?.total_count ?? 0} domains</span>
+              <InputSearch
+                size="sm"
+                className="w-52"
+                ariaLabel="Search domains"
+                placeholder="Search..."
+                value={filters.search}
+                onChange={(search) => setFilters({ ...filters, search, page: 1 })}
+              />
             </div>
-          ) : !data?.results.length ? (
-            <EmptyState
-              icon="globe"
-              title={filters.search || filters.projectId ? 'No matching domains' : 'No domains configured'}
-              description="Add a custom domain to a service, or adjust your filters."
-            />
-          ) : (
-            <Table.Root>
+            <Table.Root
+              className="w-full min-w-[1000px] table-fixed"
+              containerClassName="rounded-none border-x-0 border-b-0"
+            >
+              <colgroup>
+                <col className="w-72" />
+                <col className="w-44" />
+                <col className="w-48" />
+                <col />
+                <col className="w-28" />
+              </colgroup>
               <Table.Header>
                 <Table.Row>
-                  {['Domain', 'Project', 'Environment', 'Routes', 'Actions'].map((label) => (
-                    <Table.ColumnHeaderCell key={label} className="border-r text-xs last:border-r-0">
-                      {label}
-                    </Table.ColumnHeaderCell>
-                  ))}
+                  <Table.ColumnHeaderCell className="h-11 border-r text-xs">Domain</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell className="h-11 border-r text-xs">
+                    <OrganizationDomainHeaderFilter
+                      label="Project"
+                      value={filters.projectId}
+                      options={projects}
+                      onChange={(projectId) => setFilters({ ...filters, projectId, environmentId: '', page: 1 })}
+                    />
+                  </Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell className="h-11 border-r text-xs">
+                    <OrganizationDomainHeaderFilter
+                      label="Environment"
+                      value={filters.environmentId}
+                      options={environments}
+                      disabled={!filters.projectId}
+                      onChange={(environmentId) => setFilters({ ...filters, environmentId, page: 1 })}
+                    />
+                  </Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell className="h-11 border-r text-xs">Routes</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell className="h-11 text-xs">Actions</Table.ColumnHeaderCell>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {data.results.map((domain) => (
-                  <OrganizationDomainRow key={`${domain.environment_id}:${domain.domain}`} domain={domain} />
-                ))}
+                {isError ? (
+                  <Table.Row>
+                    <Table.Cell colSpan={5} className="py-8 text-center">
+                      <p className="mb-3 text-sm text-neutral-subtle">Unable to load domains.</p>
+                      <Button variant="outline" color="neutral" onClick={() => refetch()}>
+                        Retry
+                      </Button>
+                    </Table.Cell>
+                  </Table.Row>
+                ) : isLoading ? (
+                  <Table.Row>
+                    <Table.Cell colSpan={5} className="py-12">
+                      <div className="flex justify-center">
+                        <LoaderSpinner />
+                      </div>
+                    </Table.Cell>
+                  </Table.Row>
+                ) : !data?.results.length ? (
+                  <Table.Row>
+                    <Table.Cell colSpan={5} className="py-8 text-center text-sm text-neutral-subtle">
+                      {filters.search || filters.projectId
+                        ? 'No matching domains. Adjust your filters or search.'
+                        : 'No domains configured. Add a custom domain to a service.'}
+                    </Table.Cell>
+                  </Table.Row>
+                ) : (
+                  data.results.map((domain) => (
+                    <OrganizationDomainRow key={`${domain.environment_id}:${domain.domain}`} domain={domain} />
+                  ))
+                )}
               </Table.Body>
             </Table.Root>
-          )}
+          </div>
           <Pagination
             pageSize={String(filters.pageSize)}
             previousDisabled={filters.page === 1 || isFetching}
