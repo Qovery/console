@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { Badge, Button, Heading, Icon, Link, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Link, Section } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
 export const AGENT_EXPERIENCE_ENTRY_DISMISSED_KEY = 'agent-experience-entry-dismissed'
@@ -32,25 +32,15 @@ export function AgentExperienceEntryCard() {
         <Icon iconName="xmark" iconStyle="regular" />
       </Button>
       <div className="flex items-center gap-2 pr-6">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-brand-subtle text-brand">
-          <Icon iconName="robot" iconStyle="regular" />
-        </span>
         <Heading level={2} id="agent-experience-entry" className="text-sm">
-          Set up how coding agents work with Qovery
+          Set up your coding agents
         </Heading>
-        <Badge variant="surface" color="brand" size="sm">
-          New
-        </Badge>
       </div>
-      <p className="text-sm text-neutral-subtle">
-        Connect your agents, choose the skills they load, limit what they can do, and see what they did.
-      </p>
+      <p className="text-sm text-neutral-subtle">Manage agent skills, permissions, and activity in one place.</p>
       <Link
-        as="button"
         to="/organization/$organizationId/agent-experience"
         params={{ organizationId }}
-        size="md"
-        variant="outline"
+        size="sm"
         color="neutral"
         className="w-fit gap-1.5"
       >

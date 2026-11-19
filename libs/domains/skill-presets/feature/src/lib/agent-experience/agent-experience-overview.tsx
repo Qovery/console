@@ -2,18 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ReactNode, useMemo, useState } from 'react'
 import { type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
-import {
-  Badge,
-  Button,
-  Callout,
-  Heading,
-  Icon,
-  Link,
-  ProgressBar,
-  Section,
-  Skeleton,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, Link, ProgressBar, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type ActivitySearch } from '../agent-activity/activity-search'
@@ -34,6 +23,7 @@ import {
   computeAgentExperienceSetup,
 } from '../utils/agent-experience'
 import { OnOffBadge, copilotStateLabel } from './agent-experience-copilot'
+import { ConnectAgentModal } from './connect-agent-modal'
 import { PresetSummary } from './preset-summary'
 import { ActorChip, AgentExperiencePage, Stat, StatGrid } from './ui/agent-experience-ui'
 
@@ -161,6 +151,7 @@ export const HERO_SUBTITLE =
  * It holds no action: the checklist's Next row does.
  */
 function AgentExperienceHero({ organizationId, variant }: { organizationId: string; variant: 'full' | 'sentence' }) {
+  const { openModal, closeModal } = useModal()
   if (variant === 'sentence') {
     return (
       <p className="text-sm text-neutral-subtle" data-testid="agent-experience-hero" data-variant="sentence">
@@ -194,19 +185,32 @@ function AgentExperienceHero({ organizationId, variant }: { organizationId: stri
             </span>
             <span className="text-xs text-neutral-subtle">{pillar.text}</span>
             <span className="mt-auto flex flex-wrap gap-x-3 gap-y-1 pt-1">
-              {pillar.pieces.map((piece) => (
-                <Link
-                  key={piece.name}
-                  to={piece.to}
-                  params={{ organizationId }}
-                  color="brand"
-                  size="xs"
-                  className="inline-flex items-center gap-1"
-                >
-                  <Icon iconName={piece.icon} iconStyle="regular" aria-hidden="true" />
-                  {piece.name}
-                </Link>
-              ))}
+              {pillar.pieces.map((piece) =>
+                piece.to === STEP_PATHS.connect ? (
+                  <Button
+                    key={piece.name}
+                    variant="plain"
+                    size="xs"
+                    onClick={() =>
+                      openModal({ content: <ConnectAgentModal onClose={closeModal} />, options: { width: 676 } })
+                    }
+                  >
+                    {piece.name}
+                  </Button>
+                ) : (
+                  <Link
+                    key={piece.name}
+                    to={piece.to}
+                    params={{ organizationId }}
+                    color="brand"
+                    size="xs"
+                    className="inline-flex items-center gap-1"
+                  >
+                    <Icon iconName={piece.icon} iconStyle="regular" aria-hidden="true" />
+                    {piece.name}
+                  </Link>
+                )
+              )}
             </span>
           </li>
         ))}
@@ -215,19 +219,22 @@ function AgentExperienceHero({ organizationId, variant }: { organizationId: stri
   )
 }
 
-function StepAction({
-  step,
-  primary,
-  organizationId,
-}: {
-  step: AgentExperienceStepId
-  primary: boolean
-  organizationId: string
-}) {
-  const variant = primary ? 'solid' : 'outline'
-  const color = primary ? 'brand' : 'neutral'
+function StepAction({ step, organizationId }: { step: AgentExperienceStepId; organizationId: string }) {
+  const { openModal, closeModal } = useModal()
+  if (step === 'connect') {
+    return (
+      <Button
+        size="sm"
+        variant="outline"
+        color="neutral"
+        onClick={() => openModal({ content: <ConnectAgentModal onClose={closeModal} />, options: { width: 676 } })}
+      >
+        {STEPS[step].action}
+      </Button>
+    )
+  }
   return (
-    <Link as="button" to={STEP_PATHS[step]} params={{ organizationId }} size="md" variant={variant} color={color}>
+    <Link as="button" to={STEP_PATHS[step]} params={{ organizationId }} size="sm" variant="outline" color="neutral">
       {STEPS[step].action}
     </Link>
   )
@@ -265,63 +272,53 @@ function AiOffCallout({ organizationId, canEnable }: { organizationId: string; c
   )
 }
 
-/** The setup steps. The Next row holds the only primary button; the others get an outline one. */
+/** Setup follows the organization overview onboarding checklist. */
 function SetupChecklist({ setup, organizationId }: { setup: AgentExperienceSetup; organizationId: string }) {
   const percent = Math.round((setup.doneCount / setup.steps.length) * 100)
   return (
-    <Section aria-labelledby="setup-checklist" className="flex flex-col gap-4 rounded-md border border-neutral p-4">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-4">
-          <Heading level={2} id="setup-checklist">
-            {setup.state === 'empty' ? 'Set up how coding agents work with Qovery' : 'Finish your setup'}
-          </Heading>
-          <span className="text-sm text-neutral-subtle" data-testid="setup-progress">
+    <Section aria-labelledby="setup-checklist" className="flex flex-col gap-3">
+      <Heading level={2} id="setup-checklist" className="text-base">
+        Finish your setup
+      </Heading>
+      <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+        <div className="flex flex-wrap items-center gap-4 border-b border-neutral bg-surface-neutral-subtle px-4 py-3">
+          <span className="text-sm font-medium">Onboarding checklist</span>
+          <div className="w-24">
+            <ProgressBar.Root aria-hidden="true">
+              <ProgressBar.Cell value={percent} color="var(--green-9)" />
+            </ProgressBar.Root>
+          </div>
+          <span className="text-xs text-neutral-subtle" data-testid="setup-progress">
             {setup.doneCount} of {setup.steps.length} done
           </span>
         </div>
-        <ProgressBar.Root aria-hidden="true">
-          <ProgressBar.Cell value={percent} color="var(--brand-9)" />
-        </ProgressBar.Root>
-      </div>
-      <ol className="flex flex-col gap-2" data-testid="setup-steps">
-        {setup.steps.map(({ id, done }) => {
-          const isNext = id === setup.nextStep
-          const step = STEPS[id]
-          return (
-            <li
-              key={id}
-              data-testid={`setup-step-${id}`}
-              data-state={done ? 'done' : isNext ? 'next' : 'todo'}
-              className={clsx(
-                'flex flex-wrap items-center justify-between gap-3 rounded-md border px-4 py-3',
-                isNext ? 'border-brand-strong bg-surface-brand-subtle' : 'border-neutral'
-              )}
-            >
-              <div className="flex min-w-0 items-start gap-3">
-                <Icon
-                  iconName={done ? 'circle-check' : 'circle'}
-                  iconStyle={done ? 'solid' : 'regular'}
-                  className={clsx('mt-0.5', done ? 'text-positive' : 'text-neutral-subtle')}
-                  aria-hidden="true"
-                />
-                <div className="flex flex-col gap-0.5">
-                  <span className={clsx('text-sm font-medium', done ? 'text-neutral-subtle' : 'text-neutral')}>
+        <ol className="divide-y divide-neutral" data-testid="setup-steps">
+          {setup.steps.map(({ id, done }) => {
+            const step = STEPS[id]
+            return (
+              <li
+                key={id}
+                data-testid={`setup-step-${id}`}
+                data-state={done ? 'done' : id === setup.nextStep ? 'next' : 'todo'}
+                className="flex flex-wrap items-center justify-between gap-4 px-4 py-4"
+              >
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className={clsx('text-sm', done && 'text-neutral-subtle line-through')}>
                     {step.title}
                     {done && <span className="sr-only"> (done)</span>}
-                    {isNext && (
-                      <Badge variant="surface" color="brand" size="sm" className="ml-2">
-                        Next
-                      </Badge>
-                    )}
                   </span>
-                  <span className="text-xs text-neutral-subtle">{done ? step.done : step.description}</span>
+                  {!done && <span className="text-xs text-neutral-subtle">{step.description}</span>}
                 </div>
-              </div>
-              {!done && <StepAction step={id} primary={isNext} organizationId={organizationId} />}
-            </li>
-          )
-        })}
-      </ol>
+                {done ? (
+                  <Icon iconName="circle-check" iconStyle="solid" className="text-positive" aria-hidden="true" />
+                ) : (
+                  <StepAction step={id} organizationId={organizationId} />
+                )}
+              </li>
+            )
+          })}
+        </ol>
+      </div>
     </Section>
   )
 }
@@ -655,20 +652,19 @@ function MemberOverview({ organizationId }: { organizationId: string }) {
  * Connecting is a one-time setup per machine, so it is not in the side menu. This button keeps it one
  * click away for the next laptop or CI runner.
  */
-function ConnectAgentButton({ organizationId }: { organizationId: string }) {
+function ConnectAgentButton() {
+  const { openModal, closeModal } = useModal()
   return (
-    <Link
-      as="button"
-      to="/organization/$organizationId/agent-experience/connect"
-      params={{ organizationId }}
+    <Button
       size="md"
       variant="outline"
       color="neutral"
       className="gap-1.5"
+      onClick={() => openModal({ content: <ConnectAgentModal onClose={closeModal} />, options: { width: 676 } })}
     >
       <Icon iconName="plug" iconStyle="regular" aria-hidden="true" />
       Connect an agent
-    </Link>
+    </Button>
   )
 }
 
@@ -692,7 +688,7 @@ export function AgentExperienceOverview() {
             : 'What your coding agent receives from Qovery, and what it did.'
       }
       showHelp
-      action={<ConnectAgentButton organizationId={organizationId} />}
+      action={<ConnectAgentButton />}
     >
       {isLoading ? (
         <Skeleton height={240} className="w-full" show />

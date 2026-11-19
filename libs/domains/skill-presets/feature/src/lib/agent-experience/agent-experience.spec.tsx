@@ -54,6 +54,21 @@ beforeEach(() => {
 })
 
 describe('AgentExperienceOverview', () => {
+  it('opens connection instructions in a modal and switches setup tabs', async () => {
+    useScenario('agent-experience-empty')
+    const { userEvent } = renderWithProviders(<AgentExperienceOverview />)
+    await screen.findByTestId('setup-progress')
+    await userEvent.click(screen.getByRole('button', { name: 'Connect an agent' }))
+    const dialog = await screen.findByRole('dialog')
+    expect(within(dialog).getByText(/skill.qovery.com\/install.sh/)).toBeInTheDocument()
+    await userEvent.click(within(dialog).getByText('CLI', { exact: true }))
+    expect(within(dialog).getByText('qovery auth')).toBeInTheDocument()
+    await userEvent.click(within(dialog).getByText('MCP server', { exact: true }))
+    expect(within(dialog).getByText(/claude mcp add/)).toBeInTheDocument()
+    await userEvent.click(within(dialog).getByText('Close', { exact: true }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+  })
+
   it('explains Agents the first time, starts with a custom preset, and shows no numbers', async () => {
     useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperienceOverview />)
@@ -76,7 +91,7 @@ describe('AgentExperienceOverview', () => {
     // New organizations have AI features on: no Turn on AI anywhere.
     expect(screen.queryByTestId('overview-ai-off')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
-    expect(within(intro).queryByRole('button')).not.toBeInTheDocument()
+    expect(within(intro).getByRole('button', { name: 'Install skills' })).toBeInTheDocument()
     expect(screen.getByText('Connect an agent')).toBeInTheDocument()
     expect(screen.queryByTestId('week-kpis')).not.toBeInTheDocument()
   })
@@ -549,7 +564,7 @@ describe('AgentExperienceConnect', () => {
 describe('AgentExperienceEntryCard', () => {
   it('leads to Agents and can be dismissed for good', async () => {
     const { userEvent, unmount } = renderWithProviders(<AgentExperienceEntryCard />)
-    expect(screen.getByText('Set up how coding agents work with Qovery')).toBeInTheDocument()
+    expect(screen.getByText('Set up your coding agents')).toBeInTheDocument()
     expect(screen.getByText('Open Agents')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
