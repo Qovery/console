@@ -13,6 +13,7 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 jest.mock('@tanstack/react-query', () => ({
   ...jest.requireActual('@tanstack/react-query'),
+  useQuery: () => ({ data: 'PRODUCTION' }),
   useQueryClient: () => ({ fetchQuery: mockFetch }),
 }))
 jest.mock('@qovery/domains/custom-domains/feature', () => ({
@@ -20,7 +21,16 @@ jest.mock('@qovery/domains/custom-domains/feature', () => ({
 }))
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
-  Link: ({ children }: PropsWithChildren) => <span>{children}</span>,
+  Link: ({
+    children,
+    className,
+    title,
+    ...props
+  }: PropsWithChildren<{ className?: string; title?: string; 'aria-label'?: string }>) => (
+    <a href="/organization" className={className} title={title} aria-label={props['aria-label']}>
+      {children}
+    </a>
+  ),
   useModalConfirmation: () => ({ openModalConfirmation: mockConfirm }),
 }))
 const domain: OrganizationCustomDomainResponse = {
@@ -54,7 +64,8 @@ function renderRow(value = domain) {
 beforeEach(() => jest.clearAllMocks())
 
 it('renders a route without a public port', () => {
-  renderRow()
+  const { baseElement } = renderRow()
+  expect(baseElement).toMatchSnapshot()
   expect(screen.getByText('web')).toBeInTheDocument()
   expect(screen.getByText('/')).toBeInTheDocument()
 })
@@ -94,4 +105,26 @@ it('renders a controlled row checkbox and reports changes', async () => {
   expect(checkbox).toBeChecked()
   await userEvent.click(checkbox)
   expect(onSelectionChange).toHaveBeenCalledWith(false)
+})
+
+it('uses a single circular external-link action and renders the actual environment mode', () => {
+  renderRow()
+  const external = screen.getByRole('link', { name: 'Open app.example.com' })
+  expect(external).toHaveAttribute('href', 'https://app.example.com')
+  expect(external.querySelectorAll('i')).toHaveLength(1)
+  expect(external).toHaveClass('rounded-full')
+  expect(screen.getByLabelText('production environment')).toHaveTextContent('P')
+})
+it('renders compact neutral route chips and preserves full long names', () => {
+  const longDomain = {
+    ...domain,
+    domain: 'a-very-long-domain-name.example.com',
+    project: { ...domain.project, name: 'A very long project name' },
+  }
+  renderRow(longDomain)
+  expect(screen.getByTitle(longDomain.domain)).toHaveTextContent(longDomain.domain)
+  expect(screen.getByTitle(longDomain.project.name)).toHaveClass('font-normal')
+  const route = screen.getByRole('link', { name: 'web: /' })
+  expect(route).toHaveClass('gap-0', 'text-xs')
+  expect(route.querySelector('img')).toHaveAttribute('src', '/assets/domains/route-application.svg')
 })

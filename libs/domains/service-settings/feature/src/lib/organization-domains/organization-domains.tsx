@@ -167,13 +167,13 @@ export function OrganizationDomainsContent() {
                 onChange={(event) => setFilters({ ...filters, search: event.target.value, page: 1 })}
               />
             </div>
-            <Table.Root className="w-full min-w-[1000px] table-fixed" containerClassName="rounded-none border-0">
+            <Table.Root className="w-full min-w-[1100px] table-fixed" containerClassName="rounded-none border-0">
               <colgroup>
-                <col className="w-72" />
-                <col className="w-44" />
-                <col className="w-48" />
+                <col className="w-[300px]" />
+                <col className="w-[180px]" />
+                <col className="w-[200px]" />
                 <col />
-                <col className="w-28" />
+                <col className="w-[118px]" />
               </colgroup>
               <Table.Header>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -187,6 +187,7 @@ export function OrganizationDomainsContent() {
                           <div className="flex items-center gap-3">
                             <Checkbox
                               aria-label="Select all domains on this page"
+                              className="h-3.5 w-3.5"
                               checked={
                                 table.getIsAllPageRowsSelected()
                                   ? true

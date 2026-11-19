@@ -1,0 +1,171 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`renders a route without a public port 1`] = `
+<body>
+  <div>
+    <div
+      class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
+    >
+      <table
+        class="min-w-full divide-y divide-neutral text-sm text-neutral"
+      >
+        <tbody
+          class="divide-y divide-neutral"
+        >
+          <tr>
+            <td
+              class="border-neutral px-4 py-0 h-12 border-r font-medium"
+            >
+              <div
+                class="flex items-center gap-3"
+              >
+                <span
+                  class="min-w-0 truncate"
+                  title="app.example.com"
+                >
+                  app.example.com
+                </span>
+                <a
+                  aria-label="Open app.example.com"
+                  class="inline-flex items-center font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral shrink-0"
+                  data-state="closed"
+                  href="https://app.example.com"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-link "
+                  />
+                </a>
+              </div>
+            </td>
+            <td
+              class="border-neutral px-4 py-0 h-12 border-r"
+            >
+              <a
+                class="min-w-0 max-w-full font-normal"
+                href="/organization"
+                title="Project"
+              >
+                <span
+                  class="truncate"
+                >
+                  Project
+                </span>
+              </a>
+            </td>
+            <td
+              class="border-neutral px-4 py-0 h-12 border-r"
+            >
+              <a
+                class="min-w-0 max-w-full gap-2 font-normal"
+                href="/organization"
+                title="production"
+              >
+                <span
+                  class="flex w-4 shrink-0"
+                >
+                  <span
+                    aria-label="production environment"
+                    class="items-center shrink-0 text-xs border-negative-subtle border text-negative flex h-4 w-4 justify-center p-0 font-semibold rounded"
+                    data-accent-color="red"
+                  >
+                    P
+                  </span>
+                </span>
+                <span
+                  class="truncate"
+                >
+                  production
+                </span>
+              </a>
+            </td>
+            <td
+              class="border-neutral px-4 py-0 h-12 border-r"
+            >
+              <div
+                class="no-scrollbar flex items-center gap-1.5 overflow-x-auto py-2"
+              >
+                <a
+                  aria-label="web: /"
+                  class="min-w-0 shrink-0 gap-0 overflow-hidden rounded border border-neutral text-xs leading-4 focus-visible:outline-2 focus-visible:outline-brand-strong"
+                  href="/organization"
+                >
+                  <span
+                    class="flex min-w-0 items-center gap-1 px-1.5 py-[3px]"
+                  >
+                    <span
+                      class="flex size-3.5 shrink-0 items-center justify-center"
+                    >
+                      <img
+                        alt=""
+                        class="h-auto max-w-full"
+                        src="/assets/domains/route-application.svg"
+                      />
+                    </span>
+                    <span
+                      class="max-w-32 truncate"
+                    >
+                      web
+                    </span>
+                  </span>
+                  <span
+                    class="max-w-32 self-stretch truncate border-l border-neutral px-1.5 py-[3px] font-normal text-neutral-subtle"
+                  >
+                    /
+                  </span>
+                </a>
+              </div>
+            </td>
+            <td
+              class="border-neutral px-4 py-0 h-12"
+            >
+              <div
+                class="flex justify-end gap-1.5"
+              >
+                <button
+                  aria-label="Edit app.example.com"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 justify-center px-0 rounded w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                  data-state="closed"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-pencil "
+                  />
+                </button>
+                <button
+                  aria-label="Check DNS for app.example.com"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 justify-center px-0 rounded w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                  data-state="closed"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-arrow-rotate-right "
+                  />
+                </button>
+                <button
+                  aria-label="Delete app.example.com"
+                  class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 justify-center px-0 rounded w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                  data-state="closed"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-trash "
+                  />
+                </button>
+                <span
+                  class="sr-only"
+                  role="status"
+                >
+                  Check DNS records
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+`;
