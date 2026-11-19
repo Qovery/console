@@ -55,8 +55,8 @@ export function HeaderDeploymentLogs({ serviceStatus, deploymentDate, children }
     : serviceStatus?.steps?.total_computing_duration_sec ?? 0
 
   return (
-    <div className="flex h-12 w-full shrink-0 items-center justify-between border-b border-neutral bg-background px-4">
-      <div className="flex h-full items-center gap-4">
+    <div className="flex h-12 w-full shrink-0 items-center justify-between border-b border-neutral bg-background px-4 max-md:h-auto max-md:flex-wrap max-md:gap-2 max-md:py-2">
+      <div className="flex h-full flex-wrap items-center gap-x-4 gap-y-2">
         <div className="flex items-center gap-1">
           <Button onClick={() => router.history.back()} variant="plain" iconOnly aria-label="Back">
             <Icon className="text-base" iconName="arrow-left" iconStyle="regular" />

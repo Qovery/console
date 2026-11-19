@@ -391,7 +391,7 @@ function DeploymentLogsBody({
 
   return (
     <>
-      <div className="flex w-full items-center justify-between border-b border-neutral px-4 py-2.5">
+      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral px-4 py-2.5 max-md:flex-wrap">
         <FiltersStageStep
           service={service}
           serviceStatus={serviceStatus}

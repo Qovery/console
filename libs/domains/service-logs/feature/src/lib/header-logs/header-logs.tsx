@@ -84,8 +84,8 @@ export function HeaderLogs({
     serviceStatus?.state === 'STOPPED'
 
   return (
-    <div className="flex h-12 w-full items-center justify-between border-b border-neutral bg-background pr-4">
-      <div className="flex h-full">
+    <div className="flex h-12 w-full items-center justify-between border-b border-neutral bg-background pr-4 max-md:h-auto">
+      <div className="flex h-full min-w-0">
         <div className="flex h-full items-center gap-3 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral">
           {match(type)
             .with('DEPLOYMENT', () => {
@@ -93,7 +93,7 @@ export function HeaderLogs({
               const actionStatus = serviceStatus?.status_details?.status
 
               return (
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                   <div className="flex items-center gap-1.5">
                     <Button onClick={onBack} variant="plain" iconOnly>
                       <Icon className="text-base" iconName="arrow-left" iconStyle="regular" />

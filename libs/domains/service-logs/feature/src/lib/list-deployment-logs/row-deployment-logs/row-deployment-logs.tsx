@@ -47,7 +47,8 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
       id={rowId}
       onCopy={copySelectedLogMessages}
       className={twMerge(
-        clsx('group mb-0.5 flex min-h-6 text-xs', {
+        // Below md the message moves under the line number and timestamp so it gets the full width
+        clsx('group mb-0.5 flex min-h-6 text-xs max-md:flex-wrap', {
           'hover:bg-surface-neutral-subtle': !isHighlighted,
           'bg-surface-neutral-componentHover': isHighlighted,
         })
@@ -80,11 +81,14 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
         </span>
       </Table.Cell>
       <Table.Cell
-        className={clsx('relative h-fit w-full overflow-hidden py-1 pl-3 pr-6 font-code font-bold', {
-          'text-negative': error,
-          'text-positive': success,
-          'text-neutral': !error && !success,
-        })}
+        className={clsx(
+          'relative h-fit w-full overflow-hidden py-1 pl-3 pr-6 font-code font-bold max-md:basis-full max-md:pl-2 max-md:pr-2 max-md:pt-0',
+          {
+            'text-negative': error,
+            'text-positive': success,
+            'text-neutral': !error && !success,
+          }
+        )}
       >
         <span className="truncate whitespace-pre-wrap break-all" {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}>
           {type === LogsType.ERROR ? (
