@@ -7,10 +7,10 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       class="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background"
     >
       <div
-        class="flex h-12 items-center justify-between gap-3 border-b border-neutral px-3"
+        class="flex h-12 items-center justify-between gap-3 border-b border-neutral px-3 max-md:h-auto max-md:flex-wrap max-md:py-2"
       >
         <div
-          class="flex min-w-0 items-center gap-3 text-xs text-neutral-subtle"
+          class="flex min-w-0 flex-wrap items-center gap-3 text-xs text-neutral-subtle"
         >
           <div
             class="flex items-center gap-2"
