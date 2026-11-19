@@ -115,6 +115,7 @@ export * from './lib/settings-git-repository-access/settings-git-repository-acce
 export * from './lib/settings-helm-repositories/settings-helm-repositories'
 export * from './lib/settings-container-registries/settings-container-registries'
 export * from './lib/settings-billing-summary/settings-billing-summary'
+export * from './lib/settings-billing-usage/settings-billing-usage'
 export * from './lib/settings-webhook/settings-webhook'
 export * from './lib/settings-api-token/policy-api-token/policy-api-token-list'
 export * from './lib/settings-api-token/settings-api-token'
