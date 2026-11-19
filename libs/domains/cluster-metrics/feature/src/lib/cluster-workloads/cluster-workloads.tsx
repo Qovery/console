@@ -239,10 +239,11 @@ function ResourceCell({ type, value, total }: { type: WorkloadSortKey; value: nu
   )
 }
 
-// Same grid and cell treatment as the environment service list
+// Same grid and cell treatment as the environment service list.
+// Below md the namespace (second column of every row) is hidden so name, pods, CPU and memory fit on a phone.
 const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(260px,1.6fr)_minmax(180px,1fr)_72px_minmax(200px,1fr)_minmax(200px,1fr)]'
-const cellClassName = 'relative flex h-full min-w-0 items-center border-r border-neutral last:border-r-0'
+  'grid w-full grid-cols-[minmax(260px,1.6fr)_minmax(180px,1fr)_72px_minmax(200px,1fr)_minmax(200px,1fr)] max-md:grid-cols-[minmax(0,1.3fr)_40px_minmax(0,1fr)_minmax(0,1fr)] max-md:[&>*:nth-child(2)]:hidden'
+const cellClassName = 'relative flex h-full min-w-0 items-center border-r border-neutral last:border-r-0 max-md:!px-2'
 
 function WorkloadsTable({
   organizationId,
@@ -412,7 +413,7 @@ function WorkloadsTable({
   )
 
   return (
-    <Table.Root className="w-full min-w-[960px] text-xs" containerClassName="rounded-none border-none">
+    <Table.Root className="w-full text-xs md:min-w-[960px]" containerClassName="rounded-none border-none">
       <Table.Header className="border-t border-neutral">
         <Table.Row className={`h-9 w-full ${tableGridLayoutClassName}`}>
           <Table.ColumnHeaderCell className={twMerge(cellClassName, 'text-neutral-subtle')}>
