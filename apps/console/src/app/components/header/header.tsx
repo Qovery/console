@@ -45,7 +45,7 @@ export function Header() {
               <div className="hidden md:block">
                 <SpotlightTrigger />
               </div>
-              <Button onClick={handleFeedbackClick} variant="outline">
+              <Button onClick={handleFeedbackClick} variant="outline" className="hidden md:inline-flex">
                 Feedback
               </Button>
               <AssistantTrigger />

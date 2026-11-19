@@ -130,7 +130,7 @@ export function ServiceInstance({ service }: { service: AnyService }) {
     <div>
       <div className="overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
         <div className="no-scrollbar overflow-x-auto px-4 pb-5 pt-3.5">
-          <div className="flex min-w-[960px] justify-end gap-6">
+          <div className="flex gap-x-6 gap-y-2 max-md:flex-wrap md:min-w-[960px] md:justify-end">
             {resources && resources}
             {valuesOverride && valuesOverride}
           </div>

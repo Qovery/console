@@ -169,6 +169,8 @@ export const Modal = (props: ModalProps) => {
               ? { width: 'calc(100vw - 48px)', height: 'calc(100vh  - 48px)', top: 24 }
               : {
                   width: typeof width === 'number' ? `${width}px` : width,
+                  // Keeps fixed-width modals inside narrow (mobile) viewports
+                  maxWidth: 'calc(100vw - 32px)',
                   ...(height ? { height: typeof height === 'number' ? `${height}px` : height } : {}),
                 }
           }

@@ -140,15 +140,18 @@ function RouteComponent() {
   return (
     <div className="group/cluster-settings flex min-h-0 flex-1 flex-col">
       <ClusterWideCredentialsBanner />
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <aside
           className={twMerge(
-            clsx('relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral', {
-              'w-60': eksAnywhereCluster,
-            })
+            clsx(
+              'relative shrink-0 self-stretch border-b border-neutral pb-4 md:min-h-[calc(100vh-2.75rem-4rem)] md:w-52 md:border-b-0 md:border-r md:pb-0',
+              {
+                'md:w-60': eksAnywhereCluster,
+              }
+            )
           )}
         >
-          <div className="sticky top-16">
+          <div className="md:sticky md:top-16">
             <Sidebar.Root className="mt-6 group-has-[[data-wide-credentials-banner]]/cluster-settings:mt-0">
               {LINKS_SETTINGS.map((link) => (
                 <Sidebar.Item key={link.to} to={link.to} icon={link.icon}>

@@ -1,5 +1,5 @@
 import { useParams, useRouter } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
 import { CreateOrganizationModal, useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
@@ -12,6 +12,7 @@ import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } fr
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
   const { openModal, closeModal } = useModal()
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const {
     organizationId = '',
     clusterId = '',
@@ -187,14 +188,27 @@ export function Breadcrumbs() {
     })
   }
 
+  // On narrow screens the trail overflows: bring the current scope into view instead of the organization
+  const currentScopeId = breadcrumbData[breadcrumbData.length - 1]?.item.id
+  useLayoutEffect(() => {
+    const container = scrollContainerRef.current
+    if (container) {
+      container.scrollLeft = container.scrollWidth
+    }
+  }, [currentScopeId])
+
   return (
-    <div className="no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap">
+    <div
+      ref={scrollContainerRef}
+      className="no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap"
+    >
       {breadcrumbData.map((data, index) => (
         <div
           key={data.item.id}
           className={
             index === breadcrumbData.length - 1
-              ? 'flex min-w-0 flex-1 items-center gap-2'
+              ? // Below md the trail scrolls instead of truncating, so the current scope keeps its width
+                'flex min-w-0 shrink-0 items-center gap-2 md:flex-1'
               : 'flex shrink-0 items-center gap-2'
           }
         >
