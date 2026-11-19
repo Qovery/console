@@ -167,10 +167,7 @@ export function OrganizationDomainsContent() {
                 onChange={(event) => setFilters({ ...filters, search: event.target.value, page: 1 })}
               />
             </div>
-            <Table.Root
-              className="w-full min-w-[1000px] table-fixed"
-              containerClassName="rounded-none border-x-0 border-b-0"
-            >
+            <Table.Root className="w-full min-w-[1000px] table-fixed" containerClassName="rounded-none border-0">
               <colgroup>
                 <col className="w-72" />
                 <col className="w-44" />
