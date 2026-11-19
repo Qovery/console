@@ -92,10 +92,10 @@ const WebhookList = ({ organizationId }: { organizationId: string }) => {
             <li
               key={webhook.id}
               data-testid="webhook-row"
-              className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
+              className="flex items-center justify-between gap-x-4 gap-y-3 border-b border-neutral p-4 last:border-0 max-md:flex-wrap"
             >
-              <div className="flex flex-col">
-                <div className="mb-1 flex text-xs font-medium text-neutral">
+              <div className="flex min-w-0 flex-col">
+                <div className="mb-1 flex break-all text-xs font-medium text-neutral">
                   <Truncate truncateLimit={58} text={webhook.target_url || ''} />
                   {webhook.description && (
                     <Tooltip content={webhook.description}>
@@ -120,7 +120,7 @@ const WebhookList = ({ organizationId }: { organizationId: string }) => {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 <InputToggle
                   title={`${webhook.enabled ? 'Enabled' : 'Disabled'}`}
                   className={`${webhook.enabled ? 'mr-5' : 'mr-4'}`}
@@ -177,7 +177,7 @@ export function SettingsWebhook() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Webhook"

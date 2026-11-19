@@ -104,7 +104,7 @@ export function HelmValuesOverrideArgumentsSettings() {
 
   return (
     <FormProvider {...methods}>
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading
           title="Value override as arguments"
           description="Specify each override by declaring the variable name, value and its type."

@@ -44,17 +44,17 @@ function getBillingRecurrenceStr(renewalAt: string | null | undefined): string {
 
 const BillingSummarySkeleton = () => (
   <div className="w-full">
-    <Section className="px-8 pb-8 pt-6">
+    <Section className="px-4 pb-8 pt-6 md:px-8">
       <div className="relative mb-8 border-b border-neutral pb-6">
         <Skeleton height={32} width={132} show />
-        <div className="absolute right-0 top-0 flex shrink-0 gap-3">
+        <div className="flex shrink-0 flex-wrap gap-3 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0">
           <Skeleton height={32} width={120} show />
           <Skeleton height={32} width={110} show />
           <Skeleton height={32} width={110} show />
         </div>
       </div>
       <div className="max-w-content-with-navigation-left">
-        <div className="mb-3 flex gap-2">
+        <div className="mb-3 flex gap-2 max-md:flex-col">
           {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="h-[114px] flex-1 rounded border border-neutral bg-surface-neutral p-5">
               <Skeleton height={12} width={80} show />
@@ -101,10 +101,10 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading title="Plan details" showNeedHelp={false} />
-          <div className="absolute right-0 top-0 flex shrink-0 gap-3">
+          <div className="flex shrink-0 flex-wrap gap-3 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0">
             <Button variant="surface" color="neutral" size="md" onClick={props.onShowUsageClick}>
               Show usage
               <Icon iconName="gauge-high" iconStyle="regular" />
@@ -159,7 +159,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               </div>
             </Callout.Root>
           )}
-          <div className="mb-3 flex gap-2">
+          <div className="mb-3 flex gap-2 max-md:flex-col">
             <div className="h-[114px]  flex-1  rounded  border border-neutral bg-surface-neutral p-5">
               <div className="mb-1 text-xs font-medium text-neutral-subtle">Current plan</div>
               <div className="mb-1 text-sm font-medium text-neutral">

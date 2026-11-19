@@ -19,7 +19,7 @@ export function SettingsSlackIntegration() {
   if (!SLACK_BOT_API_URL) {
     return (
       <div className="w-full">
-        <Section className="px-8 pb-8 pt-6">
+        <Section className="px-4 pb-8 pt-6 md:px-8">
           <SettingsHeading
             title="Slack"
             description="Slack integration is not configured. Contact your administrator."
@@ -31,7 +31,7 @@ export function SettingsSlackIntegration() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SlackInstallationList organizationId={organizationId} onConnectSlack={addToSlack}>
           {(hasInstallation, onAddRule) => (
             <div className="relative">

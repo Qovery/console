@@ -96,7 +96,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
   return (
     <FormProvider {...methods}>
       <div className="flex w-full flex-col justify-between">
-        <Section className="p-8">
+        <Section className="px-4 py-8 md:p-8">
           <SettingsHeading title="General settings" />
           <div className="max-w-content-with-navigation-left">
             {cluster.cloud_provider !== 'ON_PREMISE' && (

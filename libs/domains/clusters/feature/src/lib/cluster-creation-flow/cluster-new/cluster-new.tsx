@@ -268,7 +268,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
     }
 
     return (
-      <div ref={ref} className="h-fit w-[calc(100%/2-16px)] lg:w-[calc(100%/3-16px)]">
+      <div ref={ref} className="h-fit w-[calc(100%/2-16px)] max-md:w-[calc(100%-16px)] lg:w-[calc(100%/3-16px)]">
         <button
           onClick={() => setExpanded(!expanded)}
           className={twMerge(
@@ -305,7 +305,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
               animate={{ opacity: 1 }}
               exit={{ opacity: 0.25, pointerEvents: 'none' }}
               transition={{ duration: 0.15 }}
-              className={getExpanderPosition('relative mt-4 overflow-hidden', index)}
+              className={getExpanderPosition('relative mt-4 overflow-hidden max-md:ml-0 max-md:w-full', index)}
             >
               <div className="flex flex-col gap-6 rounded-md border border-neutral bg-surface-neutral-subtle p-4">
                 <div className="flex gap-3 font-medium">
@@ -318,7 +318,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
                   </div>
                   <span className="text-base text-neutral">{title}</span>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 max-md:flex-col">
                   {options.map((optionProps) => (
                     <CardOption key={optionProps.title} {...optionProps} />
                   ))}
@@ -347,7 +347,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
         type="button"
         aria-disabled={disabled}
         className={twMerge(
-          'relative flex h-32 w-[calc(100%/2-16px)] justify-between gap-4 rounded-md border border-neutral p-4 shadow-sm transition lg:w-[calc(100%/3-16px)]',
+          'relative flex h-32 w-[calc(100%/2-16px)] justify-between gap-4 rounded-md border border-neutral p-4 shadow-sm transition max-md:w-[calc(100%-16px)] lg:w-[calc(100%/3-16px)]',
           disabled
             ? twMerge(
                 'bg-surface-neutral-component shadow-none hover:border-neutral hover:bg-surface-neutral-component',

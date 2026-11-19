@@ -349,7 +349,7 @@ export function ClusterDnsProviderSettings({
 
   return (
     <FormProvider {...methods}>
-      <Section className="p-8">
+      <Section className="px-4 py-8 md:p-8">
         <SettingsHeading
           title="DNS provider"
           description={

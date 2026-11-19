@@ -31,7 +31,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="General" />
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Organization profile">

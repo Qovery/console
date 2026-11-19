@@ -307,7 +307,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const hasOverlaySave = ['connections', 'automations', 'outputs', 'advanced-settings'].includes(page)
 
   return (
-    <Section className="px-8 pb-8 pt-6">
+    <Section className="px-4 pb-8 pt-6 md:px-8">
       <SettingsHeading title={content.title} description={content.description} />
       <form onSubmit={submit} className="max-w-content-with-navigation-left space-y-4">
         {page === 'general' ? <AgenticWorkflowGeneralSettings form={form} /> : null}

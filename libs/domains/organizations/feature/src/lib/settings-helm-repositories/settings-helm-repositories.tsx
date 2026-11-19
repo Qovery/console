@@ -21,7 +21,7 @@ export interface PageOrganizationHelmRepositoriesProps {
 const HelmRepositoriesRowsSkeleton = () => (
   <ul>
     {[0, 1, 2, 3].map((index) => (
-      <li key={index} className="flex items-center justify-between border-b border-neutral p-4 last:border-0">
+      <li key={index} className="flex items-center justify-between gap-3 border-b border-neutral p-4 last:border-0">
         <div className="flex items-center gap-4">
           <Skeleton width={20} height={20} show={true} />
           <div className="space-y-2">
@@ -76,9 +76,9 @@ function HelmRepositoriesList({
           key={repository.id}
           className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
         >
-          <div className="flex items-center">
-            <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" />
-            <div className="ml-4">
+          <div className="flex min-w-0 items-center">
+            <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" className="shrink-0" />
+            <div className="ml-4 min-w-0">
               <h2 className="mb-1 flex text-xs font-medium text-neutral">
                 <Truncate
                   truncateLimit={60}
@@ -92,10 +92,10 @@ function HelmRepositoriesList({
                   </Tooltip>
                 )}
               </h2>
-              <p className="text-xs text-neutral-subtle">{repository.url}</p>
+              <p className="break-all text-xs text-neutral-subtle">{repository.url}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex shrink-0 gap-2">
             <Indicator
               content={
                 <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
@@ -137,7 +137,7 @@ export function PageOrganizationHelmRepositories({
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Helm repositories"

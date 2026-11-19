@@ -118,7 +118,7 @@ const TerraformArgumentsSettingsContent = ({ service }: { service: Terraform }) 
 
   return (
     <FormProvider {...methods}>
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading
           title="Terraform arguments"
           description="Configure the arguments passed to each Terraform command."

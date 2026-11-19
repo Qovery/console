@@ -111,7 +111,7 @@ function DatabaseRdsDashboardContent({ dbInstance, databaseEngine, storageResour
           </div>
         </div>
       </div>
-      <div className="space-y-8 px-8 py-8">
+      <div className="space-y-8 px-4 py-8 md:px-8">
         <Section className="gap-4">
           <Heading weight="medium" level={2}>
             Health overview

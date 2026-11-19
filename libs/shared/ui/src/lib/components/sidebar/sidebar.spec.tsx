@@ -44,7 +44,7 @@ describe('Sidebar', () => {
       </Sidebar.Root>
     )
 
-    expect(screen.getByText('General')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'General' })).toBeInTheDocument()
   })
 
   it('should mark active item', () => {
@@ -55,9 +55,25 @@ describe('Sidebar', () => {
       </Sidebar.Root>
     )
 
-    const generalItem = screen.getByText('General').closest('a')
+    const generalItem = screen.getByRole('link', { name: 'General' })
     expect(generalItem).toHaveAttribute('data-active', 'true')
     expect(generalItem).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('should show the current section in the mobile menu button and expand the list on click', async () => {
+    const { userEvent } = renderWithProviders(
+      <Sidebar.Root>
+        <Sidebar.Item to="/general">General</Sidebar.Item>
+        <Sidebar.Item to="/deployment">Deployment</Sidebar.Item>
+      </Sidebar.Root>
+    )
+
+    const menuButton = screen.getByRole('button', { name: 'General' })
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false')
+
+    await userEvent.click(menuButton)
+
+    expect(menuButton).toHaveAttribute('aria-expanded', 'true')
   })
 
   it('should render group with sub items', async () => {

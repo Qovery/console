@@ -23,7 +23,7 @@ function PageProjectGeneral(props: PageProjectGeneralProps) {
 
   return (
     <div key={getValues().toString()} className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="General" showNeedHelp={false} />
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Project settings">

@@ -234,7 +234,7 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
           </div>
         </div>
       </div>
-      <div className="space-y-10 px-8 py-10">
+      <div className="space-y-10 px-4 py-10 md:px-8">
         <Section className="gap-4">
           <Heading weight="medium" level={2}>
             Service health check

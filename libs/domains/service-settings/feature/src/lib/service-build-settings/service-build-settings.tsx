@@ -61,7 +61,7 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="Build settings" description="Configure the build parameters for this service." />
         <div className="max-w-content-with-navigation-left">
           {disabled && (

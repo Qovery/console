@@ -24,7 +24,7 @@ function RouteComponent() {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading
           title="Advanced settings"
           description="Any change to this section will be applied after triggering a service update."

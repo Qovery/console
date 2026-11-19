@@ -81,7 +81,7 @@ function RouteComponent() {
   if (isClusterLoading) {
     return (
       <div className="flex w-full flex-col justify-between">
-        <Section className="max-w-content-with-navigation-left p-8">
+        <Section className="max-w-content-with-navigation-left px-4 py-8 md:p-8">
           <div className="flex items-start justify-center p-10">
             <LoaderSpinner className="w-5" />
           </div>
@@ -93,7 +93,7 @@ function RouteComponent() {
   return (
     <FormProvider {...methods}>
       <div className="flex w-full flex-col justify-between">
-        <Section className="max-w-content-with-navigation-left p-8">
+        <Section className="max-w-content-with-navigation-left px-4 py-8 md:p-8">
           <SettingsHeading title="EKS Anywhere configuration" />
           <form onSubmit={onSubmit}>
             <div className="space-y-10">

@@ -174,7 +174,7 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
 
   return (
     <FormProvider {...methods}>
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="General settings" description={headingDescription} />
         <div className="max-w-content-with-navigation-left">
           <form onSubmit={onSubmit} className="space-y-10">

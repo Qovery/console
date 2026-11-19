@@ -174,7 +174,7 @@ export function ApplicationContainerStorageSettings() {
   }
 
   return (
-    <Section className="px-8 pb-8 pt-6">
+    <Section className="px-4 pb-8 pt-6 md:px-8">
       <div className="space-y-6">
         <SettingsHeading title="Storage" description="Add persistent local storage for your application.">
           <Button size="md" variant="solid" color="brand" type="button" onClick={() => openStorageModal()}>

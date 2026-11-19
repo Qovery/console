@@ -63,7 +63,7 @@ const TerraformConfigurationSettingsWrapper = () => {
 
   return (
     <FormProvider {...methods}>
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading
           title="Terraform configuration"
           description="Customize the resources assigned to the service."

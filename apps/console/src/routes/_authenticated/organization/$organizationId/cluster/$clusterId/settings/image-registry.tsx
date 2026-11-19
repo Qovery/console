@@ -22,7 +22,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="p-8">
+      <Section className="px-4 py-8 md:p-8">
         <SettingsHeading
           title="Mirroring registry"
           description="This mirroring registry is used to store the built images or mirror the container images deployed on this cluster."
