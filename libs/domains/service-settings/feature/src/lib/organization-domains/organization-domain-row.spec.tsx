@@ -126,5 +126,6 @@ it('renders compact neutral route chips and preserves full long names', () => {
   expect(screen.getByTitle(longDomain.project.name)).toHaveClass('font-normal')
   const route = screen.getByRole('link', { name: 'web: /' })
   expect(route).toHaveClass('gap-0', 'text-xs')
-  expect(route.querySelector('img')).toHaveAttribute('src', '/assets/domains/route-application.svg')
+  expect(route.querySelector('svg')).toBeInTheDocument()
+  expect(route.querySelector('img')).not.toBeInTheDocument()
 })

@@ -2,7 +2,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { match } from 'ts-pattern'
 import { useDeleteCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import {
@@ -155,16 +154,7 @@ export function OrganizationDomainRow({
                 }}
               >
                 <span className="flex min-w-0 items-center gap-1 px-1.5 py-[3px]">
-                  {match(route.service.type)
-                    .with('APPLICATION', () => (
-                      <span className="flex size-3.5 shrink-0 items-center justify-center">
-                        <img src="/assets/domains/route-application.svg" alt="" className="h-auto max-w-full" />
-                      </span>
-                    ))
-                    .with('HELM', () => <Icon name="HELM" width="14" height="14" />)
-                    .otherwise(() => (
-                      <Icon name="CONTAINER" width="14" height="14" />
-                    ))}
+                  <Icon name={route.service.type} width="14" height="14" />
                   <span className="max-w-32 truncate">{route.service.name}</span>
                 </span>
                 <span className="max-w-32 self-stretch truncate border-l border-neutral px-1.5 py-[3px] font-normal text-neutral-subtle">
