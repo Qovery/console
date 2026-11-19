@@ -100,6 +100,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                   value={field.value}
                   error={error?.message}
                   label="Website"
+                  inputMode="url"
                 />
               )}
             />

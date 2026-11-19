@@ -294,7 +294,6 @@ const MembersTable = (props: MembersTableProps) => {
                   <Table.ColumnHeaderCell
                     key={header.id}
                     className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''} ${index >= 3 ? 'max-md:hidden' : ''}`}
-                    className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''}`}
                     style={{ width: `${columnSizes[index]}%` }}
                   >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
