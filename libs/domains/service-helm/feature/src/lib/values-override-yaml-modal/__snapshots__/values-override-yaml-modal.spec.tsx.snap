@@ -73,7 +73,7 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
               class="p-0"
             >
               <section
-                style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100vh - 278px);"
+                style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100dvh - 278px);"
               >
                 <div
                   style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"

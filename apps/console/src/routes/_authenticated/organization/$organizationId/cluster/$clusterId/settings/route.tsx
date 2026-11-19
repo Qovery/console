@@ -144,7 +144,7 @@ function RouteComponent() {
         <aside
           className={twMerge(
             clsx(
-              'relative shrink-0 self-stretch border-b border-neutral pb-4 md:min-h-[calc(100vh-2.75rem-4rem)] md:w-52 md:border-b-0 md:border-r md:pb-0',
+              'relative shrink-0 self-stretch border-b border-neutral pb-4 md:min-h-[calc(100dvh-2.75rem-4rem)] md:w-52 md:border-b-0 md:border-r md:pb-0',
               {
                 'md:w-60': eksAnywhereCluster,
               }

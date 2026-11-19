@@ -166,7 +166,7 @@ export const Modal = (props: ModalProps) => {
           }}
           style={
             fullScreen
-              ? { width: 'calc(100vw - 48px)', height: 'calc(100vh  - 48px)', top: 24 }
+              ? { width: 'calc(100vw - 48px)', height: 'calc(100dvh  - 48px)', top: 24 }
               : {
                   width: typeof width === 'number' ? `${width}px` : width,
                   // Keeps fixed-width modals inside narrow (mobile) viewports
