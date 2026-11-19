@@ -98,13 +98,10 @@ describe('ClusterCredentialsModal', () => {
         /^(Cloudformation stack|Cloudformation extended permissions|Cloudformation restricted permissions)$/
       if (isWideCredentialsEnabled) {
         // "Single credential mode" is open by default: only the extended link is visible
-        expect(screen.getByRole('button', { name: 'Single credential mode' })).toHaveAttribute(
-          'aria-expanded',
-          'true'
-        )
-        expect(
-          screen.getAllByRole('link', { name: linkNames }).map((link) => link.textContent)
-        ).toEqual(['Cloudformation extended permissions'])
+        expect(screen.getByRole('button', { name: 'Single credential mode' })).toHaveAttribute('aria-expanded', 'true')
+        expect(screen.getAllByRole('link', { name: linkNames }).map((link) => link.textContent)).toEqual([
+          'Cloudformation extended permissions',
+        ])
 
         // Opening restricted mode replaces the single credential section: restricted first, then extended
         await userEvent.click(screen.getByRole('button', { name: 'Extended & Restricted credentials mode' }))

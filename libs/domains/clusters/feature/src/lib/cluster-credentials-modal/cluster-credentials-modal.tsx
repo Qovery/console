@@ -683,7 +683,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   <div className="flex flex-col gap-3">
                     <Accordion.Root type="single" collapsible defaultValue="single" className="flex flex-col gap-2">
                       <Accordion.Item value="single" className="rounded border border-neutral">
-                        <Accordion.Trigger className="min-h-10 w-full flex-row-reverse justify-between gap-3 px-3 py-2 text-left font-medium text-neutral">
+                        <Accordion.Trigger className="min-h-10 w-full cursor-pointer flex-row-reverse justify-between gap-3 px-3 py-2 text-left font-medium text-neutral">
                           Single credential mode
                         </Accordion.Trigger>
                         <Accordion.Content>
@@ -698,7 +698,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                         </Accordion.Content>
                       </Accordion.Item>
                       <Accordion.Item value="restricted" className="rounded border border-neutral">
-                        <Accordion.Trigger className="min-h-10 w-full flex-row-reverse justify-between gap-3 px-3 py-2 text-left font-medium text-neutral">
+                        <Accordion.Trigger className="min-h-10 w-full cursor-pointer flex-row-reverse justify-between gap-3 px-3 py-2 text-left font-medium text-neutral">
                           Extended & Restricted credentials mode
                         </Accordion.Trigger>
                         <Accordion.Content>
