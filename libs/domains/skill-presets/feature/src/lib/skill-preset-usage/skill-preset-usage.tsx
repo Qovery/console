@@ -240,6 +240,13 @@ function UsageContent({ organizationId }: { organizationId: string }) {
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
+                  {usage.by_skill.length === 0 && (
+                    <Table.Row>
+                      <Table.Cell colSpan={5} className="text-neutral-subtle">
+                        No skill usage for the selected period and filters.
+                      </Table.Cell>
+                    </Table.Row>
+                  )}
                   {usage.by_skill.slice(0, TOP_LIMIT).map((row) => (
                     <Table.Row key={row.skill_name}>
                       <Table.Cell className="font-sans">
@@ -277,6 +284,13 @@ function UsageContent({ organizationId }: { organizationId: string }) {
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
+                  {usage.by_member.length === 0 && (
+                    <Table.Row>
+                      <Table.Cell colSpan={4} className="text-neutral-subtle">
+                        No member usage for the selected period and filters.
+                      </Table.Cell>
+                    </Table.Row>
+                  )}
                   {usage.by_member.slice(0, TOP_LIMIT).map((row) => (
                     <Table.Row key={row.user_sub}>
                       <Table.Cell>
@@ -311,6 +325,13 @@ function UsageContent({ organizationId }: { organizationId: string }) {
                 </Table.Row>
               </Table.Header>
               <Table.Body>
+                {byPreset.length === 0 && (
+                  <Table.Row>
+                    <Table.Cell colSpan={3} className="text-neutral-subtle">
+                      No preset usage for the selected period and filters.
+                    </Table.Cell>
+                  </Table.Row>
+                )}
                 {byPreset.map((row) => (
                   <Table.Row key={row.skill_preset_id ?? NO_PRESET}>
                     <Table.Cell>
