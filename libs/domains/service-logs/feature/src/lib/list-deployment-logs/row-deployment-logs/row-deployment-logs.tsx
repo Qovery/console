@@ -26,6 +26,7 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
 
   const [isHighlighted, setIsHighlighted] = useState(false)
   const [copyLinkIcon, setCopyLinkIcon] = useState<IconName>('link')
+  const isLinkCopied = copyLinkIcon === 'check'
 
   const step = original.details?.stage?.step
   const type = original.type
@@ -57,11 +58,16 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
       <Table.Cell className="h-6 min-w-10 select-none py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-subtle group-hover:bg-surface-neutral-subtle group-hover:delay-1000">
         <Tooltip content="Copy row URL">
           <span className="relative block">
-            <span className={`group-hover:opacity-0 ${isHighlighted ? 'opacity-0' : ''}`}>{original.id}</span>
+            {/* The copy button sits over the line number. Touch screens have no hover, so the copied state is what
+                gives feedback: the check icon replaces the number for a second after a tap */}
+            <span className={`group-hover:opacity-0 ${isHighlighted || isLinkCopied ? 'opacity-0' : ''}`}>
+              {original.id}
+            </span>
             <button
+              aria-label="Copy row URL"
               className={clsx('absolute left-0 top-0 text-sm text-neutral', {
-                'text-brand': isHighlighted,
-                'opacity-0 hover:text-brand group-hover:opacity-100': !isHighlighted,
+                'text-brand': isHighlighted || isLinkCopied,
+                'opacity-0 hover:text-brand group-hover:opacity-100': !isHighlighted && !isLinkCopied,
               })}
               onClick={() => {
                 setCopyLinkIcon('check')

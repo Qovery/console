@@ -19,12 +19,12 @@ exports[`Input should match snapshot when loading 1`] = `
           type="button"
         >
           <div
-            class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 absolute left-0 right-0 m-auto group-hover:opacity-0"
+            class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 absolute left-0 right-0 m-auto group-hover:opacity-0 [@media(hover:none)]:opacity-0"
             data-testid="spinner"
           />
           <i
             aria-hidden="true"
-            class="fa-light fa-stop absolute left-0 right-0 m-auto opacity-0 group-hover:opacity-100"
+            class="fa-light fa-stop absolute left-0 right-0 m-auto opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
           />
         </button>
       </div>
