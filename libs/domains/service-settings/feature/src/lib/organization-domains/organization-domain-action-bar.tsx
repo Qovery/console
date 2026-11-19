@@ -127,13 +127,13 @@ export function OrganizationDomainActionBar({
       <div
         role="region"
         aria-label="Selected domain actions"
-        className="pointer-events-auto w-full max-w-[488px] rounded-lg border border-neutral bg-surface-neutral p-3 pl-4 text-sm text-neutral shadow-xl"
+        className="pointer-events-auto w-max max-w-full rounded-lg border border-neutral bg-surface-neutral p-3 pl-4 text-sm text-neutral shadow-xl"
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <span>
+          <span className="shrink-0 whitespace-nowrap">
             {domains.length} selected {pluralize(domains.length, 'domain')}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               className="px-1 text-ssm font-medium text-neutral-subtle underline"
