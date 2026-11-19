@@ -12,7 +12,7 @@ export function AgentTaskEnvironmentModal({
   onClose,
 }: {
   organizationId: string
-  template: AgenticWorkflowTemplate
+  template?: AgenticWorkflowTemplate
   onClose: () => void
 }) {
   const navigate = useNavigate()
@@ -28,18 +28,25 @@ export function AgentTaskEnvironmentModal({
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title="Create Agent Task"
-        description={template.title}
-        submitLabel="Continue"
+        title={template ? 'Create Agent Task' : 'Open Automations'}
+        description={template?.title}
+        submitLabel={template ? 'Continue' : 'Open Automations'}
         submitDisabled={!canContinue}
         onClose={onClose}
         onSubmit={methods.handleSubmit(async ({ projectId, environmentId }) => {
           if (!canContinue) return
-          await navigate({
-            to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-            params: { organizationId, projectId, environmentId },
-            search: { template: template.id },
-          })
+          if (template) {
+            await navigate({
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+              params: { organizationId, projectId, environmentId },
+              search: { template: template.id },
+            })
+          } else {
+            await navigate({
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
+              params: { organizationId, projectId, environmentId },
+            })
+          }
           onClose()
         })}
       >

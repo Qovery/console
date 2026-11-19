@@ -67,3 +67,17 @@ it.each([
   expect(screen.getByText(new RegExp(message))).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
 })
+
+it('opens Automations in the chosen environment without a template', async () => {
+  const { userEvent } = renderWithProviders(<AgentTaskEnvironmentModal organizationId="org" onClose={props.onClose} />)
+  await select('Project', 'Project one')
+  await select('Environment', 'Staging')
+  await userEvent.click(screen.getByRole('button', { name: 'Open Automations' }))
+  await waitFor(() =>
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
+      params: { organizationId: 'org', projectId: 'p1', environmentId: 'env' },
+    })
+  )
+  expect(props.onClose).toHaveBeenCalled()
+})

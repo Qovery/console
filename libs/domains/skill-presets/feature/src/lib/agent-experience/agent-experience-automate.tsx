@@ -115,7 +115,7 @@ const MCP_URL = 'https://mcp.qovery.com/mcp'
 /** A value to copy, in full (it wraps instead of being cut), with a copy button named after it. */
 function CopyValue({ label, value, copyLabel }: { label: string; value: string; copyLabel: string }) {
   return (
-    <span className="flex items-start justify-between gap-2 rounded border border-neutral bg-surface-neutral-subtle px-2 py-1">
+    <span className="flex items-center justify-between gap-2 rounded border border-neutral bg-surface-neutral-subtle px-2 py-1">
       <span className="min-w-0 break-all py-1 text-xs">
         <span className="text-neutral-subtle">{label}: </span>
         <code className="font-code text-neutral">{value}</code>
@@ -137,11 +137,13 @@ function RunOnItsOwn({
   canManage,
   organizationId,
   adminNames,
+  onOpenEnvironment,
 }: {
   job: AgentJob
   canManage: boolean
   organizationId: string
   adminNames: string[]
+  onOpenEnvironment: () => void
 }) {
   return (
     <Section aria-labelledby="agent-job-run" className="flex flex-col gap-4" data-testid="agent-job-run">
@@ -266,9 +268,16 @@ function RunOnItsOwn({
                       Add the MCP server
                     </Link>
                   )}
-                  <Link to="/organization/$organizationId/overview" params={{ organizationId }} color="brand" size="xs">
+                  <Button
+                    type="button"
+                    variant="plain"
+                    color="brand"
+                    size="xs"
+                    className="h-auto p-0"
+                    onClick={onOpenEnvironment}
+                  >
                     Open Automations in an environment
-                  </Link>
+                  </Button>
                   <ExternalLink href="https://www.qovery.com/docs/configuration/agent-tasks/overview" size="xs">
                     Agent Tasks docs
                   </ExternalLink>
@@ -418,7 +427,19 @@ function JobDetailsPanel({
                   Anything the policy does not allow is refused by the Qovery API, from the Console, the CLI, Terraform
                   or MCP, and every call is in the audit logs.
                 </p>
-                <RunOnItsOwn job={job} canManage={canManage} organizationId={organizationId} adminNames={adminNames} />
+                <RunOnItsOwn
+                  job={job}
+                  canManage={canManage}
+                  organizationId={organizationId}
+                  adminNames={adminNames}
+                  onOpenEnvironment={() => {
+                    onOpenChange(false)
+                    openModal({
+                      content: <AgentTaskEnvironmentModal organizationId={organizationId} onClose={closeModal} />,
+                      options: { width: 560 },
+                    })
+                  }}
+                />
                 <CodeSection id="agent-job-policy" title="Policy (Rego)" code={job.policy} copyLabel="Copy policy" />
                 <p className="text-xs text-neutral-subtle">
                   Replace each REPLACE_WITH_... value with an ID from your organization before you create the token.
@@ -504,83 +525,92 @@ export function AgentExperienceAutomate() {
       title="Automate"
       description="Agents that run on their own, each with a token that allows only its job."
     >
-      <Section className="gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <InputSelectSmall
-            name="level"
-            ariaLabel="Safety level"
-            className="w-48"
-            inputClassName="h-8"
-            defaultValue={level}
-            onChange={(value) => setLevel(value as typeof level)}
-            items={[
-              { value: 'all', label: 'All levels' },
-              ...AGENT_JOB_LEVELS.map((item) => ({ value: item.level, label: item.title })),
-            ]}
-          />
-          {/* Members cannot create the policy token a job needs: no button for them. */}
-          {canManage && (
-            <Button type="button" size="md" variant="outline" color="neutral" className="gap-1.5" onClick={openNewJob}>
-              <Icon iconName="circle-plus" iconStyle="regular" />
-              {NEW_JOB_TITLE}
-            </Button>
-          )}
-        </div>
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" data-testid="agent-job-grid">
-          {jobs.map((job) => (
-            <JobCard key={job.slug} job={job} onViewDetails={openDetails} />
-          ))}
-        </div>
-      </Section>
-
-      {isAgentTasksEnabled && (
-        <Section aria-labelledby="run-agents-on-qovery" className="gap-2">
-          <div className="flex flex-col gap-0.5">
-            <Heading level={2} id="run-agents-on-qovery">
-              Agent Tasks templates
-            </Heading>
-            <p className="text-sm text-neutral-subtle">
-              Ready-made agents that run next to your services. Select a template to get started.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {agentTasks.map((task) => (
-              <button
+      <div className="flex flex-col gap-8">
+        <Section className="gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <InputSelectSmall
+              name="level"
+              ariaLabel="Safety level"
+              className="w-48"
+              inputClassName="h-8"
+              defaultValue={level}
+              onChange={(value) => setLevel(value as typeof level)}
+              items={[
+                { value: 'all', label: 'All levels' },
+                ...AGENT_JOB_LEVELS.map((item) => ({ value: item.level, label: item.title })),
+              ]}
+            />
+            {/* Members cannot create the policy token a job needs: no button for them. */}
+            {canManage && (
+              <Button
                 type="button"
-                key={task.id}
-                onClick={() =>
-                  openNewJobModal({
-                    content: (
-                      <AgentTaskEnvironmentModal
-                        organizationId={organizationId}
-                        template={task}
-                        onClose={closeNewJobModal}
-                      />
-                    ),
-                    options: { width: 560 },
-                  })
-                }
-                className={`${CARD_CLASS_NAME} group transition-colors hover:border-neutral-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong`}
-                aria-label={`${task.title}: create Agent Task`}
+                size="md"
+                variant="outline"
+                color="neutral"
+                className="gap-1.5"
+                onClick={openNewJob}
               >
-                <span className="flex w-full items-start justify-between gap-2">
-                  <span className="flex h-9 w-9 items-center justify-center rounded bg-surface-neutral-component">
-                    {task.logoPath ? (
-                      <img src={task.logoPath} alt="" className="h-6 w-6 object-contain" />
-                    ) : (
-                      <Icon iconName={task.iconName ?? 'robot'} iconStyle="regular" className="text-xl text-brand" />
-                    )}
-                  </span>
-                </span>
-                <span className="flex flex-col gap-1">
-                  <span className="text-sm font-medium text-neutral">{task.title}</span>
-                  <span className="text-xs leading-5 text-neutral-subtle">{task.description}</span>
-                </span>
-              </button>
+                <Icon iconName="circle-plus" iconStyle="regular" />
+                {NEW_JOB_TITLE}
+              </Button>
+            )}
+          </div>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" data-testid="agent-job-grid">
+            {jobs.map((job) => (
+              <JobCard key={job.slug} job={job} onViewDetails={openDetails} />
             ))}
           </div>
         </Section>
-      )}
+
+        {isAgentTasksEnabled && (
+          <Section aria-labelledby="run-agents-on-qovery" className="gap-4">
+            <div className="flex flex-col gap-1">
+              <Heading level={2} id="run-agents-on-qovery">
+                Agent Tasks templates
+              </Heading>
+              <p className="text-sm text-neutral-subtle">
+                Ready-made agents that run next to your services. Select a template to get started.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {agentTasks.map((task) => (
+                <button
+                  type="button"
+                  key={task.id}
+                  onClick={() =>
+                    openNewJobModal({
+                      content: (
+                        <AgentTaskEnvironmentModal
+                          organizationId={organizationId}
+                          template={task}
+                          onClose={closeNewJobModal}
+                        />
+                      ),
+                      options: { width: 560 },
+                    })
+                  }
+                  className={`${CARD_CLASS_NAME} group transition-colors hover:border-neutral-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong`}
+                  aria-label={`${task.title}: create Agent Task`}
+                >
+                  <span className="flex w-full items-start justify-between gap-2">
+                    <span className="flex h-9 w-9 items-center justify-center rounded bg-surface-neutral-component">
+                      {task.logoPath ? (
+                        <img src={task.logoPath} alt="" className="h-6 w-6 object-contain" />
+                      ) : (
+                        <Icon iconName={task.iconName ?? 'robot'} iconStyle="regular" className="text-xl text-brand" />
+                      )}
+                    </span>
+                  </span>
+                  <span className="flex flex-col gap-1">
+                    <span className="text-sm font-medium text-neutral">{task.title}</span>
+                    <span className="text-xs leading-5 text-neutral-subtle">{task.description}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </Section>
+        )}
+      </div>
       <JobDetailsPanel
         job={selectedJob}
         open={isDetailsOpen}
