@@ -27,10 +27,9 @@ import {
   type Job,
   type Terraform,
 } from '@qovery/domains/services/data-access'
-import { isContainerGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { parseCmd } from '@qovery/shared/util-js'
-import { convertAutoscalingResponseToRequest } from '@qovery/shared/util-services'
+import { convertAutoscalingResponseToRequest, omitStoredContainerFields } from '@qovery/shared/util-services'
 
 export interface HelmGeneralData
   extends Omit<HelmRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec'> {
@@ -180,16 +179,7 @@ export const handleContainerSubmit = (
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
     labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
     autoscaling: convertAutoscalingResponseToRequest(container.autoscaling),
-    // Without `source` and `build_settings` the API keeps the stored ones; a Git container rejects changed image fields and auto-deploy or auto-preview
-    source: undefined,
-    build_settings: undefined,
-    ...(isContainerGitSource(container.source) && {
-      registry_id: undefined,
-      image_name: undefined,
-      tag: undefined,
-      auto_deploy: undefined,
-      auto_preview: undefined,
-    }),
+    ...omitStoredContainerFields(container),
   }
 }
 

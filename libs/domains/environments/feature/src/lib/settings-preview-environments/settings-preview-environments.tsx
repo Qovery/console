@@ -7,18 +7,16 @@ import {
   type AnyService,
   type EditableService,
   isArgoCd,
-  isContainer,
   isEditableService,
+  isGitContainer,
 } from '@qovery/domains/services/data-access'
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { IconEnum, isContainerGitSource } from '@qovery/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
 import { BlockContent, Button, Callout, Icon, InputToggle, Section } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
-
-const isGitContainer = (service: AnyService) => isContainer(service) && isContainerGitSource(service.source)
 
 interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void

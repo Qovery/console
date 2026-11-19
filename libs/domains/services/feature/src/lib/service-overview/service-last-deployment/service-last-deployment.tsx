@@ -7,7 +7,7 @@ import {
   type AnyService,
   getDeployableServiceType,
   isAgenticWorkflow,
-  isContainer,
+  isGitContainer,
 } from '@qovery/domains/services/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { isContainerGitSource, isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
@@ -94,10 +94,10 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
   const lastDeployment = deploymentHistory[0]
   const gitRepository = service ? getGitRepository(service) : undefined
   // Containers have no commit list endpoint, so their deployed commit comes from the source only
-  const isGitContainer = Boolean(service && isContainer(service) && isContainerGitSource(service.source))
+  const isGitContainerService = Boolean(service && isGitContainer(service))
   const showGitCommit =
     Boolean(gitRepository) &&
-    (!isGitContainer || Boolean(gitRepository?.deployed_commit_id)) &&
+    (!isGitContainerService || Boolean(gitRepository?.deployed_commit_id)) &&
     Boolean(service?.id && service?.name && service?.serviceType && 'environment' in service && service.environment)
 
   const isOngoing = match(lastDeployment?.status_details?.status)
@@ -194,7 +194,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
       <span className="pointer-events-auto inline-flex items-center gap-2.5">
         <DotSeparator />
         <span className="flex items-center gap-2.5 font-normal" onClick={preventParentLinkNavigation}>
-          {isGitContainer ? (
+          {isGitContainerService ? (
             <DeployedCommit gitRepository={gitRepository} />
           ) : (
             <LastCommit
@@ -215,7 +215,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
               </span>
             </>
           )}
-          {!isGitContainer && (
+          {!isGitContainerService && (
             <>
               <DotSeparator />
               <LastCommitAuthor

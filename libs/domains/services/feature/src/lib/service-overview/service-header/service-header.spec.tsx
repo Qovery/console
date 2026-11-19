@@ -440,7 +440,7 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText('GitHub')).not.toBeInTheDocument()
   })
 
-  it('renders the Git source and the running image of a Git container', () => {
+  it('renders the Git source and deployed commit of a Git container without its image', () => {
     const container = gitContainerFactoryMock(1)[0]
 
     renderWithProviders(<ServiceHeader environment={environment} service={container} />)
@@ -448,8 +448,9 @@ describe('ServiceHeader', () => {
     expect(screen.getByText('GitHub')).toBeInTheDocument()
     expect(screen.getByText('qovery/console')).toBeInTheDocument()
     expect(screen.getByText('main')).toBeInTheDocument()
-    expect(screen.getByText(container.image_name)).toBeInTheDocument()
-    expect(screen.getByText(container.tag)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '4f3a1c2' })).toBeInTheDocument()
+    expect(screen.queryByText(container.image_name)).not.toBeInTheDocument()
+    expect(screen.queryByText(container.tag)).not.toBeInTheDocument()
   })
 
   it('renders database badges and copies the connection URI', async () => {
