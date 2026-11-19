@@ -406,7 +406,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                     />
                                   )}
                                 />
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                   <Controller
                                     name="karpenter.disk_iops"
                                     control={control}
@@ -536,7 +536,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           />
                         )}
                       />
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <Controller
                           name="karpenter.qovery_node_pools.gpu_override.disk_iops"
                           control={control}
@@ -691,7 +691,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 )}
               />
               {props.cloudProvider === 'AWS' && (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Controller
                     name="disk_iops"
                     control={control}
