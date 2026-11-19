@@ -60,6 +60,10 @@ function shouldIgnoreRowNavigation(target: EventTarget | null) {
   return target instanceof HTMLElement && Boolean(target.closest(interactiveRowTargetSelector))
 }
 
+// Below md the list keeps the date (with execution id and logs link) and the status; the other columns are hidden
+const mobileDeploymentColumnClassName = (index: number) =>
+  index === 0 ? 'max-md:!w-[60%] max-md:overflow-hidden' : index === 1 ? 'max-md:!w-[40%]' : 'max-md:hidden'
+
 export interface EnvironmentDeploymentListProps {
   environmentId: string
 }
@@ -466,13 +470,13 @@ export function EnvironmentDeploymentList() {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
+      <Table.Root className="w-full table-fixed overflow-x-scroll text-ssm md:min-w-[1080px]">
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className="group font-medium"
+                  className={`group font-medium ${mobileDeploymentColumnClassName(header.column.getIndex())}`}
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -534,6 +538,7 @@ export function EnvironmentDeploymentList() {
                   {row.getVisibleCells().map((cell) => (
                     <Table.Cell
                       key={cell.id}
+                      className={mobileDeploymentColumnClassName(cell.column.getIndex())}
                       style={{
                         width: `${cell.column.getSize()}px`,
                       }}
