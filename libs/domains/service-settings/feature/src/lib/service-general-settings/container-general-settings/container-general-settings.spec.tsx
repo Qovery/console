@@ -61,7 +61,29 @@ describe('ContainerGeneralSettings', () => {
     expect(screen.getByLabelText('Dockerfile path')).toBeDisabled()
     expect(screen.getByLabelText('Running image')).toHaveValue(`${gitContainer.image_name}:${gitContainer.tag}`)
     expect(screen.getByLabelText('Running image')).toBeDisabled()
+    expect(screen.queryByLabelText('Dockerfile stage')).not.toBeInTheDocument()
     expect(screen.queryByText('Container registry settings')).not.toBeInTheDocument()
+  })
+
+  it('should render the Dockerfile stage read-only for a Git container that targets one', () => {
+    renderSettings({
+      ...gitContainer,
+      source: {
+        git_repository: {
+          provider: 'GITHUB' as const,
+          owner: 'qovery',
+          name: 'qovery/console',
+          url: 'https://github.com/qovery/console.git',
+          branch: 'main',
+          root_path: '/',
+          dockerfile_path: 'Dockerfile',
+          docker_target_build_stage: 'runtime',
+        },
+      },
+    })
+
+    expect(screen.getByLabelText('Dockerfile stage')).toHaveValue('runtime')
+    expect(screen.getByLabelText('Dockerfile stage')).toBeDisabled()
   })
 
   it('should replace auto-deploy with a note for a Git container', () => {
