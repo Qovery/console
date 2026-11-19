@@ -68,12 +68,9 @@ export function AgentExperienceNav() {
           title="Settings"
           icon="gear"
           iconStyle="regular"
-          className="mt-4"
           defaultOpen={pathname.startsWith(`${base}/policy-tokens`)}
         >
-          <Sidebar.Item to={`${base}/policy-tokens`} icon="key" iconStyle="regular" className="pl-[41.5px]">
-            Policy tokens
-          </Sidebar.Item>
+          <Sidebar.SubItem to={`${base}/policy-tokens`}>Policy tokens</Sidebar.SubItem>
         </Sidebar.Group>
       )}
     </Sidebar.Root>

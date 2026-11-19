@@ -1,19 +1,9 @@
-import { Link, useParams } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { type SkillPresetUsageBucket, type SkillPresetUsageResponse } from '@qovery/domains/skill-presets/data-access'
-import {
-  Badge,
-  Button,
-  Chart,
-  Heading,
-  Icon,
-  InputSelect,
-  SegmentedControl,
-  Skeleton,
-  TablePrimitives,
-} from '@qovery/shared/ui'
+import { Button, Chart, Heading, InputSelectSmall, Skeleton, TablePrimitives } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
@@ -34,6 +24,7 @@ const RANGES: { value: string; label: string; hours: number; bucket: SkillPreset
 
 const ALL = 'all'
 const NO_PRESET = 'none'
+const TOP_LIMIT = 5
 
 interface UsageFilters {
   range: string
@@ -46,9 +37,9 @@ const percent = (part: number, total: number) => (total === 0 ? '0%' : `${Math.r
 
 function Stat({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
-    <div className="flex flex-col gap-0.5 px-4 py-3">
+    <div className="flex min-h-28 flex-col justify-between gap-3 rounded-md border border-neutral bg-surface-neutral px-4 py-3">
       <dt className="text-xs text-neutral-subtle">{label}</dt>
-      <dd className="text-base font-medium tabular-nums text-neutral">{value}</dd>
+      <dd className="text-3xl font-medium tabular-nums text-neutral">{value}</dd>
       {detail && <dd className="text-xs text-neutral-subtle">{detail}</dd>}
     </div>
   )
@@ -63,7 +54,7 @@ function DrillButton({ label, onClick, active }: { label: string; onClick: () =>
       size="xs"
       onClick={onClick}
       aria-pressed={active}
-      className="h-auto px-0 text-left text-sm underline-offset-2 hover:underline"
+      className="h-auto px-0 text-left text-sm font-normal underline-offset-2 hover:underline"
     >
       {label}
     </Button>
@@ -120,66 +111,40 @@ function UsageContent({ organizationId }: { organizationId: string }) {
   const byPreset = usage?.by_preset ?? []
 
   return (
-    <div className="flex flex-col gap-6">
-      <p className="flex items-center gap-2 text-sm text-neutral-subtle">
-        <Icon iconName="robot" iconStyle="regular" aria-hidden="true" />
-        Skill loads tell you what agents read.{' '}
-        <Link
-          to="/organization/$organizationId/agent-experience/agent-activity"
-          params={{ organizationId }}
-          className="font-medium text-brand hover:underline"
-        >
-          See what they did next in Agent activity
-        </Link>
-      </p>
-      <div className="flex flex-wrap items-end gap-3">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs text-neutral-subtle" id="usage-range-label">
-            Period
-          </span>
-          <SegmentedControl.Root
-            value={filters.range}
-            onValueChange={(value) => set({ range: value })}
-            aria-labelledby="usage-range-label"
-          >
-            {RANGES.map((item) => (
-              <SegmentedControl.Item key={item.value} value={item.value} className="text-xs">
-                {item.label}
-              </SegmentedControl.Item>
-            ))}
-          </SegmentedControl.Root>
-        </div>
-        <InputSelect
-          className="w-52"
-          label="Skill"
-          isSearchable
-          value={filters.skillName}
+    <div className="flex min-w-0 flex-col gap-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <InputSelectSmall
+          className="w-48 shrink-0"
+          inputClassName="h-8"
+          name="skill"
+          ariaLabel="Skill"
+          defaultValue={filters.skillName}
           onChange={(value) => set({ skillName: value as string })}
-          options={[
+          items={[
             { value: ALL, label: 'All skills' },
             ...(unfiltered?.by_skill ?? []).map(({ skill_name }) => ({ value: skill_name, label: skill_name })),
           ]}
         />
-        <InputSelect
-          className="w-52"
-          label="Member"
-          isSearchable
-          value={filters.userSub}
+        <InputSelectSmall
+          className="w-48 shrink-0"
+          inputClassName="h-8"
+          name="member"
+          ariaLabel="Member"
+          defaultValue={filters.userSub}
           onChange={(value) => set({ userSub: value as string })}
-          options={[
+          items={[
             { value: ALL, label: 'All members' },
             ...(unfiltered?.by_member ?? []).map(({ user_sub, user_name }) => ({ value: user_sub, label: user_name })),
           ]}
         />
-        <InputSelect
-          className="w-52"
-          label="Preset"
-          value={filters.skillPresetId}
+        <InputSelectSmall
+          className="w-48 shrink-0"
+          inputClassName="h-8"
+          name="preset"
+          ariaLabel="Preset"
+          defaultValue={filters.skillPresetId}
           onChange={(value) => set({ skillPresetId: value as string })}
-          options={[
-            { value: ALL, label: 'All presets' },
-            ...presets.map(({ id, name }) => ({ value: id, label: name })),
-          ]}
+          items={[{ value: ALL, label: 'All presets' }, ...presets.map(({ id, name }) => ({ value: id, label: name }))]}
         />
         {hasFilter && (
           <Button
@@ -192,86 +157,92 @@ function UsageContent({ organizationId }: { organizationId: string }) {
             Clear filters
           </Button>
         )}
+        <InputSelectSmall
+          name="period"
+          ariaLabel="Period"
+          className="ml-auto w-[180px] shrink-0"
+          inputClassName="h-8"
+          defaultValue={filters.range}
+          onChange={(value) => set({ range: value })}
+          items={RANGES.map(({ value, label }) => ({ value, label: `Last ${label}` }))}
+        />
       </div>
 
       {isLoading || !usage ? (
         <Skeleton height={360} className="w-full" show />
       ) : (
-        <div className={clsx('flex flex-col gap-6', isFetching && 'opacity-70')} aria-busy={isFetching}>
-          <dl className="grid grid-cols-2 divide-x divide-neutral rounded-md border border-neutral lg:grid-cols-4">
-            <Stat label="Skill loads" value={usage.totals.loads.toLocaleString('en-US')} />
-            <Stat
-              label="Served from cache"
-              value={percent(usage.totals.cached_loads, usage.totals.loads)}
-              detail={`${usage.totals.cached_loads.toLocaleString('en-US')} loads sent nothing new`}
-            />
-            <Stat label="Members" value={usage.totals.members.toLocaleString('en-US')} />
-            <Stat
-              label="Organization text sent"
-              value={`${formatTokens(usage.totals.approx_injected_tokens)} tokens`}
-              detail="Your content and team context, cache misses only"
-            />
-          </dl>
+        <div className={clsx('flex min-w-0 flex-col gap-8', isFetching && 'opacity-70')} aria-busy={isFetching}>
+          <div className="flex min-w-0 flex-col gap-4">
+            <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Stat label="Skill loads" value={usage.totals.loads.toLocaleString('en-US')} />
+              <Stat label="Served from cache" value={percent(usage.totals.cached_loads, usage.totals.loads)} />
+              <Stat label="Members" value={usage.totals.members.toLocaleString('en-US')} />
+              <Stat
+                label="Organization text sent"
+                value={`${formatTokens(usage.totals.approx_injected_tokens)} tokens`}
+              />
+            </dl>
 
-          <section
-            aria-labelledby="usage-timeline"
-            className="flex flex-col gap-2 rounded-md border border-neutral p-4"
-          >
-            <div className="flex items-center justify-between">
-              <Heading level={2} id="usage-timeline">
-                Loads over time
-              </Heading>
-              <span className="flex items-center gap-4 text-xs text-neutral-subtle" aria-hidden="true">
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-3 rounded-sm bg-surface-brand-solid" /> Fetched
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-3 rounded-sm bg-surface-neutral-solid" /> From cache
-                </span>
-              </span>
-            </div>
-            <Chart.Container
-              className="h-56"
-              isEmpty={usage.totals.loads === 0}
-              aria-label="Skill loads over time, fetched and from cache"
+            <section
+              aria-labelledby="usage-timeline"
+              className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4"
             >
-              <BarChart data={timeline} margin={{ top: 8, bottom: 0, left: 0, right: 0 }}>
-                <CartesianGrid horizontal vertical={false} stroke="var(--neutral-4)" />
-                <XAxis dataKey="label" tickLine={false} minTickGap={24} />
-                <YAxis allowDecimals={false} width={32} tickLine={false} axisLine={false} />
-                <Chart.Tooltip
-                  content={
-                    <Chart.TooltipContent
-                      title="Skill loads"
-                      formatLabel={(key) => (key === 'fetched' ? 'Fetched' : 'From cache')}
-                    />
-                  }
-                />
-                <Bar dataKey="fetched" stackId="loads" fill="var(--brand-9)" isAnimationActive={false} />
-                <Bar dataKey="cached" stackId="loads" fill="var(--neutral-8)" isAnimationActive={false} />
-              </BarChart>
-            </Chart.Container>
-          </section>
+              <div className="flex items-center justify-between">
+                <Heading level={2} id="usage-timeline">
+                  Loads over time
+                </Heading>
+                <span className="flex items-center gap-4 text-xs text-neutral-subtle" aria-hidden="true">
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-3 rounded-sm bg-surface-brand-solid" /> Fetched
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-3 rounded-sm bg-surface-neutral-solid" /> From cache
+                  </span>
+                </span>
+              </div>
+              <Chart.Container
+                className="h-56"
+                isEmpty={usage.totals.loads === 0}
+                aria-label="Skill loads over time, fetched and from cache"
+              >
+                <BarChart data={timeline} margin={{ top: 8, bottom: 0, left: 0, right: 0 }}>
+                  <CartesianGrid horizontal vertical={false} stroke="var(--neutral-4)" />
+                  <XAxis dataKey="label" tickLine={false} minTickGap={24} />
+                  <YAxis allowDecimals={false} width={32} tickLine={false} axisLine={false} />
+                  <Chart.Tooltip
+                    content={
+                      <Chart.TooltipContent
+                        title="Skill loads"
+                        formatLabel={(key) => (key === 'fetched' ? 'Fetched' : 'From cache')}
+                      />
+                    }
+                  />
+                  <Bar dataKey="fetched" stackId="loads" fill="var(--brand-9)" isAnimationActive={false} />
+                  <Bar dataKey="cached" stackId="loads" fill="var(--neutral-8)" isAnimationActive={false} />
+                </BarChart>
+              </Chart.Container>
+            </section>
+          </div>
 
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">
             <section aria-labelledby="usage-skills" className="flex flex-col gap-2">
               <Heading level={2} id="usage-skills">
-                Top skills
+                Top 5 skills
               </Heading>
-              <Table.Root>
-                <Table.Header>
+              <Table.Root className="w-full min-w-[600px]">
+                <Table.Header className="[&_th]:font-sans [&_th]:text-xs">
                   <Table.Row>
                     <Table.ColumnHeaderCell>Skill</Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="text-right">Loads</Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="text-right">Cache</Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="text-right">Members</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-left">Loads</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-left">Cache</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-left">Members</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Last load</Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                  {usage.by_skill.slice(0, 10).map((row) => (
+                  {usage.by_skill.slice(0, TOP_LIMIT).map((row) => (
                     <Table.Row key={row.skill_name}>
-                      <Table.Cell className="font-code">
+                      <Table.Cell className="font-sans">
                         <DrillButton
                           label={row.skill_name}
                           active={filters.skillName === row.skill_name}
@@ -280,11 +251,9 @@ function UsageContent({ organizationId }: { organizationId: string }) {
                           }
                         />
                       </Table.Cell>
-                      <Table.Cell className="text-right tabular-nums">{row.loads}</Table.Cell>
-                      <Table.Cell className="text-right tabular-nums">
-                        {percent(row.cached_loads, row.loads)}
-                      </Table.Cell>
-                      <Table.Cell className="text-right tabular-nums">{row.members}</Table.Cell>
+                      <Table.Cell className="tabular-nums">{row.loads}</Table.Cell>
+                      <Table.Cell className="tabular-nums">{percent(row.cached_loads, row.loads)}</Table.Cell>
+                      <Table.Cell className="tabular-nums">{row.members}</Table.Cell>
                       <Table.Cell className="text-neutral-subtle">
                         {timeAgo(new Date(row.last_loaded_at))} ago
                       </Table.Cell>
@@ -296,19 +265,19 @@ function UsageContent({ organizationId }: { organizationId: string }) {
 
             <section aria-labelledby="usage-members" className="flex flex-col gap-2">
               <Heading level={2} id="usage-members">
-                Top members
+                Top 5 members
               </Heading>
-              <Table.Root>
-                <Table.Header>
+              <Table.Root className="w-full min-w-[600px]">
+                <Table.Header className="[&_th]:font-sans [&_th]:text-xs">
                   <Table.Row>
                     <Table.ColumnHeaderCell>Member</Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="text-right">Loads</Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="text-right">Skills</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-left">Loads</Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="text-left">Skills</Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell>Last load</Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                  {usage.by_member.slice(0, 10).map((row) => (
+                  {usage.by_member.slice(0, TOP_LIMIT).map((row) => (
                     <Table.Row key={row.user_sub}>
                       <Table.Cell>
                         <DrillButton
@@ -317,8 +286,8 @@ function UsageContent({ organizationId }: { organizationId: string }) {
                           onClick={() => set({ userSub: filters.userSub === row.user_sub ? ALL : row.user_sub })}
                         />
                       </Table.Cell>
-                      <Table.Cell className="text-right tabular-nums">{row.loads}</Table.Cell>
-                      <Table.Cell className="text-right tabular-nums">{row.skills}</Table.Cell>
+                      <Table.Cell className="tabular-nums">{row.loads}</Table.Cell>
+                      <Table.Cell className="tabular-nums">{row.skills}</Table.Cell>
                       <Table.Cell className="text-neutral-subtle">
                         {timeAgo(new Date(row.last_loaded_at))} ago
                       </Table.Cell>
@@ -333,45 +302,40 @@ function UsageContent({ organizationId }: { organizationId: string }) {
             <Heading level={2} id="usage-presets">
               By preset
             </Heading>
-            <ul className="flex flex-col gap-2">
-              {byPreset.map((row) => {
-                const share = usage.totals.loads === 0 ? 0 : row.loads / usage.totals.loads
-                return (
-                  <li
-                    key={row.skill_preset_id ?? NO_PRESET}
-                    className="grid grid-cols-[200px_minmax(0,1fr)_80px] items-center gap-3 text-sm"
-                  >
-                    {row.skill_preset_id ? (
-                      <DrillButton
-                        label={row.skill_preset_name ?? 'Deleted preset'}
-                        active={filters.skillPresetId === row.skill_preset_id}
-                        onClick={() =>
-                          set({
-                            skillPresetId:
-                              filters.skillPresetId === row.skill_preset_id ? ALL : row.skill_preset_id ?? ALL,
-                          })
-                        }
-                      />
-                    ) : (
-                      <span className="text-neutral-subtle">No preset</span>
-                    )}
-                    <span className="h-2 overflow-hidden rounded-full bg-surface-neutral-component" aria-hidden="true">
-                      <span className="block h-full bg-surface-brand-solid" style={{ width: `${share * 100}%` }} />
-                    </span>
-                    <span className="text-right tabular-nums text-neutral">
-                      {row.loads} <span className="text-neutral-subtle">({Math.round(share * 100)}%)</span>
-                    </span>
-                  </li>
-                )
-              })}
-            </ul>
+            <Table.Root className="w-full min-w-[480px]">
+              <Table.Header className="[&_th]:font-sans [&_th]:text-xs">
+                <Table.Row>
+                  <Table.ColumnHeaderCell>Preset</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Loads</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Share of loads</Table.ColumnHeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {byPreset.map((row) => (
+                  <Table.Row key={row.skill_preset_id ?? NO_PRESET}>
+                    <Table.Cell>
+                      {row.skill_preset_id ? (
+                        <DrillButton
+                          label={row.skill_preset_name ?? 'Deleted preset'}
+                          active={filters.skillPresetId === row.skill_preset_id}
+                          onClick={() =>
+                            set({
+                              skillPresetId:
+                                filters.skillPresetId === row.skill_preset_id ? ALL : row.skill_preset_id ?? ALL,
+                            })
+                          }
+                        />
+                      ) : (
+                        <span className="text-neutral-subtle">No preset</span>
+                      )}
+                    </Table.Cell>
+                    <Table.Cell className="tabular-nums">{row.loads}</Table.Cell>
+                    <Table.Cell className="tabular-nums">{percent(row.loads, usage.totals.loads)}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
           </section>
-          {hasFilter && (
-            <p className="flex items-center gap-2 text-xs text-neutral-subtle">
-              <Badge variant="surface">Filtered</Badge>
-              Click a skill, member or preset again to remove its filter.
-            </p>
-          )}
         </div>
       )}
     </div>
