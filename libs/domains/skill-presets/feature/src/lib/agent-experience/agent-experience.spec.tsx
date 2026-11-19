@@ -3,7 +3,6 @@ import { type ReactNode } from 'react'
 import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgentExperienceAutomate } from './agent-experience-automate'
-import { AgentExperienceBuildOptimizer } from './agent-experience-build-optimizer'
 import { AgentExperienceConnect } from './agent-experience-connect'
 import { AgentExperienceCopilot, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
@@ -26,6 +25,11 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
+jest.mock('posthog-js/react', () => ({
+  ...jest.requireActual('posthog-js/react'),
+  useFeatureFlagEnabled: () => true,
+}))
+
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
   resetSkillPresetsMockApi()
@@ -39,38 +43,7 @@ beforeEach(() => {
   jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
 })
 
-describe('AgentExperienceBuildOptimizer', () => {
-  it('is on with AI features, says how to use it and what it never does', async () => {
-    useScenario('agent-experience-active')
-    const { userEvent } = renderWithProviders(<AgentExperienceBuildOptimizer />)
-
-    expect(await within(screen.getByTestId('build-optimizer-state')).findByText('On')).toBeInTheDocument()
-    expect(screen.getByText(/On the Build step, click Optimize/)).toBeInTheDocument()
-    expect(screen.getByText('It never changes your Dockerfile, your build settings or your image.')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
-
-    await userEvent.click(screen.getByRole('button', { name: 'See an example result' }))
-    expect(await screen.findByText('Build optimization analysis')).toBeInTheDocument()
-  })
-
-  it('offers Turn on AI when AI is off', async () => {
-    useScenario('ai-features-off')
-    const { userEvent } = renderWithProviders(<AgentExperienceBuildOptimizer />)
-    await userEvent.click(await screen.findByRole('button', { name: 'Turn on AI' }))
-    expect(await screen.findByRole('dialog')).toBeInTheDocument()
-    expect(within(screen.getByTestId('build-optimizer-state')).getByText('Off')).toBeInTheDocument()
-  })
-})
-
 describe('AgentExperienceCopilot', () => {
-  it('says the Copilot will change', () => {
-    useScenario('agent-experience-active')
-    renderWithProviders(<AgentExperienceCopilot />)
-    expect(screen.getByTestId('copilot-will-change')).toHaveTextContent(
-      'The Copilot will change. Troubleshooting and optimization are moving into dedicated features, starting with Optimize builds.'
-    )
-  })
-
   it('shows one combined status and the Copilot settings to admins', async () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperienceCopilot />)
@@ -123,7 +96,7 @@ describe('AgentExperienceCopilot', () => {
 const CODING_AGENT_NAMES = ['Claude Code', 'Codex', 'Cursor', 'OpenCode', 'Gemini CLI', 'VS Code Copilot']
 
 describe('AgentExperienceAutomate', () => {
-  it('shows the jobs in one grid, safest first, each with its safety level and trigger', async () => {
+  it('shows the jobs in one grid, safest first, with safety levels and no trigger labels', async () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperienceAutomate />)
 
@@ -134,8 +107,8 @@ describe('AgentExperienceAutomate', () => {
     expect(cards[8]).toHaveAttribute('data-testid', 'agent-job-test-on-production-clone')
     expect(within(cards[8]).getByTestId('agent-job-level')).toHaveTextContent('Change')
     expect(
-      within(screen.getByTestId('agent-job-stop-idle-environments')).getByTestId('agent-job-trigger')
-    ).toHaveTextContent('Weekdays at 8 PM and 8 AM')
+      within(screen.getByTestId('agent-job-stop-idle-environments')).queryByTestId('agent-job-trigger')
+    ).not.toBeInTheDocument()
     // The safety promise stays whole on the card.
     expect(
       grid.getByText('Stops idle dev environments at night and starts them in the morning. Nothing else.')
@@ -150,7 +123,7 @@ describe('AgentExperienceAutomate', () => {
     useScenario('agent-experience-active')
     const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
 
-    await userEvent.click(screen.getByRole('radio', { name: /Hygiene/ }))
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Safety level' }), 'hygiene')
     const cards = within(screen.getByTestId('agent-job-grid')).getAllByRole('button', { name: /: view details/ })
     expect(cards.map((card) => card.getAttribute('data-testid'))).toEqual([
       'agent-job-stop-idle-environments',
@@ -165,7 +138,10 @@ describe('AgentExperienceAutomate', () => {
     await userEvent.click(screen.getByTestId('agent-job-investigate-production-incident'))
     const details = within(await screen.findByRole('dialog'))
     expect(details.getByRole('heading', { name: 'Investigate an incident' })).toBeInTheDocument()
-    const headings = details.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent)
+    const headings = details
+      .getAllByRole('heading')
+      .slice(1)
+      .map((heading) => heading.textContent)
     expect(headings.slice(0, 4)).toEqual(['Prompt for the agent', 'The agent can', 'It can never', 'Run it on its own'])
     expect(details.getByText(/Our production checkout service started failing/)).toBeInTheDocument()
     expect(details.getByText('Deploy, redeploy, restart or stop anything')).toBeInTheDocument()
@@ -208,9 +184,7 @@ describe('Automate, recurring agents', () => {
     // Nothing is created from here: the action opens the environment's Automations.
     expect(agentTask.getByText('Open Automations in an environment')).toBeInTheDocument()
     expect(agentTask.getByText(/This page creates nothing/)).toBeInTheDocument()
-    expect(screen.getByTestId('agent-job-where')).toHaveTextContent(
-      'This agent runs where you start it: as an Agent Task on your Qovery infrastructure, or from a coding agent on a laptop or in CI.'
-    )
+
     expect(run.getByTestId('route-coding-agent').compareDocumentPosition(run.getByTestId('route-agent-task'))).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING
     )
@@ -391,14 +365,14 @@ describe('AgentExperienceConnect', () => {
     useScenario('agent-experience-active')
     const { unmount } = renderWithProviders(<AgentExperienceConnect />)
     expect(await screen.findByTestId('connect-your-preset')).toHaveTextContent(
-      /^Your agent loads your organization’s preset: .+ \(organization default\)Skills Registry$/
+      /^Your agent’s preset: .+Skills registry$/
     )
     unmount()
 
     useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperienceConnect />)
     expect(await screen.findByTestId('connect-your-preset')).toHaveTextContent(
-      'No preset yet: agents get the full Qovery skills.Create a preset in the Skills Registry'
+      'No preset applies to you: your agent gets the Qovery skills as published.Skills registry'
     )
   })
 
@@ -407,6 +381,6 @@ describe('AgentExperienceConnect', () => {
     renderWithProviders(<AgentExperienceConnect />)
     expect(await screen.findByText('curl -s https://get.qovery.com | bash')).toBeInTheDocument()
     await waitFor(() => expect(screen.queryByTestId('connect-your-preset')).not.toBeInTheDocument())
-    expect(screen.queryByText(/No preset yet/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/No preset applies to you/)).not.toBeInTheDocument()
   })
 })

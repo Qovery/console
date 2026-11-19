@@ -6,8 +6,6 @@ import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 
 const AGENT_TASKS_FLAG = 'argentic-workflow'
-// Entries nested in a group: indented like a sub-entry, with their icon.
-const NESTED_ITEM = 'pl-[41.5px]'
 const DAY_MS = 24 * 3_600_000
 
 /** Denied agent actions over the last 7 days, for the Activity badge (like open issues on Alerts). */
@@ -25,7 +23,7 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 }
 
 /**
- * The side list of Agents: the Skills Registry, Connect, Automate with Optimize builds under it, and
+ * The side list of Agents: the Skills Registry, Connect, Automate, and
  * Activity, then Settings. Settings holds policy tokens, the Copilot and, behind their flag, the Agent
  * Tasks pages; it is for owners and admins only, and opens by itself on its pages.
  */
@@ -70,10 +68,6 @@ export function AgentExperienceNav() {
       <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
         Automate
       </Sidebar.Item>
-      {/* Under Automate: indented like a sub-entry, with the icon of its page. */}
-      <Sidebar.Item to={`${base}/build-optimizer`} icon="gauge-high" iconStyle="regular" className={NESTED_ITEM}>
-        Optimize builds
-      </Sidebar.Item>
       <Sidebar.Item
         to={`${base}/agent-activity`}
         icon="wave-pulse"
@@ -91,19 +85,9 @@ export function AgentExperienceNav() {
           defaultOpen={settingsPaths.some((path) => pathname.startsWith(path))}
         >
           <Sidebar.SubItem to={`${base}/policy-tokens`}>Policy tokens</Sidebar.SubItem>
-          <Sidebar.Item to={`${base}/copilot`} icon="message-bot" iconStyle="regular" className={NESTED_ITEM}>
-            Copilot settings
-          </Sidebar.Item>
-          {isAgentTasksEnabled && (
-            <Sidebar.Item to={`${base}/agent-task-tokens`} icon="robot" iconStyle="regular" className={NESTED_ITEM}>
-              Model tokens
-            </Sidebar.Item>
-          )}
-          {isAgentTasksEnabled && (
-            <Sidebar.Item to={`${base}/mcp-servers`} icon="plug" iconStyle="regular" className={NESTED_ITEM}>
-              MCP servers
-            </Sidebar.Item>
-          )}
+          <Sidebar.SubItem to={`${base}/copilot`}>Copilot settings</Sidebar.SubItem>
+          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>}
+          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>}
         </Sidebar.Group>
       )}
     </Sidebar.Root>

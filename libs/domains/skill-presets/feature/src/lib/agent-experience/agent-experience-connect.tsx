@@ -14,10 +14,8 @@ import {
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { useResolvedSkillPreset } from '../hooks/use-resolved-skill-preset/use-resolved-skill-preset'
-import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { QOVERY_SKILLS } from '../utils/qovery-skills'
 import { CommandBlock } from './command-block'
-import { PresetSummary } from './preset-summary'
 import { AgentExperiencePage, CodingAgentLogos } from './ui/agent-experience-ui'
 
 const { Tabs } = TabsPrimitives
@@ -106,7 +104,7 @@ function ConnectStep({
   return (
     <Section aria-labelledby={id} className="flex flex-col gap-3 rounded-md border border-neutral p-4">
       <div className="flex items-start gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-brand-subtle text-brand">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center text-neutral-subtle">
           <Icon iconName={icon} iconStyle="regular" />
         </span>
         <div className="flex flex-col gap-0.5">
@@ -187,60 +185,37 @@ function McpTabs() {
   )
 }
 
-/**
- * The first thing on the page: the installed skills load the organization's preset. A member sees the
- * preset that applies to them; an admin sees the organization default, with a link to the presets.
- */
+/** The preset resolved for the signed-in member, including owners and admins. */
 export function YourPresetLine() {
   const { organizationId = '' } = useParams({ strict: false })
   const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
   const resolved = useResolvedSkillPreset({ organizationId })
-  const presets = useSkillPresets({ organizationId, isTemplate: false, enabled: canManage })
 
-  if (isRoleLoading || resolved.isLoading || (canManage && presets.isLoading)) {
-    return <Skeleton height={44} className="w-full" show />
-  }
+  if (isRoleLoading || resolved.isLoading) return <Skeleton height={44} className="w-full" show />
+  if (resolved.error || !resolved.data) return null
 
-  // Before the endpoints answer (or when they fail), say nothing rather than something wrong.
-  if (canManage ? presets.error : resolved.error) return null
-
-  const all = presets.data ?? []
-  const organizationDefault = all.find((preset) => preset.assigned_to.organization_default)
-  const name = canManage ? organizationDefault?.name : resolved.data?.skill_preset?.name
-  const presetsLink = (
-    to:
-      | '/organization/$organizationId/agent-experience/skill-presets'
-      | '/organization/$organizationId/agent-experience/skill-presets/new',
-    label: string
-  ) => (
-    <Link to={to} params={{ organizationId }} color="brand" size="sm" className="ml-auto">
-      {label}
-    </Link>
-  )
-
+  const preset = resolved.data.skill_preset
   return (
     <div
-      className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-brand-subtle bg-surface-brand-subtle px-4 py-3 text-sm text-neutral"
+      className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-neutral bg-surface-neutral px-4 py-3 text-sm text-neutral"
       data-testid="connect-your-preset"
     >
-      <Icon iconName="sliders" iconStyle="regular" className="text-brand" aria-hidden="true" />
-      {name ? (
+      {preset ? (
         <span>
-          Your agent loads your organization’s preset: <span className="font-medium">{name}</span>
-          {canManage && <span className="text-neutral-subtle"> (organization default)</span>}
+          Your agent’s preset: <span className="font-medium">{preset.name}</span>
         </span>
-      ) : canManage && all.length > 0 ? (
-        <span>No organization default yet: agents without a role or member preset get the full Qovery skills.</span>
       ) : (
-        <span>No preset yet: agents get the full Qovery skills.</span>
+        <span>No preset applies to you: your agent gets the Qovery skills as published.</span>
       )}
-      {canManage &&
-        (all.length > 0
-          ? presetsLink('/organization/$organizationId/agent-experience/skill-presets', 'Skills Registry')
-          : presetsLink(
-              '/organization/$organizationId/agent-experience/skill-presets/new',
-              'Create a preset in the Skills Registry'
-            ))}
+      <Link
+        to="/organization/$organizationId/agent-experience/skill-presets"
+        params={{ organizationId }}
+        color="brand"
+        size="sm"
+        className="ml-auto"
+      >
+        {canManage ? 'Skills registry' : 'See what your agent receives'}
+      </Link>
     </div>
   )
 }
@@ -284,7 +259,7 @@ export function AgentExperienceConnect() {
               <ul className="flex flex-col gap-2 pt-2" data-testid="connect-skill-list">
                 {QOVERY_SKILLS.map(({ name, description }) => (
                   <li key={name} className="flex flex-col gap-0.5 text-sm md:flex-row md:gap-3">
-                    <code className="w-48 shrink-0 font-code text-neutral">{name}</code>
+                    <span className="w-48 shrink-0 text-neutral">{name}</span>
                     <span className="text-neutral-subtle">{description}</span>
                   </li>
                 ))}
@@ -314,16 +289,6 @@ export function AgentExperienceConnect() {
       >
         <McpTabs />
       </ConnectStep>
-
-      <Section
-        aria-labelledby="connect-preset"
-        className="flex flex-col gap-2 rounded-md bg-surface-neutral-subtle p-4"
-      >
-        <Heading level={2} id="connect-preset">
-          What your agent receives
-        </Heading>
-        <PresetSummary />
-      </Section>
     </AgentExperiencePage>
   )
 }
