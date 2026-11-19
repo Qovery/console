@@ -12,6 +12,7 @@ import {
   environmentSelectionCellClassName,
   environmentTableCellClassName,
   environmentTableGridLayoutClassName,
+  environmentTableSecondaryColumnClassName,
 } from './environment-section/environment-section'
 import { EnvironmentsTableActionBar } from './environments-table-action-bar'
 
@@ -50,7 +51,7 @@ function EnvironmentsTableSkeleton() {
                 <EnvironmentMode mode={section} variant="shrink" />
                 <Heading>{SECTION_TITLES[section]}</Heading>
               </div>
-              <Table.Root className="w-full min-w-[1080px]" containerClassName="no-scrollbar overflow-x-auto">
+              <Table.Root className="w-full md:min-w-[1080px]" containerClassName="no-scrollbar overflow-x-auto">
                 <Table.Header>
                   <Table.Row className={`${environmentTableGridLayoutClassName} w-full items-center text-xs`}>
                     <Table.ColumnHeaderCell className="h-9 p-0 text-neutral-subtle">
@@ -61,13 +62,13 @@ function EnvironmentsTableSkeleton() {
                     <Table.ColumnHeaderCell className="flex h-9 items-center py-0 pl-0 pr-4 text-neutral-subtle">
                       <Skeleton height={16} width={130} />
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                    <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle max-md:hidden">
                       <Skeleton height={16} width={110} />
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                    <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle max-md:hidden">
                       <Skeleton height={16} width={80} />
                     </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                    <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle max-md:hidden">
                       <Skeleton height={16} width={90} />
                     </Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell className="flex h-9 items-center justify-end border-l border-neutral text-left text-neutral-subtle">
@@ -89,18 +90,24 @@ function EnvironmentsTableSkeleton() {
                           <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={90} />
                         </div>
                       </Table.Cell>
-                      <Table.Cell className={environmentTableCellClassName}>
+                      <Table.Cell
+                        className={`${environmentTableCellClassName} ${environmentTableSecondaryColumnClassName}`}
+                      >
                         <div className="flex h-full items-center justify-between">
                           <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={140} />
                           <Skeleton height={16} width={64} />
                         </div>
                       </Table.Cell>
-                      <Table.Cell className={environmentTableCellClassName}>
+                      <Table.Cell
+                        className={`${environmentTableCellClassName} ${environmentTableSecondaryColumnClassName}`}
+                      >
                         <div className="flex h-full items-center gap-2">
                           <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={140} />
                         </div>
                       </Table.Cell>
-                      <Table.Cell className={environmentTableCellClassName}>
+                      <Table.Cell
+                        className={`${environmentTableCellClassName} ${environmentTableSecondaryColumnClassName}`}
+                      >
                         <div className="flex h-full items-center">
                           <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={100} />
                         </div>
