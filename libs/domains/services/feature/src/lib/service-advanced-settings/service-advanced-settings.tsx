@@ -253,7 +253,7 @@ export function AdvancedSettings({
       <form onSubmit={onSubmit}>
         <div className="relative">
           <div className="overflow-hidden rounded">
-            <Table.Root className="w-full table-fixed text-sm">
+            <Table.Root className="w-full table-fixed text-sm max-md:min-w-[760px]">
               <Table.Header className="text-xs">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <Table.Row key={headerGroup.id} className="divide-x divide-neutral">

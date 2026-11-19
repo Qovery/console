@@ -19,10 +19,10 @@ export function HeaderEnvironmentStages({
   const totalDurationSec = environmentStatus?.total_deployment_duration_in_seconds ?? 0
 
   return (
-    <div className="flex h-12 w-full items-center justify-between">
+    <div className="flex h-12 w-full items-center justify-between max-md:h-auto max-md:flex-wrap max-md:gap-3 max-md:py-2">
       <div className="flex h-full">
         <div
-          className={clsx('flex h-full items-center gap-4 text-sm font-medium text-neutral', {
+          className={clsx('flex h-full flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-neutral', {
             'pr-2': environmentStatus?.state === 'DEPLOYING',
           })}
         >

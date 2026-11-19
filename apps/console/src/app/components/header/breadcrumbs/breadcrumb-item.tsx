@@ -42,7 +42,7 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
   const listRef = useRef<HTMLDivElement>(null)
   const labelClassName = twMerge(
     clsx('block min-w-0 truncate', {
-      'max-w-44 md:max-w-64 lg:max-w-80': isCurrentScope,
+      'md:max-w-64 lg:max-w-80': isCurrentScope,
       'max-w-32 md:max-w-40 lg:max-w-52': !isCurrentScope,
     })
   )

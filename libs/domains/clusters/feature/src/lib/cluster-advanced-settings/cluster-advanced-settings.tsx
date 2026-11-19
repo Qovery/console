@@ -127,7 +127,7 @@ export function ClusterAdvancedSettings({
             </div>
           ) : (
             <div className="overflow-hidden rounded">
-              <Table.Root className="w-full table-fixed text-sm">
+              <Table.Root className="w-full table-fixed text-sm max-md:min-w-[760px]">
                 <Table.Header className="text-xs">
                   <Table.Row className="divide-x divide-neutral">
                     <Table.ColumnHeaderCell className="font-medium">Settings</Table.ColumnHeaderCell>

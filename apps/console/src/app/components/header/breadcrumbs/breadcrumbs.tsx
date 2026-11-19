@@ -1,11 +1,12 @@
 import { useParams, useRouter } from '@tanstack/react-router'
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
 import { CreateOrganizationModal, useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { sortProjectsByFavorite, useFavoriteProjects, useProjects } from '@qovery/domains/projects/feature'
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { Avatar, useModal } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } from './breadcrumb-item'
 
@@ -13,6 +14,7 @@ export function Breadcrumbs() {
   const { buildLocation } = useRouter()
   const { openModal, closeModal } = useModal()
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
   const {
     organizationId = '',
     clusterId = '',
@@ -192,23 +194,32 @@ export function Breadcrumbs() {
   const currentScopeId = breadcrumbData[breadcrumbData.length - 1]?.item.id
   useLayoutEffect(() => {
     const container = scrollContainerRef.current
-    if (container) {
-      container.scrollLeft = container.scrollWidth
+    const currentScope = container?.lastElementChild
+    if (container && currentScope instanceof HTMLElement) {
+      // Align the start of the current scope (keeping the separator before it visible) so its name is never cut
+      const offset = currentScope.getBoundingClientRect().left - container.getBoundingClientRect().left
+      container.scrollLeft = Math.max(0, container.scrollLeft + offset - 24)
+      setIsScrolled(container.scrollLeft > 0)
     }
   }, [currentScopeId])
 
   return (
     <div
       ref={scrollContainerRef}
-      className="no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap"
+      onScroll={(event) => setIsScrolled(event.currentTarget.scrollLeft > 0)}
+      className={twMerge(
+        'no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap',
+        // Fade the cut parent crumbs so the scrolled trail reads as intentional
+        isScrolled && '[mask-image:linear-gradient(to_right,transparent,black_32px)]'
+      )}
     >
       {breadcrumbData.map((data, index) => (
         <div
           key={data.item.id}
           className={
             index === breadcrumbData.length - 1
-              ? // Below md the trail scrolls instead of truncating, so the current scope keeps its width
-                'flex min-w-0 shrink-0 items-center gap-2 md:flex-1'
+              ? // Below md the current scope keeps at least 8rem; the trail scrolls when the parents leave less room
+                'flex min-w-[8rem] shrink items-center gap-2 md:min-w-0 md:flex-1'
               : 'flex shrink-0 items-center gap-2'
           }
         >

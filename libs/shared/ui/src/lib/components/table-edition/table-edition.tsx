@@ -17,11 +17,14 @@ export interface TableEditionProps {
 
 export function TableEdition(props: TableEditionProps) {
   return (
-    <div className={`rounded border border-solid border-neutral text-sm text-neutral  ${props.className || ''}`}>
+    // Below md the table scrolls horizontally: rows keep a minimum width so columns stay readable
+    <div
+      className={`rounded border border-solid border-neutral text-sm text-neutral max-md:overflow-x-auto ${props.className || ''}`}
+    >
       {props.tableBody?.map((row, index) => (
         <div
           data-testid="edition-table-row"
-          className={`flex min-h-10 border-solid border-neutral ${
+          className={`flex min-h-10 border-solid border-neutral max-md:min-w-[600px] ${
             props.tableBody && props.tableBody.length - 1 !== index ? 'border-b' : ''
           } ${row.className || ''}`}
           key={index}
