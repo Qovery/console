@@ -11,9 +11,6 @@ import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved, within
 import { MemberAgentView } from './member-agent-view/member-agent-view'
 import { MockScenarioBanner } from './mock-scenario-banner/mock-scenario-banner'
 import { SettingsSkillPresets } from './settings-skill-presets/settings-skill-presets'
-import { SkillLoads } from './skill-loads/skill-loads'
-import { SkillPresetAssignments } from './skill-preset-assignments/skill-preset-assignments'
-import { SkillPresetUsage } from './skill-preset-usage/skill-preset-usage'
 import { SkillPresetCreate } from './template-gallery/template-gallery'
 
 /*
@@ -200,83 +197,6 @@ describe('member view', () => {
     expect(await screen.findByTestId('member-no-preset')).toHaveTextContent(
       'No preset applies. Your agent uses the Qovery skills as published.'
     )
-  })
-})
-
-describe('assignments', () => {
-  it('shows the effective preset of every member and why', async () => {
-    useScenario('typical')
-    renderWithProviders(<SkillPresetAssignments />)
-
-    const jamie = (await screen.findByText('Jamie Rossi')).closest('tr')
-    expect(jamie).not.toBeNull()
-    expect(within(jamie as HTMLElement).getByText('External contractors')).toBeInTheDocument()
-    expect(within(jamie as HTMLElement).getByText('Assigned to the member')).toBeInTheDocument()
-    const priya = screen.getByText('Priya Shah').closest('tr') as HTMLElement
-    expect(within(priya).getByText('Platform (CLI-first)')).toBeInTheDocument()
-    expect(within(priya).getByText('From their role')).toBeInTheDocument()
-  })
-})
-
-describe('skill loads', () => {
-  it('lists loads with their preset and delivery, and pages through them', async () => {
-    useScenario('large')
-    const { userEvent } = renderWithProviders(<SkillLoads />)
-
-    const table = await screen.findByRole('table', undefined, { timeout: 5000 })
-    expect(within(table).getAllByRole('row')).toHaveLength(31)
-    expect(within(table).getAllByText(/From cache|Fetched/).length).toBe(30)
-
-    await userEvent.click(screen.getByTestId('button-next-page'))
-    await waitFor(() => expect(screen.getByTestId('button-previous-page')).toBeEnabled())
-  })
-})
-
-describe('usage', () => {
-  it('shows totals and drills into a member', async () => {
-    useScenario('typical')
-    const { userEvent } = renderWithProviders(<SkillPresetUsage />)
-
-    const heading = await screen.findByRole('heading', { name: 'Top 5 members' })
-    expect(screen.getByText('Served from cache')).toBeInTheDocument()
-    const topMembers = heading.parentElement as HTMLElement
-    const [firstMember] = within(topMembers).getAllByRole('button')
-    await userEvent.click(firstMember)
-
-    expect(firstMember).toHaveAttribute('aria-pressed', 'true')
-    expect(await screen.findByRole('button', { name: 'Clear filters' })).toBeInTheDocument()
-  })
-
-  it('drills into a skill, toggles it off again, and clears every filter at once', async () => {
-    useScenario('typical')
-    const { userEvent } = renderWithProviders(<SkillPresetUsage />)
-
-    const heading = await screen.findByRole('heading', { name: 'Top 5 skills' })
-    const topSkills = heading.parentElement as HTMLElement
-    const [firstSkill] = within(topSkills).getAllByRole('button')
-    await userEvent.click(firstSkill)
-    expect(firstSkill).toHaveAttribute('aria-pressed', 'true')
-    await userEvent.click(firstSkill)
-    expect(firstSkill).toHaveAttribute('aria-pressed', 'false')
-
-    await userEvent.click(firstSkill)
-    await userEvent.click(await screen.findByRole('button', { name: 'Clear filters' }))
-    expect(firstSkill).toHaveAttribute('aria-pressed', 'false')
-    expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument()
-  })
-
-  it('shows a load error with a retry', async () => {
-    useScenario('typical')
-    const getUsage = jest
-      .spyOn(skillPresetsApi, 'getSkillPresetUsage')
-      .mockRejectedValue(buildSkillPresetApiError(503, 'Unavailable'))
-    const { userEvent } = renderWithProviders(<SkillPresetUsage />)
-
-    expect(await screen.findByText('Usage could not be loaded')).toBeInTheDocument()
-    const calls = getUsage.mock.calls.length
-    await userEvent.click(screen.getByRole('button', { name: /Try again/ }))
-    await waitFor(() => expect(getUsage.mock.calls.length).toBeGreaterThan(calls))
-    getUsage.mockRestore()
   })
 })
 

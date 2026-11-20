@@ -1,5 +1,5 @@
 import { type OrganizationEventResponse, type OrganizationEventResponseList } from 'qovery-typescript-axios'
-import { type SkillLoadsParams, type SkillPresetsApi } from '../skill-presets.api'
+import { type SkillPresetsApi } from '../skill-presets.api'
 import {
   SKILL_PRESET_AI_FEATURES_OFF_MESSAGE,
   SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
@@ -29,7 +29,6 @@ import {
   type SkillPresetResolutionSource,
   type SkillPresetResponse,
   type SkillPresetRevisionResponse,
-  type SkillPresetUsageResponse,
 } from '../skill-presets.types'
 import {
   type MockAgentAction,
@@ -592,22 +591,6 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       }
       return respond(response)
     },
-    listSkillLoads(_organizationId, { pageSize = 30, continueToken, stepBackToken }: SkillLoadsParams = {}) {
-      if (!seed.isAdmin) return forbidden()
-      const loads = events
-        .filter(({ event_type }) => (event_type as string) === SKILL_LOAD_EVENT_TYPE)
-        .sort((a, b) => (b.timestamp ?? '').localeCompare(a.timestamp ?? ''))
-      const start = continueToken ? Number(continueToken) : stepBackToken ? Math.max(Number(stepBackToken), 0) : 0
-      const end = start + pageSize
-      const response: OrganizationEventResponseList = {
-        events: loads.slice(start, end),
-        links: {
-          next: end < loads.length ? `/organization/mock/events?continueToken=${end}` : undefined,
-          previous: start > 0 ? `/organization/mock/events?stepBackToken=${start - pageSize}` : undefined,
-        },
-      }
-      return respond(response)
-    },
     listAssignees() {
       return respond(seed.assignees)
     },
@@ -668,80 +651,6 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       const { actorKind: _actorKind, policyTokenId: _policyTokenId, ...own } = params
       const activity = aggregateAgentActivity(agentActions(), loadRecords, { ...own, userSub: currentUser.id })
       return respond({ ...activity, by_policy_token: [] })
-    },
-    getSkillPresetUsage(_organizationId, { from, to, bucket, skillName, userSub, skillPresetId }) {
-      if (!seed.isAdmin) return forbidden()
-      const fromTime = new Date(from).getTime()
-      const toTime = new Date(to).getTime()
-      if (toTime - fromTime > 90 * 24 * HOUR_MS + 60_000) return fail(400, 'The range must not exceed 90 days')
-      const records = loadRecords.filter((record) => {
-        const time = new Date(record.timestamp).getTime()
-        return (
-          time >= fromTime &&
-          time <= toTime &&
-          (!skillName || record.skill_name === skillName) &&
-          (!userSub || record.user_sub === userSub) &&
-          (!skillPresetId || record.skill_preset_id === skillPresetId)
-        )
-      })
-      const step = bucket === 'HOUR' ? HOUR_MS : 24 * HOUR_MS
-      const firstBucket = Math.floor(fromTime / step) * step
-      const timeline = Array.from({ length: Math.max(Math.ceil((toTime - firstBucket) / step), 1) }, (_, index) => ({
-        start: new Date(firstBucket + index * step).toISOString(),
-        loads: 0,
-        cached_loads: 0,
-      }))
-      const groupBy = <K extends string | null>(key: (record: (typeof records)[number]) => K) => {
-        const groups = new Map<K, typeof records>()
-        records.forEach((record) => groups.set(key(record), [...(groups.get(key(record)) ?? []), record]))
-        return groups
-      }
-      const latest = (items: typeof records) =>
-        items.reduce((max, { timestamp }) => (timestamp > max ? timestamp : max), '')
-      records.forEach((record) => {
-        const slot = timeline[Math.floor((new Date(record.timestamp).getTime() - firstBucket) / step)]
-        if (!slot) return
-        slot.loads += 1
-        if (record.from_cache) slot.cached_loads += 1
-      })
-      const response: SkillPresetUsageResponse = {
-        from,
-        to,
-        bucket,
-        totals: {
-          loads: records.length,
-          cached_loads: records.filter(({ from_cache }) => from_cache).length,
-          members: new Set(records.map(({ user_sub }) => user_sub)).size,
-          approx_injected_tokens: records.reduce((sum, { tokens }) => sum + tokens, 0),
-        },
-        timeline,
-        by_skill: [...groupBy((record) => record.skill_name).entries()]
-          .map(([skill_name, items]) => ({
-            skill_name,
-            loads: items.length,
-            cached_loads: items.filter(({ from_cache }) => from_cache).length,
-            members: new Set(items.map(({ user_sub }) => user_sub)).size,
-            last_loaded_at: latest(items),
-          }))
-          .sort((a, b) => b.loads - a.loads),
-        by_member: [...groupBy((record) => record.user_sub).entries()]
-          .map(([user_sub, items]) => ({
-            user_sub,
-            user_name: items[0].user_name,
-            loads: items.length,
-            skills: new Set(items.map(({ skill_name }) => skill_name)).size,
-            last_loaded_at: latest(items),
-          }))
-          .sort((a, b) => b.loads - a.loads),
-        by_preset: [...groupBy((record) => record.skill_preset_id).entries()]
-          .map(([skill_preset_id, items]) => ({
-            skill_preset_id,
-            skill_preset_name: items[0].skill_preset_name,
-            loads: items.length,
-          }))
-          .sort((a, b) => b.loads - a.loads),
-      }
-      return respond(response)
     },
   }
 
