@@ -10,6 +10,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Badge, Button, Icon, InputText, InputTextArea } from '@qovery/shared/ui'
+import { BillingAlerts } from './billing-alerts'
 import { BillingError, type PricingClient } from './client'
 import {
   type Access,
@@ -41,9 +42,20 @@ export interface BillingSettingsPageProps {
   access?: Access
   /** Where Chargebee sends the person back after changing the card (a console URL); default: this page. */
   returnUrl?: string
+  /** Shows <BillingAlerts> (an overdue invoice, a card that expires) at the top of the page (default). Hosts that place alerts themselves pass false. */
+  alerts?: boolean
+  /** Where the alerts' buttons go. */
+  onNavigate?: (to: 'invoices' | 'billing') => void
 }
 
-export function BillingSettingsPage({ organizationId, client, access: given, returnUrl }: BillingSettingsPageProps) {
+export function BillingSettingsPage({
+  organizationId,
+  client,
+  access: given,
+  returnUrl,
+  alerts = true,
+  onNavigate,
+}: BillingSettingsPageProps) {
   const access = useAccess(client, organizationId, given)
   const [aws, setAws] = useState<AwsMarketplace>()
   const loadAws = useCallback(() => {
@@ -65,6 +77,9 @@ export function BillingSettingsPage({ organizationId, client, access: given, ret
   const onAws = aws?.billing_channel === 'aws_marketplace' || aws?.request?.status === 'accepted'
   return (
     <div className="flex flex-col gap-6">
+      {alerts && (
+        <BillingAlerts organizationId={organizationId} client={client} access={access} onNavigate={onNavigate} />
+      )}
       <PaymentMethodCard organizationId={organizationId} client={client} onAws={onAws} returnUrl={returnUrl} />
       {client.awsMarketplace && (
         <AwsMarketplaceCard organizationId={organizationId} client={client} aws={aws} onChange={setAws} onAws={onAws} />

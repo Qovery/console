@@ -1,10 +1,11 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { useCallback } from 'react'
+import { type ReactNode, useCallback } from 'react'
 import { P, match } from 'ts-pattern'
-import { BillingAlerts, UsagePage } from '@qovery/shared/billing-kit'
+import { UsagePage } from '@qovery/shared/billing-kit'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Callout, EmptyState, Icon, Link, Section, Skeleton } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import {
   type BillingUsageErrorType,
   getBillingUsageErrorType,
@@ -60,6 +61,26 @@ export function useBillingNavigate(organizationId: string) {
         ? navigate({ to: '/organization/$organizationId/settings/invoices', params: { organizationId } })
         : navigate({ to: '/organization/$organizationId/settings/billing-settings', params: { organizationId } }),
     [navigate, organizationId]
+  )
+}
+
+// The three billing pages share this frame. The kit renders the alerts at the top of each page, under its heading.
+export function BillingPageLayout({
+  title,
+  description,
+  children,
+}: {
+  title?: string
+  description?: string
+  children: ReactNode
+}) {
+  return (
+    <div className="w-full">
+      <Section className="px-8 pb-8 pt-6">
+        {title && <SettingsHeading title={title} description={description} showNeedHelp={false} />}
+        <div className="flex max-w-content-with-navigation-left flex-col gap-6">{children}</div>
+      </Section>
+    </div>
   )
 }
 
@@ -165,30 +186,31 @@ export function BillingUsageView() {
   const { data, error, isLoading, refetch, isRefetching } = useBillingUsage({ organizationId })
   const client = usePricingClient()
   const goTo = useBillingNavigate(organizationId)
+  const { showChat } = useSupportChat()
 
+  // No console heading: the kit's "Plan details" heads the page, with the alerts under it
   return (
-    <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
-        <div className="max-w-content-with-navigation-left">
-          {match({ data, error, isLoading })
-            .with({ isLoading: true }, () => <BillingUsageSkeleton />)
-            .with({ data: P.not(P.nullish) }, ({ data }) => (
-              <div className="flex flex-col gap-6">
-                <BillingAlerts organizationId={organizationId} client={client} access={data.access} onNavigate={goTo} />
-                <UsagePage organizationId={organizationId} client={client} offers="none" />
-              </div>
-            ))
-            .otherwise(() => (
-              <BillingUsageError
-                type={getBillingUsageErrorType(error)}
-                organizationId={organizationId}
-                onRetry={() => refetch()}
-                isRetrying={isRefetching}
-              />
-            ))}
-        </div>
-      </Section>
-    </div>
+    <BillingPageLayout>
+      {match({ data, error, isLoading })
+        .with({ isLoading: true }, () => <BillingUsageSkeleton />)
+        .with({ data: P.not(P.nullish) }, () => (
+          <UsagePage
+            organizationId={organizationId}
+            client={client}
+            offers="none"
+            onNavigate={goTo}
+            onContactSales={showChat}
+          />
+        ))
+        .otherwise(() => (
+          <BillingUsageError
+            type={getBillingUsageErrorType(error)}
+            organizationId={organizationId}
+            onRetry={() => refetch()}
+            isRetrying={isRefetching}
+          />
+        ))}
+    </BillingPageLayout>
   )
 }
 

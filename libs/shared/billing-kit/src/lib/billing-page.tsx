@@ -3,11 +3,10 @@
  * that show billing on one route (the back office's customer view). The console mounts the three
  * pages on their own sidebar entries instead: <UsagePage>, <InvoicesPage>, <BillingSettingsPage>.
  *
- *   <BillingPage organizationId={id} client={createPricingClient({ pricingApiUrl, coreApiUrl, getToken })} />
+ *   <BillingPage organizationId={id} client={createPricingClient({ pricingApiUrl, getToken })} />
  */
 import { useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
-import { BillingAlerts } from './billing-alerts'
 import { BillingSettingsPage } from './billing-settings-page'
 import { InvoicesPage } from './invoices-page'
 import { UsagePage, type UsagePageProps } from './usage-page'
@@ -54,21 +53,18 @@ export function BillingPage({ tab: initial = 'usage', onTabChange, ...props }: B
           </button>
         ))}
       </nav>
-      <BillingAlerts
-        organizationId={props.organizationId}
-        client={props.client}
-        hide={tab === 'invoices' ? ['overdue'] : []}
-        onNavigate={go}
-      />
-      {tab === 'usage' && <UsagePage {...props} />}
+      {tab === 'usage' && <UsagePage {...props} onNavigate={go} />}
       {tab === 'invoices' && (
         <InvoicesPage
           organizationId={props.organizationId}
           client={props.client}
           onManagePaymentMethod={() => go('billing')}
+          onNavigate={go}
         />
       )}
-      {tab === 'billing' && <BillingSettingsPage organizationId={props.organizationId} client={props.client} />}
+      {tab === 'billing' && (
+        <BillingSettingsPage organizationId={props.organizationId} client={props.client} onNavigate={go} />
+      )}
     </div>
   )
 }

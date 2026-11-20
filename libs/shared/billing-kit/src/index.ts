@@ -9,7 +9,19 @@ export type { BillingSettingsPageProps } from './lib/billing-settings-page'
 export { BillingAlerts } from './lib/billing-alerts'
 export type { BillingAlertsProps } from './lib/billing-alerts'
 export type { Access } from './lib/parts'
-export { cardState, validOfferURL, validateBillingInfo } from './lib/rules'
+export {
+  cardState,
+  customRangeError,
+  historyCSV,
+  historyTable,
+  presetRange,
+  quantity,
+  validOfferURL,
+  validateBillingInfo,
+} from './lib/rules'
+export { PlanChangeFlow } from './lib/plan-change'
+export { CancelDialog, PlannedBanners } from './lib/cancel'
+export { UsageHistory } from './lib/usage-history'
 export { BuilderPrices, PricingTable } from './lib/pricing-table'
 export { BuilderPicker, builderSizeFor } from './lib/builder-picker'
 export type { BuilderPickerProps } from './lib/builder-picker'

@@ -7,6 +7,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Badge, Button, Callout, Icon, Modal } from '@qovery/shared/ui'
+import { BillingAlerts } from './billing-alerts'
 import { BillingError, type PricingClient } from './client'
 import { CompactSelect } from './compact-select'
 import {
@@ -40,6 +41,10 @@ export interface InvoicesPageProps {
   onManagePaymentMethod?: () => void
   /** The person's access when the host knows it; otherwise read from the usage API. */
   access?: Access
+  /** Shows <BillingAlerts> (a card that expires) at the top of the page (default). Hosts that place alerts themselves pass false. */
+  alerts?: boolean
+  /** Where the alerts' buttons go. */
+  onNavigate?: (to: 'invoices' | 'billing') => void
 }
 
 type PayState = { error?: string; payment?: boolean; until?: number }
@@ -53,7 +58,14 @@ export async function openPaymentMethodPage(client: PricingClient, organizationI
   if (s?.url) openExternal(s.url)
 }
 
-export function InvoicesPage({ organizationId, client, onManagePaymentMethod, access: given }: InvoicesPageProps) {
+export function InvoicesPage({
+  organizationId,
+  client,
+  onManagePaymentMethod,
+  access: given,
+  alerts = true,
+  onNavigate,
+}: InvoicesPageProps) {
   const access = useAccess(client, organizationId, given)
   if (!access)
     return (
@@ -62,7 +74,21 @@ export function InvoicesPage({ organizationId, client, onManagePaymentMethod, ac
       </div>
     )
   if (!isBillingAccess(access) || !client.invoices) return <BillingRolesOnly />
-  return <Invoices organizationId={organizationId} client={client} onManagePaymentMethod={onManagePaymentMethod} />
+  return (
+    <div className="flex flex-col gap-6">
+      {/* The page has its own overdue banner. */}
+      {alerts && (
+        <BillingAlerts
+          organizationId={organizationId}
+          client={client}
+          access={access}
+          hide={['overdue']}
+          onNavigate={onNavigate}
+        />
+      )}
+      <Invoices organizationId={organizationId} client={client} onManagePaymentMethod={onManagePaymentMethod} />
+    </div>
+  )
 }
 
 function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<InvoicesPageProps, 'access'>) {

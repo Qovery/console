@@ -1,28 +1,26 @@
 /*
- * The console's plan and usage page, from pricing-api: the plan, the current bill, this month's spend,
- * usage against every limit, deployments over 30 days, and the upgrade journey (pick a plan, see
- * the quote with its add-ons and conflicts, confirm). It mirrors the console's "Plan details"
- * page, explains the bill with usage over time (UsageInsights), and only uses @qovery/shared/ui, so the console can mount it as is:
+ * The console's plan and usage page, from pricing-api: the plan, the estimated bill, what is
+ * above the plan this month, usage against every limit, usage over a period the person picks,
+ * and the journeys around the plan: change plan (pick, review the quote and what it costs today,
+ * confirm), keep the current plan when a change is planned, cancel at the end of the term and
+ * keep the subscription. Alerts (an overdue invoice, a card that expires) sit under the page's
+ * heading, as on the Invoices and Billing pages. It only uses @qovery/shared/ui, so the console
+ * mounts it as is:
  *
- *   <UsagePage organizationId={id} client={createPricingClient({ pricingApiUrl, coreApiUrl, getToken })} />
+ *   <UsagePage organizationId={id} client={createPricingClient({ pricingApiUrl, getToken })} onNavigate={go} />
  */
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Badge, Button, Callout, Chart, Icon, Modal, RadioGroup } from '@qovery/shared/ui'
+import { useCallback, useEffect, useState } from 'react'
+import { Badge, Button, Callout, Icon, Modal } from '@qovery/shared/ui'
+import { BillingAlerts } from './billing-alerts'
+import { CancelDialog, PlannedBanners } from './cancel'
 import type { PricingClient } from './client'
 import { date, money, num, valueText } from './format'
 import { AskAdminModal, EmailPreferencesPanel, OfferHost } from './offers'
+import { PlanChangeFlow } from './plan-change'
 import { PricingTable } from './pricing-table'
-import type {
-  BillingUsage,
-  Entitlement,
-  Offer,
-  Period,
-  PlanChangeResult,
-  PlanOption,
-  PlanOptions,
-  Spend,
-  UsageSeries,
-} from './types'
+import { changeBlockedText, estimateLineLabel } from './rules'
+import type { BillingUsage, Cancellation, Entitlement, Offer, Period, PlanOptions, Spend, UsageSeries } from './types'
+import { UsageHistory } from './usage-history'
 import { UsageChart, UsageInsights } from './usage-insights'
 
 export interface UsagePageProps {
@@ -36,6 +34,10 @@ export interface UsagePageProps {
   offers?: 'all' | 'cards' | 'none'
   /** Opens a journey on load: the plan comparison, or the plan change (on `plan` when given). For deep links. */
   open?: { modal: 'compare' | 'upgrade'; plan?: string; period?: Period }
+  /** Shows <BillingAlerts> under the page heading (default). Hosts that place alerts themselves pass false. */
+  alerts?: boolean
+  /** Where the alerts' buttons go: the invoices page or the billing settings page. */
+  onNavigate?: (to: 'invoices' | 'billing') => void
 }
 
 function Card({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {
@@ -68,7 +70,7 @@ function UsageRow({
   onAsk,
 }: {
   e: Entitlement
-  onUpgrade?: () => void
+  onUpgrade: () => void
   onDetails?: () => void
   onAsk?: () => void
 }) {
@@ -118,11 +120,9 @@ function UsageRow({
                 Ask an admin for more
               </button>
             ) : (
-              onUpgrade && (
-                <button type="button" className="font-medium text-brand hover:underline" onClick={onUpgrade}>
-                  Upgrade to get more
-                </button>
-              )
+              <button type="button" className="font-medium text-brand hover:underline" onClick={onUpgrade}>
+                Upgrade to get more
+              </button>
             ))}
           {e.over && e.mode === 'soft' && <span className="text-warning">Billed above the plan</span>}
         </span>
@@ -156,318 +156,6 @@ function SeriesModal({ series, onClose }: { series: UsageSeries; onClose: () => 
   )
 }
 
-// ------------------------------------------------------------------ the upgrade journey
-
-function UpgradeFlow({
-  organizationId,
-  client,
-  usage,
-  preselect,
-  onClose,
-  onDone,
-  onContactSales,
-}: {
-  organizationId: string
-  client: PricingClient
-  usage: BillingUsage
-  preselect?: string
-  onClose: () => void
-  onDone: () => void
-  onContactSales?: () => void
-}) {
-  const [options, setOptions] = useState<PlanOptions>()
-  const [pick, setPick] = useState<string | undefined>(preselect)
-  const [step, setStep] = useState<'choose' | 'review' | 'done'>('choose')
-  const [result, setResult] = useState<PlanChangeResult>()
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState('')
-  useEffect(() => {
-    client.planOptions!(organizationId)
-      .then(setOptions)
-      .catch((e) => setError(e.message))
-  }, [client, organizationId])
-  const chosen = options?.results.find((o) => o.plan.code === pick)
-  const over = usage.entitlements.filter((e) => e.over && e.mode === 'hard')
-  // The first upgrade whose limits cover what is over today is the recommended one.
-  const recommended = useMemo(
-    () =>
-      options?.results.find((o) => !o.current && o.quote?.direction === 'upgrade' && o.quote.conflicts.length === 0)
-        ?.plan.code,
-    [options]
-  )
-  const cur = options?.currency ?? usage.billing.currency
-
-  async function review() {
-    if (!pick) return
-    setBusy(true)
-    setError('')
-    try {
-      setResult(await client.quotePlanChange!(organizationId, pick, options?.period))
-      setStep('review')
-    } catch (e) {
-      setError((e as Error).message)
-    }
-    setBusy(false)
-  }
-  async function confirm() {
-    if (!pick) return
-    setBusy(true)
-    setError('')
-    try {
-      setResult(await client.changePlan!(organizationId, pick, options?.period))
-      setStep('done')
-      onDone()
-    } catch (e) {
-      setError((e as Error).message)
-    }
-    setBusy(false)
-  }
-  const q = result?.quote
-  return (
-    <Modal
-      externalOpen
-      setExternalOpen={(o) => {
-        if (!o) onClose()
-      }}
-      width="min(720px, calc(100vw - 24px))"
-      buttonClose={false}
-    >
-      <div className="flex max-h-[80vh] flex-col">
-        <div className="flex items-start gap-3 border-b border-neutral px-6 py-4">
-          <div className="min-w-0 flex-1">
-            <h2 className="h4 text-neutral">
-              {step === 'choose' ? 'Change plan' : step === 'review' ? `Move to ${chosen?.plan.name}` : 'Done'}
-            </h2>
-            <p className="text-sm text-neutral-subtle">
-              {step === 'choose'
-                ? `You are on ${usage.plan.name}.`
-                : step === 'review'
-                  ? 'Review what changes before you confirm.'
-                  : ''}
-            </p>
-          </div>
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-subtle hover:bg-surface-neutral-componentHover"
-          >
-            <Icon iconName="xmark" iconStyle="solid" />
-          </button>
-        </div>
-        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
-          {client.mode === 'preview' && step !== 'done' && (
-            <Callout.Root color="sky">
-              <Callout.Text>Preview: quotes are real, nothing is applied.</Callout.Text>
-            </Callout.Root>
-          )}
-          {options && !options.self_serve && (
-            <Callout.Root color="neutral">
-              <Callout.Text>
-                <Callout.TextHeading>Your plan is managed by your account manager</Callout.TextHeading>Prices below are
-                list prices; your contract may differ. Ask your account manager to change it.
-              </Callout.Text>
-            </Callout.Root>
-          )}
-          {step === 'choose' && (
-            <>
-              {over.length > 0 && (
-                <p className="text-sm text-neutral">
-                  You are at the limit of {over.map((e) => e.name.toLowerCase()).join(', ')}.
-                </p>
-              )}
-              {!options && !error && <div className="text-sm text-neutral-subtle">Loading plans…</div>}
-              <RadioGroup.Root className="flex flex-col gap-2" value={pick ?? ''} onValueChange={setPick}>
-                {options?.results.map((o: PlanOption) => (
-                  <label
-                    key={o.plan.code}
-                    htmlFor={`plan-${o.plan.code}`}
-                    className={`flex cursor-pointer items-start gap-3 rounded border p-4 transition-colors hover:bg-surface-neutral-subtle ${pick === o.plan.code ? 'border-brand-strong bg-surface-neutral' : 'border-neutral'} ${o.current ? 'opacity-70' : ''}`}
-                  >
-                    <RadioGroup.Item
-                      id={`plan-${o.plan.code}`}
-                      value={o.plan.code}
-                      disabled={o.current}
-                      className="mt-0.5"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium text-neutral">{o.plan.name}</span>
-                        {o.current && (
-                          <Badge color="neutral" variant="surface" size="sm">
-                            Current plan
-                          </Badge>
-                        )}
-                        {recommended === o.plan.code && (
-                          <Badge color="brand" variant="surface" size="sm">
-                            Recommended
-                          </Badge>
-                        )}
-                        {o.quote?.direction === 'downgrade' && (
-                          <Badge color="neutral" variant="surface" size="sm">
-                            At the end of the term
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="text-xs text-neutral-subtle">
-                        {o.highlights.map((h) => `${valueText(h.value)} ${h.sku.split('.')[0]}`).join(' · ')}
-                      </div>
-                      {o.quote && o.quote.conflicts.length > 0 && (
-                        <div className="mt-1 text-xs text-warning">
-                          {o.quote.conflicts.length} limit{o.quote.conflicts.length > 1 ? 's' : ''} to bring down first
-                        </div>
-                      )}
-                    </div>
-                    <div className="whitespace-nowrap text-right text-sm text-neutral">
-                      {o.quote ? (
-                        o.plan.code.startsWith('ENTERPRISE') && !o.quote.total ? (
-                          'on request'
-                        ) : (
-                          <>
-                            {money(o.quote.total, cur)}
-                            <span className="text-xs text-neutral-subtle"> / {o.quote.period}</span>
-                          </>
-                        )
-                      ) : o.current ? (
-                        ''
-                      ) : (
-                        '—'
-                      )}
-                    </div>
-                  </label>
-                ))}
-              </RadioGroup.Root>
-            </>
-          )}
-          {step === 'review' && q && (
-            <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                <Card label="From">{usage.plan.name}</Card>
-                <Card label="To">{chosen?.plan.name}</Card>
-                <Card
-                  label={`New price per ${q.period}`}
-                  hint={
-                    <>
-                      {usage.estimate && usage.estimate.period === q.period && (
-                        <>
-                          {q.total >= usage.estimate.total ? '+' : '−'}
-                          {money(Math.abs(q.total - usage.estimate.total), q.currency)} per {q.period} ·{' '}
-                        </>
-                      )}
-                      {q.effective_at === 'now'
-                        ? 'from today, prorated'
-                        : `from ${date(usage.billing.term_end)}, the end of your term`}
-                    </>
-                  }
-                >
-                  {money(q.total, q.currency)}
-                </Card>
-              </div>
-              {q.auto_addons.length > 0 && (
-                <div className="rounded border border-neutral p-4 text-sm">
-                  <div className="mb-1 font-medium text-neutral">Added to keep what you use today</div>
-                  {q.auto_addons.map((a) => (
-                    <div key={a.code} className="flex justify-between text-neutral-subtle">
-                      <span>
-                        {a.quantity} × {a.name}
-                      </span>
-                      <span>{money(a.amount, q.currency)}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {q.kept_addons.length > 0 && (
-                <div className="text-xs text-neutral-subtle">
-                  Kept: {q.kept_addons.map((a) => `${a.quantity} × ${a.name}`).join(', ')}
-                </div>
-              )}
-              {q.projected_overage > 0 && (
-                <div className="text-xs text-neutral-subtle">
-                  At today's usage, about {money(q.projected_overage, q.currency)} per {q.period} would be billed above
-                  the plan.
-                </div>
-              )}
-              {q.conflicts.length > 0 && (
-                <Callout.Root color="yellow">
-                  <Callout.Text>
-                    <Callout.TextHeading>Before the switch</Callout.TextHeading>
-                    {q.conflicts.map((c) => (
-                      <div key={c.sku}>{c.fix}</div>
-                    ))}
-                  </Callout.Text>
-                </Callout.Root>
-              )}
-              {q.message && <p className="text-sm text-neutral-subtle">{q.message}</p>}
-            </div>
-          )}
-          {step === 'done' && q && (
-            <Callout.Root color={result?.applied ? 'green' : 'sky'}>
-              <Callout.Text>
-                <Callout.TextHeading>
-                  {result?.applied
-                    ? q.effective_at === 'now'
-                      ? `You are now on ${chosen?.plan.name}`
-                      : `The switch to ${chosen?.plan.name} is scheduled`
-                    : 'Preview: this is what the customer would get'}
-                </Callout.TextHeading>
-                {result?.applied
-                  ? q.effective_at === 'now'
-                    ? 'Your new limits apply right away.'
-                    : `It takes effect on ${date(usage.billing.term_end)}.`
-                  : `${money(q.total, q.currency)} per ${q.period}, ${q.effective_at === 'now' ? 'from today' : 'at the end of the term'}. Nothing was changed.`}
-              </Callout.Text>
-            </Callout.Root>
-          )}
-          {error && (
-            <Callout.Root color="red">
-              <Callout.Text>{error}</Callout.Text>
-            </Callout.Root>
-          )}
-        </div>
-        <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-6 py-3">
-          {step === 'choose' && (
-            <>
-              {onContactSales && (
-                <Button size="lg" variant="plain" color="neutral" onClick={onContactSales}>
-                  Talk to sales
-                </Button>
-              )}
-              <Button
-                size="lg"
-                disabled={!pick || busy || (options && !options.self_serve && client.mode === 'live')}
-                loading={busy}
-                onClick={review}
-              >
-                Review
-              </Button>
-            </>
-          )}
-          {step === 'review' && (
-            <>
-              <Button size="lg" variant="plain" color="neutral" onClick={() => setStep('choose')}>
-                Back
-              </Button>
-              <Button
-                size="lg"
-                loading={busy}
-                disabled={!q?.can_apply || (options && !options.self_serve && client.mode === 'live')}
-                onClick={confirm}
-              >
-                {q?.effective_at === 'now' ? 'Confirm and upgrade' : 'Schedule the switch'}
-              </Button>
-            </>
-          )}
-          {step === 'done' && (
-            <Button size="lg" onClick={onClose}>
-              Close
-            </Button>
-          )}
-        </div>
-      </div>
-    </Modal>
-  )
-}
-
 // ------------------------------------------------------------------ the page
 
 export function UsagePage({
@@ -477,11 +165,15 @@ export function UsagePage({
   onManageSpendLimits,
   offers = 'all',
   open,
+  alerts = true,
+  onNavigate,
 }: UsagePageProps) {
   const [u, setU] = useState<BillingUsage>()
   const [spend, setSpend] = useState<Spend>()
+  const [plan, setPlan] = useState<PlanOptions>()
+  const [cancellation, setCancellation] = useState<Cancellation>()
   const [error, setError] = useState('')
-  const [modal, setModal] = useState<'compare' | 'upgrade' | null>(open?.modal ?? null)
+  const [modal, setModal] = useState<'compare' | 'upgrade' | 'cancel' | null>(open?.modal ?? null)
   const [detail, setDetail] = useState<UsageSeries>()
   const [ask, setAsk] = useState<Entitlement>()
   const [comparePeriod, setComparePeriod] = useState<Period | undefined>(open?.period)
@@ -493,6 +185,16 @@ export function UsagePage({
       .then((x) => {
         setU(x)
         setError('')
+        // What is planned (a plan change, a cancellation) and what can be changed: billing roles only.
+        if (x.access === 'member') return
+        client
+          .planOptions?.(organizationId)
+          .then(setPlan)
+          .catch(() => setPlan(undefined))
+        client
+          .cancellation?.(organizationId)
+          .then(setCancellation)
+          .catch(() => setCancellation(undefined))
       })
       .catch((e) => setError(e.message))
     client
@@ -511,25 +213,34 @@ export function UsagePage({
   if (!u) return <div className="p-6 text-sm text-neutral-subtle">Loading billing…</div>
   const cur = u.billing.currency
   const amounts = u.access !== 'member'
-  // The console copy hides plan changes until core relays them (client without changePlan).
-  const canChangePlan = !!client.changePlan
+  const canChangePlan = amounts && !!client.planOptions && !!client.quotePlanChange
   // A limit the plan does not include (0, nothing used) reads as "not included", with the features.
   const notIncluded = (e: Entitlement) => e.kind !== 'feature' && e.value === 0 && e.used === 0
   const limits = u.entitlements.filter((e) => e.kind !== 'feature' && e.lifecycle !== 'preview' && !notIncluded(e))
   const features = u.entitlements
     .filter((e) => e.kind === 'feature' || notIncluded(e))
     .map((e) => (e.kind === 'feature' ? e : { ...e, value: false as const }))
-  const upgrade = (plan?: string) => {
-    setPreselect(plan)
+  const upgrade = (p?: string) => {
+    setPreselect(p)
     setModal('upgrade')
   }
   const sp = spend ?? u.spend
   const skuName = (sku: string) => u.entitlements.find((e) => e.sku === sku)?.name ?? sku
+  const unitOf = (sku: string) => u.entitlements.find((e) => e.sku === sku)?.unit ?? ''
+  // Usage above the plan in this period's estimate (meters: this month so far).
+  const estimatedAbove = (u.estimate?.lines ?? [])
+    .filter((l) => l.kind === 'overage' && l.meter)
+    .reduce((a, l) => a + l.amount / (u.estimate?.period === 'year' ? 12 : 1), 0)
+  const ending =
+    cancellation?.current &&
+    (cancellation.current.status === 'scheduled' || cancellation.current.status === 'requested')
+  const cancelBlocked =
+    cancellation?.mode === 'unavailable' ? changeBlockedText(cancellation.unavailable ?? undefined, 'cancel') : null
   // An offer's button opens the journey it is about.
   const onOffer = (o: Offer) => {
     const a = o.content.action
     if (a.type === 'trial') return load() // OfferHost started it: show the new limits
-    if (a.type === 'upgrade' && amounts) upgrade(a.plan)
+    if (a.type === 'upgrade' && canChangePlan) upgrade(a.plan)
     else if (a.type === 'annualize') {
       setComparePeriod('year')
       setModal('compare')
@@ -547,13 +258,11 @@ export function UsagePage({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button variant="surface" color="neutral" size="md" onClick={() => setModal('compare')}>
+            Compare plans
+            <Icon iconName="table-columns" iconStyle="regular" />
+          </Button>
           {canChangePlan && (
-            <Button variant="surface" color="neutral" size="md" onClick={() => setModal('compare')}>
-              Compare plans
-              <Icon iconName="table-columns" iconStyle="regular" />
-            </Button>
-          )}
-          {amounts && canChangePlan && (
             <Button size="md" onClick={() => upgrade()}>
               Change plan
             </Button>
@@ -561,6 +270,9 @@ export function UsagePage({
         </div>
       </div>
 
+      {alerts && (
+        <BillingAlerts organizationId={organizationId} client={client} access={u.access} onNavigate={onNavigate} />
+      )}
       {u.status.status === 'payment_failed' && (
         <Callout.Root color="red">
           <Callout.Text>
@@ -588,11 +300,36 @@ export function UsagePage({
           </Callout.Text>
         </Callout.Root>
       )}
-      {amounts && u.billing.cadence === 'monthly' && (
+      {amounts && (
+        <PlannedBanners
+          organizationId={organizationId}
+          client={client}
+          scheduled={plan?.scheduled_change}
+          cancellation={cancellation}
+          onChanged={load}
+        />
+      )}
+      {amounts && u.billing.cadence === 'monthly' && !ending && (
         <Callout.Root color="neutral">
           <Callout.Text>
             <Callout.TextHeading>Save with yearly billing</Callout.TextHeading>Yearly plans cost about 20% less than 12
             monthly payments.
+            {canChangePlan && (
+              <div className="mt-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  color="neutral"
+                  onClick={() => {
+                    setPreselect(u.plan.code)
+                    setComparePeriod('year')
+                    setModal('upgrade')
+                  }}
+                >
+                  Switch to yearly billing
+                </Button>
+              </div>
+            )}
           </Callout.Text>
         </Callout.Root>
       )}
@@ -604,7 +341,7 @@ export function UsagePage({
           organizationId={organizationId}
           client={client}
           onAction={onOffer}
-          onReviewRequests={amounts && canChangePlan ? () => upgrade() : undefined}
+          onReviewRequests={canChangePlan ? () => upgrade() : undefined}
           skuName={skuName}
         />
       )}
@@ -615,61 +352,80 @@ export function UsagePage({
           hint={`${u.billing.period === 'year' ? 'Yearly' : 'Monthly'} · term ends ${date(u.billing.term_end)}`}
         >
           {u.plan.name}
+          {plan?.scheduled_change && (
+            <Badge className="ml-2" color="sky" variant="surface" size="sm">
+              {plan.scheduled_change.name} from {date(plan.scheduled_change.effective_on)}
+            </Badge>
+          )}
         </Card>
         {amounts && u.estimate && (
-          <Card label="Current bill" hint={`Next invoice: ${date(u.estimate.term_end || u.billing.term_end)}`}>
+          <Card
+            label="Estimated bill"
+            hint={`For this ${u.estimate.period}, usage so far included · next invoice ${date(u.estimate.term_end || u.billing.term_end)}`}
+          >
             {money(u.estimate.total, cur)}{' '}
             <span className="text-xs font-normal text-neutral-subtle">/ {u.estimate.period}</span>
           </Card>
         )}
         {amounts && sp && (
           <Card
-            label="Spend this month"
+            label="Above the plan this month"
             hint={
-              sp.account.monthly_limit != null ? (
-                <>
-                  {Math.round(sp.account.used_pct ?? 0)}% of the {money(sp.account.monthly_limit, cur)} limit
-                  {onManageSpendLimits && (
-                    <>
-                      {' '}
-                      ·{' '}
-                      <button type="button" className="text-brand hover:underline" onClick={onManageSpendLimits}>
-                        Manage
-                      </button>
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  No spend limit
-                  {onManageSpendLimits && (
-                    <>
-                      {' '}
-                      ·{' '}
-                      <button type="button" className="text-brand hover:underline" onClick={onManageSpendLimits}>
-                        Set one
-                      </button>
-                    </>
-                  )}
-                </>
-              )
+              <>
+                {estimatedAbove > sp.spent ? (
+                  <>{money(sp.spent, cur)} recorded so far toward your spend limit. </>
+                ) : null}
+                {sp.account.monthly_limit != null ? (
+                  <>
+                    {Math.round(sp.account.used_pct ?? 0)}% of the {money(sp.account.monthly_limit, cur)} spend limit
+                    {onManageSpendLimits && (
+                      <>
+                        {' '}
+                        ·{' '}
+                        <button type="button" className="text-brand hover:underline" onClick={onManageSpendLimits}>
+                          Manage
+                        </button>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    No spend limit
+                    {onManageSpendLimits && (
+                      <>
+                        {' '}
+                        ·{' '}
+                        <button type="button" className="text-brand hover:underline" onClick={onManageSpendLimits}>
+                          Set one
+                        </button>
+                      </>
+                    )}
+                  </>
+                )}
+              </>
             }
           >
-            {money(sp.spent, cur)} <span className="text-xs font-normal text-neutral-subtle">beyond the plan</span>
+            {money(Math.max(sp.spent, estimatedAbove), cur)}{' '}
+            <span className="text-xs font-normal text-neutral-subtle">
+              {estimatedAbove > sp.spent ? 'estimated' : 'recorded'}
+            </span>
           </Card>
         )}
       </div>
 
       {amounts && u.estimate && u.estimate.lines.length > 1 && (
         <div className="rounded border border-neutral bg-surface-neutral">
+          <div className="border-b border-neutral px-5 py-2 text-xs font-medium text-neutral-subtle">
+            Estimated bill for this {u.estimate.period}
+          </div>
           {u.estimate.lines.map((l, i) => (
             <div
               key={i}
               className="flex justify-between gap-3 border-b border-neutral px-5 py-2 text-sm last:border-b-0"
             >
               <span className="text-neutral">
-                {l.label}
-                {l.quantity > 1 ? ` × ${l.quantity}` : ''}
+                {estimateLineLabel(l, unitOf)}
+                {l.kind === 'overage' && <span className="text-xs text-neutral-subtle"> (estimate)</span>}
               </span>
               <span className={l.amount < 0 ? 'text-positive' : 'text-neutral'}>{money(l.amount, cur)}</span>
             </div>
@@ -686,7 +442,7 @@ export function UsagePage({
               <UsageRow
                 key={e.sku}
                 e={e}
-                onUpgrade={canChangePlan ? () => upgrade() : undefined}
+                onUpgrade={() => (canChangePlan ? upgrade() : setModal('compare'))}
                 onDetails={series ? () => setDetail(series) : undefined}
                 onAsk={!amounts && client.requestUpgrade ? () => setAsk(e) : undefined}
               />
@@ -712,17 +468,47 @@ export function UsagePage({
         )}
       </div>
 
+      {client.usageHistory && <UsageHistory organizationId={organizationId} client={client} />}
+
       <div>
         <h3 className="mb-1 text-base font-medium text-neutral">Usage details</h3>
-        <p className="mb-3 text-sm text-neutral-subtle">
-          How this organization used the plan over the last three months, and where this month is heading.
-        </p>
-        <UsageInsights usage={u} />
+        <p className="mb-3 text-sm text-neutral-subtle">What the plan covers, and where this month is heading.</p>
+        <UsageInsights usage={u} overTime={!client.usageHistory} />
       </div>
 
       <EmailPreferencesPanel organizationId={organizationId} client={client} />
 
       {u.notes.length > 0 && <p className="text-xs text-neutral-subtle">{u.notes.join(' ')}</p>}
+
+      {amounts && cancellation && !ending && cancellation.unavailable?.code !== 'SUBSCRIPTION_ENDED' && (
+        <div className="border-t border-neutral pt-4 text-sm text-neutral-subtle">
+          {!cancelBlocked ? (
+            <button
+              type="button"
+              className="text-neutral-subtle underline-offset-2 hover:text-neutral hover:underline"
+              onClick={() => setModal('cancel')}
+            >
+              Cancel subscription
+            </button>
+          ) : cancelBlocked.contact &&
+            onContactSales &&
+            cancellation.unavailable?.code !== 'PAYMENT_ACTIONS_UNAVAILABLE' ? (
+            <button
+              type="button"
+              className="text-neutral-subtle underline-offset-2 hover:text-neutral hover:underline"
+              onClick={onContactSales}
+            >
+              {cancellation.unavailable?.code === 'AWS_MARKETPLACE'
+                ? 'Your subscription is managed in AWS Marketplace: contact us to cancel'
+                : 'Contact us to cancel'}
+            </button>
+          ) : (
+            <span>
+              {cancelBlocked.title}. {cancelBlocked.body}
+            </span>
+          )}
+        </div>
+      )}
 
       {modal === 'compare' && (
         <Modal
@@ -742,7 +528,14 @@ export function UsagePage({
               currency={cur}
               defaultPeriod={comparePeriod ?? u.billing.period}
               currentPlan={u.plan.code}
-              onSelect={(p) => upgrade(p.code)}
+              onSelect={
+                canChangePlan
+                  ? (p, period) => {
+                      setComparePeriod(period)
+                      upgrade(p.code)
+                    }
+                  : undefined
+              }
               onContactSales={() => onContactSales?.()}
               currencySwitch={false}
             />
@@ -763,14 +556,27 @@ export function UsagePage({
       )}
       {detail && <SeriesModal series={detail} onClose={() => setDetail(undefined)} />}
       {modal === 'upgrade' && (
-        <UpgradeFlow
+        <PlanChangeFlow
           organizationId={organizationId}
           client={client}
           usage={u}
           preselect={preselect}
-          onClose={() => setModal(null)}
+          prePeriod={comparePeriod}
+          onClose={() => {
+            setModal(null)
+            setComparePeriod(undefined)
+          }}
           onDone={load}
           onContactSales={onContactSales}
+        />
+      )}
+      {modal === 'cancel' && cancellation && (
+        <CancelDialog
+          organizationId={organizationId}
+          client={client}
+          view={cancellation}
+          onClose={() => setModal(null)}
+          onDone={load}
         />
       )}
     </div>

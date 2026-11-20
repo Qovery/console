@@ -1,7 +1,7 @@
 /*
  * The shapes the billing kit reads. They mirror pricing-api's responses (docs/INTEGRATION.md):
- * GET /public/v1/plans, GET /organization/{id}/billingUsage, GET /organization/{id}/spendLimits,
- * and the plan picker and plan change core relays. Amounts are cents of `currency`.
+ * GET /public/v1/plans, GET /organization/{id}/billingUsage, /spendLimits, /planOptions, /planChange,
+ * /cancellation, /usageHistory, invoices and payment details. Amounts are cents of `currency`.
  */
 export type Value = number | boolean | 'unlimited'
 export type Period = 'month' | 'year'
@@ -73,6 +73,8 @@ export interface EstimateLine {
   unit_amount: number
   amount: number
   note?: string
+  sku?: string
+  meter?: boolean
 }
 export interface Estimate {
   plan: string
@@ -302,7 +304,7 @@ export interface EmailPreferences {
   categories: EmailCategory[]
 }
 
-// ---- plan picker and plan change (relayed by core)
+// ---- plan picker and plan change (pricing-api's customer API)
 export interface Quote {
   direction: 'upgrade' | 'downgrade' | 'migrate' | 'same'
   from: string
@@ -326,18 +328,132 @@ export interface PlanOption {
   highlights: { sku: string; value: Value; mode: string; overage_unit_price: number }[]
   quote?: Quote
 }
+/** Whether a confirm would go through; when not, the error code it would get and why. */
+export interface Availability {
+  available: boolean
+  code?: string
+  detail?: string
+}
+/** A change waiting for the renewal (a downgrade, yearly to monthly). */
+export interface ScheduledChange {
+  plan: string
+  name: string
+  effective_on: string
+}
 export interface PlanOptions {
   segment: string
   self_serve: boolean
   currency: string
   period: Period
   results: PlanOption[]
+  // From pricing-api's customer API (absent from core's older relay).
+  change?: Availability
+  scheduled_change?: ScheduledChange | null
+  term_end?: string
+  billing_channel?: BillingChannel
+  /** Card accounts: whether a usable payment method is on file (null: not a card account, or unknown). */
+  payment_method_on_file?: boolean | null
+}
+/** What a plan change does to the invoices (estimates: Chargebee computes the exact amounts). */
+export interface PlanChangeBill {
+  currency: string
+  effective_on: string
+  charge_today: number
+  credit_today: number
+  due_today: number
+  credit_left: number
+  next_invoice_on: string
+  next_invoice: number
+  estimated: boolean
 }
 export interface PlanChangeResult {
   applied: boolean
   preview?: boolean
   contract_managed?: boolean
   quote: Quote
+  bill?: PlanChangeBill
+  discount?: { label: string; percent: number; amount: number } | null
+  change?: Availability
+  duplicate?: boolean
+  scheduled_change?: ScheduledChange | null
+  cancelled_scheduled_change?: boolean
+}
+
+// ---- cancellation (GET|POST|DELETE /organization/{id}/cancellation)
+export type CancelReason = 'too_expensive' | 'missing_feature' | 'moving_away' | 'project_ended' | 'not_using' | 'other'
+export interface CancellationRecord {
+  id: number
+  status: 'scheduled' | 'requested' | 'undone' | 'withdrawn' | 'closed'
+  reason: CancelReason
+  feedback: string
+  ends_on: string
+  requested_by: string
+  requested_at: string
+  updated_at: string
+  handled_at: string | null
+}
+export interface Cancellation {
+  /** What to type to confirm. */
+  organization_name: string
+  /** cancel: ends at the term end. request: staff confirm it (a contract, a notice period). unavailable: see `unavailable`. */
+  mode: 'cancel' | 'request' | 'unavailable'
+  unavailable: Availability | null
+  billing_channel: BillingChannel
+  term_end: string
+  ends_on: string
+  notice_days: number
+  notice_deadline: string | null
+  support_days: number
+  support_until: string
+  after_end: string[]
+  reasons: { code: CancelReason; label: string }[]
+  current: CancellationRecord | null
+}
+export interface CancellationResult {
+  status: 'scheduled' | 'requested' | 'undone' | 'withdrawn' | 'none'
+  existing?: boolean
+  cancellation: CancellationRecord | null
+}
+
+// ---- usage over a period (GET /organization/{id}/usageHistory)
+export type Granularity = 'day' | 'month'
+export interface UsageHistoryPoint {
+  period: string
+  quantity: number
+  by_organization: Record<string, number>
+  no_data?: boolean
+}
+export interface UsageHistorySeries {
+  sku: string
+  name: string
+  unit: string
+  kind: 'limit' | 'meter'
+  source: 'deployments' | 'billed' | 'snapshot'
+  /** sum: meters add up over a period. peak: counts show the busiest day. */
+  aggregate: 'sum' | 'peak'
+  included?: number
+  total: number
+  points: UsageHistoryPoint[]
+}
+export interface UsageHistoryAmounts {
+  source: 'invoices'
+  currency: string
+  months: { month: string; invoiced: number; invoices: number }[]
+  total: number
+  unavailable?: 'aws_marketplace' | 'not_linked' | 'billing_unavailable'
+}
+export interface UsageHistory {
+  organization_id: string
+  access: 'member' | 'billing' | 'demo'
+  from: string
+  to: string
+  granularity: Granularity
+  periods: string[]
+  data_since: string | null
+  organizations: { id: string; name: string }[]
+  series: UsageHistorySeries[]
+  amounts?: UsageHistoryAmounts
+  notes: string[]
 }
 
 // ---- the customer's own billing (GET /organization/{id}/invoices, /paymentMethods, /billingInfo, /awsMarketplace)

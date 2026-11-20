@@ -24,13 +24,17 @@ describe('UsagePage', () => {
     renderWithProviders(<UsagePage organizationId="org-northwind" client={readOnlyClient()} offers="none" />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
-    expect(
-      screen.queryByRole('button', { name: /change plan|compare plans|upgrade|ask an admin/i })
-    ).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /compare plans/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /change plan|ask an admin/i })).not.toBeInTheDocument()
   })
 
   it('should offer plan changes when the client can change plans', async () => {
-    const client = { ...readOnlyClient(), planOptions: jest.fn(), quotePlanChange: jest.fn(), changePlan: jest.fn() }
+    const client = {
+      ...readOnlyClient(),
+      planOptions: jest.fn().mockReturnValue(new Promise(() => undefined)),
+      quotePlanChange: jest.fn(),
+      changePlan: jest.fn(),
+    }
     renderWithProviders(<UsagePage organizationId="org-northwind" client={client} offers="none" />)
 
     expect(await screen.findByRole('button', { name: 'Change plan' })).toBeInTheDocument()

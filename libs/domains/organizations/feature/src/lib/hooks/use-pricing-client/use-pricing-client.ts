@@ -3,14 +3,22 @@ import { useMemo } from 'react'
 import { type PricingClient, createPricingClient } from '@qovery/shared/billing-kit'
 import { PRICING_API_URL } from '@qovery/shared/util-node-env'
 
-// Only the calls the console mounts. Plan changes wait for core's planOptions and planChange routes;
-// offers, upgrade requests and email preferences wait for customer emails.
+// Only the calls the console mounts, all to pricing-api with the user's token (core relays none of them).
+// Offers, upgrade requests and email preferences wait for customer emails.
 export function pickConsoleCalls(client: PricingClient): PricingClient {
   return {
     mode: client.mode,
     publicPlans: client.publicPlans,
     billingUsage: client.billingUsage,
     spendLimits: client.spendLimits,
+    planOptions: client.planOptions,
+    quotePlanChange: client.quotePlanChange,
+    changePlan: client.changePlan,
+    keepPlan: client.keepPlan,
+    cancellation: client.cancellation,
+    cancel: client.cancel,
+    keepSubscription: client.keepSubscription,
+    usageHistory: client.usageHistory,
     invoices: client.invoices,
     invoicePdf: client.invoicePdf,
     collectInvoice: client.collectInvoice,
