@@ -6,7 +6,8 @@ import {
   gitContainerFactoryMock,
   helmFactoryMock,
 } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { SelectVersionModal } from '../select-version-modal/select-version-modal'
 import { ServiceActions } from './service-actions'
 
 let mockService = helmFactoryMock(1)[0]
@@ -18,6 +19,12 @@ const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockOpenServiceRemoveModal = jest.fn()
 const mockCopyToClipboard = jest.fn()
+const mockUseCommits = jest.fn()
+const mockCommitToDeploy = {
+  git_commit_id: 'b'.repeat(40),
+  message: 'fix: older build',
+  created_at: '2026-11-19T10:00:00Z',
+}
 
 let mockDeploymentStatus = {
   state: 'READY',
@@ -80,6 +87,13 @@ jest.mock('../hooks/use-deploy-service/use-deploy-service', () => ({
   useDeployService: () => ({
     mutate: mockDeployService,
   }),
+}))
+
+jest.mock('../hooks/use-commits/use-commits', () => ({
+  useCommits: (props: unknown) => {
+    mockUseCommits(props)
+    return { data: [mockCommitToDeploy], isLoading: false }
+  },
 }))
 
 jest.mock('../hooks/use-delete-service/use-delete-service', () => ({
@@ -190,11 +204,19 @@ describe('ServiceActions', () => {
     )
 
     await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /deploy another version/i }))
 
-    expect(screen.getByRole('menuitem', { name: /deploy another version/i })).toBeInTheDocument()
+    const { content } = mockOpenModal.mock.calls[0][0]
+    expect(content.type).toBe(SelectVersionModal)
+    content.props.onSubmit('1.2.3')
+    expect(mockDeployService).toHaveBeenCalledWith({
+      serviceId: mockService.id,
+      serviceType: 'CONTAINER',
+      request: { image_tag: '1.2.3' },
+    })
   })
 
-  it('should not offer image versions for a Git container and deploy it without an image tag', async () => {
+  it('should deploy another commit of a Git container', async () => {
     mockService = gitContainerFactoryMock(1)[0]
     const { userEvent } = renderWithProviders(
       <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
@@ -204,10 +226,32 @@ describe('ServiceActions', () => {
     )
 
     await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /deploy another version/i }))
 
-    expect(screen.queryByRole('menuitem', { name: /deploy another version/i })).not.toBeInTheDocument()
+    const modal = within(renderWithProviders(mockOpenModal.mock.calls[0][0].content).container)
+    expect(mockUseCommits).toHaveBeenCalledWith({ serviceId: mockService.id, serviceType: 'CONTAINER' })
 
-    await userEvent.click(screen.getByRole('menuitem', { name: /^deploy/i }))
+    await userEvent.click(modal.getByRole('radio', { name: new RegExp(mockCommitToDeploy.message) }))
+    await userEvent.click(modal.getByRole('button', { name: 'Deploy' }))
+
+    expect(mockDeployService).toHaveBeenCalledWith({
+      serviceId: mockService.id,
+      serviceType: 'CONTAINER',
+      request: { git_commit_id: mockCommitToDeploy.git_commit_id },
+    })
+  })
+
+  it('should deploy a Git container at its stored commit without an image tag', async () => {
+    mockService = gitContainerFactoryMock(1)[0]
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /^deploy$/i }))
 
     expect(mockDeployService).toHaveBeenCalledWith({
       serviceId: mockService.id,

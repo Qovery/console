@@ -26,7 +26,7 @@ interface VersionedServiceBase {
 
 export type GitVersionedService = VersionedServiceBase & {
   sourceType: 'git'
-  serviceType: 'APPLICATION' | 'JOB' | 'HELM' | 'TERRAFORM'
+  serviceType: 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'
 }
 
 export type ContainerVersionedService = VersionedServiceBase & {
@@ -91,8 +91,14 @@ export function toVersionedService(service: AnyService): VersionedService | unde
   }
 
   if (isContainer(service)) {
-    // Deploy-all cannot target a commit, and the image tag of a Git container comes from its own build
-    if (isContainerGitSource(service.source)) return undefined
+    if (isContainerGitSource(service.source)) {
+      return {
+        ...baseService(service),
+        sourceType: 'git',
+        serviceType: 'CONTAINER',
+        currentVersion: service.source.git_repository.deployed_commit_id,
+      }
+    }
 
     const containerRegistryId = service.registry.id
     if (!containerRegistryId) return undefined
@@ -245,6 +251,10 @@ export function buildDeployByVersionPayload(
       .with({ serviceType: 'APPLICATION', sourceType: 'git' }, ({ id }) => ({
         ...payload,
         applications: [...(payload.applications ?? []), { application_id: id, git_commit_id: selection.version }],
+      }))
+      .with({ serviceType: 'CONTAINER', sourceType: 'git' }, ({ id }) => ({
+        ...payload,
+        containers: [...(payload.containers ?? []), { id, git_commit_id: selection.version }],
       }))
       .with({ serviceType: 'CONTAINER', sourceType: 'container' }, ({ id }) => ({
         ...payload,

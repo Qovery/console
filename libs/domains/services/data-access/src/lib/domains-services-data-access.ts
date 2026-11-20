@@ -579,7 +579,10 @@ export const services = createQueryKeys('services', {
     props:
       | {
           serviceId: string
-          serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'TERRAFORM'>
+          serviceType: Extract<
+            ServiceType,
+            'APPLICATION' | 'CONTAINER' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'TERRAFORM'
+          >
         }
       | {
           serviceId: string
@@ -598,6 +601,7 @@ export const services = createQueryKeys('services', {
             'APPLICATION',
             async () => (await applicationMainCallsApi.listApplicationCommit(serviceId)).data.results
           )
+          .with('CONTAINER', async () => (await containerMainCallsApi.listContainerCommit(serviceId)).data.results)
           .with(
             'JOB',
             'CRON_JOB',

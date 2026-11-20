@@ -237,7 +237,7 @@ function MenuManageDeployment({
   }
 
   const deployCommitVersion = (
-    service: Application | Job | Helm | Terraform,
+    service: Application | Container | Job | Helm | Terraform,
     gitRepository: ApplicationGitRepository,
     title: string
   ) => {
@@ -533,6 +533,7 @@ function MenuManageDeployment({
             { service: { serviceType: 'APPLICATION' } },
             { service: { serviceType: 'TERRAFORM' } },
             { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobGitSource) }) },
+            { service: P.intersection({ serviceType: 'CONTAINER' }, { source: P.when(isContainerGitSource) }) },
             ({ service }) => {
               const gitRepository = match(service)
                 .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
@@ -541,6 +542,7 @@ function MenuManageDeployment({
                   ({ terraform_files_source }) => terraform_files_source?.git?.git_repository
                 )
                 .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
+                .with({ serviceType: 'CONTAINER' }, ({ source }) => source.git_repository)
                 .exhaustive()
 
               return match(state)
@@ -572,10 +574,6 @@ function MenuManageDeployment({
                     )
                 )
             }
-          )
-          .with(
-            { service: P.intersection({ serviceType: 'CONTAINER' }, { source: P.when(isContainerGitSource) }) },
-            () => null
           )
           .with(
             { service: { serviceType: 'CONTAINER' } },

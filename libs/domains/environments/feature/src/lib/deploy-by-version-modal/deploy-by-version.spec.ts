@@ -1,4 +1,5 @@
 import { type Commit } from 'qovery-typescript-axios'
+import { isContainerGitSource } from '@qovery/shared/enums'
 import {
   containerFactoryMock,
   gitContainerFactoryMock,
@@ -106,6 +107,16 @@ const services: DeployByVersionService[] = [
     versions: [{ value: 'terraform-new' }],
     isSkipped: true,
   },
+  {
+    id: 'git-container',
+    name: 'Git container',
+    iconUri: 'app://qovery-console/container',
+    serviceType: 'CONTAINER',
+    sourceType: 'git',
+    currentVersion: 'container-old',
+    versions: [{ value: 'container-new' }, { value: 'container-old' }],
+    isSkipped: false,
+  },
 ]
 
 describe('deploy by version', () => {
@@ -117,7 +128,10 @@ describe('deploy by version', () => {
 
     expect(payload).toEqual({
       applications: [{ application_id: 'application', git_commit_id: 'app-new' }],
-      containers: [{ id: 'container', image_tag: '2.0.0' }],
+      containers: [
+        { id: 'container', image_tag: '2.0.0' },
+        { id: 'git-container', git_commit_id: 'container-new' },
+      ],
       jobs: [
         { id: 'git-job', git_commit_id: 'job-new' },
         { id: 'container-job', image_tag: '2.0.0' },
@@ -128,7 +142,7 @@ describe('deploy by version', () => {
       ],
       terraforms: [{ id: 'terraform', git_commit_id: 'terraform-new' }],
     })
-    expect(countDeployByVersionServices(payload)).toBe(7)
+    expect(countDeployByVersionServices(payload)).toBe(8)
     expect(payload.terraforms).not.toContainEqual(expect.objectContaining({ id: 'skipped-terraform' }))
   })
 
@@ -140,16 +154,21 @@ describe('deploy by version', () => {
     expect(toVersionedService(helm)).toBeUndefined()
   })
 
-  it('offers registry tags for an image container but excludes a Git container', () => {
+  it('offers registry tags for an image container and commits for a Git container', () => {
     const imageContainer = containerFactoryMock(1)[0]
     const gitContainer = gitContainerFactoryMock(1)[0]
+    if (!isContainerGitSource(gitContainer.source)) throw new Error('The Git container factory must have a Git source')
 
     expect(toVersionedService(imageContainer)).toMatchObject({
       serviceType: 'CONTAINER',
       sourceType: 'container',
       currentVersion: imageContainer.tag,
     })
-    expect(toVersionedService(gitContainer)).toBeUndefined()
+    expect(toVersionedService(gitContainer)).toMatchObject({
+      serviceType: 'CONTAINER',
+      sourceType: 'git',
+      currentVersion: gitContainer.source.git_repository.deployed_commit_id,
+    })
   })
 
   it('includes a regular Terraform service and reads its deployed commit', () => {

@@ -59,6 +59,7 @@ export function useDeployByVersionServices({ environmentId, organizationId }: Us
       ...match(service.serviceType)
         .with('HELM', () => queries.services.listCommits({ serviceId: service.id, serviceType: 'HELM', of: 'chart' }))
         .with('APPLICATION', () => queries.services.listCommits({ serviceId: service.id, serviceType: 'APPLICATION' }))
+        .with('CONTAINER', () => queries.services.listCommits({ serviceId: service.id, serviceType: 'CONTAINER' }))
         .with('JOB', () => queries.services.listCommits({ serviceId: service.id, serviceType: 'JOB' }))
         .with('TERRAFORM', () => queries.services.listCommits({ serviceId: service.id, serviceType: 'TERRAFORM' }))
         .exhaustive(),

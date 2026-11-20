@@ -1,4 +1,9 @@
-import { ApplicationBuildAnalysisApi, DatabaseTypeEnum, JobBuildAnalysisApi } from 'qovery-typescript-axios'
+import {
+  ApplicationBuildAnalysisApi,
+  ContainerMainCallsApi,
+  DatabaseTypeEnum,
+  JobBuildAnalysisApi,
+} from 'qovery-typescript-axios'
 import {
   type Container,
   type Database,
@@ -97,5 +102,23 @@ describe('build analysis', () => {
       mutations.startBuildAnalysis({ serviceId: 'job-1', serviceType: 'JOB', executionId: 'exec-1' })
     ).resolves.toBe(analysis)
     expect(startAnalysis).toHaveBeenCalledWith('job-1', { execution_id: 'exec-1' })
+  })
+})
+
+describe('commit list', () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
+  it('reads the commits of a container from its own endpoint', async () => {
+    const commits = [{ git_commit_id: 'a'.repeat(40) }]
+    const listCommits = jest
+      .spyOn(ContainerMainCallsApi.prototype, 'listContainerCommit')
+      .mockReturnValue(Promise.resolve({ data: { results: commits } }) as never)
+
+    await expect(
+      services.listCommits({ serviceId: 'container-1', serviceType: 'CONTAINER' }).queryFn({} as never)
+    ).resolves.toBe(commits)
+    expect(listCommits).toHaveBeenCalledWith('container-1')
   })
 })
