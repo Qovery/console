@@ -88,7 +88,7 @@ describe('AgentTasksGate', () => {
     expect(screen.queryByText('Model tokens page')).not.toBeInTheDocument()
     await waitFor(() =>
       expect(mockNavigate).toHaveBeenCalledWith(
-        expect.objectContaining({ to: '/organization/$organizationId/agent-experience', replace: true })
+        expect.objectContaining({ to: '/organization/$organizationId/agent-experience/skill-presets', replace: true })
       )
     )
   })

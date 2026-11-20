@@ -1,10 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { AgentExperienceConnect } from '@qovery/domains/skill-presets/feature'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
+// Connecting an agent is a popup now, opened from the Skills registry. Kept so old links still work.
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/agent-experience/connect')({
-  component: RouteComponent,
+  beforeLoad: ({ params: { organizationId } }) => {
+    throw redirect({
+      to: '/organization/$organizationId/agent-experience/skill-presets',
+      params: { organizationId },
+      search: { connect: true },
+      replace: true,
+    })
+  },
 })
-
-function RouteComponent() {
-  return <AgentExperienceConnect />
-}
