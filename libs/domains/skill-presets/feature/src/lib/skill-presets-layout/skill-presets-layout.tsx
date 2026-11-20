@@ -8,7 +8,8 @@ import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/
 import { MemberAgentView } from '../member-agent-view/member-agent-view'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 
-export type SkillPresetsTab = 'presets' | 'assignments' | 'preview' | 'loads' | 'usage'
+/** The Skills registry is one page. */
+export type SkillPresetsTab = 'presets'
 
 export interface SkillPresetsLayoutProps {
   activeTab: SkillPresetsTab
@@ -33,23 +34,16 @@ function AccessSkeleton() {
  * view of what their agent receives. The role is known before anything renders, so admin controls
  * never flash for members, and admin pages never mount for them (their queries never run).
  */
-export function SkillPresetsLayout({ activeTab, children }: SkillPresetsLayoutProps) {
+export function SkillPresetsLayout({ children }: SkillPresetsLayoutProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
-  const pageTitles: Record<SkillPresetsTab, string> = {
-    presets: 'Presets',
-    assignments: 'Assignments',
-    preview: 'Preview',
-    loads: 'Skill loads',
-    usage: 'Usage',
-  }
 
   return (
     <Section className="px-8 pb-8 pt-6">
       <SettingsHeading
-        title={canManage ? pageTitles[activeTab] : 'Skills registry'}
+        title="Skills registry"
         description={isLoading ? undefined : canManage ? ADMIN_DESCRIPTION : MEMBER_DESCRIPTION}
       >
         {!isLoading && canManage && (
