@@ -1,5 +1,12 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import {
+  RBAC_V2_PAGES,
+  RbacPrototypeProvider,
+  RbacV2ModeSwitch,
+  stageAtLeast,
+  useRbacPrototype,
+} from '@qovery/domains/organizations/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
@@ -7,8 +14,18 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   component: RouteComponent,
 })
 
+// RBAC v2 prototype: the provider keeps the MVP/Target mode and the mock data shared across the settings pages
 function RouteComponent() {
+  return (
+    <RbacPrototypeProvider>
+      <SettingsLayout />
+    </RbacPrototypeProvider>
+  )
+}
+
+function SettingsLayout() {
   const { organizationId = '' } = useParams({ strict: false })
+  const { mode, isTarget, hasTags } = useRbacPrototype()
   const {
     location: { pathname },
   } = useRouterState()
@@ -25,20 +42,28 @@ function RouteComponent() {
     icon: 'gear' as const,
   }
 
+  // RBAC v2 prototype, from Next: labels merge with tags on their own page, this page keeps the annotations
   const labelsAnnotationsLink = {
-    title: 'Labels & annotations',
+    title: hasTags ? 'Annotations' : 'Labels & annotations',
     to: `${pathSettings}/labels-annotations`,
-    icon: 'tags' as const,
+    icon: hasTags ? ('note-sticky' as const) : ('tags' as const),
+  }
+
+  const labelsLink = {
+    title: 'Labels',
+    to: `${pathSettings}/labels`,
+    icon: 'tag' as const,
+    badge: 'New',
   }
 
   const teamLink = {
     type: 'group',
     title: 'Team',
     icon: 'users' as const,
-    children: [
-      { title: 'Members', to: `${pathSettings}/members` },
-      { title: 'Roles & permissions', to: `${pathSettings}/roles` },
-    ],
+    children: RBAC_V2_PAGES.filter((page) => stageAtLeast(mode, page.since ?? 'mvp')).map((page) => ({
+      title: (page.navTitle ?? page.title)(isTarget),
+      to: `${pathSettings}/${page.id}`,
+    })),
   }
 
   const billingPlansLink = {
@@ -132,6 +157,7 @@ function RouteComponent() {
     generalLink,
     teamLink,
     billingPlansLink,
+    ...(hasTags ? [labelsLink] : []),
     labelsAnnotationsLink,
     argoCdIntegrationLink,
     containerRegistriesLink,
@@ -139,7 +165,8 @@ function RouteComponent() {
     cloudCredentialsLink,
     gitRepositoriesAccessLink,
     notificationsLink,
-    apiTokenLink,
+    // RBAC v2 prototype: in the target solution, service accounts and personal tokens replace the API tokens
+    ...(isTarget ? [] : [apiTokenLink]),
     aiLink,
     ...(isAgenticWorkflowEnabled ? [agentsLink] : []),
     ...(isOrganizationAdmin ? [dangerZoneLink] : []),
@@ -173,6 +200,7 @@ function RouteComponent() {
                   to={link.to}
                   icon={link.icon}
                   iconStyle={'iconStyle' in link ? link.iconStyle : undefined}
+                  badge={'badge' in link ? link.badge : undefined}
                 >
                   {link.title}
                 </Sidebar.Item>
@@ -186,6 +214,7 @@ function RouteComponent() {
           <Outlet />
         </div>
       </div>
+      <RbacV2ModeSwitch />
     </div>
   )
 }
