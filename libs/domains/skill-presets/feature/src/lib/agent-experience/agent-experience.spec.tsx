@@ -8,12 +8,12 @@ import {
 } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgentExperienceAutomate } from './agent-experience-automate'
-import { AgentExperienceConnect } from './agent-experience-connect'
 import { AgentExperienceCopilot, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
 import { AGENT_EXPERIENCE_ENTRY_DISMISSED_KEY, AgentExperienceEntryCard } from './agent-experience-entry-card'
 import { AgentExperienceNav } from './agent-experience-nav'
 import { AgentExperienceOverview } from './agent-experience-overview'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
+import { ConnectAgentModal } from './connect-agent-modal'
 
 // The pages go through the real hooks and the in-browser mock API.
 jest.mock('@qovery/shared/util-node-env', () => ({
@@ -470,15 +470,16 @@ describe('AgentExperiencePolicyTokens', () => {
 })
 
 describe('AgentExperienceNav', () => {
-  it('has four entries, then Settings with policy tokens, for admins only', async () => {
+  it('has three entries, then Settings with policy tokens, for admins only', async () => {
     useScenario('agent-experience-active')
     const { userEvent, unmount } = renderWithProviders(<AgentExperienceNav />)
     expect(await screen.findByText('Settings')).toBeInTheDocument()
-    for (const label of ['Overview', 'Skills registry', 'Automate', 'Activity']) {
+    for (const label of ['Skills registry', 'Automate', 'Activity']) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
-    // Connect is reached from the Overview, not from the menu. Policy tokens sit in Settings.
+    // Connect is a popup, not a menu entry, and there is no Agents overview. Policy tokens sit in Settings.
     expect(screen.queryByText('Connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('Overview')).not.toBeInTheDocument()
     expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Settings' }))
     const settings = within(
@@ -505,59 +506,31 @@ describe('AgentExperienceNav', () => {
   })
 })
 
-describe('AgentExperienceConnect', () => {
-  it('gives a command to copy for the skills, the CLI and the MCP server', () => {
+describe('ConnectAgentModal', () => {
+  it('gives the commands to copy for the skills, the CLI and the MCP server, in tabs', async () => {
     useScenario('agent-experience-active')
-    renderWithProviders(<AgentExperienceConnect />)
+    const { userEvent } = renderWithProviders(<ConnectAgentModal onClose={jest.fn()} />)
+    expect(screen.getByRole('heading', { name: 'Connect an agent' })).toBeInTheDocument()
     expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
-    expect(screen.getByText('curl -s https://get.qovery.com | bash')).toBeInTheDocument()
-    expect(screen.getByText(/claude mcp add --transport http qovery/)).toBeInTheDocument()
     expect(
       within(screen.getByRole('group', { name: 'Copy the skills install command' })).getByRole('button', {
         name: 'Copy',
       })
     ).toBeInTheDocument()
-    expect(screen.getByText('Start here')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('CLI'))
+    expect(screen.getByText('curl -s https://get.qovery.com | bash')).toBeInTheDocument()
+    expect(screen.getByText('qovery auth')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('MCP server'))
+    expect(screen.getByText(/claude mcp add --transport http qovery/)).toBeInTheDocument()
   })
 
-  it('has the MCP set-up of each coding agent in its own tab', async () => {
-    useScenario('agent-experience-active')
-    const { userEvent } = renderWithProviders(<AgentExperienceConnect />)
-    expect(screen.getAllByRole('tab').map((tab) => tab.textContent)).toEqual([
-      'Claude Code',
-      'Codex',
-      'Cursor',
-      'Gemini CLI',
-      'VS Code',
-    ])
-    await userEvent.click(screen.getByRole('tab', { name: 'Gemini CLI' }))
-    expect(screen.getByText(/gemini mcp add --transport http/)).toBeInTheDocument()
-    expect(
-      within(screen.getByRole('group', { name: 'Copy the Gemini CLI command' })).getByRole('button', { name: 'Copy' })
-    ).toBeInTheDocument()
-  })
-
-  it('says which preset the installed skills load', async () => {
-    useScenario('agent-experience-active')
-    const { unmount } = renderWithProviders(<AgentExperienceConnect />)
-    expect(await screen.findByTestId('connect-your-preset')).toHaveTextContent(
-      /^Your agent’s preset: .+Skills registry$/
-    )
-    unmount()
-
-    useScenario('agent-experience-empty')
-    renderWithProviders(<AgentExperienceConnect />)
-    expect(await screen.findByTestId('connect-your-preset')).toHaveTextContent(
-      'No preset applies to you: your agent gets the Qovery skills as published.Skills registry'
-    )
-  })
-
-  it('says nothing about the preset when the presets cannot be loaded', async () => {
-    useScenario('errors')
-    renderWithProviders(<AgentExperienceConnect />)
-    expect(await screen.findByText('curl -s https://get.qovery.com | bash')).toBeInTheDocument()
-    await waitFor(() => expect(screen.queryByTestId('connect-your-preset')).not.toBeInTheDocument())
-    expect(screen.queryByText(/No preset applies to you/)).not.toBeInTheDocument()
+  it('closes on Close', async () => {
+    const onClose = jest.fn()
+    const { userEvent } = renderWithProviders(<ConnectAgentModal onClose={onClose} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(onClose).toHaveBeenCalled()
   })
 })
 

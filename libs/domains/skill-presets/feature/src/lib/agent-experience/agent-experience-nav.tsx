@@ -23,9 +23,9 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 }
 
 /**
- * The side list of Agents: Overview, the Skills Registry, Automate, and
- * Activity, then Settings. Settings holds policy tokens, the Copilot and, behind their flag, the Agent
- * Tasks pages; it is for owners and admins only, and opens by itself on its pages.
+ * The side list of Agents: the Skills registry, Automate and Activity, then Settings. Settings holds
+ * policy tokens, the Copilot and, behind their flag, the Agent Tasks pages; it is for owners and admins
+ * only, and opens by itself on its pages. Connecting an agent is a popup, not a page.
  */
 export function AgentExperienceNav() {
   const { organizationId = '' } = useParams({ strict: false })
@@ -35,13 +35,6 @@ export function AgentExperienceNav() {
   const base = `/organization/${organizationId}/agent-experience`
   const { pathname } = useLocation()
   const registryPath = `${base}/skill-presets`
-  const sections = [
-    { title: 'Presets', to: registryPath },
-    { title: 'Assignments', to: `${registryPath}/assignments` },
-    { title: 'Skill loads', to: `${registryPath}/loads` },
-    { title: 'Usage', to: `${registryPath}/usage` },
-  ]
-  const activeSection = sections.slice(1).find(({ to }) => pathname === to || pathname.startsWith(`${to}/`))
   const isRegistryPage = pathname === registryPath || pathname.startsWith(`${registryPath}/`)
 
   const isAdmin = !isLoading && canManage
@@ -49,22 +42,9 @@ export function AgentExperienceNav() {
 
   return (
     <Sidebar.Root className="mt-6" aria-label="Agents">
-      <Sidebar.Item to={base} icon="table-layout" iconStyle="regular" active={pathname.replace(/\/$/, '') === base}>
-        Overview
+      <Sidebar.Item to={registryPath} icon="sliders" iconStyle="regular" active={isRegistryPage}>
+        Skills registry
       </Sidebar.Item>
-      {!isLoading && canManage ? (
-        <Sidebar.Group title="Skills registry" icon="sliders" iconStyle="regular" defaultOpen={isRegistryPage}>
-          {sections.map(({ title, to }) => (
-            <Sidebar.SubItem key={to} to={to} active={isRegistryPage && (activeSection?.to ?? registryPath) === to}>
-              {title}
-            </Sidebar.SubItem>
-          ))}
-        </Sidebar.Group>
-      ) : (
-        <Sidebar.Item to={registryPath} icon="sliders" iconStyle="regular" active={isRegistryPage}>
-          Skills registry
-        </Sidebar.Item>
-      )}
       <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
         Automate
       </Sidebar.Item>
@@ -94,14 +74,18 @@ export function AgentExperienceNav() {
   )
 }
 
-/** Agent Tasks pages exist only behind their feature flag: without it, back to the Overview. */
+/** Agent Tasks pages exist only behind their feature flag: without it, back to the Skills registry. */
 export function AgentTasksGate({ children }: { children: ReactNode }) {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const isAgentTasksEnabled = Boolean(useFeatureFlagEnabled(AGENT_TASKS_FLAG))
   useEffect(() => {
     if (!isAgentTasksEnabled) {
-      navigate({ to: '/organization/$organizationId/agent-experience', params: { organizationId }, replace: true })
+      navigate({
+        to: '/organization/$organizationId/agent-experience/skill-presets',
+        params: { organizationId },
+        replace: true,
+      })
     }
   }, [isAgentTasksEnabled, navigate, organizationId])
   return isAgentTasksEnabled ? <>{children}</> : null

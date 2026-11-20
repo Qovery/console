@@ -226,20 +226,6 @@ function PresetRow({
             >
               Duplicate
             </DropdownMenu.Item>
-            {!template && (
-              <DropdownMenu.Item
-                icon={<Icon iconName="bookmark" iconStyle="regular" />}
-                onSelect={() =>
-                  navigate({
-                    to: '/organization/$organizationId/agent-experience/skill-presets/new',
-                    params: { organizationId },
-                    search: { from: preset.id, asTemplate: true },
-                  })
-                }
-              >
-                Save as template
-              </DropdownMenu.Item>
-            )}
             <DropdownMenu.Separator />
             <DropdownMenu.Item
               color="red"
@@ -258,7 +244,8 @@ function PresetRow({
 function PresetsContent({ organizationId }: { organizationId: string }) {
   const [previewPreset, setPreviewPreset] = useState<SkillPresetResponse | null>(null)
   const navigate = useNavigate()
-  const { data: presets, isLoading, error, refetch } = useSkillPresets({ organizationId })
+  // Saving presets as templates is not offered: templates come from Qovery, by profile.
+  const { data: presets, isLoading, error, refetch } = useSkillPresets({ organizationId, isTemplate: false })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
   const { mutateAsync: deleteSkillPreset } = useDeleteSkillPreset()
   const { openModalConfirmation } = useModalConfirmation()

@@ -13,14 +13,10 @@ jest.mock('axios', () => {
   return { __esModule: true, default: instance, ...instance }
 })
 
-const mockGetOrganizationEvents = jest.fn()
 const mockEditOrganizationAiFeatures = jest.fn()
 jest.mock('qovery-typescript-axios', () => ({
   ...jest.requireActual('qovery-typescript-axios'),
-  // The API module builds these clients when it loads: the methods call through to the mocks later.
-  OrganizationEventApi: function OrganizationEventApi() {
-    return { getOrganizationEvents: (...args: unknown[]) => mockGetOrganizationEvents(...args) }
-  },
+  // The API module builds this client when it loads: the method calls through to the mock later.
   OrganizationMainCallsApi: function OrganizationMainCallsApi() {
     return { editOrganizationAiFeatures: (...args: unknown[]) => mockEditOrganizationAiFeatures(...args) }
   },
@@ -77,12 +73,11 @@ describe('skill presets API, over HTTP', () => {
     })
   })
 
-  it('reads the organization activity, the caller’s own activity and the usage', async () => {
+  it('reads the organization activity and the caller’s own activity', async () => {
     http.get.mockResolvedValue({ data: { totals: {} } })
     const params = { from: 'a', to: 'b', bucket: 'DAY' } as never
     await skillPresetsApi.getAgentActivity(ORG, params)
     await skillPresetsApi.getMyAgentActivity(ORG, params)
-    await skillPresetsApi.getSkillPresetUsage(ORG, params)
     expect(http.get).toHaveBeenCalledWith(`/organization/${ORG}/agentActivity`, { params })
     // The actor filter goes out as actorKind.
     await skillPresetsApi.getAgentActivity(ORG, { ...(params as object), actorKind: 'POLICY_TOKEN' } as never)
@@ -90,24 +85,6 @@ describe('skill presets API, over HTTP', () => {
       params: expect.objectContaining({ actorKind: 'POLICY_TOKEN' }),
     })
     expect(http.get).toHaveBeenCalledWith(`/organization/${ORG}/agentActivity/me`, { params })
-    expect(http.get).toHaveBeenCalledWith(`/organization/${ORG}/skillPreset/usage`, { params })
-  })
-
-  it('reads skill loads from the audit logs, filtered on SKILL_LOAD and SKILL_PRESET, with its cursors', async () => {
-    mockGetOrganizationEvents.mockResolvedValue({ data: { events: [] } })
-    await skillPresetsApi.listSkillLoads(ORG, { pageSize: 10, continueToken: 'next' })
-    expect(mockGetOrganizationEvents).toHaveBeenCalledWith(
-      ORG,
-      10,
-      undefined,
-      undefined,
-      'next',
-      undefined,
-      'SKILL_LOAD',
-      undefined,
-      undefined,
-      'SKILL_PRESET'
-    )
   })
 
   it('turns AI features on with the organization endpoint', async () => {

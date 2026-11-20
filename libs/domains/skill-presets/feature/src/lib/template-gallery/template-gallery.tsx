@@ -2,7 +2,6 @@ import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SkillPresetEditor } from '../skill-preset-editor/skill-preset-editor'
 import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
@@ -38,11 +37,10 @@ function TemplateOption({
   )
 }
 
-/** First step of "Create preset": blank, a Qovery template by profile, or one of the organization's own. */
+/** First step of "Create preset": blank, or a Qovery template by profile. */
 export function TemplateGallery() {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
-  const { data: organizationTemplates = [] } = useSkillPresets({ organizationId, isTemplate: true })
 
   useDocumentTitle('Create preset - Skills registry - Agents')
 
@@ -72,29 +70,6 @@ export function TemplateGallery() {
       </div>
 
       <MockScenarioBanner />
-
-      <section aria-labelledby="gallery-organization" className="flex flex-col gap-3">
-        <Heading level={2} id="gallery-organization">
-          Your templates
-        </Heading>
-        {organizationTemplates.length === 0 ? (
-          <p className="text-sm text-neutral-subtle">
-            None yet. Use “Save as template” on any preset to reuse it here.
-          </p>
-        ) : (
-          <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {organizationTemplates.map((preset) => (
-              <TemplateOption
-                key={preset.id}
-                title={preset.name}
-                summary={preset.description || 'No description.'}
-                icon={<Icon iconName="bookmark" iconStyle="regular" />}
-                onSelect={() => open({ from: preset.id })}
-              />
-            ))}
-          </ul>
-        )}
-      </section>
 
       <section aria-labelledby="gallery-qovery" className="flex flex-col gap-3">
         <Heading level={2} id="gallery-qovery">

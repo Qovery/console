@@ -1,8 +1,8 @@
-import { useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Accordion, Button, ExternalLink, Heading, Icon, InputTextArea, Link, ModalCrud } from '@qovery/shared/ui'
+import { Accordion, Button, ExternalLink, Heading, Icon, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import { ConnectAgentModal } from './connect-agent-modal'
 import { CodingAgentLogos } from './ui/agent-experience-ui'
 
 export const NEW_JOB_TITLE = 'Automate a new job'
@@ -31,7 +31,7 @@ const NEXT_STEPS = [
  * qovery-policy-token skill turns into a tested policy token. Nothing is created from the Console.
  */
 export function NewJobModal({ onClose, canManage }: { onClose: () => void; canManage: boolean }) {
-  const { organizationId = '' } = useParams({ strict: false })
+  const { openModal, closeModal } = useModal()
   const methods = useForm()
   const [intent, setIntent] = useState('')
   const [, copy] = useCopyToClipboard()
@@ -112,15 +112,18 @@ export function NewJobModal({ onClose, canManage }: { onClose: () => void; canMa
             <p className="text-xs text-neutral-subtle">
               Works in these coding agents and any agent with the Qovery skills. Where slash commands are not available,
               ask your agent to use the qovery-policy-token skill with the same words. Skills not installed yet?{' '}
-              <Link
-                to="/organization/$organizationId/agent-experience/connect"
-                params={{ organizationId }}
+              <Button
+                type="button"
+                variant="plain"
                 color="brand"
                 size="xs"
-                onClick={onClose}
+                className="h-auto px-0 text-xs"
+                onClick={() =>
+                  openModal({ content: <ConnectAgentModal onClose={closeModal} />, options: { width: 676 } })
+                }
               >
                 Connect your agent
-              </Link>
+              </Button>
             </p>
           </div>
 

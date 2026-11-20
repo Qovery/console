@@ -85,7 +85,7 @@ describe('skill presets access', () => {
     renderWithProviders(<SettingsSkillPresets />)
 
     expect(screen.getByRole('button', { name: /Create preset/ })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Presets' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Skills registry' })).toBeInTheDocument()
     expect(screen.queryByText(memberNote)).not.toBeInTheDocument()
   })
 
