@@ -4,7 +4,7 @@
 
 This is a dense product UI. Whitespace serves hierarchy and legibility, not aesthetics. Don't add padding to make something "feel premium" — add it when the content needs room to breathe for readability.
 
-Spacing follows a **4px grid** — every gap, padding, and margin should be a multiple of 4px.
+Use the Tailwind spacing scale and match shared components and comparable layouts. The common 4px rhythm is a guide, not a reason to override existing component spacing. `p-5` and `gap-5` are 20px on the standard scale and are valid 4px multiples.
 
 **Before adding spacing, ask:** does removing it break legibility or make a target too small to hit? If not, remove it.
 
@@ -125,7 +125,7 @@ At any decision point, count the distinct options, actions, or pieces of informa
 
 ## Never
 
-- Use arbitrary spacing values outside the 4px grid
+- Introduce arbitrary spacing values when an existing token or shared component fits
 - Make all spacing equal — variety creates hierarchy
 - Wrap everything in cards — not everything needs a container
 - Nest cards inside cards — use spacing and dividers for internal hierarchy

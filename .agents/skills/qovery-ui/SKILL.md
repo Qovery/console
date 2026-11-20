@@ -1,11 +1,17 @@
 ---
 name: qovery-ui
-description: Design review and implementation guidance for the Qovery Console. Use for auditing UI components, refining spacing and color, selecting the right shared component, writing microcopy, and designing new surfaces from scratch.
+description: Use for every user-facing UI change or review in the Qovery Console, including feature implementation, bug fixes, styling, layout, interactions, and copy. Applies to small changes without an explicit design request or skill invocation.
 ---
 
 # Qovery UI Skill
 
 Design review and implementation guidance for the Qovery Console. Read `.claude/design.md` first for orientation.
+
+## Default workflow
+
+Apply this skill before any user-facing UI change, whether or not the user names a command. Read `.claude/design.md`, inspect the closest existing implementation and shared components, then load only the references relevant to the change from the table below. Implement the requested change directly; a separate design proposal or command selection is not required.
+
+The commands below are optional workflows for targeted requests, not prerequisites for UI implementation.
 
 ---
 
@@ -14,8 +20,8 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 `.claude/design.md` is the source of truth — read it first. These are quick-reference reminders for agents running without that context.
 
 **Colors:** Tailwind tokens only, never hardcoded. Status colors are semantic, never decorative. Brand violet on actionable controls only.
-**Typography:** `text-sm` is the default. Two weights: 400 body, 500 anchors. Roboto Mono for tabular data. Max 3 sizes per surface.
-**Spacing:** 4px grid. Variety creates hierarchy. Cards for distinct actionable content only — never nested.
+**Typography:** `text-sm` is the default. Follow shared component typography and comparable usages. Do not apply monospace merely because content appears in a table.
+**Spacing:** Follow existing component spacing and the Tailwind scale. Cards for distinct actionable content only — never nested.
 **Components:** Shared component first, always. `<StatusChip>` for all system states. `<Button>` not `<ButtonPrimitive>`. `<Badge>` not `<Tag>`.
 **Copy:** Technical but human. Button copy 1–3 words. Modal titles name the action. Address the user as "you."
 **Motion:** Default is no motion. High-frequency actions never animate. Every animation needs a reason beyond aesthetics.
@@ -32,7 +38,6 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 | `/qovery-ui component` | Find the right component or scaffold a new one |
 | `/qovery-ui copy`      | Review or write microcopy                      |
 | `/qovery-ui motion`    | Audit or add animation                         |
-| `/qovery-ui craft`     | Design something new from scratch              |
 
 ---
 
@@ -59,7 +64,6 @@ Output format — a single markdown table, one row per issue:
 | ------------------- | ------------- | --------------------------------------- | --------------------------------------------- |
 | `ServiceRow.tsx:42` | `[blocking]`  | `text-green-500` used for running state | Replace with `text-positive`                  |
 | `Modal.tsx:18`      | `[important]` | Modal title is "Settings"               | Rename to the action: "Configure autoscaling" |
-| `Card.tsx:9`        | `[nit]`       | `gap-5` off the 4px grid                | Use `gap-4` or `gap-6`                        |
 
 Finish with: total issues by severity.
 
@@ -73,7 +77,6 @@ Fix without changing functionality. Output a Before / After / Why table, one row
 
 | Before                | After                             | Why                                      |
 | --------------------- | --------------------------------- | ---------------------------------------- |
-| `p-5`                 | `p-4`                             | Off the 4px grid                         |
 | `text-neutral-600`    | `text-neutral-subtle`             | Legacy token                             |
 | No hover state on row | `hover:bg-surface-neutral-subtle` | Interactive elements need hover feedback |
 
@@ -110,26 +113,6 @@ Review or generate microcopy. Output findings as a Before / After / Why table:
 **Load:** `references/motion.md`
 
 Ask first: how often will users see this? If the answer is "constantly," remove the animation. Otherwise, check easing and duration against the guide and output a Before / After / Why table.
-
----
-
-## /craft
-
-**Load:** `references/typography.md`, `references/spacing-layout.md`, `references/colors.md`, `references/components.md`, `references/copy.md`
-
-Generative command — use when designing something new from scratch rather than reviewing existing work.
-
-**Input:** describe what you're building. Include the user goal, the data or content being shown, and any known constraints (compact, read-heavy, action-dense).
-
-**Output:** a structured design proposal with:
-
-1. **Layout skeleton** — which primitives to reach for (card, table, modal, inline), rough visual hierarchy
-2. **Component choices** — which shared components satisfy each UI need and why
-3. **Typography** — size and weight choices per content level
-4. **Color decisions** — which semantic tokens to use for each surface and state
-5. **Copy suggestions** — headings, labels, CTAs, empty state
-
-Output structured prose and a table for component choices. Do not output code. Flag any working memory concerns (>4 simultaneous choices) and suggest grouping or progressive disclosure where needed.
 
 ---
 

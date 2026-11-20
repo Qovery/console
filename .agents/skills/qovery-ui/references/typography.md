@@ -4,15 +4,15 @@
 
 - **One font family:** Roboto. No decorative typefaces, no system font fallbacks in product UI.
 - **Base body size:** `text-sm` (0.875rem / 14px). The entire console defaults to this — it is not a "small" size, it is the normal size.
-- **Two weights only:** 400 (`font-normal`) for body, captions, and legends; 500 (`font-medium`) for buttons, titles, badges, and smaller copy that needs weight to stay legible.
-- **Roboto Mono for tabular data:** use `font-mono` for table headers, captions containing IDs or timestamps, and any numeric values that must align in columns.
+- **Common weights:** 400 (`font-normal`) for body, captions, and legends; 500 (`font-medium`) for buttons, titles, badges, and smaller copy that needs weight to stay legible.
+- **Monospace:** preserve shared component defaults. Use `font-code` for code and commands; a table, URL, ID, or timestamp does not by itself require monospace.
 - **Icons match adjacent text size:** an icon sitting next to `text-sm` gets `text-sm`, next to `text-xs` gets `text-xs`. FontAwesome icons are sized via `font-size`, so the Tailwind text size class controls the icon size directly. Mismatched sizes break the visual baseline and make the icon feel either too heavy or too timid relative to the label.
 
 ---
 
 ## Type Scale
 
-Five sizes. Don't introduce others.
+Use the existing type scale and shared component defaults. The following are common examples, not an exhaustive list.
 
 | Role                 | Class       | Size | Weight        | When to use                                                  |
 | -------------------- | ----------- | ---- | ------------- | ------------------------------------------------------------ |
@@ -31,27 +31,22 @@ Five sizes. Don't introduce others.
 
 ## Weight & Contrast
 
-Only two weights are in the system:
+Common weights in the console:
 
 - **`font-normal` (400):** body text, captions, legends, running content
 - **`font-medium` (500):** buttons, section titles, badges, and small copy (`text-xs`) that would otherwise feel too light at its size
 
 `font-medium` on `text-sm` running text adds visual noise without improving readability. Reserve it for structural anchors (headings, button labels) and for small text where normal weight reads as whisper.
 
-Never use `font-bold`, `font-semibold`, or any weight outside this pair.
+Match the shared component and comparable usages rather than imposing a blanket weight restriction.
 
 ---
 
 ## Roboto Mono
 
-Use `font-mono` for:
+Use `font-code` for code and commands. Preserve the typography supplied by shared table components rather than adding monospace to headers, values, or metadata by default.
 
-- Table column headers
-- Numeric values that must align in columns
-- Captions containing version numbers, timestamps, or IDs
-- Any value where character-width consistency matters
-
-Don't use Roboto Mono for labels, body text, or decorative purposes — it signals "this is data" and should be reserved for that.
+For ordinary names, labels, descriptions, URLs, and timestamps, follow comparable Console usages.
 
 ---
 
@@ -65,9 +60,9 @@ Fewer distinct sizes, more contrast between them.
 
 - Adjacent levels in a hierarchy should be at least one step apart on the scale
 - Use weight or color to differentiate elements at the same size level
-- Use at most 3 distinct sizes per surface
+- Keep the hierarchy clear and consistent with comparable surfaces
 
-A card that mixes `text-2xl`, `text-base`, `text-sm`, and `text-xs` all at once has lost its hierarchy — audit and collapse.
+Review whether each size communicates a distinct role rather than enforcing a fixed number of sizes.
 
 ---
 
@@ -99,8 +94,5 @@ In JSX, use Unicode directly (`…`, ` `) or HTML entities in template strings.
 ## Never
 
 - Introduce a font family other than Roboto or Roboto Mono
-- Use `font-bold` or `font-semibold` — outside the two-weight system
-- Use more than three distinct sizes on a single surface
 - Use `text-xs font-normal` for primary interactive labels — too light to anchor attention
-- Use Roboto Mono for non-tabular copy
 - Add intermediate sizes (`text-[15px]`, `text-[13px]`) to split a difference — work within the scale
