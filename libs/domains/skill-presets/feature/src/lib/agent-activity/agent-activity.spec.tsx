@@ -17,10 +17,10 @@ jest.mock('@qovery/shared/util-node-env', () => ({
   SKILL_PRESETS_MOCK: 'true',
 }))
 
-// A small in-memory URL: the filters live in the search params.
 // The pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
 configure({ asyncUtilTimeout: 5000 })
 
+// A small in-memory URL: the filters live in the search params.
 const mockUrl = {
   search: {} as ActivitySearch,
   listeners: new Set<() => void>(),
