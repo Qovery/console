@@ -1,5 +1,4 @@
 import { useParams } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type DeploymentHistoryEnvironmentV2,
   type Environment,
@@ -61,16 +60,12 @@ function HistoryUnavailableIcon() {
   )
 }
 
-export function LoaderPlaceholder({ title, description }: { title?: string; description?: string }) {
-  const isDeploymentLogsV2Enabled = useFeatureFlagEnabled('deployment-logs-v2') === true
-
-  if (isDeploymentLogsV2Enabled && title === undefined) return <DeploymentLogsSkeleton />
-
+export function LoaderPlaceholder({ title, description }: { title: string; description?: string }) {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-5 text-center">
       <LoaderDots />
       <div className="flex flex-col gap-2">
-        <p className="text-neutral">{title ?? 'Deployment logs are loading…'}</p>
+        <p className="text-neutral">{title}</p>
         <span className="text-sm text-neutral-subtle">{description}</span>
       </div>
     </div>
@@ -79,16 +74,6 @@ export function LoaderPlaceholder({ title, description }: { title?: string; desc
 
 // Page loader: the header skeleton keeps the loader where it stays once the header shows up
 export function DeploymentLogsLoader() {
-  const isDeploymentLogsV2Enabled = useFeatureFlagEnabled('deployment-logs-v2') === true
-
-  if (!isDeploymentLogsV2Enabled) {
-    return (
-      <div className="flex h-page-container w-full flex-col justify-center">
-        <LoaderPlaceholder />
-      </div>
-    )
-  }
-
   return (
     <div className="flex h-page-container flex-col">
       <div className="flex h-12 shrink-0 items-center gap-3 border-b border-neutral px-4">
@@ -98,7 +83,7 @@ export function DeploymentLogsLoader() {
         <Skeleton width={305} height={28} />
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center bg-background">
-        <LoaderPlaceholder />
+        <DeploymentLogsSkeleton />
       </div>
     </div>
   )
@@ -142,7 +127,7 @@ export function DeploymentLogsPlaceholder({
 
   // Show loader when data is loading or service is undefined
   if (!service || (itemsLength === 0 && !hideLogs && serviceDeploymentStatus === undefined)) {
-    return <LoaderPlaceholder />
+    return <DeploymentLogsSkeleton />
   }
 
   // Show queued state
@@ -265,7 +250,7 @@ export function DeploymentLogsPlaceholder({
   }
 
   // Default fallback
-  return <LoaderPlaceholder />
+  return <DeploymentLogsSkeleton />
 }
 
 export default DeploymentLogsPlaceholder
