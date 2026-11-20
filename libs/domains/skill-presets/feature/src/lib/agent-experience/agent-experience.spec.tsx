@@ -7,11 +7,10 @@ import {
   skillPresetsApi,
 } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { AgentsSetupSection } from '../agents-setup/agents-setup-section'
 import { AgentExperienceAutomate } from './agent-experience-automate'
 import { AgentExperienceCopilot, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
-import { AGENT_EXPERIENCE_ENTRY_DISMISSED_KEY, AgentExperienceEntryCard } from './agent-experience-entry-card'
 import { AgentExperienceNav } from './agent-experience-nav'
-import { AgentExperienceOverview } from './agent-experience-overview'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
 import { ConnectAgentModal } from './connect-agent-modal'
 
@@ -53,54 +52,43 @@ beforeEach(() => {
   jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
 })
 
-describe('AgentExperienceOverview', () => {
-  it('opens connection instructions in a modal and switches setup tabs', async () => {
+describe('AgentsSetupSection', () => {
+  it('lists the three steps in order the first time, with the preset step next', async () => {
     useScenario('agent-experience-empty')
-    const { userEvent } = renderWithProviders(<AgentExperienceOverview />)
-    await screen.findByTestId('setup-progress')
-    await userEvent.click(screen.getByRole('button', { name: 'Connect an agent' }))
-    const dialog = await screen.findByRole('dialog')
-    expect(within(dialog).getByText(/skill.qovery.com\/install.sh/)).toBeInTheDocument()
-    await userEvent.click(within(dialog).getByText('CLI', { exact: true }))
-    expect(within(dialog).getByText('qovery auth')).toBeInTheDocument()
-    await userEvent.click(within(dialog).getByText('MCP server', { exact: true }))
-    expect(within(dialog).getByText(/claude mcp add/)).toBeInTheDocument()
-    await userEvent.click(within(dialog).getByText('Close', { exact: true }))
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
-  })
+    renderWithProviders(<AgentsSetupSection />)
 
-  it('explains Agents the first time, starts with a custom preset, and shows no numbers', async () => {
-    useScenario('agent-experience-empty')
-    renderWithProviders(<AgentExperienceOverview />)
-
-    expect(await screen.findByTestId('setup-progress')).toHaveTextContent('0 of 3 done')
-    expect(screen.getByTestId('agent-experience-state')).toHaveAttribute('data-state', 'empty')
-    const intro = screen.getByTestId('agent-experience-hero')
-    expect(within(intro).getByRole('heading', { name: 'The future of infrastructure is agentic' })).toBeInTheDocument()
-    expect(within(screen.getByTestId('hero-pillar-guide')).getByText('Skills Registry')).toBeInTheDocument()
-    expect(within(screen.getByTestId('hero-pillar-control')).getByText(/Deny by default/)).toBeInTheDocument()
-    expect(within(screen.getByTestId('hero-pillar-observe')).getByText('Audit logs')).toBeInTheDocument()
-    // The steps in order: value first, connecting last.
+    expect(await screen.findByTestId('agents-setup-progress')).toHaveTextContent('0 of 3 done')
     expect(
-      within(screen.getByTestId('setup-steps'))
+      within(screen.getByTestId('agents-setup-steps'))
         .getAllByRole('listitem')
         .map((item) => item.dataset.testid)
-    ).toEqual(['setup-step-preset', 'setup-step-policy-token', 'setup-step-connect'])
-    expect(stepState('preset')).toBe('next')
-    expect(within(screen.getByTestId('setup-step-preset')).getByText('Set up your Skills Registry')).toBeInTheDocument()
-    // New organizations have AI features on: no Turn on AI anywhere.
-    expect(screen.queryByTestId('overview-ai-off')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
-    expect(within(intro).getByRole('button', { name: 'Install skills' })).toBeInTheDocument()
-    expect(screen.getByText('Connect an agent')).toBeInTheDocument()
-    expect(screen.queryByTestId('week-kpis')).not.toBeInTheDocument()
+    ).toEqual(['agents-setup-step-preset', 'agents-setup-step-policy-token', 'agents-setup-step-connect'])
+    expect(screen.getByTestId('agents-setup-step-preset')).toHaveAttribute('data-state', 'next')
+    expect(screen.getByText('Create a preset in the Skills registry')).toBeInTheDocument()
+    // New organizations have AI features on.
+    expect(screen.queryByTestId('agents-setup-ai-off')).not.toBeInTheDocument()
   })
 
-  it('shows Turn on AI as a notice when AI features are off, and keeps AI on when the Copilot step fails', async () => {
+  it('opens the Connect an agent popup from its step', async () => {
+    useScenario('agent-experience-empty')
+    const { userEvent } = renderWithProviders(<AgentsSetupSection />)
+    const step = await screen.findByTestId('agents-setup-step-connect')
+    await userEvent.click(within(step).getByRole('button', { name: 'Connect an agent' }))
+    expect(await screen.findByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
+  })
+
+  it('marks the connect step done only from what we have seen, and says so', async () => {
+    useScenario('agent-experience-partial')
+    renderWithProviders(<AgentsSetupSection />)
+    const step = await screen.findByTestId('agents-setup-step-connect')
+    expect(step).toHaveAttribute('data-state', 'done')
+    expect(step).toHaveTextContent('We’ve seen agent activity in the last 30 days.')
+  })
+
+  it('offers Turn on AI when AI features are off, and keeps AI on when the Copilot step fails', async () => {
     useScenario('agent-experience-copilot-error')
-    const { userEvent } = renderWithProviders(<AgentExperienceOverview />)
-    const notice = await screen.findByTestId('overview-ai-off')
-    expect(notice).toHaveTextContent('AI features are off for this organization')
+    const { userEvent } = renderWithProviders(<AgentsSetupSection />)
+    const notice = await screen.findByTestId('agents-setup-ai-off')
 
     await userEvent.click(within(notice).getByRole('button', { name: 'Turn on AI' }))
     const dialog = await screen.findByRole('dialog')
@@ -114,72 +102,29 @@ describe('AgentExperienceOverview', () => {
     ).toBeInTheDocument()
     expect(within(dialog).getByTestId('submit-button')).toHaveTextContent('Retry')
     await userEvent.click(within(dialog).getByTestId('submit-button'))
-    await waitFor(() => expect(screen.queryByTestId('overview-ai-off')).not.toBeInTheDocument())
+    await waitFor(() => expect(screen.queryByTestId('agents-setup-ai-off')).not.toBeInTheDocument())
   })
 
-  it('highlights the next step when partly set up', async () => {
-    useScenario('agent-experience-partial')
-    renderWithProviders(<AgentExperienceOverview />)
-
-    await waitFor(() => expect(screen.getByTestId('setup-progress')).toHaveTextContent('1 of 3 done'))
-    // The hero folds to one sentence once a step is done.
-    expect(screen.getByTestId('agent-experience-hero')).toHaveAttribute('data-variant', 'sentence')
-    expect(stepState('connect')).toBe('done')
-    expect(stepState('preset')).toBe('next')
-    expect(stepState('policy-token')).toBe('todo')
-    expect(await screen.findByTestId('week-kpis')).toBeInTheDocument()
-  })
-
-  it('shows what agents did once everything is in place', async () => {
+  it('goes away once everything is set up', async () => {
     useScenario('agent-experience-active')
-    renderWithProviders(<AgentExperienceOverview />)
-
-    expect(await screen.findByRole('heading', { name: 'Active presets' })).toBeInTheDocument()
-    expect(screen.getByTestId('agent-experience-state')).toHaveAttribute('data-state', 'active')
-    expect(screen.queryByTestId('setup-steps')).not.toBeInTheDocument()
-    const kpis = await screen.findByTestId('week-kpis')
-    expect(kpis).toHaveTextContent('Last 7 days')
-    expect(kpis).toHaveTextContent('Members with agents')
-    expect(within(kpis).getAllByRole('link')).toHaveLength(4)
-    const tokens = screen.getByRole('heading', { name: 'Policy tokens in use' }).closest('section') as HTMLElement
-    expect(within(tokens).getByText('ci-deployer')).toBeInTheDocument()
-    expect(screen.getByTestId('overview-denied')).toHaveTextContent('payments-production')
-    // No hero once in use: the numbers come first. Suggestions live on Activity, linked from here.
-    expect(screen.queryByTestId('agent-experience-hero')).not.toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'Suggestions' })).not.toBeInTheDocument()
-    expect(screen.getByTestId('overview-copilot-state')).toHaveTextContent(/\d+ suggestions? in Activity/)
-    expect(await screen.findByTestId('overview-copilot-state')).toHaveTextContent('On, read-only')
+    renderWithProviders(<AgentsSetupSection />)
+    await waitFor(() => expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument())
   })
 
-  it('says when Agents cannot be loaded, and loads again on Try again', async () => {
-    useScenario('agent-experience-active')
-    const getActivity = jest
-      .spyOn(skillPresetsApi, 'getAgentActivity')
-      .mockRejectedValue(buildSkillPresetApiError(404, 'Not found'))
-    const { userEvent } = renderWithProviders(<AgentExperienceOverview />)
-
-    const alert = await screen.findByRole('alert')
-    expect(alert).toHaveTextContent('Agents could not be loaded')
-    expect(alert).toHaveTextContent('HTTP 404')
-    const calls = getActivity.mock.calls.length
-    await userEvent.click(within(alert).getByRole('button', { name: /Try again/ }))
-    await waitFor(() => expect(getActivity.mock.calls.length).toBeGreaterThan(calls))
-    getActivity.mockRestore()
-  })
-
-  it('shows a member their own setup, with no admin actions', async () => {
+  it('stays away from members', async () => {
     useScenario('member')
-    renderWithProviders(<AgentExperienceOverview />)
+    renderWithProviders(<AgentsSetupSection />)
+    await waitFor(() => expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument())
+  })
 
-    expect(await screen.findByRole('heading', { name: 'Your agent setup', level: 1 })).toBeInTheDocument()
-    expect(await screen.findByTestId('preset-summary')).toHaveTextContent('Your agent gets the')
-    expect(screen.queryByTestId('setup-steps')).not.toBeInTheDocument()
-    expect(screen.queryByText('Members with agents')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
-    // Nothing that leads to a page a member cannot use.
-    expect(screen.queryByTestId('agent-experience-hero')).not.toBeInTheDocument()
-    expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
-    expect(screen.queryByText('What the Copilot does')).not.toBeInTheDocument()
+  it('can be dismissed for good', async () => {
+    useScenario('agent-experience-empty')
+    const { userEvent, unmount } = renderWithProviders(<AgentsSetupSection />)
+    await userEvent.click(await screen.findByRole('button', { name: 'Dismiss agents setup' }))
+    expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument()
+    unmount()
+    renderWithProviders(<AgentsSetupSection />)
+    expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument()
   })
 })
 
@@ -531,21 +476,5 @@ describe('ConnectAgentModal', () => {
     const { userEvent } = renderWithProviders(<ConnectAgentModal onClose={onClose} />)
     await userEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(onClose).toHaveBeenCalled()
-  })
-})
-
-describe('AgentExperienceEntryCard', () => {
-  it('leads to Agents and can be dismissed for good', async () => {
-    const { userEvent, unmount } = renderWithProviders(<AgentExperienceEntryCard />)
-    expect(screen.getByText('Set up your coding agents')).toBeInTheDocument()
-    expect(screen.getByText('Open Agents')).toBeInTheDocument()
-
-    await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
-    expect(screen.queryByTestId('agent-experience-entry')).not.toBeInTheDocument()
-    expect(window.localStorage.getItem(AGENT_EXPERIENCE_ENTRY_DISMISSED_KEY)).toBe('true')
-    unmount()
-
-    renderWithProviders(<AgentExperienceEntryCard />)
-    expect(screen.queryByTestId('agent-experience-entry')).not.toBeInTheDocument()
   })
 })
