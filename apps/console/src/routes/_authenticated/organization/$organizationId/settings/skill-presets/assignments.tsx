@@ -5,7 +5,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   {
     beforeLoad: ({ params: { organizationId } }) => {
       throw redirect({
-        to: '/organization/$organizationId/agent-experience/skill-presets/assignments',
+        to: '/organization/$organizationId/agent-experience/skill-presets',
         params: { organizationId },
         replace: true,
       })

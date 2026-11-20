@@ -23,28 +23,14 @@ beforeEach(() => {
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
 })
 
-describe('AgentExperienceNav, Skills registry group', () => {
-  it.each(['assignments', 'preview', 'loads', 'preset-1', 'preset-1/history', 'new'])(
-    'highlights the correct nested page for %s',
-    (path) => {
-      jest.mocked(useLocation).mockReturnValue({
-        pathname: `/organization/organization-1/agent-experience/skill-presets/${path}`,
-      } as never)
-      renderWithProviders(<AgentExperienceNav />)
-      const titles: Record<string, string> = { assignments: 'Assignments', loads: 'Skill loads' }
-      const title = titles[path] ?? 'Presets'
-      expect(screen.getByRole('link', { name: title })).toHaveAttribute('aria-current', 'page')
-      expect(screen.getAllByRole('link')).toHaveLength(3)
-    }
-  )
-
-  it('keeps member navigation read-only', () => {
-    jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: false })
+describe('AgentExperienceNav, Skills registry', () => {
+  it.each(['', '/preset-1', '/preset-1/history', '/new'])('shows one Skills registry entry, current on %s', (path) => {
     jest.mocked(useLocation).mockReturnValue({
-      pathname: '/organization/organization-1/agent-experience/skill-presets',
+      pathname: `/organization/organization-1/agent-experience/skill-presets${path}`,
     } as never)
     renderWithProviders(<AgentExperienceNav />)
     expect(screen.getByRole('link', { name: 'Skills registry' })).toHaveAttribute('aria-current', 'page')
-    expect(screen.queryByRole('link', { name: 'Assignments' })).not.toBeInTheDocument()
+    expect(screen.getAllByRole('link')).toHaveLength(1)
+    expect(screen.queryByRole('link', { name: /Assignments|Skill loads|Usage/ })).not.toBeInTheDocument()
   })
 })

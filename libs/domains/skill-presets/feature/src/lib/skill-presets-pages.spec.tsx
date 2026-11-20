@@ -11,8 +11,6 @@ import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved, within
 import { MemberAgentView } from './member-agent-view/member-agent-view'
 import { MockScenarioBanner } from './mock-scenario-banner/mock-scenario-banner'
 import { SettingsSkillPresets } from './settings-skill-presets/settings-skill-presets'
-import { SkillLoads } from './skill-loads/skill-loads'
-import { SkillPresetAssignments } from './skill-preset-assignments/skill-preset-assignments'
 import { SkillPresetCreate } from './template-gallery/template-gallery'
 
 /*
@@ -199,35 +197,6 @@ describe('member view', () => {
     expect(await screen.findByTestId('member-no-preset')).toHaveTextContent(
       'No preset applies. Your agent uses the Qovery skills as published.'
     )
-  })
-})
-
-describe('assignments', () => {
-  it('shows the effective preset of every member and why', async () => {
-    useScenario('typical')
-    renderWithProviders(<SkillPresetAssignments />)
-
-    const jamie = (await screen.findByText('Jamie Rossi')).closest('tr')
-    expect(jamie).not.toBeNull()
-    expect(within(jamie as HTMLElement).getByText('External contractors')).toBeInTheDocument()
-    expect(within(jamie as HTMLElement).getByText('Assigned to the member')).toBeInTheDocument()
-    const priya = screen.getByText('Priya Shah').closest('tr') as HTMLElement
-    expect(within(priya).getByText('Platform (CLI-first)')).toBeInTheDocument()
-    expect(within(priya).getByText('From their role')).toBeInTheDocument()
-  })
-})
-
-describe('skill loads', () => {
-  it('lists loads with their preset and delivery, and pages through them', async () => {
-    useScenario('large')
-    const { userEvent } = renderWithProviders(<SkillLoads />)
-
-    const table = await screen.findByRole('table', undefined, { timeout: 5000 })
-    expect(within(table).getAllByRole('row')).toHaveLength(31)
-    expect(within(table).getAllByText(/From cache|Fetched/).length).toBe(30)
-
-    await userEvent.click(screen.getByTestId('button-next-page'))
-    await waitFor(() => expect(screen.getByTestId('button-previous-page')).toBeEnabled())
   })
 })
 
