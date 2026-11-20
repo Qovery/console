@@ -1,4 +1,4 @@
-import { mockPointerCoarse, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { mockPointerCoarse, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import Tooltip, { type TooltipProps } from './tooltip'
 
 const props: TooltipProps = {
@@ -31,6 +31,24 @@ describe('Tooltip', () => {
     await userEvent.click(screen.getByText('info'))
 
     expect(await screen.findAllByText('Role description')).not.toHaveLength(0)
+  })
+
+  it('closes on a tap outside', async () => {
+    mockPointer(true)
+    const { userEvent } = renderWithProviders(
+      <div>
+        <Tooltip content="Role description">
+          <span>info</span>
+        </Tooltip>
+        <p>elsewhere</p>
+      </div>
+    )
+
+    await userEvent.click(screen.getByText('info'))
+    expect(await screen.findAllByText('Role description')).not.toHaveLength(0)
+
+    await userEvent.click(screen.getByText('elsewhere'))
+    await waitFor(() => expect(screen.queryByText('Role description')).not.toBeInTheDocument())
   })
 
   it('does not open on tap when the trigger is a button', async () => {

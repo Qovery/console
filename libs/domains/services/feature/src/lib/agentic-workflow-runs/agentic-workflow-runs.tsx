@@ -19,9 +19,15 @@ import { dateFullFormat, formatDuration, timeAgo } from '@qovery/shared/util-dat
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
 
-// Below md the runs table keeps the date and the status
-const MOBILE_ROW_CLASS_NAME =
-  'max-md:[&>*:first-child]:!w-[65%] max-md:[&>*:first-child]:overflow-hidden max-md:[&>*:nth-child(2)]:!w-[35%] max-md:[&>*:nth-child(n+3)]:hidden'
+// Column widths; below md the runs table keeps the date and the status
+const COLUMN_CLASS_NAMES = {
+  date: 'w-[420px] max-md:w-[65%] max-md:overflow-hidden',
+  status: 'w-[128px] max-md:w-[35%]',
+  trigger: 'w-[196px] max-md:hidden',
+  payload: 'w-[180px] max-md:hidden',
+  duration: 'w-[160px] max-md:hidden',
+  cost: 'w-[120px] max-md:hidden',
+}
 
 const { Table } = TablePrimitives
 
@@ -377,13 +383,25 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
     <div className="flex grow flex-col justify-between">
       <Table.Root className="w-full table-fixed text-ssm md:min-w-[1204px]">
         <Table.Header>
-          <Table.Row className={clsx('divide-x divide-neutral', MOBILE_ROW_CLASS_NAME)}>
-            <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[128px] font-medium">Status</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[180px] font-medium">Payload</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[160px] font-medium">Duration</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[120px] font-medium">Cost</Table.ColumnHeaderCell>
+          <Table.Row className="divide-x divide-neutral">
+            <Table.ColumnHeaderCell className={clsx('font-medium', COLUMN_CLASS_NAMES.date)}>
+              Date
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className={clsx('font-medium', COLUMN_CLASS_NAMES.status)}>
+              Status
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className={clsx('font-medium', COLUMN_CLASS_NAMES.trigger)}>
+              Trigger
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className={clsx('font-medium', COLUMN_CLASS_NAMES.payload)}>
+              Payload
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className={clsx('font-medium', COLUMN_CLASS_NAMES.duration)}>
+              Duration
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className={clsx('font-medium', COLUMN_CLASS_NAMES.cost)}>
+              Cost
+            </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -391,15 +409,12 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             <Table.Row
               key={run.id}
               role="button"
-              className={clsx(
-                'h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle',
-                MOBILE_ROW_CLASS_NAME
-              )}
+              className="h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
               tabIndex={0}
               onClick={() => setSelectedRun(run)}
               onKeyDown={(event) => openRunWithKeyboard(event, run)}
             >
-              <Table.Cell className="w-[420px]">
+              <Table.Cell className={COLUMN_CLASS_NAMES.date}>
                 <div className="flex flex-col gap-0.5">
                   <Tooltip
                     open={selectedRun ? false : undefined}
@@ -428,11 +443,11 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                   </span>
                 </div>
               </Table.Cell>
-              <Table.Cell className="w-[128px]">{runStatus(run.status, true)}</Table.Cell>
-              <Table.Cell className="w-[196px]">
+              <Table.Cell className={COLUMN_CLASS_NAMES.status}>{runStatus(run.status, true)}</Table.Cell>
+              <Table.Cell className={COLUMN_CLASS_NAMES.trigger}>
                 <RunTrigger trigger={run.trigger} />
               </Table.Cell>
-              <Table.Cell className="w-[180px]">
+              <Table.Cell className={COLUMN_CLASS_NAMES.payload}>
                 {run.payload === null || run.payload === undefined ? (
                   '—'
                 ) : run.payload === '' ? (
@@ -453,10 +468,10 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
                   </Button>
                 )}
               </Table.Cell>
-              <Table.Cell className="w-[160px] whitespace-nowrap">
+              <Table.Cell className={clsx('whitespace-nowrap', COLUMN_CLASS_NAMES.duration)}>
                 <RunDuration duration={run.duration_ms} />
               </Table.Cell>
-              <Table.Cell className="w-[120px] whitespace-nowrap font-mono">
+              <Table.Cell className={clsx('whitespace-nowrap font-mono', COLUMN_CLASS_NAMES.cost)}>
                 <RunCost cost={run.cost} />
               </Table.Cell>
             </Table.Row>

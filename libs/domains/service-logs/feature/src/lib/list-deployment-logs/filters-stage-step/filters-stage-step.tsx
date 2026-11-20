@@ -170,7 +170,7 @@ export function FiltersStageStep({
   )
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center max-md:flex-wrap max-md:gap-y-2">
       {match(service)
         .with({ serviceType: 'CONTAINER' }, () => false)
         .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)

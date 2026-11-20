@@ -1,4 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useMemo } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
@@ -21,9 +22,11 @@ import { useArgoCdServices } from '../hooks/use-argocd-services/use-argocd-servi
 
 const { Table } = TablePrimitives
 
-// Below md the list keeps the service and its actions; last operation and target version are hidden
 const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(350px,502px)_minmax(200px,275px)_minmax(280px,340px)_minmax(10px,50px)] max-md:grid-cols-[minmax(0,1fr)_56px] max-md:[&>*:nth-child(2)]:hidden max-md:[&>*:nth-child(3)]:hidden'
+  'grid w-full grid-cols-[minmax(350px,502px)_minmax(200px,275px)_minmax(280px,340px)_minmax(10px,50px)] max-md:grid-cols-[minmax(0,1fr)_88px]'
+// Below md the list keeps the service and its actions
+const secondaryCellClassName = 'flex h-full items-center border-r border-neutral max-md:hidden'
+const actionsCellClassName = 'flex h-full items-center justify-start max-md:px-2'
 
 export interface ArgoCdServiceListProps {
   environment: Environment
@@ -85,13 +88,13 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Service
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
+              <Table.ColumnHeaderCell className={clsx(secondaryCellClassName, 'text-neutral-subtle')}>
                 Last operation
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
+              <Table.ColumnHeaderCell className={clsx(secondaryCellClassName, 'text-neutral-subtle')}>
                 Target version
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-full items-center justify-start text-neutral-subtle">
+              <Table.ColumnHeaderCell className={clsx(actionsCellClassName, 'text-neutral-subtle')}>
                 Actions
               </Table.ColumnHeaderCell>
             </Table.Row>
@@ -136,7 +139,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                     </div>
                   </Table.Cell>
 
-                  <Table.Cell className="flex h-full items-center border-r border-neutral">
+                  <Table.Cell className={secondaryCellClassName}>
                     <div className="flex items-center gap-2 text-sm">
                       <Icon iconName="link" iconStyle="regular" className="text-neutral" />
                       {service.last_synced_at ? (
@@ -150,7 +153,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                     </div>
                   </Table.Cell>
 
-                  <Table.Cell className="flex h-full items-center border-r border-neutral">
+                  <Table.Cell className={secondaryCellClassName}>
                     <div className="flex min-w-0 flex-col gap-0.5 text-ssm">
                       {gitRepository && (
                         <div className="flex min-w-0 items-center gap-2 text-neutral">
@@ -209,7 +212,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                     )}
                   </Table.Cell>
 
-                  <Table.Cell className="flex h-full items-center justify-start">
+                  <Table.Cell className={actionsCellClassName}>
                     <ArgoCdServiceActions environment={environment} service={service} onAction={stopRowNavigation} />
                   </Table.Cell>
                 </Table.Row>

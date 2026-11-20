@@ -22,11 +22,11 @@ const HelmRepositoriesRowsSkeleton = () => (
   <ul>
     {[0, 1, 2, 3].map((index) => (
       <li key={index} className="flex items-center justify-between gap-3 border-b border-neutral p-4 last:border-0">
-        <div className="flex items-center gap-4">
+        <div className="flex min-w-0 items-center gap-4">
           <Skeleton width={20} height={20} show={true} />
-          <div className="space-y-2">
-            <Skeleton width={220} height={12} show={true} />
-            <Skeleton width={200} height={12} show={true} />
+          <div className="min-w-0 space-y-2">
+            <Skeleton width={220} height={12} show={true} className="max-w-full" />
+            <Skeleton width={200} height={12} show={true} className="max-w-full" />
           </div>
         </div>
         <div className="flex gap-2">
@@ -79,7 +79,7 @@ function HelmRepositoriesList({
           <div className="flex min-w-0 items-center">
             <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" />
             <div className="ml-4 min-w-0">
-              <h2 className="mb-1 flex text-xs font-medium text-neutral">
+              <h2 className="mb-1 flex text-xs font-medium text-neutral max-md:break-all">
                 <Truncate
                   truncateLimit={60}
                   text={`${repository.name}${repository.config?.access_key_id ? ` (${repository.config?.access_key_id})` : repository.config?.scaleway_access_key ? ` (${repository.config?.scaleway_access_key})` : repository.config?.username ? ` (${repository.config?.username})` : ''}`}

@@ -15,7 +15,7 @@ import {
   useState,
 } from 'react'
 import { useHorizontalOverflowFade } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
+import { scrollIntoViewHorizontally, twMerge } from '@qovery/shared/util-js'
 
 const navbarItemVariants = cva(
   [
@@ -166,13 +166,7 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
     const container = scrollRef.current
     const activeItem = activeId ? items.get(activeId) : undefined
     if (container && activeItem) {
-      const containerRect = container.getBoundingClientRect()
-      const itemRect = activeItem.getBoundingClientRect()
-      if (itemRect.right > containerRect.right) {
-        container.scrollLeft += itemRect.right - containerRect.right + 16
-      } else if (itemRect.left < containerRect.left) {
-        container.scrollLeft -= containerRect.left - itemRect.left + 16
-      }
+      scrollIntoViewHorizontally(container, activeItem, { align: 'nearest', margin: 16 })
     }
     updateOverflow()
   }, [activeId, items, recalculate, scrollRef, updateOverflow])

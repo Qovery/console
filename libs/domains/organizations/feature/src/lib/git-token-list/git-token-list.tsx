@@ -39,8 +39,10 @@ export function GitTokenList() {
               <div className="flex min-w-0 items-center">
                 <Icon name={gitToken.type} width="20px" height="20px" />
                 <div className="ml-4 min-w-0">
-                  <p className="mb-1 flex items-center gap-2 text-xs font-medium text-neutral">
-                    <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
+                  <p className="mb-1 flex items-center gap-2 text-xs font-medium text-neutral max-md:flex-wrap">
+                    <span className="min-w-0 max-md:break-all">
+                      <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
+                    </span>
                     <ExpiredTokenBadge token={gitToken} />
                     {gitToken.description && (
                       <Tooltip content={gitToken.description}>

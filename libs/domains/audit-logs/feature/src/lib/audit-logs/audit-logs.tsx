@@ -26,7 +26,7 @@ import {
 import { type SelectedTimestamps } from '@qovery/shared/ui'
 import FilterSection from '../filter-section/filter-section'
 import RowEventFeature from '../row-event-feature/row-event-feature'
-import { AUDIT_LOG_MOBILE_GRID_CLASS_NAME } from '../row-event/row-event'
+import { AUDIT_LOG_MOBILE_GRID_CLASS_NAME, AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME } from '../row-event/row-event'
 import {
   computeDisplayByLabel,
   computeMenusToDisplay,
@@ -138,6 +138,7 @@ function createTableDataHead(
     },
     {
       title: 'Target type',
+      className: clsx('px-4 py-2', AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME),
       hierarchicalFilter: {
         key: 'target_type',
         initialData: Object.keys(OrganizationEventTargetType).map((item) => {
@@ -175,6 +176,7 @@ function createTableDataHead(
     },
     {
       title: 'User',
+      className: clsx('px-4 py-2', AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME),
       filter: [
         {
           title: 'Filter by user',
@@ -187,6 +189,7 @@ function createTableDataHead(
     },
     {
       title: 'Source',
+      className: clsx('px-4 py-2', AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME),
       filter: [
         {
           title: 'Filter by source',

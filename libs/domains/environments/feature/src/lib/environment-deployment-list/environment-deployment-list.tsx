@@ -115,6 +115,7 @@ export function EnvironmentDeploymentList() {
   const columns = useMemo(
     () => [
       columnHelper.accessor('auditing_data.created_at', {
+        id: 'created_at',
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
@@ -473,7 +474,7 @@ export function EnvironmentDeploymentList() {
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={clsx('group font-medium', deploymentListMobileColumnClassName(header.column.getIndex()))}
+                  className={clsx('group font-medium', deploymentListMobileColumnClassName(header.column.id))}
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -535,7 +536,7 @@ export function EnvironmentDeploymentList() {
                   {row.getVisibleCells().map((cell) => (
                     <Table.Cell
                       key={cell.id}
-                      className={deploymentListMobileColumnClassName(cell.column.getIndex())}
+                      className={deploymentListMobileColumnClassName(cell.column.id)}
                       style={{
                         width: `${cell.column.getSize()}px`,
                       }}

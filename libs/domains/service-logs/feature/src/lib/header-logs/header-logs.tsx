@@ -94,7 +94,7 @@ export function HeaderLogs({
               const actionStatus = serviceStatus?.status_details?.status
 
               return (
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <div className="flex items-center gap-3 max-md:flex-wrap max-md:gap-y-2">
                   <div className="flex items-center gap-1.5">
                     <Button onClick={onBack} variant="plain" iconOnly>
                       <Icon className="text-base" iconName="arrow-left" iconStyle="regular" />

@@ -101,7 +101,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
   }
 
   const baseClassNames =
-    'flex text-left items-start gap-4 relative rounded border border-neutral transition-all hover:border-brand-strong bg-surface-neutral p-4 transition w-[397px]'
+    'flex text-left items-start gap-4 relative rounded border border-neutral transition-all hover:border-brand-strong bg-surface-neutral p-4 transition w-[397px] max-md:w-full'
   const disabledClassNames = disabled
     ? twMerge(
         'border-neutral bg-surface-neutral-component shadow-none hover:border-neutral hover:bg-surface-neutral-component',

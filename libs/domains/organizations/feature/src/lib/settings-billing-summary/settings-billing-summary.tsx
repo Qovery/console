@@ -47,7 +47,7 @@ const BillingSummarySkeleton = () => (
     <Section className="px-4 pb-8 pt-6 md:px-8">
       <div className="relative mb-8 border-b border-neutral pb-6">
         <Skeleton height={32} width={132} show />
-        <div className={twMerge('flex flex-wrap gap-3', SETTINGS_HEADER_ACTION_CLASS_NAME)}>
+        <div className={twMerge('flex flex-wrap gap-3', SETTINGS_HEADER_ACTION_CLASS_NAME, 'max-md:mb-0 max-md:mt-4')}>
           <Skeleton height={32} width={120} show />
           <Skeleton height={32} width={110} show />
           <Skeleton height={32} width={110} show />

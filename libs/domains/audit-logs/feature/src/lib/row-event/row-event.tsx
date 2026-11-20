@@ -14,9 +14,9 @@ import { EventOriginIcon } from '@qovery/shared/util-icons'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { getTargetTypeLabel } from '../utils/target-type-selection-utils'
 
-// Below md the table keeps timestamp, event and target; the details stay one tap away
-export const AUDIT_LOG_MOBILE_GRID_CLASS_NAME =
-  'max-md:text-xs max-md:![grid-template-columns:46%_22%_32%] max-md:[&>*:nth-child(n+4)]:hidden max-md:[&>*]:min-w-0 max-md:[&>*]:overflow-hidden'
+// Below md the table keeps timestamp, event and target; the other cells get AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME
+export const AUDIT_LOG_MOBILE_GRID_CLASS_NAME = 'max-md:text-xs max-md:![grid-template-columns:44%_26%_30%]'
+export const AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME = 'max-md:hidden'
 
 export interface RowEventProps {
   event: OrganizationEventResponse
@@ -222,7 +222,7 @@ export function RowEvent(props: RowEventProps) {
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
-        <div className="flex min-w-0 items-center justify-between gap-3 pl-2">
+        <div className="flex min-w-0 items-center justify-between gap-3 pl-2 max-md:overflow-hidden">
           <Skeleton height={10} width={130} show={isPlaceholder}>
             <div className="flex items-center gap-3">
               <Icon
@@ -240,7 +240,7 @@ export function RowEvent(props: RowEventProps) {
             {eventIcon}
           </Skeleton>
         </div>
-        <div className="min-w-0 px-5" data-testid="tag">
+        <div className="min-w-0 px-5 max-md:overflow-hidden max-md:px-2" data-testid="tag">
           <Skeleton height={10} width={80} show={isPlaceholder}>
             <span className="block truncate whitespace-nowrap">
               <span className={isEventTypeFailed ? 'text-negative' : 'text-brand'}>
@@ -255,7 +255,7 @@ export function RowEvent(props: RowEventProps) {
             </span>
           </Skeleton>
         </div>
-        <div className="min-w-0 px-4">
+        <div className="min-w-0 px-4 max-md:overflow-hidden max-md:px-2">
           <Skeleton height={10} width={80} show={isPlaceholder}>
             <Tooltip
               content={
@@ -284,14 +284,14 @@ export function RowEvent(props: RowEventProps) {
                   <div
                     className={`flex items-center gap-1 truncate pr-2 ${
                       targetExists
-                        ? '-translate-x-5 transition-transform duration-200 hover:text-brand group-hover:translate-x-0'
+                        ? '-translate-x-5 transition-transform duration-200 hover:text-brand group-hover:translate-x-0 max-md:translate-x-0'
                         : ''
                     }`}
                   >
                     {targetExists && (
                       <Icon
                         iconName="arrow-right"
-                        className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                        className="opacity-0 transition-opacity duration-200 group-hover:opacity-100 max-md:hidden"
                       />
                     )}
                     {event.target_type && renderLink(event.target_type)}
@@ -301,17 +301,17 @@ export function RowEvent(props: RowEventProps) {
             </Tooltip>
           </Skeleton>
         </div>
-        <div className="min-w-0 px-4 text-neutral-subtle">
+        <div className={clsx('min-w-0 px-4 text-neutral-subtle', AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME)}>
           <Skeleton height={10} width={80} show={isPlaceholder}>
             <>{getTargetTypeLabel(event.target_type ?? '')}</>
           </Skeleton>
         </div>
-        <div className="min-w-0 px-4">
+        <div className={clsx('min-w-0 px-4', AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME)}>
           <Skeleton height={10} width={80} show={isPlaceholder} className="truncate text-neutral-subtle">
             <Truncate truncateLimit={40} text={event.triggered_by ?? ''} />
           </Skeleton>
         </div>
-        <div className="min-w-0 px-4">
+        <div className={clsx('min-w-0 px-4', AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME)}>
           <Skeleton height={16} width={80} show={isPlaceholder} className="justify-end">
             <Tooltip content={event.user_agent} disabled={!event.user_agent} side="right">
               <div className="truncate text-neutral-subtle">

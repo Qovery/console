@@ -44,9 +44,13 @@ exports[`GitTokenList should match snapshot 1`] = `
                 class="ml-4 min-w-0"
               >
                 <p
-                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral"
+                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral max-md:flex-wrap"
                 >
-                  token1
+                  <span
+                    class="min-w-0 max-md:break-all"
+                  >
+                    token1
+                  </span>
                 </p>
                 <p
                   class="flex flex-wrap gap-x-3 text-xs text-neutral-subtle"
@@ -138,9 +142,13 @@ exports[`GitTokenList should match snapshot 1`] = `
                 class="ml-4 min-w-0"
               >
                 <p
-                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral"
+                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral max-md:flex-wrap"
                 >
-                  token2
+                  <span
+                    class="min-w-0 max-md:break-all"
+                  >
+                    token2
+                  </span>
                 </p>
                 <p
                   class="flex flex-wrap gap-x-3 text-xs text-neutral-subtle"

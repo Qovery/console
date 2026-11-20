@@ -287,7 +287,7 @@ export function CardService({
         className={clsx({
           'flex cursor-pointer items-center gap-6 rounded border border-neutral p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-surface-neutral-subtle':
             true,
-          'col-span-3 bg-surface-neutral-subtle p-6': expanded,
+          'col-span-full bg-surface-neutral-subtle p-6': expanded,
         })}
       >
         {expanded ? (

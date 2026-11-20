@@ -97,10 +97,16 @@ const SidebarRoot = forwardRef<ElementRef<'div'>, SidebarRootProps>(function Sid
   const routerState = useRouterState()
   const pathname = routerState.location.pathname
 
+  // Below md the navigation collapses behind a button showing the current section, so the page content stays in view
+  const listId = useId()
+  const listRef = useRef<HTMLDivElement>(null)
+
   const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
 
-    const container = event.currentTarget
+    // Arrow keys move between the navigation links only, not to the mobile toggle
+    const container = listRef.current
+    if (!container) return
     const getFocusableElements = (): HTMLElement[] => {
       const selectors = ['a[href]', 'button:not([disabled])']
       const elements: HTMLElement[] = []
@@ -137,9 +143,6 @@ const SidebarRoot = forwardRef<ElementRef<'div'>, SidebarRootProps>(function Sid
     }
   }, [])
 
-  // Below md the navigation collapses behind a button showing the current section, so the page content stays in view
-  const listId = useId()
-  const listRef = useRef<HTMLDivElement>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [currentLabel, setCurrentLabel] = useState('')
 
@@ -151,8 +154,10 @@ const SidebarRoot = forwardRef<ElementRef<'div'>, SidebarRootProps>(function Sid
     const list = listRef.current
     if (!list) return
     const updateLabel = () => {
-      const current = list.querySelector('[aria-current="page"]')
-      setCurrentLabel(current?.textContent?.trim() ?? '')
+      const current = list.querySelector('[aria-current="page"]')?.cloneNode(true)
+      if (!(current instanceof HTMLElement)) return setCurrentLabel('')
+      current.querySelectorAll('[data-testid="sidebar-badge"]').forEach((badge) => badge.remove())
+      setCurrentLabel(current.textContent?.trim() ?? '')
     }
     updateLabel()
     const observer = typeof MutationObserver === 'undefined' ? null : new MutationObserver(updateLabel)

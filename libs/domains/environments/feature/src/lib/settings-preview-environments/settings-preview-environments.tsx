@@ -134,7 +134,13 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
             </div>
           </BlockContent>
           <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
-            <Button className="mb-6" disabled={!formState.isValid} size="lg" loading={loading} type="submit">
+            <Button
+              className="mb-6 max-md:mb-0"
+              disabled={!formState.isValid}
+              size="lg"
+              loading={loading}
+              type="submit"
+            >
               Save
             </Button>
           </div>

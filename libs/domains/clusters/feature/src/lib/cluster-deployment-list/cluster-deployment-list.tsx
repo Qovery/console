@@ -69,6 +69,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
   const columns = useMemo(
     () => [
       columnHelper.accessor('auditing_data.created_at', {
+        id: 'created_at',
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
@@ -323,7 +324,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header) => (
                 <Table.ColumnHeaderCell
-                  className={clsx('font-medium', deploymentListMobileColumnClassName(header.column.getIndex()))}
+                  className={clsx('font-medium', deploymentListMobileColumnClassName(header.column.id))}
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -365,7 +366,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
               {row.getVisibleCells().map((cell) => (
                 <Table.Cell
                   key={cell.id}
-                  className={deploymentListMobileColumnClassName(cell.column.getIndex())}
+                  className={deploymentListMobileColumnClassName(cell.column.id)}
                   style={{
                     width: `${cell.column.getSize()}px`,
                   }}

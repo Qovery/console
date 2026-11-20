@@ -354,7 +354,7 @@ function SettingsRolesEditContent({
                   ))}
                 </Table>
               )}
-              <div className={clsx('mb-24 mt-6 flex justify-between gap-3', STICKY_FORM_ACTIONS_CLASS_NAME)}>
+              <div className={clsx('mt-6 flex justify-between gap-3 md:mb-24', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button
                   type="button"
                   data-testid="delete-button"

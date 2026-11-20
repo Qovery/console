@@ -69,11 +69,43 @@ describe('Sidebar', () => {
     )
 
     const menuButton = screen.getByRole('button', { name: 'General' })
+    const list = document.getElementById(menuButton.getAttribute('aria-controls') ?? '')
     expect(menuButton).toHaveAttribute('aria-expanded', 'false')
+    expect(list).toHaveClass('max-md:hidden')
 
     await userEvent.click(menuButton)
 
     expect(menuButton).toHaveAttribute('aria-expanded', 'true')
+    expect(list).not.toHaveClass('max-md:hidden')
+  })
+
+  it('should leave the badge out of the mobile menu button label', () => {
+    mockPathname = '/issues'
+    renderWithProviders(
+      <Sidebar.Root>
+        <Sidebar.Item to="/issues" badge="3">
+          Issues
+        </Sidebar.Item>
+      </Sidebar.Root>
+    )
+
+    expect(screen.getByRole('button', { name: 'Issues' })).toBeInTheDocument()
+  })
+
+  it('should move between links with arrow keys without stopping on the mobile menu button', async () => {
+    const { userEvent } = renderWithProviders(
+      <Sidebar.Root>
+        <Sidebar.Item to="/general">General</Sidebar.Item>
+        <Sidebar.Item to="/deployment">Deployment</Sidebar.Item>
+      </Sidebar.Root>
+    )
+
+    screen.getByRole('link', { name: 'Deployment' }).focus()
+    await userEvent.keyboard('{ArrowDown}')
+    expect(screen.getByRole('link', { name: 'General' })).toHaveFocus()
+
+    await userEvent.keyboard('{ArrowUp}')
+    expect(screen.getByRole('link', { name: 'Deployment' })).toHaveFocus()
   })
 
   it('should render group with sub items', async () => {

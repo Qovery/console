@@ -117,6 +117,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   const columns = useMemo(
     () => [
       columnHelper.accessor('auditing_data.created_at', {
+        id: 'created_at',
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
@@ -551,7 +552,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header) => (
                 <Table.ColumnHeaderCell
-                  className={clsx('font-medium', deploymentListMobileColumnClassName(header.column.getIndex()))}
+                  className={clsx('font-medium', deploymentListMobileColumnClassName(header.column.id))}
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -606,7 +607,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
-                    className={deploymentListMobileColumnClassName(cell.column.getIndex())}
+                    className={deploymentListMobileColumnClassName(cell.column.id)}
                     style={{
                       width: `${cell.column.getSize()}px`,
                     }}

@@ -63,7 +63,7 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
               {original.id}
             </span>
             <button
-              aria-label="Copy row URL"
+              aria-label={isLinkCopied ? 'Row URL copied' : 'Copy row URL'}
               className={clsx('absolute left-0 top-0 text-sm text-neutral', {
                 'text-brand': isHighlighted || isLinkCopied,
                 'opacity-0 hover:text-brand group-hover:opacity-100': !isHighlighted && !isLinkCopied,

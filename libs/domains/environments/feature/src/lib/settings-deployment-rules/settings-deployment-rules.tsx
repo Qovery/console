@@ -164,7 +164,13 @@ export const SettingsDeploymentRules = () => {
             )}
           </BlockContent>
           <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
-            <Button className="mb-6" type="submit" size="lg" disabled={!methods.formState.isValid} loading={loading}>
+            <Button
+              className="mb-6 max-md:mb-0"
+              type="submit"
+              size="lg"
+              disabled={!methods.formState.isValid}
+              loading={loading}
+            >
               Save
             </Button>
           </div>

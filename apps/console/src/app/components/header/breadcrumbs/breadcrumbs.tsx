@@ -7,7 +7,7 @@ import { sortProjectsByFavorite, useFavoriteProjects, useProjects } from '@qover
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { Avatar, useModal } from '@qovery/shared/ui'
 import { useHorizontalOverflowFade } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
+import { scrollIntoViewHorizontally, twMerge } from '@qovery/shared/util-js'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } from './breadcrumb-item'
 
@@ -196,15 +196,19 @@ export function Breadcrumbs() {
 
   const currentScopeId = breadcrumbData[breadcrumbData.length - 1]?.item.id
   useLayoutEffect(() => {
-    const container = scrollContainerRef.current
-    const currentScope = container?.lastElementChild
-    if (container && currentScope instanceof HTMLElement) {
-      // When the trail overflows, scroll the current scope (and the separator before it) into view
-      const offset = currentScope.getBoundingClientRect().left - container.getBoundingClientRect().left
-      container.scrollLeft = Math.max(0, container.scrollLeft + offset - 24)
+    // When the trail overflows, scroll the current scope (and the separator before it) into view,
+    // again after a resize or rotation changes how much of the trail fits
+    const scrollToCurrentScope = () => {
+      const container = scrollContainerRef.current
+      const currentScope = container?.lastElementChild
+      if (!container || !(currentScope instanceof HTMLElement)) return
+      scrollIntoViewHorizontally(container, currentScope, { align: 'start', margin: 24 })
       updateOverflowFade()
     }
-  }, [currentScopeId])
+    scrollToCurrentScope()
+    window.addEventListener('resize', scrollToCurrentScope)
+    return () => window.removeEventListener('resize', scrollToCurrentScope)
+  }, [currentScopeId, scrollContainerRef, updateOverflowFade])
 
   return (
     <div

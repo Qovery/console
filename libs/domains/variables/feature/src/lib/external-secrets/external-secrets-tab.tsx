@@ -47,9 +47,10 @@ import { getJsonTargetKey } from './get-json-target-key'
 
 const { Table } = TablePrimitives
 
-// Below md the table keeps selection, name and actions; reference, source and scope (columns 3 to 5) are hidden
 const gridLayoutClassName =
-  'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220px_140px_104px] max-md:grid-cols-[32px_minmax(0,1fr)_104px] max-md:[&>*:nth-child(n+3):not(:last-child)]:hidden'
+  'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220px_140px_104px] max-md:grid-cols-[32px_minmax(0,1fr)_104px]'
+// Below md the table keeps selection, name and actions
+const MOBILE_HIDDEN_COLUMN_IDS = ['reference', 'source', 'scope']
 
 type ExternalSecretRow = {
   id: string
@@ -548,7 +549,8 @@ export function ExternalSecretsTab({
                     className={twMerge(
                       'group relative flex items-center font-medium',
                       header.column.id === 'actions' && 'justify-end',
-                      header.column.id === 'name' && 'border-r border-neutral'
+                      header.column.id === 'name' && 'border-r border-neutral',
+                      MOBILE_HIDDEN_COLUMN_IDS.includes(header.column.id) && 'max-md:hidden'
                     )}
                   >
                     {['source', 'scope'].includes(header.column.id) ? (
@@ -598,7 +600,8 @@ export function ExternalSecretsTab({
                     className={twMerge(
                       'flex h-full items-center first:relative',
                       cell.column.id === 'actions' && 'justify-end',
-                      cell.column.id === 'name' && 'border-r border-neutral'
+                      cell.column.id === 'name' && 'border-r border-neutral',
+                      MOBILE_HIDDEN_COLUMN_IDS.includes(cell.column.id) && 'max-md:hidden'
                     )}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
