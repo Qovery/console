@@ -5,7 +5,7 @@ description: Use for every user-facing UI change or review in the Qovery Console
 
 # Qovery UI Skill
 
-Design review and implementation guidance for the Qovery Console. Read `.claude/design.md` first for orientation.
+Design review and implementation guidance for the Qovery Console.
 
 ## Default workflow
 
@@ -13,7 +13,7 @@ Apply this skill before any user-facing UI change or review, without requiring a
 
 ## Reference selection
 
-Read the references needed for the task before editing or reviewing. More than one may apply; do not load every reference for every change.
+The references below define the Console conventions. More than one may apply to a task.
 
 | When the task involves                                         | Read                                               |
 | -------------------------------------------------------------- | -------------------------------------------------- |
@@ -24,4 +24,4 @@ Read the references needed for the task before editing or reviewing. More than o
 
 For a broader visual review or redesign, load the topic references relevant to that surface.
 
-For shared component changes, follow the reuse, compatibility, Storybook, and interaction checks in the component reference. For reviews, distinguish concrete user-impacting issues from optional preferences; a component substitution is not blocking merely because it is preferred.
+For reviews, distinguish violations of these conventions and concrete user-impacting issues from optional preferences.
