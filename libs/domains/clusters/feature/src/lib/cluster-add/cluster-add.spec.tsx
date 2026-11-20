@@ -1,4 +1,5 @@
 import posthog from 'posthog-js'
+import { type Gate } from '@qovery/shared/billing-kit'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { type SelfManagedClusterCreationFlowProps } from '../self-managed-cluster-creation/self-managed-cluster-creation-flow'
 import { ClusterAdd } from './cluster-add'
@@ -22,10 +23,57 @@ jest.mock('posthog-js', () => ({
 }))
 jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: () => false }))
 const mockShowPylonForm = jest.fn()
+const mockShowChat = jest.fn()
 jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
-  useSupportChat: () => ({ showPylonForm: mockShowPylonForm }),
+  useSupportChat: () => ({ showPylonForm: mockShowPylonForm, showChat: mockShowChat }),
 }))
+// The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
+const mockGates: { current: Gate[] | undefined } = { current: undefined }
+jest.mock('@qovery/shared/billing-kit', () => {
+  const actual = jest.requireActual('@qovery/shared/billing-kit')
+  const client = {
+    mode: 'live',
+    publicPlans: () => Promise.resolve(),
+    billingUsage: () => Promise.resolve(),
+    spendLimits: () => Promise.resolve(),
+    gateEvent: () => Promise.resolve(),
+    get gates() {
+      return mockGates.current
+        ? (organizationId: string) =>
+            Promise.resolve({ organization_id: organizationId, access: 'billing', gates: mockGates.current })
+        : undefined
+    },
+  }
+  return {
+    ...actual,
+    useBillingPaywall: (organizationId: string, keys: object, options: object) =>
+      actual.usePaywall(client, organizationId, keys, options),
+  }
+})
+
+const lockedManaged: Gate = {
+  action: 'cluster.create',
+  sku: 'clusters.managed',
+  name: 'Managed clusters',
+  allowed: false,
+  reason: 'not_in_plan',
+  limit: 0,
+  used: 0,
+  requested: 1,
+  paywall: {
+    sku: 'clusters.managed',
+    title: 'Qovery-managed clusters',
+    message: 'Your Free plan includes 0 clusters.',
+    headline: 'Let Qovery run your Kubernetes cluster',
+    benefits: ['Qovery creates the cluster in your cloud account and keeps it upgraded and patched.'],
+    audience: 'billing',
+    options: [
+      { type: 'start_trial', label: 'Try it free for 14 days', days: 14, includes: '1 more Qovery-managed cluster' },
+      { type: 'contact_sales', label: 'Talk to us' },
+    ],
+  },
+}
 jest.mock('../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction', () => ({
   useClusterCreationRestriction: () => ({ isClusterCreationRestricted: false }),
 }))
@@ -46,7 +94,10 @@ jest.mock('../self-managed-cluster-creation/self-managed-cluster-creation-flow',
 }))
 
 describe('ClusterAdd', () => {
-  beforeEach(() => mockNavigate.mockClear())
+  beforeEach(() => {
+    mockNavigate.mockClear()
+    mockGates.current = undefined
+  })
   afterEach(() => jest.restoreAllMocks())
 
   async function openCreationFlow(userEvent: ReturnType<typeof renderWithProviders>['userEvent']) {
@@ -149,5 +200,52 @@ describe('ClusterAdd', () => {
 
     await waitFor(() => expect(screen.queryByText('Creation flow')).not.toBeInTheDocument())
     expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
+  describe('when the plan does not include Qovery-managed clusters', () => {
+    beforeEach(() => {
+      mockGates.current = [lockedManaged]
+    })
+
+    it('shows the managed cards locked with the trial, and opens the paywall instead of the creation flow', async () => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+
+      const aws = await screen.findByRole('button', { name: /^Amazon Web Services\s*Try it free for 14 days$/ })
+      expect(screen.getAllByText('Try it free for 14 days')).toHaveLength(4)
+      expect(screen.getByText('Google Cloud Platform').closest('a')).not.toBeInTheDocument()
+
+      await userEvent.click(aws)
+
+      expect(await screen.findByText('Let Qovery run your Kubernetes cluster')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Start free trial' })).toBeInTheDocument()
+      expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
+        selectedCloudProvider: 'AWS',
+        selectedInstallationType: 'managed',
+      })
+    })
+
+    it('keeps self-managed clusters available', async () => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+      await screen.findAllByText('Try it free for 14 days')
+
+      await userEvent.click(screen.getByRole('button', { name: 'GCP' }))
+
+      expect(await screen.findByText('Provider GCP')).toBeInTheDocument()
+    })
+
+    it('opens the sales chat from the paywall', async () => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+      await userEvent.click(await screen.findByRole('button', { name: /^Microsoft Azure\s*Try it free/ }))
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Talk to us' }))
+
+      expect(mockShowChat).toHaveBeenCalled()
+    })
+  })
+
+  it('keeps the managed cards as links when nothing is locked', () => {
+    renderWithProviders(<ClusterAdd />)
+    expect(screen.getByText('Amazon Web Services').closest('a')).toBeInTheDocument()
+    expect(screen.queryByText('Try it free for 14 days')).not.toBeInTheDocument()
   })
 })

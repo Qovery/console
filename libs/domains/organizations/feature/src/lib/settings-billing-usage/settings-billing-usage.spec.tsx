@@ -668,7 +668,7 @@ describe('SettingsBillingUsage', () => {
 })
 
 describe('pickConsoleCalls', () => {
-  it('should mount plan changes, cancellation, reactivation, prepaid credits, usage history, build usage, invoice details and discounts, and leave offers and emails out', () => {
+  it('should mount plan changes, cancellation, reactivation, prepaid credits, usage history, build usage, invoice details, discounts and paywalls, and leave offers and emails out', () => {
     const calls = pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
@@ -699,10 +699,18 @@ describe('pickConsoleCalls', () => {
       'quoteDiscounts',
       'requestDiscounts',
       'withdrawDiscountRequest',
+      'gates',
+      'gateEvent',
+      'trials',
+      'startTrial',
+      'setTrialContinue',
+      'quoteAddon',
+      'buyAddon',
+      'requestUpgrade',
     ] as const) {
       expect(calls[name]).toEqual(expect.any(Function))
     }
-    for (const name of ['offers', 'offerEvent', 'acceptOffer', 'requestUpgrade', 'emailPreferences'] as const) {
+    for (const name of ['offers', 'offerEvent', 'acceptOffer', 'emailPreferences'] as const) {
       expect(calls[name]).toBeUndefined()
     }
   })

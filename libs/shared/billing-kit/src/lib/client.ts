@@ -5,6 +5,7 @@
  * passes its own client (staff previews, nothing applied).
  */
 import type {
+  AddonPurchaseResult,
   AwsMarketplace,
   BillingInfo,
   BillingInfoView,
@@ -16,9 +17,11 @@ import type {
   CreditPurchaseResult,
   Credits,
   CustomerInvoice,
+  CustomerTrial,
   DiscountQuote,
   Discounts,
   EmailPreferences,
+  Gates,
   Granularity,
   InvoiceDetails,
   InvoiceDownload,
@@ -26,6 +29,8 @@ import type {
   Offers,
   PaymentMethods,
   PaymentSession,
+  PaywallEvent,
+  PaywallOptionType,
   Period,
   PlanChangeResult,
   PlanOptions,
@@ -34,6 +39,8 @@ import type {
   ReactivationResult,
   Spend,
   Trial,
+  TrialStartRequest,
+  TrialStartResult,
   UpgradeRequest,
   UsageHistoryData,
 } from './types'
@@ -102,9 +109,10 @@ export interface PricingClient {
   ): Promise<void>
   /** Accepts a trial offer: the trial starts at once (billing roles only). */
   acceptOffer?(organizationId: string, offerId: number): Promise<{ trial: Trial }>
+  /** source "paywall": asked from a paywall (counted in its funnel). */
   requestUpgrade?(
     organizationId: string,
-    req: { sku?: string; plan_code?: string; message?: string }
+    req: { sku?: string; plan_code?: string; message?: string; source?: 'paywall' }
   ): Promise<{ request: UpgradeRequest; notified: number; existing?: boolean }>
   closeUpgradeRequest?(organizationId: string, requestId: number, status: 'done' | 'declined'): Promise<void>
   emailPreferences?(organizationId: string): Promise<EmailPreferences>
@@ -136,6 +144,27 @@ export interface PricingClient {
     req: { ids: string[]; message?: string; accept_terms: boolean }
   ): Promise<Discounts>
   withdrawDiscountRequest?(organizationId: string, requestId: number): Promise<Discounts>
+  // Optional: feature gates and paywalls (3.4i). Any member reads gates; billing roles start a
+  // trial or buy an add-on. Without gates, <Paywall> and usePaywall stay out of the way.
+  gates?(organizationId: string, q: { actions?: string[]; skus?: string[] }): Promise<Gates>
+  gateEvent?(organizationId: string, e: { sku: string; event: PaywallEvent; choice?: PaywallOptionType }): Promise<void>
+  trials?(organizationId: string): Promise<{ trials: CustomerTrial[] }>
+  /** Starts a free trial. continue and accept_auto_charge only when the person ticked it. */
+  startTrial?(organizationId: string, req: TrialStartRequest): Promise<TrialStartResult>
+  /** null turns the automatic continuation off. */
+  setTrialContinue?(
+    organizationId: string,
+    trialId: number,
+    cont: TrialStartRequest['continue'] | null,
+    acceptAutoCharge?: boolean
+  ): Promise<{ trial: CustomerTrial }>
+  quoteAddon?(organizationId: string, req: { code: string; quantity?: number }): Promise<AddonPurchaseResult>
+  /** Charges the card on file (prorated by Chargebee). idempotencyKey: one per review. */
+  buyAddon?(
+    organizationId: string,
+    req: { code: string; quantity?: number },
+    idempotencyKey: string
+  ): Promise<AddonPurchaseResult>
 }
 
 export class BillingError extends Error {
@@ -170,6 +199,14 @@ export function buildUsageQuery(r: { from: string; to: string; granularity?: Gra
     ...(r.granularity ? { granularity: r.granularity } : {}),
     ...(r.service !== undefined ? { service: r.service } : {}),
   }).toString()
+}
+
+/** The query of a gates read: actions and SKUs, comma separated. */
+export function gatesQuery(q: { actions?: string[]; skus?: string[] }) {
+  const p = new URLSearchParams()
+  if (q.actions?.length) p.set('actions', q.actions.join(','))
+  if (q.skus?.length) p.set('skus', q.skus.join(','))
+  return p.toString()
 }
 
 export function createPricingClient(o: ClientOptions): PricingClient {
@@ -305,5 +342,27 @@ export function createPricingClient(o: ClientOptions): PricingClient {
       }),
     withdrawDiscountRequest: (org, id) =>
       req(o.pricingApiUrl, `/organization/${org}/discountRequests/${id}`, { method: 'DELETE' }),
+    gates: (org, q) => req(o.pricingApiUrl, `/organization/${org}/gates?${gatesQuery(q)}`),
+    gateEvent: (org, e) =>
+      req(o.pricingApiUrl, `/organization/${org}/gates/events`, { method: 'POST', body: JSON.stringify(e) }),
+    trials: (org) => req(o.pricingApiUrl, `/organization/${org}/trials`),
+    startTrial: (org, r) =>
+      req(o.pricingApiUrl, `/organization/${org}/trials`, { method: 'POST', body: JSON.stringify(r) }),
+    setTrialContinue: (org, id, cont, accept) =>
+      req(o.pricingApiUrl, `/organization/${org}/trials/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(cont ? { continue: cont, accept_auto_charge: !!accept } : { continue: null }),
+      }),
+    quoteAddon: (org, r) =>
+      req(o.pricingApiUrl, `/organization/${org}/addons`, {
+        method: 'POST',
+        body: JSON.stringify({ ...r, dry_run: true }),
+      }),
+    buyAddon: (org, r, key) =>
+      req(o.pricingApiUrl, `/organization/${org}/addons`, {
+        method: 'POST',
+        body: JSON.stringify({ ...r, dry_run: false }),
+        headers: { 'Idempotency-Key': key },
+      }),
   }
 }

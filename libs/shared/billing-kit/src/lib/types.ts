@@ -923,3 +923,120 @@ export interface DiscountQuote {
   discount_until: string
   term_months: number
 }
+
+// ---- feature gates, paywalls and feature trials (pricing-api's customer API, 3.4i)
+export type GateReason =
+  | ''
+  | 'not_in_plan'
+  | 'limit_reached'
+  | 'trial_used'
+  | 'payment_required'
+  | 'account_locked'
+  | 'not_linked'
+  | 'unknown_action'
+  | 'trial_active'
+  | 'not_applicable'
+export type PaywallOptionType =
+  | 'start_trial'
+  | 'upgrade'
+  | 'addon'
+  | 'request_admin'
+  | 'contact_sales'
+  | 'update_payment'
+export interface PaywallOption {
+  type: PaywallOptionType
+  label: string
+  detail?: string
+  recommended?: boolean
+  // start_trial
+  days?: number
+  includes?: string
+  end_behaviour?: string
+  // upgrade, addon
+  plan?: string
+  plan_name?: string
+  addon?: string
+  addon_name?: string
+  amount?: number
+  difference?: number
+  period?: Period
+  currency?: string
+}
+export interface PaywallInfo {
+  sku: string
+  title: string
+  message: string
+  headline: string
+  benefits: string[]
+  media?: { url: string; kind: 'image' | 'video' }
+  options: PaywallOption[]
+  /** Who the options were ranked for: a billing role (also the check's 402) or a member. */
+  audience: 'billing' | 'member'
+  /** Why no trial is offered (used, disabled, sales_led…); absent when one is. */
+  trial_block?: string
+}
+export interface Gate {
+  action?: string
+  sku: string
+  name: string
+  allowed: boolean
+  reason: GateReason
+  limit: Value
+  used: number
+  requested: number
+  trial?: { until: string }
+  paywall?: PaywallInfo
+}
+export interface Gates {
+  organization_id: string
+  access: 'member' | 'billing' | 'demo'
+  gates: Gate[]
+}
+export interface TrialContinue {
+  type: 'plan' | 'addon'
+  code: string
+  name: string
+  period: Period
+  text?: string
+}
+export interface CustomerTrial {
+  id: number
+  sku: string
+  name: string
+  what: string
+  status: 'active' | 'converted' | 'grace' | 'cleanup_due' | 'cleaned' | 'cancelled'
+  source: 'offer' | 'paywall'
+  started_at: string
+  ends_at: string
+  grace_until?: string | null
+  started_by?: string
+  continue?: TrialContinue | null
+}
+export interface TrialStartRequest {
+  sku?: string
+  action?: string
+  continue?: { plan?: string; addon?: string; period?: Period }
+  accept_auto_charge?: boolean
+}
+export interface TrialStartResult {
+  trial: CustomerTrial
+  gate: Gate
+  preview?: boolean
+}
+export interface AddonQuote {
+  code: string
+  name: string
+  quantity: number
+  unit_amount: number
+  amount: number
+  period: Period
+  currency: string
+}
+export interface AddonPurchaseResult {
+  applied: boolean
+  quote?: AddonQuote
+  buy?: Availability
+  duplicate?: boolean
+  preview?: boolean
+}
+export type PaywallEvent = 'shown' | 'clicked' | 'dismissed'

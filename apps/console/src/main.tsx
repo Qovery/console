@@ -14,6 +14,7 @@ import posthog from 'posthog-js'
 import { StrictMode, useEffect, useRef } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
+import { offerPaywallFromError } from '@qovery/shared/billing-kit'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { slackBotAxios } from '@qovery/shared/slack-bot/data-access'
 import { LoaderSpinner, type ToastStatus, toast, toastError } from '@qovery/shared/ui'
@@ -130,6 +131,8 @@ const queryClient = new QueryClient({
       }
     },
     onError(error, _variables, _context, mutation) {
+      // A refusal by the plan with pricing-api's paywall: the paywall opens instead of an error toast.
+      if (offerPaywallFromError(error)) return
       if (mutation.meta?.notifyOnError) {
         if (mutation.meta.notifyOnError === true) {
           toastError(error as Error)
