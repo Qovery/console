@@ -241,6 +241,16 @@ export function AgentExperiencePolicyTokens() {
         >
           <span className="flex items-center gap-2">
             <CreatePolicyTokenButton organizationId={organizationId} secondary />
+            <Link
+              as="button"
+              to="/organization/$organizationId/agent-experience/automate"
+              params={{ organizationId }}
+              size="md"
+              variant="outline"
+              color="neutral"
+            >
+              Start from a job
+            </Link>
           </span>
         </EmptyState>
       ) : (

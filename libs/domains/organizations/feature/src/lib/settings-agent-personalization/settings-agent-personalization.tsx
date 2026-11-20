@@ -90,7 +90,7 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
             </Tooltip>
           ) : null}
         </div>
-        <p className="break-all font-mono text-xs text-neutral-subtle">{mcpServer.url}</p>
+        <p className="break-all text-xs text-neutral-subtle">{mcpServer.url}</p>
       </Section>
       <div className="flex shrink-0 gap-2">
         {mcpServer.scope === McpServerScope.ORGANIZATION || mcpServer.attachable ? (

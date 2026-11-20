@@ -147,6 +147,23 @@ describe('presets list', () => {
   })
 })
 
+describe('Connect an agent', () => {
+  it('opens the popup from the registry header', async () => {
+    useScenario('typical')
+    const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
+    await userEvent.click(await screen.findByRole('button', { name: /Connect an agent/ }))
+    expect(await screen.findByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
+  })
+
+  it('opens it by itself from an old Connect link, then drops the parameter', async () => {
+    useScenario('typical')
+    jest.mocked(useSearch).mockReturnValue({ connect: true })
+    renderWithProviders(<SettingsSkillPresets />)
+    expect(await screen.findByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
+    expect(mockNavigate).toHaveBeenCalledWith(expect.objectContaining({ search: {}, replace: true }))
+  })
+})
+
 describe('member view', () => {
   it('lists what the member’s agent receives, with sizes and hashes', async () => {
     useScenario('member')
