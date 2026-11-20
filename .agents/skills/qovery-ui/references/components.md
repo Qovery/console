@@ -1,103 +1,198 @@
 # Components — Qovery Console
 
-All shared components live in `libs/shared/ui/src/lib/components/`. Check here before building anything new.
+Use this reference to choose components and integrate them consistently.
 
-## Reuse and Extend Shared UI
+Shared components live in `libs/shared/ui/src/lib/components/` and are exported through `@qovery/shared/ui`.
 
-- Check `shared/ui` and its existing callers first. Reuse a component when its **behavior** fits; visual similarity alone does not justify swapping in a component with different interaction semantics.
-- Nothing new in `shared/console-shared` (legacy). Generic presentation goes to `shared/ui`, business UI stays in its domain. Do not move business logic into the design system just to avoid `console-shared`.
-- Extend a shared component only for a concrete need its API cannot cover. Keep the extension generic and existing callers working.
-- Multiple styling variants: follow the existing CVA pattern. Simple conditions do not need a variant.
-- Classes: `clsx` for conditional composition, `twMerge` (`@qovery/shared/util-js`) when defaults can conflict with a caller's `className`. No nested template strings.
-- Add or update Storybook stories for new shared components and new visual states or variants.
+For sizes, weights, and spacing, use the typography and spacing references.
 
-## Verify the Interaction
+## Choose an existing component first
 
-- Loading, failure, validation, and saving states give clear feedback.
-- Clickable controls look clickable. "Draft being checked" is distinguishable from "changes ready to save".
-- Read-only fields stay read-only in nested editors and dialogs.
-- Leaving with unsaved changes has deliberate behavior; leave-page protection must not block navigation within the draft.
-- Test tooltips and popovers from their actual keyboard focus target, including controls nested in clickable rows or links. A focusable parent does not make a hover tooltip keyboard-accessible.
+Before implementing a control:
 
----
+1. Find the shared component that supports the required interaction.
+2. Inspect its API and an established working usage.
+3. Reuse its variants and behavior before adding custom styling.
 
-## Decision Guide
+Choose by function, not visual resemblance. A select changes a value; a dropdown menu exposes actions; tabs switch views.
 
-### "I need a button"
+Correct local integration problems before changing a shared component. Extend shared behavior only when the existing API cannot meet the requirement, and check the impact on other callers.
 
-Always use `<Button>`. `ButtonPrimitive` is the internal primitive it wraps — never use it directly in product code.
+## Buttons and links
 
-- `solid` + `brand` → primary CTA
-- `outline` or `surface` + `neutral` → secondary / cancel
-- `solid` + `red` → destructive actions only
-- Icon-only buttons always need `aria-label`
+Use `Button` for actions and `Link` for navigation. A link may have button styling through `as="button"`, but it remains navigation.
 
-### "I need to show a system status"
+| Hierarchy | Treatment                           | Limit per page     |
+| --------- | ----------------------------------- | ------------------ |
+| Primary   | `variant="solid" color="brand"`     | At most one        |
+| Secondary | `variant="solid" color="neutral"`   | At most one        |
+| Tertiary  | `variant="outline" color="neutral"` | Multiple as needed |
 
-Use `<StatusChip status={...} />`. The prop is `status`, not `state`. Never build your own colored dot, badge, or custom indicator for deployment, build, or cluster state. It handles exhaustive matching across all known states via `ts-pattern` — includes optional tooltip and monochrome variant.
+Check existing actions before introducing another primary or secondary action. Apply the same hierarchy check inside dialogs and empty states. Reserve red action styling for destructive actions.
 
-### "I need an inline status badge or tag"
+Use consistent button sizes within an action group. Follow the button-group spacing in `spacing-layout.md`.
 
-Use `<Badge>`. `<Tag>` is deprecated — do not use it. Available colors: `brand`, `green`, `red`, `sky`, `yellow`, `neutral`, `purple`.
+Use `iconOnly` for icon-only buttons and provide an accessible name. Use `CopyButton` for copying content and its confirmation feedback.
 
-### "I need an alert / info box"
+**Don't:**
 
-Use `<Callout>` — not a custom `div` with a colored border. Always pair it with an icon and a text description; a color-only callout conveys nothing to users with color vision deficiencies.
+- Use `ButtonPrimitive` directly in product code.
+- Recreate a button with a styled `div`.
+- Add another brand primary button simply because an action appears in a separate section.
 
-### "I need a modal / dialog"
+## Selects, menus, and tabs
 
-Use `<Modal>` via the `useModal()` hook. It includes overlay, focus trap, and correct z-index. Don't wrap Radix Dialog directly — you'll miss the focus trap.
+| Need                                         | Component or pattern             |
+| -------------------------------------------- | -------------------------------- |
+| Select a form value                          | `InputSelect`                    |
+| Compact selection beside filters or controls | `InputSelectSmall`               |
+| Expose a list of actions                     | `DropdownMenu`                   |
+| Switch between related views                 | Established `Navbar` tab pattern |
 
-### "I need a tooltip"
+Use selects for filtering and grouping controls. Don't replace them with a custom segmented selector.
 
-Use `<Tooltip>`. For non-interactive status icons in tight spaces, the tooltip content serves as the text alternative. For icon-only buttons, a tooltip is a visual complement but `aria-label` on the button is still required for screen reader accessibility.
+For view tabs, follow **Environment overview → List/Pipeline**. For tabs inside a setup dialog, follow **Secret-manager integration**.
 
-### "I need a dropdown menu"
+Keep the selected value visible in its control. Avoid adding a second representation that merely repeats it.
 
-Use `<DropdownMenu>` — wraps Radix Dropdown Menu with keyboard navigation and correct styling. Don't build custom dropdown menus; they won't handle keyboard correctly.
+**Don't:**
 
-### "I need a form field"
+- Use action menus as a substitute for value selection.
+- Build tabs from individually styled buttons.
+- Override each filter independently until the controls have different heights or alignment.
 
-Use components from `inputs/`:
+## Form controls
 
-- `<InputText>` — standard text field with floating label
-- `<InputSelect>` — select with search
-- `<InputTextArea>` — multiline
-- `<InputToggle>` — boolean switch
-- `<InputCheckbox>` — checkbox
-- `<InputRadio>` — radio group
+Use the shared input that matches the value:
 
-All handle focus state, error state, and label positioning consistently.
+| Value or interaction               | Component       |
+| ---------------------------------- | --------------- |
+| Single-line text                   | `InputText`     |
+| Multiline text                     | `InputTextArea` |
+| Search                             | `InputSearch`   |
+| Selection                          | `InputSelect`   |
+| Boolean setting                    | `InputToggle`   |
+| Selection checkbox                 | `Checkbox`      |
+| Mutually exclusive visible choices | `InputRadio`    |
 
-**Small variants (`<InputTextSmall>`, `<InputSelectSmall>`)** are for inline contexts where the standard 52px input height creates visual imbalance alongside buttons or other controls. Use only in those specific aligned layouts — not as a general size preference.
+Use compact input variants for compact control rows, not as a general replacement for standard form fields.
 
-### "I need a table"
+Use component-provided labels, hints, errors, and disabled states. Place supplementary field information, including character counts, in the field's hint area.
 
-Use `<TablePrimitives>` — the modern replacement for the deprecated `<Table>`.
+For a checkbox with a title and description, associate the label correctly and align the checkbox with the complete content block.
 
-### "I need a loading state"
+**Don't:**
 
-- `<Skeleton>` for content placeholders — mirror the shape and count of the content it replaces so layout doesn't shift when data arrives
-- `<LoaderDots>` for inline process indicators
-- `<LoaderSpinner>` for page or section loading
+- Use the deprecated `InputCheckbox` for new work.
+- Rebuild floating labels or validation styling.
+- Add a separate caption where the component already provides a hint.
 
-Wrap data-fetching components in `<Suspense>` with the skeleton as the fallback.
+## Tables
 
-### "I need an empty state"
+Use `TablePrimitives`. Use TanStack Table when sorting, selection, filtering, or other table behavior requires it.
 
-Use `<EmptyState>` only for cards or tables that have no data yet. For a search or filter that returns zero results, use inline copy within the list — not the full empty state component. Size the empty state to match what the filled component would occupy; use the small variant inside compact contexts.
+Preserve the component's surface, cell spacing, dividers, and column-heading typography. Focus custom work on the row content.
 
-### "I need to show a notification"
+- Style the first identifying item in each row with `font-medium`. Keep supporting content at normal weight.
+- Keep supporting text visually secondary without shrinking ordinary content.
+- Align cell content with its heading and comparable rows.
+- Vertically align row actions and selection controls.
+- Keep nested actions from accidentally triggering row navigation.
+- Use the existing pagination component when pagination is needed.
 
-Use `useToast()` from `@qovery/shared/toast`.
+**Don't:**
 
----
+- Rebuild the table's styling around the component.
+- Wrap an already bordered table in another padded, bordered card.
+- Apply monospace to cell values.
+- Migrate an unrelated working table solely because it uses the legacy component.
 
-## What Not to Use
+## Statuses and pills
 
-| Component           | Status             | Replace with                  |
-| ------------------- | ------------------ | ----------------------------- |
-| `<Tag>`             | Deprecated         | `<Badge>`                     |
-| `<Table>`           | Deprecated         | `<TablePrimitives>`           |
-| `<IconFa>`          | Deprecated         | `<Icon iconStyle iconName />` |
-| `<ButtonPrimitive>` | Internal primitive | `<Button>`                    |
+Use `StatusChip` for the deployment, build, service, and cluster states it supports. Pass the actual `status`; don't invent a new status mapping or colored dot.
+
+Use `Badge` for compact categories and labels. Preserve its typography and choose color according to meaning.
+
+**Don't:**
+
+- Force unrelated business states into `StatusChip`.
+- Use status colors as decoration.
+- Use deprecated `Tag` for new work.
+- Add a badge to information that does not benefit from being distinguished.
+
+## Tooltips and callouts
+
+Use `Tooltip` for short supplementary information. Consider an information-icon trigger when permanently displaying the explanation would overcrowd the interface.
+
+Keep information necessary to complete the task visible. A tooltip should supplement the interface, not conceal essential instructions.
+
+Use the compound `Callout` components for information that deserves persistent attention:
+
+- `Callout.Root`
+- `Callout.Icon`
+- `Callout.Text`
+- `Callout.TextHeading`
+- `Callout.TextDescription`
+
+Include only the parts the message needs. Keep the message concise. Choose the `Callout.Root` color according to context:
+
+| Context                                           | `color`   |
+| ------------------------------------------------- | --------- |
+| Neutral guidance or contextual explanation        | `neutral` |
+| Information the user should notice                | `sky`     |
+| Warning, risk, or a condition requiring attention | `yellow`  |
+| Error, failure, or blocking problem               | `red`     |
+| Success or confirmation of a positive result      | `green`   |
+
+**Don't:**
+
+- Add a callout for every explanation.
+- Recreate a callout using arbitrary borders and colors.
+- Use `purple` without an established semantic purpose.
+- Rely on hover alone for information attached to an interactive control.
+
+## Dialogs and detail panels
+
+Use the existing `Modal` infrastructure, including `useModal`, for focused tasks and forms.
+
+For tabbed setup dialogs, follow the secret-manager integration's header, tabs, content, and footer arrangement.
+
+For a side detail panel, follow the service catalog's blueprint details implementation. `Sheet` provides the panel presentation; it does not replace the surrounding dialog behavior.
+
+Use the existing confirmation-modal utilities when confirmation is required.
+
+**Don't:**
+
+- Recreate overlay, dismissal, and focus behavior independently.
+- Treat every dialog as the same width or composition.
+- Copy only the visible panel styling and omit its interaction behavior.
+
+## Loading, empty, and feedback states
+
+Use:
+
+- `Skeleton` for loading content with a known structure.
+- `LoaderSpinner` or `LoaderDots` for an ongoing operation.
+- `EmptyState` for an empty content area.
+- `useToast` from `@qovery/shared/toast` for transient action feedback.
+
+Distinguish loading, failure, no data, and no matching results. Choose the empty-state presentation appropriate to the available area; `EmptyState` provides standard and compact variants.
+
+Apply the page's existing action hierarchy when adding an empty-state action.
+
+## Established usage references
+
+Paths are repository-relative.
+
+| Pattern               | Source                                                                                                                                 |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| List/Pipeline tabs    | `apps/console/src/routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/route.tsx` |
+| Tabbed setup dialog   | `libs/domains/clusters/feature/src/lib/secret-manager-modals/secret-manager-integration-modal.tsx`                                     |
+| Catalog detail panel  | `libs/domains/services/feature/src/lib/blueprint-details-panel/blueprint-details-panel.tsx`                                            |
+| Table row composition | `libs/domains/services/feature/src/lib/argocd-service-list/argocd-service-list.tsx`                                                    |
+
+## Shared-component changes
+
+Keep generic presentation in `shared/ui` and business-specific behavior in its domain. Do not add new components to legacy `shared/console-shared`.
+
+When adding or extending a shared component, update its relevant stories and verify existing callers. Cover the interaction states affected by the change, including keyboard operation where applicable.
