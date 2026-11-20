@@ -3,7 +3,7 @@ import { type Organization } from 'qovery-typescript-axios'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { getSkillPresetsMockScenario } from '@qovery/domains/skill-presets/data-access'
 import { AICopilotSettings } from '@qovery/shared/devops-copilot/feature'
-import { Badge, Button, Callout, Heading, Icon, Link, Section, Skeleton, useModal } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Heading, Icon, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { TURN_ON_AI_LABEL, TurnOnAiModal } from '../ai-features-notice/ai-features-notice'
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
@@ -77,26 +77,6 @@ export function AgentExperienceCopilot() {
       width="reading"
     >
       <div className="flex flex-col gap-6">
-        <Callout.Root color="neutral" data-testid="copilot-will-change">
-          <Callout.Icon>
-            <Icon iconName="circle-info" iconStyle="regular" />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextDescription>
-              The Copilot will change. Troubleshooting and optimization are moving into dedicated features, starting
-              with{' '}
-              <Link
-                to="/organization/$organizationId/agent-experience/build-optimizer"
-                params={{ organizationId }}
-                color="brand"
-                size="sm"
-              >
-                Optimize builds
-              </Link>
-              .
-            </Callout.TextDescription>
-          </Callout.Text>
-        </Callout.Root>
         <Section aria-labelledby="copilot-does" className="flex flex-col gap-3 rounded-md border border-neutral p-4">
           <Heading level={2} id="copilot-does">
             What the Copilot does

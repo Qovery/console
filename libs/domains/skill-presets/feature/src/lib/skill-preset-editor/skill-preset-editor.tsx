@@ -66,7 +66,6 @@ const LEAVE_UNSAVED_CHANGES_MESSAGE = 'You have unsaved changes on this preset. 
 interface EditorSearch {
   template?: string
   from?: string
-  asTemplate?: boolean | string
 }
 
 function EditorSection({
@@ -598,7 +597,6 @@ export function SkillPresetEditorForm({
 function SkillPresetEditorPage() {
   const { organizationId = '', skillPresetId } = useParams({ strict: false })
   const search = useSearch({ strict: false }) as EditorSearch
-  const asTemplate = search.asTemplate === true || search.asTemplate === 'true'
   const { data: preset, isLoading: isPresetLoading, error: presetError } = useSkillPreset({ skillPresetId })
   const { data: presets = [], isLoading: isListLoading } = useSkillPresets({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
@@ -644,14 +642,8 @@ function SkillPresetEditorPage() {
       ...source,
       assigned_to: { organization_default: false, role_ids: [], user_ids: [] },
     })
-    initialValues = {
-      ...copy,
-      isTemplate: asTemplate,
-      name: asTemplate ? `${source.name} template` : isTemplate(source) ? source.name : `${source.name} (copy)`,
-    }
-    origin = isTemplate(source)
-      ? `Started from your template ${source.name}.`
-      : `Copied from ${source.name}, without its assignments.`
+    initialValues = { ...copy, isTemplate: false, name: `${source.name} (copy)` }
+    origin = `Copied from ${source.name}, without its assignments.`
   } else if (template) {
     initialValues = toSkillPresetFormValues({
       ...template.preset,
@@ -672,7 +664,7 @@ function SkillPresetEditorPage() {
       presets={presets}
       assignees={assignees}
       origin={origin}
-      asTemplate={preset ? preset.is_template : asTemplate}
+      asTemplate={preset?.is_template ?? false}
     />
   )
 }

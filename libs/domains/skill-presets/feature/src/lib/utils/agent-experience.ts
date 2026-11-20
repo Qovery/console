@@ -1,6 +1,7 @@
 /**
- * The setup state of Agents, from what the organization already has. No new signal:
- * "connected" means agents have loaded a skill or acted on Qovery, as agent activity reports it.
+ * The setup state of Agents, from what the organization already has. No new signal: "connected" means
+ * we have seen agent activity in the last 30 days (a skill load, an action or a denial). It does not
+ * prove an agent is installed today, and the setup card says only what it means.
  */
 
 export type AgentExperienceStepId = 'preset' | 'policy-token' | 'connect'
@@ -26,8 +27,8 @@ export interface AgentExperienceSetup {
 }
 
 // The value first: the organization's own preset, then the limits, then connecting agents, which load
-// that preset. AI features are not a step: new organizations have them on, and the Overview shows a
-// notice when they are off. Only steps the user does: agents acting is shown on Activity.
+// that preset. AI features are not a step: new organizations have them on, and the setup card shows
+// Turn on AI when they are off.
 const ORDER: AgentExperienceStepId[] = ['preset', 'policy-token', 'connect']
 
 export function computeAgentExperienceSetup(input: AgentExperienceSetupInput): AgentExperienceSetup {

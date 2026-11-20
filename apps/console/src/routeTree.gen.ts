@@ -59,7 +59,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdAgentExperiencePolicyTo
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/mcp-servers'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/copilot'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/connect'
-import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/build-optimizer'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/automate'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/agent-task-tokens'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/agent-activity'
@@ -601,15 +600,6 @@ const AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute =
     {
       id: '/connect',
       path: '/connect',
-      getParentRoute: () =>
-        AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
-    } as any,
-  )
-const AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRoute =
-  AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRouteImport.update(
-    {
-      id: '/build-optimizer',
-      path: '/build-optimizer',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
     } as any,
@@ -2284,7 +2274,6 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/agent-experience/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
   '/organization/$organizationId/agent-experience/agent-task-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute
   '/organization/$organizationId/agent-experience/automate': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
-  '/organization/$organizationId/agent-experience/build-optimizer': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRoute
   '/organization/$organizationId/agent-experience/connect': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   '/organization/$organizationId/agent-experience/copilot': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
   '/organization/$organizationId/agent-experience/mcp-servers': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute
@@ -2517,7 +2506,6 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/agent-experience/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
   '/organization/$organizationId/agent-experience/agent-task-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute
   '/organization/$organizationId/agent-experience/automate': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
-  '/organization/$organizationId/agent-experience/build-optimizer': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRoute
   '/organization/$organizationId/agent-experience/connect': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   '/organization/$organizationId/agent-experience/copilot': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
   '/organization/$organizationId/agent-experience/mcp-servers': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute
@@ -2740,7 +2728,6 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/agent-experience/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
   '/_authenticated/organization/$organizationId/agent-experience/agent-task-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute
   '/_authenticated/organization/$organizationId/agent-experience/automate': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
-  '/_authenticated/organization/$organizationId/agent-experience/build-optimizer': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRoute
   '/_authenticated/organization/$organizationId/agent-experience/connect': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   '/_authenticated/organization/$organizationId/agent-experience/copilot': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
   '/_authenticated/organization/$organizationId/agent-experience/mcp-servers': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute
@@ -2982,7 +2969,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/agent-experience/agent-activity'
     | '/organization/$organizationId/agent-experience/agent-task-tokens'
     | '/organization/$organizationId/agent-experience/automate'
-    | '/organization/$organizationId/agent-experience/build-optimizer'
     | '/organization/$organizationId/agent-experience/connect'
     | '/organization/$organizationId/agent-experience/copilot'
     | '/organization/$organizationId/agent-experience/mcp-servers'
@@ -3215,7 +3201,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/agent-experience/agent-activity'
     | '/organization/$organizationId/agent-experience/agent-task-tokens'
     | '/organization/$organizationId/agent-experience/automate'
-    | '/organization/$organizationId/agent-experience/build-optimizer'
     | '/organization/$organizationId/agent-experience/connect'
     | '/organization/$organizationId/agent-experience/copilot'
     | '/organization/$organizationId/agent-experience/mcp-servers'
@@ -3437,7 +3422,6 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/agent-experience/agent-activity'
     | '/_authenticated/organization/$organizationId/agent-experience/agent-task-tokens'
     | '/_authenticated/organization/$organizationId/agent-experience/automate'
-    | '/_authenticated/organization/$organizationId/agent-experience/build-optimizer'
     | '/_authenticated/organization/$organizationId/agent-experience/connect'
     | '/_authenticated/organization/$organizationId/agent-experience/copilot'
     | '/_authenticated/organization/$organizationId/agent-experience/mcp-servers'
@@ -4008,13 +3992,6 @@ declare module '@tanstack/react-router' {
       path: '/connect'
       fullPath: '/organization/$organizationId/agent-experience/connect'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
-    }
-    '/_authenticated/organization/$organizationId/agent-experience/build-optimizer': {
-      id: '/_authenticated/organization/$organizationId/agent-experience/build-optimizer'
-      path: '/build-optimizer'
-      fullPath: '/organization/$organizationId/agent-experience/build-optimizer'
-      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
     }
     '/_authenticated/organization/$organizationId/agent-experience/automate': {
@@ -5360,7 +5337,6 @@ interface AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildr
   AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentActivityRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute
-  AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute
   AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceMcpServersRoute
@@ -5384,8 +5360,6 @@ const AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren: 
       AuthenticatedOrganizationOrganizationIdAgentExperienceAgentTaskTokensRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceAutomateRoute,
-    AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRoute:
-      AuthenticatedOrganizationOrganizationIdAgentExperienceBuildOptimizerRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute:
       AuthenticatedOrganizationOrganizationIdAgentExperienceConnectRoute,
     AuthenticatedOrganizationOrganizationIdAgentExperienceCopilotRoute:

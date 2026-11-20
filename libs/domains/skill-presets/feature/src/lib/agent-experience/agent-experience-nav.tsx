@@ -6,8 +6,6 @@ import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 
 const AGENT_TASKS_FLAG = 'argentic-workflow'
-// Entries nested in a group: indented like a sub-entry, with their icon.
-const NESTED_ITEM = 'pl-[41.5px]'
 const DAY_MS = 24 * 3_600_000
 
 /** Denied agent actions over the last 7 days, for the Activity badge (like open issues on Alerts). */
@@ -25,11 +23,9 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 }
 
 /**
- * The side list of Agents: four entries, then Settings. The Skills Registry comes first so people see
- * what their agents will get; Connect is a one-time setup per machine, reached from the Overview (its
- * header button and the last setup step), not from here. Optimize builds sits under Automate as one
- * of the jobs agents do. Settings holds policy tokens, the Copilot and, behind their flag, the Agent
- * Tasks pages; it is for owners and admins only, and opens by itself on its pages.
+ * The side list of Agents: the Skills registry, Automate and Activity, then Settings. Settings holds
+ * policy tokens, the Copilot and, behind their flag, the Agent Tasks pages; it is for owners and admins
+ * only, and opens by itself on its pages. Connecting an agent is a popup, not a page.
  */
 export function AgentExperienceNav() {
   const { organizationId = '' } = useParams({ strict: false })
@@ -39,13 +35,6 @@ export function AgentExperienceNav() {
   const base = `/organization/${organizationId}/agent-experience`
   const { pathname } = useLocation()
   const registryPath = `${base}/skill-presets`
-  const sections = [
-    { title: 'Presets', to: registryPath },
-    { title: 'Assignments', to: `${registryPath}/assignments` },
-    { title: 'Skill loads', to: `${registryPath}/loads` },
-    { title: 'Usage', to: `${registryPath}/usage` },
-  ]
-  const activeSection = sections.slice(1).find(({ to }) => pathname === to || pathname.startsWith(`${to}/`))
   const isRegistryPage = pathname === registryPath || pathname.startsWith(`${registryPath}/`)
 
   const isAdmin = !isLoading && canManage
@@ -53,29 +42,11 @@ export function AgentExperienceNav() {
 
   return (
     <Sidebar.Root className="mt-6" aria-label="Agents">
-      <Sidebar.Item to={base} icon="table-layout" iconStyle="regular" active={pathname.replace(/\/$/, '') === base}>
-        Overview
+      <Sidebar.Item to={registryPath} icon="sliders" iconStyle="regular" active={isRegistryPage}>
+        Skills registry
       </Sidebar.Item>
-      {!isLoading && canManage ? (
-        <Sidebar.Group title="Skills registry" icon="sliders" iconStyle="regular" defaultOpen={isRegistryPage}>
-          {sections.map(({ title, to }) => (
-            <Sidebar.SubItem key={to} to={to} active={isRegistryPage && (activeSection?.to ?? registryPath) === to}>
-              {title}
-            </Sidebar.SubItem>
-          ))}
-        </Sidebar.Group>
-      ) : (
-        <Sidebar.Item to={registryPath} icon="sliders" iconStyle="regular" active={isRegistryPage}>
-          Skills registry
-        </Sidebar.Item>
-      )}
-
       <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
         Automate
-      </Sidebar.Item>
-      {/* Under Automate: indented like a sub-entry, with the icon of its page. */}
-      <Sidebar.Item to={`${base}/build-optimizer`} icon="gauge-high" iconStyle="regular" className={NESTED_ITEM}>
-        Optimize builds
       </Sidebar.Item>
       <Sidebar.Item
         to={`${base}/agent-activity`}
@@ -91,39 +62,30 @@ export function AgentExperienceNav() {
           title="Settings"
           icon="gear"
           iconStyle="regular"
-          className="mt-4"
           defaultOpen={settingsPaths.some((path) => pathname.startsWith(path))}
         >
-          <Sidebar.Item to={`${base}/policy-tokens`} icon="key" iconStyle="regular" className={NESTED_ITEM}>
-            Policy tokens
-          </Sidebar.Item>
-          <Sidebar.Item to={`${base}/copilot`} icon="message-bot" iconStyle="regular" className={NESTED_ITEM}>
-            Copilot settings
-          </Sidebar.Item>
-          {isAgentTasksEnabled && (
-            <Sidebar.Item to={`${base}/agent-task-tokens`} icon="robot" iconStyle="regular" className={NESTED_ITEM}>
-              Model tokens
-            </Sidebar.Item>
-          )}
-          {isAgentTasksEnabled && (
-            <Sidebar.Item to={`${base}/mcp-servers`} icon="plug" iconStyle="regular" className={NESTED_ITEM}>
-              MCP servers
-            </Sidebar.Item>
-          )}
+          <Sidebar.SubItem to={`${base}/policy-tokens`}>Policy tokens</Sidebar.SubItem>
+          <Sidebar.SubItem to={`${base}/copilot`}>Copilot settings</Sidebar.SubItem>
+          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>}
+          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>}
         </Sidebar.Group>
       )}
     </Sidebar.Root>
   )
 }
 
-/** Agent Tasks pages exist only behind their feature flag: without it, back to the Overview. */
+/** Agent Tasks pages exist only behind their feature flag: without it, back to the Skills registry. */
 export function AgentTasksGate({ children }: { children: ReactNode }) {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const isAgentTasksEnabled = Boolean(useFeatureFlagEnabled(AGENT_TASKS_FLAG))
   useEffect(() => {
     if (!isAgentTasksEnabled) {
-      navigate({ to: '/organization/$organizationId/agent-experience', params: { organizationId }, replace: true })
+      navigate({
+        to: '/organization/$organizationId/agent-experience/skill-presets',
+        params: { organizationId },
+        replace: true,
+      })
     }
   }, [isAgentTasksEnabled, navigate, organizationId])
   return isAgentTasksEnabled ? <>{children}</> : null

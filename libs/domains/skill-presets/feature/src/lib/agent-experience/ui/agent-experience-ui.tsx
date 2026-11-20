@@ -23,6 +23,7 @@ export function AgentExperiencePage({
   action,
   width = 'full',
   showHelp = false,
+  layout = 'settings',
   children,
 }: {
   title: string
@@ -31,13 +32,24 @@ export function AgentExperiencePage({
   action?: ReactNode
   width?: 'full' | 'reading'
   showHelp?: boolean
+  layout?: 'settings' | 'dashboard'
   children: ReactNode
 }) {
   return (
-    <Section className="px-8 pb-8 pt-6">
-      <SettingsHeading title={title} titleBadge={titleBadge} description={description} showNeedHelp={showHelp}>
-        {action}
-      </SettingsHeading>
+    <Section className={layout === 'dashboard' ? 'p-6' : 'px-8 pb-8 pt-6'}>
+      {layout === 'dashboard' ? (
+        <header className="mb-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <Heading level={1}>{title}</Heading>
+            {description && <p className="text-sm text-neutral-subtle">{description}</p>}
+          </div>
+          {action}
+        </header>
+      ) : (
+        <SettingsHeading title={title} titleBadge={titleBadge} description={description} showNeedHelp={showHelp}>
+          {action}
+        </SettingsHeading>
+      )}
       <div className={`flex flex-col gap-6 ${width === 'reading' ? 'max-w-content-with-navigation-left' : ''}`}>
         {children}
         <MockScenarioBanner />
@@ -124,6 +136,7 @@ export function Stat({
   icon,
   delta,
   riseIsBad = false,
+  prominent = false,
   search,
 }: {
   label: string
@@ -131,6 +144,7 @@ export function Stat({
   icon?: IconName
   delta?: number
   riseIsBad?: boolean
+  prominent?: boolean
   search?: ActivitySearch
 }) {
   const { organizationId = '' } = useParams({ strict: false })
@@ -140,8 +154,10 @@ export function Stat({
         {icon && <Icon iconName={icon} iconStyle="regular" aria-hidden="true" />}
         {label}
       </dt>
-      <dd className="flex items-baseline gap-2">
-        <span className="text-base font-medium tabular-nums text-neutral">{value.toLocaleString('en-US')}</span>
+      <dd className={prominent ? 'flex min-h-14 flex-col gap-0.5' : 'flex items-baseline gap-2'}>
+        <span className={`${prominent ? 'text-3xl' : 'text-base'} font-medium tabular-nums text-neutral`}>
+          {value.toLocaleString('en-US')}
+        </span>
         {delta !== undefined && delta !== 0 && (
           <span
             className={`text-xs ${riseIsBad && delta > 0 ? 'text-negative' : 'text-neutral-subtle'}`}
@@ -155,7 +171,13 @@ export function Stat({
     </>
   )
   if (!search) {
-    return <div className="flex flex-col gap-0.5 rounded-md border border-neutral px-4 py-3">{content}</div>
+    return (
+      <div
+        className={`flex flex-col rounded-md border border-neutral px-4 py-3 ${prominent ? 'min-h-28 justify-between gap-3 bg-surface-neutral' : 'gap-0.5'}`}
+      >
+        {content}
+      </div>
+    )
   }
   return (
     <Link

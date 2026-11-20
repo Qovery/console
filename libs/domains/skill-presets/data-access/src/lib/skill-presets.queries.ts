@@ -1,14 +1,13 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { type AgentActivityParams } from './agent-activity.types'
 import {
-  type SkillLoadsParams,
   getMockAiFeaturesEnabled,
   listMockPolicyTokens,
   listMockSkillPresetAssignees,
   skillPresetsApi,
 } from './skill-presets.api'
 import { getSkillPresetErrorStatus } from './skill-presets.errors'
-import { type SkillPresetRequest, type SkillPresetUsageParams } from './skill-presets.types'
+import { type SkillPresetRequest } from './skill-presets.types'
 
 /** The API's maximum: it has no offset, so older revisions than this cannot be listed. */
 export const SKILL_PRESET_REVISIONS_PAGE_SIZE = 100
@@ -34,10 +33,6 @@ export const skillPresets = createQueryKeys('skillPresets', {
     queryKey: [organizationId, skillPresetId ?? 'all', limit],
     queryFn: () => skillPresetsApi.listSkillPresetRevisions(organizationId, { skillPresetId, limit }),
   }),
-  loads: ({ organizationId, ...params }: { organizationId: string } & SkillLoadsParams) => ({
-    queryKey: [organizationId, params],
-    queryFn: () => skillPresetsApi.listSkillLoads(organizationId, params),
-  }),
   resolved: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     queryFn: () => skillPresetsApi.getResolvedSkillPreset(organizationId),
@@ -57,10 +52,6 @@ export const skillPresets = createQueryKeys('skillPresets', {
     queryKey: [organizationId, skillName],
     // Displayed, not loaded by an agent: audited as a VIEW, never counted in usage.
     queryFn: () => skillPresetsApi.getResolvedSkill(organizationId, skillName, { purpose: 'VIEW' }),
-  }),
-  usage: ({ organizationId, ...params }: { organizationId: string } & SkillPresetUsageParams) => ({
-    queryKey: [organizationId, params],
-    queryFn: () => skillPresetsApi.getSkillPresetUsage(organizationId, params),
   }),
   /** Mock mode only: see `getMockAiFeaturesEnabled`. */
   mockAiFeatures: ({ organizationId }: { organizationId: string }) => ({
