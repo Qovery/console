@@ -16,13 +16,19 @@ function RouteComponent() {
     icon: 'gear' as const,
   }
 
+  const costBudgetLink = {
+    title: 'Cost & budget',
+    to: `${pathSettings}/cost-budget`,
+    icon: 'wallet' as const,
+  }
+
   const dangerZoneLink = {
     title: 'Danger zone',
     to: `${pathSettings}/danger-zone`,
     icon: 'skull' as const,
   }
 
-  const LINKS_SETTINGS = [generalLink, dangerZoneLink]
+  const LINKS_SETTINGS = [generalLink, costBudgetLink, dangerZoneLink]
 
   return (
     <div className="flex min-h-0 flex-1">
