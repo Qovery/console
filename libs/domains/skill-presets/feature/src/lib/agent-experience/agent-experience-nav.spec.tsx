@@ -16,6 +16,8 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
+jest.mock('../hooks/use-agent-activity/use-agent-activity', () => ({ useAgentActivity: () => ({ data: undefined }) }))
+
 jest.mock('../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets')
 
 beforeEach(() => {
@@ -23,14 +25,24 @@ beforeEach(() => {
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
 })
 
-describe('AgentExperienceNav, Skills registry', () => {
+describe('AgentExperienceNav', () => {
   it.each(['', '/preset-1', '/preset-1/history', '/new'])('shows one Skills registry entry, current on %s', (path) => {
     jest.mocked(useLocation).mockReturnValue({
       pathname: `/organization/organization-1/agent-experience/skill-presets${path}`,
     } as never)
     renderWithProviders(<AgentExperienceNav />)
     expect(screen.getByRole('link', { name: 'Skills registry' })).toHaveAttribute('aria-current', 'page')
-    expect(screen.getAllByRole('link')).toHaveLength(1)
+    expect(screen.getByRole('link', { name: 'Activity' })).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /Assignments|Skill loads|Usage/ })).not.toBeInTheDocument()
+  })
+
+  it('keeps Settings away from members', () => {
+    jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: false })
+    jest.mocked(useLocation).mockReturnValue({
+      pathname: '/organization/organization-1/agent-experience/skill-presets',
+    } as never)
+    renderWithProviders(<AgentExperienceNav />)
+    expect(screen.getByRole('link', { name: 'Skills registry' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.queryByText('Settings')).not.toBeInTheDocument()
   })
 })
