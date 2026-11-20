@@ -1,29 +1,17 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type DeploymentHistoryEnvironmentV2, type Status } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import {
-  useBuildAnalysis,
-  useDeploymentStatus,
-  useLinks,
-  useService,
-  useStartBuildAnalysis,
-} from '@qovery/domains/services/feature'
-import { containerFactoryMock, environmentFactoryMock, gitContainerFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { useBuildAnalysis, useService, useStartBuildAnalysis } from '@qovery/domains/services/feature'
+import { environmentFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { useServiceDeploymentHistory } from '../hooks/use-service-deployment-history/use-service-deployment-history'
 import { ListDeploymentLogs } from './list-deployment-logs'
-
-window.HTMLElement.prototype.scroll = jest.fn()
 
 jest.mock('../hooks/use-deployment-logs/use-deployment-logs')
 jest.mock('../hooks/use-service-deployment-history/use-service-deployment-history')
 jest.mock('@qovery/domains/services/feature')
 jest.mock('@qovery/domains/organizations/feature')
-jest.mock('posthog-js/react', () => ({
-  useFeatureFlagEnabled: jest.fn(() => false),
-}))
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -41,12 +29,6 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
-jest.mock('../hooks/use-generate-build-usage-report/use-generate-build-usage-report', () => ({
-  useGenerateBuildUsageReport: () => ({
-    mutateAsync: jest.fn(),
-    isLoading: false,
-  }),
-}))
 describe('ListDeploymentLogs', () => {
   const mockEnvironment = environmentFactoryMock(1)[0]
 
@@ -144,10 +126,6 @@ describe('ListDeploymentLogs', () => {
       setShowPreviousLogs: jest.fn(),
     })
 
-    useDeploymentStatus.mockReturnValue({
-      data: { state: 'RUNNING' },
-    })
-
     useService.mockReturnValue({
       data: {
         id: 'service-1',
@@ -165,9 +143,6 @@ describe('ListDeploymentLogs', () => {
     jest
       .mocked(useOrganization)
       .mockReturnValue({ data: { ai_features_enabled: true } } as ReturnType<typeof useOrganization>)
-    useLinks.mockReturnValue({
-      data: [{ id: 'link-1', url: 'https://example.com', is_default: false, is_qovery_domain: false }],
-    })
   })
 
   it('should render successfully', () => {
@@ -177,37 +152,11 @@ describe('ListDeploymentLogs', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should display logs', () => {
-    renderWithProviders(<ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />)
-
-    expect(screen.getByText('Log 1')).toBeInTheDocument()
-    expect(screen.getByText('Log 2')).toBeInTheDocument()
-  })
-
-  it('should filter logs by stage step', async () => {
+  it('should display logs grouped by step', async () => {
     const { userEvent } = renderWithProviders(
       <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
     )
 
-    const buildButtons = screen.getAllByRole('button', { name: /build/i })
-    // Pick the filter button (not the "Build runner usage" button)
-    const buildButton = buildButtons.find((btn) => !btn.textContent?.includes('runner')) ?? buildButtons[0]
-    await userEvent.click(buildButton)
-
-    await waitFor(() => {
-      expect(screen.getByText('Log 1')).toBeInTheDocument()
-      expect(screen.queryByText('Log 2')).not.toBeInTheDocument()
-    })
-  })
-
-  it('should display logs grouped by step behind the deployment-logs-v2 flag', async () => {
-    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
-
-    const { userEvent } = renderWithProviders(
-      <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
-    )
-
-    expect(useFeatureFlagEnabled).toHaveBeenCalledWith('deployment-logs-v2')
     expect(screen.getByRole('heading', { name: 'Logs' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Search logs' })).toBeInTheDocument()
     // The lines carry no step: each phase shows them in one row, the failed one open
@@ -218,37 +167,5 @@ describe('ListDeploymentLogs', () => {
     await userEvent.click(screen.getByRole('button', { name: /Build logs/ }))
 
     expect(screen.getByText('Log 1')).toBeInTheDocument()
-
-    jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
-  })
-
-  it('should show progress indicator when deployment is progressing', () => {
-    useDeploymentStatus.mockReturnValue({
-      data: { state: 'BUILDING' },
-    })
-
-    renderWithProviders(<ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />)
-
-    expect(screen.getByText('Streaming deployment logs')).toBeInTheDocument()
-  })
-
-  it('should show the build usage report button for a Git container', () => {
-    useService.mockReturnValue({ data: gitContainerFactoryMock(1)[0] })
-
-    const { container } = renderWithProviders(
-      <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
-    )
-
-    expect(container.querySelector('.fa-chart-line')).toBeInTheDocument()
-  })
-
-  it('should hide the build usage report button for an image container', () => {
-    useService.mockReturnValue({ data: containerFactoryMock(1)[0] })
-
-    const { container } = renderWithProviders(
-      <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
-    )
-
-    expect(container.querySelector('.fa-chart-line')).not.toBeInTheDocument()
   })
 })
