@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { getBillingSettingsLinks, useIsBillingUsageEnabled } from '@qovery/domains/organizations/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
@@ -14,6 +15,7 @@ function RouteComponent() {
   } = useRouterState()
   const { roles } = useUserRole()
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
+  const isBillingUsageEnabled = useIsBillingUsageEnabled()
 
   const isOrganizationAdmin = roles.some((role) => role.includes(`organization:${organizationId}:admin`))
 
@@ -45,10 +47,7 @@ function RouteComponent() {
     type: 'group',
     title: 'Billing & plans',
     icon: 'credit-card' as const,
-    children: [
-      { title: 'Billing summary', to: `${pathSettings}/billing-summary` },
-      { title: 'Billing details', to: `${pathSettings}/billing-details` },
-    ],
+    children: getBillingSettingsLinks(pathSettings, isBillingUsageEnabled),
   }
 
   const containerRegistriesLink = {
