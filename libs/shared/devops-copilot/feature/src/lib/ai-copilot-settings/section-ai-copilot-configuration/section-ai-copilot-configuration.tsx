@@ -28,9 +28,9 @@ export interface SectionAICopilotConfigurationProps {
 function getDisableConfirmationModal(closeModal: () => void, onDisable: () => void) {
   return (
     <div className="p-6">
-      <h2 className="mb-2 text-base font-medium text-neutral">Disable Copilot</h2>
+      <h2 className="mb-2 text-base font-medium text-neutral">Turn off Copilot</h2>
       <p className="mb-6 text-sm text-neutral-subtle">
-        Are you sure you want to disable Copilot? This will stop Copilot assistance for your organization.
+        The Copilot stops helping your organization. You can turn it on again at any time.
       </p>
       <div className="flex justify-end gap-3">
         <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
@@ -39,13 +39,13 @@ function getDisableConfirmationModal(closeModal: () => void, onDisable: () => vo
         <Button
           type="button"
           size="lg"
-          color="red"
+          color="brand"
           onClick={() => {
             closeModal()
             onDisable()
           }}
         >
-          Disable
+          Turn off Copilot
         </Button>
       </div>
     </div>
@@ -79,8 +79,8 @@ export function SectionAICopilotConfiguration({
   }
 
   const modeOptions = [
-    { label: 'Read-Only', value: 'read-only' },
-    { label: 'Read-Write', value: 'read-write' },
+    { label: 'Read-only', value: 'read-only' },
+    { label: 'Read-write', value: 'read-write' },
   ]
 
   return (
@@ -99,11 +99,12 @@ export function SectionAICopilotConfiguration({
                     <Icon iconName="robot" className="mr-2 text-brand" />
                     <p className="text-sm font-medium text-neutral">Copilot for {organization?.name}</p>
                   </div>
-                  <p className="text-xs text-neutral-subtle">Copilot assistance is currently active</p>
                 </div>
+                {/* Reversible: an outline button, not a destructive red one. */}
                 <Button
                   size="md"
-                  color="red"
+                  color="neutral"
+                  variant="outline"
                   loading={isUpdating}
                   onClick={() => {
                     openModal({
@@ -111,7 +112,7 @@ export function SectionAICopilotConfiguration({
                     })
                   }}
                 >
-                  Disable
+                  Turn off Copilot
                 </Button>
               </div>
             </div>
@@ -166,7 +167,7 @@ export function SectionAICopilotConfiguration({
 
             <div className="space-y-4">
               <div className="space-y-1">
-                <label className="text-sm font-medium text-neutral">Access Mode</label>
+                <label className="text-sm font-medium text-neutral">Access mode</label>
                 <p className="text-xs text-neutral-subtle">
                   Choose the level of access Copilot will have on your organization
                 </p>
@@ -176,7 +177,7 @@ export function SectionAICopilotConfiguration({
                 onChange={(value) => setSelectedMode(value as 'read-write' | 'read-only')}
                 options={modeOptions}
                 portal
-                label="Right access"
+                label="Access"
                 disabled={isUpdating}
               />
 
@@ -198,7 +199,7 @@ export function SectionAICopilotConfiguration({
                 </Callout.Icon>
                 <Callout.Text>
                   <Callout.TextHeading>
-                    {mode === 'read-only' ? 'Read-Only Mode' : 'Read-Write Mode'}
+                    {mode === 'read-only' ? 'Read-only mode' : 'Read-write mode'}
                   </Callout.TextHeading>
                   <Callout.TextDescription>
                     {mode === 'read-only'

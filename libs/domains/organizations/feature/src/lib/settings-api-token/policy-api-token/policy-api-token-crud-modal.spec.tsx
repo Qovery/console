@@ -48,6 +48,35 @@ describe('PolicyApiTokenCrudModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('starts from an example when given default values', async () => {
+    const { userEvent } = renderWithProviders(
+      <PolicyApiTokenCrudModal
+        {...props}
+        defaultValues={{
+          name: 'stop-idle-environments',
+          description: 'Stops idle environments.',
+          opa_policy: 'default allow := false',
+        }}
+      />
+    )
+
+    expect(screen.getByRole('textbox', { name: /token name/i })).toHaveValue('stop-idle-environments')
+    expect(screen.getByTestId('code-editor')).toHaveTextContent('default allow := false')
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    await waitFor(() =>
+      expect(createPolicyApiTokenMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          policyApiTokenCreateRequest: expect.objectContaining({
+            name: 'stop-idle-environments',
+            description: 'Stops idle environments.',
+            opa_policy: 'default allow := false',
+          }),
+        })
+      )
+    )
+  })
+
   it('should submit the name, description and policy', async () => {
     const { userEvent } = renderWithProviders(<PolicyApiTokenCrudModal {...props} />)
 
