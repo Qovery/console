@@ -1,187 +1,104 @@
 # Colors — Qovery Console
 
-## The Rules
+Use the existing semantic tokens. Choose colors by their role, not by their appearance in one theme.
 
-1. **Always prefer Tailwind utilities.** Use `bg-surface-brand-solid`, `text-negative`, `border-neutral` etc. wherever Tailwind classes are applicable. CSS variables (`var(--brand-9)`) are the fallback for contexts where Tailwind classes can't be used — inline styles, `keyframes`, SCSS, or dynamic JS values.
-2. **Never hardcode hex or rgba.** Every color value must come from a Tailwind utility or a CSS token.
-3. **Status colors are semantic only.** `positive`, `warning`, `negative`, `info` exist to communicate system state. Using them to make a header "pop" is a bug.
-4. **Brand violet is concentrated.** It belongs on actionable controls and active-state markers. Not on decorative borders, not as a background wash.
-5. **Light/dark parity is automatic.** If you use the right token, you get both themes for free. If you hardcode, you break one.
+When using a shared component, select its supported variant and color rather than overriding its internal colors.
 
----
+## Backgrounds and surfaces
 
-## Design System First
+| Token                                | Use                                                                    |
+| ------------------------------------ | ---------------------------------------------------------------------- |
+| `bg-background`                      | Main page background                                                   |
+| `bg-background-secondary`            | Secondary canvas layer, following the surrounding layout               |
+| `bg-surface-neutral`                 | Any content surface sitting above the page background                  |
+| `bg-surface-neutral-subtle`          | Subtle separation within a surface or a secondary panel                |
+| `bg-surface-neutral-component`       | Contained elements that need separation from their surrounding surface |
+| `bg-surface-neutral-componentHover`  | Hover treatment for neutral interactive elements                       |
+| `bg-surface-neutral-componentActive` | Pressed or active treatment for neutral interactive elements           |
+| `bg-background-overlay`              | Modal backdrop, supplied by the modal infrastructure                   |
 
-Before touching any color value, check for existing tokens, CSS variables, or theme config. Propose changes using the existing system — never override with one-off values, never add new tokens without a design decision behind them.
+Apply `bg-surface-neutral` explicitly to content surfaces above the page background so they remain distinct in dark mode. Match the surrounding page and established component usage; do not add a different background to every nested element.
 
----
+## Text and icons
 
-## Contrast
+| Token                                                         | Use                                                  |
+| ------------------------------------------------------------- | ---------------------------------------------------- |
+| `text-neutral`                                                | Titles, primary labels, and ordinary content         |
+| `text-neutral-subtle`                                         | Descriptions and supporting information              |
+| `text-neutral-disabled`                                       | Disabled or unavailable controls                     |
+| `text-brand`                                                  | Interactive text and elements only                   |
+| `text-positive`, `text-warning`, `text-negative`, `text-info` | Text and icons communicating the corresponding state |
 
-| Context                             | Minimum ratio              | Common failure                           |
-| ----------------------------------- | -------------------------- | ---------------------------------------- |
-| Body text                           | 4.5:1 (WCAG AA)            | Light gray on white                      |
-| Large text (≥ 18.66px or 14px bold) | 3:1                        | Section headers on subtle backgrounds    |
-| Interactive element boundary        | 3:1                        | Outline buttons on colored surfaces      |
-| Focus ring                          | 3:1 against adjacent color | Brand ring on brand background           |
-| Placeholder text                    | 4.5:1                      | Default gray placeholder — usually fails |
+Use the same semantic color for an icon and its associated message unless the shared component defines a different combination. Do not use the disabled color merely to make information less prominent.
 
-Gray text on colored backgrounds looks washed out. Use a darker shade of the background hue, or transparency — never a generic neutral lifted from the neutral scale.
+## Borders
 
-Don't eyeball contrast. Test with Stark, Contrast app, or browser devtools.
+| Token                                          | Use                                                 |
+| ---------------------------------------------- | --------------------------------------------------- |
+| `border-neutral`                               | Standard surface boundaries and dividers            |
+| `border-neutral-component`                     | Stronger component boundaries                       |
+| `border-neutral-componentHover`                | Hovered component boundaries                        |
+| `border-brand-strong`, `outline-brand-outline` | Focus treatment where defined by the shared control |
+| Semantic status border                         | Boundaries communicating the corresponding state    |
 
----
+Preserve shared-component focus styling. Do not use colored borders for decorative emphasis.
 
-## Accent Color & 60/30/10
+## Brand and interaction colors
 
-One primary accent, used sparingly. An interface where everything pops has nothing that pops. Save the accent for the primary action and critical signals.
+Reserve brand violet for primary actions, active navigation, selection, and focus. `text-brand` is only for interactive text and elements.
 
-**60/30/10** (visual weight, not pixel count):
+Use the shared button variants described in [Components](components.md), rather than manually recoloring buttons. Neutral controls can remain neutral; not every clickable element needs brand color.
 
-- **60%** — neutral backgrounds, base surfaces, white space
-- **30%** — text, borders, inactive states
-- **10%** — accent: CTAs, highlights, focus states
+## Semantic colors
 
-The common mistake is using brand violet everywhere because "it's the brand color." Overuse kills its power.
+| Family     | Meaning                               |
+| ---------- | ------------------------------------- |
+| `positive` | Success, healthy state, or completion |
+| `warning`  | Risk or something requiring attention |
+| `negative` | Error, failure, or destructive action |
+| `info`     | Informational notice                  |
 
----
+Within each family:
 
-## Token Architecture
+- `text-*` colors the message or status icon.
+- `bg-surface-*-subtle` provides a subtle status background.
+- `bg-surface-*-component` provides a contained status element's background.
+- `bg-surface-*-solid` provides a solid fill.
+- `border-*-subtle` and `border-*-component` provide matching boundaries.
 
-CSS custom properties live in `libs/shared/ui/src/lib/styles/base/themes.scss`.  
-Tailwind utilities are wired in `tailwind-workspace-preset.js`.
+Prefer the supported variants of `StatusChip`, `Callout`, and `Badge` for these combinations. Pair color with a label or recognizable status icon so color is not the only indication.
 
-### Scale Structure (Radix-style 1–12)
+## Inverted surfaces
 
-Each semantic color has a 12-step scale:
+Use matched inverted tokens:
 
-| Step | Purpose                                                            |
-| ---- | ------------------------------------------------------------------ |
-| 1    | App background tint                                                |
-| 2    | Subtle surface                                                     |
-| 3    | UI element background (component surface)                          |
-| 4    | Hovered UI element                                                 |
-| 5    | Active / pressed UI element                                        |
-| 6    | Subtle border                                                      |
-| 7    | Component border (alpha variant available)                         |
-| 8    | Hovered border                                                     |
-| 9    | **Solid background** (the canonical "brand-9", "positive-9", etc.) |
-| 10   | Hovered solid background                                           |
-| 11   | **Text / icon color** (readable on white or dark surfaces)         |
-| 12   | High-contrast text                                                 |
+- `bg-surface-neutralInvert` or `bg-surface-neutralInvert-component` for the surface.
+- `text-neutralInvert` for primary text.
+- `text-neutralInvert-subtle` for supporting text.
+- `border-neutralInvert` when a border is needed.
 
-**For status indicators:** use `-9` for solid fills, `-11` for text/icons on neutral backgrounds.
+Tooltips and neutral filled buttons already define these combinations; prefer the shared components. Inverted does not mean always dark: the values change with the theme.
 
----
+## Charts
 
-## Semantic Color Vocabulary
+Reuse the corresponding observability chart's palette and series conventions. Use semantic colors for semantic states; otherwise follow the existing chart palette without assigning arbitrary status meanings.
 
-### Neutral (scaffolding)
+## Implementation
 
-```
-bg-surface-neutral              → var(--neutral-1)   page background
-bg-surface-neutral-subtle       → var(--neutral-2)   alternate panel / sidebar
-bg-surface-neutral-component    → var(--neutral-3)   input backplate, card
-bg-surface-neutral-componentHover → var(--neutral-4) hover state layer
-text-neutral                    → var(--neutral-12)  default text
-text-neutral-subtle             → var(--neutral-11)  metadata, helper
-text-neutral-disabled           → var(--neutral-10)  disabled state
-border-neutral                  → var(--neutral-6)   default border
-border-neutral-component        → var(--neutral-7)   stronger component border
-border-neutral-componentHover   → var(--neutral-8)   hover border
-```
+Use semantic Tailwind classes. When a library requires a color value, use the existing theme CSS variable. Do not hardcode separate light and dark colors.
 
-### Brand (action / active state)
+Token sources:
 
-```
-bg-surface-brand-solid          → var(--brand-9)     primary button fill
-bg-surface-brand-solidHover     → var(--brand-10)    primary button hover
-bg-surface-brand-component      → var(--brand-3)     active nav item background
-bg-surface-brand-subtle         → var(--brand-2)     subtle brand tint
-text-brand                      → var(--brand-11)    brand text, active nav
-border-brand-component          → var(--brand-alpha-7) brand component border
-border-brand-subtle             → var(--brand-6)     subtle brand border
-```
+- `tailwind-workspace-preset.js`
+- `libs/shared/ui/src/lib/styles/base/themes.scss`
 
-### Status Colors
+## Don't
 
-```
-Positive (green)
-  bg-surface-positive-solid     → var(--positive-9)
-  bg-surface-positive-component → var(--positive-3)
-  bg-surface-positive-subtle    → var(--positive-2)
-  text-positive                 → var(--positive-11)
-  border-positive-component     → var(--positive-alpha-7)
-
-Warning (amber)
-  bg-surface-warning-solid      → var(--warning-9)
-  bg-surface-warning-component  → var(--warning-3)
-  bg-surface-warning-subtle     → var(--warning-2)
-  text-warning                  → var(--warning-11)
-  border-warning-component      → var(--warning-alpha-7)
-
-Negative (red)
-  bg-surface-negative-solid     → var(--negative-9)
-  bg-surface-negative-component → var(--negative-3)
-  bg-surface-negative-subtle    → var(--negative-2)
-  text-negative                 → var(--negative-11)
-  border-negative-component     → var(--negative-alpha-7)
-
-Info (blue)
-  bg-surface-info-solid         → var(--info-9)
-  bg-surface-info-component     → var(--info-3)
-  bg-surface-info-subtle        → var(--info-2)
-  text-info                     → var(--info-11)
-  border-info-component         → var(--info-alpha-7)
-```
-
-### Special Tokens
-
-```
---background-1                  → main app canvas
---background-2                  → alternate canvas layer
---background-overlay            → modal backdrop (80% black)
-```
-
-### Invert Tokens
-
-Invert tokens reference the opposite theme's color values. In light mode, `--neutral-invert-12` resolves to the dark-theme neutral — producing a dark surface or dark text that sits on top of the current light background. The canonical example is a tooltip: dark background, light text, regardless of the active theme.
-
-```
-text-neutralInvert              → var(--neutral-invert-12)   light text on a dark surface
-text-neutralInvert-subtle       → var(--neutral-invert-11)   secondary light text
-bg-surface-neutralInvert        → var(--neutral-invert-1)    dark surface (tooltip, popover)
-bg-surface-neutralInvert-component → var(--neutral-invert-3) elevated dark surface
-border-neutralInvert            → var(--neutral-invert-6)    border on a dark surface
-
-text-positiveInvert             → var(--positive-invert-11)  positive/green on a dark surface
-text-negativeInvert             → var(--negative-invert-11)  negative/red on a dark surface
-text-warningInvert              → var(--warning-invert-11)   warning/amber on a dark surface
-text-infoInvert                 → var(--info-invert-11)      info/blue on a dark surface
-```
-
-Use `text-*Invert` status tokens whenever a status icon or label appears inside an invert surface (tooltip, dark popover). Using the non-invert variant (`text-positive`, `text-warning`, etc.) on a dark background will produce the light-theme value and may fail contrast.
-
-Invert tokens follow the same 1–12 scale structure as the standard palette, but resolve to the opposite theme's values — so they always produce contrast against the current surface regardless of light or dark mode.
-
-**Use sparingly.** Invert surfaces are reserved for floating layers that need maximum separation from the page (tooltips, contextual popover labels, kbd hints). Don't apply them to cards, panels, or any persistent surface.
-
-**Don't introduce new invert tokens without design team validation.** The invert scale is intentionally narrow. If a use case seems to require a new invert value, raise it with the design team first.
-
----
-
-## How to Choose a Semantic Shade
-
-What are you coloring?
-
-- A **fill** (button, solid badge, status indicator) → `-9` — e.g. `bg-surface-negative-solid`
-- **Text or an icon** on a neutral background → `-11` — e.g. `text-negative`
-- A **subtle background** (callout, tinted surface) → `-subtle` / `-2` — e.g. `bg-surface-warning-subtle`
-- A **component surface** (card, badge background) → `-component` / `-3` — e.g. `bg-surface-positive-component`
-- A **border** on a colored surface → `-component` alpha — e.g. `border-negative-component`
-
----
-
-## Legacy Tokens to Avoid
-
-The old `--color-neutral-50` through `--color-neutral-900` scale (and their Tailwind equivalents like `text-neutral-600`) are deprecated. Use the semantic scale (`text-neutral-subtle`, `bg-surface-neutral-component`, etc.) instead.
+- Hardcode hex, RGB, or HSL colors in product UI.
+- Use raw palette colors or legacy numbered neutrals when a semantic token exists.
+- Use status colors as decoration.
+- Add brand backgrounds or borders merely to highlight a section.
+- Use arbitrary opacity to invent another text or surface shade.
+- Manually define light/dark pairs already handled by tokens.
+- Give accent tokens a new meaning without established usage.
+- Add a new token when an existing role covers the need.
