@@ -164,7 +164,7 @@ jobs:
 
       - name: Upload build and coverage artifacts
         if: always()
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: dist-and-coverage-artifacts
           path: |
@@ -257,7 +257,7 @@ jobs:
         run: yarn e2e:staging
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: console-staging-smoke-report
           path: |
