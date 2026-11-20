@@ -52,11 +52,7 @@ Load `.agents/skills/qovery-ui/SKILL.md` for UI work. It selects the relevant re
 
 | File                           | What's in it                                                                     |
 | ------------------------------ | -------------------------------------------------------------------------------- |
-| `references/colors.md`         | Token system, semantic rules, contrast requirements, tonal scale                 |
-| `references/typography.md`     | Type scale, weights, Roboto Mono, typographic characters                         |
+| `references/colors.md`         | Semantic tokens for surfaces, text, borders, interactions, and status            |
+| `references/typography.md`     | Page hierarchy, text sizes, weights, and code typography                         |
 | `references/spacing-layout.md` | Overview and settings composition, usual gaps, button groups, padding, alignment |
 | `references/components.md`     | Which component to use when                                                      |
-| `references/copy.md`           | Tone, microcopy patterns, modal titles, button copy rules                        |
-| `references/motion.md`         | Animation decision framework, easing, duration guide                             |
-| `references/anti-patterns.md`  | Match-and-refuse design bans                                                     |
-| `references/accessibility.md`  | Non-negotiables, ARIA, focus management                                          |
