@@ -29,7 +29,6 @@ import {
 import { Badge, ExternalLink, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
-import { DeployedCommit } from '../../deployed-commit/deployed-commit'
 import { useBlueprintUpdateState } from '../../hooks/use-blueprint-update-state/use-blueprint-update-state'
 import LastCommit from '../../last-commit/last-commit'
 import LastVersion from '../../last-version/last-version'
@@ -209,9 +208,8 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
               </span>
             </Tooltip>
           )}
-          {isContainer(service) ? (
-            <DeployedCommit gitRepository={gitRepository} />
-          ) : (
+          {/* After an image-to-Git switch, a container has no deployed commit until its first Git build */}
+          {(!isContainer(service) || gitRepository.deployed_commit_id) && (
             <LastCommit
               organizationId={organizationId}
               projectId={projectId}

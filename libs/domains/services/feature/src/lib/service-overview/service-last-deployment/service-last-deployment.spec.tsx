@@ -254,19 +254,21 @@ describe('ServiceLastDeployment', () => {
     expect(mockLastCommit).not.toHaveBeenCalled()
   })
 
-  it('renders the deployed commit of a Git container without listing commits', () => {
+  it('renders the commit and author of a Git container like an application', () => {
     mockUseDeploymentHistory.mockReturnValue({
       data: [baseDeployment],
       isFetched: true,
     })
 
-    renderWithProviders(
-      <ServiceLastDeployment serviceId="service-123" serviceType="CONTAINER" service={gitContainerFactoryMock(1)[0]} />
-    )
+    const container = gitContainerFactoryMock(1)[0]
 
-    expect(screen.getByRole('button', { name: '4f3a1c2' })).toBeInTheDocument()
-    expect(screen.queryByText('mock-last-commit-author')).not.toBeInTheDocument()
-    expect(mockLastCommit).not.toHaveBeenCalled()
+    renderWithProviders(<ServiceLastDeployment serviceId="service-123" serviceType="CONTAINER" service={container} />)
+
+    expect(screen.getByText('mock-last-commit')).toBeInTheDocument()
+    expect(screen.getByText('mock-last-commit-author')).toBeInTheDocument()
+    expect(mockLastCommit).toHaveBeenCalledWith(
+      expect.objectContaining({ service: container, showDeployFromAnotherVersionButton: false })
+    )
   })
 
   it('renders the last deployment version of a Git container that has no deployed commit yet', () => {
@@ -295,6 +297,7 @@ describe('ServiceLastDeployment', () => {
 
     expect(screen.getByRole('button', { name: 'v1.2.3' })).toBeInTheDocument()
     expect(screen.queryByText('mocked-time ago')).not.toBeInTheDocument()
+    expect(mockLastCommit).not.toHaveBeenCalled()
   })
 
   it('prevents the deployment link navigation when clicking the last commit button', () => {

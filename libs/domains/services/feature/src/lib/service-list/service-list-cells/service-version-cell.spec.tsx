@@ -1,4 +1,5 @@
 import { type Helm, type Terraform } from '@qovery/domains/services/data-access'
+import { isContainerGitSource } from '@qovery/shared/enums'
 import { containerFactoryMock, gitContainerFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
@@ -289,7 +290,7 @@ describe('ServiceVersionCell', () => {
     expect(screen.getByRole('button', { name: 'Deploy from another version' })).toBeInTheDocument()
   })
 
-  it('shows the Git source and deployed commit of a Git container without image version actions', () => {
+  it('shows the Git source, deployed commit and commit picker of a Git container without its image', () => {
     const container = gitContainerFactoryMock(1)[0]
 
     renderWithProviders(<ServiceVersionCell service={container} />)
@@ -298,6 +299,20 @@ describe('ServiceVersionCell', () => {
     expect(screen.getByText('main')).toBeInTheDocument()
     expect(screen.getByText('4f3a1c2')).toBeInTheDocument()
     expect(screen.queryByText(container.image_name)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploy from another version' })).toBeInTheDocument()
+  })
+
+  it('shows no commit for a Git container not built from Git yet', () => {
+    const container = gitContainerFactoryMock(1)[0]
+    if (!isContainerGitSource(container.source)) throw new Error('The Git container factory must have a Git source')
+    const notYetBuiltContainer = {
+      ...container,
+      source: { git_repository: { ...container.source.git_repository, deployed_commit_id: undefined } },
+    }
+
+    renderWithProviders(<ServiceVersionCell service={notYetBuiltContainer} />)
+
+    expect(screen.getByText('qovery/console')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Deploy from another version' })).not.toBeInTheDocument()
   })
 })

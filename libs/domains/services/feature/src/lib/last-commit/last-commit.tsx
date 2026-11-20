@@ -1,7 +1,13 @@
 import clsx from 'clsx'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent, useState } from 'react'
-import { type Application, type Helm, type Job, type Terraform } from '@qovery/domains/services/data-access'
+import {
+  type Application,
+  type Container,
+  type Helm,
+  type Job,
+  type Terraform,
+} from '@qovery/domains/services/data-access'
 import { Button, CopyToClipboard, Icon, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
@@ -10,7 +16,7 @@ import SelectCommitModal from '../select-commit-modal/select-commit-modal'
 export interface LastCommitProps {
   organizationId: string
   projectId: string
-  service: Pick<Application | Job | Helm | Terraform, 'id' | 'name' | 'serviceType' | 'environment'>
+  service: Pick<Application | Container | Job | Helm | Terraform, 'id' | 'name' | 'serviceType' | 'environment'>
   gitRepository: ApplicationGitRepository
   showDeployFromAnotherVersionButton?: boolean
 }

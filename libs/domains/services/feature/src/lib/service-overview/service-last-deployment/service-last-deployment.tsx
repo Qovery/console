@@ -26,7 +26,6 @@ import {
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { DeployedCommit } from '../../deployed-commit/deployed-commit'
 import { useDeployAgenticWorkflow } from '../../hooks/use-deploy-agentic-workflow/use-deploy-agentic-workflow'
 import { useDeployService } from '../../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentHistory } from '../../hooks/use-deployment-history/use-deployment-history'
@@ -93,7 +92,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
 
   const lastDeployment = deploymentHistory[0]
   const gitRepository = service ? getGitRepository(service) : undefined
-  // Containers have no commit list endpoint, so their deployed commit comes from the source only
+  // After an image-to-Git switch, a container has deployment history but no deployed commit yet
   const isGitContainerService = Boolean(service && isGitContainer(service))
   const showGitCommit =
     Boolean(gitRepository) &&
@@ -194,17 +193,13 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
       <span className="pointer-events-auto inline-flex items-center gap-2.5">
         <DotSeparator />
         <span className="flex items-center gap-2.5 font-normal" onClick={preventParentLinkNavigation}>
-          {isGitContainerService ? (
-            <DeployedCommit gitRepository={gitRepository} />
-          ) : (
-            <LastCommit
-              organizationId={organizationId}
-              projectId={projectId}
-              gitRepository={gitRepository}
-              service={service as LastCommitProps['service']}
-              showDeployFromAnotherVersionButton={false}
-            />
-          )}
+          <LastCommit
+            organizationId={organizationId}
+            projectId={projectId}
+            gitRepository={gitRepository}
+            service={service as LastCommitProps['service']}
+            showDeployFromAnotherVersionButton={false}
+          />
           {'updated_at' in (lastDeployment.auditing_data ?? {}) && lastDeployment.auditing_data.created_at && (
             <>
               <DotSeparator />
@@ -215,18 +210,14 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
               </span>
             </>
           )}
-          {!isGitContainerService && (
-            <>
-              <DotSeparator />
-              <LastCommitAuthor
-                gitRepository={gitRepository}
-                serviceId={service.id}
-                serviceType={service.serviceType as LastCommitAuthorProps['serviceType']}
-                size={20}
-                withFullName
-              />
-            </>
-          )}
+          <DotSeparator />
+          <LastCommitAuthor
+            gitRepository={gitRepository}
+            serviceId={service.id}
+            serviceType={service.serviceType as LastCommitAuthorProps['serviceType']}
+            size={20}
+            withFullName
+          />
         </span>
       </span>
     ) : null
