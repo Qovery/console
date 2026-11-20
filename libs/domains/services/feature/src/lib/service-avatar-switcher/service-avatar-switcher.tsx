@@ -38,11 +38,15 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
           />
         </button>
       </Popover.Trigger>
-      <Popover.Content side="bottom" className="flex flex-col gap-2" style={{ width: 400 }}>
+      <Popover.Content
+        side="bottom"
+        // Capped to the viewport on phones; the icon grid scrolls within the available height
+        className="flex max-h-[var(--radix-popover-content-available-height)] w-[400px] max-w-[calc(100vw-20px)] flex-col gap-2"
+      >
         <span className="text-sm text-neutral-subtle">Change icon</span>
         <InputSearch placeholder="Search..." className="mb-1" onChange={(value) => setSearchTerm(value)} autofocus />
         {filteredIcons.length > 0 ? (
-          <div className="grid grid-cols-8 gap-2 text-sm text-neutral-subtle">
+          <div className="grid min-h-0 grid-cols-6 gap-2 overflow-y-auto text-sm text-neutral-subtle sm:grid-cols-8">
             {filteredIcons.map(({ icon, title, uri, className }) => {
               const isSelected = uri === service.icon_uri
               // XXX: corner case as application and container have the same icon, we want to hide one of them.

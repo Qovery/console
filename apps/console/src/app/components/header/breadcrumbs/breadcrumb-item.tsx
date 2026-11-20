@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { Command } from 'cmdk'
 import { type MouseEvent, type ReactNode, useCallback, useMemo, useRef, useState } from 'react'
 import { Button, Command as CommandMenu, Icon, Popover, Truncate } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
+import { isTouchScreen, twMerge } from '@qovery/shared/util-js'
 
 export interface BreadcrumbItemData {
   id: string
@@ -42,7 +42,7 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
   const listRef = useRef<HTMLDivElement>(null)
   const labelClassName = twMerge(
     clsx('block min-w-0 truncate', {
-      'max-w-44 md:max-w-64 lg:max-w-80': isCurrentScope,
+      'md:max-w-64 lg:max-w-80': isCurrentScope,
       'max-w-32 md:max-w-40 lg:max-w-52': !isCurrentScope,
     })
   )
@@ -57,6 +57,8 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
   const shouldRenderMenu = Boolean(footerAction) || (items?.length ?? 0) > 1
 
   const focusSearch = useCallback(() => {
+    // On touch screens the keyboard would cover the list; people scroll it or tap the search field themselves
+    if (isTouchScreen()) return
     requestAnimationFrame(() => {
       inputRef.current?.focus()
     })

@@ -131,7 +131,7 @@ function DeploymentHistoryDropdown({ environment, deploymentHistory }: Deploymen
                       <CopyToClipboardButtonIcon
                         content={deployment.identifier.execution_id}
                         tooltipContent="Copy execution id"
-                        className="opacity-0 transition-opacity group-hover:opacity-100"
+                        className="opacity-0 transition-opacity group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                         iconClassName="text-xs"
                       />
                     )}
@@ -391,7 +391,7 @@ function DeploymentLogsBody({
 
   return (
     <>
-      <div className="flex w-full items-center justify-between border-b border-neutral px-4 py-2.5">
+      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral px-4 py-2.5 max-md:flex-wrap">
         <FiltersStageStep
           service={service}
           serviceStatus={serviceStatus}

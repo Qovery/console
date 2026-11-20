@@ -155,7 +155,13 @@ export function EventSidebar({ events, clusterId, serviceId, service, isLoading 
   const [expandedEventKey, setExpandedEventKey] = useState<string>()
 
   return (
-    <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral">
+    <div
+      className={twMerge(
+        'flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral max-md:h-[40dvh] max-md:min-w-0 max-md:max-w-none max-md:border-l-0 max-md:border-t',
+        // Below md an empty list only needs room for its message
+        !isLoading && events.length === 0 && 'max-md:h-auto'
+      )}
+    >
       <p className="border-b border-neutral bg-surface-neutral-subtle px-4 py-2 text-xs font-medium text-neutral-subtle">
         {pluralize(events.length, 'Event', 'Events')} associated
       </p>

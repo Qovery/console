@@ -342,6 +342,7 @@ export function NotificationChannelModal({
                     onChange={field.onChange}
                     value={field.value ?? ''}
                     type={isEdit ? 'password' : 'text'}
+                    inputMode="url"
                     label="Webhook URL"
                     error={error?.message}
                   />

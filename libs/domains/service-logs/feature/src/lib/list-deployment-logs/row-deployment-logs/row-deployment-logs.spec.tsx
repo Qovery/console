@@ -77,4 +77,17 @@ describe('RowDeploymentLogs', () => {
 
     expect(mockCopyToClipboard).toHaveBeenCalledWith(`${window.location.href.split('#')[0]}#1`)
   })
+
+  it('shows the copied state without hover, so touch screens get feedback', async () => {
+    const { userEvent } = renderRowDeploymentLogs()
+
+    const copyButton = screen.getByRole('button', { name: 'Copy row URL' })
+    expect(copyButton).toHaveClass('opacity-0')
+
+    await userEvent.click(copyButton)
+
+    expect(copyButton).not.toHaveClass('opacity-0')
+    expect(copyButton).toHaveClass('text-brand')
+    expect(screen.getByText('1')).toHaveClass('opacity-0')
+  })
 })

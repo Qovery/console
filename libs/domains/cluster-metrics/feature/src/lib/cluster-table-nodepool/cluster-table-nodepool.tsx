@@ -60,8 +60,8 @@ function SystemNodepool({ organizationId, clusterId, untrackedNodes, nodeWarning
         value="untracked-nodes"
         className="rounded border border-neutral bg-surface-neutral [box-shadow:0px_1px_2px_0px_rgba(27,36,44,0.12)]"
       >
-        <Accordion.Trigger className="group flex min-h-[86px] w-full items-start justify-between py-5">
-          <div className="flex h-full w-1/4 items-start justify-between border-r border-neutral px-6">
+        <Accordion.Trigger className="group flex min-h-[86px] w-full items-start justify-between py-5 max-md:flex-col max-md:gap-4">
+          <div className="flex h-full w-full items-start justify-between border-neutral px-4 md:w-1/4 md:border-r md:px-6">
             <div className="flex items-start gap-[18px]">
               <Tooltip content={untrackedMetrics.nodesWarningCount > 0 ? 'Warning' : 'Ready'}>
                 <span className="flex h-5 w-4 items-center justify-center">
@@ -86,7 +86,7 @@ function SystemNodepool({ organizationId, clusterId, untrackedNodes, nodeWarning
               className="relative top-0.5 text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
             />
           </div>
-          <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral px-5 pt-0.5">
+          <div className="flex w-full flex-col justify-start gap-3 border-neutral pl-[50px] pr-4 pt-0.5 md:w-1/4 md:border-r md:px-5">
             <div className="flex w-full items-center justify-between">
               <span className="flex items-center gap-2 text-sm text-neutral-subtle">
                 <Icon iconName="microchip" iconStyle="regular" className="relative top-[1px] text-neutral-subtle" />
@@ -98,7 +98,7 @@ function SystemNodepool({ organizationId, clusterId, untrackedNodes, nodeWarning
               </span>
             </div>
           </div>
-          <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral px-5 pt-0.5">
+          <div className="flex w-full flex-col justify-start gap-3 border-neutral pl-[50px] pr-4 pt-0.5 md:w-1/4 md:border-r md:px-5">
             <div className="flex w-full items-center justify-between">
               <span className="flex items-center gap-2 text-sm text-neutral-subtle">
                 <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-subtle" />
@@ -110,7 +110,7 @@ function SystemNodepool({ organizationId, clusterId, untrackedNodes, nodeWarning
               </span>
             </div>
           </div>
-          <div className="flex w-1/4 flex-col justify-start gap-3 px-5 pt-0.5">
+          <div className="flex w-full flex-col justify-start gap-3 pl-[50px] pr-4 pt-0.5 md:w-1/4 md:px-5">
             <span className="flex items-center gap-2 text-sm text-neutral-subtle">
               <svg
                 className="text-neutral-subtle"
@@ -329,8 +329,8 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                 value={nodePool.name}
                 className="rounded border border-neutral bg-surface-neutral [box-shadow:0px_1px_2px_0px_rgba(27,36,44,0.12)]"
               >
-                <Accordion.Trigger className="group flex min-h-[86px] w-full items-start justify-between py-5">
-                  <div className="flex h-full w-1/4 items-start justify-between border-r border-neutral px-6">
+                <Accordion.Trigger className="group flex min-h-[86px] w-full items-start justify-between py-5 max-md:flex-col max-md:gap-4">
+                  <div className="flex h-full w-full items-start justify-between border-neutral px-4 md:w-1/4 md:border-r md:px-6">
                     <div className="flex items-start gap-[18px]">
                       <Tooltip content={metrics.nodesWarningCount > 0 ? 'Warning' : 'Ready'}>
                         <span className="flex h-5 w-4 items-center justify-center">
@@ -366,7 +366,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       className="relative top-0.5 text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
                     />
                   </div>
-                  <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral px-5 pt-0.5">
+                  <div className="flex w-full flex-col justify-start gap-3 border-neutral pl-[50px] pr-4 pt-0.5 md:w-1/4 md:border-r md:px-5">
                     <div className="flex w-full items-center justify-between">
                       <span className="flex items-center gap-2 text-sm text-neutral-subtle">
                         <Icon
@@ -413,7 +413,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       unit="vCPU"
                     />
                   </div>
-                  <div className="flex w-1/4 flex-col justify-start gap-3 border-r border-neutral px-5 pt-0.5">
+                  <div className="flex w-full flex-col justify-start gap-3 border-neutral pl-[50px] pr-4 pt-0.5 md:w-1/4 md:border-r md:px-5">
                     <div className="flex w-full items-center justify-between">
                       <span className="flex items-center gap-2 text-sm text-neutral-subtle">
                         <Icon
@@ -460,7 +460,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       unit="GB"
                     />
                   </div>
-                  <div className="flex w-1/4 flex-col justify-start gap-3 px-5 pt-0.5">
+                  <div className="flex w-full flex-col justify-start gap-3 pl-[50px] pr-4 pt-0.5 md:w-1/4 md:px-5">
                     <span className="flex items-center gap-2 text-sm text-neutral-subtle">
                       <svg
                         className="text-neutral-subtle"

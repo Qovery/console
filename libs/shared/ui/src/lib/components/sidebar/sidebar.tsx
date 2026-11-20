@@ -13,6 +13,8 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useId,
+  useRef,
   useState,
 } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
@@ -95,10 +97,17 @@ const SidebarRoot = forwardRef<ElementRef<'div'>, SidebarRootProps>(function Sid
   const routerState = useRouterState()
   const pathname = routerState.location.pathname
 
+  // Below md the navigation collapses behind a button showing the current section, so the page content stays in view
+  const listId = useId()
+  const listRef = useRef<HTMLDivElement>(null)
+
   const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
 
-    const container = event.currentTarget
+    // Arrow keys move between the navigation links only, not to the mobile toggle
+    const container = listRef.current
+    // From the mobile toggle (list collapsed or not), arrow keys keep their default behaviour
+    if (!container || !container.contains(document.activeElement)) return
     const getFocusableElements = (): HTMLElement[] => {
       const selectors = ['a[href]', 'button:not([disabled])']
       const elements: HTMLElement[] = []
@@ -135,10 +144,52 @@ const SidebarRoot = forwardRef<ElementRef<'div'>, SidebarRootProps>(function Sid
     }
   }, [])
 
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [currentLabel, setCurrentLabel] = useState('')
+
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
+    const list = listRef.current
+    if (!list) return
+    const updateLabel = () => {
+      const current = list.querySelector('[aria-current="page"]')?.cloneNode(true)
+      if (!(current instanceof HTMLElement)) return setCurrentLabel('')
+      current.querySelectorAll('[data-testid="sidebar-badge"]').forEach((badge) => badge.remove())
+      setCurrentLabel(current.textContent?.trim() ?? '')
+    }
+    updateLabel()
+    const observer = typeof MutationObserver === 'undefined' ? null : new MutationObserver(updateLabel)
+    observer?.observe(list, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-current'] })
+    return () => observer?.disconnect()
+  }, [])
+
   return (
     <SidebarContext.Provider value={{ pathname }}>
       <div ref={ref} className={twMerge('flex flex-col', className)} onKeyDown={handleKeyDown} {...props}>
-        {children}
+        <button
+          type="button"
+          aria-expanded={mobileOpen}
+          aria-controls={listId}
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="mx-4 flex items-center gap-2 rounded-md border border-neutral bg-surface-neutral px-3 py-2 text-sm font-medium text-neutral md:hidden"
+        >
+          <Icon iconName="bars" iconStyle="regular" className="text-neutral-subtle" />
+          <span className="truncate">{currentLabel || 'Menu'}</span>
+          <Icon
+            iconName="chevron-down"
+            className={twMerge('ml-auto transition-transform duration-200 ease-out', mobileOpen && 'rotate-180')}
+          />
+        </button>
+        <div
+          ref={listRef}
+          id={listId}
+          className={twMerge('flex flex-col', mobileOpen ? 'max-md:mt-2' : 'max-md:hidden')}
+        >
+          {children}
+        </div>
       </div>
     </SidebarContext.Provider>
   )

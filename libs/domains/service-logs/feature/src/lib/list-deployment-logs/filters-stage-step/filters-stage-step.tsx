@@ -81,7 +81,7 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
   const shouldDisplayDuration = hasLiveDuration || totalDurationSec > 0
 
   const buttonClasses = clsx(
-    'flex h-8 items-center gap-1.5 rounded-lg border border-neutral bg-surface-neutral px-2.5 text-sm font-medium text-neutral-subtle transition hover:border-neutral-subtle hover:bg-surface-neutral-component',
+    'flex h-8 items-center gap-1.5 whitespace-nowrap rounded-lg border border-neutral bg-surface-neutral px-2.5 text-sm font-medium text-neutral-subtle transition hover:border-neutral-subtle hover:bg-surface-neutral-component',
     {
       'border-neutral-strong bg-surface-neutral-subtle text-neutral': isFilterActive(type),
       'border-brand-component bg-surface-brand-subtle': isStepRunning && isFilterActive(type),
@@ -170,7 +170,7 @@ export function FiltersStageStep({
   )
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center max-md:flex-wrap max-md:gap-y-2">
       {match(service)
         .with({ serviceType: 'CONTAINER' }, () => false)
         .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)

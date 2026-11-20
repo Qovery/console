@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { twMerge } from '@qovery/shared/util-js'
+import { isTouchScreen, twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 import Tooltip from '../../tooltip/tooltip'
 
@@ -124,7 +124,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
           onKeyDown={onKeyDown}
           spellCheck={spellCheck}
           autoComplete={autoComplete}
-          autoFocus={autoFocus}
+          autoFocus={autoFocus && !isTouchScreen()}
         />
         {hasShowPasswordButton && (
           <div

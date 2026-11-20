@@ -26,6 +26,7 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
 
   const [isHighlighted, setIsHighlighted] = useState(false)
   const [copyLinkIcon, setCopyLinkIcon] = useState<IconName>('link')
+  const isLinkCopied = copyLinkIcon === 'check'
 
   const step = original.details?.stage?.step
   const type = original.type
@@ -47,7 +48,8 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
       id={rowId}
       onCopy={copySelectedLogMessages}
       className={twMerge(
-        clsx('group mb-0.5 flex min-h-6 text-xs', {
+        // Below md the message moves under the line number and timestamp so it gets the full width
+        clsx('group mb-0.5 flex min-h-6 text-xs max-md:flex-wrap', {
           'hover:bg-surface-neutral-subtle': !isHighlighted,
           'bg-surface-neutral-componentHover': isHighlighted,
         })
@@ -56,11 +58,15 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
       <Table.Cell className="h-6 min-w-10 select-none py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-subtle group-hover:bg-surface-neutral-subtle group-hover:delay-1000">
         <Tooltip content="Copy row URL">
           <span className="relative block">
-            <span className={`group-hover:opacity-0 ${isHighlighted ? 'opacity-0' : ''}`}>{original.id}</span>
+            {/* Without hover on touch screens, the copied check icon replacing the line number is the tap feedback */}
+            <span className={clsx('group-hover:opacity-0', (isHighlighted || isLinkCopied) && 'opacity-0')}>
+              {original.id}
+            </span>
             <button
+              aria-label={isLinkCopied ? 'Row URL copied' : 'Copy row URL'}
               className={clsx('absolute left-0 top-0 text-sm text-neutral', {
-                'text-brand': isHighlighted,
-                'opacity-0 hover:text-brand group-hover:opacity-100': !isHighlighted,
+                'text-brand': isHighlighted || isLinkCopied,
+                'opacity-0 hover:text-brand group-hover:opacity-100': !isHighlighted && !isLinkCopied,
               })}
               onClick={() => {
                 setCopyLinkIcon('check')
@@ -80,11 +86,14 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
         </span>
       </Table.Cell>
       <Table.Cell
-        className={clsx('relative h-fit w-full overflow-hidden py-1 pl-3 pr-6 font-code font-bold', {
-          'text-negative': error,
-          'text-positive': success,
-          'text-neutral': !error && !success,
-        })}
+        className={clsx(
+          'relative h-fit w-full overflow-hidden py-1 pl-3 pr-6 font-code font-bold max-md:basis-full max-md:pl-2 max-md:pr-2 max-md:pt-0',
+          {
+            'text-negative': error,
+            'text-positive': success,
+            'text-neutral': !error && !success,
+          }
+        )}
       >
         <span className="truncate whitespace-pre-wrap break-all" {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}>
           {type === LogsType.ERROR ? (

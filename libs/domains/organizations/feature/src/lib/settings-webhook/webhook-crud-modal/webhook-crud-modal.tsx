@@ -94,6 +94,7 @@ export function WebhookCrudModal({ organizationId, closeModal, webhook }: Webhoo
               onChange={field.onChange}
               value={field.value}
               label="URL"
+              inputMode="url"
               error={error?.message}
             />
           )}

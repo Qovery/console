@@ -20,11 +20,11 @@ exports[`VariableList should match snapshot 1`] = `
           class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
         >
           <table
-            class="divide-y divide-neutral text-neutral w-full min-w-[800px] text-xs"
+            class="min-w-full divide-y divide-neutral text-neutral w-full text-xs md:min-w-[800px]"
           >
             <thead>
               <tr
-                class="items-center text-xs grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="items-center text-xs grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
               >
                 <th
                   class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
@@ -34,7 +34,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -82,7 +82,7 @@ exports[`VariableList should match snapshot 1`] = `
                     <button
                       aria-expanded="false"
                       aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                       data-state="closed"
                       type="button"
                     >
@@ -95,7 +95,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium max-md:hidden"
                 >
                   <div
                     class="relative inline-block"
@@ -103,7 +103,7 @@ exports[`VariableList should match snapshot 1`] = `
                     <button
                       aria-expanded="false"
                       aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                       data-state="closed"
                       type="button"
                     >
@@ -116,7 +116,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium max-md:hidden"
                 >
                   <button
                     class="flex items-center gap-1 cursor-pointer select-none truncate"
@@ -140,7 +140,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="divide-y divide-neutral"
             >
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-810e3ca6-6e42-40b1-952a-4cfcef3c9fd1"
               >
                 <td
@@ -151,7 +151,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -220,13 +220,13 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 [@media(hover:none)]:opacity-100 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -235,7 +235,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -253,7 +253,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -270,7 +270,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_3d_"
                       type="button"
@@ -289,7 +289,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-fcdbdda7-3133-4bba-9a72-36f8a0519848"
               >
                 <td
@@ -300,7 +300,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -369,13 +369,13 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 [@media(hover:none)]:opacity-100 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -384,7 +384,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -402,7 +402,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -419,7 +419,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_3k_"
                       type="button"
@@ -438,7 +438,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-fb121e5a-ff31-4835-a328-8ed561133174"
               >
                 <td
@@ -449,7 +449,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -502,7 +502,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -511,7 +511,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -529,7 +529,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -546,7 +546,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_3q_"
                       type="button"
@@ -565,7 +565,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-57658166-0318-430c-8d8a-610a34d98910"
               >
                 <td
@@ -576,7 +576,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -625,13 +625,13 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 [@media(hover:none)]:opacity-100 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -640,7 +640,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -658,7 +658,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -675,7 +675,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_41_"
                       type="button"
@@ -694,7 +694,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-acac4cee-5627-437b-9fd3-d0947d92da4b"
               >
                 <td
@@ -705,7 +705,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -759,7 +759,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -768,7 +768,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -786,7 +786,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -803,7 +803,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_48_"
                       type="button"
@@ -822,7 +822,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-831751ab-ebfb-4036-97f7-31689e3d8ed9"
               >
                 <td
@@ -833,7 +833,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -937,7 +937,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -946,7 +946,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -964,7 +964,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit in Doppler"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -981,7 +981,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_4g_"
                       type="button"
@@ -1000,7 +1000,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-3486e37c-5cdc-4e50-bcf7-75b1c818eb5f"
               >
                 <td
@@ -1011,7 +1011,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -1069,13 +1069,13 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 [@media(hover:none)]:opacity-100 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -1084,7 +1084,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1102,7 +1102,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -1119,7 +1119,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_4o_"
                       type="button"
@@ -1138,7 +1138,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-7d1b18cf-9ea1-4b00-b82a-4b5d152aa6eb"
               >
                 <td
@@ -1149,7 +1149,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -1218,13 +1218,13 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 [@media(hover:none)]:opacity-100 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -1233,7 +1233,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1251,7 +1251,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -1268,7 +1268,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_4v_"
                       type="button"
@@ -1287,7 +1287,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-b5a0f1de-3c2e-4d7a-9f61-2e7c1c0d4a11"
               >
                 <td
@@ -1298,7 +1298,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -1363,13 +1363,13 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 [@media(hover:none)]:opacity-100 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -1378,7 +1378,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1396,7 +1396,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -1413,7 +1413,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_56_"
                       type="button"
@@ -1432,7 +1432,7 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
               </tr>
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[32px_minmax(0,1.3fr)_minmax(0,1fr)_76px]"
                 id="variable-row-c6b1e2ef-4d3f-4e8b-8a72-3f8d2d1e5b22"
               >
                 <td
@@ -1443,7 +1443,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-checked="false"
-                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                       data-state="unchecked"
                       role="checkbox"
                       type="button"
@@ -1513,13 +1513,13 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 [@media(hover:none)]:opacity-100 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -1528,7 +1528,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1546,7 +1546,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       type="button"
                     >
                       <div
@@ -1563,7 +1563,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_5d_"
                       type="button"
@@ -1601,11 +1601,11 @@ exports[`VariableList should match snapshot 1`] = `
           class="no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral"
         >
           <table
-            class="divide-y divide-neutral text-neutral w-full min-w-[800px] text-xs"
+            class="min-w-full divide-y divide-neutral text-neutral w-full text-xs md:min-w-[800px]"
           >
             <thead>
               <tr
-                class="items-center text-xs grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="items-center text-xs grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_48px]"
               >
                 <th
                   class="h-11 px-4 text-left font-code group relative flex items-center font-medium border-r border-neutral"
@@ -1647,7 +1647,7 @@ exports[`VariableList should match snapshot 1`] = `
                     <button
                       aria-expanded="false"
                       aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                       data-state="closed"
                       type="button"
                     >
@@ -1660,7 +1660,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </th>
                 <th
-                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium max-md:hidden"
                 >
                   <button
                     class="flex items-center gap-1 cursor-pointer select-none truncate"
@@ -1674,7 +1674,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </button>
                 </th>
                 <th
-                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium"
+                  class="h-11 border-neutral px-4 text-left font-code group relative flex items-center font-medium max-md:hidden"
                 >
                   <button
                     class="flex items-center gap-1 cursor-pointer select-none truncate"
@@ -1698,7 +1698,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="divide-y divide-neutral"
             >
               <tr
-                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px]"
+                class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_minmax(0,1fr)_minmax(0,15%)_minmax(0,12%)_88px] max-md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_48px]"
                 id="variable-row-ade79b9c-8515-47f2-8069-83c1e8c35c4d"
               >
                 <td
@@ -1742,13 +1742,13 @@ exports[`VariableList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 [@media(hover:none)]:opacity-100 hover:text-neutral group-hover:opacity-100"
                       />
                     </span>
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <a
                     class="flex items-center gap-2 text-sm font-medium"
@@ -1758,7 +1758,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </a>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative max-md:hidden"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1776,7 +1776,7 @@ exports[`VariableList should match snapshot 1`] = `
                   >
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       disabled=""
                       type="button"
                     >
@@ -1794,7 +1794,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-expanded="false"
                       aria-haspopup="menu"
                       aria-label="Other actions"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-ssm h-7 gap-x-1 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                       data-state="closed"
                       id="radix-_r_5n_"
                       type="button"
