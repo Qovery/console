@@ -1,4 +1,5 @@
 import { useLocation, useParams } from '@tanstack/react-router'
+import { configure } from '@testing-library/react'
 import { type ReactNode } from 'react'
 import {
   type SkillPresetsMockScenario,
@@ -31,6 +32,9 @@ jest.mock('@tanstack/react-router', () => ({
     </a>
   ),
 }))
+
+// The pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
+configure({ asyncUtilTimeout: 5000 })
 
 jest.mock('posthog-js/react', () => ({
   ...jest.requireActual('posthog-js/react'),
