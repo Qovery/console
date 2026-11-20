@@ -16,7 +16,7 @@ import {
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 import {
   buildAutoscalingRequestFromForm,
   buildEditServicePayload,
@@ -147,7 +147,7 @@ function ServiceResourcesSettingsForm({
               service={service}
               advancedSettings={advancedSettings}
             />
-            <div className="flex justify-end">
+            <div className={`flex justify-end ${stickyFormActionsClassName}`}>
               <Button
                 type="submit"
                 size="lg"

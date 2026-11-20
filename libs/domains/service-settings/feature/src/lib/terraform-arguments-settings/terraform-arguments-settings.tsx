@@ -4,7 +4,7 @@ import { type Terraform } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputText, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -172,7 +172,7 @@ const TerraformArgumentsSettingsContent = ({ service }: { service: Terraform }) 
             ))}
           </Section>
 
-          <div className="flex justify-end">
+          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
             <Button
               type="submit"
               size="lg"

@@ -16,7 +16,7 @@ import {
 import { AutoDeploySetting, useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isHelmRepositorySource } from '@qovery/shared/enums'
-import { Button, Callout, Icon, InputText, Section } from '@qovery/shared/ui'
+import { Button, Callout, Icon, InputText, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -248,7 +248,7 @@ export function HelmValuesOverrideFileSettings() {
               isSetting
             />
             {methods.watch('type') !== 'YAML' ? (
-              <div className="mt-10 flex justify-end">
+              <div className={`mt-10 flex justify-end ${stickyFormActionsClassName}`}>
                 <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledSaveButton}>
                   Save
                 </Button>

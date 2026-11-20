@@ -4,7 +4,15 @@ import { useEffect, useState } from 'react'
 import { Controller, type FieldValues, useForm } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { timezoneValues, weekdaysValues } from '@qovery/shared/enums'
-import { BlockContent, Button, InputSelect, InputText, InputToggle, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  InputSelect,
+  InputText,
+  InputToggle,
+  Section,
+  stickyFormActionsClassName,
+} from '@qovery/shared/ui'
 import { dateToHours } from '@qovery/shared/util-dates'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
@@ -154,7 +162,7 @@ export const SettingsDeploymentRules = () => {
               </>
             )}
           </BlockContent>
-          <div className="flex justify-end">
+          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
             <Button className="mb-6" type="submit" size="lg" disabled={!methods.formState.isValid} loading={loading}>
               Save
             </Button>

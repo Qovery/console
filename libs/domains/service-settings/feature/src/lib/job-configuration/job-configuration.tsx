@@ -6,7 +6,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 
 export const JobConfiguration = () => {
@@ -149,7 +149,7 @@ export const JobConfiguration = () => {
                   <JobConfigurationForm
                     jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
                   />
-                  <div className="flex justify-end">
+                  <div className={`flex justify-end ${stickyFormActionsClassName}`}>
                     <Button
                       type="submit"
                       size="lg"

@@ -16,7 +16,7 @@ import {
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type HealthcheckData } from '@qovery/shared/interfaces'
-import { Button, Callout, Icon, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, Callout, Icon, Link, LoaderSpinner, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 const HealthchecksSettingsFallback = () => (
@@ -133,7 +133,7 @@ function ApplicationContainerHealthchecksSettingsContent() {
           <FormProvider {...methods}>
             <form onSubmit={onSubmit}>
               <ApplicationContainerHealthchecksForm ports={service.ports?.map((port) => port.internal_port) ?? []} />
-              <div className="flex justify-end">
+              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
                 <Button type="submit" size="lg" loading={isLoading}>
                   Save
                 </Button>

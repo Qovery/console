@@ -19,6 +19,7 @@ import {
   InputTextArea,
   Link,
   Skeleton,
+  stickyFormActionsClassName,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -352,7 +353,7 @@ function SettingsRolesEditContent({
                   ))}
                 </Table>
               )}
-              <div className="mb-24 mt-6 flex justify-between gap-3">
+              <div className={`mb-24 mt-6 flex justify-between gap-3 ${stickyFormActionsClassName}`}>
                 <Button
                   type="button"
                   data-testid="delete-button"

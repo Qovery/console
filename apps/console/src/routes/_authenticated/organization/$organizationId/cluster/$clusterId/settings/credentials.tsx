@@ -20,7 +20,7 @@ import {
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Section, toast, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, Section, stickyFormActionsClassName, toast, useModalConfirmation } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
@@ -226,7 +226,7 @@ function ClusterCredentialsSettingsForm() {
               ) : (
                 <ClusterCredentialsSettings cloudProvider={clusterCloudProviderInfo?.cloud_provider} isSetting={true} />
               )}
-              <div className="flex justify-end">
+              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
                 <Button
                   data-testid="submit-button"
                   type="submit"

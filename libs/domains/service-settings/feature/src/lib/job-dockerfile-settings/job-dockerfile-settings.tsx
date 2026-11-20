@@ -8,7 +8,7 @@ import { DockerfileSettings, type DockerfileSettingsData } from '@qovery/domains
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isJobGitSource } from '@qovery/shared/enums'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { TemplateIds } from '@qovery/shared/util-services'
 
@@ -169,7 +169,7 @@ export function JobDockerfileSettings() {
           />
           <div className="max-w-content-with-navigation-left">
             <DockerfileSettingsWrapper>
-              <div className="flex justify-end">
+              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
                 <Button type="submit" size="lg" loading={isLoadingEditService || isLoadingCheckDockerfile}>
                   Save
                 </Button>

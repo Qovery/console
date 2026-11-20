@@ -10,7 +10,16 @@ import {
 } from '@qovery/domains/services/data-access'
 import { useDefaultAdvancedSettings, useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Callout, Icon, InputText, InputToggle, LoaderSpinner, Section } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  Icon,
+  InputText,
+  InputToggle,
+  LoaderSpinner,
+  Section,
+  stickyFormActionsClassName,
+} from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -178,7 +187,7 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
               />
             </div>
             {!disabled && (
-              <div className="flex justify-end">
+              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
                 <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
                   Save
                 </Button>

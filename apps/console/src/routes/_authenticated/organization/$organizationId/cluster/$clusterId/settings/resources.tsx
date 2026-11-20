@@ -17,7 +17,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type ClusterResourcesData, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
-import { Button, Section, useModal } from '@qovery/shared/ui'
+import { Button, Section, stickyFormActionsClassName, useModal } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
@@ -155,7 +155,7 @@ function ClusterResourcesSettingsForm({ cluster }: { cluster: Cluster }) {
               hasAlreadyKarpenter={hasAlreadyKarpenter}
               fromDetail
             />
-            <div className="mt-10 flex justify-end">
+            <div className={`mt-10 flex justify-end ${stickyFormActionsClassName}`}>
               <Button
                 data-testid="submit-button"
                 type="submit"

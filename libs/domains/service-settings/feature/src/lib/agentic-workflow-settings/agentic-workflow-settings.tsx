@@ -26,7 +26,7 @@ import {
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Section, toastError } from '@qovery/shared/ui'
+import { Button, Section, stickyFormActionsClassName, toastError } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { AgenticWorkflowAdvancedSettings } from './agentic-workflow-advanced-settings/agentic-workflow-advanced-settings'
@@ -340,7 +340,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           <AgenticWorkflowAdvancedSettings form={form} isSaving={isLoading} onSave={saveSettings} />
         ) : null}
         {!hasOverlaySave ? (
-          <div className="flex justify-end pt-2">
+          <div className={`flex justify-end pt-2 ${stickyFormActionsClassName}`}>
             <Button
               type="submit"
               size="lg"

@@ -12,7 +12,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { GitRepositorySettings } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, LoaderSpinner, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
@@ -112,7 +112,7 @@ function RouteComponent() {
                   />
                 }
               />
-              <div className="flex justify-end">
+              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
                 <Button
                   data-testid="submit-button"
                   type="submit"

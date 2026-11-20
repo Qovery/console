@@ -7,7 +7,7 @@ import {
 } from '@qovery/domains/service-helm/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 const generateArguments = (
@@ -121,7 +121,7 @@ export function HelmValuesOverrideArgumentsSettings() {
               source={buildEditServicePayload({ service }).source}
               isSetting
             />
-            <div className="mt-10 flex justify-end">
+            <div className={`mt-10 flex justify-end ${stickyFormActionsClassName}`}>
               <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!methods.formState.isValid}>
                 Save
               </Button>

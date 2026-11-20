@@ -12,7 +12,15 @@ import {
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Button, Callout, Icon, InputToggle, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Callout,
+  Icon,
+  InputToggle,
+  Section,
+  stickyFormActionsClassName,
+} from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
@@ -124,7 +132,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
               )}
             </div>
           </BlockContent>
-          <div className="flex justify-end">
+          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
             <Button className="mb-6" disabled={!formState.isValid} size="lg" loading={loading} type="submit">
               Save
             </Button>

@@ -6,7 +6,16 @@ import { ClusterGeneralSettings, useCluster, useEditCluster } from '@qovery/doma
 import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
-import { BlockContent, Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Callout,
+  ExternalLink,
+  Heading,
+  Icon,
+  Section,
+  stickyFormActionsClassName,
+} from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
@@ -135,7 +144,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
                   <LabelSetting filterPropagateToCloudProvider={true} />
                 </Section>
               )}
-              <div className="flex justify-end">
+              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
                 <Button
                   data-testid="submit-button"
                   type="submit"

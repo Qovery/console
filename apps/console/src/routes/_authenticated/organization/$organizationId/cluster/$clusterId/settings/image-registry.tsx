@@ -11,7 +11,7 @@ import {
   useEditContainerRegistry,
 } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Callout, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, Callout, Icon, LoaderSpinner, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
@@ -95,7 +95,7 @@ function ImageRegistrySettings() {
             </Callout.Text>
           </Callout.Root>
         )}
-        <div className="mt-2 flex justify-end">
+        <div className={`mt-2 flex justify-end ${stickyFormActionsClassName}`}>
           <Button
             type="submit"
             size="lg"

@@ -3,7 +3,7 @@ import { type FormEventHandler, useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { useEditProject, useProject } from '@qovery/domains/projects/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, InputText, InputTextArea, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, InputText, InputTextArea, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -57,7 +57,7 @@ function PageProjectGeneral(props: PageProjectGeneralProps) {
               )}
             />
           </BlockContent>
-          <div className="flex justify-end">
+          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
             <Button data-testid="submit-button" type="submit" size="lg" disabled={!formState.isValid} loading={loading}>
               Save
             </Button>

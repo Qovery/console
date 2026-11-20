@@ -22,6 +22,7 @@ import {
   InputToggle,
   Link,
   Section,
+  stickyFormActionsClassName,
 } from '@qovery/shared/ui'
 
 const SECRET_HINT =
@@ -400,7 +401,7 @@ export function ClusterDnsProviderSettings({
               <DnsProviderFields disabled={disabled || Boolean(isSubmitting)} />
             </BlockContent>
 
-            <div className="flex justify-end">
+            <div className={`flex justify-end ${stickyFormActionsClassName}`}>
               <Button
                 data-testid="submit-button"
                 type="submit"

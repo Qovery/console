@@ -6,7 +6,7 @@ import { useClusters } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { environmentModeValues } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
-import { Button } from '@qovery/shared/ui'
+import { Button, stickyFormActionsClassName } from '@qovery/shared/ui'
 import { BlockContent, InputSelect, InputText, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useEditEnvironment } from '../hooks/use-edit-environment/use-edit-environment'
@@ -90,7 +90,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             />
           </BlockContent>
-          <div className="flex justify-end">
+          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
             <Button type="submit" size="lg" disabled={!formState.isValid} loading={loading}>
               Save
             </Button>

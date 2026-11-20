@@ -5,7 +5,16 @@ import { type FormEventHandler } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, InputFile, InputTags, InputText, InputTextArea, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  InputFile,
+  InputTags,
+  InputText,
+  InputTextArea,
+  Section,
+  stickyFormActionsClassName,
+} from '@qovery/shared/ui'
 import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useEditOrganization } from '../hooks/use-edit-organization/use-edit-organization'
@@ -122,7 +131,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               downtime...)
             </p>
           </BlockContent>
-          <div className="flex justify-end">
+          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
             <Button data-testid="submit-button" size="lg" type="submit" disabled={!formState.isValid} loading={loading}>
               Save
             </Button>

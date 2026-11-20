@@ -23,6 +23,7 @@ import {
   LoaderSpinner,
   ModalCrud,
   Tooltip,
+  stickyFormActionsClassName,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -668,7 +669,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
                     disabled={!canEditFeatures}
                   />
                   {canEditFeatures && (
-                    <div className="flex justify-end">
+                    <div className={`flex justify-end ${stickyFormActionsClassName}`}>
                       <Button data-testid="submit-button" type="submit" size="lg" loading={isEditClusterLoading}>
                         Save
                       </Button>
@@ -700,7 +701,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
                     </BlockContent>
                   )}
                   {canEditFeatures && hasGcpStaticIpFeature && (
-                    <div className="flex justify-end">
+                    <div className={`flex justify-end ${stickyFormActionsClassName}`}>
                       <Button data-testid="submit-button" type="submit" size="lg" loading={isEditClusterLoading}>
                         Save
                       </Button>

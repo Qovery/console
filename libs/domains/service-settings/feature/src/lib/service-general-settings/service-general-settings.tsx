@@ -19,7 +19,7 @@ import {
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, LoaderSpinner, Section, useModal } from '@qovery/shared/ui'
+import { Button, LoaderSpinner, Section, stickyFormActionsClassName, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ApplicationGeneralSettings } from './application-general-settings/application-general-settings'
 import { ContainerGeneralSettings } from './container-general-settings/container-general-settings'
@@ -179,7 +179,7 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
         <div className="max-w-content-with-navigation-left">
           <form onSubmit={onSubmit} className="space-y-10">
             {formContent}
-            <div className="mt-10 flex justify-end">
+            <div className={`mt-10 flex justify-end ${stickyFormActionsClassName}`}>
               <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!methods.formState.isValid}>
                 Save
               </Button>

@@ -26,6 +26,7 @@ import {
   Link,
   Section,
   inputSizeUnitRules,
+  stickyFormActionsClassName,
 } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -310,7 +311,7 @@ function DatabaseResourcesSettingsForm({
               )}
             </Section>
 
-            <div className="flex justify-end">
+            <div className={`flex justify-end ${stickyFormActionsClassName}`}>
               <Button
                 data-testid="submit-button"
                 size="lg"

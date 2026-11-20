@@ -10,7 +10,7 @@ import {
 } from '@qovery/domains/service-terraform/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, LoaderSpinner, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 export const Route = createFileRoute(
@@ -70,7 +70,7 @@ const TerraformConfigurationSettingsWrapper = () => {
         />
         <div className="max-w-content-with-navigation-left">
           <TerraformConfigurationSettings methods={methods} isSettings />
-          <div className="mt-10 flex justify-end">
+          <div className={`mt-10 flex justify-end ${stickyFormActionsClassName}`}>
             <Button
               type="submit"
               size="lg"
