@@ -6,6 +6,7 @@ import Kubernetes from 'devicon/icons/kubernetes/kubernetes-original.svg'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactElement, type ReactNode, cloneElement, useState } from 'react'
+import { type Gate, PaywallLock, useBillingPaywall } from '@qovery/shared/billing-kit'
 import { Callout, Heading, Icon, Modal, Section, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
@@ -26,6 +27,8 @@ type ProviderCardProps = {
   disabled?: boolean
   actionLabel?: string
   analytics: { selectedCloudProvider: string; selectedInstallationType: string }
+  /** The plan does not include it: the card shows the lock and opens the paywall. */
+  locked?: { gate: Gate; open: () => void }
 } & ({ slug: string } | { onClick: () => void })
 
 // Decorative: the card title already names the provider.
@@ -37,7 +40,7 @@ function ProviderIcon({ icon }: { icon: ProviderIconSource }) {
   )
 }
 
-function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, ...props }: ProviderCardProps) {
+function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, locked, ...props }: ProviderCardProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const className = twMerge(
     'flex h-[52px] items-center gap-2 rounded-md border border-neutral bg-surface-neutral px-4 text-left text-sm font-medium text-neutral transition-colors',
@@ -49,7 +52,9 @@ function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, .
     <>
       <ProviderIcon icon={icon} />
       <span className="min-w-0 flex-1 truncate">{title}</span>
-      {actionLabel ? (
+      {locked ? (
+        <PaywallLock gate={locked.gate} className="shrink-0" />
+      ) : actionLabel ? (
         <span className="shrink-0 text-ssm font-normal text-neutral-subtle">{actionLabel}</span>
       ) : (
         <Icon iconName="angle-right" iconStyle="regular" className="text-neutral-subtle" />
@@ -57,6 +62,21 @@ function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, .
     </>
   )
   const capture = () => posthog.capture('select-cluster', analytics)
+
+  if (locked && !disabled) {
+    return (
+      <button
+        type="button"
+        className={className}
+        onClick={() => {
+          capture()
+          locked.open()
+        }}
+      >
+        {content}
+      </button>
+    )
+  }
 
   if ('slug' in props && !disabled) {
     return (
@@ -111,12 +131,20 @@ export function ClusterAdd() {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
-  const { showPylonForm } = useSupportChat()
+  const { showPylonForm, showChat } = useSupportChat()
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
   const { isClusterCreationRestricted: disabled } = useClusterCreationRestriction({ organizationId })
   const [isCreationFlowOpen, setIsCreationFlowOpen] = useState(false)
   const [creationCloudProvider, setCreationCloudProvider] = useState<SelfManagedClusterCloudProvider>('AWS')
   const [creationStep, setCreationStep] = useState<SelfManagedClusterCreationStep>('general')
+  // Qovery-managed clusters can be outside the plan (Free runs self-managed clusters only): the
+  // cards stay visible, locked, and open the paywall. Self-managed clusters are not affected.
+  const paywall = useBillingPaywall(organizationId, { actions: ['cluster.create'] }, { onContactSales: showChat })
+  const managedGate = paywall.gate('cluster.create')
+  const managedLock =
+    managedGate && paywall.locked('cluster.create')
+      ? { gate: managedGate, open: () => paywall.open('cluster.create') }
+      : undefined
 
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
@@ -172,6 +200,7 @@ export function ClusterAdd() {
           slug="aws"
           disabled={disabled}
           analytics={managed('AWS')}
+          locked={managedLock}
         />
         {isEksAnywhereEnabled ? (
           <ProviderCard
@@ -196,6 +225,7 @@ export function ClusterAdd() {
           slug="gcp"
           disabled={disabled}
           analytics={managed('GCP')}
+          locked={managedLock}
         />
         <ProviderCard
           title="Scaleway"
@@ -203,6 +233,7 @@ export function ClusterAdd() {
           slug="scw"
           disabled={disabled}
           analytics={managed('SCW')}
+          locked={managedLock}
         />
         <ProviderCard
           title="Microsoft Azure"
@@ -210,6 +241,7 @@ export function ClusterAdd() {
           slug="azure"
           disabled={disabled}
           analytics={managed('AZURE')}
+          locked={managedLock}
         />
       </ProviderSection>
 
@@ -263,6 +295,8 @@ export function ClusterAdd() {
           />
         ))}
       </ProviderSection>
+
+      {paywall.element}
 
       <Modal
         fakeModal

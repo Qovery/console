@@ -10,6 +10,14 @@ export { BillingAlerts } from './lib/billing-alerts'
 export type { BillingAlertsProps } from './lib/billing-alerts'
 export type { Access } from './lib/parts'
 export {
+  continueChoices,
+  gateFor,
+  gateKeyFromBody,
+  isLocked,
+  lockLabel,
+  optionPrice,
+  paywallFromBody,
+  trialRequest,
   buildRange,
   buildServiceRows,
   cardState,
@@ -49,7 +57,18 @@ export {
 } from './lib/offers'
 export type { OfferHostProps } from './lib/offers'
 export type { PricingTableProps } from './lib/pricing-table'
-export { BillingError, buildUsageQuery, createPricingClient } from './lib/client'
+export { Paywall, PaywallLock, usePaywall } from './lib/paywall'
+export {
+  BILLING_PAYWALL_FEATURE_FLAG,
+  BillingPaywallHost,
+  offerPaywallFromError,
+  pickConsoleCalls,
+  useBillingPaywall,
+  useIsBillingPaywallEnabled,
+  usePricingClient,
+} from './lib/console-paywall'
+export type { PaywallProps, UsePaywall } from './lib/paywall'
+export { BillingError, buildUsageQuery, createPricingClient, gatesQuery } from './lib/client'
 export type { ClientOptions, PricingClient } from './lib/client'
 export * from './lib/types'
 export { money, valueText } from './lib/format'

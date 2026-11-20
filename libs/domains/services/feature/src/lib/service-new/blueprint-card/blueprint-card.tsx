@@ -1,15 +1,21 @@
 import { useParams } from '@tanstack/react-router'
 import { type BlueprintItem } from 'qovery-typescript-axios'
+import { type Gate, PaywallLock } from '@qovery/shared/billing-kit'
 import { Button, Heading, Link } from '@qovery/shared/ui'
 import { getBlueprintDisplayName } from '../../blueprint-utils/blueprint-utils'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 
+/** The plan does not include blueprints: the catalog stays browsable, Deploy opens the paywall. */
+export type BlueprintLock = { gate: Gate; open: () => void }
+
 export function BlueprintCard({
   blueprint,
   onViewDetails,
+  lock,
 }: {
   blueprint: BlueprintItem
   onViewDetails: (blueprint: BlueprintItem) => void
+  lock?: BlueprintLock
 }) {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
 
@@ -31,7 +37,12 @@ export function BlueprintCard({
         </div>
       </div>
       <div className="mt-auto flex items-center gap-1">
-        {blueprint.serviceFamily && (
+        {blueprint.serviceFamily && lock && (
+          <Button type="button" variant="outline" color="neutral" size="sm" onClick={lock.open}>
+            Deploy
+          </Button>
+        )}
+        {blueprint.serviceFamily && !lock && (
           <Link
             to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
             params={{
@@ -52,6 +63,7 @@ export function BlueprintCard({
         <Button type="button" variant="plain" color="neutral" size="sm" onClick={() => onViewDetails(blueprint)}>
           View details
         </Button>
+        {lock && <PaywallLock gate={lock.gate} onClick={lock.open} className="ml-auto" />}
       </div>
     </section>
   )
