@@ -9,6 +9,7 @@ import type {
   BillingInfo,
   BillingInfoView,
   BillingUsage,
+  BuildUsageData,
   CancelReason,
   Cancellation,
   CancellationResult,
@@ -82,6 +83,12 @@ export interface PricingClient {
     organizationId: string,
     range: { from: string; to: string; granularity?: Granularity }
   ): Promise<UsageHistoryData>
+  // Optional: build usage over a period, per builder size and service (any member; costs for
+  // billing roles). service: one service's builds ("" = the time not attributed to a service).
+  buildUsage?(
+    organizationId: string,
+    range: { from: string; to: string; granularity?: Granularity; service?: string }
+  ): Promise<BuildUsageData>
   // Optional: offers and upgrade requests (OfferHost, "Ask an admin") and email preferences.
   offers?(organizationId: string): Promise<Offers>
   offerEvent?(
@@ -137,6 +144,16 @@ export interface ClientOptions {
   /** The signed-in user's Qovery access token (the console already holds it). */
   getToken?: () => Promise<string> | string
   fetch?: typeof fetch
+}
+
+/** The query of a build usage read: the period, its grouping, and a service to drill into. */
+export function buildUsageQuery(r: { from: string; to: string; granularity?: Granularity; service?: string }) {
+  return new URLSearchParams({
+    from: r.from,
+    to: r.to,
+    ...(r.granularity ? { granularity: r.granularity } : {}),
+    ...(r.service !== undefined ? { service: r.service } : {}),
+  }).toString()
 }
 
 export function createPricingClient(o: ClientOptions): PricingClient {
@@ -212,6 +229,7 @@ export function createPricingClient(o: ClientOptions): PricingClient {
         o.pricingApiUrl,
         `/organization/${org}/usageHistory?${new URLSearchParams({ from: r.from, to: r.to, ...(r.granularity ? { granularity: r.granularity } : {}) })}`
       ),
+    buildUsage: (org, r) => req(o.pricingApiUrl, `/organization/${org}/buildUsage?${buildUsageQuery(r)}`),
     offers: (org) => req(o.pricingApiUrl, `/organization/${org}/offers`),
     offerEvent: (org, id, event, surface) =>
       req(o.pricingApiUrl, `/organization/${org}/offers/${id}/events`, {

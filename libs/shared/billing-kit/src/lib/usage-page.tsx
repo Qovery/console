@@ -1,18 +1,20 @@
 /*
  * The console's plan and usage page, from pricing-api: the plan, the estimated bill, what is
  * above the plan this month, usage against every limit, prepaid credits (balances, purchases,
- * buy), usage over a period the person picks, and the journeys around the plan: change plan
+ * buy), usage over a period the person picks, build usage per builder size and service, and the journeys around the plan: change plan
  * (pick, review the quote and what it costs today, confirm), keep the current plan when a change
  * is planned, cancel at the end of the term, keep the subscription, and reactivate it once it
  * ended. Alerts (an overdue invoice, a card that expires) sit under the page's
- * heading, as on the Invoices and Billing pages. It only uses @qovery/shared/ui, so the console
+ * heading, as on the Invoices and Billing pages; a host can draw that heading itself (`heading`).
+ * It only uses @qovery/shared/ui, so the console
  * mounts it as is:
  *
  *   <UsagePage organizationId={id} client={createPricingClient({ pricingApiUrl, getToken })} onNavigate={go} />
  */
-import { useCallback, useEffect, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useState } from 'react'
 import { Badge, Button, Callout, Icon, Modal } from '@qovery/shared/ui'
 import { BillingAlerts } from './billing-alerts'
+import { BuildUsage } from './build-usage'
 import { CancelDialog, PlannedBanners } from './cancel'
 import type { PricingClient } from './client'
 import { PrepaidCredits } from './credits'
@@ -51,6 +53,28 @@ export interface UsagePageProps {
   alerts?: boolean
   /** Where the alerts' buttons go: the invoices page or the billing settings page. */
   onNavigate?: (to: 'invoices' | 'billing') => void
+  /** Draws the page heading with the host's own component (the console's SettingsHeading). Default: the kit's heading, the same layout. */
+  heading?: (h: UsagePageHeading) => ReactNode
+}
+
+/** What the page heading shows: the title, its description and the plan buttons. */
+export interface UsagePageHeading {
+  title: string
+  description: string
+  actions: ReactNode
+}
+
+// Mirrors the console's SettingsHeading: actions at the top right, stacked under the text only on narrow screens.
+function PageHeading({ title, description, actions }: UsagePageHeading) {
+  return (
+    <div className="mb-8 flex w-full flex-col gap-4 border-b border-neutral pb-6 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-2xl font-medium text-neutral">{title}</h2>
+        <p className="max-w-2xl text-sm text-neutral-subtle">{description}</p>
+      </div>
+      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+    </div>
+  )
 }
 
 function Card({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {
@@ -180,6 +204,7 @@ export function UsagePage({
   open,
   alerts = true,
   onNavigate,
+  heading = PageHeading,
 }: UsagePageProps) {
   const [u, setU] = useState<BillingUsage>()
   const [spend, setSpend] = useState<Spend>()
@@ -274,372 +299,375 @@ export function UsagePage({
     else if (a.type === 'upgrade') setModal('compare')
     else onContactSales?.()
   }
+  const actions = (
+    <>
+      <Button variant="outline" color="neutral" size="md" onClick={() => setModal('compare')}>
+        <Icon iconName="table-columns" iconStyle="regular" />
+        Compare plans
+      </Button>
+      {canChangePlan && (
+        <Button size="md" onClick={() => upgrade()}>
+          Change plan
+        </Button>
+      )}
+    </>
+  )
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-neutral pb-5">
-        <div>
-          <h2 className="h4 text-neutral">Plan details</h2>
-          <p className="text-sm text-neutral-subtle">
-            Your plan, what it includes and what you use. Limits are shared by every organization of your contract.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="surface" color="neutral" size="md" onClick={() => setModal('compare')}>
-            Compare plans
-            <Icon iconName="table-columns" iconStyle="regular" />
-          </Button>
-          {canChangePlan && (
-            <Button size="md" onClick={() => upgrade()}>
-              Change plan
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {alerts && (
-        <BillingAlerts organizationId={organizationId} client={client} access={u.access} onNavigate={onNavigate} />
-      )}
-      {u.status.status === 'payment_failed' && (
-        <Callout.Root color="red">
-          <Callout.Text>
-            <Callout.TextHeading>Your last payment failed</Callout.TextHeading>
-            {u.status.message ?? 'Update your payment method'}
-            {u.status.grace_until ? ` before ${date(u.status.grace_until)} to keep creating resources.` : '.'}
-          </Callout.Text>
-        </Callout.Root>
-      )}
-      {amounts && ended && reactivation?.ended && (
-        <SubscriptionEndedBanner
-          view={reactivation}
-          onReactivate={() => {
-            setReactivating(reactivation)
-            setModal('reactivate')
-          }}
-          onContactSales={onContactSales}
-          preview={client.mode === 'preview'}
-        />
-      )}
-      {u.billing.locked && !(amounts && ended && reactivation) && (
-        <Callout.Root color="red">
-          <Callout.Text>
-            <Callout.TextHeading>New resources are paused</Callout.TextHeading>Your subscription is paused, cancelled or
-            unpaid. Running services are not affected.
-          </Callout.Text>
-        </Callout.Root>
-      )}
-      {u.billing.phase && (
-        <Callout.Root color="sky">
-          <Callout.Text>
-            <Callout.TextHeading>
-              {u.billing.phase.kind === 'poc' ? 'Proof of concept' : 'Trial'} until {date(u.billing.phase.until)}
-            </Callout.TextHeading>
-            Limits are not enforced until then.
-          </Callout.Text>
-        </Callout.Root>
-      )}
-      {amounts && !ended && (
-        <PlannedBanners
-          organizationId={organizationId}
-          client={client}
-          scheduled={plan?.scheduled_change}
-          cancellation={cancellation}
-          onChanged={load}
-        />
-      )}
-      {amounts && u.billing.cadence === 'monthly' && !ending && !ended && (
-        <Callout.Root color="neutral">
-          <Callout.Text>
-            <Callout.TextHeading>Save with yearly billing</Callout.TextHeading>Yearly plans cost about 20% less than 12
-            monthly payments.
-            {canChangePlan && (
-              <div className="mt-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  color="neutral"
-                  onClick={() => {
-                    setPreselect(u.plan.code)
-                    setComparePeriod('year')
-                    setModal('upgrade')
-                  }}
-                >
-                  Switch to yearly billing
-                </Button>
-              </div>
-            )}
-          </Callout.Text>
-        </Callout.Root>
-      )}
-
-      {offers !== 'none' && (
-        <OfferHost
-          key={round}
-          modal={offers === 'all'}
-          organizationId={organizationId}
-          client={client}
-          onAction={onOffer}
-          onReviewRequests={canChangePlan ? () => upgrade() : undefined}
-          skuName={skuName}
-        />
-      )}
-
-      <div className="flex flex-col gap-2 md:flex-row">
-        <Card
-          label={ended ? 'Last plan' : 'Current plan'}
-          hint={
-            ended
-              ? `Ended ${date(reactivation?.ended_on ?? u.billing.term_end)}`
-              : `${u.billing.period === 'year' ? 'Yearly' : 'Monthly'} · term ends ${date(u.billing.term_end)}`
-          }
-        >
-          {u.plan.name}
-          {plan?.scheduled_change && (
-            <Badge className="ml-2" color="sky" variant="surface" size="sm">
-              {plan.scheduled_change.name} from {date(plan.scheduled_change.effective_on)}
-            </Badge>
-          )}
-        </Card>
-        {amounts && u.estimate && !ended && (
-          <Card
-            label="Estimated bill"
-            hint={`For this ${u.estimate.period}, usage so far included · next invoice ${date(u.estimate.term_end || u.billing.term_end)}`}
-          >
-            {money(u.estimate.total, cur)}{' '}
-            <span className="text-xs font-normal text-neutral-subtle">/ {u.estimate.period}</span>
-          </Card>
+    <div>
+      {heading({
+        title: 'Plan details',
+        description:
+          'Your plan, what it includes and what you use. Limits are shared by every organization of your contract.',
+        actions,
+      })}
+      <div className="flex flex-col gap-6">
+        {alerts && (
+          <BillingAlerts organizationId={organizationId} client={client} access={u.access} onNavigate={onNavigate} />
         )}
-        {amounts && sp && (
+        {u.status.status === 'payment_failed' && (
+          <Callout.Root color="red">
+            <Callout.Text>
+              <Callout.TextHeading>Your last payment failed</Callout.TextHeading>
+              {u.status.message ?? 'Update your payment method'}
+              {u.status.grace_until ? ` before ${date(u.status.grace_until)} to keep creating resources.` : '.'}
+            </Callout.Text>
+          </Callout.Root>
+        )}
+        {amounts && ended && reactivation?.ended && (
+          <SubscriptionEndedBanner
+            view={reactivation}
+            onReactivate={() => {
+              setReactivating(reactivation)
+              setModal('reactivate')
+            }}
+            onContactSales={onContactSales}
+            preview={client.mode === 'preview'}
+          />
+        )}
+        {u.billing.locked && !(amounts && ended && reactivation) && (
+          <Callout.Root color="red">
+            <Callout.Text>
+              <Callout.TextHeading>New resources are paused</Callout.TextHeading>Your subscription is paused, cancelled
+              or unpaid. Running services are not affected.
+            </Callout.Text>
+          </Callout.Root>
+        )}
+        {u.billing.phase && (
+          <Callout.Root color="sky">
+            <Callout.Text>
+              <Callout.TextHeading>
+                {u.billing.phase.kind === 'poc' ? 'Proof of concept' : 'Trial'} until {date(u.billing.phase.until)}
+              </Callout.TextHeading>
+              Limits are not enforced until then.
+            </Callout.Text>
+          </Callout.Root>
+        )}
+        {amounts && !ended && (
+          <PlannedBanners
+            organizationId={organizationId}
+            client={client}
+            scheduled={plan?.scheduled_change}
+            cancellation={cancellation}
+            onChanged={load}
+          />
+        )}
+        {amounts && u.billing.cadence === 'monthly' && !ending && !ended && (
+          <Callout.Root color="neutral">
+            <Callout.Text>
+              <Callout.TextHeading>Save with yearly billing</Callout.TextHeading>Yearly plans cost about 20% less than
+              12 monthly payments.
+              {canChangePlan && (
+                <div className="mt-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    color="neutral"
+                    onClick={() => {
+                      setPreselect(u.plan.code)
+                      setComparePeriod('year')
+                      setModal('upgrade')
+                    }}
+                  >
+                    Switch to yearly billing
+                  </Button>
+                </div>
+              )}
+            </Callout.Text>
+          </Callout.Root>
+        )}
+
+        {offers !== 'none' && (
+          <OfferHost
+            key={round}
+            modal={offers === 'all'}
+            organizationId={organizationId}
+            client={client}
+            onAction={onOffer}
+            onReviewRequests={canChangePlan ? () => upgrade() : undefined}
+            skuName={skuName}
+          />
+        )}
+
+        <div className="flex flex-col gap-2 md:flex-row">
           <Card
-            label="Above the plan this month"
+            label={ended ? 'Last plan' : 'Current plan'}
             hint={
-              <>
-                {estimatedAbove > sp.spent ? (
-                  <>{money(sp.spent, cur)} recorded so far toward your spend limit. </>
-                ) : null}
-                {sp.account.monthly_limit != null ? (
-                  <>
-                    {Math.round(sp.account.used_pct ?? 0)}% of the {money(sp.account.monthly_limit, cur)} spend limit
-                    {onManageSpendLimits && (
-                      <>
-                        {' '}
-                        ·{' '}
-                        <button type="button" className="text-brand hover:underline" onClick={onManageSpendLimits}>
-                          Manage
-                        </button>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    No spend limit
-                    {onManageSpendLimits && (
-                      <>
-                        {' '}
-                        ·{' '}
-                        <button type="button" className="text-brand hover:underline" onClick={onManageSpendLimits}>
-                          Set one
-                        </button>
-                      </>
-                    )}
-                  </>
-                )}
-              </>
+              ended
+                ? `Ended ${date(reactivation?.ended_on ?? u.billing.term_end)}`
+                : `${u.billing.period === 'year' ? 'Yearly' : 'Monthly'} · term ends ${date(u.billing.term_end)}`
             }
           >
-            {money(Math.max(sp.spent, estimatedAbove), cur)}{' '}
-            <span className="text-xs font-normal text-neutral-subtle">
-              {estimatedAbove > sp.spent ? 'estimated' : 'recorded'}
-            </span>
+            {u.plan.name}
+            {plan?.scheduled_change && (
+              <Badge className="ml-2" color="sky" variant="surface" size="sm">
+                {plan.scheduled_change.name} from {date(plan.scheduled_change.effective_on)}
+              </Badge>
+            )}
           </Card>
-        )}
-      </div>
-
-      {amounts && !ended && u.estimate && u.estimate.lines.length > 1 && (
-        <div className="rounded border border-neutral bg-surface-neutral">
-          <div className="border-b border-neutral px-5 py-2 text-xs font-medium text-neutral-subtle">
-            Estimated bill for this {u.estimate.period}
-          </div>
-          {u.estimate.lines.map((l, i) => (
-            <div
-              key={i}
-              className="flex justify-between gap-3 border-b border-neutral px-5 py-2 text-sm last:border-b-0"
+          {amounts && u.estimate && !ended && (
+            <Card
+              label="Estimated bill"
+              hint={`For this ${u.estimate.period}, usage so far included · next invoice ${date(u.estimate.term_end || u.billing.term_end)}`}
             >
-              <span className="text-neutral">
-                {estimateLineLabel(l, unitOf)}
-                {l.kind === 'overage' && <span className="text-xs text-neutral-subtle"> (estimate)</span>}
+              {money(u.estimate.total, cur)}{' '}
+              <span className="text-xs font-normal text-neutral-subtle">/ {u.estimate.period}</span>
+            </Card>
+          )}
+          {amounts && sp && (
+            <Card
+              label="Above the plan this month"
+              hint={
+                <>
+                  {estimatedAbove > sp.spent ? (
+                    <>{money(sp.spent, cur)} recorded so far toward your spend limit. </>
+                  ) : null}
+                  {sp.account.monthly_limit != null ? (
+                    <>
+                      {Math.round(sp.account.used_pct ?? 0)}% of the {money(sp.account.monthly_limit, cur)} spend limit
+                      {onManageSpendLimits && (
+                        <>
+                          {' '}
+                          ·{' '}
+                          <button type="button" className="text-brand hover:underline" onClick={onManageSpendLimits}>
+                            Manage
+                          </button>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      No spend limit
+                      {onManageSpendLimits && (
+                        <>
+                          {' '}
+                          ·{' '}
+                          <button type="button" className="text-brand hover:underline" onClick={onManageSpendLimits}>
+                            Set one
+                          </button>
+                        </>
+                      )}
+                    </>
+                  )}
+                </>
+              }
+            >
+              {money(Math.max(sp.spent, estimatedAbove), cur)}{' '}
+              <span className="text-xs font-normal text-neutral-subtle">
+                {estimatedAbove > sp.spent ? 'estimated' : 'recorded'}
               </span>
-              <span className={l.amount < 0 ? 'text-positive' : 'text-neutral'}>{money(l.amount, cur)}</span>
-            </div>
-          ))}
+            </Card>
+          )}
         </div>
-      )}
 
-      <div>
-        <h3 className="mb-3 text-base font-medium text-neutral">Usage</h3>
-        <div className="divide-y divide-neutral rounded border border-neutral bg-surface-neutral">
-          {limits.map((e) => {
-            const series = u.usage_insights?.series.find((x) => x.sku === e.sku)
-            return (
-              <UsageRow
-                key={e.sku}
-                e={e}
-                onUpgrade={() => (canChangePlan ? upgrade() : setModal('compare'))}
-                onDetails={series ? () => setDetail(series) : undefined}
-                onAsk={!amounts && client.requestUpgrade ? () => setAsk(e) : undefined}
-              />
-            )
-          })}
-        </div>
-        {features.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2 text-xs">
-            {features.map((f) => (
-              <span
-                key={f.sku}
-                className={`inline-flex items-center gap-1.5 rounded border px-2 py-1 ${f.value === true ? 'border-neutral text-neutral' : 'border-neutral text-neutral-subtle'}`}
+        {amounts && !ended && u.estimate && u.estimate.lines.length > 1 && (
+          <div className="rounded border border-neutral bg-surface-neutral">
+            <div className="border-b border-neutral px-5 py-2 text-xs font-medium text-neutral-subtle">
+              Estimated bill for this {u.estimate.period}
+            </div>
+            {u.estimate.lines.map((l, i) => (
+              <div
+                key={i}
+                className="flex justify-between gap-3 border-b border-neutral px-5 py-2 text-sm last:border-b-0"
               >
-                <Icon
-                  iconName={f.value === true ? 'check' : 'lock'}
-                  iconStyle="regular"
-                  className={f.value === true ? 'text-positive' : ''}
-                />
-                {f.name}
-              </span>
+                <span className="text-neutral">
+                  {estimateLineLabel(l, unitOf)}
+                  {l.kind === 'overage' && <span className="text-xs text-neutral-subtle"> (estimate)</span>}
+                </span>
+                <span className={l.amount < 0 ? 'text-positive' : 'text-neutral'}>{money(l.amount, cur)}</span>
+              </div>
             ))}
           </div>
         )}
-      </div>
 
-      <PrepaidCredits
-        organizationId={organizationId}
-        client={client}
-        usage={u}
-        onContactSales={onContactSales}
-        onChanged={load}
-      />
-
-      {client.usageHistory && <UsageHistory organizationId={organizationId} client={client} />}
-
-      <div>
-        <h3 className="mb-1 text-base font-medium text-neutral">Usage details</h3>
-        <p className="mb-3 text-sm text-neutral-subtle">What the plan covers, and where this month is heading.</p>
-        <UsageInsights usage={u} overTime={!client.usageHistory} />
-      </div>
-
-      <EmailPreferencesPanel organizationId={organizationId} client={client} />
-
-      {u.notes.length > 0 && <p className="text-xs text-neutral-subtle">{u.notes.join(' ')}</p>}
-
-      {amounts && cancellation && !ending && cancellation.unavailable?.code !== 'SUBSCRIPTION_ENDED' && (
-        <div className="border-t border-neutral pt-4 text-sm text-neutral-subtle">
-          {!cancelBlocked ? (
-            <button
-              type="button"
-              className="text-neutral-subtle underline-offset-2 hover:text-neutral hover:underline"
-              onClick={() => setModal('cancel')}
-            >
-              Cancel subscription
-            </button>
-          ) : cancelBlocked.contact &&
-            onContactSales &&
-            cancellation.unavailable?.code !== 'PAYMENT_ACTIONS_UNAVAILABLE' ? (
-            <button
-              type="button"
-              className="text-neutral-subtle underline-offset-2 hover:text-neutral hover:underline"
-              onClick={onContactSales}
-            >
-              {cancellation.unavailable?.code === 'AWS_MARKETPLACE'
-                ? 'Your subscription is managed in AWS Marketplace: contact us to cancel'
-                : 'Contact us to cancel'}
-            </button>
-          ) : (
-            <span>
-              {cancelBlocked.title}. {cancelBlocked.body}
-            </span>
+        <div>
+          <h3 className="mb-3 text-base font-medium text-neutral">Usage</h3>
+          <div className="divide-y divide-neutral rounded border border-neutral bg-surface-neutral">
+            {limits.map((e) => {
+              const series = u.usage_insights?.series.find((x) => x.sku === e.sku)
+              return (
+                <UsageRow
+                  key={e.sku}
+                  e={e}
+                  onUpgrade={() => (canChangePlan ? upgrade() : setModal('compare'))}
+                  onDetails={series ? () => setDetail(series) : undefined}
+                  onAsk={!amounts && client.requestUpgrade ? () => setAsk(e) : undefined}
+                />
+              )
+            })}
+          </div>
+          {features.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2 text-xs">
+              {features.map((f) => (
+                <span
+                  key={f.sku}
+                  className={`inline-flex items-center gap-1.5 rounded border px-2 py-1 ${f.value === true ? 'border-neutral text-neutral' : 'border-neutral text-neutral-subtle'}`}
+                >
+                  <Icon
+                    iconName={f.value === true ? 'check' : 'lock'}
+                    iconStyle="regular"
+                    className={f.value === true ? 'text-positive' : ''}
+                  />
+                  {f.name}
+                </span>
+              ))}
+            </div>
           )}
         </div>
-      )}
 
-      {modal === 'compare' && (
-        <Modal
-          externalOpen
-          setExternalOpen={(o) => {
-            if (!o) {
-              setModal(null)
-              setComparePeriod(undefined)
-            }
-          }}
-          width="min(1200px, calc(100vw - 24px))"
-        >
-          <div className="max-h-[85vh] overflow-y-auto p-6">
-            <h2 className="h4 mb-4 text-neutral">Compare plans</h2>
-            <PricingTable
-              client={client}
-              currency={cur}
-              defaultPeriod={comparePeriod ?? u.billing.period}
-              currentPlan={u.plan.code}
-              onSelect={
-                canChangePlan
-                  ? (p, period) => {
-                      setComparePeriod(period)
-                      upgrade(p.code)
-                    }
-                  : undefined
-              }
-              onContactSales={() => onContactSales?.()}
-              currencySwitch={false}
-            />
-          </div>
-        </Modal>
-      )}
-      {ask && (
-        <AskAdminModal
-          organizationId={organizationId}
-          client={client}
-          sku={ask.sku}
-          skuName={ask.name}
-          onClose={() => {
-            setAsk(undefined)
-            setRound((n) => n + 1)
-          }}
-        />
-      )}
-      {detail && <SeriesModal series={detail} onClose={() => setDetail(undefined)} />}
-      {modal === 'upgrade' && (
-        <PlanChangeFlow
+        <PrepaidCredits
           organizationId={organizationId}
           client={client}
           usage={u}
-          preselect={preselect}
-          prePeriod={comparePeriod}
-          onClose={() => {
-            setModal(null)
-            setComparePeriod(undefined)
-          }}
-          onDone={load}
           onContactSales={onContactSales}
+          onChanged={load}
         />
-      )}
-      {modal === 'reactivate' && reactivating && (
-        <ReactivateFlow
-          organizationId={organizationId}
-          client={client}
-          view={reactivating}
-          onClose={() => {
-            setModal(null)
-            setReactivating(undefined)
-          }}
-          onDone={load}
-        />
-      )}
-      {modal === 'cancel' && cancellation && (
-        <CancelDialog
-          organizationId={organizationId}
-          client={client}
-          view={cancellation}
-          onClose={() => setModal(null)}
-          onDone={load}
-        />
-      )}
+
+        {client.usageHistory && <UsageHistory organizationId={organizationId} client={client} />}
+
+        {client.buildUsage && <BuildUsage organizationId={organizationId} client={client} />}
+
+        <div>
+          <h3 className="mb-1 text-base font-medium text-neutral">Usage details</h3>
+          <p className="mb-3 text-sm text-neutral-subtle">What the plan covers, and where this month is heading.</p>
+          <UsageInsights usage={u} overTime={!client.usageHistory} />
+        </div>
+
+        <EmailPreferencesPanel organizationId={organizationId} client={client} />
+
+        {u.notes.length > 0 && <p className="text-xs text-neutral-subtle">{u.notes.join(' ')}</p>}
+
+        {amounts && cancellation && !ending && cancellation.unavailable?.code !== 'SUBSCRIPTION_ENDED' && (
+          <div className="border-t border-neutral pt-4 text-sm text-neutral-subtle">
+            {!cancelBlocked ? (
+              <button
+                type="button"
+                className="text-neutral-subtle underline-offset-2 hover:text-neutral hover:underline"
+                onClick={() => setModal('cancel')}
+              >
+                Cancel subscription
+              </button>
+            ) : cancelBlocked.contact &&
+              onContactSales &&
+              cancellation.unavailable?.code !== 'PAYMENT_ACTIONS_UNAVAILABLE' ? (
+              <button
+                type="button"
+                className="text-neutral-subtle underline-offset-2 hover:text-neutral hover:underline"
+                onClick={onContactSales}
+              >
+                {cancellation.unavailable?.code === 'AWS_MARKETPLACE'
+                  ? 'Your subscription is managed in AWS Marketplace: contact us to cancel'
+                  : 'Contact us to cancel'}
+              </button>
+            ) : (
+              <span>
+                {cancelBlocked.title}. {cancelBlocked.body}
+              </span>
+            )}
+          </div>
+        )}
+
+        {modal === 'compare' && (
+          <Modal
+            externalOpen
+            setExternalOpen={(o) => {
+              if (!o) {
+                setModal(null)
+                setComparePeriod(undefined)
+              }
+            }}
+            width="min(1200px, calc(100vw - 24px))"
+          >
+            <div className="max-h-[85vh] overflow-y-auto p-6">
+              <h2 className="h4 mb-4 text-neutral">Compare plans</h2>
+              <PricingTable
+                client={client}
+                currency={cur}
+                defaultPeriod={comparePeriod ?? u.billing.period}
+                currentPlan={u.plan.code}
+                onSelect={
+                  canChangePlan
+                    ? (p, period) => {
+                        setComparePeriod(period)
+                        upgrade(p.code)
+                      }
+                    : undefined
+                }
+                onContactSales={() => onContactSales?.()}
+                currencySwitch={false}
+              />
+            </div>
+          </Modal>
+        )}
+        {ask && (
+          <AskAdminModal
+            organizationId={organizationId}
+            client={client}
+            sku={ask.sku}
+            skuName={ask.name}
+            onClose={() => {
+              setAsk(undefined)
+              setRound((n) => n + 1)
+            }}
+          />
+        )}
+        {detail && <SeriesModal series={detail} onClose={() => setDetail(undefined)} />}
+        {modal === 'upgrade' && (
+          <PlanChangeFlow
+            organizationId={organizationId}
+            client={client}
+            usage={u}
+            preselect={preselect}
+            prePeriod={comparePeriod}
+            onClose={() => {
+              setModal(null)
+              setComparePeriod(undefined)
+            }}
+            onDone={load}
+            onContactSales={onContactSales}
+          />
+        )}
+        {modal === 'reactivate' && reactivating && (
+          <ReactivateFlow
+            organizationId={organizationId}
+            client={client}
+            view={reactivating}
+            onClose={() => {
+              setModal(null)
+              setReactivating(undefined)
+            }}
+            onDone={load}
+          />
+        )}
+        {modal === 'cancel' && cancellation && (
+          <CancelDialog
+            organizationId={organizationId}
+            client={client}
+            view={cancellation}
+            onClose={() => setModal(null)}
+            onDone={load}
+          />
+        )}
+      </div>
     </div>
   )
 }

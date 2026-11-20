@@ -457,6 +457,121 @@ export interface UsageHistoryData {
   notes: string[]
 }
 
+// ---- build usage (GET /organization/{id}/buildUsage; staff: /admin/v1/{organizations|accounts}/{id}/builds)
+/** A builder size, "<largest>+" beyond the largest, "none" (no builder provisioned) or "unknown" (not attributed to a service). */
+export interface BuildSizeUsage {
+  size: string
+  name: string
+  multiplier: number
+  unknown?: boolean
+  no_builder?: boolean
+  builds: number
+  build_minutes: number
+  counted_build_minutes: number
+  cost?: number
+  share: number
+}
+export interface BuildPeriod {
+  period: string
+  builds: number
+  failed_builds: number
+  build_minutes: number
+  counted_build_minutes: number
+  deploy_minutes: number
+  cost?: number
+  by_size: Record<string, number>
+}
+export interface BuildServiceUsage {
+  /** Empty: time not attributed to a service. */
+  service_id: string
+  organization_id: string
+  name: string
+  type: string
+  builds: number
+  failed_builds: number
+  deployments: number
+  build_minutes: number
+  counted_build_minutes: number
+  deploy_minutes: number
+  avg_build_seconds: number
+  p95_build_seconds: number
+  sizes: string[]
+  cost?: number
+  build_cost?: number
+  share: number
+  trend: number[]
+  failed_counted_minutes: number
+  last_build_at?: string
+}
+export type BuildHintKind = 'top_cost' | 'downsize' | 'frequent' | 'failed'
+export interface BuildHint {
+  kind: BuildHintKind
+  service_id: string
+  service_name: string
+  title: string
+  detail: string
+  minutes: number
+  cost?: number
+}
+export interface BuildRow {
+  finished_at: string
+  execution_id: string
+  environment_id: string
+  status: string
+  failed: boolean
+  build_seconds: number
+  deploy_seconds: number
+  size: string
+  size_name: string
+  multiplier: number
+  unknown?: boolean
+  cpu_milli: number | null
+  ram_gib: number | null
+  counted_build_minutes: number
+  cost?: number
+}
+export interface BuildTotals {
+  builds: number
+  failed_builds: number
+  deployments: number
+  build_minutes: number
+  counted_build_minutes: number
+  deploy_minutes: number
+  build_cost?: number
+  deploy_cost?: number
+  services: number
+  services_built: number
+  services_not_built: number
+  unknown_builder_builds: number
+  no_builder_builds: number
+  failed_counted_minutes: number
+  failed_cost?: number
+  unattributed_deployments: number
+}
+/** One build usage answer. Costs and prices only for billing roles (and staff). */
+export interface BuildUsageData {
+  scope?: 'organization' | 'account'
+  id?: string
+  organization_id?: string
+  access?: 'member' | 'billing' | 'demo'
+  currency: string
+  prices?: { build_per_minute: number; deploy_per_minute: number }
+  builder_sizes: BuilderSize[]
+  source: { facts_since: string | null; complete: boolean; note: string }
+  organizations?: Record<string, string>
+  from: string
+  to: string
+  granularity: Granularity
+  totals: BuildTotals
+  by_size: BuildSizeUsage[]
+  periods: BuildPeriod[]
+  services: BuildServiceUsage[]
+  hints: BuildHint[]
+  /** One service's builds, newest first, when asked for with `service`. */
+  builds?: BuildRow[]
+  notes: string[]
+}
+
 // ---- the customer's own billing (GET /organization/{id}/invoices, /paymentMethods, /billingInfo, /awsMarketplace)
 export type InvoiceStatus = 'paid' | 'posted' | 'payment_due' | 'not_paid' | 'voided' | 'pending'
 export interface CustomerInvoice {

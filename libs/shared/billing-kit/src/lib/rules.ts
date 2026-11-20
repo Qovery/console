@@ -1,11 +1,12 @@
 /*
  * The billing kit's pure rules for invoices, payment methods, billing information, AWS
- * Marketplace offers, plan changes, cancellation and usage history: no React, no network, so they
+ * Marketplace offers, plan changes, cancellation, usage history and build usage: no React, no network, so they
  * are unit tested (web/tests/billing-kit.test.ts).
  */
 import type {
   Availability,
   BillingInfo,
+  BuildServiceUsage,
   CreditOption,
   CustomerInvoice,
   EstimateLine,
@@ -515,4 +516,97 @@ export function historyCSV(h: UsageHistoryData, scope = 'all'): string {
       .join(',')
   )
   return lines.join('\n') + '\n'
+}
+
+// ------------------------------------------------------------------ build usage
+
+export type BuildPreset = 'last_30' | Exclude<HistoryPreset, 'last_6'>
+
+export const BUILD_PRESETS: { id: BuildPreset; label: string }[] = [
+  { id: 'last_30', label: 'Last 30 days' },
+  { id: 'this_month', label: 'This month' },
+  { id: 'last_month', label: 'Last month' },
+  { id: 'last_3', label: 'Last 3 months' },
+  { id: 'last_12', label: 'Last 12 months' },
+  { id: 'custom', label: 'Custom range' },
+]
+
+/** The dates of a build usage preset, in UTC: the last 30 days day by day, else the history's. */
+export function buildRange(
+  p: Exclude<BuildPreset, 'custom'>,
+  today: Date
+): { from: string; to: string; granularity: Granularity } {
+  if (p !== 'last_30') return presetRange(p, today)
+  const t = utcDay(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())
+  return { from: ymd(new Date(t.getTime() - 29 * 86400000)), to: ymd(t), granularity: 'day' }
+}
+
+/** A build duration: 45 s, 3 min 05 s, 1 h 02 min. */
+export function buildDuration(seconds: number) {
+  const s = Math.round(seconds)
+  if (s < 60) return `${s} s`
+  if (s < 3600) return `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')} s`
+  return `${Math.floor(s / 3600)} h ${String(Math.floor((s % 3600) / 60)).padStart(2, '0')} min`
+}
+
+const SIZE_COLORS = [
+  'var(--brand-9)',
+  'var(--info-9)',
+  'var(--positive-9)',
+  'var(--warning-9)',
+  'var(--accent-9, var(--purple-9))',
+]
+
+/** One color per builder size, in the catalog's order; beyond the largest, no builder and unknown apart. */
+export function buildSizeColor(size: string, catalog: string[]) {
+  if (size === 'unknown') return 'var(--neutral-7)'
+  if (size === 'none') return 'var(--neutral-9)'
+  if (size.endsWith('+')) return 'var(--negative-9)'
+  const i = catalog.indexOf(size)
+  return SIZE_COLORS[(i < 0 ? catalog.length : i) % SIZE_COLORS.length]
+}
+
+export type BuildSortKey =
+  | 'name'
+  | 'builds'
+  | 'counted_build_minutes'
+  | 'deploy_minutes'
+  | 'avg_build_seconds'
+  | 'p95_build_seconds'
+  | 'cost'
+  | 'share'
+export interface BuildServiceFilter {
+  q: string
+  type: string
+  size: string
+  built: 'all' | 'built' | 'not_built'
+}
+
+/**
+ * The services table: the search (name or id), the type, a builder size used, built or not, then
+ * sorted on a column (name ascending, numbers descending by default). Time not attributed to a
+ * service always comes last.
+ */
+export function buildServiceRows(
+  services: BuildServiceUsage[],
+  f: BuildServiceFilter,
+  sort: { key: BuildSortKey; desc: boolean }
+) {
+  const q = f.q.trim().toLowerCase()
+  const rows = services.filter(
+    (s) =>
+      (!q || s.name.toLowerCase().includes(q) || s.service_id.toLowerCase().includes(q)) &&
+      (!f.type || s.type === f.type) &&
+      (!f.size || s.sizes.includes(f.size)) &&
+      (f.built === 'all' || (f.built === 'built' ? s.builds > 0 : s.builds === 0))
+  )
+  const val = (s: BuildServiceUsage) =>
+    sort.key === 'name' ? s.name.toLowerCase() : sort.key === 'cost' ? s.cost ?? 0 : s[sort.key]
+  return rows.sort((a, b) => {
+    if (!a.service_id !== !b.service_id) return a.service_id ? -1 : 1
+    const x = val(a),
+      y = val(b)
+    if (x === y) return a.name.localeCompare(b.name)
+    return (x < y ? -1 : 1) * (sort.desc ? -1 : 1)
+  })
 }

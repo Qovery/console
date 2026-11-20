@@ -1,7 +1,7 @@
 export { BillingPage } from './lib/billing-page'
 export type { BillingPageProps, BillingTab } from './lib/billing-page'
 export { UsagePage } from './lib/usage-page'
-export type { UsagePageProps } from './lib/usage-page'
+export type { UsagePageHeading, UsagePageProps } from './lib/usage-page'
 export { InvoicesPage, openPaymentMethodPage } from './lib/invoices-page'
 export type { InvoicesPageProps } from './lib/invoices-page'
 export { BillingSettingsPage } from './lib/billing-settings-page'
@@ -10,6 +10,8 @@ export { BillingAlerts } from './lib/billing-alerts'
 export type { BillingAlertsProps } from './lib/billing-alerts'
 export type { Access } from './lib/parts'
 export {
+  buildRange,
+  buildServiceRows,
   cardState,
   creditQuantityError,
   customRangeError,
@@ -25,6 +27,8 @@ export { CancelDialog, PlannedBanners } from './lib/cancel'
 export { BuyCreditsDialog, PrepaidCredits } from './lib/credits'
 export { ReactivateFlow, SubscriptionEndedBanner } from './lib/reactivate'
 export { UsageHistory } from './lib/usage-history'
+export { BuildUsage } from './lib/build-usage'
+export type { BuildUsageLoader, BuildUsageProps } from './lib/build-usage'
 export { BuilderPrices, PricingTable } from './lib/pricing-table'
 export { BuilderPicker, builderSizeFor } from './lib/builder-picker'
 export type { BuilderPickerProps } from './lib/builder-picker'
@@ -40,7 +44,7 @@ export {
 } from './lib/offers'
 export type { OfferHostProps } from './lib/offers'
 export type { PricingTableProps } from './lib/pricing-table'
-export { BillingError, createPricingClient } from './lib/client'
+export { BillingError, buildUsageQuery, createPricingClient } from './lib/client'
 export type { ClientOptions, PricingClient } from './lib/client'
 export * from './lib/types'
 export { money, valueText } from './lib/format'

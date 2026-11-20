@@ -11,7 +11,7 @@ import {
   billingUsageFactoryMock,
   createPricingClient,
 } from '@qovery/shared/billing-kit'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { pickConsoleCalls, usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import {
   BILLING_USAGE_FEATURE_FLAG,
@@ -298,6 +298,45 @@ describe('BillingUsageView', () => {
     expect(screen.getAllByText('Managed clusters').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Members').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Deployment minutes').length).toBeGreaterThan(0)
+  })
+
+  it('should draw Plan details with SettingsHeading, its buttons on the right and the alerts under it', async () => {
+    mockUsage(billingUsageFactoryMock('billing'), {
+      ...journeyRoutes(),
+      '/invoices': () =>
+        jsonResponse(200, {
+          invoices: [
+            {
+              id: 'INV-2026-0042',
+              status: 'payment_due',
+              date: '2026-11-01T00:00:00Z',
+              due_date: '2026-11-01T00:00:00Z',
+              paid_at: null,
+              currency: 'USD',
+              total: 89900,
+              amount_due: 89900,
+              amount_paid: 0,
+              collectable: true,
+              lines: [],
+            },
+          ],
+          next_offset: '',
+          billing_channel: 'chargebee',
+          actions_available: true,
+        }),
+    })
+    renderWithProviders(<BillingUsageView />)
+
+    // The same h1 as Invoices and Billing, in a SettingsHeading that holds the description and both buttons
+    const title = await screen.findByRole('heading', { level: 1, name: 'Plan details' })
+    const header = title.closest('.border-b') as HTMLElement
+    expect(within(header).getByText(/Limits are shared by every organization/)).toHaveClass('max-w-2xl')
+    expect(await within(header).findByRole('button', { name: 'Change plan' })).toBeInTheDocument()
+    expect(within(header).getByRole('button', { name: 'Compare plans' })).toBeInTheDocument()
+
+    const alert = await screen.findByRole('button', { name: 'View invoices' })
+    expect(header.compareDocumentPosition(alert) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(header).not.toContainElement(alert)
   })
 
   it('should send plan, cancellation and history calls to pricing-api, never offers or email preferences', async () => {

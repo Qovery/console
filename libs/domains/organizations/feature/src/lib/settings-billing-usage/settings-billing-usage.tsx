@@ -1,8 +1,9 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { type ReactNode, useCallback } from 'react'
+import { type ReactNode, useCallback, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { P, match } from 'ts-pattern'
-import { UsagePage } from '@qovery/shared/billing-kit'
+import { UsagePage, type UsagePageHeading } from '@qovery/shared/billing-kit'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Callout, EmptyState, Icon, Link, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
@@ -64,20 +65,24 @@ export function useBillingNavigate(organizationId: string) {
   )
 }
 
-// The three billing pages share this frame. The kit renders the alerts at the top of each page, under its heading.
+// The three billing pages share this frame: a full-width SettingsHeading, then the kit's page, whose alerts come first.
+// The Usage page draws its heading from the kit (its buttons open the kit's journeys) into headingSlot.
 export function BillingPageLayout({
   title,
   description,
+  headingSlot,
   children,
 }: {
   title?: string
   description?: string
+  headingSlot?: (element: HTMLDivElement | null) => void
   children: ReactNode
 }) {
   return (
     <div className="w-full">
       <Section className="px-8 pb-8 pt-6">
         {title && <SettingsHeading title={title} description={description} showNeedHelp={false} />}
+        {headingSlot && <div ref={headingSlot} />}
         <div className="flex max-w-content-with-navigation-left flex-col gap-6">{children}</div>
       </Section>
     </div>
@@ -187,10 +192,23 @@ export function BillingUsageView() {
   const client = usePricingClient()
   const goTo = useBillingNavigate(organizationId)
   const { showChat } = useSupportChat()
+  const [headingElement, setHeadingElement] = useState<HTMLDivElement | null>(null)
 
-  // No console heading: the kit's "Plan details" heads the page, with the alerts under it
+  // The kit's "Plan details" heading, drawn with SettingsHeading above the page like on Invoices and Billing
+  const heading = useCallback(
+    ({ title, description, actions }: UsagePageHeading) =>
+      headingElement &&
+      createPortal(
+        <SettingsHeading title={title} description={description} showNeedHelp={false}>
+          <div className="flex shrink-0 items-start gap-2">{actions}</div>
+        </SettingsHeading>,
+        headingElement
+      ),
+    [headingElement]
+  )
+
   return (
-    <BillingPageLayout>
+    <BillingPageLayout headingSlot={setHeadingElement}>
       {match({ data, error, isLoading })
         .with({ isLoading: true }, () => <BillingUsageSkeleton />)
         .with({ data: P.not(P.nullish) }, () => (
@@ -200,6 +218,7 @@ export function BillingUsageView() {
             offers="none"
             onNavigate={goTo}
             onContactSales={showChat}
+            heading={heading}
           />
         ))
         .otherwise(() => (
