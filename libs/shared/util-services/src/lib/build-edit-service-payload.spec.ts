@@ -223,6 +223,15 @@ describe('testing payload refactoring', () => {
       expect(payload).not.toHaveProperty('build_settings')
     })
 
+    it.each([
+      ['an image', imageContainer],
+      ['a Git', gitContainer],
+    ])('should send the stored ephemeral storage of %s container', (_, container) => {
+      const payload = toWire(buildEditServicePayload({ service: { ...container, ephemeral_storage_in_gib: 20 } }))
+
+      expect(payload).toMatchObject({ ephemeral_storage_in_gib: 20 })
+    })
+
     it('should drop the image fields and source of a Git container even when the request spreads the service', () => {
       const request = { ...gitContainer, auto_preview: true, ports: [] } as Partial<ContainerRequest>
       const payload = toWire(buildEditServicePayload({ service: gitContainer, request }))
