@@ -2,6 +2,8 @@ import { render } from '__tests__/utils/setup-jest'
 import Icon from '../icon/icon'
 import Tabs, { type TabsProps } from './tabs'
 
+jest.unmock('@tanstack/react-router')
+
 let props: TabsProps
 
 beforeEach(() => {

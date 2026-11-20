@@ -1,8 +1,10 @@
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/shared/factories'
+import { renderWithRouter } from '@qovery/shared/util-tests'
 import DatabaseSettingsResources, { type DatabaseSettingsResourcesProps } from './database-settings-resources'
+
+jest.unmock('@tanstack/react-router')
 
 jest.mock('@qovery/domains/cloud-providers/feature', () => ({
   useCloudProviderDatabaseInstanceTypes: () => ({
@@ -17,8 +19,8 @@ const props: DatabaseSettingsResourcesProps = {
 }
 
 describe('DatabaseSettingsResources', () => {
-  it('should render successfully', () => {
-    const { baseElement } = render(
+  it('should render successfully', async () => {
+    const { baseElement } = await renderWithRouter(
       wrapWithReactHookForm(<DatabaseSettingsResources {...props} />, {
         defaultValues: {
           instances: [1, 18],

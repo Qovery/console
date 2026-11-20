@@ -1,6 +1,8 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { NavigationLeft, type NavigationLeftProps, linkClassName } from './navigation-left'
 
+jest.unmock('@tanstack/react-router')
+
 describe('NavigationLeft', () => {
   const props: NavigationLeftProps = {
     links: [
