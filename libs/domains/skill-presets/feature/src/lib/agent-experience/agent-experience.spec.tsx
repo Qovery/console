@@ -1,10 +1,17 @@
 import { useLocation, useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
 import { type ReactNode } from 'react'
-import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
+import {
+  type SkillPresetsMockScenario,
+  buildSkillPresetApiError,
+  resetSkillPresetsMockApi,
+  skillPresetsApi,
+} from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { AgentsSetupSection } from '../agents-setup/agents-setup-section'
 import { AgentExperienceAutomate } from './agent-experience-automate'
 import { AgentExperienceCopilot, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
+import { AgentExperienceNav } from './agent-experience-nav'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
 import { ConnectAgentModal } from './connect-agent-modal'
 
@@ -39,12 +46,90 @@ const useScenario = (scenario: SkillPresetsMockScenario) => {
   resetSkillPresetsMockApi()
 }
 
+const stepState = (id: string) => screen.getByTestId(`setup-step-${id}`).getAttribute('data-state')
+
 beforeEach(() => {
   window.sessionStorage.clear()
   window.localStorage.clear()
   resetSkillPresetsMockApi()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
+})
+
+describe('AgentsSetupSection', () => {
+  it('lists the three steps in order the first time, with the preset step next', async () => {
+    useScenario('agent-experience-empty')
+    renderWithProviders(<AgentsSetupSection />)
+
+    expect(await screen.findByTestId('agents-setup-progress')).toHaveTextContent('0 of 3 done')
+    expect(
+      within(screen.getByTestId('agents-setup-steps'))
+        .getAllByRole('listitem')
+        .map((item) => item.dataset.testid)
+    ).toEqual(['agents-setup-step-preset', 'agents-setup-step-policy-token', 'agents-setup-step-connect'])
+    expect(screen.getByTestId('agents-setup-step-preset')).toHaveAttribute('data-state', 'next')
+    expect(screen.getByText('Create a preset in the Skills registry')).toBeInTheDocument()
+    // New organizations have AI features on.
+    expect(screen.queryByTestId('agents-setup-ai-off')).not.toBeInTheDocument()
+  })
+
+  it('opens the Connect an agent popup from its step', async () => {
+    useScenario('agent-experience-empty')
+    const { userEvent } = renderWithProviders(<AgentsSetupSection />)
+    const step = await screen.findByTestId('agents-setup-step-connect')
+    await userEvent.click(within(step).getByRole('button', { name: 'Connect an agent' }))
+    expect(await screen.findByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
+  })
+
+  it('marks the connect step done only from what we have seen, and says so', async () => {
+    useScenario('agent-experience-partial')
+    renderWithProviders(<AgentsSetupSection />)
+    const step = await screen.findByTestId('agents-setup-step-connect')
+    expect(step).toHaveAttribute('data-state', 'done')
+    expect(step).toHaveTextContent('We’ve seen agent activity in the last 30 days.')
+  })
+
+  it('offers Turn on AI when AI features are off, and keeps AI on when the Copilot step fails', async () => {
+    useScenario('agent-experience-copilot-error')
+    const { userEvent } = renderWithProviders(<AgentsSetupSection />)
+    const notice = await screen.findByTestId('agents-setup-ai-off')
+
+    await userEvent.click(within(notice).getByRole('button', { name: 'Turn on AI' }))
+    const dialog = await screen.findByRole('dialog')
+    await userEvent.click(
+      await within(dialog).findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
+    )
+    await userEvent.click(within(dialog).getByTestId('submit-button'))
+
+    expect(
+      await within(dialog).findByText('AI features are on, but the Copilot could not be turned on')
+    ).toBeInTheDocument()
+    expect(within(dialog).getByTestId('submit-button')).toHaveTextContent('Retry')
+    await userEvent.click(within(dialog).getByTestId('submit-button'))
+    await waitFor(() => expect(screen.queryByTestId('agents-setup-ai-off')).not.toBeInTheDocument())
+  })
+
+  it('goes away once everything is set up', async () => {
+    useScenario('agent-experience-active')
+    renderWithProviders(<AgentsSetupSection />)
+    await waitFor(() => expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument())
+  })
+
+  it('stays away from members', async () => {
+    useScenario('member')
+    renderWithProviders(<AgentsSetupSection />)
+    await waitFor(() => expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument())
+  })
+
+  it('can be dismissed for good', async () => {
+    useScenario('agent-experience-empty')
+    const { userEvent, unmount } = renderWithProviders(<AgentsSetupSection />)
+    await userEvent.click(await screen.findByRole('button', { name: 'Dismiss agents setup' }))
+    expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument()
+    unmount()
+    renderWithProviders(<AgentsSetupSection />)
+    expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument()
+  })
 })
 
 describe('AgentExperienceCopilot', () => {
@@ -330,6 +415,43 @@ describe('AgentExperiencePolicyTokens', () => {
     renderWithProviders(<AgentExperiencePolicyTokens />)
     expect(await screen.findByText('Only owners and admins manage policy tokens')).toBeInTheDocument()
     expect(screen.queryByText('Create policy token')).not.toBeInTheDocument()
+  })
+})
+
+describe('AgentExperienceNav', () => {
+  it('has three entries, then Settings with policy tokens, for admins only', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent, unmount } = renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Settings')).toBeInTheDocument()
+    for (const label of ['Skills registry', 'Automate', 'Activity']) {
+      expect(screen.getByText(label)).toBeInTheDocument()
+    }
+    // Connect is a popup, not a menu entry, and there is no Agents overview. Policy tokens sit in Settings.
+    expect(screen.queryByText('Connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('Overview')).not.toBeInTheDocument()
+    expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Settings' }))
+    const settings = within(
+      screen.getByText('Policy tokens').closest('[data-testid=sidebar-group-content]') as HTMLElement
+    )
+    expect(settings.getByText('Policy tokens')).toBeInTheDocument()
+    expect(settings.getByText('Copilot settings')).toBeInTheDocument()
+    unmount()
+
+    useScenario('member')
+    renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Activity')).toBeInTheDocument()
+    expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
+    expect(screen.queryByText('Settings')).not.toBeInTheDocument()
+  })
+
+  it('opens Settings by itself on the policy tokens page', async () => {
+    useScenario('agent-experience-active')
+    jest
+      .mocked(useLocation)
+      .mockReturnValue({ pathname: '/organization/organization-1/agent-experience/policy-tokens' } as never)
+    renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Policy tokens')).toBeInTheDocument()
   })
 })
 
