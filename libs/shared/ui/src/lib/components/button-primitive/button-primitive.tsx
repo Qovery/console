@@ -19,10 +19,10 @@ const _buttonVariants = cva(
     'focus-visible:[&:not(:active)]:outline-2',
     'outline-0',
     'select-none',
-    // Touch screens: an invisible 6px halo brings small buttons (24-28px) close to the 44px tap target guideline
+    // Touch screens: an invisible 8px halo brings small buttons to the 44px tap target guideline (28px + 2 x 8px)
     'relative',
     '[@media(pointer:coarse)]:after:absolute',
-    '[@media(pointer:coarse)]:after:-inset-1.5',
+    '[@media(pointer:coarse)]:after:-inset-2',
     "[@media(pointer:coarse)]:after:content-['']",
   ],
   {
