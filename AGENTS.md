@@ -13,8 +13,6 @@ Before working on this repo, read the relevant skills in `.agents/skills/`. Each
 
 Before creating, modifying, or reviewing any user-facing UI, load `.agents/skills/qovery-ui/SKILL.md` and read `.claude/design.md`. This applies to feature implementation, bug fixes, styling, layout, interactions, and user-facing copy, including small changes; do not wait for an explicit skill invocation or a request described as "design work". Follow the skill and load only the references relevant to the task.
 
-The optional `/qovery-ui audit`, `polish`, `component`, `copy`, and `motion` commands remain available for targeted work. UI implementation does not require choosing a command first.
-
 Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 
 ## Essential Facts

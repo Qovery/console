@@ -1,135 +1,125 @@
-# Spacing & Layout — Qovery Console
+# Spacing and layout — Qovery Console
 
-## Philosophy
+Use this reference when building or changing page composition, spacing, or alignment.
 
-This is a dense product UI. Whitespace serves hierarchy and legibility, not aesthetics. Don't add padding to make something "feel premium" — add it when the content needs room to breathe for readability.
+## Start with the page pattern
 
-Use the Tailwind spacing scale and match shared components and comparable layouts. The common 4px rhythm is a guide, not a reason to override existing component spacing. `p-5` and `gap-5` are 20px on the standard scale and are valid 4px multiples.
+Inspect the closest established page before composing a new layout. Reuse its section structure, content widths, and spacing rhythm. The examples below identify layout patterns, not permission to copy unrelated typography, colors, or behavior.
 
-**Before adding spacing, ask:** does removing it break legibility or make a target too small to hit? If not, remove it.
+### Overview pages
 
----
+Use the environment, organization, and service overviews as composition references:
 
-## Visual Rhythm
+- **Environment overview:** page header, operational sections, and Services/Pipeline views.
+- **Organization overview:** page header followed by primary content and a secondary column.
+- **Service overview:** service header followed by distinct operational sections.
 
-Spacing is how you communicate relationships. Elements close together belong together. Space between groups signals a shift in topic.
+These pages commonly use **`gap-8` / 32px between main sections**, with tighter spacing inside each section.
 
-- **Tight grouping for related elements:** 8–12px between siblings
-- **Generous separation between distinct sections:** 48–96px
-- **Vary spacing within sections** — not every row needs the same gap
-- **Asymmetric compositions** — break the predictable centered-content pattern when it makes sense
+- A section heading and its content belong together.
+- Related controls belong together.
+- Independent sections need a consistent, larger separation.
+- Elements at the same level should follow the same spacing pattern.
 
-**Established conventions from real usage:**
+Do not add a bordered container merely to establish a section. A heading and spacing may provide enough structure.
 
-| Context                                   | Value              | Notes                                             |
-| ----------------------------------------- | ------------------ | ------------------------------------------------- |
-| Title (`text-sm`) + subtitle (`text-ssm`) | `gap-1`            | Tightest readable gap between stacked label sizes |
-| Label-to-value inline                     | `gap-2`            |                                                   |
-| Content rows within a card                | `gap-3` or `gap-4` |                                                   |
-| Small card internal padding               | `p-3` or `p-4`     |                                                   |
-| Standard card internal padding            | `p-4` or `p-6`     |                                                   |
-| Fields within a form                      | `gap-4`            |                                                   |
-| Field groups within a form                | `gap-6`            |                                                   |
+### Settings pages
 
----
+Follow the established settings composition:
 
-## Card Grid Monotony
+1. Setting section title.
+2. Concise description underneath.
+3. Optional action alongside the heading area.
+4. Divider.
+5. Setting-specific sections.
 
-Don't default to card grids for everything — spacing and alignment create visual grouping naturally without wrapping everything in a container.
+Reuse `SettingsHeading` and comparable settings implementations. Its existing spacing provides:
 
-Use cards only when content is truly distinct and actionable. **Never nest cards inside cards.** If a card needs internal sections, use dividers or spacing — not another card layer.
+- **8px** between title and description.
+- **24px** below the heading content before the divider.
+- **32px** between the divider and following content.
 
-Vary card sizes, span columns, or mix cards with non-card content to break repetition. A grid of identical cards (icon + heading + text, repeated) is the most recognizable sign of an undesigned layout.
+Keep form widths and content alignment consistent with other settings pages. Do not stretch a settings form across the available viewport simply because there is room.
 
----
+## Usual spacing
 
-## Card with Attached Section
+Use these values as starting points. When a shared component already owns the spacing, preserve its defaults rather than adding another layer.
 
-A card where a secondary section — filter row, status bar, summary strip — is visually fused to the top or bottom of the card. Both appear as one bordered unit with a single continuous outline.
+| Relationship                      | Usual spacing                    | Application                                                                                                                                               |
+| --------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Main section → next main section  | `gap-8` — **32px**               | Environment, organization, and service overview sections                                                                                                  |
+| Section heading → section content | `gap-3` to `gap-4` — **12–16px** | Services section uses 12px; catalog sections commonly use 16px. Keep equivalent sections consistent.                                                      |
+| Compact title → description       | `gap-1` to `gap-2` — **4–8px**   | Catalog headings and cards. Settings heading uses 8px. Match the relevant pattern.                                                                        |
+| Icon → regular `text-sm` label    | `gap-1.5` — **6px**              | Compact inline groups, as in breadcrumbs and cluster links in the credentials modal. Larger avatars and other compositions may require different spacing. |
+| Consecutive form fields           | **12–16px**                      | General settings use `mb-3`; stacked forms also use `gap-4`. Follow one pattern within the form.                                                          |
+| Sibling cards in a catalog grid   | `gap-3` — **12px**               | Service catalog grids                                                                                                                                     |
+| Icon block → card text block      | `gap-3` — **12px**               | Blueprint and service catalog cards                                                                                                                       |
+| Card body → bottom action area    | `gap-4` — **16px**               | Catalog cards; `mt-auto` keeps the bottom area aligned across cards.                                                                                      |
 
-**The technique: `overflow-hidden` on the parent card.** This clips children to the card's border radius automatically. You never manually set inner radii, and the shared border collapses into one visual line.
+These values serve different relationships. Do not choose independently between 12px and 16px for every section or field. Choose the matching established pattern and repeat it consistently.
 
-```tsx
-// Section attached at the bottom (e.g. "3 issues affecting services")
-<div className="rounded-lg border border-neutral overflow-hidden">
-  <div className="p-4">
-    {/* main card content */}
-  </div>
-  <div className="border-t border-neutral bg-surface-negative-subtle px-4 py-3">
-    3 issues affecting services
-  </div>
-</div>
+### Button groups
 
-// Section attached at the top (e.g. filter badges above a table)
-<div className="rounded-lg border border-neutral overflow-hidden">
-  <div className="border-b border-neutral bg-surface-neutral-subtle px-3 py-2">
-    {/* badges, filters, tabs */}
-  </div>
-  <div>{/* main content */}</div>
-</div>
-```
+Use the same spacing between buttons of the same size, whether the group appears in a toolbar, footer, or card:
 
-**Rules:**
+| Button size | Gap between buttons |
+| ----------- | ------------------- |
+| `sm`        | `gap-1` — **4px**   |
+| `md`        | `gap-2` — **8px**   |
+| `lg`        | `gap-3` — **12px**  |
 
-- The attached section shares the same `border-neutral` color as the card — reads as one border, not two
-- `overflow-hidden` on the parent is required — without it, the child's background bleeds past the card radius
-- Don't manually add `rounded-t-*` or `rounded-b-*` to the child — `overflow-hidden` handles it
-- The attached section background can be any surface token depending on context
+This is the target convention for new or updated button groups; existing usages are not yet fully harmonized. It describes the gap between buttons, not the icon-to-label gap inside a button.
 
----
+### Container padding
 
-## Concentric Border Radius
+Padding separates content from a surface edge; gaps separate siblings.
 
-The most common "feels off" tell.
+Common examples:
 
-**Rule: outer radius = inner radius + padding.**
+- **Catalog cards:** `p-4` — 16px.
+- **Settings block content:** `p-4` — supplied by `BlockContent`.
+- **Settings page:** `px-8 pt-6 pb-8` — 32px horizontal, 24px top, 32px bottom.
+- **Secret-manager dialog:** 20px horizontal content inset; footer uses 20px horizontal and 16px vertical padding.
 
-Example: a card with `rounded-2xl` (16px) and `p-2` (8px) padding → the inner element should be `rounded-lg` (8px). Mismatched nested radii break the visual relationship between surfaces.
+Do not add page padding if the surrounding layout already supplies it. Keep headers, content, and footers aligned to the same horizontal inset within a surface.
 
----
+## Alignment
 
-## Optical vs. Geometric Alignment
+- Align section headings and their content to the same left edge.
+- Vertically center header actions against the heading block in ordinary section headers. For settings, preserve the established settings-header arrangement.
+- Align related controls on the same horizontal axis.
+- Center checkboxes and row actions against the complete row content, including descriptions.
+- Use consistent column and card alignment rather than manual offsets.
 
-Geometric centering often looks off. Adjust for perceived visual weight.
+For repeated cards, keep their internal structure consistent. Allow the content area to grow and anchor the bottom area with layout, rather than inserting arbitrary margins.
 
-- **Play triangle in a circle:** nudge right — the triangle's visual center is not its geometric center.
-- **Button with icon + text:** use `<Button>`. Do not add manual icon margins or custom gaps inside buttons.
-- **Asymmetric icons** (stars, arrows, carets): best fixed in the SVG directly. Fallback: `margin-left: 1px` or similar.
-- **Heavy glyph next to a light one:** optical baseline shift.
+## Established references
 
-When in doubt, trust your eye over the math.
+Paths are repository-relative. Inspect the current source.
 
----
+| Reference                    | What to inspect                                                              | Source                                                                                                                                 |
+| ---------------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Environment overview         | Section hierarchy, heading-to-content spacing, Services/Pipeline arrangement | `apps/console/src/routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/route.tsx` |
+| Organization overview        | Main and secondary columns, consistent section spacing                       | `libs/domains/organizations/feature/src/lib/organization-overview/organization-overview.tsx`                                           |
+| Service overview             | Operational section spacing                                                  | `libs/domains/services/feature/src/lib/service-overview/service-overview.tsx`                                                          |
+| Settings heading             | Title, description, action slot, divider, following spacing                  | `libs/shared/console-shared/src/lib/settings-heading/settings-heading.tsx`                                                             |
+| Environment general settings | Page insets, form width, field spacing                                       | `libs/domains/environments/feature/src/lib/settings-general/settings-general.tsx`                                                      |
+| Service catalog              | Section and grid gaps                                                        | `libs/domains/services/feature/src/lib/service-new/service-new.tsx`                                                                    |
+| Blueprint card               | Internal spacing and bottom action alignment                                 | `libs/domains/services/feature/src/lib/service-new/blueprint-card/blueprint-card.tsx`                                                  |
+| Secret-manager dialog        | Consistent header, body, and footer insets                                   | `libs/domains/clusters/feature/src/lib/secret-manager-modals/secret-manager-integration-modal.tsx`                                     |
+| Breadcrumbs                  | Compact icon-and-label spacing                                               | `apps/console/src/app/components/header/breadcrumbs/breadcrumb-item.tsx`                                                               |
+| Credentials cluster links    | Avatar beside a regular text label                                           | `libs/domains/clusters/feature/src/lib/credentials-list-clusters-modal/credentials-list-clusters-modal.tsx`                            |
 
-## The Working Memory Rule
+## Don't
 
-Humans can hold ≤4 items in working memory at once (Miller's Law, revised by Cowan 2001).
-
-At any decision point, count the distinct options, actions, or pieces of information a user must simultaneously consider:
-
-| Items | Status               | Response                                    |
-| ----- | -------------------- | ------------------------------------------- |
-| ≤4    | Within limits        | Manageable as-is                            |
-| 5–7   | Pushing the boundary | Consider grouping or progressive disclosure |
-| 8+    | Overloaded           | Users will skip, misclick, or abandon       |
-
-**Practical applications:**
-
-- **Navigation menus:** ≤5 top-level items — group the rest under clear categories
-- **Form sections:** ≤4 fields visible per group before a visual break
-- **Action buttons:** 1 primary, 1–2 secondary, group the rest in a menu
-- **Dashboard widgets:** ≤4 key metrics visible without scrolling
-- **Pricing tiers:** ≤3 options — more causes analysis paralysis
-
----
-
-## Never
-
-- Introduce arbitrary spacing values when an existing token or shared component fits
-- Make all spacing equal — variety creates hierarchy
-- Wrap everything in cards — not everything needs a container
-- Nest cards inside cards — use spacing and dividers for internal hierarchy
-- Default to identical card grids (icon + heading + text, repeated)
-- Center everything — left-aligned with asymmetry feels more designed
-- Default to the hero metric layout (big number, small label, stats, gradient) as a template — if showing real user data a prominent metric can work, but it must display actual data, not decorative numbers
-- Default to CSS Grid when Flexbox would be simpler — use the simplest tool for the job
+- **Don't improvise a new page composition** before inspecting the corresponding overview or settings pattern.
+- **Don't use the same gap everywhere.** Separate sections more clearly than elements within a section.
+- **Don't vary spacing between equivalent sections** without a structural reason.
+- **Don't inflate section gaps to 48–96px by default.** Established overview pages commonly use 32px.
+- **Don't accumulate parent gaps and child margins** that unintentionally double the intended separation.
+- **Don't wrap every section in a card** or add another padded border around an existing component.
+- **Don't override component-owned padding and gaps** merely to make one instance look different.
+- **Don't use arbitrary pixel offsets to repair alignment** before fixing the layout structure.
+- **Don't hide overflow to conceal a sizing problem.**
+- **Don't introduce asymmetry or varying card sizes just for visual variety.**
+- **Don't impose arbitrary limits on fields, cards, or navigation items as a spacing rule.** Organize the actual content using the appropriate page pattern.
