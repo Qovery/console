@@ -1,5 +1,6 @@
 import { StateEnum, type Status } from 'qovery-typescript-axios'
 import { type Terraform } from '@qovery/domains/services/data-access'
+import { containerFactoryMock, gitContainerFactoryMock } from '@qovery/shared/factories'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { FiltersStageStep, type FiltersStageStepProps } from './filters-stage-step'
 
@@ -55,6 +56,18 @@ describe('FiltersStageStep', () => {
     }
     renderWithProviders(<FiltersStageStep {...props} />)
     expect(screen.getByText('Executing')).toBeInTheDocument()
+  })
+
+  it('hides the BUILD step for an image container', () => {
+    renderWithProviders(<FiltersStageStep {...defaultProps} service={containerFactoryMock(1)[0]} />)
+    expect(screen.queryByText('Build')).not.toBeInTheDocument()
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
+  })
+
+  it('renders the BUILD step for a Git container', () => {
+    renderWithProviders(<FiltersStageStep {...defaultProps} service={gitContainerFactoryMock(1)[0]} />)
+    expect(screen.getByText('Build')).toBeInTheDocument()
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
   })
 
   it('calls toggleColumnFilter with correct type when buttons are clicked', async () => {

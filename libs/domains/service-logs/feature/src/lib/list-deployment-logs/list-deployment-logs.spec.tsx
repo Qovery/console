@@ -8,7 +8,7 @@ import {
   useService,
   useStartBuildAnalysis,
 } from '@qovery/domains/services/feature'
-import { environmentFactoryMock } from '@qovery/shared/factories'
+import { containerFactoryMock, environmentFactoryMock, gitContainerFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { useServiceDeploymentHistory } from '../hooks/use-service-deployment-history/use-service-deployment-history'
@@ -225,5 +225,25 @@ describe('ListDeploymentLogs', () => {
     renderWithProviders(<ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />)
 
     expect(screen.getByText('Streaming deployment logs')).toBeInTheDocument()
+  })
+
+  it('should show the build usage report button for a Git container', () => {
+    useService.mockReturnValue({ data: gitContainerFactoryMock(1)[0] })
+
+    const { container } = renderWithProviders(
+      <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
+    )
+
+    expect(container.querySelector('.fa-chart-line')).toBeInTheDocument()
+  })
+
+  it('should hide the build usage report button for an image container', () => {
+    useService.mockReturnValue({ data: containerFactoryMock(1)[0] })
+
+    const { container } = renderWithProviders(
+      <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
+    )
+
+    expect(container.querySelector('.fa-chart-line')).not.toBeInTheDocument()
   })
 })

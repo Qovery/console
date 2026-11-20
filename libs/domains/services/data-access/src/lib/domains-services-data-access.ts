@@ -31,6 +31,7 @@ import {
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   type ContainerRequest,
+  type ContainerSourceResponseOneOf1,
   ContainersApi,
   type CustomDomainRequest,
   DatabaseActionsApi,
@@ -98,7 +99,7 @@ import {
   type TerraformStatusDto,
 } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
-import { type ServiceTypeEnum, isHelmGitSource } from '@qovery/shared/enums'
+import { type ServiceTypeEnum, isContainerGitSource, isHelmGitSource } from '@qovery/shared/enums'
 
 const environmentApi = new EnvironmentMainCallsApi()
 const environmentActionApi = new EnvironmentActionsApi()
@@ -238,6 +239,10 @@ export function isApplication(service: AnyService): service is Application {
 
 export function isContainer(service: AnyService): service is Container {
   return service.service_type === 'CONTAINER'
+}
+
+export function isGitContainer(service: AnyService): service is Container & { source: ContainerSourceResponseOneOf1 } {
+  return isContainer(service) && isContainerGitSource(service.source)
 }
 
 export function isDatabase(service: AnyService): service is Database {

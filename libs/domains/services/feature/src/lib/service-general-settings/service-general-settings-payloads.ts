@@ -29,7 +29,7 @@ import {
 } from '@qovery/domains/services/data-access'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { parseCmd } from '@qovery/shared/util-js'
-import { convertAutoscalingResponseToRequest } from '@qovery/shared/util-services'
+import { convertAutoscalingResponseToRequest, omitStoredContainerFields } from '@qovery/shared/util-services'
 
 export interface HelmGeneralData
   extends Omit<HelmRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec'> {
@@ -179,6 +179,7 @@ export const handleContainerSubmit = (
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
     labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
     autoscaling: convertAutoscalingResponseToRequest(container.autoscaling),
+    ...omitStoredContainerFields(container),
   }
 }
 
