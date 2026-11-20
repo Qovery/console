@@ -1,7 +1,7 @@
 /*
  * The console's plan and usage page, from pricing-api: the plan, the estimated bill, what is
  * above the plan this month, usage against every limit, prepaid credits (balances, purchases,
- * buy), usage over a period the person picks, build usage per builder size and service, and the journeys around the plan: change plan
+ * buy), discounts in exchange for counterparts (billing roles), usage over a period the person picks, build usage per builder size and service, and the journeys around the plan: change plan
  * (pick, review the quote and what it costs today, confirm), keep the current plan when a change
  * is planned, cancel at the end of the term, keep the subscription, and reactivate it once it
  * ended. Alerts (an overdue invoice, a card that expires) sit under the page's
@@ -18,6 +18,7 @@ import { BuildUsage } from './build-usage'
 import { CancelDialog, PlannedBanners } from './cancel'
 import type { PricingClient } from './client'
 import { PrepaidCredits } from './credits'
+import { DiscountsCard } from './discounts'
 import { date, money, num, valueText } from './format'
 import { AskAdminModal, EmailPreferencesPanel, OfferHost } from './offers'
 import { PlanChangeFlow } from './plan-change'
@@ -508,6 +509,10 @@ export function UsagePage({
               </div>
             ))}
           </div>
+        )}
+
+        {amounts && !ended && (
+          <DiscountsCard key={round} organizationId={organizationId} client={client} usage={u} onChanged={load} />
         )}
 
         <div>

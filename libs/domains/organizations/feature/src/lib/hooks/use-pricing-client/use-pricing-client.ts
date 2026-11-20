@@ -36,6 +36,10 @@ export function pickConsoleCalls(client: PricingClient): PricingClient {
     saveBillingInfo: client.saveBillingInfo,
     awsMarketplace: client.awsMarketplace,
     requestAwsOffer: client.requestAwsOffer,
+    discounts: client.discounts,
+    quoteDiscounts: client.quoteDiscounts,
+    requestDiscounts: client.requestDiscounts,
+    withdrawDiscountRequest: client.withdrawDiscountRequest,
   }
 }
 

@@ -14,17 +14,22 @@ export {
   buildServiceRows,
   cardState,
   creditQuantityError,
+  currentDiscountRequest,
   customRangeError,
+  discountPercent,
+  discountSelectable,
   historyCSV,
   historyTable,
   presetRange,
   quantity,
+  toggleDiscount,
   validOfferURL,
   validateBillingInfo,
 } from './lib/rules'
 export { Fact, PlanChangeFlow } from './lib/plan-change'
 export { CancelDialog, PlannedBanners } from './lib/cancel'
 export { BuyCreditsDialog, PrepaidCredits } from './lib/credits'
+export { DiscountsCard } from './lib/discounts'
 export { ReactivateFlow, SubscriptionEndedBanner } from './lib/reactivate'
 export { UsageHistory } from './lib/usage-history'
 export { BuildUsage } from './lib/build-usage'

@@ -467,6 +467,77 @@ describe('BillingUsageView', () => {
     expect(buy?.key).toEqual(expect.any(String))
   })
 
+  it('should price discounts with a dry run and send the request with the terms accepted', async () => {
+    const view = {
+      organization_id: 'org-northwind',
+      availability: { available: true },
+      currency: 'USD',
+      period: 'year',
+      price: 1078800,
+      annual_price: 1078800,
+      max_percent: 35,
+      discounts: [
+        {
+          id: 'logo',
+          label: 'Logo rights',
+          percent: 3,
+          gives: 'Your logo on qovery.com',
+          requires: [],
+          excludes: [],
+          term_months: 0,
+        },
+        {
+          id: 'case-study',
+          label: 'Public case study',
+          percent: 5,
+          gives: 'A published story',
+          requires: [],
+          excludes: [],
+          term_months: 0,
+        },
+      ],
+      granted: [],
+      requests: [],
+    }
+    const discountQuote = {
+      ids: ['logo', 'case-study'],
+      points: 8,
+      percent: 8,
+      max_percent: 35,
+      capped: false,
+      currency: 'USD',
+      period: 'year',
+      price_before: 1078800,
+      price_after: 992496,
+      saving: 86304,
+      annual_before: 1078800,
+      annual_after: 992496,
+      discount_until: '2027-11-20',
+      term_months: 0,
+    }
+    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), {
+      '/discounts': () => jsonResponse(200, view),
+      '/discounts/quote': () => jsonResponse(200, discountQuote),
+      '/discountRequests': () => jsonResponse(201, { ...view, discounts: [] }),
+    })
+    const { userEvent } = renderWithProviders(<BillingUsageView />)
+
+    await userEvent.click(await screen.findByText('Logo rights'))
+    await userEvent.click(screen.getByText('Public case study'))
+    expect(await screen.findByText('$9,925')).toBeInTheDocument()
+    const request = screen.getByRole('button', { name: 'Request discount' })
+    expect(request).toBeDisabled()
+    await userEvent.click(screen.getByText(/I agree to give what each discount asks for/))
+    await userEvent.click(request)
+
+    expect(sentTo(fetchMock, '/discounts/quote').at(-1)?.body).toEqual({ ids: ['logo', 'case-study'], dry_run: true })
+    expect(sentTo(fetchMock, '/discountRequests')[0].body).toEqual({
+      ids: ['logo', 'case-study'],
+      message: '',
+      accept_terms: true,
+    })
+  })
+
   it('should show members their prepaid balances, never prices or the buy button', async () => {
     const usage = {
       ...billingUsageFactoryMock('member'),
@@ -592,7 +663,7 @@ describe('SettingsBillingUsage', () => {
 })
 
 describe('pickConsoleCalls', () => {
-  it('should mount plan changes, cancellation, reactivation, prepaid credits, usage history, build usage and invoice details, and leave offers and emails out', () => {
+  it('should mount plan changes, cancellation, reactivation, prepaid credits, usage history, build usage, invoice details and discounts, and leave offers and emails out', () => {
     const calls = pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
@@ -619,6 +690,10 @@ describe('pickConsoleCalls', () => {
       'buildUsage',
       'invoices',
       'invoice',
+      'discounts',
+      'quoteDiscounts',
+      'requestDiscounts',
+      'withdrawDiscountRequest',
     ] as const) {
       expect(calls[name]).toEqual(expect.any(Function))
     }

@@ -16,6 +16,8 @@ import type {
   CreditPurchaseResult,
   Credits,
   CustomerInvoice,
+  DiscountQuote,
+  Discounts,
   EmailPreferences,
   Granularity,
   InvoiceDetails,
@@ -123,6 +125,17 @@ export interface PricingClient {
   saveBillingInfo?(organizationId: string, info: BillingInfo): Promise<BillingInfoView>
   awsMarketplace?(organizationId: string): Promise<AwsMarketplace>
   requestAwsOffer?(organizationId: string, req: { aws_account_id: string; message?: string }): Promise<AwsMarketplace>
+  // Optional: discounts in exchange for counterparts (billing roles). A request is reviewed by
+  // Qovery; nothing changes on the subscription until it is approved.
+  discounts?(organizationId: string): Promise<Discounts>
+  /** A dry run: the price with these discounts, priced by pricing-api. 400 when a rule is broken. */
+  quoteDiscounts?(organizationId: string, ids: string[]): Promise<DiscountQuote>
+  /** accept_terms: the person agreed to give what each discount asks for (400 TERMS_NOT_ACCEPTED otherwise). */
+  requestDiscounts?(
+    organizationId: string,
+    req: { ids: string[]; message?: string; accept_terms: boolean }
+  ): Promise<Discounts>
+  withdrawDiscountRequest?(organizationId: string, requestId: number): Promise<Discounts>
 }
 
 export class BillingError extends Error {
@@ -279,5 +292,18 @@ export function createPricingClient(o: ClientOptions): PricingClient {
         method: 'POST',
         body: JSON.stringify(r),
       }),
+    discounts: (org) => req(o.pricingApiUrl, `/organization/${org}/discounts`),
+    quoteDiscounts: (org, ids) =>
+      req(o.pricingApiUrl, `/organization/${org}/discounts/quote`, {
+        method: 'POST',
+        body: JSON.stringify({ ids, dry_run: true }),
+      }),
+    requestDiscounts: (org, r) =>
+      req(o.pricingApiUrl, `/organization/${org}/discountRequests`, {
+        method: 'POST',
+        body: JSON.stringify({ ids: r.ids, message: r.message ?? '', accept_terms: r.accept_terms }),
+      }),
+    withdrawDiscountRequest: (org, id) =>
+      req(o.pricingApiUrl, `/organization/${org}/discountRequests/${id}`, { method: 'DELETE' }),
   }
 }

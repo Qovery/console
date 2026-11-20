@@ -857,3 +857,69 @@ export interface ReactivationResult {
   reactivation?: ReactivationRecord
   subscription?: { plan: string; period: Period; term_end: string }
 }
+
+// ---- self-serve discounts (GET /organization/{id}/discounts, POST .../discounts/quote, .../discountRequests; billing roles)
+/** A discount the customer may ask for: percent points, in exchange for what it `gives`. */
+export interface DiscountType {
+  id: string
+  label: string
+  percent: number
+  gives: string
+  /** At least one of these must be chosen (or already granted) with it; requires_label says so. */
+  requires: string[]
+  requires_label?: string
+  /** Cannot be combined with any of these. */
+  excludes: string[]
+  /** A commitment it brings (24, 36 months), 0 when none. */
+  term_months: number
+}
+export interface DiscountRequest {
+  id: number
+  status: 'open' | 'approved' | 'declined' | 'withdrawn'
+  discount_ids: string[]
+  labels: string[]
+  percent: number
+  message: string
+  currency: string
+  period: Period
+  price_before: number
+  price_after: number
+  requested_by: string
+  requested_at: string
+  decided_at: string | null
+  decline_reason: string
+  discount_until: string | null
+  /** Approved and on the subscription (an approval staff still add in Chargebee is not applied yet). */
+  applied: boolean
+}
+export interface Discounts {
+  organization_id: string
+  availability: Availability
+  currency: string
+  period: Period
+  /** The recurring price per period today (plan and add-ons, after discounts already running). */
+  price: number
+  annual_price: number
+  max_percent: number
+  /** What may be asked for now: empty while a request is being reviewed. */
+  discounts: DiscountType[]
+  granted: string[]
+  requests: DiscountRequest[]
+}
+/** A dry run of a selection: points add up (capped at max_percent) on plan and add-ons. */
+export interface DiscountQuote {
+  ids: string[]
+  points: number
+  percent: number
+  max_percent: number
+  capped: boolean
+  currency: string
+  period: Period
+  price_before: number
+  price_after: number
+  saving: number
+  annual_before: number
+  annual_after: number
+  discount_until: string
+  term_months: number
+}

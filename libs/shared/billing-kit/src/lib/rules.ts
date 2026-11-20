@@ -791,3 +791,62 @@ export function buildServiceRows(
     return (x < y ? -1 : 1) * (sort.desc ? -1 : 1)
   })
 }
+
+// ------------------------------------------------------------------ discounts in exchange for counterparts
+
+/**
+ * The selection rules of the discounts card, the server's (domain/discounts.go) and the ROI deal
+ * builder's (deal.ts): a discount that needs another (paying a multi-year term up front) can only
+ * be ticked once one of those is chosen or already granted; ticking one drops what it excludes
+ * (two and three years); unticking drops what no longer has its requirement.
+ */
+type DiscountRule = { id: string; requires: string[]; excludes: string[] }
+
+export function discountSelectable(d: DiscountRule, selected: string[], granted: string[] = []): boolean {
+  return d.requires.length === 0 || d.requires.some((r) => selected.includes(r) || granted.includes(r))
+}
+
+function pruneDiscounts(types: DiscountRule[], selected: string[], granted: string[]): string[] {
+  let cur = selected
+  for (;;) {
+    const kept = cur.filter((id) => {
+      const d = types.find((t) => t.id === id)
+      return !!d && discountSelectable(d, cur, granted)
+    })
+    if (kept.length === cur.length) return kept
+    cur = kept
+  }
+}
+
+export function toggleDiscount(
+  types: DiscountRule[],
+  selected: string[],
+  id: string,
+  granted: string[] = []
+): string[] {
+  if (selected.includes(id))
+    return pruneDiscounts(
+      types,
+      selected.filter((s) => s !== id),
+      granted
+    )
+  const d = types.find((t) => t.id === id)
+  if (!d || !discountSelectable(d, selected, granted)) return selected
+  const dropped = new Set([...d.excludes, ...types.filter((t) => t.excludes.includes(id)).map((t) => t.id)])
+  return pruneDiscounts(types, [...selected.filter((s) => !dropped.has(s)), id], granted)
+}
+
+/** Points add up (no compounding); the customer gets at most `max`. */
+export function discountPercent(
+  types: { id: string; percent: number }[],
+  selected: string[],
+  max: number
+): { points: number; percent: number; capped: boolean } {
+  const points = Math.round(types.filter((t) => selected.includes(t.id)).reduce((a, t) => a + t.percent, 0) * 100) / 100
+  return { points, percent: Math.min(points, max), capped: points > max }
+}
+
+/** The request the card shows: the one being reviewed, else the latest decided one (withdrawn ones are not shown). */
+export function currentDiscountRequest<T extends { status: string }>(requests: T[]): T | undefined {
+  return requests.find((r) => r.status === 'open') ?? requests.find((r) => r.status !== 'withdrawn')
+}
