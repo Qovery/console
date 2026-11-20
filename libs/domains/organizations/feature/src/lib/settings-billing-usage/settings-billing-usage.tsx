@@ -1,14 +1,18 @@
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { type ReactNode, useCallback, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { P, match } from 'ts-pattern'
-import { BillingPage } from '@qovery/shared/billing-kit'
+import { UsagePage, type UsagePageHeading } from '@qovery/shared/billing-kit'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Callout, EmptyState, Icon, Link, Section, Skeleton } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import {
   type BillingUsageErrorType,
   getBillingUsageErrorType,
   useBillingUsage,
 } from '../hooks/use-billing-usage/use-billing-usage'
+import { usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import { SettingsBillingSummary } from '../settings-billing-summary/settings-billing-summary'
 
 export const BILLING_USAGE_FEATURE_FLAG = 'billing-usage-v2'
@@ -17,12 +21,72 @@ export function useIsBillingUsageEnabled() {
   return useFeatureFlagEnabled(BILLING_USAGE_FEATURE_FLAG) === true
 }
 
-export function getBillingSettingsLinks(pathSettings: string, isBillingUsageEnabled: boolean) {
+const BILLING_ROLES = ['owner', 'admin', 'billing']
+
+// UX only: pricing-api decides who reads invoices and payment details
+export function hasBillingRole(roles: string[], organizationId: string) {
+  return (
+    roles.includes('admin') || BILLING_ROLES.some((role) => roles.includes(`organization:${organizationId}:${role}`))
+  )
+}
+
+export function getBillingSettingsLinks(
+  pathSettings: string,
+  isBillingUsageEnabled: boolean,
+  canManageBilling = false
+) {
+  if (!isBillingUsageEnabled) {
+    return [
+      { title: 'Billing summary', to: `${pathSettings}/billing-summary` },
+      { title: 'Billing details', to: `${pathSettings}/billing-details` },
+    ]
+  }
+
   return [
-    ...(isBillingUsageEnabled ? [{ title: 'Plan & usage', to: `${pathSettings}/billing` }] : []),
-    { title: 'Billing summary', to: `${pathSettings}/billing-summary` },
-    { title: 'Billing details', to: `${pathSettings}/billing-details` },
+    { title: 'Usage', to: `${pathSettings}/billing` },
+    ...(canManageBilling
+      ? [
+          { title: 'Invoices', to: `${pathSettings}/invoices` },
+          { title: 'Billing', to: `${pathSettings}/billing-settings` },
+        ]
+      : []),
   ]
+}
+
+export function useBillingNavigate(organizationId: string) {
+  const navigate = useNavigate()
+
+  return useCallback(
+    (to: 'invoices' | 'billing') =>
+      to === 'invoices'
+        ? navigate({ to: '/organization/$organizationId/settings/invoices', params: { organizationId } })
+        : navigate({ to: '/organization/$organizationId/settings/billing-settings', params: { organizationId } }),
+    [navigate, organizationId]
+  )
+}
+
+// The three billing pages share this frame: a full-width SettingsHeading, then the kit's page, whose alerts come first.
+// The Usage page draws its heading from the kit (its buttons open the kit's journeys) into headingSlot.
+export function BillingPageLayout({
+  title,
+  description,
+  headingSlot,
+  children,
+}: {
+  title?: string
+  description?: string
+  headingSlot?: (element: HTMLDivElement | null) => void
+  children: ReactNode
+}) {
+  return (
+    <div className="w-full">
+      <Section className="px-8 pb-8 pt-6">
+        {title && <SettingsHeading title={title} description={description} showNeedHelp={false} />}
+        {headingSlot && <div ref={headingSlot} />}
+        <div className="flex max-w-content-with-navigation-left flex-col gap-6">{children}</div>
+      </Section>
+    </div>
+  )
 }
 
 const BillingUsageSkeleton = () => (
@@ -122,28 +186,50 @@ function BillingUsageError({ type, organizationId, onRetry, isRetrying }: Billin
 }
 
 export function BillingUsageView() {
-  useDocumentTitle('Plan & usage - Organization settings')
+  useDocumentTitle('Usage - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
   const { data, error, isLoading, refetch, isRefetching } = useBillingUsage({ organizationId })
+  const client = usePricingClient()
+  const goTo = useBillingNavigate(organizationId)
+  const { showChat } = useSupportChat()
+  const [headingElement, setHeadingElement] = useState<HTMLDivElement | null>(null)
+
+  // The kit's "Plan details" heading, drawn with SettingsHeading above the page like on Invoices and Billing
+  const heading = useCallback(
+    ({ title, description, actions }: UsagePageHeading) =>
+      headingElement &&
+      createPortal(
+        <SettingsHeading title={title} description={description} showNeedHelp={false}>
+          <div className="flex shrink-0 items-start gap-2">{actions}</div>
+        </SettingsHeading>,
+        headingElement
+      ),
+    [headingElement]
+  )
 
   return (
-    <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
-        <div className="max-w-content-with-navigation-left">
-          {match({ data, error, isLoading })
-            .with({ isLoading: true }, () => <BillingUsageSkeleton />)
-            .with({ data: P.not(P.nullish) }, ({ data }) => <BillingPage usage={data} />)
-            .otherwise(() => (
-              <BillingUsageError
-                type={getBillingUsageErrorType(error)}
-                organizationId={organizationId}
-                onRetry={() => refetch()}
-                isRetrying={isRefetching}
-              />
-            ))}
-        </div>
-      </Section>
-    </div>
+    <BillingPageLayout headingSlot={setHeadingElement}>
+      {match({ data, error, isLoading })
+        .with({ isLoading: true }, () => <BillingUsageSkeleton />)
+        .with({ data: P.not(P.nullish) }, () => (
+          <UsagePage
+            organizationId={organizationId}
+            client={client}
+            offers="none"
+            onNavigate={goTo}
+            onContactSales={showChat}
+            heading={heading}
+          />
+        ))
+        .otherwise(() => (
+          <BillingUsageError
+            type={getBillingUsageErrorType(error)}
+            organizationId={organizationId}
+            onRetry={() => refetch()}
+            isRetrying={isRefetching}
+          />
+        ))}
+    </BillingPageLayout>
   )
 }
 

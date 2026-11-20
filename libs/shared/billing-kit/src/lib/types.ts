@@ -1,9 +1,56 @@
 /*
- * The shape of pricing-api's GET /organization/{id}/billingUsage (docs/INTEGRATION.md). Amounts are
- * cents of `currency`, and only reach billing roles.
+ * The shapes the billing kit reads. They mirror pricing-api's responses (docs/INTEGRATION.md):
+ * GET /public/v1/plans, GET /organization/{id}/billingUsage, /spendLimits, /planOptions, /planChange,
+ * /cancellation, /usageHistory, /credits, /reactivation, invoices and payment details. Amounts are cents of `currency`.
  */
 export type Value = number | boolean | 'unlimited'
 export type Period = 'month' | 'year'
+export interface Price {
+  currency: string
+  period: Period
+  amount: number
+}
+
+// ---- the website's plans (GET /public/v1/plans)
+export interface PublicEntitlement {
+  sku: string
+  name: string
+  description?: string
+  kind: 'feature' | 'limit' | 'meter'
+  unit?: string
+  value: Value
+  overage_unit_price?: Record<string, number>
+  preview?: boolean
+}
+export interface PublicAddon {
+  code: string
+  name: string
+  description?: string
+  gives: { sku: string; name: string; adds?: number; enable?: boolean }[]
+  prices: Price[]
+}
+export interface PublicPlan {
+  code: string
+  name: string
+  description: string
+  rank: number
+  version: number
+  contact_sales: boolean
+  free?: boolean
+  draft?: boolean
+  prices: Price[]
+  yearly_saving: { currency: string; monthly_x12: number; yearly: number; saving_pct: number }[]
+  published_at?: string
+  support: string
+  entitlements: PublicEntitlement[]
+  addons: PublicAddon[]
+}
+export interface PublicPlans {
+  plans: PublicPlan[]
+  currencies: string[]
+  builders?: PublicBuilders
+}
+
 // ---- one organization (GET /organization/{id}/billingUsage)
 export interface Entitlement {
   sku: string
@@ -26,6 +73,8 @@ export interface EstimateLine {
   unit_amount: number
   amount: number
   note?: string
+  sku?: string
+  meter?: boolean
 }
 export interface Estimate {
   plan: string
@@ -83,6 +132,9 @@ export interface BillingUsage {
     status: string
     phase?: { kind: string; until: string; on_end: string }
     locked: boolean
+    /** How the account pays, and whether it is one of Qovery's own organizations (never billed: amounts are $0). Absent from older servers. */
+    billing_channel?: BillingChannel
+    internal?: boolean
   }
   entitlements: Entitlement[]
   organization_usage: Record<string, number>
@@ -111,7 +163,7 @@ export interface BillingUsage {
   notes: string[]
 }
 
-/** A builder size and how its build minutes count against the plan. saving: % less than its resources (big builders). */
+/** A builder size. Listed sizes show on the pricing page and in the picker; the others are on request. saving: % less than its resources (big builders). */
 export interface BuilderSize {
   code: string
   name: string
@@ -124,6 +176,11 @@ export interface BuilderSize {
   price_per_minute?: number
   prepaid_per_minute?: number
 }
+export interface PublicBuilders {
+  annual_prepaid_discount_pct: number
+  sizes: BuilderSize[]
+}
+
 // ---- usage over time (billingUsage.usage_insights)
 export interface UsageSeries {
   sku: string
@@ -183,4 +240,686 @@ export interface UsageInsights {
   deployment_months: DeploymentMonth[]
   projection: UsageProjection[]
   value?: UsageValue
+}
+
+// ---- offers, upgrade requests, email preferences (GET /organization/{id}/offers …)
+export type OfferSurface = 'banner' | 'modal'
+export interface OfferAction {
+  type: 'upgrade' | 'annualize' | 'addon' | 'contact_sales' | 'url' | 'trial'
+  plan?: string
+  period?: Period
+  addon?: string
+  url?: string
+  sku?: string
+  value?: number
+  days?: number
+  grace_hours?: number
+}
+export interface Trial {
+  id: number
+  sku: string
+  value: string
+  status: string
+  started_at: string
+  ends_at: string
+  grace_hours: number
+}
+export interface OfferContent {
+  title: string
+  body: string
+  cta_label: string
+  action: OfferAction
+  tone?: 'brand' | 'positive' | 'warning' | 'neutral'
+  badge?: string
+  subject?: string
+}
+export interface Offer {
+  id: number
+  surfaces: OfferSurface[]
+  content: OfferContent
+  ends_at?: string | null
+  preview?: boolean
+}
+export interface UpgradeRequest {
+  id: number
+  organization_id: string
+  email: string
+  sku: string
+  plan_code: string
+  message: string
+  status: 'open' | 'done' | 'declined'
+  created_at: string
+}
+export interface Offers {
+  user: { email: string; role: string; access: 'member' | 'billing' | 'demo' }
+  offers: Offer[]
+  upgrade_requests: UpgradeRequest[]
+}
+export interface EmailCategory {
+  category: string
+  name: string
+  description: string
+  locked: boolean
+  enabled: boolean
+}
+export interface EmailPreferences {
+  email: string
+  categories: EmailCategory[]
+}
+
+// ---- plan picker and plan change (pricing-api's customer API)
+export interface Quote {
+  direction: 'upgrade' | 'downgrade' | 'migrate' | 'same'
+  from: string
+  to: string
+  period: Period
+  currency: string
+  effective_at: 'now' | 'term_end' | string
+  plan_amount: number
+  total: number
+  projected_overage: number
+  kept_addons: { code: string; name: string; quantity: number; amount: number }[]
+  auto_addons: { code: string; name: string; quantity: number; amount: number }[]
+  conflicts: { sku: string; name: string; used: number; limit: Value; fix: string }[]
+  can_apply: boolean
+  message: string
+}
+export interface PlanOption {
+  plan: { code: string; name: string; description: string; rank: number; public: boolean; legacy: boolean }
+  version: number
+  current: boolean
+  highlights: { sku: string; value: Value; mode: string; overage_unit_price: number }[]
+  quote?: Quote
+}
+/** Whether a confirm would go through; when not, the error code it would get and why. */
+export interface Availability {
+  available: boolean
+  code?: string
+  detail?: string
+}
+/** A change waiting for the renewal (a downgrade, yearly to monthly). */
+export interface ScheduledChange {
+  plan: string
+  name: string
+  effective_on: string
+}
+export interface PlanOptions {
+  segment: string
+  self_serve: boolean
+  currency: string
+  period: Period
+  results: PlanOption[]
+  // From pricing-api's customer API (absent from core's older relay).
+  change?: Availability
+  scheduled_change?: ScheduledChange | null
+  term_end?: string
+  billing_channel?: BillingChannel
+  /** Card accounts: whether a usable payment method is on file (null: not a card account, or unknown). */
+  payment_method_on_file?: boolean | null
+}
+/** What a plan change does to the invoices (estimates: Chargebee computes the exact amounts). */
+export interface PlanChangeBill {
+  currency: string
+  effective_on: string
+  charge_today: number
+  credit_today: number
+  due_today: number
+  credit_left: number
+  next_invoice_on: string
+  next_invoice: number
+  estimated: boolean
+}
+export interface PlanChangeResult {
+  applied: boolean
+  preview?: boolean
+  contract_managed?: boolean
+  quote: Quote
+  bill?: PlanChangeBill
+  discount?: { label: string; percent: number; amount: number } | null
+  change?: Availability
+  duplicate?: boolean
+  scheduled_change?: ScheduledChange | null
+  cancelled_scheduled_change?: boolean
+}
+
+// ---- cancellation (GET|POST|DELETE /organization/{id}/cancellation)
+export type CancelReason = 'too_expensive' | 'missing_feature' | 'moving_away' | 'project_ended' | 'not_using' | 'other'
+export interface CancellationRecord {
+  id: number
+  status: 'scheduled' | 'requested' | 'undone' | 'withdrawn' | 'closed' | 'reactivated'
+  reason: CancelReason
+  feedback: string
+  ends_on: string
+  requested_by: string
+  requested_at: string
+  updated_at: string
+  handled_at: string | null
+}
+export interface Cancellation {
+  /** What to type to confirm. */
+  organization_name: string
+  /** cancel: ends at the term end. request: staff confirm it (a contract, a notice period). unavailable: see `unavailable`. */
+  mode: 'cancel' | 'request' | 'unavailable'
+  unavailable: Availability | null
+  billing_channel: BillingChannel
+  term_end: string
+  ends_on: string
+  notice_days: number
+  notice_deadline: string | null
+  support_days: number
+  support_until: string
+  after_end: string[]
+  reasons: { code: CancelReason; label: string }[]
+  current: CancellationRecord | null
+}
+export interface CancellationResult {
+  status: 'scheduled' | 'requested' | 'undone' | 'withdrawn' | 'none'
+  existing?: boolean
+  cancellation: CancellationRecord | null
+}
+
+// ---- usage over a period (GET /organization/{id}/usageHistory)
+export type Granularity = 'day' | 'month'
+export interface UsageHistoryPoint {
+  period: string
+  quantity: number
+  by_organization: Record<string, number>
+  no_data?: boolean
+}
+export interface UsageHistorySeries {
+  sku: string
+  name: string
+  unit: string
+  kind: 'limit' | 'meter'
+  source: 'deployments' | 'billed' | 'snapshot'
+  /** sum: meters add up over a period. peak: counts show the busiest day. */
+  aggregate: 'sum' | 'peak'
+  included?: number
+  total: number
+  points: UsageHistoryPoint[]
+}
+export interface UsageHistoryAmounts {
+  source: 'invoices'
+  currency: string
+  months: { month: string; invoiced: number; invoices: number }[]
+  total: number
+  unavailable?: 'aws_marketplace' | 'not_linked' | 'billing_unavailable'
+}
+/** One usage history answer. Named apart from the <UsageHistory> component the kit also exports. */
+export interface UsageHistoryData {
+  organization_id: string
+  access: 'member' | 'billing' | 'demo'
+  from: string
+  to: string
+  granularity: Granularity
+  periods: string[]
+  data_since: string | null
+  organizations: { id: string; name: string }[]
+  series: UsageHistorySeries[]
+  amounts?: UsageHistoryAmounts
+  notes: string[]
+}
+
+// ---- build usage (GET /organization/{id}/buildUsage; staff: /admin/v1/{organizations|accounts}/{id}/builds)
+/** A builder size, "<largest>+" beyond the largest, "none" (no builder provisioned) or "unknown" (not attributed to a service). */
+export interface BuildSizeUsage {
+  size: string
+  name: string
+  multiplier: number
+  unknown?: boolean
+  no_builder?: boolean
+  builds: number
+  build_minutes: number
+  counted_build_minutes: number
+  cost?: number
+  share: number
+}
+export interface BuildPeriod {
+  period: string
+  builds: number
+  failed_builds: number
+  build_minutes: number
+  counted_build_minutes: number
+  deploy_minutes: number
+  cost?: number
+  by_size: Record<string, number>
+}
+export interface BuildServiceUsage {
+  /** Empty: time not attributed to a service. */
+  service_id: string
+  organization_id: string
+  name: string
+  type: string
+  builds: number
+  failed_builds: number
+  deployments: number
+  build_minutes: number
+  counted_build_minutes: number
+  deploy_minutes: number
+  avg_build_seconds: number
+  p95_build_seconds: number
+  sizes: string[]
+  cost?: number
+  build_cost?: number
+  share: number
+  trend: number[]
+  failed_counted_minutes: number
+  last_build_at?: string
+}
+export type BuildHintKind = 'top_cost' | 'downsize' | 'frequent' | 'failed'
+export interface BuildHint {
+  kind: BuildHintKind
+  service_id: string
+  service_name: string
+  title: string
+  detail: string
+  minutes: number
+  cost?: number
+}
+export interface BuildRow {
+  finished_at: string
+  execution_id: string
+  environment_id: string
+  status: string
+  failed: boolean
+  build_seconds: number
+  deploy_seconds: number
+  size: string
+  size_name: string
+  multiplier: number
+  unknown?: boolean
+  cpu_milli: number | null
+  ram_gib: number | null
+  counted_build_minutes: number
+  cost?: number
+}
+export interface BuildTotals {
+  builds: number
+  failed_builds: number
+  deployments: number
+  build_minutes: number
+  counted_build_minutes: number
+  deploy_minutes: number
+  build_cost?: number
+  deploy_cost?: number
+  services: number
+  services_built: number
+  services_not_built: number
+  unknown_builder_builds: number
+  no_builder_builds: number
+  failed_counted_minutes: number
+  failed_cost?: number
+  unattributed_deployments: number
+}
+/** One build usage answer. Costs and prices only for billing roles (and staff). */
+export interface BuildUsageData {
+  scope?: 'organization' | 'account'
+  id?: string
+  organization_id?: string
+  access?: 'member' | 'billing' | 'demo'
+  currency: string
+  prices?: { build_per_minute: number; deploy_per_minute: number }
+  builder_sizes: BuilderSize[]
+  source: { facts_since: string | null; complete: boolean; note: string }
+  organizations?: Record<string, string>
+  from: string
+  to: string
+  granularity: Granularity
+  totals: BuildTotals
+  by_size: BuildSizeUsage[]
+  periods: BuildPeriod[]
+  services: BuildServiceUsage[]
+  hints: BuildHint[]
+  /** One service's builds, newest first, when asked for with `service`. */
+  builds?: BuildRow[]
+  notes: string[]
+}
+
+// ---- the customer's own billing (GET /organization/{id}/invoices, /paymentMethods, /billingInfo, /awsMarketplace)
+export type InvoiceStatus = 'paid' | 'posted' | 'payment_due' | 'not_paid' | 'voided' | 'pending'
+export interface CustomerInvoice {
+  id: string
+  status: InvoiceStatus
+  date: string
+  due_date: string | null
+  paid_at: string | null
+  currency: string
+  total: number
+  amount_due: number
+  amount_paid: number
+  collectable: boolean
+  lines: { description: string; amount: number }[]
+}
+export type BillingChannel = 'chargebee' | 'aws_marketplace' | 'invoice' | 'internal' | 'unknown'
+/** One page of invoices, newest first. next_offset is opaque: pass it back for the next page ("" on the last). */
+export interface InvoicePage {
+  invoices: CustomerInvoice[]
+  next_offset: string
+  billing_channel: BillingChannel
+  actions_available: boolean
+}
+export interface InvoiceDownload {
+  download_url: string
+  valid_till: string
+}
+/** One invoice in detail (GET /organization/{id}/invoices/{invoiceId}). Amounts in cents. */
+export interface InvoiceDetails {
+  id: string
+  status: InvoiceStatus
+  date: string
+  due_date: string | null
+  paid_at: string | null
+  currency: string
+  period_from: string | null
+  period_to: string | null
+  subtotal: number
+  discounts: number
+  discount_lines: { description: string; amount: number }[]
+  tax: number
+  total: number
+  amount_paid: number
+  amount_due: number
+  collectable: boolean
+  lines: InvoiceDetailLine[]
+  billing_channel: BillingChannel
+  actions_available: boolean
+  notes: string[]
+}
+export type InvoiceLineKind = 'plan' | 'addon' | 'usage' | 'charge'
+export interface InvoiceDetailLine {
+  kind: InvoiceLineKind
+  label: string
+  description: string
+  sku?: string
+  /** In unit (usage lines: the SKU's unit). */
+  quantity: number
+  unit?: string
+  /** Cents per unit, when the line has one price per unit. */
+  unit_price?: number
+  amount: number
+  discount: number
+  net: number
+  from: string | null
+  to: string | null
+  usage?: InvoiceLineUsage
+}
+/** complete: every day of the period is recorded; partial: the record starts during it (since); none. */
+export type UsageCoverage = 'complete' | 'partial' | 'none'
+export interface InvoiceLineUsage {
+  sku: string
+  name: string
+  unit: string
+  /** First and last day of the period (inclusive). */
+  from: string
+  to: string
+  available: UsageCoverage
+  since: string | null
+  /** billed: what the billing pipeline recorded; deployment_reports: the deployment minutes core reported. */
+  source: 'billed' | 'deployment_reports'
+  /** sum: the days add up (a meter); per_day: the count in use each day. */
+  aggregate: 'sum' | 'per_day'
+  total: number
+  billed: number
+  /** The period's usage the line does not bill (included in the plan or prepaid). */
+  not_billed?: number
+  days: { day: string; quantity: number; organizations?: Record<string, number> }[]
+  organizations: { organization_id: string; name: string; quantity: number }[]
+  builds?: InvoiceLineBuilds
+  notes: string[]
+}
+export interface InvoiceLineBuilds {
+  available: UsageCoverage
+  since: string | null
+  note: string
+  services: {
+    organization_id: string
+    organization: string
+    name: string
+    type: string
+    builds: number
+    failed_builds: number
+    deployments: number
+    build_minutes: number
+    counted_build_minutes: number
+    deploy_minutes: number
+    sizes: string[]
+  }[]
+  by_size: { name: string; multiplier: number; builds: number; build_minutes: number; counted_build_minutes: number }[]
+}
+export interface PaymentMethod {
+  type: string
+  brand?: string
+  last4?: string
+  expiry_month?: number
+  expiry_year?: number
+  primary: boolean
+  status: 'valid' | 'expiring' | 'expired' | 'invalid' | 'pending_verification' | string
+}
+export interface PaymentMethods {
+  payment_methods: PaymentMethod[]
+  billing_channel: BillingChannel
+  actions_available: boolean
+}
+export interface PaymentSession {
+  url: string
+  expires_at: string
+}
+export interface BillingInfo {
+  company: string
+  first_name: string
+  last_name: string
+  email: string
+  line1: string
+  line2: string
+  city: string
+  zip: string
+  state: string
+  country: string
+  vat_number: string
+}
+export interface BillingInfoView extends BillingInfo {
+  contacts: { email: string; name: string }[]
+  actions_available: boolean
+}
+export interface AwsMarketplace {
+  billing_channel: BillingChannel
+  request: {
+    id: string
+    status: 'open' | 'offer_sent' | 'accepted' | 'closed'
+    aws_account_id: string
+    message: string
+    requested_at: string
+    requested_by: string
+  } | null
+  offer: { url: string; expires_at: string | null; note: string } | null
+}
+
+// ---- prepaid credits (GET|POST /organization/{id}/credits, billing roles)
+/** A meter the console sells ahead: unit_price is the pay-as-you-go price; annual, a year upfront for less. */
+export interface CreditOption {
+  sku: string
+  name: string
+  unit: string
+  unit_price: number
+  allowance: number
+  min: number
+  max: number
+  step: number
+  packs: number[]
+  annual?: { min: number; unit_price: number; discount_pct: number }
+}
+export interface CreditBalance {
+  sku: string
+  name: string
+  unit: string
+  bought: number
+  balance: number
+  drawing: number
+  remaining: number
+  expires_on: string | null
+}
+export interface CreditPurchase {
+  id: number
+  date: string
+  sku: string
+  name: string
+  unit: string
+  quantity: number
+  unit_price: number
+  amount: number
+  currency: string
+  /** The person's email, "Auto-reload" or "Qovery". */
+  by: string
+  source: 'console' | 'auto_reload' | 'qovery'
+  invoice_id: string
+}
+export interface Credits {
+  organization_id: string
+  currency: string
+  /** Whether a purchase would go through; when not, the code it would get and why. */
+  buy: Availability
+  payment_method_on_file: boolean | null
+  options: CreditOption[]
+  balances: CreditBalance[]
+  purchases: CreditPurchase[]
+  auto_reload: { sku: string; name: string; enabled: boolean; below_units: number; reload_units: number }[]
+}
+export interface CreditQuote {
+  sku: string
+  name: string
+  unit: string
+  quantity: number
+  annual: boolean
+  currency: string
+  unit_price: number
+  amount: number
+  payg_amount: number
+  saving: number
+  balance_after: number
+  expires_on: string | null
+  tax_note: string
+}
+export interface CreditPurchaseResult {
+  applied: boolean
+  preview?: boolean
+  duplicate?: boolean
+  quote?: CreditQuote
+  buy?: Availability
+  purchase?: CreditPurchase
+  credits?: Credits
+}
+
+// ---- reactivation once the subscription ended (GET|POST /organization/{id}/reactivation, billing roles)
+export interface ReactivationRecord {
+  id: number
+  status: 'requested' | 'reactivated' | 'closed'
+  plan: string
+  period: Period
+  requested_by: string
+  requested_at: string
+  handled_at: string | null
+}
+export interface Reactivation {
+  ended: boolean
+  ended_on: string | null
+  /** reactivate: a new term starts today. request: staff start it. unavailable: see `unavailable`. */
+  mode: 'reactivate' | 'request' | 'unavailable'
+  unavailable: Availability | null
+  currency: string
+  period: Period
+  last_plan: { code: string; name: string } | null
+  default_plan: string
+  plans: { code: string; name: string; description: string; rank: number; prices: Price[] }[]
+  payment_method_on_file: boolean | null
+  current: ReactivationRecord | null
+}
+export interface ReactivationQuote {
+  plan: string
+  name: string
+  period: Period
+  currency: string
+  charge_today: number
+  starts_on: string
+  next_renewal_on: string
+  next_invoice: number
+  estimated: boolean
+  tax_note: string
+}
+export interface ReactivationResult {
+  applied?: boolean
+  preview?: boolean
+  duplicate?: boolean
+  existing?: boolean
+  status?: 'reactivated' | 'requested'
+  quote?: ReactivationQuote
+  mode?: Reactivation['mode']
+  unavailable?: Availability | null
+  reactivation?: ReactivationRecord
+  subscription?: { plan: string; period: Period; term_end: string }
+}
+
+// ---- self-serve discounts (GET /organization/{id}/discounts, POST .../discounts/quote, .../discountRequests; billing roles)
+/** A discount the customer may ask for: percent points, in exchange for what it `gives`. */
+export interface DiscountType {
+  id: string
+  label: string
+  percent: number
+  gives: string
+  /** At least one of these must be chosen (or already granted) with it; requires_label says so. */
+  requires: string[]
+  requires_label?: string
+  /** Cannot be combined with any of these. */
+  excludes: string[]
+  /** A commitment it brings (24, 36 months), 0 when none. */
+  term_months: number
+}
+export interface DiscountRequest {
+  id: number
+  status: 'open' | 'approved' | 'declined' | 'withdrawn'
+  discount_ids: string[]
+  labels: string[]
+  percent: number
+  message: string
+  currency: string
+  period: Period
+  price_before: number
+  price_after: number
+  requested_by: string
+  requested_at: string
+  decided_at: string | null
+  decline_reason: string
+  discount_until: string | null
+  /** Approved and on the subscription (an approval staff still add in Chargebee is not applied yet). */
+  applied: boolean
+}
+export interface Discounts {
+  organization_id: string
+  availability: Availability
+  currency: string
+  period: Period
+  /** The recurring price per period today (plan and add-ons, after discounts already running). */
+  price: number
+  annual_price: number
+  max_percent: number
+  /** What may be asked for now: empty while a request is being reviewed. */
+  discounts: DiscountType[]
+  granted: string[]
+  requests: DiscountRequest[]
+}
+/** A dry run of a selection: points add up (capped at max_percent) on plan and add-ons. */
+export interface DiscountQuote {
+  ids: string[]
+  points: number
+  percent: number
+  max_percent: number
+  capped: boolean
+  currency: string
+  period: Period
+  price_before: number
+  price_after: number
+  saving: number
+  annual_before: number
+  annual_after: number
+  discount_until: string
+  term_months: number
 }

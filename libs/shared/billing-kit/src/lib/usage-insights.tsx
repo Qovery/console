@@ -372,7 +372,7 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
               <th className="py-1 pr-4 text-right font-medium">Build</th>
               <th className="py-1 pr-4 text-right font-medium">Deploy</th>
               <th className="py-1 pr-4 text-right font-medium">Above the plan</th>
-              {amounts && <th className="py-1 text-right font-medium">Billed</th>}
+              {amounts && <th className="py-1 text-right font-medium">Estimated cost</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral">
@@ -503,14 +503,17 @@ function BuilderPanel({ sizes, currency, amounts }: { sizes: BuilderSize[]; curr
   )
 }
 
+/** overTime: the three months' history and the monthly deployment minutes (off when the page shows <UsageHistory>). */
 export function UsageInsights({
   usage,
   pick,
   onPick,
+  overTime = true,
 }: {
   usage: BillingUsage
   pick?: string
   onPick?: (sku: string) => void
+  overTime?: boolean
 }) {
   const ins = usage.usage_insights
   const [own, setOwn] = useState('deploy.minutes')
@@ -522,8 +525,8 @@ export function UsageInsights({
     <div className="flex flex-col gap-4">
       {amounts && ins.value && ins.value.lines.length > 0 && <ValuePanel v={ins.value} />}
       <ProjectionPanel items={ins.projection} currency={usage.billing.currency} amounts={amounts} />
-      <HistoryPanel series={ins.series} pick={sel} setPick={setSel} />
-      <MonthsPanel months={ins.deployment_months} currency={usage.billing.currency} amounts={amounts} />
+      {overTime && <HistoryPanel series={ins.series} pick={sel} setPick={setSel} />}
+      {overTime && <MonthsPanel months={ins.deployment_months} currency={usage.billing.currency} amounts={amounts} />}
       {usage.builder_sizes && usage.builder_sizes.length > 1 && (
         <BuilderPanel sizes={usage.builder_sizes} currency={usage.billing.currency} amounts={amounts} />
       )}

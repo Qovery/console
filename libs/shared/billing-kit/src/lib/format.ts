@@ -24,3 +24,14 @@ export const date = (iso?: string) =>
   iso
     ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
     : ''
+
+/** Monthly price of a plan in a currency and billing period (yearly prices shown per month). */
+export function monthly(
+  prices: { currency: string; period: string; amount: number }[],
+  currency: string,
+  period: 'month' | 'year'
+) {
+  const p = prices.find((x) => x.currency === currency && x.period === period)
+  if (!p) return null
+  return period === 'year' ? Math.round(p.amount / 12) : p.amount
+}
