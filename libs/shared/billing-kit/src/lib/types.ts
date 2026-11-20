@@ -1,7 +1,7 @@
 /*
  * The shapes the billing kit reads. They mirror pricing-api's responses (docs/INTEGRATION.md):
  * GET /public/v1/plans, GET /organization/{id}/billingUsage, /spendLimits, /planOptions, /planChange,
- * /cancellation, /usageHistory, invoices and payment details. Amounts are cents of `currency`.
+ * /cancellation, /usageHistory, /credits, /reactivation, invoices and payment details. Amounts are cents of `currency`.
  */
 export type Value = number | boolean | 'unlimited'
 export type Period = 'month' | 'year'
@@ -383,7 +383,7 @@ export interface PlanChangeResult {
 export type CancelReason = 'too_expensive' | 'missing_feature' | 'moving_away' | 'project_ended' | 'not_using' | 'other'
 export interface CancellationRecord {
   id: number
-  status: 'scheduled' | 'requested' | 'undone' | 'withdrawn' | 'closed'
+  status: 'scheduled' | 'requested' | 'undone' | 'withdrawn' | 'closed' | 'reactivated'
   reason: CancelReason
   feedback: string
   ends_on: string
@@ -442,7 +442,8 @@ export interface UsageHistoryAmounts {
   total: number
   unavailable?: 'aws_marketplace' | 'not_linked' | 'billing_unavailable'
 }
-export interface UsageHistory {
+/** One usage history answer. Named apart from the <UsageHistory> component the kit also exports. */
+export interface UsageHistoryData {
   organization_id: string
   access: 'member' | 'billing' | 'demo'
   from: string
@@ -529,4 +530,128 @@ export interface AwsMarketplace {
     requested_by: string
   } | null
   offer: { url: string; expires_at: string | null; note: string } | null
+}
+
+// ---- prepaid credits (GET|POST /organization/{id}/credits, billing roles)
+/** A meter the console sells ahead: unit_price is the pay-as-you-go price; annual, a year upfront for less. */
+export interface CreditOption {
+  sku: string
+  name: string
+  unit: string
+  unit_price: number
+  allowance: number
+  min: number
+  max: number
+  step: number
+  packs: number[]
+  annual?: { min: number; unit_price: number; discount_pct: number }
+}
+export interface CreditBalance {
+  sku: string
+  name: string
+  unit: string
+  bought: number
+  balance: number
+  drawing: number
+  remaining: number
+  expires_on: string | null
+}
+export interface CreditPurchase {
+  id: number
+  date: string
+  sku: string
+  name: string
+  unit: string
+  quantity: number
+  unit_price: number
+  amount: number
+  currency: string
+  /** The person's email, "Auto-reload" or "Qovery". */
+  by: string
+  source: 'console' | 'auto_reload' | 'qovery'
+  invoice_id: string
+}
+export interface Credits {
+  organization_id: string
+  currency: string
+  /** Whether a purchase would go through; when not, the code it would get and why. */
+  buy: Availability
+  payment_method_on_file: boolean | null
+  options: CreditOption[]
+  balances: CreditBalance[]
+  purchases: CreditPurchase[]
+  auto_reload: { sku: string; name: string; enabled: boolean; below_units: number; reload_units: number }[]
+}
+export interface CreditQuote {
+  sku: string
+  name: string
+  unit: string
+  quantity: number
+  annual: boolean
+  currency: string
+  unit_price: number
+  amount: number
+  payg_amount: number
+  saving: number
+  balance_after: number
+  expires_on: string | null
+  tax_note: string
+}
+export interface CreditPurchaseResult {
+  applied: boolean
+  preview?: boolean
+  duplicate?: boolean
+  quote?: CreditQuote
+  buy?: Availability
+  purchase?: CreditPurchase
+  credits?: Credits
+}
+
+// ---- reactivation once the subscription ended (GET|POST /organization/{id}/reactivation, billing roles)
+export interface ReactivationRecord {
+  id: number
+  status: 'requested' | 'reactivated' | 'closed'
+  plan: string
+  period: Period
+  requested_by: string
+  requested_at: string
+  handled_at: string | null
+}
+export interface Reactivation {
+  ended: boolean
+  ended_on: string | null
+  /** reactivate: a new term starts today. request: staff start it. unavailable: see `unavailable`. */
+  mode: 'reactivate' | 'request' | 'unavailable'
+  unavailable: Availability | null
+  currency: string
+  period: Period
+  last_plan: { code: string; name: string } | null
+  default_plan: string
+  plans: { code: string; name: string; description: string; rank: number; prices: Price[] }[]
+  payment_method_on_file: boolean | null
+  current: ReactivationRecord | null
+}
+export interface ReactivationQuote {
+  plan: string
+  name: string
+  period: Period
+  currency: string
+  charge_today: number
+  starts_on: string
+  next_renewal_on: string
+  next_invoice: number
+  estimated: boolean
+  tax_note: string
+}
+export interface ReactivationResult {
+  applied?: boolean
+  preview?: boolean
+  duplicate?: boolean
+  existing?: boolean
+  status?: 'reactivated' | 'requested'
+  quote?: ReactivationQuote
+  mode?: Reactivation['mode']
+  unavailable?: Availability | null
+  reactivation?: ReactivationRecord
+  subscription?: { plan: string; period: Period; term_end: string }
 }

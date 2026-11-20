@@ -1,6 +1,7 @@
 /*
  * The billing kit's data source: pricing-api's customer API with the user's Qovery token. Plan
- * changes, cancellation and usage history included: core relays none of it. The back office
+ * changes, cancellation, reactivation, prepaid credits and usage history included: core relays
+ * none of it. The back office
  * passes its own client (staff previews, nothing applied).
  */
 import type {
@@ -11,6 +12,8 @@ import type {
   CancelReason,
   Cancellation,
   CancellationResult,
+  CreditPurchaseResult,
+  Credits,
   CustomerInvoice,
   EmailPreferences,
   Granularity,
@@ -23,10 +26,12 @@ import type {
   PlanChangeResult,
   PlanOptions,
   PublicPlans,
+  Reactivation,
+  ReactivationResult,
   Spend,
   Trial,
   UpgradeRequest,
-  UsageHistory,
+  UsageHistoryData,
 } from './types'
 
 export interface PricingClient {
@@ -50,11 +55,33 @@ export interface PricingClient {
   ): Promise<CancellationResult>
   /** Undoes a scheduled cancellation, or withdraws a request. */
   keepSubscription?(organizationId: string): Promise<CancellationResult>
+  // Optional: prepaid credits (billing roles). Without them, members and hosts see balances only.
+  credits?(organizationId: string): Promise<Credits>
+  quoteCredits?(
+    organizationId: string,
+    req: { sku: string; quantity: number; annual?: boolean }
+  ): Promise<CreditPurchaseResult>
+  /** Charges the card on file now. idempotencyKey: one per review. 402 PAYMENT_FAILED adds nothing. */
+  buyCredits?(
+    organizationId: string,
+    req: { sku: string; quantity: number; annual?: boolean },
+    idempotencyKey: string
+  ): Promise<CreditPurchaseResult>
+  // Optional: starting the subscription again once it ended (billing roles).
+  reactivation?(organizationId: string): Promise<Reactivation>
+  quoteReactivation?(organizationId: string, plan: string, period?: Period): Promise<ReactivationResult>
+  /** Starts a new term today (or asks staff). idempotencyKey: one per review. */
+  reactivate?(
+    organizationId: string,
+    plan: string,
+    period: Period | undefined,
+    idempotencyKey: string
+  ): Promise<ReactivationResult>
   // Optional: usage over a period (any member; amounts for billing roles).
   usageHistory?(
     organizationId: string,
     range: { from: string; to: string; granularity?: Granularity }
-  ): Promise<UsageHistory>
+  ): Promise<UsageHistoryData>
   // Optional: offers and upgrade requests (OfferHost, "Ask an admin") and email preferences.
   offers?(organizationId: string): Promise<Offers>
   offerEvent?(
@@ -89,14 +116,18 @@ export interface PricingClient {
 }
 
 export class BillingError extends Error {
-  constructor(
-    public status: number,
-    public code: string,
-    message: string,
-    public field?: string,
-    public retryAfter?: number
-  ) {
+  status: number
+  code: string
+  field?: string
+  retryAfter?: number
+  // Fields assigned in the body (not constructor parameter properties) so plain Node can load
+  // the client in tests.
+  constructor(status: number, code: string, message: string, field?: string, retryAfter?: number) {
     super(message)
+    this.status = status
+    this.code = code
+    this.field = field
+    this.retryAfter = retryAfter
   }
 }
 
@@ -152,6 +183,30 @@ export function createPricingClient(o: ClientOptions): PricingClient {
     cancel: (org, r) =>
       req(o.pricingApiUrl, `/organization/${org}/cancellation`, { method: 'POST', body: JSON.stringify(r) }),
     keepSubscription: (org) => req(o.pricingApiUrl, `/organization/${org}/cancellation`, { method: 'DELETE' }),
+    credits: (org) => req(o.pricingApiUrl, `/organization/${org}/credits`),
+    quoteCredits: (org, r) =>
+      req(o.pricingApiUrl, `/organization/${org}/credits`, {
+        method: 'POST',
+        body: JSON.stringify({ ...r, dry_run: true }),
+      }),
+    buyCredits: (org, r, key) =>
+      req(o.pricingApiUrl, `/organization/${org}/credits`, {
+        method: 'POST',
+        body: JSON.stringify({ ...r, dry_run: false }),
+        headers: { 'Idempotency-Key': key },
+      }),
+    reactivation: (org) => req(o.pricingApiUrl, `/organization/${org}/reactivation`),
+    quoteReactivation: (org, plan, period) =>
+      req(o.pricingApiUrl, `/organization/${org}/reactivation`, {
+        method: 'POST',
+        body: JSON.stringify({ plan, period, dry_run: true }),
+      }),
+    reactivate: (org, plan, period, key) =>
+      req(o.pricingApiUrl, `/organization/${org}/reactivation`, {
+        method: 'POST',
+        body: JSON.stringify({ plan, period, dry_run: false }),
+        headers: { 'Idempotency-Key': key },
+      }),
     usageHistory: (org, r) =>
       req(
         o.pricingApiUrl,

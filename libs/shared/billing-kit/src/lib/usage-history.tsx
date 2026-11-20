@@ -25,7 +25,7 @@ import {
   presetRange,
   quantity,
 } from './rules'
-import type { UsageHistory as History } from './types'
+import type { UsageHistoryData as History } from './types'
 
 // One color per organization, the console's chart palette.
 const ORG_COLORS = [

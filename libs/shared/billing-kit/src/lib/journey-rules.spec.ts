@@ -13,7 +13,7 @@ import {
   presetRange,
   quantity,
 } from './rules'
-import type { UsageHistory } from './types'
+import type { UsageHistoryData } from './types'
 
 const today = new Date('2026-11-20T10:00:00Z')
 
@@ -103,7 +103,7 @@ test('what a change is, and what to do when it cannot be confirmed here', () => 
   expect(a && b && a !== b).toBeTruthy()
 })
 
-const history: UsageHistory = {
+const history: UsageHistoryData = {
   organization_id: 'org-a',
   access: 'billing',
   from: '2026-08-01',

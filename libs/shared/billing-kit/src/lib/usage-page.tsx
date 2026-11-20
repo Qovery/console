@@ -1,9 +1,10 @@
 /*
  * The console's plan and usage page, from pricing-api: the plan, the estimated bill, what is
- * above the plan this month, usage against every limit, usage over a period the person picks,
- * and the journeys around the plan: change plan (pick, review the quote and what it costs today,
- * confirm), keep the current plan when a change is planned, cancel at the end of the term and
- * keep the subscription. Alerts (an overdue invoice, a card that expires) sit under the page's
+ * above the plan this month, usage against every limit, prepaid credits (balances, purchases,
+ * buy), usage over a period the person picks, and the journeys around the plan: change plan
+ * (pick, review the quote and what it costs today, confirm), keep the current plan when a change
+ * is planned, cancel at the end of the term, keep the subscription, and reactivate it once it
+ * ended. Alerts (an overdue invoice, a card that expires) sit under the page's
  * heading, as on the Invoices and Billing pages. It only uses @qovery/shared/ui, so the console
  * mounts it as is:
  *
@@ -14,12 +15,24 @@ import { Badge, Button, Callout, Icon, Modal } from '@qovery/shared/ui'
 import { BillingAlerts } from './billing-alerts'
 import { CancelDialog, PlannedBanners } from './cancel'
 import type { PricingClient } from './client'
+import { PrepaidCredits } from './credits'
 import { date, money, num, valueText } from './format'
 import { AskAdminModal, EmailPreferencesPanel, OfferHost } from './offers'
 import { PlanChangeFlow } from './plan-change'
 import { PricingTable } from './pricing-table'
+import { ReactivateFlow, SubscriptionEndedBanner } from './reactivate'
 import { changeBlockedText, estimateLineLabel } from './rules'
-import type { BillingUsage, Cancellation, Entitlement, Offer, Period, PlanOptions, Spend, UsageSeries } from './types'
+import type {
+  BillingUsage,
+  Cancellation,
+  Entitlement,
+  Offer,
+  Period,
+  PlanOptions,
+  Reactivation,
+  Spend,
+  UsageSeries,
+} from './types'
 import { UsageHistory } from './usage-history'
 import { UsageChart, UsageInsights } from './usage-insights'
 
@@ -172,8 +185,11 @@ export function UsagePage({
   const [spend, setSpend] = useState<Spend>()
   const [plan, setPlan] = useState<PlanOptions>()
   const [cancellation, setCancellation] = useState<Cancellation>()
+  const [reactivation, setReactivation] = useState<Reactivation>()
+  // The view the reactivation flow opened with: it stays mounted after the page reloads.
+  const [reactivating, setReactivating] = useState<Reactivation>()
   const [error, setError] = useState('')
-  const [modal, setModal] = useState<'compare' | 'upgrade' | 'cancel' | null>(open?.modal ?? null)
+  const [modal, setModal] = useState<'compare' | 'upgrade' | 'cancel' | 'reactivate' | null>(open?.modal ?? null)
   const [detail, setDetail] = useState<UsageSeries>()
   const [ask, setAsk] = useState<Entitlement>()
   const [comparePeriod, setComparePeriod] = useState<Period | undefined>(open?.period)
@@ -195,6 +211,13 @@ export function UsagePage({
           .cancellation?.(organizationId)
           .then(setCancellation)
           .catch(() => setCancellation(undefined))
+        // Once the subscription ended: when it ended and how to start it again.
+        if (x.billing.status === 'cancelled')
+          client
+            .reactivation?.(organizationId)
+            .then(setReactivation)
+            .catch(() => setReactivation(undefined))
+        else setReactivation(undefined)
       })
       .catch((e) => setError(e.message))
     client
@@ -213,7 +236,8 @@ export function UsagePage({
   if (!u) return <div className="p-6 text-sm text-neutral-subtle">Loading billing…</div>
   const cur = u.billing.currency
   const amounts = u.access !== 'member'
-  const canChangePlan = amounts && !!client.planOptions && !!client.quotePlanChange
+  // Once the subscription ended, Reactivate replaces Change plan.
+  const canChangePlan = amounts && !!client.planOptions && !!client.quotePlanChange && u.billing.status !== 'cancelled'
   // A limit the plan does not include (0, nothing used) reads as "not included", with the features.
   const notIncluded = (e: Entitlement) => e.kind !== 'feature' && e.value === 0 && e.used === 0
   const limits = u.entitlements.filter((e) => e.kind !== 'feature' && e.lifecycle !== 'preview' && !notIncluded(e))
@@ -231,7 +255,9 @@ export function UsagePage({
   const estimatedAbove = (u.estimate?.lines ?? [])
     .filter((l) => l.kind === 'overage' && l.meter)
     .reduce((a, l) => a + l.amount / (u.estimate?.period === 'year' ? 12 : 1), 0)
+  const ended = u.billing.status === 'cancelled'
   const ending =
+    !ended &&
     cancellation?.current &&
     (cancellation.current.status === 'scheduled' || cancellation.current.status === 'requested')
   const cancelBlocked =
@@ -282,7 +308,18 @@ export function UsagePage({
           </Callout.Text>
         </Callout.Root>
       )}
-      {u.billing.locked && (
+      {amounts && ended && reactivation?.ended && (
+        <SubscriptionEndedBanner
+          view={reactivation}
+          onReactivate={() => {
+            setReactivating(reactivation)
+            setModal('reactivate')
+          }}
+          onContactSales={onContactSales}
+          preview={client.mode === 'preview'}
+        />
+      )}
+      {u.billing.locked && !(amounts && ended && reactivation) && (
         <Callout.Root color="red">
           <Callout.Text>
             <Callout.TextHeading>New resources are paused</Callout.TextHeading>Your subscription is paused, cancelled or
@@ -300,7 +337,7 @@ export function UsagePage({
           </Callout.Text>
         </Callout.Root>
       )}
-      {amounts && (
+      {amounts && !ended && (
         <PlannedBanners
           organizationId={organizationId}
           client={client}
@@ -309,7 +346,7 @@ export function UsagePage({
           onChanged={load}
         />
       )}
-      {amounts && u.billing.cadence === 'monthly' && !ending && (
+      {amounts && u.billing.cadence === 'monthly' && !ending && !ended && (
         <Callout.Root color="neutral">
           <Callout.Text>
             <Callout.TextHeading>Save with yearly billing</Callout.TextHeading>Yearly plans cost about 20% less than 12
@@ -348,8 +385,12 @@ export function UsagePage({
 
       <div className="flex flex-col gap-2 md:flex-row">
         <Card
-          label="Current plan"
-          hint={`${u.billing.period === 'year' ? 'Yearly' : 'Monthly'} · term ends ${date(u.billing.term_end)}`}
+          label={ended ? 'Last plan' : 'Current plan'}
+          hint={
+            ended
+              ? `Ended ${date(reactivation?.ended_on ?? u.billing.term_end)}`
+              : `${u.billing.period === 'year' ? 'Yearly' : 'Monthly'} · term ends ${date(u.billing.term_end)}`
+          }
         >
           {u.plan.name}
           {plan?.scheduled_change && (
@@ -358,7 +399,7 @@ export function UsagePage({
             </Badge>
           )}
         </Card>
-        {amounts && u.estimate && (
+        {amounts && u.estimate && !ended && (
           <Card
             label="Estimated bill"
             hint={`For this ${u.estimate.period}, usage so far included · next invoice ${date(u.estimate.term_end || u.billing.term_end)}`}
@@ -413,7 +454,7 @@ export function UsagePage({
         )}
       </div>
 
-      {amounts && u.estimate && u.estimate.lines.length > 1 && (
+      {amounts && !ended && u.estimate && u.estimate.lines.length > 1 && (
         <div className="rounded border border-neutral bg-surface-neutral">
           <div className="border-b border-neutral px-5 py-2 text-xs font-medium text-neutral-subtle">
             Estimated bill for this {u.estimate.period}
@@ -467,6 +508,14 @@ export function UsagePage({
           </div>
         )}
       </div>
+
+      <PrepaidCredits
+        organizationId={organizationId}
+        client={client}
+        usage={u}
+        onContactSales={onContactSales}
+        onChanged={load}
+      />
 
       {client.usageHistory && <UsageHistory organizationId={organizationId} client={client} />}
 
@@ -568,6 +617,18 @@ export function UsagePage({
           }}
           onDone={load}
           onContactSales={onContactSales}
+        />
+      )}
+      {modal === 'reactivate' && reactivating && (
+        <ReactivateFlow
+          organizationId={organizationId}
+          client={client}
+          view={reactivating}
+          onClose={() => {
+            setModal(null)
+            setReactivating(undefined)
+          }}
+          onDone={load}
         />
       )}
       {modal === 'cancel' && cancellation && (

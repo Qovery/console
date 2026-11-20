@@ -3,9 +3,11 @@ import { type ReactNode } from 'react'
 import {
   type BillingUsage,
   type Cancellation,
+  type Credits,
   type PlanOptions,
-  type PricingClient,
   type Quote,
+  type Reactivation,
+  type UsageHistoryData,
   billingUsageFactoryMock,
   createPricingClient,
 } from '@qovery/shared/billing-kit'
@@ -139,10 +141,7 @@ const cancellation = (unavailable: Cancellation['unavailable'] = null): Cancella
   current: null,
 })
 
-// The kit exports a UsageHistory component, which hides the type of the same name
-type UsageHistory = Awaited<ReturnType<NonNullable<PricingClient['usageHistory']>>>
-
-const usageHistory: UsageHistory = {
+const usageHistory: UsageHistoryData = {
   organization_id: 'org-northwind',
   access: 'billing',
   from: '2026-11-01',
@@ -154,6 +153,121 @@ const usageHistory: UsageHistory = {
   series: [],
   notes: [],
 }
+
+const credits: Credits = {
+  organization_id: 'org-northwind',
+  currency: 'USD',
+  buy: { available: true },
+  payment_method_on_file: true,
+  options: [
+    {
+      sku: 'deploy.minutes',
+      name: 'Deployment minutes',
+      unit: 'minutes',
+      unit_price: 16,
+      allowance: 8000,
+      min: 100,
+      max: 156200,
+      step: 100,
+      packs: [1000, 5000, 10000],
+    },
+  ],
+  balances: [
+    {
+      sku: 'deploy.minutes',
+      name: 'Deployment minutes',
+      unit: 'minutes',
+      bought: 5000,
+      balance: 5000,
+      drawing: 0,
+      remaining: 5000,
+      expires_on: null,
+    },
+  ],
+  purchases: [
+    {
+      id: 1,
+      date: '2026-11-20T08:00:00Z',
+      sku: 'deploy.minutes',
+      name: 'Deployment minutes',
+      unit: 'minutes',
+      quantity: 5000,
+      unit_price: 16,
+      amount: 80000,
+      currency: 'USD',
+      by: 'owner@northwind.example',
+      source: 'console',
+      invoice_id: 'INV-7',
+    },
+  ],
+  auto_reload: [],
+}
+
+const creditQuote = (quantity: number) => ({
+  applied: false,
+  quote: {
+    sku: 'deploy.minutes',
+    name: 'Deployment minutes',
+    unit: 'minutes',
+    quantity,
+    annual: false,
+    currency: 'USD',
+    unit_price: 16,
+    amount: quantity * 16,
+    payg_amount: quantity * 16,
+    saving: 0,
+    balance_after: 5000 + quantity,
+    expires_on: null,
+    tax_note: 'Before tax.',
+  },
+  buy: { available: true },
+})
+
+const reactivation: Reactivation = {
+  ended: true,
+  ended_on: '2026-11-17',
+  mode: 'reactivate',
+  unavailable: null,
+  currency: 'USD',
+  period: 'year',
+  last_plan: { code: 'GROWTH_2026', name: 'Growth' },
+  default_plan: 'GROWTH_2026',
+  plans: [
+    {
+      code: 'GROWTH_2026',
+      name: 'Growth',
+      description: '',
+      rank: 2,
+      prices: [
+        { currency: 'USD', period: 'month', amount: 89900 },
+        { currency: 'USD', period: 'year', amount: 1078800 },
+      ],
+    },
+  ],
+  payment_method_on_file: true,
+  current: null,
+}
+
+const reactivationQuote = {
+  plan: 'GROWTH_2026',
+  name: 'Growth',
+  period: 'year',
+  currency: 'USD',
+  charge_today: 1078800,
+  starts_on: '2026-11-20',
+  next_renewal_on: '2027-11-20',
+  next_invoice: 1078800,
+  estimated: true,
+  tax_note: 'Before tax.',
+}
+
+const sentTo = (fetchMock: jest.Mock, suffix: string) =>
+  (fetchMock.mock.calls as unknown as [string, RequestInit][])
+    .filter(([url, init]) => url.endsWith(suffix) && init.method === 'POST')
+    .map(([, init]) => ({
+      body: JSON.parse(String(init.body)),
+      key: (init.headers as Record<string, string>)['Idempotency-Key'],
+    }))
 
 const journeyRoutes = (change?: PlanOptions['change'], unavailable?: Cancellation['unavailable']) => ({
   '/planOptions': () => jsonResponse(200, planOptions(change)),
@@ -286,8 +400,75 @@ describe('BillingUsageView', () => {
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
     const paths = calledPaths(fetchMock)
-    expect(paths.some((path) => /planOptions|cancellation/.test(path))).toBe(false)
+    expect(paths.some((path) => /planOptions|cancellation|credits|reactivation/.test(path))).toBe(false)
     expect(screen.queryByRole('button', { name: 'Change plan' })).not.toBeInTheDocument()
+  })
+
+  it('should show prepaid credits and buy them with a quote first, then the review key', async () => {
+    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), {
+      '/credits': (init) => {
+        if (init?.method !== 'POST') return jsonResponse(200, credits)
+        const body = JSON.parse(String(init.body))
+        return body.dry_run
+          ? jsonResponse(200, creditQuote(body.quantity))
+          : jsonResponse(201, { applied: true, quote: creditQuote(body.quantity).quote, credits })
+      },
+    })
+    const { userEvent } = renderWithProviders(<BillingUsageView />)
+
+    expect(await screen.findByText('Prepaid credits')).toBeInTheDocument()
+    expect(screen.getByText('owner@northwind.example')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Buy credits' }))
+    await userEvent.click(await screen.findByRole('button', { name: /^Pay \$160 now$/ }, { timeout: 3000 }))
+
+    const posts = sentTo(fetchMock, '/credits')
+    expect(posts[0]).toEqual({ body: { sku: 'deploy.minutes', quantity: 1000, dry_run: true }, key: undefined })
+    const buy = posts.find((p) => p.body.dry_run === false)
+    expect(buy?.body).toEqual({ sku: 'deploy.minutes', quantity: 1000, dry_run: false })
+    expect(buy?.key).toEqual(expect.any(String))
+  })
+
+  it('should show members their prepaid balances, never prices or the buy button', async () => {
+    const usage = {
+      ...billingUsageFactoryMock('member'),
+      prepaid_credits: [
+        { sku: 'deploy.minutes', name: 'Deployment minutes', unit: 'minutes', balance: 5000, remaining: 4200 },
+      ],
+    }
+    const fetchMock = mockUsage(usage, { '/credits': () => jsonResponse(200, credits) })
+    renderWithProviders(<BillingUsageView />)
+
+    expect(await screen.findByText('Prepaid credits')).toBeInTheDocument()
+    expect(screen.getByText(/4,200 minutes left/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Buy credits' })).not.toBeInTheDocument()
+    expect(calledPaths(fetchMock).some((path) => path.endsWith('/credits'))).toBe(false)
+  })
+
+  it('should offer to reactivate an ended subscription and confirm with the review key', async () => {
+    const ended = billingUsageFactoryMock('billing')
+    ended.billing = { ...ended.billing, status: 'cancelled', locked: true }
+    const fetchMock = mockUsage(ended, {
+      ...journeyRoutes({ available: false, code: 'SUBSCRIPTION_ENDED' }),
+      '/reactivation': (init) => {
+        if (init?.method !== 'POST') return jsonResponse(200, reactivation)
+        return JSON.parse(String(init.body)).dry_run
+          ? jsonResponse(200, { applied: false, quote: reactivationQuote, mode: 'reactivate', unavailable: null })
+          : jsonResponse(200, { applied: true, status: 'reactivated', quote: reactivationQuote })
+      },
+    })
+    const { userEvent } = renderWithProviders(<BillingUsageView />)
+
+    expect(await screen.findByText('Your subscription ended on Nov 17, 2026')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Change plan' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Reactivate' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Review' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Reactivate and pay $10,788' }))
+    expect(await screen.findByText('You are on Growth again')).toBeInTheDocument()
+
+    const posts = sentTo(fetchMock, '/reactivation')
+    expect(posts[0]).toEqual({ body: { plan: 'GROWTH_2026', period: 'year', dry_run: true }, key: undefined })
+    expect(posts[1].body).toEqual({ plan: 'GROWTH_2026', period: 'year', dry_run: false })
+    expect(posts[1].key).toEqual(expect.any(String))
   })
 
   it('should show amounts to billing roles', async () => {
@@ -372,7 +553,7 @@ describe('SettingsBillingUsage', () => {
 })
 
 describe('pickConsoleCalls', () => {
-  it('should mount plan changes, cancellation and usage history, and leave offers and emails out', () => {
+  it('should mount plan changes, cancellation, reactivation, prepaid credits and usage history, and leave offers and emails out', () => {
     const calls = pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
@@ -390,6 +571,12 @@ describe('pickConsoleCalls', () => {
       'cancel',
       'keepSubscription',
       'usageHistory',
+      'credits',
+      'quoteCredits',
+      'buyCredits',
+      'reactivation',
+      'quoteReactivation',
+      'reactivate',
     ] as const) {
       expect(calls[name]).toEqual(expect.any(Function))
     }

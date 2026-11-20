@@ -6,11 +6,12 @@
 import type {
   Availability,
   BillingInfo,
+  CreditOption,
   CustomerInvoice,
   EstimateLine,
   Granularity,
   PaymentMethod,
-  UsageHistory,
+  UsageHistoryData,
 } from './types'
 
 // ------------------------------------------------------------------ AWS Marketplace offer links
@@ -295,33 +296,55 @@ export function changeKind(q: { direction: string; period: string; effective_at:
 /** What the customer does instead when a change cannot be confirmed here. */
 export function changeBlockedText(
   a: Availability | undefined,
-  what: 'plan' | 'cancel'
+  what: 'plan' | 'cancel' | 'credits' | 'reactivate'
 ): { title: string; body: string; contact: boolean } | null {
   if (!a || a.available) return null
-  const verb = what === 'plan' ? 'change your plan' : 'cancel'
+  const verb = {
+    plan: 'change your plan',
+    cancel: 'cancel',
+    credits: 'buy prepaid credits',
+    reactivate: 'reactivate your subscription',
+  }[what]
   switch (a.code) {
     case 'PAYMENT_ACTIONS_UNAVAILABLE':
       return {
         title: 'Billing changes are not available yet',
-        body: `You can compare plans and see the prices. To ${verb} now, contact us.`,
+        body:
+          what === 'plan'
+            ? `You can compare plans and see the prices. To ${verb} now, contact us.`
+            : `To ${verb} now, contact us.`,
         contact: true,
       }
     case 'SELF_SERVE_UNAVAILABLE':
       return {
-        title: what === 'plan' ? 'Contact us to change your plan' : 'Contact us to cancel',
+        title:
+          what === 'plan'
+            ? 'Contact us to change your plan'
+            : what === 'cancel'
+              ? 'Contact us to cancel'
+              : `Contact us to ${verb}`,
         body: "This organization's subscription is not managed from the console yet. We make the change for you.",
         contact: true,
       }
     case 'CONTRACT_MANAGED':
-      return {
-        title: 'Your plan is set by your contract',
-        body: 'Your account manager changes it with you.',
-        contact: true,
-      }
+      return what === 'credits'
+        ? {
+            title: 'Prepaid usage is set by your contract',
+            body: 'Your account manager adds prepaid units with you.',
+            contact: true,
+          }
+        : {
+            title: 'Your plan is set by your contract',
+            body: 'Your account manager changes it with you.',
+            contact: true,
+          }
     case 'AWS_MARKETPLACE':
       return {
         title: 'You pay through AWS Marketplace',
-        body: `To ${verb}, your account manager updates your private offer in AWS.`,
+        body:
+          what === 'credits'
+            ? 'Your account manager adds prepaid units to your private offer in AWS.'
+            : `To ${verb}, your account manager updates your private offer in AWS.`,
         contact: true,
       }
     case 'CANCELLATION_SCHEDULED':
@@ -331,9 +354,29 @@ export function changeBlockedText(
         contact: false,
       }
     case 'SUBSCRIPTION_ENDED':
-      return { title: 'Your subscription has ended', body: 'Contact us to start a new one.', contact: true }
+      return {
+        title: 'Your subscription has ended',
+        body: 'Reactivate it from the usage page, or contact us.',
+        contact: true,
+      }
+    case 'PAYMENT_METHOD_REQUIRED':
+      return { title: 'Add a card first', body: a.detail ?? 'This is paid by card.', contact: false }
   }
   return { title: 'This change is not available', body: a.detail ?? '', contact: true }
+}
+
+/** Why a quantity of prepaid credits cannot be bought ('' when it can): the server's bounds. */
+export function creditQuantityError(
+  o: Pick<CreditOption, 'min' | 'max' | 'step' | 'unit' | 'annual'>,
+  quantity: number,
+  annual = false
+): string {
+  const min = annual && o.annual ? o.annual.min : o.min
+  if (!Number.isInteger(quantity) || quantity <= 0) return 'Enter a whole number'
+  if (quantity < min) return `At least ${n0(min)} ${o.unit}${annual ? ' for a year upfront' : ''}`
+  if (quantity > o.max) return `At most ${n0(o.max)} ${o.unit} at once. Contact us for more`
+  if (quantity % o.step !== 0) return `In steps of ${n0(o.step)} ${o.unit}`
+  return ''
 }
 
 // ------------------------------------------------------------------ usage history periods
@@ -412,8 +455,8 @@ export interface HistoryTable {
  * every organization the person sees (scope "all") or one of them. Periods before the data are
  * empty, not zero. Invoices are per contract and per month: on the monthly table for "all" only.
  */
-export function historyTable(h: UsageHistory, scope = 'all'): HistoryTable {
-  const pick = (p: UsageHistory['series'][number]['points'][number]) =>
+export function historyTable(h: UsageHistoryData, scope = 'all'): HistoryTable {
+  const pick = (p: UsageHistoryData['series'][number]['points'][number]) =>
     scope === 'all' ? p.quantity : p.by_organization[scope] ?? 0
   // Invoices are per contract and per month: a column on the monthly table for all organizations.
   const amounts = h.amounts && !h.amounts.unavailable && scope === 'all' && h.granularity === 'month' ? h.amounts : null
@@ -444,7 +487,7 @@ function csvCell(v: string | number | null) {
 }
 
 /** The table as CSV: periods as dates, quantities as plain numbers, invoices in currency units. */
-export function historyCSV(h: UsageHistory, scope = 'all'): string {
+export function historyCSV(h: UsageHistoryData, scope = 'all'): string {
   const t = historyTable(h, scope)
   const org = scope === 'all' ? '' : h.organizations.find((o) => o.id === scope)?.name ?? scope
   const head = [

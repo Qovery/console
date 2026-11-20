@@ -11,6 +11,7 @@ export type { BillingAlertsProps } from './lib/billing-alerts'
 export type { Access } from './lib/parts'
 export {
   cardState,
+  creditQuantityError,
   customRangeError,
   historyCSV,
   historyTable,
@@ -19,8 +20,10 @@ export {
   validOfferURL,
   validateBillingInfo,
 } from './lib/rules'
-export { PlanChangeFlow } from './lib/plan-change'
+export { Fact, PlanChangeFlow } from './lib/plan-change'
 export { CancelDialog, PlannedBanners } from './lib/cancel'
+export { BuyCreditsDialog, PrepaidCredits } from './lib/credits'
+export { ReactivateFlow, SubscriptionEndedBanner } from './lib/reactivate'
 export { UsageHistory } from './lib/usage-history'
 export { BuilderPrices, PricingTable } from './lib/pricing-table'
 export { BuilderPicker, builderSizeFor } from './lib/builder-picker'

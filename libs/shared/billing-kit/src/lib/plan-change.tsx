@@ -15,7 +15,8 @@ import { errorText } from './parts'
 import { changeBlockedText, changeKind, newIdempotencyKey } from './rules'
 import type { BillingUsage, Period, PlanChangeResult, PlanOption, PlanOptions, PublicPlans } from './types'
 
-function Fact({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {
+/** A labelled figure in a review (what changes, today, the next invoice). */
+export function Fact({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {
   return (
     <div className="rounded border border-neutral bg-surface-neutral p-4">
       <div className="mb-1 text-xs font-medium text-neutral-subtle">{label}</div>
