@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { useEnvironmentsOverview, useProject } from '@qovery/domains/projects/feature'
@@ -91,7 +92,7 @@ function EnvironmentsTableSkeleton() {
                         </div>
                       </Table.Cell>
                       <Table.Cell
-                        className={`${environmentTableCellClassName} ${environmentTableSecondaryColumnClassName}`}
+                        className={clsx(environmentTableCellClassName, environmentTableSecondaryColumnClassName)}
                       >
                         <div className="flex h-full items-center justify-between">
                           <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={140} />
@@ -99,14 +100,14 @@ function EnvironmentsTableSkeleton() {
                         </div>
                       </Table.Cell>
                       <Table.Cell
-                        className={`${environmentTableCellClassName} ${environmentTableSecondaryColumnClassName}`}
+                        className={clsx(environmentTableCellClassName, environmentTableSecondaryColumnClassName)}
                       >
                         <div className="flex h-full items-center gap-2">
                           <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={140} />
                         </div>
                       </Table.Cell>
                       <Table.Cell
-                        className={`${environmentTableCellClassName} ${environmentTableSecondaryColumnClassName}`}
+                        className={clsx(environmentTableCellClassName, environmentTableSecondaryColumnClassName)}
                       >
                         <div className="flex h-full items-center">
                           <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={100} />

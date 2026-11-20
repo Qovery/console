@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Icon, Section } from '@qovery/shared/ui'
+import { Button, Icon, SETTINGS_HEADER_ACTION_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { SLACK_BOT_API_URL } from '@qovery/shared/util-node-env'
 import { SlackInstallationList } from './slack-installation-list'
@@ -40,11 +40,7 @@ export function SettingsSlackIntegration() {
                 description="Get notified in Slack when deployments fail, detect failure loops, and know when environments recover."
               />
               {hasInstallation && (
-                <Button
-                  className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
-                  size="md"
-                  onClick={onAddRule}
-                >
+                <Button className={SETTINGS_HEADER_ACTION_CLASS_NAME} size="md" onClick={onAddRule}>
                   <Icon iconName="circle-plus" iconStyle="regular" />
                   Add rule
                 </Button>

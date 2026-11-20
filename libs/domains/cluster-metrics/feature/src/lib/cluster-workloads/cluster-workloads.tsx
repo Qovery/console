@@ -239,7 +239,6 @@ function ResourceCell({ type, value, total }: { type: WorkloadSortKey; value: nu
   )
 }
 
-// Same grid and cell treatment as the environment service list.
 // Below md the namespace (second column of every row) is hidden so name, pods, CPU and memory fit on a phone.
 const tableGridLayoutClassName =
   'grid w-full grid-cols-[minmax(260px,1.6fr)_minmax(180px,1fr)_72px_minmax(200px,1fr)_minmax(200px,1fr)] max-md:grid-cols-[minmax(0,1.3fr)_40px_minmax(0,1fr)_minmax(0,1fr)] max-md:[&>*:nth-child(2)]:hidden'

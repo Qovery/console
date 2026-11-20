@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import {
   type ClusterFeatureAwsExistingVpc,
   type ClusterFeatureGcpExistingVpc,
@@ -22,8 +23,8 @@ import {
   InputToggle,
   LoaderSpinner,
   ModalCrud,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Tooltip,
-  stickyFormActionsClassName,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -669,7 +670,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
                     disabled={!canEditFeatures}
                   />
                   {canEditFeatures && (
-                    <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+                    <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                       <Button data-testid="submit-button" type="submit" size="lg" loading={isEditClusterLoading}>
                         Save
                       </Button>
@@ -701,7 +702,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
                     </BlockContent>
                   )}
                   {canEditFeatures && hasGcpStaticIpFeature && (
-                    <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+                    <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                       <Button data-testid="submit-button" type="submit" size="lg" loading={isEditClusterLoading}>
                         Save
                       </Button>

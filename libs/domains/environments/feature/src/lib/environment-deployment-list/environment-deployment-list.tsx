@@ -35,6 +35,7 @@ import {
   TablePrimitives,
   Tooltip,
   Truncate,
+  deploymentListMobileColumnClassName,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -59,10 +60,6 @@ function stopRowNavigation(event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLEl
 function shouldIgnoreRowNavigation(target: EventTarget | null) {
   return target instanceof HTMLElement && Boolean(target.closest(interactiveRowTargetSelector))
 }
-
-// Below md the list keeps the date (with execution id and logs link) and the status; the other columns are hidden
-const mobileDeploymentColumnClassName = (index: number) =>
-  index === 0 ? 'max-md:!w-[60%] max-md:overflow-hidden' : index === 1 ? 'max-md:!w-[40%]' : 'max-md:hidden'
 
 export interface EnvironmentDeploymentListProps {
   environmentId: string
@@ -476,7 +473,7 @@ export function EnvironmentDeploymentList() {
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`group font-medium ${mobileDeploymentColumnClassName(header.column.getIndex())}`}
+                  className={clsx('group font-medium', deploymentListMobileColumnClassName(header.column.getIndex()))}
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -538,7 +535,7 @@ export function EnvironmentDeploymentList() {
                   {row.getVisibleCells().map((cell) => (
                     <Table.Cell
                       key={cell.id}
-                      className={mobileDeploymentColumnClassName(cell.column.getIndex())}
+                      className={deploymentListMobileColumnClassName(cell.column.getIndex())}
                       style={{
                         width: `${cell.column.getSize()}px`,
                       }}

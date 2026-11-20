@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import equal from 'fast-deep-equal'
 import {
   AgenticWorkflowExecutionMode,
@@ -26,7 +27,7 @@ import {
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Section, stickyFormActionsClassName, toastError } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME, Section, toastError } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { AgenticWorkflowAdvancedSettings } from './agentic-workflow-advanced-settings/agentic-workflow-advanced-settings'
@@ -340,7 +341,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           <AgenticWorkflowAdvancedSettings form={form} isSaving={isLoading} onSave={saveSettings} />
         ) : null}
         {!hasOverlaySave ? (
-          <div className={`flex justify-end pt-2 ${stickyFormActionsClassName}`}>
+          <div className={clsx('flex justify-end pt-2', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button
               type="submit"
               size="lg"

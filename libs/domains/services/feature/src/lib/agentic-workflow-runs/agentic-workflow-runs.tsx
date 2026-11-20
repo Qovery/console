@@ -1,5 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import * as Dialog from '@radix-ui/react-dialog'
+import clsx from 'clsx'
 import { type AgenticWorkflowRun, AgenticWorkflowRunTrigger } from 'qovery-typescript-axios'
 import { type KeyboardEvent, useEffect, useRef, useState } from 'react'
 import {
@@ -17,6 +18,10 @@ import {
 import { dateFullFormat, formatDuration, timeAgo } from '@qovery/shared/util-dates'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useAgenticWorkflowRunHistory } from '../hooks/use-agentic-workflow-run-history/use-agentic-workflow-run-history'
+
+// Below md the runs table keeps the date and the status
+const MOBILE_ROW_CLASS_NAME =
+  'max-md:[&>*:first-child]:!w-[65%] max-md:[&>*:first-child]:overflow-hidden max-md:[&>*:nth-child(2)]:!w-[35%] max-md:[&>*:nth-child(n+3)]:hidden'
 
 const { Table } = TablePrimitives
 
@@ -372,8 +377,7 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
     <div className="flex grow flex-col justify-between">
       <Table.Root className="w-full table-fixed text-ssm md:min-w-[1204px]">
         <Table.Header>
-          {/* Below md the runs table keeps the date and the status; the other columns are hidden */}
-          <Table.Row className="divide-x divide-neutral max-md:[&>*:first-child]:!w-[65%] max-md:[&>*:first-child]:overflow-hidden max-md:[&>*:nth-child(2)]:!w-[35%] max-md:[&>*:nth-child(n+3)]:hidden">
+          <Table.Row className={clsx('divide-x divide-neutral', MOBILE_ROW_CLASS_NAME)}>
             <Table.ColumnHeaderCell className="w-[420px] font-medium">Date</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[128px] font-medium">Status</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell className="w-[196px] font-medium">Trigger</Table.ColumnHeaderCell>
@@ -387,7 +391,10 @@ export function AgenticWorkflowRuns({ serviceId }: { serviceId: string }) {
             <Table.Row
               key={run.id}
               role="button"
-              className="h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle max-md:[&>*:first-child]:!w-[65%] max-md:[&>*:first-child]:overflow-hidden max-md:[&>*:nth-child(2)]:!w-[35%] max-md:[&>*:nth-child(n+3)]:hidden"
+              className={clsx(
+                'h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle',
+                MOBILE_ROW_CLASS_NAME
+              )}
               tabIndex={0}
               onClick={() => setSelectedRun(run)}
               onKeyDown={(event) => openRunWithKeyboard(event, run)}

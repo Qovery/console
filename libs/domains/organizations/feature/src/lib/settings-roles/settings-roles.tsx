@@ -4,7 +4,7 @@ import { type OrganizationAvailableRole, type OrganizationCustomRole } from 'qov
 import { Suspense } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { MemberRoleEnum } from '@qovery/shared/enums'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { SETTINGS_HEADER_ACTION_CLASS_NAME, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, ExternalLink, Icon, Link, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -182,11 +182,7 @@ export function SettingsRoles() {
             description="Manage the existing custom roles or create a new one."
           />
 
-          <Button
-            className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
-            size="md"
-            onClick={onAddRole}
-          >
+          <Button className={SETTINGS_HEADER_ACTION_CLASS_NAME} size="md" onClick={onAddRole}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add new role
           </Button>

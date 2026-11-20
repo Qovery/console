@@ -1,6 +1,6 @@
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
+import { useHorizontalOverflowFade } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { useHorizontalOverflowFade } from '../../utils/use-horizontal-overflow-fade'
 
 // Inspired by https://github.com/radix-ui/themes/blob/a63bd6920370d824be1db26f717147dc4a2501f1/packages/radix-ui-themes/src/components/table.tsx
 
@@ -13,7 +13,7 @@ const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function Table
   ref
 ) {
   // Wide tables scroll horizontally on phones; the fade shows which side hides more columns
-  const { ref: containerRef, onScroll, fadeClassName } = useHorizontalOverflowFade<HTMLDivElement>()
+  const { ref: containerRef, update: onScroll, fadeClassName } = useHorizontalOverflowFade<HTMLDivElement>()
 
   return (
     <div

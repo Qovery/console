@@ -3,7 +3,7 @@ import { type HelmRepositoryResponse } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { SETTINGS_HEADER_ACTION_CLASS_NAME, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, Indicator, Section, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { HelmRepositoryCreateEditModal } from '../helm-repository-create-edit-modal/helm-repository-create-edit-modal'
@@ -92,7 +92,7 @@ function HelmRepositoriesList({
                   </Tooltip>
                 )}
               </h2>
-              <p className="break-all text-xs text-neutral-subtle">{repository.url}</p>
+              <p className="text-xs text-neutral-subtle max-md:break-all">{repository.url}</p>
             </div>
           </div>
           <div className="flex shrink-0 gap-2">
@@ -143,11 +143,7 @@ export function PageOrganizationHelmRepositories({
             title="Helm repositories"
             description="Define and manage the helm repository to be used within your organization to deploy applications."
           />
-          <Button
-            size="md"
-            className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
-            onClick={() => onAddRepository()}
-          >
+          <Button size="md" className={SETTINGS_HEADER_ACTION_CLASS_NAME} onClick={() => onAddRepository()}>
             Add repository
             <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>

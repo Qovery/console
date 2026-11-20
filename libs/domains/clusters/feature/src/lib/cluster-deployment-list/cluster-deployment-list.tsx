@@ -28,6 +28,7 @@ import {
   TablePrimitives,
   Tooltip,
   Truncate,
+  deploymentListMobileColumnClassName,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { EventOriginIcon } from '@qovery/shared/util-icons'
@@ -45,10 +46,6 @@ function stopRowNavigation(event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLEl
 function shouldIgnoreRowNavigation(target: EventTarget | null) {
   return target instanceof HTMLElement && Boolean(target.closest(interactiveRowTargetSelector))
 }
-
-// Below md the list keeps the date (with execution id and logs link) and the status; the other columns are hidden
-const mobileDeploymentColumnClassName = (index: number) =>
-  index === 0 ? 'max-md:!w-[60%] max-md:overflow-hidden' : index === 1 ? 'max-md:!w-[40%]' : 'max-md:hidden'
 
 export interface ClusterDeploymentListProps {
   organizationId: string
@@ -326,7 +323,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header) => (
                 <Table.ColumnHeaderCell
-                  className={`font-medium ${mobileDeploymentColumnClassName(header.column.getIndex())}`}
+                  className={clsx('font-medium', deploymentListMobileColumnClassName(header.column.getIndex()))}
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -368,7 +365,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
               {row.getVisibleCells().map((cell) => (
                 <Table.Cell
                   key={cell.id}
-                  className={mobileDeploymentColumnClassName(cell.column.getIndex())}
+                  className={deploymentListMobileColumnClassName(cell.column.getIndex())}
                   style={{
                     width: `${cell.column.getSize()}px`,
                   }}

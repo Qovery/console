@@ -4,11 +4,11 @@ import { Suspense } from 'react'
 import { type CardImages } from 'react-payment-inputs/images'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
-import { useModal } from '@qovery/shared/ui'
+import { SETTINGS_HEADER_ACTION_CLASS_NAME, useModal } from '@qovery/shared/ui'
 import { Button, Callout, ExternalLink, Icon, Link, Section, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
-import { costToHuman, formatPlanDisplay, isActiveFreeTrial, pluralize } from '@qovery/shared/util-js'
+import { costToHuman, formatPlanDisplay, isActiveFreeTrial, pluralize, twMerge } from '@qovery/shared/util-js'
 import { useCreditCards } from '../hooks/use-credit-cards/use-credit-cards'
 import { useCurrentCost } from '../hooks/use-current-cost/use-current-cost'
 import InvoicesListFeature from './invoices-list-feature/invoices-list-feature'
@@ -47,7 +47,7 @@ const BillingSummarySkeleton = () => (
     <Section className="px-4 pb-8 pt-6 md:px-8">
       <div className="relative mb-8 border-b border-neutral pb-6">
         <Skeleton height={32} width={132} show />
-        <div className="flex shrink-0 flex-wrap gap-3 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0">
+        <div className={twMerge('flex flex-wrap gap-3', SETTINGS_HEADER_ACTION_CLASS_NAME)}>
           <Skeleton height={32} width={120} show />
           <Skeleton height={32} width={110} show />
           <Skeleton height={32} width={110} show />
@@ -104,7 +104,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
       <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading title="Plan details" showNeedHelp={false} />
-          <div className="flex shrink-0 flex-wrap gap-3 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0">
+          <div className={twMerge('flex flex-wrap gap-3', SETTINGS_HEADER_ACTION_CLASS_NAME)}>
             <Button variant="surface" color="neutral" size="md" onClick={props.onShowUsageClick}>
               Show usage
               <Icon iconName="gauge-high" iconStyle="regular" />

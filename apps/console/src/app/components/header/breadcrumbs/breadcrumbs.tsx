@@ -1,11 +1,12 @@
 import { useParams, useRouter } from '@tanstack/react-router'
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
 import { CreateOrganizationModal, useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { sortProjectsByFavorite, useFavoriteProjects, useProjects } from '@qovery/domains/projects/feature'
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { Avatar, useModal } from '@qovery/shared/ui'
+import { useHorizontalOverflowFade } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } from './breadcrumb-item'
@@ -13,8 +14,11 @@ import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } fr
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
   const { openModal, closeModal } = useModal()
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const {
+    ref: scrollContainerRef,
+    update: updateOverflowFade,
+    fadeClassName: overflowFadeClassName,
+  } = useHorizontalOverflowFade<HTMLDivElement>()
   const {
     organizationId = '',
     clusterId = '',
@@ -190,27 +194,25 @@ export function Breadcrumbs() {
     })
   }
 
-  // On narrow screens the trail overflows: bring the current scope into view instead of the organization
   const currentScopeId = breadcrumbData[breadcrumbData.length - 1]?.item.id
   useLayoutEffect(() => {
     const container = scrollContainerRef.current
     const currentScope = container?.lastElementChild
     if (container && currentScope instanceof HTMLElement) {
-      // Align the start of the current scope (keeping the separator before it visible) so its name is never cut
+      // When the trail overflows, scroll the current scope (and the separator before it) into view
       const offset = currentScope.getBoundingClientRect().left - container.getBoundingClientRect().left
       container.scrollLeft = Math.max(0, container.scrollLeft + offset - 24)
-      setIsScrolled(container.scrollLeft > 0)
+      updateOverflowFade()
     }
   }, [currentScopeId])
 
   return (
     <div
       ref={scrollContainerRef}
-      onScroll={(event) => setIsScrolled(event.currentTarget.scrollLeft > 0)}
+      onScroll={updateOverflowFade}
       className={twMerge(
         'no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap',
-        // Fade the cut parent crumbs so the scrolled trail reads as intentional
-        isScrolled && '[mask-image:linear-gradient(to_right,transparent,black_32px)]'
+        overflowFadeClassName
       )}
     >
       {breadcrumbData.map((data, index) => (

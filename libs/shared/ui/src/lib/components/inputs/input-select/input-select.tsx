@@ -16,7 +16,7 @@ import Select, {
 import CreatableSelect from 'react-select/creatable'
 import { match } from 'ts-pattern'
 import { type Value } from '@qovery/shared/interfaces'
-import { twMerge } from '@qovery/shared/util-js'
+import { isTouchScreen, twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../../icon/icon'
 import { LoaderSpinner } from '../../loader-spinner/loader-spinner'
 import { Tooltip } from '../../tooltip/tooltip'
@@ -292,7 +292,7 @@ export function InputSelect({
           : ''
 
   const selectProps: SelectProps<Value, true, GroupBase<Value>> & InputSelectCustomProps = {
-    autoFocus,
+    autoFocus: autoFocus && !isTouchScreen(),
     options,
     isMulti,
     components: selectComponents,

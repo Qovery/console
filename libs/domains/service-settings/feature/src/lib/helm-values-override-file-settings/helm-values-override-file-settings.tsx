@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type HelmRequestAllOfValuesOverrideFile } from 'qovery-typescript-axios'
 import { Controller, FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -16,7 +17,7 @@ import {
 import { AutoDeploySetting, useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isHelmRepositorySource } from '@qovery/shared/enums'
-import { Button, Callout, Icon, InputText, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
+import { Button, Callout, Icon, InputText, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -248,7 +249,7 @@ export function HelmValuesOverrideFileSettings() {
               isSetting
             />
             {methods.watch('type') !== 'YAML' ? (
-              <div className={`mt-10 flex justify-end ${stickyFormActionsClassName}`}>
+              <div className={clsx('mt-10 flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledSaveButton}>
                   Save
                 </Button>

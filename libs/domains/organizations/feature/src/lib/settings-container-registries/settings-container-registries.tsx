@@ -8,6 +8,7 @@ import {
   Button,
   Icon,
   Indicator,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
   Section,
   Skeleton,
   Tooltip,
@@ -272,11 +273,7 @@ export function SettingsContainerRegistries() {
             description="Define and manage the container registry to be used within your organization to deploy applications."
           />
 
-          <Button
-            className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
-            size="md"
-            onClick={() => onAddRegistry()}
-          >
+          <Button className={SETTINGS_HEADER_ACTION_CLASS_NAME} size="md" onClick={() => onAddRegistry()}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add registry
           </Button>

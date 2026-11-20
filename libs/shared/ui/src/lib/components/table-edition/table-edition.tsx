@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface TableEditionCell {
   content?: ReactNode | (() => ReactNode)
@@ -19,7 +20,10 @@ export function TableEdition(props: TableEditionProps) {
   return (
     // Below md the table scrolls horizontally: rows keep a minimum width so columns stay readable
     <div
-      className={`rounded border border-solid border-neutral text-sm text-neutral max-md:overflow-x-auto ${props.className || ''}`}
+      className={twMerge(
+        'rounded border border-solid border-neutral text-sm text-neutral max-md:overflow-x-auto',
+        props.className
+      )}
     >
       {props.tableBody?.map((row, index) => (
         <div

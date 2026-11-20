@@ -14,8 +14,8 @@ import {
   useRef,
   useState,
 } from 'react'
+import { useHorizontalOverflowFade } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { useHorizontalOverflowFade } from '../../utils/use-horizontal-overflow-fade'
 
 const navbarItemVariants = cva(
   [

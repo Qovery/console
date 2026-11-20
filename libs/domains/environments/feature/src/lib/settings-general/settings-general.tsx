@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type Cluster } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -6,7 +7,7 @@ import { useClusters } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { environmentModeValues } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
-import { Button, stickyFormActionsClassName } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME } from '@qovery/shared/ui'
 import { BlockContent, InputSelect, InputText, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useEditEnvironment } from '../hooks/use-edit-environment/use-edit-environment'
@@ -90,7 +91,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             />
           </BlockContent>
-          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+          <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button type="submit" size="lg" disabled={!formState.isValid} loading={loading}>
               Save
             </Button>

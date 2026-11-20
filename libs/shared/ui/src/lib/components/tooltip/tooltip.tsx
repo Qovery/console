@@ -31,28 +31,25 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
   },
   forwardedRef
 ) {
-  // Touch screens have no hover, so Radix never opens the tooltip. There, a tap on a non-interactive trigger (an info
-  // icon, a truncated label) opens it and a tap elsewhere closes it; taps on buttons and links keep doing their action.
-  // Controlled tooltips and desktop behave as before.
-  const isControlled = open !== undefined
-  const [touchOpen, setTouchOpen] = useState(false)
-  const handleTouchOpen = !isControlled && isTouchScreen()
+  // Radix only opens on hover or focus: on touch screens a tap on a non-interactive trigger opens it instead
+  const isTapControlled = open === undefined && isTouchScreen()
+  const [isTapOpen, setIsTapOpen] = useState(defaultOpen ?? false)
 
   const handleTriggerClick = (event: MouseEvent<HTMLElement>) => {
-    if (!handleTouchOpen) return
+    if (!isTapControlled) return
     const interactiveElement = (event.target as HTMLElement).closest(INTERACTIVE_SELECTOR)
     if (interactiveElement && event.currentTarget.contains(interactiveElement)) return
-    setTouchOpen(true)
+    setIsTapOpen(true)
   }
 
   return disabled ? (
     children
   ) : (
     <TooltipPrimitive.Root
-      open={handleTouchOpen ? touchOpen : open}
+      open={isTapControlled ? isTapOpen : open}
       defaultOpen={defaultOpen}
       onOpenChange={(value) => {
-        if (handleTouchOpen) setTouchOpen(value)
+        if (isTapControlled) setIsTapOpen(value)
         onOpenChange?.(value)
       }}
       delayDuration={delayDuration}

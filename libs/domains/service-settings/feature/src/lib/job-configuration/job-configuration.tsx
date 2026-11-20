@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { JobConfigurationForm } from '@qovery/domains/service-job/feature'
@@ -6,7 +7,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { Button, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 
 export const JobConfiguration = () => {
@@ -149,7 +150,7 @@ export const JobConfiguration = () => {
                   <JobConfigurationForm
                     jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
                   />
-                  <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+                  <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                     <Button
                       type="submit"
                       size="lg"

@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
@@ -12,7 +13,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { GitRepositorySettings } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, LoaderSpinner, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
+import { Button, LoaderSpinner, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
@@ -112,7 +113,7 @@ function RouteComponent() {
                   />
                 }
               />
-              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+              <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button
                   data-testid="submit-button"
                   type="submit"

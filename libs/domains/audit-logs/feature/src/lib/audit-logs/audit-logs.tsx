@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { subDays } from 'date-fns'
 import {
   type Organization,
@@ -25,6 +26,7 @@ import {
 import { type SelectedTimestamps } from '@qovery/shared/ui'
 import FilterSection from '../filter-section/filter-section'
 import RowEventFeature from '../row-event-feature/row-event-feature'
+import { AUDIT_LOG_MOBILE_GRID_CLASS_NAME } from '../row-event/row-event'
 import {
   computeDisplayByLabel,
   computeMenusToDisplay,
@@ -282,8 +284,7 @@ export function AuditLogs({
         />
       </div>
 
-      {/* Below md the table scrolls horizontally inside this wrapper, which would offset the sticky header,
-          so the header is static there. Above md the wrapper does not clip and the sticky header keeps working */}
+      {/* Below md this wrapper clips the table, which breaks the sticky header: the header is static there */}
       <div className="max-md:overflow-x-auto">
         <Table
           dataHead={dataHead}
@@ -291,7 +292,10 @@ export function AuditLogs({
           filter={filter}
           setFilter={setFilter}
           className="rounded border border-neutral md:min-w-[1140px]"
-          classNameHead="z-dropdown rounded-t font-code top-[2.8rem] max-md:static max-md:![grid-template-columns:46%_22%_32%] max-md:text-xs max-md:[&>*:nth-child(n+4)]:hidden max-md:[&>*]:min-w-0 max-md:[&>*]:overflow-hidden"
+          classNameHead={clsx(
+            'top-[2.8rem] z-dropdown rounded-t font-code max-md:static',
+            AUDIT_LOG_MOBILE_GRID_CLASS_NAME
+          )}
           columnsWidth={columnsWidth}
         >
           <div>

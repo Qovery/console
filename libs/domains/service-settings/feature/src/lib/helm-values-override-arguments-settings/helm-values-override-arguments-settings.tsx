@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
   type ArgumentTypes,
@@ -7,7 +8,7 @@ import {
 } from '@qovery/domains/service-helm/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 const generateArguments = (
@@ -121,7 +122,7 @@ export function HelmValuesOverrideArgumentsSettings() {
               source={buildEditServicePayload({ service }).source}
               isSetting
             />
-            <div className={`mt-10 flex justify-end ${stickyFormActionsClassName}`}>
+            <div className={clsx('mt-10 flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
               <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!methods.formState.isValid}>
                 Save
               </Button>

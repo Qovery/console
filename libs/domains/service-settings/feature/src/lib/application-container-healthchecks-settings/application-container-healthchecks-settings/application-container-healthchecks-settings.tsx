@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type ApplicationEditRequest, type ContainerRequest } from 'qovery-typescript-axios'
 import { Suspense, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -16,7 +17,7 @@ import {
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type HealthcheckData } from '@qovery/shared/interfaces'
-import { Button, Callout, Icon, Link, LoaderSpinner, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
+import { Button, Callout, Icon, Link, LoaderSpinner, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 const HealthchecksSettingsFallback = () => (
@@ -133,7 +134,7 @@ function ApplicationContainerHealthchecksSettingsContent() {
           <FormProvider {...methods}>
             <form onSubmit={onSubmit}>
               <ApplicationContainerHealthchecksForm ports={service.ports?.map((port) => port.internal_port) ?? []} />
-              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+              <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button type="submit" size="lg" loading={isLoading}>
                   Save
                 </Button>

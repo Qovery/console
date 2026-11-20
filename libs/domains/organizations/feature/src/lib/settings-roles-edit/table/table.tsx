@@ -1,5 +1,7 @@
+import clsx from 'clsx'
 import { type ReactNode } from 'react'
 import { Icon, Tooltip } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { REMOTE_ACCESS_COLUMN_CLASS_NAME } from '../utils/remote-access'
 
 export interface TableHead {
@@ -53,12 +55,15 @@ export function Table(props: TableProps) {
   const hasGroup = segments.some((segment) => segment.group)
 
   return (
-    // Below md the matrix scrolls horizontally (the sticky header then stays static); above md nothing clips it
-    <div className={`max-md:overflow-x-auto ${className}`}>
+    // Below md the matrix scrolls horizontally, which disables the sticky header
+    <div className={twMerge('max-md:overflow-x-auto', className)}>
       <div className="flex flex-col-reverse rounded border border-neutral bg-surface-neutral text-xs text-neutral max-md:min-w-[720px]">
         {children}
         <div
-          className={`sticky top-11 flex rounded-t border-b border-neutral bg-surface-neutral max-md:static ${hasGroup ? 'h-16' : 'h-10'}`}
+          className={clsx(
+            'sticky top-11 flex rounded-t border-b border-neutral bg-surface-neutral max-md:static',
+            hasGroup ? 'h-16' : 'h-10'
+          )}
         >
           <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral px-4 font-medium">
             {title}

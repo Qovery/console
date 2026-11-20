@@ -14,8 +14,7 @@ import { isArgoCdEnvironment } from '../../utils/argocd'
 
 const { Table } = TablePrimitives
 
-// Below md the table keeps selection, name (with its state) and actions; last operation, cluster and last update
-// are hidden with environmentTableSecondaryColumnClassName
+// Below md the table keeps selection, name and actions
 export const environmentTableGridLayoutClassName =
   'grid w-full grid-cols-[44px_minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px] max-md:grid-cols-[36px_minmax(0,1fr)_96px]'
 export const environmentTableSecondaryColumnClassName = 'max-md:hidden'

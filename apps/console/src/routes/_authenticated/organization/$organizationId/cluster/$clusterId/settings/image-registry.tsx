@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type ContainerRegistryRequest } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -11,7 +12,7 @@ import {
   useEditContainerRegistry,
 } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Callout, Icon, LoaderSpinner, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
+import { Button, Callout, Icon, LoaderSpinner, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
@@ -95,7 +96,7 @@ function ImageRegistrySettings() {
             </Callout.Text>
           </Callout.Root>
         )}
-        <div className={`mt-2 flex justify-end ${stickyFormActionsClassName}`}>
+        <div className={clsx('mt-2 flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
           <Button
             type="submit"
             size="lg"

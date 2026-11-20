@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import clsx from 'clsx'
 import {
   type InviteMember,
   type InviteMemberRequest,
@@ -25,6 +26,7 @@ import {
   Button,
   Callout,
   Icon,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
   Section,
   Skeleton as SkeletonPrimitive,
   TableFilter,
@@ -59,7 +61,11 @@ const Skeleton = () => {
           {columnSizes.map((columnSize, index) => (
             <Table.ColumnHeaderCell
               key={columnSize}
-              className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''} ${index >= 2 ? 'max-md:hidden' : ''}`}
+              className={clsx(
+                'border-neutral text-xs font-medium text-neutral',
+                index === 0 && 'border-r',
+                index >= 2 && 'max-md:hidden'
+              )}
               style={{ width: columnSize }}
             >
               <SkeletonPrimitive height={16} width={index === 0 ? 140 : 72} show={true} />
@@ -241,7 +247,11 @@ const MembersTable = (props: MembersTableProps) => {
               {headerGroup.headers.map((header, index) => (
                 <Table.ColumnHeaderCell
                   key={header.id}
-                  className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''} ${index >= 2 ? 'max-md:hidden' : ''}`}
+                  className={clsx(
+                    'border-neutral text-xs font-medium text-neutral',
+                    index === 0 && 'border-r',
+                    index >= 2 && 'max-md:hidden'
+                  )}
                   style={{ width: `${columnSizes[index]}%` }}
                 >
                   {header.isPlaceholder ? null : index === 0 ? (
@@ -293,7 +303,11 @@ const MembersTable = (props: MembersTableProps) => {
                 {headerGroup.headers.map((header, index) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
-                    className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''} ${index >= 3 ? 'max-md:hidden' : ''}`}
+                    className={clsx(
+                      'border-neutral text-xs font-medium text-neutral',
+                      index === 0 && 'border-r',
+                      index >= 3 && 'max-md:hidden'
+                    )}
                     style={{ width: `${columnSizes[index]}%` }}
                   >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
@@ -480,11 +494,7 @@ export function SettingsMembers() {
           />
 
           {canAddMember && (
-            <Button
-              className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
-              size="md"
-              onClick={onAddMember}
-            >
+            <Button className={SETTINGS_HEADER_ACTION_CLASS_NAME} size="md" onClick={onAddMember}>
               <Icon iconName="circle-plus" iconStyle="regular" />
               Add member
             </Button>

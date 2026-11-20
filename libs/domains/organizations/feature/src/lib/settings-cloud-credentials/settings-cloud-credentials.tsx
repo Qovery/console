@@ -13,7 +13,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Section, Skeleton } from '@qovery/shared/ui'
+import { BlockContent, SETTINGS_HEADER_ACTION_CLASS_NAME, Section, Skeleton } from '@qovery/shared/ui'
 import { Button, DropdownMenu, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
@@ -64,7 +64,7 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
             className="-ml-1.5"
           />
         )}
-        <div className="flex min-w-0 flex-col justify-center break-all">
+        <div className="flex min-w-0 flex-col justify-center max-md:break-all">
           <span className="text-xs font-medium text-neutral">{credential.name}</span>
 
           {'role_arn' in credential && (
@@ -410,7 +410,7 @@ export function SettingsCloudCredentials() {
 
           <DropdownMenu.Root open={isCreateMenuOpen} onOpenChange={setIsCreateMenuOpen}>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0">
+              <Button size="md" className={SETTINGS_HEADER_ACTION_CLASS_NAME}>
                 <Icon iconName="circle-plus" iconStyle="regular" />
                 New credential
               </Button>

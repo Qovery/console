@@ -10,6 +10,7 @@ import {
   Button,
   DropdownMenu,
   Icon,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
   Section,
   Skeleton,
   Tooltip,
@@ -253,7 +254,7 @@ export function SettingsLabelsAnnotations() {
 
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0">
+              <Button size="md" className={SETTINGS_HEADER_ACTION_CLASS_NAME}>
                 <Icon iconName="circle-plus" iconStyle="regular" />
                 Add new
               </Button>

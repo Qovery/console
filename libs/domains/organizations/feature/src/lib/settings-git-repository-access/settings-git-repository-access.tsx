@@ -4,7 +4,15 @@ import { jwtDecode } from 'jwt-decode'
 import { type GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useState } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, Icon, Section, Skeleton, useModal } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Icon,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
+  Section,
+  Skeleton,
+  useModal,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { GitTokenCreateEditModal } from '../git-token-create-edit-modal/git-token-create-edit-modal'
 import { GitTokenList } from '../git-token-list/git-token-list'
@@ -107,7 +115,7 @@ export function SettingsGitRepositoryAccess() {
 
           <Button
             size="md"
-            className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
+            className={SETTINGS_HEADER_ACTION_CLASS_NAME}
             onClick={() => {
               openModal({
                 content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,

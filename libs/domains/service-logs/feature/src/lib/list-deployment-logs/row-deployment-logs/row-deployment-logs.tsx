@@ -58,9 +58,8 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
       <Table.Cell className="h-6 min-w-10 select-none py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-subtle group-hover:bg-surface-neutral-subtle group-hover:delay-1000">
         <Tooltip content="Copy row URL">
           <span className="relative block">
-            {/* The copy button sits over the line number. Touch screens have no hover, so the copied state is what
-                gives feedback: the check icon replaces the number for a second after a tap */}
-            <span className={`group-hover:opacity-0 ${isHighlighted || isLinkCopied ? 'opacity-0' : ''}`}>
+            {/* Without hover on touch screens, the copied check icon replacing the line number is the tap feedback */}
+            <span className={clsx('group-hover:opacity-0', (isHighlighted || isLinkCopied) && 'opacity-0')}>
               {original.id}
             </span>
             <button

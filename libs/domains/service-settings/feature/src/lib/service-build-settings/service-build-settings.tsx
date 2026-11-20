@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type BuildSettings } from 'qovery-typescript-axios'
 import { Suspense, useEffect } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -17,8 +18,8 @@ import {
   InputText,
   InputToggle,
   LoaderSpinner,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Section,
-  stickyFormActionsClassName,
 } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
@@ -187,7 +188,7 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
               />
             </div>
             {!disabled && (
-              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+              <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
                   Save
                 </Button>

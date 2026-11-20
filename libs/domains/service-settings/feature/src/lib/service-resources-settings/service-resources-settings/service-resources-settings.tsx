@@ -4,6 +4,7 @@
 // and submit logic (autoscaling/HPA/KEDA + payload).
 // DATABASE stays separate because its resources UX and managed flow are different.
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type FormEventHandler, useEffect } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -16,7 +17,7 @@ import {
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { Button, Section, stickyFormActionsClassName } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import {
   buildAutoscalingRequestFromForm,
   buildEditServicePayload,
@@ -147,7 +148,7 @@ function ServiceResourcesSettingsForm({
               service={service}
               advancedSettings={advancedSettings}
             />
-            <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+            <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
               <Button
                 type="submit"
                 size="lg"

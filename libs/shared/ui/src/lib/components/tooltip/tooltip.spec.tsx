@@ -1,4 +1,4 @@
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { mockPointerCoarse, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import Tooltip, { type TooltipProps } from './tooltip'
 
 const props: TooltipProps = {
@@ -6,21 +6,13 @@ const props: TooltipProps = {
 }
 
 describe('Tooltip', () => {
-  const originalMatchMedia = window.matchMedia
-
+  let restorePointer: () => void = () => undefined
   const mockPointer = (coarse: boolean) => {
-    window.matchMedia = jest.fn().mockImplementation((query: string) => ({
-      matches: coarse && query === '(pointer: coarse)',
-      media: query,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-    })) as unknown as typeof window.matchMedia
+    restorePointer = mockPointerCoarse(coarse)
   }
 
   afterEach(() => {
-    window.matchMedia = originalMatchMedia
+    restorePointer()
   })
 
   it('should render successfully', () => {

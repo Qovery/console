@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const FADE_BOTH = '[mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)]'
-const FADE_START = '[mask-image:linear-gradient(to_right,transparent,black_24px)]'
-const FADE_END = '[mask-image:linear-gradient(to_left,transparent,black_24px)]'
+// Edge fades are a phone affordance: wide tables still overflow on small desktops, which must keep their look
+const FADE_BOTH_CLASS_NAME =
+  'max-md:[mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)]'
+const FADE_START_CLASS_NAME = 'max-md:[mask-image:linear-gradient(to_right,transparent,black_24px)]'
+const FADE_END_CLASS_NAME = 'max-md:[mask-image:linear-gradient(to_left,transparent,black_24px)]'
 
-// For horizontally scrollable containers (tab bars, wide tables on phones): fades the edges that hide content, so
-// people can tell there is more to scroll. Nothing is applied when the content fits, which is the desktop case.
 export function useHorizontalOverflowFade<T extends HTMLElement>() {
   const ref = useRef<T>(null)
   const [overflow, setOverflow] = useState({ start: false, end: false })
@@ -30,7 +30,13 @@ export function useHorizontalOverflowFade<T extends HTMLElement>() {
   }, [update])
 
   const fadeClassName =
-    overflow.start && overflow.end ? FADE_BOTH : overflow.start ? FADE_START : overflow.end ? FADE_END : ''
+    overflow.start && overflow.end
+      ? FADE_BOTH_CLASS_NAME
+      : overflow.start
+        ? FADE_START_CLASS_NAME
+        : overflow.end
+          ? FADE_END_CLASS_NAME
+          : ''
 
-  return { ref, onScroll: update, update, fadeClassName }
+  return { ref, update, fadeClassName }
 }

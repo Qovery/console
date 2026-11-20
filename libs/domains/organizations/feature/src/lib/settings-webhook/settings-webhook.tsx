@@ -3,7 +3,7 @@ import { OrganizationWebhookKindEnum, type OrganizationWebhookResponse } from 'q
 import { Suspense } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { SETTINGS_HEADER_ACTION_CLASS_NAME, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, InputToggle, Section, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -95,7 +95,7 @@ const WebhookList = ({ organizationId }: { organizationId: string }) => {
               className="flex items-center justify-between gap-x-4 gap-y-3 border-b border-neutral p-4 last:border-0 max-md:flex-wrap"
             >
               <div className="flex min-w-0 flex-col">
-                <div className="mb-1 flex break-all text-xs font-medium text-neutral">
+                <div className="mb-1 flex text-xs font-medium text-neutral max-md:break-all">
                   <Truncate truncateLimit={58} text={webhook.target_url || ''} />
                   {webhook.description && (
                     <Tooltip content={webhook.description}>
@@ -184,11 +184,7 @@ export function SettingsWebhook() {
             description="Qovery allows you to create webhooks at organization-level so that, when an event happens on an
               environment within your organization, you can get notified on external applications (for instance, Slack)."
           />
-          <Button
-            size="md"
-            className="shrink-0 max-md:-mt-4 max-md:mb-8 md:absolute md:right-0 md:top-0"
-            onClick={openAddNew}
-          >
+          <Button size="md" className={SETTINGS_HEADER_ACTION_CLASS_NAME} onClick={openAddNew}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add new
           </Button>

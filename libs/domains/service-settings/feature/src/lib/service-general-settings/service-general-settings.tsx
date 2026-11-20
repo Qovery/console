@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type Organization } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -19,7 +20,7 @@ import {
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, LoaderSpinner, Section, stickyFormActionsClassName, useModal } from '@qovery/shared/ui'
+import { Button, LoaderSpinner, STICKY_FORM_ACTIONS_CLASS_NAME, Section, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ApplicationGeneralSettings } from './application-general-settings/application-general-settings'
 import { ContainerGeneralSettings } from './container-general-settings/container-general-settings'
@@ -179,7 +180,7 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
         <div className="max-w-content-with-navigation-left">
           <form onSubmit={onSubmit} className="space-y-10">
             {formContent}
-            <div className={`mt-10 flex justify-end ${stickyFormActionsClassName}`}>
+            <div className={clsx('mt-10 flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
               <Button type="submit" size="lg" loading={isLoadingEditService} disabled={!methods.formState.isValid}>
                 Save
               </Button>

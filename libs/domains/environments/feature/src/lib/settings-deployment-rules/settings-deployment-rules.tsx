@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, type FieldValues, useForm } from 'react-hook-form'
@@ -10,8 +11,8 @@ import {
   InputSelect,
   InputText,
   InputToggle,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Section,
-  stickyFormActionsClassName,
 } from '@qovery/shared/ui'
 import { dateToHours } from '@qovery/shared/util-dates'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
@@ -162,7 +163,7 @@ export const SettingsDeploymentRules = () => {
               </>
             )}
           </BlockContent>
-          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+          <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button className="mb-6" type="submit" size="lg" disabled={!methods.formState.isValid} loading={loading}>
               Save
             </Button>

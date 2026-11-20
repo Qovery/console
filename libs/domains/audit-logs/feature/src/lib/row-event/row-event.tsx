@@ -14,6 +14,10 @@ import { EventOriginIcon } from '@qovery/shared/util-icons'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { getTargetTypeLabel } from '../utils/target-type-selection-utils'
 
+// Below md the table keeps timestamp, event and target; the details stay one tap away
+export const AUDIT_LOG_MOBILE_GRID_CLASS_NAME =
+  'max-md:text-xs max-md:![grid-template-columns:46%_22%_32%] max-md:[&>*:nth-child(n+4)]:hidden max-md:[&>*]:min-w-0 max-md:[&>*]:overflow-hidden'
+
 export interface RowEventProps {
   event: OrganizationEventResponse
   expanded: boolean
@@ -212,8 +216,7 @@ export function RowEvent(props: RowEventProps) {
         className={twMerge(
           clsx(
             'group grid h-12 cursor-pointer items-center border-b border-neutral py-2.5 text-sm font-normal text-neutral last:border-b-0 hover:bg-surface-neutral-subtle',
-            // Below md the row keeps timestamp, event and target; the details stay one tap away
-            'max-md:text-xs max-md:![grid-template-columns:46%_22%_32%] max-md:[&>*:nth-child(n+4)]:hidden max-md:[&>*]:min-w-0 max-md:[&>*]:overflow-hidden'
+            AUDIT_LOG_MOBILE_GRID_CLASS_NAME
           )
         )}
         style={{ gridTemplateColumns: columnsWidth }}
@@ -288,7 +291,7 @@ export function RowEvent(props: RowEventProps) {
                     {targetExists && (
                       <Icon
                         iconName="arrow-right"
-                        className="opacity-0 transition-opacity duration-200 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+                        className="opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                       />
                     )}
                     {event.target_type && renderLink(event.target_type)}

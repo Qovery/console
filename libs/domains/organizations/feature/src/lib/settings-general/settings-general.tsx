@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type Organization } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FormEventHandler } from 'react'
@@ -12,8 +13,8 @@ import {
   InputTags,
   InputText,
   InputTextArea,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Section,
-  stickyFormActionsClassName,
 } from '@qovery/shared/ui'
 import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -131,7 +132,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               downtime...)
             </p>
           </BlockContent>
-          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+          <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button data-testid="submit-button" size="lg" type="submit" disabled={!formState.isValid} loading={loading}>
               Save
             </Button>

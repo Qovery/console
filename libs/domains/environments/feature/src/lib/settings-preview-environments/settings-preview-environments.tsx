@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -18,8 +19,8 @@ import {
   Callout,
   Icon,
   InputToggle,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Section,
-  stickyFormActionsClassName,
 } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
@@ -132,7 +133,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
               )}
             </div>
           </BlockContent>
-          <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+          <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button className="mb-6" disabled={!formState.isValid} size="lg" loading={loading} type="submit">
               Save
             </Button>

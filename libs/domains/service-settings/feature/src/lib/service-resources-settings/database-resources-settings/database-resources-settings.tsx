@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import {
   CloudProviderEnum,
   DatabaseModeEnum,
@@ -24,9 +25,9 @@ import {
   InputSelect,
   InputText,
   Link,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Section,
   inputSizeUnitRules,
-  stickyFormActionsClassName,
 } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -311,7 +312,7 @@ function DatabaseResourcesSettingsForm({
               )}
             </Section>
 
-            <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+            <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
               <Button
                 data-testid="submit-button"
                 size="lg"

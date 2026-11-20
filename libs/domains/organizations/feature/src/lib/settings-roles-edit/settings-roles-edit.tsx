@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import {
   type OrganizationCustomRole,
   type OrganizationCustomRoleClusterPermissionsInner,
@@ -18,8 +19,8 @@ import {
   InputText,
   InputTextArea,
   Link,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Skeleton,
-  stickyFormActionsClassName,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -353,7 +354,7 @@ function SettingsRolesEditContent({
                   ))}
                 </Table>
               )}
-              <div className={`mb-24 mt-6 flex justify-between gap-3 ${stickyFormActionsClassName}`}>
+              <div className={clsx('mb-24 mt-6 flex justify-between gap-3', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button
                   type="button"
                   data-testid="delete-button"

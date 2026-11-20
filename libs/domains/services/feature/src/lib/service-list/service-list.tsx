@@ -46,8 +46,7 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
 export const tableGridLayoutClassName =
   'grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]'
 
-// Below md the list keeps selection, name, status and actions; last operation and target version (columns 3 and 4)
-// are hidden and remain available on the service page
+// Below md the list keeps selection, name, status and actions
 const MOBILE_GRID_CLASS_NAME = 'max-md:grid-cols-[36px_minmax(0,1fr)_44px_124px]'
 const MOBILE_HIDDEN_COLUMN_INDEXES = [3, 4]
 
@@ -401,7 +400,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row
                 key={headerGroup.id}
-                className={`h-9 w-full ${tableGridLayoutClassName} ${MOBILE_GRID_CLASS_NAME}`}
+                className={clsx('h-9 w-full', tableGridLayoutClassName, MOBILE_GRID_CLASS_NAME)}
               >
                 {headerGroup.headers.map((header, i) => (
                   <Table.ColumnHeaderCell
@@ -451,7 +450,11 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <Table.Row
-                  className={`h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle ${tableGridLayoutClassName} ${MOBILE_GRID_CLASS_NAME}`}
+                  className={clsx(
+                    'h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle',
+                    tableGridLayoutClassName,
+                    MOBILE_GRID_CLASS_NAME
+                  )}
                   tabIndex={0}
                   onClick={() => handleNavigateToService(row.original.id)}
                   onKeyDown={(e) => {

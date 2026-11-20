@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type Cluster, type ClusterFeatureStringResponse, KubernetesEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -13,8 +14,8 @@ import {
   ExternalLink,
   Heading,
   Icon,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Section,
-  stickyFormActionsClassName,
 } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
@@ -144,7 +145,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
                   <LabelSetting filterPropagateToCloudProvider={true} />
                 </Section>
               )}
-              <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+              <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button
                   data-testid="submit-button"
                   type="submit"

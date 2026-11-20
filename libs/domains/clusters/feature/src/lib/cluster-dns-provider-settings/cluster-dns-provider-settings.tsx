@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import {
   CloudflareDnsProviderRequestProviderEnum,
   type ClusterDnsProviderRequest,
@@ -21,8 +22,8 @@ import {
   InputText,
   InputToggle,
   Link,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Section,
-  stickyFormActionsClassName,
 } from '@qovery/shared/ui'
 
 const SECRET_HINT =
@@ -401,7 +402,7 @@ export function ClusterDnsProviderSettings({
               <DnsProviderFields disabled={disabled || Boolean(isSubmitting)} />
             </BlockContent>
 
-            <div className={`flex justify-end ${stickyFormActionsClassName}`}>
+            <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
               <Button
                 data-testid="submit-button"
                 type="submit"
