@@ -1,7 +1,7 @@
 # shared-billing-kit
 
 The billing kit from pricing-api (`web/src/billing-kit` in the qovery-pricing repository), the source of truth for these
-components. Copied from pricing-api commit `a09814fd42e356eb8c4ae5ccfee6c68641d141b7` (main, 2026-11-20).
+components. Copied from pricing-api commit `58171d8a2c1cba4909dbe9422c2f22c476007cfa` (main, 2026-11-20).
 
 What the copy changes, so the next sync can redo it:
 
@@ -9,10 +9,10 @@ What the copy changes, so the next sync can redo it:
   console's Prettier config.
 - Left out: `embed.tsx`, `embed.scss` and `inline.d.ts`, which build the website's web component.
 - No other change: the kit's own optional client methods (plan change, cancellation, reactivation, prepaid credits,
-  usage history, offers) let the console pick the calls it mounts (`pickConsoleCalls`).
+  usage history, build usage, invoice details, offers) let the console pick the calls it mounts (`pickConsoleCalls`).
 - `src/index.ts` re-exports from `./lib/`, and adds the `Access` type and the test mock.
 - `billing-usage-factory.mock.ts` and the `*.spec.ts(x)` files are console only.
 
-Every call goes to pricing-api with the signed-in user's Qovery token (`createPricingClient`). Invoices, payment
-methods, billing information, AWS Marketplace requests, plan changes, cancellation, reactivation, prepaid credits and
-usage history are pricing-api's customer API; core is not involved.
+Every call goes to pricing-api with the signed-in user's Qovery token (`createPricingClient`). Invoices and their
+details, payment methods, billing information, AWS Marketplace requests, plan changes, cancellation, reactivation,
+prepaid credits, usage history and build usage are pricing-api's customer API; core is not involved.

@@ -1,6 +1,6 @@
 /*
  * The billing kit's pure rules for invoices, payment methods, billing information, AWS
- * Marketplace offers, plan changes, cancellation, usage history and build usage: no React, no network, so they
+ * Marketplace offers, plan changes, cancellation, usage history, build usage and invoice details: no React, no network, so they
  * are unit tested (web/tests/billing-kit.test.ts).
  */
 import type {
@@ -11,6 +11,8 @@ import type {
   CustomerInvoice,
   EstimateLine,
   Granularity,
+  InvoiceDetails,
+  InvoiceLineUsage,
   PaymentMethod,
   UsageHistoryData,
 } from './types'
@@ -143,6 +145,176 @@ export async function runSequential<T>(
     if (i < items.length - 1 && o.gapMs) await sleep(o.gapMs)
   }
   return { done, failed, cancelled: !!o.signal?.aborted && done + failed < items.length }
+}
+
+// ------------------------------------------------------------------ invoice details
+
+const LINE_KIND: Record<string, string> = { plan: 'Plan', addon: 'Add-on', usage: 'Usage', charge: 'One-off charge' }
+export const lineKindLabel = (kind: string) => LINE_KIND[kind] ?? kind
+
+/** What a usage section says about its record, or '' when every day of the period is there. */
+export function usageCoverageText(u: Pick<InvoiceLineUsage, 'available' | 'since' | 'from' | 'to'>): string {
+  if (u.available === 'complete') return ''
+  if (u.available === 'partial')
+    return `Usage per day is recorded from ${u.since} on: the days of this period before it are not shown.`
+  return u.since
+    ? `The usage behind this line is not available: usage per day is recorded from ${u.since} on.`
+    : 'The usage behind this line is not available for this period.'
+}
+
+/**
+ * The chart and table of a usage section: one row per day, the quantity per organization when the
+ * account has several (keys are organization ids), else under "quantity".
+ */
+export function usageDays(u: Pick<InvoiceLineUsage, 'days' | 'organizations'>) {
+  const split = u.organizations.length > 1
+  return u.days.map((d) => {
+    const row: Record<string, number | string> = { day: d.day, label: periodLabel(d.day), quantity: d.quantity }
+    if (split) for (const o of u.organizations) row[o.organization_id] = d.organizations?.[o.organization_id] ?? 0
+    return row
+  })
+}
+
+/**
+ * The invoice as CSV: one row per line, then each usage line's days (per organization when there
+ * are several) and the builds per service behind it. Amounts in currency units, quantities as
+ * plain numbers, cells safe from spreadsheet formulas.
+ */
+export function invoiceDetailsCSV(d: InvoiceDetails): string {
+  const cur = d.currency
+  const money2 = (c: number | undefined | null) => (c == null ? null : (c / 100).toFixed(2))
+  const head = [
+    'Invoice',
+    'Record',
+    'Line',
+    'Kind',
+    'From',
+    'To',
+    'Day',
+    'Organization',
+    'Service',
+    'Builder sizes',
+    'Quantity',
+    'Unit',
+    `Unit price (${cur})`,
+    `Amount (${cur})`,
+    `Discount (${cur})`,
+    `Net (${cur})`,
+    'Builds',
+    'Build minutes',
+    'Counted build minutes',
+    'Deploy minutes',
+  ]
+  const rows: (string | number | null)[][] = []
+  const day = (iso: string | null) => (iso ? iso.slice(0, 10) : null)
+  const row = (o: {
+    record: string
+    line: string
+    kind?: string
+    from?: string | null
+    to?: string | null
+    day?: string
+    org?: string
+    service?: string
+    sizes?: string
+    qty?: number
+    unit?: string
+    unitPrice?: number
+    amount?: number
+    discount?: number
+    net?: number
+    builds?: number
+    buildMin?: number
+    counted?: number
+    deployMin?: number
+  }) =>
+    rows.push([
+      d.id,
+      o.record,
+      o.line,
+      o.kind ?? null,
+      o.from ?? null,
+      o.to ?? null,
+      o.day ?? null,
+      o.org ?? null,
+      o.service ?? null,
+      o.sizes ?? null,
+      o.qty ?? null,
+      o.unit ?? null,
+      money2(o.unitPrice),
+      money2(o.amount),
+      money2(o.discount),
+      money2(o.net),
+      o.builds ?? null,
+      o.buildMin ?? null,
+      o.counted ?? null,
+      o.deployMin ?? null,
+    ])
+  for (const l of d.lines) {
+    row({
+      record: 'line',
+      line: l.label,
+      kind: lineKindLabel(l.kind),
+      from: day(l.from),
+      to: day(l.to),
+      qty: l.quantity,
+      unit: l.unit,
+      unitPrice: l.unit_price,
+      amount: l.amount,
+      discount: l.discount,
+      net: l.net,
+    })
+  }
+  if (d.discounts)
+    row({
+      record: 'discount',
+      line: d.discount_lines.map((x) => x.description).join('; ') || 'Discounts',
+      net: -d.discounts,
+    })
+  if (d.tax) row({ record: 'tax', line: 'Tax', net: d.tax })
+  row({ record: 'total', line: 'Total', net: d.total })
+  for (const l of d.lines) {
+    const u = l.usage
+    if (!u) continue
+    const split = u.organizations.length > 1
+    for (const x of u.days) {
+      if (split)
+        for (const o of u.organizations)
+          row({
+            record: 'usage_day',
+            line: l.label,
+            day: x.day,
+            org: o.name,
+            qty: x.organizations?.[o.organization_id] ?? 0,
+            unit: u.unit,
+          })
+      else
+        row({
+          record: 'usage_day',
+          line: l.label,
+          day: x.day,
+          org: u.organizations[0]?.name,
+          qty: x.quantity,
+          unit: u.unit,
+        })
+    }
+    for (const sv of u.builds?.services ?? []) {
+      row({
+        record: 'build_service',
+        line: l.label,
+        from: u.from,
+        to: u.to,
+        org: sv.organization,
+        service: sv.name,
+        sizes: sv.sizes.join('; '),
+        builds: sv.builds,
+        buildMin: sv.build_minutes,
+        counted: sv.counted_build_minutes,
+        deployMin: sv.deploy_minutes,
+      })
+    }
+  }
+  return [head, ...rows].map((r) => r.map(csvCell).join(',')).join('\n') + '\n'
 }
 
 // ------------------------------------------------------------------ payment methods
@@ -295,6 +467,9 @@ export function changeKind(q: { direction: string; period: string; effective_at:
 }
 
 /** What the customer does instead when a change cannot be confirmed here. */
+/** What the kit says about one of Qovery's own organizations (an internal account, never billed). */
+export const INTERNAL_NOTHING_BILLED = 'Internal organization: nothing is billed'
+
 export function changeBlockedText(
   a: Availability | undefined,
   what: 'plan' | 'cancel' | 'credits' | 'reactivate'
@@ -362,6 +537,12 @@ export function changeBlockedText(
       }
     case 'PAYMENT_METHOD_REQUIRED':
       return { title: 'Add a card first', body: a.detail ?? 'This is paid by card.', contact: false }
+    case 'INTERNAL_ACCOUNT':
+      return {
+        title: INTERNAL_NOTHING_BILLED,
+        body: 'Plans, payments, credits and cancellations do not apply to it.',
+        contact: false,
+      }
   }
   return { title: 'This change is not available', body: a.detail ?? '', contact: true }
 }

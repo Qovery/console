@@ -23,7 +23,7 @@ import { AskAdminModal, EmailPreferencesPanel, OfferHost } from './offers'
 import { PlanChangeFlow } from './plan-change'
 import { PricingTable } from './pricing-table'
 import { ReactivateFlow, SubscriptionEndedBanner } from './reactivate'
-import { changeBlockedText, estimateLineLabel } from './rules'
+import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel } from './rules'
 import type {
   BillingUsage,
   Cancellation,
@@ -262,7 +262,10 @@ export function UsagePage({
   const cur = u.billing.currency
   const amounts = u.access !== 'member'
   // Once the subscription ended, Reactivate replaces Change plan.
-  const canChangePlan = amounts && !!client.planOptions && !!client.quotePlanChange && u.billing.status !== 'cancelled'
+  // Qovery's own organizations (internal accounts): usage as usual, nothing billed, nothing to change.
+  const internal = !!u.billing.internal
+  const canChangePlan =
+    amounts && !internal && !!client.planOptions && !!client.quotePlanChange && u.billing.status !== 'cancelled'
   // A limit the plan does not include (0, nothing used) reads as "not included", with the features.
   const notIncluded = (e: Entitlement) => e.kind !== 'feature' && e.value === 0 && e.used === 0
   const limits = u.entitlements.filter((e) => e.kind !== 'feature' && e.lifecycle !== 'preview' && !notIncluded(e))
@@ -321,7 +324,15 @@ export function UsagePage({
         actions,
       })}
       <div className="flex flex-col gap-6">
-        {alerts && (
+        {internal && (
+          <Callout.Root color="neutral">
+            <Callout.Text>
+              <Callout.TextHeading>{INTERNAL_NOTHING_BILLED}</Callout.TextHeading>This organization is one of Qovery's
+              own. Usage and limits show as usual; amounts are $0 and no invoice is ever sent.
+            </Callout.Text>
+          </Callout.Root>
+        )}
+        {alerts && !internal && (
           <BillingAlerts organizationId={organizationId} client={client} access={u.access} onNavigate={onNavigate} />
         )}
         {u.status.status === 'payment_failed' && (
@@ -371,7 +382,7 @@ export function UsagePage({
             onChanged={load}
           />
         )}
-        {amounts && u.billing.cadence === 'monthly' && !ending && !ended && (
+        {amounts && !internal && u.billing.cadence === 'monthly' && !ending && !ended && (
           <Callout.Root color="neutral">
             <Callout.Text>
               <Callout.TextHeading>Save with yearly billing</Callout.TextHeading>Yearly plans cost about 20% less than
@@ -556,7 +567,7 @@ export function UsagePage({
 
         {u.notes.length > 0 && <p className="text-xs text-neutral-subtle">{u.notes.join(' ')}</p>}
 
-        {amounts && cancellation && !ending && cancellation.unavailable?.code !== 'SUBSCRIPTION_ENDED' && (
+        {amounts && !internal && cancellation && !ending && cancellation.unavailable?.code !== 'SUBSCRIPTION_ENDED' && (
           <div className="border-t border-neutral pt-4 text-sm text-neutral-subtle">
             {!cancelBlocked ? (
               <button

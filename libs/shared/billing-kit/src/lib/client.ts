@@ -18,6 +18,7 @@ import type {
   CustomerInvoice,
   EmailPreferences,
   Granularity,
+  InvoiceDetails,
   InvoiceDownload,
   InvoicePage,
   Offers,
@@ -109,6 +110,8 @@ export interface PricingClient {
   // Optional: the customer's own billing (billing roles only). Invoices, payment methods and
   // billing information live in Chargebee; pricing-api reads and writes them for the organization.
   invoices?(organizationId: string, page?: { limit?: number; offset?: string }): Promise<InvoicePage>
+  /** One invoice in detail: its lines, and the usage behind each usage line. A read: it works when actions are not available. */
+  invoice?(organizationId: string, invoiceId: string): Promise<InvoiceDetails>
   /** A short-lived link to the invoice's PDF: open it at once, never keep it. */
   invoicePdf?(organizationId: string, invoiceId: string): Promise<InvoiceDownload>
   /** Pay now: charges the payment method on file. 402 PAYMENT_FAILED, 409, 429 COLLECT_TOO_SOON (retryAfter). */
@@ -159,7 +162,8 @@ export function buildUsageQuery(r: { from: string; to: string; granularity?: Gra
 export function createPricingClient(o: ClientOptions): PricingClient {
   const f = o.fetch ?? fetch.bind(globalThis)
   async function req<T>(base: string, path: string, init: RequestInit = {}, auth = true): Promise<T> {
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+    // Content-Type only with a body: a GET without it is a simple request, no CORS preflight.
+    const headers: Record<string, string> = init.body != null ? { 'Content-Type': 'application/json' } : {}
     if (auth && o.getToken) headers.Authorization = `Bearer ${await o.getToken()}`
     const res = await f(base.replace(/\/$/, '') + path, {
       ...init,
@@ -256,6 +260,7 @@ export function createPricingClient(o: ClientOptions): PricingClient {
       if (page?.offset) q.set('offset', page.offset)
       return req(o.pricingApiUrl, `/organization/${org}/invoices${q.size ? `?${q}` : ''}`)
     },
+    invoice: (org, id) => req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}`),
     invoicePdf: (org, id) => req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}/pdf`),
     collectInvoice: (org, id) =>
       req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}/collect`, { method: 'POST' }),

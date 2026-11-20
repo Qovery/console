@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Badge, Button, Icon, InputText, InputTextArea } from '@qovery/shared/ui'
 import { BillingAlerts } from './billing-alerts'
 import { BillingError, type PricingClient } from './client'
+import { EmptyState } from './invoices-page'
 import {
   type Access,
   BillingRolesOnly,
@@ -24,6 +25,7 @@ import {
   useAccess,
 } from './parts'
 import {
+  INTERNAL_NOTHING_BILLED,
   cardState,
   emptyBillingInfo,
   localDate,
@@ -75,6 +77,14 @@ export function BillingSettingsPage({
     )
   if (!isBillingAccess(access) || !client.paymentMethods) return <BillingRolesOnly />
   const onAws = aws?.billing_channel === 'aws_marketplace' || aws?.request?.status === 'accepted'
+  // One of Qovery's own organizations: no card, no billing information, nothing to pay.
+  if (aws?.billing_channel === 'internal')
+    return (
+      <EmptyState
+        title={INTERNAL_NOTHING_BILLED}
+        body="This organization is one of Qovery's own: there is no payment method or billing information to manage."
+      />
+    )
   return (
     <div className="flex flex-col gap-6">
       {alerts && (
@@ -115,9 +125,11 @@ function PaymentMethodCard({
       })
       .catch((e) => {
         setError(
-          e instanceof BillingError && e.code === 'BILLING_NOT_LINKED'
-            ? 'Billing is not set up for this organization yet.'
-            : errorText(e)
+          e instanceof BillingError && e.code === 'INTERNAL_ACCOUNT'
+            ? `${INTERNAL_NOTHING_BILLED}.`
+            : e instanceof BillingError && e.code === 'BILLING_NOT_LINKED'
+              ? 'Billing is not set up for this organization yet.'
+              : errorText(e)
         )
       })
   }, [client, organizationId])
@@ -437,9 +449,11 @@ function BillingInfoCard({ organizationId, client }: { organizationId: string; c
       .then(take)
       .catch((e) =>
         setError(
-          e instanceof BillingError && e.code === 'BILLING_NOT_LINKED'
-            ? 'Billing is not set up for this organization yet.'
-            : errorText(e)
+          e instanceof BillingError && e.code === 'INTERNAL_ACCOUNT'
+            ? `${INTERNAL_NOTHING_BILLED}.`
+            : e instanceof BillingError && e.code === 'BILLING_NOT_LINKED'
+              ? 'Billing is not set up for this organization yet.'
+              : errorText(e)
         )
       )
   }, [client, organizationId])

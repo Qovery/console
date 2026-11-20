@@ -1,7 +1,8 @@
 /*
  * The console's invoices page, from pricing-api's customer API (billing roles only): what is
- * overdue first, then every invoice with status and year filters, a download per row and for
- * the filtered rows, and "Pay now" on unpaid ones (the card on file is charged after a confirm).
+ * overdue first, then every invoice with status and year filters, "Details" (the lines and the
+ * usage behind them, <InvoiceDetailsModal>) and a download per row, a download for the filtered
+ * rows, and "Pay now" on unpaid ones (the card on file is charged after a confirm).
  *
  *   <InvoicesPage organizationId={id} client={client} onManagePaymentMethod={() => navigate('…/billing')} />
  */
@@ -10,6 +11,7 @@ import { Badge, Button, Callout, Icon, Modal } from '@qovery/shared/ui'
 import { BillingAlerts } from './billing-alerts'
 import { BillingError, type PricingClient } from './client'
 import { CompactSelect } from './compact-select'
+import { InvoiceDetailsModal } from './invoice-details'
 import {
   type Access,
   BillingRolesOnly,
@@ -22,6 +24,7 @@ import {
   useAccess,
 } from './parts'
 import {
+  INTERNAL_NOTHING_BILLED,
   type StatusFilter,
   amount,
   amountDue,
@@ -99,6 +102,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
   const [status, setStatus] = useState<StatusFilter>('all')
   const [year, setYear] = useState<number | 'all'>('all')
   const [confirm, setConfirm] = useState<CustomerInvoice>()
+  const [details, setDetails] = useState<CustomerInvoice>()
   const [paying, setPaying] = useState('')
   const [pay, setPay] = useState<Record<string, PayState>>({})
   const [downloading, setDownloading] = useState('')
@@ -128,6 +132,13 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
   const years = useMemo(() => invoiceYears(rows), [rows])
 
   if (error instanceof BillingError && error.code === 'BILLING_ROLE_REQUIRED') return <BillingRolesOnly />
+  if (error instanceof BillingError && error.code === 'INTERNAL_ACCOUNT')
+    return (
+      <EmptyState
+        title={INTERNAL_NOTHING_BILLED}
+        body="This organization is one of Qovery's own: there are no invoices."
+      />
+    )
   if (error instanceof BillingError && error.code === 'BILLING_NOT_LINKED') {
     return (
       <EmptyState title="Billing is not set up yet" body="Invoices show here once this organization has a paid plan." />
@@ -365,7 +376,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
             <span>Status</span>
             <span className="text-right">Amount</span>
             <span>Due</span>
-            <span className="w-[180px] text-right">Actions</span>
+            <span className={`${client.invoice ? 'w-[280px]' : 'w-[180px]'} text-right`}>Actions</span>
           </div>
           <ul className="divide-y divide-neutral">
             {shown.map((inv) => {
@@ -401,7 +412,21 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
                           ? `Due ${localDate(inv.due_date)}`
                           : ''}
                     </span>
-                    <span className="col-span-2 flex flex-wrap justify-end gap-2 md:col-span-1 md:w-[180px]">
+                    <span
+                      className={`col-span-2 flex flex-wrap justify-end gap-2 md:col-span-1 ${client.invoice ? 'md:w-[280px]' : 'md:w-[180px]'}`}
+                    >
+                      {client.invoice && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          color="neutral"
+                          onClick={() => setDetails(inv)}
+                          aria-label={`Details of invoice ${inv.id}`}
+                        >
+                          <Icon iconName="file-lines" iconStyle="regular" />
+                          Details
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"
@@ -451,6 +476,17 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
             </div>
           )}
         </div>
+      )}
+
+      {details && (
+        <InvoiceDetailsModal
+          organizationId={organizationId}
+          client={client}
+          invoice={details}
+          onClose={() => setDetails(undefined)}
+          onDownload={client.invoicePdf ? download : undefined}
+          downloadAvailable={actions}
+        />
       )}
 
       {confirm && (

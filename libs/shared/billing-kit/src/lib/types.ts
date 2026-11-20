@@ -132,6 +132,9 @@ export interface BillingUsage {
     status: string
     phase?: { kind: string; until: string; on_end: string }
     locked: boolean
+    /** How the account pays, and whether it is one of Qovery's own organizations (never billed: amounts are $0). Absent from older servers. */
+    billing_channel?: BillingChannel
+    internal?: boolean
   }
   entitlements: Entitlement[]
   organization_usage: Record<string, number>
@@ -587,7 +590,7 @@ export interface CustomerInvoice {
   collectable: boolean
   lines: { description: string; amount: number }[]
 }
-export type BillingChannel = 'chargebee' | 'aws_marketplace' | 'invoice' | 'unknown'
+export type BillingChannel = 'chargebee' | 'aws_marketplace' | 'invoice' | 'internal' | 'unknown'
 /** One page of invoices, newest first. next_offset is opaque: pass it back for the next page ("" on the last). */
 export interface InvoicePage {
   invoices: CustomerInvoice[]
@@ -598,6 +601,90 @@ export interface InvoicePage {
 export interface InvoiceDownload {
   download_url: string
   valid_till: string
+}
+/** One invoice in detail (GET /organization/{id}/invoices/{invoiceId}). Amounts in cents. */
+export interface InvoiceDetails {
+  id: string
+  status: InvoiceStatus
+  date: string
+  due_date: string | null
+  paid_at: string | null
+  currency: string
+  period_from: string | null
+  period_to: string | null
+  subtotal: number
+  discounts: number
+  discount_lines: { description: string; amount: number }[]
+  tax: number
+  total: number
+  amount_paid: number
+  amount_due: number
+  collectable: boolean
+  lines: InvoiceDetailLine[]
+  billing_channel: BillingChannel
+  actions_available: boolean
+  notes: string[]
+}
+export type InvoiceLineKind = 'plan' | 'addon' | 'usage' | 'charge'
+export interface InvoiceDetailLine {
+  kind: InvoiceLineKind
+  label: string
+  description: string
+  sku?: string
+  /** In unit (usage lines: the SKU's unit). */
+  quantity: number
+  unit?: string
+  /** Cents per unit, when the line has one price per unit. */
+  unit_price?: number
+  amount: number
+  discount: number
+  net: number
+  from: string | null
+  to: string | null
+  usage?: InvoiceLineUsage
+}
+/** complete: every day of the period is recorded; partial: the record starts during it (since); none. */
+export type UsageCoverage = 'complete' | 'partial' | 'none'
+export interface InvoiceLineUsage {
+  sku: string
+  name: string
+  unit: string
+  /** First and last day of the period (inclusive). */
+  from: string
+  to: string
+  available: UsageCoverage
+  since: string | null
+  /** billed: what the billing pipeline recorded; deployment_reports: the deployment minutes core reported. */
+  source: 'billed' | 'deployment_reports'
+  /** sum: the days add up (a meter); per_day: the count in use each day. */
+  aggregate: 'sum' | 'per_day'
+  total: number
+  billed: number
+  /** The period's usage the line does not bill (included in the plan or prepaid). */
+  not_billed?: number
+  days: { day: string; quantity: number; organizations?: Record<string, number> }[]
+  organizations: { organization_id: string; name: string; quantity: number }[]
+  builds?: InvoiceLineBuilds
+  notes: string[]
+}
+export interface InvoiceLineBuilds {
+  available: UsageCoverage
+  since: string | null
+  note: string
+  services: {
+    organization_id: string
+    organization: string
+    name: string
+    type: string
+    builds: number
+    failed_builds: number
+    deployments: number
+    build_minutes: number
+    counted_build_minutes: number
+    deploy_minutes: number
+    sizes: string[]
+  }[]
+  by_size: { name: string; multiplier: number; builds: number; build_minutes: number; counted_build_minutes: number }[]
 }
 export interface PaymentMethod {
   type: string

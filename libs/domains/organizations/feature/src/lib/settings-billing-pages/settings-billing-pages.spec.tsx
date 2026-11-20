@@ -2,6 +2,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type BillingUsage,
   type CustomerInvoice,
+  type InvoiceDetails,
   billingUsageFactoryMock,
   createPricingClient,
 } from '@qovery/shared/billing-kit'
@@ -48,6 +49,55 @@ const overdueInvoice: CustomerInvoice = {
   lines: [{ description: 'Growth', amount: 89900 }],
 }
 
+const invoiceDetails: InvoiceDetails = {
+  ...overdueInvoice,
+  period_from: '2026-11-01T00:00:00Z',
+  period_to: '2026-12-01T00:00:00Z',
+  subtotal: 89900,
+  discounts: 0,
+  discount_lines: [],
+  tax: 0,
+  billing_channel: 'chargebee',
+  actions_available: true,
+  notes: [],
+  lines: [
+    {
+      kind: 'usage',
+      label: 'Deployment minutes above your plan',
+      description: 'Deployment minutes',
+      sku: 'deploy.minutes',
+      quantity: 1000,
+      unit: 'minutes',
+      unit_price: 16,
+      amount: 16000,
+      discount: 0,
+      net: 16000,
+      from: '2026-10-01T00:00:00Z',
+      to: '2026-10-03T00:00:00Z',
+      usage: {
+        sku: 'deploy.minutes',
+        name: 'Deployment minutes',
+        unit: 'minutes',
+        from: '2026-10-01',
+        to: '2026-10-02',
+        available: 'complete',
+        since: '2026-08-01',
+        source: 'billed',
+        aggregate: 'sum',
+        total: 9000,
+        billed: 1000,
+        not_billed: 8000,
+        days: [
+          { day: '2026-10-01', quantity: 4000 },
+          { day: '2026-10-02', quantity: 5000 },
+        ],
+        organizations: [{ organization_id: 'org-northwind', name: 'Northwind Labs', quantity: 9000 }],
+        notes: [],
+      },
+    },
+  ],
+}
+
 const jsonResponse = (status: number, body: unknown) =>
   ({
     ok: status >= 200 && status < 300,
@@ -64,6 +114,7 @@ const mockPricingApi = (usage: BillingUsage, invoices: CustomerInvoice[] = [over
     if (path.endsWith('/collect') && init?.method === 'POST') {
       return Promise.resolve(jsonResponse(200, { ...invoices[0], status: 'paid', collectable: false }))
     }
+    if (path.endsWith('/invoices/INV-2026-0042')) return Promise.resolve(jsonResponse(200, invoiceDetails))
     if (path.endsWith('/invoices')) {
       return Promise.resolve(
         jsonResponse(200, { invoices, next_offset: '', billing_channel: 'chargebee', actions_available: true })
@@ -145,6 +196,18 @@ describe('InvoicesView', () => {
       to: '/organization/$organizationId/settings/billing-settings',
       params: { organizationId: 'org-northwind' },
     })
+  })
+
+  it('should open the details of an invoice with the usage behind its usage line', async () => {
+    const fetchMock = mockPricingApi(billingUsageFactoryMock())
+    const { userEvent } = renderWithProviders(<InvoicesView />)
+
+    await screen.findByText('INV-2026-0042')
+    await userEvent.click(screen.getByRole('button', { name: 'Details of invoice INV-2026-0042' }))
+
+    expect(await screen.findByText('Deployment minutes above your plan')).toBeInTheDocument()
+    expect(screen.getByText('Not billed (plan or prepaid)')).toBeInTheDocument()
+    expect(calledPaths(fetchMock)).toContain('/organization/org-northwind/invoices/INV-2026-0042')
   })
 
   it('should confirm before paying an invoice', async () => {

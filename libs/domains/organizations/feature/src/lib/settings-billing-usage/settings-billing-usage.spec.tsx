@@ -592,7 +592,7 @@ describe('SettingsBillingUsage', () => {
 })
 
 describe('pickConsoleCalls', () => {
-  it('should mount plan changes, cancellation, reactivation, prepaid credits and usage history, and leave offers and emails out', () => {
+  it('should mount plan changes, cancellation, reactivation, prepaid credits, usage history, build usage and invoice details, and leave offers and emails out', () => {
     const calls = pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
@@ -616,6 +616,9 @@ describe('pickConsoleCalls', () => {
       'reactivation',
       'quoteReactivation',
       'reactivate',
+      'buildUsage',
+      'invoices',
+      'invoice',
     ] as const) {
       expect(calls[name]).toEqual(expect.any(Function))
     }
