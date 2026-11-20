@@ -1,4 +1,5 @@
 import { useLocation, useParams } from '@tanstack/react-router'
+import { configure } from '@testing-library/react'
 import { type ReactNode } from 'react'
 import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
@@ -21,6 +22,9 @@ jest.mock('@tanstack/react-router', () => ({
     </a>
   ),
 }))
+
+// The pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
+configure({ asyncUtilTimeout: 5000 })
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
