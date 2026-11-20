@@ -21,7 +21,8 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 }
 
 /**
- * The side list of Agents. It groups Skills registry pages alongside Activity and Settings.
+ * The side list of Agents: the Skills registry and Activity, then Settings with policy tokens, for
+ * owners and admins only.
  */
 export function AgentExperienceNav() {
   const { organizationId = '' } = useParams({ strict: false })
@@ -30,30 +31,13 @@ export function AgentExperienceNav() {
   const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
   const denied = useDeniedThisWeek(organizationId, canManage ? 'organization' : 'me', !isLoading)
   const registryPath = `${base}/skill-presets`
-  const sections = [
-    { title: 'Presets', to: registryPath },
-    { title: 'Assignments', to: `${registryPath}/assignments` },
-    { title: 'Skill loads', to: `${registryPath}/loads` },
-    { title: 'Usage', to: `${registryPath}/usage` },
-  ]
-  const activeSection = sections.slice(1).find(({ to }) => pathname === to || pathname.startsWith(`${to}/`))
   const isRegistryPage = pathname === registryPath || pathname.startsWith(`${registryPath}/`)
 
   return (
     <Sidebar.Root className="mt-6" aria-label="Agents">
-      {!isLoading && canManage ? (
-        <Sidebar.Group title="Skills registry" icon="sliders" iconStyle="regular" defaultOpen={isRegistryPage}>
-          {sections.map(({ title, to }) => (
-            <Sidebar.SubItem key={to} to={to} active={isRegistryPage && (activeSection?.to ?? registryPath) === to}>
-              {title}
-            </Sidebar.SubItem>
-          ))}
-        </Sidebar.Group>
-      ) : (
-        <Sidebar.Item to={registryPath} icon="sliders" iconStyle="regular" active={isRegistryPage}>
-          Skills registry
-        </Sidebar.Item>
-      )}
+      <Sidebar.Item to={registryPath} icon="sliders" iconStyle="regular" active={isRegistryPage}>
+        Skills registry
+      </Sidebar.Item>
       <Sidebar.Item
         to={`${base}/agent-activity`}
         icon="wave-pulse"

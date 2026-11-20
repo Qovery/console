@@ -178,36 +178,6 @@ export interface SkillPresetAssignees {
   members: { id: string; name: string; email: string; role_id?: string; profile_picture_url?: string }[]
 }
 
-export type SkillPresetUsageBucket = 'DAY' | 'HOUR'
-
-export interface SkillPresetUsageParams {
-  from: string
-  to: string
-  bucket: SkillPresetUsageBucket
-  skillName?: string
-  userSub?: string
-  skillPresetId?: string
-}
-
-/** GET /organization/{organizationId}/skillPreset/usage. Max range 90 days. */
-export interface SkillPresetUsageResponse {
-  from: string
-  to: string
-  bucket: SkillPresetUsageBucket
-  totals: {
-    loads: number
-    cached_loads: number
-    members: number
-    /** Organization content plus team context, on non-cached loads only. */
-    approx_injected_tokens: number
-  }
-  timeline: { start: string; loads: number; cached_loads: number }[]
-  by_skill: { skill_name: string; loads: number; cached_loads: number; members: number; last_loaded_at: string }[]
-  by_member: { user_sub: string; user_name: string; loads: number; skills: number; last_loaded_at: string }[]
-  /** A null preset groups the loads that had no preset (QOVERY_DEFAULT). */
-  by_preset: { skill_preset_id: string | null; skill_preset_name: string | null; loads: number }[]
-}
-
 /** Same as the audit log page: the generated client's enums do not list these values yet. */
 export const SKILL_PRESET_SUB_TARGET_TYPE = 'SKILL_PRESET'
 /** An agent loaded a skill (purpose LOAD). */

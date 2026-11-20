@@ -1,26 +1,15 @@
 import axios from 'axios'
-import {
-  OrganizationEventApi,
-  type OrganizationEventResponseList,
-  type OrganizationEventSubTargetType,
-  type OrganizationEventType,
-  OrganizationMainCallsApi,
-  type OrganizationPolicyApiToken,
-} from 'qovery-typescript-axios'
+import { OrganizationMainCallsApi, type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
 import { type AgentActivityParams, type AgentActivityResponse } from './agent-activity.types'
 import { getSkillPresetsMockScenario } from './skill-presets-mock-mode'
 import {
   type InjectedSkillResponse,
   type ResolvedSkillPurpose,
-  SKILL_LOAD_EVENT_TYPE,
-  SKILL_PRESET_SUB_TARGET_TYPE,
   type SkillPresetAssignees,
   type SkillPresetManifestResponse,
   type SkillPresetRequest,
   type SkillPresetResponse,
   type SkillPresetRevisionResponse,
-  type SkillPresetUsageParams,
-  type SkillPresetUsageResponse,
 } from './skill-presets.types'
 
 /*
@@ -33,12 +22,6 @@ import {
  * axios calls. The mock API stays: it implements the same interface. The paths have no `/api` prefix: the axios auth
  * interceptor adds the API base URL and the token, like it does for the generated client.
  */
-
-export interface SkillLoadsParams {
-  pageSize?: number
-  continueToken?: string | null
-  stepBackToken?: string | null
-}
 
 export interface SkillPresetsApi {
   /** `isTemplate` filters on the template flag; omit it to list every preset, templates included. */
@@ -61,9 +44,6 @@ export interface SkillPresetsApi {
     skillName: string,
     params: { purpose: ResolvedSkillPurpose }
   ): Promise<InjectedSkillResponse>
-  /** Skill loads are audit log entries: event LOAD, sub-target SKILL_PRESET. */
-  listSkillLoads(organizationId: string, params?: SkillLoadsParams): Promise<OrganizationEventResponseList>
-  getSkillPresetUsage(organizationId: string, params: SkillPresetUsageParams): Promise<SkillPresetUsageResponse>
   /**
    * Turns AI features on for the organization (`PUT /organization/{id}/aiFeatures`, owners and admins).
    * Not a skill presets endpoint: it goes through this module only so the mock can play it.
@@ -78,7 +58,6 @@ export interface SkillPresetsApi {
   ): Promise<AgentActivityResponse>
 }
 
-const eventsApi = new OrganizationEventApi()
 const organizationApi = new OrganizationMainCallsApi()
 
 const httpSkillPresetsApi: SkillPresetsApi = {
@@ -126,22 +105,6 @@ const httpSkillPresetsApi: SkillPresetsApi = {
     )
     return response.data
   },
-  async listSkillLoads(organizationId, { pageSize = 30, continueToken, stepBackToken } = {}) {
-    const response = await eventsApi.getOrganizationEvents(
-      organizationId,
-      pageSize,
-      undefined,
-      undefined,
-      continueToken ?? undefined,
-      stepBackToken ?? undefined,
-      // The generated enums do not list LOAD and SKILL_PRESET yet.
-      SKILL_LOAD_EVENT_TYPE as OrganizationEventType,
-      undefined,
-      undefined,
-      SKILL_PRESET_SUB_TARGET_TYPE as OrganizationEventSubTargetType
-    )
-    return response.data
-  },
   async enableAiFeatures(organizationId) {
     await organizationApi.editOrganizationAiFeatures(organizationId, { enabled: true })
   },
@@ -153,12 +116,6 @@ const httpSkillPresetsApi: SkillPresetsApi = {
   },
   async getMyAgentActivity(organizationId, params) {
     const response = await axios.get<AgentActivityResponse>(`/organization/${organizationId}/agentActivity/me`, {
-      params,
-    })
-    return response.data
-  },
-  async getSkillPresetUsage(organizationId, params) {
-    const response = await axios.get<SkillPresetUsageResponse>(`/organization/${organizationId}/skillPreset/usage`, {
       params,
     })
     return response.data
@@ -263,8 +220,6 @@ export const skillPresetsApi: SkillPresetsApi = {
   listSkillPresetRevisions: async (...args) => (await resolveApi()).listSkillPresetRevisions(...args),
   getResolvedSkillPreset: async (...args) => (await resolveApi()).getResolvedSkillPreset(...args),
   getResolvedSkill: async (...args) => (await resolveApi()).getResolvedSkill(...args),
-  listSkillLoads: async (...args) => (await resolveApi()).listSkillLoads(...args),
-  getSkillPresetUsage: async (...args) => (await resolveApi()).getSkillPresetUsage(...args),
   enableAiFeatures: async (...args) => (await resolveApi()).enableAiFeatures(...args),
   getAgentActivity: async (...args) => (await resolveApi()).getAgentActivity(...args),
   getMyAgentActivity: async (...args) => (await resolveApi()).getMyAgentActivity(...args),

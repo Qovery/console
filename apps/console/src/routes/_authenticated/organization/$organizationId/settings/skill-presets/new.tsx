@@ -4,7 +4,6 @@ import { z } from 'zod'
 const searchSchema = z.object({
   template: z.string().optional(),
   from: z.string().optional(),
-  asTemplate: z.boolean().optional(),
 })
 
 // Moved to Agents. Kept so old links and bookmarks still work.

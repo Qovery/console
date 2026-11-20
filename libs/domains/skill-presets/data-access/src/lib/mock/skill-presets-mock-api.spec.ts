@@ -6,7 +6,7 @@ import {
   isSkillPresetConcurrentModification,
   isSkillPresetReviewUnavailable,
 } from '../skill-presets.errors'
-import { type SkillLoadChange, type SkillPresetRequest } from '../skill-presets.types'
+import { type SkillPresetRequest } from '../skill-presets.types'
 import { MOCK_ROLE_IDS } from './mock-scenarios'
 import { MOCK_MODEL_ONLY_SAMPLE, MOCK_UNSAFE_SAMPLE } from './mock-tools'
 import { createSkillPresetsMockApi } from './skill-presets-mock-api'
@@ -172,38 +172,6 @@ describe('createSkillPresetsMockApi', () => {
     expect(remaining).toHaveLength(3)
   })
 
-  it('pages skill loads as SKILL_LOAD audit entries', async () => {
-    const api = createSkillPresetsMockApi('large')
-    const { value: firstPage } = await settle(api.listSkillLoads(ORGANIZATION_ID, { pageSize: 50 }))
-
-    expect(firstPage?.events).toHaveLength(50)
-    expect(firstPage?.links?.next).toContain('continueToken=50')
-    const load = JSON.parse(firstPage?.events?.[0].change ?? '{}') as SkillLoadChange
-    expect(load).toEqual(
-      expect.objectContaining({
-        skill_name: expect.any(String),
-        from_cache: expect.any(Boolean),
-        source: expect.any(String),
-      })
-    )
-  })
-
-  it('aggregates usage with totals, timeline and breakdowns', async () => {
-    const api = createSkillPresetsMockApi('typical')
-    const to = new Date()
-    const from = new Date(to.getTime() - 30 * 24 * 3_600_000)
-    const { value: usage } = await settle(
-      api.getSkillPresetUsage(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
-    )
-
-    expect(usage?.totals.loads).toBe(36)
-    expect(usage?.timeline.reduce((sum, { loads }) => sum + loads, 0)).toBe(36)
-    expect(usage?.by_skill[0]).toEqual(
-      expect.objectContaining({ skill_name: expect.any(String), last_loaded_at: expect.any(String) })
-    )
-    expect(usage?.by_member.length).toBeGreaterThan(0)
-  })
-
   it('answers 403 to a member on admin endpoints but serves their manifest', async () => {
     const api = createSkillPresetsMockApi('member')
     const { error } = await settle(api.listSkillPresets(ORGANIZATION_ID))
@@ -242,9 +210,8 @@ describe('createSkillPresetsMockApi', () => {
       const results = await Promise.all([
         settle(api.listSkillPresets(ORGANIZATION_ID)),
         settle(api.listSkillPresetRevisions(ORGANIZATION_ID)),
-        settle(api.listSkillLoads(ORGANIZATION_ID, { pageSize: 30 })),
         settle(
-          api.getSkillPresetUsage(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
+          api.getAgentActivity(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
         ),
         settle(api.getResolvedSkillPreset(ORGANIZATION_ID)),
         settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'VIEW' })),
@@ -443,15 +410,17 @@ describe('createSkillPresetsMockApi', () => {
     expect(getSkillPresetErrorStatus(error)).toBe(403)
   })
 
-  it('audits a read for display as VIEW and keeps it out of usage and skill loads', async () => {
+  it('audits a read for display as SKILL_VIEW and keeps it out of the skill loads in activity', async () => {
     const api = createSkillPresetsMockApi('typical')
     const to = new Date(Date.now() + 60_000)
     const from = new Date(to.getTime() - 30 * 24 * 3_600_000)
-    const usage = () =>
-      settle(
-        api.getSkillPresetUsage(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
-      )
-    const before = (await usage()).value?.totals.loads
+    const loads = async () =>
+      (
+        await settle(
+          api.getAgentActivity(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
+        )
+      ).value?.totals.skill_loads
+    const before = await loads()
 
     await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'VIEW' }))
     const event = api.auditEvents().at(-1)
@@ -459,13 +428,11 @@ describe('createSkillPresetsMockApi', () => {
     expect(JSON.parse(event?.change ?? '{}')).toEqual(
       expect.objectContaining({ skill_name: 'qovery-deploy', from_cache: false })
     )
-    expect((await usage()).value?.totals.loads).toBe(before)
-    const { value: loads } = await settle(api.listSkillLoads(ORGANIZATION_ID, { pageSize: 100 }))
-    expect(loads?.events?.every(({ event_type }) => (event_type as string) === 'SKILL_LOAD')).toBe(true)
+    expect(await loads()).toBe(before)
 
     await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'LOAD' }))
     expect(api.auditEvents().at(-1)?.event_type).toBe('SKILL_LOAD')
-    expect((await usage()).value?.totals.loads).toBe((before ?? 0) + 1)
+    expect(await loads()).toBe((before ?? 0) + 1)
   })
 
   describe('agent activity', () => {
