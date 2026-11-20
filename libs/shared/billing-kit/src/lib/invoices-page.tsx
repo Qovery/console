@@ -170,6 +170,8 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
       ? onManagePaymentMethod()
       : openPaymentMethodPage(client, organizationId).catch((e) => setError(e))
   const oldestDue = [...rows].filter((r) => r.collectable).sort((a, b) => a.date.localeCompare(b.date))[0]
+  // The actions column fits its buttons: Details and Download, and Pay now when a row has it.
+  const actionsWidth = !client.invoice ? 'narrow' : !aws && shown.some((i) => i.collectable) ? 'wide' : 'medium'
 
   async function loadMore() {
     if (!page?.next_offset) return
@@ -376,7 +378,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
             <span>Status</span>
             <span className="text-right">Amount</span>
             <span>Due</span>
-            <span className={`${client.invoice ? 'w-[280px]' : 'w-[180px]'} text-right`}>Actions</span>
+            <span className={`${ACTIONS_WIDTH[actionsWidth]} text-right`}>Actions</span>
           </div>
           <ul className="divide-y divide-neutral">
             {shown.map((inv) => {
@@ -413,7 +415,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
                           : ''}
                     </span>
                     <span
-                      className={`col-span-2 flex flex-wrap justify-end gap-2 md:col-span-1 ${client.invoice ? 'md:w-[280px]' : 'md:w-[180px]'}`}
+                      className={`col-span-2 flex flex-wrap justify-end gap-2 md:col-span-1 ${ROW_ACTIONS_WIDTH[actionsWidth]}`}
                     >
                       {client.invoice && (
                         <Button
@@ -528,6 +530,9 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
     </div>
   )
 }
+
+const ACTIONS_WIDTH = { narrow: 'w-[180px]', medium: 'w-[190px]', wide: 'w-[270px]' }
+const ROW_ACTIONS_WIDTH = { narrow: 'md:w-[180px]', medium: 'md:w-[190px]', wide: 'md:w-[270px]' }
 
 const payBlocked = (ps?: PayState) => !!ps?.until && ps.until > Date.now()
 
