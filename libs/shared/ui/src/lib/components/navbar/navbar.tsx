@@ -15,6 +15,7 @@ import {
   useState,
 } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
+import { useHorizontalOverflowFade } from '../../utils/use-horizontal-overflow-fade'
 
 const navbarItemVariants = cva(
   [
@@ -155,16 +156,11 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
   const activeStyle = useMemo(() => getIndicatorStyle(activeId), [getIndicatorStyle, activeId, recalculate])
 
   // On narrow screens the tabs overflow: keep the active tab in view and fade the edges that hide more tabs
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [overflow, setOverflow] = useState({ start: false, end: false })
-
-  const updateOverflow = useCallback(() => {
-    const container = scrollRef.current
-    if (!container) return
-    const start = container.scrollLeft > 1
-    const end = container.scrollLeft + container.clientWidth < container.scrollWidth - 1
-    setOverflow((prev) => (prev.start === start && prev.end === end ? prev : { start, end }))
-  }, [])
+  const {
+    ref: scrollRef,
+    update: updateOverflow,
+    fadeClassName: overflowFadeClassName,
+  } = useHorizontalOverflowFade<HTMLDivElement>()
 
   useEffect(() => {
     const container = scrollRef.current
@@ -179,7 +175,7 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
       }
     }
     updateOverflow()
-  }, [activeId, items, recalculate, updateOverflow])
+  }, [activeId, items, recalculate, scrollRef, updateOverflow])
 
   // Keyboard navigation
   const handleKeyDown = useCallback(
@@ -235,11 +231,7 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
           onScroll={updateOverflow}
           className={twMerge(
             'relative -my-1 -ml-3 -mr-1 flex touch-pan-x flex-row items-center justify-start overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-            overflow.start &&
-              overflow.end &&
-              '[mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)]',
-            overflow.start && !overflow.end && '[mask-image:linear-gradient(to_right,transparent,black_24px)]',
-            !overflow.start && overflow.end && '[mask-image:linear-gradient(to_left,transparent,black_24px)]'
+            overflowFadeClassName
           )}
         >
           <div

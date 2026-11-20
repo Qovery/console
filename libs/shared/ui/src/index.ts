@@ -125,5 +125,6 @@ export * from './lib/utils/toast-error'
 
 export * from './lib/utils/ansi'
 export * from './lib/utils/sticky-form-actions'
+export * from './lib/utils/use-horizontal-overflow-fade'
 export * from './lib/components/deployment-action/deployment-action'
 export * from './lib/components/summary-value/summary-value'
