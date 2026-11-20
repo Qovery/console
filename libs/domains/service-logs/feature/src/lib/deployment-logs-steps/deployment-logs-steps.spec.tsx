@@ -2,7 +2,14 @@ import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type Status } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { useDefaultAdvancedSettings, useService } from '@qovery/domains/services/feature'
+import { useOrganization } from '@qovery/domains/organizations/feature'
+import {
+  useBuildAnalysis,
+  useBuildAnalysisProgress,
+  useDefaultAdvancedSettings,
+  useService,
+  useStartBuildAnalysis,
+} from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { ModalProvider } from '@qovery/shared/ui'
 import { act, render, renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -11,6 +18,7 @@ import { DeploymentLogsSteps } from './deployment-logs-steps'
 
 jest.mock('../hooks/use-deployment-logs/use-deployment-logs')
 jest.mock('@qovery/domains/services/feature')
+jest.mock('@qovery/domains/organizations/feature')
 
 const mockNavigate = jest.fn()
 let mockHash = ''
@@ -27,6 +35,9 @@ const useServiceMock = useService as jest.MockedFunction<typeof useService>
 const useDefaultAdvancedSettingsMock = useDefaultAdvancedSettings as jest.MockedFunction<
   typeof useDefaultAdvancedSettings
 >
+const useBuildAnalysisMock = useBuildAnalysis as jest.MockedFunction<typeof useBuildAnalysis>
+const useStartBuildAnalysisMock = useStartBuildAnalysis as jest.MockedFunction<typeof useStartBuildAnalysis>
+const useBuildAnalysisProgressMock = useBuildAnalysisProgress as jest.MockedFunction<typeof useBuildAnalysisProgress>
 
 function createLog(id: number, message: string, stageStep: string, stepName?: string): EnvironmentLogIds {
   return {
@@ -91,6 +102,42 @@ describe('DeploymentLogsSteps', () => {
     useServiceMock.mockReturnValue({
       data: { id: 'service-1', name: 'web-app', serviceType: 'APPLICATION' },
     } as ReturnType<typeof useService>)
+    useBuildAnalysisMock.mockReturnValue({
+      data: { latest_build_execution_id: '4', analysis: null },
+      isError: false,
+    } as ReturnType<typeof useBuildAnalysis>)
+    useStartBuildAnalysisMock.mockReturnValue({ mutate: jest.fn(), isLoading: false } as unknown as ReturnType<
+      typeof useStartBuildAnalysis
+    >)
+    useBuildAnalysisProgressMock.mockReturnValue(undefined)
+    jest
+      .mocked(useOrganization)
+      .mockReturnValue({ data: { ai_features_enabled: true } } as ReturnType<typeof useOrganization>)
+  })
+
+  it.each(['APPLICATION', 'JOB'] as const)('offers to optimize the build of a %s', (serviceType) => {
+    useServiceMock.mockReturnValue({
+      data: { id: 'service-1', name: 'web-app', serviceType },
+    } as ReturnType<typeof useService>)
+
+    renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    expect(screen.getByRole('button', { name: 'Optimize' })).toBeEnabled()
+  })
+
+  it('offers no build optimization for a container', () => {
+    useServiceMock.mockReturnValue({
+      data: { id: 'service-1', name: 'web-app', serviceType: 'CONTAINER' },
+    } as ReturnType<typeof useService>)
+
+    renderWithProviders(
+      <DeploymentLogsSteps environment={environment} serviceStatus={serviceStatus} deploymentHistory={[]} />
+    )
+
+    expect(screen.getByRole('heading', { name: 'Build' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Optimize' })).not.toBeInTheDocument()
   })
 
   it('groups steps under their phase', () => {

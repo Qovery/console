@@ -1,6 +1,7 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type DeploymentHistoryEnvironmentV2, type Status } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
+import { useOrganization } from '@qovery/domains/organizations/feature'
 import {
   useBuildAnalysis,
   useDeploymentStatus,
@@ -19,6 +20,7 @@ window.HTMLElement.prototype.scroll = jest.fn()
 jest.mock('../hooks/use-deployment-logs/use-deployment-logs')
 jest.mock('../hooks/use-service-deployment-history/use-service-deployment-history')
 jest.mock('@qovery/domains/services/feature')
+jest.mock('@qovery/domains/organizations/feature')
 jest.mock('posthog-js/react', () => ({
   useFeatureFlagEnabled: jest.fn(() => false),
 }))
@@ -160,6 +162,9 @@ describe('ListDeploymentLogs', () => {
     jest
       .mocked(useStartBuildAnalysis)
       .mockReturnValue({ mutate: jest.fn(), isLoading: false } as unknown as ReturnType<typeof useStartBuildAnalysis>)
+    jest
+      .mocked(useOrganization)
+      .mockReturnValue({ data: { ai_features_enabled: true } } as ReturnType<typeof useOrganization>)
     useLinks.mockReturnValue({
       data: [{ id: 'link-1', url: 'https://example.com', is_default: false, is_qovery_domain: false }],
     })
