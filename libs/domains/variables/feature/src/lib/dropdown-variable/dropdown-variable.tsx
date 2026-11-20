@@ -28,8 +28,8 @@ export function DropdownVariable({
   variableKeys = [],
   disableBuiltInVariables = false,
 }: DropdownVariableProps) {
-  // Determine which scope to query based on provided props
-  const parentIdToUse = serviceId || environmentId
+  // A service id is only meaningful with its scope, otherwise fall back to the environment
+  const parentIdToUse = serviceId && scope ? serviceId : environmentId
   const scopeToUse = serviceId && scope ? scope : 'ENVIRONMENT'
 
   const { data: variables = [] } = useVariables({

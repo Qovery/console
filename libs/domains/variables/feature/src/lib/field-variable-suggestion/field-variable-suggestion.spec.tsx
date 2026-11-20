@@ -9,29 +9,34 @@ const props: FieldVariableSuggestionProps = {
   },
 }
 
+const mockUseVariables = jest.fn()
+
 jest.mock('../hooks/use-variables/use-variables', () => ({
-  useVariables: () => ({
-    data: [
-      {
-        id: 'c0277184-1fe0-4f17-b09a-58eee2c05701',
-        created_at: '2023-10-25T09:13:34.723567Z',
-        updated_at: '2023-10-25T09:13:34.723568Z',
-        key: 'QOVERY_CONTAINER_Z04308DE2_HOST_INTERNAL',
-        value: 'app-z04308de2-back-end',
-        mount_path: null,
-        scope: 'BUILT_IN',
-        overridden_variable: null,
-        aliased_variable: null,
-        variable_type: 'BUILT_IN',
-        service_id: '04308de2-af27-405f-9e95-570fa94ed577',
-        service_name: 'back-end-A',
-        service_type: 'CONTAINER',
-        owned_by: 'QOVERY',
-        description: 'test',
-        is_secret: false,
-      },
-    ],
-  }),
+  useVariables: (args: unknown) => {
+    mockUseVariables(args)
+    return {
+      data: [
+        {
+          id: 'c0277184-1fe0-4f17-b09a-58eee2c05701',
+          created_at: '2023-10-25T09:13:34.723567Z',
+          updated_at: '2023-10-25T09:13:34.723568Z',
+          key: 'QOVERY_CONTAINER_Z04308DE2_HOST_INTERNAL',
+          value: 'app-z04308de2-back-end',
+          mount_path: null,
+          scope: 'BUILT_IN',
+          overridden_variable: null,
+          aliased_variable: null,
+          variable_type: 'BUILT_IN',
+          service_id: '04308de2-af27-405f-9e95-570fa94ed577',
+          service_name: 'back-end-A',
+          service_type: 'CONTAINER',
+          owned_by: 'QOVERY',
+          description: 'test',
+          is_secret: false,
+        },
+      ],
+    }
+  },
 }))
 
 describe('FieldVariableSuggestion', () => {
@@ -54,5 +59,17 @@ describe('FieldVariableSuggestion', () => {
     )
     expect(hasVariable).toBe(true)
     expect(screen.getByText(/back-end-A/)).toBeInTheDocument()
+  })
+
+  it('should query service-scoped variables when serviceId and scope are provided', () => {
+    renderWithProviders(<FieldVariableSuggestion {...props} serviceId="service-1" scope="HELM" />)
+
+    expect(mockUseVariables).toHaveBeenCalledWith({ parentId: 'service-1', scope: 'HELM' })
+  })
+
+  it('should fall back to environment variables when serviceId is provided without scope', () => {
+    renderWithProviders(<FieldVariableSuggestion {...props} serviceId="service-1" />)
+
+    expect(mockUseVariables).toHaveBeenLastCalledWith({ parentId: '000', scope: 'ENVIRONMENT' })
   })
 })

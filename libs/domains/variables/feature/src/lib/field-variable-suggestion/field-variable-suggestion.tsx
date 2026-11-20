@@ -1,10 +1,13 @@
 import { useRef } from 'react'
+import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { Button, Icon, InputTextSmall, type InputTextSmallProps } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import DropdownVariable from '../dropdown-variable/dropdown-variable'
 
 export interface FieldVariableSuggestionProps {
   environmentId: string
+  serviceId?: string
+  scope?: VariableScope
   onChange: (value: string) => void
   inputProps: InputTextSmallProps
   value?: string
@@ -13,6 +16,8 @@ export interface FieldVariableSuggestionProps {
 
 export function FieldVariableSuggestion({
   environmentId,
+  serviceId,
+  scope,
   onChange,
   className,
   inputProps,
@@ -41,7 +46,12 @@ export function FieldVariableSuggestion({
   return (
     <div className={twMerge('flex w-[calc(100%+36px)]', className)}>
       <InputTextSmall ref={inputRef} {...inputProps} inputClassName="pr-11" />
-      <DropdownVariable environmentId={environmentId} onChange={handleInsertVariable}>
+      <DropdownVariable
+        environmentId={environmentId}
+        serviceId={serviceId}
+        scope={scope}
+        onChange={handleInsertVariable}
+      >
         <Button
           size="md"
           type="button"

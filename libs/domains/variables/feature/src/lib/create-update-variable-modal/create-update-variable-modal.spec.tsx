@@ -20,9 +20,14 @@ jest.mock('@qovery/shared/ui', () => {
   }
 })
 
+const mockDropdownVariableProps = jest.fn()
+
 jest.mock('../dropdown-variable/dropdown-variable', () => ({
   __esModule: true,
-  default: ({ children }: { children: ReactNode }) => children,
+  default: (props: { children: ReactNode }) => {
+    mockDropdownVariableProps(props)
+    return props.children
+  },
 }))
 
 jest.mock('./variable-value-editor-modal/variable-value-editor-modal', () => ({
@@ -357,5 +362,13 @@ describe('CreateUpdateVariableModal', () => {
     expect(screen.queryByLabelText('Path')).not.toBeInTheDocument()
     expect(screen.queryByText('Variable interpolation')).not.toBeInTheDocument()
     expect(screen.getByLabelText('Value')).toHaveValue('typed value')
+  })
+
+  it('should list the service variables in the value field wand', () => {
+    renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="VALUE" />)
+
+    expect(mockDropdownVariableProps).toHaveBeenCalledWith(
+      expect.objectContaining({ environmentId: 'environment-id', serviceId: 'service-id', scope: 'APPLICATION' })
+    )
   })
 })

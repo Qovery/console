@@ -10,15 +10,24 @@ jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({
     environmentId: 'env-1',
+    serviceId: 'service-1',
   }),
 }))
 
+const mockFieldVariableSuggestionProps = jest.fn()
+const mockCodeEditorVariableProps = jest.fn()
+
 jest.mock('@qovery/domains/variables/feature', () => ({
-  CodeEditorVariable: ({ value, onChange }: { value?: string; onChange?: (value?: string) => void }) => (
-    <textarea data-testid="code-editor-variable" value={value} onChange={(event) => onChange?.(event.target.value)} />
-  ),
-  FieldVariableSuggestion: ({ inputProps }: { inputProps: Record<string, unknown> }) => {
-    const { error: _error, ...rest } = inputProps
+  CodeEditorVariable: (props: { value?: string; onChange?: (value?: string) => void }) => {
+    mockCodeEditorVariableProps(props)
+    const { value, onChange } = props
+    return (
+      <textarea data-testid="code-editor-variable" value={value} onChange={(event) => onChange?.(event.target.value)} />
+    )
+  },
+  FieldVariableSuggestion: (props: { inputProps: Record<string, unknown> }) => {
+    mockFieldVariableSuggestionProps(props)
+    const { error: _error, ...rest } = props.inputProps
     return <input data-testid="field-variable-suggestion" {...rest} />
   },
 }))
@@ -126,5 +135,25 @@ describe('ValuesOverrideArgumentsSetting', () => {
 
     expect(openSpy).toHaveBeenCalled()
     expect(onParentSubmit).not.toHaveBeenCalled()
+  })
+
+  it('passes the service id and HELM scope to the variable pickers so service-level variables are listed', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<ValuesOverrideArgumentsSetting {...props} />, {
+        defaultValues: {
+          arguments: [
+            { key: 'test', type: '--set', value: 'test' },
+            { key: 'test2', type: '--set-json', value: 'test', json: '{"test": "test"}' },
+          ],
+        },
+      })
+    )
+
+    expect(mockFieldVariableSuggestionProps).toHaveBeenCalledWith(
+      expect.objectContaining({ environmentId: 'env-1', serviceId: 'service-1', scope: 'HELM' })
+    )
+    expect(mockCodeEditorVariableProps).toHaveBeenCalledWith(
+      expect.objectContaining({ environmentId: 'env-1', serviceId: 'service-1', scope: 'HELM' })
+    )
   })
 })

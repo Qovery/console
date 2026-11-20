@@ -24,7 +24,8 @@ export function CodeEditorVariable({
   className,
   ...props
 }: CodeEditorVariableProps) {
-  const parentIdToUse = serviceId || environmentId
+  // A service id is only meaningful with its scope, otherwise fall back to the environment
+  const parentIdToUse = serviceId && scope ? serviceId : environmentId
   const scopeToUse = serviceId && scope ? scope : 'ENVIRONMENT'
 
   const { refetch: refetchVariables } = useVariables({

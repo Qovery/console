@@ -7,6 +7,7 @@ jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({
     environmentId: 'env-from-router',
+    serviceId: 'service-from-router',
   }),
 }))
 
@@ -75,5 +76,25 @@ describe('ValuesOverrideYamlSetting', () => {
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1)
     expect(mockOpenModal.mock.calls[0][0].content.props.environmentId).toBe('env-from-router')
+  })
+
+  it('should pass the serviceId from router params so service-level variables are listed', async () => {
+    const { userEvent } = renderWithProviders(
+      <ValuesOverrideYamlSetting
+        onSubmit={jest.fn()}
+        source={{
+          git_repository: {
+            url: 'https://github.com/Qovery/console',
+            branch: 'main',
+            root_path: '/',
+            git_token_id: 'token',
+          },
+        }}
+      />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Open YAML modal' }))
+
+    expect(mockOpenModal.mock.calls[0][0].content.props.serviceId).toBe('service-from-router')
   })
 })

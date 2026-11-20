@@ -4,13 +4,22 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DockerfileSettings, type DockerfileSettingsProps } from './dockerfile-settings'
 
 jest.mock('@tanstack/react-router', () => ({
-  useParams: () => ({ environmentId: '' }),
+  useParams: () => ({ environmentId: '', serviceId: 'job-id' }),
 }))
 
+const mockCodeEditorVariableProps = jest.fn()
+
 jest.mock('@qovery/domains/variables/feature', () => ({
-  CodeEditorVariable: ({ value, onChange }: { value?: string; onChange?: (value?: string) => void }) => (
-    <textarea data-testid="code-editor-variable" value={value} onChange={(event) => onChange?.(event.target.value)} />
-  ),
+  CodeEditorVariable: (props: { value?: string; onChange?: (value?: string) => void }) => {
+    mockCodeEditorVariableProps(props)
+    return (
+      <textarea
+        data-testid="code-editor-variable"
+        value={props.value}
+        onChange={(event) => props.onChange?.(event.target.value)}
+      />
+    )
+  },
 }))
 
 // https://github.com/suren-atoyan/monaco-react/issues/88
@@ -127,5 +136,15 @@ describe('DockerfileSettings', () => {
       dockerfile_raw: 'my dockerfile content',
       docker_target_build_stage: null,
     })
+  })
+
+  it('should list the job variables in the raw Dockerfile wand', async () => {
+    const { userEvent } = renderWithProviders(<DockerfileSettingsWithForm onSubmit={jest.fn()} />)
+    await selectEvent.select(screen.getByLabelText('File source'), 'Raw Dockerfile')
+    await userEvent.click(screen.getByRole('button', { name: /Create/i }))
+
+    expect(mockCodeEditorVariableProps).toHaveBeenCalledWith(
+      expect.objectContaining({ serviceId: 'job-id', scope: 'JOB' })
+    )
   })
 })
