@@ -92,6 +92,20 @@ describe('Sidebar', () => {
     expect(screen.getByRole('button', { name: 'Issues' })).toBeInTheDocument()
   })
 
+  it('should leave arrow keys alone on the mobile menu button', async () => {
+    const { userEvent } = renderWithProviders(
+      <Sidebar.Root>
+        <Sidebar.Item to="/general">General</Sidebar.Item>
+      </Sidebar.Root>
+    )
+
+    const menuButton = screen.getByRole('button', { name: 'General' })
+    menuButton.focus()
+    await userEvent.keyboard('{ArrowDown}')
+
+    expect(menuButton).toHaveFocus()
+  })
+
   it('should move between links with arrow keys without stopping on the mobile menu button', async () => {
     const { userEvent } = renderWithProviders(
       <Sidebar.Root>

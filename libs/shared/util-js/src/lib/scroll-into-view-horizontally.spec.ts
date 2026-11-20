@@ -27,6 +27,18 @@ describe('scrollIntoViewHorizontally', () => {
     expect(container.scrollLeft).toBe(476)
   })
 
+  it('adds the current scroll offset when aligning', () => {
+    const { container, element } = setup({ scrollLeft: 80, elementLeft: 500, elementWidth: 100 })
+    scrollIntoViewHorizontally(container, element, { align: 'start', margin: 24 })
+    expect(container.scrollLeft).toBe(556)
+  })
+
+  it('shows the start of an element wider than the container, on every call', () => {
+    const { container, element } = setup({ scrollLeft: 0, elementLeft: 200, elementWidth: 400 })
+    scrollIntoViewHorizontally(container, element, { align: 'nearest', margin: 16 })
+    expect(container.scrollLeft).toBe(184)
+  })
+
   it('never scrolls before the start when aligning', () => {
     const { container, element } = setup({ scrollLeft: 0, elementLeft: 10, elementWidth: 100 })
     scrollIntoViewHorizontally(container, element, { align: 'start', margin: 24 })

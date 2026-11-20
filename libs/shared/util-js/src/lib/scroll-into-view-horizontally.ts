@@ -14,7 +14,10 @@ export function scrollIntoViewHorizontally(
   const containerRect = container.getBoundingClientRect()
   const elementRect = element.getBoundingClientRect()
 
-  if (align === 'start') {
+  // An element wider than the container cannot fit: show its start, so repeated calls give the same result
+  const isWiderThanContainer = elementRect.right - elementRect.left > containerRect.right - containerRect.left
+
+  if (align === 'start' || isWiderThanContainer) {
     container.scrollLeft = Math.max(0, container.scrollLeft + elementRect.left - containerRect.left - margin)
   } else if (elementRect.right > containerRect.right) {
     container.scrollLeft += elementRect.right - containerRect.right + margin

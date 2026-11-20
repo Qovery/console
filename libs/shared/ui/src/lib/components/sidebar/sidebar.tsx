@@ -106,7 +106,8 @@ const SidebarRoot = forwardRef<ElementRef<'div'>, SidebarRootProps>(function Sid
 
     // Arrow keys move between the navigation links only, not to the mobile toggle
     const container = listRef.current
-    if (!container) return
+    // From the mobile toggle (list collapsed or not), arrow keys keep their default behaviour
+    if (!container || !container.contains(document.activeElement)) return
     const getFocusableElements = (): HTMLElement[] => {
       const selectors = ['a[href]', 'button:not([disabled])']
       const elements: HTMLElement[] = []
