@@ -2,18 +2,22 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactNode } from 'react'
 import { type BillingUsage, billingUsageFactoryMock, createPricingClient } from '@qovery/shared/billing-kit'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
+import { pickConsoleCalls, usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import {
   BILLING_USAGE_FEATURE_FLAG,
   BillingUsageView,
   SettingsBillingUsage,
   getBillingSettingsLinks,
+  hasBillingRole,
 } from './settings-billing-usage'
 
 jest.mock('posthog-js/react', () => ({
   useFeatureFlagEnabled: jest.fn(),
 }))
-jest.mock('../hooks/use-pricing-client/use-pricing-client')
+jest.mock('../hooks/use-pricing-client/use-pricing-client', () => ({
+  ...jest.requireActual('../hooks/use-pricing-client/use-pricing-client'),
+  usePricingClient: jest.fn(),
+}))
 jest.mock('../settings-billing-summary/settings-billing-summary', () => ({
   SettingsBillingSummary: () => <div>Billing summary page</div>,
 }))
@@ -24,6 +28,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-northwind' }),
+  useNavigate: () => jest.fn(),
   Link: ({ children }: { children: ReactNode }) => <a href="/billing-summary">{children}</a>,
 }))
 
@@ -43,11 +48,13 @@ const mockPricingApi = (billingUsage: () => Promise<Response>) => {
       : Promise.resolve(jsonResponse(404, { code: 'NOT_FOUND', detail: 'not found' }))
   )
   jest.mocked(usePricingClient).mockReturnValue(
-    createPricingClient({
-      pricingApiUrl: 'https://billing-api.qovery.com',
-      getToken: () => 'user-token',
-      fetch: fetchMock as unknown as typeof fetch,
-    })
+    pickConsoleCalls(
+      createPricingClient({
+        pricingApiUrl: 'https://billing-api.qovery.com',
+        getToken: () => 'user-token',
+        fetch: fetchMock as unknown as typeof fetch,
+      })
+    )
   )
   return fetchMock
 }
@@ -78,16 +85,18 @@ describe('BillingUsageView', () => {
     expect(screen.getAllByText('Deployment minutes').length).toBeGreaterThan(0)
   })
 
-  it('should only read billingUsage: no plan change, offers or email preferences request', async () => {
+  it('should not call plan change, offers or email preferences', async () => {
     const fetchMock = mockUsage(billingUsageFactoryMock('billing'))
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
     await userEvent.click(screen.getAllByRole('button', { name: 'View usage' })[0])
 
-    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
-      'https://billing-api.qovery.com/organization/org-northwind/billingUsage',
-    ])
+    const paths = fetchMock.mock.calls.map(([url]) => new URL(url).pathname)
+    expect(paths.every((path) => path.startsWith('/organization/org-northwind/'))).toBe(true)
+    expect(paths.some((path) => /planOptions|planChange|offers|emailPreferences|upgradeRequests/.test(path))).toBe(
+      false
+    )
     expect(
       screen.queryByRole('button', { name: /change plan|compare plans|upgrade|ask an admin/i })
     ).not.toBeInTheDocument()
@@ -175,18 +184,46 @@ describe('SettingsBillingUsage', () => {
 })
 
 describe('getBillingSettingsLinks', () => {
-  it('should hide the plan and usage entry when the flag is off', () => {
-    expect(getBillingSettingsLinks('/organization/1/settings', false).map((link) => link.title)).toEqual([
-      'Billing summary',
-      'Billing details',
-    ])
-  })
-
-  it('should list the plan and usage entry first when the flag is on', () => {
-    expect(getBillingSettingsLinks('/organization/1/settings', true)).toEqual([
-      { title: 'Plan & usage', to: '/organization/1/settings/billing' },
+  it('should keep billing summary and billing details when the flag is off', () => {
+    expect(getBillingSettingsLinks('/organization/1/settings', false, true)).toEqual([
       { title: 'Billing summary', to: '/organization/1/settings/billing-summary' },
       { title: 'Billing details', to: '/organization/1/settings/billing-details' },
     ])
+  })
+
+  it('should list usage, invoices and billing for billing roles when the flag is on', () => {
+    expect(getBillingSettingsLinks('/organization/1/settings', true, true)).toEqual([
+      { title: 'Usage', to: '/organization/1/settings/billing' },
+      { title: 'Invoices', to: '/organization/1/settings/invoices' },
+      { title: 'Billing', to: '/organization/1/settings/billing-settings' },
+    ])
+  })
+
+  it('should only list usage for other roles when the flag is on', () => {
+    expect(getBillingSettingsLinks('/organization/1/settings', true, false)).toEqual([
+      { title: 'Usage', to: '/organization/1/settings/billing' },
+    ])
+  })
+})
+
+describe('hasBillingRole', () => {
+  it.each(['owner', 'admin', 'billing'])('should accept the %s role of the organization', (role) => {
+    expect(hasBillingRole([`organization:org-1:${role}`], 'org-1')).toBe(true)
+  })
+
+  it('should accept Qovery admins', () => {
+    expect(hasBillingRole(['admin'], 'org-1')).toBe(true)
+  })
+
+  it.each([
+    [['organization:org-1:viewer']],
+    [['organization:org-1:devops']],
+    [['organization:org-2:owner']],
+    [['organization:org-10:owner']],
+    [['organization:org-1:owner-custom']],
+    [['xorganization:org-1:admin']],
+    [[]],
+  ])('should refuse %j', (roles) => {
+    expect(hasBillingRole(roles, 'org-1')).toBe(false)
   })
 })

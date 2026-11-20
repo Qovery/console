@@ -1,7 +1,8 @@
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { useCallback } from 'react'
 import { P, match } from 'ts-pattern'
-import { BillingPage } from '@qovery/shared/billing-kit'
+import { BillingAlerts, UsagePage } from '@qovery/shared/billing-kit'
 import { Button, Callout, EmptyState, Icon, Link, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import {
@@ -9,6 +10,7 @@ import {
   getBillingUsageErrorType,
   useBillingUsage,
 } from '../hooks/use-billing-usage/use-billing-usage'
+import { usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import { SettingsBillingSummary } from '../settings-billing-summary/settings-billing-summary'
 
 export const BILLING_USAGE_FEATURE_FLAG = 'billing-usage-v2'
@@ -17,12 +19,48 @@ export function useIsBillingUsageEnabled() {
   return useFeatureFlagEnabled(BILLING_USAGE_FEATURE_FLAG) === true
 }
 
-export function getBillingSettingsLinks(pathSettings: string, isBillingUsageEnabled: boolean) {
+const BILLING_ROLES = ['owner', 'admin', 'billing']
+
+// UX only: pricing-api decides who reads invoices and payment details
+export function hasBillingRole(roles: string[], organizationId: string) {
+  return (
+    roles.includes('admin') || BILLING_ROLES.some((role) => roles.includes(`organization:${organizationId}:${role}`))
+  )
+}
+
+export function getBillingSettingsLinks(
+  pathSettings: string,
+  isBillingUsageEnabled: boolean,
+  canManageBilling = false
+) {
+  if (!isBillingUsageEnabled) {
+    return [
+      { title: 'Billing summary', to: `${pathSettings}/billing-summary` },
+      { title: 'Billing details', to: `${pathSettings}/billing-details` },
+    ]
+  }
+
   return [
-    ...(isBillingUsageEnabled ? [{ title: 'Plan & usage', to: `${pathSettings}/billing` }] : []),
-    { title: 'Billing summary', to: `${pathSettings}/billing-summary` },
-    { title: 'Billing details', to: `${pathSettings}/billing-details` },
+    { title: 'Usage', to: `${pathSettings}/billing` },
+    ...(canManageBilling
+      ? [
+          { title: 'Invoices', to: `${pathSettings}/invoices` },
+          { title: 'Billing', to: `${pathSettings}/billing-settings` },
+        ]
+      : []),
   ]
+}
+
+export function useBillingNavigate(organizationId: string) {
+  const navigate = useNavigate()
+
+  return useCallback(
+    (to: 'invoices' | 'billing') =>
+      to === 'invoices'
+        ? navigate({ to: '/organization/$organizationId/settings/invoices', params: { organizationId } })
+        : navigate({ to: '/organization/$organizationId/settings/billing-settings', params: { organizationId } }),
+    [navigate, organizationId]
+  )
 }
 
 const BillingUsageSkeleton = () => (
@@ -122,9 +160,11 @@ function BillingUsageError({ type, organizationId, onRetry, isRetrying }: Billin
 }
 
 export function BillingUsageView() {
-  useDocumentTitle('Plan & usage - Organization settings')
+  useDocumentTitle('Usage - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
   const { data, error, isLoading, refetch, isRefetching } = useBillingUsage({ organizationId })
+  const client = usePricingClient()
+  const goTo = useBillingNavigate(organizationId)
 
   return (
     <div className="w-full">
@@ -132,7 +172,12 @@ export function BillingUsageView() {
         <div className="max-w-content-with-navigation-left">
           {match({ data, error, isLoading })
             .with({ isLoading: true }, () => <BillingUsageSkeleton />)
-            .with({ data: P.not(P.nullish) }, ({ data }) => <BillingPage usage={data} />)
+            .with({ data: P.not(P.nullish) }, ({ data }) => (
+              <div className="flex flex-col gap-6">
+                <BillingAlerts organizationId={organizationId} client={client} access={data.access} onNavigate={goTo} />
+                <UsagePage organizationId={organizationId} client={client} offers="none" />
+              </div>
+            ))
             .otherwise(() => (
               <BillingUsageError
                 type={getBillingUsageErrorType(error)}

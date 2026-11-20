@@ -1,9 +1,56 @@
 /*
- * The shape of pricing-api's GET /organization/{id}/billingUsage (docs/INTEGRATION.md). Amounts are
- * cents of `currency`, and only reach billing roles.
+ * The shapes the billing kit reads. They mirror pricing-api's responses (docs/INTEGRATION.md):
+ * GET /public/v1/plans, GET /organization/{id}/billingUsage, GET /organization/{id}/spendLimits,
+ * and the plan picker and plan change core relays. Amounts are cents of `currency`.
  */
 export type Value = number | boolean | 'unlimited'
 export type Period = 'month' | 'year'
+export interface Price {
+  currency: string
+  period: Period
+  amount: number
+}
+
+// ---- the website's plans (GET /public/v1/plans)
+export interface PublicEntitlement {
+  sku: string
+  name: string
+  description?: string
+  kind: 'feature' | 'limit' | 'meter'
+  unit?: string
+  value: Value
+  overage_unit_price?: Record<string, number>
+  preview?: boolean
+}
+export interface PublicAddon {
+  code: string
+  name: string
+  description?: string
+  gives: { sku: string; name: string; adds?: number; enable?: boolean }[]
+  prices: Price[]
+}
+export interface PublicPlan {
+  code: string
+  name: string
+  description: string
+  rank: number
+  version: number
+  contact_sales: boolean
+  free?: boolean
+  draft?: boolean
+  prices: Price[]
+  yearly_saving: { currency: string; monthly_x12: number; yearly: number; saving_pct: number }[]
+  published_at?: string
+  support: string
+  entitlements: PublicEntitlement[]
+  addons: PublicAddon[]
+}
+export interface PublicPlans {
+  plans: PublicPlan[]
+  currencies: string[]
+  builders?: PublicBuilders
+}
+
 // ---- one organization (GET /organization/{id}/billingUsage)
 export interface Entitlement {
   sku: string
@@ -111,7 +158,7 @@ export interface BillingUsage {
   notes: string[]
 }
 
-/** A builder size and how its build minutes count against the plan. saving: % less than its resources (big builders). */
+/** A builder size. Listed sizes show on the pricing page and in the picker; the others are on request. saving: % less than its resources (big builders). */
 export interface BuilderSize {
   code: string
   name: string
@@ -124,6 +171,11 @@ export interface BuilderSize {
   price_per_minute?: number
   prepaid_per_minute?: number
 }
+export interface PublicBuilders {
+  annual_prepaid_discount_pct: number
+  sizes: BuilderSize[]
+}
+
 // ---- usage over time (billingUsage.usage_insights)
 export interface UsageSeries {
   sku: string
@@ -183,4 +235,182 @@ export interface UsageInsights {
   deployment_months: DeploymentMonth[]
   projection: UsageProjection[]
   value?: UsageValue
+}
+
+// ---- offers, upgrade requests, email preferences (GET /organization/{id}/offers …)
+export type OfferSurface = 'banner' | 'modal'
+export interface OfferAction {
+  type: 'upgrade' | 'annualize' | 'addon' | 'contact_sales' | 'url' | 'trial'
+  plan?: string
+  period?: Period
+  addon?: string
+  url?: string
+  sku?: string
+  value?: number
+  days?: number
+  grace_hours?: number
+}
+export interface Trial {
+  id: number
+  sku: string
+  value: string
+  status: string
+  started_at: string
+  ends_at: string
+  grace_hours: number
+}
+export interface OfferContent {
+  title: string
+  body: string
+  cta_label: string
+  action: OfferAction
+  tone?: 'brand' | 'positive' | 'warning' | 'neutral'
+  badge?: string
+  subject?: string
+}
+export interface Offer {
+  id: number
+  surfaces: OfferSurface[]
+  content: OfferContent
+  ends_at?: string | null
+  preview?: boolean
+}
+export interface UpgradeRequest {
+  id: number
+  organization_id: string
+  email: string
+  sku: string
+  plan_code: string
+  message: string
+  status: 'open' | 'done' | 'declined'
+  created_at: string
+}
+export interface Offers {
+  user: { email: string; role: string; access: 'member' | 'billing' | 'demo' }
+  offers: Offer[]
+  upgrade_requests: UpgradeRequest[]
+}
+export interface EmailCategory {
+  category: string
+  name: string
+  description: string
+  locked: boolean
+  enabled: boolean
+}
+export interface EmailPreferences {
+  email: string
+  categories: EmailCategory[]
+}
+
+// ---- plan picker and plan change (relayed by core)
+export interface Quote {
+  direction: 'upgrade' | 'downgrade' | 'migrate' | 'same'
+  from: string
+  to: string
+  period: Period
+  currency: string
+  effective_at: 'now' | 'term_end' | string
+  plan_amount: number
+  total: number
+  projected_overage: number
+  kept_addons: { code: string; name: string; quantity: number; amount: number }[]
+  auto_addons: { code: string; name: string; quantity: number; amount: number }[]
+  conflicts: { sku: string; name: string; used: number; limit: Value; fix: string }[]
+  can_apply: boolean
+  message: string
+}
+export interface PlanOption {
+  plan: { code: string; name: string; description: string; rank: number; public: boolean; legacy: boolean }
+  version: number
+  current: boolean
+  highlights: { sku: string; value: Value; mode: string; overage_unit_price: number }[]
+  quote?: Quote
+}
+export interface PlanOptions {
+  segment: string
+  self_serve: boolean
+  currency: string
+  period: Period
+  results: PlanOption[]
+}
+export interface PlanChangeResult {
+  applied: boolean
+  preview?: boolean
+  contract_managed?: boolean
+  quote: Quote
+}
+
+// ---- the customer's own billing (GET /organization/{id}/invoices, /paymentMethods, /billingInfo, /awsMarketplace)
+export type InvoiceStatus = 'paid' | 'posted' | 'payment_due' | 'not_paid' | 'voided' | 'pending'
+export interface CustomerInvoice {
+  id: string
+  status: InvoiceStatus
+  date: string
+  due_date: string | null
+  paid_at: string | null
+  currency: string
+  total: number
+  amount_due: number
+  amount_paid: number
+  collectable: boolean
+  lines: { description: string; amount: number }[]
+}
+export type BillingChannel = 'chargebee' | 'aws_marketplace' | 'invoice' | 'unknown'
+/** One page of invoices, newest first. next_offset is opaque: pass it back for the next page ("" on the last). */
+export interface InvoicePage {
+  invoices: CustomerInvoice[]
+  next_offset: string
+  billing_channel: BillingChannel
+  actions_available: boolean
+}
+export interface InvoiceDownload {
+  download_url: string
+  valid_till: string
+}
+export interface PaymentMethod {
+  type: string
+  brand?: string
+  last4?: string
+  expiry_month?: number
+  expiry_year?: number
+  primary: boolean
+  status: 'valid' | 'expiring' | 'expired' | 'invalid' | 'pending_verification' | string
+}
+export interface PaymentMethods {
+  payment_methods: PaymentMethod[]
+  billing_channel: BillingChannel
+  actions_available: boolean
+}
+export interface PaymentSession {
+  url: string
+  expires_at: string
+}
+export interface BillingInfo {
+  company: string
+  first_name: string
+  last_name: string
+  email: string
+  line1: string
+  line2: string
+  city: string
+  zip: string
+  state: string
+  country: string
+  vat_number: string
+}
+export interface BillingInfoView extends BillingInfo {
+  contacts: { email: string; name: string }[]
+  actions_available: boolean
+}
+export interface AwsMarketplace {
+  billing_channel: BillingChannel
+  request: {
+    id: string
+    status: 'open' | 'offer_sent' | 'accepted' | 'closed'
+    aws_account_id: string
+    message: string
+    requested_at: string
+    requested_by: string
+  } | null
+  offer: { url: string; expires_at: string | null; note: string } | null
 }

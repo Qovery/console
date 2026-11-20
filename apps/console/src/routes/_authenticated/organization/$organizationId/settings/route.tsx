@@ -1,6 +1,10 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { getBillingSettingsLinks, useIsBillingUsageEnabled } from '@qovery/domains/organizations/feature'
+import {
+  getBillingSettingsLinks,
+  hasBillingRole,
+  useIsBillingUsageEnabled,
+} from '@qovery/domains/organizations/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
@@ -47,7 +51,7 @@ function RouteComponent() {
     type: 'group',
     title: 'Billing & plans',
     icon: 'credit-card' as const,
-    children: getBillingSettingsLinks(pathSettings, isBillingUsageEnabled),
+    children: getBillingSettingsLinks(pathSettings, isBillingUsageEnabled, hasBillingRole(roles, organizationId)),
   }
 
   const containerRegistriesLink = {
