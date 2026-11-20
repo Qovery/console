@@ -16,4 +16,7 @@ module.exports = {
   },
   resetMocks: true,
   ...nxPreset,
+  // Must come after nxPreset (which sets html only). Paths are written relative to the
+  // workspace root so Codecov can map them to repo files.
+  coverageReporters: ['text-summary', ['lcov', { projectRoot: __dirname }]],
 }
