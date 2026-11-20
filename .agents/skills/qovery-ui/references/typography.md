@@ -1,98 +1,81 @@
 # Typography — Qovery Console
 
-## Base Rules
+Use this reference when choosing text sizes, weights, font families, or establishing content hierarchy.
 
-- **One font family:** Roboto. No decorative typefaces, no system font fallbacks in product UI.
-- **Base body size:** `text-sm` (0.875rem / 14px). The entire console defaults to this — it is not a "small" size, it is the normal size.
-- **Common weights:** 400 (`font-normal`) for body, captions, and legends; 500 (`font-medium`) for buttons, titles, badges, and smaller copy that needs weight to stay legible.
-- **Monospace:** preserve shared component defaults. Use `font-code` for code and commands; a table, URL, ID, or timestamp does not by itself require monospace.
-- **Icons match adjacent text size:** an icon sitting next to `text-sm` gets `text-sm`, next to `text-xs` gets `text-xs`. FontAwesome icons are sized via `font-size`, so the Tailwind text size class controls the icon size directly. Mismatched sizes break the visual baseline and make the icon feel either too heavy or too timid relative to the label.
+## Base typography
 
----
+**`text-sm` (14px) is the default Console text size.** Use it for ordinary labels, descriptions, names, and page content.
 
-## Type Scale
+Use the existing Roboto font. Do not introduce another font family to differentiate a feature or section.
 
-Use the existing type scale and shared component defaults. The following are common examples, not an exhaustive list.
+## Sizes and hierarchy
 
-| Role                 | Class       | Size | Weight        | When to use                                                  |
-| -------------------- | ----------- | ---- | ------------- | ------------------------------------------------------------ |
-| Page title (H1)      | `text-2xl`  | 24px | `font-medium` | Page-level headings — one per page                           |
-| Section title (H2)   | `text-base` | 16px | `font-medium` | Card headers, section breaks                                 |
-| Body / default       | `text-sm`   | 14px | `font-normal` | All running content, labels, inputs                          |
-| Secondary descriptor | `text-ssm`  | 13px | `font-normal` | Subtitle or supporting text directly below a `text-sm` label |
-| Caption / meta       | `text-xs`   | 12px | `font-normal` | Secondary metadata, hints, timestamps                        |
-| Table header         | `text-xs`   | 12px | `font-medium` | Column headers in `<TablePrimitives>`                        |
+| Level            | Usage                                            | Typography                                           |
+| ---------------- | ------------------------------------------------ | ---------------------------------------------------- |
+| Page             | One page title                                   | `Heading` level 1: `text-2xl` / 24px, `font-medium`  |
+| Section          | One heading per section                          | `Heading` level 2: `text-base` / 16px, `font-medium` |
+| Within a section | Card titles, table content, labels, descriptions | `text-sm` / 14px                                     |
 
-**Jump in size creates hierarchy.** If two labels feel like the same level of importance, they should be the same size — differentiate with weight or color instead of introducing an in-between size.
+Within a section, titles and descriptions generally share the same size: **`font-medium` for titles, `font-normal` for descriptions and ordinary content**. Use the description's secondary text color to support this hierarchy.
 
-**The `text-sm` + `text-ssm` pairing** is the most common two-level label pattern in the console: a `text-sm font-medium` primary label above a `text-ssm font-normal` secondary descriptor, separated by `gap-1`. Use this instead of reaching for `text-xs` when the secondary text is still meaningful content rather than pure metadata.
+Do not automatically shrink a description because it is secondary. Secondary information still needs to be readable.
 
----
+Avoid introducing three or four sizes inside one card or component. Use the fewest sizes needed to express its structure.
 
-## Weight & Contrast
+### Small text
 
-Common weights in the console:
+Do not introduce standalone `text-xs` labels, descriptions, timestamps, or metadata in page content.
 
-- **`font-normal` (400):** body text, captions, legends, running content
-- **`font-medium` (500):** buttons, section titles, badges, and small copy (`text-xs`) that would otherwise feel too light at its size
+Small text belongs in compact components that already define it, such as pills. Preserve the component's typography rather than reproducing its small-text treatment elsewhere.
 
-`font-medium` on `text-sm` running text adds visual noise without improving readability. Reserve it for structural anchors (headings, button labels) and for small text where normal weight reads as whisper.
+Do not introduce `text-ssm` as an automatic intermediate size between a title and its description. Existing component variants may use it; ordinary content should default to `text-sm`.
 
-Match the shared component and comparable usages rather than imposing a blanket weight restriction.
+### Heading semantics
 
----
+Use the appropriate semantic heading level. A deeply nested heading should not become visually tiny simply because its component default maps that level to `text-xs`. Keep titles within ordinary cards and components at `text-sm` where appropriate.
 
-## Roboto Mono
+## Weights
 
-Use `font-code` for code and commands. Preserve the typography supplied by shared table components rather than adding monospace to headers, values, or metadata by default.
+Use weight sparingly and consistently:
 
-For ordinary names, labels, descriptions, URLs, and timestamps, follow comparable Console usages.
+- **`font-normal` (400):** ordinary content and descriptions.
+- **`font-medium` (500):** titles and the established shared button labels.
 
----
+Do not substitute `font-medium`, `font-semibold`, and `font-bold` based on a general instruction to make something stronger.
 
-## Scale & Hierarchy
+Titles are the usual place for stronger weight. Compact `text-xs` components may also use stronger weight, but follow the specific component's convention; do not apply one weight to every pill.
 
-Fewer distinct sizes, more contrast between them.
+Do not add weight variations throughout descriptions, metadata, or labels simply to create visual hierarchy. Avoid changing font weight between light and dark themes.
 
-**The anti-pattern:** three adjacent sizes — `text-sm`, `text-[15px]`, `text-base` — that read as the same level. This creates visual noise without establishing hierarchy.
+## Text density
 
-**The rule:**
+Keep visible descriptions concise and direct. Do not compensate for excessive explanation by making the text smaller.
 
-- Adjacent levels in a hierarchy should be at least one step apart on the scale
-- Use weight or color to differentiate elements at the same size level
-- Keep the hierarchy clear and consistent with comparable surfaces
+Consider an information-icon tooltip for supplementary explanations when displaying them permanently would overcrowd the interface.
 
-Review whether each size communicates a distinct role rather than enforcing a fixed number of sizes.
+Avoid adding explanatory text underneath every title by default.
 
----
+## Component boundaries
 
-## Readability & Measure
+Inspect the shared component's existing typography before applying an override. Do not independently restyle each instance.
 
-**Line length:** 60–80 characters for reading text. Dense UI labels don't need this, but descriptions, callout text, and modal body copy should not run to the edge of their container.
+Component-specific conventions belong in `references/components.md`. Table-row emphasis belongs under table usage, not in a global rule for names or copy.
 
-**Light-on-dark compensation:** dark mode text at `text-sm` can feel thinner. Lean on `font-medium` for critical labels on dark backgrounds rather than increasing size.
+## Source references
 
-**Paragraph rhythm:** `leading-normal` (1.5) for body copy in descriptions, modals, and empty state copy. `leading-tight` for stacked UI labels — `gap-1` between them is enough.
+- **`Heading`** — heading sizes and exact weight variants: `libs/shared/ui/src/lib/components/heading/heading.tsx`
+- **Button variants** — typography by button size: `libs/shared/ui/src/lib/components/button-primitive/button-primitive.tsx`
+- **`Badge`** — compact component typography: `libs/shared/ui/src/lib/components/badge/badge.tsx`
+- **Table** — component-owned column-heading typography: `libs/shared/ui/src/lib/components/table/table.tsx`
 
----
+## Don't
 
-## Typographic Characters
-
-Use the correct typographic characters — not ASCII substitutes.
-
-| Use this               | Not this                  | Context                                                        |
-| ---------------------- | ------------------------- | -------------------------------------------------------------- |
-| `…` (ellipsis)         | `...` (three dots)        | Truncated text, loading states                                 |
-| `"` `"` (curly quotes) | `"` `"` (straight quotes) | Prose, descriptions, modal copy                                |
-| `–` (en dash)          | `-` (hyphen)              | Ranges: "3–5 services", "Jan–Mar"                              |
-| non-breaking space ` ` | regular space             | Number + unit: "3 GB", "500 ms" — prevents awkward line breaks |
-
-In JSX, use Unicode directly (`…`, ` `) or HTML entities in template strings. Never escape characters that don't need escaping.
-
----
-
-## Never
-
-- Introduce a font family other than Roboto or Roboto Mono
-- Use `text-xs font-normal` for primary interactive labels — too light to anchor attention
-- Add intermediate sizes (`text-[15px]`, `text-[13px]`) to split a difference — work within the scale
+- Don't use `font-code`, except for table headings already styled by the table component and commands intended to be copied.
+- Don't use standalone `text-xs` to reduce the visual importance of page content.
+- Don't automatically make descriptions smaller than their titles.
+- Don't introduce three or four text sizes inside a simple card or component.
+- Don't make every name or label heavier.
+- Don't treat medium, semibold, and bold as equivalent.
+- Don't introduce arbitrary sizes such as `text-[15px]`.
+- Don't increase font weight specifically for dark mode.
+- Don't shrink lengthy explanations to make them fit; shorten them or reconsider where they belong.
