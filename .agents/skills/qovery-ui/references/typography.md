@@ -66,7 +66,7 @@ Component-specific conventions belong in `references/components.md`. Table-row e
 - **`Heading`** — heading sizes and exact weight variants: `libs/shared/ui/src/lib/components/heading/heading.tsx`
 - **Button variants** — typography by button size: `libs/shared/ui/src/lib/components/button-primitive/button-primitive.tsx`
 - **`Badge`** — compact component typography: `libs/shared/ui/src/lib/components/badge/badge.tsx`
-- **Table** — component-owned column-heading typography: `libs/shared/ui/src/lib/components/table/table.tsx`
+- **`TablePrimitives`** — component-owned column-heading typography: `libs/shared/ui/src/lib/components/table-primitives/table-primitives.tsx`
 
 ## Don't
 

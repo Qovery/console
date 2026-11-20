@@ -77,6 +77,8 @@ Use matched inverted tokens:
 - `text-neutralInvert-subtle` for supporting text.
 - `border-neutralInvert` when a border is needed.
 
+For status text and icons inside an inverted surface, use the matching `text-positiveInvert`, `text-warningInvert`, `text-negativeInvert`, or `text-infoInvert` token. A normal dark-theme surface is not an inverted surface.
+
 Tooltips and neutral filled buttons already define these combinations; prefer the shared components. Inverted does not mean always dark: the values change with the theme.
 
 ## Charts
