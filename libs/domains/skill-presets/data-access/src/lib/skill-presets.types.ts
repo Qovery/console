@@ -175,7 +175,7 @@ export interface SkillLoadChange {
 export interface SkillPresetAssignees {
   roles: { id: string; name: string }[]
   /** `role_id` is the member's role in the organization, used to preview which preset applies to them. */
-  members: { id: string; name: string; email: string; role_id?: string }[]
+  members: { id: string; name: string; email: string; role_id?: string; profile_picture_url?: string }[]
 }
 
 /** Same as the audit log page: the generated client's enums do not list these values yet. */

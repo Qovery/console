@@ -418,6 +418,10 @@ function longRunbook() {
 
 function largeSeed(): MockSeed {
   const seed = typicalSeed()
+  // Exercise assignment badge overflow with every organization member on one preset.
+  for (const revision of seed.presets[1].revisions) {
+    revision.state.assigned_to.user_ids = MEMBERS.map(({ id }) => id)
+  }
   const history = backendTeamRevisions()
   const last = history[history.length - 1]
   for (let index = 0; index < 116; index++) {
