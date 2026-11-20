@@ -2,6 +2,8 @@
 import {
   amountDue,
   cardState,
+  discountsExpanded,
+  discountsUpTo,
   emptyBillingInfo,
   filterInvoices,
   invoiceStatus,
@@ -156,4 +158,28 @@ it('download all runs one at a time, counts failures and stops when cancelled', 
     { signal: ac.signal, sleep: () => Promise.resolve() }
   )
   expect(r2).toEqual({ done: 1, failed: 0, cancelled: true })
+})
+
+describe('discounts card', () => {
+  const levers = [
+    { id: 'logo', percent: 3, requires: [], excludes: [] },
+    { id: 'multi-year-2', percent: 5, requires: [], excludes: ['multi-year-3'] },
+    { id: 'multi-year-3', percent: 12, requires: [], excludes: ['multi-year-2'] },
+    { id: 'term-upfront', percent: 5, requires: ['multi-year-2', 'multi-year-3'], excludes: [] },
+  ]
+
+  it('is collapsed by default and opens with a ticked lever, a request to show, or the button', () => {
+    expect(discountsExpanded({ selected: [], requests: [] })).toBe(false)
+    expect(discountsExpanded({ selected: [], requests: [{ status: 'withdrawn' }] })).toBe(false)
+    expect(discountsExpanded({ selected: ['logo'], requests: [] })).toBe(true)
+    expect(discountsExpanded({ selected: [], requests: [{ status: 'declined' }] })).toBe(true)
+    expect(discountsExpanded({ opened: true, selected: [], requests: [] })).toBe(true)
+    expect(discountsExpanded({ opened: false, selected: ['logo'], requests: [] })).toBe(false)
+  })
+
+  it('says how much the levers can save, one of each exclusive pair, capped', () => {
+    expect(discountsUpTo(levers, 35)).toBe(20)
+    expect(discountsUpTo(levers, 10)).toBe(10)
+    expect(discountsUpTo([levers[3]], 35)).toBe(0)
+  })
 })

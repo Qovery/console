@@ -850,3 +850,37 @@ export function discountPercent(
 export function currentDiscountRequest<T extends { status: string }>(requests: T[]): T | undefined {
   return requests.find((r) => r.status === 'open') ?? requests.find((r) => r.status !== 'withdrawn')
 }
+
+/**
+ * The most the levers on offer can add up to, for the collapsed card's hint ("Up to 35% off"):
+ * the largest lever of each group that excludes the others, then only the levers whose
+ * requirement is met, capped at `max`.
+ */
+export function discountsUpTo(
+  types: (DiscountRule & { percent: number })[],
+  max: number,
+  granted: string[] = []
+): number {
+  let chosen: string[] = []
+  for (const t of [...types].sort((a, b) => b.percent - a.percent)) {
+    const clash = chosen.some(
+      (id) => t.excludes.includes(id) || types.find((x) => x.id === id)?.excludes.includes(t.id)
+    )
+    if (!clash && !granted.some((g) => t.excludes.includes(g))) chosen.push(t.id)
+  }
+  chosen = pruneDiscounts(types, chosen, granted)
+  return discountPercent(types, chosen, max).percent
+}
+
+/**
+ * Whether the discounts card shows its levers, price and request form. Collapsed by default;
+ * opened (or closed) by the person; open by itself once a lever is ticked, or when there is a
+ * request to show (under review, approved or declined).
+ */
+export function discountsExpanded(p: {
+  opened?: boolean
+  selected: string[]
+  requests: { status: string }[]
+}): boolean {
+  return p.opened ?? (p.selected.length > 0 || p.requests.some((r) => r.status !== 'withdrawn'))
+}

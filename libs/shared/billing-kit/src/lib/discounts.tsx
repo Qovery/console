@@ -1,20 +1,31 @@
 /*
- * Discounts in exchange for counterparts, on the usage page (billing roles): the discounts this
- * organization may ask for, each with what it asks in return and its percentage, picked with
- * checkboxes that follow the rules (two and three years exclude each other; paying the term up
- * front needs one), the price with the selection priced by pricing-api, the terms to accept, and
- * "Request discount". Qovery reviews each request: the card then shows it under review (with
- * Withdraw), approved (and until when) or declined (with the reason).
+ * Discounts in exchange for counterparts, on the usage page (billing roles). Collapsed by
+ * default: the title, one line on what it is, "See available discounts" and how much it can
+ * save. Opened, it lists the discounts this organization may ask for, each with what it asks in
+ * return and its percentage, picked with checkboxes that follow the rules (two and three years
+ * exclude each other; paying the contract up front needs one), the price with the selection
+ * priced by pricing-api, the terms to accept, and "Request discount". Qovery reviews each
+ * request: the card then shows it first, under review (with Withdraw), approved (and until when)
+ * or declined (with the reason), and stays open. AWS Marketplace accounts get one line instead:
+ * their price comes from their private offer.
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Badge, Button, Callout, Checkbox, Icon, InputTextArea } from '@qovery/shared/ui'
 import { BillingError, type PricingClient } from './client'
 import { date, money } from './format'
 import { errorText, notifySuccess } from './parts'
-import { currentDiscountRequest, discountPercent, discountSelectable, toggleDiscount } from './rules'
+import {
+  currentDiscountRequest,
+  discountPercent,
+  discountSelectable,
+  discountsExpanded,
+  discountsUpTo,
+  toggleDiscount,
+} from './rules'
 import type { BillingUsage, DiscountQuote, DiscountRequest, Discounts } from './types'
 
 const pct = (p: number) => `${Number.isInteger(p) ? p : p.toFixed(1)}%`
+const AWS_PRIVATE_OFFER = 'Your price comes from your AWS private offer. Ask us for a new offer.'
 
 export function DiscountsCard({
   organizationId,
@@ -36,6 +47,8 @@ export function DiscountsCard({
   const [terms, setTerms] = useState(false)
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
+  const [opened, setOpened] = useState<boolean>()
+  const listId = useId()
   // A pricing-api without discounts (404) shows no card rather than an error.
   const load = () =>
     client
@@ -83,6 +96,13 @@ export function DiscountsCard({
         <Callout.Text>{error}</Callout.Text>
       </Callout.Root>
     )
+  if (view?.availability.code === 'AWS_PRIVATE_OFFER') {
+    return (
+      <p className="rounded border border-neutral bg-surface-neutral px-5 py-4 text-sm text-neutral-subtle">
+        {view.availability.detail || AWS_PRIVATE_OFFER}
+      </p>
+    )
+  }
   if (!view || !view.availability.available) return null
   const cur = view.currency
   const per = view.period === 'year' ? 'year' : 'month'
@@ -93,6 +113,8 @@ export function DiscountsCard({
   if (!open && running.length === 0 && !declined && view.discounts.length === 0) return null
   const local = discountPercent(view.discounts, selected, view.max_percent)
   const canRequest = !!client.requestDiscounts && selected.length > 0 && terms && !!quote && !busy
+  const expanded = discountsExpanded({ opened, selected, requests: view.requests })
+  const upTo = discountsUpTo(view.discounts, view.max_percent, view.granted)
 
   const request = async () => {
     setBusy(true)
@@ -131,9 +153,25 @@ export function DiscountsCard({
       <div className="p-5">
         <h3 className="text-base font-medium text-neutral">Discounts</h3>
         <p className="mt-1 text-sm text-neutral-subtle">
-          Lower your price in exchange for something that helps us grow: your logo, your story, a longer commitment.
-          Qovery reviews each request and confirms the new price.
+          Pay less in exchange for your logo, your story or a longer commitment. Qovery reviews each request and
+          confirms your new price.
         </p>
+        {view.discounts.length > 0 && (
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Button
+              size="md"
+              variant="outline"
+              color="neutral"
+              aria-expanded={expanded}
+              aria-controls={listId}
+              onClick={() => setOpened(!expanded)}
+            >
+              <Icon iconName={expanded ? 'chevron-up' : 'chevron-down'} iconStyle="regular" />
+              {expanded ? 'Hide discounts' : 'See available discounts'}
+            </Button>
+            {!expanded && upTo > 0 && <span className="text-sm text-neutral-subtle">Up to {pct(upTo)} off</span>}
+          </div>
+        )}
       </div>
 
       {(open || running.length > 0 || declined) && (
@@ -149,7 +187,7 @@ export function DiscountsCard({
                   {pct(r.percent)} off{r.discount_until ? ` until ${date(r.discount_until)}` : ''}
                 </Badge>
                 {!r.applied && (
-                  <span className="text-xs text-neutral-subtle">Approved: being applied to your subscription</span>
+                  <span className="text-xs text-neutral-subtle">Approved. We're applying it to your subscription.</span>
                 )}
               </span>
             </div>
@@ -160,7 +198,7 @@ export function DiscountsCard({
                 <Icon iconName="hourglass-half" iconStyle="regular" />
               </Callout.Icon>
               <Callout.Text>
-                <Callout.TextHeading>Your request is being reviewed</Callout.TextHeading>
+                <Callout.TextHeading>Qovery is reviewing your request.</Callout.TextHeading>
                 {open.labels.join(', ')}: {pct(open.percent)} off, {money(open.price_after, open.currency)} per {per}{' '}
                 instead of {money(open.price_before, open.currency)}. Asked by {open.requested_by} on{' '}
                 {date(open.requested_at)}.
@@ -189,7 +227,7 @@ export function DiscountsCard({
       )}
 
       {view.discounts.length > 0 && (
-        <>
+        <div id={listId} hidden={!expanded}>
           <div className="divide-y divide-neutral border-t border-neutral">
             {view.discounts.map((d) => {
               const on = selected.includes(d.id)
@@ -284,7 +322,7 @@ export function DiscountsCard({
                     onCheckedChange={(v) => setTerms(v === true)}
                   />
                   <span>
-                    I agree to give what each discount asks for. The discount can be withdrawn if it is not delivered.
+                    I agree to deliver what each discount asks for. Qovery can withdraw a discount that isn't delivered.
                   </span>
                 </label>
               </>
@@ -295,7 +333,7 @@ export function DiscountsCard({
               </Button>
             </div>
           </div>
-        </>
+        </div>
       )}
     </section>
   )

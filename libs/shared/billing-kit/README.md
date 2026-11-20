@@ -1,7 +1,7 @@
 # shared-billing-kit
 
 The billing kit from pricing-api (`web/src/billing-kit` in the qovery-pricing repository), the source of truth for these
-components. Copied from pricing-api commit `ee45730ddab021318336fc9fe3c078400e04aead` (main, 2026-11-20).
+components. Copied from pricing-api commit `86e2568e1940ad8e57e003fb8df14eff0fdceed7` (main, 2026-11-20).
 
 What the copy changes, so the next sync can redo it:
 
