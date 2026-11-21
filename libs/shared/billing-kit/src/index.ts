@@ -74,6 +74,11 @@ export {
   usePricingClient,
 } from './lib/console-paywall'
 export type { PaywallProps, UsePaywall } from './lib/paywall'
+export { GatedPage } from './lib/gated-page'
+export type { GatedPageProps } from './lib/gated-page'
+export { GatedPreview } from './lib/gated-previews'
+export { GATED_FEATURES, MAX_CAPABILITIES, gatedChip, gatedCta, gatedPageView } from './lib/gated'
+export type { GatedCta, GatedFeature, GatedPageView, GatedPreviewKey } from './lib/gated'
 export { BillingError, buildUsageQuery, createPricingClient, gatesQuery } from './lib/client'
 export type { ClientOptions, PricingClient } from './lib/client'
 export * from './lib/types'

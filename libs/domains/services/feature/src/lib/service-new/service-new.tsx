@@ -287,8 +287,12 @@ export function ServiceNew({
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
   const [selectedBlueprint, setSelectedBlueprint] = useState<BlueprintItem | null>(null)
   const [isBlueprintDetailsOpen, setIsBlueprintDetailsOpen] = useState(false)
-  // Blueprints can be outside the plan: the catalog stays browsable, Deploy opens the paywall.
-  const paywall = useBillingPaywall(organizationId, { actions: ['blueprint.create'] }, { onContactSales: showChat })
+  // Blueprints can be outside the plan: the catalog stays browsable, Deploy opens the full-page paywall.
+  const paywall = useBillingPaywall(
+    organizationId,
+    { actions: ['blueprint.create'] },
+    { onContactSales: showChat, variant: 'page' }
+  )
   const blueprintGate = paywall.gate('blueprint.create')
   const blueprintLock: BlueprintLock | undefined =
     blueprintGate && paywall.locked('blueprint.create')

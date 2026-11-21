@@ -12,7 +12,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PRICING_API_URL } from '@qovery/shared/util-node-env'
 import { type PricingClient, createPricingClient } from './client'
-import { Paywall, type PaywallProps, usePaywall } from './paywall'
+import { Paywall, usePaywall } from './paywall'
 import { gateFor, gateKeyFromBody, isLocked, paywallFromBody } from './rules'
 import type { Gate, PaywallInfo } from './types'
 
@@ -91,7 +91,7 @@ export function useIsBillingPaywallEnabled() {
   return useFeatureFlagEnabled(BILLING_PAYWALL_FEATURE_FLAG) === true
 }
 
-type PaywallOptions = Omit<PaywallProps, 'organizationId' | 'client' | 'gate' | 'paywall' | 'action' | 'onClose'>
+type PaywallOptions = NonNullable<Parameters<typeof usePaywall>[3]>
 
 /** The gates of a page's actions, behind the flag: with it off, nothing is locked. */
 export function useBillingPaywall(

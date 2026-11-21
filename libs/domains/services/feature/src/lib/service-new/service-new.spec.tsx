@@ -550,7 +550,7 @@ describe('ServiceNew', () => {
       mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
     })
 
-    it('keeps the catalog browsable and opens the paywall from Deploy', async () => {
+    it('keeps the catalog browsable and opens the full-page paywall from Deploy', async () => {
       const { userEvent } = renderWithProviders(
         <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
       )
@@ -563,7 +563,7 @@ describe('ServiceNew', () => {
       await userEvent.click(section.getAllByRole('button', { name: 'Deploy' })[0])
 
       expect(await screen.findByText('Create databases, caches and storage from a catalog')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Start free trial' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Start a 14-day trial' })).toBeInTheDocument()
     })
 
     it('opens the paywall from the blueprint details', async () => {

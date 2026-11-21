@@ -15,6 +15,7 @@ import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } fro
 import { Badge, Button, Callout, Checkbox, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
 import { BillingError, type PricingClient } from './client'
 import { date } from './format'
+import { GatedPage } from './gated-page'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
 import { Fact, PlanChangeFlow } from './plan-change'
@@ -48,6 +49,11 @@ export interface PaywallProps {
   onUpdatePayment?: () => void
   /** Drawn in place, without the modal (the back office's previews). */
   inline?: boolean
+  /**
+   * Open straight on this option's confirm step (<GatedPage>'s button already chose it and
+   * recorded the click): Back and Close return to the page.
+   */
+  startWith?: PaywallOption
 }
 
 type Step = 'choose' | 'trial' | 'addon' | 'ask' | 'upgrade' | 'done'
@@ -64,14 +70,16 @@ export function Paywall({
   onContactSales,
   onUpdatePayment,
   inline,
+  startWith,
 }: PaywallProps) {
   const [fresh, setFresh] = useState<Gate>()
   const p = fresh?.paywall ?? gate?.paywall ?? paywall
   const sku = p?.sku ?? gate?.sku ?? ''
-  const [step, setStep] = useState<Step>('choose')
-  const [picked, setPicked] = useState<PaywallOption>()
+  const [step, setStep] = useState<Step>(startWith ? STEP_OF[startWith.type] ?? 'choose' : 'choose')
+  const [picked, setPicked] = useState<PaywallOption | undefined>(startWith)
   const [done, setDone] = useState<{ title: string; body: string }>()
-  const acted = useRef(false)
+  const acted = useRef(!!startWith)
+  const back = () => (startWith ? onClose() : setStep('choose'))
 
   // A paywall from a 402 was ranked for a billing role: read this person's own (a member asks).
   useEffect(() => {
@@ -97,7 +105,7 @@ export function Paywall({
     [client, organizationId, sku]
   )
   useEffect(() => {
-    if (sku) event('shown')
+    if (sku && !startWith) event('shown')
   }, [sku]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const close = () => {
@@ -141,7 +149,7 @@ export function Paywall({
         client={client}
         plan={picked.plan}
         onClose={close}
-        onBack={() => setStep('choose')}
+        onBack={back}
         onContactSales={onContactSales}
         onDone={() => {
           acted.current = true
@@ -197,7 +205,7 @@ export function Paywall({
             sku={sku}
             option={picked}
             p={p}
-            onBack={() => setStep('choose')}
+            onBack={back}
             onStarted={(until, cont) =>
               finish(
                 'trial',
@@ -212,7 +220,7 @@ export function Paywall({
             organizationId={organizationId}
             client={client}
             option={picked}
-            onBack={() => setStep('choose')}
+            onBack={back}
             onContactSales={onContactSales}
             onBought={() =>
               finish(
@@ -230,7 +238,7 @@ export function Paywall({
             sku={sku}
             option={picked}
             title={p.title}
-            onBack={() => setStep('choose')}
+            onBack={back}
             onSent={(existing) =>
               finish(
                 'request',
@@ -337,6 +345,13 @@ function Options({ p, onChoose }: { p: PaywallData; onChoose: (o: PaywallOption)
       ))}
     </div>
   )
+}
+
+const STEP_OF: Partial<Record<PaywallOptionType, Step>> = {
+  start_trial: 'trial',
+  addon: 'addon',
+  request_admin: 'ask',
+  upgrade: 'upgrade',
 }
 
 const CTA: Record<PaywallOptionType, string> = {
@@ -741,8 +756,10 @@ export function usePaywall(
   client: PricingClient,
   organizationId: string,
   keys: { actions?: string[]; skus?: string[] },
-  options: Omit<PaywallProps, 'organizationId' | 'client' | 'gate' | 'paywall' | 'action' | 'onClose'> & {
+  options: Omit<PaywallProps, 'organizationId' | 'client' | 'gate' | 'paywall' | 'action' | 'onClose' | 'startWith'> & {
     onClose?: () => void
+    /** dialog (default): the <Paywall> modal. page: <GatedPage> over the window, for a feature with its own page. */
+    variant?: 'dialog' | 'page'
   } = {}
 ): UsePaywall {
   const [gates, setGates] = useState<Gate[]>()
@@ -768,27 +785,43 @@ export function usePaywall(
     },
     [gates]
   )
-  const element = useMemo(
-    () =>
-      current ? (
-        <Paywall
-          organizationId={organizationId}
-          client={client}
-          gate={current.gate}
-          paywall={current.paywall}
-          action={current.action}
-          {...options}
-          onClose={() => {
-            setCurrent(undefined)
-            options.onClose?.()
-          }}
-          onDone={(what) => {
-            load()
-            options.onDone?.(what)
-          }}
-        />
-      ) : null,
-    [current, client, organizationId, load]
-  ) // eslint-disable-line react-hooks/exhaustive-deps
+  const element = useMemo(() => {
+    if (!current) return null
+    const { variant, inline, ...rest } = options
+    const close = () => {
+      setCurrent(undefined)
+      options.onClose?.()
+    }
+    const done = (what: Done) => {
+      load()
+      options.onDone?.(what)
+    }
+    return variant === 'page' ? (
+      <GatedPage
+        organizationId={organizationId}
+        client={client}
+        gate={current.gate}
+        paywall={current.paywall}
+        action={current.action}
+        overlay
+        onContactSales={rest.onContactSales}
+        onUpdatePayment={rest.onUpdatePayment}
+        onClose={close}
+        onDone={done}
+      />
+    ) : (
+      <Paywall
+        organizationId={organizationId}
+        client={client}
+        gate={current.gate}
+        paywall={current.paywall}
+        action={current.action}
+        inline={inline}
+        {...rest}
+        onClose={close}
+        onDone={done}
+      />
+    )
+  }, [current, client, organizationId, load]) // eslint-disable-line react-hooks/exhaustive-deps
   return { gates, gate, locked: (key) => isLocked(gateFor(gates, key)), open, reload: load, element }
 }

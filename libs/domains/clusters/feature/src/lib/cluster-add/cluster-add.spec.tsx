@@ -207,7 +207,7 @@ describe('ClusterAdd', () => {
       mockGates.current = [lockedManaged]
     })
 
-    it('shows the managed cards locked with the trial, and opens the paywall instead of the creation flow', async () => {
+    it('shows the managed cards locked with the trial, and opens the full-page paywall instead of the creation flow', async () => {
       const { userEvent } = renderWithProviders(<ClusterAdd />)
 
       const aws = await screen.findByRole('button', { name: /^Amazon Web Services\s*Try it free for 14 days$/ })
@@ -217,7 +217,8 @@ describe('ClusterAdd', () => {
       await userEvent.click(aws)
 
       expect(await screen.findByText('Let Qovery run your Kubernetes cluster')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Start free trial' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Qovery-managed clusters' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Start a 14-day trial' })).toBeInTheDocument()
       expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
         selectedCloudProvider: 'AWS',
         selectedInstallationType: 'managed',

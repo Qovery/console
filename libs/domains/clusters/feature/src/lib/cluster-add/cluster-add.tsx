@@ -138,8 +138,12 @@ export function ClusterAdd() {
   const [creationCloudProvider, setCreationCloudProvider] = useState<SelfManagedClusterCloudProvider>('AWS')
   const [creationStep, setCreationStep] = useState<SelfManagedClusterCreationStep>('general')
   // Qovery-managed clusters can be outside the plan (Free runs self-managed clusters only): the
-  // cards stay visible, locked, and open the paywall. Self-managed clusters are not affected.
-  const paywall = useBillingPaywall(organizationId, { actions: ['cluster.create'] }, { onContactSales: showChat })
+  // cards stay visible, locked, and open the full-page paywall. Self-managed clusters are not affected.
+  const paywall = useBillingPaywall(
+    organizationId,
+    { actions: ['cluster.create'] },
+    { onContactSales: showChat, variant: 'page' }
+  )
   const managedGate = paywall.gate('cluster.create')
   const managedLock =
     managedGate && paywall.locked('cluster.create')

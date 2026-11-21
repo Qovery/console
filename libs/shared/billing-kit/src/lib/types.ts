@@ -1036,6 +1036,8 @@ export interface PaywallInfo {
   headline: string
   benefits: string[]
   media?: { url: string; kind: 'image' | 'video' }
+  /** The documentation behind "Learn more". Absent from older servers and when staff set none. */
+  learn_more_url?: string
   options: PaywallOption[]
   /** Who the options were ranked for: a billing role (also the check's 402) or a member. */
   audience: 'billing' | 'member'
