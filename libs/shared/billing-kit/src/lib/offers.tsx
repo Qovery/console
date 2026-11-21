@@ -6,13 +6,15 @@
  * mounted once in the console's layout shows the sign-in popup (once per person and offer) and
  * the banners (until dismissed); billing roles also see their team's open upgrade requests.
  * <BillingPage> mounts it with variant="card". <AskAdminModal> is the member's side of a
- * request, <EmailPreferencesPanel> the person's email settings.
+ * request, <EmailPreferencesPanel> the person's email settings. Billing roles also see a plan
+ * proposal from Qovery staff here (<ProposalBanner>), when the host passes onReviewProposal.
  */
 import { useCallback, useEffect, useState } from 'react'
 import { Badge, Banner, Button, Callout, Icon, InputTextArea, InputToggle, Modal } from '@qovery/shared/ui'
 import type { PricingClient } from './client'
 import { date } from './format'
-import type { EmailPreferences, Offer, Offers, Trial, UpgradeRequest } from './types'
+import { ProposalHost } from './proposals'
+import type { EmailPreferences, Offer, Offers, PlanProposal, Trial, UpgradeRequest } from './types'
 
 const TONE: Record<string, string> = {
   brand: 'border-brand-strong bg-surface-brand-component',
@@ -418,6 +420,9 @@ export interface OfferHostProps {
   skuName?: (sku: string) => string
   /** Show the sign-in popup (default). Off where another host already shows it. */
   modal?: boolean
+  /** Billing roles: a plan proposal from Qovery staff. Review opens the plan change on it (the
+   * console's top bar can send people to the billing page instead). Without it, no proposal shows. */
+  onReviewProposal?: (p: PlanProposal) => void
 }
 
 /** Banners, the sign-in popup and (billing roles) the team's upgrade requests. */
@@ -429,6 +434,7 @@ export function OfferHost({
   onReviewRequests,
   skuName = (s) => s,
   modal = true,
+  onReviewProposal,
 }: OfferHostProps) {
   const o = useOffers(organizationId, client)
   const [declined, setDeclined] = useState<Set<number>>(new Set())
@@ -491,6 +497,9 @@ export function OfferHost({
             {started.error}
           </Callout.Text>
         </Callout.Root>
+      )}
+      {onReviewProposal && (
+        <ProposalHost organizationId={organizationId} client={client} onReview={onReviewProposal} variant={variant} />
       )}
       {o.banners.map((b) => (
         <OfferBanner key={b.id} offer={b} variant={variant} onAction={(x) => act(x, 'banner')} onDismiss={o.dismiss} />

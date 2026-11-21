@@ -307,6 +307,45 @@ export interface EmailPreferences {
   categories: EmailCategory[]
 }
 
+// ---- plan proposals (GET /organization/{id}/proposals): a plan Qovery staff suggest, billing roles only
+export type ProposalDismissReason = 'price' | 'timing' | 'not_needed' | 'other'
+export interface ProposalDifference {
+  sku: string
+  name: string
+  from: string
+  to: string
+  tag: 'better' | 'less' | 'new' | 'cost'
+}
+export interface PlanProposal {
+  id: number
+  plan: { code: string; name: string; version: number }
+  period: Period
+  currency: string
+  /** The person at Qovery who sent it, and their message (plain text). */
+  sender_name: string
+  message: string
+  /** The banner's one line: what it saves, what it covers, the concession, or the message's start. */
+  headline: string
+  concession: { kind: 'discount' | 'price'; percent?: number; months?: number; amount?: number; label: string } | null
+  /** Per year at today's usage; null when on request or not possible. */
+  current: { plan_name: string; yearly: number | null }
+  proposed: { plan_name: string; yearly: number | null }
+  differences: ProposalDifference[]
+  status: 'sent' | 'viewed' | 'snoozed'
+  expires_at: string
+  sent_at: string
+  /** A signed, read-only page with the full comparison, when staff attached it. */
+  comparison_url?: string
+  snooze_days: number[]
+  dismiss_reasons: { value: ProposalDismissReason; label: string }[]
+  /** Whether a confirm would go through (as planOptions says it). */
+  change?: Availability
+  preview?: boolean
+}
+export interface Proposals {
+  proposal: PlanProposal | null
+}
+
 // ---- plan picker and plan change (pricing-api's customer API)
 export interface Quote {
   direction: 'upgrade' | 'downgrade' | 'migrate' | 'same'
@@ -376,6 +415,8 @@ export interface PlanChangeResult {
   quote: Quote
   bill?: PlanChangeBill
   discount?: { label: string; percent: number; amount: number } | null
+  /** A plan proposal's concession, already taken off the quote's total (accepting a proposal). */
+  concession?: { label: string; percent?: number; amount: number } | null
   change?: Availability
   duplicate?: boolean
   scheduled_change?: ScheduledChange | null

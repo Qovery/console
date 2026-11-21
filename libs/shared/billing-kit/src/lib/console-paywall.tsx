@@ -64,6 +64,12 @@ export function pickConsoleCalls(client: PricingClient): PricingClient {
     quoteAddon: client.quoteAddon,
     buyAddon: client.buyAddon,
     requestUpgrade: client.requestUpgrade,
+    proposals: client.proposals,
+    viewProposal: client.viewProposal,
+    snoozeProposal: client.snoozeProposal,
+    dismissProposal: client.dismissProposal,
+    quoteProposal: client.quoteProposal,
+    acceptProposal: client.acceptProposal,
   }
 }
 

@@ -23,6 +23,7 @@ import { date, money, num, valueText } from './format'
 import { AskAdminModal, EmailPreferencesPanel, OfferHost } from './offers'
 import { PlanChangeFlow } from './plan-change'
 import { PricingTable } from './pricing-table'
+import { ProposalHost } from './proposals'
 import { ReactivateFlow, SubscriptionEndedBanner } from './reactivate'
 import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel } from './rules'
 import type {
@@ -32,6 +33,7 @@ import type {
   Offer,
   Period,
   PlanOptions,
+  PlanProposal,
   Reactivation,
   Spend,
   UsageSeries,
@@ -48,8 +50,9 @@ export interface UsagePageProps {
   onManageSpendLimits?: () => void
   /** all: offer cards and the sign-in popup (default); cards: the console's layout shows the popup. */
   offers?: 'all' | 'cards' | 'none'
-  /** Opens a journey on load: the plan comparison, or the plan change (on `plan` when given). For deep links. */
-  open?: { modal: 'compare' | 'upgrade'; plan?: string; period?: Period }
+  /** Opens a journey on load: the plan comparison, or the plan change (on `plan` when given). For deep links.
+   * `proposal`: the plan proposal of that id, opened on its review (the email's "Review the plan"). */
+  open?: { modal: 'compare' | 'upgrade'; plan?: string; period?: Period; proposal?: number }
   /** Shows <BillingAlerts> under the page heading (default). Hosts that place alerts themselves pass false. */
   alerts?: boolean
   /** Where the alerts' buttons go: the invoices page or the billing settings page. */
@@ -215,7 +218,11 @@ export function UsagePage({
   // The view the reactivation flow opened with: it stays mounted after the page reloads.
   const [reactivating, setReactivating] = useState<Reactivation>()
   const [error, setError] = useState('')
-  const [modal, setModal] = useState<'compare' | 'upgrade' | 'cancel' | 'reactivate' | null>(open?.modal ?? null)
+  // A proposal deep link waits for the proposal before opening the plan change.
+  const [modal, setModal] = useState<'compare' | 'upgrade' | 'cancel' | 'reactivate' | null>(
+    open?.proposal ? null : open?.modal ?? null
+  )
+  const [proposal, setProposal] = useState<PlanProposal>()
   const [detail, setDetail] = useState<UsageSeries>()
   const [ask, setAsk] = useState<Entitlement>()
   const [comparePeriod, setComparePeriod] = useState<Period | undefined>(open?.period)
@@ -253,6 +260,18 @@ export function UsagePage({
     setRound((n) => n + 1)
   }, [client, organizationId])
   useEffect(load, [load])
+  useEffect(() => {
+    if (!open?.proposal || !client.proposals) return
+    client
+      .proposals(organizationId)
+      .then((r) => {
+        if (r.proposal && r.proposal.id === open.proposal) {
+          setProposal(r.proposal)
+          setModal('upgrade')
+        }
+      })
+      .catch(() => undefined)
+  }, [client, organizationId, open?.proposal])
   if (error)
     return (
       <Callout.Root color="red">
@@ -274,7 +293,12 @@ export function UsagePage({
     .filter((e) => e.kind === 'feature' || notIncluded(e))
     .map((e) => (e.kind === 'feature' ? e : { ...e, value: false as const }))
   const upgrade = (p?: string) => {
+    setProposal(undefined)
     setPreselect(p)
+    setModal('upgrade')
+  }
+  const reviewProposal = (p: PlanProposal) => {
+    setProposal(p)
     setModal('upgrade')
   }
   const sp = spend ?? u.spend
@@ -417,6 +441,15 @@ export function UsagePage({
             onAction={onOffer}
             onReviewRequests={canChangePlan ? () => upgrade() : undefined}
             skuName={skuName}
+          />
+        )}
+        {/* A plan proposal from Qovery staff, with or without offers. */}
+        {amounts && !internal && !ended && client.quotePlanChange && (
+          <ProposalHost
+            key={'proposal' + round}
+            organizationId={organizationId}
+            client={client}
+            onReview={reviewProposal}
           />
         )}
 
@@ -654,9 +687,11 @@ export function UsagePage({
             usage={u}
             preselect={preselect}
             prePeriod={comparePeriod}
+            proposal={proposal}
             onClose={() => {
               setModal(null)
               setComparePeriod(undefined)
+              setProposal(undefined)
             }}
             onDone={load}
             onContactSales={onContactSales}

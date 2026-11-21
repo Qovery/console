@@ -5,6 +5,9 @@
  * plan from the console (read-only billing, an account not handed over yet, a contract, AWS
  * Marketplace, a cancellation scheduled), the flow still compares and quotes, and says what to
  * do instead of confirming. Upgrades apply now; downgrades wait for the end of the term.
+ * With `proposal` (a plan Qovery staff suggested), it opens on the review of that plan and period
+ * and quotes and confirms through the proposal, so its concession applies; picking another plan
+ * makes it a plain plan change.
  */
 import { useEffect, useMemo, useState } from 'react'
 import { Badge, Button, Callout, Icon, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
@@ -12,8 +15,17 @@ import { BillingError, type PricingClient } from './client'
 import { date, money, monthly, valueText } from './format'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText } from './parts'
-import { changeBlockedText, changeKind, newIdempotencyKey } from './rules'
-import type { BillingUsage, Period, PlanChangeResult, PlanOption, PlanOptions, PublicPlans } from './types'
+import { ProposalNote } from './proposals'
+import { changeBlockedText, changeKind, isProposalChange, newIdempotencyKey } from './rules'
+import type {
+  BillingUsage,
+  Period,
+  PlanChangeResult,
+  PlanOption,
+  PlanOptions,
+  PlanProposal,
+  PublicPlans,
+} from './types'
 
 /** A labelled figure in a review (what changes, today, the next invoice). */
 export function Fact({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {
@@ -35,6 +47,7 @@ export function PlanChangeFlow({
   onClose,
   onDone,
   onContactSales,
+  proposal,
 }: {
   organizationId: string
   client: PricingClient
@@ -44,11 +57,13 @@ export function PlanChangeFlow({
   onClose: () => void
   onDone: () => void
   onContactSales?: () => void
+  /** A plan proposal to review: its plan, period and concession. */
+  proposal?: PlanProposal
 }) {
   const [options, setOptions] = useState<PlanOptions>()
   const [plans, setPlans] = useState<PublicPlans>()
-  const [period, setPeriod] = useState<Period>(prePeriod ?? usage.billing.period)
-  const [pick, setPick] = useState<string | undefined>(preselect)
+  const [period, setPeriod] = useState<Period>(proposal?.period ?? prePeriod ?? usage.billing.period)
+  const [pick, setPick] = useState<string | undefined>(proposal?.plan.code ?? preselect)
   const [step, setStep] = useState<'choose' | 'card' | 'review' | 'done'>('choose')
   const [result, setResult] = useState<PlanChangeResult>()
   const [key, setKey] = useState('')
@@ -66,6 +81,13 @@ export function PlanChangeFlow({
       .then(setPlans)
       .catch(() => undefined)
   }, [client, organizationId]) // eslint-disable-line react-hooks/exhaustive-deps
+  // A proposal opens straight on its review, once the plans are read.
+  const [opened, setOpened] = useState(false)
+  useEffect(() => {
+    if (!proposal || opened || !options) return
+    setOpened(true)
+    review()
+  }, [proposal, options]) // eslint-disable-line react-hooks/exhaustive-deps
   const cur = options?.currency ?? usage.billing.currency
   const currentPeriod = options?.period ?? usage.billing.period
   const current = options?.results.find((o) => o.current)
@@ -101,12 +123,17 @@ export function PlanChangeFlow({
     [options]
   )
 
+  // The proposal's own change goes through the proposal (its concession); another pick does not.
+  const viaProposal = isProposalChange(proposal, pick, period) && !!client.quoteProposal && !!client.acceptProposal
   async function review() {
     if (!pick) return
     setBusy(true)
     setError('')
     try {
-      const r = await client.quotePlanChange!(organizationId, pick, period)
+      const r =
+        viaProposal && proposal
+          ? await client.quoteProposal!(organizationId, proposal.id)
+          : await client.quotePlanChange!(organizationId, pick, period)
       setResult(r)
       setKey(newIdempotencyKey())
       setStep(
@@ -146,7 +173,11 @@ export function PlanChangeFlow({
     setBusy(true)
     setError('')
     try {
-      setResult(await client.changePlan!(organizationId, pick, period, key))
+      setResult(
+        viaProposal && proposal
+          ? await client.acceptProposal!(organizationId, proposal.id, key)
+          : await client.changePlan!(organizationId, pick, period, key)
+      )
       setStep('done')
       onDone()
     } catch (e) {
@@ -331,6 +362,7 @@ export function PlanChangeFlow({
 
           {step === 'review' && q && (
             <div className="flex flex-col gap-4">
+              {viaProposal && proposal && <ProposalNote proposal={proposal} />}
               {q.direction === 'same' ? (
                 <p className="text-sm text-neutral">{q.message}</p>
               ) : (
@@ -378,6 +410,12 @@ export function PlanChangeFlow({
                       <span className="text-xs font-normal text-neutral-subtle"> / {q.period}</span>
                     </Fact>
                   </div>
+                  {result?.concession && (
+                    <p className="text-sm text-positive">
+                      {result.concession.label}: {money(result.concession.amount, q.currency)} less per {q.period},
+                      already taken off above.
+                    </p>
+                  )}
                   {result?.discount && (
                     <p className="text-sm text-positive">
                       {result.discount.label}: {result.discount.percent}% off,{' '}

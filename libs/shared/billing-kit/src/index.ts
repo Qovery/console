@@ -28,8 +28,12 @@ export {
   discountSelectable,
   historyCSV,
   historyTable,
+  isProposalChange,
   presetRange,
+  proposalFromSearch,
+  proposalLine,
   quantity,
+  snoozeLabel,
   toggleDiscount,
   validOfferURL,
   validateBillingInfo,
@@ -56,6 +60,8 @@ export {
   useOffers,
 } from './lib/offers'
 export type { OfferHostProps } from './lib/offers'
+export { ProposalBanner, ProposalHost, ProposalNote, useProposal } from './lib/proposals'
+export type { ProposalBannerProps } from './lib/proposals'
 export type { PricingTableProps } from './lib/pricing-table'
 export { Paywall, PaywallLock, usePaywall } from './lib/paywall'
 export {

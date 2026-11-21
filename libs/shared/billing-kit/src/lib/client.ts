@@ -34,6 +34,9 @@ import type {
   Period,
   PlanChangeResult,
   PlanOptions,
+  PlanProposal,
+  ProposalDismissReason,
+  Proposals,
   PublicPlans,
   Reactivation,
   ReactivationResult,
@@ -115,6 +118,24 @@ export interface PricingClient {
     req: { sku?: string; plan_code?: string; message?: string; source?: 'paywall' }
   ): Promise<{ request: UpgradeRequest; notified: number; existing?: boolean }>
   closeUpgradeRequest?(organizationId: string, requestId: number, status: 'done' | 'declined'): Promise<void>
+  // Optional: plan proposals Qovery staff send (billing roles; members get { proposal: null }).
+  // Review quotes and accepts through the plan change rules, with the proposal's concession.
+  proposals?(organizationId: string): Promise<Proposals>
+  viewProposal?(organizationId: string, proposalId: number): Promise<void>
+  /** Remind me later: the banner comes back after `days` (3, 7 or 14) with a reminder email. */
+  snoozeProposal?(
+    organizationId: string,
+    proposalId: number,
+    days: number
+  ): Promise<{ status: string; snoozed_until: string }>
+  dismissProposal?(
+    organizationId: string,
+    proposalId: number,
+    req: { reason?: ProposalDismissReason; note?: string }
+  ): Promise<{ status: string }>
+  quoteProposal?(organizationId: string, proposalId: number): Promise<PlanChangeResult>
+  /** idempotencyKey: one per review, as for a plan change. */
+  acceptProposal?(organizationId: string, proposalId: number, idempotencyKey?: string): Promise<PlanChangeResult>
   emailPreferences?(organizationId: string): Promise<EmailPreferences>
   setEmailPreference?(organizationId: string, category: string, enabled: boolean): Promise<EmailPreferences>
   // Optional: the customer's own billing (billing roles only). Invoices, payment methods and
@@ -297,6 +318,26 @@ export function createPricingClient(o: ClientOptions): PricingClient {
       req(o.pricingApiUrl, `/organization/${org}/upgradeRequests/${id}/close`, {
         method: 'POST',
         body: JSON.stringify({ status }),
+      }),
+    proposals: (org) => req(o.pricingApiUrl, `/organization/${org}/proposals`),
+    viewProposal: (org, id) => req(o.pricingApiUrl, `/organization/${org}/proposals/${id}/view`, { method: 'POST' }),
+    snoozeProposal: (org, id, days) =>
+      req(o.pricingApiUrl, `/organization/${org}/proposals/${id}/snooze`, {
+        method: 'POST',
+        body: JSON.stringify({ days }),
+      }),
+    dismissProposal: (org, id, r) =>
+      req(o.pricingApiUrl, `/organization/${org}/proposals/${id}/dismiss`, { method: 'POST', body: JSON.stringify(r) }),
+    quoteProposal: (org, id) =>
+      req(o.pricingApiUrl, `/organization/${org}/proposals/${id}/accept`, {
+        method: 'POST',
+        body: JSON.stringify({ dry_run: true }),
+      }),
+    acceptProposal: (org, id, key) =>
+      req(o.pricingApiUrl, `/organization/${org}/proposals/${id}/accept`, {
+        method: 'POST',
+        body: JSON.stringify({ dry_run: false }),
+        headers: key ? { 'Idempotency-Key': key } : {},
       }),
     emailPreferences: (org) => req(o.pricingApiUrl, `/organization/${org}/emailPreferences`),
     setEmailPreference: (org, category, enabled) =>

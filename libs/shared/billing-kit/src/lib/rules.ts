@@ -18,6 +18,7 @@ import type {
   PaywallInfo,
   PaywallOption,
   Period,
+  PlanProposal,
   UsageHistoryData,
 } from './types'
 
@@ -985,4 +986,35 @@ export function trialRequest(sku: string, cont: PaywallOption | undefined, conse
 /** When a trial started today ends, as a date (UTC). */
 export function trialEnds(days: number, now = new Date()): string {
   return new Date(now.getTime() + days * 86400000).toISOString()
+}
+
+// ---- plan proposals
+
+/** "3 days", "1 week", "2 weeks": the Remind me later choices. */
+export function snoozeLabel(days: number): string {
+  if (days % 7 === 0) return days === 7 ? '1 week' : `${days / 7} weeks`
+  return days === 1 ? '1 day' : `${days} days`
+}
+
+/** The banner's line: "<Sender> from Qovery suggests <Plan>: <one line>". */
+export function proposalLine(p: Pick<PlanProposal, 'sender_name' | 'plan' | 'headline'>): string {
+  const head = `${p.sender_name} from Qovery suggests ${p.plan.name}`
+  return p.headline ? `${head}: ${p.headline}` : head
+}
+
+/** Whether a plan change review is the proposal's own (its plan and period): only then does
+ * Review quote and confirm through the proposal, with its concession. */
+export function isProposalChange(
+  p: Pick<PlanProposal, 'plan' | 'period'> | undefined,
+  plan: string | undefined,
+  period: string
+): boolean {
+  return !!p && p.plan.code === plan && p.period === period
+}
+
+/** The proposal id a console URL opens (?proposal=12), or undefined. */
+export function proposalFromSearch(search: string): number | undefined {
+  const v = new URLSearchParams(search).get('proposal')
+  if (!v || !/^[1-9][0-9]{0,15}$/.test(v)) return undefined
+  return Number(v)
 }
