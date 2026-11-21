@@ -4,6 +4,7 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, Link, Section } from '@qovery/shared/ui'
 import { ClusterResourcesSettings } from '../../cluster-resources-settings/cluster-resources-settings'
+import { ClusterZonesCountSetting } from '../../cluster-zones-count-setting/cluster-zones-count-setting'
 import { steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 
 export interface StepResourcesProps {
@@ -45,6 +46,9 @@ function StepResourcesForm({
           fromDetail={false}
           isProduction={isProduction}
         />
+        <div className="mt-10">
+          <ClusterZonesCountSetting cloudProvider={cloudProvider} isProduction={isProduction} />
+        </div>
 
         <div className="mt-10 flex justify-between">
           <Link

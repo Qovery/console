@@ -13,10 +13,12 @@ import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { getWidePermissionsRequest } from '../../cluster-credentials-settings/save-cluster-credentials'
+import { supportsFewerZones } from '../../cluster-zones-count-setting/cluster-zones-count-setting'
 import { useCreateCluster } from '../../hooks/use-create-cluster/use-create-cluster'
 import { useDeployCluster } from '../../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useEditCloudProviderInfo } from '../../hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info'
 import { useEditClusterKubeconfig } from '../../hooks/use-edit-cluster-kubeconfig/use-edit-cluster-kubeconfig'
+import { useSetClusterZonesCount } from '../../hooks/use-set-cluster-zones-count/use-set-cluster-zones-count'
 import { mapCreationSpotToNodePools } from '../../utils/map-creation-spot-to-node-pools'
 import { steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 import { getValueByKey } from './get-value-by-key'
@@ -53,6 +55,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
   const { mutateAsync: editClusterKubeconfig } = useEditClusterKubeconfig()
   const { mutateAsync: deployCluster, isLoading: isDeployClusterLoading } = useDeployCluster()
+  const { mutateAsync: setClusterZonesCount } = useSetClusterZonesCount()
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(generalData)
@@ -452,6 +455,15 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
         clusterId: cluster.id,
         cloudProviderInfoRequest: cloudProviderCredentials,
       })
+      const zonesCount = resourcesData.zones_count
+      if (
+        zonesCount &&
+        zonesCount !== '3' &&
+        !generalData.production &&
+        supportsFewerZones(generalData.cloud_provider, resourcesData.karpenter?.enabled)
+      ) {
+        await setClusterZonesCount({ organizationId, clusterId: cluster.id, zonesCount: Number(zonesCount) })
+      }
       if (withDeploy) {
         await deployCluster({ clusterId: cluster.id, organizationId })
       }

@@ -62,6 +62,8 @@ export interface ClusterResourcesData {
   karpenter?: KarpenterData
   scw_control_plane?: SCWControlPlaneFeatureType
   infrastructure_charts_parameters?: ClusterInfrastructureChartsParameters
+  // `cluster.zones_count` advanced setting, only shown behind the `cluster-zones-count` feature flag
+  zones_count?: '1' | '2' | '3'
 }
 
 export type Subnets = {
