@@ -13,7 +13,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { Badge, Banner, Button, Callout, Icon, InputTextArea, InputToggle, Modal } from '@qovery/shared/ui'
 import type { PricingClient } from './client'
 import { date } from './format'
-import { ProposalHost } from './proposals'
+import { ProposalBanner, ProposalHost, useProposal } from './proposals'
+import { BAR_TEXT, barBanner, barClass } from './rules'
 import type { EmailPreferences, Offer, Offers, PlanProposal, Trial, UpgradeRequest } from './types'
 
 const TONE: Record<string, string> = {
@@ -50,9 +51,15 @@ export function OfferBanner({
         onClickButton={() => onAction(offer)}
         dismissible={!!onDismiss}
         onDismiss={() => onDismiss?.(offer)}
+        className={barClass(!!onDismiss)}
+        title={c.badge ? `${c.badge}: ${c.title}` : c.title}
       >
-        {c.badge && <span className="mr-2 rounded bg-surface-neutral px-1.5 py-0.5 text-xs">{c.badge}</span>}
-        {c.title}
+        <span className={BAR_TEXT}>
+          {c.badge && (
+            <span className="mr-2 hidden rounded bg-surface-neutral px-1.5 py-0.5 text-xs sm:inline">{c.badge}</span>
+          )}
+          {c.title}
+        </span>
       </Banner>
     )
   }
@@ -366,7 +373,7 @@ export function EmailPreferencesPanel({ organizationId, client }: { organization
 }
 
 /** Loads the person's offers and requests, and records what they see and do. */
-export function useOffers(organizationId: string, client: PricingClient) {
+export function useOffers(organizationId: string, client: PricingClient, countBanners = true) {
   const [data, setData] = useState<Offers>()
   const [hidden, setHidden] = useState<Set<number>>(new Set())
   const [modalDone, setModalDone] = useState<Set<number>>(new Set())
@@ -384,9 +391,9 @@ export function useOffers(organizationId: string, client: PricingClient) {
   const visible = (data?.offers ?? []).filter((o) => !hidden.has(o.id))
   const modal = visible.find((o) => o.surfaces.includes('modal') && !modalDone.has(o.id))
   const banners = visible.filter((o) => o.surfaces.includes('banner'))
-  // Banners count as shown once per load.
+  // Banners count as shown once per load (the top bar counts the one it shows itself).
   useEffect(() => {
-    banners.forEach((o) => event(o, 'shown', 'banner'))
+    if (countBanners) banners.forEach((o) => event(o, 'shown', 'banner'))
   }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (modal) event(modal, 'shown', 'modal')
@@ -396,6 +403,7 @@ export function useOffers(organizationId: string, client: PricingClient) {
     banners,
     modal,
     reload: load,
+    shown: (o: Offer) => event(o, 'shown', 'banner'),
     dismiss: (o: Offer) => {
       event(o, 'dismissed', 'banner')
       setHidden(new Set([...hidden, o.id]))
@@ -436,7 +444,15 @@ export function OfferHost({
   modal = true,
   onReviewProposal,
 }: OfferHostProps) {
-  const o = useOffers(organizationId, client)
+  const bar = variant === 'bar'
+  // The top bar shows one banner (barBanner): it needs the proposal before picking.
+  const pr = useProposal(organizationId, client, bar && !!onReviewProposal)
+  const o = useOffers(organizationId, client, !bar)
+  const one = bar && !pr.loading ? barBanner(pr.proposal, o.banners) : undefined
+  const barOffer = one?.kind === 'offer' ? one.offer : undefined
+  useEffect(() => {
+    if (barOffer) o.shown(barOffer)
+  }, [barOffer?.id]) // eslint-disable-line react-hooks/exhaustive-deps
   const [declined, setDeclined] = useState<Set<number>>(new Set())
   // Trial offers start the trial here, then tell the host (which can refresh the billing page).
   const [started, setStarted] = useState<{ offer: Offer; trial?: Trial; error?: string }>()
@@ -498,12 +514,31 @@ export function OfferHost({
           </Callout.Text>
         </Callout.Root>
       )}
-      {onReviewProposal && (
-        <ProposalHost organizationId={organizationId} client={client} onReview={onReviewProposal} variant={variant} />
+      {bar ? (
+        <>
+          {one?.kind === 'proposal' && onReviewProposal && (
+            <ProposalBanner proposal={one.proposal} variant="bar" onReview={onReviewProposal} />
+          )}
+          {one?.kind === 'offer' && (
+            <OfferBanner offer={one.offer} variant="bar" onAction={(x) => act(x, 'banner')} onDismiss={o.dismiss} />
+          )}
+        </>
+      ) : (
+        <>
+          {onReviewProposal && (
+            <ProposalHost organizationId={organizationId} client={client} onReview={onReviewProposal} />
+          )}
+          {o.banners.map((b) => (
+            <OfferBanner
+              key={b.id}
+              offer={b}
+              variant={variant}
+              onAction={(x) => act(x, 'banner')}
+              onDismiss={o.dismiss}
+            />
+          ))}
+        </>
       )}
-      {o.banners.map((b) => (
-        <OfferBanner key={b.id} offer={b} variant={variant} onAction={(x) => act(x, 'banner')} onDismiss={o.dismiss} />
-      ))}
       {modal && o.modal && (
         <OfferModal offer={o.modal} onClose={() => o.closeModal(o.modal as Offer)} onAction={(x) => act(x, 'modal')} />
       )}

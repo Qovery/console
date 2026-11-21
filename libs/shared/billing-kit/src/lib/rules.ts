@@ -19,6 +19,7 @@ import type {
   PaywallOption,
   Period,
   PlanProposal,
+  SignupTrial,
   UsageHistoryData,
 } from './types'
 
@@ -474,6 +475,28 @@ export function changeKind(q: { direction: string; period: string; effective_at:
 /** What the customer does instead when a change cannot be confirmed here. */
 /** What the kit says about one of Qovery's own organizations (an internal account, never billed). */
 export const INTERNAL_NOTHING_BILLED = 'Internal organization: nothing is billed'
+
+/**
+ * The trial banner of a new organization: its title and what happens at the end, in the order
+ * the customer can act on: a plan chosen, the plan kept, then the default (Free, or a pause).
+ */
+export function signupTrialText(t: SignupTrial, locale?: string): { title: string; body: string } {
+  const left = t.days_left <= 1 ? 'ends tomorrow' : `ends in ${t.days_left} days`
+  const title = `Your ${t.plan_name} trial ${left}`
+  const on = localDate(t.ends_at, locale)
+  if (t.chosen_plan_name) return { title, body: `On ${on} you move to ${t.chosen_plan_name}, the plan you chose.` }
+  if (t.keep)
+    return {
+      title,
+      body: `On ${on} you keep ${t.plan_name}${t.keep_amount != null ? `, ${amount(t.keep_amount, t.currency, locale)} per month` : ''}, charged to your card on file. You can change your mind until then.`,
+    }
+  if (t.on_end === 'free')
+    return {
+      title,
+      body: `On ${on} your organization moves to the ${t.then_plan_name || 'Free'} plan. Nothing running is removed, but what goes beyond it can no longer be created. Choose a plan to keep what ${t.plan_name} gives you.`,
+    }
+  return { title, body: `On ${on} new resources pause until you choose a plan. Nothing running is stopped.` }
+}
 
 export function changeBlockedText(
   a: Availability | undefined,
@@ -996,10 +1019,37 @@ export function snoozeLabel(days: number): string {
   return days === 1 ? '1 day' : `${days} days`
 }
 
-/** The banner's line: "<Sender> from Qovery suggests <Plan>: <one line>". */
-export function proposalLine(p: Pick<PlanProposal, 'sender_name' | 'plan' | 'headline'>): string {
-  const head = `${p.sender_name} from Qovery suggests ${p.plan.name}`
+/** Who suggests what: "<Sender> from Qovery suggests <Plan>", or "The Qovery team suggests <Plan>"
+ * for a proposal sent as the team (no personal name then). */
+export function proposalHeading(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan'>): string {
+  return p.send_as === 'team'
+    ? `The Qovery team suggests ${p.plan.name}`
+    : `${p.sender_name} from Qovery suggests ${p.plan.name}`
+}
+
+/** The banner's line: the heading, then ": <one line>". */
+export function proposalLine(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan' | 'headline'>): string {
+  const head = proposalHeading(p)
   return p.headline ? `${head}: ${p.headline}` : head
+}
+
+/** What the console's top bar shows: one banner, never stacked. The open plan proposal first, else
+ * the first offer banner (offers come newest first and carry no priority of their own). */
+export type BarBanner<O> = { kind: 'proposal'; proposal: PlanProposal } | { kind: 'offer'; offer: O }
+export function barBanner<O>(
+  proposal: PlanProposal | null | undefined,
+  offers: readonly O[]
+): BarBanner<O> | undefined {
+  if (proposal) return { kind: 'proposal', proposal }
+  return offers.length ? { kind: 'offer', offer: offers[0] } : undefined
+}
+
+/** The top bar's classes, on top of the console's <Banner>: one line at every width. The text
+ * truncates with an ellipsis (its full version in a tooltip) and gives way to the button, which
+ * never wraps; a closable bar keeps room for its close button. */
+export const BAR_TEXT = 'min-w-0 truncate whitespace-nowrap'
+export function barClass(closable: boolean): string {
+  return `justify-start overflow-hidden whitespace-nowrap px-3 sm:justify-center sm:px-4${closable ? ' pr-11 sm:pr-11' : ''}`
 }
 
 /** Whether a plan change review is the proposal's own (its plan and period): only then does

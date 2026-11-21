@@ -13,7 +13,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Banner, Button, Callout, Icon, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
 import type { PricingClient } from './client'
 import { date, money } from './format'
-import { proposalLine, snoozeLabel } from './rules'
+import { BAR_TEXT, barClass, proposalHeading, proposalLine, snoozeLabel } from './rules'
 import type { PlanProposal, ProposalDismissReason } from './types'
 
 /** Loads the organization's proposal, records the first view, and snoozes or dismisses it. */
@@ -38,6 +38,8 @@ export function useProposal(organizationId: string, client: PricingClient, enabl
     proposal: proposal ?? null,
     error,
     reload: load,
+    /** Not answered yet (the top bar waits, so an offer does not flash before the proposal). */
+    loading: enabled && !!client.proposals && proposal === undefined,
     snooze: async (days: number) => {
       if (!proposal) return
       setError('')
@@ -86,9 +88,19 @@ export function ProposalBanner({
   const [later, setLater] = useState(false)
   const [dismissing, setDismissing] = useState(false)
   if (variant === 'bar') {
+    const line = proposalLine(p)
     return (
-      <Banner color="brand" buttonLabel="Review" onClickButton={() => onReview(p)}>
-        {proposalLine(p)}
+      <Banner
+        color="brand"
+        buttonLabel="Review"
+        onClickButton={() => onReview(p)}
+        className={barClass(false)}
+        title={line}
+      >
+        <span className={BAR_TEXT}>
+          <span className="hidden sm:inline">{line}</span>
+          <span className="sm:hidden">{proposalHeading(p)}</span>
+        </span>
       </Banner>
     )
   }
@@ -274,9 +286,7 @@ export function ProposalNote({ proposal: p }: { proposal: PlanProposal }) {
         <Icon iconName="envelope-open-text" iconStyle="regular" />
       </Callout.Icon>
       <Callout.Text>
-        <Callout.TextHeading>
-          {p.sender_name} from Qovery suggests {p.plan.name}
-        </Callout.TextHeading>
+        <Callout.TextHeading>{proposalHeading(p)}</Callout.TextHeading>
         {p.message && <div className="whitespace-pre-line">{p.message}</div>}
         <div className="mt-1 text-xs">
           {p.concession ? `${p.concession.label}. ` : ''}Open until {date(p.expires_at)}.

@@ -160,7 +160,29 @@ export interface BillingUsage {
   spend?: Spend
   usage_insights?: UsageInsights
   status: { status: 'ok' | 'payment_failed' | 'locked'; grace_until?: string; message?: string }
+  /** The trial a new organization started with, while it runs. Absent from older servers. */
+  signup_trial?: SignupTrial
   notes: string[]
+}
+
+/**
+ * A new organization's trial: the plan tried, its end, and what happens then: the Free plan
+ * (on_end free, then_plan_name) or new resources paused until a plan is chosen (lock). keep: a
+ * billing role chose to keep the plan, charged to the card on file; keep_amount (billing roles):
+ * the plan's monthly price. chosen_plan_name: a plan chosen during the trial, starting at its end.
+ */
+export interface SignupTrial {
+  plan: string
+  plan_name: string
+  ends_at: string
+  days_left: number
+  on_end: 'free' | 'lock'
+  then_plan?: string
+  then_plan_name?: string
+  keep: boolean
+  keep_amount?: number
+  currency: string
+  chosen_plan_name?: string
 }
 
 /** A builder size. Listed sizes show on the pricing page and in the picker; the others are on request. saving: % less than its resources (big builders). */
@@ -321,8 +343,10 @@ export interface PlanProposal {
   plan: { code: string; name: string; version: number }
   period: Period
   currency: string
-  /** The person at Qovery who sent it, and their message (plain text). */
+  /** Who sent it, and their message (plain text). sender_name is the person at Qovery, or "The
+   * Qovery team" when send_as is team (no personal name then); absent from older pricing-api. */
   sender_name: string
+  send_as?: 'person' | 'team'
   message: string
   /** The banner's one line: what it saves, what it covers, the concession, or the message's start. */
   headline: string
