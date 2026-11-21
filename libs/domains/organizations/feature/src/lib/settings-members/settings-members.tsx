@@ -19,6 +19,7 @@ import {
 } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
+import { useBillingPaywall } from '@qovery/shared/billing-kit'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import {
@@ -32,7 +33,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { pluralize } from '@qovery/shared/util-js'
 import { type SerializedError } from '@qovery/shared/utils'
 import { useAvailableRoles } from '../hooks/use-available-roles/use-available-roles'
@@ -394,6 +395,14 @@ export function SettingsMembers() {
   const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
 
   const { openModalConfirmation } = useModalConfirmation()
+  const { showChat } = useSupportChat()
+  // Every seat of the plan in use: Add member opens the full-page paywall instead of the invite.
+  const paywall = useBillingPaywall(
+    organizationId,
+    { actions: ['member.invite'] },
+    { onContactSales: showChat, variant: 'page' }
+  )
+  const isInviteLocked = paywall.locked('member.invite')
 
   const onClickEditMemberRole = async (userId: string, roleId: string) => {
     const data = { user_id: userId, role_id: roleId }
@@ -448,6 +457,7 @@ export function SettingsMembers() {
   }
 
   const onAddMember = () => {
+    if (isInviteLocked) return paywall.open('member.invite')
     openModal({
       content: <CreateModal organizationId={organizationId} onClose={closeModal} availableRoles={availableRoles} />,
       options: {
@@ -481,10 +491,11 @@ export function SettingsMembers() {
 
           {canAddMember && (
             <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
-              <Icon iconName="circle-plus" iconStyle="regular" />
+              <Icon iconName={isInviteLocked ? 'lock' : 'circle-plus'} iconStyle="regular" />
               Add member
             </Button>
           )}
+          {paywall.element}
         </div>
         {shouldShowPermissionError && (
           <Callout.Root color="yellow" className="mb-8">

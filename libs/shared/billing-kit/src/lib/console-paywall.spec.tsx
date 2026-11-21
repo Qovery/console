@@ -64,6 +64,60 @@ describe('console paywall', () => {
     expect(await screen.findByText('Let Qovery run your Kubernetes cluster')).toBeInTheDocument()
   })
 
+  it.each([
+    ['members.seats', 'member.invite', 'Members'],
+    ['observe.clusters', 'observe.enable', 'Qovery Observe'],
+    ['clusters.self_managed', 'cluster.create_self_managed', 'Self-managed clusters'],
+    ['sso', 'sso.enable', 'Single sign-on'],
+  ])('opens the full page for %s refused by the plan', async (sku, action, title) => {
+    renderWithProviders(<BillingPaywallHost organizationId="org-1" />)
+
+    act(() => {
+      offerPaywallFromError(refusal(402, { action, sku, paywall: { ...paywall, sku, title } }))
+    })
+
+    expect(await screen.findByRole('heading', { level: 1, name: title })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Start a 14-day trial' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Not now' })).toBeInTheDocument()
+  })
+
+  it('reads the gate and opens the full page when the 402 names only the action', async () => {
+    const sso: Gate = {
+      ...locked,
+      action: 'sso.enable',
+      sku: 'sso',
+      paywall: { ...paywall, sku: 'sso', title: 'Single sign-on' },
+    }
+    fetchMock.mockImplementation(() => gatesResponse([sso]))
+    renderWithProviders(<BillingPaywallHost organizationId="org-1" />)
+
+    act(() => {
+      offerPaywallFromError(refusal(402, { action: 'sso.enable' }))
+    })
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Single sign-on' })).toBeInTheDocument()
+  })
+
+  it('keeps the dialog for a feature without page content', async () => {
+    const { userEvent } = renderWithProviders(<BillingPaywallHost organizationId="org-1" />)
+
+    act(() => {
+      offerPaywallFromError(
+        refusal(402, {
+          action: 'dns_provider.edit',
+          sku: 'dns.custom_provider',
+          paywall: { ...paywall, sku: 'dns.custom_provider', title: 'Custom DNS provider' },
+        })
+      )
+    })
+
+    expect(await screen.findByRole('heading', { name: 'Custom DNS provider' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Start free trial' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByText('Custom DNS provider')).not.toBeInTheDocument()
+  })
+
   it('does not listen when the billing-paywall flag is off', () => {
     mockFlag.mockReturnValue(false)
     renderWithProviders(<BillingPaywallHost organizationId="org-1" />)

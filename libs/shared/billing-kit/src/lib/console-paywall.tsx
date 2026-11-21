@@ -5,13 +5,16 @@
  *  - useBillingPaywall(organizationId, { actions }) reads the gates of the actions a page gates
  *    (cluster.create, blueprint.create). With the flag off, nothing is locked.
  *  - <BillingPaywallHost> (mounted once per organization) opens the paywall when an API call fails
- *    with a 402 carrying pricing-api's paywall (offerPaywallFromError, called by the query cache).
+ *    with a 402 carrying pricing-api's paywall (offerPaywallFromError, called by the query cache):
+ *    the full page for a feature with page content (hasGatedPage), the dialog otherwise.
  */
 import { useAuth0 } from '@auth0/auth0-react'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PRICING_API_URL } from '@qovery/shared/util-node-env'
 import { type PricingClient, createPricingClient } from './client'
+import { hasGatedPage } from './gated'
+import { GatedPage } from './gated-page'
 import { Paywall, usePaywall } from './paywall'
 import { gateFor, gateKeyFromBody, isLocked, paywallFromBody } from './rules'
 import type { Gate, PaywallInfo } from './types'
@@ -162,6 +165,21 @@ export function BillingPaywallHost({
     }
   }, [enabled, handle])
   if (!open) return null
+  // A feature with page content (blueprints, clusters, members, Observe, SSO) gets the full page.
+  if (hasGatedPage(open.paywall?.sku ?? open.gate?.sku)) {
+    return (
+      <GatedPage
+        organizationId={organizationId}
+        client={client}
+        gate={open.gate}
+        paywall={open.paywall}
+        action={open.action}
+        overlay
+        onContactSales={onContactSales}
+        onClose={() => setOpen(undefined)}
+      />
+    )
+  }
   return (
     <Paywall
       organizationId={organizationId}

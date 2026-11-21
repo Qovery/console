@@ -300,6 +300,61 @@ function Observe() {
   )
 }
 
+function SingleSignOn() {
+  const fields: [string, string][] = [
+    ['Protocol', 'SAML 2.0'],
+    ['Sign-in URL', 'https://acme.okta.com/app/qovery/sso/saml'],
+    ['Email domain', 'acme.example'],
+  ]
+  return (
+    <Frame path={['Organization settings', 'Sign-in']}>
+      <div className="mb-4 flex items-center gap-3 rounded-md border border-neutral bg-surface-neutral p-4">
+        <span className="flex h-9 w-9 items-center justify-center rounded bg-surface-neutral-component text-neutral">
+          <Icon iconName="id-badge" iconStyle="regular" />
+        </span>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 text-sm font-medium text-neutral">
+            Okta{' '}
+            <Pill tone="positive">
+              <Dot />
+              Connected
+            </Pill>
+          </div>
+          <div className="text-xs text-neutral-subtle">
+            Members sign in with Okta. New members are added at their first sign-in.
+          </div>
+        </div>
+        <Pill tone="brand">
+          <Icon iconName="lock" iconStyle="regular" />
+          Enforced
+        </Pill>
+      </div>
+      <div className="grid grid-cols-3 gap-3">
+        {fields.map(([k, v]) => (
+          <div key={k} className="min-w-0 rounded border border-neutral bg-surface-neutral px-3 py-2">
+            <div className="text-[11px] text-neutral-subtle">{k}</div>
+            <div className="truncate text-sm text-neutral">{v}</div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 rounded-md border border-neutral bg-surface-neutral">
+        <div className="border-b border-neutral px-4 py-2.5 text-xs text-neutral-subtle">Recent sign-ins</div>
+        {[
+          ['Ada L.', 'Okta', '2 min ago'],
+          ['Grace H.', 'Okta', '1 hour ago'],
+          ['Linus T.', 'Okta', 'Yesterday'],
+        ].map(([who, via, when]) => (
+          <div key={who} className="flex items-center justify-between px-4 py-2.5 text-xs">
+            <span className="text-neutral">{who}</span>
+            <span className="text-neutral-subtle">via {via}</span>
+            <span className="text-neutral-subtle">{when}</span>
+          </div>
+        ))}
+      </div>
+    </Frame>
+  )
+}
+
 function Generic({ title, lines }: { title: string; lines: string[] }) {
   return (
     <Frame path={['Settings', title]}>
@@ -333,6 +388,8 @@ export function GatedPreview({ preview, title, lines }: { preview: GatedPreviewK
       return <Members />
     case 'observe':
       return <Observe />
+    case 'sso':
+      return <SingleSignOn />
     default:
       return <Generic title={title} lines={lines} />
   }

@@ -74,6 +74,28 @@ const lockedManaged: Gate = {
     ],
   },
 }
+const lockedSelfManaged: Gate = {
+  action: 'cluster.create_self_managed',
+  sku: 'clusters.self_managed',
+  name: 'Self-managed clusters',
+  allowed: false,
+  reason: 'limit_reached',
+  limit: 1,
+  used: 1,
+  requested: 1,
+  paywall: {
+    sku: 'clusters.self_managed',
+    title: 'Self-managed clusters',
+    message: 'Your Free plan includes 1 self-managed cluster and you are using 1.',
+    headline: 'Connect a Kubernetes cluster you already run',
+    benefits: [],
+    audience: 'billing',
+    options: [
+      { type: 'upgrade', label: 'Upgrade to Starter', plan: 'STARTER_2026', plan_name: 'Starter' },
+      { type: 'contact_sales', label: 'Talk to us' },
+    ],
+  },
+}
 jest.mock('../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction', () => ({
   useClusterCreationRestriction: () => ({ isClusterCreationRestricted: false }),
 }))
@@ -241,6 +263,32 @@ describe('ClusterAdd', () => {
       await userEvent.click(await screen.findByRole('button', { name: 'Talk to us' }))
 
       expect(mockShowChat).toHaveBeenCalled()
+    })
+  })
+
+  describe('when the plan has no self-managed cluster left', () => {
+    beforeEach(() => {
+      mockGates.current = [lockedSelfManaged]
+    })
+
+    it('locks the self-managed cards and opens the full-page paywall instead of the creation flow', async () => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+
+      const gcp = await screen.findByRole('button', { name: /^GCP\s*Starter plan$/ })
+      await userEvent.click(gcp)
+
+      expect(await screen.findByRole('heading', { level: 1, name: 'Self-managed clusters' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Upgrade to Starter' })).toBeInTheDocument()
+      expect(screen.queryByText('Creation flow')).not.toBeInTheDocument()
+    })
+
+    it('locks the demo cluster too, and keeps the managed cards as links', async () => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+
+      await userEvent.click(await screen.findByRole('button', { name: /^Local machine \(Demo\)\s*Starter plan$/ }))
+
+      expect(await screen.findByRole('heading', { level: 1, name: 'Self-managed clusters' })).toBeInTheDocument()
+      expect(screen.getByText('Amazon Web Services').closest('a')).toBeInTheDocument()
     })
   })
 

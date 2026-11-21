@@ -7,7 +7,7 @@
  * what the payload does not carry (the capability icons and the product preview) and fills what an
  * older server leaves out. A SKU without an entry gets the generic preview and the gate's text.
  */
-import type { PaywallInfo, PaywallOption, PaywallOptionType } from './types'
+import type { GateReason, PaywallInfo, PaywallOption, PaywallOptionType } from './types'
 
 /** The product previews <GatedPage> can draw (GatedPreviews.tsx). */
 export type GatedPreviewKey =
@@ -16,6 +16,7 @@ export type GatedPreviewKey =
   | 'self-managed-cluster'
   | 'members'
   | 'observe'
+  | 'sso'
   | 'generic'
 
 export interface GatedFeature {
@@ -99,7 +100,24 @@ export const GATED_FEATURES: Record<string, GatedFeature> = {
     preview: 'observe',
     learnMoreUrl: 'https://www.qovery.com/docs/configuration/integrations/observability/qovery-observe',
   },
+  sso: {
+    icon: 'key',
+    title: 'Single sign-on',
+    description: 'Your team signs in to the console with your identity provider, and access follows your directory.',
+    capabilities: [
+      { icon: 'id-badge', label: 'Okta, Microsoft Entra ID, Google Workspace and more' },
+      { icon: 'right-to-bracket', label: 'SAML or OpenID Connect' },
+      { icon: 'user-plus', label: 'Members added at their first sign-in' },
+      { icon: 'shield-check', label: "Your identity provider's MFA and password rules apply" },
+    ],
+    preview: 'sso',
+    learnMoreUrl: 'https://www.qovery.com/docs/configuration/organization/sso',
+  },
 }
+
+/** The feature has page content (an entry above): the console opens <GatedPage> for it rather than the dialog. */
+export const hasGatedPage = (sku?: string, features: Record<string, GatedFeature> = GATED_FEATURES) =>
+  !!sku && Object.prototype.hasOwnProperty.call(features, sku)
 
 export interface GatedCta {
   label: string
@@ -114,7 +132,28 @@ const shortMoney = (cents: number, currency: string) => {
     maximumFractionDigits: Number.isInteger(v) ? 0 : 2,
   }).format(v)
 }
-const lowerFirst = (s: string) => (/^[A-Z][a-z]/.test(s) ? s[0].toLowerCase() + s.slice(1) : s)
+
+/**
+ * The add-on as an action, "Add a managed cluster" (the same words as pricing-api's
+ * engine.AddonAction). The name loses its capital unless it is a brand or an acronym (Qovery, SSO),
+ * and takes "a" or "an" when it reads as one thing: not for a quantity, a plural or a longer phrase
+ * ("Add 500 build minutes", "Add HIPAA with BAA").
+ */
+export function addonAction(name?: string): string {
+  let n = (name ?? '').trim()
+  if (!n) return 'Add the add-on'
+  const words = n.split(/\s+/)
+  const first = words[0]
+  const acronym = first.length > 1 && first.toUpperCase() === first && first.toLowerCase() !== first
+  if (!acronym && !first.startsWith('Qovery') && /^[A-Z][a-z]/.test(first)) n = n[0].toLowerCase() + n.slice(1)
+  const phrase = words.some((w) => {
+    const x = w.toLowerCase().replace(/^[()[\]/.:;]+|[()[\]/.:;]+$/g, '')
+    return (x.endsWith('s') && !x.endsWith('ss')) || ['on', 'per', 'with', 'for', 'of', 'in'].includes(x)
+  })
+  if (/^[0-9]/.test(first) || n.includes(',') || phrase) return `Add ${n}`
+  const an = acronym ? 'AEFHILMNORSX'.includes(first[0]) : /^[aeiou]/i.test(n)
+  return `Add ${an ? 'an' : 'a'} ${n}`
+}
 
 const ICON: Record<PaywallOptionType, string> = {
   start_trial: 'flask',
@@ -134,12 +173,11 @@ export function gatedCta(o: PaywallOption): GatedCta {
     case 'upgrade':
       return { icon, label: o.plan_name ? `Upgrade to ${o.plan_name}` : o.label }
     case 'addon': {
-      const name = lowerFirst(o.addon_name ?? 'the add-on')
       const price =
         o.amount != null && o.amount > 0 && o.currency
           ? ` for ${shortMoney(o.amount, o.currency)}/${o.period ?? 'month'}`
           : ''
-      return { icon, label: `Add ${name}${price}` }
+      return { icon, label: `${addonAction(o.addon_name)}${price}` }
     }
     case 'request_admin':
       return { icon, label: 'Ask an admin' }
@@ -148,6 +186,38 @@ export function gatedCta(o: PaywallOption): GatedCta {
     case 'update_payment':
       return { icon, label: 'Update payment method' }
   }
+}
+
+/**
+ * The dialog's short title (the page keeps the headline as its description, the dialog as its
+ * subtitle). It says why, when the gate says: a limit in use is not "not in your plan".
+ */
+export function dialogTitle(title: string, reason?: GateReason): string {
+  if (reason === 'limit_reached') return "You have reached your plan's limit"
+  if (reason === 'not_in_plan' || reason === 'trial_used') {
+    const last = title.trim().split(/\s+/).pop() ?? ''
+    return `${title} ${last.endsWith('s') && !last.endsWith('ss') ? 'are' : 'is'} not in your plan`
+  }
+  return title
+}
+
+/** A "Free" plan or option is never a way to get a paid feature. */
+const isFree = (o: PaywallOption) => /\bfree\b/i.test(gatedCta(o).label)
+
+/**
+ * The other ways, as small "Or ..." links under the main button: in the gate's order, never the
+ * main button's action again, never a free plan, each action once.
+ */
+export function gatedOthers(options: PaywallOption[]): PaywallOption[] {
+  const [primary, ...rest] = options
+  if (!primary) return []
+  const seen = new Set([gatedCta(primary).label])
+  return rest.filter((o) => {
+    const label = gatedCta(o).label
+    if (seen.has(label) || isFree(o)) return false
+    seen.add(label)
+    return true
+  })
 }
 
 /** The small chip next to the feature name: how this customer can get it. */
@@ -179,7 +249,7 @@ export interface GatedPageView {
   preview: GatedPreviewKey
   learnMoreUrl?: string
   chip: string
-  /** The recommended option (first), and the other ways, in the gate's order. */
+  /** The recommended option (first), and the other ways, in the gate's order (gatedOthers). */
   primary?: PaywallOption
   others: PaywallOption[]
   /** Why it is locked, one sentence from pricing-api. */
@@ -207,7 +277,7 @@ export function gatedPageView(p: PaywallInfo, features: Record<string, GatedFeat
     learnMoreUrl: p.learn_more_url || f?.learnMoreUrl || undefined,
     chip: gatedChip(p),
     primary: p.options[0],
-    others: p.options.slice(1),
+    others: gatedOthers(p.options),
     message: p.message ?? '',
     media: p.media,
   }

@@ -287,7 +287,8 @@ export function ServiceNew({
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
   const [selectedBlueprint, setSelectedBlueprint] = useState<BlueprintItem | null>(null)
   const [isBlueprintDetailsOpen, setIsBlueprintDetailsOpen] = useState(false)
-  // Blueprints can be outside the plan: the catalog stays browsable, Deploy opens the full-page paywall.
+  // Blueprints can be outside the plan: the list stays browsable and base services are never gated;
+  // opening a blueprint (its details or Deploy) opens the full-page paywall.
   const paywall = useBillingPaywall(
     organizationId,
     { actions: ['blueprint.create'] },
@@ -306,6 +307,7 @@ export function ServiceNew({
       : undefined
 
   const openBlueprintDetails = (blueprint: BlueprintItem) => {
+    if (blueprintLock) return blueprintLock.open()
     setSelectedBlueprint(blueprint)
     setIsBlueprintDetailsOpen(true)
   }

@@ -566,7 +566,7 @@ describe('ServiceNew', () => {
       expect(screen.getByRole('button', { name: 'Start a 14-day trial' })).toBeInTheDocument()
     })
 
-    it('opens the paywall from the blueprint details', async () => {
+    it('opens the full-page paywall instead of the blueprint details', async () => {
       const { userEvent } = renderWithProviders(
         <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
       )
@@ -574,11 +574,58 @@ describe('ServiceNew', () => {
       await section.findAllByText('Try it free for 14 days')
 
       await userEvent.click(section.getAllByRole('button', { name: 'View details' })[0])
-      const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
-      expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
-      await userEvent.click(within(dialog).getByRole('button', { name: 'Deploy blueprint' }))
 
-      expect(await screen.findByText('Create databases, caches and storage from a catalog')).toBeInTheDocument()
+      expect(await screen.findByRole('button', { name: 'Start a 14-day trial' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Not now' })).toBeInTheDocument()
+      expect(screen.queryByRole('dialog', { name: 'AWS S3 Bucket' })).not.toBeInTheDocument()
+      expect(mockUseBlueprintCatalogServiceReadme).not.toHaveBeenCalledWith(expect.objectContaining({ enabled: true }))
+    })
+
+    it('never gates the base services: no lock, and each one still links to its creation flow', async () => {
+      const { container } = renderWithProviders(
+        <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+      )
+      const blueprintsSection = within(
+        screen.getByRole('heading', { name: 'Blueprints' }).closest('section') as HTMLElement
+      )
+      await blueprintsSection.findAllByText('Try it free for 14 days')
+      const base = within(screen.getByRole('heading', { name: 'Base services' }).closest('section') as HTMLElement)
+
+      expect(base.queryByText('Try it free for 14 days')).not.toBeInTheDocument()
+      expect(screen.getAllByText('Try it free for 14 days')).toHaveLength(blueprints.length)
+      for (const type of ['application', 'lifecycle-job', 'cron-job', 'helm']) {
+        expect(
+          container.querySelector(
+            `a[href="/organization/org-1/project/project-1/environment/env-1/service/create/${type}"]`
+          )
+        ).toBeInTheDocument()
+      }
+      expect(screen.queryByRole('button', { name: 'Not now' })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('when the plan includes blueprints', () => {
+    beforeEach(() => {
+      mockGates.current = [{ ...lockedBlueprints, allowed: true, reason: '', paywall: undefined }]
+      mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+      mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
+    })
+
+    it('opens the blueprint details and links Deploy straight to the creation flow, with no lock', async () => {
+      const { userEvent } = renderWithProviders(
+        <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+      )
+      const section = within(screen.getByRole('heading', { name: 'Blueprints' }).closest('section') as HTMLElement)
+
+      expect(section.getAllByRole('link', { name: 'Deploy' })[0]).toHaveAttribute(
+        'href',
+        '/organization/org-1/project/project-1/environment/env-1/service/create/blueprint/aws/s3'
+      )
+      await userEvent.click(section.getAllByRole('button', { name: 'View details' })[0])
+
+      expect(screen.getByRole('dialog', { name: 'AWS S3 Bucket' })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Not now' })).not.toBeInTheDocument()
+      expect(screen.queryByText('Try it free for 14 days')).not.toBeInTheDocument()
     })
   })
 })

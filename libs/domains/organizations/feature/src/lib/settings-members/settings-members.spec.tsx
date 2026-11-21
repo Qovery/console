@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { type ReactNode } from 'react'
+import { type Gate } from '@qovery/shared/billing-kit'
 import { inviteMembersMock, membersMock, organizationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useAvailableRolesHook from '../hooks/use-available-roles/use-available-roles'
@@ -33,6 +34,50 @@ jest.mock('@qovery/shared/ui', () => {
 })
 
 const mockUser = { sub: 'owner-id' }
+
+// The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
+const mockGates: { current: Gate[] | undefined } = { current: undefined }
+jest.mock('@qovery/shared/billing-kit', () => {
+  const actual = jest.requireActual('@qovery/shared/billing-kit')
+  const client = {
+    mode: 'live',
+    publicPlans: () => Promise.resolve(),
+    billingUsage: () => Promise.resolve(),
+    spendLimits: () => Promise.resolve(),
+    gateEvent: () => Promise.resolve(),
+    get gates() {
+      return mockGates.current
+        ? (organizationId: string) =>
+            Promise.resolve({ organization_id: organizationId, access: 'billing', gates: mockGates.current })
+        : undefined
+    },
+  }
+  return {
+    ...actual,
+    useBillingPaywall: (organizationId: string, keys: object, options: object) =>
+      actual.usePaywall(client, organizationId, keys, options),
+  }
+})
+
+const seatsFull: Gate = {
+  action: 'member.invite',
+  sku: 'members.seats',
+  name: 'Members',
+  allowed: false,
+  reason: 'limit_reached',
+  limit: 3,
+  used: 3,
+  requested: 1,
+  paywall: {
+    sku: 'members.seats',
+    title: 'Members',
+    message: 'Your Free plan includes 3 members and you are using 3.',
+    headline: 'Bring more of your team into the console',
+    benefits: [],
+    audience: 'billing',
+    options: [{ type: 'upgrade', label: 'Upgrade to Starter', plan: 'STARTER_2026', plan_name: 'Starter' }],
+  },
+}
 
 jest.mock('@auth0/auth0-react', () => ({
   ...jest.requireActual('@auth0/auth0-react'),
@@ -94,6 +139,7 @@ describe('SettingsMembers', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    mockGates.current = undefined
 
     const useAuth0Mock = useAuth0 as jest.MockedFunction<typeof useAuth0>
     useAuth0Mock.mockReturnValue({ user: mockUser } as ReturnType<typeof useAuth0>)
@@ -128,6 +174,28 @@ describe('SettingsMembers', () => {
     const [{ content, options }] = mockOpenModal.mock.calls[0]
     expect(options).toEqual(expect.objectContaining({ fakeModal: true }))
     expect(content.type).toBe(CreateModal)
+  })
+
+  it('should open the full-page paywall instead of the invite when every seat is in use', async () => {
+    mockGates.current = [seatsFull]
+    const { userEvent } = renderWithProviders(<SettingsMembers />)
+
+    await waitFor(() => expect(screen.getByRole('button', { name: /add member/i })).toContainHTML('fa-lock'))
+    await userEvent.click(screen.getByRole('button', { name: /add member/i }))
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Members' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Upgrade to Starter' })).toBeInTheDocument()
+    expect(mockOpenModal).not.toHaveBeenCalled()
+  })
+
+  it('should invite as usual when a seat is free', async () => {
+    mockGates.current = [{ ...seatsFull, allowed: true, reason: '', used: 2, paywall: undefined }]
+    const { userEvent } = renderWithProviders(<SettingsMembers />)
+
+    await userEvent.click(screen.getByRole('button', { name: /add member/i }))
+
+    expect(mockOpenModal).toHaveBeenCalled()
+    expect(screen.queryByRole('heading', { level: 1, name: 'Members' })).not.toBeInTheDocument()
   })
 
   it('should not display add member button when organization has an enterprise connection', () => {

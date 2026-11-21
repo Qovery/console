@@ -15,6 +15,7 @@ import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } fro
 import { Badge, Button, Callout, Checkbox, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
 import { BillingError, type PricingClient } from './client'
 import { date } from './format'
+import { addonAction, dialogTitle } from './gated'
 import { GatedPage } from './gated-page'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
@@ -29,7 +30,14 @@ import {
   trialEnds,
   trialRequest,
 } from './rules'
-import type { BillingUsage, Gate, PaywallInfo as PaywallData, PaywallOption, PaywallOptionType } from './types'
+import type {
+  BillingUsage,
+  Gate,
+  GateReason,
+  PaywallInfo as PaywallData,
+  PaywallOption,
+  PaywallOptionType,
+} from './types'
 
 type Done = 'trial' | 'upgrade' | 'addon' | 'request'
 
@@ -54,6 +62,8 @@ export interface PaywallProps {
    * recorded the click): Back and Close return to the page.
    */
   startWith?: PaywallOption
+  /** Why it is locked, when only a paywall is passed (the back office's preview): the dialog's title says it. */
+  reason?: GateReason
 }
 
 type Step = 'choose' | 'trial' | 'addon' | 'ask' | 'upgrade' | 'done'
@@ -71,6 +81,7 @@ export function Paywall({
   onUpdatePayment,
   inline,
   startWith,
+  reason,
 }: PaywallProps) {
   const [fresh, setFresh] = useState<Gate>()
   const p = fresh?.paywall ?? gate?.paywall ?? paywall
@@ -180,11 +191,12 @@ export function Paywall({
               : step === 'trial'
                 ? 'Start your free trial'
                 : step === 'addon'
-                  ? `Add ${picked?.addon_name ?? 'it'}`
+                  ? addonAction(picked?.addon_name)
                   : step === 'ask'
                     ? 'Ask an admin'
-                    : p.headline}
+                    : dialogTitle(p.title, fresh?.reason ?? gate?.reason ?? reason)}
           </h2>
+          {step === 'choose' && p.headline && <p className="mt-1 text-sm text-neutral-subtle">{p.headline}</p>}
         </div>
         <button
           type="button"
@@ -756,7 +768,10 @@ export function usePaywall(
   client: PricingClient,
   organizationId: string,
   keys: { actions?: string[]; skus?: string[] },
-  options: Omit<PaywallProps, 'organizationId' | 'client' | 'gate' | 'paywall' | 'action' | 'onClose' | 'startWith'> & {
+  options: Omit<
+    PaywallProps,
+    'organizationId' | 'client' | 'gate' | 'paywall' | 'action' | 'onClose' | 'startWith' | 'reason'
+  > & {
     onClose?: () => void
     /** dialog (default): the <Paywall> modal. page: <GatedPage> over the window, for a feature with its own page. */
     variant?: 'dialog' | 'page'

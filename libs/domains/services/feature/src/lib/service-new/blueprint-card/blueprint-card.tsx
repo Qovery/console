@@ -5,7 +5,7 @@ import { Button, Heading, Link } from '@qovery/shared/ui'
 import { getBlueprintDisplayName } from '../../blueprint-utils/blueprint-utils'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 
-/** The plan does not include blueprints: the catalog stays browsable, Deploy opens the paywall. */
+/** The plan does not include blueprints: the catalog stays browsable, opening a blueprint opens the paywall. */
 export type BlueprintLock = { gate: Gate; open: () => void }
 
 export function BlueprintCard({

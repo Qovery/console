@@ -77,7 +77,17 @@ export type { PaywallProps, UsePaywall } from './lib/paywall'
 export { GatedPage } from './lib/gated-page'
 export type { GatedPageProps } from './lib/gated-page'
 export { GatedPreview } from './lib/gated-previews'
-export { GATED_FEATURES, MAX_CAPABILITIES, gatedChip, gatedCta, gatedPageView } from './lib/gated'
+export {
+  GATED_FEATURES,
+  MAX_CAPABILITIES,
+  addonAction,
+  dialogTitle,
+  gatedChip,
+  gatedCta,
+  gatedOthers,
+  gatedPageView,
+  hasGatedPage,
+} from './lib/gated'
 export type { GatedCta, GatedFeature, GatedPageView, GatedPreviewKey } from './lib/gated'
 export { BillingError, buildUsageQuery, createPricingClient, gatesQuery } from './lib/client'
 export type { ClientOptions, PricingClient } from './lib/client'

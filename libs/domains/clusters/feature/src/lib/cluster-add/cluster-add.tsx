@@ -137,18 +137,19 @@ export function ClusterAdd() {
   const [isCreationFlowOpen, setIsCreationFlowOpen] = useState(false)
   const [creationCloudProvider, setCreationCloudProvider] = useState<SelfManagedClusterCloudProvider>('AWS')
   const [creationStep, setCreationStep] = useState<SelfManagedClusterCreationStep>('general')
-  // Qovery-managed clusters can be outside the plan (Free runs self-managed clusters only): the
-  // cards stay visible, locked, and open the full-page paywall. Self-managed clusters are not affected.
+  // Qovery-managed clusters can be outside the plan (Free runs self-managed clusters only), and each
+  // kind has its own limit: the cards stay visible, locked, and open the full-page paywall.
   const paywall = useBillingPaywall(
     organizationId,
-    { actions: ['cluster.create'] },
+    { actions: ['cluster.create', 'cluster.create_self_managed'] },
     { onContactSales: showChat, variant: 'page' }
   )
-  const managedGate = paywall.gate('cluster.create')
-  const managedLock =
-    managedGate && paywall.locked('cluster.create')
-      ? { gate: managedGate, open: () => paywall.open('cluster.create') }
-      : undefined
+  const lockFor = (action: string) => {
+    const gate = paywall.gate(action)
+    return gate && paywall.locked(action) ? { gate, open: () => paywall.open(action) } : undefined
+  }
+  const managedLock = lockFor('cluster.create')
+  const selfManagedLock = lockFor('cluster.create_self_managed')
 
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
@@ -258,6 +259,7 @@ export function ClusterAdd() {
           icon={Kubernetes}
           onClick={() => openInstallationGuideModal({ isDemo: true })}
           analytics={{ selectedCloudProvider: 'OTHER', selectedInstallationType: 'demo' }}
+          locked={selfManagedLock}
         />
         <ProviderCard
           title="AWS"
@@ -265,6 +267,7 @@ export function ClusterAdd() {
           onClick={() => openCreationFlow('AWS')}
           disabled={disabled}
           analytics={selfManaged('AWS')}
+          locked={selfManagedLock}
         />
         <ProviderCard
           title="GCP"
@@ -272,6 +275,7 @@ export function ClusterAdd() {
           onClick={() => openCreationFlow('GCP')}
           disabled={disabled}
           analytics={selfManaged('GCP')}
+          locked={selfManagedLock}
         />
         <ProviderCard
           title="Scaleway"
@@ -279,6 +283,7 @@ export function ClusterAdd() {
           onClick={() => openCreationFlow('SCW')}
           disabled={disabled}
           analytics={selfManaged('SCW')}
+          locked={selfManagedLock}
         />
         {[
           { title: 'Microsoft Azure', icon: Azure, provider: 'AZURE' },
@@ -296,6 +301,7 @@ export function ClusterAdd() {
             onClick={() => openInstallationGuideModal()}
             disabled={disabled}
             analytics={selfManaged(provider)}
+            locked={selfManagedLock}
           />
         ))}
       </ProviderSection>
