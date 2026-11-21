@@ -1027,10 +1027,22 @@ export function proposalHeading(p: Pick<PlanProposal, 'sender_name' | 'send_as' 
     : `${p.sender_name} from Qovery suggests ${p.plan.name}`
 }
 
-/** The banner's line: the heading, then ": <one line>". */
-export function proposalLine(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan' | 'headline'>): string {
+/** The banner's line: the offer first when there is one ("10% off Scale for 6 months · The Qovery
+ * team"), else the heading, then ": <one line>". */
+export function proposalLine(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan' | 'headline' | 'offer'>): string {
+  if (p.offer) return `${p.offer} · ${proposalSigner(p)}`
   const head = proposalHeading(p)
   return p.headline ? `${head}: ${p.headline}` : head
+}
+
+/** Who signs: "The Qovery team", or "Ada Lovelace, Qovery". */
+export function proposalSigner(p: Pick<PlanProposal, 'sender_name' | 'send_as'>): string {
+  return p.send_as === 'team' ? 'The Qovery team' : `${p.sender_name}, Qovery`
+}
+
+/** The banner's short line, below 640px: the offer, else the heading. */
+export function proposalShortLine(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan' | 'offer'>): string {
+  return p.offer || proposalHeading(p)
 }
 
 /** What the console's top bar shows: one banner, never stacked. The open plan proposal first, else

@@ -350,6 +350,8 @@ export interface PlanProposal {
   message: string
   /** The banner's one line: what it saves, what it covers, the concession, or the message's start. */
   headline: string
+  /** The concession as an offer ("10% off Scale for 6 months"); absent without one, or from older pricing-api. */
+  offer?: string
   concession: { kind: 'discount' | 'price'; percent?: number; months?: number; amount?: number; label: string } | null
   /** Per year at today's usage; null when on request or not possible. */
   current: { plan_name: string; yearly: number | null }

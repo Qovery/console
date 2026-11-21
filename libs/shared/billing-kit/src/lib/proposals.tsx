@@ -13,7 +13,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Banner, Button, Callout, Icon, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
 import type { PricingClient } from './client'
 import { date, money } from './format'
-import { BAR_TEXT, barClass, proposalHeading, proposalLine, snoozeLabel } from './rules'
+import { BAR_TEXT, barClass, proposalHeading, proposalLine, proposalShortLine, snoozeLabel } from './rules'
 import type { PlanProposal, ProposalDismissReason } from './types'
 
 /** Loads the organization's proposal, records the first view, and snoozes or dismisses it. */
@@ -99,7 +99,7 @@ export function ProposalBanner({
       >
         <span className={BAR_TEXT}>
           <span className="hidden sm:inline">{line}</span>
-          <span className="sm:hidden">{proposalHeading(p)}</span>
+          <span className="sm:hidden">{proposalShortLine(p)}</span>
         </span>
       </Banner>
     )
