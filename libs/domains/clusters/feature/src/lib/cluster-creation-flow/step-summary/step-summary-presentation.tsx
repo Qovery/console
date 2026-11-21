@@ -261,6 +261,12 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                         </li>
                       </>
                     )}
+                    {props.resourcesData.zones_count && props.resourcesData.zones_count !== '3' && (
+                      <li>
+                        <strong className="font-medium">Availability zones: </strong>
+                        {props.resourcesData.zones_count}
+                      </li>
+                    )}
                     {props.resourcesData.scw_control_plane && props.generalData.cloud_provider === 'SCW' && (
                       <li>
                         <strong className="font-medium">Control plane type: </strong>
