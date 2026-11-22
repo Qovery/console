@@ -6,6 +6,10 @@
  * description, benefits as the capabilities, image or video, learn more link). GATED_FEATURES adds
  * what the payload does not carry (the capability icons and the product preview) and fills what an
  * older server leaves out. A SKU without an entry gets the generic preview and the gate's text.
+ *
+ * Previews: a feature can have two, the console and Claude Code (a still, plus an optional muted
+ * loop and its poster), served by pricing-api from billing.qovery.com/paywall-media. Media staff
+ * set on the gate replace the matching default (media for the console, claude_media for Claude Code).
  */
 import type { GateReason, PaywallInfo, PaywallOption, PaywallOptionType } from './types'
 
@@ -19,6 +23,34 @@ export type GatedPreviewKey =
   | 'sso'
   | 'generic'
 
+/** One product preview: a still image, and optionally a short muted loop with its first frame as poster. */
+export interface GatedMedia {
+  image?: string
+  /** Video sources, best first (WebM, then MP4). */
+  video?: string[]
+  poster?: string
+}
+
+export type GatedPreviewTab = 'console' | 'claude'
+export type GatedPreviews = Partial<Record<GatedPreviewTab, GatedMedia>>
+
+/** Where the default previews live (web/paywall-media, served by pricing-api). A new render goes in a new folder. */
+export const PAYWALL_MEDIA_BASE = 'https://billing.qovery.com/paywall-media/v1'
+
+/** The rendered set for a feature: console.webp + console.webm/mp4 + console-poster.webp, the same for claude. */
+export function mediaSet(
+  slug: string,
+  tabs: GatedPreviewTab[] = ['console', 'claude'],
+  base = PAYWALL_MEDIA_BASE
+): GatedPreviews {
+  const out: GatedPreviews = {}
+  for (const tab of tabs) {
+    const at = `${base}/${slug}/${tab}`
+    out[tab] = { image: `${at}.webp`, video: [`${at}.webm`, `${at}.mp4`], poster: `${at}-poster.webp` }
+  }
+  return out
+}
+
 export interface GatedFeature {
   /** FontAwesome icon next to the feature name in the top strip. */
   icon: string
@@ -27,6 +59,8 @@ export interface GatedFeature {
   /** Icons for the capability lines, in order; the labels are fallbacks for the gate's benefits. */
   capabilities: { icon: string; label: string }[]
   preview: GatedPreviewKey
+  /** Rendered previews (console, Claude Code); the drawn `preview` stays the fallback. */
+  media?: GatedPreviews
   learnMoreUrl?: string
 }
 
@@ -44,6 +78,7 @@ export const GATED_FEATURES: Record<string, GatedFeature> = {
       { icon: 'arrows-rotate', label: 'Updates offered when a module changes' },
     ],
     preview: 'blueprints',
+    media: mediaSet('blueprints'),
     learnMoreUrl: 'https://www.qovery.com/docs/configuration/blueprints',
   },
   'clusters.managed': {
@@ -59,6 +94,7 @@ export const GATED_FEATURES: Record<string, GatedFeature> = {
       { icon: 'key', label: 'Full access to the cluster and your account' },
     ],
     preview: 'managed-cluster',
+    media: mediaSet('managed-cluster'),
     learnMoreUrl: 'https://www.qovery.com/docs/configuration/clusters',
   },
   'clusters.self_managed': {
@@ -72,6 +108,7 @@ export const GATED_FEATURES: Record<string, GatedFeature> = {
       { icon: 'rocket', label: 'Same deployments, logs and previews as managed clusters' },
     ],
     preview: 'self-managed-cluster',
+    media: mediaSet('self-managed-cluster'),
     learnMoreUrl: 'https://www.qovery.com/docs/getting-started/installation/kubernetes',
   },
   'members.seats': {
@@ -98,6 +135,7 @@ export const GATED_FEATURES: Record<string, GatedFeature> = {
       { icon: 'server', label: 'Runs on your own cluster' },
     ],
     preview: 'observe',
+    media: mediaSet('observe'),
     learnMoreUrl: 'https://www.qovery.com/docs/configuration/integrations/observability/qovery-observe',
   },
   sso: {
@@ -112,6 +150,35 @@ export const GATED_FEATURES: Record<string, GatedFeature> = {
     ],
     preview: 'sso',
     learnMoreUrl: 'https://www.qovery.com/docs/configuration/organization/sso',
+  },
+  'rbac.custom_roles': {
+    icon: 'user-shield',
+    title: 'Custom roles',
+    description: 'Give each team the access it needs, per cluster, per project and per environment type.',
+    capabilities: [
+      { icon: 'sliders', label: 'Manage, deploy, read-only or no access, per environment type' },
+      { icon: 'shield-check', label: 'Production kept read-only while development stays open' },
+      { icon: 'terminal', label: 'Shell and port-forward allowed only where you choose' },
+      { icon: 'cube', label: 'Cluster access set separately' },
+      { icon: 'clock-rotate-left', label: 'Every change recorded in the audit log' },
+    ],
+    preview: 'generic',
+    media: mediaSet('custom-roles'),
+    learnMoreUrl: 'https://www.qovery.com/docs/configuration/organization/members-rbac',
+  },
+  'audit.retention_days': {
+    icon: 'clock-rotate-left',
+    title: 'Log and audit retention',
+    description: "Keep your organization's audit logs for longer, and find out who changed what months later.",
+    capabilities: [
+      { icon: 'list-check', label: 'Every change to clusters, environments, services and members' },
+      { icon: 'user', label: 'Who did it, from the console, the API, Terraform or an agent' },
+      { icon: 'filter', label: 'Search and filter by date, event, target and user' },
+      { icon: 'box-archive', label: 'Older history for audits and incident reviews' },
+    ],
+    preview: 'generic',
+    media: mediaSet('log-retention'),
+    learnMoreUrl: 'https://www.qovery.com/docs/getting-started/security-and-compliance/audit-logs',
   },
 }
 
@@ -255,6 +322,8 @@ export interface GatedPageView {
   /** Why it is locked, one sentence from pricing-api. */
   message: string
   media?: PaywallInfo['media']
+  /** The previews to show, staff media first (gatedPreviews). */
+  previews: GatedPreviews
 }
 
 /** At most this many capability lines on the page. */
@@ -280,5 +349,50 @@ export function gatedPageView(p: PaywallInfo, features: Record<string, GatedFeat
     others: gatedOthers(p.options),
     message: p.message ?? '',
     media: p.media,
+    previews: gatedPreviews(p, f),
   }
+}
+
+const fromGate = (m: { url: string; kind: 'image' | 'video' }): GatedMedia =>
+  m.kind === 'video' ? { video: [m.url] } : { image: m.url }
+
+/** The previews: what staff set on the gate wins, slot by slot (media = console, claude_media = Claude Code). */
+export function gatedPreviews(p: Pick<PaywallInfo, 'media' | 'claude_media'>, f?: GatedFeature): GatedPreviews {
+  const out: GatedPreviews = {}
+  const inConsole = p.media ? fromGate(p.media) : f?.media?.console
+  const claude = p.claude_media ? fromGate(p.claude_media) : f?.media?.claude
+  if (inConsole) out.console = inConsole
+  if (claude) out.claude = claude
+  return out
+}
+
+/** The tabs of the preview switch, in order. The switch shows only when there are two. */
+export const previewTabs = (previews: GatedPreviews): GatedPreviewTab[] =>
+  (['console', 'claude'] as const).filter((t) => !!previews[t])
+
+export const PREVIEW_TAB_LABEL: Record<GatedPreviewTab, string> = { console: 'Console', claude: 'Claude Code' }
+
+/**
+ * How to show one preview: the loop when motion is fine; the still under reduced motion (or a
+ * paused video on its first frame when staff gave only a video); nothing without media.
+ */
+export function previewRender(
+  m: GatedMedia | undefined,
+  reducedMotion: boolean
+): 'video' | 'image' | 'paused-video' | 'none' {
+  if (!m) return 'none'
+  if (m.video?.length && !reducedMotion) return 'video'
+  if (m.image) return 'image'
+  if (m.video?.length) return 'paused-video'
+  return 'none'
+}
+
+/** The still for the small dialog: staff media first, else the console preview's still or poster. */
+export function dialogImage(
+  p: Pick<PaywallInfo, 'sku' | 'media'>,
+  features: Record<string, GatedFeature> = GATED_FEATURES
+): string | undefined {
+  if (p.media) return undefined
+  const m = features[p.sku]?.media?.console
+  return m?.image ?? m?.poster
 }

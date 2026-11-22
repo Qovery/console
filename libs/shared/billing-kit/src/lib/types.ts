@@ -1036,6 +1036,8 @@ export interface PaywallInfo {
   headline: string
   benefits: string[]
   media?: { url: string; kind: 'image' | 'video' }
+  /** The same feature used from Claude Code, when staff set one (the full page's second preview). */
+  claude_media?: { url: string; kind: 'image' | 'video' }
   /** The documentation behind "Learn more". Absent from older servers and when staff set none. */
   learn_more_url?: string
   options: PaywallOption[]

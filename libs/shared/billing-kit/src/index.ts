@@ -80,15 +80,29 @@ export { GatedPreview } from './lib/gated-previews'
 export {
   GATED_FEATURES,
   MAX_CAPABILITIES,
+  PAYWALL_MEDIA_BASE,
   addonAction,
+  dialogImage,
   dialogTitle,
   gatedChip,
   gatedCta,
   gatedOthers,
   gatedPageView,
+  gatedPreviews,
   hasGatedPage,
+  mediaSet,
+  previewRender,
+  previewTabs,
 } from './lib/gated'
-export type { GatedCta, GatedFeature, GatedPageView, GatedPreviewKey } from './lib/gated'
+export type {
+  GatedCta,
+  GatedFeature,
+  GatedMedia,
+  GatedPageView,
+  GatedPreviewKey,
+  GatedPreviewTab,
+  GatedPreviews,
+} from './lib/gated'
 export { BillingError, buildUsageQuery, createPricingClient, gatesQuery } from './lib/client'
 export type { ClientOptions, PricingClient } from './lib/client'
 export * from './lib/types'

@@ -15,7 +15,7 @@ import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } fro
 import { Badge, Button, Callout, Checkbox, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
 import { BillingError, type PricingClient } from './client'
 import { date } from './format'
-import { addonAction, dialogTitle } from './gated'
+import { addonAction, dialogImage, dialogTitle } from './gated'
 import { GatedPage } from './gated-page'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
@@ -298,6 +298,8 @@ export function Paywall({
 
 /** What the feature does: a taste of what is behind the lock. */
 function Promotion({ p }: { p: PaywallData }) {
+  // Staff media first; else the console preview's still, when the feature has one.
+  const still = dialogImage(p)
   return (
     <div className="flex flex-col gap-3">
       {p.media &&
@@ -314,6 +316,15 @@ function Promotion({ p }: { p: PaywallData }) {
         ) : (
           <img src={p.media.url} alt={p.title} className="w-full rounded border border-neutral" />
         ))}
+      {still && (
+        <img
+          src={still}
+          alt={p.title}
+          loading="lazy"
+          decoding="async"
+          className="w-full rounded border border-neutral"
+        />
+      )}
       {p.benefits.length > 0 && (
         <ul className="flex flex-col gap-2">
           {p.benefits.map((b) => (

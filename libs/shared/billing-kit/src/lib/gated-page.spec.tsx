@@ -126,6 +126,96 @@ describe('GatedPage', () => {
   })
 })
 
+const MEDIA = 'https://billing.qovery.com/paywall-media/v1'
+const sources = (el: Element | null) =>
+  Array.from(el?.querySelectorAll('source') ?? []).map((s) => s.getAttribute('src'))
+
+describe('GatedPage previews', () => {
+  const realMatchMedia = window.matchMedia
+  afterEach(() => {
+    window.matchMedia = realMatchMedia
+  })
+
+  it('plays the console loop with its poster, and switches to Claude Code when both previews exist', async () => {
+    const { userEvent } = renderWithProviders(
+      <GatedPage organizationId="org-1" client={client} paywall={blueprints([trial])} />
+    )
+
+    expect(screen.getByTestId('gated-preview-switch')).toBeInTheDocument()
+    const video = screen.getByTestId('gated-preview-video')
+    expect(video).toHaveAttribute('poster', `${MEDIA}/blueprints/console-poster.webp`)
+    expect(video).toHaveProperty('muted', true)
+    expect(video).toHaveAttribute('loop')
+    expect(sources(video)).toEqual([`${MEDIA}/blueprints/console.webm`, `${MEDIA}/blueprints/console.mp4`])
+
+    await userEvent.click(screen.getAllByText('Claude Code')[0])
+    expect(sources(screen.getByTestId('gated-preview-video'))).toEqual([
+      `${MEDIA}/blueprints/claude.webm`,
+      `${MEDIA}/blueprints/claude.mp4`,
+    ])
+    expect(screen.getByTestId('gated-preview')).toHaveAttribute('aria-hidden', 'true')
+  })
+
+  it('shows no switch with a single preview, and none for a feature drawn without media', () => {
+    const { unmount } = renderWithProviders(
+      <GatedPage
+        organizationId="org-1"
+        client={client}
+        paywall={{
+          ...blueprints([upgrade]),
+          sku: 'dns.custom_provider',
+          media: { url: 'https://www.qovery.com/dns.png', kind: 'image' },
+        }}
+      />
+    )
+    expect(screen.queryByTestId('gated-preview-switch')).not.toBeInTheDocument()
+    expect(screen.getByTestId('gated-preview-image')).toHaveAttribute('src', 'https://www.qovery.com/dns.png')
+    unmount()
+
+    renderWithProviders(
+      <GatedPage
+        organizationId="org-1"
+        client={client}
+        paywall={{ ...blueprints([contact]), sku: 'sso', title: 'Single sign-on' }}
+      />
+    )
+    expect(screen.queryByTestId('gated-preview-switch')).not.toBeInTheDocument()
+    expect(screen.getByTestId('gated-preview')).toHaveTextContent('Okta')
+  })
+
+  it('shows the still instead of the loop under reduced motion', () => {
+    window.matchMedia = jest.fn().mockImplementation((query: string) => ({
+      matches: query.includes('prefers-reduced-motion'),
+      media: query,
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    })) as unknown as typeof window.matchMedia
+    renderWithProviders(
+      <GatedPage
+        organizationId="org-1"
+        client={client}
+        paywall={{ ...blueprints([trial]), sku: 'observe.clusters', title: 'Qovery Observe' }}
+      />
+    )
+
+    expect(screen.queryByTestId('gated-preview-video')).not.toBeInTheDocument()
+    expect(screen.getByTestId('gated-preview-image')).toHaveAttribute('src', `${MEDIA}/observe/console.webp`)
+  })
+
+  it('plays the media staff set on the gate instead of the built-in console preview', () => {
+    renderWithProviders(
+      <GatedPage
+        organizationId="org-1"
+        client={client}
+        paywall={{ ...blueprints([trial]), media: { url: 'https://www.qovery.com/blueprints.mp4', kind: 'video' } }}
+      />
+    )
+
+    expect(sources(screen.getByTestId('gated-preview-video'))).toEqual(['https://www.qovery.com/blueprints.mp4'])
+    expect(screen.getByTestId('gated-preview-switch')).toBeInTheDocument()
+  })
+})
+
 describe('Paywall dialog', () => {
   it.each([
     ['not_in_plan', 'Blueprints are not in your plan'],
@@ -159,5 +249,20 @@ describe('Paywall dialog', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Add a managed cluster' })).toBeInTheDocument()
+  })
+
+  it('shows the console still of a feature with previews', () => {
+    renderWithProviders(
+      <Paywall
+        organizationId="org-1"
+        client={client}
+        paywall={{ ...blueprints([trial]), sku: 'observe.clusters', title: 'Qovery Observe' }}
+        reason="not_in_plan"
+        inline
+        onClose={jest.fn()}
+      />
+    )
+
+    expect(screen.getByRole('img', { name: 'Qovery Observe' })).toHaveAttribute('src', `${MEDIA}/observe/console.webp`)
   })
 })

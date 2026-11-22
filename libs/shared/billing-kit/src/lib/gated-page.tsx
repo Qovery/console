@@ -2,17 +2,27 @@
  * The full-page paywall: where the console has a page for a feature the plan does not include,
  * the page itself is the pitch. A top strip with the feature and how to get it, then two columns:
  * what it does, the button the gate decides (trial, upgrade, add-on, ask an admin, talk to us),
- * "Learn more" and the capabilities; and a faded, decorative preview of the feature in use.
+ * "Learn more" and the capabilities; and a faded, decorative preview of the feature in use: a
+ * muted loop (its still under reduced motion), with a "Console | Claude Code" switch when the
+ * feature has both previews. Without media, the drawn preview (GatedPreviews.tsx).
  *
  *   const pw = usePaywall(client, organizationId, { actions: ['blueprint.create'] }, { variant: 'page' })
  *   if (pw.locked('blueprint.create')) return <GatedPage organizationId={organizationId} client={client} gate={pw.gate('blueprint.create')} />
  *
  * The button opens <Paywall> on that option's confirm step. "Not now" shows only with onClose.
  */
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Badge, Button, ExternalLink, Icon } from '@qovery/shared/ui'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { Badge, Button, ExternalLink, Icon, SegmentedControl } from '@qovery/shared/ui'
 import type { PricingClient } from './client'
-import { gatedCta, gatedPageView } from './gated'
+import {
+  type GatedMedia,
+  type GatedPreviewTab,
+  PREVIEW_TAB_LABEL,
+  gatedCta,
+  gatedPageView,
+  previewRender,
+  previewTabs,
+} from './gated'
 import { GatedPreview } from './gated-previews'
 import { openPaymentMethodPage } from './invoices-page'
 import { Paywall, type PaywallProps } from './paywall'
@@ -44,6 +54,92 @@ const FADE = {
   WebkitMaskComposite: 'source-in',
 } as const
 
+const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
+const subscribeMotion = (onChange: () => void) => {
+  if (typeof window === 'undefined' || !window.matchMedia) return () => undefined
+  const m = window.matchMedia(REDUCED_MOTION)
+  m.addEventListener?.('change', onChange)
+  return () => m.removeEventListener?.('change', onChange)
+}
+const prefersReducedMotion = () => typeof window !== 'undefined' && !!window.matchMedia?.(REDUCED_MOTION).matches
+
+/** True once the element has come near the viewport: the video loads only then. */
+function useNearViewport<T extends Element>() {
+  const ref = useRef<T>(null)
+  const [near, setNear] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (near || !el) return
+    if (typeof IntersectionObserver === 'undefined') return setNear(true)
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setNear(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '200px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [near])
+  return [ref, near] as const
+}
+
+const MEDIA_CLASS = 'w-[760px] max-w-none rounded-lg border border-neutral'
+
+/** One preview: the loop when motion is fine and the page is near, the still otherwise. Decorative. */
+function PreviewMedia({ media, reducedMotion, near }: { media: GatedMedia; reducedMotion: boolean; near: boolean }) {
+  const how = previewRender(media, reducedMotion)
+  const sources = (media.video ?? []).map((src) => (
+    <source key={src} src={src} type={/\.webm($|[?#])/i.test(src) ? 'video/webm' : 'video/mp4'} />
+  ))
+  if (how === 'video' && near) {
+    return (
+      <video
+        key={media.video?.join()}
+        data-testid="gated-preview-video"
+        className={MEDIA_CLASS}
+        poster={media.poster ?? media.image}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        tabIndex={-1}
+      >
+        {sources}
+      </video>
+    )
+  }
+  const still = how === 'image' ? media.image : media.poster ?? media.image
+  if ((how === 'video' || how === 'image') && still)
+    return (
+      <img
+        data-testid="gated-preview-image"
+        src={still}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className={MEDIA_CLASS}
+      />
+    )
+  if (how === 'paused-video' || how === 'video')
+    return (
+      <video
+        key={media.video?.join()}
+        className={MEDIA_CLASS}
+        muted
+        playsInline
+        preload={near ? 'metadata' : 'none'}
+        tabIndex={-1}
+      >
+        {sources}
+      </video>
+    )
+  return null
+}
+
 export function GatedPage({
   organizationId,
   client,
@@ -59,6 +155,9 @@ export function GatedPage({
   const p = gate?.paywall ?? paywall
   const sku = p?.sku ?? gate?.sku ?? ''
   const [open, setOpen] = useState<PaywallOption>()
+  const [picked, setPicked] = useState<GatedPreviewTab>('console')
+  const reducedMotion = useSyncExternalStore(subscribeMotion, prefersReducedMotion, () => false)
+  const [previewRef, near] = useNearViewport<HTMLDivElement>()
   const acted = useRef(false)
   const finished = useRef(false)
 
@@ -77,6 +176,9 @@ export function GatedPage({
   const view = gatedPageView(p)
   const primary = view.primary
   const primaryCta = primary && gatedCta(primary)
+  const tabs = previewTabs(view.previews)
+  const tab = tabs.includes(picked) ? picked : tabs[0]
+  const media = tab ? view.previews[tab] : undefined
 
   const choose = (o: PaywallOption) => {
     acted.current = true
@@ -172,30 +274,40 @@ export function GatedPage({
             )}
             {view.message && <p className="text-xs text-neutral-subtle">{view.message}</p>}
           </div>
-          <div
-            aria-hidden="true"
-            data-testid="gated-preview"
-            className="pointer-events-none relative h-[280px] min-w-0 select-none overflow-hidden min-[900px]:h-[520px]"
-            style={FADE}
-          >
-            <div className="origin-top-left scale-[0.62] min-[900px]:scale-100">
-              {view.media ? (
-                view.media.kind === 'video' ? (
-                  <video
-                    src={view.media.url}
-                    className="w-[760px] max-w-none rounded-lg border border-neutral"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    tabIndex={-1}
-                  />
+          <div className="flex min-w-0 flex-col gap-3">
+            {tabs.length > 1 && (
+              <SegmentedControl.Root
+                value={tab}
+                onValueChange={(v) => setPicked(v as GatedPreviewTab)}
+                aria-label="Preview"
+                data-testid="gated-preview-switch"
+                className="self-start text-xs"
+              >
+                {tabs.map((t) => (
+                  <SegmentedControl.Item key={t} value={t}>
+                    {PREVIEW_TAB_LABEL[t]}
+                  </SegmentedControl.Item>
+                ))}
+              </SegmentedControl.Root>
+            )}
+            <div
+              ref={previewRef}
+              aria-hidden="true"
+              data-testid="gated-preview"
+              className="pointer-events-none relative h-[280px] min-w-0 select-none overflow-hidden min-[900px]:h-[520px]"
+              style={FADE}
+            >
+              <div className="origin-top-left scale-[0.62] min-[900px]:scale-100">
+                {media ? (
+                  <PreviewMedia media={media} reducedMotion={reducedMotion} near={near} />
                 ) : (
-                  <img src={view.media.url} alt="" className="w-[760px] max-w-none rounded-lg border border-neutral" />
-                )
-              ) : (
-                <GatedPreview preview={view.preview} title={view.title} lines={view.capabilities.map((c) => c.label)} />
-              )}
+                  <GatedPreview
+                    preview={view.preview}
+                    title={view.title}
+                    lines={view.capabilities.map((c) => c.label)}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>
