@@ -434,7 +434,7 @@ export function UsagePage({
 
         {offers !== 'none' && (
           <OfferHost
-            key={round}
+            key={'offers' + round}
             modal={offers === 'all'}
             organizationId={organizationId}
             client={client}
@@ -545,7 +545,13 @@ export function UsagePage({
         )}
 
         {amounts && !ended && (
-          <DiscountsCard key={round} organizationId={organizationId} client={client} usage={u} onChanged={load} />
+          <DiscountsCard
+            key={'discounts' + round}
+            organizationId={organizationId}
+            client={client}
+            usage={u}
+            onChanged={load}
+          />
         )}
 
         <div>

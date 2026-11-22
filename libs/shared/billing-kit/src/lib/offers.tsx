@@ -14,6 +14,7 @@ import { Badge, Banner, Button, Callout, Icon, InputTextArea, InputToggle, Modal
 import type { PricingClient } from './client'
 import { date } from './format'
 import { ProposalBanner, ProposalHost, useProposal } from './proposals'
+import { forgetReads, sharedRead } from './reads'
 import { BAR_TEXT, barBanner, barClass } from './rules'
 import type { EmailPreferences, Offer, Offers, PlanProposal, Trial, UpgradeRequest } from './types'
 
@@ -253,6 +254,7 @@ export function AskAdminModal({
     setError('')
     try {
       const r = await client.requestUpgrade(organizationId, { sku, message })
+      forgetReads(client, `offers:${organizationId}`)
       setDone(r)
     } catch (e) {
       setError((e as Error).message)
@@ -377,14 +379,19 @@ export function useOffers(organizationId: string, client: PricingClient, countBa
   const [data, setData] = useState<Offers>()
   const [hidden, setHidden] = useState<Set<number>>(new Set())
   const [modalDone, setModalDone] = useState<Set<number>>(new Set())
-  const load = useCallback(() => {
-    if (!client.offers) return
-    client
-      .offers(organizationId)
-      .then(setData)
-      .catch(() => setData(undefined))
-  }, [client, organizationId])
-  useEffect(load, [load])
+  // The top bar and the billing page share one read (reads.ts); a reload after an action reads again.
+  const read = useCallback(
+    (fresh: boolean) => {
+      const offers = client.offers
+      if (!offers) return
+      sharedRead<Offers>(client, `offers:${organizationId}`, () => offers.call(client, organizationId), fresh)
+        .then(setData)
+        .catch(() => setData(undefined))
+    },
+    [client, organizationId]
+  )
+  useEffect(() => read(false), [read])
+  const load = useCallback(() => read(true), [read])
   const event = (o: Offer, ev: 'shown' | 'clicked' | 'dismissed', surface: string) => {
     client.offerEvent?.(organizationId, o.id, ev, surface).catch(() => undefined)
   }
@@ -483,7 +490,10 @@ export function OfferHost({
           onDecline={
             client.closeUpgradeRequest
               ? (r) => {
-                  client.closeUpgradeRequest?.(organizationId, r.id, 'declined').catch(() => undefined)
+                  client
+                    .closeUpgradeRequest?.(organizationId, r.id, 'declined')
+                    .then(() => forgetReads(client, `offers:${organizationId}`))
+                    .catch(() => undefined)
                   setDeclined(new Set([...declined, r.id]))
                 }
               : undefined

@@ -13,22 +13,28 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Banner, Button, Callout, Icon, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
 import type { PricingClient } from './client'
 import { date, money } from './format'
+import { forgetReads, sharedRead } from './reads'
 import { BAR_TEXT, barClass, proposalHeading, proposalLine, proposalShortLine, snoozeLabel } from './rules'
-import type { PlanProposal, ProposalDismissReason } from './types'
+import type { PlanProposal, ProposalDismissReason, Proposals } from './types'
 
 /** Loads the organization's proposal, records the first view, and snoozes or dismisses it. */
 export function useProposal(organizationId: string, client: PricingClient, enabled = true) {
   const [proposal, setProposal] = useState<PlanProposal | null>()
   const [error, setError] = useState('')
   const viewed = useRef<number | undefined>(undefined)
-  const load = useCallback(() => {
-    if (!enabled || !client.proposals) return
-    client
-      .proposals(organizationId)
-      .then((r) => setProposal(r.proposal))
-      .catch(() => setProposal(null))
-  }, [client, organizationId, enabled])
-  useEffect(load, [load])
+  // The top bar and the billing page's card share one read (reads.ts); a reload reads again.
+  const read = useCallback(
+    (fresh: boolean) => {
+      const proposals = client.proposals
+      if (!enabled || !proposals) return
+      sharedRead<Proposals>(client, `proposals:${organizationId}`, () => proposals.call(client, organizationId), fresh)
+        .then((r) => setProposal(r.proposal))
+        .catch(() => setProposal(null))
+    },
+    [client, organizationId, enabled]
+  )
+  useEffect(() => read(false), [read])
+  const load = useCallback(() => read(true), [read])
   useEffect(() => {
     if (!proposal || proposal.preview || viewed.current === proposal.id) return
     viewed.current = proposal.id
@@ -45,6 +51,7 @@ export function useProposal(organizationId: string, client: PricingClient, enabl
       setError('')
       try {
         await client.snoozeProposal?.(organizationId, proposal.id, days)
+        forgetReads(client, `proposals:${organizationId}`)
         setProposal(null)
       } catch (e) {
         setError((e as Error).message)
@@ -58,6 +65,7 @@ export function useProposal(organizationId: string, client: PricingClient, enabl
           ...(reason ? { reason } : {}),
           ...(note ? { note } : {}),
         })
+        forgetReads(client, `proposals:${organizationId}`)
         setProposal(null)
       } catch (e) {
         setError((e as Error).message)
