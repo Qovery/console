@@ -370,7 +370,7 @@ export function gatedPreviews(p: Pick<PaywallInfo, 'media' | 'claude_media'>, f?
 export const previewTabs = (previews: GatedPreviews): GatedPreviewTab[] =>
   (['console', 'claude'] as const).filter((t) => !!previews[t])
 
-export const PREVIEW_TAB_LABEL: Record<GatedPreviewTab, string> = { console: 'Console', claude: 'Claude Code' }
+export const PREVIEW_TAB_LABEL: Record<GatedPreviewTab, string> = { console: 'Console', claude: 'Coding Agent' }
 
 /**
  * How to show one preview: the loop when motion is fine; the still under reduced motion (or a

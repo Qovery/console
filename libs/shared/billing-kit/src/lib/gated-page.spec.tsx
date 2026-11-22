@@ -136,7 +136,7 @@ describe('GatedPage previews', () => {
     window.matchMedia = realMatchMedia
   })
 
-  it('plays the console loop with its poster, and switches to Claude Code when both previews exist', async () => {
+  it('plays the console loop with its poster, and switches to Coding Agent when both previews exist', async () => {
     const { userEvent } = renderWithProviders(
       <GatedPage organizationId="org-1" client={client} paywall={blueprints([trial])} />
     )
@@ -148,7 +148,7 @@ describe('GatedPage previews', () => {
     expect(video).toHaveAttribute('loop')
     expect(sources(video)).toEqual([`${MEDIA}/blueprints/console.webm`, `${MEDIA}/blueprints/console.mp4`])
 
-    await userEvent.click(screen.getAllByText('Claude Code')[0])
+    await userEvent.click(screen.getAllByText('Coding Agent')[0])
     expect(sources(screen.getByTestId('gated-preview-video'))).toEqual([
       `${MEDIA}/blueprints/claude.webm`,
       `${MEDIA}/blueprints/claude.mp4`,

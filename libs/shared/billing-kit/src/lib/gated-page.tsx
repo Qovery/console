@@ -3,7 +3,7 @@
  * the page itself is the pitch. A top strip with the feature and how to get it, then two columns:
  * what it does, the button the gate decides (trial, upgrade, add-on, ask an admin, talk to us),
  * "Learn more" and the capabilities; and a faded, decorative preview of the feature in use: a
- * muted loop (its still under reduced motion), with a "Console | Claude Code" switch when the
+ * muted loop (its still under reduced motion), with a "Console | Coding Agent" switch when the
  * feature has both previews. Without media, the drawn preview (GatedPreviews.tsx).
  *
  *   const pw = usePaywall(client, organizationId, { actions: ['blueprint.create'] }, { variant: 'page' })
