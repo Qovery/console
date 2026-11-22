@@ -65,6 +65,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsIndexRout
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRouteImport } from './routes/_authenticated/organization/$organizationId/settings/notifications/slack'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRouteImport } from './routes/_authenticated/organization/$organizationId/settings/notifications/billing'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents/tokens'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents/mcps'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/variables'
@@ -617,6 +618,15 @@ const AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute =
     {
       id: '/slack',
       path: '/slack',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRouteImport.update(
+    {
+      id: '/billing',
+      path: '/billing',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute,
     } as any,
@@ -2086,6 +2096,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
   '/organization/$organizationId/settings/agents/tokens': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRoute
+  '/organization/$organizationId/settings/notifications/billing': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRoute
   '/organization/$organizationId/settings/notifications/slack': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute
   '/organization/$organizationId/cluster/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/organization/$organizationId/project/$projectId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
@@ -2293,6 +2304,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
   '/organization/$organizationId/settings/agents/tokens': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRoute
+  '/organization/$organizationId/settings/notifications/billing': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRoute
   '/organization/$organizationId/settings/notifications/slack': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute
   '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/organization/$organizationId/project/$projectId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
@@ -2497,6 +2509,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdVariablesRoute
   '/_authenticated/organization/$organizationId/settings/agents/mcps': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsMcpsRoute
   '/_authenticated/organization/$organizationId/settings/agents/tokens': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsTokensRoute
+  '/_authenticated/organization/$organizationId/settings/notifications/billing': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRoute
   '/_authenticated/organization/$organizationId/settings/notifications/slack': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
@@ -2716,6 +2729,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/variables'
     | '/organization/$organizationId/settings/agents/mcps'
     | '/organization/$organizationId/settings/agents/tokens'
+    | '/organization/$organizationId/settings/notifications/billing'
     | '/organization/$organizationId/settings/notifications/slack'
     | '/organization/$organizationId/cluster/$clusterId/'
     | '/organization/$organizationId/project/$projectId'
@@ -2923,6 +2937,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/variables'
     | '/organization/$organizationId/settings/agents/mcps'
     | '/organization/$organizationId/settings/agents/tokens'
+    | '/organization/$organizationId/settings/notifications/billing'
     | '/organization/$organizationId/settings/notifications/slack'
     | '/organization/$organizationId/cluster/$clusterId'
     | '/organization/$organizationId/project/$projectId'
@@ -3126,6 +3141,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/variables'
     | '/_authenticated/organization/$organizationId/settings/agents/mcps'
     | '/_authenticated/organization/$organizationId/settings/agents/tokens'
+    | '/_authenticated/organization/$organizationId/settings/notifications/billing'
     | '/_authenticated/organization/$organizationId/settings/notifications/slack'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/'
     | '/_authenticated/organization/$organizationId/project/$projectId/'
@@ -3681,6 +3697,13 @@ declare module '@tanstack/react-router' {
       path: '/slack'
       fullPath: '/organization/$organizationId/settings/notifications/slack'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/notifications/billing': {
+      id: '/_authenticated/organization/$organizationId/settings/notifications/billing'
+      path: '/billing'
+      fullPath: '/organization/$organizationId/settings/notifications/billing'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/agents/tokens': {
@@ -4872,11 +4895,14 @@ const AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteRouteWithChildre
   )
 
 interface AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRoute
   AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute
 }
 
 const AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteChildren: AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteChildren =
   {
+    AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsNotificationsBillingRoute,
     AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute:
       AuthenticatedOrganizationOrganizationIdSettingsNotificationsSlackRoute,
   }

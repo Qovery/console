@@ -2,6 +2,7 @@ import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/re
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   getBillingSettingsLinks,
+  getNotificationsSettingsLinks,
   hasBillingRole,
   useIsBillingUsageEnabled,
 } from '@qovery/domains/organizations/feature'
@@ -89,10 +90,7 @@ function RouteComponent() {
     type: 'group',
     title: 'Notifications',
     icon: 'bell' as const,
-    children: [
-      { title: 'Slack', to: `${pathSettings}/notifications/slack` },
-      { title: 'Webhook', to: `${pathSettings}/webhook` },
-    ],
+    children: getNotificationsSettingsLinks(pathSettings, isBillingUsageEnabled),
   }
 
   const apiTokenLink = {

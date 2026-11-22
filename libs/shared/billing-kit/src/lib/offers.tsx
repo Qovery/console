@@ -6,7 +6,8 @@
  * mounted once in the console's layout shows the sign-in popup (once per person and offer) and
  * the banners (until dismissed); billing roles also see their team's open upgrade requests.
  * <BillingPage> mounts it with variant="card". <AskAdminModal> is the member's side of a
- * request, <EmailPreferencesPanel> the person's email settings. Billing roles also see a plan
+ * request, <EmailPreferencesPanel> the person's email settings, and <EmailPreferencesLink> a row
+ * that opens them on a host page of their own. Billing roles also see a plan
  * proposal from Qovery staff here (<ProposalBanner>), when the host passes onReviewProposal.
  */
 import { useCallback, useEffect, useState } from 'react'
@@ -370,6 +371,21 @@ export function EmailPreferencesPanel({ organizationId, client }: { organization
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+/** A row that opens the person's email preferences on the host's own page (the console's Settings → Notifications). */
+export function EmailPreferencesLink({ onConfigure }: { onConfigure: () => void }) {
+  return (
+    <div className="flex items-center justify-between gap-4 rounded border border-neutral bg-surface-neutral px-5 py-3">
+      <div>
+        <h3 className="text-sm font-medium text-neutral">Email notifications</h3>
+        <p className="text-xs text-neutral-subtle">Choose which billing emails you receive.</p>
+      </div>
+      <Button size="md" variant="outline" color="neutral" onClick={onConfigure}>
+        Configure
+      </Button>
     </div>
   )
 }

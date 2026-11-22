@@ -52,6 +52,7 @@ export type { BuilderPickerProps } from './lib/builder-picker'
 export { UsageChart, UsageInsights } from './lib/usage-insights'
 export {
   AskAdminModal,
+  EmailPreferencesLink,
   EmailPreferencesPanel,
   OfferBanner,
   OfferHost,

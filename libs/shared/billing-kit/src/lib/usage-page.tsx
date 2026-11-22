@@ -20,7 +20,7 @@ import type { PricingClient } from './client'
 import { PrepaidCredits } from './credits'
 import { DiscountsCard } from './discounts'
 import { date, money, num, valueText } from './format'
-import { AskAdminModal, EmailPreferencesPanel, OfferHost } from './offers'
+import { AskAdminModal, EmailPreferencesLink, EmailPreferencesPanel, OfferHost } from './offers'
 import { PlanChangeFlow } from './plan-change'
 import { PricingTable } from './pricing-table'
 import { ProposalHost } from './proposals'
@@ -59,6 +59,8 @@ export interface UsagePageProps {
   onNavigate?: (to: 'invoices' | 'billing') => void
   /** Draws the page heading with the host's own component (the console's SettingsHeading). Default: the kit's heading, the same layout. */
   heading?: (h: UsagePageHeading) => ReactNode
+  /** Opens the host's email settings page: the page then shows a link to it instead of the email preferences. */
+  onManageEmails?: () => void
 }
 
 /** What the page heading shows: the title, its description and the plan buttons. */
@@ -209,6 +211,7 @@ export function UsagePage({
   alerts = true,
   onNavigate,
   heading = PageHeading,
+  onManageEmails,
 }: UsagePageProps) {
   const [u, setU] = useState<BillingUsage>()
   const [spend, setSpend] = useState<Spend>()
@@ -607,7 +610,11 @@ export function UsagePage({
           <UsageInsights usage={u} overTime={!client.usageHistory} />
         </div>
 
-        <EmailPreferencesPanel organizationId={organizationId} client={client} />
+        {onManageEmails ? (
+          client.emailPreferences && <EmailPreferencesLink onConfigure={onManageEmails} />
+        ) : (
+          <EmailPreferencesPanel organizationId={organizationId} client={client} />
+        )}
 
         {u.notes.length > 0 && <p className="text-xs text-neutral-subtle">{u.notes.join(' ')}</p>}
 
