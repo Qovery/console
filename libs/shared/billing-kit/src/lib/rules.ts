@@ -864,6 +864,19 @@ export function toggleDiscount(
   return pruneDiscounts(types, [...selected.filter((s) => !dropped.has(s)), id], granted)
 }
 
+/**
+ * What a new request can still take off: the cap less the points already in the contract. Those
+ * are not applied again (the contract price includes them) but they count toward the cap.
+ */
+export function discountRoom(max: number, contractPoints = 0): number {
+  return Math.max(0, max - contractPoints)
+}
+
+/** The ids a request may never include: the discounts already in the contract. */
+export function requestableDiscounts(selected: string[], inContract: { id: string }[] = []): string[] {
+  return selected.filter((id) => !inContract.some((d) => d.id === id))
+}
+
 /** Points add up (no compounding); the customer gets at most `max`. */
 export function discountPercent(
   types: { id: string; percent: number }[],
