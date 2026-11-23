@@ -25,6 +25,28 @@ describe('validateSkillPresetForm', () => {
     expect(validateSkillPresetForm({ ...values, roleIds: [] })['userIds']).toBeUndefined()
   })
 
+  it('refuses more than 200,000 characters of text in total', () => {
+    const skill = (index: number) => ({ skillName: `runbook-${index}`, description: 'd', content: 'y'.repeat(50000) })
+    expect(validateSkillPresetForm({ ...base(), customSkills: [0, 1, 2].map(skill) })['totalText']).toBeUndefined()
+    expect(validateSkillPresetForm({ ...base(), customSkills: [0, 1, 2, 3, 4].map(skill) })['totalText']).toBe(
+      'This preset holds 250,005 characters of text, over the 200,000 a model can review. Shorten the team context or your skills.'
+    )
+  })
+
+  it('refuses more than 50 skill changes', () => {
+    const customSkills = Array.from({ length: 51 }, (_, index) => ({
+      skillName: `runbook-${index}`,
+      description: 'd',
+      content: 'c',
+    }))
+    expect(validateSkillPresetForm({ ...base(), customSkills: customSkills.slice(0, 50) })['customSkills.root']).toBe(
+      undefined
+    )
+    expect(validateSkillPresetForm({ ...base(), customSkills })['customSkills.root']).toBe(
+      'A preset holds at most 50 skill changes. This one has 51.'
+    )
+  })
+
   it('requires a name within the limit', () => {
     expect(validateSkillPresetForm({ ...base(), name: ' ' })['name']).toBe('Enter a name.')
     expect(validateSkillPresetForm({ ...base(), name: 'a'.repeat(101) })['name']).toBe('At most 100 characters.')
