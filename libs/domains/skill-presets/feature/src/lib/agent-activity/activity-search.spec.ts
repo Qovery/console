@@ -1,4 +1,4 @@
-import { activityWindowEnd } from './activity-search'
+import { DEFAULT_RANGE, activityRange, activityWindowEnd } from './activity-search'
 
 describe('activityWindowEnd', () => {
   afterEach(() => jest.useRealTimers())
@@ -13,5 +13,13 @@ describe('activityWindowEnd', () => {
 
     jest.setSystemTime(new Date('2026-11-23T10:16:01Z'))
     expect(activityWindowEnd().toISOString()).toBe('2026-11-23T10:17:00.000Z')
+  })
+})
+
+describe('activityRange', () => {
+  it('falls back to the default range for a missing or unknown value', () => {
+    expect(activityRange({}).value).toBe(DEFAULT_RANGE)
+    expect(activityRange({ range: 'forever' }).value).toBe(DEFAULT_RANGE)
+    expect(activityRange({ range: '7d' }).value).toBe('7d')
   })
 })

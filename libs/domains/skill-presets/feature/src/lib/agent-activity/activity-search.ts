@@ -51,8 +51,10 @@ export function parseActor(actor?: string) {
   return {}
 }
 
+const findRange = (value?: string) => ACTIVITY_RANGES.find((range) => range.value === value)
+
 export const activityRange = (search: ActivitySearch) =>
-  ACTIVITY_RANGES.find(({ value }) => value === search.range) ?? ACTIVITY_RANGES[2]
+  findRange(search.range) ?? findRange(DEFAULT_RANGE) ?? ACTIVITY_RANGES[0]
 
 /**
  * Now, rounded up to the minute: the query key stays the same within a minute, and the window moves
