@@ -64,11 +64,13 @@ function applyFindings({ editor: editorInstance, monaco, decorations }: MonacoHa
 }
 
 /** Monaco reads keyboard input from its own textarea: that is the element the hint and errors describe. */
-function describeTextarea(editorInstance: editor.IStandaloneCodeEditor, describedBy: string) {
+function describeTextarea(editorInstance: editor.IStandaloneCodeEditor, describedBy: string, invalid: boolean) {
   const textarea = editorInstance.getDomNode()?.querySelector('textarea')
   if (!textarea) return
   if (describedBy) textarea.setAttribute('aria-describedby', describedBy)
   else textarea.removeAttribute('aria-describedby')
+  if (invalid) textarea.setAttribute('aria-invalid', 'true')
+  else textarea.removeAttribute('aria-invalid')
 }
 
 export function MarkdownField({
@@ -95,6 +97,7 @@ export function MarkdownField({
   const height = Math.min(lineCount, maxLines) * LINE_HEIGHT + 16
   const isOverLimit = value.length > maxLength
   const hasFindings = findings.length > 0
+  const isInvalid = Boolean(error) || hasFindings || isOverLimit
   const hintId = `${id}-hint`
   const feedbackId = `${id}-feedback`
   const describedBy = [`${id}-counter`, hint ? hintId : null, error || hasFindings ? feedbackId : null]
@@ -108,8 +111,8 @@ export function MarkdownField({
   }, [findingsKey])
 
   useEffect(() => {
-    if (handlesRef.current) describeTextarea(handlesRef.current.editor, describedBy)
-  }, [describedBy])
+    if (handlesRef.current) describeTextarea(handlesRef.current.editor, describedBy, isInvalid)
+  }, [describedBy, isInvalid])
 
   const revealLine = (line: number) => {
     const editorInstance = handlesRef.current?.editor
@@ -150,7 +153,7 @@ export function MarkdownField({
             }
             // Editors mounted after a rejection (a skill switched to "Add instructions") still show it.
             applyFindings(handlesRef.current, findingsRef.current)
-            describeTextarea(editorInstance, describedBy)
+            describeTextarea(editorInstance, describedBy, isInvalid)
           }}
           options={{
             ariaLabel: label,

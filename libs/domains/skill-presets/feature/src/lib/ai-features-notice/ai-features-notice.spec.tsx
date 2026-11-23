@@ -1,12 +1,12 @@
 import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { AiFeaturesNotice } from './ai-features-notice'
 
 const mockEnableAiFeatures = jest.fn()
 const mockUpdateOrgConfig = jest.fn()
 const mockAiFeaturesEnabled = jest.fn()
-const mockCopilotStatus = jest.fn()
-let mockCopilotConfig: { org_config?: { instructions?: string } } | undefined
+const mockCopilotQuery = jest.fn()
+const mockRefetchCopilot = jest.fn()
 
 jest.mock('../hooks/use-enable-ai-features/use-enable-ai-features', () => ({
   useEnableAiFeatures: () => ({ mutateAsync: mockEnableAiFeatures }),
@@ -14,19 +14,22 @@ jest.mock('../hooks/use-enable-ai-features/use-enable-ai-features', () => ({
 jest.mock('../hooks/use-ai-features-enabled/use-ai-features-enabled', () => ({
   useAiFeaturesEnabled: () => mockAiFeaturesEnabled(),
 }))
-jest.mock('../hooks/use-copilot-status/use-copilot-status', () => ({
-  useCopilotStatus: () => mockCopilotStatus(),
-}))
 jest.mock('@qovery/shared/devops-copilot/feature', () => ({
   ...jest.requireActual('@qovery/shared/devops-copilot/feature'),
-  useAICopilotConfig: () => ({ data: mockCopilotConfig }),
+  useAICopilotConfig: () => mockCopilotQuery(),
 }))
 jest.mock('@qovery/shared/devops-copilot/data-access', () => ({
   ...jest.requireActual('@qovery/shared/devops-copilot/data-access'),
   mutations: { updateOrgConfig: (...args: unknown[]) => mockUpdateOrgConfig(...args) },
 }))
 
-const copilot = (enabled: boolean) => ({ ready: true, enabled, readOnly: true, isLoading: false, error: null })
+const copilot = (enabled: boolean, instructions?: string) => ({
+  data: { org_config: { enabled, read_only: true, instructions } },
+  isLoading: false,
+  isFetching: false,
+  error: null,
+  refetch: mockRefetchCopilot,
+})
 
 const openModal = async (onEnabled = jest.fn()) => {
   const rendered = renderWithProviders(
@@ -41,8 +44,8 @@ describe('AiFeaturesNotice and the Turn on AI modal', () => {
     mockEnableAiFeatures.mockReset().mockResolvedValue(undefined)
     mockUpdateOrgConfig.mockReset().mockResolvedValue({})
     mockAiFeaturesEnabled.mockReturnValue(false)
-    mockCopilotStatus.mockReturnValue(copilot(false))
-    mockCopilotConfig = undefined
+    mockCopilotQuery.mockReturnValue(copilot(false))
+    mockRefetchCopilot.mockReset()
   })
 
   it('offers no button to people who cannot change the setting', () => {
@@ -67,7 +70,7 @@ describe('AiFeaturesNotice and the Turn on AI modal', () => {
     expect(mockUpdateOrgConfig).toHaveBeenCalledWith(
       expect.objectContaining({ organizationId: 'organization-1', enabled: true, readOnly: true })
     )
-    expect(onEnabled).toHaveBeenCalled()
+    expect(onEnabled).toHaveBeenCalledTimes(1)
   })
 
   it('keeps AI features on when the Copilot step fails, and retries only the Copilot', async () => {
@@ -89,7 +92,7 @@ describe('AiFeaturesNotice and the Turn on AI modal', () => {
   })
 
   it('keeps the Copilot instructions the organization saved before', async () => {
-    mockCopilotConfig = { org_config: { instructions: 'Answer in French.' } }
+    mockCopilotQuery.mockReturnValue(copilot(false, 'Answer in French.'))
     const { userEvent } = await openModal()
 
     await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
@@ -99,12 +102,51 @@ describe('AiFeaturesNotice and the Turn on AI modal', () => {
   })
 
   it('waits for the Copilot status before it can submit', async () => {
-    mockCopilotStatus.mockReturnValue({ ...copilot(false), isLoading: true })
-    const { userEvent } = await openModal()
+    mockCopilotQuery.mockReturnValue({ isLoading: true, isFetching: true })
+    await openModal()
 
-    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
-
+    expect(screen.getByRole('status')).toHaveTextContent('Checking the Copilot status')
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
     expect(screen.getByTestId('submit-button')).toBeDisabled()
+  })
+
+  it.each([undefined, copilot(true).data])(
+    'blocks changes when the Copilot status cannot be verified',
+    async (data) => {
+      mockCopilotQuery.mockReturnValue({ data, error: new Error('Network error'), refetch: mockRefetchCopilot })
+      const { userEvent } = await openModal()
+
+      expect(screen.getByRole('alert')).toHaveTextContent('Unable to load the Copilot status')
+      expect(screen.getByTestId('submit-button')).toBeDisabled()
+      await userEvent.click(screen.getByTestId('submit-button'))
+      expect(mockEnableAiFeatures).not.toHaveBeenCalled()
+      expect(mockUpdateOrgConfig).not.toHaveBeenCalled()
+      await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
+      expect(mockRefetchCopilot).toHaveBeenCalledTimes(1)
+    }
+  )
+
+  it('keeps the modal open while saving and allows dismissal after an error', async () => {
+    let rejectSave!: (reason: Error) => void
+    mockUpdateOrgConfig.mockReturnValue(
+      new Promise((_resolve, reject) => {
+        rejectSave = reject
+      })
+    )
+    const { userEvent } = await openModal()
+    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
+    await userEvent.click(screen.getByTestId('submit-button'))
+    await waitFor(() => expect(mockUpdateOrgConfig).toHaveBeenCalledTimes(1))
+
+    await userEvent.keyboard('{Escape}')
+    await userEvent.click(screen.getByTestId('cancel-button'))
+    await userEvent.click(screen.getByTestId('overlay'))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    rejectSave(new Error('Network error'))
+    await screen.findByText('AI features are on, but the Copilot could not be turned on')
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
   })
 
   it('only turns on the Copilot when AI features are already on', async () => {
@@ -120,7 +162,7 @@ describe('AiFeaturesNotice and the Turn on AI modal', () => {
   })
 
   it('only turns on AI features when the Copilot is already on, with no terms to accept', async () => {
-    mockCopilotStatus.mockReturnValue(copilot(true))
+    mockCopilotQuery.mockReturnValue(copilot(true))
     const { userEvent } = await openModal()
 
     expect(screen.getByText('The Copilot is already on. This turns on AI features.')).toBeInTheDocument()

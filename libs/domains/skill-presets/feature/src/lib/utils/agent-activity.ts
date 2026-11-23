@@ -1,7 +1,9 @@
 import {
   AGENT_ACTIVITY_LIMITS,
+  type AgentActionOutcome,
   type AgentActivityBucket,
   type AgentActivityResponse,
+  type AgentActivitySource,
 } from '@qovery/domains/skill-presets/data-access'
 import { QOVERY_SKILLS } from './qovery-skills'
 
@@ -126,6 +128,8 @@ export function fillTimeline<T extends { start: string }>(
 
 /** Qovery skills with no load, action or denial in the period: candidates to turn off in a preset. */
 export function unusedSkills(activity: AgentActivityResponse) {
+  if (activity.by_skill.length >= AGENT_ACTIVITY_LIMITS.maxSkills) return []
+
   const used = new Set(
     activity.by_skill
       .filter(({ loads, actions, denials }) => loads + actions + denials > 0)
@@ -151,7 +155,11 @@ const REPEATED = 3
  */
 export function computeAgentActivityHints(
   activity: AgentActivityResponse,
-  { filtered = false }: { filtered?: boolean } = {}
+  {
+    filtered = false,
+    source,
+    outcome,
+  }: { filtered?: boolean; source?: AgentActivitySource; outcome?: AgentActionOutcome } = {}
 ): AgentActivityHint[] {
   if (activity.totals.skill_loads + activity.totals.actions + activity.totals.denials === 0) return []
   const hints: AgentActivityHint[] = []
@@ -189,11 +197,14 @@ export function computeAgentActivityHints(
       })
     )
 
-  activity.by_skill
-    .filter(({ skill_name, loads, actions }) => skill_name && loads >= 5 && actions === 0)
-    .forEach(({ skill_name, loads }) =>
-      hints.push({ kind: 'loads-without-actions', skillName: skill_name ?? '', loads })
-    )
+  // Source and outcome filters can omit actions that happened after a load.
+  if (!source && !outcome) {
+    for (const { skill_name, loads, actions, denials } of activity.by_skill) {
+      if (skill_name && loads >= 5 && actions + denials === 0) {
+        hints.push({ kind: 'loads-without-actions', skillName: skill_name, loads })
+      }
+    }
+  }
 
   return hints
 }

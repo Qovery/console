@@ -26,8 +26,7 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 
 /**
  * The side list of Agents: the Skills registry, Automations and Activity, then Settings. Settings holds
- * policy tokens (owners, admins and DevOps members), then the Copilot and, behind their flag, the
- * Agent Tasks pages (owners and admins). It opens by itself on its pages.
+ * policy tokens and Copilot according to role, and the Agent Tasks pages behind their flag.
  */
 export function AgentExperienceNav() {
   const { organizationId = '' } = useParams({ strict: false })
@@ -67,7 +66,7 @@ export function AgentExperienceNav() {
       >
         Activity
       </Sidebar.Item>
-      {(isAdmin || canSeeTokens) && (
+      {(isAdmin || canSeeTokens || isAgentTasksEnabled) && (
         <Sidebar.Group
           title="Settings"
           icon="gear"
@@ -76,10 +75,8 @@ export function AgentExperienceNav() {
         >
           {canSeeTokens && <Sidebar.SubItem to={`${base}/policy-tokens`}>Policy tokens</Sidebar.SubItem>}
           {isAdmin && <Sidebar.SubItem to={`${base}/copilot`}>Copilot settings</Sidebar.SubItem>}
-          {isAdmin && isAgentTasksEnabled && (
-            <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>
-          )}
-          {isAdmin && isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>}
+          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>}
+          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>}
         </Sidebar.Group>
       )}
     </Sidebar.Root>
@@ -87,25 +84,20 @@ export function AgentExperienceNav() {
 }
 
 /**
- * Agent Tasks pages exist only behind their feature flag, and are settings for owners and admins: for
- * anyone else, back to the Skills registry. Nothing is decided while PostHog loads the flag
- * (`undefined`) or the role loads, so an allowed user is never sent away by mistake.
+ * The Agent Tasks flag also covers personal model tokens and MCPs for organization members.
  */
 export function AgentTasksGate({ children }: { children: ReactNode }) {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const flag = useFeatureFlagEnabled(AGENT_TASKS_FLAG)
-  const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
-  const isDecided = flag !== undefined && !isLoading
-  const isAllowed = isDecided && flag && canManage
   useEffect(() => {
-    if (isDecided && !isAllowed) {
+    if (flag === false) {
       navigate({
         to: '/organization/$organizationId/agent-experience/skill-presets',
         params: { organizationId },
         replace: true,
       })
     }
-  }, [isDecided, isAllowed, navigate, organizationId])
-  return isAllowed ? <>{children}</> : null
+  }, [flag, navigate, organizationId])
+  return flag ? children : null
 }

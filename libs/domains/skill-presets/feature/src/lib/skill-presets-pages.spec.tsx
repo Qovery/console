@@ -67,6 +67,7 @@ beforeAll(() => {
   ]
 })
 afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
+afterEach(() => jest.restoreAllMocks())
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   setSkillPresetsMockScenario(scenario)
@@ -90,7 +91,7 @@ describe('presets list', () => {
     expect(within(alert).getByText('The Skills registry could not be loaded')).toBeInTheDocument()
     expect(
       within(alert).getByText(
-        'Qovery could not reach the server. Your members’ agents keep working with the preset they last loaded.'
+        'The server encountered an error. Your members’ agents keep working with the preset they last loaded.'
       )
     ).toBeInTheDocument()
     expect(within(alert).getByText('Details: HTTP 500, Internal server error')).toBeInTheDocument()
@@ -171,7 +172,7 @@ describe('member view', () => {
 
   it('says when a skill left the preset since the list loaded, with no retry', async () => {
     useScenario('member')
-    const getSkill = jest
+    jest
       .spyOn(skillPresetsApi, 'getResolvedSkill')
       .mockRejectedValue(buildSkillPresetApiError(404, "There is no skill 'qovery-deploy' to load"))
     const { userEvent } = renderWithProviders(<MemberAgentView organizationId="organization-1" />)
@@ -183,7 +184,6 @@ describe('member view', () => {
 
     expect(await screen.findByTestId('skill-gone')).toHaveTextContent('qovery-deploy is no longer in your preset.')
     expect(screen.queryByRole('button', { name: /Try again/ })).not.toBeInTheDocument()
-    getSkill.mockRestore()
   })
 
   it('says when no preset applies', async () => {

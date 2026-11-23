@@ -26,11 +26,11 @@ const focusField = (finding: SkillPresetFinding) => {
   }
   // A custom skill is edited in a modal: open it, then focus the reported field once it renders.
   editSkill.click()
-  let frames = 0
+  const deadline = performance.now() + 2000
   const focusInModal = () => {
     const inModal = document.querySelector<HTMLElement>(`[role="dialog"] [id="${CSS.escape(fieldId)}"]`)
-    if (inModal) focusInside(inModal)
-    else if (++frames < 20) requestAnimationFrame(focusInModal)
+    if (inModal?.querySelector('textarea, input')) focusInside(inModal)
+    else if (performance.now() < deadline) requestAnimationFrame(focusInModal)
   }
   requestAnimationFrame(focusInModal)
 }
@@ -52,7 +52,7 @@ export function SecurityFindingsSummary({ findings }: SecurityFindingsSummaryPro
         <Callout.TextHeading id="skill-preset-findings-title">
           Not saved: {lineCount === 1 ? '1 line needs' : `${lineCount} lines need`} a change
         </Callout.TextHeading>
-        <Callout.TextDescription>
+        <div className="text-sm text-neutral-subtle">
           <p className="mb-2">
             Everything in a preset runs in your members’ agents, on their machines. Every save is checked by rules and
             by a model review, which refuse text that could expose secrets, send data out or act without the member
@@ -80,7 +80,7 @@ export function SecurityFindingsSummary({ findings }: SecurityFindingsSummaryPro
               </li>
             ))}
           </ul>
-        </Callout.TextDescription>
+        </div>
       </Callout.Text>
     </Callout.Root>
   )

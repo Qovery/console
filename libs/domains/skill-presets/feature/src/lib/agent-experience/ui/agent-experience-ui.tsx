@@ -101,8 +101,21 @@ export function ActorChip({
 }
 
 /** A row of numbers, with the period said once above it ("Last 7 days"). */
-export function StatGrid({ children, columns, period }: { children: ReactNode; columns: 3 | 4 | 5; period?: string }) {
-  const lg = { 3: 'lg:grid-cols-3', 4: 'lg:grid-cols-4', 5: 'lg:grid-cols-5' }[columns]
+export function StatGrid({
+  children,
+  columns,
+  period,
+}: {
+  children: ReactNode
+  columns: 2 | 3 | 4 | 5
+  period?: string
+}) {
+  const columnClasses = {
+    2: 'grid-cols-1 sm:grid-cols-2',
+    3: 'grid-cols-2 lg:grid-cols-3',
+    4: 'grid-cols-2 lg:grid-cols-4',
+    5: 'grid-cols-2 lg:grid-cols-5',
+  }[columns]
   return (
     <div className="flex flex-col gap-2">
       {period && (
@@ -110,7 +123,7 @@ export function StatGrid({ children, columns, period }: { children: ReactNode; c
           {period}
         </Heading>
       )}
-      <dl className={`grid grid-cols-2 gap-3 ${lg}`} data-testid="stat-grid">
+      <dl className={`grid gap-3 ${columnClasses}`} data-testid="stat-grid">
         {children}
       </dl>
     </div>

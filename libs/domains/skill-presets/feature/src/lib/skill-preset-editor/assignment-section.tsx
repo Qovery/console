@@ -107,6 +107,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
             isMulti
             isSearchable
             label="Roles"
+            disabled={!assignees}
             options={roleOptions}
             value={field.value}
             onChange={(value) => field.onChange(value as string[])}
@@ -124,6 +125,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
             isMulti
             isSearchable
             label="Members"
+            disabled={!assignees}
             options={memberOptions}
             filterOption={matchesSearchText}
             value={field.value}
@@ -152,7 +154,9 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
         <div className="flex items-center justify-between gap-3">
           <span className="flex items-center gap-2 text-neutral">
             <Icon iconName="users" iconStyle="regular" className="text-neutral-subtle" aria-hidden="true" />
-            {hasAssignment ? (
+            {hasAssignment && !assignees ? (
+              <span>The number of members receiving this preset is unavailable.</span>
+            ) : hasAssignment ? (
               <span>
                 <span className="font-medium">
                   {receiving.length} {receiving.length === 1 ? 'member' : 'members'}

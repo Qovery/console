@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
 import { PolicyApiTokenCrudModal, PolicyApiTokenPolicyModal } from '@qovery/domains/organizations/feature'
+import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/data-access'
 import {
   Badge,
   Button,
@@ -98,20 +99,21 @@ function TokenUsage({
 
 type WeekRow = { actions: number; denials: number; timeline: { start: string; actions: number; denials: number }[] }
 
-/** Zero only once the activity has loaded, so a slow or failed request never reads as no calls. */
 function WeekUsage({
   usage,
   range,
   isLoading,
   isError,
+  isTruncated,
 }: {
   usage?: WeekRow
   range: { from: string; to: string; bucket: 'DAY' }
   isLoading: boolean
   isError: boolean
+  isTruncated: boolean
 }) {
   if (isLoading) return <Skeleton height={24} width={160} show />
-  if (isError) return <span className="text-neutral-subtle">Usage unavailable</span>
+  if (isError || (isTruncated && !usage)) return <span className="text-neutral-subtle">Usage unavailable</span>
   return (
     <TokenUsage
       actions={usage?.actions ?? 0}
@@ -240,6 +242,7 @@ export function AgentExperiencePolicyTokens() {
   })
   const activeTokens = tokens ?? []
   const usageById = new Map((week?.by_policy_token ?? []).map((row) => [row.policy_token_id, row]))
+  const isWeekUsageTruncated = (week?.by_policy_token.length ?? 0) >= AGENT_ACTIVITY_LIMITS.maxPolicyTokens
   const deletedWithActivity = (canSeeActivity ? month?.by_policy_token ?? [] : []).filter(
     (row): row is typeof row & { policy_token_id: string } => row.deleted && Boolean(row.policy_token_id)
   )
@@ -331,6 +334,7 @@ export function AgentExperiencePolicyTokens() {
                       range={weekRange}
                       isLoading={isWeekLoading}
                       isError={isWeekError}
+                      isTruncated={isWeekUsageTruncated}
                     />
                   </Table.Cell>
                 )}
@@ -376,6 +380,7 @@ export function AgentExperiencePolicyTokens() {
                     range={weekRange}
                     isLoading={isWeekLoading}
                     isError={isWeekError}
+                    isTruncated={isWeekUsageTruncated}
                   />
                 </Table.Cell>
                 <Table.Cell className="text-neutral-subtle">

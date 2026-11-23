@@ -213,7 +213,7 @@ describe('SkillPresetEditorForm', () => {
     expect(screen.getByRole('textbox', { name: 'Team context' })).toHaveFocus()
   })
 
-  it('opens the custom skill and focuses the reported field from the summary', async () => {
+  it('focuses the reported custom skill field and retains its finding after a rename', async () => {
     mockCreateSkillPreset.mockRejectedValue(
       buildSkillPresetApiError(422, 'Rejected', {
         findings: [
@@ -246,6 +246,13 @@ describe('SkillPresetEditorForm', () => {
     const dialog = await screen.findByRole('dialog')
     const content = within(dialog).getByRole('textbox', { name: 'Content' })
     await waitFor(() => expect(content).toHaveFocus())
+
+    const name = within(dialog).getByRole('textbox', { name: 'Skill name' })
+    await userEvent.clear(name)
+    await userEvent.type(name, 'runbook-renamed')
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Apply changes' }))
+
+    expect(await screen.findByRole('button', { name: 'runbook-renamed, content, line 1' })).toBeInTheDocument()
   })
 
   it('clears a finding once its field is edited', async () => {
@@ -734,6 +741,7 @@ describe('SkillPresetEditor', () => {
     renderWithProviders(<SkillPresetEditor />)
 
     expect(screen.getByRole('textbox', { name: 'Name', exact: true })).toHaveValue('Backend team (copy)')
+    expect(screen.getByText('Not assigned: nobody receives this preset yet')).toBeInTheDocument()
     expect(
       screen.getByText('Copied from Backend team, without its assignments. Everything below is editable.')
     ).toBeInTheDocument()

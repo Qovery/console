@@ -14,12 +14,14 @@ const resolvedSkill = (content: string) => ({
 })
 
 describe('useResolvedSkill', () => {
+  afterEach(() => jest.restoreAllMocks())
+
   it('reads the text again when the member opens it again, so a newer revision shows', async () => {
     const request = jest
       .spyOn(axios, 'get')
       .mockResolvedValueOnce({ data: resolvedSkill('Revision 1') })
       .mockResolvedValueOnce({ data: resolvedSkill('Revision 2') })
-    const queryClient = new QueryClient()
+    const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } })
     const wrapper = ({ children }: PropsWithChildren) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     )

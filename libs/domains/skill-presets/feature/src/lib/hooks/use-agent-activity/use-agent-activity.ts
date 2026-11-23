@@ -14,13 +14,11 @@ export function useAgentActivity({ organizationId, scope, enabled = true, userSu
   const organization = useQuery({
     ...queries.skillPresets.agentActivity({ organizationId, ...params, userSub }),
     enabled: enabled && Boolean(organizationId) && isOrganization,
-    keepPreviousData: true,
     retry: false,
   })
   const own = useQuery({
     ...queries.skillPresets.myAgentActivity({ organizationId, ...params }),
     enabled: enabled && Boolean(organizationId) && !isOrganization,
-    keepPreviousData: true,
     retry: false,
   })
   return isOrganization ? organization : own

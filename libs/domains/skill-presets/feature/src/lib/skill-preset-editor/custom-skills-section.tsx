@@ -32,11 +32,11 @@ interface CustomSkillRowProps {
 }
 
 /** One skill of the organization. It watches only its own name, so typing elsewhere does not re-render it. */
-function CustomSkillRow({ index, findings }: CustomSkillRowProps) {
+function CustomSkillRow({ index, findings, originalSkillName }: CustomSkillRowProps & { originalSkillName: string }) {
   const { control } = useFormContext<SkillPresetFormValues>()
   const skillName = useWatch({ control, name: `customSkills.${index}.skillName` }) ?? ''
-  const descriptionFindings = findingsFor(findings, { field: 'skillDescription', skillName })
-  const contentFindings = findingsFor(findings, { field: 'skillContent', skillName })
+  const descriptionFindings = findingsFor(findings, { field: 'skillDescription', skillName: originalSkillName })
+  const contentFindings = findingsFor(findings, { field: 'skillContent', skillName: originalSkillName })
 
   return (
     <fieldset className="flex flex-col gap-3" aria-label={skillName ? `Skill ${skillName}` : `New skill ${index + 1}`}>
@@ -132,7 +132,7 @@ function CustomSkillModal({
         onClose={onClose}
         onSubmit={methods.handleSubmit((draft) => onApply(draft.customSkills[index]))}
       >
-        <CustomSkillRow index={index} findings={findings} />
+        <CustomSkillRow index={index} findings={findings} originalSkillName={values.customSkills[index].skillName} />
       </ModalCrud>
     </FormProvider>
   )
@@ -141,9 +141,10 @@ function CustomSkillModal({
 export interface CustomSkillsSectionProps {
   findings: SkillPresetFinding[]
   librarySkills: LibrarySkill[]
+  onRename: (oldName: string, newName: string) => void
 }
 
-export function CustomSkillsSection({ findings, librarySkills }: CustomSkillsSectionProps) {
+export function CustomSkillsSection({ findings, librarySkills, onRename }: CustomSkillsSectionProps) {
   const { control, getValues } = useFormContext<SkillPresetFormValues>()
   const { fields, append, remove, update } = useFieldArray({ control, name: 'customSkills', keyName: 'fieldKey' })
   const { errors } = useFormState({ control, name: 'customSkills' })
@@ -179,12 +180,16 @@ export function CustomSkillsSection({ findings, librarySkills }: CustomSkillsSec
             if (creating && exceedsLimit({ ...getValues(), customSkills: [...getValues('customSkills'), skill] }))
               return
             if (creating) append(skill)
-            else update(editIndex, skill)
+            else {
+              const oldName = customSkills[editIndex].skillName
+              if (oldName !== skill.skillName) onRename(oldName, skill.skillName)
+              update(editIndex, skill)
+            }
             closeModal()
           }}
         />
       ),
-      options: { width: 720 },
+      options: { width: 720, fakeModal: creating },
     })
   }
 
@@ -205,7 +210,7 @@ export function CustomSkillsSection({ findings, librarySkills }: CustomSkillsSec
           }}
         />
       ),
-      options: { width: 640 },
+      options: { width: 640, fakeModal: true },
     })
 
   return (

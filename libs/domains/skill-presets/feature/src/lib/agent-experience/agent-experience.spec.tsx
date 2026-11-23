@@ -1,18 +1,20 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useLocation, useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
 import axios from 'axios'
 import { type ReactNode } from 'react'
+import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
   installSkillPresetsMock,
   setSkillPresetsMockScenario,
 } from '@qovery/domains/skill-presets/mock'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
+import * as iamModule from '@qovery/shared/iam/feature'
 import { act, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { queries } from '@qovery/state/util-queries'
 import * as useAgentActivityModule from '../hooks/use-agent-activity/use-agent-activity'
-import * as useCanManageSkillPresetsModule from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import * as copilotStatus from '../hooks/use-copilot-status/use-copilot-status'
 import { AgentExperienceCopilot, OnOffBadge, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
 import { AgentExperienceNav } from './agent-experience-nav'
@@ -281,6 +283,24 @@ describe('AgentExperiencePolicyTokens', () => {
     expect(screen.queryByText('No policy token yet')).not.toBeInTheDocument()
   })
 
+  it('does not interpret missing usage at the activity response limit as zero calls', async () => {
+    useScenario('agent-experience-active')
+    jest.spyOn(useAgentActivityModule, 'useAgentActivity').mockReturnValue({
+      data: {
+        by_policy_token: Array.from({ length: AGENT_ACTIVITY_LIMITS.maxPolicyTokens }, (_, index) => ({
+          policy_token_id: `other-token-${index}`,
+        })),
+      },
+      isInitialLoading: false,
+      isError: false,
+    } as never)
+    renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
+    expect(within(ciDeployer).getByText('Usage unavailable')).toBeInTheDocument()
+    expect(within(ciDeployer).queryByText('No calls')).not.toBeInTheDocument()
+  })
+
   it('manages each token from its row: see activity, view the policy, delete', async () => {
     useScenario('agent-experience-active')
     const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
@@ -352,9 +372,10 @@ describe('AgentExperiencePolicyTokens', () => {
     const { userEvent, rerender } = renderWithProviders(view())
     expect(await screen.findByTestId('deleted-token-cleanup-bot')).toBeInTheDocument()
 
-    jest.spyOn(useCanManageSkillPresetsModule, 'useCanManageSkillPresets').mockReturnValue({
-      canManage: false,
-      isLoading: false,
+    jest.spyOn(iamModule, 'useUserRole').mockReturnValue({
+      roles: ['organization:organization-1:devops'],
+      loading: false,
+      isQoveryAdminUser: false,
     })
     rerender(view())
 
@@ -372,7 +393,7 @@ describe('AgentExperiencePolicyTokens', () => {
 })
 
 describe('AgentExperienceNav', () => {
-  it('has three entries, then Settings with policy tokens, for admins only', async () => {
+  it('limits policy tokens and Copilot settings by role', async () => {
     useScenario('agent-experience-active')
     const { userEvent, unmount } = renderWithProviders(<AgentExperienceNav />)
     expect(await screen.findByText('Settings')).toBeInTheDocument()
@@ -392,10 +413,13 @@ describe('AgentExperienceNav', () => {
     unmount()
 
     useScenario('member')
-    renderWithProviders(<AgentExperienceNav />)
+    const { userEvent: memberUserEvent } = renderWithProviders(<AgentExperienceNav />)
     expect(await screen.findByText('Activity')).toBeInTheDocument()
+    await memberUserEvent.click(screen.getByRole('button', { name: 'Settings' }))
+    expect(screen.getByText('Model tokens')).toBeInTheDocument()
+    expect(screen.getByText('MCP servers')).toBeInTheDocument()
     expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
-    expect(screen.queryByText('Settings')).not.toBeInTheDocument()
+    expect(screen.queryByText('Copilot settings')).not.toBeInTheDocument()
   })
 
   it('opens Settings by itself on the policy tokens page', async () => {
@@ -411,7 +435,13 @@ describe('AgentExperienceNav', () => {
 describe('ConnectAgentModal', () => {
   it('gives the commands to copy for the skills, the CLI and the MCP server, in tabs', async () => {
     useScenario('agent-experience-active')
-    const { userEvent } = renderWithProviders(<ConnectAgentModal onClose={jest.fn()} />)
+    const { userEvent } = renderWithProviders(
+      <Dialog.Root open>
+        <Dialog.Content>
+          <ConnectAgentModal onClose={jest.fn()} />
+        </Dialog.Content>
+      </Dialog.Root>
+    )
     expect(screen.getByRole('heading', { name: 'Connect an agent' })).toBeInTheDocument()
     expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
     expect(
@@ -439,7 +469,13 @@ describe('ConnectAgentModal', () => {
 
   it('closes on Close', async () => {
     const onClose = jest.fn()
-    const { userEvent } = renderWithProviders(<ConnectAgentModal onClose={onClose} />)
+    const { userEvent } = renderWithProviders(
+      <Dialog.Root open>
+        <Dialog.Content>
+          <ConnectAgentModal onClose={onClose} />
+        </Dialog.Content>
+      </Dialog.Root>
+    )
     await userEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(onClose).toHaveBeenCalled()
   })

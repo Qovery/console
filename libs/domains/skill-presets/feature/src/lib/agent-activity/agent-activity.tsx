@@ -65,6 +65,7 @@ import {
 } from '../utils/agent-activity'
 import {
   ACTIVITY_RANGES,
+  type ActivityScope,
   type ActivitySearch,
   DEFAULT_RANGE,
   SOURCE_FILTER_LABELS,
@@ -95,7 +96,6 @@ const ATTRIBUTION_NOTE =
   'Actions are matched to people by username and to skills by the agent’s user agent; treat them as indicative.'
 const NO_SKILL_LABEL = 'No skill (MCP or API)'
 
-type Scope = 'organization' | 'me'
 type Breakdown = NonNullable<ActivitySearch['view']>
 
 /** A name that narrows the whole page to it. Pressed when that filter is active. */
@@ -119,7 +119,7 @@ function DrillButton({
       aria-pressed={active}
       aria-label={label}
       onClick={onClick}
-      className="h-auto px-0 text-left text-sm font-normal underline-offset-2 hover:underline"
+      className="h-auto cursor-pointer px-0 text-left text-sm font-normal underline-offset-2 hover:underline"
     >
       {children}
     </Button>
@@ -159,7 +159,7 @@ function DeniedCount({ value }: { value: number }) {
 }
 
 const suggestionCardClassName =
-  'flex w-full flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-3 text-left text-sm font-normal transition-colors hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong'
+  'flex w-full cursor-pointer flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-3 text-left text-sm font-normal transition-colors hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong'
 
 export function HintLine({
   hint,
@@ -238,7 +238,7 @@ function FilterBar({
 }: {
   search: ActivitySearch
   setSearch: (patch: Partial<ActivitySearch>) => void
-  scope: Scope
+  scope: ActivityScope
   lists?: AgentActivityResponse
 }) {
   const actorOptions = [
@@ -319,7 +319,7 @@ function FilterBar({
           { value: 'DENIED', label: 'Denied' },
         ]}
       />
-      {hasActivityFilters(search) && (
+      {hasActivityFilters(search, scope) && (
         <Button
           type="button"
           size="sm"
@@ -350,7 +350,7 @@ function BreakdownTable({
   setSearch,
 }: {
   activity: AgentActivityResponse
-  scope: Scope
+  scope: ActivityScope
   search: ActivitySearch
   setSearch: (patch: Partial<ActivitySearch>) => void
 }) {
@@ -565,7 +565,7 @@ function BreakdownTable({
           </>
         )}
       </Table.Root>
-      {breakdown === 'skill' && isOrganization && !hasActivityFilters(search) && unused.length > 0 && (
+      {breakdown === 'skill' && isOrganization && !hasActivityFilters(search, scope) && unused.length > 0 && (
         <p className="border-t border-neutral p-3 text-xs text-neutral-subtle" data-testid="never-loaded">
           Never loaded in this period: <span className="font-sans">{unused.join(', ')}</span>. Consider turning them off
           in the preset.{' '}
@@ -607,21 +607,21 @@ function ActivityContent({
 }: {
   activity: AgentActivityResponse
   previous?: AgentActivityResponse
-  scope: Scope
+  scope: ActivityScope
   organizationId: string
   search: ActivitySearch
   setSearch: (patch: Partial<ActivitySearch>) => void
   bucket: AgentActivityBucket
 }) {
   const isOrganization = scope === 'organization'
-  const filtered = hasActivityFilters(search)
+  const filtered = hasActivityFilters(search, scope)
   const [tableView, setTableView] = useState(search.view ? 'breakdown' : 'recent')
   const [pageSize, setPageSize] = useState(PAGE_SIZE_DEFAULT)
   const [actionFilters, setActionFilters] = useState<ColumnFiltersState>([])
   const hints = useMemo(
     () =>
       isOrganization
-        ? computeAgentActivityHints(activity, { filtered })
+        ? computeAgentActivityHints(activity, { filtered, source: search.via, outcome: search.outcome })
             .sort((a, b) => {
               const priority = (hint: AgentActivityHint) =>
                 match(hint)
@@ -633,7 +633,7 @@ function ActivityContent({
             })
             .slice(0, 3)
         : [],
-    [activity, isOrganization, filtered]
+    [activity, isOrganization, filtered, search.via, search.outcome]
   )
   const timeline = fillTimeline(activity.timeline, activity, (start) => ({
     start,
@@ -696,7 +696,7 @@ function ActivityContent({
       <div className="flex flex-col gap-4">
         {tokensOnly ? (
           // Skill loads and members are people's: they say nothing about policy tokens.
-          <div className="grid gap-3 sm:grid-cols-2">
+          <StatGrid columns={2}>
             <Stat
               prominent
               label="Allowed actions"
@@ -711,7 +711,7 @@ function ActivityContent({
               delta={delta(activity.totals.denials, previous?.totals.denials)}
               riseIsBad
             />
-          </div>
+          </StatGrid>
         ) : (
           <StatGrid columns={isOrganization ? 4 : 3}>
             <Stat
@@ -1051,7 +1051,7 @@ function ActivityContent({
 export function AgentActivity() {
   const { organizationId = '' } = useParams({ strict: false })
   const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
-  const scope: Scope = canManage ? 'organization' : 'me'
+  const scope: ActivityScope = canManage ? 'organization' : 'me'
   const [search, setSearch] = useActivitySearch()
   const range = activityRange(search)
   const to = activityWindowEnd()

@@ -2,8 +2,19 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { InputSelect, ModalCrud } from '@qovery/shared/ui'
+import { Button, InputSelect, ModalCrud } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
+
+function RefetchError({ message, retry }: { message: string; retry: () => void }) {
+  return (
+    <div role="alert" className="flex items-center gap-2 text-sm text-neutral-subtle">
+      {message}
+      <Button type="button" variant="plain" size="xs" onClick={retry}>
+        Try again
+      </Button>
+    </div>
+  )
+}
 
 export function AgentTaskEnvironmentModal({
   organizationId,
@@ -61,10 +72,11 @@ export function AgentTaskEnvironmentModal({
               />
             )}
           />
-          {projectsUnavailable ? (
-            <p role="alert" className="text-sm text-neutral-subtle">
-              Unable to load projects. Close and try again.
-            </p>
+          {projects.isError ? (
+            <RefetchError
+              message={projectsUnavailable ? 'Unable to load projects.' : 'Unable to refresh projects.'}
+              retry={() => projects.refetch()}
+            />
           ) : (
             !projects.isLoading &&
             !projects.data?.length && (
@@ -90,10 +102,11 @@ export function AgentTaskEnvironmentModal({
             )}
           />
           {projectId &&
-            (environmentsUnavailable ? (
-              <p role="alert" className="text-sm text-neutral-subtle">
-                Unable to load environments. Close and try again.
-              </p>
+            (environments.isError ? (
+              <RefetchError
+                message={environmentsUnavailable ? 'Unable to load environments.' : 'Unable to refresh environments.'}
+                retry={() => environments.refetch()}
+              />
             ) : (
               !environments.isFetching &&
               !availableEnvironments.length && (

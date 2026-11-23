@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import selectEvent from 'react-select-event'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { queries } from '@qovery/state/util-queries'
 import { AgentTaskEnvironmentModal } from './agent-task-environment-modal'
 
 const mockNavigate = jest.fn()
@@ -11,7 +12,7 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 jest.mock('@tanstack/react-query', () => ({
   ...jest.requireActual('@tanstack/react-query'),
-  useQuery: () => mockEnvironments(),
+  useQuery: (options: unknown) => mockEnvironments(options),
 }))
 jest.mock('@qovery/domains/projects/feature', () => ({
   ...jest.requireActual('@qovery/domains/projects/feature'),
@@ -35,9 +36,16 @@ beforeEach(() => {
 
 it('clears the environment when switching projects', async () => {
   renderWithProviders(<AgentTaskEnvironmentModal {...props} />)
+  expect(mockEnvironments).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: false }))
   await select('Project', 'Project one')
+  expect(mockEnvironments).toHaveBeenLastCalledWith(
+    expect.objectContaining({ enabled: true, queryKey: queries.environments.list({ projectId: 'p1' }).queryKey })
+  )
   await select('Environment', 'Staging')
   await select('Project', 'Project two')
+  expect(mockEnvironments).toHaveBeenLastCalledWith(
+    expect.objectContaining({ enabled: true, queryKey: queries.environments.list({ projectId: 'p2' }).queryKey })
+  )
   expect(screen.getByRole('button', { name: 'Open Automations' })).toBeDisabled()
 })
 
@@ -67,12 +75,15 @@ it('opens Automations in the chosen environment without a template', async () =>
 })
 
 it('keeps the selected environment available after a background refetch fails', async () => {
+  const refetch = jest.fn()
+
   function ModalWithRefetch() {
     const [refetchFailed, setRefetchFailed] = useState(false)
     mockEnvironments.mockReturnValue({
       data: [{ id: 'env', name: 'Staging' }],
       isFetching: false,
       isError: refetchFailed,
+      refetch,
     })
     return (
       <>
@@ -88,6 +99,9 @@ it('keeps the selected environment available after a background refetch fails', 
   await select('Project', 'Project one')
   await select('Environment', 'Staging')
   await userEvent.click(screen.getByRole('button', { name: 'Fail refetch' }))
+  expect(screen.getByRole('alert')).toHaveTextContent('Unable to refresh environments.')
+  await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
+  expect(refetch).toHaveBeenCalledTimes(1)
   await userEvent.click(screen.getByRole('button', { name: 'Open Automations' }))
   await waitFor(() => expect(mockNavigate).toHaveBeenCalledTimes(1))
 })

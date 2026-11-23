@@ -26,7 +26,7 @@ export function FindingList({ findings, onSelectLine }: FindingListProps) {
                 variant="plain"
                 color="current"
                 size="xs"
-                className="h-auto px-0 align-baseline underline underline-offset-2"
+                className="h-auto cursor-pointer px-0 align-baseline underline underline-offset-2"
                 onClick={() => onSelectLine(finding.line)}
               >
                 Line {finding.line}

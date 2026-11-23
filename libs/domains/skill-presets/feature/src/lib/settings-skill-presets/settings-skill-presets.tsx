@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import {
   type ColumnDef,
   flexRender,
@@ -26,6 +26,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { isForbiddenError } from '@qovery/shared/util-js'
 import { useDeleteSkillPreset } from '../hooks/use-delete-skill-preset/use-delete-skill-preset'
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPresetRevisions } from '../hooks/use-skill-preset-revisions/use-skill-preset-revisions'
@@ -95,7 +96,7 @@ function PresetRow({
 }) {
   const navigate = useNavigate()
   const editedAt = lastRevision?.edited_at ?? preset.updated_at
-  const editedBy = lastRevision?.edited_by ?? preset.creator_name ?? 'Unknown'
+  const editedBy = lastRevision?.edited_by
   // Revisions name the editor by email: show the member's name, the email in a tooltip, like Audit logs.
   const editor = assignees?.members.find(({ email }) => email === editedBy)
   const openPreset = () =>
@@ -108,16 +109,19 @@ function PresetRow({
     <Table.Row
       data-testid={`skill-preset-${preset.id}`}
       className="cursor-pointer hover:bg-surface-neutral-subtle"
-      tabIndex={0}
       onClick={openPreset}
-      onKeyDown={(event) => {
-        if (event.target === event.currentTarget && event.key === 'Enter') openPreset()
-      }}
     >
       <Table.Cell className="h-auto py-3">
         <div className="flex flex-col gap-0.5">
           <span className="flex items-center gap-2">
-            <span className="font-medium text-neutral">{preset.name}</span>
+            <Link
+              className="font-medium text-neutral hover:underline"
+              to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId"
+              params={{ organizationId, skillPresetId: preset.id }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              {preset.name}
+            </Link>
             {preset.description && (
               <Tooltip content={preset.description}>
                 <span
@@ -138,27 +142,29 @@ function PresetRow({
       </Table.Cell>
       <Table.Cell className="h-auto py-3">
         <div className="flex items-center gap-2 whitespace-nowrap">
-          <Tooltip content={editor ? `${editor.name} (${editor.email})` : editedBy}>
-            <span tabIndex={0} aria-label={editor?.name ?? editedBy} onClick={(event) => event.stopPropagation()}>
-              <Avatar
-                size="sm"
-                src={editor?.profile_picture_url}
-                alt={editor?.name ?? editedBy}
-                fallback={
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-neutral-component text-xs">
-                    {(editor?.name ?? editedBy)
-                      .split(' ')
-                      .map((part) => part.charAt(0))
-                      .slice(0, 2)
-                      .join('')
-                      .toUpperCase()}
-                  </span>
-                }
-              />
-            </span>
-          </Tooltip>
+          {editedBy && (
+            <Tooltip content={editor ? `${editor.name} (${editor.email})` : editedBy}>
+              <span tabIndex={0} aria-label={editor?.name ?? editedBy} onClick={(event) => event.stopPropagation()}>
+                <Avatar
+                  size="sm"
+                  src={editor?.profile_picture_url}
+                  alt={editor?.name ?? editedBy}
+                  fallback={
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-neutral-component text-xs">
+                      {(editor?.name ?? editedBy)
+                        .split(' ')
+                        .map((part) => part.charAt(0))
+                        .slice(0, 2)
+                        .join('')
+                        .toUpperCase()}
+                    </span>
+                  }
+                />
+              </span>
+            </Tooltip>
+          )}
           <div className="flex flex-col">
-            <span>{editor?.name ?? editedBy}</span>
+            {editedBy && <span>{editor?.name ?? editedBy}</span>}
             <time className="text-xs text-neutral-subtle" dateTime={editedAt} title={dateFullFormat(editedAt)}>
               {timeAgo(new Date(editedAt))} ago
             </time>
@@ -259,7 +265,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
   if (isLoading) return <ListSkeleton />
 
   // A 403 too: an empty registry with create buttons would hide that the request was refused.
-  if (error) {
+  if (error && (!presets || isForbiddenError(error))) {
     return (
       <LoadError
         title="The Skills registry could not be loaded"
@@ -273,42 +279,47 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
   const all = presets ?? []
   if (all.length === 0) {
     return (
-      <EmptyState
-        icon="wand-magic-sparkles"
-        title="No presets yet"
-        description="A preset decides which Qovery skills your members’ agents load, adds your team’s instructions and your own skills, and applies to the whole organization, a role or specific members. Until you create one, agents use the Qovery skills as published."
-      >
-        <div className="flex gap-2">
-          <Button
-            size="md"
-            color="neutral"
-            variant="solid"
-            onClick={() =>
-              navigate({
-                to: '/organization/$organizationId/agent-experience/skill-presets/new',
-                params: { organizationId },
-              })
-            }
-          >
-            <Icon iconName="grid-2" iconStyle="regular" />
-            Start from a template
-          </Button>
-          <Button
-            size="md"
-            variant="outline"
-            color="neutral"
-            onClick={() =>
-              navigate({
-                to: '/organization/$organizationId/agent-experience/skill-presets/new',
-                params: { organizationId },
-                search: { template: 'blank' },
-              })
-            }
-          >
-            Blank preset
-          </Button>
-        </div>
-      </EmptyState>
+      <>
+        {Boolean(error) && (
+          <LoadError title="The Skills registry could not be refreshed" error={error} onRetry={refetch} />
+        )}
+        <EmptyState
+          icon="wand-magic-sparkles"
+          title="No presets yet"
+          description="A preset decides which Qovery skills your members’ agents load, adds your team’s instructions and your own skills, and applies to the whole organization, a role or specific members. Until you create one, agents use the Qovery skills as published."
+        >
+          <div className="flex gap-2">
+            <Button
+              size="md"
+              color="neutral"
+              variant="solid"
+              onClick={() =>
+                navigate({
+                  to: '/organization/$organizationId/agent-experience/skill-presets/new',
+                  params: { organizationId },
+                })
+              }
+            >
+              <Icon iconName="grid-2" iconStyle="regular" />
+              Start from a template
+            </Button>
+            <Button
+              size="md"
+              variant="outline"
+              color="neutral"
+              onClick={() =>
+                navigate({
+                  to: '/organization/$organizationId/agent-experience/skill-presets/new',
+                  params: { organizationId },
+                  search: { template: 'blank' },
+                })
+              }
+            >
+              Blank preset
+            </Button>
+          </div>
+        </EmptyState>
+      </>
     )
   }
 
@@ -325,6 +336,9 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
 
   return (
     <div className="flex flex-col gap-2">
+      {Boolean(error) && (
+        <LoadError title="The Skills registry could not be refreshed" error={error} onRetry={refetch} />
+      )}
       {previewPreset && (
         <PresetPreviewPanel
           preset={previewPreset}

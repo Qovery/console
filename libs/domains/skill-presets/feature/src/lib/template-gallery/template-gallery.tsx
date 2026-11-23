@@ -22,7 +22,7 @@ function TemplateOption({
       <button
         type="button"
         onClick={onSelect}
-        className="flex h-full w-full items-start gap-3 rounded-md border border-neutral bg-surface-neutral p-3 text-left transition-colors hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong"
+        className="flex h-full w-full cursor-pointer items-start gap-3 rounded-md border border-neutral bg-surface-neutral p-3 text-left transition-colors hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong"
       >
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-surface-neutral-component text-neutral-subtle">
           {icon}

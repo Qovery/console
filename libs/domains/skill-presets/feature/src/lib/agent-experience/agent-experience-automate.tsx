@@ -74,11 +74,14 @@ export function AgentExperienceAutomations() {
         )
       }
     >
+      {Boolean(error) && tasks && (
+        <LoadError title="Agent tasks could not be refreshed" error={error} onRetry={refetch} />
+      )}
       {enabled === undefined || isLoading ? (
         <div aria-label="Loading agent tasks" aria-busy="true">
           <Skeleton height={120} className="w-full" show />
         </div>
-      ) : error ? (
+      ) : error && !tasks ? (
         <LoadError title="Agent tasks could not be loaded" error={error} onRetry={refetch} />
       ) : !tasks?.length ? (
         <EmptyState

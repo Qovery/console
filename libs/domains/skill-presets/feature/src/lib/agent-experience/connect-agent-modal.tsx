@@ -1,3 +1,4 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 import { Button, Heading, InputSelectSmall, TabsPrimitives } from '@qovery/shared/ui'
 import { CLI_INSTALL_COMMAND, MCP_SETUPS, SKILLS_INSTALL_COMMAND } from './agent-experience-connect'
@@ -12,9 +13,11 @@ export function ConnectAgentModal({ onClose, closeLabel = 'Close' }: { onClose: 
   return (
     <Tabs.Root defaultValue="skills" className="flex flex-col">
       <div className="rounded-t-md bg-surface-neutral-subtle px-5 pt-5">
-        <Heading level={1} className="text-lg">
-          Connect an agent
-        </Heading>
+        <Dialog.Title asChild>
+          <Heading level={1} className="text-lg">
+            Connect an agent
+          </Heading>
+        </Dialog.Title>
         <p className="mt-1 text-sm text-neutral-subtle">Set up your agent on this machine. Start with Qovery skills.</p>
         <Tabs.List aria-label="Setup methods" className="-mx-5 mt-4 border-b border-neutral px-5">
           <Tabs.Trigger value="skills" className="cursor-pointer">

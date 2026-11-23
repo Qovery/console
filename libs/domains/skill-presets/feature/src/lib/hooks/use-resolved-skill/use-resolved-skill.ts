@@ -18,8 +18,10 @@ export function useResolvedSkill({
   return useQuery({
     ...queries.skillPresets.resolvedSkill({ organizationId, skillName }),
     enabled: enabled && Boolean(organizationId),
-    // One audited view per opening, not one per window focus.
+    staleTime: 0,
+    // One audited view per opening.
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     retry: false,
   })
 }

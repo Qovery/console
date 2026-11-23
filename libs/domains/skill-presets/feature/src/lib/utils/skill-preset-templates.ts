@@ -196,6 +196,7 @@ Prefer jobs with a schedule over long-running services for batch work.`,
 When you find a risk, describe it, say where it is and how to fix it. Never print secret values, only their names.`,
       skills: [
         ...off(
+          'qovery',
           'qovery-deploy',
           'qovery-preview',
           'qovery-optimize',
@@ -227,6 +228,8 @@ Never change staging or production. Stop a preview when the user is done testing
           content: `Name previews after the pull request number. Seed them with the test data set, not a copy of production data.`,
         },
         ...off(
+          'qovery',
+          'qovery-deploy',
           'qovery-assess',
           'qovery-terraform',
           'qovery-policy-token',

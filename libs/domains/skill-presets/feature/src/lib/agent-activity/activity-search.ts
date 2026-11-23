@@ -59,6 +59,7 @@ export const activitySearchSchema = z.object({
 })
 
 export type ActivitySearch = z.infer<typeof activitySearchSchema>
+export type ActivityScope = 'organization' | 'me'
 
 export const memberActor = (userSub: string) => `member:${userSub}`
 export const tokenActor = (tokenId: string) => `token:${tokenId}`
@@ -81,7 +82,7 @@ export const activityRange = (search: ActivitySearch) =>
 export const activityWindowEnd = () => new Date(Math.ceil(Date.now() / 60_000) * 60_000)
 
 /** The query params for the API. `to` is passed in, so the range stays stable between renders. */
-export function activityParams(search: ActivitySearch, to: Date, scope: 'organization' | 'me'): AgentActivityParams {
+export function activityParams(search: ActivitySearch, to: Date, scope: ActivityScope): AgentActivityParams {
   const range = activityRange(search)
   return {
     from: new Date(to.getTime() - range.hours * 3_600_000).toISOString(),
@@ -95,5 +96,5 @@ export function activityParams(search: ActivitySearch, to: Date, scope: 'organiz
   }
 }
 
-export const hasActivityFilters = (search: ActivitySearch) =>
-  Boolean(search.actor || search.skill || search.outcome || search.via)
+export const hasActivityFilters = (search: ActivitySearch, scope: ActivityScope) =>
+  Boolean((scope === 'organization' && search.actor) || search.skill || search.outcome || search.via)

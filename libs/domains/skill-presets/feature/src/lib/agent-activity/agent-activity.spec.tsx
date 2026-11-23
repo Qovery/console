@@ -2,8 +2,12 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
 import axios from 'axios'
-import { type ReactNode } from 'react'
-import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
+import { type ReactNode, useState } from 'react'
+import {
+  type AgentActivityResponse,
+  buildSkillPresetApiError,
+  skillPresetsApi,
+} from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
   installSkillPresetsMock,
@@ -35,7 +39,7 @@ jest.mock('@qovery/shared/iam/feature', () => ({
   useUserRole: () => ({
     roles: jest.requireActual('@qovery/domains/skill-presets/mock').isSkillPresetsMockMember()
       ? []
-      : ['organization:organization-1:admin'],
+      : ['organization:organization-1:admin', 'organization:organization-2:admin'],
     loading: false,
     isQoveryAdminUser: false,
   }),
@@ -214,6 +218,50 @@ describe('AgentActivity', () => {
     expect(screen.queryByText('Jordan Kim')).not.toBeInTheDocument()
   })
 
+  it('ignores the actor from a shared organization link in member scope', async () => {
+    useScenario('member')
+    mockUrl.search = { actor: 'tokens' }
+    renderWithProviders(<AgentActivity />)
+
+    await screen.findByRole('heading', { name: 'Recent actions' })
+    expect(screen.queryByRole('button', { name: 'Clear filters' })).not.toBeInTheDocument()
+  })
+
+  it.each([
+    ['agent-activity', 'getAgentActivity'],
+    ['member', 'getMyAgentActivity'],
+  ] as const)('clears activity while switching organizations in the %s scenario', async (scenario, method) => {
+    useScenario(scenario)
+    const originalRequest = skillPresetsApi[method].bind(skillPresetsApi)
+    const pendingRequest = new Promise<AgentActivityResponse>(() => undefined)
+    jest
+      .spyOn(skillPresetsApi, method)
+      .mockImplementation((organizationId, params) =>
+        organizationId === 'organization-2' ? pendingRequest : originalRequest(organizationId, params)
+      )
+
+    function ActivityWithOrganizationSwitcher() {
+      const [organizationId, setOrganizationId] = useState('organization-1')
+      jest.mocked(useParams).mockReturnValue({ organizationId })
+      return (
+        <>
+          <button type="button" onClick={() => setOrganizationId('organization-2')}>
+            Switch organization
+          </button>
+          <AgentActivity />
+        </>
+      )
+    }
+
+    const { userEvent } = renderWithProviders(<ActivityWithOrganizationSwitcher />)
+    await screen.findByRole('region', { name: 'Recent actions' })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Switch organization' }))
+
+    expect(screen.getByLabelText('Loading agent activity')).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Recent actions' })).not.toBeInTheDocument()
+  })
+
   it('explains an empty period', async () => {
     useScenario('agent-activity-empty')
     renderWithProviders(<AgentActivity />)
@@ -229,6 +277,16 @@ describe('AgentActivity', () => {
 
     expect(await screen.findByText('Agent activity could not be loaded')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Try again/ })).toBeInTheDocument()
+  })
+
+  it('distinguishes a connection failure from a server response', async () => {
+    useScenario('agent-activity')
+    jest.spyOn(skillPresetsApi, 'getAgentActivity').mockRejectedValue({ code: 'ERR_NETWORK' })
+    renderWithProviders(<AgentActivity />)
+
+    const alert = await screen.findByRole('alert')
+    expect(within(alert).getByText('Qovery could not reach the server.')).toBeInTheDocument()
+    expect(within(alert).queryByText(/Details:/)).not.toBeInTheDocument()
   })
 
   it.each([

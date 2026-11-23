@@ -24,5 +24,10 @@ export function useSkillPresetAssignees({ organizationId }: { organizationId: st
           })),
         }
       : undefined
-  return { data, isLoading: members.isLoading || roles.isLoading, error: members.error ?? roles.error }
+  return {
+    data,
+    isLoading: members.isLoading || roles.isLoading,
+    error: members.error ?? roles.error,
+    refetch: () => Promise.all([members.refetch(), roles.refetch()]),
+  }
 }

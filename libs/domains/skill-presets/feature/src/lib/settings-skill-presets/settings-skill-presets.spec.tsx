@@ -1,7 +1,20 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
+import { type ReactNode } from 'react'
 import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { SettingsSkillPresets } from './settings-skill-presets'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: jest.fn(),
+  useSearch: () => ({}),
+  useNavigate: jest.fn(),
+  Link: ({ children, params }: { children: ReactNode; params: { organizationId: string; skillPresetId: string } }) => (
+    <a href={`/organization/${params.organizationId}/agent-experience/skill-presets/${params.skillPresetId}`}>
+      {children}
+    </a>
+  ),
+}))
 
 const mockUseSkillPresets = jest.fn()
 const mockNavigate = jest.fn()
@@ -53,6 +66,7 @@ const preset = {
 }
 
 beforeEach(() => {
+  mockRevisionData = []
   jest.mocked(useNavigate).mockReturnValue(mockNavigate)
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
 })
@@ -92,7 +106,7 @@ describe('SettingsSkillPresets', () => {
     expect(screen.queryByRole('columnheader', { name: 'Revision' })).not.toBeInTheDocument()
   })
 
-  it('opens a preset from its row with a click or Enter', async () => {
+  it('opens a preset from its row and exposes a keyboard-accessible link', async () => {
     mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
     const navigate = mockNavigate
@@ -104,10 +118,10 @@ describe('SettingsSkillPresets', () => {
       to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
       params: { organizationId: 'organization-1', skillPresetId: 'preset-1' },
     })
-    navigate.mockClear()
-    row.focus()
-    await userEvent.keyboard('{Enter}')
-    expect(navigate).toHaveBeenCalledTimes(1)
+    expect(within(row).getByRole('link', { name: preset.name })).toHaveAttribute(
+      'href',
+      '/organization/organization-1/agent-experience/skill-presets/preset-1'
+    )
   })
 
   it('keeps description and row actions independent from row navigation', async () => {
@@ -133,7 +147,6 @@ describe('SettingsSkillPresets', () => {
       { skill_preset_id: 'other-preset', edited_by: 'alex.martin@example.com', edited_at: '2026-11-02T10:00:00Z' },
     ]
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
-    mockRevisionData = []
 
     const row = screen.getByTestId('skill-preset-preset-1')
     const editor = within(row).getByLabelText('Jamie Rossi')
@@ -157,11 +170,13 @@ describe('SettingsSkillPresets', () => {
     calls.forEach((props) => expect(props).toEqual({ organizationId: 'organization-1' }))
   })
 
-  it('falls back to the preset when its last revision is not in the latest revisions', () => {
+  it('shows the edit date without attributing it to the creator when its last revision is missing', () => {
     mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
     renderWithProviders(<SettingsSkillPresets />)
 
-    expect(within(screen.getByTestId('skill-preset-preset-1')).getByLabelText('Priya Shah')).toBeInTheDocument()
+    const row = screen.getByTestId('skill-preset-preset-1')
+    expect(within(row).queryByLabelText('Priya Shah')).not.toBeInTheDocument()
+    expect(row.querySelector('time')).toHaveAttribute('datetime', preset.updated_at)
   })
 
   it('sorts names and edit dates in both directions, and filters bases', async () => {

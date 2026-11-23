@@ -90,18 +90,30 @@ describe('keepEditsSinceSubmit', () => {
   it('takes the saved values, except fields changed after the submit', () => {
     const submitted = { ...toSkillPresetFormValues(preset), name: 'Backend team ' }
     const saved = { ...toSkillPresetFormValues(preset), name: 'Backend team' }
-    const current = { ...submitted, teamContext: 'Typed during the review.' }
+    const current = {
+      ...submitted,
+      teamContext: 'Typed during the review.',
+      roleIds: ['role-2'],
+      customSkills: submitted.customSkills.map((skill) => ({ ...skill, content: 'Updated after submitting.' })),
+    }
 
     expect(keepEditsSinceSubmit({ saved, submitted, current })).toEqual({
       ...saved,
-      teamContext: 'Typed during the review.',
+      teamContext: current.teamContext,
+      roleIds: current.roleIds,
+      customSkills: current.customSkills,
     })
   })
 
   it('returns the saved values when nothing changed after the submit', () => {
     const submitted = toSkillPresetFormValues(preset)
-    const saved = { ...submitted, name: 'Renamed by the server' }
+    const current = {
+      ...submitted,
+      customSkills: submitted.customSkills.map((skill) => ({ ...skill })),
+      roleIds: [...submitted.roleIds],
+    }
+    const saved = { ...submitted, roleIds: ['role-2'], customSkills: [] }
 
-    expect(keepEditsSinceSubmit({ saved, submitted, current: { ...submitted } })).toEqual(saved)
+    expect(keepEditsSinceSubmit({ saved, submitted, current })).toEqual(saved)
   })
 })

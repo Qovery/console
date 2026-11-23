@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
   SKILL_PRESET_REVISIONS_PAGE_SIZE,
@@ -53,16 +53,28 @@ function RestoreModal({
   onClose: () => void
 }) {
   const methods = useForm()
+  const { setModalDismissible } = useModal()
+  const submitting = useRef(false)
   return (
     <FormProvider {...methods}>
       <ModalCrud
         title={title}
         submitLabel={confirmLabel}
         loading={methods.formState.isSubmitting}
-        onClose={onClose}
+        onClose={() => {
+          if (!submitting.current) onClose()
+        }}
         onSubmit={methods.handleSubmit(async () => {
-          await onConfirm()
-          onClose()
+          if (submitting.current) return
+          submitting.current = true
+          setModalDismissible(false)
+          try {
+            await onConfirm()
+            onClose()
+          } finally {
+            submitting.current = false
+            setModalDismissible(true)
+          }
         })}
       >
         <p className="text-sm text-neutral-subtle">{description}</p>
@@ -198,7 +210,8 @@ function SkillPresetHistoryPage() {
     )
   }
 
-  if (error) {
+  const errorStatus = getSkillPresetErrorStatus(error)
+  if (error && (!revisions.length || errorStatus === 401 || errorStatus === 403)) {
     return (
       <Section className="px-8 pt-6">
         <LoadError title="The history could not be loaded" error={error} onRetry={() => refetch()} />
@@ -230,6 +243,7 @@ function SkillPresetHistoryPage() {
 
   return (
     <Section className="flex flex-col gap-6 px-8 pb-8 pt-6">
+      {Boolean(error) && <LoadError title="The history could not be refreshed" error={error} onRetry={refetch} />}
       <div className="flex flex-col gap-3">
         <Link
           to={
@@ -277,7 +291,7 @@ function SkillPresetHistoryPage() {
                     onClick={() => setSelectedRevision(revision.revision)}
                     aria-current={isSelected ? 'true' : undefined}
                     className={twMerge(
-                      'group relative flex w-full gap-3 rounded-md border border-transparent p-2 text-left hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong',
+                      'group relative flex w-full cursor-pointer gap-3 rounded-md border border-transparent p-2 text-left hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong',
                       isSelected && 'border-neutral-component bg-surface-neutral-subtle'
                     )}
                   >

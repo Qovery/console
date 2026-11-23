@@ -14,7 +14,8 @@ const asApiError = (error: unknown): ApiErrorLike => (typeof error === 'object' 
 
 export function getSkillPresetErrorStatus(error: unknown): number | undefined {
   const apiError = asApiError(error)
-  return apiError.response?.status ?? (apiError.code ? Number(apiError.code) : undefined)
+  const status = apiError.response?.status ?? Number(apiError.code)
+  return Number.isInteger(status) && status >= 100 && status <= 599 ? status : undefined
 }
 
 export function getSkillPresetErrorDetail(error: unknown): string | undefined {

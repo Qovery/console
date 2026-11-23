@@ -10,11 +10,13 @@ export const DEFAULT_PAGE_SIZE = 30
 
 /**
  * Every event type the audit logs can be filtered on: the generated enum, plus the events q-core records
- * that the SDK does not list yet. SKILL_LOAD: a member's agent loaded a skill.
+ * that the SDK does not list yet.
  */
 export const AUDIT_LOG_EVENT_TYPES: OrganizationEventType[] = [
   ...Object.values(OrganizationEventType),
   'SKILL_LOAD' as OrganizationEventType,
+  'SKILL_VIEW' as OrganizationEventType,
+  'SKILL_PRESET_REJECTED' as OrganizationEventType,
 ]
 
 export const auditLogsParamsSchema = z.object({

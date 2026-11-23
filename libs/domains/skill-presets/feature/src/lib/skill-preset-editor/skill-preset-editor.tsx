@@ -53,6 +53,7 @@ import {
 } from '../utils/skill-preset-findings'
 import {
   type SkillPresetFormValues,
+  effectiveQoverySkills,
   keepEditsSinceSubmit,
   snapshotSkillPresetFormValues,
   toSkillPresetFormValues,
@@ -102,11 +103,12 @@ function EditorSection({
 function fieldValue(values: SkillPresetFormValues, target: FindingTarget) {
   if (target.field === 'description') return values.description
   if (target.field === 'teamContext') return values.teamContext
-  const skill =
-    values.qoverySkills.find(({ skillName }) => skillName === target.skillName) ??
-    values.customSkills.find(({ skillName }) => skillName === target.skillName)
-  if (!skill) return undefined
-  return target.field === 'skillDescription' ? skill.description : skill.content
+  const customSkill = values.customSkills.find(({ skillName }) => skillName === target.skillName)
+  if (customSkill) return target.field === 'skillDescription' ? customSkill.description : customSkill.content
+  const qoverySkill = effectiveQoverySkills(values).find(({ skillName }) => skillName === target.skillName)
+  if (!qoverySkill || qoverySkill.choice === 'DISABLE') return undefined
+  if (target.field === 'skillContent') return qoverySkill.content
+  return qoverySkill.choice === 'REPLACE' ? qoverySkill.description : undefined
 }
 
 /** Tells the admin their Qovery skill changes are kept in the draft but not saved on the lean and empty bases. */
@@ -152,6 +154,9 @@ export interface SkillPresetEditorFormProps {
   preset?: SkillPresetResponse
   presets: SkillPresetResponse[]
   assignees?: SkillPresetAssignees
+  assigneesError?: unknown
+  isAssigneesLoading?: boolean
+  onRetryAssignees?: () => void
   origin?: string
   asTemplate?: boolean
 }
@@ -168,6 +173,9 @@ export function SkillPresetEditorForm({
   preset,
   presets,
   assignees,
+  assigneesError,
+  isAssigneesLoading,
+  onRetryAssignees,
   origin,
   asTemplate = false,
 }: SkillPresetEditorFormProps) {
@@ -220,17 +228,38 @@ export function SkillPresetEditorForm({
   useEffect(() => {
     if (!rejection) return
     const subscription = methods.watch((values) => {
-      const remaining = rejection.findings.filter((finding) => {
-        const target = findingTarget(finding.location)
-        return (
-          !target ||
-          fieldValue(values as SkillPresetFormValues, target) === rejection.snapshot[findingTargetKey(target)]
-        )
+      setRejection((current) => {
+        if (!current) return current
+        const remaining = current.findings.filter((finding) => {
+          const target = findingTarget(finding.location)
+          return (
+            !target ||
+            fieldValue(values as SkillPresetFormValues, target) === current.snapshot[findingTargetKey(target)]
+          )
+        })
+        return remaining.length === current.findings.length ? current : { ...current, findings: remaining }
       })
-      if (remaining.length !== rejection.findings.length) setRejection({ ...rejection, findings: remaining })
     })
     return () => subscription.unsubscribe()
   }, [methods, rejection])
+
+  const renameCustomSkillFindings = (oldName: string, newName: string) => {
+    setRejection((current) => {
+      if (!current) return current
+      const snapshot = { ...current.snapshot }
+      const findings = current.findings.map((finding) => {
+        const target = findingTarget(finding.location)
+        if (!target || !('skillName' in target) || target.skillName !== oldName) return finding
+        const oldKey = findingTargetKey(target)
+        const newKey = findingTargetKey({ ...target, skillName: newName })
+        snapshot[newKey] = current.snapshot[oldKey]
+        delete snapshot[oldKey]
+        const field = target.field === 'skillDescription' ? 'description' : 'content'
+        return { ...finding, location: `${field} of skill '${newName}'` }
+      })
+      return { findings, snapshot }
+    })
+  }
 
   const findings = rejection?.findings ?? []
 
@@ -510,7 +539,11 @@ export function SkillPresetEditorForm({
                     </Section>
                   )}
                   <Section aria-labelledby="section-custom-skills">
-                    <CustomSkillsSection findings={findings} librarySkills={librarySkills} />
+                    <CustomSkillsSection
+                      findings={findings}
+                      librarySkills={librarySkills}
+                      onRename={renameCustomSkillFindings}
+                    />
                   </Section>
                 </div>
               </EditorSection>
@@ -553,6 +586,16 @@ export function SkillPresetEditorForm({
                   <p className="text-sm text-neutral-subtle">
                     Templates are not assigned. Start a new preset from it to give it to roles or members.
                   </p>
+                ) : !assignees && assigneesError && onRetryAssignees ? (
+                  <LoadError
+                    title="Roles and members could not be loaded"
+                    error={assigneesError}
+                    onRetry={onRetryAssignees}
+                  />
+                ) : !assignees && isAssigneesLoading ? (
+                  <div aria-label="Loading roles and members" aria-busy="true">
+                    <LoaderSpinner />
+                  </div>
                 ) : (
                   <AssignmentSection
                     draftId={draftId}
@@ -619,14 +662,24 @@ export function SkillPresetEditorForm({
 function SkillPresetEditorPage() {
   const { organizationId = '', skillPresetId } = useParams({ strict: false })
   const search = useSearch({ strict: false }) as EditorSearch
-  const { data: preset, isLoading: isPresetLoading, error: presetError } = useSkillPreset({ skillPresetId })
+  const {
+    data: preset,
+    isLoading: isPresetLoading,
+    error: presetError,
+    refetch: refetchPreset,
+  } = useSkillPreset({ skillPresetId })
   const {
     data: presets = [],
     isLoading: isListLoading,
     error: listError,
     refetch: refetchList,
   } = useSkillPresets({ organizationId })
-  const { data: assignees } = useSkillPresetAssignees({ organizationId })
+  const {
+    data: assignees,
+    error: assigneesError,
+    isLoading: isAssigneesLoading,
+    refetch: refetchAssignees,
+  } = useSkillPresetAssignees({ organizationId })
 
   useDocumentTitle(`${skillPresetId ? 'Edit' : 'Create'} preset - Skills registry - Agents`)
 
@@ -646,17 +699,12 @@ function SkillPresetEditorPage() {
   if (skillPresetId && !preset) {
     return (
       <Section className="p-8">
-        <Callout.Root color="red" role="alert">
-          <Callout.Icon>
-            <Icon iconName="circle-exclamation" iconStyle="regular" />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextHeading>This preset could not be loaded</Callout.TextHeading>
-            <Callout.TextDescription>
-              {getSkillPresetErrorDetail(presetError) ?? 'It may have been deleted.'}
-            </Callout.TextDescription>
-          </Callout.Text>
-        </Callout.Root>
+        <LoadError
+          title="This preset could not be loaded"
+          error={presetError}
+          onRetry={refetchPreset}
+          note="It may have been deleted."
+        />
       </Section>
     )
   }
@@ -712,6 +760,9 @@ function SkillPresetEditorPage() {
       preset={preset}
       presets={presets}
       assignees={assignees}
+      assigneesError={assigneesError}
+      isAssigneesLoading={isAssigneesLoading}
+      onRetryAssignees={refetchAssignees}
       origin={origin}
       asTemplate={preset?.is_template ?? false}
     />

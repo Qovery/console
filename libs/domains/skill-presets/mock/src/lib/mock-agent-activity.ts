@@ -506,7 +506,7 @@ export function aggregateAgentActivity(
       .slice(0, AGENT_ACTIVITY_LIMITS.maxMembers),
     by_policy_token: byPolicyToken
       .sort((a, b) => b.actions + b.denials - (a.actions + a.denials))
-      .slice(0, AGENT_ACTIVITY_LIMITS.maxSkills),
+      .slice(0, AGENT_ACTIVITY_LIMITS.maxPolicyTokens),
     by_skill: bySkill
       .sort((a, b) => activity(b) - activity(a) || (a.skill_name ?? '').localeCompare(b.skill_name ?? ''))
       .slice(0, AGENT_ACTIVITY_LIMITS.maxSkills),

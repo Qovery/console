@@ -14,6 +14,7 @@ describe('skill presets errors', () => {
     expect(getSkillPresetErrorStatus({ response: { status: 404 } })).toBe(404)
     expect(getSkillPresetErrorStatus({ code: '503' })).toBe(503)
     expect(getSkillPresetErrorStatus('network down')).toBeUndefined()
+    expect(getSkillPresetErrorStatus({ code: 'ERR_NETWORK' })).toBeUndefined()
   })
 
   it('reads the server detail, or the message', () => {

@@ -11,7 +11,7 @@ Every save runs q-core's rule check, then a review by a model on AWS Bedrock. Sa
 
 ## Who can configure
 
-Only organization owners and admins (q-core's `MANAGE_ORGANIZATION_DATA`; custom roles never have it), plus Qovery staff, as on the other owner and admin settings. The page decides from the organization role in the user's token, like the other owner and admin settings, before any request. Anyone else sees a read-only view of what their own agent receives, built from the resolved endpoints.
+Only organization owners and admins (q-core's `MANAGE_ORGANIZATION_DATA`; custom roles never have it), plus Qovery staff, as on the other owner and admin settings. The page decides from the organization role in the user's token, like the other owner and admin settings, before making admin-only requests. Anyone else sees a read-only view of what their own agent receives, built from the resolved endpoints.
 
 ## Tests
 

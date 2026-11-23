@@ -126,6 +126,34 @@ describe('agent activity helpers', () => {
     expect(unusedSkills(usedWithoutLoad)).not.toContain('qovery-signup')
   })
 
+  it('does not report unused skills when the breakdown reaches its limit', () => {
+    const capped = activity({
+      by_skill: Array.from({ length: AGENT_ACTIVITY_LIMITS.maxSkills }, (_, index) => ({
+        skill_name: `skill-${index}`,
+        loads: 1,
+        actions: 0,
+        denials: 0,
+        members: 1,
+      })),
+    })
+
+    expect(unusedSkills(capped)).toEqual([])
+    expect(computeAgentActivityHints(capped)).not.toContainEqual(expect.objectContaining({ kind: 'unused-skills' }))
+  })
+
+  it('does not report loads without actions when filters exclude the related actions', () => {
+    const loadOnly = activity({
+      by_skill: [{ skill_name: 'qovery-deploy', loads: 8, actions: 0, denials: 0, members: 1 }],
+    })
+
+    expect(computeAgentActivityHints(loadOnly, { filtered: true, source: 'SKILL_LOAD' })).not.toContainEqual(
+      expect.objectContaining({ kind: 'loads-without-actions' })
+    )
+    expect(computeAgentActivityHints(loadOnly, { filtered: true, outcome: 'ALLOWED' })).not.toContainEqual(
+      expect.objectContaining({ kind: 'loads-without-actions' })
+    )
+  })
+
   it('counts members from the breakdown, or from the totals once the breakdown hit its cap', () => {
     const { by_member: members, totals } = activity()
     const member = members[0]

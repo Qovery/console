@@ -39,13 +39,12 @@ export function diffRevisions(
   const field = (before: string, after: string) => (before === after ? null : { before, after })
   const beforeSkills = new Map((previous?.skills ?? []).map((skill) => [skill.skill_name, skill]))
   const afterSkills = new Map(current.skills.map((skill) => [skill.skill_name, skill]))
+  const wasTemplate = previous?.is_template ?? false
+  const isTemplate = current.is_template ?? false
   const names = [...new Set([...beforeSkills.keys(), ...afterSkills.keys()])].sort()
 
   return {
-    template:
-      previous && previous.is_template !== current.is_template
-        ? { before: previous.is_template, after: current.is_template }
-        : null,
+    template: wasTemplate !== isTemplate ? { before: wasTemplate, after: isTemplate } : null,
     name: field(previous?.name ?? '', current.name),
     description: field(previous?.description ?? '', current.description),
     base: previous ? field(previous.base, current.base) : null,

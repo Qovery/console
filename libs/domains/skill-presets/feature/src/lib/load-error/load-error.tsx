@@ -17,7 +17,11 @@ export function LoadError({ title, error, onRetry, note }: LoadErrorProps) {
   const status = getSkillPresetErrorStatus(error)
   const detail = getSkillPresetErrorDetail(error)
   const cause =
-    status === undefined || status >= 500 ? 'Qovery could not reach the server.' : 'The server refused the request.'
+    status === undefined
+      ? 'Qovery could not reach the server.'
+      : status >= 500
+        ? 'The server encountered an error.'
+        : 'The server refused the request.'
 
   return (
     <Callout.Root color="red" role="alert">

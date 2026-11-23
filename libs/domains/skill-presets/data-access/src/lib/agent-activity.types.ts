@@ -32,6 +32,7 @@ export const AGENT_ACTIVITY_LIMITS = {
   maxRangeDays: 90,
   maxRecent: 100,
   maxMembers: 500,
+  maxPolicyTokens: 100,
   maxSkills: 100,
   maxTopSkills: 3,
   skillNamePattern: /^[a-z0-9._-]{1,64}$/,
