@@ -127,7 +127,7 @@ describe('AgentActivity', () => {
     await screen.findByTestId('breakdown-member')
 
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Breakdown' }), 'token')
-    const tokens = within(screen.getByTestId('breakdown-token'))
+    const tokens = within(await screen.findByTestId('breakdown-token'))
     expect(tokens.getByRole('button', { name: 'Policy token ci-deployer' })).toBeInTheDocument()
     expect(tokens.getByText('Deleted')).toBeInTheDocument()
     // Older records with no token id: named, not drillable.
@@ -135,7 +135,7 @@ describe('AgentActivity', () => {
     expect(tokens.queryByRole('button', { name: /Unknown policy token/ })).not.toBeInTheDocument()
 
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Breakdown' }), 'skill')
-    expect(within(screen.getByTestId('breakdown-skill')).getByText('No skill (MCP or API)')).toBeInTheDocument()
+    expect(within(await screen.findByTestId('breakdown-skill')).getByText('No skill (MCP or API)')).toBeInTheDocument()
   })
 
   it('filters the whole page to a token from its row, in the URL', async () => {

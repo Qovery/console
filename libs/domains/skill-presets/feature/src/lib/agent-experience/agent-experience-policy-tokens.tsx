@@ -227,7 +227,13 @@ export function AgentExperiencePolicyTokens() {
     actorKind: 'POLICY_TOKEN',
   })
   // Deleted tokens are not in the list, but their calls stay in the audit log.
-  const { data: month, isInitialLoading: isMonthLoading } = useAgentActivity({
+  const {
+    data: month,
+    isInitialLoading: isMonthLoading,
+    isError: isMonthError,
+    error: monthError,
+    refetch: refetchMonth,
+  } = useAgentActivity({
     organizationId,
     scope: 'organization',
     enabled: canManage && canSeeActivity,
@@ -242,6 +248,8 @@ export function AgentExperiencePolicyTokens() {
   const deletedWithActivity = (canSeeActivity ? month?.by_policy_token ?? [] : []).filter(
     (row): row is typeof row & { policy_token_id: string } => row.deleted && Boolean(row.policy_token_id)
   )
+  const hasVisibleTokens = activeTokens.length > 0 || deletedWithActivity.length > 0
+  const historyUnavailable = canSeeActivity && isMonthError
   const weekRange = {
     from: new Date(to.getTime() - 7 * DAY_MS).toISOString(),
     to: to.toISOString(),
@@ -260,7 +268,18 @@ export function AgentExperiencePolicyTokens() {
           </ExternalLink>
         </>
       }
-      action={canManage && <CreatePolicyTokenButton organizationId={organizationId} />}
+      action={
+        canManage && (
+          <div className="flex flex-wrap items-center gap-2">
+            {historyUnavailable && hasVisibleTokens && (
+              <Button type="button" size="md" variant="outline" color="neutral" onClick={() => refetchMonth()}>
+                Retry token history
+              </Button>
+            )}
+            <CreatePolicyTokenButton organizationId={organizationId} />
+          </div>
+        )
+      }
     >
       {canManage && !isRoleLoading && Boolean(error) && (
         <LoadError
@@ -281,7 +300,9 @@ export function AgentExperiencePolicyTokens() {
         <div aria-busy="true" aria-label="Loading policy tokens">
           <Skeleton height={120} className="w-full" show />
         </div>
-      ) : activeTokens.length === 0 && deletedWithActivity.length === 0 ? (
+      ) : !hasVisibleTokens && historyUnavailable ? (
+        <LoadError title="Policy token history is unavailable" error={monthError} onRetry={refetchMonth} />
+      ) : !hasVisibleTokens ? (
         <EmptyState
           icon="key"
           title="No policy token yet"

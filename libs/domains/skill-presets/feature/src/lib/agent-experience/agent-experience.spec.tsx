@@ -270,6 +270,24 @@ describe('AgentExperiencePolicyTokens', () => {
     expect(screen.queryByText('No calls')).not.toBeInTheDocument()
   })
 
+  it('offers a history retry instead of showing an empty list when history fails', async () => {
+    useScenario('agent-experience-empty')
+    const refetch = jest.fn()
+    jest.spyOn(useAgentActivityModule, 'useAgentActivity').mockReturnValue({
+      data: undefined,
+      isInitialLoading: false,
+      isError: true,
+      error: new Error('Unavailable'),
+      refetch,
+    } as never)
+    const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Policy token history is unavailable')
+    expect(screen.queryByText('No policy token yet')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(refetch).toHaveBeenCalledTimes(1)
+  })
+
   it('does not show no calls while the usage loads', async () => {
     useScenario('agent-experience-active')
     jest
