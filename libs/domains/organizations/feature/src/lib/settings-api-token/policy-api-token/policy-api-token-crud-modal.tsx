@@ -216,15 +216,17 @@ function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudModalProp
 export interface PolicyApiTokenCrudModalProps {
   onClose: () => void
   organizationId: string
+  /** Starts the form from an example (name, description, policy), for example from Agents. */
+  defaultValues?: Partial<Pick<OrganizationPolicyApiTokenCreateRequest, 'name' | 'description' | 'opa_policy'>>
 }
 
-export function PolicyApiTokenCrudModal({ organizationId, onClose }: PolicyApiTokenCrudModalProps) {
+export function PolicyApiTokenCrudModal({ organizationId, onClose, defaultValues }: PolicyApiTokenCrudModalProps) {
   const { mutateAsync: createPolicyApiToken } = useCreatePolicyApiToken()
   const { data: availableRoles = [], isFetched: isFetchedAvailableRoles } = useAvailableRoles({ organizationId })
   const { openModal, closeModal, enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
 
-  const methods = useForm<OrganizationPolicyApiTokenCreateRequest>({ mode: 'onChange' })
+  const methods = useForm<OrganizationPolicyApiTokenCreateRequest>({ mode: 'onChange', defaultValues })
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 

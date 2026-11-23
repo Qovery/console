@@ -133,12 +133,12 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
   const dataPoint = payload[0]?.payload
 
   return (
-    <div ref={ref} className="rounded-md bg-surface-neutral-solid shadow-lg">
-      <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-strong p-3 pb-2">
-        <span className="text-xs text-neutralInvert">{title}</span>
+    <div ref={ref} className="rounded-md bg-surface-neutralInvert-component shadow-lg">
+      <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutralInvert px-3 py-2">
+        <span className="text-xs font-medium text-neutralInvert">{title}</span>
         <span className="text-xs text-neutralInvert-subtle">{dataPoint?.fullTime}</span>
       </div>
-      <div className="space-y-1 p-3 pt-0">
+      <div className="space-y-1 px-2 pb-2">
         {(maxItems ? filteredPayload.slice(0, maxItems) : filteredPayload).map((entry: TooltipPayloadItem) => {
           const seriesKey = typeof entry.dataKey === 'string' ? entry.dataKey : String(entry.dataKey)
           const displayName = formatLabel ? formatLabel(seriesKey) : seriesKey

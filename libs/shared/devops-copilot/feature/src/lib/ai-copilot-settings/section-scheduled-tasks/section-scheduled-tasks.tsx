@@ -47,10 +47,10 @@ export function SectionScheduledTasks({ tasks, isLoading, onToggleTask, onDelete
   return (
     <Section className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <Heading>Scheduled Tasks</Heading>
+        <Heading>Scheduled tasks</Heading>
         <p className="text-xs text-neutral-subtle">Recurring tasks configured for your organization</p>
       </div>
-      <BlockContent title="Tasks List" classNameContent="p-0">
+      <BlockContent title="Tasks list" classNameContent="p-0">
         {isLoading ? (
           <div className="flex justify-center p-5">
             <LoaderSpinner className="w-5" />
