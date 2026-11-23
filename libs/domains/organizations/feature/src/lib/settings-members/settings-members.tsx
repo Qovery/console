@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import clsx from 'clsx'
 import {
   type InviteMember,
   type InviteMemberRequest,
@@ -25,6 +26,7 @@ import {
   Button,
   Callout,
   Icon,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
   Section,
   Skeleton as SkeletonPrimitive,
   TableFilter,
@@ -59,7 +61,11 @@ const Skeleton = () => {
           {columnSizes.map((columnSize, index) => (
             <Table.ColumnHeaderCell
               key={columnSize}
-              className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''}`}
+              className={clsx(
+                'border-neutral text-xs font-medium text-neutral',
+                index === 0 && 'border-r',
+                index >= 2 && 'max-md:hidden'
+              )}
               style={{ width: columnSize }}
             >
               <SkeletonPrimitive height={16} width={index === 0 ? 140 : 72} show={true} />
@@ -85,10 +91,10 @@ const Skeleton = () => {
             <Table.Cell className="px-4" style={{ width: columnSizes[1] }}>
               <SkeletonPrimitive className="shrink-0" width={176} height={30} show={true} />
             </Table.Cell>
-            <Table.Cell className="px-4" style={{ width: columnSizes[2] }}>
+            <Table.Cell className="px-4 max-md:hidden" style={{ width: columnSizes[2] }}>
               <SkeletonPrimitive className="shrink-0" width={64} height={16} show={true} />
             </Table.Cell>
-            <Table.Cell className="px-4" style={{ width: columnSizes[3] }}>
+            <Table.Cell className="px-4 max-md:hidden" style={{ width: columnSizes[3] }}>
               <SkeletonPrimitive className="shrink-0" width={64} height={16} show={true} />
             </Table.Cell>
           </Table.Row>
@@ -241,7 +247,11 @@ const MembersTable = (props: MembersTableProps) => {
               {headerGroup.headers.map((header, index) => (
                 <Table.ColumnHeaderCell
                   key={header.id}
-                  className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''}`}
+                  className={clsx(
+                    'border-neutral text-xs font-medium text-neutral',
+                    index === 0 && 'border-r',
+                    index >= 2 && 'max-md:hidden'
+                  )}
                   style={{ width: `${columnSizes[index]}%` }}
                 >
                   {header.isPlaceholder ? null : index === 0 ? (
@@ -293,7 +303,11 @@ const MembersTable = (props: MembersTableProps) => {
                 {headerGroup.headers.map((header, index) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
-                    className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''}`}
+                    className={clsx(
+                      'border-neutral text-xs font-medium text-neutral',
+                      index === 0 && 'border-r',
+                      index >= 3 && 'max-md:hidden'
+                    )}
                     style={{ width: `${columnSizes[index]}%` }}
                   >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
@@ -468,7 +482,7 @@ export function SettingsMembers() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Manage your team"
@@ -480,7 +494,7 @@ export function SettingsMembers() {
           />
 
           {canAddMember && (
-            <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
+            <Button className={SETTINGS_HEADER_ACTION_CLASS_NAME} size="md" onClick={onAddMember}>
               <Icon iconName="circle-plus" iconStyle="regular" />
               Add member
             </Button>

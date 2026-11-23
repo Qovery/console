@@ -229,7 +229,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     <div className="p-4">
                       {props.fromDetail ? (
                         <InputToggle
-                          className="max-w-[70%]"
+                          className="sm:max-w-[70%]"
                           name={field.name}
                           value={field.value}
                           onChange={(e) => {
@@ -256,7 +256,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           small
                         />
                       ) : (
-                        <p className="mb-2 max-w-[70%] text-sm text-neutral-subtle">
+                        <p className="mb-2 text-sm text-neutral-subtle sm:max-w-[70%]">
                           Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.
                         </p>
                       )}
@@ -270,7 +270,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     <img
                       src={KarpenterImage}
                       alt="Karpenter"
-                      className="pointer-events-none absolute right-0 top-0 h-[140px] select-none"
+                      className="pointer-events-none absolute right-0 top-0 h-[140px] select-none max-sm:hidden"
                     />
                   </div>
                   <AnimatePresence>
@@ -406,7 +406,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                     />
                                   )}
                                 />
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                   <Controller
                                     name="karpenter.disk_iops"
                                     control={control}
@@ -536,7 +536,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           />
                         )}
                       />
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <Controller
                           name="karpenter.qovery_node_pools.gpu_override.disk_iops"
                           control={control}
@@ -691,7 +691,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 )}
               />
               {props.cloudProvider === 'AWS' && (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Controller
                     name="disk_iops"
                     control={control}

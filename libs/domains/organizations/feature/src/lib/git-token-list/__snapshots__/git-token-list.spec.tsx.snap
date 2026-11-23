@@ -21,10 +21,10 @@ exports[`GitTokenList should match snapshot 1`] = `
       >
         <ul>
           <li
-            class="flex items-center justify-between border-b border-neutral p-4 last:border-0"
+            class="flex items-center justify-between gap-3 border-b border-neutral p-4 last:border-0"
           >
             <div
-              class="flex items-center"
+              class="flex min-w-0 items-center"
             >
               <svg
                 class="svg-icon text-neutral-subtle shrink-0"
@@ -41,15 +41,19 @@ exports[`GitTokenList should match snapshot 1`] = `
                 />
               </svg>
               <div
-                class="ml-4"
+                class="ml-4 min-w-0"
               >
                 <p
-                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral"
+                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral max-md:flex-wrap"
                 >
-                  token1
+                  <span
+                    class="min-w-0 max-md:break-all"
+                  >
+                    token1
+                  </span>
                 </p>
                 <p
-                  class="text-xs text-neutral-subtle"
+                  class="flex flex-wrap gap-x-3 text-xs text-neutral-subtle"
                 >
                   <span
                     class="inline-block"
@@ -59,7 +63,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                     1 month
                   </span>
                   <span
-                    class="ml-3 inline-block"
+                    class="inline-block"
                     title="Tue, 31 Oct 2023 10:48:26 GMT"
                   >
                     Created since 
@@ -68,7 +72,9 @@ exports[`GitTokenList should match snapshot 1`] = `
                 </p>
               </div>
             </div>
-            <div>
+            <div
+              class="flex shrink-0"
+            >
               <button
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-sm h-8 gap-x-1.5 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative mr-2"
                 disabled=""
@@ -102,10 +108,10 @@ exports[`GitTokenList should match snapshot 1`] = `
             </div>
           </li>
           <li
-            class="flex items-center justify-between border-b border-neutral p-4 last:border-0"
+            class="flex items-center justify-between gap-3 border-b border-neutral p-4 last:border-0"
           >
             <div
-              class="flex items-center"
+              class="flex min-w-0 items-center"
             >
               <svg
                 class="shrink-0 "
@@ -133,15 +139,19 @@ exports[`GitTokenList should match snapshot 1`] = `
                 />
               </svg>
               <div
-                class="ml-4"
+                class="ml-4 min-w-0"
               >
                 <p
-                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral"
+                  class="mb-1 flex items-center gap-2 text-xs font-medium text-neutral max-md:flex-wrap"
                 >
-                  token2
+                  <span
+                    class="min-w-0 max-md:break-all"
+                  >
+                    token2
+                  </span>
                 </p>
                 <p
-                  class="text-xs text-neutral-subtle"
+                  class="flex flex-wrap gap-x-3 text-xs text-neutral-subtle"
                 >
                   <span
                     class="inline-block"
@@ -151,7 +161,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                     1 month
                   </span>
                   <span
-                    class="ml-3 inline-block"
+                    class="inline-block"
                     title="Tue, 31 Oct 2023 10:48:26 GMT"
                   >
                     Created since 
@@ -160,7 +170,9 @@ exports[`GitTokenList should match snapshot 1`] = `
                 </p>
               </div>
             </div>
-            <div>
+            <div
+              class="flex shrink-0"
+            >
               <button
                 class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-2 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-sm h-8 gap-x-1.5 justify-center px-0 rounded-md w-8 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative mr-2"
                 disabled=""

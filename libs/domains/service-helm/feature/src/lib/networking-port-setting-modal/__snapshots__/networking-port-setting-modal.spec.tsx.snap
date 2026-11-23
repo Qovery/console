@@ -340,7 +340,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class=""
                 >
                   <label
-                    class="input__label translate-y-[7px] text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm"
                     for="Service name"
                   >
                     Service name
@@ -373,7 +373,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class=""
                 >
                   <label
-                    class="input__label translate-y-[7px] text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm"
                     for="Service port"
                   >
                     Service port
@@ -504,7 +504,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class="pointer-events-none"
                 >
                   <label
-                    class="input__label translate-y-[7px] text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm"
                     for="External port"
                   >
                     External port
@@ -538,7 +538,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class=""
                 >
                   <label
-                    class="input__label translate-y-[7px] text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm"
                     for="Namespace (optional)"
                   >
                     Namespace (optional)
@@ -572,7 +572,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                     class=""
                   >
                     <label
-                      class="input__label translate-y-[7px] text-sm !transition-none"
+                      class="input__label translate-y-[7px] text-sm"
                       for="Port name"
                     >
                       Port name

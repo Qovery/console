@@ -1,10 +1,11 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { type Terraform } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputText, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -118,7 +119,7 @@ const TerraformArgumentsSettingsContent = ({ service }: { service: Terraform }) 
 
   return (
     <FormProvider {...methods}>
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading
           title="Terraform arguments"
           description="Configure the arguments passed to each Terraform command."
@@ -172,7 +173,7 @@ const TerraformArgumentsSettingsContent = ({ service }: { service: Terraform }) 
             ))}
           </Section>
 
-          <div className="flex justify-end">
+          <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button
               type="submit"
               size="lg"

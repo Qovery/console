@@ -92,7 +92,7 @@ function PreviewCode() {
       <PreviewCodeHeader title={title} description={description} language={language} code={code} />
 
       <div className="min-h-0 flex-1">
-        <CodeEditor language={language} value={code} height="calc(100vh - 89px)" readOnly />
+        <CodeEditor language={language} value={code} height="calc(100dvh - 89px)" readOnly />
       </div>
     </div>
   )

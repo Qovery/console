@@ -31,6 +31,7 @@ import {
   TablePrimitives,
   Tooltip,
   Truncate,
+  deploymentListMobileColumnClassName,
   getTriggerAction,
   truncateText,
   useModalConfirmation,
@@ -116,6 +117,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   const columns = useMemo(
     () => [
       columnHelper.accessor('auditing_data.created_at', {
+        id: 'created_at',
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
@@ -157,7 +159,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                         <CopyToClipboardButtonIcon
                           content={data.identifier.execution_id}
                           tooltipContent="Copy execution id"
-                          className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                          className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                           iconClassName="text-xs"
                         />
                       </span>
@@ -544,13 +546,13 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
+      <Table.Root className="w-full table-fixed overflow-x-scroll text-ssm md:min-w-[1080px]">
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header) => (
                 <Table.ColumnHeaderCell
-                  className="font-medium"
+                  className={clsx('font-medium', deploymentListMobileColumnClassName(header.column.id))}
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -605,6 +607,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
+                    className={deploymentListMobileColumnClassName(cell.column.id)}
                     style={{
                       width: `${cell.column.getSize()}px`,
                     }}

@@ -226,6 +226,7 @@ export function ContainerRegistryForm({
               onChange={field.onChange}
               value={field.value}
               label="Registry url"
+              inputMode="url"
               error={error?.message}
               hint={match(watchKind)
                 .with(

@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -13,7 +14,15 @@ import {
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Button, Callout, Icon, InputToggle, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Callout,
+  Icon,
+  InputToggle,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
+  Section,
+} from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
@@ -42,7 +51,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="Preview environments" />
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           {shouldDisplayArgoCdPreviewWarning && (
@@ -129,8 +138,14 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
               )}
             </div>
           </BlockContent>
-          <div className="flex justify-end">
-            <Button className="mb-6" disabled={!formState.isValid} size="lg" loading={loading} type="submit">
+          <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
+            <Button
+              className="mb-6 max-md:mb-0"
+              disabled={!formState.isValid}
+              size="lg"
+              loading={loading}
+              type="submit"
+            >
               Save
             </Button>
           </div>

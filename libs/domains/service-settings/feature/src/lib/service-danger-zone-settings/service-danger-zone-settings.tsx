@@ -34,7 +34,7 @@ export function ServiceDangerZoneSettings({ onDeleteSuccess }: ServiceDangerZone
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <div className="max-w-content-with-navigation-left px-8 pb-8 pt-6">
+      <div className="max-w-content-with-navigation-left px-4 pb-8 pt-6 md:px-8">
         <BlockContentDelete
           title="Delete service"
           ctaLabel="Delete service"

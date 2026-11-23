@@ -5,16 +5,19 @@ import { twMerge } from '@qovery/shared/util-js'
 import Button from '../button/button'
 import Icon from '../icon/icon'
 
-const bannerVariants = cva('flex h-10 items-center justify-center text-sm font-medium', {
-  variants: {
-    color: {
-      brand: ['bg-surface-brand-component', 'text-brand'],
-      yellow: ['bg-surface-warning-component', 'text-warning'],
-      purple: ['bg-surface-accent1-component', 'text-accent1'],
-      red: ['bg-surface-negative-component', 'text-negative'],
+const bannerVariants = cva(
+  'flex h-10 items-center justify-center text-sm font-medium max-md:h-auto max-md:min-h-10 max-md:py-1.5',
+  {
+    variants: {
+      color: {
+        brand: ['bg-surface-brand-component', 'text-brand'],
+        yellow: ['bg-surface-warning-component', 'text-warning'],
+        purple: ['bg-surface-accent1-component', 'text-accent1'],
+        red: ['bg-surface-negative-component', 'text-negative'],
+      },
     },
-  },
-})
+  }
+)
 type BannerDivProps = Omit<ComponentPropsWithoutRef<'div'>, 'color'>
 
 export type BannerColor = NonNullable<VariantProps<typeof bannerVariants>['color']>
