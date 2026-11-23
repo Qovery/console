@@ -8,18 +8,31 @@ export interface SecurityFindingsSummaryProps {
   findings: SkillPresetFinding[]
 }
 
-const focusField = (finding: SkillPresetFinding) => {
-  const target = findingTarget(finding.location)
-  if (!target) return
-  const field = document.getElementById(findingFieldId(target))
-  const editSkill = field?.closest('li')?.querySelector<HTMLButtonElement>('[data-edit-skill]')
-  if (editSkill) {
-    editSkill.click()
-    return
-  }
+const focusInside = (field: HTMLElement | null) => {
   scrollToElement(field)
   // Monaco renders a textarea for keyboard input: focus it so screen readers land in the field.
   field?.querySelector<HTMLElement>('textarea, input')?.focus({ preventScroll: true })
+}
+
+const focusField = (finding: SkillPresetFinding) => {
+  const target = findingTarget(finding.location)
+  if (!target) return
+  const fieldId = findingFieldId(target)
+  const field = document.getElementById(fieldId)
+  const editSkill = field?.closest('li')?.querySelector<HTMLButtonElement>('[data-edit-skill]')
+  if (!editSkill) {
+    focusInside(field)
+    return
+  }
+  // A custom skill is edited in a modal: open it, then focus the reported field once it renders.
+  editSkill.click()
+  let frames = 0
+  const focusInModal = () => {
+    const inModal = document.querySelector<HTMLElement>(`[role="dialog"] [id="${CSS.escape(fieldId)}"]`)
+    if (inModal) focusInside(inModal)
+    else if (++frames < 20) requestAnimationFrame(focusInModal)
+  }
+  requestAnimationFrame(focusInModal)
 }
 
 /**

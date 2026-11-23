@@ -2,7 +2,7 @@ import { useParams, useSearch } from '@tanstack/react-router'
 import { type ReactNode, useState } from 'react'
 import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
 import { toast } from '@qovery/shared/ui'
-import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { toSkillPresetFormValues } from '../utils/skill-preset-form'
 import { SkillPresetEditor, SkillPresetEditorForm } from './skill-preset-editor'
 
@@ -206,6 +206,41 @@ describe('SkillPresetEditorForm', () => {
     // The summary takes the keyboard to the field to fix.
     await userEvent.click(within(summary).getByRole('button', { name: 'Team context, line 2' }))
     expect(screen.getByRole('textbox', { name: 'Team context' })).toHaveFocus()
+  })
+
+  it('opens the custom skill and focuses the reported field from the summary', async () => {
+    mockCreateSkillPreset.mockRejectedValue(
+      buildSkillPresetApiError(422, 'Rejected', {
+        findings: [
+          {
+            rule_id: 'dump-secrets',
+            location: "content of skill 'runbook-a'",
+            line: 1,
+            reason: 'Asks the agent to print or collect secrets',
+          },
+        ],
+      })
+    )
+    const { userEvent } = renderWithProviders(
+      <SkillPresetEditorForm
+        organizationId="organization-1"
+        initialValues={{
+          ...toSkillPresetFormValues(),
+          name: 'Runbooks',
+          customSkills: [{ skillName: 'runbook-a', description: 'Runbook. Use when on call.', content: 'Steps.' }],
+        }}
+        presets={[]}
+        assignees={assignees}
+      />
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+
+    const summary = await screen.findByRole('alert')
+    await userEvent.click(within(summary).getByRole('button', { name: /runbook-a/ }))
+
+    const dialog = await screen.findByRole('dialog')
+    const content = within(dialog).getByRole('textbox', { name: 'Content' })
+    await waitFor(() => expect(content).toHaveFocus())
   })
 
   it('clears a finding once its field is edited', async () => {
