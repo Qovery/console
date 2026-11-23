@@ -18,6 +18,18 @@ describe('computeAgentExperienceSetup', () => {
     expect(setup.steps.find(({ id }) => id === 'connect')?.done).toBe(true)
   })
 
+  it('counts an action alone as connected', () => {
+    const setup = computeAgentExperienceSetup({ ...nothing, actions: 1 })
+    expect(setup.state).toBe('partial')
+    expect(setup.steps.find(({ id }) => id === 'connect')?.done).toBe(true)
+  })
+
+  it('counts a denial alone as connected', () => {
+    const setup = computeAgentExperienceSetup({ ...nothing, denials: 1 })
+    expect(setup.state).toBe('partial')
+    expect(setup.steps.find(({ id }) => id === 'connect')?.done).toBe(true)
+  })
+
   it('asks to connect an agent last', () => {
     expect(computeAgentExperienceSetup({ ...nothing, presets: 1, policyTokens: 1 }).nextStep).toBe('connect')
   })
