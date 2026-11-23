@@ -285,6 +285,12 @@ export function AgentExperiencePolicyTokens() {
         >
           <span className="flex items-center gap-2">
             <CreatePolicyTokenButton organizationId={organizationId} secondary />
+            <ExternalLink
+              href="https://www.qovery.com/docs/configuration/organization/policy-examples/overview"
+              size="sm"
+            >
+              Policy examples
+            </ExternalLink>
           </span>
         </EmptyState>
       ) : (

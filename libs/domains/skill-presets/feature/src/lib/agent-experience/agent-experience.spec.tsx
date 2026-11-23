@@ -11,7 +11,11 @@ import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import * as useAgentActivityModule from '../hooks/use-agent-activity/use-agent-activity'
 import * as useCanManageSkillPresetsModule from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
+import * as copilotStatus from '../hooks/use-copilot-status/use-copilot-status'
+import { AgentExperienceCopilot, OnOffBadge, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
+import { AgentExperienceNav } from './agent-experience-nav'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
+import { ConnectAgentModal } from './connect-agent-modal'
 
 // The pages go through the real hooks and the in-browser mock API.
 jest.mock('@qovery/shared/util-node-env', () => ({
@@ -34,6 +38,11 @@ jest.mock('@tanstack/react-router', () => ({
 // The pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
 configure({ asyncUtilTimeout: 5000 })
 
+jest.mock('posthog-js/react', () => ({
+  ...jest.requireActual('posthog-js/react'),
+  useFeatureFlagEnabled: () => true,
+}))
+
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
   resetSkillPresetsMock()
@@ -47,6 +56,7 @@ beforeAll(() => {
   ]
 })
 afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
+afterEach(() => jest.restoreAllMocks())
 
 beforeEach(() => {
   window.sessionStorage.clear()
@@ -56,7 +66,80 @@ beforeEach(() => {
   jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
 })
 
-afterEach(() => jest.restoreAllMocks())
+describe('AgentExperienceCopilot', () => {
+  it('shows one combined status and the Copilot settings to admins', async () => {
+    useScenario('agent-experience-active')
+    renderWithProviders(<AgentExperienceCopilot />)
+
+    // The capabilities live in the docs, behind the header's help button.
+    expect(screen.queryByRole('heading', { name: 'What the Copilot does' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Need help here?' })).toBeInTheDocument()
+    expect(screen.getByText('Preview')).toBeInTheDocument()
+    expect(await within(screen.getByTestId('copilot-state')).findByText('AI on, Copilot read-only')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
+  })
+
+  it('offers Turn on AI when AI is off', async () => {
+    useScenario('ai-features-off')
+    renderWithProviders(<AgentExperienceCopilot />)
+
+    expect(await screen.findByRole('heading', { name: 'Turn on AI' })).toBeInTheDocument()
+    expect(within(screen.getByTestId('copilot-state')).getByText('Off')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Turn on AI' })).toBeInTheDocument()
+  })
+
+  it('opens the one-step Turn on AI dialog from the Copilot page', async () => {
+    useScenario('ai-features-off')
+    const { userEvent } = renderWithProviders(<AgentExperienceCopilot />)
+    await userEvent.click(await screen.findByRole('button', { name: 'Turn on AI' }))
+    const dialog = await screen.findByRole('dialog')
+    expect(
+      await within(dialog).findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
+    ).toBeInTheDocument()
+    expect(within(dialog).getByTestId('submit-button')).toBeDisabled()
+  })
+
+  it('names every state of AI features and the Copilot', () => {
+    expect(aiStatusLabel(true, true, true)).toBe('AI on, Copilot read-only')
+    expect(aiStatusLabel(true, true, false)).toBe('AI on, Copilot read-write')
+    expect(aiStatusLabel(true, false, true)).toBe('AI features on, Copilot off')
+    expect(aiStatusLabel(false, true, true)).toBe('AI features off, Copilot on')
+    expect(aiStatusLabel(false, false, true)).toBe('Off')
+    expect(copilotStateLabel(true, false)).toBe('On, read-write')
+    expect(copilotStateLabel(false, true)).toBe('Off')
+  })
+
+  it('names a partial state on the off badge', () => {
+    renderWithProviders(<OnOffBadge on={false} label={aiStatusLabel(true, false, true)} />)
+    expect(screen.getByText('AI features on, Copilot off')).toBeInTheDocument()
+  })
+
+  it('says the status is unknown and offers no switch when the Copilot config fails to load', async () => {
+    useScenario('ai-features-off')
+    const spy = jest.spyOn(copilotStatus, 'useCopilotStatus').mockReturnValue({
+      enabled: false,
+      readOnly: true,
+      isLoading: false,
+      error: new Error('Network Error'),
+    } as ReturnType<typeof copilotStatus.useCopilotStatus>)
+    renderWithProviders(<AgentExperienceCopilot />)
+
+    expect(await screen.findByTestId('copilot-error')).toHaveTextContent('Unable to load the Copilot status.')
+    expect(within(screen.getByTestId('copilot-state')).getByText('Unknown')).toBeInTheDocument()
+    expect(within(screen.getByTestId('copilot-state')).queryByText('Off')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
+    spy.mockRestore()
+  })
+
+  it('shows members the state only, with no switch', async () => {
+    useScenario('member')
+    renderWithProviders(<AgentExperienceCopilot />)
+
+    expect(await screen.findByTestId('copilot-member-note')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Opt-in to Copilot')).not.toBeInTheDocument()
+  })
+})
 
 describe('AgentExperiencePolicyTokens', () => {
   it('shows each token’s last 7 days, flags tokens with no expiry, and keeps deleted tokens as greyed rows', async () => {
@@ -155,6 +238,7 @@ describe('AgentExperiencePolicyTokens', () => {
     expect(await screen.findByText('No policy token yet')).toBeInTheDocument()
     // The header action and the empty-state action.
     expect(screen.getAllByRole('button', { name: /Create policy token/ })).toHaveLength(2)
+    expect(screen.getByRole('link', { name: 'Policy examples' })).toBeInTheDocument()
   })
 
   it('tells other members who manages tokens', async () => {
@@ -183,5 +267,76 @@ describe('AgentExperiencePolicyTokens', () => {
     expect(await screen.findByRole('menuitem', { name: 'View policy' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'Delete token' })).toBeInTheDocument()
     expect(screen.queryByRole('menuitem', { name: 'See activity' })).not.toBeInTheDocument()
+  })
+})
+
+describe('AgentExperienceNav', () => {
+  it('has three entries, then Settings with policy tokens, for admins only', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent, unmount } = renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Settings')).toBeInTheDocument()
+    for (const label of ['Skills registry', 'Automations', 'Activity']) {
+      expect(screen.getByText(label)).toBeInTheDocument()
+    }
+    // Connect is a popup, not a menu entry, and there is no Agents overview. Policy tokens sit in Settings.
+    expect(screen.queryByText('Connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('Overview')).not.toBeInTheDocument()
+    expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Settings' }))
+    const settings = within(
+      screen.getByText('Policy tokens').closest('[data-testid=sidebar-group-content]') as HTMLElement
+    )
+    expect(settings.getByText('Policy tokens')).toBeInTheDocument()
+    expect(settings.getByText('Copilot settings')).toBeInTheDocument()
+    unmount()
+
+    useScenario('member')
+    renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Activity')).toBeInTheDocument()
+    expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
+    expect(screen.queryByText('Settings')).not.toBeInTheDocument()
+  })
+
+  it('opens Settings by itself on the policy tokens page', async () => {
+    useScenario('agent-experience-active')
+    jest
+      .mocked(useLocation)
+      .mockReturnValue({ pathname: '/organization/organization-1/agent-experience/policy-tokens' } as never)
+    renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Policy tokens')).toBeInTheDocument()
+  })
+})
+
+describe('ConnectAgentModal', () => {
+  it('gives the commands to copy for the skills, the CLI and the MCP server, in tabs', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<ConnectAgentModal onClose={jest.fn()} />)
+    expect(screen.getByRole('heading', { name: 'Connect an agent' })).toBeInTheDocument()
+    expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
+    expect(
+      within(screen.getByRole('group', { name: 'Copy the skills install command' })).getByRole('button', {
+        name: 'Copy',
+      })
+    ).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('CLI'))
+    expect(screen.getByText('curl -fsSL https://get.qovery.com | bash')).toBeInTheDocument()
+    expect(screen.getByText('qovery auth')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('MCP server'))
+    expect(screen.getByText(/claude mcp add --transport http qovery/)).toBeInTheDocument()
+
+    // A top-level TOML key below a [section] header would belong to that section and be ignored.
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Coding agent' }), 'codex')
+    expect(
+      screen.getByText('Add this line at the top of ~/.codex/config.toml, above any [section]')
+    ).toBeInTheDocument()
+  })
+
+  it('closes on Close', async () => {
+    const onClose = jest.fn()
+    const { userEvent } = renderWithProviders(<ConnectAgentModal onClose={onClose} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(onClose).toHaveBeenCalled()
   })
 })
