@@ -202,8 +202,9 @@ export function SkillPresetEditorForm({
 
   const draftId = preset?.id ?? NEW_PRESET_ID
   const otherPresets = useMemo(() => presets.filter(({ id }) => id !== draftId), [presets, draftId])
-  const flatErrors = flattenFieldErrors(errors)
-  const errorCount = Object.keys(flatErrors).length
+  // The total text limit belongs to no single field: it is shown on its own, next to Save.
+  const { totalText: totalTextError, ...fieldErrors } = flattenFieldErrors(errors)
+  const errorCount = Object.keys(fieldErrors).length
   const changedElsewhere =
     preset !== undefined &&
     (savedElsewhere ||
@@ -562,6 +563,12 @@ export function SkillPresetEditorForm({
           </div>
 
           <div className="mt-4 flex max-w-content-with-navigation-left items-center justify-end gap-3 pb-8">
+            {isSubmitted && totalTextError && (
+              <span className="flex items-center gap-1.5 text-sm text-negative" data-testid="total-text-error">
+                <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
+                {totalTextError}
+              </span>
+            )}
             {isSubmitted && errorCount > 0 && (
               <span className="flex items-center gap-1.5 text-sm text-negative">
                 <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />

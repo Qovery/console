@@ -445,6 +445,10 @@ describe('SkillPresetEditorForm', () => {
     expect(screen.queryByTestId('total-text-counter')).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
     expect(mockCreateSkillPreset).not.toHaveBeenCalled()
+    expect(screen.getByTestId('total-text-error')).toHaveTextContent(
+      'This preset holds 240,104 characters of text, over the 200,000 a model can review.'
+    )
+    expect(screen.queryByText(/needs? a change/)).not.toBeInTheDocument()
   })
 
   it('blocks a 51st skill with a toast and no permanent counter', async () => {
