@@ -158,7 +158,7 @@ describe('AgentExperienceCopilot', () => {
     const { userEvent } = renderWithProviders(<AgentExperienceCopilot />)
 
     expect(await within(screen.getByTestId('copilot-state')).findByText('AI on, Copilot read-only')).toBeInTheDocument()
-    expect(await screen.findByTestId('copilot-preview-note')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Scheduled tasks' })).toBeInTheDocument()
     const alert = within(screen.getByTestId('copilot-error')).getByRole('alert')
     expect(alert).toHaveTextContent('Unable to refresh the Copilot status.')
     await userEvent.click(within(alert).getByRole('button', { name: 'Try again' }))

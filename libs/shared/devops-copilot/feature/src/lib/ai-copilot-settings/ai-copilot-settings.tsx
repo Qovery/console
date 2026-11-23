@@ -2,7 +2,7 @@ import { type Organization } from 'qovery-typescript-axios'
 import { useAuth } from '@qovery/shared/auth'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserAccount } from '@qovery/shared/iam/feature'
-import { Badge, Icon, Section } from '@qovery/shared/ui'
+import { Badge, Section } from '@qovery/shared/ui'
 import { useAICopilotConfig } from '../hooks/use-ai-copilot-config/use-ai-copilot-config'
 import { useAICopilotRecurringTasks } from '../hooks/use-ai-copilot-recurring-tasks/use-ai-copilot-recurring-tasks'
 import { useDeleteAICopilotRecurringTask } from '../hooks/use-delete-ai-copilot-recurring-task/use-delete-ai-copilot-recurring-task'
@@ -66,10 +66,6 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
           />
         )}
         <div className="max-w-content-with-navigation-left">
-          <p className="mb-4 flex items-center gap-1.5 text-xs text-neutral-subtle" data-testid="copilot-preview-note">
-            <Icon iconName="flask" iconStyle="regular" aria-hidden="true" />
-            Functionality may change. Billing terms are not final and will be communicated before any charges apply.
-          </p>
           {!isEnabled && !isLoadingConfig ? (
             <SectionAICopilotOptIn
               organization={organization}

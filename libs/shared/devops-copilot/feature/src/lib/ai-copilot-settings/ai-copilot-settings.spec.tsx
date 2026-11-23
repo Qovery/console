@@ -33,17 +33,16 @@ describe('AICopilotSettings', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('shows a Preview badge next to its title, and a short note instead of a callout', () => {
+  it('shows a Preview badge next to its title', () => {
     renderWithProviders(<AICopilotSettings {...props} />)
     expect(screen.getByRole('heading', { name: /Copilot configuration/ })).toBeInTheDocument()
     expect(screen.getByText('Preview')).toBeInTheDocument()
-    expect(screen.getByTestId('copilot-preview-note')).toHaveTextContent('Functionality may change.')
   })
 
   it('leaves the page title to its host when embedded', () => {
     renderWithProviders(<AICopilotSettings {...props} embedded />)
     expect(screen.queryByRole('heading', { name: /Copilot configuration/ })).not.toBeInTheDocument()
-    expect(screen.getByTestId('copilot-preview-note')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Scheduled tasks' })).toBeInTheDocument()
   })
 
   it('turns the Copilot off only after a confirmation', async () => {
