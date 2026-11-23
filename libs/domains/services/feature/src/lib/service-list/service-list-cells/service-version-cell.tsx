@@ -9,15 +9,18 @@ import {
   type AnyService,
   type Application,
   type BlueprintService,
+  type Container,
   type Database,
   type Helm,
   type Job,
   type Terraform,
   getBlueprintGitRepository,
   isBlueprintService,
+  isContainer,
 } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
+  isContainerGitSource,
   isHelmGitSource,
   isHelmRepositorySource,
   isJobContainerSource,
@@ -26,6 +29,7 @@ import {
 import { Badge, ExternalLink, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
+import { DeployedCommit } from '../../deployed-commit/deployed-commit'
 import { useBlueprintUpdateState } from '../../hooks/use-blueprint-update-state/use-blueprint-update-state'
 import LastCommit from '../../last-commit/last-commit'
 import LastVersion from '../../last-version/last-version'
@@ -149,7 +153,10 @@ function BlueprintChartVersionSlot({
 export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false }) ?? {}
 
-  const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) => {
+  const gitInfo = (
+    service: Application | Job | Helm | Terraform | Container,
+    gitRepository?: ApplicationGitRepository
+  ) => {
     if (!gitRepository) return null
 
     if (isBlueprintService(service)) {
@@ -202,12 +209,16 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
               </span>
             </Tooltip>
           )}
-          <LastCommit
-            organizationId={organizationId}
-            projectId={projectId}
-            gitRepository={gitRepository}
-            service={service}
-          />
+          {isContainer(service) ? (
+            <DeployedCommit gitRepository={gitRepository} />
+          ) : (
+            <LastCommit
+              organizationId={organizationId}
+              projectId={projectId}
+              gitRepository={gitRepository}
+              service={service}
+            />
+          )}
         </div>
       </div>
     )
@@ -358,6 +369,10 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
       }) => containerInfo(image)
     )
     .with({ service: { serviceType: 'APPLICATION' } }, ({ service }) => gitInfo(service, service.git_repository))
+    .with(
+      { service: P.intersection({ serviceType: 'CONTAINER' }, { source: P.when(isContainerGitSource) }) },
+      ({ service }) => gitInfo(service, service.source.git_repository)
+    )
     .with({ service: { serviceType: 'CONTAINER' } }, ({ service: { image_name, tag, registry } }) =>
       containerInfo({ image_name, tag, registry })
     )
