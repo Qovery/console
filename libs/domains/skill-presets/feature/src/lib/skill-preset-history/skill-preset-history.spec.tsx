@@ -108,6 +108,14 @@ describe('SkillPresetHistory', () => {
     expect(screen.queryByRole('button', { name: /Recreate from this revision/ })).not.toBeInTheDocument()
   })
 
+  it('shows a revision that only made the preset a template', () => {
+    mockRevisions = [...REVISIONS, { ...REVISIONS[1], revision: 3, is_template: true, security_review: null }]
+    renderWithProviders(<SkillPresetHistory />)
+
+    expect(screen.getAllByText('Made a template')).toHaveLength(2)
+    expect(screen.queryByText(/No change in content/)).not.toBeInTheDocument()
+  })
+
   it('does not diff a revision whose previous one is not loaded', () => {
     mockRevisions = REVISIONS.filter(({ revision }) => revision === 2)
     renderWithProviders(<SkillPresetHistory />)

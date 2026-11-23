@@ -375,6 +375,9 @@ function SkillPresetHistoryPage() {
             </p>
           )}
 
+          {diff.template && (
+            <p className="text-sm text-neutral">{diff.template.after ? 'Made a template' : 'No longer a template'}</p>
+          )}
           {diff.name && <TextDiff title="Name" before={diff.name.before} after={diff.name.after} />}
           {diff.base && (
             <p className="text-sm text-neutral">
@@ -411,7 +414,8 @@ function SkillPresetHistoryPage() {
               </div>
             </section>
           )}
-          {!diff.name &&
+          {!diff.template &&
+            !diff.name &&
             !diff.base &&
             !diff.description &&
             !diff.teamContext &&
