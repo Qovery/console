@@ -9,7 +9,8 @@ import {
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
+import { match } from 'ts-pattern'
+import { useCloudProviders, useEnsureOnPremiseCredential } from '@qovery/domains/cloud-providers/feature'
 import {
   Button,
   Callout,
@@ -39,20 +40,44 @@ import {
   isPlatformReadOnlyField,
   isSupportedPlatformField,
   omitEmptyValues,
+  toPlatformCloudVendor,
 } from '../utils/platform-configuration-utils'
+import {
+  type SelfManagedClusterRegistryValues,
+  getSelfManagedClusterRegistryRequest,
+  validateRegistryPassword,
+  validateRegistryUrl,
+  validateRegistryUsername,
+} from '../utils/self-managed-cluster-registry'
 import { OperatorConfigurationField, isSupportedOperatorConfigurationField } from './operator-configuration-field'
 
 const DEPLOYMENT_TARGET_MENU_MAX_HEIGHT = 240
 const OPERATOR_STATUS_POLL_INTERVAL = 5000
+const ON_PREMISE_REGION = 'on-premise'
 
 export type SelfManagedClusterCreationStep = 'general' | 'operator' | 'install'
 
 export type SelfManagedClusterCloudProvider = SelfManagedClusterRequestProviderEnum
 
+type OnPremiseProvider = Exclude<SelfManagedClusterCloudProvider, 'AWS' | 'GCP' | 'SCW'>
+
 const CLOUD_PROVIDER_LABELS: Record<SelfManagedClusterCloudProvider, string> = {
   AWS: 'AWS',
   GCP: 'GCP',
   SCW: 'Scaleway',
+  OVH: 'OVH Cloud',
+  CIVO: 'CIVO',
+  ORACLE: 'Oracle Cloud Infrastructure',
+  HETZNER: 'Hetzner',
+  IBM: 'IBM Cloud',
+  ON_PREMISE: 'Kubernetes',
+}
+
+function isOnPremiseProvider(cloudProvider: SelfManagedClusterCloudProvider): cloudProvider is OnPremiseProvider {
+  return match(cloudProvider)
+    .with('AWS', 'GCP', 'SCW', () => false)
+    .with('ON_PREMISE', 'HETZNER', 'OVH', 'CIVO', 'ORACLE', 'IBM', () => true)
+    .exhaustive()
 }
 
 export const SELF_MANAGED_CLUSTER_CREATION_MODAL_WIDTH: Record<SelfManagedClusterCreationStep, number> = {
@@ -61,7 +86,7 @@ export const SELF_MANAGED_CLUSTER_CREATION_MODAL_WIDTH: Record<SelfManagedCluste
   install: 474,
 }
 
-interface GeneralValues {
+interface GeneralValues extends SelfManagedClusterRegistryValues {
   name: string
   production: boolean
   credentials: string
@@ -134,7 +159,15 @@ function GeneralStep({
 }) {
   const methods = useForm<GeneralValues>({
     mode: 'onChange',
-    defaultValues: values ?? { name: '', production: false, credentials: '', region: '' },
+    defaultValues: values ?? {
+      name: '',
+      production: false,
+      credentials: '',
+      region: '',
+      registryUrl: '',
+      registryUsername: '',
+      registryPassword: '',
+    },
   })
   const { data: cloudProviders = [] } = useCloudProviders()
   const regionOptions = useMemo(
@@ -198,31 +231,89 @@ function GeneralStep({
               )}
             />
           </StepSection>
-          <StepSection title="Deployment target">
-            <ClusterCredentialsSettings
-              cloudProvider={cloudProvider}
-              isSetting={false}
-              portal
-              maxMenuHeight={DEPLOYMENT_TARGET_MENU_MAX_HEIGHT}
-            />
-            <Controller
-              name="region"
-              control={methods.control}
-              rules={{ required: 'Please select a region.' }}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  label="Region"
-                  maxMenuHeight={DEPLOYMENT_TARGET_MENU_MAX_HEIGHT}
-                  options={regionOptions}
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={error?.message}
-                  isSearchable
-                  portal
-                />
-              )}
-            />
-          </StepSection>
+          {isOnPremiseProvider(cloudProvider) ? (
+            <StepSection title="Container registry">
+              <p className="text-sm text-neutral-subtle">
+                This registry is used to store the built images or mirror the container images deployed on this cluster.
+              </p>
+              <Controller
+                name="registryUrl"
+                control={methods.control}
+                rules={{ validate: validateRegistryUrl }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    name={field.name}
+                    label="Registry URL"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={error?.message}
+                    hint="Expected format: https://registry.example.com or https://registry.example.com:5000"
+                  />
+                )}
+              />
+              <Controller
+                name="registryUsername"
+                control={methods.control}
+                rules={{
+                  validate: (value, { registryPassword }) => validateRegistryUsername(value, registryPassword),
+                  deps: ['registryPassword'],
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    name={field.name}
+                    label="Username (optional)"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={error?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="registryPassword"
+                control={methods.control}
+                rules={{
+                  validate: (value, { registryUsername }) => validateRegistryPassword(value, registryUsername),
+                  deps: ['registryUsername'],
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    name={field.name}
+                    type="password"
+                    label="Password (optional)"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={error?.message}
+                  />
+                )}
+              />
+            </StepSection>
+          ) : (
+            <StepSection title="Deployment target">
+              <ClusterCredentialsSettings
+                cloudProvider={cloudProvider}
+                isSetting={false}
+                portal
+                maxMenuHeight={DEPLOYMENT_TARGET_MENU_MAX_HEIGHT}
+              />
+              <Controller
+                name="region"
+                control={methods.control}
+                rules={{ required: 'Please select a region.' }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    label="Region"
+                    maxMenuHeight={DEPLOYMENT_TARGET_MENU_MAX_HEIGHT}
+                    options={regionOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={error?.message}
+                    isSearchable
+                    portal
+                  />
+                )}
+              />
+            </StepSection>
+          )}
         </StepLayout>
       </form>
     </FormProvider>
@@ -410,6 +501,8 @@ export function SelfManagedClusterCreationFlow({
   // Unset until edited, so the defaults of the template loaded meanwhile still apply.
   const [operatorValues, setOperatorValues] = useState<OperatorValues>()
   const [clusterId, setClusterId] = useState<string>()
+  const isOnPremise = isOnPremiseProvider(cloudProvider)
+  const platformCloudVendor = toPlatformCloudVendor(cloudProvider)
   const {
     data: templates,
     isSuccess: isTemplatesSuccess,
@@ -418,7 +511,7 @@ export function SelfManagedClusterCreationFlow({
   } = usePlatformTemplates({
     organizationId,
     clusterMode: 'CUSTOMER_MANAGED',
-    cloudProvider,
+    cloudProvider: platformCloudVendor,
   })
   const template = templates?.[0]
   const operatorComponent = template?.bootstrapComponent
@@ -427,7 +520,9 @@ export function SelfManagedClusterCreationFlow({
     [operatorComponent, operatorValues]
   )
   const operatorConfig = useMemo(() => omitEmptyValues(resolvedOperatorValues), [resolvedOperatorValues])
-  const { mutateAsync: createSelfManagedCluster, isLoading: isCreating } = useCreateSelfManagedCluster()
+  const { mutateAsync: ensureOnPremiseCredential, isLoading: isEnsuringCredential } = useEnsureOnPremiseCredential()
+  const { mutateAsync: createSelfManagedCluster, isLoading: isCreatingCluster } = useCreateSelfManagedCluster()
+  const isCreating = isEnsuringCredential || isCreatingCluster
   const debouncedOperatorConfig = useDebounce(operatorConfig, 300)
   const {
     data: operatorPreview,
@@ -442,7 +537,7 @@ export function SelfManagedClusterCreationFlow({
     templateVersion: template?.version,
     componentKey: operatorComponent?.key,
     clusterMode: 'CUSTOMER_MANAGED',
-    cloudProvider,
+    cloudProvider: platformCloudVendor,
     request: { profileConfig: debouncedOperatorConfig, clusterInputs: {}, componentOutputs: {} },
     enabled: step === 'operator',
   })
@@ -468,25 +563,29 @@ export function SelfManagedClusterCreationFlow({
       : {}
 
   const createCluster = async () => {
-    if (!generalValues) return
+    if (!generalValues || isCreating) return
 
     setModalDismissible?.(false)
     try {
+      const credentialId = isOnPremise
+        ? (await ensureOnPremiseCredential({ organizationId })).id
+        : generalValues.credentials
       const cluster = await createSelfManagedCluster({
         organizationId,
         clusterRequest: {
           name: generalValues.name.trim(),
           production: generalValues.production,
           provider: cloudProvider,
-          region: generalValues.region,
-          credentials: { id: generalValues.credentials },
+          region: isOnPremise ? ON_PREMISE_REGION : generalValues.region,
+          credentials: { id: credentialId },
           platform: getPlatformSelection(),
+          ...(isOnPremise ? { registry: getSelfManagedClusterRegistryRequest(generalValues) } : {}),
         },
       })
       setClusterId(cluster.id)
       goToStep('install')
     } catch {
-      // Errors are notified by the mutation.
+      // Errors are notified by the mutations.
     } finally {
       setModalDismissible?.(true)
     }
