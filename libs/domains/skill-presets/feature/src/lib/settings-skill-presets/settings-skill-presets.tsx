@@ -9,9 +9,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { type SkillPresetResponse, getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/data-access'
+import {
+  type SkillPresetResponse,
+  type SkillPresetRevisionResponse,
+  getSkillPresetErrorStatus,
+} from '@qovery/domains/skill-presets/data-access'
 import {
   Avatar,
   Badge,
@@ -82,24 +86,20 @@ function ListSkeleton() {
 
 function PresetRow({
   preset,
+  lastRevision,
   organizationId,
   assignees,
   onDelete,
   onPreview,
 }: {
   preset: SkillPresetResponse
+  lastRevision?: SkillPresetRevisionResponse
   organizationId: string
   assignees: ReturnType<typeof useSkillPresetAssignees>['data']
   onPreview: (preset: SkillPresetResponse) => void
   onDelete: (preset: SkillPresetResponse) => void
 }) {
   const navigate = useNavigate()
-  // One small request per row: the organization-wide history is capped and would miss older presets.
-  const { data: [lastRevision] = [] } = useSkillPresetRevisions({
-    organizationId,
-    skillPresetId: preset.id,
-    limit: 1,
-  })
   const editedAt = lastRevision?.edited_at ?? preset.updated_at
   const editedBy = lastRevision?.edited_by ?? preset.creator_name ?? 'Unknown'
   // Revisions name the editor by email: show the member's name, the email in a tooltip, like Audit logs.
@@ -247,6 +247,16 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
   // Saving presets as templates is not offered: templates come from Qovery, by profile.
   const { data: presets, isLoading, error, refetch } = useSkillPresets({ organizationId, isTemplate: false })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
+  // One request for the whole list: the organization's latest revisions, newest first. It is capped, so a
+  // preset left untouched while many others changed is missing: its row falls back to the preset itself.
+  const { data: revisions } = useSkillPresetRevisions({ organizationId })
+  const lastRevisions = useMemo(() => {
+    const latest = new Map<string, SkillPresetRevisionResponse>()
+    revisions?.forEach((revision) => {
+      if (!latest.has(revision.skill_preset_id)) latest.set(revision.skill_preset_id, revision)
+    })
+    return latest
+  }, [revisions])
   const { mutateAsync: deleteSkillPreset } = useDeleteSkillPreset()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -387,6 +397,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
             <PresetRow
               key={preset.id}
               preset={preset}
+              lastRevision={lastRevisions.get(preset.id)}
               organizationId={organizationId}
               assignees={assignees}
               onDelete={onDelete}
