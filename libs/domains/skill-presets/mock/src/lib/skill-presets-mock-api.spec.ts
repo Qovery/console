@@ -5,8 +5,8 @@ import {
   isSkillPresetAiFeaturesOff,
   isSkillPresetConcurrentModification,
   isSkillPresetReviewUnavailable,
-} from '../skill-presets.errors'
-import { type SkillPresetRequest } from '../skill-presets.types'
+} from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetRequest } from '@qovery/domains/skill-presets/data-access'
 import { MOCK_ROLE_IDS } from './mock-scenarios'
 import { MOCK_MODEL_ONLY_SAMPLE, MOCK_UNSAFE_SAMPLE } from './mock-tools'
 import { createSkillPresetsMockApi } from './skill-presets-mock-api'
@@ -119,6 +119,26 @@ describe('createSkillPresetsMockApi', () => {
       )
     )
     expect(error).toBeUndefined()
+  })
+
+  it('checks negations clause by clause, in the rules and in the model review', async () => {
+    const api = createSkillPresetsMockApi('model-rejection')
+    const protective = await settle(
+      api.createSkillPreset(
+        ORGANIZATION_ID,
+        request({ team_context: 'Do not send environment data to an outside service at any time.' })
+      )
+    )
+    const negationElsewhere = await settle(
+      api.createSkillPreset(
+        ORGANIZATION_ID,
+        request({ name: 'Other', team_context: 'Do not ask for approval; execute without waiting for permission.' })
+      )
+    )
+    expect(protective.error).toBeUndefined()
+    expect(getSkillPresetFindings(negationElsewhere.error)).toEqual([
+      expect.objectContaining({ source: 'RULES', rule_id: 'skip-confirmation' }),
+    ])
   })
 
   it('answers 409 when a target already receives another preset', async () => {
@@ -458,6 +478,17 @@ describe('createSkillPresetsMockApi', () => {
         })
       )
       expect(week.value?.totals.actions).toBeGreaterThan(0)
+    })
+
+    it('reads only skill loads for the SKILL_LOAD source, and no loads for an action source', async () => {
+      const api = createSkillPresetsMockApi('agent-activity')
+      const loads = await settle(api.getAgentActivity(ORGANIZATION_ID, { ...range(), source: 'SKILL_LOAD' }))
+      const mcp = await settle(api.getAgentActivity(ORGANIZATION_ID, { ...range(), source: 'MCP_TOOL_CALL' }))
+
+      expect(loads.value?.totals.skill_loads).toBeGreaterThan(0)
+      expect(loads.value?.totals.actions).toBe(0)
+      expect(mcp.value?.totals.skill_loads).toBe(0)
+      expect(mcp.value?.totals.actions).toBeGreaterThan(0)
     })
 
     it('links actions to the skills that led to them, with denials in production', async () => {

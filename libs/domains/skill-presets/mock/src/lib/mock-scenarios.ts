@@ -4,7 +4,7 @@ import {
   type SkillPresetBase,
   type SkillPresetChangeType,
   type SkillPresetSkill,
-} from '../skill-presets.types'
+} from '@qovery/domains/skill-presets/data-access'
 import { type SkillPresetsMockScenario } from './mock-scenario-names'
 
 export interface MockPresetState {
@@ -65,12 +65,42 @@ export interface MockPolicyToken {
   description?: string
   role_name: string
   role_id: string
+  opa_policy: string
   creator_name: string
   expires_at?: string
   last_used_at?: string
 }
 
 const daysFromNow = (days: number) => new Date(Date.now() + days * 24 * 3_600_000).toISOString()
+
+const CI_DEPLOYER_POLICY = `default allow := false
+
+staging_environment_id := "REPLACE_WITH_STAGING_ENVIRONMENT_ID"
+
+allow if read_staging
+allow if deploy_staging
+
+# Read staging: services, status, deployment history and logs.
+read_staging if {
+	input.request.method in {"GET", "HEAD"}
+	input.qovery_metadata.environment_id == staging_environment_id
+	not "environmentVariable" in input.request.path
+}
+
+# Deploy or restart staging. Nothing else.
+deploy_staging if {
+	input.request.method == "POST"
+	input.qovery_metadata.environment_id == staging_environment_id
+	input.request.path[count(input.request.path) - 1] in {"deploy", "redeploy", "restart"}
+}`
+
+const REVIEW_AGENT_POLICY = `default allow := false
+
+# Read logs and statuses, never change anything. Environment variables are left out.
+allow if {
+	input.request.method in {"GET", "HEAD"}
+	not "environmentVariable" in input.request.path
+}`
 
 /** The CI token matches the `policy:<id>:ci-deployer` actor of the agent activity mock. */
 function mockPolicyTokens(): MockPolicyToken[] {
@@ -82,6 +112,7 @@ function mockPolicyTokens(): MockPolicyToken[] {
       description: 'CI pipeline: deploys staging environments only.',
       role_name: 'devops',
       role_id: MOCK_ROLE_IDS.devops,
+      opa_policy: CI_DEPLOYER_POLICY,
       creator_name: 'Alex Martin',
       expires_at: daysFromNow(49),
       last_used_at: daysFromNow(-0.4),
@@ -93,6 +124,7 @@ function mockPolicyTokens(): MockPolicyToken[] {
       description: 'Reads logs and statuses, never deploys.',
       role_name: 'viewer',
       role_id: MOCK_ROLE_IDS.viewer,
+      opa_policy: REVIEW_AGENT_POLICY,
       creator_name: 'Sam Lee',
       last_used_at: daysFromNow(-2),
     },

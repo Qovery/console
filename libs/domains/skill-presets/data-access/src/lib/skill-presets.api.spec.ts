@@ -3,11 +3,6 @@ import { skillPresetsApi } from './skill-presets.api'
 import { buildSkillPresetApiError, getSkillPresetErrorStatus } from './skill-presets.errors'
 import { mutations, skillPresets } from './skill-presets.queries'
 
-// The HTTP path, with the mock off: requests are checked at the axios boundary.
-jest.mock('@qovery/shared/util-node-env', () => ({
-  ...jest.requireActual('@qovery/shared/util-node-env'),
-  SKILL_PRESETS_MOCK: undefined,
-}))
 jest.mock('axios', () => {
   const instance = { get: jest.fn(), post: jest.fn(), put: jest.fn(), delete: jest.fn() }
   return { __esModule: true, default: instance, ...instance }
@@ -119,7 +114,20 @@ describe('skill presets query keys', () => {
       ORG,
       true,
     ])
-    expect(skillPresets.revisions({ organizationId: ORG }).queryKey).toContain('all')
+    expect(skillPresets.revisions({ organizationId: ORG }).queryKey).toEqual([
+      'skillPresets',
+      'revisions',
+      ORG,
+      'all',
+      100,
+    ])
+    expect(skillPresets.revisions({ organizationId: ORG, skillPresetId: PRESET, limit: 1 }).queryKey).toEqual([
+      'skillPresets',
+      'revisions',
+      ORG,
+      PRESET,
+      1,
+    ])
     expect(skillPresets.resolvedSkill({ organizationId: ORG, skillName: 'qovery' }).queryKey).toEqual([
       'skillPresets',
       'resolvedSkill',
@@ -138,14 +146,5 @@ describe('skill presets query keys', () => {
     await skillPresets.resolved({ organizationId: ORG }).queryFn({} as never)
     expect(http.get).toHaveBeenCalledWith(`/skillPreset/${PRESET}`)
     expect(http.get).toHaveBeenCalledWith(`/organization/${ORG}/skillPreset/resolved`)
-  })
-
-  it('refuses the mock-only queries outside mock mode', async () => {
-    await expect(skillPresets.mockPolicyTokens({ organizationId: ORG }).queryFn({} as never)).rejects.toThrow(
-      'The skill presets mock is not active'
-    )
-    await expect(skillPresets.mockAssignees({ organizationId: ORG }).queryFn({} as never)).rejects.toThrow(
-      'The skill presets mock is not active'
-    )
   })
 })

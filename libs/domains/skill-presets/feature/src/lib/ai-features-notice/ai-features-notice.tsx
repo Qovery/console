@@ -43,7 +43,7 @@ export function TurnOnAiModal({ organizationId, onClose, onEnabled }: TurnOnAiMo
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
   const copilot = useCopilotStatus({ organizationId })
   // Same query as the Copilot status: read for the saved instructions, which turning it on must keep.
-  const { data: copilotConfig } = useAICopilotConfig({ organizationId, enabled: copilot.ready })
+  const { data: copilotConfig } = useAICopilotConfig({ organizationId })
   const { data: userAccount } = useUserAccount()
   const { user } = useAuth()
   const [aiTurnedOn, setAiTurnedOn] = useState(false)

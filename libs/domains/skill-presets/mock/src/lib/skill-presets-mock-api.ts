@@ -1,10 +1,10 @@
-import { type OrganizationEventResponse, type OrganizationEventResponseList } from 'qovery-typescript-axios'
-import { type SkillPresetsApi } from '../skill-presets.api'
+import { type OrganizationEventResponse } from 'qovery-typescript-axios'
+import { type SkillPresetsApi } from '@qovery/domains/skill-presets/data-access'
 import {
   SKILL_PRESET_AI_FEATURES_OFF_MESSAGE,
   SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
   buildSkillPresetApiError,
-} from '../skill-presets.errors'
+} from '@qovery/domains/skill-presets/data-access'
 import {
   SKILL_NAME_PATTERN,
   SKILL_PRESET_LIMITS,
@@ -12,7 +12,7 @@ import {
   isOwnerRole,
   isQoverySkillName,
   totalPresetTextLength,
-} from '../skill-presets.limits'
+} from '@qovery/domains/skill-presets/data-access'
 import {
   type InjectedSkillResponse,
   SKILL_LOAD_EVENT_TYPE,
@@ -29,7 +29,7 @@ import {
   type SkillPresetResolutionSource,
   type SkillPresetResponse,
   type SkillPresetRevisionResponse,
-} from '../skill-presets.types'
+} from '@qovery/domains/skill-presets/data-access'
 import {
   type MockAgentAction,
   agentActivityParamsError,
@@ -594,10 +594,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     listAssignees() {
       return respond(seed.assignees)
     },
-    /**
-     * Plays the DevOps Copilot service for its config and recurring task calls, through an axios
-     * adapter installed in mock mode only. Anything else answers 404.
-     */
+    /** Plays the DevOps Copilot service for its config and recurring task calls. Anything else answers 404. */
     copilotRequest(method: string, url: string, body?: string) {
       const path = url.replace(/^https?:\/\/[^/]+/, '')
       if (method === 'get' && /\/organization\/[^/]+\/config$/.test(path)) {

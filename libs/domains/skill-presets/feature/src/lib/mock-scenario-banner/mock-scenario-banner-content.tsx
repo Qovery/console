@@ -2,7 +2,7 @@ import {
   SKILL_PRESETS_MOCK_SCENARIOS,
   type SkillPresetsMockScenario,
   switchSkillPresetsMockScenario,
-} from '@qovery/domains/skill-presets/data-access'
+} from '@qovery/domains/skill-presets/mock'
 import { Badge, Button, CopyButton, Icon, InputSelectSmall } from '@qovery/shared/ui'
 
 export interface MockScenarioBannerContentProps {

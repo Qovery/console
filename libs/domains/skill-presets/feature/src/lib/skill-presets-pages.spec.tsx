@@ -1,12 +1,14 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
+import axios from 'axios'
 import { type ReactNode } from 'react'
+import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
-  buildSkillPresetApiError,
-  resetSkillPresetsMockApi,
-  skillPresetsApi,
-} from '@qovery/domains/skill-presets/data-access'
+  installSkillPresetsMock,
+  resetSkillPresetsMock,
+} from '@qovery/domains/skill-presets/mock'
+import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved, within } from '@qovery/shared/util-tests'
 import { MemberAgentView } from './member-agent-view/member-agent-view'
 import { MockScenarioBanner } from './mock-scenario-banner/mock-scenario-banner'
@@ -59,15 +61,24 @@ configure({ asyncUtilTimeout: 5000 })
 
 const mockNavigate = jest.fn()
 
+let uninstallMocks: Array<() => void> = []
+beforeAll(() => {
+  uninstallMocks = [
+    installSkillPresetsMock(axios, 'api', { passthrough: false }),
+    installSkillPresetsMock(devopsCopilotAxios, 'copilot', { passthrough: false }),
+  ]
+})
+afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
+
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
 }
 
 beforeEach(() => {
   setMockFlag('true')
   window.sessionStorage.clear()
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
   mockNavigate.mockReset()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useNavigate).mockReturnValue(mockNavigate)

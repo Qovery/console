@@ -4,7 +4,6 @@ import { Heading } from '@qovery/shared/ui'
 
 export interface SettingsHeadingProps {
   title: string
-  /** Shown next to the title, for example a "Beta" badge. */
   titleBadge?: ReactNode
   description?: ReactNode
   children?: ReactNode
@@ -23,10 +22,10 @@ export function SettingsHeading({
       <div className="flex w-full items-start justify-between gap-4 pb-6">
         <div className="flex flex-col gap-2">
           {titleBadge ? (
-            <span className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Heading>{title}</Heading>
               {titleBadge}
-            </span>
+            </div>
           ) : (
             <Heading>{title}</Heading>
           )}
