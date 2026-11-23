@@ -9,8 +9,8 @@ import {
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { match } from 'ts-pattern'
 import { useCloudProviders, useEnsureOnPremiseCredential } from '@qovery/domains/cloud-providers/feature'
+import { isOnPremiseProvider } from '@qovery/domains/clusters/data-access'
 import {
   Button,
   Callout,
@@ -59,8 +59,6 @@ export type SelfManagedClusterCreationStep = 'general' | 'operator' | 'install'
 
 export type SelfManagedClusterCloudProvider = SelfManagedClusterRequestProviderEnum
 
-type OnPremiseProvider = Exclude<SelfManagedClusterCloudProvider, 'AWS' | 'GCP' | 'SCW'>
-
 const CLOUD_PROVIDER_LABELS: Record<SelfManagedClusterCloudProvider, string> = {
   AWS: 'AWS',
   GCP: 'GCP',
@@ -71,13 +69,6 @@ const CLOUD_PROVIDER_LABELS: Record<SelfManagedClusterCloudProvider, string> = {
   HETZNER: 'Hetzner',
   IBM: 'IBM Cloud',
   ON_PREMISE: 'Kubernetes',
-}
-
-function isOnPremiseProvider(cloudProvider: SelfManagedClusterCloudProvider): cloudProvider is OnPremiseProvider {
-  return match(cloudProvider)
-    .with('AWS', 'GCP', 'SCW', () => false)
-    .with('ON_PREMISE', 'HETZNER', 'OVH', 'CIVO', 'ORACLE', 'IBM', () => true)
-    .exhaustive()
 }
 
 export const SELF_MANAGED_CLUSTER_CREATION_MODAL_WIDTH: Record<SelfManagedClusterCreationStep, number> = {
