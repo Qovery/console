@@ -22,6 +22,7 @@ export function AgentTaskEnvironmentModal({
   const projects = useProjects({ organizationId })
   const environments = useQuery({ ...queries.environments.list({ projectId }), enabled: Boolean(projectId) })
   const availableEnvironments = environments.data ?? []
+  const purpose = template ? 'adding an Agent Task' : 'opening Automations'
   const canContinue =
     !projects.isError && !environments.isError && availableEnvironments.some(({ id }) => id === environmentId)
 
@@ -77,9 +78,7 @@ export function AgentTaskEnvironmentModal({
           ) : (
             !projects.isLoading &&
             !projects.data?.length && (
-              <p className="text-sm text-neutral-subtle">
-                Create a project and an environment before adding an Agent Task.
-              </p>
+              <p className="text-sm text-neutral-subtle">Create a project and an environment before {purpose}.</p>
             )
           )}
           <Controller
@@ -107,7 +106,7 @@ export function AgentTaskEnvironmentModal({
               !environments.isFetching &&
               !availableEnvironments.length && (
                 <p className="text-sm text-neutral-subtle">
-                  This project has no environments. Create one before adding an Agent Task.
+                  This project has no environments. Create one before {purpose}.
                 </p>
               )
             ))}

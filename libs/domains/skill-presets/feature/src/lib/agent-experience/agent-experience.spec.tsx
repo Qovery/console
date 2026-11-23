@@ -1,16 +1,22 @@
 import { useLocation, useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
+import axios from 'axios'
 import { type ReactNode } from 'react'
+import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
-  buildSkillPresetApiError,
-  resetSkillPresetsMockApi,
-  skillPresetsApi,
-} from '@qovery/domains/skill-presets/data-access'
+  installSkillPresetsMock,
+  resetSkillPresetsMock,
+} from '@qovery/domains/skill-presets/mock'
+import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgentsSetupSection } from '../agents-setup/agents-setup-section'
+import * as useAgentActivityModule from '../hooks/use-agent-activity/use-agent-activity'
+import * as useCanManageSkillPresetsModule from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
+import * as copilotStatus from '../hooks/use-copilot-status/use-copilot-status'
+import * as skillPresetAssignees from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { AgentExperienceAutomate } from './agent-experience-automate'
-import { AgentExperienceCopilot, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
+import { AgentExperienceCopilot, OnOffBadge, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
 import { AgentExperienceNav } from './agent-experience-nav'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
 import { ConnectAgentModal } from './connect-agent-modal'
@@ -33,6 +39,13 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
+// One copy function for the whole file, to check what reaches the clipboard.
+const mockCopyToClipboard = jest.fn()
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useCopyToClipboard: () => [null, mockCopyToClipboard],
+}))
+
 // The pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
 configure({ asyncUtilTimeout: 5000 })
 
@@ -43,15 +56,24 @@ jest.mock('posthog-js/react', () => ({
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
 }
 
 const stepState = (id: string) => screen.getByTestId(`setup-step-${id}`).getAttribute('data-state')
 
+let uninstallMocks: Array<() => void> = []
+beforeAll(() => {
+  uninstallMocks = [
+    installSkillPresetsMock(axios, 'api', { passthrough: false }),
+    installSkillPresetsMock(devopsCopilotAxios, 'copilot', { passthrough: false }),
+  ]
+})
+afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
+
 beforeEach(() => {
   window.sessionStorage.clear()
   window.localStorage.clear()
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
 })
@@ -99,6 +121,8 @@ describe('AgentsSetupSection', () => {
     await userEvent.click(
       await within(dialog).findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
     )
+    // Submitting waits for the Copilot status, so an enabled Copilot is never reset to read-only.
+    await waitFor(() => expect(within(dialog).getByTestId('submit-button')).toBeEnabled())
     await userEvent.click(within(dialog).getByTestId('submit-button'))
 
     expect(
@@ -137,7 +161,10 @@ describe('AgentExperienceCopilot', () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperienceCopilot />)
 
-    expect(screen.getByRole('heading', { name: 'What the Copilot does' })).toBeInTheDocument()
+    // The capabilities live in the docs, behind the header's help button.
+    expect(screen.queryByRole('heading', { name: 'What the Copilot does' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Need help here?' })).toBeInTheDocument()
+    expect(screen.getByText('Preview')).toBeInTheDocument()
     expect(await within(screen.getByTestId('copilot-state')).findByText('AI on, Copilot read-only')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
   })
@@ -170,6 +197,28 @@ describe('AgentExperienceCopilot', () => {
     expect(aiStatusLabel(false, false, true)).toBe('Off')
     expect(copilotStateLabel(true, false)).toBe('On, read-write')
     expect(copilotStateLabel(false, true)).toBe('Off')
+  })
+
+  it('names a partial state on the off badge', () => {
+    renderWithProviders(<OnOffBadge on={false} label={aiStatusLabel(true, false, true)} />)
+    expect(screen.getByText('AI features on, Copilot off')).toBeInTheDocument()
+  })
+
+  it('says the status is unknown and offers no switch when the Copilot config fails to load', async () => {
+    useScenario('ai-features-off')
+    const spy = jest.spyOn(copilotStatus, 'useCopilotStatus').mockReturnValue({
+      enabled: false,
+      readOnly: true,
+      isLoading: false,
+      error: new Error('Network Error'),
+    } as ReturnType<typeof copilotStatus.useCopilotStatus>)
+    renderWithProviders(<AgentExperienceCopilot />)
+
+    expect(await screen.findByTestId('copilot-error')).toHaveTextContent('Unable to load the Copilot status.')
+    expect(within(screen.getByTestId('copilot-state')).getByText('Unknown')).toBeInTheDocument()
+    expect(within(screen.getByTestId('copilot-state')).queryByText('Off')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
+    spy.mockRestore()
   })
 
   it('shows members the state only, with no switch', async () => {
@@ -265,7 +314,9 @@ describe('Automate, recurring agents', () => {
     expect(codingAgent.getAllByTestId('coding-agent').map((item) => item.textContent)).toEqual(CODING_AGENT_NAMES)
     // Full values, not cut with an ellipsis.
     expect(codingAgent.getByText('QOVERY_CLI_ACCESS_TOKEN=<policy token>')).toBeInTheDocument()
-    expect(codingAgent.getByText('0 8,20 * * 1-5')).toBeInTheDocument()
+    expect(codingAgent.getByText('0 8,20 * * *')).toBeInTheDocument()
+    // The prompt is written in Paris time: the cron says so.
+    expect(codingAgent.getByText('Schedule (Europe/Paris):')).toBeInTheDocument()
     const agentTask = within(run.getByTestId('route-agent-task'))
     expect(agentTask.getByText('Recommended')).toBeInTheDocument()
     expect(agentTask.getByText(/with no laptop or CI to keep running/)).toBeInTheDocument()
@@ -279,6 +330,17 @@ describe('Automate, recurring agents', () => {
     )
   })
 
+  it('reads the members and roles only for members, not for owners and admins', async () => {
+    useScenario('agent-experience-active')
+    const spy = jest.spyOn(skillPresetAssignees, 'useSkillPresetAssignees')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByTestId('agent-job-roll-back-bad-release'))
+    expect(await screen.findByTestId('agent-job-run')).toBeInTheDocument()
+    expect(spy).not.toHaveBeenCalled()
+    spy.mockRestore()
+  })
+
   it('shows members the catalog, with no action they cannot take, and who to ask', async () => {
     useScenario('member')
     const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
@@ -287,6 +349,7 @@ describe('Automate, recurring agents', () => {
     await userEvent.click(screen.getByTestId('agent-job-roll-back-bad-release'))
     const details = within(await screen.findByRole('dialog'))
     expect(details.queryByRole('button', { name: /Create policy token/ })).not.toBeInTheDocument()
+    expect(details.queryByRole('button', { name: 'Describe it' })).not.toBeInTheDocument()
     expect(details.queryByText('Add the MCP server')).not.toBeInTheDocument()
     await waitFor(() =>
       expect(details.getByTestId('agent-job-member-note')).toHaveTextContent(
@@ -307,23 +370,51 @@ describe('Automate a new job', () => {
 
     await userEvent.click(await screen.findByRole('button', { name: /Automate a new job/ }))
     const modal = within(await screen.findByTestId('new-job-modal'))
-    // Empty to start with: the example is a hint, not a value.
+    // The title says it prepares a command, and the docs sit next to the description.
+    expect(screen.getByRole('heading', { name: 'Prepare a command for your agent' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Docs/ })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/configuration/organization/api-policy-token'
+    )
+    // Empty to start with: the examples are offered, not filled in.
     expect(screen.getByRole('textbox', { name: 'The job' })).toHaveValue('')
     expect(modal.getByTestId('new-job-command')).toHaveTextContent('/qovery-policy-token <describe the job>')
     expect(screen.getByTestId('submit-button')).toBeDisabled()
+    expect(modal.getByText('Or click an example to fill the field:')).toBeInTheDocument()
 
     await userEvent.click(modal.getByRole('button', { name: /stop dev and QA environments/ }))
+    expect(screen.getByRole('textbox', { name: 'The job' })).toHaveValue(
+      'Every weeknight at 8 PM, stop dev and QA environments nobody used today'
+    )
     expect(modal.getByTestId('new-job-command')).toHaveTextContent(
       '/qovery-policy-token Every weeknight at 8 PM, stop dev and QA environments nobody used today'
     )
     expect(screen.getByTestId('submit-button')).toBeEnabled()
     expect(modal.getAllByTestId('coding-agent')).toHaveLength(6)
-    // The steps are folded until asked for.
-    await userEvent.click(modal.getByRole('button', { name: 'What happens next' }))
-    expect(await modal.findByText(/refuses everything by default/)).toBeInTheDocument()
+    // Scheduling is its own visible step, not folded away.
+    expect(modal.getByRole('heading', { name: '1. Run this command in your coding agent' })).toBeInTheDocument()
+    expect(modal.getByRole('heading', { name: '2. Schedule the job' })).toBeInTheDocument()
     expect(modal.getByTestId('new-job-schedule')).toHaveTextContent(
-      'Then schedule it: as an Agent Task on Qovery (recommended), or from your coding agent, with that token.'
+      'A separate step, once the token exists: schedule the job as an Agent Task on Qovery (recommended), or from your coding agent, with that token.'
     )
+    // What the skill does is folded until asked for.
+    expect(modal.queryByText(/refuses everything by default/)).not.toBeInTheDocument()
+    await userEvent.click(modal.getByRole('button', { name: 'What your agent does with it' }))
+    expect(await modal.findByText(/refuses everything by default/)).toBeInTheDocument()
+  })
+
+  it('offers the examples only while the field is empty, so they never replace typed text', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /Automate a new job/ }))
+    expect(screen.getByTestId('new-job-examples')).toBeInTheDocument()
+    await userEvent.type(screen.getByTestId('new-job-intent'), 'Restart the api')
+    expect(screen.queryByTestId('new-job-examples')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /stop dev and QA environments/ })).not.toBeInTheDocument()
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'The job' }))
+    expect(screen.getByTestId('new-job-examples')).toBeInTheDocument()
   })
 
   it('puts a typed intent on one line', async () => {
@@ -345,8 +436,22 @@ describe('Automate a new job', () => {
     await userEvent.type(screen.getByTestId('new-job-intent'), 'Restart the api when it stops answering')
     await userEvent.click(screen.getByTestId('submit-button'))
 
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('/qovery-policy-token Restart the api when it stops answering')
     expect(screen.getByTestId('submit-button')).toHaveTextContent('Copied')
     expect(screen.getByTestId('new-job-modal')).toBeInTheDocument()
+  })
+
+  it('shows Connect your agent in place, and keeps the typed job on the way back', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /Automate a new job/ }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'The job' }), 'Restart the api')
+    await userEvent.click(screen.getByRole('button', { name: 'Connect your agent' }))
+    expect(await screen.findByRole('heading', { name: 'Connect an agent' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
+    expect(await screen.findByRole('textbox', { name: 'The job' })).toHaveValue('Restart the api')
   })
 
   it('opens from a job’s details', async () => {
@@ -359,13 +464,19 @@ describe('Automate a new job', () => {
   })
 })
 
+afterEach(() => jest.restoreAllMocks())
+
 describe('AgentExperiencePolicyTokens', () => {
   it('shows each token’s last 7 days, flags tokens with no expiry, and keeps deleted tokens as greyed rows', async () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperiencePolicyTokens />)
 
     const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
-    expect(await within(ciDeployer).findByTestId('token-usage')).toHaveTextContent(/\d+ allowed/)
+    expect(screen.getByRole('columnheader', { name: 'Last 7 days' })).toBeInTheDocument()
+    const usage = await within(ciDeployer).findByTestId('token-usage')
+    expect(usage).toHaveTextContent(/\d+ allowed/)
+    // One bar per day of the week.
+    expect(usage.querySelectorAll('[aria-hidden="true"] > span').length).toBeGreaterThanOrEqual(7)
     expect(within(ciDeployer).queryByTestId('no-expiry')).not.toBeInTheDocument()
     expect(within(screen.getByTestId('policy-token-review-agent')).getByTestId('no-expiry')).toHaveTextContent(
       'No expiry'
@@ -373,6 +484,33 @@ describe('AgentExperiencePolicyTokens', () => {
     const deleted = await screen.findByTestId('deleted-token-cleanup-bot')
     expect(within(deleted).getByText('Deleted', { selector: 'span' })).toBeInTheDocument()
     expect(within(deleted).getByText('See activity')).toBeInTheDocument()
+    expect(within(deleted).queryByText('Calls in the last 30 days')).not.toBeInTheDocument()
+    expect(deleted).toHaveTextContent(/No calls|\d+ allowed/)
+  })
+
+  it('never reads a failed usage request as no calls', async () => {
+    useScenario('agent-experience-active')
+    jest
+      .spyOn(useAgentActivityModule, 'useAgentActivity')
+      .mockReturnValue({ data: undefined, isInitialLoading: false, isError: true } as never)
+    renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
+    expect(within(ciDeployer).getByText('Usage unavailable')).toBeInTheDocument()
+    expect(screen.queryByText('No calls')).not.toBeInTheDocument()
+    expect(screen.getByTestId('deleted-tokens-error')).toHaveTextContent('Deleted tokens could not be loaded.')
+  })
+
+  it('does not show no calls while the usage loads', async () => {
+    useScenario('agent-experience-active')
+    jest
+      .spyOn(useAgentActivityModule, 'useAgentActivity')
+      .mockReturnValue({ data: undefined, isInitialLoading: true, isError: false } as never)
+    renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    expect(await screen.findByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+    expect(screen.queryByText('No calls')).not.toBeInTheDocument()
+    expect(screen.queryByText('No policy token yet')).not.toBeInTheDocument()
   })
 
   it('manages each token from its row: see activity, view the policy, delete', async () => {
@@ -388,6 +526,23 @@ describe('AgentExperiencePolicyTokens', () => {
 
     await waitFor(() => expect(screen.queryByTestId('policy-token-review-agent')).not.toBeInTheDocument())
     expect(screen.getByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+  })
+
+  it('keeps the deleted-token history once the last active token is deleted', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
+    expect(await screen.findByTestId('deleted-token-cleanup-bot')).toBeInTheDocument()
+
+    for (const name of ['ci-deployer', 'review-agent']) {
+      await userEvent.click(await screen.findByRole('button', { name: `Actions for ${name}` }))
+      await userEvent.click(await screen.findByRole('menuitem', { name: 'Delete token' }))
+      await userEvent.type(await screen.findByRole('textbox'), name)
+      await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+      await waitFor(() => expect(screen.queryByTestId(`policy-token-${name}`)).not.toBeInTheDocument())
+    }
+
+    expect(screen.getByTestId('deleted-token-cleanup-bot')).toBeInTheDocument()
+    expect(screen.queryByText('No policy token yet')).not.toBeInTheDocument()
   })
 
   it('creates a token here, with the explanation once', async () => {
@@ -406,15 +561,37 @@ describe('AgentExperiencePolicyTokens', () => {
     useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperiencePolicyTokens />)
     expect(await screen.findByText('No policy token yet')).toBeInTheDocument()
-    expect(screen.getAllByRole('button', { name: /Create policy token/ }).length).toBeGreaterThan(0)
+    // The header action and the empty-state action.
+    expect(screen.getAllByRole('button', { name: /Create policy token/ })).toHaveLength(2)
     expect(screen.getByText('Start from a job')).toBeInTheDocument()
   })
 
-  it('tells members only owners and admins manage tokens', async () => {
+  it('tells other members who manages tokens', async () => {
     useScenario('member')
     renderWithProviders(<AgentExperiencePolicyTokens />)
-    expect(await screen.findByText('Only owners and admins manage policy tokens')).toBeInTheDocument()
+    expect(await screen.findByText('Only owners, admins and DevOps members manage policy tokens')).toBeInTheDocument()
     expect(screen.queryByText('Create policy token')).not.toBeInTheDocument()
+  })
+
+  it('lets DevOps members manage tokens, without the organization activity', async () => {
+    // A DevOps member: the mock organization's tokens, but no organization-wide activity.
+    useScenario('agent-experience-active')
+    jest.spyOn(useCanManageSkillPresetsModule, 'useCanManageSkillPresets').mockReturnValue({
+      canManage: false,
+      isLoading: false,
+    })
+    const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    expect(await screen.findByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Last 7 days' })).not.toBeInTheDocument()
+    expect(screen.queryByTestId('token-usage')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('deleted-token-cleanup-bot')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Actions for ci-deployer' }))
+    expect(await screen.findByRole('menuitem', { name: 'View policy' })).toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: 'Delete token' })).toBeInTheDocument()
+    expect(screen.queryByRole('menuitem', { name: 'See activity' })).not.toBeInTheDocument()
   })
 })
 
@@ -468,11 +645,17 @@ describe('ConnectAgentModal', () => {
     ).toBeInTheDocument()
 
     await userEvent.click(screen.getByText('CLI'))
-    expect(screen.getByText('curl -s https://get.qovery.com | bash')).toBeInTheDocument()
+    expect(screen.getByText('curl -fsSL https://get.qovery.com | bash')).toBeInTheDocument()
     expect(screen.getByText('qovery auth')).toBeInTheDocument()
 
     await userEvent.click(screen.getByText('MCP server'))
     expect(screen.getByText(/claude mcp add --transport http qovery/)).toBeInTheDocument()
+
+    // A top-level TOML key below a [section] header would belong to that section and be ignored.
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Coding agent' }), 'codex')
+    expect(
+      screen.getByText('Add this line at the top of ~/.codex/config.toml, above any [section]')
+    ).toBeInTheDocument()
   })
 
   it('closes on Close', async () => {

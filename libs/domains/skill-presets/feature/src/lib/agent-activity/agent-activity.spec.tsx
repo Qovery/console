@@ -1,12 +1,14 @@
 import { useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
+import axios from 'axios'
 import { type ReactNode } from 'react'
+import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
-  buildSkillPresetApiError,
-  resetSkillPresetsMockApi,
-  skillPresetsApi,
-} from '@qovery/domains/skill-presets/data-access'
+  installSkillPresetsMock,
+  resetSkillPresetsMock,
+} from '@qovery/domains/skill-presets/mock'
+import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { type ActivitySearch } from './activity-search'
 import { AgentActivity } from './agent-activity'
@@ -50,14 +52,23 @@ jest.mock('@tanstack/react-router', () => ({
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
 }
 
 const CI_DEPLOYER = '3f1c9a2e-0000-4000-8000-00000000c1d0'
 
+let uninstallMocks: Array<() => void> = []
+beforeAll(() => {
+  uninstallMocks = [
+    installSkillPresetsMock(axios, 'api', { passthrough: false }),
+    installSkillPresetsMock(devopsCopilotAxios, 'copilot', { passthrough: false }),
+  ]
+})
+afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
+
 beforeEach(() => {
   window.sessionStorage.clear()
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
   mockUrl.search = {}
   // Set in each test: restoreAllMocks clears implementations between tests.
   mockNavigate.mockReset().mockImplementation(({ search }: { search: ActivitySearch }) => mockUrl.set(search))
@@ -131,13 +142,11 @@ describe('AgentActivity', () => {
       expect.objectContaining({ search: expect.objectContaining({ actor: `token:${CI_DEPLOYER}` }), replace: true })
     )
     expect(screen.getByRole('combobox', { name: 'Actor' })).toHaveValue(`token:${CI_DEPLOYER}`)
-    await waitFor(() =>
-      expect(
-        Array.from(document.querySelectorAll('[data-actor-kind]')).every(
-          (chip) => chip.getAttribute('data-actor-kind') === 'policy-token'
-        )
-      ).toBe(true)
-    )
+    await waitFor(() => {
+      const chips = Array.from(document.querySelectorAll('[data-actor-kind]'))
+      expect(chips.length).toBeGreaterThan(0)
+      expect(chips.every((chip) => chip.getAttribute('data-actor-kind') === 'policy-token')).toBe(true)
+    })
   })
 
   it('reads its filters from the URL, and clears them from the filter bar', async () => {
@@ -252,6 +261,21 @@ describe('AgentActivity', () => {
 
     await userEvent.click(within(count).getByRole('button', { name: 'Show all denied' }))
     expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { outcome: 'DENIED' } }))
+  })
+
+  it('does not say nothing was denied when the denials are older than the recent actions', async () => {
+    useScenario('agent-activity')
+    const getAgentActivity = skillPresetsApi.getAgentActivity.bind(skillPresetsApi)
+    jest.spyOn(skillPresetsApi, 'getAgentActivity').mockImplementation(async (...args) => {
+      const response = await getAgentActivity(...args)
+      return { ...response, recent: response.recent.filter(({ outcome }) => outcome === 'ALLOWED') }
+    })
+    renderWithProviders(<AgentActivity />)
+
+    expect(await screen.findByTestId('no-recent-denial')).toHaveTextContent(
+      'Denied actions in this period are not among the 100 most recent shown.'
+    )
+    expect(screen.getByRole('button', { name: 'Show all denied' })).toBeInTheDocument()
   })
 
   it('loads again when Try again is clicked', async () => {

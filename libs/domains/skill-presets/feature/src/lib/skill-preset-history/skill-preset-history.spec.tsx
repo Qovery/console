@@ -38,13 +38,15 @@ const REVISIONS = [
   },
 ]
 
-let mockRevisions = REVISIONS
+let mockRevisions: object[] = REVISIONS
+const PRESETS_LOADED = { isSuccess: true, data: [{ id: 'preset-1', name: 'Backend team' }] }
+let mockPresets: { isSuccess: boolean; data?: { id: string; name: string }[] } = PRESETS_LOADED
 
 jest.mock('../hooks/use-skill-preset-revisions/use-skill-preset-revisions', () => ({
   useSkillPresetRevisions: () => ({ isLoading: false, data: mockRevisions }),
 }))
 jest.mock('../hooks/use-skill-presets/use-skill-presets', () => ({
-  useSkillPresets: () => ({ data: [{ id: 'preset-1', name: 'Backend team' }] }),
+  useSkillPresets: () => mockPresets,
 }))
 jest.mock('../hooks/use-skill-preset-assignees/use-skill-preset-assignees', () => ({
   useSkillPresetAssignees: () => ({ data: { roles: [], members: [] } }),
@@ -63,6 +65,7 @@ jest.mock('@monaco-editor/react', () => ({
 
 beforeEach(() => {
   mockRevisions = REVISIONS
+  mockPresets = PRESETS_LOADED
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1', skillPresetId: 'preset-1' })
 })
 
@@ -91,6 +94,28 @@ describe('SkillPresetHistory', () => {
     )
   })
 
+  it('offers to recreate a preset the loaded list no longer has', async () => {
+    mockPresets = { isSuccess: true, data: [] }
+    renderWithProviders(<SkillPresetHistory />)
+
+    expect(screen.getByRole('button', { name: /Recreate from this revision/ })).toBeInTheDocument()
+  })
+
+  it('does not treat a preset as deleted while the list is loading or failed', () => {
+    mockPresets = { isSuccess: false, data: undefined }
+    renderWithProviders(<SkillPresetHistory />)
+
+    expect(screen.queryByRole('button', { name: /Recreate from this revision/ })).not.toBeInTheDocument()
+  })
+
+  it('shows a revision that only made the preset a template', () => {
+    mockRevisions = [...REVISIONS, { ...REVISIONS[1], revision: 3, is_template: true, security_review: null }]
+    renderWithProviders(<SkillPresetHistory />)
+
+    expect(screen.getAllByText('Made a template')).toHaveLength(2)
+    expect(screen.queryByText(/No change in content/)).not.toBeInTheDocument()
+  })
+
   it('does not diff a revision whose previous one is not loaded', () => {
     mockRevisions = REVISIONS.filter(({ revision }) => revision === 2)
     renderWithProviders(<SkillPresetHistory />)
@@ -99,9 +124,13 @@ describe('SkillPresetHistory', () => {
     expect(screen.queryByTestId('diff')).not.toBeInTheDocument()
   })
 
-  it('names the review in plain words, with the model id in a tooltip', () => {
-    renderWithProviders(<SkillPresetHistory />)
-    expect(screen.getByText('Model review on AWS Bedrock, prompt v1: allowed')).toBeInTheDocument()
+  it('names the review in plain words, with the model id in a tooltip', async () => {
+    const { userEvent } = renderWithProviders(<SkillPresetHistory />)
+    const review = screen.getByText('Model review on AWS Bedrock, prompt v1: allowed')
     expect(screen.queryByText(/example-model-id/)).not.toBeInTheDocument()
+
+    await userEvent.hover(review)
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Model: example-model-id')
   })
 })

@@ -87,7 +87,7 @@ function PieceRow({ organizationId, name, detail, tokens, sha256, skillName, pic
               variant="outline"
               color="neutral"
               aria-expanded={open}
-              aria-controls={panelId}
+              aria-controls={open ? panelId : undefined}
               onClick={() => setOpen((value) => !value)}
             >
               {open ? 'Hide' : 'Read'}
@@ -237,7 +237,7 @@ export function MemberAgentView({ organizationId }: { organizationId: string }) 
               </Table.Body>
             </Table.Root>
             <p className="text-xs text-neutral-subtle">
-              Qovery skills not listed here load as Qovery publishes them, with the team context. Opening a piece here
+              Qovery skills not listed here follow the starting point above, with the team context. Opening a piece here
               is recorded in the audit logs as a view; it does not count as an agent load. Say “show Qovery preset” to
               your agent to see the same text there.
             </p>

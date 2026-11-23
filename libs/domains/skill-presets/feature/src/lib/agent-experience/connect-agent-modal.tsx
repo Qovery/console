@@ -3,7 +3,8 @@ import { Button, Heading, InputSelectSmall, Navbar } from '@qovery/shared/ui'
 import { CLI_INSTALL_COMMAND, MCP_SETUPS, SKILLS_INSTALL_COMMAND } from './agent-experience-connect'
 import { CommandBlock } from './command-block'
 
-export function ConnectAgentModal({ onClose }: { onClose: () => void }) {
+/** `closeLabel` reads "Back" when the popup is shown inside another modal, which it returns to. */
+export function ConnectAgentModal({ onClose, closeLabel = 'Close' }: { onClose: () => void; closeLabel?: string }) {
   const [tab, setTab] = useState('skills')
   const [agentId, setAgentId] = useState(MCP_SETUPS[0].id)
   const agent = MCP_SETUPS.find(({ id }) => id === agentId) ?? MCP_SETUPS[0]
@@ -72,7 +73,7 @@ export function ConnectAgentModal({ onClose }: { onClose: () => void }) {
       </div>
       <div className="flex items-center justify-end gap-3 border-t border-neutral px-5 py-4">
         <Button type="button" variant="outline" color="neutral" onClick={onClose}>
-          Close
+          {closeLabel}
         </Button>
       </div>
     </div>

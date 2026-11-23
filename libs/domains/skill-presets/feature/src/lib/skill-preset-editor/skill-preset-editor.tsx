@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Link, useBlocker, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type ReactNode, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
-import { Controller, FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
+import { Controller, type FieldErrors, FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import {
   SKILL_PRESET_LIMITS,
   SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
@@ -28,6 +28,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { scrollToElement } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 import { AI_FEATURES_OFF_TOOLTIP, AiFeaturesNotice } from '../ai-features-notice/ai-features-notice'
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
@@ -36,13 +37,13 @@ import { useEditSkillPreset } from '../hooks/use-edit-skill-preset/use-edit-skil
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPreset } from '../hooks/use-skill-preset/use-skill-preset'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
+import { LoadError } from '../load-error/load-error'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SecurityFindingsSummary } from '../security-findings-summary/security-findings-summary'
 import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
 import { PresetPreviewPanel } from '../skill-presets-preview/preset-preview-panel'
 import { isTemplate } from '../utils/resolve-preset'
-import { scrollToElement } from '../utils/scroll'
 import {
   type FindingTarget,
   findingFieldId,
@@ -51,7 +52,13 @@ import {
   findingsAsText,
   findingsFor,
 } from '../utils/skill-preset-findings'
-import { type SkillPresetFormValues, toSkillPresetFormValues, toSkillPresetRequest } from '../utils/skill-preset-form'
+import {
+  type SkillPresetFormValues,
+  keepEditsSinceSubmit,
+  snapshotSkillPresetFormValues,
+  toSkillPresetFormValues,
+  toSkillPresetRequest,
+} from '../utils/skill-preset-form'
 import { SKILL_PRESET_TEMPLATES, findTemplate } from '../utils/skill-preset-templates'
 import { flattenFieldErrors, skillPresetResolver } from '../utils/skill-preset-validation'
 import { AssignmentSection } from './assignment-section'
@@ -195,8 +202,9 @@ export function SkillPresetEditorForm({
 
   const draftId = preset?.id ?? NEW_PRESET_ID
   const otherPresets = useMemo(() => presets.filter(({ id }) => id !== draftId), [presets, draftId])
-  const flatErrors = flattenFieldErrors(errors)
-  const errorCount = Object.keys(flatErrors).length
+  // The total text limit belongs to no single field: it is shown on its own, next to Save.
+  const { totalText: totalTextError, ...fieldErrors } = flattenFieldErrors(errors)
+  const errorCount = Object.keys(fieldErrors).length
   const changedElsewhere =
     preset !== undefined &&
     (savedElsewhere ||
@@ -266,17 +274,23 @@ export function SkillPresetEditorForm({
     setConflictDetail(null)
   }
 
-  const onInvalid = () => {
-    const [firstError] = Object.keys(flattenFieldErrors(methods.formState.errors))
+  // The errors come as an argument: the form state read here is still the one from before the submit.
+  const onInvalid = (invalidFields: FieldErrors<SkillPresetFormValues>) => {
+    const [firstError] = Object.keys(flattenFieldErrors(invalidFields))
     if (!firstError) return
-    // Text inputs take focus through react-hook-form; Monaco fields are scrolled to.
-    methods.setFocus(firstError as Parameters<typeof methods.setFocus>[0])
-    scrollToElement(document.querySelector(`[name="${firstError}"]`))
+    // The fields are controlled and pass no ref to react-hook-form, so focus goes through the DOM: the
+    // input of that name, or the textarea Monaco reads its keyboard input from.
+    const markdownField = document.querySelector(`[data-field-name="${firstError}"]`)
+    const target = markdownField ?? document.querySelector(`[name="${firstError}"]`)
+    const focusable = markdownField ? markdownField.querySelector('textarea') : target
+    if (focusable instanceof HTMLElement) focusable.focus({ preventScroll: true })
+    scrollToElement(target)
   }
 
-  const onValid = async (submitted: SkillPresetFormValues) => {
+  const onValid = async (values: SkillPresetFormValues) => {
     if (saving.current) return
     saving.current = true
+    const submitted = snapshotSkillPresetFormValues(values)
     setRejection(null)
     setConflictDetail(null)
     setServerError(null)
@@ -290,7 +304,11 @@ export function SkillPresetEditorForm({
         // The review passed and the revision is stored: refresh what the page shows from it.
         setSavePhase('saving')
         await queryClient.invalidateQueries({ queryKey: queries.skillPresets._def })
-        methods.reset(toSkillPresetFormValues(saved))
+        // The saved revision becomes the baseline. Edits typed during the review stay, as unsaved changes.
+        const savedValues = toSkillPresetFormValues(saved)
+        const draft = keepEditsSinceSubmit({ saved: savedValues, submitted, current: methods.getValues() })
+        methods.reset(savedValues)
+        if (draft !== savedValues) methods.reset(draft, { keepDefaultValues: true })
         setBaseRevision(saved.revision)
       } else {
         await createSkillPreset({ organizationId, body })
@@ -511,6 +529,7 @@ export function SkillPresetEditorForm({
                   render={({ field, fieldState }) => (
                     <MarkdownField
                       id={findingFieldId({ field: 'teamContext' })}
+                      name={field.name}
                       label="Team context"
                       hideLabel
                       value={field.value}
@@ -550,6 +569,12 @@ export function SkillPresetEditorForm({
           </div>
 
           <div className="mt-4 flex max-w-content-with-navigation-left items-center justify-end gap-3 pb-8">
+            {isSubmitted && totalTextError && (
+              <span className="flex items-center gap-1.5 text-sm text-negative" data-testid="total-text-error">
+                <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
+                {totalTextError}
+              </span>
+            )}
             {isSubmitted && errorCount > 0 && (
               <span className="flex items-center gap-1.5 text-sm text-negative">
                 <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
@@ -598,7 +623,12 @@ function SkillPresetEditorPage() {
   const { organizationId = '', skillPresetId } = useParams({ strict: false })
   const search = useSearch({ strict: false }) as EditorSearch
   const { data: preset, isLoading: isPresetLoading, error: presetError } = useSkillPreset({ skillPresetId })
-  const { data: presets = [], isLoading: isListLoading } = useSkillPresets({ organizationId })
+  const {
+    data: presets = [],
+    isLoading: isListLoading,
+    error: listError,
+    refetch: refetchList,
+  } = useSkillPresets({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
 
   useDocumentTitle(`${skillPresetId ? 'Edit' : 'Create'} preset - Skills registry - Agents`)
@@ -615,7 +645,8 @@ function SkillPresetEditorPage() {
     )
   }
 
-  if (skillPresetId && (presetError || !preset)) {
+  // A failed background refetch keeps the cached preset: the form stays mounted, so the draft is kept.
+  if (skillPresetId && !preset) {
     return (
       <Section className="p-8">
         <Callout.Root color="red" role="alert">
@@ -629,6 +660,27 @@ function SkillPresetEditorPage() {
             </Callout.TextDescription>
           </Callout.Text>
         </Callout.Root>
+      </Section>
+    )
+  }
+
+  // Duplicate needs its source: never fall back to a blank form that looks like a copy.
+  if (search.from && !source) {
+    return (
+      <Section className="p-8">
+        {listError ? (
+          <LoadError title="The preset to copy could not be loaded" error={listError} onRetry={() => refetchList()} />
+        ) : (
+          <Callout.Root color="red" role="alert">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>The preset to copy was not found</Callout.TextHeading>
+              <Callout.TextDescription>It may have been deleted.</Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+        )}
       </Section>
     )
   }

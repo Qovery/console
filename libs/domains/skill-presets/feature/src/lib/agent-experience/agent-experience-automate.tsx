@@ -25,7 +25,7 @@ import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use
 import { AGENT_JOBS, AGENT_JOB_LEVELS, type AgentJob, policyExampleUrl } from '../utils/agent-jobs'
 import { AgentTaskEnvironmentModal } from './agent-task-environment-modal'
 import { CopyLabelGroup } from './command-block'
-import { NEW_JOB_TITLE, NewJobModal } from './new-job-modal'
+import { NEW_JOB_LABEL, NewJobModal } from './new-job-modal'
 import { AgentExperiencePage, CodingAgentLogos } from './ui/agent-experience-ui'
 
 /** The Agent Tasks templates that run an agent on Qovery itself. */
@@ -113,6 +113,9 @@ const TRIGGER_ICONS = { schedule: 'calendar-clock', webhook: 'webhook' } as cons
 const MCP_URL = 'https://mcp.qovery.com/mcp'
 
 /** A value to copy, in full (it wraps instead of being cut), with a copy button named after it. */
+/** "Schedule (Europe/Paris)": a cron is only right in the timezone the prompt is written in. */
+const withTimezone = (label: string, timezone?: string) => (timezone ? `${label} (${timezone})` : label)
+
 function CopyValue({ label, value, copyLabel }: { label: string; value: string; copyLabel: string }) {
   return (
     <span className="flex items-center justify-between gap-2 rounded border border-neutral bg-surface-neutral-subtle px-2 py-1">
@@ -128,6 +131,35 @@ function CopyValue({ label, value, copyLabel }: { label: string; value: string; 
 }
 
 /**
+ * For members: who can create the policy token. The members and roles are only read here, when a
+ * member opens a job, never for owners and admins.
+ */
+function MemberNote({ organizationId }: { organizationId: string }) {
+  const { data: assignees } = useSkillPresetAssignees({ organizationId })
+  const adminRoleIds = new Set(
+    (assignees?.roles ?? []).filter(({ name }) => ['owner', 'admin'].includes(name.toLowerCase())).map(({ id }) => id)
+  )
+  const adminNames = (assignees?.members ?? [])
+    .filter(({ role_id }) => adminRoleIds.has(role_id ?? ''))
+    .map(({ name }) => name)
+  return (
+    <Callout.Root color="neutral" data-testid="agent-job-member-note">
+      <Callout.Icon>
+        <Icon iconName="lock-keyhole" iconStyle="regular" />
+      </Callout.Icon>
+      <Callout.Text>
+        <Callout.TextDescription>
+          Only owners and admins create policy tokens.
+          {adminNames.length > 0
+            ? ` Send this job to one of them: ${adminNames.join(', ')}.`
+            : ' Send this job to one of them.'}
+        </Callout.TextDescription>
+      </Callout.Text>
+    </Callout.Root>
+  )
+}
+
+/**
  * How the job runs without anyone: first its policy token, then a scheduler. The Agent Task form is
  * not prefilled from here: it only takes its own templates, and the Qovery MCP server needs the token
  * value, shown once at creation. So the steps give each value to copy.
@@ -136,13 +168,11 @@ function RunOnItsOwn({
   job,
   canManage,
   organizationId,
-  adminNames,
   onOpenEnvironment,
 }: {
   job: AgentJob
   canManage: boolean
   organizationId: string
-  adminNames: string[]
   onOpenEnvironment: () => void
 }) {
   return (
@@ -161,21 +191,7 @@ function RunOnItsOwn({
               shown once: keep it for the next step.
               {canManage && ' Use Create policy token at the bottom of this panel.'}
             </span>
-            {!canManage && (
-              <Callout.Root color="neutral" data-testid="agent-job-member-note">
-                <Callout.Icon>
-                  <Icon iconName="lock-keyhole" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <Callout.TextDescription>
-                    Only owners and admins create policy tokens.
-                    {adminNames.length > 0
-                      ? ` Send this job to one of them: ${adminNames.join(', ')}.`
-                      : ' Send this job to one of them.'}
-                  </Callout.TextDescription>
-                </Callout.Text>
-              </Callout.Root>
-            )}
+            {!canManage && <MemberNote organizationId={organizationId} />}
           </span>
         </li>
         <li className="flex items-start gap-3">
@@ -220,7 +236,7 @@ function RunOnItsOwn({
                 </span>
                 {job.trigger.kind === 'schedule' && job.trigger.cron ? (
                   <CopyValue
-                    label="Schedule"
+                    label={withTimezone('Schedule', job.trigger.timezone)}
                     value={job.trigger.cron}
                     copyLabel="Copy the schedule for the coding agent"
                   />
@@ -247,7 +263,11 @@ function RunOnItsOwn({
                   Task with the prompt below, this trigger, and the Qovery MCP server set up with the token.
                 </span>
                 {job.trigger.kind === 'schedule' && job.trigger.cron ? (
-                  <CopyValue label="On a schedule" value={job.trigger.cron} copyLabel="Copy the Agent Task schedule" />
+                  <CopyValue
+                    label={withTimezone('On a schedule', job.trigger.timezone)}
+                    value={job.trigger.cron}
+                    copyLabel="Copy the Agent Task schedule"
+                  />
                 ) : (
                   <span className="text-xs text-neutral">From a webhook: use the URL the Agent Task gets.</span>
                 )}
@@ -328,14 +348,6 @@ function JobDetailsPanel({
   onNewJob: () => void
 }) {
   const { openModal, closeModal } = useModal()
-  const { data: assignees } = useSkillPresetAssignees({ organizationId })
-  // Who a member can send the job to: the organization's owners and admins.
-  const adminRoleIds = new Set(
-    (assignees?.roles ?? []).filter(({ name }) => ['owner', 'admin'].includes(name.toLowerCase())).map(({ id }) => id)
-  )
-  const adminNames = (assignees?.members ?? [])
-    .filter(({ role_id }) => adminRoleIds.has(role_id ?? ''))
-    .map(({ name }) => name)
   if (!job) return null
   const createToken = () => {
     // The sheet is a modal dialog: close it first so the create form gets the focus.
@@ -431,7 +443,6 @@ function JobDetailsPanel({
                   job={job}
                   canManage={canManage}
                   organizationId={organizationId}
-                  adminNames={adminNames}
                   onOpenEnvironment={() => {
                     onOpenChange(false)
                     openModal({
@@ -444,22 +455,25 @@ function JobDetailsPanel({
                 <p className="text-xs text-neutral-subtle">
                   Replace each REPLACE_WITH_... value with an ID from your organization before you create the token.
                 </p>
-                <p className="flex flex-wrap items-center gap-1 text-sm text-neutral-subtle">
-                  Need a different job?
-                  <Button
-                    type="button"
-                    variant="plain"
-                    color="brand"
-                    size="xs"
-                    className="h-auto px-0 text-sm"
-                    onClick={() => {
-                      onOpenChange(false)
-                      onNewJob()
-                    }}
-                  >
-                    Describe it
-                  </Button>
-                </p>
+                {/* Members cannot create the policy token a new job needs, as on the page's button. */}
+                {canManage && (
+                  <p className="flex flex-wrap items-center gap-1 text-sm text-neutral-subtle">
+                    Need a different job?
+                    <Button
+                      type="button"
+                      variant="plain"
+                      color="brand"
+                      size="xs"
+                      className="h-auto px-0 text-sm"
+                      onClick={() => {
+                        onOpenChange(false)
+                        onNewJob()
+                      }}
+                    >
+                      Describe it
+                    </Button>
+                  </p>
+                )}
               </div>
             </div>
 
@@ -511,7 +525,7 @@ export function AgentExperienceAutomate() {
   const { openModal: openNewJobModal, closeModal: closeNewJobModal } = useModal()
   const openNewJob = () =>
     openNewJobModal({
-      content: <NewJobModal onClose={closeNewJobModal} canManage={canManage} />,
+      content: <NewJobModal onClose={closeNewJobModal} />,
       options: { width: 680 },
     })
 
@@ -551,7 +565,7 @@ export function AgentExperienceAutomate() {
                 onClick={openNewJob}
               >
                 <Icon iconName="circle-plus" iconStyle="regular" />
-                {NEW_JOB_TITLE}
+                {NEW_JOB_LABEL}
               </Button>
             )}
           </div>

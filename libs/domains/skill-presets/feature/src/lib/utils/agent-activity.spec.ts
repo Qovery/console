@@ -1,11 +1,12 @@
-import { type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
+import { AGENT_ACTIVITY_LIMITS, type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
 import {
   actionLabel,
   actionTypeLabel,
   actorLabel,
   computeAgentActivityHints,
   groupActionsByType,
-  neverLoadedSkills,
+  memberCount,
+  unusedSkills,
 } from './agent-activity'
 
 const action = (
@@ -109,9 +110,33 @@ describe('agent activity helpers', () => {
     expect(actorLabel('jane@example.com')).toEqual({ kind: 'member', label: 'jane@example.com' })
   })
 
-  it('lists the Qovery skills nobody loaded', () => {
-    expect(neverLoadedSkills(activity())).toEqual(expect.arrayContaining(['qovery-assess', 'qovery-signup']))
-    expect(neverLoadedSkills(activity())).not.toContain('qovery-deploy')
+  it('lists the Qovery skills nobody used', () => {
+    expect(unusedSkills(activity())).toEqual(expect.arrayContaining(['qovery-assess', 'qovery-signup']))
+    expect(unusedSkills(activity())).not.toContain('qovery-deploy')
+  })
+
+  it('counts a skill with actions or denials but no recorded load as used', () => {
+    const usedWithoutLoad = activity({
+      by_skill: [
+        { skill_name: 'qovery-assess', loads: 0, actions: 2, denials: 0, members: 1 },
+        { skill_name: 'qovery-signup', loads: 0, actions: 0, denials: 1, members: 1 },
+      ],
+    })
+    expect(unusedSkills(usedWithoutLoad)).not.toContain('qovery-assess')
+    expect(unusedSkills(usedWithoutLoad)).not.toContain('qovery-signup')
+  })
+
+  it('counts members from the breakdown, or from the totals once the breakdown hit its cap', () => {
+    expect(memberCount(activity({ totals: { ...activity().totals, members: 3, policy_tokens: 1 } }))).toBe(2)
+    const member = activity().by_member[0]
+    const capped = activity({
+      by_member: Array.from({ length: AGENT_ACTIVITY_LIMITS.maxMembers }, (_, index) => ({
+        ...member,
+        user_sub: `user-${index}`,
+      })),
+      totals: { ...activity().totals, members: 620, policy_tokens: 20 },
+    })
+    expect(memberCount(capped)).toBe(600)
   })
 
   it('suggests factual follow-ups, each tied to something to adjust', () => {

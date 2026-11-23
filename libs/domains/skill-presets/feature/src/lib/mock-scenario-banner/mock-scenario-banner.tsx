@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react'
-import { getSkillPresetsMockScenario, loadSkillPresetsMockTools } from '@qovery/domains/skill-presets/data-access'
+import { getSkillPresetsMockScenario, loadSkillPresetsMockTools } from '@qovery/domains/skill-presets/mock'
 
 // The mock tools hold an unsafe text sample for testing: they load only when the mock is active.
 const LazyBanner = lazy(async () => {

@@ -1,5 +1,5 @@
-import { type SkillPresetFinding } from '../skill-presets.types'
-import { type InspectedField } from './mock-content-inspector'
+import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
+import { type InspectedField, isNegated } from './mock-content-inspector'
 
 /*
  * Stand-in for the model security review that q-core runs on AWS Bedrock after its rules, for the
@@ -27,7 +27,10 @@ export const MOCK_REVIEW_PROMPT_VERSION = 'v1'
 export function reviewSkillPresetContent(fields: InspectedField[]): SkillPresetFinding[] {
   return fields.flatMap(({ location, text }) =>
     text.split('\n').flatMap((lineText, index) =>
-      SHAPES.filter(({ pattern }) => pattern.test(lineText)).map(({ category, reason }) => ({
+      SHAPES.filter(({ pattern }) => {
+        const match = pattern.exec(lineText)
+        return match !== null && !isNegated(lineText, match.index)
+      }).map(({ category, reason }) => ({
         source: 'MODEL' as const,
         rule_id: category,
         location,

@@ -1,4 +1,4 @@
-import { type SkillPresetFinding } from '../skill-presets.types'
+import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 
 /**
  * A partial port of q-core's `SkillPresetContentInspector`, for the mock only, so the Console can
@@ -96,7 +96,7 @@ const RULES: Rule[] = [
   ),
 ]
 
-/** Attacks when they describe what to do, protections when negated in the same sentence. */
+/** Attacks when they describe what to do, protections when negated in the same clause. */
 const WITHOUT_RULES: Rule[] = [
   rule(
     'conceal-from-user',
@@ -110,7 +110,8 @@ const WITHOUT_RULES: Rule[] = [
   ),
 ]
 
-const NEGATION = /\b(never|don't|do not|must not|mustn't|cannot|can't|not allowed to)\b/i
+/** A negation in the clause before a match: the instruction protects rather than attacks. */
+export const NEGATION = /\b(never|don't|do not|must not|mustn't|cannot|can't|not allowed to)\b/i
 
 const hostAndPathOf = (url: string) => url.replace(/^https?:\/\//i, '').toLowerCase()
 
@@ -124,6 +125,15 @@ function isAllowedUrl(url: string) {
       : host === allowed || host.endsWith(`.${allowed}`)
   )
 }
+
+/** Whether the clause holding the match, up to the match, is negated. Other clauses do not count. */
+export const isNegated = (lineText: string, matchIndex: number) =>
+  NEGATION.test(
+    lineText
+      .slice(0, matchIndex)
+      .split(/[.!?,;:]/)
+      .pop() ?? ''
+  )
 
 export interface InspectedField {
   location: string
@@ -148,8 +158,7 @@ export function inspectSkillPresetContent(fields: InspectedField[]): SkillPreset
       WITHOUT_RULES.forEach(({ id, reason, pattern }) => {
         const match = pattern.exec(lineText)
         if (!match) return
-        const sentenceBefore = lineText.slice(0, match.index).split('.').pop() ?? ''
-        if (!NEGATION.test(sentenceBefore)) add(id, reason)
+        if (!isNegated(lineText, match.index)) add(id, reason)
       })
 
       for (const [url] of lineText.matchAll(URL_REGEX)) {

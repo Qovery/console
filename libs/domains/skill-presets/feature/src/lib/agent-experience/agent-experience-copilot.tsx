@@ -1,7 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { type Organization } from 'qovery-typescript-axios'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import { getSkillPresetsMockScenario } from '@qovery/domains/skill-presets/data-access'
 import { AICopilotSettings } from '@qovery/shared/devops-copilot/feature'
 import { Badge, Button, Callout, Heading, Icon, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -10,13 +8,6 @@ import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-fe
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { useCopilotStatus } from '../hooks/use-copilot-status/use-copilot-status'
 import { AgentExperiencePage } from './ui/agent-experience-ui'
-
-const COPILOT_DOES = [
-  { icon: 'comments', text: 'Answers questions about your services, deployments and clusters, right in the Console.' },
-  { icon: 'stethoscope', text: 'Troubleshoots a failed deployment from its logs and events.' },
-  { icon: 'bolt', text: 'Takes actions such as deploys and restarts, only when you allow read-write mode.' },
-  { icon: 'clock', text: 'Runs the scheduled tasks you set up.' },
-] as const
 
 export function OnOffBadge({ on, label }: { on: boolean; label?: string }) {
   return on ? (
@@ -27,7 +18,7 @@ export function OnOffBadge({ on, label }: { on: boolean; label?: string }) {
   ) : (
     <Badge variant="outline" color="neutral" className="gap-1">
       <Icon iconName="circle" iconStyle="regular" aria-hidden="true" />
-      Off
+      {label ?? 'Off'}
     </Badge>
   )
 }
@@ -52,16 +43,12 @@ export const copilotStateLabel = (enabled: boolean, readOnly: boolean) =>
  */
 export function AgentExperienceCopilot() {
   const { organizationId = '' } = useParams({ strict: false })
-  const isMock = getSkillPresetsMockScenario() !== null
   const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
   const copilot = useCopilotStatus({ organizationId })
   const aiOn = aiFeaturesEnabled && copilot.enabled
-  const { data: organizationData } = useOrganization({ organizationId, enabled: !isMock })
-  // The mock never reads the real organization.
-  const organization: Organization | undefined = isMock
-    ? ({ id: organizationId, name: 'Acme (mock)' } as Organization)
-    : organizationData
+  const hasCopilotError = Boolean(copilot.error)
+  const { data: organization } = useOrganization({ organizationId })
   const { openModal, closeModal } = useModal()
   useDocumentTitle('Copilot - Agents')
 
@@ -70,27 +57,15 @@ export function AgentExperienceCopilot() {
       title="Copilot"
       titleBadge={
         <Badge variant="surface" color="brand" size="sm">
-          Beta
+          Preview
         </Badge>
       }
       description="Qovery’s AI assistant in the Console, limited to what you allow."
       width="reading"
+      // What the Copilot does lives in the docs, behind the header's help button, as on other settings pages.
+      showHelp
     >
       <div className="flex flex-col gap-6">
-        <Section aria-labelledby="copilot-does" className="flex flex-col gap-3 rounded-md border border-neutral p-4">
-          <Heading level={2} id="copilot-does">
-            What the Copilot does
-          </Heading>
-          <ul className="grid grid-cols-1 gap-3 text-sm text-neutral md:grid-cols-2">
-            {COPILOT_DOES.map(({ icon, text }) => (
-              <li key={text} className="flex items-start gap-2">
-                <Icon iconName={icon} iconStyle="regular" className="mt-0.5 text-brand" aria-hidden="true" />
-                {text}
-              </li>
-            ))}
-          </ul>
-        </Section>
-
         <div
           className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral px-4 py-3"
           data-testid="copilot-state"
@@ -101,10 +76,29 @@ export function AgentExperienceCopilot() {
           </span>
           {copilot.isLoading ? (
             <Skeleton width={160} height={20} show />
+          ) : hasCopilotError ? (
+            <Badge variant="outline" color="neutral" className="gap-1">
+              <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
+              Unknown
+            </Badge>
           ) : (
             <OnOffBadge on={aiOn} label={aiStatusLabel(aiFeaturesEnabled, copilot.enabled, copilot.readOnly)} />
           )}
         </div>
+
+        {/* A failed config read is not "off": say so, and offer no switch until it loads. */}
+        {hasCopilotError && (
+          <Callout.Root color="red" data-testid="copilot-error">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextDescription>
+                Unable to load the Copilot status. Reload the page to try again.
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+        )}
 
         {isRoleLoading ? (
           <Skeleton height={160} className="w-full" show />
@@ -121,7 +115,7 @@ export function AgentExperienceCopilot() {
           </Callout.Root>
         ) : (
           <>
-            {!copilot.isLoading && !aiOn && (
+            {!copilot.isLoading && !hasCopilotError && !aiOn && (
               <Section
                 aria-labelledby="copilot-turn-on"
                 className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"
@@ -146,7 +140,7 @@ export function AgentExperienceCopilot() {
                 </Button>
               </Section>
             )}
-            {copilot.enabled && organization && copilot.ready && (
+            {copilot.enabled && !hasCopilotError && organization && (
               // The existing Copilot settings: access source, access mode, scheduled tasks, and turning it off.
               <AICopilotSettings organization={organization} embedded />
             )}

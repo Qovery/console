@@ -68,6 +68,16 @@ it.each([
   expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
 })
 
+it.each([
+  [props.template, 'This project has no environments. Create one before adding an Agent Task.'],
+  [undefined, 'This project has no environments. Create one before opening Automations.'],
+])('names what the empty environment list blocks', async (template, message) => {
+  mockEnvironments.mockReturnValue({ data: [], isFetching: false, isError: false })
+  renderWithProviders(<AgentTaskEnvironmentModal organizationId="org" template={template} onClose={props.onClose} />)
+  await select('Project', 'Project one')
+  expect(screen.getByText(message)).toBeInTheDocument()
+})
+
 it('opens Automations in the chosen environment without a template', async () => {
   const { userEvent } = renderWithProviders(<AgentTaskEnvironmentModal organizationId="org" onClose={props.onClose} />)
   await select('Project', 'Project one')

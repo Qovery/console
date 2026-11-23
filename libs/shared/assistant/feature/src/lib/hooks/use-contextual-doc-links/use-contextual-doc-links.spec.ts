@@ -21,6 +21,17 @@ describe('useContextualDocLinks', () => {
     })
   })
 
+  it('should link the Copilot docs from the Agents Copilot page', () => {
+    setPathname('/organization/org-123/agent-experience/copilot')
+
+    const { result } = renderHook(() => useContextualDocLinks())
+
+    expect(result.current).toContainEqual({
+      link: 'https://www.qovery.com/docs/copilot/overview',
+      label: 'What the Copilot does',
+    })
+  })
+
   it('should match tanstack organization settings routes', () => {
     setPathname('/organization/org-123/settings/api-token')
 

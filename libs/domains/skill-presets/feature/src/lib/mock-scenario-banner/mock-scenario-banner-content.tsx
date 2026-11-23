@@ -2,7 +2,7 @@ import {
   SKILL_PRESETS_MOCK_SCENARIOS,
   type SkillPresetsMockScenario,
   switchSkillPresetsMockScenario,
-} from '@qovery/domains/skill-presets/data-access'
+} from '@qovery/domains/skill-presets/mock'
 import { Badge, Button, CopyButton, Icon, InputSelectSmall } from '@qovery/shared/ui'
 
 export interface MockScenarioBannerContentProps {
@@ -23,8 +23,9 @@ export function MockScenarioBannerContent({
     <div
       role="status"
       aria-label="Mock data"
-      // A dev bar fixed to the bottom of the window, so the page above keeps its real layout.
-      className="fixed bottom-0 left-0 right-0 z-10 flex flex-wrap items-center gap-3 border-t border-dashed border-neutral bg-surface-neutral-subtle px-4 py-2 text-xs text-neutral"
+      // A dev bar fixed to the bottom of the window, so the page above keeps its real layout. One line
+      // high, scrolling sideways on narrow windows, so the spacer below the page always matches it.
+      className="fixed bottom-0 left-0 right-0 z-10 flex h-12 items-center gap-3 overflow-x-auto whitespace-nowrap border-t border-dashed border-neutral bg-surface-neutral-subtle px-4 text-xs text-neutral"
       data-testid="mock-scenario-banner"
     >
       <Badge variant="surface" className="gap-1">

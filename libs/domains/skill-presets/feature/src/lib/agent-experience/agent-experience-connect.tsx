@@ -1,7 +1,7 @@
 /** The commands of the Connect an agent popup: the Qovery skills, the CLI and the MCP server per coding agent. */
 
 export const SKILLS_INSTALL_COMMAND = 'curl -fsSL https://skill.qovery.com/install.sh | bash'
-export const CLI_INSTALL_COMMAND = 'curl -s https://get.qovery.com | bash'
+export const CLI_INSTALL_COMMAND = 'curl -fsSL https://get.qovery.com | bash'
 export const MCP_URL = 'https://mcp.qovery.com/mcp'
 export const MCP_ADD_COMMAND = `claude mcp add --transport http qovery ${MCP_URL} --callback-port 4242`
 
@@ -20,7 +20,11 @@ export const MCP_SETUPS: {
     id: 'codex',
     name: 'Codex',
     steps: [
-      { title: 'Add this line to your config.toml', command: 'mcp_oauth_callback_port = 4242', prompt: false },
+      {
+        title: 'Add this line at the top of ~/.codex/config.toml, above any [section]',
+        command: 'mcp_oauth_callback_port = 4242',
+        prompt: false,
+      },
       { title: 'Run this command', command: `codex mcp add qovery --url '${MCP_URL}'` },
     ],
   },

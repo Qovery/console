@@ -1,3 +1,4 @@
+import equal from 'fast-deep-equal'
 import {
   type SkillPresetBase,
   type SkillPresetRequest,
@@ -116,4 +117,36 @@ export function toSkillPresetRequest(values: SkillPresetFormValues): SkillPreset
       ? { organization_default: false, role_ids: [], user_ids: [] }
       : { organization_default: values.organizationDefault, role_ids: values.roleIds, user_ids: values.userIds },
   }
+}
+
+/**
+ * A copy that later edits cannot change. react-hook-form hands the submit handler its live values,
+ * which keep changing while the save runs.
+ */
+export const snapshotSkillPresetFormValues = (values: SkillPresetFormValues): SkillPresetFormValues => ({
+  ...values,
+  qoverySkills: values.qoverySkills.map((skill) => ({ ...skill })),
+  customSkills: values.customSkills.map((skill) => ({ ...skill })),
+  roleIds: [...values.roleIds],
+  userIds: [...values.userIds],
+})
+
+/**
+ * The draft to show once a save succeeds: the saved revision, plus every field the admin changed while
+ * the save was running. Fields left alone since the submit take the saved value.
+ */
+export function keepEditsSinceSubmit({
+  saved,
+  submitted,
+  current,
+}: {
+  saved: SkillPresetFormValues
+  submitted: SkillPresetFormValues
+  current: SkillPresetFormValues
+}): SkillPresetFormValues {
+  const keys = Object.keys(saved) as (keyof SkillPresetFormValues)[]
+  return keys.reduce(
+    (values, key) => (equal(current[key], submitted[key]) ? values : { ...values, [key]: current[key] }),
+    saved
+  )
 }

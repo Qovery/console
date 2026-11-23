@@ -57,10 +57,10 @@ import {
   computeAgentActivityHints,
   fillTimeline,
   memberCount,
-  neverLoadedSkills,
   peopleRows,
   policyTokenName,
   targetLabel,
+  unusedSkills,
 } from '../utils/agent-activity'
 import {
   ACTIVITY_RANGES,
@@ -70,6 +70,7 @@ import {
   SOURCE_FILTER_LABELS,
   activityParams,
   activityRange,
+  activityWindowEnd,
   hasActivityFilters,
   memberActor,
   parseActor,
@@ -174,12 +175,12 @@ export function HintLine({
   const card = match(hint)
     .returnType<{ title: string; description: string; destination: 'presets' | 'policies'; onClick?: () => void }>()
     .with({ kind: 'unused-skills' }, (hint) => ({
-      title: `${hint.skills.length} Qovery ${hint.skills.length === 1 ? 'skill was' : 'skills were'} not loaded`,
+      title: `${hint.skills.length} Qovery ${hint.skills.length === 1 ? 'skill was' : 'skills were'} not used`,
       description: `${hint.skills.join(', ')}. Consider turning them off in a preset.`,
       destination: 'presets' as const,
     }))
     .with({ kind: 'environment-denials' }, (hint) => ({
-      title: `${hint.count} actions denied in ${hint.environment}`,
+      title: `${hint.count} recent actions denied in ${hint.environment}`,
       description: 'Review the policy tokens used for this environment.',
       destination: 'policies' as const,
     }))
@@ -229,10 +230,6 @@ export function HintLine({
   )
 }
 
-/**
- * One toolbar row, as on Audit logs: the period on the left, then actor, skill, source and outcome,
- * then Clear filters on the right. Every change goes to the URL.
- */
 function FilterBar({
   search,
   setSearch,
@@ -372,7 +369,7 @@ function BreakdownTable({
   const setBreakdown = (view: Breakdown) => setSearch({ view: view === automatic ? undefined : view })
   const toggle = (key: 'actor' | 'skill', value: string) =>
     setSearch({ [key]: search[key] === value ? undefined : value, page: undefined })
-  const unused = neverLoadedSkills(activity)
+  const unused = unusedSkills(activity)
   const tokens = activity.by_policy_token ?? []
   const people = peopleRows(activity)
 
@@ -988,7 +985,7 @@ function ActivityContent({
               <Icon iconName="ban" iconStyle="regular" />
               What was blocked
             </Heading>
-            {denied.length > 0 && search.outcome !== 'DENIED' && (
+            {activity.totals.denials > 0 && search.outcome !== 'DENIED' && (
               <span className="text-xs text-neutral-subtle" data-testid="denied-count">
                 <Button
                   type="button"
@@ -1004,7 +1001,11 @@ function ActivityContent({
             )}
           </div>
           {denied.length === 0 ? (
-            <p className="text-sm text-neutral-subtle">No agent action was denied in this period.</p>
+            <p className="text-sm text-neutral-subtle" data-testid="no-recent-denial">
+              {activity.totals.denials > 0
+                ? 'Denied actions in this period are not among the 100 most recent shown.'
+                : 'No agent action was denied in this period.'}
+            </p>
           ) : (
             <ol className="rounded-t-lg border-t border-neutral bg-surface-neutral py-1.5" data-testid="denied-actions">
               {denied.slice(0, 6).map((action) => (
@@ -1053,7 +1054,7 @@ export function AgentActivity() {
   const scope: Scope = canManage ? 'organization' : 'me'
   const [search, setSearch] = useActivitySearch()
   const range = activityRange(search)
-  const to = useMemo(() => new Date(Math.ceil(Date.now() / 60_000) * 60_000), [])
+  const to = activityWindowEnd()
   const params = activityParams(search, to, scope)
   const { data, isLoading, isFetching, error, refetch } = useAgentActivity({
     organizationId,
@@ -1081,8 +1082,6 @@ export function AgentActivity() {
     to: params.from,
   })
   const isOrganization = scope === 'organization'
-  // The privacy note in full the first time, then in one line.
-
   const activity =
     data && search.skill === NO_SKILL
       ? {
