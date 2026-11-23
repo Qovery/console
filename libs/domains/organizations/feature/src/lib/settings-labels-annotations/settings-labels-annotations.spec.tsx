@@ -68,4 +68,12 @@ describe('SettingsLabelsAnnotations', () => {
     expect(screen.getByText('Add new')).toBeInTheDocument()
     expect(screen.getAllByText('test')[0]).toBeInTheDocument()
   })
+
+  it('should only render annotations groups when labels have their own page', () => {
+    renderWithProviders(<SettingsLabelsAnnotations annotationsOnly />)
+
+    expect(screen.getByRole('heading', { name: 'Annotations' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Add annotations group/ })).toBeInTheDocument()
+    expect(screen.queryByText('Labels groups')).not.toBeInTheDocument()
+  })
 })
