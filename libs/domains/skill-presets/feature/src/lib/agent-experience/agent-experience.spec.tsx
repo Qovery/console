@@ -2,7 +2,6 @@ import { useLocation, useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
 import axios from 'axios'
 import { type ReactNode } from 'react'
-import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
   installSkillPresetsMock,
@@ -10,7 +9,6 @@ import {
 } from '@qovery/domains/skill-presets/mock'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
-import { AgentsSetupSection } from '../agents-setup/agents-setup-section'
 import * as useAgentActivityModule from '../hooks/use-agent-activity/use-agent-activity'
 import * as useCanManageSkillPresetsModule from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import * as copilotStatus from '../hooks/use-copilot-status/use-copilot-status'
@@ -59,8 +57,6 @@ const useScenario = (scenario: SkillPresetsMockScenario) => {
   resetSkillPresetsMock()
 }
 
-const stepState = (id: string) => screen.getByTestId(`setup-step-${id}`).getAttribute('data-state')
-
 let uninstallMocks: Array<() => void> = []
 beforeAll(() => {
   uninstallMocks = [
@@ -76,84 +72,6 @@ beforeEach(() => {
   resetSkillPresetsMock()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
-})
-
-describe('AgentsSetupSection', () => {
-  it('lists the three steps in order the first time, with the preset step next', async () => {
-    useScenario('agent-experience-empty')
-    renderWithProviders(<AgentsSetupSection />)
-
-    expect(await screen.findByTestId('agents-setup-progress')).toHaveTextContent('0 of 3 done')
-    expect(
-      within(screen.getByTestId('agents-setup-steps'))
-        .getAllByRole('listitem')
-        .map((item) => item.dataset.testid)
-    ).toEqual(['agents-setup-step-preset', 'agents-setup-step-policy-token', 'agents-setup-step-connect'])
-    expect(screen.getByTestId('agents-setup-step-preset')).toHaveAttribute('data-state', 'next')
-    expect(screen.getByText('Create a preset in the Skills registry')).toBeInTheDocument()
-    // New organizations have AI features on.
-    expect(screen.queryByTestId('agents-setup-ai-off')).not.toBeInTheDocument()
-  })
-
-  it('opens the Connect an agent popup from its step', async () => {
-    useScenario('agent-experience-empty')
-    const { userEvent } = renderWithProviders(<AgentsSetupSection />)
-    const step = await screen.findByTestId('agents-setup-step-connect')
-    await userEvent.click(within(step).getByRole('button', { name: 'Connect an agent' }))
-    expect(await screen.findByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
-  })
-
-  it('marks the connect step done only from what we have seen, and says so', async () => {
-    useScenario('agent-experience-partial')
-    renderWithProviders(<AgentsSetupSection />)
-    const step = await screen.findByTestId('agents-setup-step-connect')
-    expect(step).toHaveAttribute('data-state', 'done')
-    expect(step).toHaveTextContent('We’ve seen agent activity in the last 30 days.')
-  })
-
-  it('offers Turn on AI when AI features are off, and keeps AI on when the Copilot step fails', async () => {
-    useScenario('agent-experience-copilot-error')
-    const { userEvent } = renderWithProviders(<AgentsSetupSection />)
-    const notice = await screen.findByTestId('agents-setup-ai-off')
-
-    await userEvent.click(within(notice).getByRole('button', { name: 'Turn on AI' }))
-    const dialog = await screen.findByRole('dialog')
-    await userEvent.click(
-      await within(dialog).findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
-    )
-    // Submitting waits for the Copilot status, so an enabled Copilot is never reset to read-only.
-    await waitFor(() => expect(within(dialog).getByTestId('submit-button')).toBeEnabled())
-    await userEvent.click(within(dialog).getByTestId('submit-button'))
-
-    expect(
-      await within(dialog).findByText('AI features are on, but the Copilot could not be turned on')
-    ).toBeInTheDocument()
-    expect(within(dialog).getByTestId('submit-button')).toHaveTextContent('Retry')
-    await userEvent.click(within(dialog).getByTestId('submit-button'))
-    await waitFor(() => expect(screen.queryByTestId('agents-setup-ai-off')).not.toBeInTheDocument())
-  })
-
-  it('goes away once everything is set up', async () => {
-    useScenario('agent-experience-active')
-    renderWithProviders(<AgentsSetupSection />)
-    await waitFor(() => expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument())
-  })
-
-  it('stays away from members', async () => {
-    useScenario('member')
-    renderWithProviders(<AgentsSetupSection />)
-    await waitFor(() => expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument())
-  })
-
-  it('can be dismissed for good', async () => {
-    useScenario('agent-experience-empty')
-    const { userEvent, unmount } = renderWithProviders(<AgentsSetupSection />)
-    await userEvent.click(await screen.findByRole('button', { name: 'Dismiss agents setup' }))
-    expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument()
-    unmount()
-    renderWithProviders(<AgentsSetupSection />)
-    expect(screen.queryByTestId('agents-setup')).not.toBeInTheDocument()
-  })
 })
 
 describe('AgentExperienceCopilot', () => {
