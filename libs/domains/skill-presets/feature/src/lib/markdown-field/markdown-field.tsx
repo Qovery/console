@@ -6,6 +6,7 @@ import { type SkillPresetFinding, approxTokens } from '@qovery/domains/skill-pre
 import { CodeEditor, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { FindingList } from '../finding-list/finding-list'
+import { findingSourceLabel } from '../utils/skill-preset-findings'
 
 export interface MarkdownFieldProps {
   id: string
@@ -39,13 +40,13 @@ function applyFindings({ editor: editorInstance, monaco, decorations }: MonacoHa
   monaco.editor.setModelMarkers(
     model,
     'skill-preset-findings',
-    lines.map(({ line, reason, rule_id, source }) => ({
+    lines.map((finding) => ({
       severity: monaco.MarkerSeverity.Error,
-      message: `${source === 'MODEL' ? 'Model review' : 'Rule check'}: ${reason} (${rule_id})`,
-      startLineNumber: line,
+      message: `${findingSourceLabel(finding)}: ${finding.reason} (${finding.rule_id})`,
+      startLineNumber: finding.line,
       startColumn: 1,
-      endLineNumber: line,
-      endColumn: model.getLineMaxColumn(line),
+      endLineNumber: finding.line,
+      endColumn: model.getLineMaxColumn(finding.line),
     }))
   )
   decorations.set(
