@@ -1,6 +1,7 @@
 // The billing kit's rules for paywalls, trials, plan proposals and shared reads, and the calls the
 // pricing-api client sends for them, from pricing-api's web/tests (paywall, proposals, kit-reads).
 import { createPricingClient, gatesQuery } from './client'
+import { introChip, introPageView } from './gated'
 import { SHARED_READ_MS, forgetReads, sharedRead } from './reads'
 import {
   BAR_TEXT,
@@ -12,8 +13,10 @@ import {
   isLocked,
   isProposalChange,
   lockLabel,
+  markIntroSeen,
   optionPrice,
   paywallFromBody,
+  pendingIntro,
   proposalFromSearch,
   proposalHeading,
   proposalLine,
@@ -366,5 +369,68 @@ describe('createPricingClient paywall and proposal calls', () => {
   it('should leave out empty actions and SKUs from the gates query', () => {
     expect(gatesQuery({})).toBe('')
     expect(gatesQuery({ skus: ['a'] })).toBe('skus=a')
+  })
+})
+
+// Intros ("Show when included"), from pricing-api's web/tests/paywall-intros.test.ts.
+describe('paywall intros', () => {
+  const intro = {
+    sku: 'service_catalog',
+    title: 'Blueprints',
+    headline: 'Included in your plan',
+    benefits: ['One'],
+    plan: { code: 'GROWTH_2026', name: 'Growth' },
+    cta: 'Continue',
+  }
+  const allowed = {
+    action: 'blueprint.create',
+    sku: 'service_catalog',
+    name: 'Blueprints',
+    allowed: true,
+    reason: '' as const,
+    limit: true,
+    used: 0,
+    requested: 1,
+    intro,
+  }
+
+  it('should show an intro on an allowed gate only, once per organization in the session', () => {
+    expect(pendingIntro('org-a', { ...allowed, allowed: false })).toBeUndefined()
+    expect(pendingIntro('org-a', undefined)).toBeUndefined()
+    expect(pendingIntro('org-a', allowed)).toBe(intro)
+    markIntroSeen('org-a', 'service_catalog')
+    expect(pendingIntro('org-a', allowed)).toBeUndefined()
+    expect(pendingIntro('org-b', allowed)).toBe(intro)
+  })
+
+  it('should build the intro page without any option to buy', () => {
+    const v = introPageView(intro)
+    expect(v.chip).toBe('Included in your Growth plan')
+    expect(v.primary).toBeUndefined()
+    expect(v.others).toEqual([])
+    expect(introChip({})).toBe('Included in your plan')
+  })
+
+  it('should record what the person did with an intro', async () => {
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValue({ ok: true, status: 204, headers: new Headers(), text: () => Promise.resolve('') })
+    const original = global.fetch
+    global.fetch = fetchMock as unknown as typeof fetch
+    try {
+      await createPricingClient({ pricingApiUrl: 'https://p', getToken: () => Promise.resolve('t') }).gateIntro?.(
+        'org-1',
+        {
+          sku: 'service_catalog',
+          action: 'continued',
+        }
+      )
+    } finally {
+      global.fetch = original
+    }
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toBe('https://p/organization/org-1/gates/intro')
+    expect(init.method).toBe('POST')
+    expect(JSON.parse(init.body)).toEqual({ sku: 'service_catalog', action: 'continued' })
   })
 })

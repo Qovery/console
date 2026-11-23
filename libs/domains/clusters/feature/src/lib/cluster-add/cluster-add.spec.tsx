@@ -38,6 +38,7 @@ jest.mock('@qovery/shared/billing-kit', () => {
     billingUsage: () => Promise.resolve(),
     spendLimits: () => Promise.resolve(),
     gateEvent: () => Promise.resolve(),
+    gateIntro: () => Promise.resolve(),
     get gates() {
       return mockGates.current
         ? (organizationId: string) =>
@@ -289,6 +290,61 @@ describe('ClusterAdd', () => {
 
       expect(await screen.findByRole('heading', { level: 1, name: 'Self-managed clusters' })).toBeInTheDocument()
       expect(screen.getByText('Amazon Web Services').closest('a')).toBeInTheDocument()
+    })
+  })
+
+  describe('when the plan includes them and their intro is due for this person', () => {
+    const intro = (sku: string, title: string) => ({
+      sku,
+      title,
+      headline: 'Included in your plan',
+      benefits: [],
+      plan: { code: 'GROWTH_2026', name: 'Growth' },
+      cta: 'Continue',
+    })
+    beforeEach(() => {
+      mockGates.current = [
+        {
+          ...lockedManaged,
+          allowed: true,
+          reason: '',
+          paywall: undefined,
+          intro: intro('clusters.managed', 'Qovery-managed clusters'),
+        },
+        {
+          ...lockedSelfManaged,
+          allowed: true,
+          reason: '',
+          paywall: undefined,
+          intro: intro('clusters.self_managed', 'Self-managed clusters'),
+        },
+      ]
+    })
+
+    it('shows the intro before the managed creation, and Continue goes on to it', async () => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+      await screen.findByRole('button', { name: 'Amazon Web Services' })
+      expect(screen.queryByText('Try it free for 14 days')).not.toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Amazon Web Services' }))
+
+      expect(await screen.findByText('Included in your Growth plan')).toBeInTheDocument()
+      expect(mockNavigate).not.toHaveBeenCalled()
+      await userEvent.click(screen.getByRole('button', { name: /Continue/ }))
+      expect(mockNavigate).toHaveBeenCalledWith({
+        to: '/organization/$organizationId/cluster/create/$slug',
+        params: { organizationId: 'org-123', slug: 'aws' },
+      })
+    })
+
+    it('shows the intro before the self-managed flow, then opens it', async () => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+      await userEvent.click(await screen.findByRole('button', { name: 'GCP' }))
+
+      expect(await screen.findByRole('heading', { level: 1, name: 'Self-managed clusters' })).toBeInTheDocument()
+      expect(screen.queryByText('Provider GCP')).not.toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: /Continue/ }))
+      expect(await screen.findByText('Provider GCP')).toBeInTheDocument()
     })
   })
 

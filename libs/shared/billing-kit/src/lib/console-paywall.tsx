@@ -61,6 +61,7 @@ export function pickConsoleCalls(client: PricingClient): PricingClient {
     withdrawDiscountRequest: client.withdrawDiscountRequest,
     gates: client.gates,
     gateEvent: client.gateEvent,
+    gateIntro: client.gateIntro,
     trials: client.trials,
     startTrial: client.startTrial,
     setTrialContinue: client.setTrialContinue,

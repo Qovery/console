@@ -29,6 +29,8 @@ type ProviderCardProps = {
   analytics: { selectedCloudProvider: string; selectedInstallationType: string }
   /** The plan does not include it: the card shows the lock and opens the paywall. */
   locked?: { gate: Gate; open: () => void }
+  /** The plan includes it and its intro is due: shown first, then go (on Continue). */
+  intro?: (go: () => void) => void
 } & ({ slug: string } | { onClick: () => void })
 
 // Decorative: the card title already names the provider.
@@ -40,8 +42,18 @@ function ProviderIcon({ icon }: { icon: ProviderIconSource }) {
   )
 }
 
-function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, locked, ...props }: ProviderCardProps) {
+function ProviderCard({
+  title,
+  icon,
+  disabled = false,
+  actionLabel,
+  analytics,
+  locked,
+  intro,
+  ...props
+}: ProviderCardProps) {
   const { organizationId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const className = twMerge(
     'flex h-[52px] items-center gap-2 rounded-md border border-neutral bg-surface-neutral px-4 text-left text-sm font-medium text-neutral transition-colors',
     disabled ? 'cursor-not-allowed bg-surface-neutral-component text-neutral-subtle' : 'hover:border-brand-strong',
@@ -71,6 +83,28 @@ function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, l
         onClick={() => {
           capture()
           locked.open()
+        }}
+      >
+        {content}
+      </button>
+    )
+  }
+
+  if (intro && !disabled) {
+    const go = () =>
+      'slug' in props
+        ? navigate({
+            to: '/organization/$organizationId/cluster/create/$slug',
+            params: { organizationId, slug: props.slug },
+          })
+        : props.onClick()
+    return (
+      <button
+        type="button"
+        className={className}
+        onClick={() => {
+          capture()
+          intro(go)
         }}
       >
         {content}
@@ -150,6 +184,11 @@ export function ClusterAdd() {
   }
   const managedLock = lockFor('cluster.create')
   const selfManagedLock = lockFor('cluster.create_self_managed')
+  // Included in the plan, with an intro due for this person: the card shows it before going on.
+  const introFor = (action: string) =>
+    paywall.intro(action) ? (go: () => void) => paywall.proceed(action, go) : undefined
+  const managedIntro = introFor('cluster.create')
+  const selfManagedIntro = introFor('cluster.create_self_managed')
 
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
@@ -206,6 +245,7 @@ export function ClusterAdd() {
           disabled={disabled}
           analytics={managed('AWS')}
           locked={managedLock}
+          intro={managedIntro}
         />
         {isEksAnywhereEnabled ? (
           <ProviderCard
@@ -231,6 +271,7 @@ export function ClusterAdd() {
           disabled={disabled}
           analytics={managed('GCP')}
           locked={managedLock}
+          intro={managedIntro}
         />
         <ProviderCard
           title="Scaleway"
@@ -239,6 +280,7 @@ export function ClusterAdd() {
           disabled={disabled}
           analytics={managed('SCW')}
           locked={managedLock}
+          intro={managedIntro}
         />
         <ProviderCard
           title="Microsoft Azure"
@@ -247,6 +289,7 @@ export function ClusterAdd() {
           disabled={disabled}
           analytics={managed('AZURE')}
           locked={managedLock}
+          intro={managedIntro}
         />
       </ProviderSection>
 
@@ -260,6 +303,7 @@ export function ClusterAdd() {
           onClick={() => openInstallationGuideModal({ isDemo: true })}
           analytics={{ selectedCloudProvider: 'OTHER', selectedInstallationType: 'demo' }}
           locked={selfManagedLock}
+          intro={selfManagedIntro}
         />
         <ProviderCard
           title="AWS"
@@ -268,6 +312,7 @@ export function ClusterAdd() {
           disabled={disabled}
           analytics={selfManaged('AWS')}
           locked={selfManagedLock}
+          intro={selfManagedIntro}
         />
         <ProviderCard
           title="GCP"
@@ -276,6 +321,7 @@ export function ClusterAdd() {
           disabled={disabled}
           analytics={selfManaged('GCP')}
           locked={selfManagedLock}
+          intro={selfManagedIntro}
         />
         <ProviderCard
           title="Scaleway"
@@ -284,6 +330,7 @@ export function ClusterAdd() {
           disabled={disabled}
           analytics={selfManaged('SCW')}
           locked={selfManagedLock}
+          intro={selfManagedIntro}
         />
         {[
           { title: 'Microsoft Azure', icon: Azure, provider: 'AZURE' },
@@ -302,6 +349,7 @@ export function ClusterAdd() {
             disabled={disabled}
             analytics={selfManaged(provider)}
             locked={selfManagedLock}
+            intro={selfManagedIntro}
           />
         ))}
       </ProviderSection>

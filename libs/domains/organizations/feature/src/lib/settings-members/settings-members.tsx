@@ -456,15 +456,16 @@ export function SettingsMembers() {
     }
   }
 
-  const onAddMember = () => {
-    if (isInviteLocked) return paywall.open('member.invite')
-    openModal({
-      content: <CreateModal organizationId={organizationId} onClose={closeModal} availableRoles={availableRoles} />,
-      options: {
-        fakeModal: true,
-      },
-    })
-  }
+  // A seat left: the intro first when one is due, then the invite. No seat left: the paywall.
+  const onAddMember = () =>
+    paywall.proceed('member.invite', () =>
+      openModal({
+        content: <CreateModal organizationId={organizationId} onClose={closeModal} availableRoles={availableRoles} />,
+        options: {
+          fakeModal: true,
+        },
+      })
+    )
 
   useEffect(() => {
     if (isSuccessMembers) {
