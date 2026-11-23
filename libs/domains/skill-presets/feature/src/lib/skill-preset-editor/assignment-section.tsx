@@ -58,7 +58,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
           assigned_to: { organization_default: organizationDefault, role_ids: roleIds, user_ids: userIds },
         },
         otherPresets,
-        assignees?.members ?? []
+        assignees ?? { roles: [], members: [] }
       ),
     [draftId, organizationDefault, roleIds, userIds, otherPresets, assignees]
   )

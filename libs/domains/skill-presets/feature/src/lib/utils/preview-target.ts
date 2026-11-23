@@ -3,6 +3,7 @@ import {
   type AssignablePreset,
   RESOLUTION_SOURCE_LABELS,
   type ResolvedPreset,
+  effectiveRoleId,
   resolvePresetFor,
 } from './resolve-preset'
 
@@ -33,12 +34,15 @@ export function resolvePreviewTarget<T extends AssignablePreset>(
   if (kind === 'user') {
     const member = assignees?.members.find((item) => item.id === id)
     return {
-      ...resolvePresetFor(presets, { userId: id, roleId: member?.role_id }),
+      ...resolvePresetFor(presets, { userId: id, roleId: effectiveRoleId(member?.role_id, assignees?.roles) }),
       targetLabel: member?.name ?? 'This member',
     }
   }
   const role = assignees?.roles.find((item) => item.id === id)
-  return { ...resolvePresetFor(presets, { roleId: id }), targetLabel: role ? `The ${role.name} role` : 'This role' }
+  return {
+    ...resolvePresetFor(presets, { roleId: effectiveRoleId(id, assignees?.roles) }),
+    targetLabel: role ? `The ${role.name} role` : 'This role',
+  }
 }
 
 export const describeResolution = (resolved: ResolvedPreset<AssignablePreset>) =>

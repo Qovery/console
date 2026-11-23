@@ -2,6 +2,7 @@ import {
   type SkillPresetAssignedTo,
   type SkillPresetAssignees,
   type SkillPresetResolutionSource,
+  isOwnerRole,
 } from '@qovery/domains/skill-presets/data-access'
 
 export interface AssignablePreset {
@@ -13,6 +14,13 @@ export interface AssignablePreset {
 export interface ResolvedPreset<T extends AssignablePreset> {
   source: SkillPresetResolutionSource
   preset: T | null
+}
+
+/** q-core resolves the organization owner as an admin: the Owner role gets the Admin role's preset. */
+export function effectiveRoleId(roleId: string | undefined, roles: SkillPresetAssignees['roles'] = []) {
+  const role = roles.find(({ id }) => id === roleId)
+  if (!role || !isOwnerRole(role)) return roleId
+  return roles.find(({ name }) => name.toLowerCase() === 'admin')?.id ?? roleId
 }
 
 /** Same order as q-core: the member's own assignment, then their role's, then the organization default. */
@@ -43,11 +51,12 @@ export const RESOLUTION_SOURCE_LABELS: Record<SkillPresetResolutionSource, strin
 export function membersReceiving(
   draft: AssignablePreset,
   otherPresets: AssignablePreset[],
-  members: SkillPresetAssignees['members']
+  { members, roles }: SkillPresetAssignees
 ) {
   const presets = [draft, ...otherPresets.filter(({ id }) => id !== draft.id)]
   return members.filter(
-    ({ id, role_id }) => resolvePresetFor(presets, { userId: id, roleId: role_id }).preset?.id === draft.id
+    ({ id, role_id }) =>
+      resolvePresetFor(presets, { userId: id, roleId: effectiveRoleId(role_id, roles) }).preset?.id === draft.id
   )
 }
 
