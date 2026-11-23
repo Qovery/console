@@ -11,11 +11,7 @@ import {
 } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import {
-  type SkillPresetResponse,
-  type SkillPresetRevisionResponse,
-  getSkillPresetErrorStatus,
-} from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetResponse, type SkillPresetRevisionResponse } from '@qovery/domains/skill-presets/data-access'
 import {
   Avatar,
   Badge,
@@ -274,7 +270,8 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
 
   if (isLoading) return <ListSkeleton />
 
-  if (error && getSkillPresetErrorStatus(error) !== 403) {
+  // A 403 too: an empty registry with create buttons would hide that the request was refused.
+  if (error) {
     return (
       <LoadError
         title="The Skills registry could not be loaded"

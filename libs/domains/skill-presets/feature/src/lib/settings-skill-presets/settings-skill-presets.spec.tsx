@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
+import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { SettingsSkillPresets } from './settings-skill-presets'
 
@@ -63,6 +64,19 @@ describe('SettingsSkillPresets', () => {
 
     expect(screen.getByText('No presets yet')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Start from a template/ })).toBeInTheDocument()
+  })
+
+  it('shows a refused request as an error, not as an empty registry', () => {
+    mockUseSkillPresets.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: buildSkillPresetApiError(403, 'Forbidden'),
+    })
+    renderWithProviders(<SettingsSkillPresets />)
+
+    expect(screen.getByText('The Skills registry could not be loaded')).toBeInTheDocument()
+    expect(screen.getByText(/The server refused the request./)).toBeInTheDocument()
+    expect(screen.queryByText('No presets yet')).not.toBeInTheDocument()
   })
 
   it('lists presets with their base and assignments', () => {
