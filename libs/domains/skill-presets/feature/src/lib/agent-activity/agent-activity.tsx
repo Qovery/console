@@ -229,10 +229,6 @@ export function HintLine({
   )
 }
 
-/**
- * One toolbar row, as on Audit logs: the period on the left, then actor, skill, source and outcome,
- * then Clear filters on the right. Every change goes to the URL.
- */
 function FilterBar({
   search,
   setSearch,
@@ -1081,8 +1077,6 @@ export function AgentActivity() {
     to: params.from,
   })
   const isOrganization = scope === 'organization'
-  // The privacy note in full the first time, then in one line.
-
   const activity =
     data && search.skill === NO_SKILL
       ? {

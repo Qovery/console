@@ -97,8 +97,6 @@ function TokenUsage({
   )
 }
 
-/** The organization's policy tokens, surfaced next to the rest of the agent setup. Owners and admins. */
-/** Row actions, as in the skill presets list: see its activity, view its policy, delete it. */
 function TokenMenu({
   token,
   organizationId,
