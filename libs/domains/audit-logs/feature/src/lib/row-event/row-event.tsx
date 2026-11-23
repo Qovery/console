@@ -69,7 +69,8 @@ const securityRejectionSummary = (event: OrganizationEventResponse) => {
   if ((event.event_type as string | undefined) !== SKILL_PRESET_REJECTED_EVENT_TYPE) return null
   let findings: { source?: string }[] = []
   try {
-    findings = JSON.parse(event.change ?? '{}')?.findings ?? []
+    const parsed = JSON.parse(event.change ?? '{}')
+    findings = Array.isArray(parsed?.findings) ? parsed.findings : []
   } catch {
     // An unreadable payload still shows as a rejection.
   }

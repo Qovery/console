@@ -236,6 +236,19 @@ describe('RowEvent', () => {
     ).toBeInTheDocument()
   })
 
+  it('should still describe a refused save whose findings are not a list', () => {
+    const rejected = {
+      ...mockEvent,
+      event_type: 'SKILL_PRESET_REJECTED',
+      target_type: OrganizationEventTargetType.ORGANIZATION,
+      sub_target_type: 'SKILL_PRESET',
+      change: JSON.stringify({ findings: { source: 'RULES' } }),
+    } as unknown as OrganizationEventResponse
+    renderWithProviders(<RowEvent {...props} event={rejected} />)
+
+    expect(screen.getByText('· Rejected by the security review · 0 findings', { exact: false })).toBeInTheDocument()
+  })
+
   it('should render a skill viewed in the Console', () => {
     const viewed = {
       ...mockEvent,
