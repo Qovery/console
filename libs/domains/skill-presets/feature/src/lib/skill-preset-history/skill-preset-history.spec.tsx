@@ -124,9 +124,13 @@ describe('SkillPresetHistory', () => {
     expect(screen.queryByTestId('diff')).not.toBeInTheDocument()
   })
 
-  it('names the review in plain words, with the model id in a tooltip', () => {
-    renderWithProviders(<SkillPresetHistory />)
-    expect(screen.getByText('Model review on AWS Bedrock, prompt v1: allowed')).toBeInTheDocument()
+  it('names the review in plain words, with the model id in a tooltip', async () => {
+    const { userEvent } = renderWithProviders(<SkillPresetHistory />)
+    const review = screen.getByText('Model review on AWS Bedrock, prompt v1: allowed')
     expect(screen.queryByText(/example-model-id/)).not.toBeInTheDocument()
+
+    await userEvent.hover(review)
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Model: example-model-id')
   })
 })
