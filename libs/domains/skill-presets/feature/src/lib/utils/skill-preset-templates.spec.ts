@@ -1,8 +1,6 @@
-import {
-  getSkillPresetFindings,
-  resetSkillPresetsMockApi,
-  skillPresetsApi,
-} from '@qovery/domains/skill-presets/data-access'
+import axios from 'axios'
+import { getSkillPresetFindings, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
+import { installSkillPresetsMock, resetSkillPresetsMock } from '@qovery/domains/skill-presets/mock'
 import { SKILL_PRESET_TEMPLATES } from './skill-preset-templates'
 
 jest.mock('@qovery/shared/util-node-env', () => ({
@@ -11,13 +9,18 @@ jest.mock('@qovery/shared/util-node-env', () => ({
 }))
 
 describe('SKILL_PRESET_TEMPLATES', () => {
+  let uninstall: () => void
+  beforeAll(() => {
+    uninstall = installSkillPresetsMock(axios, 'api', { passthrough: false })
+  })
+  afterAll(() => uninstall())
   beforeEach(() => {
     window.sessionStorage.setItem('qovery-mock-skill-presets', 'empty')
-    resetSkillPresetsMockApi()
+    resetSkillPresetsMock()
   })
   afterEach(() => {
     window.sessionStorage.clear()
-    resetSkillPresetsMockApi()
+    resetSkillPresetsMock()
   })
 
   it('covers the eight profiles', () => {

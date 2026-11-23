@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
-import { useMemo } from 'react'
 import { PolicyApiTokenCrudModal, PolicyApiTokenPolicyModal } from '@qovery/domains/organizations/feature'
 import {
   Badge,
@@ -17,9 +16,10 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { tokenActor } from '../agent-activity/activity-search'
+import { activityWindowEnd, tokenActor } from '../agent-activity/activity-search'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useAgentExperiencePolicyTokens } from '../hooks/use-agent-experience-policy-tokens/use-agent-experience-policy-tokens'
+import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { useDeleteAgentPolicyToken } from '../hooks/use-delete-agent-policy-token/use-delete-agent-policy-token'
 import { LoadError } from '../load-error/load-error'
@@ -96,9 +96,40 @@ function TokenUsage({
   )
 }
 
-/** The organization's policy tokens, surfaced next to the rest of the agent setup. Owners and admins. */
-/** Row actions, as in the skill presets list: see its activity, view its policy, delete it. */
-function TokenMenu({ token, organizationId }: { token: OrganizationPolicyApiToken; organizationId: string }) {
+type WeekRow = { actions: number; denials: number; timeline: { start: string; actions: number; denials: number }[] }
+
+/** Zero only once the activity has loaded, so a slow or failed request never reads as no calls. */
+function WeekUsage({
+  usage,
+  range,
+  isLoading,
+  isError,
+}: {
+  usage?: WeekRow
+  range: { from: string; to: string; bucket: 'DAY' }
+  isLoading: boolean
+  isError: boolean
+}) {
+  if (isLoading) return <Skeleton height={24} width={160} show />
+  if (isError) return <span className="text-neutral-subtle">Usage unavailable</span>
+  return (
+    <TokenUsage
+      actions={usage?.actions ?? 0}
+      denials={usage?.denials ?? 0}
+      timeline={fillTimeline(usage?.timeline ?? [], range, (start) => ({ start, actions: 0, denials: 0 }))}
+    />
+  )
+}
+
+function TokenMenu({
+  token,
+  organizationId,
+  canSeeActivity,
+}: {
+  token: OrganizationPolicyApiToken
+  organizationId: string
+  canSeeActivity: boolean
+}) {
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -111,18 +142,20 @@ function TokenMenu({ token, organizationId }: { token: OrganizationPolicyApiToke
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end">
-        <DropdownMenu.Item
-          icon={<Icon iconName="wave-pulse" iconStyle="regular" />}
-          onSelect={() =>
-            navigate({
-              to: '/organization/$organizationId/agent-experience/agent-activity',
-              params: { organizationId },
-              search: { actor: tokenActor(token.id) },
-            })
-          }
-        >
-          See activity
-        </DropdownMenu.Item>
+        {canSeeActivity && (
+          <DropdownMenu.Item
+            icon={<Icon iconName="wave-pulse" iconStyle="regular" />}
+            onSelect={() =>
+              navigate({
+                to: '/organization/$organizationId/agent-experience/agent-activity',
+                params: { organizationId },
+                search: { actor: tokenActor(token.id) },
+              })
+            }
+          >
+            See activity
+          </DropdownMenu.Item>
+        )}
         <DropdownMenu.Item
           icon={<Icon iconName="file-code" iconStyle="regular" />}
           onSelect={() =>
@@ -159,12 +192,14 @@ function TokenMenu({ token, organizationId }: { token: OrganizationPolicyApiToke
 }
 
 /**
- * The organization's policy tokens, fully managed here: create, see activity, view the policy, delete.
- * Owners and admins.
+ * The organization's policy tokens, fully managed here: create, view the policy, delete. Owners, admins
+ * and DevOps members, as q-core allows. The usage and deleted-token history come from the organization
+ * activity, which only owners and admins can read.
  */
 export function AgentExperiencePolicyTokens() {
   const { organizationId = '' } = useParams({ strict: false })
-  const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
+  const { canManage, isLoading: isRoleLoading } = useCanManagePolicyTokens({ organizationId })
+  const { canManage: canSeeActivity } = useCanManageSkillPresets({ organizationId })
   const {
     data: tokens,
     isLoading,
@@ -174,27 +209,36 @@ export function AgentExperiencePolicyTokens() {
     organizationId,
     enabled: canManage,
   })
-  const to = useMemo(() => new Date(Math.ceil(Date.now() / 60_000) * 60_000), [])
+  const to = activityWindowEnd()
   // Last 7 days of every token, from Activity's by-token breakdown.
-  const { data: week } = useAgentActivity({
+  const {
+    data: week,
+    isInitialLoading: isWeekLoading,
+    isError: isWeekError,
+  } = useAgentActivity({
     organizationId,
     scope: 'organization',
-    enabled: canManage,
+    enabled: canManage && canSeeActivity,
     from: new Date(to.getTime() - 7 * DAY_MS).toISOString(),
     to: to.toISOString(),
     bucket: 'DAY',
     actorKind: 'POLICY_TOKEN',
   })
   // Deleted tokens are not in the list, but their calls stay in the audit log.
-  const { data: month } = useAgentActivity({
+  const {
+    data: month,
+    isInitialLoading: isMonthLoading,
+    isError: isMonthError,
+  } = useAgentActivity({
     organizationId,
     scope: 'organization',
-    enabled: canManage,
+    enabled: canManage && canSeeActivity,
     from: new Date(to.getTime() - 30 * DAY_MS).toISOString(),
     to: to.toISOString(),
     bucket: 'DAY',
     actorKind: 'POLICY_TOKEN',
   })
+  const activeTokens = tokens ?? []
   const usageById = new Map((week?.by_policy_token ?? []).map((row) => [row.policy_token_id, row]))
   const deletedWithActivity = (month?.by_policy_token ?? []).filter(
     (row): row is typeof row & { policy_token_id: string } => row.deleted && Boolean(row.policy_token_id)
@@ -224,16 +268,16 @@ export function AgentExperiencePolicyTokens() {
       ) : !canManage ? (
         <EmptyState
           icon="key"
-          title="Only owners and admins manage policy tokens"
+          title="Only owners, admins and DevOps members manage policy tokens"
           description="Ask one of them for a token for your agent."
         />
-      ) : isLoading ? (
+      ) : isLoading || (isMonthLoading && activeTokens.length === 0) ? (
         <div aria-busy="true" aria-label="Loading policy tokens">
           <Skeleton height={120} className="w-full" show />
         </div>
       ) : error ? (
         <LoadError title="Policy tokens could not be loaded" error={error} onRetry={() => refetch()} />
-      ) : !tokens || tokens.length === 0 ? (
+      ) : activeTokens.length === 0 && deletedWithActivity.length === 0 ? (
         <EmptyState
           icon="key"
           title="No policy token yet"
@@ -259,7 +303,7 @@ export function AgentExperiencePolicyTokens() {
             <Table.Row>
               <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Role</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Last 7 days</Table.ColumnHeaderCell>
+              {canSeeActivity && <Table.ColumnHeaderCell>Last 7 days</Table.ColumnHeaderCell>}
               <Table.ColumnHeaderCell>Last used</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Expires</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
@@ -268,56 +312,52 @@ export function AgentExperiencePolicyTokens() {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {tokens.map((token) => {
-              const usage = usageById.get(token.id)
-              return (
-                <Table.Row key={token.id} data-testid={`policy-token-${token.name}`}>
-                  <Table.Cell className="h-auto py-2">
-                    <span className="flex flex-col">
-                      <span className="font-medium text-neutral">
-                        <ActorChip kind="policy-token" name={token.name ?? ''} prefix={false} />
-                      </span>
-                      {token.description && <span className="text-xs text-neutral-subtle">{token.description}</span>}
+            {activeTokens.map((token) => (
+              <Table.Row key={token.id} data-testid={`policy-token-${token.name}`}>
+                <Table.Cell className="h-auto py-2">
+                  <span className="flex flex-col">
+                    <span className="font-medium text-neutral">
+                      <ActorChip kind="policy-token" name={token.name ?? ''} prefix={false} />
                     </span>
-                  </Table.Cell>
-                  <Table.Cell className="capitalize">{token.role_name ?? 'None'}</Table.Cell>
+                    {token.description && <span className="text-xs text-neutral-subtle">{token.description}</span>}
+                  </span>
+                </Table.Cell>
+                <Table.Cell className="capitalize">{token.role_name ?? 'None'}</Table.Cell>
+                {canSeeActivity && (
                   <Table.Cell className="h-auto py-2">
-                    <TokenUsage
-                      actions={usage?.actions ?? 0}
-                      denials={usage?.denials ?? 0}
-                      timeline={fillTimeline(usage?.timeline ?? [], weekRange, (start) => ({
-                        start,
-                        actions: 0,
-                        denials: 0,
-                      }))}
+                    <WeekUsage
+                      usage={usageById.get(token.id)}
+                      range={weekRange}
+                      isLoading={isWeekLoading}
+                      isError={isWeekError}
                     />
                   </Table.Cell>
-                  <Table.Cell className="text-neutral-subtle">
-                    {token.last_used_at ? (
-                      <time dateTime={token.last_used_at} title={dateFullFormat(token.last_used_at)}>
-                        {timeAgo(new Date(token.last_used_at))} ago
-                      </time>
-                    ) : (
-                      'Never'
-                    )}
-                  </Table.Cell>
-                  <Table.Cell className="text-neutral-subtle">
-                    {token.expires_at ? (
-                      dateFullFormat(token.expires_at, undefined, 'dd MMM yyyy')
-                    ) : (
-                      // A token that never expires stays valid if it leaks: flag it.
-                      <Badge variant="surface" color="yellow" className="gap-1" data-testid="no-expiry">
-                        <Icon iconName="triangle-exclamation" iconStyle="regular" aria-hidden="true" />
-                        No expiry
-                      </Badge>
-                    )}
-                  </Table.Cell>
-                  <Table.Cell className="text-right">
-                    <TokenMenu token={token} organizationId={organizationId} />
-                  </Table.Cell>
-                </Table.Row>
-              )
-            })}
+                )}
+                <Table.Cell className="text-neutral-subtle">
+                  {token.last_used_at ? (
+                    <time dateTime={token.last_used_at} title={dateFullFormat(token.last_used_at)}>
+                      {timeAgo(new Date(token.last_used_at))} ago
+                    </time>
+                  ) : (
+                    'Never'
+                  )}
+                </Table.Cell>
+                <Table.Cell className="text-neutral-subtle">
+                  {token.expires_at ? (
+                    dateFullFormat(token.expires_at, undefined, 'dd MMM yyyy')
+                  ) : (
+                    // A token that never expires stays valid if it leaks: flag it.
+                    <Badge variant="surface" color="yellow" className="gap-1" data-testid="no-expiry">
+                      <Icon iconName="triangle-exclamation" iconStyle="regular" aria-hidden="true" />
+                      No expiry
+                    </Badge>
+                  )}
+                </Table.Cell>
+                <Table.Cell className="text-right">
+                  <TokenMenu token={token} organizationId={organizationId} canSeeActivity={canSeeActivity} />
+                </Table.Cell>
+              </Table.Row>
+            ))}
             {deletedWithActivity.map((row) => (
               // Deleted tokens keep their history: greyed, with the Deleted badge, still linked to Activity.
               <Table.Row
@@ -329,7 +369,14 @@ export function AgentExperiencePolicyTokens() {
                   <ActorChip kind="policy-token" name={policyTokenName(row)} prefix={false} deleted />
                 </Table.Cell>
                 <Table.Cell className="capitalize text-neutral-subtle">{row.role_name ?? 'None'}</Table.Cell>
-                <Table.Cell className="text-xs text-neutral-subtle">Calls in the last 30 days</Table.Cell>
+                <Table.Cell className="h-auto py-2">
+                  <WeekUsage
+                    usage={usageById.get(row.policy_token_id)}
+                    range={weekRange}
+                    isLoading={isWeekLoading}
+                    isError={isWeekError}
+                  />
+                </Table.Cell>
                 <Table.Cell className="text-neutral-subtle">
                   <time dateTime={row.last_activity_at} title={dateFullFormat(row.last_activity_at)}>
                     {timeAgo(new Date(row.last_activity_at))} ago
@@ -352,6 +399,11 @@ export function AgentExperiencePolicyTokens() {
             ))}
           </Table.Body>
         </Table.Root>
+      )}
+      {canManage && isMonthError && (
+        <p className="text-xs text-neutral-subtle" data-testid="deleted-tokens-error">
+          Deleted tokens could not be loaded.
+        </p>
       )}
     </AgentExperiencePage>
   )

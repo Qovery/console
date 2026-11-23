@@ -1,7 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { type Organization } from 'qovery-typescript-axios'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import { getSkillPresetsMockScenario } from '@qovery/domains/skill-presets/data-access'
 import { AICopilotSettings } from '@qovery/shared/devops-copilot/feature'
 import { Badge, Button, Callout, Heading, Icon, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -45,17 +43,12 @@ export const copilotStateLabel = (enabled: boolean, readOnly: boolean) =>
  */
 export function AgentExperienceCopilot() {
   const { organizationId = '' } = useParams({ strict: false })
-  const isMock = getSkillPresetsMockScenario() !== null
   const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
   const copilot = useCopilotStatus({ organizationId })
   const aiOn = aiFeaturesEnabled && copilot.enabled
   const hasCopilotError = Boolean(copilot.error)
-  const { data: organizationData } = useOrganization({ organizationId, enabled: !isMock })
-  // The mock never reads the real organization.
-  const organization: Organization | undefined = isMock
-    ? ({ id: organizationId, name: 'Acme (mock)' } as Organization)
-    : organizationData
+  const { data: organization } = useOrganization({ organizationId })
   const { openModal, closeModal } = useModal()
   useDocumentTitle('Copilot - Agents')
 
@@ -147,7 +140,7 @@ export function AgentExperienceCopilot() {
                 </Button>
               </Section>
             )}
-            {copilot.enabled && !hasCopilotError && organization && copilot.ready && (
+            {copilot.enabled && !hasCopilotError && organization && (
               // The existing Copilot settings: access source, access mode, scheduled tasks, and turning it off.
               <AICopilotSettings organization={organization} embedded />
             )}

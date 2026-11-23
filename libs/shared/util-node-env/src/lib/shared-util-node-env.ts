@@ -38,5 +38,4 @@ export const NODE_ENV = process.env.NODE_ENV,
   DEVOPS_COPILOT_API_BASE_URL = process.env.NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL,
   CHARGEBEE_PUBLISHABLE_KEY = process.env.NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY,
   SLACK_BOT_API_URL = process.env.NX_PUBLIC_SLACK_BOT_API_URL,
-  // Preview builds only: "true" serves the skill presets endpoints from in-memory mock data. Never set it in production.
   SKILL_PRESETS_MOCK = process.env.NX_PUBLIC_SKILL_PRESETS_MOCK

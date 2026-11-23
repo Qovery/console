@@ -4,11 +4,10 @@ import {
   OrganizationEventOrigin,
   type OrganizationEventResponse,
   OrganizationEventTargetType,
-  OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { type Dispatch, type RefObject, type SetStateAction, useEffect, useMemo, useRef, useState } from 'react'
 import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
-import { type AuditLogsParams } from '@qovery/shared/router'
+import { AUDIT_LOG_EVENT_TYPES, type AuditLogsParams } from '@qovery/shared/router'
 import {
   Button,
   Heading,
@@ -124,7 +123,7 @@ function createTableDataHead(
         {
           title: 'Filter by event',
           key: 'event_type',
-          itemsCustom: Object.keys(OrganizationEventType).map((item) => item),
+          itemsCustom: AUDIT_LOG_EVENT_TYPES,
           hideFilterNumber: true,
           search: true,
           sortAlphabetically: true,

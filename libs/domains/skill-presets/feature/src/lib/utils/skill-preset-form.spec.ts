@@ -1,5 +1,10 @@
 import { type SkillPresetResponse } from '@qovery/domains/skill-presets/data-access'
-import { effectiveQoverySkills, toSkillPresetFormValues, toSkillPresetRequest } from './skill-preset-form'
+import {
+  effectiveQoverySkills,
+  keepEditsSinceSubmit,
+  toSkillPresetFormValues,
+  toSkillPresetRequest,
+} from './skill-preset-form'
 
 const preset: SkillPresetResponse = {
   id: 'preset-1',
@@ -45,8 +50,8 @@ describe('skill preset form mapping', () => {
     expect(body.assigned_to).toEqual(preset.assigned_to)
   })
 
-  it('does not send Qovery skill entries on the lean and empty bases', () => {
-    const values = { ...toSkillPresetFormValues(preset), base: 'LEAN' as const }
+  it.each(['LEAN', 'NONE'] as const)('does not send Qovery skill entries on the %s base', (base) => {
+    const values = { ...toSkillPresetFormValues(preset), base }
     expect(effectiveQoverySkills(values)).toEqual([])
     expect(toSkillPresetRequest(values).skills.map(({ skill_name }) => skill_name)).toEqual(['release-checklist'])
   })
@@ -78,5 +83,25 @@ describe('skill preset form mapping', () => {
     const body = toSkillPresetRequest({ ...toSkillPresetFormValues(preset), isTemplate: true })
     expect(body.is_template).toBe(true)
     expect(body.assigned_to).toEqual({ organization_default: false, role_ids: [], user_ids: [] })
+  })
+})
+
+describe('keepEditsSinceSubmit', () => {
+  it('takes the saved values, except fields changed after the submit', () => {
+    const submitted = { ...toSkillPresetFormValues(preset), name: 'Backend team ' }
+    const saved = { ...toSkillPresetFormValues(preset), name: 'Backend team' }
+    const current = { ...submitted, teamContext: 'Typed during the review.' }
+
+    expect(keepEditsSinceSubmit({ saved, submitted, current })).toEqual({
+      ...saved,
+      teamContext: 'Typed during the review.',
+    })
+  })
+
+  it('returns the saved values when nothing changed after the submit', () => {
+    const submitted = toSkillPresetFormValues(preset)
+    const saved = { ...submitted, name: 'Renamed by the server' }
+
+    expect(keepEditsSinceSubmit({ saved, submitted, current: { ...submitted } })).toEqual(saved)
   })
 })

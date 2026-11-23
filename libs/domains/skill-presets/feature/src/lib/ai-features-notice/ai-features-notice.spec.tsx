@@ -6,6 +6,7 @@ const mockEnableAiFeatures = jest.fn()
 const mockUpdateOrgConfig = jest.fn()
 const mockAiFeaturesEnabled = jest.fn()
 const mockCopilotStatus = jest.fn()
+let mockCopilotConfig: { org_config?: { instructions?: string } } | undefined
 
 jest.mock('../hooks/use-enable-ai-features/use-enable-ai-features', () => ({
   useEnableAiFeatures: () => ({ mutateAsync: mockEnableAiFeatures }),
@@ -15,6 +16,10 @@ jest.mock('../hooks/use-ai-features-enabled/use-ai-features-enabled', () => ({
 }))
 jest.mock('../hooks/use-copilot-status/use-copilot-status', () => ({
   useCopilotStatus: () => mockCopilotStatus(),
+}))
+jest.mock('@qovery/shared/devops-copilot/feature', () => ({
+  ...jest.requireActual('@qovery/shared/devops-copilot/feature'),
+  useAICopilotConfig: () => ({ data: mockCopilotConfig }),
 }))
 jest.mock('@qovery/shared/devops-copilot/data-access', () => ({
   ...jest.requireActual('@qovery/shared/devops-copilot/data-access'),
@@ -37,6 +42,7 @@ describe('AiFeaturesNotice and the Turn on AI modal', () => {
     mockUpdateOrgConfig.mockReset().mockResolvedValue({})
     mockAiFeaturesEnabled.mockReturnValue(false)
     mockCopilotStatus.mockReturnValue(copilot(false))
+    mockCopilotConfig = undefined
   })
 
   it('offers no button to people who cannot change the setting', () => {
@@ -74,12 +80,31 @@ describe('AiFeaturesNotice and the Turn on AI modal', () => {
     expect(await screen.findByText('AI features are on, but the Copilot could not be turned on')).toBeInTheDocument()
     expect(screen.getByText(/The Copilot service did not answer. Retry turns on the Copilot only./)).toBeInTheDocument()
     expect(screen.getByTestId('submit-button')).toHaveTextContent('Retry')
-    expect(onEnabled).not.toHaveBeenCalled()
+    // AI features are on: presets can be saved even if the Copilot never turns on.
+    expect(onEnabled).toHaveBeenCalledTimes(1)
 
     await userEvent.click(screen.getByTestId('submit-button'))
     expect(mockEnableAiFeatures).toHaveBeenCalledTimes(1)
     expect(mockUpdateOrgConfig).toHaveBeenCalledTimes(2)
-    expect(onEnabled).toHaveBeenCalled()
+  })
+
+  it('keeps the Copilot instructions the organization saved before', async () => {
+    mockCopilotConfig = { org_config: { instructions: 'Answer in French.' } }
+    const { userEvent } = await openModal()
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(mockUpdateOrgConfig).toHaveBeenCalledWith(expect.objectContaining({ instructions: 'Answer in French.' }))
+  })
+
+  it('waits for the Copilot status before it can submit', async () => {
+    mockCopilotStatus.mockReturnValue({ ...copilot(false), isLoading: true })
+    const { userEvent } = await openModal()
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
+
+    expect(screen.getByTestId('submit-button')).toBeDisabled()
   })
 
   it('only turns on the Copilot when AI features are already on', async () => {

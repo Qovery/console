@@ -1,10 +1,10 @@
-import { useParams } from '@tanstack/react-router'
+import { useParams, useSearch } from '@tanstack/react-router'
 import { type ReactNode, useState } from 'react'
 import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
 import { toast } from '@qovery/shared/ui'
-import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { toSkillPresetFormValues } from '../utils/skill-preset-form'
-import { SkillPresetEditorForm } from './skill-preset-editor'
+import { SkillPresetEditor, SkillPresetEditorForm } from './skill-preset-editor'
 
 jest.mock('@qovery/shared/ui', () => ({ ...jest.requireActual('@qovery/shared/ui'), toast: jest.fn() }))
 
@@ -15,6 +15,7 @@ const mockUseBlocker = jest.fn()
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(),
+  useSearch: jest.fn(),
   useNavigate: () => jest.fn(),
   useBlocker: (options: unknown) => mockUseBlocker(options),
   Link: ({ children }: { children: ReactNode }) => <a href="/">{children}</a>,
@@ -25,6 +26,21 @@ jest.mock('../hooks/use-create-skill-preset/use-create-skill-preset', () => ({
 }))
 jest.mock('../hooks/use-edit-skill-preset/use-edit-skill-preset', () => ({
   useEditSkillPreset: () => ({ mutateAsync: mockEditSkillPreset, isLoading: false }),
+}))
+const mockUseSkillPreset = jest.fn()
+const mockUseSkillPresets = jest.fn()
+jest.mock('../hooks/use-skill-preset/use-skill-preset', () => ({
+  useSkillPreset: () => mockUseSkillPreset(),
+}))
+jest.mock('../hooks/use-skill-presets/use-skill-presets', () => ({
+  useSkillPresets: () => mockUseSkillPresets(),
+}))
+jest.mock('../hooks/use-skill-preset-assignees/use-skill-preset-assignees', () => ({
+  useSkillPresetAssignees: () => ({ data: undefined }),
+}))
+// An organization admin: the role gate is covered by skill-presets-access.spec.tsx.
+jest.mock('@qovery/shared/iam/feature', () => ({
+  useUserRole: () => ({ roles: ['organization:organization-1:admin'], loading: false, isQoveryAdminUser: false }),
 }))
 jest.mock('@monaco-editor/react', () => {
   const { forwardRef } = jest.requireActual('react')
@@ -90,6 +106,7 @@ const renderEdit = (preset = savedPreset) =>
 
 beforeEach(() => {
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
+  jest.mocked(useSearch).mockReturnValue({})
 })
 
 describe('SkillPresetEditorForm', () => {
@@ -138,6 +155,7 @@ describe('SkillPresetEditorForm', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
 
     expect(screen.getByText('Enter a name.')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Name', exact: true })).toHaveFocus()
     expect(mockCreateSkillPreset).not.toHaveBeenCalled()
   })
 
@@ -188,6 +206,41 @@ describe('SkillPresetEditorForm', () => {
     // The summary takes the keyboard to the field to fix.
     await userEvent.click(within(summary).getByRole('button', { name: 'Team context, line 2' }))
     expect(screen.getByRole('textbox', { name: 'Team context' })).toHaveFocus()
+  })
+
+  it('opens the custom skill and focuses the reported field from the summary', async () => {
+    mockCreateSkillPreset.mockRejectedValue(
+      buildSkillPresetApiError(422, 'Rejected', {
+        findings: [
+          {
+            rule_id: 'dump-secrets',
+            location: "content of skill 'runbook-a'",
+            line: 1,
+            reason: 'Asks the agent to print or collect secrets',
+          },
+        ],
+      })
+    )
+    const { userEvent } = renderWithProviders(
+      <SkillPresetEditorForm
+        organizationId="organization-1"
+        initialValues={{
+          ...toSkillPresetFormValues(),
+          name: 'Runbooks',
+          customSkills: [{ skillName: 'runbook-a', description: 'Runbook. Use when on call.', content: 'Steps.' }],
+        }}
+        presets={[]}
+        assignees={assignees}
+      />
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+
+    const summary = await screen.findByRole('alert')
+    await userEvent.click(within(summary).getByRole('button', { name: /runbook-a/ }))
+
+    const dialog = await screen.findByRole('dialog')
+    const content = within(dialog).getByRole('textbox', { name: 'Content' })
+    await waitFor(() => expect(content).toHaveFocus())
   })
 
   it('clears a finding once its field is edited', async () => {
@@ -316,6 +369,25 @@ describe('SkillPresetEditorForm', () => {
     expect(await screen.findByTestId('no-changes-hint')).toBeInTheDocument()
   })
 
+  it('keeps edits typed while the save runs, as unsaved changes on top of the saved revision', async () => {
+    let finish: (value: unknown) => void = () => undefined
+    mockEditSkillPreset.mockReturnValue(new Promise((resolve) => (finish = resolve)))
+    const { userEvent } = renderEdit()
+    const description = screen.getByLabelText('Description (optional)')
+    await userEvent.type(description, 'Saved part')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    await screen.findByRole('button', { name: /Checking for security…/ })
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Name', exact: true }), ' v2')
+    finish({ ...savedPreset, description: 'Saved part', revision: 4 })
+
+    expect(await screen.findByRole('button', { name: 'Save' })).toBeEnabled()
+    expect(screen.getByRole('textbox', { name: 'Name', exact: true })).toHaveValue('Backend team v2')
+    expect(description).toHaveValue('Saved part')
+    expect(screen.queryByTestId('no-changes-hint')).not.toBeInTheDocument()
+    expect(mockUseBlocker).toHaveBeenLastCalledWith(expect.objectContaining({ disabled: false }))
+  })
+
   it('labels model findings and shows their reason in full', async () => {
     mockCreateSkillPreset.mockRejectedValue(
       buildSkillPresetApiError(422, 'Rejected', {
@@ -409,6 +481,10 @@ describe('SkillPresetEditorForm', () => {
     expect(screen.queryByTestId('total-text-counter')).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
     expect(mockCreateSkillPreset).not.toHaveBeenCalled()
+    expect(screen.getByTestId('total-text-error')).toHaveTextContent(
+      'This preset holds 240,104 characters of text, over the 200,000 a model can review.'
+    )
+    expect(screen.queryByText(/needs? a change/)).not.toBeInTheDocument()
   })
 
   it('blocks a 51st skill with a toast and no permanent counter', async () => {
@@ -506,6 +582,31 @@ describe('SkillPresetEditorForm', () => {
     })
   })
 
+  it('focuses the first Markdown field that needs a change', async () => {
+    const { userEvent } = renderEditor()
+    const row = screen.getByTestId('qovery-skill-qovery-deploy')
+    await userEvent.click(within(row).getByRole('radio', { name: 'Add instructions' }))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+
+    expect(screen.getByRole('textbox', { name: 'Team instructions for qovery-deploy' })).toHaveFocus()
+  })
+
+  it('drops the errors of fields a Qovery skill no longer shows', async () => {
+    const { userEvent } = renderEditor()
+    const row = screen.getByTestId('qovery-skill-qovery-deploy')
+    await userEvent.click(within(row).getByRole('radio', { name: 'Replace' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+    expect(within(row).getByText('Needs a change')).toBeInTheDocument()
+    expect(screen.getByText(/fields? needs? a change/)).toBeInTheDocument()
+
+    await userEvent.click(within(row).getByRole('radio', { name: 'As is' }))
+
+    expect(within(row).queryByText('Needs a change')).not.toBeInTheDocument()
+    expect(screen.queryByText(/fields? needs? a change/)).not.toBeInTheDocument()
+    expect(mockCreateSkillPreset).not.toHaveBeenCalled()
+  })
+
   it('turns several Qovery skills off at once', async () => {
     mockCreateSkillPreset.mockResolvedValue(savedPreset)
     const { userEvent } = renderEditor()
@@ -521,6 +622,15 @@ describe('SkillPresetEditorForm', () => {
     expect(skills).toContainEqual({ skill_name: 'qovery-speedup', mode: 'DISABLE' })
   })
 
+  it('finds a member by email', async () => {
+    const { userEvent } = renderEditor()
+
+    await userEvent.type(screen.getByLabelText('Members'), 'taylor.brooks@')
+
+    expect(await screen.findByText('Taylor Brooks')).toBeInTheDocument()
+    expect(screen.queryByText('Priya Shah')).not.toBeInTheDocument()
+  })
+
   it('does not offer the Owner role as a target', async () => {
     const { userEvent } = renderWithProviders(
       <SkillPresetEditorForm
@@ -533,5 +643,94 @@ describe('SkillPresetEditorForm', () => {
     await userEvent.click(screen.getByLabelText('Roles'))
     expect(await screen.findByRole('option', { name: 'Devops' })).toBeInTheDocument()
     expect(screen.queryByRole('option', { name: 'Owner' })).not.toBeInTheDocument()
+  })
+})
+
+describe('SkillPresetEditor', () => {
+  it('keeps the draft when a background refetch of the preset fails', async () => {
+    jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1', skillPresetId: 'preset-1' })
+    mockUseSkillPresets.mockReturnValue({ data: [savedPreset], isLoading: false })
+    mockUseSkillPreset.mockReturnValue({ data: savedPreset, isLoading: false, error: null })
+    // react-query keeps the cached preset next to the error of a failed refetch.
+    function WithFailedRefetch() {
+      const [, setFailed] = useState(false)
+      const failRefetch = () => {
+        mockUseSkillPreset.mockReturnValue({
+          data: savedPreset,
+          isLoading: false,
+          error: buildSkillPresetApiError(500, 'Internal error'),
+        })
+        setFailed(true)
+      }
+      return (
+        <>
+          <button type="button" onClick={failRefetch}>
+            Fail refetch
+          </button>
+          <SkillPresetEditor />
+        </>
+      )
+    }
+    const { userEvent } = renderWithProviders(<WithFailedRefetch />)
+    await userEvent.type(screen.getByLabelText('Description (optional)'), 'Unsaved draft')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Fail refetch' }))
+
+    expect(screen.queryByText('This preset could not be loaded')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Description (optional)')).toHaveValue('Unsaved draft')
+  })
+
+  it('shows an error when the preset cannot be loaded at all', () => {
+    jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1', skillPresetId: 'preset-1' })
+    mockUseSkillPresets.mockReturnValue({ data: [], isLoading: false })
+    mockUseSkillPreset.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: buildSkillPresetApiError(404, 'Not found'),
+    })
+    renderWithProviders(<SkillPresetEditor />)
+
+    expect(screen.getByText('This preset could not be loaded')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Description (optional)')).not.toBeInTheDocument()
+  })
+
+  it('offers a retry instead of a blank form when the preset to duplicate cannot be loaded', async () => {
+    const refetch = jest.fn()
+    jest.mocked(useSearch).mockReturnValue({ from: 'preset-1' })
+    mockUseSkillPreset.mockReturnValue({ data: undefined, isLoading: false, error: null })
+    mockUseSkillPresets.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: buildSkillPresetApiError(500, 'Internal error'),
+      refetch,
+    })
+    const { userEvent } = renderWithProviders(<SkillPresetEditor />)
+
+    expect(screen.getByText('The preset to copy could not be loaded')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Create preset' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(refetch).toHaveBeenCalled()
+  })
+
+  it('says the preset to duplicate was not found when it was deleted', () => {
+    jest.mocked(useSearch).mockReturnValue({ from: 'deleted-preset' })
+    mockUseSkillPreset.mockReturnValue({ data: undefined, isLoading: false, error: null })
+    mockUseSkillPresets.mockReturnValue({ data: [savedPreset], isLoading: false, error: null })
+    renderWithProviders(<SkillPresetEditor />)
+
+    expect(screen.getByText('The preset to copy was not found')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Create preset' })).not.toBeInTheDocument()
+  })
+
+  it('opens a copy of the preset to duplicate, without its assignments', () => {
+    jest.mocked(useSearch).mockReturnValue({ from: 'preset-1' })
+    mockUseSkillPreset.mockReturnValue({ data: undefined, isLoading: false, error: null })
+    mockUseSkillPresets.mockReturnValue({ data: [savedPreset], isLoading: false, error: null })
+    renderWithProviders(<SkillPresetEditor />)
+
+    expect(screen.getByRole('textbox', { name: 'Name', exact: true })).toHaveValue('Backend team (copy)')
+    expect(
+      screen.getByText('Copied from Backend team, without its assignments. Everything below is editable.')
+    ).toBeInTheDocument()
   })
 })

@@ -1,9 +1,21 @@
 import { useMemo, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { type SkillPresetAssignees, isOwnerRole } from '@qovery/domains/skill-presets/data-access'
+import {
+  type AssignablePreset,
+  type SkillPresetAssignees,
+  isOwnerRole,
+} from '@qovery/domains/skill-presets/data-access'
+import { type Value } from '@qovery/shared/interfaces'
 import { Button, Callout, Icon, InputSelect, InputToggle } from '@qovery/shared/ui'
-import { type AssignablePreset, membersReceiving } from '../utils/resolve-preset'
+import { membersReceiving } from '../utils/resolve-preset'
 import { type SkillPresetFormValues } from '../utils/skill-preset-form'
+
+/** Matches the option's search text (name and email). react-select passes its own wrapper, with the option under `data`. */
+const matchesSearchText = (option: Value, inputValue: string) => {
+  const { searchText, label } = (option as unknown as { data: Value }).data
+  const text = searchText ?? (typeof label === 'string' ? label : '')
+  return text.toLowerCase().includes(inputValue.trim().toLowerCase())
+}
 
 export interface AssignmentSectionProps {
   draftId: string
@@ -58,7 +70,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
           assigned_to: { organization_default: organizationDefault, role_ids: roleIds, user_ids: userIds },
         },
         otherPresets,
-        assignees?.members ?? []
+        assignees ?? { roles: [], members: [] }
       ),
     [draftId, organizationDefault, roleIds, userIds, otherPresets, assignees]
   )
@@ -113,6 +125,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
             isSearchable
             label="Members"
             options={memberOptions}
+            filterOption={matchesSearchText}
             value={field.value}
             onChange={(value) => field.onChange(value as string[])}
             hint="Overrides the member's role preset and the organization default."

@@ -1,8 +1,16 @@
 import { useLocation, useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
+import axios from 'axios'
 import { type ReactNode } from 'react'
-import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
+import {
+  type SkillPresetsMockScenario,
+  installSkillPresetsMock,
+  resetSkillPresetsMock,
+} from '@qovery/domains/skill-presets/mock'
+import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import * as useAgentActivityModule from '../hooks/use-agent-activity/use-agent-activity'
+import * as useCanManageSkillPresetsModule from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import * as copilotStatus from '../hooks/use-copilot-status/use-copilot-status'
 import * as skillPresetAssignees from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { AgentExperienceAutomate } from './agent-experience-automate'
@@ -45,13 +53,22 @@ jest.mock('posthog-js/react', () => ({
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
 }
+
+let uninstallMocks: Array<() => void> = []
+beforeAll(() => {
+  uninstallMocks = [
+    installSkillPresetsMock(axios, 'api', { passthrough: false }),
+    installSkillPresetsMock(devopsCopilotAxios, 'copilot', { passthrough: false }),
+  ]
+})
+afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
 
 beforeEach(() => {
   window.sessionStorage.clear()
   window.localStorage.clear()
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
 })
@@ -107,7 +124,6 @@ describe('AgentExperienceCopilot', () => {
   it('says the status is unknown and offers no switch when the Copilot config fails to load', async () => {
     useScenario('ai-features-off')
     const spy = jest.spyOn(copilotStatus, 'useCopilotStatus').mockReturnValue({
-      ready: true,
       enabled: false,
       readOnly: true,
       isLoading: false,
@@ -365,13 +381,19 @@ describe('Automate a new job', () => {
   })
 })
 
+afterEach(() => jest.restoreAllMocks())
+
 describe('AgentExperiencePolicyTokens', () => {
   it('shows each token’s last 7 days, flags tokens with no expiry, and keeps deleted tokens as greyed rows', async () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperiencePolicyTokens />)
 
     const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
-    expect(await within(ciDeployer).findByTestId('token-usage')).toHaveTextContent(/\d+ allowed/)
+    expect(screen.getByRole('columnheader', { name: 'Last 7 days' })).toBeInTheDocument()
+    const usage = await within(ciDeployer).findByTestId('token-usage')
+    expect(usage).toHaveTextContent(/\d+ allowed/)
+    // One bar per day of the week.
+    expect(usage.querySelectorAll('[aria-hidden="true"] > span').length).toBeGreaterThanOrEqual(7)
     expect(within(ciDeployer).queryByTestId('no-expiry')).not.toBeInTheDocument()
     expect(within(screen.getByTestId('policy-token-review-agent')).getByTestId('no-expiry')).toHaveTextContent(
       'No expiry'
@@ -379,6 +401,33 @@ describe('AgentExperiencePolicyTokens', () => {
     const deleted = await screen.findByTestId('deleted-token-cleanup-bot')
     expect(within(deleted).getByText('Deleted', { selector: 'span' })).toBeInTheDocument()
     expect(within(deleted).getByText('See activity')).toBeInTheDocument()
+    expect(within(deleted).queryByText('Calls in the last 30 days')).not.toBeInTheDocument()
+    expect(deleted).toHaveTextContent(/No calls|\d+ allowed/)
+  })
+
+  it('never reads a failed usage request as no calls', async () => {
+    useScenario('agent-experience-active')
+    jest
+      .spyOn(useAgentActivityModule, 'useAgentActivity')
+      .mockReturnValue({ data: undefined, isInitialLoading: false, isError: true } as never)
+    renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
+    expect(within(ciDeployer).getByText('Usage unavailable')).toBeInTheDocument()
+    expect(screen.queryByText('No calls')).not.toBeInTheDocument()
+    expect(screen.getByTestId('deleted-tokens-error')).toHaveTextContent('Deleted tokens could not be loaded.')
+  })
+
+  it('does not show no calls while the usage loads', async () => {
+    useScenario('agent-experience-active')
+    jest
+      .spyOn(useAgentActivityModule, 'useAgentActivity')
+      .mockReturnValue({ data: undefined, isInitialLoading: true, isError: false } as never)
+    renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    expect(await screen.findByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+    expect(screen.queryByText('No calls')).not.toBeInTheDocument()
+    expect(screen.queryByText('No policy token yet')).not.toBeInTheDocument()
   })
 
   it('manages each token from its row: see activity, view the policy, delete', async () => {
@@ -394,6 +443,23 @@ describe('AgentExperiencePolicyTokens', () => {
 
     await waitFor(() => expect(screen.queryByTestId('policy-token-review-agent')).not.toBeInTheDocument())
     expect(screen.getByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+  })
+
+  it('keeps the deleted-token history once the last active token is deleted', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
+    expect(await screen.findByTestId('deleted-token-cleanup-bot')).toBeInTheDocument()
+
+    for (const name of ['ci-deployer', 'review-agent']) {
+      await userEvent.click(await screen.findByRole('button', { name: `Actions for ${name}` }))
+      await userEvent.click(await screen.findByRole('menuitem', { name: 'Delete token' }))
+      await userEvent.type(await screen.findByRole('textbox'), name)
+      await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+      await waitFor(() => expect(screen.queryByTestId(`policy-token-${name}`)).not.toBeInTheDocument())
+    }
+
+    expect(screen.getByTestId('deleted-token-cleanup-bot')).toBeInTheDocument()
+    expect(screen.queryByText('No policy token yet')).not.toBeInTheDocument()
   })
 
   it('creates a token here, with the explanation once', async () => {
@@ -412,15 +478,37 @@ describe('AgentExperiencePolicyTokens', () => {
     useScenario('agent-experience-empty')
     renderWithProviders(<AgentExperiencePolicyTokens />)
     expect(await screen.findByText('No policy token yet')).toBeInTheDocument()
-    expect(screen.getAllByRole('button', { name: /Create policy token/ }).length).toBeGreaterThan(0)
+    // The header action and the empty-state action.
+    expect(screen.getAllByRole('button', { name: /Create policy token/ })).toHaveLength(2)
     expect(screen.getByText('Start from a job')).toBeInTheDocument()
   })
 
-  it('tells members only owners and admins manage tokens', async () => {
+  it('tells other members who manages tokens', async () => {
     useScenario('member')
     renderWithProviders(<AgentExperiencePolicyTokens />)
-    expect(await screen.findByText('Only owners and admins manage policy tokens')).toBeInTheDocument()
+    expect(await screen.findByText('Only owners, admins and DevOps members manage policy tokens')).toBeInTheDocument()
     expect(screen.queryByText('Create policy token')).not.toBeInTheDocument()
+  })
+
+  it('lets DevOps members manage tokens, without the organization activity', async () => {
+    // A DevOps member: the mock organization's tokens, but no organization-wide activity.
+    useScenario('agent-experience-active')
+    jest.spyOn(useCanManageSkillPresetsModule, 'useCanManageSkillPresets').mockReturnValue({
+      canManage: false,
+      isLoading: false,
+    })
+    const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    expect(await screen.findByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Last 7 days' })).not.toBeInTheDocument()
+    expect(screen.queryByTestId('token-usage')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('deleted-token-cleanup-bot')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Actions for ci-deployer' }))
+    expect(await screen.findByRole('menuitem', { name: 'View policy' })).toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: 'Delete token' })).toBeInTheDocument()
+    expect(screen.queryByRole('menuitem', { name: 'See activity' })).not.toBeInTheDocument()
   })
 })
 

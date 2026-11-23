@@ -51,8 +51,16 @@ export function parseActor(actor?: string) {
   return {}
 }
 
+const findRange = (value?: string) => ACTIVITY_RANGES.find((range) => range.value === value)
+
 export const activityRange = (search: ActivitySearch) =>
-  ACTIVITY_RANGES.find(({ value }) => value === search.range) ?? ACTIVITY_RANGES[2]
+  findRange(search.range) ?? findRange(DEFAULT_RANGE) ?? ACTIVITY_RANGES[0]
+
+/**
+ * Now, rounded up to the minute: the query key stays the same within a minute, and the window moves
+ * forward on the next render after it.
+ */
+export const activityWindowEnd = () => new Date(Math.ceil(Date.now() / 60_000) * 60_000)
 
 /** The query params for the API. `to` is passed in, so the range stays stable between renders. */
 export function activityParams(search: ActivitySearch, to: Date, scope: 'organization' | 'me'): AgentActivityParams {

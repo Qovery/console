@@ -1,11 +1,6 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import { type AgentActivityParams } from './agent-activity.types'
-import {
-  getMockAiFeaturesEnabled,
-  listMockPolicyTokens,
-  listMockSkillPresetAssignees,
-  skillPresetsApi,
-} from './skill-presets.api'
+import { skillPresetsApi } from './skill-presets.api'
 import { getSkillPresetErrorStatus } from './skill-presets.errors'
 import { type SkillPresetRequest } from './skill-presets.types'
 
@@ -52,21 +47,6 @@ export const skillPresets = createQueryKeys('skillPresets', {
     queryKey: [organizationId, skillName],
     // Displayed, not loaded by an agent: audited as a VIEW, never counted in usage.
     queryFn: () => skillPresetsApi.getResolvedSkill(organizationId, skillName, { purpose: 'VIEW' }),
-  }),
-  /** Mock mode only: see `getMockAiFeaturesEnabled`. */
-  mockAiFeatures: ({ organizationId }: { organizationId: string }) => ({
-    queryKey: [organizationId],
-    queryFn: () => getMockAiFeaturesEnabled(),
-  }),
-  /** Mock mode only: see `listMockPolicyTokens`. */
-  mockPolicyTokens: ({ organizationId }: { organizationId: string }) => ({
-    queryKey: [organizationId],
-    queryFn: () => listMockPolicyTokens(),
-  }),
-  /** Mock mode only: see `listMockSkillPresetAssignees`. */
-  mockAssignees: ({ organizationId }: { organizationId: string }) => ({
-    queryKey: [organizationId],
-    queryFn: () => listMockSkillPresetAssignees(),
   }),
 })
 

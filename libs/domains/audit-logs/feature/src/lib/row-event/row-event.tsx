@@ -69,7 +69,8 @@ const securityRejectionSummary = (event: OrganizationEventResponse) => {
   if ((event.event_type as string | undefined) !== SKILL_PRESET_REJECTED_EVENT_TYPE) return null
   let findings: { source?: string }[] = []
   try {
-    findings = JSON.parse(event.change ?? '{}')?.findings ?? []
+    const parsed = JSON.parse(event.change ?? '{}')
+    findings = Array.isArray(parsed?.findings) ? parsed.findings : []
   } catch {
     // An unreadable payload still shows as a rejection.
   }
@@ -168,7 +169,10 @@ export function RowEvent(props: RowEventProps) {
   }
 
   const isEventTypeFailed =
-    event.event_type === OrganizationEventType.ACCESS_DENIED || event.event_type?.toLowerCase().includes('fail')
+    event.event_type === OrganizationEventType.ACCESS_DENIED ||
+    // A preset save the security review refused: nothing was saved.
+    (event.event_type as string | undefined) === SKILL_PRESET_REJECTED_EVENT_TYPE ||
+    event.event_type?.toLowerCase().includes('fail')
 
   const eventIcon = match(event.event_type)
     .with(

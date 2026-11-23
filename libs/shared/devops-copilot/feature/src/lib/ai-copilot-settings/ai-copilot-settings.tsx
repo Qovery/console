@@ -58,16 +58,15 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
             title="Copilot configuration"
             titleBadge={
               <Badge variant="surface" color="brand" size="sm">
-                Beta
+                Preview
               </Badge>
             }
-            description="Configure Copilot"
+            description="Choose how Copilot accesses your organization and whether it can take actions."
             showNeedHelp={false}
           />
         )}
         <div className="max-w-content-with-navigation-left">
-          {/* The page title carries a Beta badge; this line keeps the billing note. */}
-          <p className="mb-4 flex items-center gap-1.5 text-xs text-neutral-subtle" data-testid="copilot-beta-note">
+          <p className="mb-4 flex items-center gap-1.5 text-xs text-neutral-subtle" data-testid="copilot-preview-note">
             <Icon iconName="flask" iconStyle="regular" aria-hidden="true" />
             Functionality may change. Billing terms are not final and will be communicated before any charges apply.
           </p>

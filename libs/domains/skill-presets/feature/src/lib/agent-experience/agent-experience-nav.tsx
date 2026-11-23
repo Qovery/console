@@ -1,8 +1,10 @@
 import { useLocation, useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { type ReactNode, useEffect, useMemo } from 'react'
+import { type ReactNode, useEffect } from 'react'
 import { Sidebar } from '@qovery/shared/ui'
+import { activityWindowEnd } from '../agent-activity/activity-search'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
+import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 
 const AGENT_TASKS_FLAG = 'argentic-workflow'
@@ -10,7 +12,7 @@ const DAY_MS = 24 * 3_600_000
 
 /** Denied agent actions over the last 7 days, for the Activity badge (like open issues on Alerts). */
 function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me', enabled: boolean) {
-  const to = useMemo(() => new Date(Math.ceil(Date.now() / 60_000) * 60_000), [])
+  const to = activityWindowEnd()
   const { data } = useAgentActivity({
     organizationId,
     scope,
@@ -24,8 +26,8 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 
 /**
  * The side list of Agents: the Skills registry, Automate and Activity, then Settings. Settings holds
- * policy tokens, the Copilot and, behind their flag, the Agent Tasks pages; it is for owners and admins
- * only, and opens by itself on its pages. Connecting an agent is a popup, not a page.
+ * policy tokens (owners, admins and DevOps members), then the Copilot and, behind their flag, the
+ * Agent Tasks pages (owners and admins). It opens by itself on its pages.
  */
 export function AgentExperienceNav() {
   const { organizationId = '' } = useParams({ strict: false })
@@ -34,10 +36,12 @@ export function AgentExperienceNav() {
   const denied = useDeniedThisWeek(organizationId, canManage ? 'organization' : 'me', !isLoading)
   const base = `/organization/${organizationId}/agent-experience`
   const { pathname } = useLocation()
+  const { canManage: canManageTokens, isLoading: isTokenRoleLoading } = useCanManagePolicyTokens({ organizationId })
   const registryPath = `${base}/skill-presets`
   const isRegistryPage = pathname === registryPath || pathname.startsWith(`${registryPath}/`)
 
   const isAdmin = !isLoading && canManage
+  const canSeeTokens = !isTokenRoleLoading && canManageTokens
   const settingsPaths = [`${base}/policy-tokens`, `${base}/copilot`, `${base}/agent-task-tokens`, `${base}/mcp-servers`]
 
   return (
@@ -53,21 +57,27 @@ export function AgentExperienceNav() {
         icon="wave-pulse"
         iconStyle="regular"
         badge={denied > 0 ? String(denied) : undefined}
-        aria-label={denied > 0 ? `Activity, ${denied} denied actions in the last 7 days` : undefined}
+        aria-label={
+          denied > 0
+            ? `Activity, ${denied} denied ${denied === 1 ? 'action' : 'actions'} in the last 7 days`
+            : undefined
+        }
       >
         Activity
       </Sidebar.Item>
-      {isAdmin && (
+      {(isAdmin || canSeeTokens) && (
         <Sidebar.Group
           title="Settings"
           icon="gear"
           iconStyle="regular"
           defaultOpen={settingsPaths.some((path) => pathname.startsWith(path))}
         >
-          <Sidebar.SubItem to={`${base}/policy-tokens`}>Policy tokens</Sidebar.SubItem>
-          <Sidebar.SubItem to={`${base}/copilot`}>Copilot settings</Sidebar.SubItem>
-          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>}
-          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>}
+          {canSeeTokens && <Sidebar.SubItem to={`${base}/policy-tokens`}>Policy tokens</Sidebar.SubItem>}
+          {isAdmin && <Sidebar.SubItem to={`${base}/copilot`}>Copilot settings</Sidebar.SubItem>}
+          {isAdmin && isAgentTasksEnabled && (
+            <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>
+          )}
+          {isAdmin && isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>}
         </Sidebar.Group>
       )}
     </Sidebar.Root>

@@ -1,27 +1,30 @@
+import { Heading, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
-/** The Copilot's AI service terms, shown before anyone turns the Copilot on. */
 export function CopilotTermsOfService({ className }: { className?: string }) {
   return (
-    <div
-      className={twMerge('max-h-80 overflow-y-auto rounded border border-neutral bg-surface-neutral p-4', className)}
+    <Section
+      className={twMerge(
+        'block max-h-80 overflow-y-auto rounded border border-neutral bg-surface-neutral p-4',
+        className
+      )}
     >
-      <h3 className="mb-3 text-sm font-semibold text-neutral">
+      <Heading className="mb-3 text-sm font-semibold">
         Qovery AI DevOps Copilot - AI service terms and conditions
-      </h3>
+      </Heading>
       <div className="space-y-4 text-xs text-neutral-subtle">
-        <div>
-          <p className="mb-2 font-semibold text-neutral">1. Company information</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">1. Company information</Heading>
           <p>
             BIRDSIGHT is a French simplified joint stock company, registered under number 852 571 108 with the Registry
             of Trade and Companies of Paris, whose head office is located at 128 rue de la Boétie, 75008 PARIS (the
             "Company").
           </p>
           <p className="mt-2">The Company may be contacted via the following email address: support@qovery.com</p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">2. Company's AI Service</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">2. Company's AI Service</Heading>
           <p className="mb-2">
             The Company offers to its customers (the "Customer(s)") services enabling them to deploy their applications
             on their cloud provider (hereinafter referred to as the "Applications") (the "Services") via an API or the
@@ -32,12 +35,12 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             on the Customers' instructions or helps them with documentation (hereinafter referred to as the "AI
             Service").
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">
             3. Contractual documents and information regarding the AI Service Terms and Conditions
-          </p>
+          </Heading>
           <p className="mb-2">
             <span className="font-medium">Function of the AI Service Terms and Conditions:</span> These terms and
             conditions (the "AI Service Terms and Conditions") complete the General Terms and Conditions (the "General
@@ -70,10 +73,10 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             the AI Service Terms and Conditions by ticking a box when activating the AI Service on the Platform. If the
             Customer does not accept all the AI Service Terms and Conditions, they cannot access the AI Service.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">4. Access to the AI Service</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">4. Access to the AI Service</Heading>
           <p className="mb-2">
             The Customer can access the AI Service by going directly to the Platform, in the settings of their account,
             and activate the AI Service. The AI Service can only be activated by administrator accounts.
@@ -87,18 +90,18 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             The Customer is solely responsible for creating accesses for Users, for setting their access rights to the
             AI Service and for their personal use of the Platform.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">5. Duration of the AI Service</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">5. Duration of the AI Service</Heading>
           <p>
             The AI service may only be provided to the Customer during the active subscription period in effect
             according to the General Terms and Conditions.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">6. Financial terms</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">6. Financial terms</Heading>
           <p className="mb-2">
             The price of the AI Service is indicated on the Platform or in the specific quotation accepted by the
             Customer, if any.
@@ -125,10 +128,10 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
               effective recovery fees should be higher than this amount.
             </li>
           </ul>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">7. Intellectual property rights</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">7. Intellectual property rights</Heading>
           <p className="mb-2">
             <span className="font-medium">7.1 Intellectual property rights of the Company:</span> The systems, software,
             structures, infrastructures, databases and content (text, images, graphics, music, logos, trademarks,
@@ -157,10 +160,10 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             intellectual property rights relating to the Customer's code, Content and Applications, which remain
             entirely and exclusively the property of the Customer.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">8. Company's obligations</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">8. Company's obligations</Heading>
           <p className="mb-1">
             The Company undertakes to ensure that the results of its use of the AI Service comply with the Company's
             obligations under the General Terms and Conditions, and in particular:
@@ -181,16 +184,16 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             practices, the Company will immediately inform the Customer by any appropriate written means and propose
             appropriate corrective measures.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">9. Customer's obligations</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">9. Customer's obligations</Heading>
           <p className="mb-2">
-            <span className="font-medium">8.1 Concerning the provision of information:</span> The Customer undertakes to
+            <span className="font-medium">9.1 Concerning the provision of information:</span> The Customer undertakes to
             provide the Company with all the information required to activate and use the AI Service.
           </p>
           <p className="mb-2">
-            <span className="font-medium">8.2 Concerning the Customer's account:</span> The Customer is solely
+            <span className="font-medium">9.2 Concerning the Customer's account:</span> The Customer is solely
             responsible for creating access for Users and for setting their access rights to the AI Service.
           </p>
           <p className="mb-2">
@@ -200,7 +203,7 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             case.
           </p>
           <p className="mb-2">
-            <span className="font-medium">8.3 Concerning the use of the AI Service:</span> The Customer is responsible
+            <span className="font-medium">9.3 Concerning the use of the AI Service:</span> The Customer is responsible
             for the use of the AI Service by the Users and any information they share in this context. They are also
             responsible for the use of the AI Service and any information shared by Users including as Content. The
             Customer undertakes to ensure that the AI Service is used exclusively by them and/or Users, who are subject
@@ -296,10 +299,10 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             result of the breach of any of the Customer's obligations. The Customer shall indemnify the Company for any
             loss suffered and reimburse the Company for any sums it may have to bear as a result.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">9 End of AI Service</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">10. End of AI Service</Heading>
           <p className="mb-2">
             The Customer may terminate the AI Service by going directly to the Platform, in the settings of their
             account, and deactivate the AI Service. The AI Service can only be deactivated by administrator accounts.
@@ -309,10 +312,10 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             The AI Service will be automatically terminated with the end of the Company's services in accordance with
             the General Terms and Conditions.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">10 Sanctions in the event of breach</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">11. Sanctions in the event of breach</Heading>
           <p className="mb-1">
             In the event of a breach of any of the Customer's obligations under the AI Service Terms and Conditions, the
             Company may:
@@ -334,10 +337,10 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             period of 15 calendar days. AI Service will be terminated at the end of this period if the breach is not
             remedied, without any right for the Customer to be reimbursed for any prepaid fees.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">11 Modification of AI Service Terms and Conditions</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">12. Modification of AI Service Terms and Conditions</Heading>
           <p className="mb-2">
             The Company may modify the AI Service Terms and Conditions at any time and will inform the Customer by any
             pertinent channel.
@@ -353,10 +356,10 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
             If the Customer uses the AI Service after the entry into force of the modified AI Service Terms and
             Conditions, the Company considers that the Customer has accepted them.
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">12 Consumer Mediation</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">13. Consumer Mediation</Heading>
           <p className="mb-2">
             In the event of any dispute with the Company, in relation to these AI Service Terms and Conditions,
             individual Customers have the right to seek recourse, free of charge, to a consumer mediator, for purposes
@@ -375,14 +378,14 @@ export function CopilotTermsOfService({ className }: { className?: string }) {
               https://www.cm2c.net
             </a>
           </p>
-        </div>
+        </Section>
 
-        <div>
-          <p className="mb-2 font-semibold text-neutral">13 Applicable law</p>
+        <Section>
+          <Heading className="mb-2 text-xs font-semibold">14. Applicable law</Heading>
           <p>The AI Service Terms and Conditions are governed by French law.</p>
-        </div>
+        </Section>
       </div>
-    </div>
+    </Section>
   )
 }
 

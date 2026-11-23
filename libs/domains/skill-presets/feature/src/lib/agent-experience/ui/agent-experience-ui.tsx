@@ -11,11 +11,7 @@ import { MockScenarioBanner } from '../../mock-scenario-banner/mock-scenario-ban
  * pattern, one wording and color for allowed and denied, one chip for members and policy tokens.
  */
 
-/**
- * Page frame: heading, a one-line description, an optional action, then the content. One width
- * rule: reading pages (forms, instructions) are narrow, tables and dashboards use the full width.
- * The help chip shows where the docs explain the page, as on the Copilot page.
- */
+/** Page frame: heading, description, an optional action, then the content. */
 export function AgentExperiencePage({
   title,
   titleBadge,
