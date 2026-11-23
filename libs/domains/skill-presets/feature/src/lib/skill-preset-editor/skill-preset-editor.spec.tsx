@@ -316,6 +316,25 @@ describe('SkillPresetEditorForm', () => {
     expect(await screen.findByTestId('no-changes-hint')).toBeInTheDocument()
   })
 
+  it('keeps edits typed while the save runs, as unsaved changes on top of the saved revision', async () => {
+    let finish: (value: unknown) => void = () => undefined
+    mockEditSkillPreset.mockReturnValue(new Promise((resolve) => (finish = resolve)))
+    const { userEvent } = renderEdit()
+    const description = screen.getByLabelText('Description (optional)')
+    await userEvent.type(description, 'Saved part')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    await screen.findByRole('button', { name: /Checking for security…/ })
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Name', exact: true }), ' v2')
+    finish({ ...savedPreset, description: 'Saved part', revision: 4 })
+
+    expect(await screen.findByRole('button', { name: 'Save' })).toBeEnabled()
+    expect(screen.getByRole('textbox', { name: 'Name', exact: true })).toHaveValue('Backend team v2')
+    expect(description).toHaveValue('Saved part')
+    expect(screen.queryByTestId('no-changes-hint')).not.toBeInTheDocument()
+    expect(mockUseBlocker).toHaveBeenLastCalledWith(expect.objectContaining({ disabled: false }))
+  })
+
   it('labels model findings and shows their reason in full', async () => {
     mockCreateSkillPreset.mockRejectedValue(
       buildSkillPresetApiError(422, 'Rejected', {

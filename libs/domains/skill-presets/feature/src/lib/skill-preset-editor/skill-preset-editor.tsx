@@ -51,7 +51,13 @@ import {
   findingsAsText,
   findingsFor,
 } from '../utils/skill-preset-findings'
-import { type SkillPresetFormValues, toSkillPresetFormValues, toSkillPresetRequest } from '../utils/skill-preset-form'
+import {
+  type SkillPresetFormValues,
+  keepEditsSinceSubmit,
+  snapshotSkillPresetFormValues,
+  toSkillPresetFormValues,
+  toSkillPresetRequest,
+} from '../utils/skill-preset-form'
 import { SKILL_PRESET_TEMPLATES, findTemplate } from '../utils/skill-preset-templates'
 import { flattenFieldErrors, skillPresetResolver } from '../utils/skill-preset-validation'
 import { AssignmentSection } from './assignment-section'
@@ -274,9 +280,10 @@ export function SkillPresetEditorForm({
     scrollToElement(document.querySelector(`[name="${firstError}"]`))
   }
 
-  const onValid = async (submitted: SkillPresetFormValues) => {
+  const onValid = async (values: SkillPresetFormValues) => {
     if (saving.current) return
     saving.current = true
+    const submitted = snapshotSkillPresetFormValues(values)
     setRejection(null)
     setConflictDetail(null)
     setServerError(null)
@@ -290,7 +297,11 @@ export function SkillPresetEditorForm({
         // The review passed and the revision is stored: refresh what the page shows from it.
         setSavePhase('saving')
         await queryClient.invalidateQueries({ queryKey: queries.skillPresets._def })
-        methods.reset(toSkillPresetFormValues(saved))
+        // The saved revision becomes the baseline. Edits typed during the review stay, as unsaved changes.
+        const savedValues = toSkillPresetFormValues(saved)
+        const draft = keepEditsSinceSubmit({ saved: savedValues, submitted, current: methods.getValues() })
+        methods.reset(savedValues)
+        if (draft !== savedValues) methods.reset(draft, { keepDefaultValues: true })
         setBaseRevision(saved.revision)
       } else {
         await createSkillPreset({ organizationId, body })
