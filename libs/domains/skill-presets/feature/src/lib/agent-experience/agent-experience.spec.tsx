@@ -61,7 +61,9 @@ describe('AgentExperienceCopilot', () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperienceCopilot />)
 
-    expect(screen.getByRole('heading', { name: 'What the Copilot does' })).toBeInTheDocument()
+    // The capabilities live in the docs, behind the header's help button.
+    expect(screen.queryByRole('heading', { name: 'What the Copilot does' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Need help here?' })).toBeInTheDocument()
     expect(screen.getByText('Preview')).toBeInTheDocument()
     expect(await within(screen.getByTestId('copilot-state')).findByText('AI on, Copilot read-only')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()

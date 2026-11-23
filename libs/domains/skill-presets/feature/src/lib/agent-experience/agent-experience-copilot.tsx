@@ -11,13 +11,6 @@ import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/
 import { useCopilotStatus } from '../hooks/use-copilot-status/use-copilot-status'
 import { AgentExperiencePage } from './ui/agent-experience-ui'
 
-const COPILOT_DOES = [
-  { icon: 'comments', text: 'Answers questions about your services, deployments and clusters, right in the Console.' },
-  { icon: 'stethoscope', text: 'Troubleshoots a failed deployment from its logs and events.' },
-  { icon: 'bolt', text: 'Takes actions such as deploys and restarts, only when you allow read-write mode.' },
-  { icon: 'clock', text: 'Runs the scheduled tasks you set up.' },
-] as const
-
 export function OnOffBadge({ on, label }: { on: boolean; label?: string }) {
   return on ? (
     <Badge variant="surface" color="green" className="gap-1 whitespace-nowrap">
@@ -75,22 +68,10 @@ export function AgentExperienceCopilot() {
       }
       description="Qovery’s AI assistant in the Console, limited to what you allow."
       width="reading"
+      // What the Copilot does lives in the docs, behind the header's help button, as on other settings pages.
+      showHelp
     >
       <div className="flex flex-col gap-6">
-        <Section aria-labelledby="copilot-does" className="flex flex-col gap-3 rounded-md border border-neutral p-4">
-          <Heading level={2} id="copilot-does">
-            What the Copilot does
-          </Heading>
-          <ul className="grid grid-cols-1 gap-3 text-sm text-neutral md:grid-cols-2">
-            {COPILOT_DOES.map(({ icon, text }) => (
-              <li key={text} className="flex items-start gap-2">
-                <Icon iconName={icon} iconStyle="regular" className="mt-0.5 text-brand" aria-hidden="true" />
-                {text}
-              </li>
-            ))}
-          </ul>
-        </Section>
-
         <div
           className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral px-4 py-3"
           data-testid="copilot-state"

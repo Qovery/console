@@ -14,7 +14,7 @@ import { MockScenarioBanner } from '../../mock-scenario-banner/mock-scenario-ban
 /**
  * Page frame: heading, a one-line description, an optional action, then the content. One width
  * rule: reading pages (forms, instructions) are narrow, tables and dashboards use the full width.
- * The help chip shows on the Overview only.
+ * The help chip shows where the docs explain the page, as on the Copilot page.
  */
 export function AgentExperiencePage({
   title,
