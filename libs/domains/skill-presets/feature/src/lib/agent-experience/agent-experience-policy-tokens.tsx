@@ -208,6 +208,7 @@ export function AgentExperiencePolicyTokens() {
     bucket: 'DAY',
     actorKind: 'POLICY_TOKEN',
   })
+  const activeTokens = tokens ?? []
   const usageById = new Map((week?.by_policy_token ?? []).map((row) => [row.policy_token_id, row]))
   const deletedWithActivity = (month?.by_policy_token ?? []).filter(
     (row): row is typeof row & { policy_token_id: string } => row.deleted && Boolean(row.policy_token_id)
@@ -246,7 +247,7 @@ export function AgentExperiencePolicyTokens() {
         </div>
       ) : error ? (
         <LoadError title="Policy tokens could not be loaded" error={error} onRetry={() => refetch()} />
-      ) : !tokens || tokens.length === 0 ? (
+      ) : activeTokens.length === 0 && deletedWithActivity.length === 0 ? (
         <EmptyState
           icon="key"
           title="No policy token yet"
@@ -271,7 +272,7 @@ export function AgentExperiencePolicyTokens() {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {tokens.map((token) => {
+            {activeTokens.map((token) => {
               const usage = usageById.get(token.id)
               return (
                 <Table.Row key={token.id} data-testid={`policy-token-${token.name}`}>

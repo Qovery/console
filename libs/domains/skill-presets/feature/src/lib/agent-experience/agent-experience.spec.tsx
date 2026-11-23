@@ -73,6 +73,23 @@ describe('AgentExperiencePolicyTokens', () => {
     expect(screen.getByTestId('policy-token-ci-deployer')).toBeInTheDocument()
   })
 
+  it('keeps the deleted-token history once the last active token is deleted', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
+    expect(await screen.findByTestId('deleted-token-cleanup-bot')).toBeInTheDocument()
+
+    for (const name of ['ci-deployer', 'review-agent']) {
+      await userEvent.click(await screen.findByRole('button', { name: `Actions for ${name}` }))
+      await userEvent.click(await screen.findByRole('menuitem', { name: 'Delete token' }))
+      await userEvent.type(await screen.findByRole('textbox'), name)
+      await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+      await waitFor(() => expect(screen.queryByTestId(`policy-token-${name}`)).not.toBeInTheDocument())
+    }
+
+    expect(screen.getByTestId('deleted-token-cleanup-bot')).toBeInTheDocument()
+    expect(screen.queryByText('No policy token yet')).not.toBeInTheDocument()
+  })
+
   it('creates a token here, with the explanation once', async () => {
     useScenario('agent-experience-active')
     renderWithProviders(<AgentExperiencePolicyTokens />)
