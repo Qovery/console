@@ -6,9 +6,23 @@ import { OrganizationDomains, OrganizationDomainsContent } from './organization-
 
 const mockList = jest.fn()
 let mockRoles = ['organization:org-1:admin']
+let mockSearch: { page?: number } = {}
+const mockSearchListeners = new Set<() => void>()
+const mockNavigate = jest.fn()
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-1' }),
+  getRouteApi: () => ({
+    useNavigate: () => mockNavigate,
+    useSearch: () =>
+      jest.requireActual('react').useSyncExternalStore(
+        (listener: () => void) => {
+          mockSearchListeners.add(listener)
+          return () => mockSearchListeners.delete(listener)
+        },
+        () => mockSearch
+      ),
+  }),
 }))
 jest.mock('@tanstack/react-query', () => ({ ...jest.requireActual('@tanstack/react-query'), useQuery: jest.fn() }))
 jest.mock('@qovery/shared/iam/feature', () => ({ useUserRole: () => ({ roles: mockRoles, loading: false }) }))
@@ -57,6 +71,13 @@ let mockState = { data: result, isLoading: false, isFetching: false, isError: fa
 
 beforeEach(() => {
   mockList.mockClear()
+  mockSearch = {}
+  mockNavigate
+    .mockReset()
+    .mockImplementation(({ search }: { search: (prev: typeof mockSearch) => typeof mockSearch }) => {
+      mockSearch = search(mockSearch)
+      mockSearchListeners.forEach((listener) => listener())
+    })
   mockRoles = ['organization:org-1:admin']
   mockState = { data: result, isLoading: false, isFetching: false, isError: false, refetch }
   jest.mocked(useQuery).mockImplementation((options: unknown) => {
@@ -106,6 +127,27 @@ it('shows skeleton rows while domains are loading', () => {
   const { container } = renderWithProviders(<OrganizationDomainsContent />)
   expect(container.querySelectorAll('tbody tr[aria-hidden="true"]')).toHaveLength(10)
   expect(screen.queryByText('No domains configured. Add a custom domain to a service.')).not.toBeInTheDocument()
+})
+
+it('reads the page from the URL and writes it back when paging', async () => {
+  mockSearch = { page: 2 }
+  const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  expect(mockList.mock.lastCall[0]).toEqual(expect.arrayContaining([expect.objectContaining({ page: 2 })]))
+  await userEvent.click(screen.getByTestId('button-next-page'))
+  expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ replace: false }))
+  expect(mockSearch).toEqual({ page: 3 })
+  await userEvent.click(screen.getByTestId('button-previous-page'))
+  expect(mockSearch).toEqual({ page: 2 })
+  await userEvent.type(screen.getByRole('textbox', { name: 'Search domains' }), 'e')
+  expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ replace: true }))
+  expect(mockSearch).toEqual({ page: 1 })
+})
+
+it('explains an empty page reached through the URL', () => {
+  mockSearch = { page: 9 }
+  mockState = { ...mockState, data: { results: [], total_count: 61 } }
+  renderWithProviders(<OrganizationDomainsContent />)
+  expect(screen.getByText('No domains on this page.')).toBeInTheDocument()
 })
 
 it('offers retry when listing fails', async () => {

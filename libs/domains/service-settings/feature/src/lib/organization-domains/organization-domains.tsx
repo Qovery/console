@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from '@tanstack/react-router'
+import { getRouteApi, useParams } from '@tanstack/react-router'
 import {
   type ColumnDef,
   type ColumnFiltersState,
+  type OnChangeFn,
   type RowSelectionState,
   flexRender,
   functionalUpdate,
@@ -36,6 +37,8 @@ import { OrganizationDomainCreateModal } from './organization-domain-create-moda
 import { OrganizationDomainRow } from './organization-domain-row'
 
 const { Table } = TablePrimitives
+
+const route = getRouteApi('/_authenticated/organization/$organizationId/domains')
 
 const SKELETON_ROWS = 10
 const SKELETON_ROUTE_WIDTHS = [[120], [96, 112], [140], [104, 88, 120]]
@@ -106,11 +109,28 @@ export function OrganizationDomains() {
 export function OrganizationDomainsContent() {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
-  const [filters, setFiltersState] = useState({ projectId: '', environmentId: '', search: '', page: 1, pageSize: 30 })
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const setFilters: typeof setFiltersState = (next) => {
-    setRowSelection({})
-    setFiltersState(next)
+  const navigate = route.useNavigate()
+  const { page = 1 } = route.useSearch()
+  const [filterState, setFilterState] = useState({ projectId: '', environmentId: '', search: '', pageSize: 30 })
+  const filters = { ...filterState, page }
+  // Selection belongs to the page it was made on, including when the page changes through browser history.
+  const [selection, setSelection] = useState<{ page: number; rows: RowSelectionState }>({ page, rows: {} })
+  const rowSelection = selection.page === page ? selection.rows : {}
+  const setRowSelection: OnChangeFn<RowSelectionState> = (updater) =>
+    setSelection({ page, rows: functionalUpdate(updater, rowSelection) })
+  const setFilters = (next: typeof filters | ((current: typeof filters) => typeof filters)) => {
+    const { page: nextPage, ...nextFilterState } = functionalUpdate(next, filters)
+    const filtersChanged = (Object.keys(nextFilterState) as (keyof typeof filterState)[]).some(
+      (key) => nextFilterState[key] !== filterState[key]
+    )
+    if (filtersChanged) {
+      setFilterState(nextFilterState)
+      setRowSelection({})
+    }
+    if (nextPage !== page) {
+      // Paging adds a history entry; resetting the page after a filter change replaces it.
+      navigate({ search: (prev) => ({ ...prev, page: nextPage }), replace: filtersChanged })
+    }
   }
   const { data: projects = [] } = useQuery(queries.projects.list({ organizationId }))
   const { data: environments = [] } = useQuery({
@@ -272,7 +292,9 @@ export function OrganizationDomainsContent() {
                     <Table.Cell colSpan={5} className="py-8 text-center text-sm text-neutral-subtle">
                       {filters.search || filters.projectId
                         ? 'No matching domains. Adjust your filters or search.'
-                        : 'No domains configured. Add a custom domain to a service.'}
+                        : filters.page > 1
+                          ? 'No domains on this page.'
+                          : 'No domains configured. Add a custom domain to a service.'}
                     </Table.Cell>
                   </Table.Row>
                 ) : (
