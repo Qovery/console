@@ -14,4 +14,11 @@ describe('AGENT_JOBS', () => {
       expect(sandboxRule).toContain('not "environmentVariable" in input.request.path')
     }
   )
+
+  it('says the preview job may act on any environment its policy does not protect', () => {
+    const preview = job('fix-in-preview-environment')
+    expect(preview.policy).toContain('not input.qovery_metadata.environment_id in protected_environment_ids')
+    expect(preview.can.join(' ')).toMatch(/any environment of the project except production and staging/)
+    expect(preview.summary).toMatch(/any environment except production and staging/)
+  })
 })

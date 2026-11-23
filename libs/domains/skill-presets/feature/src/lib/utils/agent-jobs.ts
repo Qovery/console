@@ -92,12 +92,12 @@ export const AGENT_JOBS: AgentJob[] = [
     slug: 'fix-in-preview-environment',
     level: 'investigate',
     title: 'Verify a fix in a preview',
-    summary: 'Tests a fix in preview environments. Never touches production or staging.',
+    summary: 'Tests a fix in previews. Can start or stop any environment except production and staging.',
     does: 'Reads production to find a bug, then deploys and checks its fix in preview environments, and cannot touch production or staging.',
     can: [
       'Find the organization, project and environment by name',
       'Read every environment of the project, production included, except environment variables',
-      'Deploy, redeploy, restart or stop a preview environment, or one of its services',
+      'Deploy, redeploy, restart or stop any environment of the project except production and staging, previews included, or one of its services',
     ],
     cannot: [
       'Deploy, restart or stop production or staging',
@@ -108,7 +108,7 @@ export const AGENT_JOBS: AgentJob[] = [
     prompt:
       'Users report that the discount code field rejects valid codes.\nThe Qovery project is "shop".\n\n1. Read the production logs and deployment history to find the error.\n2. Fix the bug on a new branch and open a pull request.\n3. Wait for the preview environment of the pull request, deploy it if needed,\n   and check that a valid discount code is accepted.\n4. Stop the preview environment when you are done, and post the result on the pull request.\n\nYou cannot deploy production. A human merges the pull request.',
     policy:
-      'default allow := false\n\norganization_id := "REPLACE_WITH_ORGANIZATION_ID"\nproject_id := "REPLACE_WITH_PROJECT_ID"\nproduction_environment_id := "REPLACE_WITH_PRODUCTION_ENVIRONMENT_ID"\n\n# Long-lived environments in the project that the agent must never change.\nprotected_environment_ids := {\n\tproduction_environment_id,\n\t"REPLACE_WITH_STAGING_ENVIRONMENT_ID",\n}\n\nallow if cli_lookup\nallow if read_project\nallow if manage_preview\n\n# Let the Qovery CLI find the organization, project and environment by name.\ncli_lookup if {\n\tinput.request.method == "GET"\n\tinput.request.path in {\n\t\t["api", "organization"],\n\t\t["api", "organization", organization_id],\n\t\t["api", "organization", organization_id, "project"],\n\t\t["api", "project", project_id],\n\t\t["api", "project", project_id, "environment"],\n\t}\n}\n\n# Read every environment of the project, production included, except environment variables.\nread_project if {\n\tinput.request.method in {"GET", "HEAD"}\n\tinput.qovery_metadata.project_id == project_id\n\tnot "environmentVariable" in input.request.path\n}\n\n# Deploy, redeploy, restart or stop a preview environment, or one of its services.\nmanage_preview if {\n\tinput.request.method == "POST"\n\tinput.qovery_metadata.project_id == project_id\n\tnot input.qovery_metadata.environment_id in protected_environment_ids\n\tinput.request.path[count(input.request.path) - 1] in {"deploy", "redeploy", "restart", "restart-service", "stop"}\n}',
+      'default allow := false\n\norganization_id := "REPLACE_WITH_ORGANIZATION_ID"\nproject_id := "REPLACE_WITH_PROJECT_ID"\nproduction_environment_id := "REPLACE_WITH_PRODUCTION_ENVIRONMENT_ID"\n\n# Long-lived environments in the project that the agent must never change.\nprotected_environment_ids := {\n\tproduction_environment_id,\n\t"REPLACE_WITH_STAGING_ENVIRONMENT_ID",\n}\n\nallow if cli_lookup\nallow if read_project\nallow if manage_preview\n\n# Let the Qovery CLI find the organization, project and environment by name.\ncli_lookup if {\n\tinput.request.method == "GET"\n\tinput.request.path in {\n\t\t["api", "organization"],\n\t\t["api", "organization", organization_id],\n\t\t["api", "organization", organization_id, "project"],\n\t\t["api", "project", project_id],\n\t\t["api", "project", project_id, "environment"],\n\t}\n}\n\n# Read every environment of the project, production included, except environment variables.\nread_project if {\n\tinput.request.method in {"GET", "HEAD"}\n\tinput.qovery_metadata.project_id == project_id\n\tnot "environmentVariable" in input.request.path\n}\n\n# Deploy, redeploy, restart or stop any environment of the project that is not protected\n# (previews, but also dev or QA), or one of its services.\nmanage_preview if {\n\tinput.request.method == "POST"\n\tinput.qovery_metadata.project_id == project_id\n\tnot input.qovery_metadata.environment_id in protected_environment_ids\n\tinput.request.path[count(input.request.path) - 1] in {"deploy", "redeploy", "restart", "restart-service", "stop"}\n}',
     trigger: {
       kind: 'webhook',
       label: 'When a pull request is opened',
