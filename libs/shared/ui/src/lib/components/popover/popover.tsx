@@ -1,6 +1,6 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
-import { twMerge } from '@qovery/shared/util-js'
+import { isTouchScreen, twMerge } from '@qovery/shared/util-js'
 
 // Inspired by https://github.com/radix-ui/themes/blob/a63bd6920370d824be1db26f717147dc4a2501f1/packages/radix-ui-themes/src/components/popover.tsx
 
@@ -20,7 +20,7 @@ interface PopoverContentProps extends Omit<ComponentPropsWithoutRef<typeof Popov
   container?: PopoverPrimitive.PopoverPortalProps['container']
 }
 const PopoverContent = forwardRef<ElementRef<typeof PopoverPrimitive.Content>, PopoverContentProps>(
-  function PopoverContent({ container, forceMount, className, ...props }, forwardedRef) {
+  function PopoverContent({ container, forceMount, className, onOpenAutoFocus, ...props }, forwardedRef) {
     return (
       <PopoverPrimitive.Portal container={container} forceMount={forceMount}>
         <PopoverPrimitive.Content
@@ -28,6 +28,15 @@ const PopoverContent = forwardRef<ElementRef<typeof PopoverPrimitive.Content>, P
           sideOffset={8}
           collisionPadding={10}
           {...props}
+          onOpenAutoFocus={(event) => {
+            onOpenAutoFocus?.(event)
+            // Touch screens: focus the popover itself rather than its first field, so opening a menu with a search
+            // input does not raise the virtual keyboard over it
+            if (!event.defaultPrevented && isTouchScreen()) {
+              event.preventDefault()
+              ;(event.currentTarget as HTMLElement | null)?.focus()
+            }
+          }}
           ref={forwardedRef}
           className={twMerge(
             'z-dropdown rounded border border-neutral bg-surface-neutral p-4 shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded',

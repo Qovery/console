@@ -1,6 +1,6 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ReactElement, useRef, useState } from 'react'
-import { twMerge } from '@qovery/shared/util-js'
+import { isTouchScreen, twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 const inputSearchVariants = cva(
@@ -80,7 +80,7 @@ export function InputSearch(props: InputSearchProps) {
         <input
           data-testid="input-search"
           ref={ref}
-          autoFocus={autofocus}
+          autoFocus={autofocus && !isTouchScreen()}
           className={twMerge(inputSearchVariants({ size }), customSize)}
           type="text"
           aria-label={ariaLabel}

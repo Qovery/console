@@ -73,6 +73,18 @@ body {
     height: calc(100vh - theme('spacing.16'));
   }
 
+  // Touch screens: remove the double-tap zoom delay on every tap
+  @media (pointer: coarse) {
+    touch-action: manipulation;
+
+    // iOS Safari zooms into any field below 16px on focus; keep fields at 16px on touch screens only
+    input:not([type='checkbox'], [type='radio'], [type='range']),
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+
   button,
   a,
   [role='link'],

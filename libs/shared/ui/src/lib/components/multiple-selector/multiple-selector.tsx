@@ -12,7 +12,7 @@ import {
   useState,
 } from 'react'
 import { useDebounce } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
+import { isTouchScreen, twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 
 // Inspired by https://github.com/origin-space/originui/blob/main/app/search/multiselect.tsx
@@ -234,7 +234,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
     }, [isLoadingProp])
 
     useEffect(() => {
-      if (inputProps?.autoFocus) {
+      if (inputProps?.autoFocus && !isTouchScreen()) {
         inputRef.current?.focus()
         setOpen(true)
       }
@@ -608,6 +608,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
               })}
               <CommandPrimitive.Input
                 {...inputProps}
+                autoFocus={inputProps?.autoFocus && !isTouchScreen()}
                 ref={inputRef}
                 value={inputValue}
                 disabled={disabled}
