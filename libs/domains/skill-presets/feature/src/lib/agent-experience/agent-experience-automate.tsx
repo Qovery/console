@@ -25,7 +25,7 @@ import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use
 import { AGENT_JOBS, AGENT_JOB_LEVELS, type AgentJob, policyExampleUrl } from '../utils/agent-jobs'
 import { AgentTaskEnvironmentModal } from './agent-task-environment-modal'
 import { CopyLabelGroup } from './command-block'
-import { NEW_JOB_TITLE, NewJobModal } from './new-job-modal'
+import { NEW_JOB_LABEL, NewJobModal } from './new-job-modal'
 import { AgentExperiencePage, CodingAgentLogos } from './ui/agent-experience-ui'
 
 /** The Agent Tasks templates that run an agent on Qovery itself. */
@@ -448,22 +448,25 @@ function JobDetailsPanel({
                 <p className="text-xs text-neutral-subtle">
                   Replace each REPLACE_WITH_... value with an ID from your organization before you create the token.
                 </p>
-                <p className="flex flex-wrap items-center gap-1 text-sm text-neutral-subtle">
-                  Need a different job?
-                  <Button
-                    type="button"
-                    variant="plain"
-                    color="brand"
-                    size="xs"
-                    className="h-auto px-0 text-sm"
-                    onClick={() => {
-                      onOpenChange(false)
-                      onNewJob()
-                    }}
-                  >
-                    Describe it
-                  </Button>
-                </p>
+                {/* Members cannot create the policy token a new job needs, as on the page's button. */}
+                {canManage && (
+                  <p className="flex flex-wrap items-center gap-1 text-sm text-neutral-subtle">
+                    Need a different job?
+                    <Button
+                      type="button"
+                      variant="plain"
+                      color="brand"
+                      size="xs"
+                      className="h-auto px-0 text-sm"
+                      onClick={() => {
+                        onOpenChange(false)
+                        onNewJob()
+                      }}
+                    >
+                      Describe it
+                    </Button>
+                  </p>
+                )}
               </div>
             </div>
 
@@ -515,7 +518,7 @@ export function AgentExperienceAutomate() {
   const { openModal: openNewJobModal, closeModal: closeNewJobModal } = useModal()
   const openNewJob = () =>
     openNewJobModal({
-      content: <NewJobModal onClose={closeNewJobModal} canManage={canManage} />,
+      content: <NewJobModal onClose={closeNewJobModal} />,
       options: { width: 680 },
     })
 
@@ -555,7 +558,7 @@ export function AgentExperienceAutomate() {
                 onClick={openNewJob}
               >
                 <Icon iconName="circle-plus" iconStyle="regular" />
-                {NEW_JOB_TITLE}
+                {NEW_JOB_LABEL}
               </Button>
             )}
           </div>

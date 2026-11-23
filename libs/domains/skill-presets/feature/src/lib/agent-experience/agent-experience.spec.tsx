@@ -239,6 +239,7 @@ describe('Automate, recurring agents', () => {
     await userEvent.click(screen.getByTestId('agent-job-roll-back-bad-release'))
     const details = within(await screen.findByRole('dialog'))
     expect(details.queryByRole('button', { name: /Create policy token/ })).not.toBeInTheDocument()
+    expect(details.queryByRole('button', { name: 'Describe it' })).not.toBeInTheDocument()
     expect(details.queryByText('Add the MCP server')).not.toBeInTheDocument()
     await waitFor(() =>
       expect(details.getByTestId('agent-job-member-note')).toHaveTextContent(
@@ -259,23 +260,51 @@ describe('Automate a new job', () => {
 
     await userEvent.click(await screen.findByRole('button', { name: /Automate a new job/ }))
     const modal = within(await screen.findByTestId('new-job-modal'))
-    // Empty to start with: the example is a hint, not a value.
+    // The title says it prepares a command, and the docs sit next to the description.
+    expect(screen.getByRole('heading', { name: 'Prepare a command for your agent' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Docs/ })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/configuration/organization/api-policy-token'
+    )
+    // Empty to start with: the examples are offered, not filled in.
     expect(screen.getByRole('textbox', { name: 'The job' })).toHaveValue('')
     expect(modal.getByTestId('new-job-command')).toHaveTextContent('/qovery-policy-token <describe the job>')
     expect(screen.getByTestId('submit-button')).toBeDisabled()
+    expect(modal.getByText('Or click an example to fill the field:')).toBeInTheDocument()
 
     await userEvent.click(modal.getByRole('button', { name: /stop dev and QA environments/ }))
+    expect(screen.getByRole('textbox', { name: 'The job' })).toHaveValue(
+      'Every weeknight at 8 PM, stop dev and QA environments nobody used today'
+    )
     expect(modal.getByTestId('new-job-command')).toHaveTextContent(
       '/qovery-policy-token Every weeknight at 8 PM, stop dev and QA environments nobody used today'
     )
     expect(screen.getByTestId('submit-button')).toBeEnabled()
     expect(modal.getAllByTestId('coding-agent')).toHaveLength(6)
-    // The steps are folded until asked for.
-    await userEvent.click(modal.getByRole('button', { name: 'What happens next' }))
-    expect(await modal.findByText(/refuses everything by default/)).toBeInTheDocument()
+    // Scheduling is its own visible step, not folded away.
+    expect(modal.getByRole('heading', { name: '1. Run this command in your coding agent' })).toBeInTheDocument()
+    expect(modal.getByRole('heading', { name: '2. Schedule the job' })).toBeInTheDocument()
     expect(modal.getByTestId('new-job-schedule')).toHaveTextContent(
-      'Then schedule it: as an Agent Task on Qovery (recommended), or from your coding agent, with that token.'
+      'A separate step, once the token exists: schedule the job as an Agent Task on Qovery (recommended), or from your coding agent, with that token.'
     )
+    // What the skill does is folded until asked for.
+    expect(modal.queryByText(/refuses everything by default/)).not.toBeInTheDocument()
+    await userEvent.click(modal.getByRole('button', { name: 'What your agent does with it' }))
+    expect(await modal.findByText(/refuses everything by default/)).toBeInTheDocument()
+  })
+
+  it('offers the examples only while the field is empty, so they never replace typed text', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /Automate a new job/ }))
+    expect(screen.getByTestId('new-job-examples')).toBeInTheDocument()
+    await userEvent.type(screen.getByTestId('new-job-intent'), 'Restart the api')
+    expect(screen.queryByTestId('new-job-examples')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /stop dev and QA environments/ })).not.toBeInTheDocument()
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'The job' }))
+    expect(screen.getByTestId('new-job-examples')).toBeInTheDocument()
   })
 
   it('puts a typed intent on one line', async () => {
