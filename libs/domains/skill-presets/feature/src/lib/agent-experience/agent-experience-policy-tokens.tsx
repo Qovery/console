@@ -302,8 +302,8 @@ export function AgentExperiencePolicyTokens() {
           </span>
         </EmptyState>
       ) : (
-        <Table.Root>
-          <Table.Header>
+        <Table.Root className="[&_[data-actor-kind]]:whitespace-normal [&_tr>:first-child]:max-w-sm [&_tr>:first-child]:[overflow-wrap:anywhere]">
+          <Table.Header className="whitespace-nowrap">
             <Table.Row>
               <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Role</Table.ColumnHeaderCell>
@@ -352,7 +352,7 @@ export function AgentExperiencePolicyTokens() {
                     dateFullFormat(token.expires_at, undefined, 'dd MMM yyyy')
                   ) : (
                     // A token that never expires stays valid if it leaks: flag it.
-                    <Badge variant="surface" color="yellow" className="gap-1" data-testid="no-expiry">
+                    <Badge variant="surface" color="yellow" className="gap-1 whitespace-nowrap" data-testid="no-expiry">
                       <Icon iconName="triangle-exclamation" iconStyle="regular" aria-hidden="true" />
                       No expiry
                     </Badge>
