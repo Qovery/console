@@ -340,6 +340,19 @@ describe('Automate a new job', () => {
     expect(screen.getByTestId('new-job-modal')).toBeInTheDocument()
   })
 
+  it('shows Connect your agent in place, and keeps the typed job on the way back', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(await screen.findByRole('button', { name: /Automate a new job/ }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'The job' }), 'Restart the api')
+    await userEvent.click(screen.getByRole('button', { name: 'Connect your agent' }))
+    expect(await screen.findByRole('heading', { name: 'Connect an agent' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
+    expect(await screen.findByRole('textbox', { name: 'The job' })).toHaveValue('Restart the api')
+  })
+
   it('opens from a job’s details', async () => {
     useScenario('agent-experience-active')
     const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)

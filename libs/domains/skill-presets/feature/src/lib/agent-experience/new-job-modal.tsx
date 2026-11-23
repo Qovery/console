@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Accordion, Button, ExternalLink, Heading, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
+import { Accordion, Button, ExternalLink, Heading, InputTextArea, ModalCrud } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { ConnectAgentModal } from './connect-agent-modal'
 import { CodingAgentLogos } from './ui/agent-experience-ui'
@@ -37,8 +37,9 @@ const POLICY_TOKEN_DOCS_URL = 'https://www.qovery.com/docs/configuration/organiz
  * after the token exists. Nothing is created from the Console. Owners and admins only.
  */
 export function NewJobModal({ onClose }: { onClose: () => void }) {
-  const { openModal, closeModal } = useModal()
   const methods = useForm()
+  // Connect your agent shows in place: the modal slot holds one modal, and the typed job must survive.
+  const [isConnecting, setIsConnecting] = useState(false)
   const [intent, setIntent] = useState('')
   const [, copy] = useCopyToClipboard()
   const [copied, setCopied] = useState(false)
@@ -49,6 +50,8 @@ export function NewJobModal({ onClose }: { onClose: () => void }) {
     setIntent(value)
     setCopied(false)
   }
+
+  if (isConnecting) return <ConnectAgentModal onClose={() => setIsConnecting(false)} closeLabel="Back" />
 
   return (
     <FormProvider {...methods}>
@@ -127,9 +130,7 @@ export function NewJobModal({ onClose }: { onClose: () => void }) {
                 color="brand"
                 size="xs"
                 className="h-auto px-0 text-xs"
-                onClick={() =>
-                  openModal({ content: <ConnectAgentModal onClose={closeModal} />, options: { width: 676 } })
-                }
+                onClick={() => setIsConnecting(true)}
               >
                 Connect your agent
               </Button>
