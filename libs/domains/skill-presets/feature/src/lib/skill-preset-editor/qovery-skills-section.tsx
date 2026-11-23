@@ -53,8 +53,9 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
 
   return (
     <li className="flex flex-col gap-3 p-3" data-testid={`qovery-skill-${skillName}`}>
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex items-start gap-3">
         <Checkbox
+          className="mt-0.5"
           checked={selected}
           onCheckedChange={(checked) => onSelect(checked === true)}
           aria-label={`Select ${skillName}`}
@@ -76,6 +77,8 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
             )}
           </span>
         </div>
+      </div>
+      <div className="min-w-0 overflow-x-auto pl-7">
         <Controller
           control={control}
           name={`qoverySkills.${index}.choice`}

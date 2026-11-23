@@ -383,7 +383,7 @@ export function SkillPresetEditorForm({
                     History
                   </ButtonLink>
                 )}
-                <DraftPreview />
+                {preset && <DraftPreview />}
               </div>
             </div>
             {origin && <p className="text-sm text-neutral-subtle">{origin} Everything below is editable.</p>}

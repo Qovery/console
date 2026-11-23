@@ -116,6 +116,11 @@ describe('SkillPresetEditorForm', () => {
     mockUseBlocker.mockReset()
   })
 
+  it('does not offer a draft preview when creating a preset', () => {
+    renderEditor()
+    expect(screen.queryByRole('button', { name: 'Preview', exact: true })).not.toBeInTheDocument()
+  })
+
   it('previews the unsaved draft without saving or discarding edits', async () => {
     const { userEvent } = renderEdit()
     const name = screen.getByRole('textbox', { name: 'Name', exact: true })

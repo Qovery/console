@@ -162,11 +162,6 @@ export function TurnOnAiModal({ organizationId, onClose, onEnabled }: TurnOnAiMo
               />
             </div>
           )}
-          {needsCopilot && !hasAcceptedTerms && (
-            <p className="text-xs text-neutral-subtle" data-testid="turn-on-ai-hint">
-              Accept the terms to continue.
-            </p>
-          )}
           {error && (
             <Callout.Root color="red" role="alert" data-testid="turn-on-ai-error">
               <Callout.Icon>
