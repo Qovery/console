@@ -23,6 +23,7 @@ import {
   isManagedDatabase,
 } from '@qovery/domains/services/data-access'
 import {
+  isContainerGitSource,
   isHelmGitSource,
   isHelmGitValuesOverride,
   isHelmRepositorySource,
@@ -571,6 +572,10 @@ function MenuManageDeployment({
                     )
                 )
             }
+          )
+          .with(
+            { service: P.intersection({ serviceType: 'CONTAINER' }, { source: P.when(isContainerGitSource) }) },
+            () => null
           )
           .with(
             { service: { serviceType: 'CONTAINER' } },

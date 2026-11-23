@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { gitContainerFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceList, type ServiceListProps } from './service-list'
 
@@ -521,6 +522,16 @@ describe('ServiceList', () => {
 
     expect(screen.getByText('No service found')).toBeInTheDocument()
     expect(screen.queryByText('Review pull requests')).not.toBeInTheDocument()
+  })
+
+  it('should render a Git container with its Git source', () => {
+    mockServicesData = [{ ...gitContainerFactoryMock(1)[0], name: 'git-container' }]
+
+    renderWithProviders(<ServiceList {...serviceListProps} />)
+
+    expect(screen.getByText('git-container')).toBeInTheDocument()
+    expect(screen.getByText('qovery/console')).toBeInTheDocument()
+    expect(screen.getByText('4f3a1c2')).toBeInTheDocument()
   })
 
   it('should navigate to service on row click', async () => {

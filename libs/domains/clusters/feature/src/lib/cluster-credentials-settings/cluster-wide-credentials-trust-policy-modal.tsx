@@ -1,5 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { CopyButton, Heading, Section } from '@qovery/shared/ui'
+import { CopyButton, ExternalLink, Heading, Section } from '@qovery/shared/ui'
 
 export interface ClusterWideCredentialsTrustPolicyModalProps {
   trustPolicy: string
@@ -13,9 +13,25 @@ export function ClusterWideCredentialsTrustPolicyModal({ trustPolicy }: ClusterW
           Allow Qovery access
         </Heading>
       </Dialog.Title>
-      <Dialog.Description className="mb-6 mt-2 text-sm text-neutral-subtle">
-        Qovery requires extended credentials for the next deployment. Allow Qovery to assume your extended credentials
-        IAM role by adding the following trust policy under Trust relationships in AWS IAM.
+      <Dialog.Description asChild>
+        <div className="mb-6 mt-2 flex flex-col gap-3 text-sm text-neutral-subtle">
+          <p>Qovery requires extended credentials for the next deployment.</p>
+          <p>
+            Allow Qovery to assume your extended credentials IAM role by following the steps{' '}
+            <ExternalLink
+              href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#enable-%2F-disable-the-extended-credentials-iam-role"
+              size="sm"
+              className="inline-flex"
+            >
+              here
+            </ExternalLink>
+            .
+          </p>
+          <p>
+            Once the Cloudformation is in status <code className="font-code text-neutral">UPDATE_COMPLETE</code>, the
+            Trust Relationships should be:
+          </p>
+        </div>
       </Dialog.Description>
       <div className="relative">
         <textarea
