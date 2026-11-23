@@ -985,7 +985,7 @@ function ActivityContent({
               <Icon iconName="ban" iconStyle="regular" />
               What was blocked
             </Heading>
-            {denied.length > 0 && search.outcome !== 'DENIED' && (
+            {activity.totals.denials > 0 && search.outcome !== 'DENIED' && (
               <span className="text-xs text-neutral-subtle" data-testid="denied-count">
                 <Button
                   type="button"
@@ -1001,7 +1001,11 @@ function ActivityContent({
             )}
           </div>
           {denied.length === 0 ? (
-            <p className="text-sm text-neutral-subtle">No agent action was denied in this period.</p>
+            <p className="text-sm text-neutral-subtle" data-testid="no-recent-denial">
+              {activity.totals.denials > 0
+                ? 'Denied actions in this period are not among the 100 most recent shown.'
+                : 'No agent action was denied in this period.'}
+            </p>
           ) : (
             <ol className="rounded-t-lg border-t border-neutral bg-surface-neutral py-1.5" data-testid="denied-actions">
               {denied.slice(0, 6).map((action) => (

@@ -254,6 +254,21 @@ describe('AgentActivity', () => {
     expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ search: { outcome: 'DENIED' } }))
   })
 
+  it('does not say nothing was denied when the denials are older than the recent actions', async () => {
+    useScenario('agent-activity')
+    const getAgentActivity = skillPresetsApi.getAgentActivity.bind(skillPresetsApi)
+    jest.spyOn(skillPresetsApi, 'getAgentActivity').mockImplementation(async (...args) => {
+      const response = await getAgentActivity(...args)
+      return { ...response, recent: response.recent.filter(({ outcome }) => outcome === 'ALLOWED') }
+    })
+    renderWithProviders(<AgentActivity />)
+
+    expect(await screen.findByTestId('no-recent-denial')).toHaveTextContent(
+      'Denied actions in this period are not among the 100 most recent shown.'
+    )
+    expect(screen.getByRole('button', { name: 'Show all denied' })).toBeInTheDocument()
+  })
+
   it('loads again when Try again is clicked', async () => {
     useScenario('agent-activity')
     const getActivity = jest
