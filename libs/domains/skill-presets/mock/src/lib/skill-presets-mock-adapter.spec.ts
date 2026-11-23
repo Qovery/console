@@ -28,9 +28,18 @@ describe('installSkillPresetsMock', () => {
     const presets = await api.get(`/organization/${ORG}/skillPreset`, { params: { isTemplate: false } })
     const templates = await api.get(`https://api.example.com/organization/${ORG}/skillPreset?isTemplate=true`)
 
-    expect(all.data.length).toBeGreaterThan(presets.data.length)
-    expect(presets.data.every(({ is_template }: { is_template: boolean }) => !is_template)).toBe(true)
-    expect(templates.data.every(({ is_template }: { is_template: boolean }) => is_template)).toBe(true)
+    expect(all.data.results.length).toBeGreaterThan(presets.data.results.length)
+    expect(presets.data.results.every(({ is_template }: { is_template: boolean }) => !is_template)).toBe(true)
+    expect(templates.data.results.every(({ is_template }: { is_template: boolean }) => is_template)).toBe(true)
+  })
+
+  it('wraps the revision list in results, like the API', async () => {
+    const api = axios.create()
+    installSkillPresetsMock(api, 'api', { passthrough: false })
+
+    const revisions = await api.get(`/organization/${ORG}/skillPreset/revision`, { params: { limit: 5 } })
+
+    expect(Array.isArray(revisions.data.results)).toBe(true)
   })
 
   it('answers the organization data the pages read, shaped like the generated client', async () => {
@@ -78,6 +87,23 @@ describe('installSkillPresetsMock', () => {
     const response = await copilot.get(`https://copilot.example.com/organization/${ORG}/config`)
 
     expect(response.data.org_config).toEqual(expect.objectContaining({ enabled: true }))
+  })
+
+  it('sends the Copilot requests it does not play on, such as threads', async () => {
+    const send = jest.fn<ReturnType<AxiosAdapter>, Parameters<AxiosAdapter>>(async (config) => ({
+      data: 'real thread',
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config,
+    }))
+    const copilot = axios.create({ baseURL: 'https://copilot.example.com', adapter: send })
+    installSkillPresetsMock(copilot, 'copilot')
+
+    const response = await copilot.get(`/owner/user-1/organization/${ORG}/thread`)
+
+    expect(response.data).toBe('real thread')
+    expect(send).toHaveBeenCalledTimes(1)
   })
 
   it('rejects like the API, with the status on the response', async () => {
