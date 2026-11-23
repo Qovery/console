@@ -70,6 +70,7 @@ import {
   SOURCE_FILTER_LABELS,
   activityParams,
   activityRange,
+  activityWindowEnd,
   hasActivityFilters,
   memberActor,
   parseActor,
@@ -1049,7 +1050,7 @@ export function AgentActivity() {
   const scope: Scope = canManage ? 'organization' : 'me'
   const [search, setSearch] = useActivitySearch()
   const range = activityRange(search)
-  const to = useMemo(() => new Date(Math.ceil(Date.now() / 60_000) * 60_000), [])
+  const to = activityWindowEnd()
   const params = activityParams(search, to, scope)
   const { data, isLoading, isFetching, error, refetch } = useAgentActivity({
     organizationId,

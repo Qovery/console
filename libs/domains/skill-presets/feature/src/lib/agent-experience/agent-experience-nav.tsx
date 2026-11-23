@@ -1,6 +1,6 @@
 import { useLocation, useParams } from '@tanstack/react-router'
-import { useMemo } from 'react'
 import { Sidebar } from '@qovery/shared/ui'
+import { activityWindowEnd } from '../agent-activity/activity-search'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
@@ -9,7 +9,7 @@ const DAY_MS = 24 * 3_600_000
 
 /** Denied agent actions over the last 7 days, for the Activity badge (like open issues on Alerts). */
 function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me', enabled: boolean) {
-  const to = useMemo(() => new Date(Math.ceil(Date.now() / 60_000) * 60_000), [])
+  const to = activityWindowEnd()
   const { data } = useAgentActivity({
     organizationId,
     scope,

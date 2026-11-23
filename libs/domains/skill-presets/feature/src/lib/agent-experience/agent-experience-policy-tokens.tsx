@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
-import { useMemo } from 'react'
 import { PolicyApiTokenCrudModal, PolicyApiTokenPolicyModal } from '@qovery/domains/organizations/feature'
 import {
   Badge,
@@ -17,7 +16,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { tokenActor } from '../agent-activity/activity-search'
+import { activityWindowEnd, tokenActor } from '../agent-activity/activity-search'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useAgentExperiencePolicyTokens } from '../hooks/use-agent-experience-policy-tokens/use-agent-experience-policy-tokens'
 import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
@@ -210,7 +209,7 @@ export function AgentExperiencePolicyTokens() {
     organizationId,
     enabled: canManage,
   })
-  const to = useMemo(() => new Date(Math.ceil(Date.now() / 60_000) * 60_000), [])
+  const to = activityWindowEnd()
   // Last 7 days of every token, from Activity's by-token breakdown.
   const {
     data: week,
