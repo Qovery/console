@@ -127,9 +127,16 @@ describe('presets list', () => {
 
   it('shows the scenario and a reset in the mock bar for any scenario but typical', async () => {
     useScenario('errors')
-    renderWithProviders(<MockScenarioBanner />)
+    const { unmount } = renderWithProviders(<MockScenarioBanner />)
     expect(await screen.findByTestId('mock-scenario-name')).toHaveTextContent('Scenario: errors')
     expect(screen.getByRole('button', { name: 'Reset to typical' })).toBeInTheDocument()
+    unmount()
+
+    useScenario('typical')
+    renderWithProviders(<MockScenarioBanner />)
+    expect(await screen.findByTestId('mock-scenario-banner')).toBeInTheDocument()
+    expect(screen.queryByTestId('mock-scenario-name')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Reset to typical' })).not.toBeInTheDocument()
   })
 
   it('deletes a preset after typing its name', async () => {
