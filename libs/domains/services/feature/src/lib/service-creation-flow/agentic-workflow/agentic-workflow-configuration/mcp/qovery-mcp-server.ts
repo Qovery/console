@@ -1,5 +1,5 @@
 import { type McpServerResponse } from 'qovery-typescript-axios'
-import { QOVERY_MCP_SERVER_URL } from '@qovery/shared/util-js'
+import { QOVERY_MCP_SERVER_URL } from '@qovery/domains/organizations/data-access'
 
 const QOVERY_MCP_SERVER_ORIGIN = new URL(QOVERY_MCP_SERVER_URL).origin
 

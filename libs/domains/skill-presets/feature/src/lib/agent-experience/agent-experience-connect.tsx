@@ -3,7 +3,7 @@ import {
   QOVERY_MCP_CODEX_COMMAND,
   QOVERY_MCP_CODEX_CONFIG,
   QOVERY_MCP_SERVER_URL,
-} from '@qovery/shared/util-js'
+} from '@qovery/domains/organizations/data-access'
 
 /** The commands of the Connect an agent popup: the Qovery skills, the CLI and the MCP server per coding agent. */
 

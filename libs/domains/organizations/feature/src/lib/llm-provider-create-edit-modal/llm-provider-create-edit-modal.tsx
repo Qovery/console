@@ -27,6 +27,7 @@ interface LlmProviderFormValues {
 export interface LlmProviderCreateEditModalProps {
   onClose: (response?: LlmProviderResponse) => void
   llmProvider?: LlmProviderResponse
+  personalOnly?: boolean
 }
 
 const PROVIDER_OPTIONS = [
@@ -99,7 +100,11 @@ function BedrockRegionSelect({ value, onChange }: { value: string; onChange: (va
   )
 }
 
-export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProviderCreateEditModalProps) {
+export function LlmProviderCreateEditModal({
+  onClose,
+  llmProvider,
+  personalOnly = false,
+}: LlmProviderCreateEditModalProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const isEdit = llmProvider !== undefined
   const { enableAlertClickOutside } = useModal()
@@ -142,7 +147,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
       credential: credential || undefined,
       ...(data.type === LlmProviderType.BEDROCK ? { region: data.region.trim() || null } : {}),
       ...(data.type === LlmProviderType.ANTHROPIC_COMPATIBLE ? { base_url: data.baseUrl.trim() } : {}),
-      scope: isEdit ? undefined : data.scope,
+      scope: isEdit ? undefined : personalOnly ? LlmProviderScope.USER : data.scope,
     }
 
     try {
@@ -167,7 +172,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
         submitLabel={isEdit ? 'Save token' : 'Add token'}
       >
         <div className="space-y-4">
-          {!isEdit ? (
+          {!isEdit && !personalOnly ? (
             <Controller
               name="scope"
               control={methods.control}

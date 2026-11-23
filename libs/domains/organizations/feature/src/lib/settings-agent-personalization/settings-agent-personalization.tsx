@@ -8,6 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
+import { useUserRole } from '@qovery/shared/iam/feature'
 import {
   Badge,
   BlockContent,
@@ -34,14 +35,21 @@ import { McpServerCreateEditModal } from '../mcp-server-create-edit-modal/mcp-se
 interface McpServerRowProps {
   organizationId: string
   mcpServer: McpServerResponse
+  currentUserSub?: string
+  canManageOrganization: boolean
 }
 
-function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
+function McpServerRow({ organizationId, mcpServer, currentUserSub, canManageOrganization }: McpServerRowProps) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteMcpServer } = useDeleteMcpServer()
   const owner =
     mcpServer.scope === McpServerScope.USER ? `Owner: ${mcpServer.owner_name ?? 'Unknown member'}` : undefined
+  const isOwner =
+    mcpServer.scope === McpServerScope.USER && Boolean(currentUserSub && mcpServer.owner_user_sub === currentUserSub)
+  const canEdit =
+    mcpServer.scope === McpServerScope.ORGANIZATION ? canManageOrganization : isOwner && mcpServer.attachable
+  const canDelete = canManageOrganization || isOwner
   const onEdit = () => {
     openModal({
       content: <McpServerCreateEditModal mcpServer={mcpServer} onClose={closeModal} />,
@@ -92,30 +100,32 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
         </div>
         <p className="break-all text-xs text-neutral-subtle">{mcpServer.url}</p>
       </Section>
-      <div className="flex shrink-0 gap-2">
-        {mcpServer.scope === McpServerScope.ORGANIZATION || mcpServer.attachable ? (
+      {canDelete && (
+        <div className="flex shrink-0 gap-2">
+          {canEdit && (
+            <Button
+              size="md"
+              variant="outline"
+              color="neutral"
+              iconOnly
+              aria-label={`Edit ${mcpServer.name}`}
+              onClick={onEdit}
+            >
+              <Icon iconName="gear" iconStyle="regular" />
+            </Button>
+          )}
           <Button
             size="md"
             variant="outline"
             color="neutral"
             iconOnly
-            aria-label={`Edit ${mcpServer.name}`}
-            onClick={onEdit}
+            aria-label={`Delete ${mcpServer.name}`}
+            onClick={onDelete}
           >
-            <Icon iconName="gear" iconStyle="regular" />
+            <Icon iconName="trash-can" iconStyle="regular" />
           </Button>
-        ) : null}
-        <Button
-          size="md"
-          variant="outline"
-          color="neutral"
-          iconOnly
-          aria-label={`Delete ${mcpServer.name}`}
-          onClick={onDelete}
-        >
-          <Icon iconName="trash-can" iconStyle="regular" />
-        </Button>
-      </div>
+        </div>
+      )}
     </li>
   )
 }
@@ -143,17 +153,19 @@ interface LlmProviderRowProps {
   organizationId: string
   llmProvider: LlmProviderResponse
   currentUserSub?: string
+  canManageOrganization: boolean
 }
 
-function LlmProviderRow({ organizationId, llmProvider, currentUserSub }: LlmProviderRowProps) {
+function LlmProviderRow({ organizationId, llmProvider, currentUserSub, canManageOrganization }: LlmProviderRowProps) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteLlmProvider } = useDeleteLlmProvider()
   const owner =
     llmProvider.scope === LlmProviderScope.USER ? `Owner: ${llmProvider.owner_name ?? 'Unknown member'}` : undefined
   const canManage =
-    llmProvider.scope === LlmProviderScope.ORGANIZATION ||
-    Boolean(currentUserSub && llmProvider.owner_user_sub === currentUserSub)
+    llmProvider.scope === LlmProviderScope.ORGANIZATION
+      ? canManageOrganization
+      : Boolean(currentUserSub && llmProvider.owner_user_sub === currentUserSub)
 
   const onEdit = () => {
     openModal({
@@ -286,7 +298,12 @@ function ScopedItemsList<T extends ScopedItem>({
   )
 }
 
-function LlmProvidersList({ organizationId }: { organizationId: string }) {
+interface ScopedCredentialsListProps {
+  organizationId: string
+  canManageOrganization: boolean
+}
+
+function LlmProvidersList({ organizationId, canManageOrganization }: ScopedCredentialsListProps) {
   const { data: llmProviders = [] } = useLlmProviders({ organizationId, suspense: true })
   const { user } = useAuth0()
 
@@ -309,18 +326,16 @@ function LlmProvidersList({ organizationId }: { organizationId: string }) {
           organizationId={organizationId}
           llmProvider={llmProvider}
           currentUserSub={user?.sub}
+          canManageOrganization={canManageOrganization}
         />
       )}
     />
   )
 }
 
-interface McpServersListProps {
-  organizationId: string
-}
-
-function McpServersList({ organizationId }: McpServersListProps) {
+function McpServersList({ organizationId, canManageOrganization }: ScopedCredentialsListProps) {
   const { data: mcpServers = [] } = useMcpServers({ organizationId, suspense: true })
+  const { user } = useAuth0()
 
   if (mcpServers.length === 0) {
     return (
@@ -340,20 +355,35 @@ function McpServersList({ organizationId }: McpServersListProps) {
       organizationTitle="Organization MCPs"
       personalTitle="Personal MCPs"
       renderItem={(mcpServer) => (
-        <McpServerRow key={mcpServer.id} organizationId={organizationId} mcpServer={mcpServer} />
+        <McpServerRow
+          key={mcpServer.id}
+          organizationId={organizationId}
+          mcpServer={mcpServer}
+          currentUserSub={user?.sub}
+          canManageOrganization={canManageOrganization}
+        />
       )}
     />
+  )
+}
+
+function useCanManageOrganizationCredentials(organizationId: string) {
+  const { roles, loading, isQoveryAdminUser } = useUserRole()
+  return (
+    !loading &&
+    (isQoveryAdminUser || ['owner', 'admin'].some((role) => roles.includes(`organization:${organizationId}:${role}`)))
   )
 }
 
 export function SettingsAgentTokens() {
   useDocumentTitle('Agent tokens - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
+  const canManageOrganization = useCanManageOrganizationCredentials(organizationId)
   const { openModal, closeModal } = useModal()
 
   const onAddToken = () => {
     openModal({
-      content: <LlmProviderCreateEditModal onClose={closeModal} />,
+      content: <LlmProviderCreateEditModal onClose={closeModal} personalOnly={!canManageOrganization} />,
       options: { fakeModal: true, width: 680 },
     })
   }
@@ -369,7 +399,7 @@ export function SettingsAgentTokens() {
         </SettingsHeading>
         <div className="max-w-content-with-navigation-left">
           <Suspense fallback={<LlmProvidersSkeleton />}>
-            <LlmProvidersList organizationId={organizationId} />
+            <LlmProvidersList organizationId={organizationId} canManageOrganization={canManageOrganization} />
           </Suspense>
         </div>
       </div>
@@ -380,6 +410,7 @@ export function SettingsAgentTokens() {
 export function SettingsAgentMcps() {
   useDocumentTitle('Agent MCPs - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
+  const canManageOrganization = useCanManageOrganizationCredentials(organizationId)
   const { openModal, closeModal } = useModal()
 
   const onAddMcp = () => {
@@ -403,7 +434,7 @@ export function SettingsAgentMcps() {
         </SettingsHeading>
         <div className="max-w-content-with-navigation-left">
           <Suspense fallback={<McpServersSkeleton />}>
-            <McpServersList organizationId={organizationId} />
+            <McpServersList organizationId={organizationId} canManageOrganization={canManageOrganization} />
           </Suspense>
         </div>
       </div>

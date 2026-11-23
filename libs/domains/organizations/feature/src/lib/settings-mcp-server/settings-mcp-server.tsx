@@ -1,9 +1,13 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode, useState } from 'react'
+import {
+  QOVERY_MCP_CLAUDE_COMMAND,
+  QOVERY_MCP_CODEX_COMMAND,
+  QOVERY_MCP_CODEX_CONFIG,
+} from '@qovery/domains/organizations/data-access'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { Button, CopyButton, Heading, Icon, Navbar, Section, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { QOVERY_MCP_CLAUDE_COMMAND, QOVERY_MCP_CODEX_COMMAND, QOVERY_MCP_CODEX_CONFIG } from '@qovery/shared/util-js'
 import CrudModalFeature from '../settings-api-token/crud-modal-feature/crud-modal-feature'
 
 interface CommandBlockProps {

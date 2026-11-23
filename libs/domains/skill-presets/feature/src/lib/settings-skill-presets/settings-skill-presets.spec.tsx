@@ -9,10 +9,8 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: jest.fn(),
   useSearch: () => ({}),
   useNavigate: jest.fn(),
-  Link: ({ children, params }: { children: ReactNode; params: { organizationId: string; skillPresetId: string } }) => (
-    <a href={`/organization/${params.organizationId}/agent-experience/skill-presets/${params.skillPresetId}`}>
-      {children}
-    </a>
+  Link: ({ children, to, params }: { children: ReactNode; to: string; params: Record<string, string> }) => (
+    <a href={to.replace(/\$([A-Za-z]+Id)/g, (placeholder, key) => params[key] ?? placeholder)}>{children}</a>
   ),
 }))
 
