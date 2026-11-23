@@ -9,13 +9,11 @@ export function useEnableAiFeatures() {
   return useMutation(mutations.enableAiFeatures, {
     onSuccess(_, { organizationId }) {
       queryClient.invalidateQueries({ queryKey: queries.organizations.details({ organizationId }).queryKey })
-      queryClient.invalidateQueries({ queryKey: queries.skillPresets.mockAiFeatures({ organizationId }).queryKey })
     },
     meta: {
       notifyOnSuccess: {
         title: 'AI features are on. You can now create and edit presets.',
       },
-      notifyOnError: true,
     },
   })
 }

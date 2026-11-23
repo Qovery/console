@@ -1,4 +1,5 @@
-import { assignmentConflicts, isTemplate, membersReceiving, resolvePresetFor } from './resolve-preset'
+import { effectiveRoleId, resolvePresetFor } from '@qovery/domains/skill-presets/data-access'
+import { isTemplate, membersReceiving } from './resolve-preset'
 
 const preset = (
   id: string,
@@ -39,17 +40,20 @@ describe('resolvePresetFor', () => {
       { id: 'user-sam', name: 'Sam', email: 'sam@example.com', role_id: 'role-backend' },
     ]
     const draft = preset('draft', { role_ids: ['role-backend'] })
-    expect(membersReceiving(draft, presets, members).map(({ id }) => id)).toEqual(['user-sam'])
+    expect(membersReceiving(draft, presets, { roles: [], members }).map(({ id }) => id)).toEqual(['user-sam'])
   })
 
-  it('lists the targets another preset already holds', () => {
-    const conflicts = assignmentConflicts(
-      { organization_default: true, role_ids: ['role-devops', 'role-qa'], user_ids: ['user-jamie'] },
-      presets
-    )
-    expect(conflicts.organizationDefault?.id).toBe('default')
-    expect(conflicts.roles.map(({ roleId }) => roleId)).toEqual(['role-devops'])
-    expect(conflicts.users.map(({ userId }) => userId)).toEqual(['user-jamie'])
+  it('gives the owner the Admin role preset, as q-core does', () => {
+    const roles = [
+      { id: 'role-owner', name: 'Owner' },
+      { id: 'role-admin', name: 'Admin' },
+    ]
+    const members = [{ id: 'user-alex', name: 'Alex', email: 'alex@example.com', role_id: 'role-owner' }]
+    const draft = preset('admins', { role_ids: ['role-admin'] })
+
+    expect(effectiveRoleId('role-owner', roles)).toBe('role-admin')
+    expect(effectiveRoleId('role-admin', roles)).toBe('role-admin')
+    expect(membersReceiving(draft, presets, { roles, members }).map(({ id }) => id)).toEqual(['user-alex'])
   })
 
   it('recognizes templates by their flag', () => {

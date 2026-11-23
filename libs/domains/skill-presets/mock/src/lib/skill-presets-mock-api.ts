@@ -1,18 +1,20 @@
-import { type OrganizationEventResponse, type OrganizationEventResponseList } from 'qovery-typescript-axios'
-import { type SkillPresetsApi } from '../skill-presets.api'
+import { type OrganizationEventResponse } from 'qovery-typescript-axios'
+import { type SkillPresetsApi } from '@qovery/domains/skill-presets/data-access'
 import {
   SKILL_PRESET_AI_FEATURES_OFF_MESSAGE,
   SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
   buildSkillPresetApiError,
-} from '../skill-presets.errors'
+} from '@qovery/domains/skill-presets/data-access'
 import {
   SKILL_NAME_PATTERN,
   SKILL_PRESET_LIMITS,
   approxTokens,
+  effectiveRoleId,
   isOwnerRole,
   isQoverySkillName,
+  resolvePresetFor,
   totalPresetTextLength,
-} from '../skill-presets.limits'
+} from '@qovery/domains/skill-presets/data-access'
 import {
   type InjectedSkillResponse,
   SKILL_LOAD_EVENT_TYPE,
@@ -29,7 +31,7 @@ import {
   type SkillPresetResolutionSource,
   type SkillPresetResponse,
   type SkillPresetRevisionResponse,
-} from '../skill-presets.types'
+} from '@qovery/domains/skill-presets/data-access'
 import {
   type MockAgentAction,
   agentActivityParamsError,
@@ -285,16 +287,14 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     if (previous) presets.push(previous)
   }
 
+  // The same resolution as the editor's preview, so mock mode and the UI cannot drift apart.
   const resolveFor = (userId: string): { source: SkillPresetResolutionSource; preset?: StoredPreset } => {
-    const candidates = presets.filter(({ is_template }) => !is_template)
-    const byUser = candidates.find(({ assigned_to }) => assigned_to.user_ids.includes(userId))
-    if (byUser) return { source: 'USER', preset: byUser }
-    const roleId = seed.memberRoles[userId]
-    const byRole = candidates.find(({ assigned_to }) => assigned_to.role_ids.includes(roleId))
-    if (byRole) return { source: 'ROLE', preset: byRole }
-    const byDefault = candidates.find(({ assigned_to }) => assigned_to.organization_default)
-    if (byDefault) return { source: 'ORGANIZATION', preset: byDefault }
-    return { source: 'QOVERY_DEFAULT' }
+    const roleId = effectiveRoleId(seed.memberRoles[userId], seed.assignees.roles)
+    const { source, preset } = resolvePresetFor(
+      presets.filter(({ is_template }) => !is_template),
+      { userId, roleId }
+    )
+    return { source, preset: preset ?? undefined }
   }
 
   for (const load of seed.loads) {
@@ -594,10 +594,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     listAssignees() {
       return respond(seed.assignees)
     },
-    /**
-     * Plays the DevOps Copilot service for its config and recurring task calls, through an axios
-     * adapter installed in mock mode only. Anything else answers 404.
-     */
+    /** Plays the DevOps Copilot service for its config and recurring task calls. Anything else answers 404. */
     copilotRequest(method: string, url: string, body?: string) {
       const path = url.replace(/^https?:\/\/[^/]+/, '')
       if (method === 'get' && /\/organization\/[^/]+\/config$/.test(path)) {

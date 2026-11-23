@@ -2,6 +2,7 @@ import { type FieldErrors, type Resolver } from 'react-hook-form'
 import {
   SKILL_NAME_PATTERN,
   SKILL_PRESET_LIMITS,
+  isQoverySkillName,
   totalPresetTextLength,
 } from '@qovery/domains/skill-presets/data-access'
 import { type SkillPresetFormValues, effectiveQoverySkills, toSkillPresetRequest } from './skill-preset-form'
@@ -85,8 +86,9 @@ export function validateSkillPresetForm(values: SkillPresetFormValues): Record<s
     const path = `customSkills.${index}`
     const skillName = skill.skillName.trim()
     if (!skillName) errors[`${path}.skillName`] = 'Enter a skill name.'
-    else if (skillName.startsWith('qovery'))
-      errors[`${path}.skillName`] = 'Names starting with "qovery" are reserved for Qovery skills.'
+    else if (isQoverySkillName(skillName))
+      errors[`${path}.skillName`] =
+        'The name "qovery" and names starting with "qovery-" are reserved for Qovery skills.'
     else if (!SKILL_NAME_PATTERN.test(skillName)) {
       errors[`${path}.skillName`] =
         'Use lowercase letters, digits and hyphens, at most 64 characters, no hyphen at the start or end.'

@@ -1,12 +1,14 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
+import axios from 'axios'
 import { type ReactNode } from 'react'
+import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
-  buildSkillPresetApiError,
-  resetSkillPresetsMockApi,
-  skillPresetsApi,
-} from '@qovery/domains/skill-presets/data-access'
+  installSkillPresetsMock,
+  resetSkillPresetsMock,
+} from '@qovery/domains/skill-presets/mock'
+import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved, within } from '@qovery/shared/util-tests'
 import { MemberAgentView } from './member-agent-view/member-agent-view'
 import { MockScenarioBanner } from './mock-scenario-banner/mock-scenario-banner'
@@ -59,15 +61,24 @@ configure({ asyncUtilTimeout: 5000 })
 
 const mockNavigate = jest.fn()
 
+let uninstallMocks: Array<() => void> = []
+beforeAll(() => {
+  uninstallMocks = [
+    installSkillPresetsMock(axios, 'api', { passthrough: false }),
+    installSkillPresetsMock(devopsCopilotAxios, 'copilot', { passthrough: false }),
+  ]
+})
+afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
+
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
 }
 
 beforeEach(() => {
   setMockFlag('true')
   window.sessionStorage.clear()
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
   mockNavigate.mockReset()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useNavigate).mockReturnValue(mockNavigate)
@@ -116,9 +127,16 @@ describe('presets list', () => {
 
   it('shows the scenario and a reset in the mock bar for any scenario but typical', async () => {
     useScenario('errors')
-    renderWithProviders(<MockScenarioBanner />)
+    const { unmount } = renderWithProviders(<MockScenarioBanner />)
     expect(await screen.findByTestId('mock-scenario-name')).toHaveTextContent('Scenario: errors')
     expect(screen.getByRole('button', { name: 'Reset to typical' })).toBeInTheDocument()
+    unmount()
+
+    useScenario('typical')
+    renderWithProviders(<MockScenarioBanner />)
+    expect(await screen.findByTestId('mock-scenario-banner')).toBeInTheDocument()
+    expect(screen.queryByTestId('mock-scenario-name')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Reset to typical' })).not.toBeInTheDocument()
   })
 
   it('deletes a preset after typing its name', async () => {
@@ -240,6 +258,8 @@ describe('AI features off', () => {
     await userEvent.click(
       await screen.findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
     )
+    // Submitting waits for the Copilot status, so an enabled Copilot is never reset to read-only.
+    await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
     await userEvent.click(screen.getByTestId('submit-button'))
 
     await waitForElementToBeRemoved(() => screen.queryByTestId('ai-features-notice'))

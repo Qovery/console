@@ -1,4 +1,12 @@
-import { findingKindLabel, findingLocationLabel, findingTarget, findingsFor } from './skill-preset-findings'
+import {
+  findingFieldId,
+  findingKindLabel,
+  findingLocationLabel,
+  findingSourceLabel,
+  findingTarget,
+  findingsAsText,
+  findingsFor,
+} from './skill-preset-findings'
 
 describe('skill preset findings', () => {
   it('maps every location q-core sends to an editor field', () => {
@@ -22,6 +30,39 @@ describe('skill preset findings', () => {
       { rule_id: 'c', location: 'team context', line: 2, reason: 'C' },
     ]
     expect(findingsFor(findings, { field: 'teamContext' }).map(({ line }) => line)).toEqual([2, 4])
+  })
+
+  it('matches a skill finding to its skill and field only', () => {
+    const findings = [
+      { rule_id: 'a', location: "content of skill 'x'", line: 1, reason: 'A' },
+      { rule_id: 'b', location: "content of skill 'y'", line: 2, reason: 'B' },
+      { rule_id: 'c', location: "description of skill 'x'", line: 3, reason: 'C' },
+    ]
+    expect(findingsFor(findings, { field: 'skillContent', skillName: 'x' }).map(({ rule_id }) => rule_id)).toEqual([
+      'a',
+    ])
+    expect(findingsFor(findings, { field: 'skillDescription', skillName: 'x' }).map(({ rule_id }) => rule_id)).toEqual([
+      'c',
+    ])
+    expect(findingsFor(findings, { field: 'skillContent', skillName: 'z' })).toEqual([])
+  })
+
+  it('builds DOM ids from any skill name', () => {
+    expect(findingFieldId({ field: 'teamContext' })).toBe('skill-preset-field-teamContext')
+    expect(findingFieldId({ field: 'skillContent', skillName: 'release.notes v2' })).toBe(
+      'skill-preset-field-skillContent-release-notes-v2'
+    )
+  })
+
+  it('names the source and lists findings as text', () => {
+    const rule = { source: 'RULES' as const, rule_id: 'a', location: 'description', line: 1, reason: 'Prints a secret' }
+    const model = { ...rule, source: 'MODEL' as const, line: 2, reason: 'Sends data out' }
+    expect(findingSourceLabel(rule)).toBe('Rule check')
+    expect(findingSourceLabel(model)).toBe('Model review')
+    expect(findingsAsText([rule, model])).toBe(
+      'Rule check, line 1: Prints a secret. Model review, line 2: Sends data out.'
+    )
+    expect(findingsAsText([])).toBeUndefined()
   })
 
   it('labels a finding for the summary', () => {

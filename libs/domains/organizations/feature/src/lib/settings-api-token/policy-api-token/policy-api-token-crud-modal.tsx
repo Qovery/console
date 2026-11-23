@@ -216,7 +216,6 @@ function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudModalProp
 export interface PolicyApiTokenCrudModalProps {
   onClose: () => void
   organizationId: string
-  /** Starts the form from an example (name, description, policy), for example from Agents. */
   defaultValues?: Partial<Pick<OrganizationPolicyApiTokenCreateRequest, 'name' | 'description' | 'opa_policy'>>
 }
 

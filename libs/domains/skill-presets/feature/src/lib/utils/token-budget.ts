@@ -97,6 +97,22 @@ function budgetOf(input: BudgetInput | null): TokenBudget {
         todayTokens: QOVERY_SKILL_SIZES[name]?.skillMd ?? null,
       })
     }
+    // Qovery skills published after this catalog: their published size is unknown here, the preset's text is not.
+    const known = new Set(QOVERY_SKILLS.map(({ name }) => name))
+    for (const entry of skills.filter(({ mode, skillName }) => mode !== 'ADD' && !known.has(skillName))) {
+      if (entry.mode === 'DISABLE') {
+        disabled.push(entry.skillName)
+        continue
+      }
+      onDemand.push({
+        skillName: entry.skillName,
+        qoveryTokens: 0,
+        organizationTokens: entry.contentTokens,
+        teamContextTokens,
+        total: entry.contentTokens + teamContextTokens,
+        todayTokens: null,
+      })
+    }
   } else if (base === 'LEAN') {
     onDemand.push({
       skillName: 'qovery',

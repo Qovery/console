@@ -15,6 +15,16 @@ const CHOICES: { value: QoverySkillChoice; label: string }[] = [
   { value: 'DISABLE', label: 'Disable' },
 ]
 
+const showsDescription = (choice: QoverySkillChoice) => choice === 'REPLACE'
+const showsContent = (choice: QoverySkillChoice) => choice === 'OVERLAY' || choice === 'REPLACE'
+
+/** The fields a choice hides. Their errors from an earlier save would otherwise still count as changes to make. */
+const hiddenFields = (index: number, choice: QoverySkillChoice) =>
+  [
+    !showsDescription(choice) && (`qoverySkills.${index}.description` as const),
+    !showsContent(choice) && (`qoverySkills.${index}.content` as const),
+  ].filter((name) => name !== false)
+
 interface QoverySkillRowProps {
   index: number
   skillName: string
@@ -25,7 +35,7 @@ interface QoverySkillRowProps {
 
 /** One Qovery skill. It watches only its own fields, so typing elsewhere does not re-render it. */
 function QoverySkillRow({ index, skillName, findings, selected, onSelect }: QoverySkillRowProps) {
-  const { control, getFieldState } = useFormContext<SkillPresetFormValues>()
+  const { control, getFieldState, clearErrors } = useFormContext<SkillPresetFormValues>()
   const choice = useWatch({ control, name: `qoverySkills.${index}.choice` })
   const formState = useFormState({
     control,
@@ -34,10 +44,12 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
   const contentFindings = findingsFor(findings, { field: 'skillContent', skillName })
   const descriptionFindings = findingsFor(findings, { field: 'skillDescription', skillName })
   const size = QOVERY_SKILL_SIZES[skillName]
+  // Only the fields the current choice shows can need a change.
   const hasIssue =
-    contentFindings.length + descriptionFindings.length > 0 ||
-    getFieldState(`qoverySkills.${index}.content`, formState).invalid ||
-    getFieldState(`qoverySkills.${index}.description`, formState).invalid
+    (showsDescription(choice) &&
+      (descriptionFindings.length > 0 || getFieldState(`qoverySkills.${index}.description`, formState).invalid)) ||
+    (showsContent(choice) &&
+      (contentFindings.length > 0 || getFieldState(`qoverySkills.${index}.content`, formState).invalid))
 
   return (
     <li className="flex flex-col gap-3 p-3" data-testid={`qovery-skill-${skillName}`}>
@@ -70,7 +82,10 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
           render={({ field }) => (
             <SegmentedControl.Root
               value={field.value}
-              onValueChange={(value) => field.onChange(value as QoverySkillChoice)}
+              onValueChange={(value) => {
+                field.onChange(value as QoverySkillChoice)
+                clearErrors(hiddenFields(index, value as QoverySkillChoice))
+              }}
               aria-label={`How agents use ${skillName}`}
               className="text-xs"
             >
@@ -127,6 +142,7 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
             render={({ field, fieldState }) => (
               <MarkdownField
                 id={findingFieldId({ field: 'skillContent', skillName })}
+                name={field.name}
                 label={choice === 'OVERLAY' ? `Team instructions for ${skillName}` : `Replacement for ${skillName}`}
                 hint={
                   choice === 'OVERLAY'
@@ -153,7 +169,7 @@ export interface QoverySkillsSectionProps {
 }
 
 export function QoverySkillsSection({ findings }: QoverySkillsSectionProps) {
-  const { control, setValue, getValues } = useFormContext<SkillPresetFormValues>()
+  const { control, setValue, getValues, clearErrors } = useFormContext<SkillPresetFormValues>()
   // The list of Qovery skills never changes while editing: only their fields do.
   const { fields } = useFieldArray({ control, name: 'qoverySkills', keyName: 'fieldKey' })
   const [selected, setSelected] = useState<string[]>([])
@@ -166,6 +182,7 @@ export function QoverySkillsSection({ findings }: QoverySkillsSectionProps) {
     getValues('qoverySkills').forEach((skill, index) => {
       if (selected.includes(skill.skillName)) {
         setValue(`qoverySkills.${index}.choice`, choice, { shouldDirty: true })
+        clearErrors(hiddenFields(index, choice))
       }
     })
     setSelected([])

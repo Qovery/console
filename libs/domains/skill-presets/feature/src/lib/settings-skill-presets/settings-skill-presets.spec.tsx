@@ -1,10 +1,12 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
+import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { SettingsSkillPresets } from './settings-skill-presets'
 
 const mockUseSkillPresets = jest.fn()
 const mockNavigate = jest.fn()
-let mockRevisionData: { edited_by: string; edited_at: string }[] = []
+const mockUseSkillPresetRevisions = jest.fn()
+let mockRevisionData: { skill_preset_id: string; edited_by: string; edited_at: string }[] = []
 
 // An organization admin: the role gate is covered by skill-presets-access.spec.tsx.
 jest.mock('@qovery/shared/iam/feature', () => ({
@@ -15,7 +17,10 @@ jest.mock('../hooks/use-skill-presets/use-skill-presets', () => ({
   useSkillPresets: () => mockUseSkillPresets(),
 }))
 jest.mock('../hooks/use-skill-preset-revisions/use-skill-preset-revisions', () => ({
-  useSkillPresetRevisions: () => ({ data: mockRevisionData }),
+  useSkillPresetRevisions: (props: unknown) => {
+    mockUseSkillPresetRevisions(props)
+    return { data: mockRevisionData }
+  },
 }))
 jest.mock('../hooks/use-skill-preset-assignees/use-skill-preset-assignees', () => ({
   useSkillPresetAssignees: () => ({
@@ -59,6 +64,19 @@ describe('SettingsSkillPresets', () => {
 
     expect(screen.getByText('No presets yet')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Start from a template/ })).toBeInTheDocument()
+  })
+
+  it('shows a refused request as an error, not as an empty registry', () => {
+    mockUseSkillPresets.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: buildSkillPresetApiError(403, 'Forbidden'),
+    })
+    renderWithProviders(<SettingsSkillPresets />)
+
+    expect(screen.getByText('The Skills registry could not be loaded')).toBeInTheDocument()
+    expect(screen.getByText(/The server refused the request./)).toBeInTheDocument()
+    expect(screen.queryByText('No presets yet')).not.toBeInTheDocument()
   })
 
   it('lists presets with their base and assignments', () => {
@@ -109,7 +127,11 @@ describe('SettingsSkillPresets', () => {
 
   it('shows the last editor avatar and identifies them in a tooltip', async () => {
     mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
-    mockRevisionData = [{ edited_by: 'jamie.rossi@example.com', edited_at: '2026-11-01T10:00:00Z' }]
+    mockRevisionData = [
+      { skill_preset_id: 'preset-1', edited_by: 'jamie.rossi@example.com', edited_at: '2026-11-01T10:00:00Z' },
+      { skill_preset_id: 'preset-1', edited_by: 'priya.shah@example.com', edited_at: '2026-10-01T10:00:00Z' },
+      { skill_preset_id: 'other-preset', edited_by: 'alex.martin@example.com', edited_at: '2026-11-02T10:00:00Z' },
+    ]
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
     mockRevisionData = []
 
@@ -119,6 +141,27 @@ describe('SettingsSkillPresets', () => {
     expect(within(row).getByText(/ago$/)).toBeInTheDocument()
     await userEvent.hover(editor)
     expect(await screen.findByRole('tooltip')).toHaveTextContent('Jamie Rossi (jamie.rossi@example.com)')
+  })
+
+  it('reads the last editors of every preset from one request', () => {
+    mockUseSkillPresetRevisions.mockClear()
+    mockUseSkillPresets.mockReturnValue({
+      data: [preset, { ...preset, id: 'preset-2', name: 'Second' }, { ...preset, id: 'preset-3', name: 'Third' }],
+      isLoading: false,
+    })
+    renderWithProviders(<SettingsSkillPresets />)
+
+    expect(screen.getAllByTestId(/^skill-preset-/)).toHaveLength(3)
+    const calls = mockUseSkillPresetRevisions.mock.calls.map(([props]) => props)
+    expect(calls.length).toBeGreaterThan(0)
+    calls.forEach((props) => expect(props).toEqual({ organizationId: 'organization-1' }))
+  })
+
+  it('falls back to the preset when its last revision is not in the latest revisions', () => {
+    mockUseSkillPresets.mockReturnValue({ data: [preset], isLoading: false })
+    renderWithProviders(<SettingsSkillPresets />)
+
+    expect(within(screen.getByTestId('skill-preset-preset-1')).getByLabelText('Priya Shah')).toBeInTheDocument()
   })
 
   it('sorts names and edit dates in both directions, and filters bases', async () => {

@@ -71,10 +71,8 @@ export function TemplateGallery() {
 
       <MockScenarioBanner />
 
-      <section aria-labelledby="gallery-qovery" className="flex flex-col gap-3">
-        <Heading level={2} id="gallery-qovery">
-          Qovery templates
-        </Heading>
+      <Section aria-labelledby="gallery-qovery" className="gap-3">
+        <Heading id="gallery-qovery">Qovery templates</Heading>
         <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
           <TemplateOption
             title="Blank preset"
@@ -92,7 +90,7 @@ export function TemplateGallery() {
             />
           ))}
         </ul>
-      </section>
+      </Section>
     </Section>
   )
 }
