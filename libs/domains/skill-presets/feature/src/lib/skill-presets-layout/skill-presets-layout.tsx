@@ -22,7 +22,7 @@ const MEMBER_DESCRIPTION = 'What your coding agent receives from Qovery, readabl
 
 function AccessSkeleton() {
   return (
-    <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading the Skills registry">
+    <div className="flex flex-col gap-3" aria-busy="true" role="status" aria-label="Loading the Skills registry">
       <Skeleton width={320} height={16} show />
       <Skeleton height={200} className="w-full" show />
     </div>
