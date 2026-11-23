@@ -542,6 +542,21 @@ describe('SkillPresetEditorForm', () => {
     })
   })
 
+  it('drops the errors of fields a Qovery skill no longer shows', async () => {
+    const { userEvent } = renderEditor()
+    const row = screen.getByTestId('qovery-skill-qovery-deploy')
+    await userEvent.click(within(row).getByRole('radio', { name: 'Replace' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+    expect(within(row).getByText('Needs a change')).toBeInTheDocument()
+    expect(screen.getByText(/fields? needs? a change/)).toBeInTheDocument()
+
+    await userEvent.click(within(row).getByRole('radio', { name: 'As is' }))
+
+    expect(within(row).queryByText('Needs a change')).not.toBeInTheDocument()
+    expect(screen.queryByText(/fields? needs? a change/)).not.toBeInTheDocument()
+    expect(mockCreateSkillPreset).not.toHaveBeenCalled()
+  })
+
   it('turns several Qovery skills off at once', async () => {
     mockCreateSkillPreset.mockResolvedValue(savedPreset)
     const { userEvent } = renderEditor()
