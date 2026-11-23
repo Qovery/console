@@ -9,8 +9,10 @@ import {
   SKILL_NAME_PATTERN,
   SKILL_PRESET_LIMITS,
   approxTokens,
+  effectiveRoleId,
   isOwnerRole,
   isQoverySkillName,
+  resolvePresetFor,
   totalPresetTextLength,
 } from '@qovery/domains/skill-presets/data-access'
 import {
@@ -285,16 +287,14 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     if (previous) presets.push(previous)
   }
 
+  // The same resolution as the editor's preview, so mock mode and the UI cannot drift apart.
   const resolveFor = (userId: string): { source: SkillPresetResolutionSource; preset?: StoredPreset } => {
-    const candidates = presets.filter(({ is_template }) => !is_template)
-    const byUser = candidates.find(({ assigned_to }) => assigned_to.user_ids.includes(userId))
-    if (byUser) return { source: 'USER', preset: byUser }
-    const roleId = seed.memberRoles[userId]
-    const byRole = candidates.find(({ assigned_to }) => assigned_to.role_ids.includes(roleId))
-    if (byRole) return { source: 'ROLE', preset: byRole }
-    const byDefault = candidates.find(({ assigned_to }) => assigned_to.organization_default)
-    if (byDefault) return { source: 'ORGANIZATION', preset: byDefault }
-    return { source: 'QOVERY_DEFAULT' }
+    const roleId = effectiveRoleId(seed.memberRoles[userId], seed.assignees.roles)
+    const { source, preset } = resolvePresetFor(
+      presets.filter(({ is_template }) => !is_template),
+      { userId, roleId }
+    )
+    return { source, preset: preset ?? undefined }
   }
 
   for (const load of seed.loads) {

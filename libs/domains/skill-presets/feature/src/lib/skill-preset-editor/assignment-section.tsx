@@ -1,9 +1,13 @@
 import { useMemo, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { type SkillPresetAssignees, isOwnerRole } from '@qovery/domains/skill-presets/data-access'
+import {
+  type AssignablePreset,
+  type SkillPresetAssignees,
+  isOwnerRole,
+} from '@qovery/domains/skill-presets/data-access'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, Callout, Icon, InputSelect, InputToggle } from '@qovery/shared/ui'
-import { type AssignablePreset, membersReceiving } from '../utils/resolve-preset'
+import { membersReceiving } from '../utils/resolve-preset'
 import { type SkillPresetFormValues } from '../utils/skill-preset-form'
 
 /** Matches the option's search text (name and email). react-select passes its own wrapper, with the option under `data`. */
