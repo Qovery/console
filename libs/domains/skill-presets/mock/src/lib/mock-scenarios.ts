@@ -4,7 +4,7 @@ import {
   type SkillPresetBase,
   type SkillPresetChangeType,
   type SkillPresetSkill,
-} from '../skill-presets.types'
+} from '@qovery/domains/skill-presets/data-access'
 import { type SkillPresetsMockScenario } from './mock-scenario-names'
 
 export interface MockPresetState {

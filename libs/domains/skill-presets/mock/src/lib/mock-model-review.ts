@@ -1,4 +1,4 @@
-import { type SkillPresetFinding } from '../skill-presets.types'
+import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 import { type InspectedField } from './mock-content-inspector'
 
 /*

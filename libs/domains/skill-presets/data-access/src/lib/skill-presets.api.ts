@@ -1,11 +1,9 @@
 import axios from 'axios'
-import { OrganizationMainCallsApi, type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
+import { OrganizationMainCallsApi } from 'qovery-typescript-axios'
 import { type AgentActivityParams, type AgentActivityResponse } from './agent-activity.types'
-import { getSkillPresetsMockScenario } from './skill-presets-mock-mode'
 import {
   type InjectedSkillResponse,
   type ResolvedSkillPurpose,
-  type SkillPresetAssignees,
   type SkillPresetManifestResponse,
   type SkillPresetRequest,
   type SkillPresetResponse,
@@ -17,10 +15,10 @@ import {
  *
  * TODO: the skill presets and agent activity endpoints are added to qovery-openapi-spec by
  * Qovery/qovery-openapi-spec#1261. Once it is released in `qovery-typescript-axios`, replace
- * `httpSkillPresetsApi` with the generated `SkillPresetsApi` (same method names), swap the types in
+ * `skillPresetsApi` with the generated `SkillPresetsApi` (same method names), swap the types in
  * skill-presets.types.ts and agent-activity.types.ts for the generated ones, and delete this file's
- * axios calls. The mock API stays: it implements the same interface. The paths have no `/api` prefix: the axios auth
- * interceptor adds the API base URL and the token, like it does for the generated client.
+ * axios calls. The paths have no `/api` prefix: the axios auth interceptor adds the API base URL and
+ * the token, like it does for the generated client.
  */
 
 export interface SkillPresetsApi {
@@ -44,10 +42,7 @@ export interface SkillPresetsApi {
     skillName: string,
     params: { purpose: ResolvedSkillPurpose }
   ): Promise<InjectedSkillResponse>
-  /**
-   * Turns AI features on for the organization (`PUT /organization/{id}/aiFeatures`, owners and admins).
-   * Not a skill presets endpoint: it goes through this module only so the mock can play it.
-   */
+  /** Turns AI features on for the organization (`PUT /organization/{id}/aiFeatures`, owners and admins). */
   enableAiFeatures(organizationId: string): Promise<void>
   /** What coding agents did on Qovery, for the whole organization (owners and admins). */
   getAgentActivity(organizationId: string, params: AgentActivityParams): Promise<AgentActivityResponse>
@@ -60,7 +55,7 @@ export interface SkillPresetsApi {
 
 const organizationApi = new OrganizationMainCallsApi()
 
-const httpSkillPresetsApi: SkillPresetsApi = {
+export const skillPresetsApi: SkillPresetsApi = {
   async listSkillPresets(organizationId, { isTemplate } = {}) {
     const response = await axios.get<{ results: SkillPresetResponse[] }>(
       `/organization/${organizationId}/skillPreset`,
@@ -120,107 +115,4 @@ const httpSkillPresetsApi: SkillPresetsApi = {
     })
     return response.data
   },
-}
-
-type MockSkillPresetsApi = SkillPresetsApi & {
-  listAssignees: () => Promise<SkillPresetAssignees>
-  listPolicyTokens: () => Promise<OrganizationPolicyApiToken[]>
-  deletePolicyToken: (policyTokenId: string) => Promise<void>
-  copilotRequest: (method: string, url: string, body?: string) => Promise<unknown>
-  aiFeaturesEnabled: () => Promise<boolean>
-}
-
-let mockApi: { scenario: string; api: Promise<MockSkillPresetsApi> } | undefined
-
-function resolveMockApi(): Promise<MockSkillPresetsApi> | null {
-  const scenario = getSkillPresetsMockScenario()
-  if (!scenario) return null
-  if (mockApi?.scenario !== scenario) {
-    // Loaded on demand so the mock data never ships in the main bundle.
-    const api = import('./mock/skill-presets-mock-api').then(({ createSkillPresetsMockApi }) =>
-      createSkillPresetsMockApi(scenario)
-    )
-    mockApi = { scenario, api }
-  }
-  return mockApi.api
-}
-
-async function resolveApi(): Promise<SkillPresetsApi> {
-  return (await resolveMockApi()) ?? httpSkillPresetsApi
-}
-
-/** Descriptions and the unsafe sample of the mock scenarios, loaded only when the mock is active. */
-export const loadSkillPresetsMockTools = () => import('./mock/mock-tools')
-
-/**
- * Members and roles of the mock organization. Outside mock mode the Console's own members and roles
- * queries are used instead, so the mock never sees real people.
- */
-export async function listMockSkillPresetAssignees(): Promise<SkillPresetAssignees> {
-  const api = await resolveMockApi()
-  if (!api) throw new Error('The skill presets mock is not active')
-  return api.listAssignees()
-}
-
-/**
- * Mock mode only: the mock organization's policy tokens. Outside mock mode the Console's own policy
- * token query is used, so the mock never shows real tokens.
- */
-export async function listMockPolicyTokens(): Promise<OrganizationPolicyApiToken[]> {
-  const api = await resolveMockApi()
-  if (!api) throw new Error('The skill presets mock is not active')
-  return api.listPolicyTokens()
-}
-
-/** Mock mode only: deletes one of the mock organization's policy tokens. */
-export async function deleteMockPolicyToken(policyTokenId: string): Promise<void> {
-  const api = await resolveMockApi()
-  if (!api) throw new Error('The skill presets mock is not active')
-  return api.deletePolicyToken(policyTokenId)
-}
-
-/**
- * Mock mode only: routes the DevOps Copilot service calls (config and recurring tasks) to the mock,
- * so the Copilot settings can be played without that service. Resolves to false outside mock mode.
- */
-export async function installSkillPresetsCopilotMock(): Promise<boolean> {
-  if (!resolveMockApi()) return false
-  const { devopsCopilotAxios } = await import('@qovery/shared/devops-copilot/data-access')
-  devopsCopilotAxios.defaults.adapter = async (config) => {
-    const api = await resolveMockApi()
-    if (!api) throw new Error('The skill presets mock is not active')
-    const data = await api.copilotRequest(
-      (config.method ?? 'get').toLowerCase(),
-      `${config.baseURL ?? ''}${config.url ?? ''}`,
-      typeof config.data === 'string' ? config.data : undefined
-    )
-    return { data, status: 200, statusText: 'OK', headers: {}, config }
-  }
-  return true
-}
-
-/** Mock mode only: whether the mock organization has AI features on. It changes when they are turned on. */
-export async function getMockAiFeaturesEnabled(): Promise<boolean> {
-  const api = await resolveMockApi()
-  if (!api) throw new Error('The skill presets mock is not active')
-  return api.aiFeaturesEnabled()
-}
-
-/** Test helper: drop the in-memory mock so the next call starts from the scenario's seed. */
-export function resetSkillPresetsMockApi() {
-  mockApi = undefined
-}
-
-export const skillPresetsApi: SkillPresetsApi = {
-  listSkillPresets: async (...args) => (await resolveApi()).listSkillPresets(...args),
-  getSkillPreset: async (...args) => (await resolveApi()).getSkillPreset(...args),
-  createSkillPreset: async (...args) => (await resolveApi()).createSkillPreset(...args),
-  editSkillPreset: async (...args) => (await resolveApi()).editSkillPreset(...args),
-  deleteSkillPreset: async (...args) => (await resolveApi()).deleteSkillPreset(...args),
-  listSkillPresetRevisions: async (...args) => (await resolveApi()).listSkillPresetRevisions(...args),
-  getResolvedSkillPreset: async (...args) => (await resolveApi()).getResolvedSkillPreset(...args),
-  getResolvedSkill: async (...args) => (await resolveApi()).getResolvedSkill(...args),
-  enableAiFeatures: async (...args) => (await resolveApi()).enableAiFeatures(...args),
-  getAgentActivity: async (...args) => (await resolveApi()).getAgentActivity(...args),
-  getMyAgentActivity: async (...args) => (await resolveApi()).getMyAgentActivity(...args),
 }

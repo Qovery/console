@@ -3,7 +3,7 @@ import {
   SKILL_PRESETS_MOCK_MEMBER_SCENARIOS,
   SKILL_PRESETS_MOCK_SCENARIOS,
   type SkillPresetsMockScenario,
-} from './mock/mock-scenario-names'
+} from './mock-scenario-names'
 
 export const SKILL_PRESETS_MOCK_QUERY_PARAM = 'mockSkillPresets'
 const STORAGE_KEY = 'qovery-mock-skill-presets'
@@ -24,7 +24,8 @@ const readStorage = () => {
   }
 }
 
-const isMockBuild = () => SKILL_PRESETS_MOCK?.trim() === 'true'
+/** Only a build with `NX_PUBLIC_SKILL_PRESETS_MOCK=true` can serve mock data. */
+export const isSkillPresetsMockBuild = () => SKILL_PRESETS_MOCK?.trim() === 'true'
 
 const write = (value: string) => {
   try {
@@ -40,7 +41,7 @@ const write = (value: string) => {
  * covers every way to pick one.
  */
 export function rememberSkillPresetsMockScenario() {
-  if (!isMockBuild()) return
+  if (!isSkillPresetsMockBuild()) return
   const fromUrl = readQueryParam()
   if (fromUrl === 'off' || isScenario(fromUrl)) write(fromUrl)
 }
@@ -56,7 +57,7 @@ rememberSkillPresetsMockScenario()
  * API. Data resets on reload. Reads only: safe to call during render.
  */
 export function getSkillPresetsMockScenario(): SkillPresetsMockScenario | null {
-  if (!isMockBuild()) return null
+  if (!isSkillPresetsMockBuild()) return null
   const fromUrl = readQueryParam()
   const chosen = fromUrl === 'off' || isScenario(fromUrl) ? fromUrl : readStorage()
   if (chosen === 'off') return null

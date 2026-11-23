@@ -3,7 +3,7 @@ import {
   type AgentActivityParams,
   type AgentActivityResponse,
   type AgentActivitySource,
-} from '../agent-activity.types'
+} from '@qovery/domains/skill-presets/data-access'
 
 /*
  * Agent activity for the mock, shaped like q-core's: actions follow from the skill loads (a load of
