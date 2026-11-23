@@ -38,7 +38,7 @@ const REVISIONS = [
   },
 ]
 
-let mockRevisions = REVISIONS
+let mockRevisions: object[] = REVISIONS
 const PRESETS_LOADED = { isSuccess: true, data: [{ id: 'preset-1', name: 'Backend team' }] }
 let mockPresets: { isSuccess: boolean; data?: { id: string; name: string }[] } = PRESETS_LOADED
 
