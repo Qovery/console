@@ -1,12 +1,12 @@
-import { Badge, Button, Callout, Icon, Tooltip } from '@qovery/shared/ui'
-import { useOpenConnectIdp } from '../idp-nudge'
+import { useParams } from '@tanstack/react-router'
+import { Badge, Button, Callout, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { principalById } from '../rbac-v2-mock-data'
 import { useRbacPrototype } from '../rbac-v2-prototype-context'
 import { Panel, PrincipalAvatar, groupIcon } from '../rbac-v2-ui'
 
 export function GroupsTab() {
   const { roles, groups, hasIdp } = useRbacPrototype()
-  const openConnectIdp = useOpenConnectIdp()
+  const { organizationId = '' } = useParams({ strict: false })
 
   return (
     <div className="flex flex-col gap-6">
@@ -21,9 +21,14 @@ export function GroupsTab() {
               Groups are created and managed in Qovery. Connect an IdP to sync its groups and their membership.
             </Callout.TextDescription>
             <div className="mt-3">
-              <Button type="button" size="sm" onClick={openConnectIdp}>
+              <Link
+                as="button"
+                size="sm"
+                to="/organization/$organizationId/settings/identity-provider"
+                params={{ organizationId }}
+              >
                 Connect an IdP
-              </Button>
+              </Link>
             </div>
           </Callout.Text>
         </Callout.Root>

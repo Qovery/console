@@ -130,7 +130,7 @@ function SwitchLabel({ label, description }: { label: string; description: strin
 const IDP_SUMMARY = {
   idp: 'An identity provider (Okta, Microsoft Entra ID, Google Workspace…) is connected: members sign in with SSO and their IdP groups give them roles.',
   'no-idp':
-    'No identity provider: members sign in with Google, GitHub or email, and every role is assigned by hand in Qovery. The console suggests connecting one.',
+    'No identity provider: members sign in with Google, GitHub or email, and every role is assigned by hand in Qovery.',
 }
 
 export const STAGES: { mode: PrototypeMode; label: string }[] = [

@@ -2,7 +2,6 @@ import { type KeyboardEvent } from 'react'
 import { Badge, Button, Icon, Tooltip, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { AssignRoleModal } from '../assign-role-modal'
-import { IdpNudge } from '../idp-nudge'
 import { type Group, PRINCIPALS, type Principal, type Role, principalById } from '../rbac-v2-mock-data'
 import { useRbacPrototype } from '../rbac-v2-prototype-context'
 import { type TargetedPermission } from '../rbac-v2-targeted-data'
@@ -249,112 +248,105 @@ export function MembersTab() {
       : 'grid-cols-[minmax(0,1.2fr)_minmax(0,2.6fr)_auto]'
   )
 
-  const manualAssignments = users
-    .flatMap((user) => getRoleSources({ principalId: user.id, assignments, groups, isTarget, hasGroups }))
-    .filter((source) => source.kind === 'direct').length
-
   return (
-    <>
-      <IdpNudge manualAssignments={manualAssignments} />
-      <Panel title={`${users.length} members`}>
-        <div
-          className={twMerge(
-            columns,
-            'border-b border-neutral bg-surface-neutral-subtle px-4 py-2 text-xs font-medium text-neutral-subtle'
-          )}
-        >
-          <span>Member</span>
-          {showGroups && <span>Groups</span>}
-          <span>Roles</span>
-          <span className="w-[68px]" />
-        </div>
-        <div className="divide-y divide-neutral">
-          {users.map((user) => {
-            const sources = getRoleSources({ principalId: user.id, assignments, groups, isTarget, hasGroups }).sort(
-              (a, b) => SOURCE_ORDER.indexOf(a.kind) - SOURCE_ORDER.indexOf(b.kind)
-            )
-            const userGroups = groups
-              .filter((group) => group.memberIds.includes(user.id))
-              .filter((group) => hasGroups || group.source === 'idp')
-            return (
-              <div
-                key={user.id}
-                {...(isTarget && {
-                  role: 'button',
-                  tabIndex: 0,
-                  onClick: () => openWhyAccess(user),
-                  onKeyDown: (event: KeyboardEvent) => event.key === 'Enter' && openWhyAccess(user),
-                })}
-                className={twMerge(
-                  columns,
-                  'items-start px-4 py-3',
-                  isTarget && 'cursor-pointer hover:bg-surface-neutral-subtle'
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <PrincipalAvatar principal={user} />
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-neutral">{user.name}</p>
-                    <p className="truncate text-xs text-neutral-subtle">{user.email}</p>
-                  </div>
+    <Panel title={`${users.length} members`}>
+      <div
+        className={twMerge(
+          columns,
+          'border-b border-neutral bg-surface-neutral-subtle px-4 py-2 text-xs font-medium text-neutral-subtle'
+        )}
+      >
+        <span>Member</span>
+        {showGroups && <span>Groups</span>}
+        <span>Roles</span>
+        <span className="w-[68px]" />
+      </div>
+      <div className="divide-y divide-neutral">
+        {users.map((user) => {
+          const sources = getRoleSources({ principalId: user.id, assignments, groups, isTarget, hasGroups }).sort(
+            (a, b) => SOURCE_ORDER.indexOf(a.kind) - SOURCE_ORDER.indexOf(b.kind)
+          )
+          const userGroups = groups
+            .filter((group) => group.memberIds.includes(user.id))
+            .filter((group) => hasGroups || group.source === 'idp')
+          return (
+            <div
+              key={user.id}
+              {...(isTarget && {
+                role: 'button',
+                tabIndex: 0,
+                onClick: () => openWhyAccess(user),
+                onKeyDown: (event: KeyboardEvent) => event.key === 'Enter' && openWhyAccess(user),
+              })}
+              className={twMerge(
+                columns,
+                'items-start px-4 py-3',
+                isTarget && 'cursor-pointer hover:bg-surface-neutral-subtle'
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <PrincipalAvatar principal={user} />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-neutral">{user.name}</p>
+                  <p className="truncate text-xs text-neutral-subtle">{user.email}</p>
                 </div>
-                {showGroups && (
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {userGroups.length === 0 && <span className="text-xs text-neutral-subtle">—</span>}
-                    {userGroups.map((group) => (
-                      <GroupBadge key={group.id} group={group} />
-                    ))}
-                  </div>
-                )}
-                <ul className="flex flex-col gap-2">
-                  {sources.length === 0 && <li className="pt-1 text-xs text-neutral-subtle">No Access</li>}
-                  {sources.map((source, index) => (
-                    <RoleWithSource
-                      key={`${source.roleId}-${index}`}
-                      source={source}
-                      isOnlyRole={sources.length === 1}
-                      onRemove={source.assignment ? () => removeAssignment(source.assignment?.id ?? '') : undefined}
-                    />
-                  ))}
-                </ul>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  color="neutral"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    openAssign(user)
-                  }}
-                >
-                  <Icon iconName="plus" />
-                  Role
-                </Button>
               </div>
-            )
-          })}
-        </div>
-        <div className="flex flex-wrap items-center gap-4 border-t border-neutral px-4 py-3 text-xs text-neutral-subtle">
-          {(showGroups || hasIdp) && (
-            <span className="flex items-center gap-1.5">
-              <Icon iconName={ROLE_SOURCE_ICONS.group} iconStyle="regular" className="text-info" />
-              {showGroups ? 'Synced from a group' : 'From the IdP mapping'}
-            </span>
-          )}
+              {showGroups && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {userGroups.length === 0 && <span className="text-xs text-neutral-subtle">—</span>}
+                  {userGroups.map((group) => (
+                    <GroupBadge key={group.id} group={group} />
+                  ))}
+                </div>
+              )}
+              <ul className="flex flex-col gap-2">
+                {sources.length === 0 && <li className="pt-1 text-xs text-neutral-subtle">No Access</li>}
+                {sources.map((source, index) => (
+                  <RoleWithSource
+                    key={`${source.roleId}-${index}`}
+                    source={source}
+                    isOnlyRole={sources.length === 1}
+                    onRemove={source.assignment ? () => removeAssignment(source.assignment?.id ?? '') : undefined}
+                  />
+                ))}
+              </ul>
+              <Button
+                size="sm"
+                variant="outline"
+                color="neutral"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  openAssign(user)
+                }}
+              >
+                <Icon iconName="plus" />
+                Role
+              </Button>
+            </div>
+          )
+        })}
+      </div>
+      <div className="flex flex-wrap items-center gap-4 border-t border-neutral px-4 py-3 text-xs text-neutral-subtle">
+        {(showGroups || hasIdp) && (
           <span className="flex items-center gap-1.5">
-            <Icon iconName={ROLE_SOURCE_ICONS.direct} iconStyle="regular" />
-            Assigned manually
+            <Icon iconName={ROLE_SOURCE_ICONS.group} iconStyle="regular" className="text-info" />
+            {showGroups ? 'Synced from a group' : 'From the IdP mapping'}
           </span>
-          {isTarget && (
-            <>
-              <span className="flex items-center gap-1.5">
-                <Icon iconName={ROLE_SOURCE_ICONS.delegated} iconStyle="regular" className="text-warning" />
-                Delegated, with expiry
-              </span>
-              <span className="ml-auto">Click a member to see why they have access.</span>
-            </>
-          )}
-        </div>
-      </Panel>
-    </>
+        )}
+        <span className="flex items-center gap-1.5">
+          <Icon iconName={ROLE_SOURCE_ICONS.direct} iconStyle="regular" />
+          Assigned manually
+        </span>
+        {isTarget && (
+          <>
+            <span className="flex items-center gap-1.5">
+              <Icon iconName={ROLE_SOURCE_ICONS.delegated} iconStyle="regular" className="text-warning" />
+              Delegated, with expiry
+            </span>
+            <span className="ml-auto">Click a member to see why they have access.</span>
+          </>
+        )}
+      </div>
+    </Panel>
   )
 }

@@ -86,20 +86,18 @@ describe('SettingsRbacV2Page', () => {
     }
   })
 
-  it('should start in the MVP without IdP, and connect one from the nudge', async () => {
+  it('should switch to IdP role mappings without prompting to connect on Members', async () => {
     const { userEvent } = renderPage('members')
 
     expect(screen.queryByText('Groups')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Remove Admin' })).toBeInTheDocument()
-    expect(screen.getByText('Manage access from your identity provider')).toBeInTheDocument()
+    expect(screen.queryByText('Manage access from your identity provider')).not.toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('button', { name: 'Connect an IdP' }))
-    await userEvent.click(await screen.findByRole('button', { name: 'Connect Okta' }))
+    await userEvent.click(screen.getByRole('radio', { name: /^With IdP/ }))
 
     // Groups come with the target solution: in the MVP, IdP roles show up without a Groups column
     expect(screen.queryByText('Groups')).not.toBeInTheDocument()
     expect(screen.getByText('From the IdP mapping')).toBeInTheDocument()
-    expect(screen.queryByText('Manage access from your identity provider')).not.toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /^With IdP/ })).toHaveAttribute('data-state', 'on')
   })
 
