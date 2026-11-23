@@ -50,8 +50,8 @@ describe('skill preset form mapping', () => {
     expect(body.assigned_to).toEqual(preset.assigned_to)
   })
 
-  it('does not send Qovery skill entries on the lean and empty bases', () => {
-    const values = { ...toSkillPresetFormValues(preset), base: 'LEAN' as const }
+  it.each(['LEAN', 'NONE'] as const)('does not send Qovery skill entries on the %s base', (base) => {
+    const values = { ...toSkillPresetFormValues(preset), base }
     expect(effectiveQoverySkills(values)).toEqual([])
     expect(toSkillPresetRequest(values).skills.map(({ skill_name }) => skill_name)).toEqual(['release-checklist'])
   })
