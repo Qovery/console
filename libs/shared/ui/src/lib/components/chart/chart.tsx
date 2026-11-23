@@ -138,7 +138,7 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
         <span className="text-xs font-medium text-neutralInvert">{title}</span>
         <span className="text-xs text-neutralInvert-subtle">{dataPoint?.fullTime}</span>
       </div>
-      <div className="space-y-1 px-2 pb-2">
+      <div className="space-y-1 px-3 pb-2">
         {(maxItems ? filteredPayload.slice(0, maxItems) : filteredPayload).map((entry: TooltipPayloadItem) => {
           const seriesKey = typeof entry.dataKey === 'string' ? entry.dataKey : String(entry.dataKey)
           const displayName = formatLabel ? formatLabel(seriesKey) : seriesKey
