@@ -132,7 +132,7 @@ export function AgentsSetupSection() {
           <span className="shrink-0 font-code text-xs uppercase text-neutral">Finish your setup</span>
           <div className="flex-1">
             <ProgressBar.Root aria-hidden="true">
-              <ProgressBar.Cell value={percent} color="var(--green-9)" />
+              <ProgressBar.Cell value={percent} color="var(--positive-9)" />
             </ProgressBar.Root>
           </div>
           <span
