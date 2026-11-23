@@ -101,6 +101,13 @@ it('uses server pagination and resets to the first page when searching', async (
   )
 })
 
+it('shows skeleton rows while domains are loading', () => {
+  mockState = { ...mockState, data: undefined, isLoading: true, isFetching: true } as unknown as typeof mockState
+  const { container } = renderWithProviders(<OrganizationDomainsContent />)
+  expect(container.querySelectorAll('tbody tr[aria-hidden="true"]')).toHaveLength(10)
+  expect(screen.queryByText('No domains configured. Add a custom domain to a service.')).not.toBeInTheDocument()
+})
+
 it('offers retry when listing fails', async () => {
   mockState = { ...mockState, isError: true }
   const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)

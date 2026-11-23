@@ -21,6 +21,7 @@ import {
   LoaderSpinner,
   Pagination,
   Section,
+  Skeleton,
   TableFilter,
   TableFilterSearch,
   TablePrimitives,
@@ -35,6 +36,46 @@ import { OrganizationDomainCreateModal } from './organization-domain-create-moda
 import { OrganizationDomainRow } from './organization-domain-row'
 
 const { Table } = TablePrimitives
+
+const SKELETON_ROWS = 10
+const SKELETON_ROUTE_WIDTHS = [[120], [96, 112], [140], [104, 88, 120]]
+
+function OrganizationDomainsSkeletonRows() {
+  return Array.from({ length: SKELETON_ROWS }, (_, index) => (
+    <Table.Row key={index} aria-hidden="true">
+      <Table.Cell className="h-12 border-r">
+        <div className="flex items-center gap-3">
+          <Skeleton width={14} height={14} />
+          <Skeleton width={160 + ((index * 37) % 120)} height={16} />
+          <Skeleton width={24} height={24} rounded />
+        </div>
+      </Table.Cell>
+      <Table.Cell className="h-12 border-r">
+        <Skeleton width={72 + ((index * 23) % 48)} height={16} />
+      </Table.Cell>
+      <Table.Cell className="h-12 border-r">
+        <div className="flex items-center gap-2">
+          <Skeleton width={16} height={16} />
+          <Skeleton width={88 + ((index * 29) % 56)} height={16} />
+        </div>
+      </Table.Cell>
+      <Table.Cell className="h-12 border-r">
+        <div className="flex items-center gap-1.5">
+          {SKELETON_ROUTE_WIDTHS[index % SKELETON_ROUTE_WIDTHS.length].map((width, routeIndex) => (
+            <Skeleton key={routeIndex} width={width} height={24} />
+          ))}
+        </div>
+      </Table.Cell>
+      <Table.Cell className="h-12">
+        <div className="flex justify-end gap-1.5">
+          <Skeleton width={24} height={24} />
+          <Skeleton width={24} height={24} />
+          <Skeleton width={24} height={24} />
+        </div>
+      </Table.Cell>
+    </Table.Row>
+  ))
+}
 
 export function OrganizationDomains() {
   useDocumentTitle('Domains - Organization')
@@ -225,13 +266,7 @@ export function OrganizationDomainsContent() {
                     </Table.Cell>
                   </Table.Row>
                 ) : isLoading ? (
-                  <Table.Row>
-                    <Table.Cell colSpan={5} className="py-12">
-                      <div className="flex justify-center">
-                        <LoaderSpinner />
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
+                  <OrganizationDomainsSkeletonRows />
                 ) : !data?.results.length ? (
                   <Table.Row>
                     <Table.Cell colSpan={5} className="py-8 text-center text-sm text-neutral-subtle">
