@@ -4,7 +4,6 @@ import { type ReactNode } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Badge, Heading, Icon, Section } from '@qovery/shared/ui'
 import { type ActivitySearch } from '../../agent-activity/activity-search'
-import { MockScenarioBanner } from '../../mock-scenario-banner/mock-scenario-banner'
 
 /*
  * The shared pieces of the Agents pages, so every page reads the same way: one header
@@ -48,7 +47,6 @@ export function AgentExperiencePage({
       )}
       <div className={`flex flex-col gap-6 ${width === 'reading' ? 'max-w-content-with-navigation-left' : ''}`}>
         {children}
-        <MockScenarioBanner />
       </div>
     </Section>
   )

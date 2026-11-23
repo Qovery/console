@@ -6,18 +6,14 @@ import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill
 import {
   type SkillPresetsMockScenario,
   installSkillPresetsMock,
-  resetSkillPresetsMock,
+  setSkillPresetsMockScenario,
 } from '@qovery/domains/skill-presets/mock'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { type ActivitySearch } from './activity-search'
 import { AgentActivity } from './agent-activity'
 
-// The page goes through the real hooks and the in-browser mock API.
-jest.mock('@qovery/shared/util-node-env', () => ({
-  ...jest.requireActual('@qovery/shared/util-node-env'),
-  SKILL_PRESETS_MOCK: 'true',
-}))
+// The page goes through the real hooks and the mock API.
 
 // The pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
 configure({ asyncUtilTimeout: 5000 })
@@ -32,6 +28,17 @@ const mockUrl = {
   },
 }
 const mockNavigate = jest.fn()
+
+jest.mock('@qovery/shared/iam/feature', () => ({
+  ...jest.requireActual('@qovery/shared/iam/feature'),
+  useUserRole: () => ({
+    roles: jest.requireActual('@qovery/domains/skill-presets/mock').isSkillPresetsMockMember()
+      ? []
+      : ['organization:organization-1:admin'],
+    loading: false,
+    isQoveryAdminUser: false,
+  }),
+}))
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -51,8 +58,7 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
-  window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMock()
+  setSkillPresetsMockScenario(scenario)
 }
 
 const CI_DEPLOYER = '3f1c9a2e-0000-4000-8000-00000000c1d0'
@@ -68,7 +74,7 @@ afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
 
 beforeEach(() => {
   window.sessionStorage.clear()
-  resetSkillPresetsMock()
+  setSkillPresetsMockScenario()
   mockUrl.search = {}
   // Set in each test: restoreAllMocks clears implementations between tests.
   mockNavigate.mockReset().mockImplementation(({ search }: { search: ActivitySearch }) => mockUrl.set(search))

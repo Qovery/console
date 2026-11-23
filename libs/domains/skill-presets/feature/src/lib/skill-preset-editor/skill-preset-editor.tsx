@@ -39,7 +39,6 @@ import { useSkillPreset } from '../hooks/use-skill-preset/use-skill-preset'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { LoadError } from '../load-error/load-error'
 import { MarkdownField } from '../markdown-field/markdown-field'
-import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SecurityFindingsSummary } from '../security-findings-summary/security-findings-summary'
 import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
 import { PresetPreviewPanel } from '../skill-presets-preview/preset-preview-panel'
@@ -389,8 +388,6 @@ export function SkillPresetEditorForm({
             </div>
             {origin && <p className="text-sm text-neutral-subtle">{origin} Everything below is editable.</p>}
           </div>
-
-          <MockScenarioBanner />
 
           {changedElsewhere && (
             <Callout.Root color="yellow" role="status">

@@ -14,7 +14,6 @@ import posthog from 'posthog-js'
 import { StrictMode, useEffect, useRef } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
-import { installSkillPresetsMock, isSkillPresetsMockBuild } from '@qovery/domains/skill-presets/mock'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { slackBotAxios } from '@qovery/shared/slack-bot/data-access'
 import { LoaderSpinner, type ToastStatus, toast, toastError } from '@qovery/shared/ui'
@@ -47,11 +46,6 @@ type ToastArgs = {
   description?: string
   callback?: () => void
   labelAction?: string
-}
-
-if (isSkillPresetsMockBuild()) {
-  installSkillPresetsMock(axios, 'api')
-  installSkillPresetsMock(devopsCopilotAxios, 'copilot')
 }
 
 const SENTRY_DSN = 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024'

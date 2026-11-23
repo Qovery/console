@@ -5,7 +5,7 @@ import { type ReactNode } from 'react'
 import {
   type SkillPresetsMockScenario,
   installSkillPresetsMock,
-  resetSkillPresetsMock,
+  setSkillPresetsMockScenario,
 } from '@qovery/domains/skill-presets/mock'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
@@ -17,11 +17,18 @@ import { AgentExperienceNav } from './agent-experience-nav'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
 import { ConnectAgentModal } from './connect-agent-modal'
 
-// The pages go through the real hooks and the in-browser mock API.
-jest.mock('@qovery/shared/util-node-env', () => ({
-  ...jest.requireActual('@qovery/shared/util-node-env'),
-  SKILL_PRESETS_MOCK: 'true',
+// The pages go through the real hooks and the mock API.
+jest.mock('@qovery/shared/iam/feature', () => ({
+  ...jest.requireActual('@qovery/shared/iam/feature'),
+  useUserRole: () => ({
+    roles: jest.requireActual('@qovery/domains/skill-presets/mock').isSkillPresetsMockMember()
+      ? []
+      : ['organization:organization-1:admin'],
+    loading: false,
+    isQoveryAdminUser: false,
+  }),
 }))
+
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(),
@@ -44,8 +51,7 @@ jest.mock('posthog-js/react', () => ({
 }))
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
-  window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMock()
+  setSkillPresetsMockScenario(scenario)
 }
 
 let uninstallMocks: Array<() => void> = []
@@ -61,7 +67,7 @@ afterEach(() => jest.restoreAllMocks())
 beforeEach(() => {
   window.sessionStorage.clear()
   window.localStorage.clear()
-  resetSkillPresetsMock()
+  setSkillPresetsMockScenario()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
 })

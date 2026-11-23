@@ -1,23 +1,13 @@
 import axios, { type AxiosAdapter } from 'axios'
 import { getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/data-access'
-import { installSkillPresetsMock, resetSkillPresetsMock } from './skill-presets-mock-adapter'
-
-jest.mock('@qovery/shared/util-node-env', () => ({
-  ...jest.requireActual('@qovery/shared/util-node-env'),
-  SKILL_PRESETS_MOCK: 'true',
-}))
+import { installSkillPresetsMock, setSkillPresetsMockScenario } from './skill-presets-mock-adapter'
 
 const ORG = 'organization-1'
-
-const useScenario = (scenario: string) => {
-  window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMock()
-}
 
 describe('installSkillPresetsMock', () => {
   beforeEach(() => {
     window.sessionStorage.clear()
-    resetSkillPresetsMock()
+    setSkillPresetsMockScenario()
   })
 
   it('answers the skill presets endpoints, with query parameters from the URL or the params', async () => {
@@ -58,7 +48,7 @@ describe('installSkillPresetsMock', () => {
   })
 
   it('lists and deletes the mock organization policy tokens, each with its policy', async () => {
-    useScenario('agent-experience-active')
+    setSkillPresetsMockScenario('agent-experience-active')
     const api = axios.create()
     installSkillPresetsMock(api, 'api', { passthrough: false })
 
@@ -71,7 +61,7 @@ describe('installSkillPresetsMock', () => {
   })
 
   it('turns AI features on through the organization endpoint', async () => {
-    useScenario('ai-features-off')
+    setSkillPresetsMockScenario('ai-features-off')
     const api = axios.create()
     installSkillPresetsMock(api, 'api', { passthrough: false })
 
@@ -135,9 +125,7 @@ describe('installSkillPresetsMock', () => {
     expect(organization.data).toEqual({ id: ORG, name: 'Real organization', ai_features_enabled: true })
   })
 
-  it('leaves every request untouched when the mock is switched off, and can be removed', async () => {
-    useScenario('off')
-    window.history.replaceState({}, '', '/?mockSkillPresets=off')
+  it('restores the original adapter when uninstalled', async () => {
     const send = jest.fn<ReturnType<AxiosAdapter>, Parameters<AxiosAdapter>>(async (config) => ({
       data: 'real',
       status: 200,
@@ -148,9 +136,8 @@ describe('installSkillPresetsMock', () => {
     const api = axios.create({ adapter: send })
     const uninstall = installSkillPresetsMock(api, 'api')
 
-    expect((await api.get(`/organization/${ORG}/skillPreset`)).data).toBe('real')
     uninstall()
     expect(api.defaults.adapter).toBe(send)
-    window.history.replaceState({}, '', '/')
+    expect((await api.get(`/organization/${ORG}/skillPreset`)).data).toBe('real')
   })
 })

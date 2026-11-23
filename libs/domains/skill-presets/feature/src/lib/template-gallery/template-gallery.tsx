@@ -2,7 +2,6 @@ import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SkillPresetEditor } from '../skill-preset-editor/skill-preset-editor'
 import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
 import { SKILL_PRESET_TEMPLATES } from '../utils/skill-preset-templates'
@@ -68,8 +67,6 @@ export function TemplateGallery() {
           until you choose who receives the preset.
         </p>
       </div>
-
-      <MockScenarioBanner />
 
       <Section aria-labelledby="gallery-qovery" className="gap-3">
         <Heading id="gallery-qovery">Qovery templates</Heading>

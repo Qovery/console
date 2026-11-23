@@ -30,7 +30,6 @@ import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use
 import { useSkillPresetRevisions } from '../hooks/use-skill-preset-revisions/use-skill-preset-revisions'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { LoadError } from '../load-error/load-error'
-import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { AssignmentChips } from '../settings-skill-presets/assignment-chips'
 import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
 import { baseLabel } from '../utils/qovery-skills'
@@ -253,8 +252,6 @@ function SkillPresetHistoryPage() {
           changed.
         </p>
       </div>
-
-      <MockScenarioBanner />
 
       {restoreError && (
         <Callout.Root color="red" role="alert">

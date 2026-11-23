@@ -7,7 +7,6 @@ import { AI_FEATURES_OFF_TOOLTIP, AiFeaturesNotice } from '../ai-features-notice
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { MemberAgentView } from '../member-agent-view/member-agent-view'
-import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 
 /** The Skills registry is one page. */
 export type SkillPresetsTab = 'presets'
@@ -104,7 +103,6 @@ export function SkillPresetsLayout({ children }: SkillPresetsLayoutProps) {
         </div>
       </SettingsHeading>
       <div className="flex flex-col gap-6">
-        <MockScenarioBanner />
         {!isLoading && canManage && !aiFeaturesEnabled && (
           <AiFeaturesNotice organizationId={organizationId} canEnable={canManage} />
         )}

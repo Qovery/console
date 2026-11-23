@@ -1,5 +1,4 @@
 import { getSkillPresetErrorDetail, getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/data-access'
-import { getSkillPresetsMockScenario } from '@qovery/domains/skill-presets/mock'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
 
 export interface LoadErrorProps {
@@ -19,7 +18,6 @@ export function LoadError({ title, error, onRetry, note }: LoadErrorProps) {
   const detail = getSkillPresetErrorDetail(error)
   const cause =
     status === undefined || status >= 500 ? 'Qovery could not reach the server.' : 'The server refused the request.'
-  const isSimulated = getSkillPresetsMockScenario() === 'errors'
 
   return (
     <Callout.Root color="red" role="alert">
@@ -35,12 +33,6 @@ export function LoadError({ title, error, onRetry, note }: LoadErrorProps) {
         {(status !== undefined || detail) && (
           <p className="text-xs text-neutral-subtle">
             Details: {[status && `HTTP ${status}`, detail].filter(Boolean).join(', ')}
-          </p>
-        )}
-        {isSimulated && (
-          <p className="flex items-center gap-1.5 text-xs text-neutral-subtle">
-            <Icon iconName="flask" iconStyle="regular" aria-hidden="true" />
-            Simulated by the errors mock scenario.
           </p>
         )}
       </Callout.Text>

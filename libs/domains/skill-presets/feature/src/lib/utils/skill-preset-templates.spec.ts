@@ -1,12 +1,7 @@
 import axios from 'axios'
 import { getSkillPresetFindings, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
-import { installSkillPresetsMock, resetSkillPresetsMock } from '@qovery/domains/skill-presets/mock'
+import { installSkillPresetsMock, setSkillPresetsMockScenario } from '@qovery/domains/skill-presets/mock'
 import { SKILL_PRESET_TEMPLATES } from './skill-preset-templates'
-
-jest.mock('@qovery/shared/util-node-env', () => ({
-  ...jest.requireActual('@qovery/shared/util-node-env'),
-  SKILL_PRESETS_MOCK: 'true',
-}))
 
 describe('SKILL_PRESET_TEMPLATES', () => {
   let uninstall: () => void
@@ -15,12 +10,11 @@ describe('SKILL_PRESET_TEMPLATES', () => {
   })
   afterAll(() => uninstall())
   beforeEach(() => {
-    window.sessionStorage.setItem('qovery-mock-skill-presets', 'empty')
-    resetSkillPresetsMock()
+    setSkillPresetsMockScenario('empty')
   })
   afterEach(() => {
     window.sessionStorage.clear()
-    resetSkillPresetsMock()
+    setSkillPresetsMockScenario()
   })
 
   it('covers the eight profiles', () => {

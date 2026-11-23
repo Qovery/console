@@ -6,30 +6,28 @@ import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill
 import {
   type SkillPresetsMockScenario,
   installSkillPresetsMock,
-  resetSkillPresetsMock,
+  setSkillPresetsMockScenario,
 } from '@qovery/domains/skill-presets/mock'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved, within } from '@qovery/shared/util-tests'
 import { MemberAgentView } from './member-agent-view/member-agent-view'
-import { MockScenarioBanner } from './mock-scenario-banner/mock-scenario-banner'
 import { SettingsSkillPresets } from './settings-skill-presets/settings-skill-presets'
 import { SkillPresetCreate } from './template-gallery/template-gallery'
 
 /*
- * These tests go through the real hooks and the in-browser mock API (the same one preview builds use),
+ * These tests go through the real hooks and the mock API,
  * so they check the pages against the documented response shapes, not hand-written fixtures.
  */
 
-// Read through a global: the mock mode module reads the flag while imports are still loading.
-const flagHolder = globalThis as { skillPresetsMockFlag?: string }
-const setMockFlag = (value?: string) => {
-  flagHolder.skillPresetsMockFlag = value
-}
-jest.mock('@qovery/shared/util-node-env', () => ({
-  ...jest.requireActual('@qovery/shared/util-node-env'),
-  get SKILL_PRESETS_MOCK() {
-    return (globalThis as { skillPresetsMockFlag?: string }).skillPresetsMockFlag
-  },
+jest.mock('@qovery/shared/iam/feature', () => ({
+  ...jest.requireActual('@qovery/shared/iam/feature'),
+  useUserRole: () => ({
+    roles: jest.requireActual('@qovery/domains/skill-presets/mock').isSkillPresetsMockMember()
+      ? []
+      : ['organization:organization-1:admin'],
+    loading: false,
+    isQoveryAdminUser: false,
+  }),
 }))
 
 jest.mock('@tanstack/react-router', () => ({
@@ -71,42 +69,20 @@ beforeAll(() => {
 afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
-  window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMock()
+  setSkillPresetsMockScenario(scenario)
 }
 
 beforeEach(() => {
-  setMockFlag('true')
   window.sessionStorage.clear()
-  resetSkillPresetsMock()
+  setSkillPresetsMockScenario()
   mockNavigate.mockReset()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useNavigate).mockReturnValue(mockNavigate)
   jest.mocked(useSearch).mockReturnValue({})
 })
 
-describe('mock scenario banner', () => {
-  it('shows the mock data badge and scenario when the mock is active', async () => {
-    useScenario('large')
-    renderWithProviders(<MockScenarioBanner />)
-
-    const banner = await screen.findByTestId('mock-scenario-banner')
-    expect(within(banner).getByText('Mock data')).toBeInTheDocument()
-    expect(within(banner).getByText(/40 presets/)).toBeInTheDocument()
-  })
-
-  it('renders nothing when the build flag is off', async () => {
-    setMockFlag(undefined)
-    useScenario('typical')
-    const { container } = renderWithProviders(<MockScenarioBanner />)
-
-    await new Promise((resolve) => setTimeout(resolve, 50))
-    expect(container).toBeEmptyDOMElement()
-  })
-})
-
 describe('presets list', () => {
-  it('fails once in the errors scenario, says it is simulated, and loads on retry', async () => {
+  it('fails once and loads on retry', async () => {
     useScenario('errors')
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
 
@@ -118,25 +94,10 @@ describe('presets list', () => {
       )
     ).toBeInTheDocument()
     expect(within(alert).getByText('Details: HTTP 500, Internal server error')).toBeInTheDocument()
-    expect(within(alert).getByText('Simulated by the errors mock scenario.')).toBeInTheDocument()
 
     await userEvent.click(within(alert).getByRole('button', { name: 'Try again' }))
 
     expect(await screen.findByText('Backend team')).toBeInTheDocument()
-  })
-
-  it('shows the scenario and a reset in the mock bar for any scenario but typical', async () => {
-    useScenario('errors')
-    const { unmount } = renderWithProviders(<MockScenarioBanner />)
-    expect(await screen.findByTestId('mock-scenario-name')).toHaveTextContent('Scenario: errors')
-    expect(screen.getByRole('button', { name: 'Reset to typical' })).toBeInTheDocument()
-    unmount()
-
-    useScenario('typical')
-    renderWithProviders(<MockScenarioBanner />)
-    expect(await screen.findByTestId('mock-scenario-banner')).toBeInTheDocument()
-    expect(screen.queryByTestId('mock-scenario-name')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Reset to typical' })).not.toBeInTheDocument()
   })
 
   it('deletes a preset after typing its name', async () => {
