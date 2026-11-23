@@ -234,6 +234,7 @@ describe('RowEvent', () => {
     expect(
       screen.getByText('· Rejected by the security review · 2 findings (rule check, model review)', { exact: false })
     ).toBeInTheDocument()
+    expect(screen.getByText('Skill Preset Rejected')).toHaveClass('text-negative')
   })
 
   it('should still describe a refused save whose findings are not a list', () => {
