@@ -281,6 +281,8 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
         <div className="flex gap-2">
           <Button
             size="md"
+            color="neutral"
+            variant="solid"
             onClick={() =>
               navigate({
                 to: '/organization/$organizationId/agent-experience/skill-presets/new',

@@ -109,7 +109,7 @@ export function LlmProviderSetting({
                   No token is configured. Create one here or manage tokens in{' '}
                   <a
                     className="font-medium text-brand hover:underline"
-                    href={`/organization/${organizationId}/settings/agents/tokens`}
+                    href={`/organization/${organizationId}/agent-experience/agent-task-tokens`}
                   >
                     Agents → Tokens
                   </a>
