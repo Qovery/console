@@ -68,3 +68,23 @@ export const containerFactoryMock = (howMany: number): Container[] =>
       items: [],
     },
   }))
+
+export const gitContainerFactoryMock = (howMany: number): Container[] =>
+  containerFactoryMock(howMany).map((container) => ({
+    ...container,
+    auto_deploy: false,
+    auto_preview: false,
+    source: {
+      git_repository: {
+        provider: 'GITHUB' as const,
+        owner: 'qovery',
+        name: 'qovery/console',
+        url: 'https://github.com/qovery/console.git',
+        branch: 'main',
+        root_path: '/',
+        deployed_commit_id: '4f3a1c2e9b8d7a6f5e4d3c2b1a0f9e8d7c6b5a49',
+        dockerfile_path: 'Dockerfile',
+      },
+    },
+    build_settings: { timeout_max_sec: 1800, cpu_max_in_milli: 4000, ram_max_in_gib: 8 },
+  }))

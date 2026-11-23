@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type BuildAnalysisResult, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useState } from 'react'
+import { useOrganization } from '@qovery/domains/organizations/feature'
 import { type BuildAnalysisServiceType } from '@qovery/domains/services/data-access'
 import { useBuildAnalysis, useBuildAnalysisProgress, useStartBuildAnalysis } from '@qovery/domains/services/feature'
 import { Button, Icon, Tooltip, toast, useModal } from '@qovery/shared/ui'
@@ -43,6 +44,7 @@ export function BuildOptimizerButton({
 }: BuildOptimizerButtonProps) {
   const { organizationId = '', projectId = '', executionId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
+  const { data: organization } = useOrganization({ organizationId, enabled: Boolean(organizationId) })
   const { data: buildAnalysisState, isError } = useBuildAnalysis({
     serviceId,
     serviceType,
@@ -118,6 +120,12 @@ export function BuildOptimizerButton({
         Open analysis
       </Button>
     )
+  }
+
+  if (!organization) return <DisabledOptimizeButton />
+  // The API refuses to start an analysis for an organization that opted out of AI features
+  if (organization.ai_features_enabled === false) {
+    return <DisabledOptimizeButton reason="AI features are turned off for this organization" />
   }
 
   const optimizeButton = (

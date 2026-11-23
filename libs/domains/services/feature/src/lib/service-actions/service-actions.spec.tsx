@@ -1,5 +1,11 @@
 import type { ReactNode } from 'react'
-import { databaseFactoryMock, environmentFactoryMock, helmFactoryMock } from '@qovery/shared/factories'
+import {
+  containerFactoryMock,
+  databaseFactoryMock,
+  environmentFactoryMock,
+  gitContainerFactoryMock,
+  helmFactoryMock,
+} from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceActions } from './service-actions'
 
@@ -172,6 +178,41 @@ describe('ServiceActions', () => {
     await userEvent.keyboard('{Enter}')
 
     expect(mockCopyToClipboard).toHaveBeenCalledWith(mockService.id)
+  })
+
+  it('should offer to deploy another image version for an image container', async () => {
+    mockService = containerFactoryMock(1)[0]
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+
+    expect(screen.getByRole('menuitem', { name: /deploy another version/i })).toBeInTheDocument()
+  })
+
+  it('should not offer image versions for a Git container and deploy it without an image tag', async () => {
+    mockService = gitContainerFactoryMock(1)[0]
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+
+    expect(screen.queryByRole('menuitem', { name: /deploy another version/i })).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('menuitem', { name: /^deploy/i }))
+
+    expect(mockDeployService).toHaveBeenCalledWith({
+      serviceId: mockService.id,
+      serviceType: 'CONTAINER',
+    })
   })
 
   it('should redeploy directly without opening a modal when no changes are pending', async () => {

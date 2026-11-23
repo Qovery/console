@@ -1,4 +1,3 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactNode } from 'react'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -7,8 +6,6 @@ import {
   DeploymentLogsPlaceholder,
   type DeploymentLogsPlaceholderProps,
 } from './deployment-logs-placeholder'
-
-jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
 
 const mockEnvironment = environmentFactoryMock(1)[0]
 const mockApplication = applicationFactoryMock(1)[0]
@@ -34,33 +31,13 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 describe('DeploymentLogsPlaceholder', () => {
-  beforeEach(() => {
-    jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
-  })
-
-  it.each([false, undefined])('preserves the current page loader when the flag is %s', (flag) => {
-    jest.mocked(useFeatureFlagEnabled).mockReturnValue(flag)
-
-    const { container } = renderWithProviders(<DeploymentLogsLoader />)
-
-    expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
-    expect(screen.queryByRole('status', { name: 'Loading deployment logs' })).not.toBeInTheDocument()
-    // No header skeleton either
-    expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
-  })
-
-  it('shows the page skeleton when the flag is enabled', () => {
-    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
-
+  it('shows the page skeleton', () => {
     renderWithProviders(<DeploymentLogsLoader />)
 
     expect(screen.getByRole('status', { name: 'Loading deployment logs' })).toBeInTheDocument()
-    expect(screen.queryByText('Deployment logs are loading…')).not.toBeInTheDocument()
   })
 
-  it('shows the skeleton while the log lines are loading with the flag enabled', () => {
-    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
-
+  it('shows the skeleton while the log lines are loading', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         environment={mockEnvironment}
@@ -75,7 +52,6 @@ describe('DeploymentLogsPlaceholder', () => {
     )
 
     expect(screen.getByRole('status', { name: 'Loading deployment logs' })).toBeInTheDocument()
-    expect(screen.queryByText('Deployment logs are loading…')).not.toBeInTheDocument()
   })
 
   const props: DeploymentLogsPlaceholderProps = {
@@ -85,7 +61,7 @@ describe('DeploymentLogsPlaceholder', () => {
     environment: mockEnvironment,
   }
 
-  it('should render loader while deployment logs are still loading', () => {
+  it('should render skeleton while deployment logs are still loading', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={1}
@@ -134,7 +110,7 @@ describe('DeploymentLogsPlaceholder', () => {
       />
     )
 
-    expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Loading deployment logs' })).toBeInTheDocument()
   })
 
   it('should render "No history deployment available"', () => {
@@ -144,23 +120,6 @@ describe('DeploymentLogsPlaceholder', () => {
     expect(
       screen.getByText(`No history deployment available for this service ${mockApplication.name}.`)
     ).toBeInTheDocument()
-  })
-
-  it('should render spinner', () => {
-    renderWithProviders(
-      <DeploymentLogsPlaceholder
-        itemsLength={0}
-        environment={mockEnvironment}
-        serviceStatus={{
-          id: '0',
-          state: 'DEPLOYED',
-          service_deployment_status: 'UP_TO_DATE',
-          is_part_last_deployment: true,
-        }}
-      />
-    )
-
-    expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
   })
 
   it('should render no logs placeholder', () => {
@@ -182,8 +141,7 @@ describe('DeploymentLogsPlaceholder', () => {
     expect(screen.getByText('No logs to display.')).toBeInTheDocument()
   })
 
-  it.each([true, false])('preserves the queued state when the flag is %s', (flag) => {
-    jest.mocked(useFeatureFlagEnabled).mockReturnValue(flag)
+  it('should render queued state', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={0}
