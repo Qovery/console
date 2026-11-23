@@ -40,6 +40,22 @@ describe('computeTokenBudget', () => {
     expect(budget.onDemand.find(({ skillName }) => skillName === 'release-checklist')?.total).toBe(130)
   })
 
+  it('counts Qovery skills the catalog does not know yet from the preset text', () => {
+    const budget = computeTokenBudget({
+      base: 'FULL',
+      team_context: null,
+      skills: [
+        { skill_name: 'qovery-shipped-later', mode: 'OVERLAY', content: 'y'.repeat(200) },
+        { skill_name: 'qovery-retired', mode: 'DISABLE' },
+      ],
+    })
+
+    expect(budget.onDemand.find(({ skillName }) => skillName === 'qovery-shipped-later')).toEqual(
+      expect.objectContaining({ qoveryTokens: 0, organizationTokens: 50, total: 50, todayTokens: null })
+    )
+    expect(budget.disabled).toEqual(['qovery-retired'])
+  })
+
   it('loads one lean skill on the lean base and nothing from Qovery on the empty base', () => {
     expect(computeTokenBudget({ base: 'LEAN', skills: [] }).onDemand.map(({ skillName }) => skillName)).toEqual([
       'qovery',
