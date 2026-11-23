@@ -136,6 +136,10 @@ describe('installSkillPresetsMock', () => {
     const api = axios.create({ adapter: send })
     const uninstall = installSkillPresetsMock(api, 'api')
 
+    const { data } = await api.get(`/organization/${ORG}/skillPreset`)
+    expect(data).toEqual({ results: expect.any(Array) })
+    expect(send).not.toHaveBeenCalled()
+
     uninstall()
     expect(api.defaults.adapter).toBe(send)
     expect((await api.get(`/organization/${ORG}/skillPreset`)).data).toBe('real')

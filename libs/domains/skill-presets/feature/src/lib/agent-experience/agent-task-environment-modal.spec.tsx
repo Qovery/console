@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import selectEvent from 'react-select-event'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { AgentTaskEnvironmentModal } from './agent-task-environment-modal'
@@ -42,7 +43,7 @@ it('clears the environment when switching projects', async () => {
 
 it.each([
   [{ data: [], isFetching: false, isError: false }, 'This project has no environments.'],
-  [{ data: [], isFetching: false, isError: true }, 'Unable to load environments.'],
+  [{ data: undefined, isFetching: false, isError: true }, 'Unable to load environments.'],
 ])('prevents continuing when environments are unavailable', async (result, message) => {
   mockEnvironments.mockReturnValue(result)
   renderWithProviders(<AgentTaskEnvironmentModal {...props} />)
@@ -63,4 +64,30 @@ it('opens Automations in the chosen environment without a template', async () =>
     })
   )
   expect(props.onClose).toHaveBeenCalled()
+})
+
+it('keeps the selected environment available after a background refetch fails', async () => {
+  function ModalWithRefetch() {
+    const [refetchFailed, setRefetchFailed] = useState(false)
+    mockEnvironments.mockReturnValue({
+      data: [{ id: 'env', name: 'Staging' }],
+      isFetching: false,
+      isError: refetchFailed,
+    })
+    return (
+      <>
+        <button type="button" onClick={() => setRefetchFailed(true)}>
+          Fail refetch
+        </button>
+        <AgentTaskEnvironmentModal {...props} />
+      </>
+    )
+  }
+
+  const { userEvent } = renderWithProviders(<ModalWithRefetch />)
+  await select('Project', 'Project one')
+  await select('Environment', 'Staging')
+  await userEvent.click(screen.getByRole('button', { name: 'Fail refetch' }))
+  await userEvent.click(screen.getByRole('button', { name: 'Open Automations' }))
+  await waitFor(() => expect(mockNavigate).toHaveBeenCalledTimes(1))
 })

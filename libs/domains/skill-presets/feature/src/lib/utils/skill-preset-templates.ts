@@ -185,12 +185,12 @@ Prefer jobs with a schedule over long-running services for batch work.`,
   {
     id: 'security',
     title: 'Security / compliance',
-    summary: 'Assessments and least-privilege tokens. Read-only.',
+    summary: 'Read-only security assessments.',
     assignmentHint: 'Suggested for: security reviewers, by member',
     icon: 'shield-check',
     preset: {
       name: 'Security reviewers',
-      description: 'Read-only reviews and scoped tokens for automation.',
+      description: 'Read-only reviews of security risks and access configuration.',
       base: 'FULL',
       team_context: `You help a security reviewer. Stay read-only: read configuration, never change it.
 When you find a risk, describe it, say where it is and how to fix it. Never print secret values, only their names.`,
@@ -201,6 +201,7 @@ When you find a risk, describe it, say where it is and how to fix it. Never prin
           'qovery-optimize',
           'qovery-speedup',
           'qovery-terraform',
+          'qovery-policy-token',
           'qovery-signup',
           'qovery-onboard'
         ),

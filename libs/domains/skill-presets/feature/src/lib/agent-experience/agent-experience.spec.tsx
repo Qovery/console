@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useLocation, useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
 import axios from 'axios'
@@ -8,7 +9,8 @@ import {
   setSkillPresetsMockScenario,
 } from '@qovery/domains/skill-presets/mock'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
-import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { queries } from '@qovery/state/util-queries'
 import * as useAgentActivityModule from '../hooks/use-agent-activity/use-agent-activity'
 import * as useCanManageSkillPresetsModule from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import * as copilotStatus from '../hooks/use-copilot-status/use-copilot-status'
@@ -125,9 +127,11 @@ describe('AgentExperienceCopilot', () => {
     const spy = jest.spyOn(copilotStatus, 'useCopilotStatus').mockReturnValue({
       enabled: false,
       readOnly: true,
+      hasConfig: false,
       isLoading: false,
       error: new Error('Network Error'),
-    } as ReturnType<typeof copilotStatus.useCopilotStatus>)
+      refetch: jest.fn(),
+    })
     renderWithProviders(<AgentExperienceCopilot />)
 
     expect(await screen.findByTestId('copilot-error')).toHaveTextContent('Unable to load the Copilot status.')
@@ -135,6 +139,63 @@ describe('AgentExperienceCopilot', () => {
     expect(within(screen.getByTestId('copilot-state')).queryByText('Off')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
     spy.mockRestore()
+  })
+
+  it('keeps Copilot settings and the known status visible when a config refresh fails', async () => {
+    useScenario('agent-experience-active')
+    const refetch = jest.fn()
+    jest.spyOn(copilotStatus, 'useCopilotStatus').mockReturnValue({
+      enabled: true,
+      readOnly: true,
+      hasConfig: true,
+      isLoading: false,
+      error: new Error('Network Error'),
+      refetch,
+    })
+
+    const { userEvent } = renderWithProviders(<AgentExperienceCopilot />)
+
+    expect(await within(screen.getByTestId('copilot-state')).findByText('AI on, Copilot read-only')).toBeInTheDocument()
+    expect(await screen.findByTestId('copilot-preview-note')).toBeInTheDocument()
+    const alert = within(screen.getByTestId('copilot-error')).getByRole('alert')
+    expect(alert).toHaveTextContent('Unable to refresh the Copilot status.')
+    await userEvent.click(within(alert).getByRole('button', { name: 'Try again' }))
+    expect(refetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('leaves the AI status unknown and hides the toggle after an organization request fails', async () => {
+    useScenario('agent-experience-active')
+    const interceptor = axios.interceptors.request.use((config) => {
+      if (config.url?.endsWith('/organization/organization-1')) throw new Error('Network Error')
+      return config
+    })
+
+    try {
+      renderWithProviders(<AgentExperienceCopilot />)
+
+      expect(await screen.findByText('Unable to load the AI features status.')).toBeInTheDocument()
+      expect(await within(screen.getByTestId('copilot-state')).findByText('Unknown')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
+    } finally {
+      axios.interceptors.request.eject(interceptor)
+    }
+  })
+
+  it('only describes turning on the Copilot when AI features are already on', async () => {
+    useScenario('agent-experience-active')
+    jest.spyOn(copilotStatus, 'useCopilotStatus').mockReturnValue({
+      enabled: false,
+      readOnly: true,
+      hasConfig: true,
+      isLoading: false,
+      error: null,
+      refetch: jest.fn(),
+    })
+    renderWithProviders(<AgentExperienceCopilot />)
+
+    expect(
+      await screen.findByText(/AI features are already on. This turns on the Copilot in read-only mode/)
+    ).toBeInTheDocument()
   })
 
   it('shows members the state only, with no switch', async () => {
@@ -166,7 +227,33 @@ describe('AgentExperiencePolicyTokens', () => {
     expect(within(deleted).getByText('Deleted', { selector: 'span' })).toBeInTheDocument()
     expect(within(deleted).getByText('See activity')).toBeInTheDocument()
     expect(within(deleted).queryByText('Calls in the last 30 days')).not.toBeInTheDocument()
-    expect(deleted).toHaveTextContent(/No calls|\d+ allowed/)
+    expect(await within(deleted).findByText('No calls')).toBeInTheDocument()
+  })
+
+  it('keeps cached policy tokens visible when refreshing the list fails', async () => {
+    useScenario('agent-experience-active')
+    const queryClient = new QueryClient()
+    renderWithProviders(
+      <QueryClientProvider client={queryClient}>
+        <AgentExperiencePolicyTokens />
+      </QueryClientProvider>
+    )
+    expect(await screen.findByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+
+    const interceptor = axios.interceptors.request.use((config) => {
+      if (config.url?.endsWith('/policyApiToken')) throw new Error('Network Error')
+      return config
+    })
+    try {
+      await act(() =>
+        queryClient.refetchQueries(queries.organizations.policyApiTokens({ organizationId: 'organization-1' }))
+      )
+
+      expect(await screen.findByRole('alert')).toHaveTextContent('Policy tokens could not be refreshed')
+      expect(screen.getByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+    } finally {
+      axios.interceptors.request.eject(interceptor)
+    }
   })
 
   it('never reads a failed usage request as no calls', async () => {
@@ -255,13 +342,21 @@ describe('AgentExperiencePolicyTokens', () => {
   })
 
   it('lets DevOps members manage tokens, without the organization activity', async () => {
-    // A DevOps member: the mock organization's tokens, but no organization-wide activity.
     useScenario('agent-experience-active')
+    const queryClient = new QueryClient()
+    const view = () => (
+      <QueryClientProvider client={queryClient}>
+        <AgentExperiencePolicyTokens />
+      </QueryClientProvider>
+    )
+    const { userEvent, rerender } = renderWithProviders(view())
+    expect(await screen.findByTestId('deleted-token-cleanup-bot')).toBeInTheDocument()
+
     jest.spyOn(useCanManageSkillPresetsModule, 'useCanManageSkillPresets').mockReturnValue({
       canManage: false,
       isLoading: false,
     })
-    const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
+    rerender(view())
 
     expect(await screen.findByTestId('policy-token-ci-deployer')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
@@ -325,11 +420,14 @@ describe('ConnectAgentModal', () => {
       })
     ).toBeInTheDocument()
 
-    await userEvent.click(screen.getByText('CLI'))
+    screen.getByRole('tab', { name: 'Qovery skills' }).focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect(screen.getByRole('tab', { name: 'CLI', selected: true })).toHaveFocus()
     expect(screen.getByText('curl -fsSL https://get.qovery.com | bash')).toBeInTheDocument()
     expect(screen.getByText('qovery auth')).toBeInTheDocument()
 
-    await userEvent.click(screen.getByText('MCP server'))
+    await userEvent.keyboard('{ArrowRight}')
+    expect(screen.getByRole('tab', { name: 'MCP server', selected: true })).toHaveFocus()
     expect(screen.getByText(/claude mcp add --transport http qovery/)).toBeInTheDocument()
 
     // A top-level TOML key below a [section] header would belong to that section and be ignored.

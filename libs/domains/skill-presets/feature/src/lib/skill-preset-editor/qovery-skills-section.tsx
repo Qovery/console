@@ -78,7 +78,7 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
           </span>
         </div>
       </div>
-      <div className="min-w-0 overflow-x-auto pl-7">
+      <div className="-my-1 min-w-0 overflow-x-auto py-1 pl-7 pr-1">
         <Controller
           control={control}
           name={`qoverySkills.${index}.choice`}

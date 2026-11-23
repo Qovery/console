@@ -19,8 +19,9 @@ export function AgentTaskEnvironmentModal({
   const projects = useProjects({ organizationId })
   const environments = useQuery({ ...queries.environments.list({ projectId }), enabled: Boolean(projectId) })
   const availableEnvironments = environments.data ?? []
-  const canContinue =
-    !projects.isError && !environments.isError && availableEnvironments.some(({ id }) => id === environmentId)
+  const projectsUnavailable = projects.isError && !projects.data
+  const environmentsUnavailable = environments.isError && !environments.data
+  const canContinue = !projectsUnavailable && availableEnvironments.some(({ id }) => id === environmentId)
 
   return (
     <FormProvider {...methods}>
@@ -28,7 +29,8 @@ export function AgentTaskEnvironmentModal({
         title="Choose an environment"
         description="Create the agent task in the environment where it should run."
         submitLabel="Open Automations"
-        submitDisabled={!canContinue}
+        submitDisabled={!canContinue || methods.formState.isSubmitting}
+        loading={methods.formState.isSubmitting}
         onClose={onClose}
         onSubmit={methods.handleSubmit(async ({ projectId, environmentId }) => {
           if (!canContinue) return
@@ -59,7 +61,7 @@ export function AgentTaskEnvironmentModal({
               />
             )}
           />
-          {projects.isError ? (
+          {projectsUnavailable ? (
             <p role="alert" className="text-sm text-neutral-subtle">
               Unable to load projects. Close and try again.
             </p>
@@ -83,12 +85,12 @@ export function AgentTaskEnvironmentModal({
                 options={availableEnvironments.map(({ id, name }) => ({ value: id, label: name }))}
                 isSearchable
                 portal
-                disabled={!projectId || environments.isFetching}
+                disabled={!projectId || environments.isLoading}
               />
             )}
           />
           {projectId &&
-            (environments.isError ? (
+            (environmentsUnavailable ? (
               <p role="alert" className="text-sm text-neutral-subtle">
                 Unable to load environments. Close and try again.
               </p>

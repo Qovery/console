@@ -127,8 +127,19 @@ describe('agent activity helpers', () => {
   })
 
   it('counts members from the breakdown, or from the totals once the breakdown hit its cap', () => {
-    expect(memberCount(activity({ totals: { ...activity().totals, members: 3, policy_tokens: 1 } }))).toBe(2)
-    const member = activity().by_member[0]
+    const { by_member: members, totals } = activity()
+    const member = members[0]
+    expect(
+      memberCount(
+        activity({
+          by_member: [
+            ...members,
+            { ...member, actor_kind: 'POLICY_TOKEN', policy_token_id: 'token-1', user_sub: null },
+          ],
+          totals: { ...totals, members: 3, policy_tokens: 1 },
+        })
+      )
+    ).toBe(2)
     const capped = activity({
       by_member: Array.from({ length: AGENT_ACTIVITY_LIMITS.maxMembers }, (_, index) => ({
         ...member,

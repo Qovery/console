@@ -1,9 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { Link, useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Badge, Heading, Icon, Section } from '@qovery/shared/ui'
-import { type ActivitySearch } from '../../agent-activity/activity-search'
 
 /*
  * The shared pieces of the Agents pages, so every page reads the same way: one header
@@ -119,11 +117,7 @@ export function StatGrid({ children, columns, period }: { children: ReactNode; c
   )
 }
 
-/**
- * One number. With `search`, a card that opens Activity with those filters, and looks clickable (hover
- * border, chevron). `delta` compares with the previous period, in neutral text; it turns red only when
- * denials rise (`riseIsBad`), which is a real signal, while a denied count on its own is not.
- */
+/** A metric with an optional comparison against the previous period. */
 export function Stat({
   label,
   value,
@@ -131,7 +125,6 @@ export function Stat({
   delta,
   riseIsBad = false,
   prominent = false,
-  search,
 }: {
   label: string
   value: number
@@ -139,11 +132,11 @@ export function Stat({
   delta?: number
   riseIsBad?: boolean
   prominent?: boolean
-  search?: ActivitySearch
 }) {
-  const { organizationId = '' } = useParams({ strict: false })
-  const content = (
-    <>
+  return (
+    <div
+      className={`flex flex-col rounded-md border border-neutral px-4 py-3 ${prominent ? 'min-h-28 justify-between gap-3 bg-surface-neutral' : 'gap-0.5'}`}
+    >
       <dt className="flex items-center gap-1.5 text-xs text-neutral-subtle">
         {icon && <Icon iconName={icon} iconStyle="regular" aria-hidden="true" />}
         {label}
@@ -162,33 +155,6 @@ export function Stat({
           </span>
         )}
       </dd>
-    </>
-  )
-  if (!search) {
-    return (
-      <div
-        className={`flex flex-col rounded-md border border-neutral px-4 py-3 ${prominent ? 'min-h-28 justify-between gap-3 bg-surface-neutral' : 'gap-0.5'}`}
-      >
-        {content}
-      </div>
-    )
-  }
-  return (
-    <Link
-      to="/organization/$organizationId/agent-experience/agent-activity"
-      params={{ organizationId }}
-      search={search}
-      className="group relative flex flex-col gap-0.5 rounded-md border border-neutral px-4 py-3 pr-8 transition-colors hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:border-neutral-component focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong"
-      aria-label={`${label}: ${value.toLocaleString('en-US')}. Open in Activity`}
-      data-testid="stat-link"
-    >
-      {content}
-      <Icon
-        iconName="chevron-right"
-        iconStyle="regular"
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle group-hover:text-neutral"
-        aria-hidden="true"
-      />
-    </Link>
+    </div>
   )
 }

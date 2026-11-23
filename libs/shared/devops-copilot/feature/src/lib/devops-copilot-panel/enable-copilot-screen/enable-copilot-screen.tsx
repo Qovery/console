@@ -13,7 +13,7 @@ export function EnableCopilotScreen({ organizationId, onClose }: EnableCopilotSc
         <span className="mx-auto block max-w-[500px]">
           Our DevOps AI Copilot can help you fix your deployments, optimize your infrastructure costs, audit your
           security and do everything you would expect from a complete DevOps Engineering team. <br />
-          Enable it in your organization settings to get started.
+          Enable it in the Agents tab to get started.
         </span>
       }
       icon="robot"

@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
 import axios from 'axios'
@@ -130,9 +131,7 @@ describe('AgentActivity', () => {
     expect(tokens.queryByRole('button', { name: /Unknown policy token/ })).not.toBeInTheDocument()
 
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Breakdown' }), 'skill')
-    expect(
-      within(screen.getByTestId('breakdown-skill')).getByRole('button', { name: 'No skill (MCP or API)' })
-    ).toBeInTheDocument()
+    expect(within(screen.getByTestId('breakdown-skill')).getByText('No skill (MCP or API)')).toBeInTheDocument()
   })
 
   it('filters the whole page to a token from its row, in the URL', async () => {
@@ -230,6 +229,36 @@ describe('AgentActivity', () => {
 
     expect(await screen.findByText('Agent activity could not be loaded')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Try again/ })).toBeInTheDocument()
+  })
+
+  it.each([
+    [500, 'Agent activity could not be refreshed', true],
+    [403, 'Agent activity could not be loaded', false],
+  ])('handles cached activity when a refresh returns HTTP %s', async (status, message, showActivity) => {
+    useScenario('agent-activity')
+    jest.spyOn(Date, 'now').mockReturnValue(new Date('2026-11-23T10:15:20Z').getTime())
+    const getActivity = jest.spyOn(skillPresetsApi, 'getAgentActivity')
+
+    function ActivityWithRefresh() {
+      const queryClient = useQueryClient()
+      return (
+        <>
+          <button type="button" onClick={() => queryClient.refetchQueries()}>
+            Refresh
+          </button>
+          <AgentActivity />
+        </>
+      )
+    }
+
+    const { userEvent } = renderWithProviders(<ActivityWithRefresh />)
+    await screen.findByTestId('recent-count')
+    getActivity.mockRejectedValue(buildSkillPresetApiError(status, 'Refresh failed'))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Refresh' }))
+
+    expect(await screen.findByText(message)).toBeInTheDocument()
+    expect(Boolean(screen.queryByTestId('recent-count'))).toBe(showActivity)
   })
 
   it('changes the period from the filter row, back to the first page, and clears the other filters at once', async () => {

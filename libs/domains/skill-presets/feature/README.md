@@ -7,7 +7,7 @@ Organization settings > AI settings > Skill presets. Admins decide how their mem
 
 ## Security review
 
-Every save runs q-core's rule check, then a review by a model on AWS Bedrock. Saves take a few seconds: the button shows "Checking for security…", then "Saving…". Findings say where they came from ("Rule check" or "Model review"). The mock plays the review with two reworded shapes and takes about 1.5 seconds per save.
+Every save runs q-core's rule check, then a review by a model on AWS Bedrock. Saves take a few seconds: the button shows "Checking for security…", then "Saving…". Findings say where they came from ("Rule check" or "Model review").
 
 ## Who can configure
 

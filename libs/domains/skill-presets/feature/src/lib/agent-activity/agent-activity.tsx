@@ -17,6 +17,7 @@ import {
   type AgentActivityBucket,
   type AgentActivityResponse,
   type AgentActorType,
+  getSkillPresetErrorStatus,
   isAgentActivityTimedOut,
 } from '@qovery/domains/skill-presets/data-access'
 import {
@@ -66,7 +67,6 @@ import {
   ACTIVITY_RANGES,
   type ActivitySearch,
   DEFAULT_RANGE,
-  NO_SKILL,
   SOURCE_FILTER_LABELS,
   activityParams,
   activityRange,
@@ -96,7 +96,7 @@ const ATTRIBUTION_NOTE =
 const NO_SKILL_LABEL = 'No skill (MCP or API)'
 
 type Scope = 'organization' | 'me'
-type Breakdown = 'member' | 'token' | 'skill'
+type Breakdown = NonNullable<ActivitySearch['view']>
 
 /** A name that narrows the whole page to it. Pressed when that filter is active. */
 function DrillButton({
@@ -289,7 +289,6 @@ function FilterBar({
         onChange={(value) => set({ skill: value === ALL ? undefined : (value as string) })}
         items={[
           { value: ALL, label: 'All skills' },
-          { value: NO_SKILL, label: NO_SKILL_LABEL },
           ...(lists?.by_skill ?? []).flatMap(({ skill_name }) =>
             skill_name ? [{ value: skill_name, label: skill_name }] : []
           ),
@@ -304,7 +303,7 @@ function FilterBar({
         onChange={(value) => set({ via: value === ALL ? undefined : (value as ActivitySearch['via']) })}
         items={[
           { value: ALL, label: 'All sources' },
-          ...Object.entries(SOURCE_FILTER_LABELS).map(([value, label]) => ({ value, label: label ?? value })),
+          ...Object.entries(SOURCE_FILTER_LABELS).map(([value, label]) => ({ value, label })),
         ]}
       />
       <InputSelectSmall
@@ -543,15 +542,16 @@ function BreakdownTable({
                   </Table.Cell>
                 </Table.Row>
               )}
-              {activity.by_skill.map((row) => (
-                <Table.Row key={row.skill_name ?? NO_SKILL}>
+              {activity.by_skill.map(({ skill_name: name, ...row }) => (
+                <Table.Row key={name ?? NO_SKILL_LABEL}>
                   <Table.Cell>
-                    <DrillButton
-                      active={search.skill === (row.skill_name ?? NO_SKILL)}
-                      onClick={() => toggle('skill', row.skill_name ?? NO_SKILL)}
-                    >
-                      {row.skill_name ?? NO_SKILL_LABEL}
-                    </DrillButton>
+                    {name ? (
+                      <DrillButton active={search.skill === name} onClick={() => toggle('skill', name)}>
+                        {name}
+                      </DrillButton>
+                    ) : (
+                      NO_SKILL_LABEL
+                    )}
                   </Table.Cell>
                   <Table.Cell className="tabular-nums">{row.loads}</Table.Cell>
                   <Table.Cell className="tabular-nums">{row.actions}</Table.Cell>
@@ -1082,51 +1082,54 @@ export function AgentActivity() {
     to: params.from,
   })
   const isOrganization = scope === 'organization'
-  const activity =
-    data && search.skill === NO_SKILL
-      ? {
-          ...data,
-          by_skill: data.by_skill.filter(({ skill_name }) => !skill_name),
-          recent: data.recent.filter(({ skill_name }) => !skill_name),
-        }
-      : data
+  const errorStatus = getSkillPresetErrorStatus(error)
+  const hasAccessError = errorStatus === 401 || errorStatus === 403
+  const activity = hasAccessError ? undefined : data
   useDocumentTitle(`${isOrganization ? 'Activity' : 'Your activity'} - Agents`)
 
   return (
     <AgentExperiencePage layout="dashboard" title="Activity">
       <div className="flex flex-col gap-3">
-        <FilterBar search={search} setSearch={setSearch} scope={scope} lists={lists} />
+        <FilterBar search={search} setSearch={setSearch} scope={scope} lists={hasAccessError ? undefined : lists} />
       </div>
+
+      {!isRoleLoading && !isLoading && error ? (
+        isAgentActivityTimedOut(error) ? (
+          // A busy range can take too long to read (q-core answers 503): a shorter one, or a filter, works.
+          <Callout.Root color="yellow" role="alert" data-testid="activity-timed-out">
+            <Callout.Icon>
+              <Icon iconName="hourglass-end" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>{AGENT_ACTIVITY_TIMED_OUT_MESSAGE}</Callout.TextHeading>
+              <Callout.TextDescription>You can also filter by member or skill.</Callout.TextDescription>
+            </Callout.Text>
+            <Button
+              type="button"
+              size="md"
+              variant="outline"
+              color="neutral"
+              className="self-center"
+              onClick={() => refetch()}
+            >
+              <Icon iconName="rotate-right" iconStyle="regular" />
+              Try again
+            </Button>
+          </Callout.Root>
+        ) : (
+          <LoadError
+            title={activity ? 'Agent activity could not be refreshed' : 'Agent activity could not be loaded'}
+            error={error}
+            onRetry={() => refetch()}
+          />
+        )
+      ) : null}
 
       {isRoleLoading || isLoading ? (
         <div className="flex flex-col gap-3" aria-busy="true" aria-label="Loading agent activity">
           <Skeleton height={72} className="w-full" show />
           <Skeleton height={240} className="w-full" show />
         </div>
-      ) : error && isAgentActivityTimedOut(error) ? (
-        // A busy range can take too long to read (q-core answers 503): a shorter one, or a filter, works.
-        <Callout.Root color="yellow" role="alert" data-testid="activity-timed-out">
-          <Callout.Icon>
-            <Icon iconName="hourglass-end" iconStyle="regular" />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextHeading>{AGENT_ACTIVITY_TIMED_OUT_MESSAGE}</Callout.TextHeading>
-            <Callout.TextDescription>You can also filter by member or skill.</Callout.TextDescription>
-          </Callout.Text>
-          <Button
-            type="button"
-            size="md"
-            variant="outline"
-            color="neutral"
-            className="self-center"
-            onClick={() => refetch()}
-          >
-            <Icon iconName="rotate-right" iconStyle="regular" />
-            Try again
-          </Button>
-        </Callout.Root>
-      ) : error ? (
-        <LoadError title="Agent activity could not be loaded" error={error} onRetry={() => refetch()} />
       ) : activity ? (
         <div className={clsx(isFetching && 'opacity-70')} aria-busy={isFetching}>
           <ActivityContent

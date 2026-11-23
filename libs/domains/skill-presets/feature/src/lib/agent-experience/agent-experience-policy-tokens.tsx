@@ -240,7 +240,7 @@ export function AgentExperiencePolicyTokens() {
   })
   const activeTokens = tokens ?? []
   const usageById = new Map((week?.by_policy_token ?? []).map((row) => [row.policy_token_id, row]))
-  const deletedWithActivity = (month?.by_policy_token ?? []).filter(
+  const deletedWithActivity = (canSeeActivity ? month?.by_policy_token ?? [] : []).filter(
     (row): row is typeof row & { policy_token_id: string } => row.deleted && Boolean(row.policy_token_id)
   )
   const weekRange = {
@@ -263,6 +263,13 @@ export function AgentExperiencePolicyTokens() {
       }
       action={canManage && <CreatePolicyTokenButton organizationId={organizationId} />}
     >
+      {canManage && !isRoleLoading && Boolean(error) && (
+        <LoadError
+          title={tokens ? 'Policy tokens could not be refreshed' : 'Policy tokens could not be loaded'}
+          error={error}
+          onRetry={() => refetch()}
+        />
+      )}
       {isRoleLoading ? (
         <Skeleton height={120} className="w-full" show />
       ) : !canManage ? (
@@ -271,12 +278,10 @@ export function AgentExperiencePolicyTokens() {
           title="Only owners, admins and DevOps members manage policy tokens"
           description="Ask one of them for a token for your agent."
         />
-      ) : isLoading || (isMonthLoading && activeTokens.length === 0) ? (
+      ) : error && !tokens ? null : isLoading || (canSeeActivity && isMonthLoading && activeTokens.length === 0) ? (
         <div aria-busy="true" aria-label="Loading policy tokens">
           <Skeleton height={120} className="w-full" show />
         </div>
-      ) : error ? (
-        <LoadError title="Policy tokens could not be loaded" error={error} onRetry={() => refetch()} />
       ) : activeTokens.length === 0 && deletedWithActivity.length === 0 ? (
         <EmptyState
           icon="key"
@@ -396,7 +401,7 @@ export function AgentExperiencePolicyTokens() {
           </Table.Body>
         </Table.Root>
       )}
-      {canManage && isMonthError && (
+      {canManage && canSeeActivity && isMonthError && (
         <p className="text-xs text-neutral-subtle" data-testid="deleted-tokens-error">
           Deleted tokens could not be loaded.
         </p>

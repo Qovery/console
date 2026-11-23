@@ -3,6 +3,7 @@ import { type ReactNode, useState } from 'react'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { Button, CopyButton, Heading, Icon, Navbar, Section, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { QOVERY_MCP_CLAUDE_COMMAND, QOVERY_MCP_CODEX_COMMAND, QOVERY_MCP_CODEX_CONFIG } from '@qovery/shared/util-js'
 import CrudModalFeature from '../settings-api-token/crud-modal-feature/crud-modal-feature'
 
 interface CommandBlockProps {
@@ -115,10 +116,7 @@ export function SettingsMcpServer() {
                       title="Run this command"
                       description="Authenticate through OAuth and add the Qovery MCP server to Claude Code."
                     >
-                      <CommandBlock
-                        content="claude mcp add --transport http qovery https://mcp.qovery.com/mcp --callback-port 4242"
-                        showPrompt
-                      />
+                      <CommandBlock content={QOVERY_MCP_CLAUDE_COMMAND} showPrompt />
                     </InstructionSection>
                   ) : (
                     <div className="flex flex-col gap-5">
@@ -127,14 +125,14 @@ export function SettingsMcpServer() {
                         title="Update your config.toml"
                         description="Add this setting to your Codex configuration file to use the OAuth callback port."
                       >
-                        <CommandBlock content="mcp_oauth_callback_port = 4242" />
+                        <CommandBlock content={QOVERY_MCP_CODEX_CONFIG} />
                       </InstructionSection>
                       <InstructionSection
                         number={2}
                         title="Run this command"
                         description="Authenticate through OAuth and add the Qovery MCP server to Codex."
                       >
-                        <CommandBlock content="codex mcp add qovery --url 'https://mcp.qovery.com/mcp'" showPrompt />
+                        <CommandBlock content={QOVERY_MCP_CODEX_COMMAND} showPrompt />
                       </InstructionSection>
                     </div>
                   )}

@@ -1,7 +1,7 @@
 import { type McpServerResponse } from 'qovery-typescript-axios'
+import { QOVERY_MCP_SERVER_URL } from '@qovery/shared/util-js'
 
-export const QOVERY_MCP_SERVER_URL = 'https://mcp.qovery.com/mcp'
-const QOVERY_MCP_SERVER_ORIGIN = 'https://mcp.qovery.com'
+const QOVERY_MCP_SERVER_ORIGIN = new URL(QOVERY_MCP_SERVER_URL).origin
 
 export function isQoveryMcpServer({ url }: { url?: McpServerResponse['url'] | null }) {
   if (!url) return false
