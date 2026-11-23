@@ -42,6 +42,16 @@ describe('validateSkillPresetForm', () => {
     }
     const errors = validateSkillPresetForm(values)
     expect(errors['customSkills.0.skillName']).toContain('reserved')
+    // Same rule as q-core: only "qovery" and the "qovery-" prefix are reserved.
+    expect(
+      validateSkillPresetForm({
+        ...base(),
+        customSkills: [
+          { skillName: 'qovery', description: 'd', content: 'c' },
+          { skillName: 'qoveryops', description: 'd', content: 'c' },
+        ],
+      })
+    ).toEqual({ 'customSkills.0.skillName': expect.stringContaining('reserved') })
     expect(errors['customSkills.1.skillName']).toContain('lowercase')
     expect(errors['customSkills.2.description']).toContain('agents use it')
     expect(errors['customSkills.2.content']).toBe('Write the skill content.')
