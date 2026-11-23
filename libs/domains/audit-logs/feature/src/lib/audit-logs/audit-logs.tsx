@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { subDays } from 'date-fns'
 import {
   type Organization,
@@ -25,6 +26,7 @@ import {
 import { type SelectedTimestamps } from '@qovery/shared/ui'
 import FilterSection from '../filter-section/filter-section'
 import RowEventFeature from '../row-event-feature/row-event-feature'
+import { AUDIT_LOG_MOBILE_GRID_CLASS_NAME, AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME } from '../row-event/row-event'
 import {
   computeDisplayByLabel,
   computeMenusToDisplay,
@@ -136,6 +138,7 @@ function createTableDataHead(
     },
     {
       title: 'Target type',
+      className: clsx('px-4 py-2', AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME),
       hierarchicalFilter: {
         key: 'target_type',
         initialData: Object.keys(OrganizationEventTargetType).map((item) => {
@@ -173,6 +176,7 @@ function createTableDataHead(
     },
     {
       title: 'User',
+      className: clsx('px-4 py-2', AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME),
       filter: [
         {
           title: 'Filter by user',
@@ -185,6 +189,7 @@ function createTableDataHead(
     },
     {
       title: 'Source',
+      className: clsx('px-4 py-2', AUDIT_LOG_MOBILE_HIDDEN_CELL_CLASS_NAME),
       filter: [
         {
           title: 'Filter by source',
@@ -268,7 +273,7 @@ export function AuditLogs({
   )
 
   return (
-    <Section className="mt-6 grow px-8">
+    <Section className="mt-6 grow px-4 md:px-8">
       <div className="flex flex-col gap-6">
         <Heading level={1}>Audit logs</Heading>
         <hr className="w-full border-neutral" />
@@ -282,41 +287,82 @@ export function AuditLogs({
         />
       </div>
 
-      <Table
-        dataHead={dataHead}
-        data={events}
-        filter={filter}
-        setFilter={setFilter}
-        className="min-w-[1140px] rounded border border-neutral"
-        classNameHead="z-dropdown rounded-t font-code top-[2.8rem]"
-        columnsWidth={columnsWidth}
-      >
-        <div>
-          {isLoading ? (
-            placeholderEvents?.map((event) => (
-              <RowEventFeature
-                key={event.timestamp}
-                event={event}
-                columnsWidth={columnsWidth}
-                isPlaceholder
-                expandedEventTimestamp={expandedEventTimestamp}
-                setExpandedEventTimestamp={setExpandedEventTimestamp}
-                validTargetIds={validTargetIds}
-              />
-            ))
-          ) : !organizationMaxLimitReached && events?.length === 0 ? (
-            <div className="flex h-[30vh] items-center justify-center px-5 py-4 text-center">
-              <div>
-                <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-                <p className="mt-1 text-xs font-medium text-neutral-subtle" data-testid="empty-result">
-                  No events found, we retain logs for a maximum of {auditLogsRetentionInDays} days <br /> Try to change
-                  your filters.
-                </p>
+      {/* Below md this wrapper clips the table, which breaks the sticky header: the header is static there */}
+      <div className="max-md:overflow-x-auto">
+        <Table
+          dataHead={dataHead}
+          data={events}
+          filter={filter}
+          setFilter={setFilter}
+          className="rounded border border-neutral md:min-w-[1140px]"
+          classNameHead={clsx(
+            'top-[2.8rem] z-dropdown rounded-t font-code max-md:static',
+            AUDIT_LOG_MOBILE_GRID_CLASS_NAME
+          )}
+          columnsWidth={columnsWidth}
+        >
+          <div>
+            {isLoading ? (
+              placeholderEvents?.map((event) => (
+                <RowEventFeature
+                  key={event.timestamp}
+                  event={event}
+                  columnsWidth={columnsWidth}
+                  isPlaceholder
+                  expandedEventTimestamp={expandedEventTimestamp}
+                  setExpandedEventTimestamp={setExpandedEventTimestamp}
+                  validTargetIds={validTargetIds}
+                />
+              ))
+            ) : !organizationMaxLimitReached && events?.length === 0 ? (
+              <div className="flex h-[30vh] items-center justify-center px-5 py-4 text-center">
+                <div>
+                  <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                  <p className="mt-1 text-xs font-medium text-neutral-subtle" data-testid="empty-result">
+                    No events found, we retain logs for a maximum of {auditLogsRetentionInDays} days <br /> Try to
+                    change your filters.
+                  </p>
+                </div>
               </div>
-            </div>
-          ) : organizationMaxLimitReached ? (
-            <div>
-              {events?.map((event) => (
+            ) : organizationMaxLimitReached ? (
+              <div>
+                {events?.map((event) => (
+                  <RowEventFeature
+                    key={event.timestamp}
+                    event={event}
+                    columnsWidth={columnsWidth}
+                    expandedEventTimestamp={expandedEventTimestamp}
+                    setExpandedEventTimestamp={setExpandedEventTimestamp}
+                    validTargetIds={validTargetIds}
+                  />
+                ))}
+                <div className="flex h-14 items-center justify-center border-b border-neutral">
+                  <p className="flex items-center gap-3 text-sm text-neutral">
+                    {auditLogsRetentionInDays} days limit reached.
+                    <Button type="button" variant="outline" onClick={() => showChat()}>
+                      <span>Upgrade plan</span>
+                      <Icon iconName="arrow-up-right-from-square" className="text-neutral" />
+                    </Button>
+                  </p>
+                </div>
+                {[...Array(3)].map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex h-14 items-center justify-between border-b border-neutral px-5 last:border-0"
+                  >
+                    {[...Array(6)].map((_, index) => (
+                      <div key={index} className="flex items-center gap-4">
+                        {index === 0 ? (
+                          <Icon iconName="lock-keyhole" iconStyle="regular" className="text-sm text-neutral-subtle" />
+                        ) : null}
+                        <Skeleton key={index} height={10} width={116} />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              events?.map((event) => (
                 <RowEventFeature
                   key={event.timestamp}
                   event={event}
@@ -325,46 +371,11 @@ export function AuditLogs({
                   setExpandedEventTimestamp={setExpandedEventTimestamp}
                   validTargetIds={validTargetIds}
                 />
-              ))}
-              <div className="flex h-14 items-center justify-center border-b border-neutral">
-                <p className="flex items-center gap-3 text-sm text-neutral">
-                  {auditLogsRetentionInDays} days limit reached.
-                  <Button type="button" variant="outline" onClick={() => showChat()}>
-                    <span>Upgrade plan</span>
-                    <Icon iconName="arrow-up-right-from-square" className="text-neutral" />
-                  </Button>
-                </p>
-              </div>
-              {[...Array(3)].map((_, index) => (
-                <div
-                  key={index}
-                  className="flex h-14 items-center justify-between border-b border-neutral px-5 last:border-0"
-                >
-                  {[...Array(6)].map((_, index) => (
-                    <div key={index} className="flex items-center gap-4">
-                      {index === 0 ? (
-                        <Icon iconName="lock-keyhole" iconStyle="regular" className="text-sm text-neutral-subtle" />
-                      ) : null}
-                      <Skeleton key={index} height={10} width={116} />
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          ) : (
-            events?.map((event) => (
-              <RowEventFeature
-                key={event.timestamp}
-                event={event}
-                columnsWidth={columnsWidth}
-                expandedEventTimestamp={expandedEventTimestamp}
-                setExpandedEventTimestamp={setExpandedEventTimestamp}
-                validTargetIds={validTargetIds}
-              />
-            ))
-          )}
-        </div>
-      </Table>
+              ))
+            )}
+          </div>
+        </Table>
+      </div>
       <Pagination
         className="pb-20 pt-4"
         onPrevious={onPrevious}

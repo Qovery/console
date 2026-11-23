@@ -1,9 +1,17 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type FormEventHandler, useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { useEditProject, useProject } from '@qovery/domains/projects/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, InputText, InputTextArea, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  InputText,
+  InputTextArea,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
+  Section,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -23,7 +31,7 @@ function PageProjectGeneral(props: PageProjectGeneralProps) {
 
   return (
     <div key={getValues().toString()} className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="General" showNeedHelp={false} />
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Project settings">
@@ -57,7 +65,7 @@ function PageProjectGeneral(props: PageProjectGeneralProps) {
               )}
             />
           </BlockContent>
-          <div className="flex justify-end">
+          <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button data-testid="submit-button" type="submit" size="lg" disabled={!formState.isValid} loading={loading}>
               Save
             </Button>

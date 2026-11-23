@@ -17,7 +17,7 @@ export function AssistantTrigger() {
   }, [initChat])
 
   return (
-    <Button type="button" variant="outline" color="neutral" iconOnly onClick={toggleAssistantOpen}>
+    <Button type="button" variant="outline" color="neutral" iconOnly aria-label="Help" onClick={toggleAssistantOpen}>
       <Icon iconName="circle-question" />
     </Button>
   )

@@ -3,7 +3,7 @@ import { type HelmRepositoryResponse } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { SETTINGS_HEADER_ACTION_CLASS_NAME, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, Indicator, Section, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { HelmRepositoryCreateEditModal } from '../helm-repository-create-edit-modal/helm-repository-create-edit-modal'
@@ -21,12 +21,12 @@ export interface PageOrganizationHelmRepositoriesProps {
 const HelmRepositoriesRowsSkeleton = () => (
   <ul>
     {[0, 1, 2, 3].map((index) => (
-      <li key={index} className="flex items-center justify-between border-b border-neutral p-4 last:border-0">
-        <div className="flex items-center gap-4">
+      <li key={index} className="flex items-center justify-between gap-3 border-b border-neutral p-4 last:border-0">
+        <div className="flex min-w-0 items-center gap-4">
           <Skeleton width={20} height={20} show={true} />
-          <div className="space-y-2">
-            <Skeleton width={220} height={12} show={true} />
-            <Skeleton width={200} height={12} show={true} />
+          <div className="min-w-0 space-y-2">
+            <Skeleton width={220} height={12} show={true} className="max-w-full" />
+            <Skeleton width={200} height={12} show={true} className="max-w-full" />
           </div>
         </div>
         <div className="flex gap-2">
@@ -76,10 +76,10 @@ function HelmRepositoriesList({
           key={repository.id}
           className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
         >
-          <div className="flex items-center">
+          <div className="flex min-w-0 items-center">
             <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" />
-            <div className="ml-4">
-              <h2 className="mb-1 flex text-xs font-medium text-neutral">
+            <div className="ml-4 min-w-0">
+              <h2 className="mb-1 flex text-xs font-medium text-neutral max-md:break-all">
                 <Truncate
                   truncateLimit={60}
                   text={`${repository.name}${repository.config?.access_key_id ? ` (${repository.config?.access_key_id})` : repository.config?.scaleway_access_key ? ` (${repository.config?.scaleway_access_key})` : repository.config?.username ? ` (${repository.config?.username})` : ''}`}
@@ -92,10 +92,10 @@ function HelmRepositoriesList({
                   </Tooltip>
                 )}
               </h2>
-              <p className="text-xs text-neutral-subtle">{repository.url}</p>
+              <p className="text-xs text-neutral-subtle max-md:break-all">{repository.url}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex shrink-0 gap-2">
             <Indicator
               content={
                 <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
@@ -137,13 +137,13 @@ export function PageOrganizationHelmRepositories({
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Helm repositories"
             description="Define and manage the helm repository to be used within your organization to deploy applications."
           />
-          <Button size="md" className="absolute right-0 top-0 shrink-0" onClick={() => onAddRepository()}>
+          <Button size="md" className={SETTINGS_HEADER_ACTION_CLASS_NAME} onClick={() => onAddRepository()}>
             Add repository
             <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>

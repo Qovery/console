@@ -14,8 +14,10 @@ import { isArgoCdEnvironment } from '../../utils/argocd'
 
 const { Table } = TablePrimitives
 
+// Below md the table keeps selection, name and actions
 export const environmentTableGridLayoutClassName =
-  'grid w-full grid-cols-[44px_minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
+  'grid w-full grid-cols-[44px_minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px] max-md:grid-cols-[36px_minmax(0,1fr)_96px]'
+export const environmentTableSecondaryColumnClassName = 'max-md:hidden'
 export const environmentSelectionCellClassName = 'flex h-full items-center pl-4'
 export const environmentNameCellContentClassName =
   'flex h-full min-w-0 flex-col justify-center gap-1 py-2 pl-0 pr-4 xl:flex-row xl:items-center xl:justify-between xl:gap-2'
@@ -121,7 +123,7 @@ function EnvRow({
           </div>
         </div>
       </Table.Cell>
-      <Table.Cell className={environmentTableCellClassName}>
+      <Table.Cell className={twMerge(environmentTableCellClassName, environmentTableSecondaryColumnClassName)}>
         <div className="flex h-full items-center justify-between">
           <div className="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
             {overview.services_overview.service_count === 0 ? (
@@ -138,7 +140,7 @@ function EnvRow({
           <EnvironmentStateChip mode="last-deployment" environmentId={overview.id} variant="monochrome" />
         </div>
       </Table.Cell>
-      <Table.Cell className={environmentTableCellClassName}>
+      <Table.Cell className={twMerge(environmentTableCellClassName, environmentTableSecondaryColumnClassName)}>
         <div className="flex h-full items-center justify-between">
           {overview.cluster && (
             <Link
@@ -156,7 +158,7 @@ function EnvRow({
           )}
         </div>
       </Table.Cell>
-      <Table.Cell className={environmentTableCellClassName}>
+      <Table.Cell className={twMerge(environmentTableCellClassName, environmentTableSecondaryColumnClassName)}>
         <div className="flex h-full items-center">{timeAgo(new Date(overview.updated_at ?? Date.now()))} ago</div>
       </Table.Cell>
       <Table.Cell className={environmentTableCellClassName}>
@@ -361,7 +363,7 @@ export function EnvironmentSection({
           <EmptyState />
         </div>
       ) : (
-        <Table.Root className="w-full min-w-[1080px]" containerClassName="no-scrollbar overflow-x-auto">
+        <Table.Root className="w-full md:min-w-[1080px]" containerClassName="no-scrollbar overflow-x-auto">
           <Table.Header>
             <Table.Row className={twMerge('w-full items-center text-xs', environmentTableGridLayoutClassName)}>
               <Table.ColumnHeaderCell className="h-9 p-0 text-neutral-subtle">
@@ -401,7 +403,7 @@ export function EnvironmentSection({
                 sort={sort}
                 effectiveSort={effectiveSort}
                 onSort={handleSort}
-                className="border-l border-neutral"
+                className="border-l border-neutral max-md:hidden"
                 buttonClassName="px-4"
               />
               <SortableColumnHeader
@@ -410,7 +412,7 @@ export function EnvironmentSection({
                 sort={sort}
                 effectiveSort={effectiveSort}
                 onSort={handleSort}
-                className="border-l border-neutral"
+                className="border-l border-neutral max-md:hidden"
                 buttonClassName="px-4"
               />
               <SortableColumnHeader
@@ -419,7 +421,7 @@ export function EnvironmentSection({
                 sort={sort}
                 effectiveSort={effectiveSort}
                 onSort={handleSort}
-                className="border-l border-neutral"
+                className="border-l border-neutral max-md:hidden"
                 buttonClassName="px-4"
               />
               <Table.ColumnHeaderCell className="flex h-9 items-center justify-end border-l border-neutral text-left text-neutral-subtle">

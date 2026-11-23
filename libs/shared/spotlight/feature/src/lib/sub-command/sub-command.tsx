@@ -137,7 +137,7 @@ export function SubCommand({
 
   return (
     <div className="flex h-11 items-center justify-end gap-4 bg-surface-neutral-subtle px-2.5">
-      <span className="flex gap-1.5 text-xs text-neutral-subtle">
+      <span className="flex gap-1.5 text-xs text-neutral-subtle max-md:hidden">
         Arrow to navigate
         <div className="flex gap-1">
           <CustomKbd className="w-4">
@@ -148,7 +148,7 @@ export function SubCommand({
           </CustomKbd>
         </div>
       </span>
-      <span className="flex gap-1.5 text-xs text-neutral-subtle">
+      <span className="flex gap-1.5 text-xs text-neutral-subtle max-md:hidden">
         Enter to open
         <CustomKbd className="w-4">
           <Icon iconName="arrow-turn-down-left" />
@@ -165,7 +165,7 @@ export function SubCommand({
               })}
             >
               Actions
-              <CustomKbd className="w-4">
+              <CustomKbd className="w-4 max-md:hidden">
                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 10 10">
                   <path
                     fill="var(--neutral-11)"
@@ -173,7 +173,7 @@ export function SubCommand({
                   ></path>
                 </svg>
               </CustomKbd>
-              <div className="flex gap-1">
+              <div className="flex gap-1 max-md:hidden">
                 <span className="mx-0.5 block h-3 w-[1px] bg-surface-neutral-component"></span>
                 <CustomKbd className="w-4 pt-[1px] text-sm">
                   <span>{metaKey}</span>

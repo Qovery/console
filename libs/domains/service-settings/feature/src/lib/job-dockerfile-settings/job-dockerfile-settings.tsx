@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type LifecycleJobResponse } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
@@ -8,7 +9,7 @@ import { DockerfileSettings, type DockerfileSettingsData } from '@qovery/domains
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isJobGitSource } from '@qovery/shared/enums'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { TemplateIds } from '@qovery/shared/util-services'
 
@@ -144,7 +145,7 @@ export function JobDockerfileSettings() {
           )
 
     return (
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="flex w-full flex-col justify-between">
           <SettingsHeading
             title="Dockerfile"
@@ -169,7 +170,7 @@ export function JobDockerfileSettings() {
           />
           <div className="max-w-content-with-navigation-left">
             <DockerfileSettingsWrapper>
-              <div className="flex justify-end">
+              <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button type="submit" size="lg" loading={isLoadingEditService || isLoadingCheckDockerfile}>
                   Save
                 </Button>

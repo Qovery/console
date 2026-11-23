@@ -72,7 +72,7 @@ export function DropdownVariable({
       <Popover.Root open={open} onOpenChange={_onOpenChange}>
         <Popover.Trigger>{children}</Popover.Trigger>
         <DropdownMenu.Content asChild>
-          <Popover.Content className="z-50 flex max-h-60 w-[400px] min-w-[400px] flex-col p-2">
+          <Popover.Content className="z-50 flex max-h-60 w-[400px] min-w-[400px] max-w-[calc(100vw-32px)] flex-col p-2 max-md:min-w-0">
             {/*
                 `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                 fix issue with item focus if we use input search

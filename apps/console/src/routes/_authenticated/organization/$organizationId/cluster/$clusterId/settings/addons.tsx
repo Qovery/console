@@ -161,7 +161,7 @@ function RouteComponent() {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="p-8">
+      <Section className="px-4 py-8 md:p-8">
         <SettingsHeading
           title="Add-ons"
           description="Add-ons are activable options that will grant you access to specific Qovery feature. You can activate or deactivate them when you want."
@@ -190,7 +190,7 @@ function RouteComponent() {
                   </p>
                 </div>
                 <div className="flex flex-col items-start gap-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <DropdownMenu.Root
                       onOpenChange={(open) => {
                         if (open) {

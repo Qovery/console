@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type ClusterCloudProviderInfo } from 'qovery-typescript-axios'
 import { useEffect, useRef } from 'react'
@@ -20,7 +21,7 @@ import {
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Section, toast, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME, Section, toast, useModalConfirmation } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
@@ -217,7 +218,7 @@ function ClusterCredentialsSettingsForm() {
   return (
     <FormProvider {...methods}>
       <div className="flex w-full flex-col justify-between">
-        <Section className="p-8">
+        <Section className="px-4 py-8 md:p-8">
           <SettingsHeading title="Credentials" />
           <div className="max-w-content-with-navigation-left">
             <form onSubmit={onSubmit} className="flex flex-col gap-6">
@@ -226,7 +227,7 @@ function ClusterCredentialsSettingsForm() {
               ) : (
                 <ClusterCredentialsSettings cloudProvider={clusterCloudProviderInfo?.cloud_provider} isSetting={true} />
               )}
-              <div className="flex justify-end">
+              <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button
                   data-testid="submit-button"
                   type="submit"

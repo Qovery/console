@@ -52,8 +52,8 @@ function DatabaseRdsDashboardContent({ dbInstance, databaseEngine, storageResour
 
   return (
     <div className="isolate">
-      <div className="bg-surface sticky top-[45px] z-header h-14 w-full bg-background">
-        <div className="mx-8 flex min-h-14 flex-col justify-between gap-3 border-b border-neutral py-3 md:h-full md:min-h-0 md:flex-row md:items-center md:py-0">
+      <div className="bg-surface sticky top-[45px] z-header w-full bg-background md:h-14">
+        <div className="mx-4 flex min-h-14 flex-col justify-between gap-3 border-b border-neutral py-3 md:mx-8 md:h-full md:min-h-0 md:flex-row md:items-center md:py-0">
           <div className="flex flex-wrap gap-2">
             <Tooltip
               content={
@@ -111,7 +111,7 @@ function DatabaseRdsDashboardContent({ dbInstance, databaseEngine, storageResour
           </div>
         </div>
       </div>
-      <div className="space-y-8 px-8 py-8">
+      <div className="space-y-8 px-4 py-8 md:px-8">
         <Section className="gap-4">
           <Heading weight="medium" level={2}>
             Health overview

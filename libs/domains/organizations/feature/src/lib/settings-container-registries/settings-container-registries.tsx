@@ -8,6 +8,7 @@ import {
   Button,
   Icon,
   Indicator,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
   Section,
   Skeleton,
   Tooltip,
@@ -100,15 +101,15 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
               </Tooltip>
             )}
           </h2>
-          <p className="text-xs text-neutral-subtle">
-            {registry.kind}{' '}
+          <p className="flex flex-wrap gap-x-3 text-xs text-neutral-subtle">
+            <span>{registry.kind}</span>
             {registry.updated_at && (
-              <span className="ml-3 inline-block" title={dateUTCString(registry.updated_at)}>
+              <span className="inline-block" title={dateUTCString(registry.updated_at)}>
                 Last updated {timeAgo(new Date(registry.updated_at))}
               </span>
             )}{' '}
             {registry.created_at && (
-              <span className="ml-3 inline-block" title={dateUTCString(registry.created_at)}>
+              <span className="inline-block" title={dateUTCString(registry.created_at)}>
                 Created since {dateMediumLocalFormat(registry.created_at)}
               </span>
             )}
@@ -265,14 +266,14 @@ export function SettingsContainerRegistries() {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Container registries"
             description="Define and manage the container registry to be used within your organization to deploy applications."
           />
 
-          <Button className="absolute right-0 top-0" size="md" onClick={() => onAddRegistry()}>
+          <Button className={SETTINGS_HEADER_ACTION_CLASS_NAME} size="md" onClick={() => onAddRegistry()}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add registry
           </Button>

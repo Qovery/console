@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import {
   type OrganizationCustomRole,
   type OrganizationCustomRoleClusterPermissionsInner,
@@ -18,6 +19,7 @@ import {
   InputText,
   InputTextArea,
   Link,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Skeleton,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -33,7 +35,7 @@ import { REMOTE_ACCESS_FLAGS, remoteAccessFormKey } from './utils/remote-access'
 
 const SettingsRolesEditSkeleton = () => (
   <div className="flex w-full flex-col justify-between">
-    <div className="p-8">
+    <div className="px-4 py-8 md:p-8">
       <div className="mb-8 flex justify-between">
         <div className="space-y-2">
           <Skeleton width={50} height={12} show={true} />
@@ -247,7 +249,7 @@ function SettingsRolesEditContent({
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <div className="p-8">
+      <div className="px-4 py-8 md:p-8">
         {customRole && (
           <>
             <div className="mb-8 flex justify-between">
@@ -352,7 +354,7 @@ function SettingsRolesEditContent({
                   ))}
                 </Table>
               )}
-              <div className="mb-24 mt-6 flex justify-between gap-3">
+              <div className={clsx('mt-6 flex justify-between gap-3 md:mb-24', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button
                   type="button"
                   data-testid="delete-button"
