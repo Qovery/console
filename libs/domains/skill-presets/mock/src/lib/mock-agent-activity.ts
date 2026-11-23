@@ -328,7 +328,7 @@ export function aggregateAgentActivity(
   const toTime = new Date(to).getTime()
   const inRange = (at: string) => {
     const time = new Date(at).getTime()
-    return time >= fromTime && time <= toTime
+    return time >= fromTime && time < toTime
   }
   const matches = (user: string | null, skill: string | null) =>
     (!userSub || user === userSub) && (!skillName || skill === skillName)
@@ -342,9 +342,10 @@ export function aggregateAgentActivity(
       (!outcome || action.outcome === outcome) &&
       (!source || action.source === source)
   )
-  // Skill loads are a member's: a token filter or an action source leaves them out.
+  // As q-core: skill loads are a member's, so a token filter, an action source or the DENIED outcome
+  // leaves them out. The SKILL_LOAD source keeps them and leaves the actions out.
   const scopedLoads =
-    tokenOnly || source
+    tokenOnly || (source && source !== 'SKILL_LOAD') || outcome === 'DENIED'
       ? []
       : loads.filter((load) => inRange(load.timestamp) && matches(load.user_sub, load.skill_name))
   const isDenied = ({ outcome }: MockAgentAction) => outcome === 'DENIED'
