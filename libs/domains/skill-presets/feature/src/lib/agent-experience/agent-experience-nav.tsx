@@ -45,7 +45,11 @@ export function AgentExperienceNav() {
         icon="wave-pulse"
         iconStyle="regular"
         badge={denied > 0 ? String(denied) : undefined}
-        aria-label={denied > 0 ? `Activity, ${denied} denied actions in the last 7 days` : undefined}
+        aria-label={
+          denied > 0
+            ? `Activity, ${denied} denied ${denied === 1 ? 'action' : 'actions'} in the last 7 days`
+            : undefined
+        }
       >
         Activity
       </Sidebar.Item>
