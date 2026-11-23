@@ -1,6 +1,5 @@
 import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { useMemo, useState } from 'react'
 import { Button, Heading, Icon, Link, ProgressBar, Section, useModal } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { ConnectAgentModal } from '../agent-experience/connect-agent-modal'
@@ -38,13 +37,17 @@ const STEPS: Record<AgentExperienceStepId, { title: string; description: string;
   },
 }
 
-/** The last 30 days, ending now (rounded to the minute, so the query key is stable). */
-function useLastMonth() {
-  const [to] = useState(() => new Date(Math.ceil(Date.now() / 60_000) * 60_000))
-  return useMemo(
-    () => ({ from: new Date(to.getTime() - 30 * DAY_MS).toISOString(), to: to.toISOString(), bucket: 'DAY' as const }),
-    [to]
-  )
+const WINDOW_STEP_MS = 5 * 60_000
+
+/**
+ * The last 30 days, up to the next 5-minute mark. Computed at every render, not fixed at mount, so the
+ * window moves forward when the card renders again (for example after the connect popup closes) and
+ * activity that happens after the page loads shows up. Rounding keeps the query key the same within
+ * each 5 minutes, so renders in between reuse the cached answer.
+ */
+function lastMonth() {
+  const to = Math.ceil(Date.now() / WINDOW_STEP_MS) * WINDOW_STEP_MS
+  return { from: new Date(to - 30 * DAY_MS).toISOString(), to: new Date(to).toISOString(), bucket: 'DAY' as const }
 }
 
 function StepAction({ step, organizationId }: { step: AgentExperienceStepId; organizationId: string }) {
@@ -90,7 +93,7 @@ export function AgentsSetupSection() {
   const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
   const [dismissed, setDismissed] = useLocalStorage(`${AGENTS_SETUP_DISMISSED_KEY}_${organizationId}`, false)
   const enabled = canManage && !dismissed
-  const range = useLastMonth()
+  const range = lastMonth()
   const activity = useAgentActivity({ organizationId, scope: 'organization', enabled, ...range })
   const presets = useSkillPresets({ organizationId, isTemplate: false, enabled })
   const tokens = useAgentExperiencePolicyTokens({ organizationId, enabled })
