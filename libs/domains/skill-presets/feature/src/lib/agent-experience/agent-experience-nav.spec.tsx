@@ -92,4 +92,29 @@ describe('AgentTasksGate', () => {
       )
     )
   })
+
+  it('waits while PostHog loads the flag or the role loads, without leaving', () => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(undefined)
+    const { unmount } = renderWithProviders(<AgentTasksGate>Model tokens page</AgentTasksGate>)
+    expect(screen.queryByText('Model tokens page')).not.toBeInTheDocument()
+    unmount()
+
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
+    jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: true })
+    renderWithProviders(<AgentTasksGate>Model tokens page</AgentTasksGate>)
+    expect(screen.queryByText('Model tokens page')).not.toBeInTheDocument()
+    expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
+  it('sends members back to the Skills registry, even with the flag', async () => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
+    jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: false })
+    renderWithProviders(<AgentTasksGate>Model tokens page</AgentTasksGate>)
+    expect(screen.queryByText('Model tokens page')).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.objectContaining({ to: '/organization/$organizationId/agent-experience/skill-presets', replace: true })
+      )
+    )
+  })
 })

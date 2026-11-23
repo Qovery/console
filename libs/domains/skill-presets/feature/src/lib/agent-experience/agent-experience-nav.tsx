@@ -74,19 +74,26 @@ export function AgentExperienceNav() {
   )
 }
 
-/** Agent Tasks pages exist only behind their feature flag: without it, back to the Skills registry. */
+/**
+ * Agent Tasks pages exist only behind their feature flag, and are settings for owners and admins: for
+ * anyone else, back to the Skills registry. Nothing is decided while PostHog loads the flag
+ * (`undefined`) or the role loads, so an allowed user is never sent away by mistake.
+ */
 export function AgentTasksGate({ children }: { children: ReactNode }) {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
-  const isAgentTasksEnabled = Boolean(useFeatureFlagEnabled(AGENT_TASKS_FLAG))
+  const flag = useFeatureFlagEnabled(AGENT_TASKS_FLAG)
+  const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
+  const isDecided = flag !== undefined && !isLoading
+  const isAllowed = isDecided && flag && canManage
   useEffect(() => {
-    if (!isAgentTasksEnabled) {
+    if (isDecided && !isAllowed) {
       navigate({
         to: '/organization/$organizationId/agent-experience/skill-presets',
         params: { organizationId },
         replace: true,
       })
     }
-  }, [isAgentTasksEnabled, navigate, organizationId])
-  return isAgentTasksEnabled ? <>{children}</> : null
+  }, [isDecided, isAllowed, navigate, organizationId])
+  return isAllowed ? <>{children}</> : null
 }
