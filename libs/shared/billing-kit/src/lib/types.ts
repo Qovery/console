@@ -972,8 +972,15 @@ export interface Discounts {
   discounts: DiscountType[]
   granted: string[]
   requests: DiscountRequest[]
+  /**
+   * Discounts already included in the contract (negotiated with Qovery): shown ticked and locked,
+   * never asked for again. contract_points: theirs added up, counted toward max_percent.
+   * Absent from an older pricing-api.
+   */
+  in_contract?: DiscountType[]
+  contract_points?: number
 }
-/** A dry run of a selection: points add up (capped at max_percent) on plan and add-ons. */
+/** A dry run of a selection: points add up (capped at max_percent, with the contract's points) on plan and add-ons. */
 export interface DiscountQuote {
   ids: string[]
   points: number
@@ -982,6 +989,8 @@ export interface DiscountQuote {
   capped: boolean
   currency: string
   period: Period
+  /** Points already in the contract: not in percent, but counted toward max_percent. */
+  contract_points?: number
   price_before: number
   price_after: number
   saving: number

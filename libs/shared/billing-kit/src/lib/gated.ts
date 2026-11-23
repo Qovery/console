@@ -180,6 +180,36 @@ export const GATED_FEATURES: Record<string, GatedFeature> = {
     media: mediaSet('log-retention'),
     learnMoreUrl: 'https://www.qovery.com/docs/getting-started/security-and-compliance/audit-logs',
   },
+  'terraform.provider': {
+    icon: 'file-code',
+    title: 'Terraform services',
+    description:
+      'Run your Terraform or OpenTofu code as a service in an environment: plan, apply, and outputs your apps can read.',
+    capabilities: [
+      { icon: 'code-branch', label: 'Terraform or OpenTofu, from your Git repository' },
+      { icon: 'server', label: 'Runs on your cluster, with the state kept for you' },
+      { icon: 'list-check', label: 'Plan first, then apply, from the console or the API' },
+      { icon: 'sliders', label: 'Variables detected from your code, tfvars files supported' },
+      { icon: 'arrow-right-arrow-left', label: 'Outputs become environment variables for your services' },
+    ],
+    preview: 'generic',
+    media: mediaSet('terraform'),
+    learnMoreUrl: 'https://www.qovery.com/docs/configuration/terraform',
+  },
+  environments: {
+    icon: 'layer-group',
+    title: 'Environments',
+    description: 'Run more environments side by side: production, staging and one for each team or feature.',
+    capabilities: [
+      { icon: 'layer-group', label: 'Production, staging and development, each on its own' },
+      { icon: 'clone', label: 'Clone an environment, with its services, to any project or cluster' },
+      { icon: 'code-pull-request', label: 'Preview environments per pull request do not count' },
+      { icon: 'cube', label: 'Each environment on the cluster you choose' },
+    ],
+    preview: 'generic',
+    media: mediaSet('environments'),
+    learnMoreUrl: 'https://www.qovery.com/docs/configuration/environment',
+  },
 }
 
 /** The feature has page content (an entry above): the console opens <GatedPage> for it rather than the dialog. */

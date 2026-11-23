@@ -6,8 +6,10 @@
  * exclude each other; paying the contract up front needs one), the price with the selection
  * priced by pricing-api, the terms to accept, and "Request discount". Qovery reviews each
  * request: the card then shows it first, under review (with Withdraw), approved (and until when)
- * or declined (with the reason), and stays open. AWS Marketplace accounts get one line instead:
- * their price comes from their private offer.
+ * or declined (with the reason), and stays open. Discounts already in the contract (negotiated
+ * with Qovery) show ticked and locked, "Included in your contract": never asked for again, and
+ * their points count toward the maximum. AWS Marketplace accounts get one line instead: their
+ * price comes from their private offer.
  */
 import { useEffect, useId, useState } from 'react'
 import { Badge, Button, Callout, Checkbox, Icon, InputTextArea } from '@qovery/shared/ui'
@@ -17,9 +19,11 @@ import { errorText, notifySuccess } from './parts'
 import {
   currentDiscountRequest,
   discountPercent,
+  discountRoom,
   discountSelectable,
   discountsExpanded,
   discountsUpTo,
+  requestableDiscounts,
   toggleDiscount,
 } from './rules'
 import type { BillingUsage, DiscountQuote, DiscountRequest, Discounts } from './types'
@@ -110,17 +114,22 @@ export function DiscountsCard({
   const shown = currentDiscountRequest(view.requests)
   const open = shown?.status === 'open' ? shown : undefined
   const declined = shown?.status === 'declined' ? shown : undefined
-  if (!open && running.length === 0 && !declined && view.discounts.length === 0) return null
-  const local = discountPercent(view.discounts, selected, view.max_percent)
+  const contract = view.in_contract ?? []
+  const contractPoints = view.contract_points ?? 0
+  // What a request can still take off, and what meets a requirement: the contract counts for both.
+  const room = discountRoom(view.max_percent, contractPoints)
+  const have = [...view.granted, ...contract.map((d) => d.id)]
+  if (!open && running.length === 0 && !declined && view.discounts.length === 0 && contract.length === 0) return null
+  const local = discountPercent(view.discounts, selected, room)
   const canRequest = !!client.requestDiscounts && selected.length > 0 && terms && !!quote && !busy
   const expanded = discountsExpanded({ opened, selected, requests: view.requests })
-  const upTo = discountsUpTo(view.discounts, view.max_percent, view.granted)
+  const upTo = discountsUpTo(view.discounts, room, have)
 
   const request = async () => {
     setBusy(true)
     try {
       const v = await client.requestDiscounts!(organizationId, {
-        ids: selected,
+        ids: requestableDiscounts(selected, contract),
         message: message.trim() || undefined,
         accept_terms: terms,
       })
@@ -173,6 +182,36 @@ export function DiscountsCard({
           </div>
         )}
       </div>
+
+      {contract.length > 0 && (
+        <div className="flex flex-col gap-3 border-t border-neutral px-5 py-4">
+          <div className="text-xs font-medium text-neutral-subtle">Included in your contract</div>
+          {contract.map((d) => (
+            <div key={d.id} className="flex items-start gap-3">
+              <Checkbox
+                id={`discount-contract-${d.id}`}
+                className="mt-0.5"
+                checked
+                disabled
+                aria-label={`${d.label}: included in your contract`}
+              />
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="text-sm font-medium text-neutral">{d.label}</span>
+                <span className="text-xs text-neutral-subtle">{d.gives}</span>
+              </span>
+              <Badge color="neutral" variant="surface" size="sm">
+                Included · −{pct(d.percent)}
+              </Badge>
+            </div>
+          ))}
+          <p className="text-xs text-neutral-subtle">
+            Already in your price.{' '}
+            {room > 0
+              ? `${pct(contractPoints)} of the ${pct(view.max_percent)} maximum is used, so you can ask for up to ${pct(room)} more.`
+              : `Your contract already includes the ${pct(view.max_percent)} maximum.`}
+          </p>
+        </div>
+      )}
 
       {(open || running.length > 0 || declined) && (
         <div className="flex flex-col gap-3 border-t border-neutral px-5 py-4">
@@ -231,7 +270,7 @@ export function DiscountsCard({
           <div className="divide-y divide-neutral border-t border-neutral">
             {view.discounts.map((d) => {
               const on = selected.includes(d.id)
-              const can = on || discountSelectable(d, selected, view.granted)
+              const can = on || discountSelectable(d, selected, have)
               const id = `discount-${d.id}`
               return (
                 <label
@@ -244,7 +283,7 @@ export function DiscountsCard({
                     className="mt-0.5"
                     checked={on}
                     disabled={!can}
-                    onCheckedChange={() => setSelected((s) => toggleDiscount(view.discounts, s, d.id, view.granted))}
+                    onCheckedChange={() => setSelected((s) => toggleDiscount(view.discounts, s, d.id, have))}
                   />
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className={`text-sm font-medium ${can ? 'text-neutral' : 'text-neutral-subtle'}`}>
@@ -291,12 +330,18 @@ export function DiscountsCard({
                       </span>
                     )}
                   </div>
+                  {contractPoints > 0 && (
+                    <div className="text-xs text-neutral-subtle">
+                      On top of the {pct(contractPoints)} in your contract
+                    </div>
+                  )}
                 </div>
               )}
             </div>
             {(quote?.capped ?? local.capped) && (
               <p className="text-xs text-neutral-subtle">
-                Discounts add up to {pct(quote?.points ?? local.points)}; the most we offer is {pct(view.max_percent)}.
+                Discounts add up to {pct(quote?.points ?? local.points)}; the most we offer is {pct(view.max_percent)}
+                {contractPoints > 0 ? `, ${pct(contractPoints)} of it already in your contract` : ''}.
               </p>
             )}
             {quote && (
