@@ -241,6 +241,18 @@ describe('createSkillPresetsMockApi', () => {
     }
   })
 
+  it.each(['typical', 'large'] as const)(
+    'assigns each member directly to one preset at most in %s',
+    async (scenario) => {
+      const api = createSkillPresetsMockApi(scenario)
+      const { value: presets } = await settle(api.listSkillPresets(ORGANIZATION_ID, { isTemplate: false }))
+      const userIds = (presets ?? []).flatMap(({ assigned_to }) => assigned_to.user_ids)
+
+      expect(userIds.length).toBeGreaterThan(0)
+      expect(new Set(userIds).size).toBe(userIds.length)
+    }
+  )
+
   it('resolves no preset for the member in the member-no-preset scenario', async () => {
     const api = createSkillPresetsMockApi('member-no-preset')
     const { value: manifest } = await settle(api.getResolvedSkillPreset(ORGANIZATION_ID))

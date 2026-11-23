@@ -122,7 +122,6 @@ export * from './lib/settings-api-token/policy-api-token/policy-api-token-policy
 export * from './lib/settings-api-token/settings-api-token'
 export * from './lib/settings-api-token/settings-policy-api-token'
 export * from './lib/settings-mcp-server/settings-mcp-server'
-export * from './lib/settings-ai-skills/settings-ai-skills'
 export * from './lib/settings-agent-personalization/settings-agent-personalization'
 export * from './lib/mcp-server-create-edit-modal/mcp-server-create-edit-modal'
 export * from './lib/mcp-server-setting/mcp-server-setting'

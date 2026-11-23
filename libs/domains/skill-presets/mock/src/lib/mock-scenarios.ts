@@ -450,6 +450,16 @@ function longRunbook() {
 
 function largeSeed(): MockSeed {
   const seed = typicalSeed()
+  // Exercise assignment badge overflow with many members on one preset. A member holds one direct
+  // assignment at most, so members already assigned to another preset are left out.
+  const assignedElsewhere = new Set(
+    seed.presets
+      .filter((_, index) => index !== 1)
+      .flatMap(({ revisions }) => revisions.at(-1)?.state.assigned_to.user_ids ?? [])
+  )
+  for (const revision of seed.presets[1].revisions) {
+    revision.state.assigned_to.user_ids = MEMBERS.map(({ id }) => id).filter((id) => !assignedElsewhere.has(id))
+  }
   const history = backendTeamRevisions()
   const last = history[history.length - 1]
   for (let index = 0; index < 116; index++) {

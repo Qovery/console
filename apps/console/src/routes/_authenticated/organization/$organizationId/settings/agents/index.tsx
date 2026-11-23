@@ -1,13 +1,12 @@
-import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
+// Moved to Agents. Kept so old links and bookmarks still work.
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/agents/')({
-  component: RouteComponent,
+  beforeLoad: ({ params: { organizationId } }) => {
+    throw redirect({
+      to: '/organization/$organizationId/agent-experience/agent-task-tokens',
+      params: { organizationId },
+      replace: true,
+    })
+  },
 })
-
-function RouteComponent() {
-  const { organizationId } = useParams({ strict: false })
-
-  if (!organizationId) return null
-
-  return <Navigate to="/organization/$organizationId/settings/agents/tokens" params={{ organizationId }} replace />
-}

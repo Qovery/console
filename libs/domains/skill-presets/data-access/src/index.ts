@@ -1,6 +1,7 @@
 export * from './lib/skill-presets.types'
 export * from './lib/agent-activity.types'
 export * from './lib/skill-presets.limits'
+export * from './lib/skill-presets.resolution'
 export * from './lib/skill-presets.errors'
 export * from './lib/skill-presets.api'
 export * from './lib/skill-presets.queries'

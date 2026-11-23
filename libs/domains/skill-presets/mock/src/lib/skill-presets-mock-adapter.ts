@@ -1,15 +1,22 @@
 import axios, { type AxiosAdapter, AxiosError, type AxiosInstance } from 'axios'
-import { type SkillPresetsMockScenario } from './mock-scenario-names'
-import { getSkillPresetsMockScenario } from './skill-presets-mock-mode'
+import { SKILL_PRESETS_MOCK_MEMBER_SCENARIOS, type SkillPresetsMockScenario } from './mock-scenario-names'
 import { type SkillPresetsMockServer, type SkillPresetsMockService } from './skill-presets-mock-server'
 
 let server: { scenario: SkillPresetsMockScenario; instance: Promise<SkillPresetsMockServer> } | undefined
 
-function resolveServer(): Promise<SkillPresetsMockServer> | null {
-  const scenario = getSkillPresetsMockScenario()
-  if (!scenario) return null
+let scenario: SkillPresetsMockScenario = 'typical'
+
+export function setSkillPresetsMockScenario(next: SkillPresetsMockScenario = 'typical') {
+  scenario = next
+  resetSkillPresetsMock()
+}
+
+export function isSkillPresetsMockMember() {
+  return SKILL_PRESETS_MOCK_MEMBER_SCENARIOS.includes(scenario)
+}
+
+function resolveServer(): Promise<SkillPresetsMockServer> {
   if (server?.scenario !== scenario) {
-    // Loaded on demand so the mock data never ships in the main bundle.
     const instance = import('./skill-presets-mock-server').then(({ createSkillPresetsMockServer }) =>
       createSkillPresetsMockServer(scenario)
     )
@@ -20,8 +27,8 @@ function resolveServer(): Promise<SkillPresetsMockServer> | null {
 
 /**
  * Serves the skill presets pages from the mock scenario at the HTTP boundary: the instance's adapter
- * answers the endpoints the mock plays and sends every other request on as usual. With no mock
- * scenario active, every request goes out untouched. `passthrough: false` answers only from the mock,
+ * answers the endpoints the mock plays and sends every other request on as usual.
+ * `passthrough: false` answers only from the mock,
  * for tests without a real API.
  */
 export function installSkillPresetsMock(
@@ -32,9 +39,7 @@ export function installSkillPresetsMock(
   const defaultAdapter = instance.defaults.adapter
   const send: AxiosAdapter = axios.getAdapter(defaultAdapter)
   instance.defaults.adapter = async (config) => {
-    const pending = resolveServer()
-    if (!pending) return send(config)
-    const answer = (await pending).handle(service, config, passthrough ? send : undefined)
+    const answer = (await resolveServer()).handle(service, config, passthrough ? send : undefined)
     if (answer) return answer
     if (passthrough) return send(config)
     throw new AxiosError('Not played by the mock', AxiosError.ERR_BAD_REQUEST, config, undefined, {
@@ -57,6 +62,5 @@ export function resetSkillPresetsMock() {
 
 /** Test helper: the audit entries the mock recorded, oldest first. */
 export async function getSkillPresetsMockAuditEvents() {
-  const pending = resolveServer()
-  return pending ? (await pending).auditEvents() : []
+  return (await resolveServer()).auditEvents()
 }
