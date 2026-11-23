@@ -36,6 +36,7 @@ import { useEditSkillPreset } from '../hooks/use-edit-skill-preset/use-edit-skil
 import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPreset } from '../hooks/use-skill-preset/use-skill-preset'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
+import { LoadError } from '../load-error/load-error'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { MockScenarioBanner } from '../mock-scenario-banner/mock-scenario-banner'
 import { SecurityFindingsSummary } from '../security-findings-summary/security-findings-summary'
@@ -609,7 +610,12 @@ function SkillPresetEditorPage() {
   const { organizationId = '', skillPresetId } = useParams({ strict: false })
   const search = useSearch({ strict: false }) as EditorSearch
   const { data: preset, isLoading: isPresetLoading, error: presetError } = useSkillPreset({ skillPresetId })
-  const { data: presets = [], isLoading: isListLoading } = useSkillPresets({ organizationId })
+  const {
+    data: presets = [],
+    isLoading: isListLoading,
+    error: listError,
+    refetch: refetchList,
+  } = useSkillPresets({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
 
   useDocumentTitle(`${skillPresetId ? 'Edit' : 'Create'} preset - Skills registry - Agents`)
@@ -626,7 +632,8 @@ function SkillPresetEditorPage() {
     )
   }
 
-  if (skillPresetId && (presetError || !preset)) {
+  // A failed background refetch keeps the cached preset: the form stays mounted, so the draft is kept.
+  if (skillPresetId && !preset) {
     return (
       <Section className="p-8">
         <Callout.Root color="red" role="alert">
@@ -640,6 +647,27 @@ function SkillPresetEditorPage() {
             </Callout.TextDescription>
           </Callout.Text>
         </Callout.Root>
+      </Section>
+    )
+  }
+
+  // Duplicate needs its source: never fall back to a blank form that looks like a copy.
+  if (search.from && !source) {
+    return (
+      <Section className="p-8">
+        {listError ? (
+          <LoadError title="The preset to copy could not be loaded" error={listError} onRetry={() => refetchList()} />
+        ) : (
+          <Callout.Root color="red" role="alert">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>The preset to copy was not found</Callout.TextHeading>
+              <Callout.TextDescription>It may have been deleted.</Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+        )}
       </Section>
     )
   }
