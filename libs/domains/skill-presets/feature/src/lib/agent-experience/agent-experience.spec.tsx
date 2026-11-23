@@ -371,7 +371,7 @@ describe('ConnectAgentModal', () => {
     ).toBeInTheDocument()
 
     await userEvent.click(screen.getByText('CLI'))
-    expect(screen.getByText('curl -s https://get.qovery.com | bash')).toBeInTheDocument()
+    expect(screen.getByText('curl -fsSL https://get.qovery.com | bash')).toBeInTheDocument()
     expect(screen.getByText('qovery auth')).toBeInTheDocument()
 
     await userEvent.click(screen.getByText('MCP server'))
