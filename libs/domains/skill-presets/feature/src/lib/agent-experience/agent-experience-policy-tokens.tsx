@@ -227,11 +227,7 @@ export function AgentExperiencePolicyTokens() {
     actorKind: 'POLICY_TOKEN',
   })
   // Deleted tokens are not in the list, but their calls stay in the audit log.
-  const {
-    data: month,
-    isInitialLoading: isMonthLoading,
-    isError: isMonthError,
-  } = useAgentActivity({
+  const { data: month, isInitialLoading: isMonthLoading } = useAgentActivity({
     organizationId,
     scope: 'organization',
     enabled: canManage && canSeeActivity,
@@ -405,11 +401,6 @@ export function AgentExperiencePolicyTokens() {
             ))}
           </Table.Body>
         </Table.Root>
-      )}
-      {canManage && canSeeActivity && isMonthError && (
-        <p className="text-xs text-neutral-subtle" data-testid="deleted-tokens-error">
-          Deleted tokens could not be loaded.
-        </p>
       )}
     </AgentExperiencePage>
   )

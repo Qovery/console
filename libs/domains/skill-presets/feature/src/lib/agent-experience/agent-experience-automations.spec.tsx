@@ -60,15 +60,25 @@ afterEach(() => {
   jest.restoreAllMocks()
 })
 
-it('lists only agent tasks, with their project, environment and service link', async () => {
+it('lists only agent tasks, with links to their projects, environments and services', async () => {
   renderWithProviders(<AgentExperienceAutomations />)
   expect(await screen.findByRole('link', { name: task.name })).toHaveAttribute(
     'href',
     '/organization/organization-1/project/project-1/environment/env-1/service/task-1/overview'
   )
-  expect(screen.getByText('Staging')).toBeInTheDocument()
-  expect(screen.getByText('Production')).toBeInTheDocument()
-  expect(screen.getAllByText('Reporting')).toHaveLength(2)
+  expect(screen.getByRole('link', { name: 'Staging' })).toHaveAttribute(
+    'href',
+    '/organization/organization-1/project/project-1/environment/env-1/overview'
+  )
+  expect(screen.getByRole('link', { name: 'Production' })).toHaveAttribute(
+    'href',
+    '/organization/organization-1/project/project-1/environment/env-2/overview'
+  )
+  const projectLinks = screen.getAllByRole('link', { name: 'Reporting' })
+  expect(projectLinks).toHaveLength(2)
+  projectLinks.forEach((link) =>
+    expect(link).toHaveAttribute('href', '/organization/organization-1/project/project-1/overview')
+  )
   expect(screen.queryByText('Web app')).not.toBeInTheDocument()
   expect(mockServices).toHaveBeenCalledTimes(1)
 })

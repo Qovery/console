@@ -114,8 +114,22 @@ export function AgentExperienceAutomations() {
                     {task.name}
                   </Link>
                 </Table.Cell>
-                <Table.Cell>{task.project_name}</Table.Cell>
-                <Table.Cell>{task.environment_name}</Table.Cell>
+                <Table.Cell>
+                  <Link
+                    to="/organization/$organizationId/project/$projectId/overview"
+                    params={{ organizationId, projectId: task.project_id }}
+                  >
+                    {task.project_name}
+                  </Link>
+                </Table.Cell>
+                <Table.Cell>
+                  <Link
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
+                    params={{ organizationId, projectId: task.project_id, environmentId: task.environment_id }}
+                  >
+                    {task.environment_name}
+                  </Link>
+                </Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>

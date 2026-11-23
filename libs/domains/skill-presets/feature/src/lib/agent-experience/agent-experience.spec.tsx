@@ -268,7 +268,6 @@ describe('AgentExperiencePolicyTokens', () => {
     const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
     expect(within(ciDeployer).getByText('Usage unavailable')).toBeInTheDocument()
     expect(screen.queryByText('No calls')).not.toBeInTheDocument()
-    expect(screen.getByTestId('deleted-tokens-error')).toHaveTextContent('Deleted tokens could not be loaded.')
   })
 
   it('does not show no calls while the usage loads', async () => {
