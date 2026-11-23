@@ -1,5 +1,4 @@
 import selectEvent from 'react-select-event'
-import { AGENTIC_WORKFLOW_TEMPLATES } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { AgentTaskEnvironmentModal } from './agent-task-environment-modal'
 
@@ -24,7 +23,7 @@ jest.mock('@qovery/domains/projects/feature', () => ({
   }),
 }))
 
-const props = { organizationId: 'org', template: AGENTIC_WORKFLOW_TEMPLATES[0], onClose: jest.fn() }
+const props = { organizationId: 'org', onClose: jest.fn() }
 const select = async (label: string, value: string) =>
   selectEvent.select(screen.getByLabelText(label), value, { container: document.body })
 
@@ -33,28 +32,12 @@ beforeEach(() => {
   mockEnvironments.mockReturnValue({ data: [{ id: 'env', name: 'Staging' }], isFetching: false, isError: false })
 })
 
-it('opens the selected template creation flow in the chosen environment', async () => {
-  const { userEvent } = renderWithProviders(<AgentTaskEnvironmentModal {...props} />)
-  expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
-  await select('Project', 'Project one')
-  await select('Environment', 'Staging')
-  await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
-  await waitFor(() =>
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-      params: { organizationId: 'org', projectId: 'p1', environmentId: 'env' },
-      search: { template: props.template.id },
-    })
-  )
-  expect(props.onClose).toHaveBeenCalled()
-})
-
 it('clears the environment when switching projects', async () => {
   renderWithProviders(<AgentTaskEnvironmentModal {...props} />)
   await select('Project', 'Project one')
   await select('Environment', 'Staging')
   await select('Project', 'Project two')
-  expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Open Automations' })).toBeDisabled()
 })
 
 it.each([
@@ -65,17 +48,7 @@ it.each([
   renderWithProviders(<AgentTaskEnvironmentModal {...props} />)
   await select('Project', 'Project one')
   expect(screen.getByText(new RegExp(message))).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
-})
-
-it.each([
-  [props.template, 'This project has no environments. Create one before adding an Agent Task.'],
-  [undefined, 'This project has no environments. Create one before opening Automations.'],
-])('names what the empty environment list blocks', async (template, message) => {
-  mockEnvironments.mockReturnValue({ data: [], isFetching: false, isError: false })
-  renderWithProviders(<AgentTaskEnvironmentModal organizationId="org" template={template} onClose={props.onClose} />)
-  await select('Project', 'Project one')
-  expect(screen.getByText(message)).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Open Automations' })).toBeDisabled()
 })
 
 it('opens Automations in the chosen environment without a template', async () => {

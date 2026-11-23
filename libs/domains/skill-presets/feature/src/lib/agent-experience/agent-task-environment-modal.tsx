@@ -2,17 +2,14 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { type AgenticWorkflowTemplate } from '@qovery/domains/services/feature'
 import { InputSelect, ModalCrud } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
 export function AgentTaskEnvironmentModal({
   organizationId,
-  template,
   onClose,
 }: {
   organizationId: string
-  template?: AgenticWorkflowTemplate
   onClose: () => void
 }) {
   const navigate = useNavigate()
@@ -22,32 +19,23 @@ export function AgentTaskEnvironmentModal({
   const projects = useProjects({ organizationId })
   const environments = useQuery({ ...queries.environments.list({ projectId }), enabled: Boolean(projectId) })
   const availableEnvironments = environments.data ?? []
-  const purpose = template ? 'adding an Agent Task' : 'opening Automations'
   const canContinue =
     !projects.isError && !environments.isError && availableEnvironments.some(({ id }) => id === environmentId)
 
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title={template ? 'Create Agent Task' : 'Open Automations'}
-        description={template?.title}
-        submitLabel={template ? 'Continue' : 'Open Automations'}
+        title="Choose an environment"
+        description="Create the agent task in the environment where it should run."
+        submitLabel="Open Automations"
         submitDisabled={!canContinue}
         onClose={onClose}
         onSubmit={methods.handleSubmit(async ({ projectId, environmentId }) => {
           if (!canContinue) return
-          if (template) {
-            await navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-              params: { organizationId, projectId, environmentId },
-              search: { template: template.id },
-            })
-          } else {
-            await navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
-              params: { organizationId, projectId, environmentId },
-            })
-          }
+          await navigate({
+            to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
+            params: { organizationId, projectId, environmentId },
+          })
           onClose()
         })}
       >
@@ -78,7 +66,9 @@ export function AgentTaskEnvironmentModal({
           ) : (
             !projects.isLoading &&
             !projects.data?.length && (
-              <p className="text-sm text-neutral-subtle">Create a project and an environment before {purpose}.</p>
+              <p className="text-sm text-neutral-subtle">
+                Create a project and an environment before creating an agent task.
+              </p>
             )
           )}
           <Controller
@@ -106,7 +96,7 @@ export function AgentTaskEnvironmentModal({
               !environments.isFetching &&
               !availableEnvironments.length && (
                 <p className="text-sm text-neutral-subtle">
-                  This project has no environments. Create one before {purpose}.
+                  This project has no environments. Create one before creating an agent task.
                 </p>
               )
             ))}

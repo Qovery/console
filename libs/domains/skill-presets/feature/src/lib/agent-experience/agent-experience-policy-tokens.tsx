@@ -285,16 +285,12 @@ export function AgentExperiencePolicyTokens() {
         >
           <span className="flex items-center gap-2">
             <CreatePolicyTokenButton organizationId={organizationId} secondary />
-            <Link
-              as="button"
-              to="/organization/$organizationId/agent-experience/automate"
-              params={{ organizationId }}
-              size="md"
-              variant="outline"
-              color="neutral"
+            <ExternalLink
+              href="https://www.qovery.com/docs/configuration/organization/policy-examples/overview"
+              size="sm"
             >
-              Start from a job
-            </Link>
+              Policy examples
+            </ExternalLink>
           </span>
         </EmptyState>
       ) : (

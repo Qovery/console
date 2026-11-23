@@ -53,6 +53,16 @@ beforeEach(() => {
 })
 
 describe('AgentExperienceNav', () => {
+  it('shows Automations only when Agent Tasks are enabled', () => {
+    const { unmount } = renderWithProviders(<AgentExperienceNav />)
+    expect(screen.queryByRole('link', { name: 'Automations' })).not.toBeInTheDocument()
+    unmount()
+
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
+    renderWithProviders(<AgentExperienceNav />)
+    expect(screen.getByRole('link', { name: 'Automations' })).toBeInTheDocument()
+  })
+
   it.each(['', '/preset-1', '/preset-1/history', '/new'])('shows one Skills registry entry, current on %s', (path) => {
     jest.mocked(useLocation).mockReturnValue({
       pathname: `/organization/organization-1/agent-experience/skill-presets${path}`,
