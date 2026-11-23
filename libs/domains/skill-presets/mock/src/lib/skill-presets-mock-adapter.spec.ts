@@ -39,15 +39,26 @@ describe('installSkillPresetsMock', () => {
 
     const members = await api.get(`/organization/${ORG}/member`)
     const roles = await api.get(`/organization/${ORG}/availableRole`)
-    const tokens = await api.get(`/organization/${ORG}/policyApiToken`)
     const organization = await api.get(`/organization/${ORG}`)
 
     expect(members.data.results[0]).toEqual(
       expect.objectContaining({ id: expect.any(String), email: expect.any(String), role_name: expect.any(String) })
     )
     expect(roles.data.results).toContainEqual(expect.objectContaining({ name: 'Admin' }))
-    expect(tokens.data.results.every(({ opa_policy }: { opa_policy?: string }) => Boolean(opa_policy))).toBe(true)
     expect(organization.data).toEqual(expect.objectContaining({ id: ORG, ai_features_enabled: true }))
+  })
+
+  it('lists and deletes the mock organization policy tokens, each with its policy', async () => {
+    useScenario('agent-experience-active')
+    const api = axios.create()
+    installSkillPresetsMock(api, 'api', { passthrough: false })
+
+    const { results } = (await api.get(`/organization/${ORG}/policyApiToken`)).data
+    expect(results.length).toBeGreaterThan(0)
+    expect(results.every(({ opa_policy }: { opa_policy?: string }) => opa_policy?.includes('default allow'))).toBe(true)
+
+    await api.delete(`/organization/${ORG}/policyApiToken/${results[0].id}`)
+    expect((await api.get(`/organization/${ORG}/policyApiToken`)).data.results).toHaveLength(results.length - 1)
   })
 
   it('turns AI features on through the organization endpoint', async () => {
