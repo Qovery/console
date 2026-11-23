@@ -128,6 +128,35 @@ function CopyValue({ label, value, copyLabel }: { label: string; value: string; 
 }
 
 /**
+ * For members: who can create the policy token. The members and roles are only read here, when a
+ * member opens a job, never for owners and admins.
+ */
+function MemberNote({ organizationId }: { organizationId: string }) {
+  const { data: assignees } = useSkillPresetAssignees({ organizationId })
+  const adminRoleIds = new Set(
+    (assignees?.roles ?? []).filter(({ name }) => ['owner', 'admin'].includes(name.toLowerCase())).map(({ id }) => id)
+  )
+  const adminNames = (assignees?.members ?? [])
+    .filter(({ role_id }) => adminRoleIds.has(role_id ?? ''))
+    .map(({ name }) => name)
+  return (
+    <Callout.Root color="neutral" data-testid="agent-job-member-note">
+      <Callout.Icon>
+        <Icon iconName="lock-keyhole" iconStyle="regular" />
+      </Callout.Icon>
+      <Callout.Text>
+        <Callout.TextDescription>
+          Only owners and admins create policy tokens.
+          {adminNames.length > 0
+            ? ` Send this job to one of them: ${adminNames.join(', ')}.`
+            : ' Send this job to one of them.'}
+        </Callout.TextDescription>
+      </Callout.Text>
+    </Callout.Root>
+  )
+}
+
+/**
  * How the job runs without anyone: first its policy token, then a scheduler. The Agent Task form is
  * not prefilled from here: it only takes its own templates, and the Qovery MCP server needs the token
  * value, shown once at creation. So the steps give each value to copy.
@@ -136,13 +165,11 @@ function RunOnItsOwn({
   job,
   canManage,
   organizationId,
-  adminNames,
   onOpenEnvironment,
 }: {
   job: AgentJob
   canManage: boolean
   organizationId: string
-  adminNames: string[]
   onOpenEnvironment: () => void
 }) {
   return (
@@ -161,21 +188,7 @@ function RunOnItsOwn({
               shown once: keep it for the next step.
               {canManage && ' Use Create policy token at the bottom of this panel.'}
             </span>
-            {!canManage && (
-              <Callout.Root color="neutral" data-testid="agent-job-member-note">
-                <Callout.Icon>
-                  <Icon iconName="lock-keyhole" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <Callout.TextDescription>
-                    Only owners and admins create policy tokens.
-                    {adminNames.length > 0
-                      ? ` Send this job to one of them: ${adminNames.join(', ')}.`
-                      : ' Send this job to one of them.'}
-                  </Callout.TextDescription>
-                </Callout.Text>
-              </Callout.Root>
-            )}
+            {!canManage && <MemberNote organizationId={organizationId} />}
           </span>
         </li>
         <li className="flex items-start gap-3">
@@ -328,14 +341,6 @@ function JobDetailsPanel({
   onNewJob: () => void
 }) {
   const { openModal, closeModal } = useModal()
-  const { data: assignees } = useSkillPresetAssignees({ organizationId })
-  // Who a member can send the job to: the organization's owners and admins.
-  const adminRoleIds = new Set(
-    (assignees?.roles ?? []).filter(({ name }) => ['owner', 'admin'].includes(name.toLowerCase())).map(({ id }) => id)
-  )
-  const adminNames = (assignees?.members ?? [])
-    .filter(({ role_id }) => adminRoleIds.has(role_id ?? ''))
-    .map(({ name }) => name)
   if (!job) return null
   const createToken = () => {
     // The sheet is a modal dialog: close it first so the create form gets the focus.
@@ -431,7 +436,6 @@ function JobDetailsPanel({
                   job={job}
                   canManage={canManage}
                   organizationId={organizationId}
-                  adminNames={adminNames}
                   onOpenEnvironment={() => {
                     onOpenChange(false)
                     openModal({

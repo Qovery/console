@@ -4,6 +4,7 @@ import { type ReactNode } from 'react'
 import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import * as copilotStatus from '../hooks/use-copilot-status/use-copilot-status'
+import * as skillPresetAssignees from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { AgentExperienceAutomate } from './agent-experience-automate'
 import { AgentExperienceCopilot, OnOffBadge, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
@@ -217,6 +218,17 @@ describe('Automate, recurring agents', () => {
     expect(run.getByTestId('route-coding-agent').compareDocumentPosition(run.getByTestId('route-agent-task'))).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING
     )
+  })
+
+  it('reads the members and roles only for members, not for owners and admins', async () => {
+    useScenario('agent-experience-active')
+    const spy = jest.spyOn(skillPresetAssignees, 'useSkillPresetAssignees')
+    const { userEvent } = renderWithProviders(<AgentExperienceAutomate />)
+
+    await userEvent.click(screen.getByTestId('agent-job-roll-back-bad-release'))
+    expect(await screen.findByTestId('agent-job-run')).toBeInTheDocument()
+    expect(spy).not.toHaveBeenCalled()
+    spy.mockRestore()
   })
 
   it('shows members the catalog, with no action they cannot take, and who to ask', async () => {
