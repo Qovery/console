@@ -14,7 +14,6 @@ import { match } from 'ts-pattern'
 import { type SkillPresetResponse, type SkillPresetRevisionResponse } from '@qovery/domains/skill-presets/data-access'
 import {
   Avatar,
-  Badge,
   Button,
   DropdownMenu,
   EmptyState,
@@ -35,7 +34,6 @@ import { LoadError } from '../load-error/load-error'
 import { SkillPresetsLayout } from '../skill-presets-layout/skill-presets-layout'
 import { PresetPreviewPanel } from '../skill-presets-preview/preset-preview-panel'
 import { baseLabel } from '../utils/qovery-skills'
-import { isTemplate } from '../utils/resolve-preset'
 import { AssignmentChips } from './assignment-chips'
 
 const { Table } = TablePrimitives
@@ -100,7 +98,6 @@ function PresetRow({
   const editedBy = lastRevision?.edited_by ?? preset.creator_name ?? 'Unknown'
   // Revisions name the editor by email: show the member's name, the email in a tooltip, like Audit logs.
   const editor = assignees?.members.find(({ email }) => email === editedBy)
-  const template = isTemplate(preset)
   const openPreset = () =>
     navigate({
       to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
@@ -132,21 +129,12 @@ function PresetRow({
                 </span>
               </Tooltip>
             )}
-            {template && (
-              <Badge variant="surface" size="base" className="font-medium">
-                Template
-              </Badge>
-            )}
           </span>
         </div>
       </Table.Cell>
       <Table.Cell className="whitespace-nowrap">{baseLabel(preset.base)}</Table.Cell>
       <Table.Cell className="h-auto py-3">
-        {template ? (
-          <span className="text-neutral-subtle">Templates are not assigned</span>
-        ) : (
-          <AssignmentChips assignedTo={preset.assigned_to} assignees={assignees} />
-        )}
+        <AssignmentChips assignedTo={preset.assigned_to} assignees={assignees} />
       </Table.Cell>
       <Table.Cell className="h-auto py-3">
         <div className="flex items-center gap-2 whitespace-nowrap">
