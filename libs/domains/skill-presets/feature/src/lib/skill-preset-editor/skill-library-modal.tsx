@@ -65,7 +65,14 @@ export function SkillLibraryModal({ skills, presentSkillNames, onAdd, onClose }:
         onSubmit={methods.handleSubmit(() => onAdd(skills.filter(({ id }) => selected.includes(id))))}
       >
         <div className="flex flex-col gap-4">
-          <InputSearch placeholder="Search skills" value={search} onChange={setSearch} ariaLabel="Search skills" />
+          {/* Enter in the search field would submit the modal and add the selection without a click on Add. */}
+          <div
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') event.preventDefault()
+            }}
+          >
+            <InputSearch placeholder="Search skills" value={search} onChange={setSearch} ariaLabel="Search skills" />
+          </div>
           <div className="flex max-h-[55vh] flex-col gap-4 overflow-y-auto">
             {GROUPS.map((group) => {
               const groupSkills = filtered.filter((skill) => skill.group === group.value)
