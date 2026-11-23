@@ -20,7 +20,11 @@ export const MCP_SETUPS: {
     id: 'codex',
     name: 'Codex',
     steps: [
-      { title: 'Add this line to your config.toml', command: 'mcp_oauth_callback_port = 4242', prompt: false },
+      {
+        title: 'Add this line at the top of ~/.codex/config.toml, above any [section]',
+        command: 'mcp_oauth_callback_port = 4242',
+        prompt: false,
+      },
       { title: 'Run this command', command: `codex mcp add qovery --url '${MCP_URL}'` },
     ],
   },

@@ -376,6 +376,12 @@ describe('ConnectAgentModal', () => {
 
     await userEvent.click(screen.getByText('MCP server'))
     expect(screen.getByText(/claude mcp add --transport http qovery/)).toBeInTheDocument()
+
+    // A top-level TOML key below a [section] header would belong to that section and be ignored.
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Coding agent' }), 'codex')
+    expect(
+      screen.getByText('Add this line at the top of ~/.codex/config.toml, above any [section]')
+    ).toBeInTheDocument()
   })
 
   it('closes on Close', async () => {
