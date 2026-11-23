@@ -27,7 +27,7 @@ export function OnOffBadge({ on, label }: { on: boolean; label?: string }) {
   ) : (
     <Badge variant="outline" color="neutral" className="gap-1">
       <Icon iconName="circle" iconStyle="regular" aria-hidden="true" />
-      Off
+      {label ?? 'Off'}
     </Badge>
   )
 }
@@ -101,10 +101,29 @@ export function AgentExperienceCopilot() {
           </span>
           {copilot.isLoading ? (
             <Skeleton width={160} height={20} show />
+          ) : copilot.error ? (
+            <Badge variant="outline" color="neutral" className="gap-1">
+              <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
+              Unknown
+            </Badge>
           ) : (
             <OnOffBadge on={aiOn} label={aiStatusLabel(aiFeaturesEnabled, copilot.enabled, copilot.readOnly)} />
           )}
         </div>
+
+        {/* A failed config read is not "off": say so, and offer no switch until it loads. */}
+        {copilot.error && (
+          <Callout.Root color="red" data-testid="copilot-error">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextDescription>
+                Unable to load the Copilot status. Reload the page to try again.
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+        )}
 
         {isRoleLoading ? (
           <Skeleton height={160} className="w-full" show />
@@ -121,7 +140,7 @@ export function AgentExperienceCopilot() {
           </Callout.Root>
         ) : (
           <>
-            {!copilot.isLoading && !aiOn && (
+            {!copilot.isLoading && !copilot.error && !aiOn && (
               <Section
                 aria-labelledby="copilot-turn-on"
                 className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"
@@ -146,7 +165,7 @@ export function AgentExperienceCopilot() {
                 </Button>
               </Section>
             )}
-            {copilot.enabled && organization && copilot.ready && (
+            {copilot.enabled && !copilot.error && organization && copilot.ready && (
               // The existing Copilot settings: access source, access mode, scheduled tasks, and turning it off.
               <AICopilotSettings organization={organization} embedded />
             )}

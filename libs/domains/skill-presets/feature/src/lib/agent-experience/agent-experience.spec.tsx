@@ -3,8 +3,9 @@ import { configure } from '@testing-library/react'
 import { type ReactNode } from 'react'
 import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import * as copilotStatus from '../hooks/use-copilot-status/use-copilot-status'
 import { AgentExperienceAutomate } from './agent-experience-automate'
-import { AgentExperienceCopilot, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
+import { AgentExperienceCopilot, OnOffBadge, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
 import { ConnectAgentModal } from './connect-agent-modal'
 
@@ -86,6 +87,29 @@ describe('AgentExperienceCopilot', () => {
     expect(aiStatusLabel(false, false, true)).toBe('Off')
     expect(copilotStateLabel(true, false)).toBe('On, read-write')
     expect(copilotStateLabel(false, true)).toBe('Off')
+  })
+
+  it('names a partial state on the off badge', () => {
+    renderWithProviders(<OnOffBadge on={false} label={aiStatusLabel(true, false, true)} />)
+    expect(screen.getByText('AI features on, Copilot off')).toBeInTheDocument()
+  })
+
+  it('says the status is unknown and offers no switch when the Copilot config fails to load', async () => {
+    useScenario('ai-features-off')
+    const spy = jest.spyOn(copilotStatus, 'useCopilotStatus').mockReturnValue({
+      ready: true,
+      enabled: false,
+      readOnly: true,
+      isLoading: false,
+      error: new Error('Network Error'),
+    } as ReturnType<typeof copilotStatus.useCopilotStatus>)
+    renderWithProviders(<AgentExperienceCopilot />)
+
+    expect(await screen.findByTestId('copilot-error')).toHaveTextContent('Unable to load the Copilot status.')
+    expect(within(screen.getByTestId('copilot-state')).getByText('Unknown')).toBeInTheDocument()
+    expect(within(screen.getByTestId('copilot-state')).queryByText('Off')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
+    spy.mockRestore()
   })
 
   it('shows members the state only, with no switch', async () => {
