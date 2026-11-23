@@ -28,6 +28,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { scrollToElement } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 import { AI_FEATURES_OFF_TOOLTIP, AiFeaturesNotice } from '../ai-features-notice/ai-features-notice'
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
@@ -43,7 +44,6 @@ import { SecurityFindingsSummary } from '../security-findings-summary/security-f
 import { SkillPresetsAdminOnly } from '../skill-presets-layout/skill-presets-layout'
 import { PresetPreviewPanel } from '../skill-presets-preview/preset-preview-panel'
 import { isTemplate } from '../utils/resolve-preset'
-import { scrollToElement } from '../utils/scroll'
 import {
   type FindingTarget,
   findingFieldId,

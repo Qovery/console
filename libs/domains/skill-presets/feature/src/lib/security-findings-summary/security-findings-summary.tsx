@@ -1,7 +1,7 @@
 import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
+import { scrollToElement } from '@qovery/shared/util-js'
 import { FindingSourceLabel } from '../finding-list/finding-source-label'
-import { scrollToElement } from '../utils/scroll'
 import { findingFieldId, findingLocationLabel, findingTarget } from '../utils/skill-preset-findings'
 
 export interface SecurityFindingsSummaryProps {
