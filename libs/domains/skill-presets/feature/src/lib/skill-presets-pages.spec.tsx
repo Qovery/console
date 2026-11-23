@@ -240,6 +240,8 @@ describe('AI features off', () => {
     await userEvent.click(
       await screen.findByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' })
     )
+    // Submitting waits for the Copilot status, so an enabled Copilot is never reset to read-only.
+    await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
     await userEvent.click(screen.getByTestId('submit-button'))
 
     await waitForElementToBeRemoved(() => screen.queryByTestId('ai-features-notice'))
