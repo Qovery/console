@@ -587,6 +587,15 @@ describe('SkillPresetEditorForm', () => {
     expect(skills).toContainEqual({ skill_name: 'qovery-speedup', mode: 'DISABLE' })
   })
 
+  it('finds a member by email', async () => {
+    const { userEvent } = renderEditor()
+
+    await userEvent.type(screen.getByLabelText('Members'), 'taylor.brooks@')
+
+    expect(await screen.findByText('Taylor Brooks')).toBeInTheDocument()
+    expect(screen.queryByText('Priya Shah')).not.toBeInTheDocument()
+  })
+
   it('does not offer the Owner role as a target', async () => {
     const { userEvent } = renderWithProviders(
       <SkillPresetEditorForm
