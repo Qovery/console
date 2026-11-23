@@ -37,13 +37,6 @@ export function resolvePresetFor<T extends AssignablePreset>(
   return { source: 'QOVERY_DEFAULT', preset: null }
 }
 
-export const RESOLUTION_SOURCE_LABELS: Record<SkillPresetResolutionSource, string> = {
-  USER: 'Assigned to the member',
-  ROLE: 'From their role',
-  ORGANIZATION: 'Organization default',
-  QOVERY_DEFAULT: 'No preset: Qovery skills as published',
-}
-
 /**
  * Who would receive [draft] once saved, among all members: members it would win for, given the
  * other presets' assignments.
@@ -58,26 +51,6 @@ export function membersReceiving(
     ({ id, role_id }) =>
       resolvePresetFor(presets, { userId: id, roleId: effectiveRoleId(role_id, roles) }).preset?.id === draft.id
   )
-}
-
-/** Targets of [assignedTo] that another preset already holds: q-core answers 409 for them. */
-export function assignmentConflicts(
-  assignedTo: SkillPresetAssignedTo,
-  otherPresets: AssignablePreset[],
-  selfId?: string
-) {
-  const others = otherPresets.filter(({ id }) => id !== selfId)
-  return {
-    organizationDefault: assignedTo.organization_default
-      ? others.find(({ assigned_to }) => assigned_to.organization_default) ?? null
-      : null,
-    roles: assignedTo.role_ids
-      .map((roleId) => ({ roleId, preset: others.find(({ assigned_to }) => assigned_to.role_ids.includes(roleId)) }))
-      .filter((conflict): conflict is { roleId: string; preset: AssignablePreset } => Boolean(conflict.preset)),
-    users: assignedTo.user_ids
-      .map((userId) => ({ userId, preset: others.find(({ assigned_to }) => assigned_to.user_ids.includes(userId)) }))
-      .filter((conflict): conflict is { userId: string; preset: AssignablePreset } => Boolean(conflict.preset)),
-  }
 }
 
 /** Templates are starting points admins copy: q-core never resolves them for anyone. */
