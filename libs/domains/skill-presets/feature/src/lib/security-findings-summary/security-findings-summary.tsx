@@ -27,7 +27,8 @@ const focusField = (finding: SkillPresetFinding) => {
  * that nothing was saved.
  */
 export function SecurityFindingsSummary({ findings }: SecurityFindingsSummaryProps) {
-  const lineCount = findings.length
+  // A line can break several rules, or a rule and the model review: count it once.
+  const lineCount = new Set(findings.map(({ location, line }) => `${location}:${line}`)).size
 
   return (
     <Callout.Root color="red" role="alert" aria-labelledby="skill-preset-findings-title">
