@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { twMerge } from '@qovery/shared/util-js'
+import { isTouchScreen, twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputTextProps {
@@ -28,6 +28,8 @@ export interface InputTextProps {
   placeholder?: string
   autoFocus?: boolean
   autoComplete?: string
+  // Picks the virtual keyboard on phones (for example 'url' or 'email') without native form validation
+  inputMode?: 'text' | 'email' | 'url' | 'numeric' | 'decimal' | 'tel' | 'search'
 }
 
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function InputText(props, ref) {
@@ -48,6 +50,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
     placeholder,
     autoFocus,
     autoComplete = 'off',
+    inputMode,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -137,8 +140,10 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               readOnly={readOnly}
               value={currentValue}
               placeholder={placeholder}
-              autoFocus={autoFocus}
+              // On phones the keyboard would open over half the screen as soon as the form appears
+              autoFocus={autoFocus && !isTouchScreen()}
               autoComplete={autoComplete}
+              inputMode={inputMode}
               onChange={(e) => {
                 if (onChange) onChange(e)
                 setCurrentValue(e.currentTarget.value)

@@ -1,17 +1,24 @@
 import { useParams, useRouter } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
 import { CreateOrganizationModal, useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { sortProjectsByFavorite, useFavoriteProjects, useProjects } from '@qovery/domains/projects/feature'
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { Avatar, useModal } from '@qovery/shared/ui'
+import { useHorizontalOverflowFade } from '@qovery/shared/util-hooks'
+import { scrollIntoViewHorizontally, twMerge } from '@qovery/shared/util-js'
 import { Separator } from '../header'
 import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
   const { openModal, closeModal } = useModal()
+  const {
+    ref: scrollContainerRef,
+    update: updateOverflowFade,
+    fadeClassName: overflowFadeClassName,
+  } = useHorizontalOverflowFade<HTMLDivElement>()
   const {
     organizationId = '',
     clusterId = '',
@@ -187,14 +194,38 @@ export function Breadcrumbs() {
     })
   }
 
+  const currentScopeId = breadcrumbData[breadcrumbData.length - 1]?.item.id
+  useLayoutEffect(() => {
+    // When the trail overflows, scroll the current scope (and the separator before it) into view,
+    // again after a resize or rotation changes how much of the trail fits
+    const scrollToCurrentScope = () => {
+      const container = scrollContainerRef.current
+      const currentScope = container?.lastElementChild
+      if (!container || !(currentScope instanceof HTMLElement)) return
+      scrollIntoViewHorizontally(container, currentScope, { align: 'start', margin: 24 })
+      updateOverflowFade()
+    }
+    scrollToCurrentScope()
+    window.addEventListener('resize', scrollToCurrentScope)
+    return () => window.removeEventListener('resize', scrollToCurrentScope)
+  }, [currentScopeId, scrollContainerRef, updateOverflowFade])
+
   return (
-    <div className="no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap">
+    <div
+      ref={scrollContainerRef}
+      onScroll={updateOverflowFade}
+      className={twMerge(
+        'no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap',
+        overflowFadeClassName
+      )}
+    >
       {breadcrumbData.map((data, index) => (
         <div
           key={data.item.id}
           className={
             index === breadcrumbData.length - 1
-              ? 'flex min-w-0 flex-1 items-center gap-2'
+              ? // Below md the current scope keeps at least 8rem; the trail scrolls when the parents leave less room
+                'flex min-w-[8rem] shrink items-center gap-2 md:min-w-0 md:flex-1'
               : 'flex shrink-0 items-center gap-2'
           }
         >

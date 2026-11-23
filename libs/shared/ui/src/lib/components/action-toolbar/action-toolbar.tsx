@@ -4,7 +4,8 @@ import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'reac
 import { twMerge } from '@qovery/shared/util-js'
 import { buttonVariants } from '../button-primitive/button-primitive'
 
-const toolbarButtonVariants = cva(['active:scale-100'], {
+// Toolbar buttons touch each other: their touch halo only extends vertically so neighbours' tap areas never overlap
+const toolbarButtonVariants = cva(['active:scale-100', '[@media(pointer:coarse)]:after:inset-x-0'], {
   variants: {
     variant: {
       outline: [],

@@ -125,5 +125,6 @@ export * from './lib/utils/toast'
 export * from './lib/utils/toast-error'
 
 export * from './lib/utils/ansi'
+export * from './lib/utils/mobile-layout'
 export * from './lib/components/deployment-action/deployment-action'
 export * from './lib/components/summary-value/summary-value'

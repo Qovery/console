@@ -1,4 +1,4 @@
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { mockPointerCoarse, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import Tooltip, { type TooltipProps } from './tooltip'
 
 const props: TooltipProps = {
@@ -6,8 +6,74 @@ const props: TooltipProps = {
 }
 
 describe('Tooltip', () => {
+  let restorePointer: () => void = () => undefined
+  const mockPointer = (coarse: boolean) => {
+    restorePointer = mockPointerCoarse(coarse)
+  }
+
+  afterEach(() => {
+    restorePointer()
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<Tooltip {...props} />)
     expect(baseElement).toBeTruthy()
+  })
+
+  it('opens on tap on touch screens when the trigger is not interactive', async () => {
+    mockPointer(true)
+    const { userEvent } = renderWithProviders(
+      <Tooltip content="Role description">
+        <span>info</span>
+      </Tooltip>
+    )
+
+    await userEvent.click(screen.getByText('info'))
+
+    expect(await screen.findAllByText('Role description')).not.toHaveLength(0)
+  })
+
+  it('closes on a tap outside', async () => {
+    mockPointer(true)
+    const { userEvent } = renderWithProviders(
+      <div>
+        <Tooltip content="Role description">
+          <span>info</span>
+        </Tooltip>
+        <p>elsewhere</p>
+      </div>
+    )
+
+    await userEvent.click(screen.getByText('info'))
+    expect(await screen.findAllByText('Role description')).not.toHaveLength(0)
+
+    await userEvent.click(screen.getByText('elsewhere'))
+    await waitFor(() => expect(screen.queryByText('Role description')).not.toBeInTheDocument())
+  })
+
+  it('does not open on tap when the trigger is a button', async () => {
+    mockPointer(true)
+    const { userEvent } = renderWithProviders(
+      <Tooltip content="Copy value">
+        <button type="button">copy</button>
+      </Tooltip>
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'copy' }))
+
+    expect(screen.queryByText('Copy value')).not.toBeInTheDocument()
+  })
+
+  it('does not open on click with a mouse', async () => {
+    mockPointer(false)
+    const { userEvent } = renderWithProviders(
+      <Tooltip content="Role description">
+        <span>info</span>
+      </Tooltip>
+    )
+
+    await userEvent.click(screen.getByText('info'))
+
+    expect(screen.queryByText('Role description')).not.toBeInTheDocument()
   })
 })

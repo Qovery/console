@@ -1,4 +1,4 @@
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { mockPointerCoarse, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import InputText, { type InputTextProps } from './input-text'
 
 describe('InputText', () => {
@@ -94,5 +94,17 @@ describe('InputText', () => {
     expect(screen.getByText(props.label)).toHaveClass('!transition-none')
 
     await waitFor(() => expect(screen.getByText(props.label)).not.toHaveClass('!transition-none'))
+  })
+
+  it('should focus the input on mount when autoFocus is set', () => {
+    renderWithProviders(<InputText {...props} autoFocus />)
+    expect(screen.getByRole('textbox')).toHaveFocus()
+  })
+
+  it('should not focus the input on mount on touch screens, so the virtual keyboard stays closed', () => {
+    const restorePointer = mockPointerCoarse()
+    renderWithProviders(<InputText {...props} autoFocus />)
+    expect(screen.getByRole('textbox')).not.toHaveFocus()
+    restorePointer()
   })
 })

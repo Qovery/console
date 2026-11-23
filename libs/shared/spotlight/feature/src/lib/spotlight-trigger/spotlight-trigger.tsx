@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { Icon, Kbd } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
@@ -24,8 +25,14 @@ const SpotlightTriggerBase = ({ organizationId }: { organizationId: string }) =>
 
   return (
     <>
+      {/* Below md the trigger is a square search icon so search stays reachable on phones */}
       <button
-        className="group flex h-7 w-[200px] items-center gap-1.5 rounded-md border border-neutral bg-surface-neutral pl-2 pr-1.5 text-ssm transition-colors hover:border-neutral-component"
+        aria-label="Search"
+        className={clsx(
+          'group flex h-7 items-center gap-1.5 rounded-md border border-neutral bg-surface-neutral text-ssm transition-colors hover:border-neutral-component max-md:w-7 max-md:justify-center md:w-[200px] md:pl-2 md:pr-1.5',
+          // Touch screens: an invisible halo gives the 28px icon a 44px tall tap target without reaching its neighbours
+          "relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-x-1 [@media(pointer:coarse)]:after:-inset-y-2 [@media(pointer:coarse)]:after:content-['']"
+        )}
         onClick={() => setOpenSpotlight(!openSpotlight)}
       >
         <Icon
@@ -33,8 +40,8 @@ const SpotlightTriggerBase = ({ organizationId }: { organizationId: string }) =>
           iconStyle="regular"
           className="text-xs text-neutral-subtle transition-colors group-hover:text-neutral"
         />
-        <span className="text-neutral-subtle">Search</span>
-        <div className="ml-auto flex gap-1 text-neutral-subtle">
+        <span className="text-neutral-subtle max-md:hidden">Search</span>
+        <div className="ml-auto flex gap-1 text-neutral-subtle max-md:hidden">
           <Kbd className={`px-1 pt-[1px] ${metaKey === 'Ctrl' ? 'text-2xs' : 'text-sm'}`}>{metaKey}</Kbd>
           <Kbd>
             <svg xmlns="http://www.w3.org/2000/svg" width="6" height="8" fill="none" viewBox="0 0 6 8">
