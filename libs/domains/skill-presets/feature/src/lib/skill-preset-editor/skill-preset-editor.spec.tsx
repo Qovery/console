@@ -155,6 +155,7 @@ describe('SkillPresetEditorForm', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
 
     expect(screen.getByText('Enter a name.')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Name', exact: true })).toHaveFocus()
     expect(mockCreateSkillPreset).not.toHaveBeenCalled()
   })
 
@@ -544,6 +545,16 @@ describe('SkillPresetEditorForm', () => {
       description: 'Runbook. Use when on call.',
       content: 'Steps.',
     })
+  })
+
+  it('focuses the first Markdown field that needs a change', async () => {
+    const { userEvent } = renderEditor()
+    const row = screen.getByTestId('qovery-skill-qovery-deploy')
+    await userEvent.click(within(row).getByRole('radio', { name: 'Add instructions' }))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
+
+    expect(screen.getByRole('textbox', { name: 'Team instructions for qovery-deploy' })).toHaveFocus()
   })
 
   it('drops the errors of fields a Qovery skill no longer shows', async () => {

@@ -142,6 +142,7 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
             render={({ field, fieldState }) => (
               <MarkdownField
                 id={findingFieldId({ field: 'skillContent', skillName })}
+                name={field.name}
                 label={choice === 'OVERLAY' ? `Team instructions for ${skillName}` : `Replacement for ${skillName}`}
                 hint={
                   choice === 'OVERLAY'

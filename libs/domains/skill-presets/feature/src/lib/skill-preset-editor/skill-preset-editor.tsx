@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Link, useBlocker, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type ReactNode, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
-import { Controller, FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
+import { Controller, type FieldErrors, FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import {
   SKILL_PRESET_LIMITS,
   SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
@@ -274,12 +274,17 @@ export function SkillPresetEditorForm({
     setConflictDetail(null)
   }
 
-  const onInvalid = () => {
-    const [firstError] = Object.keys(flattenFieldErrors(methods.formState.errors))
+  // The errors come as an argument: the form state read here is still the one from before the submit.
+  const onInvalid = (invalidFields: FieldErrors<SkillPresetFormValues>) => {
+    const [firstError] = Object.keys(flattenFieldErrors(invalidFields))
     if (!firstError) return
-    // Text inputs take focus through react-hook-form; Monaco fields are scrolled to.
-    methods.setFocus(firstError as Parameters<typeof methods.setFocus>[0])
-    scrollToElement(document.querySelector(`[name="${firstError}"]`))
+    // The fields are controlled and pass no ref to react-hook-form, so focus goes through the DOM: the
+    // input of that name, or the textarea Monaco reads its keyboard input from.
+    const markdownField = document.querySelector(`[data-field-name="${firstError}"]`)
+    const target = markdownField ?? document.querySelector(`[name="${firstError}"]`)
+    const focusable = markdownField ? markdownField.querySelector('textarea') : target
+    if (focusable instanceof HTMLElement) focusable.focus({ preventScroll: true })
+    scrollToElement(target)
   }
 
   const onValid = async (values: SkillPresetFormValues) => {
@@ -524,6 +529,7 @@ export function SkillPresetEditorForm({
                   render={({ field, fieldState }) => (
                     <MarkdownField
                       id={findingFieldId({ field: 'teamContext' })}
+                      name={field.name}
                       label="Team context"
                       hideLabel
                       value={field.value}

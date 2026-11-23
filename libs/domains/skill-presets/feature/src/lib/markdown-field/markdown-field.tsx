@@ -10,6 +10,8 @@ import { findingSourceLabel } from '../utils/skill-preset-findings'
 
 export interface MarkdownFieldProps {
   id: string
+  /** The form field path: lets a failed submit find this field, which has no input of that name. */
+  name?: string
   label: string
   hideLabel?: boolean
   value: string
@@ -71,6 +73,7 @@ function describeTextarea(editorInstance: editor.IStandaloneCodeEditor, describe
 
 export function MarkdownField({
   id,
+  name,
   label,
   hideLabel = false,
   value,
@@ -117,7 +120,7 @@ export function MarkdownField({
   }
 
   return (
-    <div className={twMerge('flex flex-col gap-1.5', className)} id={id} data-testid={id}>
+    <div className={twMerge('flex flex-col gap-1.5', className)} id={id} data-testid={id} data-field-name={name}>
       <div className={hideLabel ? 'sr-only' : undefined}>
         <span className={hideLabel ? 'sr-only' : 'text-sm font-medium text-neutral'} id={`${id}-label`}>
           {label}
