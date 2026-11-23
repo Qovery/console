@@ -53,6 +53,7 @@ describe('AgentExperienceCopilot', () => {
     renderWithProviders(<AgentExperienceCopilot />)
 
     expect(screen.getByRole('heading', { name: 'What the Copilot does' })).toBeInTheDocument()
+    expect(screen.getByText('Preview')).toBeInTheDocument()
     expect(await within(screen.getByTestId('copilot-state')).findByText('AI on, Copilot read-only')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
   })

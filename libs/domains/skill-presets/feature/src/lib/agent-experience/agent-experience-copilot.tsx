@@ -70,7 +70,7 @@ export function AgentExperienceCopilot() {
       title="Copilot"
       titleBadge={
         <Badge variant="surface" color="brand" size="sm">
-          Beta
+          Preview
         </Badge>
       }
       description="Qovery’s AI assistant in the Console, limited to what you allow."
