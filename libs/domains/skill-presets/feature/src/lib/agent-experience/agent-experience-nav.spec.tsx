@@ -1,6 +1,7 @@
 import { useLocation, useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { AgentExperienceNav } from './agent-experience-nav'
 
@@ -19,9 +20,11 @@ jest.mock('@tanstack/react-router', () => ({
 jest.mock('../hooks/use-agent-activity/use-agent-activity', () => ({ useAgentActivity: () => ({ data: undefined }) }))
 
 jest.mock('../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets')
+jest.mock('../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens')
 
 beforeEach(() => {
   jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: true, isLoading: false })
+  jest.mocked(useCanManagePolicyTokens).mockReturnValue({ canManage: true, isLoading: false })
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
 })
 
@@ -38,11 +41,21 @@ describe('AgentExperienceNav', () => {
 
   it('keeps Settings away from members', () => {
     jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: false })
+    jest.mocked(useCanManagePolicyTokens).mockReturnValue({ canManage: false, isLoading: false })
     jest.mocked(useLocation).mockReturnValue({
       pathname: '/organization/organization-1/agent-experience/skill-presets',
     } as never)
     renderWithProviders(<AgentExperienceNav />)
     expect(screen.getByRole('link', { name: 'Skills registry' })).toHaveAttribute('aria-current', 'page')
     expect(screen.queryByText('Settings')).not.toBeInTheDocument()
+  })
+
+  it('shows policy tokens to DevOps members, who manage them without the organization activity', () => {
+    jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: false })
+    jest.mocked(useLocation).mockReturnValue({
+      pathname: '/organization/organization-1/agent-experience/policy-tokens',
+    } as never)
+    renderWithProviders(<AgentExperienceNav />)
+    expect(screen.getByRole('link', { name: 'Policy tokens' })).toBeInTheDocument()
   })
 })

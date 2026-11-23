@@ -2,6 +2,7 @@ import { useLocation, useParams } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { Sidebar } from '@qovery/shared/ui'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
+import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 
 const DAY_MS = 24 * 3_600_000
@@ -22,13 +23,14 @@ function useDeniedThisWeek(organizationId: string, scope: 'organization' | 'me',
 
 /**
  * The side list of Agents: the Skills registry and Activity, then Settings with policy tokens, for
- * owners and admins only.
+ * owners, admins and DevOps members.
  */
 export function AgentExperienceNav() {
   const { organizationId = '' } = useParams({ strict: false })
   const base = `/organization/${organizationId}/agent-experience`
   const { pathname } = useLocation()
   const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
+  const { canManage: canManageTokens, isLoading: isTokenRoleLoading } = useCanManagePolicyTokens({ organizationId })
   const denied = useDeniedThisWeek(organizationId, canManage ? 'organization' : 'me', !isLoading)
   const registryPath = `${base}/skill-presets`
   const isRegistryPage = pathname === registryPath || pathname.startsWith(`${registryPath}/`)
@@ -47,7 +49,7 @@ export function AgentExperienceNav() {
       >
         Activity
       </Sidebar.Item>
-      {!isLoading && canManage && (
+      {!isTokenRoleLoading && canManageTokens && (
         <Sidebar.Group
           title="Settings"
           icon="gear"

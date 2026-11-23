@@ -3,6 +3,7 @@ import { configure } from '@testing-library/react'
 import { type ReactNode } from 'react'
 import { type SkillPresetsMockScenario, resetSkillPresetsMockApi } from '@qovery/domains/skill-presets/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import * as useCanManageSkillPresetsModule from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
 
 // The pages go through the real hooks and the in-browser mock API.
@@ -38,6 +39,8 @@ beforeEach(() => {
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
 })
+
+afterEach(() => jest.restoreAllMocks())
 
 describe('AgentExperiencePolicyTokens', () => {
   it('shows each token’s last 7 days, flags tokens with no expiry, and keeps deleted tokens as greyed rows', async () => {
@@ -89,10 +92,31 @@ describe('AgentExperiencePolicyTokens', () => {
     expect(screen.getAllByRole('button', { name: /Create policy token/ }).length).toBeGreaterThan(0)
   })
 
-  it('tells members only owners and admins manage tokens', async () => {
+  it('tells other members who manages tokens', async () => {
     useScenario('member')
     renderWithProviders(<AgentExperiencePolicyTokens />)
-    expect(await screen.findByText('Only owners and admins manage policy tokens')).toBeInTheDocument()
+    expect(await screen.findByText('Only owners, admins and DevOps members manage policy tokens')).toBeInTheDocument()
     expect(screen.queryByText('Create policy token')).not.toBeInTheDocument()
+  })
+
+  it('lets DevOps members manage tokens, without the organization activity', async () => {
+    // A DevOps member: the mock organization's tokens, but no organization-wide activity.
+    useScenario('agent-experience-active')
+    jest.spyOn(useCanManageSkillPresetsModule, 'useCanManageSkillPresets').mockReturnValue({
+      canManage: false,
+      isLoading: false,
+    })
+    const { userEvent } = renderWithProviders(<AgentExperiencePolicyTokens />)
+
+    expect(await screen.findByTestId('policy-token-ci-deployer')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
+    expect(screen.queryByRole('columnheader', { name: 'Last 7 days' })).not.toBeInTheDocument()
+    expect(screen.queryByTestId('token-usage')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('deleted-token-cleanup-bot')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Actions for ci-deployer' }))
+    expect(await screen.findByRole('menuitem', { name: 'View policy' })).toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: 'Delete token' })).toBeInTheDocument()
+    expect(screen.queryByRole('menuitem', { name: 'See activity' })).not.toBeInTheDocument()
   })
 })

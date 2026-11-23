@@ -20,6 +20,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { tokenActor } from '../agent-activity/activity-search'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useAgentExperiencePolicyTokens } from '../hooks/use-agent-experience-policy-tokens/use-agent-experience-policy-tokens'
+import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { useDeleteAgentPolicyToken } from '../hooks/use-delete-agent-policy-token/use-delete-agent-policy-token'
 import { LoadError } from '../load-error/load-error'
@@ -98,7 +99,15 @@ function TokenUsage({
 
 /** The organization's policy tokens, surfaced next to the rest of the agent setup. Owners and admins. */
 /** Row actions, as in the skill presets list: see its activity, view its policy, delete it. */
-function TokenMenu({ token, organizationId }: { token: OrganizationPolicyApiToken; organizationId: string }) {
+function TokenMenu({
+  token,
+  organizationId,
+  canSeeActivity,
+}: {
+  token: OrganizationPolicyApiToken
+  organizationId: string
+  canSeeActivity: boolean
+}) {
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -111,18 +120,20 @@ function TokenMenu({ token, organizationId }: { token: OrganizationPolicyApiToke
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end">
-        <DropdownMenu.Item
-          icon={<Icon iconName="wave-pulse" iconStyle="regular" />}
-          onSelect={() =>
-            navigate({
-              to: '/organization/$organizationId/agent-experience/agent-activity',
-              params: { organizationId },
-              search: { actor: tokenActor(token.id) },
-            })
-          }
-        >
-          See activity
-        </DropdownMenu.Item>
+        {canSeeActivity && (
+          <DropdownMenu.Item
+            icon={<Icon iconName="wave-pulse" iconStyle="regular" />}
+            onSelect={() =>
+              navigate({
+                to: '/organization/$organizationId/agent-experience/agent-activity',
+                params: { organizationId },
+                search: { actor: tokenActor(token.id) },
+              })
+            }
+          >
+            See activity
+          </DropdownMenu.Item>
+        )}
         <DropdownMenu.Item
           icon={<Icon iconName="file-code" iconStyle="regular" />}
           onSelect={() =>
@@ -159,12 +170,14 @@ function TokenMenu({ token, organizationId }: { token: OrganizationPolicyApiToke
 }
 
 /**
- * The organization's policy tokens, fully managed here: create, see activity, view the policy, delete.
- * Owners and admins.
+ * The organization's policy tokens, fully managed here: create, view the policy, delete. Owners, admins
+ * and DevOps members, as q-core allows. The usage and deleted-token history come from the organization
+ * activity, which only owners and admins can read.
  */
 export function AgentExperiencePolicyTokens() {
   const { organizationId = '' } = useParams({ strict: false })
-  const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
+  const { canManage, isLoading: isRoleLoading } = useCanManagePolicyTokens({ organizationId })
+  const { canManage: canSeeActivity } = useCanManageSkillPresets({ organizationId })
   const {
     data: tokens,
     isLoading,
@@ -179,7 +192,7 @@ export function AgentExperiencePolicyTokens() {
   const { data: week } = useAgentActivity({
     organizationId,
     scope: 'organization',
-    enabled: canManage,
+    enabled: canManage && canSeeActivity,
     from: new Date(to.getTime() - 7 * DAY_MS).toISOString(),
     to: to.toISOString(),
     bucket: 'DAY',
@@ -189,7 +202,7 @@ export function AgentExperiencePolicyTokens() {
   const { data: month } = useAgentActivity({
     organizationId,
     scope: 'organization',
-    enabled: canManage,
+    enabled: canManage && canSeeActivity,
     from: new Date(to.getTime() - 30 * DAY_MS).toISOString(),
     to: to.toISOString(),
     bucket: 'DAY',
@@ -224,7 +237,7 @@ export function AgentExperiencePolicyTokens() {
       ) : !canManage ? (
         <EmptyState
           icon="key"
-          title="Only owners and admins manage policy tokens"
+          title="Only owners, admins and DevOps members manage policy tokens"
           description="Ask one of them for a token for your agent."
         />
       ) : isLoading ? (
@@ -249,7 +262,7 @@ export function AgentExperiencePolicyTokens() {
             <Table.Row>
               <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Role</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Last 7 days</Table.ColumnHeaderCell>
+              {canSeeActivity && <Table.ColumnHeaderCell>Last 7 days</Table.ColumnHeaderCell>}
               <Table.ColumnHeaderCell>Last used</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Expires</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
@@ -271,17 +284,19 @@ export function AgentExperiencePolicyTokens() {
                     </span>
                   </Table.Cell>
                   <Table.Cell className="capitalize">{token.role_name ?? 'None'}</Table.Cell>
-                  <Table.Cell className="h-auto py-2">
-                    <TokenUsage
-                      actions={usage?.actions ?? 0}
-                      denials={usage?.denials ?? 0}
-                      timeline={fillTimeline(usage?.timeline ?? [], weekRange, (start) => ({
-                        start,
-                        actions: 0,
-                        denials: 0,
-                      }))}
-                    />
-                  </Table.Cell>
+                  {canSeeActivity && (
+                    <Table.Cell className="h-auto py-2">
+                      <TokenUsage
+                        actions={usage?.actions ?? 0}
+                        denials={usage?.denials ?? 0}
+                        timeline={fillTimeline(usage?.timeline ?? [], weekRange, (start) => ({
+                          start,
+                          actions: 0,
+                          denials: 0,
+                        }))}
+                      />
+                    </Table.Cell>
+                  )}
                   <Table.Cell className="text-neutral-subtle">
                     {token.last_used_at ? (
                       <time dateTime={token.last_used_at} title={dateFullFormat(token.last_used_at)}>
@@ -303,7 +318,7 @@ export function AgentExperiencePolicyTokens() {
                     )}
                   </Table.Cell>
                   <Table.Cell className="text-right">
-                    <TokenMenu token={token} organizationId={organizationId} />
+                    <TokenMenu token={token} organizationId={organizationId} canSeeActivity={canSeeActivity} />
                   </Table.Cell>
                 </Table.Row>
               )
