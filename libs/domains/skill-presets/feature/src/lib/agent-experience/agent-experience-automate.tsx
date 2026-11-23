@@ -53,7 +53,8 @@ export function AgentExperienceAutomations() {
       title="Automations"
       description={
         <>
-          View the agent tasks in your organization.{' '}
+          View the agent tasks in your organization.
+          <br />
           <ExternalLink href="https://www.qovery.com/docs/configuration/agent-tasks/overview" size="sm">
             Agent Tasks docs
           </ExternalLink>
