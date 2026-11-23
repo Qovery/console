@@ -1,4 +1,4 @@
-import { getSkillPresetsMockCanManage } from '@qovery/domains/skill-presets/data-access'
+import { getSkillPresetsMockCanManage } from '@qovery/domains/skill-presets/mock'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { canManagePolicyTokens } from '../../utils/can-manage-policy-tokens'
 

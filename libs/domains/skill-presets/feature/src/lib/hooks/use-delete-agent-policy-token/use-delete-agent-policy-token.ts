@@ -1,23 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDeletePolicyApiToken } from '@qovery/domains/organizations/feature'
-import { deleteMockPolicyToken, getSkillPresetsMockScenario } from '@qovery/domains/skill-presets/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 /**
- * Deletes a policy token: the same mutation as the policy token settings, or the mock organization's
- * token in mock mode.
+ * Deletes a policy token with the same mutation as the policy token settings, then refreshes the
+ * agent activity so the deleted token shows as a greyed row right away.
  */
 export function useDeleteAgentPolicyToken({ organizationId }: { organizationId: string }) {
-  const isMock = getSkillPresetsMockScenario() !== null
   const queryClient = useQueryClient()
-  const { mutateAsync: deleteRealToken } = useDeletePolicyApiToken()
+  const { mutateAsync: deletePolicyApiToken } = useDeletePolicyApiToken()
   return useMutation({
-    mutationFn: (policyApiTokenId: string) =>
-      isMock ? deleteMockPolicyToken(policyApiTokenId) : deleteRealToken({ organizationId, policyApiTokenId }),
+    mutationFn: (policyApiTokenId: string) => deletePolicyApiToken({ organizationId, policyApiTokenId }),
     onSuccess: () => {
-      if (isMock) {
-        queryClient.invalidateQueries({ queryKey: queries.skillPresets.mockPolicyTokens({ organizationId }).queryKey })
-      }
+      queryClient.invalidateQueries({ queryKey: queries.skillPresets.agentActivity._def })
     },
   })
 }

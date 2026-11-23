@@ -1,12 +1,14 @@
 import { useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
+import axios from 'axios'
 import { type ReactNode } from 'react'
+import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
-  buildSkillPresetApiError,
-  resetSkillPresetsMockApi,
-  skillPresetsApi,
-} from '@qovery/domains/skill-presets/data-access'
+  installSkillPresetsMock,
+  resetSkillPresetsMock,
+} from '@qovery/domains/skill-presets/mock'
+import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { type ActivitySearch } from './activity-search'
 import { AgentActivity } from './agent-activity'
@@ -50,14 +52,23 @@ jest.mock('@tanstack/react-router', () => ({
 
 const useScenario = (scenario: SkillPresetsMockScenario) => {
   window.sessionStorage.setItem('qovery-mock-skill-presets', scenario)
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
 }
 
 const CI_DEPLOYER = '3f1c9a2e-0000-4000-8000-00000000c1d0'
 
+let uninstallMocks: Array<() => void> = []
+beforeAll(() => {
+  uninstallMocks = [
+    installSkillPresetsMock(axios, 'api', { passthrough: false }),
+    installSkillPresetsMock(devopsCopilotAxios, 'copilot', { passthrough: false }),
+  ]
+})
+afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
+
 beforeEach(() => {
   window.sessionStorage.clear()
-  resetSkillPresetsMockApi()
+  resetSkillPresetsMock()
   mockUrl.search = {}
   // Set in each test: restoreAllMocks clears implementations between tests.
   mockNavigate.mockReset().mockImplementation(({ search }: { search: ActivitySearch }) => mockUrl.set(search))
