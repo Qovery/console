@@ -39,12 +39,14 @@ const REVISIONS = [
 ]
 
 let mockRevisions = REVISIONS
+const PRESETS_LOADED = { isSuccess: true, data: [{ id: 'preset-1', name: 'Backend team' }] }
+let mockPresets: { isSuccess: boolean; data?: { id: string; name: string }[] } = PRESETS_LOADED
 
 jest.mock('../hooks/use-skill-preset-revisions/use-skill-preset-revisions', () => ({
   useSkillPresetRevisions: () => ({ isLoading: false, data: mockRevisions }),
 }))
 jest.mock('../hooks/use-skill-presets/use-skill-presets', () => ({
-  useSkillPresets: () => ({ data: [{ id: 'preset-1', name: 'Backend team' }] }),
+  useSkillPresets: () => mockPresets,
 }))
 jest.mock('../hooks/use-skill-preset-assignees/use-skill-preset-assignees', () => ({
   useSkillPresetAssignees: () => ({ data: { roles: [], members: [] } }),
@@ -63,6 +65,7 @@ jest.mock('@monaco-editor/react', () => ({
 
 beforeEach(() => {
   mockRevisions = REVISIONS
+  mockPresets = PRESETS_LOADED
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1', skillPresetId: 'preset-1' })
 })
 
@@ -89,6 +92,20 @@ describe('SkillPresetHistory', () => {
         body: expect.objectContaining({ team_context: 'Deploy to staging first.', skills: [] }),
       })
     )
+  })
+
+  it('offers to recreate a preset the loaded list no longer has', async () => {
+    mockPresets = { isSuccess: true, data: [] }
+    renderWithProviders(<SkillPresetHistory />)
+
+    expect(screen.getByRole('button', { name: /Recreate from this revision/ })).toBeInTheDocument()
+  })
+
+  it('does not treat a preset as deleted while the list is loading or failed', () => {
+    mockPresets = { isSuccess: false, data: undefined }
+    renderWithProviders(<SkillPresetHistory />)
+
+    expect(screen.queryByRole('button', { name: /Recreate from this revision/ })).not.toBeInTheDocument()
   })
 
   it('does not diff a revision whose previous one is not loaded', () => {

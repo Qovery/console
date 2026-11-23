@@ -104,7 +104,7 @@ function SkillPresetHistoryPage() {
   const { organizationId = '', skillPresetId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const { data: revisions = [], isLoading, error, refetch } = useSkillPresetRevisions({ organizationId, skillPresetId })
-  const { data: presets = [] } = useSkillPresets({ organizationId })
+  const { data: presets = [], isSuccess: presetsLoaded } = useSkillPresets({ organizationId })
   const { data: assignees } = useSkillPresetAssignees({ organizationId })
   const { mutateAsync: editSkillPreset, isLoading: isRestoring } = useEditSkillPreset({
     successMessage: 'Revision restored as a new revision',
@@ -141,12 +141,14 @@ function SkillPresetHistoryPage() {
   const selected = selectedEntry?.revision
   const previous = selectedEntry?.previous
   const isDeleted = latest?.change_type === 'DELETE'
-  const presetExists = presets.some(({ id }) => id === skillPresetId)
+  // Only a DELETE revision or a loaded list proves the preset is gone: a list still loading or failed
+  // does not, so restoring never creates a second copy of a live preset.
+  const presetGone = isDeleted || (presetsLoaded && !presets.some(({ id }) => id === skillPresetId))
 
   useDocumentTitle(`History of ${latest?.name ?? 'preset'} - Skills registry - Agents`)
 
   const restore = (revision: SkillPresetRevisionResponse) => {
-    const recreate = isDeleted || !presetExists
+    const recreate = presetGone
     const confirm = async () => {
       setRestoreError(null)
       try {
@@ -232,7 +234,7 @@ function SkillPresetHistoryPage() {
       <div className="flex flex-col gap-3">
         <Link
           to={
-            presetExists
+            !presetGone
               ? '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId'
               : '/organization/$organizationId/agent-experience/skill-presets'
           }
@@ -240,7 +242,7 @@ function SkillPresetHistoryPage() {
           className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
         >
           <Icon iconName="arrow-left" iconStyle="regular" />
-          {presetExists ? latest.name : 'Skills registry'}
+          {!presetGone ? latest.name : 'Skills registry'}
         </Link>
         <div className="flex items-center gap-3">
           <Heading>History of {latest.name}</Heading>
@@ -346,7 +348,7 @@ function SkillPresetHistoryPage() {
                 </p>
               )}
             </div>
-            {selected.change_type !== 'DELETE' && (!isLatest || isDeleted || !presetExists) && (
+            {selected.change_type !== 'DELETE' && (!isLatest || presetGone) && (
               <Button
                 type="button"
                 size="md"
@@ -356,7 +358,7 @@ function SkillPresetHistoryPage() {
                 onClick={() => restore(selected)}
               >
                 <Icon iconName="clock-rotate-left" iconStyle="regular" />
-                {isDeleted || !presetExists ? 'Recreate from this revision' : 'Restore this revision'}
+                {presetGone ? 'Recreate from this revision' : 'Restore this revision'}
               </Button>
             )}
           </div>
