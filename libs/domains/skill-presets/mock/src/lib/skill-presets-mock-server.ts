@@ -48,6 +48,13 @@ const parseBody = (data: unknown) => {
   }
 }
 
+/** The Copilot endpoints the mock plays. Other Copilot requests, such as threads, pass through. */
+const COPILOT_ROUTES: Array<{ method: string; pattern: RegExp }> = [
+  { method: 'get', pattern: /\/organization\/[^/]+\/config$/ },
+  { method: 'put', pattern: /\/organization\/[^/]+\/config\/org$/ },
+  { method: 'get', pattern: /\/organization\/[^/]+\/recurring-tasks$/ },
+]
+
 const toBoolean = (value?: string) => (value === undefined ? undefined : value === 'true')
 const toNumber = (value?: string) => (value === undefined ? undefined : Number(value))
 
@@ -63,8 +70,9 @@ export function createSkillPresetsMockServer(scenario: SkillPresetsMockScenario)
     {
       method: 'get',
       pattern: /^\/organization\/([^/]+)\/skillPreset$/,
-      handler: ([organizationId], { query }) =>
-        api.listSkillPresets(organizationId, { isTemplate: toBoolean(query['isTemplate']) }),
+      handler: async ([organizationId], { query }) => ({
+        results: await api.listSkillPresets(organizationId, { isTemplate: toBoolean(query['isTemplate']) }),
+      }),
     },
     {
       method: 'post',
@@ -74,11 +82,12 @@ export function createSkillPresetsMockServer(scenario: SkillPresetsMockScenario)
     {
       method: 'get',
       pattern: /^\/organization\/([^/]+)\/skillPreset\/revision$/,
-      handler: ([organizationId], { query }) =>
-        api.listSkillPresetRevisions(organizationId, {
+      handler: async ([organizationId], { query }) => ({
+        results: await api.listSkillPresetRevisions(organizationId, {
           skillPresetId: query['skillPresetId'],
           limit: toNumber(query['limit']),
         }),
+      }),
     },
     {
       method: 'get',
@@ -179,6 +188,7 @@ export function createSkillPresetsMockServer(scenario: SkillPresetsMockScenario)
 
   const route = (service: SkillPresetsMockService, method: string, path: string) => {
     if (service === 'copilot') {
+      if (!COPILOT_ROUTES.some((candidate) => candidate.method === method && candidate.pattern.test(path))) return null
       return {
         params: [],
         handler: ((_, { rawBody }) => api.copilotRequest(method, path, rawBody)) as Handler,
