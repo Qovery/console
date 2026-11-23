@@ -50,6 +50,7 @@ export function AgentExperienceCopilot() {
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
   const copilot = useCopilotStatus({ organizationId })
   const aiOn = aiFeaturesEnabled && copilot.enabled
+  const hasCopilotError = Boolean(copilot.error)
   const { data: organizationData } = useOrganization({ organizationId, enabled: !isMock })
   // The mock never reads the real organization.
   const organization: Organization | undefined = isMock
@@ -82,7 +83,7 @@ export function AgentExperienceCopilot() {
           </span>
           {copilot.isLoading ? (
             <Skeleton width={160} height={20} show />
-          ) : copilot.error ? (
+          ) : hasCopilotError ? (
             <Badge variant="outline" color="neutral" className="gap-1">
               <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
               Unknown
@@ -93,7 +94,7 @@ export function AgentExperienceCopilot() {
         </div>
 
         {/* A failed config read is not "off": say so, and offer no switch until it loads. */}
-        {copilot.error && (
+        {hasCopilotError && (
           <Callout.Root color="red" data-testid="copilot-error">
             <Callout.Icon>
               <Icon iconName="circle-exclamation" iconStyle="regular" />
@@ -121,7 +122,7 @@ export function AgentExperienceCopilot() {
           </Callout.Root>
         ) : (
           <>
-            {!copilot.isLoading && !copilot.error && !aiOn && (
+            {!copilot.isLoading && !hasCopilotError && !aiOn && (
               <Section
                 aria-labelledby="copilot-turn-on"
                 className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"
@@ -146,7 +147,7 @@ export function AgentExperienceCopilot() {
                 </Button>
               </Section>
             )}
-            {copilot.enabled && !copilot.error && organization && copilot.ready && (
+            {copilot.enabled && !hasCopilotError && organization && copilot.ready && (
               // The existing Copilot settings: access source, access mode, scheduled tasks, and turning it off.
               <AICopilotSettings organization={organization} embedded />
             )}
