@@ -15,6 +15,7 @@ import * as copilotStatus from '../hooks/use-copilot-status/use-copilot-status'
 import * as skillPresetAssignees from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { AgentExperienceAutomate } from './agent-experience-automate'
 import { AgentExperienceCopilot, OnOffBadge, aiStatusLabel, copilotStateLabel } from './agent-experience-copilot'
+import { AgentExperienceNav } from './agent-experience-nav'
 import { AgentExperiencePolicyTokens } from './agent-experience-policy-tokens'
 import { ConnectAgentModal } from './connect-agent-modal'
 
@@ -509,6 +510,43 @@ describe('AgentExperiencePolicyTokens', () => {
     expect(await screen.findByRole('menuitem', { name: 'View policy' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'Delete token' })).toBeInTheDocument()
     expect(screen.queryByRole('menuitem', { name: 'See activity' })).not.toBeInTheDocument()
+  })
+})
+
+describe('AgentExperienceNav', () => {
+  it('has three entries, then Settings with policy tokens, for admins only', async () => {
+    useScenario('agent-experience-active')
+    const { userEvent, unmount } = renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Settings')).toBeInTheDocument()
+    for (const label of ['Skills registry', 'Automate', 'Activity']) {
+      expect(screen.getByText(label)).toBeInTheDocument()
+    }
+    // Connect is a popup, not a menu entry, and there is no Agents overview. Policy tokens sit in Settings.
+    expect(screen.queryByText('Connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('Overview')).not.toBeInTheDocument()
+    expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Settings' }))
+    const settings = within(
+      screen.getByText('Policy tokens').closest('[data-testid=sidebar-group-content]') as HTMLElement
+    )
+    expect(settings.getByText('Policy tokens')).toBeInTheDocument()
+    expect(settings.getByText('Copilot settings')).toBeInTheDocument()
+    unmount()
+
+    useScenario('member')
+    renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Activity')).toBeInTheDocument()
+    expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
+    expect(screen.queryByText('Settings')).not.toBeInTheDocument()
+  })
+
+  it('opens Settings by itself on the policy tokens page', async () => {
+    useScenario('agent-experience-active')
+    jest
+      .mocked(useLocation)
+      .mockReturnValue({ pathname: '/organization/organization-1/agent-experience/policy-tokens' } as never)
+    renderWithProviders(<AgentExperienceNav />)
+    expect(await screen.findByText('Policy tokens')).toBeInTheDocument()
   })
 })
 
