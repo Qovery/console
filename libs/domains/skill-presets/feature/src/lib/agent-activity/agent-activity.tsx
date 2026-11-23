@@ -57,10 +57,10 @@ import {
   computeAgentActivityHints,
   fillTimeline,
   memberCount,
-  neverLoadedSkills,
   peopleRows,
   policyTokenName,
   targetLabel,
+  unusedSkills,
 } from '../utils/agent-activity'
 import {
   ACTIVITY_RANGES,
@@ -175,12 +175,12 @@ export function HintLine({
   const card = match(hint)
     .returnType<{ title: string; description: string; destination: 'presets' | 'policies'; onClick?: () => void }>()
     .with({ kind: 'unused-skills' }, (hint) => ({
-      title: `${hint.skills.length} Qovery ${hint.skills.length === 1 ? 'skill was' : 'skills were'} not loaded`,
+      title: `${hint.skills.length} Qovery ${hint.skills.length === 1 ? 'skill was' : 'skills were'} not used`,
       description: `${hint.skills.join(', ')}. Consider turning them off in a preset.`,
       destination: 'presets' as const,
     }))
     .with({ kind: 'environment-denials' }, (hint) => ({
-      title: `${hint.count} actions denied in ${hint.environment}`,
+      title: `${hint.count} recent actions denied in ${hint.environment}`,
       description: 'Review the policy tokens used for this environment.',
       destination: 'policies' as const,
     }))
@@ -369,7 +369,7 @@ function BreakdownTable({
   const setBreakdown = (view: Breakdown) => setSearch({ view: view === automatic ? undefined : view })
   const toggle = (key: 'actor' | 'skill', value: string) =>
     setSearch({ [key]: search[key] === value ? undefined : value, page: undefined })
-  const unused = neverLoadedSkills(activity)
+  const unused = unusedSkills(activity)
   const tokens = activity.by_policy_token ?? []
   const people = peopleRows(activity)
 

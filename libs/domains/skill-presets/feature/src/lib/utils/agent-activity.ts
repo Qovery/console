@@ -1,4 +1,8 @@
-import { type AgentActivityBucket, type AgentActivityResponse } from '@qovery/domains/skill-presets/data-access'
+import {
+  AGENT_ACTIVITY_LIMITS,
+  type AgentActivityBucket,
+  type AgentActivityResponse,
+} from '@qovery/domains/skill-presets/data-access'
 import { QOVERY_SKILLS } from './qovery-skills'
 
 /**
@@ -87,8 +91,15 @@ export const peopleRows = (activity: AgentActivityResponse) =>
     actor_kind ? actor_kind === 'MEMBER' : actorLabel(user_name).kind === 'member'
   )
 
-/** Members using agents. `totals.members` still counts policy tokens, for older clients. */
-export const memberCount = (activity: AgentActivityResponse) => peopleRows(activity).length
+/**
+ * Members using agents. `totals.members` still counts policy tokens, for older clients, so people are
+ * counted from `by_member`, unless that list hit its cap.
+ */
+export function memberCount(activity: AgentActivityResponse) {
+  const people = peopleRows(activity).length
+  if (activity.by_member.length < AGENT_ACTIVITY_LIMITS.maxMembers) return people
+  return Math.max(activity.totals.members - activity.totals.policy_tokens, people)
+}
 
 /** A token's name; older audit rows grouped under a null token have none. */
 export const policyTokenName = (row: { token_name: string | null }) => row.token_name ?? LEGACY_TOKEN_LABEL
@@ -113,10 +124,14 @@ export function fillTimeline<T extends { start: string }>(
   return filled
 }
 
-/** Qovery skills nobody loaded in the period: candidates to turn off in a preset. */
-export function neverLoadedSkills(activity: AgentActivityResponse) {
-  const loaded = new Set(activity.by_skill.filter(({ loads }) => loads > 0).map(({ skill_name }) => skill_name))
-  return QOVERY_SKILLS.map(({ name }) => name).filter((name) => !loaded.has(name))
+/** Qovery skills with no load, action or denial in the period: candidates to turn off in a preset. */
+export function unusedSkills(activity: AgentActivityResponse) {
+  const used = new Set(
+    activity.by_skill
+      .filter(({ loads, actions, denials }) => loads + actions + denials > 0)
+      .map(({ skill_name }) => skill_name)
+  )
+  return QOVERY_SKILLS.map(({ name }) => name).filter((name) => !used.has(name))
 }
 
 export type AgentActivityHint =
@@ -142,7 +157,7 @@ export function computeAgentActivityHints(
   const hints: AgentActivityHint[] = []
 
   // Only meaningful for the whole organization: one member not loading a skill says nothing.
-  const unused = filtered ? [] : neverLoadedSkills(activity)
+  const unused = filtered ? [] : unusedSkills(activity)
   if (unused.length > 0) hints.push({ kind: 'unused-skills', skills: unused })
 
   const deniedByEnvironment = new Map<string, number>()
