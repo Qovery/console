@@ -28,6 +28,13 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
+// One copy function for the whole file, to check what reaches the clipboard.
+const mockCopyToClipboard = jest.fn()
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useCopyToClipboard: () => [null, mockCopyToClipboard],
+}))
+
 // The pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
 configure({ asyncUtilTimeout: 5000 })
 
@@ -326,6 +333,7 @@ describe('Automate a new job', () => {
     await userEvent.type(screen.getByTestId('new-job-intent'), 'Restart the api when it stops answering')
     await userEvent.click(screen.getByTestId('submit-button'))
 
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('/qovery-policy-token Restart the api when it stops answering')
     expect(screen.getByTestId('submit-button')).toHaveTextContent('Copied')
     expect(screen.getByTestId('new-job-modal')).toBeInTheDocument()
   })
