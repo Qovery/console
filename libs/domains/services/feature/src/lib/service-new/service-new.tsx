@@ -308,8 +308,11 @@ export function ServiceNew({
 
   const openBlueprintDetails = (blueprint: BlueprintItem) => {
     if (blueprintLock) return blueprintLock.open()
-    setSelectedBlueprint(blueprint)
-    setIsBlueprintDetailsOpen(true)
+    // Blueprints in the plan: the first time, the intro says so (when staff turned it on), then the details open.
+    paywall.proceed('blueprint.create', () => {
+      setSelectedBlueprint(blueprint)
+      setIsBlueprintDetailsOpen(true)
+    })
   }
 
   return (

@@ -11,7 +11,7 @@
  * loop and its poster), served by pricing-api from billing.qovery.com/paywall-media. Media staff
  * set on the gate replace the matching default (media for the console, claude_media for Claude Code).
  */
-import type { GateReason, PaywallInfo, PaywallOption, PaywallOptionType } from './types'
+import type { GateIntro, GateReason, PaywallInfo, PaywallOption, PaywallOptionType } from './types'
 
 /** The product previews <GatedPage> can draw (GatedPreviews.tsx). */
 export type GatedPreviewKey =
@@ -381,6 +381,34 @@ export function gatedPageView(p: PaywallInfo, features: Record<string, GatedFeat
     media: p.media,
     previews: gatedPreviews(p, f),
   }
+}
+
+/** The intro's chip: the plan that includes the feature. */
+export function introChip(i: Pick<GateIntro, 'plan'>): string {
+  return i.plan?.name ? `Included in your ${i.plan.name} plan` : 'Included in your plan'
+}
+
+/**
+ * The page for an intro (a feature the plan already includes): the same content as the paywall,
+ * the chip says it is included, and no option: the page's one button is the intro's Continue.
+ */
+export function introPageView(i: GateIntro, features: Record<string, GatedFeature> = GATED_FEATURES): GatedPageView {
+  const v = gatedPageView(
+    {
+      sku: i.sku,
+      title: i.title,
+      headline: i.headline,
+      benefits: i.benefits,
+      media: i.media,
+      claude_media: i.claude_media,
+      learn_more_url: i.learn_more_url,
+      message: '',
+      options: [],
+      audience: 'billing',
+    },
+    features
+  )
+  return { ...v, chip: introChip(i), primary: undefined, others: [] }
 }
 
 const fromGate = (m: { url: string; kind: 'image' | 'video' }): GatedMedia =>

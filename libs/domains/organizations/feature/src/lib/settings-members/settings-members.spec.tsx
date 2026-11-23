@@ -45,6 +45,7 @@ jest.mock('@qovery/shared/billing-kit', () => {
     billingUsage: () => Promise.resolve(),
     spendLimits: () => Promise.resolve(),
     gateEvent: () => Promise.resolve(),
+    gateIntro: () => Promise.resolve(),
     get gates() {
       return mockGates.current
         ? (organizationId: string) =>
@@ -196,6 +197,35 @@ describe('SettingsMembers', () => {
 
     expect(mockOpenModal).toHaveBeenCalled()
     expect(screen.queryByRole('heading', { level: 1, name: 'Members' })).not.toBeInTheDocument()
+  })
+
+  it('should show the intro first when a seat is free and the intro is due, then invite on Continue', async () => {
+    mockGates.current = [
+      {
+        ...seatsFull,
+        allowed: true,
+        reason: '',
+        used: 2,
+        paywall: undefined,
+        intro: {
+          sku: 'members.seats',
+          title: 'Members',
+          headline: 'Bring your team in',
+          benefits: [],
+          cta: 'Continue',
+        },
+      },
+    ]
+    const { userEvent } = renderWithProviders(<SettingsMembers />)
+    // The gates are read once the page mounts.
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    await userEvent.click(screen.getByRole('button', { name: /add member/i }))
+
+    expect(await screen.findByText('Bring your team in')).toBeInTheDocument()
+    expect(mockOpenModal).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(mockOpenModal).toHaveBeenCalled()
   })
 
   it('should not display add member button when organization has an enterprise connection', () => {

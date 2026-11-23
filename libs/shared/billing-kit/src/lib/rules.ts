@@ -11,6 +11,7 @@ import type {
   CustomerInvoice,
   EstimateLine,
   Gate,
+  GateIntro,
   Granularity,
   InvoiceDetails,
   InvoiceLineUsage,
@@ -931,6 +932,20 @@ export function discountsExpanded(p: {
 /** The gate for an action id (cluster.create) or a SKU (service_catalog). */
 export function gateFor(gates: Gate[] | undefined, key: string): Gate | undefined {
   return gates?.find((g) => g.action === key) ?? gates?.find((g) => g.sku === key)
+}
+
+// The intros shown in this session, by organization and SKU: the gates read again before
+// pricing-api has the "shown" never bring one back.
+const introsSeen = new Set<string>()
+
+/** The intro to show before going on with an allowed action, unless this session already showed it. */
+export function pendingIntro(organizationId: string, g?: Gate): GateIntro | undefined {
+  if (!g?.allowed || !g.intro) return undefined
+  return introsSeen.has(`${organizationId}|${g.intro.sku}`) ? undefined : g.intro
+}
+
+export function markIntroSeen(organizationId: string, sku: string) {
+  introsSeen.add(`${organizationId}|${sku}`)
 }
 
 /** Locked: refused, with a paywall to show. Allowed, unknown and unlinked are never locked. */

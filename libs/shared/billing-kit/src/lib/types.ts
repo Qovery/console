@@ -1055,6 +1055,23 @@ export interface PaywallInfo {
   /** Why no trial is offered (used, disabled, sales_led…); absent when one is. */
   trial_block?: string
 }
+/**
+ * The paywall shown once to a person whose plan already includes the feature ("Show when
+ * included", staff turn it on per paywall), so they learn it is there: what it does and a single
+ * button (cta, "Continue") that goes on with the action. No trial, upgrade or add-on.
+ */
+export interface GateIntro {
+  sku: string
+  title: string
+  headline: string
+  benefits: string[]
+  media?: { url: string; kind: 'image' | 'video' }
+  claude_media?: { url: string; kind: 'image' | 'video' }
+  learn_more_url?: string
+  /** The plan that includes it; absent when something else gives it (an add-on, a contract). */
+  plan?: { code: string; name: string }
+  cta: string
+}
 export interface Gate {
   action?: string
   sku: string
@@ -1066,6 +1083,8 @@ export interface Gate {
   requested: number
   trial?: { until: string }
   paywall?: PaywallInfo
+  /** Allowed, and this person has not seen the feature's intro in this organization (added November 2026). */
+  intro?: GateIntro
 }
 export interface Gates {
   organization_id: string
@@ -1120,3 +1139,5 @@ export interface AddonPurchaseResult {
   preview?: boolean
 }
 export type PaywallEvent = 'shown' | 'clicked' | 'dismissed'
+/** What a person did with an intro: shown, then went on with the action (continued) or closed it (dismissed). */
+export type IntroAction = 'shown' | 'continued' | 'dismissed'

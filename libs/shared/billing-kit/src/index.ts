@@ -15,7 +15,9 @@ export {
   gateKeyFromBody,
   isLocked,
   lockLabel,
+  markIntroSeen,
   optionPrice,
+  pendingIntro,
   paywallFromBody,
   trialRequest,
   buildRange,
@@ -63,7 +65,7 @@ export type { OfferHostProps } from './lib/offers'
 export { ProposalBanner, ProposalHost, ProposalNote, useProposal } from './lib/proposals'
 export type { ProposalBannerProps } from './lib/proposals'
 export type { PricingTableProps } from './lib/pricing-table'
-export { Paywall, PaywallLock, usePaywall } from './lib/paywall'
+export { Paywall, PaywallIntroDialog, PaywallLock, usePaywall } from './lib/paywall'
 export {
   BILLING_PAYWALL_FEATURE_FLAG,
   BillingPaywallHost,
@@ -73,7 +75,7 @@ export {
   useIsBillingPaywallEnabled,
   usePricingClient,
 } from './lib/console-paywall'
-export type { PaywallProps, UsePaywall } from './lib/paywall'
+export type { PaywallIntroDialogProps, PaywallProps, UsePaywall } from './lib/paywall'
 export { GatedPage } from './lib/gated-page'
 export type { GatedPageProps } from './lib/gated-page'
 export { GatedPreview } from './lib/gated-previews'
@@ -90,6 +92,8 @@ export {
   gatedPageView,
   gatedPreviews,
   hasGatedPage,
+  introChip,
+  introPageView,
   mediaSet,
   previewRender,
   previewTabs,

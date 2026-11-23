@@ -10,12 +10,17 @@
  * <Paywall> is the dialog: the promotion (headline, benefits, image or video), then the options
  * (start a free trial, upgrade, add an add-on, ask an admin, talk to us), each with its confirm
  * step. <PaywallLock> is the small inline variant for a button or a menu entry.
+ *
+ * Intros: when staff turned "Show when included" on, an allowed gate carries intro the first time
+ * a person meets it in an organization. pw.proceed(key, run) shows it (the page or the dialog,
+ * with one Continue that calls run), opens the paywall when the action is locked, and otherwise
+ * just runs. <PaywallIntroDialog> is the intro's dialog.
  */
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Badge, Button, Callout, Checkbox, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Checkbox, ExternalLink, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
 import { BillingError, type PricingClient } from './client'
 import { date } from './format'
-import { addonAction, dialogImage, dialogTitle } from './gated'
+import { addonAction, dialogImage, dialogTitle, introChip } from './gated'
 import { GatedPage } from './gated-page'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
@@ -25,15 +30,19 @@ import {
   gateFor,
   isLocked,
   lockLabel,
+  markIntroSeen,
   newIdempotencyKey,
   optionPrice,
+  pendingIntro,
   trialEnds,
   trialRequest,
 } from './rules'
 import type {
   BillingUsage,
   Gate,
+  GateIntro,
   GateReason,
+  IntroAction,
   PaywallInfo as PaywallData,
   PaywallOption,
   PaywallOptionType,
@@ -732,6 +741,121 @@ function UpgradeStep({
   )
 }
 
+export interface PaywallIntroDialogProps {
+  organizationId: string
+  client: PricingClient
+  intro: GateIntro
+  /** Continue: go on with what the person was doing. */
+  onContinue: () => void
+  /** Not now, the close button or Escape: counts as seen, the action does not go on. */
+  onClose: () => void
+  /** Drawn in place, without the modal (the back office's previews). */
+  inline?: boolean
+}
+
+/** The intro's dialog, where the feature has no page: what it does, then Continue. */
+export function PaywallIntroDialog({
+  organizationId,
+  client,
+  intro,
+  onContinue,
+  onClose,
+  inline,
+}: PaywallIntroDialogProps) {
+  const acted = useRef(false)
+  const record = useCallback(
+    (a: IntroAction) => {
+      if (client.gateIntro && client.mode !== 'preview')
+        client.gateIntro(organizationId, { sku: intro.sku, action: a }).catch(() => undefined)
+    },
+    [client, organizationId, intro.sku]
+  )
+  useEffect(() => {
+    if (client.mode !== 'preview') markIntroSeen(organizationId, intro.sku)
+    record('shown')
+  }, [intro.sku]) // eslint-disable-line react-hooks/exhaustive-deps
+  const close = () => {
+    if (!acted.current) record('dismissed')
+    acted.current = true
+    onClose()
+  }
+  const goOn = () => {
+    acted.current = true
+    record('continued')
+    onContinue()
+  }
+  const p: PaywallData = {
+    sku: intro.sku,
+    title: intro.title,
+    headline: intro.headline,
+    benefits: intro.benefits,
+    media: intro.media,
+    message: '',
+    options: [],
+    audience: 'billing',
+  }
+  const body = (
+    <div className="flex max-h-[85vh] flex-col">
+      <div className="flex items-start gap-3 border-b border-neutral px-6 py-4">
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex flex-wrap items-center gap-2">
+            <Badge color="green" variant="surface" size="sm">
+              <Icon iconName="circle-check" iconStyle="regular" className="mr-1 text-xs" />
+              {introChip(intro)}
+            </Badge>
+            {client.mode === 'preview' && (
+              <Badge color="yellow" variant="surface" size="sm">
+                Preview
+              </Badge>
+            )}
+          </div>
+          <h2 className="h4 text-neutral">{intro.title}</h2>
+          {intro.headline && <p className="mt-1 text-sm text-neutral-subtle">{intro.headline}</p>}
+        </div>
+        <button
+          type="button"
+          aria-label="Close"
+          onClick={close}
+          className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-subtle hover:bg-surface-neutral-componentHover"
+        >
+          <Icon iconName="xmark" iconStyle="solid" />
+        </button>
+      </div>
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
+        <Promotion p={p} />
+        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-neutral pt-4">
+          {intro.learn_more_url && (
+            <ExternalLink as="button" size="lg" variant="outline" color="neutral" href={intro.learn_more_url}>
+              Learn more
+            </ExternalLink>
+          )}
+          <Button size="lg" variant="plain" color="neutral" onClick={close}>
+            Not now
+          </Button>
+          <Button size="lg" color="brand" onClick={goOn}>
+            {intro.cta || 'Continue'}
+            <Icon iconName="arrow-right" iconStyle="regular" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+  if (inline)
+    return <div className="w-full max-w-[600px] rounded-lg border border-neutral bg-background shadow-lg">{body}</div>
+  return (
+    <Modal
+      externalOpen
+      setExternalOpen={(o) => {
+        if (!o) close()
+      }}
+      width="min(600px, calc(100vw - 24px))"
+      buttonClose={false}
+    >
+      {body}
+    </Modal>
+  )
+}
+
 /** The small inline variant: a lock and the next step, on a button or a menu entry. */
 export function PaywallLock({ gate, onClick, className }: { gate?: Gate; onClick?: () => void; className?: string }) {
   const label = lockLabel(gate)
@@ -766,6 +890,13 @@ export interface UsePaywall {
   locked: (key: string) => boolean
   /** Opens the paywall of an action or SKU, or of a paywall read from core's 402. */
   open: (key: string | { paywall: PaywallData; action?: string }) => void
+  /** The intro to show before the action, when this person has not seen it (allowed gates only). */
+  intro: (key: string) => GateIntro | undefined
+  /**
+   * Goes on with an action: the paywall when it is locked, the intro first when one is due (run
+   * on Continue, not on Not now), else run at once. Gates not read (yet, or failing): run.
+   */
+  proceed: (key: string, run: () => void) => void
   reload: () => void
   /** The dialog when one is open: place it once in the tree. */
   element: ReactNode
@@ -789,7 +920,13 @@ export function usePaywall(
   } = {}
 ): UsePaywall {
   const [gates, setGates] = useState<Gate[]>()
-  const [current, setCurrent] = useState<{ gate?: Gate; paywall?: PaywallData; action?: string }>()
+  const [current, setCurrent] = useState<{
+    gate?: Gate
+    paywall?: PaywallData
+    action?: string
+    intro?: GateIntro
+    run?: () => void
+  }>()
   const sig = JSON.stringify(keys)
   const load = useCallback(() => {
     if (!client.gates || (!keys.actions?.length && !keys.skus?.length)) return
@@ -811,6 +948,17 @@ export function usePaywall(
     },
     [gates]
   )
+  const intro = useCallback((key: string) => pendingIntro(organizationId, gateFor(gates, key)), [gates, organizationId])
+  const proceed = useCallback(
+    (key: string, run: () => void) => {
+      const g = gateFor(gates, key)
+      if (isLocked(g)) return setCurrent({ gate: g })
+      const due = pendingIntro(organizationId, g)
+      if (due) return setCurrent({ intro: due, run })
+      run()
+    },
+    [gates, organizationId]
+  )
   const element = useMemo(() => {
     if (!current) return null
     const { variant, inline, ...rest } = options
@@ -821,6 +969,32 @@ export function usePaywall(
     const done = (what: Done) => {
       load()
       options.onDone?.(what)
+    }
+    if (current.intro) {
+      const { run } = current
+      const goOn = () => {
+        setCurrent(undefined)
+        run?.()
+      }
+      return variant === 'page' ? (
+        <GatedPage
+          organizationId={organizationId}
+          client={client}
+          intro={current.intro}
+          overlay
+          onClose={close}
+          onContinue={goOn}
+        />
+      ) : (
+        <PaywallIntroDialog
+          organizationId={organizationId}
+          client={client}
+          intro={current.intro}
+          inline={inline}
+          onClose={close}
+          onContinue={goOn}
+        />
+      )
     }
     return variant === 'page' ? (
       <GatedPage
@@ -849,5 +1023,5 @@ export function usePaywall(
       />
     )
   }, [current, client, organizationId, load]) // eslint-disable-line react-hooks/exhaustive-deps
-  return { gates, gate, locked: (key) => isLocked(gateFor(gates, key)), open, reload: load, element }
+  return { gates, gate, locked: (key) => isLocked(gateFor(gates, key)), open, intro, proceed, reload: load, element }
 }

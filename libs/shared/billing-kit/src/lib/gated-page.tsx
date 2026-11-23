@@ -10,6 +10,10 @@
  *   if (pw.locked('blueprint.create')) return <GatedPage organizationId={organizationId} client={client} gate={pw.gate('blueprint.create')} />
  *
  * The button opens <Paywall> on that option's confirm step. "Not now" shows only with onClose.
+ *
+ * With intro (a feature the plan already includes, shown once per person): the same page, the chip
+ * "Included in your <Plan> plan", and one button, the intro's Continue (onContinue), then Learn
+ * more. No trial, upgrade or add-on. Shown, Continue and Not now are recorded (client.gateIntro).
  */
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { Badge, Button, ExternalLink, Icon, SegmentedControl } from '@qovery/shared/ui'
@@ -20,13 +24,15 @@ import {
   PREVIEW_TAB_LABEL,
   gatedCta,
   gatedPageView,
+  introPageView,
   previewRender,
   previewTabs,
 } from './gated'
 import { GatedPreview } from './gated-previews'
 import { openPaymentMethodPage } from './invoices-page'
 import { Paywall, type PaywallProps } from './paywall'
-import type { Gate, PaywallInfo, PaywallOption, PaywallOptionType } from './types'
+import { markIntroSeen } from './rules'
+import type { Gate, GateIntro, IntroAction, PaywallInfo, PaywallOption, PaywallOptionType } from './types'
 
 export interface GatedPageProps {
   organizationId: string
@@ -42,6 +48,10 @@ export interface GatedPageProps {
   onUpdatePayment?: () => void
   /** Over the whole window (the console opening it from a lock). Default: in the page's own flow. */
   overlay?: boolean
+  /** The intro of a feature the plan includes (gate.intro): shown when there is no paywall. */
+  intro?: GateIntro
+  /** The intro's Continue: go on with what the person was doing. */
+  onContinue?: () => void
 }
 
 // The preview fades to the right and to the bottom: a taste, not a screenshot to read.
@@ -151,9 +161,12 @@ export function GatedPage({
   onContactSales,
   onUpdatePayment,
   overlay,
+  intro: introProp,
+  onContinue,
 }: GatedPageProps) {
   const p = gate?.paywall ?? paywall
-  const sku = p?.sku ?? gate?.sku ?? ''
+  const intro = p ? undefined : introProp
+  const sku = p?.sku ?? intro?.sku ?? gate?.sku ?? ''
   const [open, setOpen] = useState<PaywallOption>()
   const [picked, setPicked] = useState<GatedPreviewTab>('console')
   const reducedMotion = useSyncExternalStore(subscribeMotion, prefersReducedMotion, () => false)
@@ -168,12 +181,26 @@ export function GatedPage({
     },
     [client, organizationId, sku]
   )
+  // An intro is recorded apart from the paywall's funnel, per person; a failure never blocks.
+  const introEvent = useCallback(
+    (a: IntroAction) => {
+      if (sku && client.gateIntro && client.mode !== 'preview')
+        client.gateIntro(organizationId, { sku, action: a }).catch(() => undefined)
+    },
+    [client, organizationId, sku]
+  )
   useEffect(() => {
-    if (sku) event('shown')
+    if (!sku) return
+    if (!intro) {
+      event('shown')
+      return
+    }
+    if (client.mode !== 'preview') markIntroSeen(organizationId, sku)
+    introEvent('shown')
   }, [sku]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!p) return null
-  const view = gatedPageView(p)
+  if (!p && !intro) return null
+  const view = p ? gatedPageView(p) : introPageView(intro as GateIntro)
   const primary = view.primary
   const primaryCta = primary && gatedCta(primary)
   const tabs = previewTabs(view.previews)
@@ -194,16 +221,24 @@ export function GatedPage({
   const dismiss =
     onClose &&
     (() => {
-      if (!acted.current) event('dismissed')
+      if (!acted.current) {
+        if (intro) introEvent('dismissed')
+        else event('dismissed')
+      }
       onClose()
     })
+  const goOn = () => {
+    acted.current = true
+    introEvent('continued')
+    onContinue?.()
+  }
 
   const page = (
     <section aria-labelledby={`gated-${sku}`} className="flex min-h-full w-full min-w-0 flex-col bg-background">
       <div className="flex min-h-12 items-center gap-2 border-b border-neutral px-4 py-2 sm:px-6">
         <Icon iconName={view.icon as 'lock'} iconStyle="regular" className="text-sm text-neutral-subtle" />
         <span className="truncate text-sm font-medium text-neutral">{view.title}</span>
-        <Badge color="neutral" variant="surface" size="sm" className="shrink-0">
+        <Badge color={intro ? 'green' : 'neutral'} variant="surface" size="sm" className="shrink-0">
           {view.chip}
         </Badge>
         {client.mode === 'preview' && (
@@ -231,6 +266,12 @@ export function GatedPage({
               {view.description && <p className="text-sm leading-6 text-neutral-subtle">{view.description}</p>}
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              {intro && (
+                <Button size="lg" color="brand" onClick={goOn}>
+                  {intro.cta || 'Continue'}
+                  <Icon iconName="arrow-right" iconStyle="regular" />
+                </Button>
+              )}
               {primary && primaryCta && (
                 <Button size="lg" color="brand" onClick={() => choose(primary)}>
                   <Icon iconName={primaryCta.icon as 'plus'} iconStyle="regular" />

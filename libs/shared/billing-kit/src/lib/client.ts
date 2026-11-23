@@ -23,6 +23,7 @@ import type {
   EmailPreferences,
   Gates,
   Granularity,
+  IntroAction,
   InvoiceDetails,
   InvoiceDownload,
   InvoicePage,
@@ -40,6 +41,7 @@ import type {
   PublicPlans,
   Reactivation,
   ReactivationResult,
+  SignupTrial,
   Spend,
   Trial,
   TrialStartRequest,
@@ -61,6 +63,12 @@ export interface PricingClient {
   changePlan?(organizationId: string, plan: string, period?: Period, idempotencyKey?: string): Promise<PlanChangeResult>
   /** "Keep my current plan": drops the change scheduled for the renewal. */
   keepPlan?(organizationId: string): Promise<{ removed: boolean }>
+  /** A new organization's trial: keep its plan at the end (with the consent, a card on file), or stop keeping it. */
+  keepSignupTrial?(
+    organizationId: string,
+    keep: boolean,
+    acceptAutoCharge: boolean
+  ): Promise<{ signup_trial: SignupTrial | null }>
   // Optional: cancellation at the end of the term (billing roles only).
   cancellation?(organizationId: string): Promise<Cancellation>
   cancel?(
@@ -169,6 +177,8 @@ export interface PricingClient {
   // trial or buy an add-on. Without gates, <Paywall> and usePaywall stay out of the way.
   gates?(organizationId: string, q: { actions?: string[]; skus?: string[] }): Promise<Gates>
   gateEvent?(organizationId: string, e: { sku: string; event: PaywallEvent; choice?: PaywallOptionType }): Promise<void>
+  /** Records what the person did with an intro (once shown, it never shows to them again in this organization). */
+  gateIntro?(organizationId: string, e: { sku: string; action: IntroAction }): Promise<void>
   trials?(organizationId: string): Promise<{ trials: CustomerTrial[] }>
   /** Starts a free trial. continue and accept_auto_charge only when the person ticked it. */
   startTrial?(organizationId: string, req: TrialStartRequest): Promise<TrialStartResult>
@@ -271,6 +281,11 @@ export function createPricingClient(o: ClientOptions): PricingClient {
         headers: key ? { 'Idempotency-Key': key } : {},
       }),
     keepPlan: (org) => req(o.pricingApiUrl, `/organization/${org}/planChange/scheduled`, { method: 'DELETE' }),
+    keepSignupTrial: (org, keep, accept) =>
+      req(o.pricingApiUrl, `/organization/${org}/signupTrial`, {
+        method: 'PUT',
+        body: JSON.stringify({ keep, accept_auto_charge: accept }),
+      }),
     cancellation: (org) => req(o.pricingApiUrl, `/organization/${org}/cancellation`),
     cancel: (org, r) =>
       req(o.pricingApiUrl, `/organization/${org}/cancellation`, { method: 'POST', body: JSON.stringify(r) }),
@@ -386,6 +401,8 @@ export function createPricingClient(o: ClientOptions): PricingClient {
     gates: (org, q) => req(o.pricingApiUrl, `/organization/${org}/gates?${gatesQuery(q)}`),
     gateEvent: (org, e) =>
       req(o.pricingApiUrl, `/organization/${org}/gates/events`, { method: 'POST', body: JSON.stringify(e) }),
+    gateIntro: (org, e) =>
+      req(o.pricingApiUrl, `/organization/${org}/gates/intro`, { method: 'POST', body: JSON.stringify(e) }),
     trials: (org) => req(o.pricingApiUrl, `/organization/${org}/trials`),
     startTrial: (org, r) =>
       req(o.pricingApiUrl, `/organization/${org}/trials`, { method: 'POST', body: JSON.stringify(r) }),
