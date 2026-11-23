@@ -5,7 +5,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { getSkillPresetErrorDetail } from '@qovery/domains/skill-presets/data-access'
 import { useAuth } from '@qovery/shared/auth'
 import { mutations as copilotMutations } from '@qovery/shared/devops-copilot/data-access'
-import { CopilotTermsOfService } from '@qovery/shared/devops-copilot/feature'
+import { CopilotTermsOfService, useAICopilotConfig } from '@qovery/shared/devops-copilot/feature'
 import { useUserAccount } from '@qovery/shared/iam/feature'
 import { Accordion, Button, Callout, Checkbox, Icon, ModalCrud, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
@@ -42,6 +42,8 @@ export function TurnOnAiModal({ organizationId, onClose, onEnabled }: TurnOnAiMo
   const { mutateAsync: enableAiFeatures } = useEnableAiFeatures()
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
   const copilot = useCopilotStatus({ organizationId })
+  // Same query as the Copilot status: read for the saved instructions, which turning it on must keep.
+  const { data: copilotConfig } = useAICopilotConfig({ organizationId, enabled: copilot.ready })
   const { data: userAccount } = useUserAccount()
   const { user } = useAuth()
   const [aiTurnedOn, setAiTurnedOn] = useState(false)
@@ -58,6 +60,8 @@ export function TurnOnAiModal({ organizationId, onClose, onEnabled }: TurnOnAiMo
       try {
         await enableAiFeatures({ organizationId })
         setAiTurnedOn(true)
+        // Presets can be saved from now on, even if the Copilot step below fails and the modal is closed.
+        onEnabled?.()
       } catch (failure) {
         setError({ step: 'ai', detail: errorDetail(failure) })
         return
@@ -69,6 +73,7 @@ export function TurnOnAiModal({ organizationId, onClose, onEnabled }: TurnOnAiMo
           organizationId,
           enabled: true,
           readOnly: true,
+          instructions: copilotConfig?.org_config?.instructions,
           userEmail: userAccount?.communication_email ?? user?.email,
         })
         posthog.capture('ai-copilot-enabled', { organization_id: organizationId, mode: 'Read-Only' })
@@ -88,7 +93,8 @@ export function TurnOnAiModal({ organizationId, onClose, onEnabled }: TurnOnAiMo
       <ModalCrud
         title={TURN_ON_AI_LABEL}
         submitLabel={copilotFailed ? 'Retry' : TURN_ON_AI_LABEL}
-        submitDisabled={!copilot.ready || (needsCopilot && !hasAcceptedTerms)}
+        // Until the Copilot status is known, a Copilot already on would read as off and be reset to read-only.
+        submitDisabled={copilot.isLoading || (needsCopilot && !hasAcceptedTerms)}
         loading={methods.formState.isSubmitting}
         onClose={onClose}
         onSubmit={submit}
