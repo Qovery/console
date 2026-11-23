@@ -25,7 +25,7 @@ import {
   type Terraform,
   type TerraformType,
 } from '@qovery/domains/services/data-access'
-import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
+import { isContainerGitSource, isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
 import { extractAndProcessAutoscaling } from './keda/autoscaling-payload/autoscaling-payload'
 
 type applicationProps = {
@@ -177,6 +177,21 @@ function refactoApplication({ service: application, request = {} }: applicationP
   }
 }
 
+// Without `source` and `build_settings` the API keeps the stored ones; a Git container rejects changed image fields and auto-deploy or auto-preview
+function omitStoredContainerFields(container: Pick<Container, 'source'>) {
+  return {
+    source: undefined,
+    build_settings: undefined,
+    ...(isContainerGitSource(container.source) && {
+      registry_id: undefined,
+      image_name: undefined,
+      tag: undefined,
+      auto_deploy: undefined,
+      auto_preview: undefined,
+    }),
+  }
+}
+
 function refactoContainer({ service: container, request = {} }: containerProps): ContainerRequest {
   const { autoscaling, cleanedRequest } = extractAndProcessAutoscaling(request, container.autoscaling)
 
@@ -189,6 +204,7 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     cpu: container.cpu,
     gpu: container.gpu,
     memory: container.memory,
+    ephemeral_storage_in_gib: container.ephemeral_storage_in_gib,
     max_running_instances: container.max_running_instances,
     min_running_instances: container.min_running_instances,
     registry_id: container.registry?.id || '',
@@ -202,6 +218,7 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     autoscaling,
     ...('cpu_architecture' in container ? { cpu_architecture: container.cpu_architecture } : {}),
     ...cleanedRequest,
+    ...omitStoredContainerFields(container),
   }
 }
 

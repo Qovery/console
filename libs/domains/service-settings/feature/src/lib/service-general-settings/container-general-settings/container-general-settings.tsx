@@ -1,5 +1,5 @@
 import { type Organization } from 'qovery-typescript-axios'
-import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
+import { AnnotationSetting, EditGitRepositorySettings, LabelSetting } from '@qovery/domains/organizations/feature'
 import { type Container } from '@qovery/domains/services/data-access'
 import {
   AutoDeploySection,
@@ -7,7 +7,8 @@ import {
   GeneralContainerSettings,
   GeneralSetting,
 } from '@qovery/domains/services/feature'
-import { Heading, Section } from '@qovery/shared/ui'
+import { isContainerGitSource } from '@qovery/shared/enums'
+import { Callout, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
 
 export interface ContainerGeneralSettingsProps {
   service: Container
@@ -20,6 +21,8 @@ export function ContainerGeneralSettings({
   organization,
   openContainerRegistryCreateEditModal,
 }: ContainerGeneralSettingsProps) {
+  const gitRepository = isContainerGitSource(service.source) ? service.source.git_repository : undefined
+
   return (
     <>
       <Section className="gap-4">
@@ -29,17 +32,51 @@ export function ContainerGeneralSettings({
 
       <Section className="gap-4">
         <Heading>Source</Heading>
-        <GeneralContainerSettings
-          organizationId={organization.id}
-          isSetting
-          openContainerRegistryCreateEditModal={openContainerRegistryCreateEditModal}
-        />
+        {gitRepository ? (
+          <>
+            <EditGitRepositorySettings
+              organizationId={organization.id}
+              gitRepository={gitRepository}
+              showEditAction={false}
+            />
+            <InputText name="dockerfile_path" value={gitRepository.dockerfile_path} label="Dockerfile path" disabled />
+            {gitRepository.docker_target_build_stage && (
+              <InputText
+                name="docker_target_build_stage"
+                value={gitRepository.docker_target_build_stage}
+                label="Dockerfile stage"
+                disabled
+              />
+            )}
+            <InputText
+              name="running_image"
+              value={`${service.image_name}:${service.tag}`}
+              label="Running image"
+              disabled
+            />
+          </>
+        ) : (
+          <GeneralContainerSettings
+            organizationId={organization.id}
+            isSetting
+            openContainerRegistryCreateEditModal={openContainerRegistryCreateEditModal}
+          />
+        )}
       </Section>
 
       <Section className="gap-4">
         <Heading>Deploy</Heading>
         <EntrypointCmdInputs />
-        <AutoDeploySection serviceId={service.id} source="CONTAINER_REGISTRY" />
+        {gitRepository ? (
+          <Callout.Root color="neutral">
+            <Callout.Icon>
+              <Icon iconName="circle-info" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>Auto-deploy and preview environments are not available yet for Git containers.</Callout.Text>
+          </Callout.Root>
+        ) : (
+          <AutoDeploySection serviceId={service.id} source="CONTAINER_REGISTRY" />
+        )}
       </Section>
 
       <Section className="gap-4">

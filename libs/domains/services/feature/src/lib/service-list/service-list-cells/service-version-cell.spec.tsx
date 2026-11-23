@@ -1,4 +1,5 @@
 import { type Helm, type Terraform } from '@qovery/domains/services/data-access'
+import { containerFactoryMock, gitContainerFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
 import { ServiceVersionCell } from './service-version-cell'
@@ -277,5 +278,26 @@ describe('ServiceVersionCell', () => {
       screen.queryByText('No configuration input is required. Continue to preview the update.')
     ).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Preview changes' })).toBeInTheDocument()
+  })
+
+  it('shows the image and the image version action for an image container', () => {
+    const container = containerFactoryMock(1)[0]
+
+    renderWithProviders(<ServiceVersionCell service={container} />)
+
+    expect(screen.getByText(container.image_name)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploy from another version' })).toBeInTheDocument()
+  })
+
+  it('shows the Git source and deployed commit of a Git container without image version actions', () => {
+    const container = gitContainerFactoryMock(1)[0]
+
+    renderWithProviders(<ServiceVersionCell service={container} />)
+
+    expect(screen.getByText('qovery/console')).toBeInTheDocument()
+    expect(screen.getByText('main')).toBeInTheDocument()
+    expect(screen.getByText('4f3a1c2')).toBeInTheDocument()
+    expect(screen.queryByText(container.image_name)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Deploy from another version' })).not.toBeInTheDocument()
   })
 })

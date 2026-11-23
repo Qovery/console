@@ -1,7 +1,9 @@
 import {
   type BaseJobResponseAllOfSource,
   type BaseJobResponseAllOfSourceOneOf,
-  type BaseJobResponseAllOfSourceOneOf1,
+  type ContainerSourceResponse,
+  type ContainerSourceResponseOneOf,
+  type ContainerSourceResponseOneOf1,
   type HelmResponseAllOfSource,
   type HelmResponseAllOfSourceOneOf,
   type HelmResponseAllOfSourceOneOf1,
@@ -23,10 +25,14 @@ export function isHelmGitValuesOverride(
   return !!valuesOverride?.file?.git?.git_repository
 }
 
-export function isJobGitSource(source?: BaseJobResponseAllOfSource): source is BaseJobResponseAllOfSourceOneOf1 {
+export function isJobGitSource(source?: BaseJobResponseAllOfSource): source is BaseJobResponseAllOfSourceOneOf {
   return !!source && 'docker' in source
 }
 
-export function isJobContainerSource(source?: BaseJobResponseAllOfSource): source is BaseJobResponseAllOfSourceOneOf {
+export function isJobContainerSource(source?: BaseJobResponseAllOfSource): source is ContainerSourceResponseOneOf {
   return !!source && 'image' in source
+}
+
+export function isContainerGitSource(source?: ContainerSourceResponse): source is ContainerSourceResponseOneOf1 {
+  return !!source && 'git_repository' in source
 }

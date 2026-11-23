@@ -1,16 +1,5 @@
-import { Link, useLocation, useParams } from '@tanstack/react-router'
-import {
-  type ColumnFiltersState,
-  type FilterFn,
-  createColumnHelper,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
-import download from 'downloadjs'
-import posthog from 'posthog-js'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type DeploymentHistoryEnvironmentV2,
   type Environment,
@@ -19,42 +8,13 @@ import {
   type Stage,
   type Status,
 } from 'qovery-typescript-axios'
-import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { P, match } from 'ts-pattern'
-import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
-import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
-import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
-import {
-  Button,
-  CopyToClipboardButtonIcon,
-  DropdownMenu,
-  Icon,
-  StatusChip,
-  TablePrimitives,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { useMemo, useState } from 'react'
+import { Button, CopyToClipboardButtonIcon, DropdownMenu, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 import { DeploymentLogsSteps } from '../deployment-logs-steps/deployment-logs-steps'
-import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
 import { HeaderDeploymentLogs } from '../header-deployment-logs/header-deployment-logs'
-import HeaderLogs from '../header-logs/header-logs'
-import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
-import { useGenerateBuildUsageReport } from '../hooks/use-generate-build-usage-report/use-generate-build-usage-report'
 import { useServiceDeploymentHistory } from '../hooks/use-service-deployment-history/use-service-deployment-history'
-import { ProgressIndicator } from '../progress-indicator/progress-indicator'
-import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
-import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
-import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
-import { type EnvironmentEngineStep, type FilterType, getFilterStep } from '../utils/deployment-log-filter-step'
-import { FiltersStageStep } from './filters-stage-step/filters-stage-step'
-import { RowDeploymentLogs } from './row-deployment-logs/row-deployment-logs'
-
-export type { FilterType }
-
-const { Table } = TablePrimitives
-
-const MemoizedRowDeploymentLogs = memo(RowDeploymentLogs)
 
 export interface ListDeploymentLogsProps {
   environment: Environment
@@ -62,13 +22,6 @@ export interface ListDeploymentLogsProps {
   stage?: Stage
   environmentStatus?: EnvironmentStatus
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
-}
-
-interface DeploymentLogsHeaderProps {
-  environment: Environment
-  serviceStatus: Status
-  environmentStatus?: EnvironmentStatus
-  deploymentHistory: DeploymentHistoryEnvironmentV2[]
 }
 
 interface DeploymentHistoryDropdownProps {
@@ -150,371 +103,6 @@ function DeploymentHistoryDropdown({ environment, deploymentHistory }: Deploymen
   )
 }
 
-const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
-  environment,
-  serviceStatus,
-  environmentStatus,
-  deploymentHistory,
-}: DeploymentLogsHeaderProps) {
-  const { serviceId = '' } = useParams({ strict: false })
-
-  return (
-    <HeaderLogs
-      type="DEPLOYMENT"
-      environment={environment}
-      serviceId={serviceId}
-      serviceStatus={serviceStatus}
-      environmentStatus={environmentStatus}
-    >
-      <DeploymentHistoryDropdown environment={environment} deploymentHistory={deploymentHistory} />
-    </HeaderLogs>
-  )
-})
-
-interface DeploymentLogsBodyProps {
-  environment: Environment
-  serviceStatus: Status
-  stage?: Stage
-  environmentStatus?: EnvironmentStatus
-  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
-  deploymentHistory: DeploymentHistoryEnvironmentV2[]
-}
-
-const PAUSE_SCROLL_THRESHOLD = 80
-
-function DeploymentLogsBody({
-  environment,
-  environmentStatus,
-  serviceStatus,
-  stage,
-  preCheckStage,
-  deploymentHistory,
-}: DeploymentLogsBodyProps) {
-  const { hash } = useLocation()
-  const { organizationId = '', projectId = '', serviceId = '', executionId = '' } = useParams({ strict: false })
-  const refScrollSection = useRef<HTMLDivElement>(null)
-  const accumulatedScrollUp = useRef(0)
-  const [isScrolledUp, setIsScrolledUp] = useState(false)
-  const { updateStageId } = useContext(ServiceStageIdsContext)
-  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
-  const { mutateAsync: generateBuildUsageReport, isLoading: isBuildReportLoading } = useGenerateBuildUsageReport()
-
-  useEffect(() => {
-    if (stage) updateStageId(stage.id)
-  }, [serviceId, serviceStatus, updateStageId, stage])
-
-  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId, suspense: true })
-  const {
-    data: logs = [],
-    isScrollPaused: pauseLogs,
-    setPauseLogs,
-    bufferedLogsCount,
-    showPreviousLogs,
-    setShowPreviousLogs,
-  } = useDeploymentLogs({
-    organizationId,
-    projectId,
-    environmentId: environment.id,
-    serviceId,
-    executionId,
-  })
-
-  // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes
-  useEffect(() => {
-    const section = refScrollSection.current
-    if (!section) return
-
-    !pauseLogs && section.scroll(0, section.scrollHeight)
-  }, [logs, pauseLogs])
-
-  const handleScroll = useCallback(() => {
-    const section = refScrollSection.current
-    if (!section) return
-    const isAtBottom = section.scrollTop + section.clientHeight >= section.scrollHeight - 4
-    setIsScrolledUp(!isAtBottom)
-    if (isAtBottom && pauseLogs) {
-      setPauseLogs(false)
-    }
-  }, [pauseLogs, setPauseLogs])
-
-  // `useEffect` used to scroll to the hash id
-  useEffect(() => {
-    const section = refScrollSection.current
-    if (hash && section) {
-      setPauseLogs(true)
-      setShowPreviousLogs(true)
-      const row = document.getElementById(hash.substring(1))
-      if (row) {
-        // scroll the section to the row's position
-        setTimeout(() => {
-          const rowPosition = row.getBoundingClientRect().top + section.scrollTop - 160
-          section.scrollTo({ top: rowPosition, behavior: 'smooth' })
-        }, 50)
-      }
-    }
-  }, [logs, setPauseLogs, setShowPreviousLogs, hash])
-
-  const columnHelper = createColumnHelper<EnvironmentLogIds>()
-
-  const customFilter: FilterFn<EnvironmentLogIds> = (row, columnId, filterValue) => {
-    if (filterValue === 'ALL') return true
-
-    const rowValue = row.getValue(columnId)
-
-    if (typeof rowValue === 'string') {
-      // https://qovery.slack.com/archives/C02NPSG2HBL/p1728487593457479?thread_ts=1727785723.481289&cid=C02NPSG2HBL
-      const stepValue = getFilterStep(rowValue as EnvironmentEngineStep)
-      return stepValue.toLowerCase().includes(filterValue.toLowerCase())
-    }
-    return false
-  }
-
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor('timestamp', {
-        filterFn: customFilter,
-      }),
-      columnHelper.accessor('message', {
-        filterFn: customFilter,
-      }),
-      columnHelper.accessor('details.stage.step', {
-        id: 'details.stage.step',
-        filterFn: customFilter,
-      }),
-    ],
-    [columnHelper]
-  )
-
-  const defaultColumnsFilters = useMemo(
-    () => [
-      {
-        id: 'details.stage.step',
-        value: 'ALL',
-      },
-    ],
-    []
-  )
-
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(defaultColumnsFilters)
-
-  const table = useReactTable({
-    data: logs,
-    state: { columnFilters },
-    onColumnFiltersChange: setColumnFilters,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    enableFilters: true,
-    getFilteredRowModel: getFilteredRowModel(),
-  })
-
-  const toggleColumnFilter = useCallback(
-    (type: FilterType) => {
-      setColumnFilters((prevFilters) => {
-        const currentFilter = prevFilters.find((filter) => filter.id === 'details.stage.step')
-        if (currentFilter?.value === type) {
-          return defaultColumnsFilters
-        }
-        return [
-          {
-            id: 'details.stage.step',
-            value: type,
-          },
-        ]
-      })
-      setTimeout(() => {
-        const section = refScrollSection.current
-        section?.scroll(0, section?.scrollHeight)
-      }, 10)
-    },
-    [defaultColumnsFilters]
-  )
-
-  const isFilterActive = useMemo(
-    () => (type: FilterType) => columnFilters.some((filter) => filter.value === type),
-    [columnFilters]
-  )
-  const isLastVersion = deploymentHistory?.[0]?.identifier.execution_id === executionId || !executionId
-  const currentDeployment = executionId
-    ? deploymentHistory.find((d) => d.identifier.execution_id === executionId)
-    : deploymentHistory[0]
-  const isDeploymentProgressing = isLastVersion
-    ? match(deploymentStatus?.state)
-        .with(
-          'BUILDING',
-          'DEPLOYING',
-          'CANCELING',
-          'DELETING',
-          'RESTARTING',
-          'STOPPING',
-          'QUEUED',
-          'DELETE_QUEUED',
-          'RESTART_QUEUED',
-          'STOP_QUEUED',
-          'DEPLOYMENT_QUEUED',
-          () => true
-        )
-        .otherwise(() => false)
-    : false
-
-  const isCrashLoopDetected = useMemo(() => {
-    if (!isDeploymentProgressing) return false
-    const warningCounts = new Map<string, number>()
-    for (const log of logs) {
-      const text = log.message?.safe_message ?? ''
-      if (!text.includes('⚠️')) continue
-      warningCounts.set(text, (warningCounts.get(text) ?? 0) + 1)
-    }
-    return [...warningCounts.values()].some((count) => count >= 3)
-  }, [logs, isDeploymentProgressing])
-
-  const isError = serviceStatus?.state?.includes('ERROR')
-
-  if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
-    return (
-      <div className="min-h-0 w-full flex-1">
-        <div className="flex h-full flex-col items-center justify-between bg-background">
-          <div className="flex h-full flex-col items-center justify-center">
-            <DeploymentLogsPlaceholder
-              environment={environment}
-              environmentStatus={environmentStatus}
-              serviceStatus={serviceStatus}
-              itemsLength={logs.length}
-              environmentDeploymentHistory={deploymentHistory}
-              preCheckStage={preCheckStage}
-            />
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <>
-      <div className="flex w-full items-center justify-between border-b border-neutral px-4 py-2.5">
-        <FiltersStageStep
-          service={service}
-          serviceStatus={serviceStatus}
-          isFilterActive={isFilterActive}
-          toggleColumnFilter={toggleColumnFilter}
-        />
-        <div className="flex items-center gap-2">
-          {(isError || isCrashLoopDetected) && (
-            <Button
-              color="brand"
-              variant="surface"
-              onClick={() => {
-                posthog.capture('ai-copilot-troubleshoot-triggered', {
-                  source: 'deployment-logs',
-                  troubleshoot_type: 'deployment',
-                  deployment_id: executionId,
-                  trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
-                })
-                const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
-                setDevopsCopilotOpen(true)
-                sendMessageRef?.current?.(message)
-              }}
-            >
-              <Icon iconName="sparkles" iconStyle="solid" />
-              Launch diagnostic for this error
-            </Button>
-          )}
-          {match(service)
-            .with({ serviceType: 'CONTAINER' }, () => false)
-            .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
-            .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)
-            .with({ serviceType: 'HELM', values_override: P.when(isHelmRepositorySource) }, () => false)
-            .otherwise(() => true) &&
-            currentDeployment?.identifier.execution_id && (
-              <Tooltip content={isBuildReportLoading ? 'Generating build usage report…' : 'Build runner usage'}>
-                <span>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    iconOnly
-                    loading={isBuildReportLoading}
-                    onClick={async () => {
-                      try {
-                        const res = await generateBuildUsageReport({
-                          environmentId: environment.id,
-                          executionId: currentDeployment.identifier.execution_id,
-                          reportExpirationInSeconds: 3600,
-                        })
-                        if (res.report_url) {
-                          window.open(res.report_url, '_blank')
-                        }
-                      } catch {
-                        // error handled by mutation hook notification
-                      }
-                    }}
-                  >
-                    <Icon iconName="chart-line" className={isBuildReportLoading ? 'invisible' : ''} />
-                  </Button>
-                </span>
-              </Tooltip>
-            )}
-          <Button
-            onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
-            variant="outline"
-            size="sm"
-            iconOnly
-          >
-            <Icon iconName="file-arrow-down" iconStyle="regular" />
-          </Button>
-        </div>
-      </div>
-      <div
-        className="min-h-0 w-full flex-1 overflow-y-scroll"
-        ref={refScrollSection}
-        onScroll={handleScroll}
-        onWheel={(event) => {
-          if (pauseLogs) return
-
-          const section = refScrollSection.current
-          if (!section) return
-
-          const hasScrollableContent = section.clientHeight !== section.scrollHeight
-          if (!hasScrollableContent) return
-
-          if (event.deltaY < 0) {
-            accumulatedScrollUp.current += Math.abs(event.deltaY)
-            if (accumulatedScrollUp.current >= PAUSE_SCROLL_THRESHOLD) {
-              accumulatedScrollUp.current = 0
-              setPauseLogs(true)
-            }
-          } else {
-            accumulatedScrollUp.current = 0
-          }
-        }}
-      >
-        {logs.length >= 500 && (
-          <ShowPreviousLogsButton
-            showPreviousLogs={showPreviousLogs}
-            setShowPreviousLogs={setShowPreviousLogs}
-            setPauseLogs={setPauseLogs}
-          />
-        )}
-        <Table.Root
-          className="w-full border-separate border-spacing-y-0.5 text-xs"
-          containerClassName="rounded-none border-none bg-background"
-        >
-          <Table.Body className="divide-y-0">
-            {table.getRowModel().rows.map((row) => (
-              <MemoizedRowDeploymentLogs key={row.id} {...row} />
-            ))}
-          </Table.Body>
-        </Table.Root>
-        {isDeploymentProgressing && (
-          <ProgressIndicator className="mb-2 pl-2" pauseLogs={pauseLogs} message="Streaming deployment logs" />
-        )}
-      </div>
-      {isScrolledUp && (
-        <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} bufferedLogsCount={bufferedLogsCount} />
-      )}
-    </>
-  )
-}
-
 export function ListDeploymentLogs({
   environment,
   environmentStatus,
@@ -528,40 +116,16 @@ export function ListDeploymentLogs({
     serviceId,
     suspense: true,
   })
-  const isDeploymentLogsV2Enabled = useFeatureFlagEnabled('deployment-logs-v2') === true
-
-  if (isDeploymentLogsV2Enabled) {
-    const deployment = executionId
-      ? deploymentHistory.find((deployment) => deployment.identifier.execution_id === executionId)
-      : deploymentHistory[0]
-
-    return (
-      <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-background">
-        <HeaderDeploymentLogs serviceStatus={serviceStatus} deploymentDate={deployment?.auditing_data.created_at}>
-          <DeploymentHistoryDropdown environment={environment} deploymentHistory={deploymentHistory} />
-        </HeaderDeploymentLogs>
-        <DeploymentLogsSteps
-          key={executionId || 'latest'}
-          environment={environment}
-          serviceStatus={serviceStatus}
-          stage={stage}
-          environmentStatus={environmentStatus}
-          preCheckStage={preCheckStage}
-          deploymentHistory={deploymentHistory}
-        />
-      </div>
-    )
-  }
+  const deployment = executionId
+    ? deploymentHistory.find((deployment) => deployment.identifier.execution_id === executionId)
+    : deploymentHistory[0]
 
   return (
     <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-background">
-      <DeploymentLogsHeader
-        environment={environment}
-        serviceStatus={serviceStatus}
-        environmentStatus={environmentStatus}
-        deploymentHistory={deploymentHistory}
-      />
-      <DeploymentLogsBody
+      <HeaderDeploymentLogs serviceStatus={serviceStatus} deploymentDate={deployment?.auditing_data.created_at}>
+        <DeploymentHistoryDropdown environment={environment} deploymentHistory={deploymentHistory} />
+      </HeaderDeploymentLogs>
+      <DeploymentLogsSteps
         key={executionId || 'latest'}
         environment={environment}
         serviceStatus={serviceStatus}
