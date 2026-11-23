@@ -131,13 +131,11 @@ describe('AgentActivity', () => {
       expect.objectContaining({ search: expect.objectContaining({ actor: `token:${CI_DEPLOYER}` }), replace: true })
     )
     expect(screen.getByRole('combobox', { name: 'Actor' })).toHaveValue(`token:${CI_DEPLOYER}`)
-    await waitFor(() =>
-      expect(
-        Array.from(document.querySelectorAll('[data-actor-kind]')).every(
-          (chip) => chip.getAttribute('data-actor-kind') === 'policy-token'
-        )
-      ).toBe(true)
-    )
+    await waitFor(() => {
+      const chips = Array.from(document.querySelectorAll('[data-actor-kind]'))
+      expect(chips.length).toBeGreaterThan(0)
+      expect(chips.every((chip) => chip.getAttribute('data-actor-kind') === 'policy-token')).toBe(true)
+    })
   })
 
   it('reads its filters from the URL, and clears them from the filter bar', async () => {
