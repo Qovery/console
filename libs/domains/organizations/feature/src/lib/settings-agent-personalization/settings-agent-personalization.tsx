@@ -367,18 +367,21 @@ function McpServersList({ organizationId, canManageOrganization }: ScopedCredent
   )
 }
 
-function useCanManageOrganizationCredentials(organizationId: string) {
+function useOrganizationCredentialPermissions(organizationId: string) {
   const { roles, loading, isQoveryAdminUser } = useUserRole()
-  return (
-    !loading &&
-    (isQoveryAdminUser || ['owner', 'admin'].some((role) => roles.includes(`organization:${organizationId}:${role}`)))
-  )
+  return {
+    isRoleLoading: loading,
+    canManageOrganization:
+      !loading &&
+      (isQoveryAdminUser ||
+        ['owner', 'admin'].some((role) => roles.includes(`organization:${organizationId}:${role}`))),
+  }
 }
 
 export function SettingsAgentTokens() {
   useDocumentTitle('Agent tokens - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
-  const canManageOrganization = useCanManageOrganizationCredentials(organizationId)
+  const { canManageOrganization, isRoleLoading } = useOrganizationCredentialPermissions(organizationId)
   const { openModal, closeModal } = useModal()
 
   const onAddToken = () => {
@@ -392,7 +395,7 @@ export function SettingsAgentTokens() {
     <Section className="px-8 pb-8 pt-6">
       <div className="space-y-6">
         <SettingsHeading title="Tokens" description="Configure the provider credentials used by your agent tasks.">
-          <Button size="md" onClick={onAddToken}>
+          <Button size="md" onClick={onAddToken} disabled={isRoleLoading}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add token
           </Button>
@@ -410,7 +413,7 @@ export function SettingsAgentTokens() {
 export function SettingsAgentMcps() {
   useDocumentTitle('Agent MCPs - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
-  const canManageOrganization = useCanManageOrganizationCredentials(organizationId)
+  const { canManageOrganization } = useOrganizationCredentialPermissions(organizationId)
   const { openModal, closeModal } = useModal()
 
   const onAddMcp = () => {

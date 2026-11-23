@@ -210,6 +210,17 @@ describe('Agent settings pages', () => {
     expect(screen.queryByRole('button', { name: 'Add token' })).not.toBeInTheDocument()
   })
 
+  it('waits for the organization role before enabling token creation', () => {
+    jest.mocked(useUserRole).mockReturnValue({
+      roles: [],
+      loading: true,
+      isQoveryAdminUser: false,
+    })
+    renderWithProviders(<SettingsAgentTokens />)
+
+    expect(screen.getByRole('button', { name: 'Add token' })).toBeDisabled()
+  })
+
   it('should render and manage provider tokens', async () => {
     useMcpServersMock.mockReturnValue({ data: [] })
     useLlmProvidersMock.mockReturnValue({ data: llmProviders })
