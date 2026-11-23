@@ -213,7 +213,9 @@ describe('Automate, recurring agents', () => {
     expect(codingAgent.getAllByTestId('coding-agent').map((item) => item.textContent)).toEqual(CODING_AGENT_NAMES)
     // Full values, not cut with an ellipsis.
     expect(codingAgent.getByText('QOVERY_CLI_ACCESS_TOKEN=<policy token>')).toBeInTheDocument()
-    expect(codingAgent.getByText('0 8,20 * * 1-5')).toBeInTheDocument()
+    expect(codingAgent.getByText('0 8,20 * * *')).toBeInTheDocument()
+    // The prompt is written in Paris time: the cron says so.
+    expect(codingAgent.getByText('Schedule (Europe/Paris):')).toBeInTheDocument()
     const agentTask = within(run.getByTestId('route-agent-task'))
     expect(agentTask.getByText('Recommended')).toBeInTheDocument()
     expect(agentTask.getByText(/with no laptop or CI to keep running/)).toBeInTheDocument()

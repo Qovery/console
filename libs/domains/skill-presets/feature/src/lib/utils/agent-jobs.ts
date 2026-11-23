@@ -16,6 +16,8 @@ export interface AgentJobTrigger {
   label: string
   /** The cron expression to start from, for a schedule. */
   cron?: string
+  /** The timezone the cron is written in, when the prompt names one. Set it on the Agent Task too. */
+  timezone?: string
   /** Who sends the webhook, or another way to run it. */
   note?: string
 }
@@ -135,7 +137,8 @@ export const AGENT_JOBS: AgentJob[] = [
       'Check the "dev" and "qa" environments of the Qovery project "shop".\n\nIf an environment has had no deployment in the last 24 hours, or if it is\nafter 8 PM or a weekend in Paris time, stop it.\nOn weekdays at 8 AM Paris time, start the stopped ones again.\n\nList what you stopped or started, and why.',
     policy:
       'default allow := false\n\norganization_id := "REPLACE_WITH_ORGANIZATION_ID"\nproject_id := "REPLACE_WITH_PROJECT_ID"\n\n# The non-production environments the agent may stop and start.\nidle_candidate_environment_ids := {\n\t"REPLACE_WITH_DEV_ENVIRONMENT_ID",\n\t"REPLACE_WITH_QA_ENVIRONMENT_ID",\n}\n\nallow if cli_lookup\nallow if read_candidates\nallow if stop_or_start\n\n# Let the Qovery CLI find the organization, project and environment by name.\ncli_lookup if {\n\tinput.request.method == "GET"\n\tinput.request.path in {\n\t\t["api", "organization"],\n\t\t["api", "organization", organization_id],\n\t\t["api", "organization", organization_id, "project"],\n\t\t["api", "project", project_id],\n\t\t["api", "project", project_id, "environment"],\n\t}\n}\n\n# Read the status and deployment history of those environments.\nread_candidates if {\n\tinput.request.method in {"GET", "HEAD"}\n\tinput.qovery_metadata.environment_id in idle_candidate_environment_ids\n\tnot "environmentVariable" in input.request.path\n}\n\n# Stop an environment, or start it again with a deploy. Nothing else.\nstop_or_start if {\n\tinput.request.method == "POST"\n\tinput.request.path[1] == "environment"\n\tinput.request.path[2] in idle_candidate_environment_ids\n\tinput.request.path[3] in {"stop", "deploy"}\n\tcount(input.request.path) == 4\n}',
-    trigger: { kind: 'schedule', label: 'Weekdays at 8 PM and 8 AM', cron: '0 8,20 * * 1-5' },
+    // Every day: the prompt stops environments on weekends too, and starts them on weekdays only.
+    trigger: { kind: 'schedule', label: 'Every day at 8 PM and 8 AM', cron: '0 8,20 * * *', timezone: 'Europe/Paris' },
   },
   {
     slug: 'clean-up-preview-environments',
@@ -242,9 +245,10 @@ export const AGENT_JOBS: AgentJob[] = [
       'default allow := false\n\norganization_id := "REPLACE_WITH_ORGANIZATION_ID"\nproject_id := "REPLACE_WITH_PROJECT_ID"\nproduction_environment_id := "REPLACE_WITH_PRODUCTION_ENVIRONMENT_ID"\n\n# The applications the agent may scale, with their current CPU, memory and branch, and the\n# highest number of instances the agent may set.\napplications := {\n\t"REPLACE_WITH_API_APPLICATION_ID": {"cpu": 1000, "memory": 2048, "branch": "main", "floor": 2, "ceiling": 12},\n\t"REPLACE_WITH_WEB_APPLICATION_ID": {"cpu": 500, "memory": 1024, "branch": "main", "floor": 2, "ceiling": 8},\n}\n\nallow if cli_lookup\nallow if read_production\nallow if scale\nallow if redeploy\n\n# Let the Qovery CLI find the organization, project and environment by name.\ncli_lookup if {\n\tinput.request.method == "GET"\n\tinput.request.path in {\n\t\t["api", "organization"],\n\t\t["api", "organization", organization_id],\n\t\t["api", "organization", organization_id, "project"],\n\t\t["api", "project", project_id],\n\t\t["api", "project", project_id, "environment"],\n\t}\n}\n\n# Read production: services, status, deployment history and logs.\nread_production if {\n\tinput.request.method in {"GET", "HEAD"}\n\tinput.qovery_metadata.environment_id == production_environment_id\n\tnot "environmentVariable" in input.request.path\n}\n\n# Change the number of instances between the floor and the ceiling.\n# CPU, memory and branch must stay as they are.\nscale if {\n\tinput.request.method == "PUT"\n\tinput.request.path[1] == "application"\n\tcount(input.request.path) == 3\n\tapp := applications[input.request.path[2]]\n\tbody := input.request.body\n\tbody.min_running_instances >= app.floor\n\tbody.max_running_instances >= body.min_running_instances\n\tbody.max_running_instances <= app.ceiling\n\tbody.cpu == app.cpu\n\tbody.memory == app.memory\n\tbody.git_repository.branch == app.branch\n}\n\n# Redeploy a scaled application so the new values apply.\nredeploy if {\n\tinput.request.method == "POST"\n\tinput.request.path[1] == "application"\n\tapplications[input.request.path[2]]\n\tinput.request.path[3] == "redeploy"\n\tcount(input.request.path) == 4\n}',
     trigger: {
       kind: 'schedule',
-      label: 'Before a known peak, for example Fridays at 5 PM',
-      cron: '0 17 * * 5',
-      note: 'And a second schedule to scale back after the peak.',
+      label: 'Before a known peak, for example Tuesdays at 9:30 AM',
+      cron: '30 9 * * 2',
+      timezone: 'Europe/Paris',
+      note: 'And a second schedule to scale back after the peak, for example Tuesdays at 2 PM (0 14 * * 2).',
     },
   },
   {

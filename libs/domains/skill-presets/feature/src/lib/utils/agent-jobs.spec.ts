@@ -21,4 +21,21 @@ describe('AGENT_JOBS', () => {
     expect(preview.can.join(' ')).toMatch(/any environment of the project except production and staging/)
     expect(preview.summary).toMatch(/any environment except production and staging/)
   })
+
+  it('runs the idle job every day, as its prompt stops environments on weekends too', () => {
+    expect(job('stop-idle-environments').trigger).toMatchObject({ cron: '0 8,20 * * *', timezone: 'Europe/Paris' })
+  })
+
+  it('scales before the Tuesday peak its prompt names, with the scale back as a second schedule', () => {
+    const { trigger, prompt } = job('scale-before-traffic-peak')
+    expect(prompt).toMatch(/On Tuesday at 9:30 AM/)
+    expect(trigger).toMatchObject({ cron: '30 9 * * 2', timezone: 'Europe/Paris' })
+    expect(trigger.note).toMatch(/0 14 \* \* 2/)
+  })
+
+  it('names the timezone of every schedule whose prompt is in Paris time', () => {
+    AGENT_JOBS.filter(({ prompt, trigger }) => trigger.kind === 'schedule' && /Paris/.test(prompt)).forEach(
+      ({ trigger }) => expect(trigger.timezone).toBe('Europe/Paris')
+    )
+  })
 })

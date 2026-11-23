@@ -113,6 +113,9 @@ const TRIGGER_ICONS = { schedule: 'calendar-clock', webhook: 'webhook' } as cons
 const MCP_URL = 'https://mcp.qovery.com/mcp'
 
 /** A value to copy, in full (it wraps instead of being cut), with a copy button named after it. */
+/** "Schedule (Europe/Paris)": a cron is only right in the timezone the prompt is written in. */
+const withTimezone = (label: string, timezone?: string) => (timezone ? `${label} (${timezone})` : label)
+
 function CopyValue({ label, value, copyLabel }: { label: string; value: string; copyLabel: string }) {
   return (
     <span className="flex items-center justify-between gap-2 rounded border border-neutral bg-surface-neutral-subtle px-2 py-1">
@@ -233,7 +236,7 @@ function RunOnItsOwn({
                 </span>
                 {job.trigger.kind === 'schedule' && job.trigger.cron ? (
                   <CopyValue
-                    label="Schedule"
+                    label={withTimezone('Schedule', job.trigger.timezone)}
                     value={job.trigger.cron}
                     copyLabel="Copy the schedule for the coding agent"
                   />
@@ -260,7 +263,11 @@ function RunOnItsOwn({
                   Task with the prompt below, this trigger, and the Qovery MCP server set up with the token.
                 </span>
                 {job.trigger.kind === 'schedule' && job.trigger.cron ? (
-                  <CopyValue label="On a schedule" value={job.trigger.cron} copyLabel="Copy the Agent Task schedule" />
+                  <CopyValue
+                    label={withTimezone('On a schedule', job.trigger.timezone)}
+                    value={job.trigger.cron}
+                    copyLabel="Copy the Agent Task schedule"
+                  />
                 ) : (
                   <span className="text-xs text-neutral">From a webhook: use the URL the Agent Task gets.</span>
                 )}
