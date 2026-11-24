@@ -99,17 +99,17 @@ describe('getSelfManagedClusterRegistryRequest', () => {
     ).toStrictEqual({ kind: 'GENERIC_CR', url: 'https://registry.example.com:5000' })
   })
 
-  it('sends the credentials of a generic registry with an account login', () => {
+  it('sends the credentials of a generic registry with an account login, the password verbatim', () => {
     expect(
       getSelfManagedClusterRegistryRequest({
         kind: 'GENERIC_CR',
         url: 'https://registry.example.com',
-        config: { login_type: 'ACCOUNT', username: ' robot ', password: 's3cret' },
+        config: { login_type: 'ACCOUNT', username: ' robot ', password: ' s3cret ' },
       })
     ).toStrictEqual({
       kind: 'GENERIC_CR',
       url: 'https://registry.example.com',
-      credentials: { username: 'robot', password: 's3cret' },
+      credentials: { username: 'robot', password: ' s3cret ' },
     })
   })
 

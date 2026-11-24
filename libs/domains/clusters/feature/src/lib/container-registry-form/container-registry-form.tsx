@@ -190,12 +190,13 @@ export function ContainerRegistryForm({
             disabled={fromEditClusterSettings ? !(isClusterSelfManaged && !isClusterDemo && isClusterOnPremise) : false}
             onChange={(value) => {
               methods.setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
-              if (fromClusterCreation) {
+              if (!fromClusterCreation) {
+                methods.resetField('config')
+              }
+              if (fromClusterCreation || fromEditClusterSettings) {
                 methods.setValue('config.username', '')
                 methods.setValue('config.password', '')
                 methods.clearErrors(['config.username', 'config.password'])
-              } else {
-                methods.resetField('config')
               }
               field.onChange(value)
               // GitHub Enterprise doesn't support anonymous login, so we set the login type to ACCOUNT

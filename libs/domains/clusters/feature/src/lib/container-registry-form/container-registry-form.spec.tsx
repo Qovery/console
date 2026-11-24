@@ -417,6 +417,24 @@ describe('ContainerRegistryForm', () => {
       expect(screen.getByText(/We encourage you to set credentials for Docker Hub/)).toBeInTheDocument()
     })
 
+    it('empties the saved credentials when the kind changes in the settings of a cluster', async () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm fromEditClusterSettings cluster={onPremiseCluster} />, {
+          defaultValues: {
+            kind: ContainerRegistryKindEnum.GITHUB_CR,
+            url: 'https://ghcr.io',
+            config: { username: 'qovery' },
+          },
+        })
+      )
+      expect(screen.getByLabelText('Container registry prefix')).toHaveValue('qovery')
+
+      await selectEvent.select(screen.getByLabelText('Type'), 'DOCKER_HUB', { container: document.body })
+
+      expect(screen.getByLabelText('Username')).toHaveValue('')
+      expect(screen.getByLabelText('Password')).toHaveValue('')
+    })
+
     it('keeps the login type of a GitHub registry free in the settings of another cluster', () => {
       renderWithProviders(
         wrapWithReactHookForm(<ContainerRegistryForm fromEditClusterSettings cluster={awsCluster} />, {
