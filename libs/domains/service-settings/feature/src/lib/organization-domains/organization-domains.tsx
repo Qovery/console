@@ -97,17 +97,19 @@ export function OrganizationDomains() {
 
   if (loading)
     return (
-      <div className="flex justify-center py-12">
+      <div className="container mx-auto mt-6 flex justify-center py-12">
         <LoaderSpinner />
       </div>
     )
   if (!isAdmin)
     return (
-      <EmptyState
-        icon="lock"
-        title="Administrator access required"
-        description="Only organization administrators can view and manage organization domains."
-      />
+      <div className="container mx-auto mt-6 pb-28">
+        <EmptyState
+          icon="lock"
+          title="Administrator access required"
+          description="Only organization administrators can view and manage organization domains."
+        />
+      </div>
     )
 
   return <OrganizationDomainsContent key={organizationId} />
