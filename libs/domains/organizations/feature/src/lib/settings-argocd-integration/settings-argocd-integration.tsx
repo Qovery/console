@@ -573,7 +573,7 @@ export function SettingsArgoCdIntegration() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="flex justify-between gap-2">
           <SettingsHeading
             title="ArgoCD integration"

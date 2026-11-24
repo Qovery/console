@@ -49,9 +49,10 @@ export const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, sto
               <Icon iconName="arrow-up" className={loading ? 'opacity-0' : ''} />
             ) : (
               <>
-                <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:opacity-0" />
+                {/* Without hover (touch screens) the stop icon is shown directly, as the spinner alone hides the action */}
+                <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:opacity-0 [@media(hover:none)]:opacity-0" />
                 <Icon
-                  className="absolute left-0 right-0 m-auto opacity-0 group-hover:opacity-100"
+                  className="absolute left-0 right-0 m-auto opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                   iconName="stop"
                   iconStyle="light"
                 />

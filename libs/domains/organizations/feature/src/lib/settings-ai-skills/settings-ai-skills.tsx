@@ -44,7 +44,7 @@ export function SettingsAiSkills() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading
           title="Skills"
           description="Give your AI agent the ability to deploy, troubleshoot, optimize, and manage Kubernetes infrastructure."

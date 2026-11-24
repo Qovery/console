@@ -13,7 +13,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Section, Skeleton } from '@qovery/shared/ui'
+import { BlockContent, SETTINGS_HEADER_ACTION_CLASS_NAME, Section, Skeleton } from '@qovery/shared/ui'
 import { Button, DropdownMenu, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
@@ -51,10 +51,10 @@ type CredentialRowProps = {
 const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: CredentialRowProps) => {
   return (
     <div
-      className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral p-4 last:border-0"
+      className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center justify-between gap-3 border-b border-neutral p-4 last:border-0"
       key={credential.id}
     >
-      <div className="grid grid-cols-[32px_1fr] gap-2">
+      <div className="grid grid-cols-[32px_minmax(0,1fr)] gap-2">
         {credential.object_type === 'EKS_ANYWHERE_VSPHERE' ? (
           <Icon name={IconEnum.EKS_ANYWHERE} width={32} height={32} className="-ml-1.5" />
         ) : (
@@ -64,7 +64,7 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
             className="-ml-1.5"
           />
         )}
-        <div className="flex flex-col justify-center">
+        <div className="flex min-w-0 flex-col justify-center max-md:break-all">
           <span className="text-xs font-medium text-neutral">{credential.name}</span>
 
           {'role_arn' in credential && (
@@ -404,13 +404,13 @@ export function SettingsCloudCredentials() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading title="Cloud Credentials" description="Manage your Cloud providers credentials." />
 
           <DropdownMenu.Root open={isCreateMenuOpen} onOpenChange={setIsCreateMenuOpen}>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" className="absolute right-0 top-0 shrink-0">
+              <Button size="md" className={SETTINGS_HEADER_ACTION_CLASS_NAME}>
                 <Icon iconName="circle-plus" iconStyle="regular" />
                 New credential
               </Button>

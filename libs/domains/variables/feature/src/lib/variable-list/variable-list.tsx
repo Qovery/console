@@ -937,8 +937,8 @@ export function VariableList({
     return (
       <div className={twMerge('flex flex-col', !isTabLayout && 'grow justify-between')}>
         {headerActions && (
-          <div className="flex items-center justify-between border-b border-neutral bg-surface-neutral px-4 py-2">
-            <div className="flex items-center gap-1.5 text-sm font-medium text-neutral">
+          <div className="flex items-center justify-between gap-2 border-b border-neutral bg-surface-neutral px-4 py-2 max-md:flex-wrap">
+            <div className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium text-neutral">
               <span>{countText}</span>
               <Tooltip content={countTooltipContent}>
                 <span>
@@ -946,7 +946,7 @@ export function VariableList({
                 </span>
               </Tooltip>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 max-md:flex-wrap">
               <TableFilterSearch
                 className="h-8 w-[200px]"
                 value={filterValue ?? ''}

@@ -8,6 +8,7 @@ import {
   Button,
   Icon,
   Indicator,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
   Section,
   Skeleton,
   Tooltip,
@@ -82,12 +83,12 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
     <li
       data-testid={`registries-list-${registry.id}`}
       key={registry.id}
-      className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
+      className="flex items-center justify-between border-b border-neutral p-4 last:border-0 max-md:gap-3"
     >
-      <div className="flex items-center">
+      <div className="flex items-center max-md:min-w-0">
         <Icon name={registry.kind ? containerRegistryKindToIcon(registry.kind) : IconEnum.AWS} width="20" height="20" />
-        <div className="ml-4">
-          <h2 className="mb-1 flex text-xs font-medium text-neutral">
+        <div className="ml-4 max-md:min-w-0">
+          <h2 className="mb-1 flex text-xs font-medium text-neutral max-md:break-words">
             <Truncate
               truncateLimit={60}
               text={`${registry.name}${registry.config?.access_key_id ? ` (${registry.config?.access_key_id})` : registry.config?.scaleway_access_key ? ` (${registry.config?.scaleway_access_key})` : registry.config?.username ? ` (${registry.config?.username})` : ''}`}
@@ -100,22 +101,22 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
               </Tooltip>
             )}
           </h2>
-          <p className="text-xs text-neutral-subtle">
-            {registry.kind}{' '}
+          <p className="flex flex-wrap gap-x-3 text-xs text-neutral-subtle">
+            <span>{registry.kind}</span>
             {registry.updated_at && (
-              <span className="ml-3 inline-block" title={dateUTCString(registry.updated_at)}>
+              <span className="inline-block" title={dateUTCString(registry.updated_at)}>
                 Last updated {timeAgo(new Date(registry.updated_at))}
               </span>
             )}{' '}
             {registry.created_at && (
-              <span className="ml-3 inline-block" title={dateUTCString(registry.created_at)}>
+              <span className="inline-block" title={dateUTCString(registry.created_at)}>
                 Created since {dateMediumLocalFormat(registry.created_at)}
               </span>
             )}
           </p>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 max-md:shrink-0">
         {(registry?.associated_services_count || 0) > 0 && (
           <Indicator
             content={
@@ -265,14 +266,14 @@ export function SettingsContainerRegistries() {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Container registries"
             description="Define and manage the container registry to be used within your organization to deploy applications."
           />
 
-          <Button className="absolute right-0 top-0" size="md" onClick={() => onAddRegistry()}>
+          <Button className={SETTINGS_HEADER_ACTION_CLASS_NAME} size="md" onClick={() => onAddRegistry()}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add registry
           </Button>

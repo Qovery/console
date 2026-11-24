@@ -110,6 +110,7 @@ export function BillingDetails({
             className="mb-3 min-w-0 flex-1"
             name={field.name}
             label="Billing email"
+            type="email"
             value={field.value}
             onChange={field.onChange}
             onBlur={field.onBlur}

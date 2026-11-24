@@ -44,7 +44,7 @@ interface PreviewCodeHeaderProps {
 
 function PreviewCodeHeader({ title, description, language, code }: PreviewCodeHeaderProps) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-neutral bg-surface-neutral-subtle px-6 py-4">
+    <div className="flex shrink-0 items-start justify-between gap-4 border-b border-neutral bg-surface-neutral-subtle px-6 py-4 max-md:flex-wrap">
       <Section className="min-w-0">
         <Heading className="mb-1">{title}</Heading>
         <p className="text-sm text-neutral-subtle">{description}</p>
@@ -88,11 +88,11 @@ function PreviewCode() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex h-dvh flex-col bg-background md:h-screen">
       <PreviewCodeHeader title={title} description={description} language={language} code={code} />
 
       <div className="min-h-0 flex-1">
-        <CodeEditor language={language} value={code} height="calc(100vh - 89px)" readOnly />
+        <CodeEditor language={language} value={code} height="100%" readOnly />
       </div>
     </div>
   )

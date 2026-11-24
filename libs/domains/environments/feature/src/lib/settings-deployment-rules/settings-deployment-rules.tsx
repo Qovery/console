@@ -1,10 +1,19 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, type FieldValues, useForm } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { timezoneValues, weekdaysValues } from '@qovery/shared/enums'
-import { BlockContent, Button, InputSelect, InputText, InputToggle, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  InputSelect,
+  InputText,
+  InputToggle,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
+  Section,
+} from '@qovery/shared/ui'
 import { dateToHours } from '@qovery/shared/util-dates'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
@@ -59,7 +68,7 @@ export const SettingsDeploymentRules = () => {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="Deployment rules" />
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Start & stop">
@@ -154,8 +163,14 @@ export const SettingsDeploymentRules = () => {
               </>
             )}
           </BlockContent>
-          <div className="flex justify-end">
-            <Button className="mb-6" type="submit" size="lg" disabled={!methods.formState.isValid} loading={loading}>
+          <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
+            <Button
+              className="mb-6 max-md:mb-0"
+              type="submit"
+              size="lg"
+              disabled={!methods.formState.isValid}
+              loading={loading}
+            >
               Save
             </Button>
           </div>

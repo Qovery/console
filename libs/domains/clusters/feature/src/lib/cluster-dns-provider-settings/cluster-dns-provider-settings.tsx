@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import {
   CloudflareDnsProviderRequestProviderEnum,
   type ClusterDnsProviderRequest,
@@ -21,6 +22,7 @@ import {
   InputText,
   InputToggle,
   Link,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Section,
 } from '@qovery/shared/ui'
 
@@ -349,7 +351,7 @@ export function ClusterDnsProviderSettings({
 
   return (
     <FormProvider {...methods}>
-      <Section className="p-8">
+      <Section className="px-4 py-8 md:p-8">
         <SettingsHeading
           title="DNS provider"
           description={
@@ -400,7 +402,7 @@ export function ClusterDnsProviderSettings({
               <DnsProviderFields disabled={disabled || Boolean(isSubmitting)} />
             </BlockContent>
 
-            <div className="flex justify-end">
+            <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
               <Button
                 data-testid="submit-button"
                 type="submit"

@@ -206,7 +206,7 @@ describe('MessageList', () => {
         />
       )
 
-      scrollArea = container.querySelector('.h-\\[calc\\(100vh-316px\\)\\]')
+      scrollArea = container.querySelector('.h-\\[calc\\(100dvh-316px\\)\\]')
       expect(scrollArea).toBeInTheDocument()
     })
 

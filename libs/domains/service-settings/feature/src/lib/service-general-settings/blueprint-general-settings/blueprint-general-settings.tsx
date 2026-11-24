@@ -388,7 +388,7 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
 
   if (!details) {
     return (
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading
           title="Blueprint configuration"
           description="Configure the inputs defined by this Blueprint."
@@ -404,7 +404,7 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
   }
 
   return (
-    <Section className="px-8 pb-8 pt-6">
+    <Section className="px-4 pb-8 pt-6 md:px-8">
       <SettingsHeading title="Blueprint configuration" description="Configure the inputs defined by this Blueprint." />
       <div className="max-w-content-with-navigation-left space-y-3">
         <BlueprintSection active iconName="circle-info" title="Service information">
