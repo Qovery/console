@@ -126,8 +126,8 @@ export function ClusterAdvancedSettings({
               <LoaderSpinner className="w-6" />
             </div>
           ) : (
-            <div className="overflow-hidden rounded">
-              <Table.Root className="w-full table-fixed text-sm">
+            <div className="rounded max-md:min-w-0 md:overflow-hidden">
+              <Table.Root className="w-full table-fixed text-sm max-md:min-w-[760px]">
                 <Table.Header className="text-xs">
                   <Table.Row className="divide-x divide-neutral">
                     <Table.ColumnHeaderCell className="font-medium">Settings</Table.ColumnHeaderCell>
@@ -161,7 +161,7 @@ export function ClusterAdvancedSettings({
                             </div>
                           </Tooltip>
                           <CopyToClipboardButtonIcon
-                            className="invisible ml-2 text-neutral-subtle group-hover:visible"
+                            className="invisible ml-2 text-neutral-subtle group-hover:visible [@media(hover:none)]:visible"
                             content={row.defaultValue?.toString() ?? ''}
                           />
                         </div>

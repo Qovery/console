@@ -78,7 +78,7 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
     return (
       <div className="flex flex-col">
         <HeaderPreCheckLogs preCheckStage={preCheckStage} />
-        <div className="flex h-[calc(100vh-156px)] w-full flex-col items-center justify-center gap-5 overflow-hidden text-center">
+        <div className="flex h-[calc(100dvh-156px)] w-full flex-col items-center justify-center gap-5 overflow-hidden text-center">
           <LoaderDots />
           <div className="flex flex-col gap-3">
             <p className="text-neutral">Pre-check logs are loading…</p>
@@ -94,7 +94,7 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
   if (!preCheckStage) return null
 
   return (
-    <div className="h-[calc(100vh-108px)] w-full overflow-hidden">
+    <div className="h-[calc(100dvh-108px)] w-full overflow-hidden">
       <div className="relative h-full">
         <HeaderPreCheckLogs preCheckStage={preCheckStage}>
           <div className="flex items-center gap-4">
@@ -137,7 +137,7 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
                             <CopyToClipboardButtonIcon
                               content={deployment.identifier.execution_id}
                               tooltipContent="Copy execution id"
-                              className="opacity-0 transition-opacity group-hover:opacity-100"
+                              className="opacity-0 transition-opacity group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                               iconClassName="text-xs"
                             />
                           )}

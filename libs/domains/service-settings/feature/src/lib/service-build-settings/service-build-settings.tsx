@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type BuildSettings } from 'qovery-typescript-axios'
 import { Suspense, useEffect } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -10,7 +11,16 @@ import {
 } from '@qovery/domains/services/data-access'
 import { useDefaultAdvancedSettings, useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Callout, Icon, InputText, InputToggle, LoaderSpinner, Section } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  Icon,
+  InputText,
+  InputToggle,
+  LoaderSpinner,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
+  Section,
+} from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -61,7 +71,7 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="Build settings" description="Configure the build parameters for this service." />
         <div className="max-w-content-with-navigation-left">
           {disabled && (
@@ -178,7 +188,7 @@ function BuildSettingsForm({ service, onSubmit, loading, disabled, defaultAdvanc
               />
             </div>
             {!disabled && (
-              <div className="flex justify-end">
+              <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
                   Save
                 </Button>
