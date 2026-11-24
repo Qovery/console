@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, type SyntheticEvent, useEffect, useState } from 'react'
 import Select, {
   type GroupBase,
   type MenuListProps,
@@ -65,9 +65,14 @@ const getCustomProps = ({ selectProps }: { selectProps: unknown }) => selectProp
 
 const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => {
   const { menuListButton } = getCustomProps(props)
+  // A modal locks scrolling outside itself and cancels wheel and touch moves that reach the document.
+  // A menu portalled out of the modal is outside it: keep its scroll events from reaching that lock.
+  const stopScrollLock = props.selectProps.menuPortalTarget
+    ? (event: SyntheticEvent) => event.stopPropagation()
+    : undefined
 
   return (
-    <div role="listbox">
+    <div role="listbox" onWheel={stopScrollLock} onTouchMove={stopScrollLock}>
       <components.MenuList {...props}>
         {menuListButton && (
           <div

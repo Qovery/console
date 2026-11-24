@@ -154,4 +154,26 @@ describe('InputSelect', () => {
     expect(onChangeMock).toHaveBeenCalledWith('option2')
     expect(screen.getByTestId('select')).toHaveClass('input--filter')
   })
+
+  it('keeps scroll events of a portalled menu from reaching document-level scroll locks', () => {
+    const documentWheel = jest.fn()
+    document.addEventListener('wheel', documentWheel)
+    renderWithProviders(<InputSelect {...props} portal />)
+    selectEvent.openMenu(screen.getByLabelText('Select Multiple'))
+    const option = screen.getByText('Test 1')
+    expect(screen.getByTestId('select')).not.toContainElement(option)
+    option.dispatchEvent(new WheelEvent('wheel', { bubbles: true, deltaY: 40 }))
+    expect(documentWheel).not.toHaveBeenCalled()
+    document.removeEventListener('wheel', documentWheel)
+  })
+
+  it('lets scroll events of an inline menu bubble', () => {
+    const documentWheel = jest.fn()
+    document.addEventListener('wheel', documentWheel)
+    renderWithProviders(<InputSelect {...props} />)
+    selectEvent.openMenu(screen.getByLabelText('Select Multiple'))
+    screen.getByText('Test 1').dispatchEvent(new WheelEvent('wheel', { bubbles: true, deltaY: 40 }))
+    expect(documentWheel).toHaveBeenCalled()
+    document.removeEventListener('wheel', documentWheel)
+  })
 })
