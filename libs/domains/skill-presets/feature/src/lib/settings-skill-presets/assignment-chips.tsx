@@ -1,5 +1,6 @@
-import { type SkillPresetAssignedTo, type SkillPresetAssignees } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetAssignedTo } from 'qovery-typescript-axios'
 import { Badge, Icon, Tooltip } from '@qovery/shared/ui'
+import { type SkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 
 export interface AssignmentChipsProps {
   assignedTo: SkillPresetAssignedTo

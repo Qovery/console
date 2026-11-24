@@ -1,8 +1,7 @@
+import { type AgentActivityResponse, type AgentActivitySource } from 'qovery-typescript-axios'
 import {
   AGENT_ACTIVITY_LIMITS,
-  type AgentActivityParams,
-  type AgentActivityResponse,
-  type AgentActivitySource,
+  type AgentActivityQueryParams as AgentActivityParams,
 } from '@qovery/domains/skill-presets/data-access'
 
 /*

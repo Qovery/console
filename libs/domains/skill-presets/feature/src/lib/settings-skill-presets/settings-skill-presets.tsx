@@ -9,9 +9,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { type SkillPresetResponse, type SkillPresetRevisionResponse } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { type SkillPresetResponse, type SkillPresetRevisionResponse } from '@qovery/domains/skill-presets/data-access'
 import {
   Avatar,
   Button,

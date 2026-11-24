@@ -1,6 +1,7 @@
+import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFieldArray, useFormContext, useFormState, useWatch } from 'react-hook-form'
-import { SKILL_PRESET_LIMITS, type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
+import { SKILL_PRESET_LIMITS } from '@qovery/domains/skill-presets/data-access'
 import { Button, Checkbox, Icon, InputText, SegmentedControl } from '@qovery/shared/ui'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { qoverySkillDescription } from '../utils/qovery-skills'
@@ -28,7 +29,7 @@ const hiddenFields = (index: number, choice: QoverySkillChoice) =>
 interface QoverySkillRowProps {
   index: number
   skillName: string
-  findings: SkillPresetFinding[]
+  findings: SkillPresetRejectionFinding[]
   selected: boolean
   onSelect: (checked: boolean) => void
 }
@@ -168,7 +169,7 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
 }
 
 export interface QoverySkillsSectionProps {
-  findings: SkillPresetFinding[]
+  findings: SkillPresetRejectionFinding[]
 }
 
 export function QoverySkillsSection({ findings }: QoverySkillsSectionProps) {

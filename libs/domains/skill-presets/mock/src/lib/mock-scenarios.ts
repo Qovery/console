@@ -1,10 +1,11 @@
 import {
+  type Member,
+  type OrganizationAvailableRole,
   type SkillPresetAssignedTo,
-  type SkillPresetAssignees,
   type SkillPresetBase,
   type SkillPresetChangeType,
-  type SkillPresetSkill,
-} from '@qovery/domains/skill-presets/data-access'
+  type SkillPresetSkillRequest,
+} from 'qovery-typescript-axios'
 import { type SkillPresetsMockScenario } from './mock-scenario-names'
 
 export interface MockPresetState {
@@ -13,7 +14,7 @@ export interface MockPresetState {
   description: string
   base: SkillPresetBase
   team_context: string | null
-  skills: SkillPresetSkill[]
+  skills: SkillPresetSkillRequest[]
   assigned_to: Required<SkillPresetAssignedTo>
 }
 
@@ -41,7 +42,10 @@ export interface MockLoadSeed {
 export interface MockSeed {
   currentUserId: string
   isAdmin: boolean
-  assignees: SkillPresetAssignees
+  assignees: {
+    roles: OrganizationAvailableRole[]
+    members: (Pick<Member, 'id' | 'email' | 'role_id' | 'profile_picture_url'> & Required<Pick<Member, 'name'>>)[]
+  }
   memberRoles: Record<string, string>
   presets: MockPresetSeed[]
   loads: MockLoadSeed[]

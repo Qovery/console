@@ -1,9 +1,9 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
+import { type SkillPresetRevisionResponse } from 'qovery-typescript-axios'
 import { useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
   SKILL_PRESET_REVISIONS_PAGE_SIZE,
-  type SkillPresetRevisionResponse,
   getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
   getSkillPresetFindings,

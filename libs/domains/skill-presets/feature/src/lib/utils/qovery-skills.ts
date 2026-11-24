@@ -1,5 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { type SkillPresetBase } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetBase } from 'qovery-typescript-axios'
 
 /**
  * The Qovery skills a preset can adjust on the Full base. q-core keeps no list (it only enforces the

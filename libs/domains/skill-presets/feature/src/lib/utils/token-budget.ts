@@ -1,9 +1,9 @@
 import {
   type SkillPresetBase,
   type SkillPresetManifestResponse,
-  type SkillPresetSkill,
-  approxTokens,
-} from '@qovery/domains/skill-presets/data-access'
+  type SkillPresetSkillRequest,
+} from 'qovery-typescript-axios'
+import { approxTokens } from '@qovery/domains/skill-presets/data-access'
 import { QOVERY_SKILLS } from './qovery-skills'
 
 /**
@@ -39,7 +39,7 @@ export const TODAY_ALWAYS_TOKENS = Object.values(QOVERY_SKILL_SIZES).reduce((sum
 export interface PresetLikeForBudget {
   base: SkillPresetBase
   team_context?: string | null
-  skills: SkillPresetSkill[]
+  skills: SkillPresetSkillRequest[]
 }
 
 export interface OnDemandBudgetRow {
@@ -64,7 +64,12 @@ export interface TokenBudget {
 interface BudgetInput {
   base: SkillPresetBase
   teamContextTokens: number
-  skills: { skillName: string; mode: SkillPresetSkill['mode']; descriptionTokens: number; contentTokens: number }[]
+  skills: {
+    skillName: string
+    mode: SkillPresetSkillRequest['mode']
+    descriptionTokens: number
+    contentTokens: number
+  }[]
 }
 
 function budgetOf(input: BudgetInput | null): TokenBudget {

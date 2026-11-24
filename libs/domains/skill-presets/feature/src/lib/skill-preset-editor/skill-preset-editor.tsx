@@ -1,13 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Link, useBlocker, useNavigate, useParams, useSearch } from '@tanstack/react-router'
+import { type SkillPresetRejectionFinding, type SkillPresetResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type FieldErrors, FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import {
   SKILL_PRESET_LIMITS,
   SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
-  type SkillPresetAssignees,
-  type SkillPresetFinding,
-  type SkillPresetResponse,
   getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
   getSkillPresetFindings,
@@ -34,7 +32,10 @@ import { AI_FEATURES_OFF_TOOLTIP, AiFeaturesNotice } from '../ai-features-notice
 import { useAiFeaturesEnabled } from '../hooks/use-ai-features-enabled/use-ai-features-enabled'
 import { useCreateSkillPreset } from '../hooks/use-create-skill-preset/use-create-skill-preset'
 import { useEditSkillPreset } from '../hooks/use-edit-skill-preset/use-edit-skill-preset'
-import { useSkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
+import {
+  type SkillPresetAssignees,
+  useSkillPresetAssignees,
+} from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 import { useSkillPreset } from '../hooks/use-skill-preset/use-skill-preset'
 import { useSkillPresets } from '../hooks/use-skill-presets/use-skill-presets'
 import { LoadError } from '../load-error/load-error'
@@ -162,7 +163,7 @@ export interface SkillPresetEditorFormProps {
 }
 
 interface Rejection {
-  findings: SkillPresetFinding[]
+  findings: SkillPresetRejectionFinding[]
   /** The text of each field as it was rejected, to drop a finding once the admin edits its field. */
   snapshot: Record<string, string | undefined>
 }

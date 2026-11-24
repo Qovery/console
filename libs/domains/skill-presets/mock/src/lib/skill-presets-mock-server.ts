@@ -1,10 +1,12 @@
 import { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
-import { type Member, type Organization, type OrganizationAvailableRole } from 'qovery-typescript-axios'
 import {
-  type AgentActivityParams,
-  type ResolvedSkillPurpose,
+  type Member,
+  type Organization,
+  type OrganizationAvailableRole,
+  type SkillLoadPurpose,
   type SkillPresetRequest,
-} from '@qovery/domains/skill-presets/data-access'
+} from 'qovery-typescript-axios'
+import { type AgentActivityQueryParams as AgentActivityParams } from '@qovery/domains/skill-presets/data-access'
 import { type SkillPresetsMockScenario } from './mock-scenario-names'
 import { createSkillPresetsMockApi } from './skill-presets-mock-api'
 
@@ -92,14 +94,14 @@ export function createSkillPresetsMockServer(scenario: SkillPresetsMockScenario)
     {
       method: 'get',
       pattern: /^\/organization\/([^/]+)\/skillPreset\/resolved$/,
-      handler: ([organizationId]) => api.getResolvedSkillPreset(organizationId),
+      handler: () => api.getResolvedSkillPreset(),
     },
     {
       method: 'get',
       pattern: /^\/organization\/([^/]+)\/skillPreset\/resolved\/skill\/([^/]+)$/,
       handler: ([organizationId, skillName], { query }) =>
         api.getResolvedSkill(organizationId, decodeURIComponent(skillName), {
-          purpose: (query['purpose'] ?? 'VIEW') as ResolvedSkillPurpose,
+          purpose: (query['purpose'] ?? 'VIEW') as SkillLoadPurpose,
         }),
     },
     {
@@ -132,8 +134,8 @@ export function createSkillPresetsMockServer(scenario: SkillPresetsMockScenario)
     {
       method: 'put',
       pattern: /^\/organization\/([^/]+)\/aiFeatures$/,
-      handler: async ([organizationId], { body }) => {
-        if ((body as { enabled?: boolean } | undefined)?.enabled) await api.enableAiFeatures(organizationId)
+      handler: async (_, { body }) => {
+        if ((body as { enabled?: boolean } | undefined)?.enabled) await api.enableAiFeatures()
         return { enabled: await api.aiFeaturesEnabled() }
       },
     },

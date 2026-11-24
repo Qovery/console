@@ -1,4 +1,4 @@
-import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 import { type InspectedField, isNegated } from './mock-content-inspector'
 
 /*
@@ -24,7 +24,7 @@ const SHAPES: { category: string; reason: string; pattern: RegExp }[] = [
 export const MOCK_REVIEW_MODEL = 'mock-review-model'
 export const MOCK_REVIEW_PROMPT_VERSION = 'v1'
 
-export function reviewSkillPresetContent(fields: InspectedField[]): SkillPresetFinding[] {
+export function reviewSkillPresetContent(fields: InspectedField[]): SkillPresetRejectionFinding[] {
   return fields.flatMap(({ location, text }) =>
     text.split('\n').flatMap((lineText, index) =>
       SHAPES.filter(({ pattern }) => {

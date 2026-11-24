@@ -2,8 +2,17 @@ import {
   type OrganizationEventResponse,
   OrganizationEventSubTargetType,
   OrganizationEventType,
+  type SkillLoadPurpose,
+  type SkillPresetAssignedTo,
+  type SkillPresetChangeType,
+  type SkillPresetManifestResponse,
+  type SkillPresetRequest,
+  type SkillPresetResolutionSource,
+  type SkillPresetResolvedSkillResponse,
+  type SkillPresetResponse,
+  type SkillPresetRevisionResponse,
 } from 'qovery-typescript-axios'
-import { type SkillPresetsClient } from '@qovery/domains/skill-presets/data-access'
+import { type AgentActivityQueryParams } from '@qovery/domains/skill-presets/data-access'
 import {
   SKILL_PRESET_AI_FEATURES_OFF_MESSAGE,
   SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
@@ -20,19 +29,6 @@ import {
   totalPresetTextLength,
 } from '@qovery/domains/skill-presets/data-access'
 import {
-  type InjectedSkillResponse,
-  type SkillLoadChange,
-  type SkillPresetAssignedTo,
-  type SkillPresetAssignees,
-  type SkillPresetChangeType,
-  type SkillPresetManifestResponse,
-  type SkillPresetRejectedChange,
-  type SkillPresetRequest,
-  type SkillPresetResolutionSource,
-  type SkillPresetResponse,
-  type SkillPresetRevisionResponse,
-} from '@qovery/domains/skill-presets/data-access'
-import {
   type MockAgentAction,
   agentActivityParamsError,
   aggregateAgentActivity,
@@ -41,7 +37,7 @@ import {
 import { inspectSkillPresetContent } from './mock-content-inspector'
 import { MOCK_REVIEW_MODEL, MOCK_REVIEW_PROMPT_VERSION, reviewSkillPresetContent } from './mock-model-review'
 import { type SkillPresetsMockScenario } from './mock-scenario-names'
-import { type MockPolicyToken, type MockPresetState, buildMockSeed } from './mock-scenarios'
+import { type MockPresetState, buildMockSeed } from './mock-scenarios'
 
 /** Deterministic stand-in for SHA-256: 64 hex characters, clearly not a real hash of the content. */
 export function mockHash(text: string) {
@@ -300,7 +296,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   for (const load of seed.loads) {
     const { source, preset } = resolveFor(load.member_id)
     const skill = preset?.skills.find(({ skill_name }) => skill_name === load.skill_name)
-    const change: SkillLoadChange = {
+    const change = {
       skill_name: load.skill_name,
       source,
       skill_preset_id: preset?.id ?? null,
@@ -396,7 +392,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     const findings = inspect(state)
     if (findings.length > 0) {
       // A refused save leaves a SKILL_PRESET_REJECTED audit entry: hashes and findings, never the text.
-      const rejected: SkillPresetRejectedChange = {
+      const rejected = {
         attempted_change: exceptId ? 'UPDATE' : 'CREATE',
         skill_preset_id: exceptId ?? null,
         name: state.name,
@@ -441,14 +437,8 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   let concurrentSaveDone = false
   let listFailedOnce = false
 
-  const api: SkillPresetsClient & {
-    listAssignees: () => Promise<SkillPresetAssignees>
-    listPolicyTokens: () => Promise<MockPolicyToken[]>
-    deletePolicyToken: (policyTokenId: string) => Promise<void>
-    copilotRequest: (method: string, url: string, body?: string) => Promise<unknown>
-    aiFeaturesEnabled: () => Promise<boolean>
-  } = {
-    listSkillPresets(_organizationId, { isTemplate } = {}) {
+  const api = {
+    listSkillPresets(_organizationId: string, { isTemplate }: { isTemplate?: boolean } = {}) {
       if (!seed.isAdmin) return forbidden()
       // Fails once, so the error state and its retry can both be shown.
       if (scenario === 'errors' && !listFailedOnce) {
@@ -462,12 +452,12 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
           .map(toResponse)
       )
     },
-    getSkillPreset(skillPresetId) {
+    getSkillPreset(skillPresetId: string) {
       if (!seed.isAdmin) return forbidden()
       const preset = findPreset(skillPresetId)
       return preset ? respond(toResponse(preset)) : fail(404, `Skill preset ${skillPresetId} does not exist`)
     },
-    createSkillPreset(_organizationId, body) {
+    createSkillPreset(_organizationId: string, body: SkillPresetRequest) {
       if (!seed.isAdmin) return forbidden()
       const state = toState(body)
       const rejection = checkWrite(state)
@@ -487,7 +477,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       pushEvent('CREATE', currentUser.email, timestamp, auditView(preset))
       return respond(toResponse(preset), writeLatency)
     },
-    editSkillPreset(skillPresetId, body) {
+    editSkillPreset(skillPresetId: string, body: SkillPresetRequest) {
       if (!seed.isAdmin) return forbidden()
       const previous = findPreset(skillPresetId)
       if (!previous) return fail(404, `Skill preset ${skillPresetId} does not exist`)
@@ -506,7 +496,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       pushEvent('UPDATE', currentUser.email, timestamp, auditView(preset), auditView(previous))
       return respond(toResponse(preset), writeLatency)
     },
-    deleteSkillPreset(skillPresetId) {
+    deleteSkillPreset(skillPresetId: string) {
       if (!seed.isAdmin) return forbidden()
       const preset = findPreset(skillPresetId)
       if (!preset) return fail(404, `Skill preset ${skillPresetId} does not exist`)
@@ -516,7 +506,10 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       pushEvent('DELETE', currentUser.email, timestamp, { ...auditView(preset), security_review: null })
       return respond(undefined)
     },
-    listSkillPresetRevisions(_organizationId, { skillPresetId, limit = 50 } = {}) {
+    listSkillPresetRevisions(
+      _organizationId: string,
+      { skillPresetId, limit = 50 }: { skillPresetId?: string; limit?: number } = {}
+    ) {
       if (!seed.isAdmin) return forbidden()
       const results = revisions
         .filter((revision) => !skillPresetId || revision.skill_preset_id === skillPresetId)
@@ -549,11 +542,11 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       }
       return respond(manifest)
     },
-    getResolvedSkill(_organizationId, skillName, { purpose }) {
+    getResolvedSkill(_organizationId: string, skillName: string, { purpose }: { purpose: SkillLoadPurpose }) {
       const { source, preset } = resolveFor(currentUser.id)
       const skill = preset?.skills.find(({ skill_name }) => skill_name === skillName)
       if (!skill && !isQoverySkillName(skillName)) return fail(404, `There is no skill '${skillName}' to load`)
-      const response: InjectedSkillResponse = {
+      const response: SkillPresetResolvedSkillResponse = {
         source,
         skill_name: skillName,
         skill_preset: preset ? { id: preset.id, name: preset.name, revision: preset.revision } : null,
@@ -564,7 +557,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
         team_context: preset?.team_context ?? null,
         team_context_sha256: preset?.team_context ? mockHash(preset.team_context) : null,
       }
-      const change: SkillLoadChange = {
+      const change = {
         skill_name: skillName,
         source,
         skill_preset_id: preset?.id ?? null,
@@ -600,7 +593,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       return respond(seed.assignees)
     },
     /** Plays the DevOps Copilot service for its config and recurring task calls. Anything else answers 404. */
-    copilotRequest(method: string, url: string, body?: string) {
+    async copilotRequest(method: string, url: string, body?: string) {
       const path = url.replace(/^https?:\/\/[^/]+/, '')
       if (method === 'get' && /\/organization\/[^/]+\/config$/.test(path)) {
         return respond({ org_config: { ...copilot }, role_configs: [] })
@@ -637,21 +630,20 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       aiFeaturesOn = true
       return respond(undefined)
     },
-    getAgentActivity(_organizationId, params) {
+    getAgentActivity(_organizationId: string, params: AgentActivityQueryParams) {
       if (!seed.isAdmin) return forbidden()
       if (activityTimesOut(params)) return fail(503, ACTIVITY_TIMED_OUT_DETAIL)
       const invalid = agentActivityParamsError(params)
       if (invalid) return fail(400, invalid)
       return respond(aggregateAgentActivity(agentActions(), loadRecords, params))
     },
-    getMyAgentActivity(_organizationId, params) {
+    getMyAgentActivity(_organizationId: string, params: AgentActivityQueryParams) {
       if (activityTimesOut(params)) return fail(503, ACTIVITY_TIMED_OUT_DETAIL)
-      const invalid = agentActivityParamsError({ ...params, actorKind: undefined, policyTokenId: undefined })
+      // /me ignores organization-wide actor filters and only shows the caller's actions and loads.
+      const own = { ...params, actorKind: undefined, policyTokenId: undefined, userSub: currentUser.id }
+      const invalid = agentActivityParamsError(own)
       if (invalid) return fail(400, invalid)
-      // Only the caller's own actions and loads: the member view never shows other people. Like q-core,
-      // /me ignores the actor filters and never lists policy tokens.
-      const { actorKind: _actorKind, policyTokenId: _policyTokenId, ...own } = params
-      const activity = aggregateAgentActivity(agentActions(), loadRecords, { ...own, userSub: currentUser.id })
+      const activity = aggregateAgentActivity(agentActions(), loadRecords, own)
       return respond({ ...activity, by_policy_token: [] })
     },
   }

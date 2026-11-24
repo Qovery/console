@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { type SkillPresetAssignees } from '@qovery/domains/skill-presets/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 /**
@@ -11,7 +10,7 @@ export function useSkillPresetAssignees({ organizationId }: { organizationId: st
   const members = useQuery({ ...queries.organizations.members({ organizationId }), enabled })
   const roles = useQuery({ ...queries.organizations.availableRoles({ organizationId }), enabled })
 
-  const data: SkillPresetAssignees | undefined =
+  const data =
     members.data && roles.data
       ? {
           roles: roles.data.map(({ id, name }) => ({ id, name })),
@@ -31,3 +30,5 @@ export function useSkillPresetAssignees({ organizationId }: { organizationId: st
     refetch: () => Promise.all([members.refetch(), roles.refetch()]),
   }
 }
+
+export type SkillPresetAssignees = NonNullable<ReturnType<typeof useSkillPresetAssignees>['data']>

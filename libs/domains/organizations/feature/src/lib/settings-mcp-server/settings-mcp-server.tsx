@@ -1,14 +1,16 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode, useState } from 'react'
-import {
-  QOVERY_MCP_CLAUDE_COMMAND,
-  QOVERY_MCP_CODEX_COMMAND,
-  QOVERY_MCP_CODEX_CONFIG,
-} from '@qovery/domains/organizations/data-access'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { Button, CopyButton, Heading, Icon, Navbar, Section, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import CrudModalFeature from '../settings-api-token/crud-modal-feature/crud-modal-feature'
+
+export const QOVERY_MCP_SERVER_URL = 'https://mcp.qovery.com/mcp'
+
+const QOVERY_MCP_OAUTH_CALLBACK_PORT = 4242
+export const QOVERY_MCP_CLAUDE_COMMAND = `claude mcp add --transport http qovery ${QOVERY_MCP_SERVER_URL} --callback-port ${QOVERY_MCP_OAUTH_CALLBACK_PORT}`
+export const QOVERY_MCP_CODEX_CONFIG = `mcp_oauth_callback_port = ${QOVERY_MCP_OAUTH_CALLBACK_PORT}`
+export const QOVERY_MCP_CODEX_COMMAND = `codex mcp add qovery --url '${QOVERY_MCP_SERVER_URL}'`
 
 interface CommandBlockProps {
   content: string

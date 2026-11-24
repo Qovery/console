@@ -1,10 +1,10 @@
-import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 import { Button, Icon } from '@qovery/shared/ui'
 import { findingKindLabel } from '../utils/skill-preset-findings'
 import { FindingSourceLabel } from './finding-source-label'
 
 export interface FindingListProps {
-  findings: SkillPresetFinding[]
+  findings: SkillPresetRejectionFinding[]
   onSelectLine?: (line: number) => void
 }
 

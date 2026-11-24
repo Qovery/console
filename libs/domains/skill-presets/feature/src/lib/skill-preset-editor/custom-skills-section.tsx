@@ -1,3 +1,4 @@
+import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 import {
   Controller,
   FormProvider,
@@ -7,7 +8,7 @@ import {
   useFormState,
   useWatch,
 } from 'react-hook-form'
-import { SKILL_PRESET_LIMITS, type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
+import { SKILL_PRESET_LIMITS } from '@qovery/domains/skill-presets/data-access'
 import {
   Button,
   DropdownMenu,
@@ -28,7 +29,7 @@ import { type LibrarySkill, SkillLibraryModal } from './skill-library-modal'
 
 interface CustomSkillRowProps {
   index: number
-  findings: SkillPresetFinding[]
+  findings: SkillPresetRejectionFinding[]
 }
 
 /** One skill of the organization. It watches only its own name, so typing elsewhere does not re-render it. */
@@ -105,7 +106,7 @@ function CustomSkillModal({
   values: SkillPresetFormValues
   index: number
   creating: boolean
-  findings: SkillPresetFinding[]
+  findings: SkillPresetRejectionFinding[]
   onApply: (skill: CustomSkill) => void
   onClose: () => void
 }) {
@@ -139,7 +140,7 @@ function CustomSkillModal({
 }
 
 export interface CustomSkillsSectionProps {
-  findings: SkillPresetFinding[]
+  findings: SkillPresetRejectionFinding[]
   librarySkills: LibrarySkill[]
   onRename: (oldName: string, newName: string) => void
 }

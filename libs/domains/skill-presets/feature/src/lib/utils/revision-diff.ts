@@ -2,13 +2,13 @@ import {
   type SkillPresetAssignedTo,
   type SkillPresetRequest,
   type SkillPresetRevisionResponse,
-  type SkillPresetSkill,
-} from '@qovery/domains/skill-presets/data-access'
+  type SkillPresetSkillRequest,
+} from 'qovery-typescript-axios'
 
 export interface SkillChange {
   skillName: string
-  before: SkillPresetSkill | null
-  after: SkillPresetSkill | null
+  before: SkillPresetSkillRequest | null
+  after: SkillPresetSkillRequest | null
 }
 
 export interface RevisionDiff {
@@ -21,7 +21,7 @@ export interface RevisionDiff {
   assignments: { before: SkillPresetAssignedTo; after: SkillPresetAssignedTo } | null
 }
 
-const sameSkill = (a: SkillPresetSkill, b: SkillPresetSkill) =>
+const sameSkill = (a: SkillPresetSkillRequest, b: SkillPresetSkillRequest) =>
   a.mode === b.mode && (a.description ?? '') === (b.description ?? '') && (a.content ?? '') === (b.content ?? '')
 
 const sameAssignment = (a: SkillPresetAssignedTo, b: SkillPresetAssignedTo) =>
@@ -91,7 +91,7 @@ export const revisionToRequest = (revision: SkillPresetRevisionResponse): SkillP
 })
 
 /** Readable text of a skill entry, for the diff viewer. */
-export function skillAsText(skill: SkillPresetSkill | null) {
+export function skillAsText(skill: SkillPresetSkillRequest | null) {
   if (!skill) return ''
   return [
     `mode: ${skill.mode}`,

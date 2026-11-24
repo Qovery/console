@@ -1,4 +1,4 @@
-import { type SkillPresetRevisionResponse } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetRevisionResponse } from 'qovery-typescript-axios'
 import { diffRevisions, reviewSummary, revisionToRequest, summarizeDiff } from './revision-diff'
 
 const revision = (overrides: Partial<SkillPresetRevisionResponse>): SkillPresetRevisionResponse => ({

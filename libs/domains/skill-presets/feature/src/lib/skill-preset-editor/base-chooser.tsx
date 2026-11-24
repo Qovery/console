@@ -1,4 +1,4 @@
-import { type SkillPresetBase } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetBase } from 'qovery-typescript-axios'
 import { InputSelect } from '@qovery/shared/ui'
 import { SKILL_PRESET_BASES } from '../utils/qovery-skills'
 

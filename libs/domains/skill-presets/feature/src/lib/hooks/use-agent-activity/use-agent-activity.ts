@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { type AgentActivityParams } from '@qovery/domains/skill-presets/data-access'
 import { queries } from '@qovery/state/util-queries'
+import { type AgentActivityParams } from '../../agent-activity/agent-activity.types'
 
 export interface UseAgentActivityProps extends AgentActivityParams {
   organizationId: string

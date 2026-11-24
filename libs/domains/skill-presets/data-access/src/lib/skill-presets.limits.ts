@@ -38,3 +38,15 @@ export const approxTokens = (text?: string | null) => (text ? Math.floor((text.l
  * preset assigned to Owner would never apply. Default role names are fixed.
  */
 export const isOwnerRole = (role: { name: string }) => role.name.toLowerCase() === 'owner'
+
+/** Range and limits of the endpoints: 30 days by default, 90 at most. Anything else is a 400. */
+export const AGENT_ACTIVITY_LIMITS = {
+  defaultRangeDays: 30,
+  maxRangeDays: 90,
+  maxRecent: 100,
+  maxMembers: 500,
+  maxPolicyTokens: 100,
+  maxSkills: 100,
+  maxTopSkills: 3,
+  skillNamePattern: /^[a-z0-9._-]{1,64}$/,
+} as const

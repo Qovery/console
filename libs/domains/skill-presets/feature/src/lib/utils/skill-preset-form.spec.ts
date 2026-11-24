@@ -1,4 +1,4 @@
-import { type SkillPresetResponse } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetResponse } from 'qovery-typescript-axios'
 import {
   effectiveQoverySkills,
   keepEditsSinceSubmit,

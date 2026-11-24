@@ -1,9 +1,6 @@
+import { type SkillPresetManifestSkill, type SkillPresetResolutionSource } from 'qovery-typescript-axios'
 import { useId, useState } from 'react'
-import {
-  type SkillPresetManifestSkill,
-  type SkillPresetResolutionSource,
-  getSkillPresetErrorStatus,
-} from '@qovery/domains/skill-presets/data-access'
+import { getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/data-access'
 import { Badge, Button, Callout, Heading, Icon, Section, Skeleton, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { useResolvedSkillPreset } from '../hooks/use-resolved-skill-preset/use-resolved-skill-preset'
 import { useResolvedSkill } from '../hooks/use-resolved-skill/use-resolved-skill'

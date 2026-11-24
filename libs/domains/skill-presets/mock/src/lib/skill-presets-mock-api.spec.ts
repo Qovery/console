@@ -1,3 +1,4 @@
+import { type SkillPresetRequest } from 'qovery-typescript-axios'
 import {
   getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
@@ -6,7 +7,6 @@ import {
   isSkillPresetConcurrentModification,
   isSkillPresetReviewUnavailable,
 } from '@qovery/domains/skill-presets/data-access'
-import { type SkillPresetRequest } from '@qovery/domains/skill-presets/data-access'
 import { MOCK_ROLE_IDS } from './mock-scenarios'
 import { MOCK_MODEL_ONLY_SAMPLE, MOCK_UNSAFE_SAMPLE } from './mock-tools'
 import { createSkillPresetsMockApi } from './skill-presets-mock-api'
@@ -195,7 +195,7 @@ describe('createSkillPresetsMockApi', () => {
   it('answers 403 to a member on admin endpoints but serves their manifest', async () => {
     const api = createSkillPresetsMockApi('member')
     const { error } = await settle(api.listSkillPresets(ORGANIZATION_ID))
-    const { value: manifest } = await settle(api.getResolvedSkillPreset(ORGANIZATION_ID))
+    const { value: manifest } = await settle(api.getResolvedSkillPreset())
 
     expect(getSkillPresetErrorStatus(error)).toBe(403)
     expect(manifest?.source).toBe('ORGANIZATION')
@@ -233,7 +233,7 @@ describe('createSkillPresetsMockApi', () => {
         settle(
           api.getAgentActivity(ORGANIZATION_ID, { from: from.toISOString(), to: to.toISOString(), bucket: 'DAY' })
         ),
-        settle(api.getResolvedSkillPreset(ORGANIZATION_ID)),
+        settle(api.getResolvedSkillPreset()),
         settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'VIEW' })),
         settle(api.listAssignees()),
       ])
@@ -255,7 +255,7 @@ describe('createSkillPresetsMockApi', () => {
 
   it('resolves no preset for the member in the member-no-preset scenario', async () => {
     const api = createSkillPresetsMockApi('member-no-preset')
-    const { value: manifest } = await settle(api.getResolvedSkillPreset(ORGANIZATION_ID))
+    const { value: manifest } = await settle(api.getResolvedSkillPreset())
     const { value: skill } = await settle(api.getResolvedSkill(ORGANIZATION_ID, 'qovery-deploy', { purpose: 'VIEW' }))
 
     expect(manifest).toEqual({ source: 'QOVERY_DEFAULT', skill_preset: null })
@@ -431,14 +431,14 @@ describe('createSkillPresetsMockApi', () => {
     const api = createSkillPresetsMockApi('ai-features-off')
     expect((await settle(api.aiFeaturesEnabled())).value).toBe(false)
 
-    await settle(api.enableAiFeatures(ORGANIZATION_ID))
+    await settle(api.enableAiFeatures())
 
     expect((await settle(api.aiFeaturesEnabled())).value).toBe(true)
     expect((await settle(api.createSkillPreset(ORGANIZATION_ID, request()))).error).toBeUndefined()
   })
 
   it('refuses to turn AI features on for a member', async () => {
-    const { error } = await settle(createSkillPresetsMockApi('member').enableAiFeatures(ORGANIZATION_ID))
+    const { error } = await settle(createSkillPresetsMockApi('member').enableAiFeatures())
     expect(getSkillPresetErrorStatus(error)).toBe(403)
   })
 
@@ -683,7 +683,7 @@ describe('createSkillPresetsMockApi', () => {
 
       expect(await config()).toBe(false)
       expect(getSkillPresetErrorStatus((await turnOn()).error)).toBe(403)
-      await settle(api.enableAiFeatures(ORGANIZATION_ID))
+      await settle(api.enableAiFeatures())
       await turnOn()
       expect(await config()).toBe(true)
       expect(getSkillPresetErrorStatus((await settle(api.copilotRequest('get', '/other'))).error)).toBe(404)

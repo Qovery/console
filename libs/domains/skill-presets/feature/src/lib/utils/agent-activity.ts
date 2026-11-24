@@ -1,10 +1,10 @@
+import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/data-access'
 import {
-  AGENT_ACTIVITY_LIMITS,
   type AgentActionOutcome,
   type AgentActivityBucket,
   type AgentActivityResponse,
   type AgentActivitySource,
-} from '@qovery/domains/skill-presets/data-access'
+} from '../agent-activity/agent-activity.types'
 import { QOVERY_SKILLS } from './qovery-skills'
 
 /**

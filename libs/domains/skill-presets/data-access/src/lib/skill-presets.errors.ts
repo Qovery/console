@@ -1,4 +1,4 @@
-import { type SkillPresetFinding } from './skill-presets.types'
+import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 
 /**
  * Errors reach the Console reshaped by the axios auth interceptor: `{ message, name, code, response }`.
@@ -7,7 +7,7 @@ import { type SkillPresetFinding } from './skill-presets.types'
 interface ApiErrorLike {
   message?: string
   code?: string
-  response?: { status?: number; data?: { detail?: string; findings?: SkillPresetFinding[] } }
+  response?: { status?: number; data?: { detail?: string; findings?: SkillPresetRejectionFinding[] } }
 }
 
 const asApiError = (error: unknown): ApiErrorLike => (typeof error === 'object' && error !== null ? error : {})
@@ -60,7 +60,7 @@ export const SKILL_PRESET_AI_FEATURES_OFF_MESSAGE =
   'Turn on AI features for this organization to use skill presets: every preset is reviewed by a model before it reaches members.'
 
 /** The findings of a 422 security rejection, or an empty list for any other error. */
-export function getSkillPresetFindings(error: unknown): SkillPresetFinding[] {
+export function getSkillPresetFindings(error: unknown): SkillPresetRejectionFinding[] {
   if (getSkillPresetErrorStatus(error) !== 422) return []
   return asApiError(error).response?.data?.findings ?? []
 }

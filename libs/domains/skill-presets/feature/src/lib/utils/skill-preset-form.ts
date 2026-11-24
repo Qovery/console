@@ -3,9 +3,9 @@ import {
   type SkillPresetBase,
   type SkillPresetRequest,
   type SkillPresetResponse,
-  type SkillPresetSkill,
-  isQoverySkillName,
-} from '@qovery/domains/skill-presets/data-access'
+  type SkillPresetSkillRequest,
+} from 'qovery-typescript-axios'
+import { isQoverySkillName } from '@qovery/domains/skill-presets/data-access'
 import { QOVERY_SKILLS } from './qovery-skills'
 
 /** AS_IS means the preset has no entry for the skill: agents load it as Qovery publishes it. */
@@ -92,14 +92,14 @@ export const effectiveQoverySkills = (values: Pick<SkillPresetFormValues, 'base'
  * is never assigned.
  */
 export function toSkillPresetRequest(values: SkillPresetFormValues) {
-  const qoverySkills: SkillPresetSkill[] = effectiveQoverySkills(values).map(
+  const qoverySkills: SkillPresetSkillRequest[] = effectiveQoverySkills(values).map(
     ({ skillName, choice, description, content }) => {
       if (choice === 'DISABLE') return { skill_name: skillName, mode: 'DISABLE' }
       if (choice === 'OVERLAY') return { skill_name: skillName, mode: 'OVERLAY', content }
       return { skill_name: skillName, mode: 'REPLACE', description, content }
     }
   )
-  const customSkills: SkillPresetSkill[] = values.customSkills.map(({ skillName, description, content }) => ({
+  const customSkills: SkillPresetSkillRequest[] = values.customSkills.map(({ skillName, description, content }) => ({
     skill_name: skillName.trim(),
     mode: 'ADD',
     description,

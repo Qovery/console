@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { skillPresetsApi } from './skill-presets.api'
 import { buildSkillPresetApiError, getSkillPresetErrorStatus } from './skill-presets.errors'
 import { mutations, skillPresets } from './skill-presets.queries'
 
@@ -19,10 +18,12 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-describe('skill presets API, over HTTP', () => {
+describe('skill preset queries and mutations, over HTTP', () => {
   it('lists presets with the template filter and returns the results', async () => {
     request.mockResolvedValue({ data: { results: [{ id: PRESET }] } })
-    await expect(skillPresetsApi.listSkillPresets(ORG, { isTemplate: false })).resolves.toEqual([{ id: PRESET }])
+    await expect(skillPresets.list({ organizationId: ORG, isTemplate: false }).queryFn({} as never)).resolves.toEqual([
+      { id: PRESET },
+    ])
     expect(request).toHaveBeenCalledWith(requestMatching('GET', `/organization/${ORG}/skillPreset?isTemplate=false`))
   })
 
@@ -34,10 +35,13 @@ describe('skill presets API, over HTTP', () => {
       .mockResolvedValueOnce({ data: { id: PRESET, revision: 2 } })
       .mockResolvedValueOnce({ data: undefined })
 
-    await skillPresetsApi.getSkillPreset(PRESET)
-    await skillPresetsApi.createSkillPreset(ORG, body)
-    await expect(skillPresetsApi.editSkillPreset(PRESET, body)).resolves.toEqual({ id: PRESET, revision: 2 })
-    await skillPresetsApi.deleteSkillPreset(PRESET)
+    await skillPresets.details({ skillPresetId: PRESET }).queryFn({} as never)
+    await mutations.createSkillPreset({ organizationId: ORG, body })
+    await expect(mutations.editSkillPreset({ organizationId: ORG, skillPresetId: PRESET, body })).resolves.toEqual({
+      id: PRESET,
+      revision: 2,
+    })
+    await mutations.deleteSkillPreset({ organizationId: ORG, skillPresetId: PRESET })
 
     expect(request).toHaveBeenCalledWith(requestMatching('GET', `/skillPreset/${PRESET}`))
     expect(request).toHaveBeenCalledWith(requestMatching('POST', `/organization/${ORG}/skillPreset`, body))
@@ -47,7 +51,7 @@ describe('skill presets API, over HTTP', () => {
 
   it('lists revisions for one preset with a limit', async () => {
     request.mockResolvedValue({ data: { results: [] } })
-    await skillPresetsApi.listSkillPresetRevisions(ORG, { skillPresetId: PRESET, limit: 1 })
+    await skillPresets.revisions({ organizationId: ORG, skillPresetId: PRESET, limit: 1 }).queryFn({} as never)
     expect(request).toHaveBeenCalledWith(
       requestMatching('GET', `/organization/${ORG}/skillPreset/revision?skillPresetId=${PRESET}&limit=1`)
     )
@@ -55,8 +59,8 @@ describe('skill presets API, over HTTP', () => {
 
   it('reads what an agent receives, and a skill for display only', async () => {
     request.mockResolvedValue({ data: {} })
-    await skillPresetsApi.getResolvedSkillPreset(ORG)
-    await skillPresetsApi.getResolvedSkill(ORG, 'qovery deploy', { purpose: 'VIEW' })
+    await skillPresets.resolved({ organizationId: ORG }).queryFn({} as never)
+    await skillPresets.resolvedSkill({ organizationId: ORG, skillName: 'qovery deploy' }).queryFn({} as never)
     expect(request).toHaveBeenCalledWith(requestMatching('GET', `/organization/${ORG}/skillPreset/resolved`))
     expect(request).toHaveBeenCalledWith(
       requestMatching('GET', `/organization/${ORG}/skillPreset/resolved/skill/qovery%20deploy?purpose=VIEW`)
@@ -66,8 +70,8 @@ describe('skill presets API, over HTTP', () => {
   it('reads the organization activity and the caller’s own activity', async () => {
     request.mockResolvedValue({ data: { totals: {} } })
     const params = { from: 'a', to: 'b', bucket: 'DAY' } as const
-    await skillPresetsApi.getAgentActivity(ORG, { ...params, actorKind: 'POLICY_TOKEN' })
-    await skillPresetsApi.getMyAgentActivity(ORG, params)
+    await skillPresets.agentActivity({ organizationId: ORG, ...params, actorKind: 'POLICY_TOKEN' }).queryFn({} as never)
+    await skillPresets.myAgentActivity({ organizationId: ORG, ...params }).queryFn({} as never)
     expect(request).toHaveBeenCalledWith(
       requestMatching('GET', `/organization/${ORG}/agentActivity?from=a&to=b&bucket=DAY&actorKind=POLICY_TOKEN`)
     )
@@ -84,7 +88,9 @@ describe('skill presets API, over HTTP', () => {
 
   it.each([403, 409, 422, 503])('passes a %i answer on to the caller', async (status) => {
     request.mockRejectedValue(buildSkillPresetApiError(status, 'refused'))
-    const error = await skillPresetsApi.editSkillPreset(PRESET, { name: 'Backend' }).catch((e: unknown) => e)
+    const error = await mutations
+      .editSkillPreset({ organizationId: ORG, skillPresetId: PRESET, body: { name: 'Backend' } })
+      .catch((e: unknown) => e)
     expect(getSkillPresetErrorStatus(error)).toBe(status)
   })
 
@@ -128,17 +134,5 @@ describe('skill presets query keys', () => {
       ORG,
       'qovery',
     ])
-  })
-
-  it('fetches through the API module', async () => {
-    request.mockResolvedValue({ data: { results: [{ id: PRESET }] } })
-    await expect(skillPresets.list({ organizationId: ORG, isTemplate: false }).queryFn({} as never)).resolves.toEqual([
-      { id: PRESET },
-    ])
-    request.mockResolvedValue({ data: { id: PRESET } })
-    await skillPresets.details({ skillPresetId: PRESET }).queryFn({} as never)
-    await skillPresets.resolved({ organizationId: ORG }).queryFn({} as never)
-    expect(request).toHaveBeenCalledWith(requestMatching('GET', `/skillPreset/${PRESET}`))
-    expect(request).toHaveBeenCalledWith(requestMatching('GET', `/organization/${ORG}/skillPreset/resolved`))
   })
 })

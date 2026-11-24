@@ -1,8 +1,9 @@
 import { type Monaco } from '@monaco-editor/react'
 import clsx from 'clsx'
 import { type editor } from 'monaco-editor'
+import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 import { useEffect, useRef } from 'react'
-import { type SkillPresetFinding, approxTokens } from '@qovery/domains/skill-presets/data-access'
+import { approxTokens } from '@qovery/domains/skill-presets/data-access'
 import { CodeEditor, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { FindingList } from '../finding-list/finding-list'
@@ -19,7 +20,7 @@ export interface MarkdownFieldProps {
   maxLength: number
   hint?: string
   error?: string
-  findings?: SkillPresetFinding[]
+  findings?: SkillPresetRejectionFinding[]
   minLines?: number
   maxLines?: number
   readOnly?: boolean
@@ -35,7 +36,10 @@ interface MonacoHandles {
 }
 
 /** Pushes findings into Monaco: markers carry the reason on hover, decorations highlight the line. */
-function applyFindings({ editor: editorInstance, monaco, decorations }: MonacoHandles, findings: SkillPresetFinding[]) {
+function applyFindings(
+  { editor: editorInstance, monaco, decorations }: MonacoHandles,
+  findings: SkillPresetRejectionFinding[]
+) {
   const model = editorInstance.getModel()
   if (!model) return
   const lines = findings.filter(({ line }) => line <= model.getLineCount())

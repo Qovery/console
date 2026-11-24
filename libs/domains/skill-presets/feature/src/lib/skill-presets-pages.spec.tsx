@@ -1,8 +1,9 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
 import axios from 'axios'
+import { SkillPresetsApi } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { buildSkillPresetApiError, skillPresetsApi } from '@qovery/domains/skill-presets/data-access'
+import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
   installSkillPresetsMock,
@@ -173,7 +174,7 @@ describe('member view', () => {
   it('says when a skill left the preset since the list loaded, with no retry', async () => {
     useScenario('member')
     jest
-      .spyOn(skillPresetsApi, 'getResolvedSkill')
+      .spyOn(SkillPresetsApi.prototype, 'getResolvedSkill')
       .mockRejectedValue(buildSkillPresetApiError(404, "There is no skill 'qovery-deploy' to load"))
     const { userEvent } = renderWithProviders(<MemberAgentView organizationId="organization-1" />)
     await screen.findByText('Backend team')

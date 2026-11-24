@@ -1,5 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { type SkillPresetBase, type SkillPresetSkill } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetBase, type SkillPresetSkillRequest } from 'qovery-typescript-axios'
 
 export interface SkillPresetTemplate {
   id: string
@@ -13,11 +13,12 @@ export interface SkillPresetTemplate {
     description: string
     base: SkillPresetBase
     team_context: string
-    skills: SkillPresetSkill[]
+    skills: SkillPresetSkillRequest[]
   }
 }
 
-const off = (...names: string[]): SkillPresetSkill[] => names.map((skill_name) => ({ skill_name, mode: 'DISABLE' }))
+const off = (...names: string[]): SkillPresetSkillRequest[] =>
+  names.map((skill_name) => ({ skill_name, mode: 'DISABLE' }))
 
 /**
  * Starting points by profile, maintained by Qovery. Everything is editable once picked. The text must

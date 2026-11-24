@@ -1,10 +1,6 @@
 import { z } from 'zod'
-import {
-  AGENT_ACTIVITY_LIMITS,
-  type AgentActivityBucket,
-  type AgentActivityParams,
-  type AgentActivitySource,
-} from '@qovery/domains/skill-presets/data-access'
+import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/data-access'
+import { type AgentActivityBucket, type AgentActivityParams, type AgentActivitySource } from './agent-activity.types'
 
 export const ACTIVITY_RANGES: { value: string; label: string; hours: number; bucket: AgentActivityBucket }[] = [
   { value: '1d', label: '24 hours', hours: 24, bucket: 'HOUR' },

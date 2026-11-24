@@ -1,11 +1,11 @@
-import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
 import { scrollToElement } from '@qovery/shared/util-js'
 import { FindingSourceLabel } from '../finding-list/finding-source-label'
 import { findingFieldId, findingLocationLabel, findingTarget } from '../utils/skill-preset-findings'
 
 export interface SecurityFindingsSummaryProps {
-  findings: SkillPresetFinding[]
+  findings: SkillPresetRejectionFinding[]
 }
 
 const focusInside = (field: HTMLElement | null) => {
@@ -14,7 +14,7 @@ const focusInside = (field: HTMLElement | null) => {
   field?.querySelector<HTMLElement>('textarea, input')?.focus({ preventScroll: true })
 }
 
-const focusField = (finding: SkillPresetFinding) => {
+const focusField = (finding: SkillPresetRejectionFinding) => {
   const target = findingTarget(finding.location)
   if (!target) return
   const fieldId = findingFieldId(target)

@@ -1,15 +1,11 @@
-import { isOwnerRole } from './skill-presets.limits'
 import {
-  type SkillPresetAssignedTo,
-  type SkillPresetAssignees,
+  type OrganizationAvailableRole,
   type SkillPresetResolutionSource,
-} from './skill-presets.types'
+  type SkillPresetResponse,
+} from 'qovery-typescript-axios'
+import { isOwnerRole } from './skill-presets.limits'
 
-export interface AssignablePreset {
-  id: string
-  name: string
-  assigned_to: SkillPresetAssignedTo
-}
+export type AssignablePreset = Pick<SkillPresetResponse, 'id' | 'name' | 'assigned_to'>
 
 export interface ResolvedPreset<T extends AssignablePreset> {
   source: SkillPresetResolutionSource
@@ -17,7 +13,7 @@ export interface ResolvedPreset<T extends AssignablePreset> {
 }
 
 /** q-core resolves the organization owner as an admin: the Owner role gets the Admin role's preset. */
-export function effectiveRoleId(roleId: string | undefined, roles: SkillPresetAssignees['roles'] = []) {
+export function effectiveRoleId(roleId: string | undefined, roles: OrganizationAvailableRole[] = []) {
   const role = roles.find(({ id }) => id === roleId)
   if (!role || !isOwnerRole(role)) return roleId
   return roles.find(({ name }) => name.toLowerCase() === 'admin')?.id ?? roleId

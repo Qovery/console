@@ -14,9 +14,6 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { match } from 'ts-pattern'
 import {
   AGENT_ACTIVITY_TIMED_OUT_MESSAGE,
-  type AgentActivityBucket,
-  type AgentActivityResponse,
-  type AgentActorType,
   getSkillPresetErrorStatus,
   isAgentActivityTimedOut,
 } from '@qovery/domains/skill-presets/data-access'
@@ -77,6 +74,7 @@ import {
   parseActor,
   tokenActor,
 } from './activity-search'
+import { type AgentActivityBucket, type AgentActivityResponse, type AgentActorType } from './agent-activity.types'
 import { useActivitySearch } from './use-activity-search'
 
 const { Table } = TablePrimitives

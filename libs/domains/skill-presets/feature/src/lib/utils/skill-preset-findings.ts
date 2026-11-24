@@ -1,5 +1,5 @@
+import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
 
 /** The editor field a 422 finding points at, from its `location` string. */
 export type FindingTarget =
@@ -23,7 +23,7 @@ export function findingTarget(location: string): FindingTarget | null {
 export const findingTargetKey = (target: FindingTarget) =>
   'skillName' in target ? `${target.field}:${target.skillName}` : target.field
 
-export function findingsFor(findings: SkillPresetFinding[], target: FindingTarget) {
+export function findingsFor(findings: SkillPresetRejectionFinding[], target: FindingTarget) {
   const key = findingTargetKey(target)
   return findings
     .filter((finding) => {
@@ -34,7 +34,7 @@ export function findingsFor(findings: SkillPresetFinding[], target: FindingTarge
 }
 
 /** "team context, line 3" reads better as "Team context, line 3". */
-export function findingLocationLabel(finding: SkillPresetFinding) {
+export function findingLocationLabel(finding: SkillPresetRejectionFinding) {
   const target = findingTarget(finding.location)
   const where = match(target)
     .with(null, () => finding.location)
@@ -52,11 +52,11 @@ export function findingFieldId(target: FindingTarget) {
 }
 
 /** Where a finding came from, as text: never shown by color alone. */
-export const findingSourceLabel = (finding: SkillPresetFinding) =>
+export const findingSourceLabel = (finding: SkillPresetRejectionFinding) =>
   finding.source === 'MODEL' ? 'Model review' : 'Rule check'
 
 /** One line of text per finding, for fields that only take a text error (inputs, text areas). */
-export const findingsAsText = (findings: SkillPresetFinding[]) =>
+export const findingsAsText = (findings: SkillPresetRejectionFinding[]) =>
   findings.length > 0
     ? findings.map((finding) => `${findingSourceLabel(finding)}, line ${finding.line}: ${finding.reason}.`).join(' ')
     : undefined
@@ -73,5 +73,5 @@ const MODEL_CATEGORY_LABELS: Record<string, string> = {
 }
 
 /** Rules keep their id (it names the exact rule); model categories get a readable name. */
-export const findingKindLabel = (finding: SkillPresetFinding) =>
+export const findingKindLabel = (finding: SkillPresetRejectionFinding) =>
   finding.source === 'MODEL' ? MODEL_CATEGORY_LABELS[finding.rule_id] ?? finding.rule_id : finding.rule_id

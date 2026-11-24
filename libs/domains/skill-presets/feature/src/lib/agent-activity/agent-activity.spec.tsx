@@ -1,13 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
-import axios from 'axios'
+import axios, { type AxiosResponse } from 'axios'
+import { AgentActivityApi } from 'qovery-typescript-axios'
 import { type ReactNode, useState } from 'react'
-import {
-  type AgentActivityResponse,
-  buildSkillPresetApiError,
-  skillPresetsApi,
-} from '@qovery/domains/skill-presets/data-access'
+import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
   installSkillPresetsMock,
@@ -17,6 +14,7 @@ import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { type ActivitySearch } from './activity-search'
 import { AgentActivity } from './agent-activity'
+import { type AgentActivityResponse } from './agent-activity.types'
 
 // The page goes through the real hooks and the mock API.
 
@@ -232,13 +230,11 @@ describe('AgentActivity', () => {
     ['member', 'getMyAgentActivity'],
   ] as const)('clears activity while switching organizations in the %s scenario', async (scenario, method) => {
     useScenario(scenario)
-    const originalRequest = skillPresetsApi[method].bind(skillPresetsApi)
-    const pendingRequest = new Promise<AgentActivityResponse>(() => undefined)
-    jest
-      .spyOn(skillPresetsApi, method)
-      .mockImplementation((organizationId, params) =>
-        organizationId === 'organization-2' ? pendingRequest : originalRequest(organizationId, params)
-      )
+    const originalRequest = AgentActivityApi.prototype[method]
+    const pendingRequest = new Promise<AxiosResponse<AgentActivityResponse>>(() => undefined)
+    jest.spyOn(AgentActivityApi.prototype, method).mockImplementation(function (this: AgentActivityApi, ...args) {
+      return args[0] === 'organization-2' ? pendingRequest : originalRequest.apply(this, args)
+    })
 
     function ActivityWithOrganizationSwitcher() {
       const [organizationId, setOrganizationId] = useState('organization-1')
@@ -271,7 +267,7 @@ describe('AgentActivity', () => {
   it('shows an error with a retry', async () => {
     useScenario('agent-activity')
     jest
-      .spyOn(skillPresetsApi, 'getAgentActivity')
+      .spyOn(AgentActivityApi.prototype, 'getAgentActivity')
       .mockRejectedValue(buildSkillPresetApiError(500, 'Internal server error'))
     renderWithProviders(<AgentActivity />)
 
@@ -281,7 +277,7 @@ describe('AgentActivity', () => {
 
   it('distinguishes a connection failure from a server response', async () => {
     useScenario('agent-activity')
-    jest.spyOn(skillPresetsApi, 'getAgentActivity').mockRejectedValue({ code: 'ERR_NETWORK' })
+    jest.spyOn(AgentActivityApi.prototype, 'getAgentActivity').mockRejectedValue({ code: 'ERR_NETWORK' })
     renderWithProviders(<AgentActivity />)
 
     const alert = await screen.findByRole('alert')
@@ -295,7 +291,7 @@ describe('AgentActivity', () => {
   ])('handles cached activity when a refresh returns HTTP %s', async (status, message, showActivity) => {
     useScenario('agent-activity')
     jest.spyOn(Date, 'now').mockReturnValue(new Date('2026-11-23T10:15:20Z').getTime())
-    const getActivity = jest.spyOn(skillPresetsApi, 'getAgentActivity')
+    const getActivity = jest.spyOn(AgentActivityApi.prototype, 'getAgentActivity')
 
     function ActivityWithRefresh() {
       const queryClient = useQueryClient()
@@ -358,10 +354,16 @@ describe('AgentActivity', () => {
 
   it('does not say nothing was denied when the denials are older than the recent actions', async () => {
     useScenario('agent-activity')
-    const getAgentActivity = skillPresetsApi.getAgentActivity.bind(skillPresetsApi)
-    jest.spyOn(skillPresetsApi, 'getAgentActivity').mockImplementation(async (...args) => {
-      const response = await getAgentActivity(...args)
-      return { ...response, recent: response.recent.filter(({ outcome }) => outcome === 'ALLOWED') }
+    const getAgentActivity = AgentActivityApi.prototype.getAgentActivity
+    jest.spyOn(AgentActivityApi.prototype, 'getAgentActivity').mockImplementation(async function (
+      this: AgentActivityApi,
+      ...args
+    ) {
+      const response = await getAgentActivity.apply(this, args)
+      return {
+        ...response,
+        data: { ...response.data, recent: response.data.recent.filter(({ outcome }) => outcome === 'ALLOWED') },
+      }
     })
     renderWithProviders(<AgentActivity />)
 
@@ -374,7 +376,7 @@ describe('AgentActivity', () => {
   it('loads again when Try again is clicked', async () => {
     useScenario('agent-activity')
     const getActivity = jest
-      .spyOn(skillPresetsApi, 'getAgentActivity')
+      .spyOn(AgentActivityApi.prototype, 'getAgentActivity')
       .mockRejectedValue(buildSkillPresetApiError(500, 'Internal server error'))
     const { userEvent } = renderWithProviders(<AgentActivity />)
     await screen.findByText('Agent activity could not be loaded')
@@ -398,11 +400,22 @@ describe('AgentActivity', () => {
 
   it('sends the actor filter as actorKind', async () => {
     useScenario('agent-activity')
-    const getActivity = jest.spyOn(skillPresetsApi, 'getAgentActivity')
+    const getActivity = jest.spyOn(AgentActivityApi.prototype, 'getAgentActivity')
     mockUrl.search = { actor: 'tokens' }
     renderWithProviders(<AgentActivity />)
     await waitFor(() =>
-      expect(getActivity).toHaveBeenCalledWith('organization-1', expect.objectContaining({ actorKind: 'POLICY_TOKEN' }))
+      expect(getActivity).toHaveBeenCalledWith(
+        'organization-1',
+        expect.any(String),
+        expect.any(String),
+        'DAY',
+        undefined,
+        undefined,
+        'POLICY_TOKEN',
+        undefined,
+        undefined,
+        undefined
+      )
     )
   })
 })

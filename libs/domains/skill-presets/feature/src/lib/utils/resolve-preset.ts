@@ -1,9 +1,5 @@
-import {
-  type AssignablePreset,
-  type SkillPresetAssignees,
-  effectiveRoleId,
-  resolvePresetFor,
-} from '@qovery/domains/skill-presets/data-access'
+import { type AssignablePreset, effectiveRoleId, resolvePresetFor } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 
 /**
  * Who would receive [draft] once saved, among all members: members it would win for, given the

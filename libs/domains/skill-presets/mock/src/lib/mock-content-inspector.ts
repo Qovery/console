@@ -1,4 +1,4 @@
-import { type SkillPresetFinding } from '@qovery/domains/skill-presets/data-access'
+import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 
 /**
  * A partial port of q-core's `SkillPresetContentInspector`, for the mock only, so the Console can
@@ -140,8 +140,8 @@ export interface InspectedField {
   text: string
 }
 
-export function inspectSkillPresetContent(fields: InspectedField[]): SkillPresetFinding[] {
-  const findings: SkillPresetFinding[] = []
+export function inspectSkillPresetContent(fields: InspectedField[]): SkillPresetRejectionFinding[] {
+  const findings: SkillPresetRejectionFinding[] = []
 
   for (const { location, text } of fields) {
     text.split('\n').forEach((lineText, index) => {
