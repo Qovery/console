@@ -4,21 +4,18 @@ import { configure } from '@testing-library/react'
 import axios, { type AxiosResponse } from 'axios'
 import { AgentActivityApi } from 'qovery-typescript-axios'
 import { type ReactNode, useState } from 'react'
-import {
-  type SkillPresetsMockScenario,
-  buildSkillPresetApiError,
-  installSkillPresetsMock,
-  setSkillPresetsMockScenario,
-} from '@qovery/domains/skill-presets/mock'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { CI_DEPLOYER_ID } from '../test-fixtures/agent-activity'
+import {
+  buildSkillPresetApiError,
+  installSkillPresetsFixtures,
+  setSkillPresetsScenario,
+} from '../test-fixtures/skill-presets'
 import { type ActivitySearch } from './activity-search'
 import { AgentActivity } from './agent-activity'
 import { type AgentActivityResponse } from './agent-activity.types'
 
-// The page goes through the real hooks and the mock API.
-
-// The pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
 configure({ asyncUtilTimeout: 5000 })
 
 // A small in-memory URL: the filters live in the search params.
@@ -35,7 +32,7 @@ const mockNavigate = jest.fn()
 jest.mock('@qovery/shared/iam/feature', () => ({
   ...jest.requireActual('@qovery/shared/iam/feature'),
   useUserRole: () => ({
-    roles: jest.requireActual('@qovery/domains/skill-presets/mock').isSkillPresetsMockMember()
+    roles: jest.requireActual('../test-fixtures/skill-presets').isSkillPresetsTestMember()
       ? []
       : ['organization:organization-1:admin', 'organization:organization-2:admin'],
     loading: false,
@@ -60,24 +57,18 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
-const useScenario = (scenario: SkillPresetsMockScenario) => {
-  setSkillPresetsMockScenario(scenario)
-}
-
-const CI_DEPLOYER = '3f1c9a2e-0000-4000-8000-00000000c1d0'
-
 let uninstallMocks: Array<() => void> = []
 beforeAll(() => {
   uninstallMocks = [
-    installSkillPresetsMock(axios, 'api', { passthrough: false }),
-    installSkillPresetsMock(devopsCopilotAxios, 'copilot', { passthrough: false }),
+    installSkillPresetsFixtures(axios, 'api'),
+    installSkillPresetsFixtures(devopsCopilotAxios, 'copilot'),
   ]
 })
 afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
 
 beforeEach(() => {
   window.sessionStorage.clear()
-  setSkillPresetsMockScenario()
+  setSkillPresetsScenario()
   mockUrl.search = {}
   // Set in each test: restoreAllMocks clears implementations between tests.
   mockNavigate.mockReset().mockImplementation(({ search }: { search: ActivitySearch }) => mockUrl.set(search))
@@ -88,13 +79,13 @@ afterEach(() => jest.restoreAllMocks())
 
 describe('AgentActivity', () => {
   it('shows a loading state first', () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     renderWithProviders(<AgentActivity />)
     expect(screen.getByLabelText('Loading agent activity')).toBeInTheDocument()
   })
 
   it('shows members, skills and policy tokens in one view, with what was blocked', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
 
     await userEvent.click(await screen.findByRole('tab', { name: 'Breakdown' }))
@@ -119,7 +110,7 @@ describe('AgentActivity', () => {
   })
 
   it('switches the breakdown between members, tokens and skills', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
     await userEvent.click(await screen.findByRole('tab', { name: 'Breakdown' }))
     await screen.findByTestId('breakdown-member')
@@ -137,7 +128,7 @@ describe('AgentActivity', () => {
   })
 
   it('filters the whole page to a token from its row, in the URL', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
     await userEvent.click(await screen.findByRole('tab', { name: 'Breakdown' }))
     await screen.findByTestId('breakdown-member')
@@ -146,9 +137,9 @@ describe('AgentActivity', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Policy token ci-deployer' }))
 
     expect(mockNavigate).toHaveBeenLastCalledWith(
-      expect.objectContaining({ search: expect.objectContaining({ actor: `token:${CI_DEPLOYER}` }), replace: true })
+      expect.objectContaining({ search: expect.objectContaining({ actor: `token:${CI_DEPLOYER_ID}` }), replace: true })
     )
-    expect(screen.getByRole('combobox', { name: 'Actor' })).toHaveValue(`token:${CI_DEPLOYER}`)
+    expect(screen.getByRole('combobox', { name: 'Actor' })).toHaveValue(`token:${CI_DEPLOYER_ID}`)
     await waitFor(() => {
       const chips = Array.from(document.querySelectorAll('[data-actor-kind]'))
       expect(chips.length).toBeGreaterThan(0)
@@ -157,7 +148,7 @@ describe('AgentActivity', () => {
   })
 
   it('reads its filters from the URL, and clears them from the filter bar', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     mockUrl.search = { outcome: 'DENIED', range: '7d' }
     const { userEvent } = renderWithProviders(<AgentActivity />)
 
@@ -170,7 +161,7 @@ describe('AgentActivity', () => {
   })
 
   it('pages the recent actions, with counts that match what is shown, in the URL', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
 
     const count = await screen.findByTestId('recent-count', undefined, { timeout: 5000 })
@@ -184,7 +175,7 @@ describe('AgentActivity', () => {
   })
 
   it('filters recent actions from the Action column and resets pagination', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     mockUrl.search = { page: 2 }
     const { userEvent } = renderWithProviders(<AgentActivity />)
     const recent = within(await screen.findByRole('region', { name: 'Recent actions' }))
@@ -197,7 +188,7 @@ describe('AgentActivity', () => {
   })
 
   it('keeps the breakdown in the URL', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     mockUrl.search = { view: 'skill' }
     renderWithProviders(<AgentActivity />)
 
@@ -205,7 +196,7 @@ describe('AgentActivity', () => {
   })
 
   it('shows a member only their own activity', async () => {
-    useScenario('member')
+    setSkillPresetsScenario('member')
     renderWithProviders(<AgentActivity />)
 
     expect(await screen.findByRole('heading', { name: 'Activity', level: 1 })).toBeInTheDocument()
@@ -217,7 +208,7 @@ describe('AgentActivity', () => {
   })
 
   it('ignores the actor from a shared organization link in member scope', async () => {
-    useScenario('member')
+    setSkillPresetsScenario('member')
     mockUrl.search = { actor: 'tokens' }
     renderWithProviders(<AgentActivity />)
 
@@ -229,7 +220,7 @@ describe('AgentActivity', () => {
     ['agent-activity', 'getAgentActivity'],
     ['member', 'getMyAgentActivity'],
   ] as const)('clears activity while switching organizations in the %s scenario', async (scenario, method) => {
-    useScenario(scenario)
+    setSkillPresetsScenario(scenario)
     const originalRequest = AgentActivityApi.prototype[method]
     const pendingRequest = new Promise<AxiosResponse<AgentActivityResponse>>(() => undefined)
     jest.spyOn(AgentActivityApi.prototype, method).mockImplementation(function (this: AgentActivityApi, ...args) {
@@ -259,13 +250,13 @@ describe('AgentActivity', () => {
   })
 
   it('explains an empty period', async () => {
-    useScenario('agent-activity-empty')
+    setSkillPresetsScenario('agent-activity-empty')
     renderWithProviders(<AgentActivity />)
     expect(await screen.findByText('No agent activity yet')).toBeInTheDocument()
   })
 
   it('shows an error with a retry', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     jest
       .spyOn(AgentActivityApi.prototype, 'getAgentActivity')
       .mockRejectedValue(buildSkillPresetApiError(500, 'Internal server error'))
@@ -276,7 +267,7 @@ describe('AgentActivity', () => {
   })
 
   it('distinguishes a connection failure from a server response', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     jest.spyOn(AgentActivityApi.prototype, 'getAgentActivity').mockRejectedValue({ code: 'ERR_NETWORK' })
     renderWithProviders(<AgentActivity />)
 
@@ -289,7 +280,7 @@ describe('AgentActivity', () => {
     [500, 'Agent activity could not be refreshed', true],
     [403, 'Agent activity could not be loaded', false],
   ])('handles cached activity when a refresh returns HTTP %s', async (status, message, showActivity) => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     jest.spyOn(Date, 'now').mockReturnValue(new Date('2026-11-23T10:15:20Z').getTime())
     const getActivity = jest.spyOn(AgentActivityApi.prototype, 'getAgentActivity')
 
@@ -316,7 +307,7 @@ describe('AgentActivity', () => {
   })
 
   it('changes the period from the filter row, back to the first page, and clears the other filters at once', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     mockUrl.search = { outcome: 'DENIED', skill: 'qovery-deploy', page: 2 }
     const { userEvent } = renderWithProviders(<AgentActivity />)
     const toolbar = within(await screen.findByRole('toolbar', { name: 'Filters' }))
@@ -331,7 +322,7 @@ describe('AgentActivity', () => {
   })
 
   it('goes back a page, and drops the page from the URL on the first one', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     mockUrl.search = { page: 2 }
     const { userEvent } = renderWithProviders(<AgentActivity />)
     expect(await screen.findByTestId('recent-count', undefined, { timeout: 5000 })).toHaveTextContent(
@@ -343,7 +334,7 @@ describe('AgentActivity', () => {
   })
 
   it('shows every denied action from the blocked list', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     const { userEvent } = renderWithProviders(<AgentActivity />)
     const count = await screen.findByTestId('denied-count', undefined, { timeout: 5000 })
     expect(count).toHaveTextContent('Show all denied')
@@ -353,7 +344,7 @@ describe('AgentActivity', () => {
   })
 
   it('does not say nothing was denied when the denials are older than the recent actions', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     const getAgentActivity = AgentActivityApi.prototype.getAgentActivity
     jest.spyOn(AgentActivityApi.prototype, 'getAgentActivity').mockImplementation(async function (
       this: AgentActivityApi,
@@ -374,7 +365,7 @@ describe('AgentActivity', () => {
   })
 
   it('loads again when Try again is clicked', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     const getActivity = jest
       .spyOn(AgentActivityApi.prototype, 'getAgentActivity')
       .mockRejectedValue(buildSkillPresetApiError(500, 'Internal server error'))
@@ -387,7 +378,7 @@ describe('AgentActivity', () => {
   })
 
   it('asks for a shorter period when the range takes too long to read', async () => {
-    useScenario('agent-activity-timeout')
+    setSkillPresetsScenario('agent-activity-timeout')
     mockUrl.search = { range: '30d' }
     const { userEvent } = renderWithProviders(<AgentActivity />)
 
@@ -399,7 +390,7 @@ describe('AgentActivity', () => {
   })
 
   it('sends the actor filter as actorKind', async () => {
-    useScenario('agent-activity')
+    setSkillPresetsScenario('agent-activity')
     const getActivity = jest.spyOn(AgentActivityApi.prototype, 'getAgentActivity')
     mockUrl.search = { actor: 'tokens' }
     renderWithProviders(<AgentActivity />)

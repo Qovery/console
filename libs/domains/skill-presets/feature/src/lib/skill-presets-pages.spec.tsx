@@ -3,27 +3,21 @@ import { configure } from '@testing-library/react'
 import axios from 'axios'
 import { SkillPresetsApi } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import {
-  type SkillPresetsMockScenario,
-  buildSkillPresetApiError,
-  installSkillPresetsMock,
-  setSkillPresetsMockScenario,
-} from '@qovery/domains/skill-presets/mock'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
-import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { MemberAgentView } from './member-agent-view/member-agent-view'
 import { SettingsSkillPresets } from './settings-skill-presets/settings-skill-presets'
 import { SkillPresetCreate } from './template-gallery/template-gallery'
-
-/*
- * These tests go through the real hooks and the mock API,
- * so they check the pages against the documented response shapes, not hand-written fixtures.
- */
+import {
+  buildSkillPresetApiError,
+  installSkillPresetsFixtures,
+  setSkillPresetsScenario,
+} from './test-fixtures/skill-presets'
 
 jest.mock('@qovery/shared/iam/feature', () => ({
   ...jest.requireActual('@qovery/shared/iam/feature'),
   useUserRole: () => ({
-    roles: jest.requireActual('@qovery/domains/skill-presets/mock').isSkillPresetsMockMember()
+    roles: jest.requireActual('./test-fixtures/skill-presets').isSkillPresetsTestMember()
       ? []
       : ['organization:organization-1:admin'],
     loading: false,
@@ -55,7 +49,6 @@ jest.mock('@monaco-editor/react', () => {
   return { Editor: FakeEditor, DiffEditor: FakeEditor }
 })
 
-// These pages run against the in-memory mock API with its latency: shared CI runners need longer waits.
 configure({ asyncUtilTimeout: 5000 })
 
 const mockNavigate = jest.fn()
@@ -63,20 +56,16 @@ const mockNavigate = jest.fn()
 let uninstallMocks: Array<() => void> = []
 beforeAll(() => {
   uninstallMocks = [
-    installSkillPresetsMock(axios, 'api', { passthrough: false }),
-    installSkillPresetsMock(devopsCopilotAxios, 'copilot', { passthrough: false }),
+    installSkillPresetsFixtures(axios, 'api'),
+    installSkillPresetsFixtures(devopsCopilotAxios, 'copilot'),
   ]
 })
 afterAll(() => uninstallMocks.forEach((uninstall) => uninstall()))
 afterEach(() => jest.restoreAllMocks())
 
-const useScenario = (scenario: SkillPresetsMockScenario) => {
-  setSkillPresetsMockScenario(scenario)
-}
-
 beforeEach(() => {
   window.sessionStorage.clear()
-  setSkillPresetsMockScenario()
+  setSkillPresetsScenario()
   mockNavigate.mockReset()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
   jest.mocked(useNavigate).mockReturnValue(mockNavigate)
@@ -85,7 +74,7 @@ beforeEach(() => {
 
 describe('presets list', () => {
   it('fails once and loads on retry', async () => {
-    useScenario('errors')
+    setSkillPresetsScenario('errors')
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
 
     const alert = await screen.findByRole('alert')
@@ -103,7 +92,7 @@ describe('presets list', () => {
   })
 
   it('deletes a preset after typing its name', async () => {
-    useScenario('typical')
+    setSkillPresetsScenario('typical')
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
     const row = await screen.findByTestId('skill-preset-0193f1c2-5a7e-7b10-9a0e-3d1f2c4b5a02')
 
@@ -112,12 +101,12 @@ describe('presets list', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Platform (CLI-first)')
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
 
-    await waitForElementToBeRemoved(() => screen.queryByTestId('skill-preset-0193f1c2-5a7e-7b10-9a0e-3d1f2c4b5a02'))
+    await waitFor(() => expect(row).not.toBeInTheDocument())
     expect(screen.getByText('Backend team')).toBeInTheDocument()
   })
 
   it('hides the create action and shows the member view to non-admins', async () => {
-    useScenario('member')
+    setSkillPresetsScenario('member')
     renderWithProviders(<SettingsSkillPresets />)
 
     expect(
@@ -130,14 +119,14 @@ describe('presets list', () => {
 
 describe('Connect an agent', () => {
   it('opens the popup from the registry header', async () => {
-    useScenario('typical')
+    setSkillPresetsScenario('typical')
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
     await userEvent.click(await screen.findByRole('button', { name: /Connect an agent/ }))
     expect(await screen.findByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
   })
 
   it('opens it by itself from an old Connect link, then drops the parameter', async () => {
-    useScenario('typical')
+    setSkillPresetsScenario('typical')
     jest.mocked(useSearch).mockReturnValue({ connect: true })
     renderWithProviders(<SettingsSkillPresets />)
     expect(await screen.findByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
@@ -147,7 +136,7 @@ describe('Connect an agent', () => {
 
 describe('member view', () => {
   it('lists what the member’s agent receives, with sizes and hashes', async () => {
-    useScenario('member')
+    setSkillPresetsScenario('member')
     renderWithProviders(<MemberAgentView organizationId="organization-1" />)
 
     expect(await screen.findByText('Backend team')).toBeInTheDocument()
@@ -159,7 +148,7 @@ describe('member view', () => {
   })
 
   it('reads the full text of a skill on demand', async () => {
-    useScenario('member')
+    setSkillPresetsScenario('member')
     const { userEvent } = renderWithProviders(<MemberAgentView organizationId="organization-1" />)
     await screen.findByText('Backend team')
     const [pieces] = screen.getAllByRole('table')
@@ -172,7 +161,7 @@ describe('member view', () => {
   })
 
   it('says when a skill left the preset since the list loaded, with no retry', async () => {
-    useScenario('member')
+    setSkillPresetsScenario('member')
     jest
       .spyOn(SkillPresetsApi.prototype, 'getResolvedSkill')
       .mockRejectedValue(buildSkillPresetApiError(404, "There is no skill 'qovery-deploy' to load"))
@@ -188,7 +177,7 @@ describe('member view', () => {
   })
 
   it('says when no preset applies', async () => {
-    useScenario('member-no-preset')
+    setSkillPresetsScenario('member-no-preset')
     renderWithProviders(<MemberAgentView organizationId="organization-1" />)
 
     expect(await screen.findByTestId('member-no-preset')).toHaveTextContent(
@@ -199,7 +188,7 @@ describe('member view', () => {
 
 describe('create flow', () => {
   it('opens the editor from a template', async () => {
-    useScenario('empty')
+    setSkillPresetsScenario('empty')
     const { userEvent } = renderWithProviders(<SkillPresetCreate />)
 
     await userEvent.click(screen.getByRole('button', { name: /Developer/ }))
@@ -208,7 +197,7 @@ describe('create flow', () => {
   })
 
   it('prefills the editor with the chosen template', async () => {
-    useScenario('empty')
+    setSkillPresetsScenario('empty')
     jest.mocked(useSearch).mockReturnValue({ template: 'developer' })
     renderWithProviders(<SkillPresetCreate />)
 
@@ -220,7 +209,7 @@ describe('create flow', () => {
 
 describe('AI features off', () => {
   it('explains why and disables creating, while the list stays readable', async () => {
-    useScenario('ai-features-off')
+    setSkillPresetsScenario('ai-features-off')
     renderWithProviders(<SettingsSkillPresets />)
 
     expect(await screen.findByTestId('ai-features-notice')).toHaveTextContent('The Skills registry needs AI features')
@@ -229,7 +218,7 @@ describe('AI features off', () => {
   })
 
   it('turns AI on, then enables creating', async () => {
-    useScenario('ai-features-off')
+    setSkillPresetsScenario('ai-features-off')
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
     await screen.findByTestId('ai-features-notice')
 
@@ -241,13 +230,13 @@ describe('AI features off', () => {
     await waitFor(() => expect(screen.getByTestId('submit-button')).toBeEnabled())
     await userEvent.click(screen.getByTestId('submit-button'))
 
-    await waitForElementToBeRemoved(() => screen.queryByTestId('ai-features-notice'))
+    await waitFor(() => expect(screen.queryByTestId('ai-features-notice')).not.toBeInTheDocument())
     // The dialog closes on its own after success: wait for the page to be reachable again.
     expect(await screen.findByRole('button', { name: /Create preset/ })).toBeEnabled()
   })
 
   it('still lets an admin delete a preset', async () => {
-    useScenario('ai-features-off')
+    setSkillPresetsScenario('ai-features-off')
     const { userEvent } = renderWithProviders(<SettingsSkillPresets />)
     const row = await screen.findByTestId('skill-preset-0193f1c2-5a7e-7b10-9a0e-3d1f2c4b5a02')
 
@@ -256,7 +245,7 @@ describe('AI features off', () => {
     await userEvent.type(screen.getByRole('textbox'), 'Platform (CLI-first)')
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
 
-    await waitForElementToBeRemoved(() => screen.queryByTestId('skill-preset-0193f1c2-5a7e-7b10-9a0e-3d1f2c4b5a02'))
+    await waitFor(() => expect(row).not.toBeInTheDocument())
     expect(screen.getByText('Backend team')).toBeInTheDocument()
   })
 })

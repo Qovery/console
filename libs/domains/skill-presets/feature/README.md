@@ -2,7 +2,7 @@
 
 Organization settings > AI settings > Skill presets. Admins decide how their members' coding agents use Qovery: which Qovery skills they load, team instructions on top, the organization's own skills, and who receives each preset.
 
-- `data-access`: types, a temporary API module (`skill-presets.api.ts`) to swap for the generated client once the endpoints are in qovery-openapi-spec, React Query keys.
+- `data-access`: React Query keys and mutations backed by the generated OpenAPI client.
 - `feature`: list, assignments, skill loads, usage, template gallery, editor, history.
 
 ## Security review
@@ -15,4 +15,4 @@ Only organization owners and admins (q-core's `MANAGE_ORGANIZATION_DATA`; custom
 
 ## Tests
 
-The test suites use the HTTP fixtures in `skill-presets/mock` to cover API responses and errors.
+The page tests use local HTTP fixtures for API responses and errors.

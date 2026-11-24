@@ -1,8 +1,8 @@
 import { useParams, useSearch } from '@tanstack/react-router'
 import { type ReactNode, useState } from 'react'
-import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/mock'
 import { toast } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { buildSkillPresetApiError } from '../test-fixtures/skill-presets'
 import { toSkillPresetFormValues } from '../utils/skill-preset-form'
 import { SkillPresetEditor, SkillPresetEditorForm } from './skill-preset-editor'
 

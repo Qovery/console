@@ -1,23 +1,8 @@
-import axios from 'axios'
-import { mutations } from '@qovery/domains/skill-presets/data-access'
-import { installSkillPresetsMock, setSkillPresetsMockScenario } from '@qovery/domains/skill-presets/mock'
-import { getSkillPresetFindings } from '@qovery/domains/skill-presets/util'
+import { toSkillPresetFormValues } from './skill-preset-form'
 import { SKILL_PRESET_TEMPLATES } from './skill-preset-templates'
+import { validateSkillPresetForm } from './skill-preset-validation'
 
 describe('SKILL_PRESET_TEMPLATES', () => {
-  let uninstall: () => void
-  beforeAll(() => {
-    uninstall = installSkillPresetsMock(axios, 'api', { passthrough: false })
-  })
-  afterAll(() => uninstall())
-  beforeEach(() => {
-    setSkillPresetsMockScenario('empty')
-  })
-  afterEach(() => {
-    window.sessionStorage.clear()
-    setSkillPresetsMockScenario()
-  })
-
   it('covers the eight profiles', () => {
     expect(SKILL_PRESET_TEMPLATES.map(({ id }) => id)).toEqual([
       'developer',
@@ -32,19 +17,13 @@ describe('SKILL_PRESET_TEMPLATES', () => {
   })
 
   it.each(SKILL_PRESET_TEMPLATES.map((template) => [template.title, template] as const))(
-    '%s passes validation and the content checks',
-    async (_, template) => {
-      const save = mutations.createSkillPreset({
-        organizationId: 'organization-1',
-        body: {
-          ...template.preset,
-          is_template: false,
-          assigned_to: { organization_default: false, role_ids: [], user_ids: [] },
-        },
+    '%s passes the editor validation',
+    (_, { preset }) => {
+      const form = toSkillPresetFormValues({
+        ...preset,
+        assigned_to: { organization_default: false, role_ids: [], user_ids: [] },
       })
-      await expect(save.catch((error) => getSkillPresetFindings(error))).resolves.toEqual(
-        expect.objectContaining({ name: template.preset.name })
-      )
+      expect(validateSkillPresetForm(form)).toEqual({})
     }
   )
 })

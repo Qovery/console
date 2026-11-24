@@ -1,5 +1,5 @@
-import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/mock'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { buildSkillPresetApiError } from '../test-fixtures/skill-presets'
 import { AiFeaturesNotice } from './ai-features-notice'
 
 const mockEnableAiFeatures = jest.fn()
