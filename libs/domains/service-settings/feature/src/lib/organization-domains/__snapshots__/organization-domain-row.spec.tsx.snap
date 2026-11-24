@@ -239,7 +239,7 @@ exports[`renders a route without a public port 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-regular fa-trash "
+                    class="fa-regular fa-trash-can "
                   />
                 </button>
               </div>

@@ -172,7 +172,7 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
                           )
                         }
                       >
-                        <Icon iconName={removed ? 'arrow-rotate-left' : 'trash'} iconStyle="regular" />
+                        <Icon iconName={removed ? 'arrow-rotate-left' : 'trash-can'} iconStyle="regular" />
                       </Button>
                     </Tooltip>
                   ) : null

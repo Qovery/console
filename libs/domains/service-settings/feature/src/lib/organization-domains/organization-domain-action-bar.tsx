@@ -159,7 +159,7 @@ export function OrganizationDomainActionBar({
               disabled={disabled || busy || !targets.length}
               onClick={confirmDelete}
             >
-              <Icon iconName="trash" iconStyle="regular" />
+              <Icon iconName="trash-can" iconStyle="regular" />
               Delete
             </Button>
           </div>

@@ -395,7 +395,7 @@ export function OrganizationDomainCreateModal({ onClose }: OrganizationDomainCre
                           setConflicts([])
                         }}
                       >
-                        <Icon iconName="trash" iconStyle="regular" />
+                        <Icon iconName="trash-can" iconStyle="regular" />
                       </Button>
                     </Tooltip>
                   </>

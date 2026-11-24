@@ -205,7 +205,7 @@ export function OrganizationDomainRow({
                 })
               }
             >
-              <Icon iconName="trash" />
+              <Icon iconName="trash-can" />
             </Button>
           </Tooltip>
         </div>
