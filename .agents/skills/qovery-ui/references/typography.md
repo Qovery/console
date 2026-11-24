@@ -28,7 +28,7 @@ Use `text-sm` for ordinary labels, descriptions, timestamps, and metadata. Reser
 
 Table column headers use `text-xs` (12px); row content uses `text-sm` (14px). See the table integration guidance in [Components](components.md).
 
-Preserve small text in compact components that already define it, such as pills. Preserve the component's typography rather than reproducing its small-text treatment elsewhere.
+Small badge and pill labels use `text-xs font-medium`. This specific treatment does not apply to all `text-xs` text, such as table headers. Do not reproduce badge typography in ordinary page content.
 
 ### Compact list metadata
 
@@ -49,7 +49,7 @@ Use weight sparingly and consistently:
 
 Do not substitute `font-medium`, `font-semibold`, and `font-bold` based on a general instruction to make something stronger.
 
-Titles are the usual place for stronger weight. Compact `text-xs` components may also use stronger weight, but follow the specific component's convention; do not apply one weight to every pill.
+Titles and the small badge/pill labels specified above are the usual places for stronger weight.
 
 Do not add weight variations throughout descriptions, metadata, or labels simply to create visual hierarchy. Avoid changing font weight between light and dark themes.
 

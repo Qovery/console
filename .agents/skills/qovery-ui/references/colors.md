@@ -99,7 +99,7 @@ Reuse the corresponding observability chart's palette and series conventions. Us
 
 ## Implementation
 
-Use semantic Tailwind classes. When a library requires a color value, use the existing theme CSS variable. Do not hardcode separate light and dark colors.
+Use semantic Tailwind classes. When a library requires a color value, resolve the exact CSS variable from `tailwind-workspace-preset.js` and verify it is defined in `themes.scss`; do not guess variable names from color names or component props. For example, the positive and negative solid tokens map to `--positive-9` and `--negative-9`, not `--green-9` and `--red-9`. An undefined SVG fill variable can render black and erase the distinction between chart series. Do not hardcode separate light and dark colors.
 
 Token sources:
 

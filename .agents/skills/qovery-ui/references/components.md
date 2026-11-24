@@ -18,6 +18,10 @@ Choose by function, not visual resemblance. A select changes a value; a dropdown
 
 Correct local integration problems before changing a shared component. Extend shared behavior only when the existing API cannot meet the requirement, and check the impact on other callers.
 
+## Repeated elements
+
+Use one consistent presentation for a family of similar items: the same icon treatment, title alignment, typography, spacing, and action placement. Vary the design only when the difference communicates meaningful information. Do not decorate one item independently of its siblings.
+
 ## Buttons and links
 
 Use `Button` for actions and `Link` for navigation. A link may have button styling through `as="button"`, but it remains navigation.
@@ -51,11 +55,11 @@ Use `iconOnly` for icon-only buttons and provide an accessible name. Use `CopyBu
 
 Use selects for filtering and grouping controls. Don't replace them with a custom segmented selector.
 
-For view tabs, follow **Environment overview → List/Pipeline**. For tabs inside a setup dialog, follow **Secret-manager integration**.
+For view tabs, follow **Environment overview → List/Pipeline**. Prefer a meaningful icon alongside each tab label, as in Services and Variables; keep icon treatment consistent across sibling tabs. For tabs inside a setup dialog, follow **Secret-manager integration**.
 
 Keep the selected value visible in its control. Avoid adding a second representation that merely repeats it.
 
-Choose widths deliberately across a filter group. Leave enough space between the longest displayed value and the chevron, and verify selected values as well as the default labels. Reuse supported sizing options; inspect the shared select's padding before adding local overrides.
+Choose widths deliberately across a filter group. Leave enough space between the longest displayed value and the chevron, and verify selected values as well as the default labels. Reuse supported sizing options; inspect the shared select's padding and chevron positioning before adding local overrides. Using the shared select alone does not guarantee label clearance. If it is cramped, compare established working callers to distinguish a local sizing issue from a shared-component defect; assess other callers before changing shared defaults.
 
 **Don't:**
 
@@ -134,7 +138,7 @@ State the useful finding and next step concisely. When the product supports that
 
 Use `StatusChip` for the deployment, build, service, and cluster states it supports. Pass the actual `status`; don't invent a new status mapping or colored dot.
 
-Use `Badge` for compact categories and labels. Preserve its typography and choose color according to meaning.
+Use `Badge` for compact categories and labels, following the small badge/pill typography in [Typography](typography.md). The current `Badge` supplies `text-xs` but no weight: add `className="font-medium"` at the usage. Choose color according to meaning.
 
 **Don't:**
 
@@ -142,6 +146,10 @@ Use `Badge` for compact categories and labels. Preserve its typography and choos
 - Use status colors as decoration.
 - Use deprecated `Tag` for new work.
 - Add a badge to information that does not benefit from being distinguished.
+
+## Charts
+
+Reuse the shared `Chart` tooltip and legend components and a comparable observability integration. For Recharts, use `Chart.Tooltip` with `Chart.TooltipContent` rather than leaving the library's default tooltip content. Inspect `libs/shared/ui/src/lib/components/chart/chart.tsx` and its stories for supported props and styling. A correctly styled hover cursor does not style the tooltip itself.
 
 ## Tooltips and callouts
 
