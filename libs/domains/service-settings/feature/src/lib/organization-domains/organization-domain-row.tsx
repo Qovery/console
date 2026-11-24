@@ -17,7 +17,7 @@ import {
 } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import { getDomainTargets } from '../utils/organization-domain-targets'
-import { OrganizationDomainCreateModal } from './organization-domain-create-modal'
+import { OrganizationDomainEditModal } from './organization-domain-edit-modal'
 
 const { Table } = TablePrimitives
 
@@ -176,8 +176,8 @@ export function OrganizationDomainRow({
               size="xs"
               onClick={() =>
                 openModal({
-                  content: <OrganizationDomainCreateModal domain={domain} onClose={closeModal} />,
-                  options: { width: 488 },
+                  content: <OrganizationDomainEditModal domain={domain} onClose={closeModal} />,
+                  options: { width: 560 },
                 })
               }
             >
