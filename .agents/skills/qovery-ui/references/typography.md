@@ -24,7 +24,7 @@ Avoid introducing three or four sizes inside one card or component. Use the fewe
 
 ### Small text
 
-Do not introduce standalone `text-xs` labels, descriptions, timestamps, or metadata in page content.
+Use `text-sm` for ordinary labels, descriptions, timestamps, and metadata. Reserve `text-xs` for the specific compact treatments below.
 
 Table column headers use `text-xs` (12px); row content uses `text-sm` (14px). See the table integration guidance in [Components](components.md).
 
@@ -32,9 +32,15 @@ Other small text belongs in compact components that already define it, such as p
 
 Do not introduce `text-ssm` as an automatic intermediate size between a title and its description. Existing component variants may use it; ordinary content should default to `text-sm`.
 
+### Compact panel labels
+
+For a small supporting panel within a section, an icon paired with a `text-xs font-medium` label is an optional treatment when a quieter heading helps the hierarchy. Keep the panel content at `text-sm`. This is not the default for page section headings or ordinary card titles.
+
 ### Heading semantics
 
-Use the appropriate semantic heading level. A deeply nested heading should not become visually tiny simply because its component default maps that level to `text-xs`. Keep titles within ordinary cards and components at `text-sm` where appropriate.
+Choose semantic elements for document structure and explicitly define their visual typography through a shared component or text-style classes. Raw headings have global styles; a parent’s `text-sm` does not override a heading’s own font size. Do not rely on inherited typography for headings.
+
+Match the rendered size to the hierarchy above, independently of the heading level. Titles within ordinary cards and components use `text-sm`.
 
 ## Weights
 

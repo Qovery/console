@@ -24,4 +24,6 @@ The references below define the Console conventions. More than one may apply to 
 
 For a broader visual review or redesign, load the topic references relevant to that surface.
 
+Verify the rendered result when implementing UI: check typography, alignment and wrapping with representative content, including long labels and filtered results. Source classes alone do not establish how the page renders.
+
 For reviews, distinguish violations of these conventions and concrete user-impacting issues from optional preferences.
