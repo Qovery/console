@@ -216,11 +216,10 @@ export function ContainerRegistryForm({
             error={error?.message}
             options={getOptionsContainerRegistry(
               availableContainerRegistries.filter(({ kind }) =>
-                isOnPremiseClusterRegistry
-                  ? SELF_MANAGED_CLUSTER_REGISTRY_KINDS.includes(kind)
-                  : fromEditClusterSettings
-                    ? kind === 'GITHUB_CR' || kind === 'GENERIC_CR'
-                    : true
+                match({ isOnPremiseClusterRegistry, fromEditClusterSettings })
+                  .with({ isOnPremiseClusterRegistry: true }, () => SELF_MANAGED_CLUSTER_REGISTRY_KINDS.includes(kind))
+                  .with({ fromEditClusterSettings: true }, () => kind === 'GITHUB_CR' || kind === 'GENERIC_CR')
+                  .otherwise(() => true)
               )
             )}
             isSearchable

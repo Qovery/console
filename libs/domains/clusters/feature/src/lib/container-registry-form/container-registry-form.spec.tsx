@@ -423,11 +423,12 @@ describe('ContainerRegistryForm', () => {
           defaultValues: {
             kind: ContainerRegistryKindEnum.GITHUB_CR,
             url: 'https://ghcr.io',
-            config: { username: 'qovery' },
+            config: { username: 'qovery', password: 'saved-token' },
           },
         })
       )
       expect(screen.getByLabelText('Container registry prefix')).toHaveValue('qovery')
+      expect(screen.getByLabelText('Personal Access Token')).toHaveValue('saved-token')
 
       await selectEvent.select(screen.getByLabelText('Type'), 'DOCKER_HUB', { container: document.body })
 
