@@ -24,17 +24,15 @@ Avoid introducing three or four sizes inside one card or component. Use the fewe
 
 ### Small text
 
-Use `text-sm` for ordinary labels, descriptions, timestamps, and metadata. Reserve `text-xs` for the specific compact treatments below.
+Use `text-sm` for ordinary labels, descriptions, timestamps, and metadata. Reserve `text-xs` for table headers and compact shared components such as pills.
 
 Table column headers use `text-xs` (12px); row content uses `text-sm` (14px). See the table integration guidance in [Components](components.md).
 
-Other small text belongs in compact components that already define it, such as pills. Preserve the component's typography rather than reproducing its small-text treatment elsewhere.
+Preserve small text in compact components that already define it, such as pills. Preserve the component's typography rather than reproducing its small-text treatment elsewhere.
 
-Do not introduce `text-ssm` as an automatic intermediate size between a title and its description. Existing component variants may use it; ordinary content should default to `text-sm`.
+### Compact list metadata
 
-### Compact panel labels
-
-For a small supporting panel within a section, an icon paired with a `text-xs font-medium` label is an optional treatment when a quieter heading helps the hierarchy. Keep the panel content at `text-sm`. This is not the default for page section headings or ordinary card titles.
+A compact icon-and-text group within a list item may use `text-ssm` when it supports the primary content, such as actor or time metadata. Use this selectively; ordinary content and card titles remain `text-sm`. Keep the icon and text vertically centered. Do not reduce metadata to `text-xs` or make every list use smaller text.
 
 ### Heading semantics
 

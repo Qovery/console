@@ -53,12 +53,14 @@ Use these values as starting points. When a shared component already owns the sp
 | --------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Main section → next main section  | `gap-8` — **32px**               | Environment, organization, and service overview sections                                                                                                  |
 | Section heading → section content | `gap-3` to `gap-4` — **12–16px** | Services section uses 12px; top-level catalog sections use 16px. Blueprint category headings use 8px (`gap-2`).                                           |
-| Compact title → description       | `gap-1` to `gap-2` — **4–8px**   | Catalog headings and cards. Settings heading uses 8px. Match the relevant pattern.                                                                        |
+| List-item title → supporting text | `gap-1` — **4px**                | Closely related `text-sm` lines within a row or compact item. Do not use the section or settings-heading gap here.                                        |
 | Icon → regular `text-sm` label    | `gap-1.5` — **6px**              | Compact inline groups, as in breadcrumbs and cluster links in the credentials modal. Larger avatars and other compositions may require different spacing. |
 | Consecutive form fields           | **12–16px**                      | General settings use `mb-3`; stacked forms also use `gap-4`. Follow one pattern within the form.                                                          |
 | Sibling cards in a catalog grid   | `gap-3` — **12px**               | Service catalog grids                                                                                                                                     |
 | Icon block → card text block      | `gap-3` — **12px**               | Blueprint and option cards; preserve the existing gap for other catalog variants                                                                          |
 | Card body → bottom action area    | `gap-4` — **16px**               | Blueprint and option cards with a separate action area; `mt-auto` aligns that area across sibling cards.                                                  |
+
+For two closely related lines within a list item, start with normal line-height and no extra gap; use `gap-1` (4px) if they need separation. Do not automatically add `gap-2` (8px) between a `text-sm` title and its metadata. Settings title/description spacing remains 8px as specified above.
 
 These values serve different relationships. Do not choose independently between 12px and 16px for every section or field. Choose the matching established pattern and repeat it consistently.
 

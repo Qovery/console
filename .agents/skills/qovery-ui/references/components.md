@@ -112,15 +112,17 @@ Preserve the component's surface, cell spacing, and dividers. Use `text-xs` (12p
 
 ### Tables with multiple views
 
-When tabs switch between views of a table, compose them as one shared outer surface, as in the service List/Pipeline and variables-table patterns:
+When tabs switch between table views, reproduce the two-layer construction used by environment variables and the service List/Pipeline view. It is one integrated unit with **two visible rounded outlines**, not a single flat bordered rectangle.
 
-1. Tabs and view-specific filters or actions in the top area.
-2. A divider, then the table header and rows.
-3. Pagination directly below the last row, separated by a divider and inside the same surface.
+1. **Back layer — tabs:** `rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle`. Use `Navbar` and give its wrapper `pb-2` to accommodate the overlap.
+2. **Front layer — content:** a sibling positioned with `relative -mt-2`, containing `overflow-hidden rounded-lg border border-neutral bg-surface-neutral`. Its rounded top corners overlap the bottom of the tab layer by 8px. Preserve the distinct tab background and the content's own top border and rounding.
+3. **Inside the front layer:** view-specific filters/actions when needed, a divider, then the table header and rows. Pagination sits directly below the last row, with a divider and the same content background.
 
-Keep these areas aligned to the same outer edges. Use `bg-surface-neutral` for the content surface. The table body owns any needed overflow; the surrounding controls should remain accessible.
+Keep both layers full-width and aligned at their outer edges. There is no padded gap around an inner table. Scope scrolling to the table content so controls remain accessible.
 
-Use one outer border and corner treatment. When `Table.Root` sits inside this surface, use its `containerClassName` to remove the redundant border and rounding, following the variables-table integration. Do not place a separately padded, bordered table card inside another card, or leave tabs and pagination floating outside their table surface.
+When the front layer already supplies the content border and rounding, use `Table.Root`'s `containerClassName="border-0 rounded-none"` to avoid a third outline. Remove only the table primitive's redundant wrapper styling, never the front layer's rounded corners.
+
+Construction reference: `apps/console/src/routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables/route.tsx`. The service overview uses the same overlap with `relative -top-2` and `pb-2` on the tabs wrapper.
 
 ## Suggestions and recommended actions
 

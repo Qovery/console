@@ -13,11 +13,23 @@ When using a shared component, select its supported variant and color rather tha
 | `bg-surface-neutral`                 | Any content surface sitting above the page background                  |
 | `bg-surface-neutral-subtle`          | Subtle separation within a surface or a secondary panel                |
 | `bg-surface-neutral-component`       | Contained elements that need separation from their surrounding surface |
-| `bg-surface-neutral-componentHover`  | Hover treatment for neutral interactive elements                       |
+| `bg-surface-neutral-componentHover`  | Hover for elements resting on the component surface                    |
 | `bg-surface-neutral-componentActive` | Pressed or active treatment for neutral interactive elements           |
 | `bg-background-overlay`              | Modal backdrop, supplied by the modal infrastructure                   |
 
 Apply `bg-surface-neutral` explicitly to content surfaces above the page background so they remain distinct in dark mode. Match the surrounding page and established component usage; do not add a different background to every nested element.
+
+## Neutral hover progression
+
+Choose hover backgrounds relative to the resting surface, one step stronger:
+
+| Resting surface                | Hover surface                       |
+| ------------------------------ | ----------------------------------- |
+| `bg-surface-neutral`           | `bg-surface-neutral-subtle`         |
+| `bg-surface-neutral-subtle`    | `bg-surface-neutral-component`      |
+| `bg-surface-neutral-component` | `bg-surface-neutral-componentHover` |
+
+Preserve shared components' existing variants. For custom rows or chart hover highlights, do not jump directly to `componentHover` regardless of the surrounding surface. A chart's hovered area on a neutral surface uses the subtle token; on a subtle surface, use component. If the chart API needs a color value, use the corresponding theme variable (`var(--neutral-2)` for subtle, `var(--neutral-3)` for component).
 
 ## Text and icons
 
