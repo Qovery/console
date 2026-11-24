@@ -149,7 +149,7 @@ Use `Badge` for compact categories and labels, following the small badge/pill ty
 
 ## Charts
 
-Reuse the shared `Chart` tooltip and legend components and a comparable observability integration. For Recharts, use `Chart.Tooltip` with `Chart.TooltipContent` rather than leaving the library's default tooltip content. Inspect `libs/shared/ui/src/lib/components/chart/chart.tsx` and its stories for supported props and styling. A correctly styled hover cursor does not style the tooltip itself.
+Reuse the shared `Chart` tooltip wrapper and legend components with a comparable observability integration. Follow `libs/domains/observability/feature/src/lib/local-chart/tooltip.tsx` for tooltip content styling and the [Colors](colors.md) reference for its matched inverted tokens. Inspect `Chart.TooltipContent` before reusing it: its current normal solid background does not match that observability treatment. Do not assume a shared component already meets every convention, or fall back to the library's default tooltip content. A correctly styled hover cursor does not style the tooltip itself.
 
 ## Tooltips and callouts
 

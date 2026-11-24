@@ -91,11 +91,20 @@ Use matched inverted tokens:
 
 For status text and icons inside an inverted surface, use the matching `text-positiveInvert`, `text-warningInvert`, `text-negativeInvert`, or `text-infoInvert` token. A normal dark-theme surface is not an inverted surface.
 
-Tooltips and neutral filled buttons already define these combinations; prefer the shared components. Inverted does not mean always dark: the values change with the theme.
+Prefer shared components, but verify that the selected implementation pairs its surface and text tokens consistently. Inverted does not mean always dark: the values change with the theme.
 
 ## Charts
 
 Reuse the corresponding observability chart's palette and series conventions. Use semantic colors for semantic states; otherwise follow the existing chart palette without assigning arbitrary status meanings.
+
+For chart tooltip content, follow `libs/domains/observability/feature/src/lib/local-chart/tooltip.tsx`:
+
+- Surface: `bg-surface-neutralInvert-component`.
+- Dividers: `border-neutralInvert`.
+- Labels and values: `text-neutralInvert`.
+- Secondary information: `text-neutralInvert-subtle`.
+
+Do not combine a normal solid surface with inverted text. The series markers retain their chart series colors.
 
 ## Implementation
 

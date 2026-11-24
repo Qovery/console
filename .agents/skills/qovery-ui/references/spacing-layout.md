@@ -43,11 +43,13 @@ Reuse `SettingsHeading` and comparable settings implementations. Its existing sp
 - **24px** below the heading content before the divider.
 - **32px** between the divider and following content.
 
+`SettingsHeading` already supplies this separation through `mb-8`. Do not add another `gap-8` between it and the next block. Put the subsequent sections in their own spaced container so their gaps do not double the heading margin.
+
 Keep form widths and content alignment consistent with other settings pages. Do not stretch a settings form across the available viewport simply because there is room.
 
 ## Usual spacing
 
-Use these values as starting points. When a shared component already owns the spacing, preserve its defaults rather than adding another layer.
+Use these values as starting points. Inspect component margins and padding before adding surrounding spacing. Each separation should have one owner: do not stack a parent gap and a component margin for the same space. Check the resulting distance, not just the individual utility values.
 
 | Relationship                      | Usual spacing                    | Application                                                                                                                                               |
 | --------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
