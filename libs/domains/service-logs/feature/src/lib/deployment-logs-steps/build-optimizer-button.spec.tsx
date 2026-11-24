@@ -1,10 +1,12 @@
 import { type BuildAnalysisResponse, type BuildAnalysisState } from 'qovery-typescript-axios'
 import { useState } from 'react'
+import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useBuildAnalysis, useBuildAnalysisProgress, useStartBuildAnalysis } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BuildOptimizerButton } from './build-optimizer-button'
 
+jest.mock('@qovery/domains/organizations/feature')
 jest.mock('@qovery/domains/services/feature')
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -14,6 +16,13 @@ jest.mock('@tanstack/react-router', () => ({
 const useBuildAnalysisMock = useBuildAnalysis as jest.MockedFunction<typeof useBuildAnalysis>
 const useStartBuildAnalysisMock = useStartBuildAnalysis as jest.MockedFunction<typeof useStartBuildAnalysis>
 const useBuildAnalysisProgressMock = useBuildAnalysisProgress as jest.MockedFunction<typeof useBuildAnalysisProgress>
+const useOrganizationMock = useOrganization as jest.MockedFunction<typeof useOrganization>
+
+function mockAiFeaturesEnabled(aiFeaturesEnabled: boolean) {
+  useOrganizationMock.mockReturnValue({ data: { ai_features_enabled: aiFeaturesEnabled } } as ReturnType<
+    typeof useOrganization
+  >)
+}
 
 const environment = environmentFactoryMock(1)[0]
 
@@ -68,6 +77,32 @@ describe('BuildOptimizerButton', () => {
     >)
     useBuildAnalysisProgressMock.mockReturnValue(undefined)
     mockBuildAnalysisState({ latest_build_execution_id: 'exec-1', analysis: null })
+    mockAiFeaturesEnabled(true)
+  })
+
+  it('is disabled for an organization that turned AI features off', async () => {
+    mockAiFeaturesEnabled(false)
+    const { userEvent } = renderButton()
+
+    const button = screen.getByRole('button', { name: 'Optimize' })
+    expect(button).toBeDisabled()
+    await userEvent.hover(button.parentElement as HTMLElement)
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('AI features are turned off for this organization')
+  })
+
+  it('keeps a finished analysis open to an organization that turned AI features off', () => {
+    mockAiFeaturesEnabled(false)
+    mockBuildAnalysisState({ latest_build_execution_id: 'exec-1', analysis: analysisOf('DONE') })
+    renderButton()
+
+    expect(screen.getByRole('button', { name: 'Open analysis' })).toBeEnabled()
+  })
+
+  it('is disabled while the organization loads', () => {
+    useOrganizationMock.mockReturnValue({ data: undefined } as ReturnType<typeof useOrganization>)
+    renderButton()
+
+    expect(screen.getByRole('button', { name: 'Optimize' })).toBeDisabled()
   })
 
   it('is disabled until the build succeeded', () => {

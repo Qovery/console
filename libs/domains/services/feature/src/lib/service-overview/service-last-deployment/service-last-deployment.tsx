@@ -3,9 +3,14 @@ import posthog from 'posthog-js'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent, Suspense, useContext } from 'react'
 import { P, match } from 'ts-pattern'
-import { type AnyService, getDeployableServiceType, isAgenticWorkflow } from '@qovery/domains/services/data-access'
+import {
+  type AnyService,
+  getDeployableServiceType,
+  isAgenticWorkflow,
+  isGitContainer,
+} from '@qovery/domains/services/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
-import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
+import { isContainerGitSource, isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import {
   Button,
   CopyToClipboard,
@@ -21,6 +26,7 @@ import {
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { DeployedCommit } from '../../deployed-commit/deployed-commit'
 import { useDeployAgenticWorkflow } from '../../hooks/use-deploy-agentic-workflow/use-deploy-agentic-workflow'
 import { useDeployService } from '../../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentHistory } from '../../hooks/use-deployment-history/use-deployment-history'
@@ -44,6 +50,7 @@ const DotSeparator = () => (
 function getGitRepository(service: AnyService): ApplicationGitRepository | undefined {
   return match(service)
     .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+    .with({ serviceType: 'CONTAINER', source: P.when(isContainerGitSource) }, ({ source }) => source.git_repository)
     .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, ({ source }) => source.docker?.git_repository)
     .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, ({ source }) => source.git?.git_repository)
     .with({ serviceType: 'TERRAFORM' }, ({ terraform_files_source }) => terraform_files_source?.git?.git_repository)
@@ -86,8 +93,11 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
 
   const lastDeployment = deploymentHistory[0]
   const gitRepository = service ? getGitRepository(service) : undefined
+  // Containers have no commit list endpoint, so their deployed commit comes from the source only
+  const isGitContainerService = Boolean(service && isGitContainer(service))
   const showGitCommit =
     Boolean(gitRepository) &&
+    (!isGitContainerService || Boolean(gitRepository?.deployed_commit_id)) &&
     Boolean(service?.id && service?.name && service?.serviceType && 'environment' in service && service.environment)
 
   const isOngoing = match(lastDeployment?.status_details?.status)
@@ -184,13 +194,17 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
       <span className="pointer-events-auto inline-flex items-center gap-2.5">
         <DotSeparator />
         <span className="flex items-center gap-2.5 font-normal" onClick={preventParentLinkNavigation}>
-          <LastCommit
-            organizationId={organizationId}
-            projectId={projectId}
-            gitRepository={gitRepository}
-            service={service as LastCommitProps['service']}
-            showDeployFromAnotherVersionButton={false}
-          />
+          {isGitContainerService ? (
+            <DeployedCommit gitRepository={gitRepository} />
+          ) : (
+            <LastCommit
+              organizationId={organizationId}
+              projectId={projectId}
+              gitRepository={gitRepository}
+              service={service as LastCommitProps['service']}
+              showDeployFromAnotherVersionButton={false}
+            />
+          )}
           {'updated_at' in (lastDeployment.auditing_data ?? {}) && lastDeployment.auditing_data.created_at && (
             <>
               <DotSeparator />
@@ -201,14 +215,18 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
               </span>
             </>
           )}
-          <DotSeparator />
-          <LastCommitAuthor
-            gitRepository={gitRepository}
-            serviceId={service.id}
-            serviceType={service.serviceType as LastCommitAuthorProps['serviceType']}
-            size={20}
-            withFullName
-          />
+          {!isGitContainerService && (
+            <>
+              <DotSeparator />
+              <LastCommitAuthor
+                gitRepository={gitRepository}
+                serviceId={service.id}
+                serviceType={service.serviceType as LastCommitAuthorProps['serviceType']}
+                size={20}
+                withFullName
+              />
+            </>
+          )}
         </span>
       </span>
     ) : null

@@ -1,7 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useLocation, useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type DeploymentHistoryEnvironmentV2,
   type Environment,
@@ -96,7 +95,6 @@ export function DeploymentLogsSteps({
   const [searchQuery, setSearchQuery] = useState('')
   const deferredSearchQuery = useDeferredValue(searchQuery)
   const [openStepOverrides, setOpenStepOverrides] = useState<Record<string, boolean>>({})
-  const isBuildOptimizerEnabled = useFeatureFlagEnabled('deployment-logs-build-optimizer') === true
   // Only the builds of applications and jobs can be analysed
   const buildAnalysisServiceType = match(service?.serviceType)
     .with('APPLICATION', 'JOB', (serviceType) => serviceType)
@@ -236,7 +234,7 @@ export function DeploymentLogsSteps({
                     </Heading>
                     <DeploymentLogStatusIcon status={phase.status} />
                   </div>
-                  {phase.id === 'BUILD' && isBuildOptimizerEnabled && buildAnalysisServiceType && (
+                  {phase.id === 'BUILD' && buildAnalysisServiceType && (
                     <BuildOptimizerButton
                       environment={environment}
                       serviceId={serviceId}
