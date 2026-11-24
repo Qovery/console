@@ -312,7 +312,7 @@ describe('ContainerRegistryForm', () => {
 
     it('hides the registry name and description and offers the on-premise kinds at cluster creation', () => {
       renderWithProviders(
-        wrapWithReactHookForm(<ContainerRegistryForm fromClusterCreation />, {
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="creation" />, {
           defaultValues: { kind: ContainerRegistryKindEnum.GENERIC_CR },
         })
       )
@@ -324,7 +324,7 @@ describe('ContainerRegistryForm', () => {
 
     it('offers the on-premise kinds in the settings of an on-premise cluster', () => {
       renderWithProviders(
-        wrapWithReactHookForm(<ContainerRegistryForm fromEditClusterSettings cluster={onPremiseCluster} />, {
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={onPremiseCluster} />, {
           defaultValues: { name: 'hello', kind: ContainerRegistryKindEnum.GENERIC_CR },
         })
       )
@@ -337,7 +337,7 @@ describe('ContainerRegistryForm', () => {
       'forces the account login of a %s registry at cluster creation',
       async (kind) => {
         renderWithProviders(
-          wrapWithReactHookForm(<ContainerRegistryForm fromClusterCreation />, {
+          wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="creation" />, {
             defaultValues: { kind: ContainerRegistryKindEnum.GENERIC_CR, config: { login_type: 'ANONYMOUS' } },
           })
         )
@@ -353,7 +353,7 @@ describe('ContainerRegistryForm', () => {
 
     it('shows the account login of a GitHub registry loaded in the settings of an on-premise cluster', () => {
       renderWithProviders(
-        wrapWithReactHookForm(<ContainerRegistryForm fromEditClusterSettings cluster={onPremiseCluster} />, {
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={onPremiseCluster} />, {
           defaultValues: { kind: ContainerRegistryKindEnum.GITHUB_CR, url: 'https://ghcr.io' },
         })
       )
@@ -364,7 +364,7 @@ describe('ContainerRegistryForm', () => {
 
     it('checks a generic registry URL against the cluster registry rules in the settings of an on-premise cluster', async () => {
       const { userEvent } = renderWithProviders(
-        wrapWithReactHookForm(<ContainerRegistryForm fromEditClusterSettings cluster={onPremiseCluster} />, {
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={onPremiseCluster} />, {
           defaultValues: { kind: ContainerRegistryKindEnum.GENERIC_CR, url: '' },
         })
       )
@@ -396,7 +396,7 @@ describe('ContainerRegistryForm', () => {
 
     it('does not encourage Docker Hub credentials where they are required', async () => {
       renderWithProviders(
-        wrapWithReactHookForm(<ContainerRegistryForm fromClusterCreation />, {
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="creation" />, {
           defaultValues: { kind: ContainerRegistryKindEnum.GENERIC_CR, config: { login_type: 'ANONYMOUS' } },
         })
       )
@@ -419,7 +419,7 @@ describe('ContainerRegistryForm', () => {
 
     it('empties the saved credentials when the kind changes in the settings of a cluster', async () => {
       renderWithProviders(
-        wrapWithReactHookForm(<ContainerRegistryForm fromEditClusterSettings cluster={onPremiseCluster} />, {
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={onPremiseCluster} />, {
           defaultValues: {
             kind: ContainerRegistryKindEnum.GITHUB_CR,
             url: 'https://ghcr.io',
@@ -438,7 +438,7 @@ describe('ContainerRegistryForm', () => {
 
     it('keeps the login type of a GitHub registry free in the settings of another cluster', () => {
       renderWithProviders(
-        wrapWithReactHookForm(<ContainerRegistryForm fromEditClusterSettings cluster={awsCluster} />, {
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={awsCluster} />, {
           defaultValues: { kind: ContainerRegistryKindEnum.GITHUB_CR, url: 'https://ghcr.io' },
         })
       )

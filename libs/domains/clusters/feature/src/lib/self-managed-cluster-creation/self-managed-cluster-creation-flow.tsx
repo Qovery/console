@@ -225,7 +225,7 @@ function GeneralStep({
               <p className="text-sm text-neutral-subtle">
                 This registry is used to store the built images or mirror the container images deployed on this cluster.
               </p>
-              <ContainerRegistryForm fromClusterCreation />
+              <ContainerRegistryForm clusterRegistry="creation" />
             </StepSection>
           ) : (
             <StepSection title="Deployment target">

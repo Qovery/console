@@ -32,8 +32,7 @@ import {
 } from '../utils/self-managed-cluster-registry'
 
 export interface ContainerRegistryFormProps {
-  fromEditClusterSettings?: boolean
-  fromClusterCreation?: boolean
+  clusterRegistry?: 'settings' | 'creation'
   cluster?: Cluster
   isEdit?: boolean
   registry?: ContainerRegistryResponse
@@ -55,8 +54,7 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
     .filter(Boolean)
 
 export function ContainerRegistryForm({
-  fromEditClusterSettings = false,
-  fromClusterCreation = false,
+  clusterRegistry,
   cluster,
   isEdit = false,
   registry,
@@ -109,7 +107,10 @@ export function ContainerRegistryForm({
   const isClusterSelfManaged = cluster?.kubernetes === 'SELF_MANAGED'
   const isClusterDemo = cluster?.is_demo
   const isClusterOnPremise = cluster?.cloud_provider === 'ON_PREMISE'
-  const isOnPremiseClusterRegistry = fromClusterCreation || (fromEditClusterSettings && isClusterOnPremise)
+  const isOnPremiseClusterRegistry = match(clusterRegistry)
+    .with('creation', () => true)
+    .with('settings', () => isClusterOnPremise)
+    .otherwise(() => false)
   const isAccountLoginRequired = (kind?: ContainerRegistryKindEnum) =>
     kind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR ||
     (isOnPremiseClusterRegistry && kind !== undefined && SELF_MANAGED_CLUSTER_REGISTRY_ACCOUNT_KINDS.includes(kind))
@@ -143,7 +144,7 @@ export function ContainerRegistryForm({
           )}
         />
       )}
-      {!fromClusterCreation && (
+      {clusterRegistry !== 'creation' && (
         <>
           <Controller
             name="name"
@@ -154,7 +155,7 @@ export function ContainerRegistryForm({
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-name"
-                disabled={fromEditClusterSettings}
+                disabled={clusterRegistry === 'settings'}
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -168,7 +169,7 @@ export function ContainerRegistryForm({
             control={methods.control}
             render={({ field, fieldState: { error } }) => (
               <InputTextArea
-                disabled={fromEditClusterSettings}
+                disabled={clusterRegistry === 'settings'}
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -187,13 +188,15 @@ export function ContainerRegistryForm({
         }}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
-            disabled={fromEditClusterSettings ? !(isClusterSelfManaged && !isClusterDemo && isClusterOnPremise) : false}
+            disabled={
+              clusterRegistry === 'settings' ? !(isClusterSelfManaged && !isClusterDemo && isClusterOnPremise) : false
+            }
             onChange={(value) => {
               methods.setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
-              if (!fromClusterCreation) {
+              if (clusterRegistry !== 'creation') {
                 methods.resetField('config')
               }
-              if (fromClusterCreation || fromEditClusterSettings) {
+              if (clusterRegistry !== undefined) {
                 methods.setValue('config.username', '')
                 methods.setValue('config.password', '')
                 methods.clearErrors(['config.username', 'config.password'])
@@ -216,9 +219,9 @@ export function ContainerRegistryForm({
             error={error?.message}
             options={getOptionsContainerRegistry(
               availableContainerRegistries.filter(({ kind }) =>
-                match({ isOnPremiseClusterRegistry, fromEditClusterSettings })
+                match({ isOnPremiseClusterRegistry, clusterRegistry })
                   .with({ isOnPremiseClusterRegistry: true }, () => SELF_MANAGED_CLUSTER_REGISTRY_KINDS.includes(kind))
-                  .with({ fromEditClusterSettings: true }, () => kind === 'GITHUB_CR' || kind === 'GENERIC_CR')
+                  .with({ clusterRegistry: 'settings' }, () => kind === 'GITHUB_CR' || kind === 'GENERIC_CR')
                   .otherwise(() => true)
               )
             )}
@@ -474,7 +477,7 @@ export function ContainerRegistryForm({
         />
       )}
 
-      {!fromClusterCreation && <hr className="border-neutral" />}
+      {clusterRegistry !== 'creation' && <hr className="border-neutral" />}
 
       {(cluster?.cloud_provider === 'AWS' ||
         watchKind === ContainerRegistryKindEnum.ECR ||

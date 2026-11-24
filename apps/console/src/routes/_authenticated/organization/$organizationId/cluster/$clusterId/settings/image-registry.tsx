@@ -83,7 +83,7 @@ function ImageRegistrySettings() {
   return (
     <FormProvider {...methods}>
       <form className="flex flex-col" onSubmit={onSubmit}>
-        <ContainerRegistryForm fromEditClusterSettings cluster={cluster} />
+        <ContainerRegistryForm clusterRegistry="settings" cluster={cluster} />
         {(methods.formState.dirtyFields.kind || methods.formState.dirtyFields.url) && (
           <Callout.Root className="mt-4" color="yellow">
             <Callout.Icon>
