@@ -47,14 +47,14 @@ describe('SectionScheduledTasks', () => {
     it('should render section heading', () => {
       render(<SectionScheduledTasks {...defaultProps} />)
 
-      expect(screen.getByText('Scheduled Tasks')).toBeInTheDocument()
+      expect(screen.getByText('Scheduled tasks')).toBeInTheDocument()
       expect(screen.getByText('Recurring tasks configured for your organization')).toBeInTheDocument()
     })
 
     it('should render tasks list title', () => {
       render(<SectionScheduledTasks {...defaultProps} />)
 
-      expect(screen.getByText('Tasks List')).toBeInTheDocument()
+      expect(screen.getByText('Tasks list')).toBeInTheDocument()
     })
 
     it('should show loader when loading', () => {

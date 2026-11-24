@@ -45,9 +45,13 @@ describe('LlmProviderCreateEditModal', () => {
     })
   })
 
-  it('should create a personal Claude token', async () => {
+  it.each([false, true])('should create a personal Claude token when personalOnly is %s', async (personalOnly) => {
     const onClose = jest.fn()
-    const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={onClose} />)
+    const { userEvent } = renderWithProviders(
+      <LlmProviderCreateEditModal onClose={onClose} personalOnly={personalOnly} />
+    )
+
+    expect(screen.queryByLabelText('Scope') !== null).toBe(!personalOnly)
 
     await userEvent.type(screen.getByLabelText('Name'), ' My Claude ')
     await userEvent.type(screen.getByLabelText('Token'), ' sk-ant-secret ')
