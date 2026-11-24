@@ -1,7 +1,9 @@
 import { ApplicationBuildAnalysisApi, DatabaseTypeEnum, JobBuildAnalysisApi } from 'qovery-typescript-axios'
 import {
+  type Container,
   type Database,
   type Terraform,
+  isGitContainer,
   isServiceMYSQL,
   isServicePostgreSQL,
   isTerraform,
@@ -14,10 +16,18 @@ describe('service type guards', () => {
   const postgresql = { service_type: 'DATABASE', type: DatabaseTypeEnum.POSTGRESQL } as Database
   const mysql = { ...postgresql, type: DatabaseTypeEnum.MYSQL }
   const terraform = { service_type: 'TERRAFORM' } as Terraform
+  const imageContainer = { service_type: 'CONTAINER', source: { image: {} } } as Container
+  const gitContainer = { service_type: 'CONTAINER', source: { git_repository: {} } } as Container
 
   it('identifies Terraform services', () => {
     expect(isTerraform(terraform)).toBe(true)
     expect(isTerraform(postgresql)).toBe(false)
+  })
+
+  it('identifies containers built from a Git repository only', () => {
+    expect(isGitContainer(gitContainer)).toBe(true)
+    expect(isGitContainer(imageContainer)).toBe(false)
+    expect(isGitContainer(terraform)).toBe(false)
   })
 
   it('identifies PostgreSQL databases only', () => {

@@ -29,7 +29,7 @@ import {
 } from '@qovery/domains/services/data-access'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { parseCmd } from '@qovery/shared/util-js'
-import { convertAutoscalingResponseToRequest } from '@qovery/shared/util-services'
+import { buildEditServicePayload, convertAutoscalingResponseToRequest } from '@qovery/shared/util-services'
 
 export interface HelmGeneralData
   extends Omit<HelmRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec'> {
@@ -164,23 +164,23 @@ export const handleContainerSubmit = (
   container: Container,
   labelsGroups: OrganizationLabelsGroupEnrichedResponse[],
   annotationsGroups: OrganizationAnnotationsGroupResponse[]
-): ContainerRequest => {
-  return {
-    ...container,
-    name: data.name,
-    description: data.description || '',
-    icon_uri: data.icon_uri,
-    auto_deploy: data.auto_deploy,
-    tag: data.image_tag || '',
-    image_name: data.image_name || '',
-    arguments: data.cmd_arguments?.length ? parseCmd(data.cmd_arguments) : [],
-    entrypoint: data.image_entry_point || '',
-    registry_id: data.registry || '',
-    annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
-    labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
-    autoscaling: convertAutoscalingResponseToRequest(container.autoscaling),
-  }
-}
+): ContainerRequest =>
+  buildEditServicePayload({
+    service: container,
+    request: {
+      name: data.name,
+      description: data.description || '',
+      icon_uri: data.icon_uri,
+      auto_deploy: data.auto_deploy,
+      tag: data.image_tag || '',
+      image_name: data.image_name || '',
+      arguments: data.cmd_arguments?.length ? parseCmd(data.cmd_arguments) : [],
+      entrypoint: data.image_entry_point || '',
+      registry_id: data.registry || '',
+      annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
+      labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
+    },
+  })
 
 export const handleJobSubmit = (
   data: JobGeneralData,

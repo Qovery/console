@@ -8,6 +8,7 @@ import {
   type EditableService,
   isArgoCd,
   isEditableService,
+  isGitContainer,
 } from '@qovery/domains/services/data-access'
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -113,8 +114,12 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                               <span className="relative flex items-center">
                                 <Icon name={getIconName(service)} className="mr-3" />
                                 {service.name}
+                                {isGitContainer(service) && (
+                                  <span className="ml-2 text-neutral-subtle">Not available yet for Git containers</span>
+                                )}
                               </span>
                             }
+                            disabled={isGitContainer(service)}
                             small
                           />
                         )}
@@ -202,7 +207,9 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
     methods.setValue('on_demand_preview', value)
     //set all preview applications "true" when env preview is true
     if (loadingStatusEnvironmentDeploymentRules) {
-      services.forEach((service) => methods.setValue(service.id, value, { shouldDirty: true }))
+      services
+        .filter((service) => !isGitContainer(service))
+        .forEach((service) => methods.setValue(service.id, value, { shouldDirty: true }))
     }
   }
 

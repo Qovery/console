@@ -1,5 +1,10 @@
 import { type Commit } from 'qovery-typescript-axios'
-import { helmFactoryMock, terraformFactoryMock } from '@qovery/shared/factories'
+import {
+  containerFactoryMock,
+  gitContainerFactoryMock,
+  helmFactoryMock,
+  terraformFactoryMock,
+} from '@qovery/shared/factories'
 import {
   type DeployByVersionService,
   buildDeployByVersionPayload,
@@ -133,6 +138,18 @@ describe('deploy by version', () => {
 
     expect(toVersionedService(terraform)).toBeUndefined()
     expect(toVersionedService(helm)).toBeUndefined()
+  })
+
+  it('offers registry tags for an image container but excludes a Git container', () => {
+    const imageContainer = containerFactoryMock(1)[0]
+    const gitContainer = gitContainerFactoryMock(1)[0]
+
+    expect(toVersionedService(imageContainer)).toMatchObject({
+      serviceType: 'CONTAINER',
+      sourceType: 'container',
+      currentVersion: imageContainer.tag,
+    })
+    expect(toVersionedService(gitContainer)).toBeUndefined()
   })
 
   it('includes a regular Terraform service and reads its deployed commit', () => {

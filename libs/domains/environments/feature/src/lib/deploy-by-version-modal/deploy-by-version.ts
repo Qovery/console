@@ -8,7 +8,13 @@ import {
   isHelm,
   isJob,
 } from '@qovery/domains/services/data-access'
-import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
+import {
+  isContainerGitSource,
+  isHelmGitSource,
+  isHelmRepositorySource,
+  isJobContainerSource,
+  isJobGitSource,
+} from '@qovery/shared/enums'
 
 interface VersionedServiceBase {
   id: string
@@ -85,6 +91,9 @@ export function toVersionedService(service: AnyService): VersionedService | unde
   }
 
   if (isContainer(service)) {
+    // Deploy-all cannot target a commit, and the image tag of a Git container comes from its own build
+    if (isContainerGitSource(service.source)) return undefined
+
     const containerRegistryId = service.registry.id
     if (!containerRegistryId) return undefined
 
