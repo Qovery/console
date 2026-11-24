@@ -93,6 +93,8 @@ Common examples:
 
 Do not add page padding if the surrounding layout already supplies it. Keep headers, content, and footers aligned to the same horizontal inset within a surface.
 
+Apply that content inset to nested elements such as chart legends as well as headings and body content. Inspect shared components' own padding: add the missing inset where needed without doubling an inset they already supply. Check the rendered alignment of the whole surface, not only each component in isolation.
+
 ## Alignment
 
 - Align section headings and their content to the same left edge.

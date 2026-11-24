@@ -57,6 +57,8 @@ Use selects for filtering and grouping controls. Don't replace them with a custo
 
 For filter toolbars, inspect an existing Console filter toolbar and preserve its compact, inline arrangement. Do not import stacked form-field labels into filters by default; the displayed selection identifies the filter. Keep reset/clear actions alongside the controls they affect, and provide accessible names without adding unnecessary visible labels.
 
+Match the rendered heights of selects and adjacent toolbar buttons, and center them vertically. Choose the appropriate supported component sizes; the same size name on different components does not necessarily produce the same height. Verify the controls together before adding local sizing overrides.
+
 For view tabs, follow **Environment overview → List/Pipeline**. Prefer a meaningful icon alongside each tab label, as in Services and Variables; keep icon treatment consistent across sibling tabs. For tabs inside a setup dialog, follow **Secret-manager integration**.
 
 Keep the selected value visible in its control. Avoid adding a second representation that merely repeats it.
@@ -107,7 +109,7 @@ Preserve the component's surface, cell spacing, and dividers. Use `text-xs` (12p
 - Align cell content with its heading and comparable rows.
 - Vertically align row actions and selection controls.
 - Keep nested actions from accidentally triggering row navigation.
-- Use the existing pagination component when pagination is needed.
+- Use the existing pagination component when pagination is needed. Keep the result count, navigation buttons, and page-size control in one compact, vertically centered footer row; do not stack a separate count row above the pagination.
 
 **Don't:**
 
@@ -123,6 +125,8 @@ When tabs switch between table views, reproduce the two-layer construction used 
 1. **Back layer — tabs:** `rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle`. Use `Navbar` and give its wrapper `pb-2` to accommodate the overlap.
 2. **Front layer — content:** a sibling positioned with `relative -mt-2`, containing `overflow-hidden rounded-lg border border-neutral bg-surface-neutral`. Its rounded top corners overlap the bottom of the tab layer by 8px. Preserve the distinct tab background and the content's own top border and rounding.
 3. **Inside the front layer:** view-specific filters/actions when needed, a divider, then the table header and rows. Pagination sits directly below the last row, with a divider and the same content background.
+
+Use the toolbar for controls or useful context. Do not repeat the active tab's title immediately below it unless the heading adds information beyond the selected view.
 
 Keep both layers full-width and aligned at their outer edges. There is no padded gap around an inner table. Scope scrolling to the table content so controls remain accessible.
 
