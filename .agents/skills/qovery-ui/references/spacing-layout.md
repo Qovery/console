@@ -6,6 +6,10 @@ Use this reference when building or changing page composition, spacing, or align
 
 Inspect the closest established page before composing a new layout. Reuse its section structure, content widths, and spacing rhythm. The examples below identify layout patterns, not permission to copy unrelated typography, colors, or behavior.
 
+Before placing components, identify the main sections and which elements belong together. Infer the grouping from the task and the closest established page; ask for clarification only when an ambiguity would materially change the composition.
+
+Use tighter spacing within a group and a larger, consistent gap between independent sections. For example, summary metrics and the chart explaining them belong in one group; a detailed table is a separate section.
+
 ### Overview pages
 
 Use the environment, organization, and service overviews as composition references:

@@ -55,6 +55,8 @@ For view tabs, follow **Environment overview → List/Pipeline**. For tabs insid
 
 Keep the selected value visible in its control. Avoid adding a second representation that merely repeats it.
 
+Choose widths deliberately across a filter group. Leave enough space between the longest displayed value and the chevron, and verify selected values as well as the default labels. Reuse supported sizing options; inspect the shared select's padding before adding local overrides.
+
 **Don't:**
 
 - Use action menus as a substitute for value selection.
@@ -91,10 +93,11 @@ For a checkbox with a title and description, associate the label correctly and a
 
 Use `TablePrimitives`. Use TanStack Table when sorting, selection, filtering, or other table behavior requires it.
 
-Preserve the component's surface, cell spacing, dividers, and column-heading typography. Focus custom work on the row content.
+Preserve the component's surface, cell spacing, and dividers. Use `text-xs` (12px) for column headers and `text-sm` (14px) for row content, retaining the component-owned code font in the header. `TablePrimitives` header cells currently inherit the table's text size: apply `text-xs` to `Table.Header` or its header row, not to `Table.Root`. Focus other custom work on the row content.
 
 - Style the first identifying item in each row with `font-medium`. Keep supporting content at normal weight.
 - Keep supporting text visually secondary without shrinking ordinary content.
+- Give independently useful information its own column. Avoid packing the action, resource, type, and full resource hierarchy into one cell when users need to scan those separately.
 - Align cell content with its heading and comparable rows.
 - Vertically align row actions and selection controls.
 - Keep nested actions from accidentally triggering row navigation.
@@ -106,6 +109,24 @@ Preserve the component's surface, cell spacing, dividers, and column-heading typ
 - Wrap an already bordered table in another padded, bordered card.
 - Apply monospace to cell values.
 - Migrate an unrelated working table solely because it uses the legacy component.
+
+### Tables with multiple views
+
+When tabs switch between views of a table, compose them as one shared outer surface, as in the service List/Pipeline and variables-table patterns:
+
+1. Tabs and view-specific filters or actions in the top area.
+2. A divider, then the table header and rows.
+3. Pagination directly below the last row, separated by a divider and inside the same surface.
+
+Keep these areas aligned to the same outer edges. Use `bg-surface-neutral` for the content surface. The table body owns any needed overflow; the surrounding controls should remain accessible.
+
+Use one outer border and corner treatment. When `Table.Root` sits inside this surface, use its `containerClassName` to remove the redundant border and rounding, following the variables-table integration. Do not place a separately padded, bordered table card inside another card, or leave tabs and pagination floating outside their table surface.
+
+## Suggestions and recommended actions
+
+Base recommendations on evidence in the displayed data. Do not infer a problem merely from an absent association or a zero count.
+
+State the useful finding and next step concisely. When the product supports that next step, provide a relevant action or navigation target. If the entire suggestion is actionable, avoid repeating the same destination in a separate link. If an action updates another part of the page, make the result apparent by bringing the affected section into view or providing clear feedback.
 
 ## Statuses and pills
 
@@ -184,12 +205,13 @@ Apply the page's existing action hierarchy when adding an empty-state action.
 
 Paths are repository-relative.
 
-| Pattern               | Source                                                                                                                                 |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| List/Pipeline tabs    | `apps/console/src/routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/route.tsx` |
-| Tabbed setup dialog   | `libs/domains/clusters/feature/src/lib/secret-manager-modals/secret-manager-integration-modal.tsx`                                     |
-| Catalog detail panel  | `libs/domains/services/feature/src/lib/blueprint-details-panel/blueprint-details-panel.tsx`                                            |
-| Table row composition | `libs/domains/services/feature/src/lib/argocd-service-list/argocd-service-list.tsx`                                                    |
+| Pattern                     | Source                                                                                                                                 |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| List/Pipeline tabs          | `apps/console/src/routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/route.tsx` |
+| Tabbed setup dialog         | `libs/domains/clusters/feature/src/lib/secret-manager-modals/secret-manager-integration-modal.tsx`                                     |
+| Catalog detail panel        | `libs/domains/services/feature/src/lib/blueprint-details-panel/blueprint-details-panel.tsx`                                            |
+| Variables table integration | `libs/domains/variables/feature/src/lib/variable-list/variable-list.tsx`                                                               |
+| Table row composition       | `libs/domains/services/feature/src/lib/argocd-service-list/argocd-service-list.tsx`                                                    |
 
 ## Shared-component changes
 

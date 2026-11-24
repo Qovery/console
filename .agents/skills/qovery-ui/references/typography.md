@@ -26,7 +26,9 @@ Avoid introducing three or four sizes inside one card or component. Use the fewe
 
 Do not introduce standalone `text-xs` labels, descriptions, timestamps, or metadata in page content.
 
-Small text belongs in compact components that already define it, such as pills. Preserve the component's typography rather than reproducing its small-text treatment elsewhere.
+Table column headers use `text-xs` (12px); row content uses `text-sm` (14px). See the table integration guidance in [Components](components.md).
+
+Other small text belongs in compact components that already define it, such as pills. Preserve the component's typography rather than reproducing its small-text treatment elsewhere.
 
 Do not introduce `text-ssm` as an automatic intermediate size between a title and its description. Existing component variants may use it; ordinary content should default to `text-sm`.
 
@@ -49,7 +51,11 @@ Do not add weight variations throughout descriptions, metadata, or labels simply
 
 ## Text density
 
-Keep visible descriptions concise and direct. Do not compensate for excessive explanation by making the text smaller.
+Before adding visible content, identify what the user needs to understand or do here. Prioritize that information and challenge content that does not help with either.
+
+Keep visible descriptions concise and direct. Remove captions that repeat a title, label, selected filter, or obvious behavior. Do not compensate for excessive explanation by making the text smaller.
+
+Keep supplementary context secondary. Consider a detail view for longer explanations rather than displaying every piece of context in a row or card.
 
 Consider an information-icon tooltip for supplementary explanations when displaying them permanently would overcrowd the interface.
 
