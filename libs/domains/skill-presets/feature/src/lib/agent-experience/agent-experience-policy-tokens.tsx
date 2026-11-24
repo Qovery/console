@@ -19,7 +19,6 @@ import {
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { activityWindowEnd, tokenActor } from '../agent-activity/activity-search'
-import { AGENT_ACTIVITY_FLAG } from '../agent-activity/agent-activity-flag'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useAgentExperiencePolicyTokens } from '../hooks/use-agent-experience-policy-tokens/use-agent-experience-policy-tokens'
 import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
@@ -204,7 +203,7 @@ export function AgentExperiencePolicyTokens() {
   const { organizationId = '' } = useParams({ strict: false })
   const { canManage, isLoading: isRoleLoading } = useCanManagePolicyTokens({ organizationId })
   const { canManage: canSeeActivity } = useCanManageSkillPresets({ organizationId })
-  const isActivityEnabled = useFeatureFlagEnabled(AGENT_ACTIVITY_FLAG) === true
+  const isActivityEnabled = useFeatureFlagEnabled('agent-activity') === true
   const {
     data: tokens,
     isLoading,

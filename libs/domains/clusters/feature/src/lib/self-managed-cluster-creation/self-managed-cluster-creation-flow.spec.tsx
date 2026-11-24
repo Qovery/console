@@ -6,6 +6,7 @@ import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { Modal } from '@qovery/shared/ui'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { useAvailableContainerRegistries } from '../hooks/use-available-container-registries/use-available-container-registries'
 import { useClusterOperatorBootstrap } from '../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap'
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
@@ -37,6 +38,7 @@ jest.mock('../hooks/use-create-self-managed-cluster/use-create-self-managed-clus
 jest.mock('../hooks/use-cluster-operator-status/use-cluster-operator-status')
 jest.mock('../hooks/use-cluster-operator-bootstrap/use-cluster-operator-bootstrap')
 jest.mock('../hooks/use-platform-template-component-configuration/use-platform-template-component-configuration')
+jest.mock('../hooks/use-available-container-registries/use-available-container-registries')
 
 const useCloudProvidersMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviders') as jest.Mock
 const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
@@ -49,6 +51,7 @@ const mockUseCreateSelfManagedCluster = useCreateSelfManagedCluster as jest.Mock
 const mockUseClusterOperatorStatus = useClusterOperatorStatus as jest.Mock
 const mockUseClusterOperatorBootstrap = useClusterOperatorBootstrap as jest.Mock
 const mockUsePlatformTemplateComponentConfiguration = usePlatformTemplateComponentConfiguration as jest.Mock
+const mockUseAvailableContainerRegistries = useAvailableContainerRegistries as jest.Mock
 const mockDownload = download as jest.Mock
 const mockCreateSelfManagedCluster = jest.fn()
 const mockEnsureOnPremiseCredential = jest.fn()
@@ -109,9 +112,12 @@ async function goToOnPremiseOperatorStep(
   registry: { username?: string; password?: string } = {}
 ) {
   await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
-  await userEvent.type(screen.getByLabelText('Registry URL'), 'https://registry.example.com:5000')
-  if (registry.username) await userEvent.type(screen.getByLabelText('Username (optional)'), registry.username)
-  if (registry.password) await userEvent.type(screen.getByLabelText('Password (optional)'), registry.password)
+  await userEvent.type(screen.getByLabelText('Registry url'), 'https://registry.example.com:5000')
+  if (registry.username && registry.password) {
+    await selectEvent.select(screen.getByLabelText('Login type'), 'Account', { container: document.body })
+    await userEvent.type(screen.getByLabelText('Username'), registry.username)
+    await userEvent.type(screen.getByLabelText('Password'), registry.password)
+  }
   await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
   await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
   await screen.findByRole('heading', { name: 'Configure Qovery Operator' })
@@ -156,6 +162,11 @@ describe('SelfManagedClusterCreationFlow', () => {
       isLoading: false,
     })
     mockUseClusterOperatorStatus.mockReturnValue({ data: { operator_connected: false } })
+    mockUseAvailableContainerRegistries.mockReturnValue({
+      data: ['ECR', 'DOCKER_HUB', 'GENERIC_CR', 'GITHUB_CR', 'GITHUB_ENTERPRISE_CR', 'GITLAB_CR'].map((kind) => ({
+        kind,
+      })),
+    })
     mockUseClusterOperatorBootstrap.mockReturnValue({
       data: { values_yaml: 'secret: values', helm_command: HELM_COMMAND },
       isLoading: false,
@@ -695,7 +706,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="AWS" onClose={mockOnClose} />
     )
 
-    expect(screen.queryByLabelText('Registry URL')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Registry url')).not.toBeInTheDocument()
     await goToOperatorStep(userEvent)
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
 
@@ -734,9 +745,10 @@ describe('SelfManagedClusterCreationFlow', () => {
 
         expect(screen.getByRole('heading', { name: title })).toBeInTheDocument()
         expect(screen.getByRole('heading', { name: 'Container registry' })).toBeInTheDocument()
-        expect(screen.getByLabelText('Registry URL')).toHaveAttribute('type', 'text')
-        expect(screen.getByLabelText('Username (optional)')).toHaveAttribute('type', 'text')
-        expect(screen.getByLabelText('Password (optional)')).toHaveAttribute('type', 'password')
+        expect(screen.getByText('GENERIC_CR')).toBeInTheDocument()
+        expect(screen.getByLabelText('Registry url')).toHaveValue('')
+        expect(screen.queryByLabelText('Registry name')).not.toBeInTheDocument()
+        expect(screen.queryByLabelText('Description')).not.toBeInTheDocument()
         expect(screen.queryByRole('heading', { name: 'Deployment target' })).not.toBeInTheDocument()
         expect(screen.queryByLabelText('Credentials')).not.toBeInTheDocument()
         expect(screen.queryByLabelText('Region')).not.toBeInTheDocument()
@@ -747,6 +759,20 @@ describe('SelfManagedClusterCreationFlow', () => {
       }
     )
 
+    it('offers only the registry kinds an on-premise cluster accepts', async () => {
+      renderWithProviders(
+        <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
+      )
+
+      selectEvent.openMenu(screen.getByLabelText('Type'))
+
+      expect(screen.getAllByRole('option').map((option) => option.textContent)).toStrictEqual([
+        'DOCKER_HUB',
+        'GENERIC_CR',
+        'GITHUB_CR',
+      ])
+    })
+
     it('requires a cluster name and a registry URL', async () => {
       const { userEvent } = renderWithProviders(
         <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
@@ -756,78 +782,116 @@ describe('SelfManagedClusterCreationFlow', () => {
       await waitFor(() => expect(screen.getByLabelText('Cluster name')).toHaveValue('my-cluster'))
       expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
 
-      await userEvent.type(screen.getByLabelText('Registry URL'), 'https://registry.example.com')
+      await userEvent.type(screen.getByLabelText('Registry url'), 'https://registry.example.com')
 
       await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
     })
 
-    it.each([
-      ['registry.example.com', 'The registry URL must start with http:// or https://.'],
-      [
-        'https://robot:secret@registry.example.com',
-        'The registry URL must not contain a username or a password: use the fields below.',
-      ],
-      ['https://localhost:5000', 'The registry URL cannot target localhost.'],
-      [
-        'https://registry.example.com/v2',
-        'The registry URL must not contain a path: keep the host and the optional port only.',
-      ],
-      ['https://registry.example.com?mirror=true', 'The registry URL must not contain query parameters.'],
-      ['https://registry.example.com#images', 'The registry URL must not contain a fragment.'],
-    ])('refuses the registry URL %s', async (url, message) => {
+    it('gives the expected format of a generic registry URL', () => {
+      renderWithProviders(
+        <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
+      )
+
+      expect(
+        screen.getByText('Expected format: https://registry.example.com or https://registry.example.com:5000')
+      ).toBeInTheDocument()
+    })
+
+    it('refuses a generic registry URL that q-core refuses', async () => {
       const { userEvent } = renderWithProviders(
         <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
       )
 
       await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
-      await userEvent.type(screen.getByLabelText('Registry URL'), url)
+      await userEvent.type(screen.getByLabelText('Registry url'), 'https://registry.example.com/v2')
 
-      expect(await screen.findByText(message)).toBeInTheDocument()
+      expect(
+        await screen.findByText('The registry URL must not contain a path: keep the host and the optional port only.')
+      ).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
     })
 
-    it('requires the registry username and password together', async () => {
+    it('accepts a generic registry URL with a single-label host', async () => {
       const { userEvent } = renderWithProviders(
         <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
       )
 
       await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
-      await userEvent.type(screen.getByLabelText('Registry URL'), 'https://registry.example.com')
-      await userEvent.type(screen.getByLabelText('Username (optional)'), 'robot')
-
-      expect(await screen.findByText('Please enter a password, or clear the username.')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
-
-      await userEvent.type(screen.getByLabelText('Password (optional)'), 's3cret')
+      await userEvent.type(screen.getByLabelText('Registry url'), 'https://registry:5000')
 
       await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
-      expect(screen.queryByText('Please enter a password, or clear the username.')).not.toBeInTheDocument()
-
-      await userEvent.clear(screen.getByLabelText('Username (optional)'))
-
-      expect(await screen.findByText('Please enter a username, or clear the password.')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
     })
 
-    it('asks for the registry username once a password is typed', async () => {
+    it('refuses a registry username or password made of spaces', async () => {
       const { userEvent } = renderWithProviders(
         <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
       )
 
       await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
-      await userEvent.type(screen.getByLabelText('Registry URL'), 'https://registry.example.com')
-      await userEvent.type(screen.getByLabelText('Password (optional)'), 's3cret')
+      await userEvent.type(screen.getByLabelText('Registry url'), 'https://registry.example.com')
+      await selectEvent.select(screen.getByLabelText('Login type'), 'Account', { container: document.body })
+      await userEvent.type(screen.getByLabelText('Username'), '   ')
+      await userEvent.type(screen.getByLabelText('Password'), '   ')
 
-      expect(await screen.findByText('Please enter a username, or clear the password.')).toBeInTheDocument()
+      expect(await screen.findByText('Please enter a username.')).toBeInTheDocument()
+      expect(await screen.findByText('Please enter a password.')).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
-
-      await userEvent.clear(screen.getByLabelText('Password (optional)'))
-
-      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
-      expect(screen.queryByText('Please enter a username, or clear the password.')).not.toBeInTheDocument()
     })
 
-    it('creates the cluster with the on-premise credential and the registry without credentials', async () => {
+    it('enables Continue when the registry is filled before the cluster name', async () => {
+      const { userEvent } = renderWithProviders(
+        <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
+      )
+
+      await userEvent.type(screen.getByLabelText('Registry url'), 'https://registry.example.com')
+      await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    })
+
+    it('empties the registry credentials when the kind changes', async () => {
+      const { userEvent } = renderWithProviders(
+        <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
+      )
+
+      await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
+      await selectEvent.select(screen.getByLabelText('Type'), 'GITHUB_CR', { container: document.body })
+      await userEvent.type(screen.getByLabelText('Container registry prefix'), 'qovery')
+      await userEvent.type(screen.getByLabelText('Personal Access Token'), 's3cret')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+
+      await selectEvent.select(screen.getByLabelText('Type'), 'DOCKER_HUB', { container: document.body })
+
+      expect(screen.getByLabelText('Username')).toHaveValue('')
+      expect(screen.getByLabelText('Password')).toHaveValue('')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled())
+
+      await userEvent.type(screen.getByLabelText('Username'), 'qovery')
+      await userEvent.type(screen.getByLabelText('Password'), 's3cret')
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    })
+
+    it('requires the generic registry username and password once the account login is chosen', async () => {
+      const { userEvent } = renderWithProviders(
+        <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
+      )
+
+      await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
+      await userEvent.type(screen.getByLabelText('Registry url'), 'https://registry.example.com')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+
+      await selectEvent.select(screen.getByLabelText('Login type'), 'Account', { container: document.body })
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled())
+      await userEvent.type(screen.getByLabelText('Username'), 'robot')
+      expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
+      await userEvent.type(screen.getByLabelText('Password'), 's3cret')
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+    })
+
+    it('creates the cluster with the on-premise credential and the generic registry without credentials', async () => {
       const { userEvent } = renderWithProviders(
         <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
       )
@@ -858,7 +922,7 @@ describe('SelfManagedClusterCreationFlow', () => {
       expect(await screen.findByRole('heading', { name: 'Install Qovery Operator' })).toBeInTheDocument()
     })
 
-    it('creates the cluster with the registry credentials when both are filled', async () => {
+    it('creates the cluster with the generic registry credentials of an account login', async () => {
       const { userEvent } = renderWithProviders(
         <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="ON_PREMISE" onClose={mockOnClose} />
       )
@@ -894,6 +958,40 @@ describe('SelfManagedClusterCreationFlow', () => {
       ])
     })
 
+    it.each([
+      ['GITHUB_CR', 'https://ghcr.io', 'Container registry prefix', 'Personal Access Token'],
+      ['DOCKER_HUB', 'https://docker.io', 'Username', 'Password'],
+    ])(
+      'creates the cluster with a %s registry, whose account login and credentials are required',
+      async (kind, url, usernameLabel, passwordLabel) => {
+        const { userEvent } = renderWithProviders(
+          <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
+        )
+
+        await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
+        await selectEvent.select(screen.getByLabelText('Type'), kind, { container: document.body })
+
+        expect(screen.getByLabelText('Registry url')).toHaveValue(url)
+        expect(screen.getByLabelText('Login type')).toBeDisabled()
+        expect(screen.getByText('Account')).toBeInTheDocument()
+        await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled())
+
+        await userEvent.type(screen.getByLabelText(usernameLabel), 'qovery')
+        await userEvent.type(screen.getByLabelText(passwordLabel), 's3cret')
+        await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+        await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+        await screen.findByRole('heading', { name: 'Configure Qovery Operator' })
+        await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+        expect(mockCreateSelfManagedCluster).toHaveBeenCalledWith({
+          organizationId: 'org-123',
+          clusterRequest: expect.objectContaining({
+            registry: { kind, url, credentials: { username: 'qovery', password: 's3cret' } },
+          }),
+        })
+      }
+    )
+
     it('keeps the registry values when going back from the Operator step', async () => {
       const { userEvent } = renderWithProviders(
         <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
@@ -902,10 +1000,47 @@ describe('SelfManagedClusterCreationFlow', () => {
       await goToOnPremiseOperatorStep(userEvent, { username: 'robot', password: 's3cret' })
       await userEvent.click(screen.getByRole('button', { name: 'Back' }))
 
-      expect(screen.getByLabelText('Registry URL')).toHaveValue('https://registry.example.com:5000')
-      expect(screen.getByLabelText('Username (optional)')).toHaveValue('robot')
-      expect(screen.getByLabelText('Password (optional)')).toHaveValue('s3cret')
-      expect(screen.getByLabelText('Password (optional)')).toHaveAttribute('type', 'password')
+      expect(screen.getByLabelText('Registry url')).toHaveValue('https://registry.example.com:5000')
+      expect(screen.getByLabelText('Username')).toHaveValue('robot')
+      expect(screen.getByLabelText('Password')).toHaveValue('s3cret')
+      expect(screen.getByLabelText('Password')).toHaveAttribute('type', 'password')
+    })
+
+    it('sends no credentials of another registry kind after going back and changing the kind', async () => {
+      const { userEvent } = renderWithProviders(
+        <SelfManagedClusterCreationFlow organizationId="org-123" cloudProvider="HETZNER" onClose={mockOnClose} />
+      )
+
+      await userEvent.type(screen.getByLabelText('Cluster name'), 'my-cluster')
+      await selectEvent.select(screen.getByLabelText('Type'), 'GITHUB_CR', { container: document.body })
+      await userEvent.type(screen.getByLabelText('Container registry prefix'), 'qovery')
+      await userEvent.type(screen.getByLabelText('Personal Access Token'), 'github-token')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+      await screen.findByRole('heading', { name: 'Configure Qovery Operator' })
+      await userEvent.click(screen.getByRole('button', { name: 'Back' }))
+
+      await selectEvent.select(screen.getByLabelText('Type'), 'DOCKER_HUB', { container: document.body })
+
+      expect(screen.getByLabelText('Username')).toHaveValue('')
+      expect(screen.getByLabelText('Password')).toHaveValue('')
+      await userEvent.type(screen.getByLabelText('Username'), 'docker-user')
+      await userEvent.type(screen.getByLabelText('Password'), 'docker-token')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled())
+      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+      await screen.findByRole('heading', { name: 'Configure Qovery Operator' })
+      await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+      expect(mockCreateSelfManagedCluster).toHaveBeenCalledWith({
+        organizationId: 'org-123',
+        clusterRequest: expect.objectContaining({
+          registry: {
+            kind: 'DOCKER_HUB',
+            url: 'https://docker.io',
+            credentials: { username: 'docker-user', password: 'docker-token' },
+          },
+        }),
+      })
     })
 
     it('does not create the cluster when the on-premise credential fails, then retries both', async () => {

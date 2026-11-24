@@ -39,5 +39,3 @@ export function useAvailableContainerRegistries() {
     },
   })
 }
-
-export default useAvailableContainerRegistries

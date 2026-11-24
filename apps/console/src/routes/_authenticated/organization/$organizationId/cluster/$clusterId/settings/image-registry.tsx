@@ -3,9 +3,8 @@ import clsx from 'clsx'
 import { type ContainerRegistryRequest } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCluster } from '@qovery/domains/clusters/feature'
+import { ContainerRegistryForm, useCluster } from '@qovery/domains/clusters/feature'
 import {
-  ContainerRegistryForm,
   getContainerRegistryDefaultType,
   getContainerRegistryPayloadConfig,
   useContainerRegistries,
@@ -85,7 +84,7 @@ function ImageRegistrySettings() {
   return (
     <FormProvider {...methods}>
       <form className="flex flex-col" onSubmit={onSubmit}>
-        <ContainerRegistryForm fromEditClusterSettings cluster={cluster} />
+        <ContainerRegistryForm clusterRegistry="settings" cluster={cluster} />
         {(methods.formState.dirtyFields.kind || methods.formState.dirtyFields.url) && (
           <Callout.Root className="mt-4" color="yellow">
             <Callout.Icon>
