@@ -46,26 +46,6 @@ exports[`renders the domains list 1`] = `
                   61
                    domains
                 </span>
-                <div
-                  aria-label="DNS status on this page"
-                  class="flex flex-wrap items-center gap-2"
-                  role="group"
-                >
-                  <button
-                    aria-pressed="false"
-                    class="rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
-                    type="button"
-                  >
-                    <span
-                      class="text-neutral inline-flex items-center shrink-0 px-1.5 h-6 border-neutral border rounded-full bg-surface-neutral-subtle text-ssm font-medium"
-                      data-accent-color="neutral"
-                    >
-                      1
-                       
-                      unknown
-                    </span>
-                  </button>
-                </div>
               </div>
               <span
                 class="group relative"

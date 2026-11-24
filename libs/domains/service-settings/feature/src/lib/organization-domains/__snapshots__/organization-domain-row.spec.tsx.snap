@@ -43,15 +43,9 @@ exports[`renders a route without a public port 1`] = `
             <td
               class="border-neutral px-4 py-0 h-12 border-r"
             >
-              <span
-                class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border bg-surface-neutral-subtle gap-1 rounded-md font-medium"
-                data-accent-color="neutral"
-              >
-                <i
-                  aria-hidden="true"
-                  class="fa-solid fa-circle-question text-[12px]"
-                />
-                Unknown
+              <span>
+                Status of 
+                app.example.com
               </span>
             </td>
             <td

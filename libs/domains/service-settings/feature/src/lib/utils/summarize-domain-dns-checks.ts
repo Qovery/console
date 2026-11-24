@@ -2,7 +2,7 @@ import { type CheckedCustomDomainResponse, type OrganizationCustomDomainResponse
 import { match } from 'ts-pattern'
 import { getDomainTargets } from './organization-domain-targets'
 
-export const DOMAIN_DNS_STATUSES = ['failing', 'unknown', 'checking', 'valid'] as const
+export const DOMAIN_DNS_STATUSES = ['failing', 'unknown', 'valid'] as const
 export type DomainDnsStatus = (typeof DOMAIN_DNS_STATUSES)[number]
 
 const isFailingCheck = ({ status }: CheckedCustomDomainResponse) =>
@@ -13,11 +13,9 @@ const isFailingCheck = ({ status }: CheckedCustomDomainResponse) =>
 // A domain is served by one or several services; its DNS is valid only when every service check for it passes.
 export function getDomainDnsStatus(
   domain: OrganizationCustomDomainResponse,
-  serviceChecks: Map<string, CheckedCustomDomainResponse[] | undefined>,
-  checkingServiceIds: ReadonlySet<string> = new Set()
+  serviceChecks: Map<string, CheckedCustomDomainResponse[] | undefined>
 ): { status: DomainDnsStatus; details: string[] } {
   const services = [...new Set(getDomainTargets(domain).map(({ service }) => service.id))]
-  if (services.some((id) => checkingServiceIds.has(id))) return { status: 'checking', details: [] }
   const checks = services.map((id) => serviceChecks.get(id)?.find((check) => check.domain_name === domain.domain))
   const failing = checks.filter((check): check is CheckedCustomDomainResponse =>
     Boolean(check && isFailingCheck(check))

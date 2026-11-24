@@ -28,7 +28,11 @@ jest.mock('@tanstack/react-query', () => ({ ...jest.requireActual('@tanstack/rea
 const mockRecheck = jest.fn()
 let mockDnsStatuses = new Map<string, { status: string; details: string[] }>()
 jest.mock('./use-organization-domain-dns-statuses', () => ({
-  useOrganizationDomainDnsStatuses: () => ({ statuses: mockDnsStatuses, recheck: mockRecheck }),
+  useOrganizationDomainDnsStatuses: () => ({
+    statuses: mockDnsStatuses,
+    fetchingKeys: new Set(),
+    recheck: mockRecheck,
+  }),
 }))
 jest.mock('@qovery/shared/iam/feature', () => ({ useUserRole: () => ({ roles: mockRoles, loading: false }) }))
 jest.mock('./organization-domain-row', () => ({

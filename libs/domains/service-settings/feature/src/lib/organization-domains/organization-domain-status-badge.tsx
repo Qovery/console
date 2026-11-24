@@ -9,7 +9,6 @@ export const DOMAIN_DNS_STATUS_DISPLAY: Record<
 > = {
   failing: { label: 'Failing', color: 'red', iconName: 'circle-exclamation' },
   unknown: { label: 'Unknown', color: 'neutral', iconName: 'circle-question' },
-  checking: { label: 'Checking', color: 'neutral', iconName: 'clock-eight' },
   valid: { label: 'Valid', color: 'green', iconName: 'circle-check' },
 }
 

@@ -47,10 +47,9 @@ describe('getDomainDnsStatus', () => {
     })
   })
 
-  it('is unknown when a check is missing and checking while one runs', () => {
+  it('is unknown when a check is missing', () => {
     const checks = new Map([['web', [check('other.example.com', 'RESOLVES_TO_IP')]]])
     expect(getDomainDnsStatus(domain('app.example.com', ['web']), checks).status).toBe('unknown')
-    expect(getDomainDnsStatus(domain('app.example.com', ['web']), checks, new Set(['web'])).status).toBe('checking')
   })
 })
 

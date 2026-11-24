@@ -14,7 +14,6 @@ import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import {
-  Badge,
   Button,
   Checkbox,
   EmptyState,
@@ -37,6 +36,7 @@ import { DOMAIN_DNS_STATUSES, type DomainDnsStatus } from '../utils/summarize-do
 import { OrganizationDomainActionBar } from './organization-domain-action-bar'
 import { OrganizationDomainCreateModal } from './organization-domain-create-modal'
 import { OrganizationDomainRow } from './organization-domain-row'
+import { OrganizationDomainStatusSummary } from './organization-domain-status'
 import { DOMAIN_DNS_STATUS_DISPLAY, OrganizationDomainStatusBadge } from './organization-domain-status-badge'
 import { useOrganizationDomainDnsStatuses } from './use-organization-domain-dns-statuses'
 
@@ -162,16 +162,17 @@ export function OrganizationDomainsContent() {
     keepPreviousData: true,
   })
   const pageDomains = useMemo(() => data?.results ?? [], [data])
-  const { statuses, recheck } = useOrganizationDomainDnsStatuses(pageDomains)
-  const getStatus = (domain: OrganizationCustomDomainResponse) =>
-    statuses.get(getDomainSelectionKey(domain)) ?? { status: 'unknown' as const, details: [] }
+  // Non-blocking: rows render right away; status cells and the summary suspend on their own.
+  // Domains whose checks have not settled have no status yet, so they are left out of status facets and filters.
+  const { statuses, fetchingKeys, recheck } = useOrganizationDomainDnsStatuses(pageDomains)
+  const getStatus = (domain: OrganizationCustomDomainResponse) => statuses.get(getDomainSelectionKey(domain))?.status
   const statusCounts = new Map<DomainDnsStatus, number>()
   pageDomains.forEach((domain) => {
-    const { status } = getStatus(domain)
-    statusCounts.set(status, (statusCounts.get(status) ?? 0) + 1)
+    const status = getStatus(domain)
+    if (status) statusCounts.set(status, (statusCounts.get(status) ?? 0) + 1)
   })
   const visibleDomains = filters.status
-    ? pageDomains.filter((domain) => getStatus(domain).status === filters.status)
+    ? pageDomains.filter((domain) => getStatus(domain) === filters.status)
     : pageDomains
   const statusFacets = new Map(
     DOMAIN_DNS_STATUSES.filter((status) => statusCounts.has(status)).map((status) => [
@@ -185,7 +186,7 @@ export function OrganizationDomainsContent() {
     {
       id: 'status',
       header: 'Status',
-      accessorFn: (domain) => getStatus(domain).status,
+      accessorFn: (domain) => getStatus(domain) ?? null,
       meta: {
         facetedValues: statusFacets,
         customFacetEntry: ({ value }: { value: DomainDnsStatus }) => <OrganizationDomainStatusBadge status={value} />,
@@ -272,32 +273,11 @@ export function OrganizationDomainsContent() {
             <div className="flex items-center justify-between gap-3 bg-surface-neutral-subtle px-4 py-3">
               <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <span className="text-xs text-neutral-subtle">{data?.total_count ?? 0} domains</span>
-                {statusFacets.size ? (
-                  <div className="flex flex-wrap items-center gap-2" role="group" aria-label="DNS status on this page">
-                    {[...statusFacets].map(([status, count]) => {
-                      const { label, color } = DOMAIN_DNS_STATUS_DISPLAY[status as DomainDnsStatus]
-                      const active = filters.status === status
-                      return (
-                        <button
-                          key={status}
-                          type="button"
-                          aria-pressed={active}
-                          className="rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
-                          onClick={() => setFilters({ ...filters, status: active ? '' : (status as DomainDnsStatus) })}
-                        >
-                          <Badge
-                            variant="surface"
-                            color={color}
-                            radius="full"
-                            className={active ? 'text-ssm font-medium ring-1 ring-current' : 'text-ssm font-medium'}
-                          >
-                            {count} {label.toLowerCase()}
-                          </Badge>
-                        </button>
-                      )
-                    })}
-                  </div>
-                ) : null}
+                <OrganizationDomainStatusSummary
+                  domains={pageDomains}
+                  status={filters.status}
+                  onStatusChange={(status) => setFilters({ ...filters, status })}
+                />
               </div>
               <TableFilterSearch
                 aria-label="Search domains"
@@ -387,7 +367,7 @@ export function OrganizationDomainsContent() {
                         domain={row.original}
                         selected={row.getIsSelected()}
                         selectionDisabled={isFetching || !row.getCanSelect()}
-                        dnsStatus={getStatus(row.original)}
+                        dnsChecking={fetchingKeys.has(getDomainSelectionKey(row.original))}
                         onCheckDns={() => recheck(row.original)}
                         onSelectionChange={(selected) => row.toggleSelected(selected)}
                       />

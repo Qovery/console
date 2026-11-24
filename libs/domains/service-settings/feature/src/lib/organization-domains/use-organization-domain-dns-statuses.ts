@@ -11,8 +11,18 @@ const getDomainServices = (domains: OrganizationCustomDomainResponse[]) => [
   ...new Map(domains.flatMap(getDomainTargets).map(({ service }) => [service.id, service])).values(),
 ]
 
+export interface DomainDnsStatusResult {
+  status: DomainDnsStatus
+  details: string[]
+}
+
 // The list API has no DNS status yet: derive it from the per-service DNS checks of the domains on screen.
-export function useOrganizationDomainDnsStatuses(domains: OrganizationCustomDomainResponse[]) {
+// With `suspense`, the caller suspends until every check has settled, so it never renders a provisional status.
+// Without it, `statuses` only holds domains whose checks have settled.
+export function useOrganizationDomainDnsStatuses(
+  domains: OrganizationCustomDomainResponse[],
+  { suspense = false }: { suspense?: boolean } = {}
+) {
   const queryClient = useQueryClient()
   const services = getDomainServices(domains)
   const results = useQueries({
@@ -21,16 +31,23 @@ export function useOrganizationDomainDnsStatuses(domains: OrganizationCustomDoma
       retry: false,
       staleTime: DNS_CHECK_STALE_TIME,
       refetchOnWindowFocus: false,
+      suspense,
+      // A failed check means "unknown", not a broken page.
+      useErrorBoundary: false,
     })),
   })
+  const resultByService = new Map(services.map((service, index) => [service.id, results[index]]))
   const serviceChecks = new Map(services.map((service, index) => [service.id, results[index]?.data]))
-  const checkingServiceIds = new Set(services.filter((_, index) => results[index]?.isFetching).map(({ id }) => id))
-  const statuses = new Map<string, { status: DomainDnsStatus; details: string[] }>(
-    domains.map((domain) => [
-      getDomainSelectionKey(domain),
-      getDomainDnsStatus(domain, serviceChecks, checkingServiceIds),
-    ])
-  )
+  const statuses = new Map<string, DomainDnsStatusResult>()
+  const fetchingKeys = new Set<string>()
+  domains.forEach((domain) => {
+    const key = getDomainSelectionKey(domain)
+    const domainResults = getDomainServices([domain]).map(({ id }) => resultByService.get(id))
+    if (domainResults.some((result) => result?.isFetching)) fetchingKeys.add(key)
+    if (domainResults.every((result) => result && !result.isLoading)) {
+      statuses.set(key, getDomainDnsStatus(domain, serviceChecks))
+    }
+  })
 
   const recheck = useCallback(
     (domain: OrganizationCustomDomainResponse) =>
@@ -46,5 +63,5 @@ export function useOrganizationDomainDnsStatuses(domains: OrganizationCustomDoma
     [queryClient]
   )
 
-  return { statuses, recheck }
+  return { statuses, fetchingKeys, recheck }
 }

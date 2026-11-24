@@ -17,9 +17,8 @@ import {
 import { pluralize } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 import { getDomainTargets } from '../utils/organization-domain-targets'
-import { type DomainDnsStatus } from '../utils/summarize-domain-dns-checks'
 import { OrganizationDomainEditModal } from './organization-domain-edit-modal'
-import { OrganizationDomainStatusBadge } from './organization-domain-status-badge'
+import { OrganizationDomainStatusCell } from './organization-domain-status'
 
 const { Table } = TablePrimitives
 
@@ -28,14 +27,14 @@ export function OrganizationDomainRow({
   selected,
   onSelectionChange,
   selectionDisabled,
-  dnsStatus = { status: 'unknown', details: [] },
+  dnsChecking = false,
   onCheckDns,
 }: {
   domain: OrganizationCustomDomainResponse
   selected?: boolean
   onSelectionChange?: (selected: boolean) => void
   selectionDisabled?: boolean
-  dnsStatus?: { status: DomainDnsStatus; details: string[] }
+  dnsChecking?: boolean
   onCheckDns?: () => void
 }) {
   const { organizationId = '' } = useParams({ strict: false })
@@ -82,15 +81,7 @@ export function OrganizationDomainRow({
         </div>
       </Table.Cell>
       <Table.Cell className="h-12 border-r">
-        {dnsStatus.details.length ? (
-          <Tooltip content={dnsStatus.details.join('\n')}>
-            <span className="inline-flex">
-              <OrganizationDomainStatusBadge status={dnsStatus.status} />
-            </span>
-          </Tooltip>
-        ) : (
-          <OrganizationDomainStatusBadge status={dnsStatus.status} />
-        )}
+        <OrganizationDomainStatusCell domain={domain} />
       </Table.Cell>
       <Table.Cell className="h-12 border-r">
         <Link
@@ -181,7 +172,7 @@ export function OrganizationDomainRow({
               variant="outline"
               color="neutral"
               size="xs"
-              disabled={!onCheckDns || dnsStatus.status === 'checking' || !targets.length}
+              disabled={!onCheckDns || dnsChecking || !targets.length}
               onClick={onCheckDns}
             >
               <Icon iconName="arrow-rotate-right" />
