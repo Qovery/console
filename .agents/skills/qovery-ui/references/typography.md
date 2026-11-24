@@ -4,7 +4,7 @@ Use this reference when choosing text sizes, weights, font families, or establis
 
 ## Base typography
 
-**`text-sm` (14px) is the default Console text size.** Use it for ordinary labels, descriptions, names, and page content.
+**`text-sm` (14px) is the standard Console text size.** Use it for ordinary labels, descriptions, names, and page content. Set it explicitly on the text or a containing block; it is a design convention, not a guaranteed inherited CSS default. Weight and color classes do not establish a text size.
 
 Use the existing Roboto font. Do not introduce another font family to differentiate a feature or section.
 
