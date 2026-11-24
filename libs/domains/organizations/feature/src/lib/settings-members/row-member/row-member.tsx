@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   type InviteMember,
   type InviteMemberRequest,
@@ -144,7 +143,7 @@ export function RowMember(props: RowMemberProps) {
                 />
               </Indicator>
             )}
-            <div className="ml-3 truncate text-xs max-md:max-w-[120px]">
+            <div className="ml-3 truncate text-xs">
               <p className="mb-1 truncate font-medium text-neutral">{(member as Member).name}</p>
               <span className="truncate text-neutral-subtle">{member.email}</span>
             </div>
@@ -287,11 +286,7 @@ export function RowMember(props: RowMemberProps) {
           </DropdownMenu.Root>
         </div>
       </Table.Cell>
-      {/* Below md only the name, role and invitation status fit: dates are secondary and hidden */}
-      <Table.Cell
-        className={clsx('px-4 text-xs text-neutral', !deleteInviteMember && 'max-md:hidden')}
-        style={{ width: `${columnSizes[2]}%` }}
-      >
+      <Table.Cell className="px-4 text-xs text-neutral" style={{ width: `${columnSizes[2]}%` }}>
         {(member as Member).last_activity_at ? (
           <Tooltip content={dateUTCString((member as Member).last_activity_at!)}>
             <span data-testid="last-activity">{timeAgo(new Date((member as Member).last_activity_at || ''))} ago</span>
@@ -300,7 +295,7 @@ export function RowMember(props: RowMemberProps) {
           <span>{upperCaseFirstLetter((member as InviteMember).invitation_status)}</span>
         )}
       </Table.Cell>
-      <Table.Cell className="px-4 text-xs text-neutral max-md:hidden" style={{ width: `${columnSizes[3]}%` }}>
+      <Table.Cell className="px-4 text-xs text-neutral" style={{ width: `${columnSizes[3]}%` }}>
         <Tooltip content={dateUTCString(member.created_at)}>
           <span data-testid="created-at">{dateMediumLocalFormat(member.created_at)}</span>
         </Tooltip>
