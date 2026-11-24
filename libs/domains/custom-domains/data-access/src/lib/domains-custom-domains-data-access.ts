@@ -1,8 +1,12 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
+import { isAxiosError } from 'axios'
 import {
   ApplicationCustomDomainApi,
   ContainerCustomDomainApi,
   type CustomDomainRequest,
+  type CustomDomainValidationRequest,
+  EnvironmentCustomDomainApi,
+  type EnvironmentCustomDomainRequest,
   HelmCustomDomainApi,
   OrganizationCustomDomainApi,
 } from 'qovery-typescript-axios'
@@ -14,6 +18,7 @@ const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
 
 const organizationCustomDomainApi = new OrganizationCustomDomainApi()
+const environmentCustomDomainApi = new EnvironmentCustomDomainApi()
 
 export interface OrganizationCustomDomainFilters {
   organizationId: string
@@ -25,6 +30,19 @@ export interface OrganizationCustomDomainFilters {
 }
 
 export const customDomains = createQueryKeys('customDomains', {
+  // The hostname new domains of the environment must CNAME to. `null` until the environment is first deployed.
+  environmentCnameTarget: ({ environmentId }: { environmentId: string }) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      try {
+        const response = await environmentCustomDomainApi.getEnvironmentCustomDomainCnameTarget(environmentId)
+        return response.data.cname_target
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 404) return null
+        throw error
+      }
+    },
+  }),
   organizationList: ({
     organizationId,
     projectId,
@@ -77,6 +95,26 @@ export const customDomains = createQueryKeys('customDomains', {
 })
 
 export const mutations = {
+  async createEnvironmentCustomDomain({
+    environmentId,
+    payload,
+  }: {
+    environmentId: string
+    payload: EnvironmentCustomDomainRequest
+  }) {
+    const response = await environmentCustomDomainApi.createEnvironmentCustomDomain(environmentId, payload)
+    return response.data
+  },
+  async validateEnvironmentCustomDomain({
+    environmentId,
+    payload,
+  }: {
+    environmentId: string
+    payload: CustomDomainValidationRequest
+  }) {
+    const response = await environmentCustomDomainApi.validateEnvironmentCustomDomain(environmentId, payload)
+    return response.data.errors
+  },
   async createCustomDomain({
     serviceId,
     serviceType,

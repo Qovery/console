@@ -3,9 +3,11 @@ import { type CustomDomainRequest, type OrganizationCustomDomainResponse } from 
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useEditOrganizationCustomDomain } from '@qovery/domains/custom-domains/feature'
-import { Button, CopyButton, Icon, InputText, InputToggle, Skeleton, Tooltip, useModal } from '@qovery/shared/ui'
+import { Button, Icon, InputText, InputToggle, Tooltip, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import { getDomainTargetKey, getDomainTargets } from '../utils/organization-domain-targets'
+import { OrganizationDomainCnameRecords } from './organization-domain-cname-records'
+import { OrganizationDomainRouteItem } from './organization-domain-route-item'
 
 type DomainTarget = ReturnType<typeof getDomainTargets>[number]
 
@@ -59,10 +61,6 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
   }, [isDirty, enableAlertClickOutside])
 
   const watchDomain = watch('domain')
-  // Record names only depend on the domain, so the block keeps its final layout while the target loads.
-  const cnameRecords = [watchDomain, ...(watchDomain.includes('*') ? [] : [`*.${watchDomain}`])].map(
-    (name) => `${name} CNAME`
-  )
 
   const save = (redeploy: boolean) =>
     handleSubmit(async (payload) => {
@@ -103,36 +101,11 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
           )}
         />
         {isLoadingValidationDomain || validationDomain ? (
-          <div className="overflow-hidden rounded-lg border border-neutral">
-            <div className="border-b border-neutral bg-surface-neutral-subtle px-3 py-2 text-xs font-medium text-neutral">
-              CNAME configuration
-            </div>
-            <div className="flex items-start justify-between gap-3 py-2 pl-3 pr-2">
-              <dl className="flex min-w-0 flex-col gap-2 font-code text-xs leading-5">
-                {cnameRecords.map((name) => (
-                  <div key={name} className="min-w-0">
-                    <dt className="truncate text-info">{name}</dt>
-                    <dd className="h-5 truncate text-neutral-subtle">
-                      {validationDomain ?? (
-                        <span className="flex h-full items-center">
-                          <Skeleton width={240} height={12} />
-                        </span>
-                      )}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-              {validationDomain ? (
-                <CopyButton
-                  iconOnly
-                  size="xs"
-                  content={cnameRecords.map((name) => `${name} ${validationDomain}`).join('\n')}
-                />
-              ) : (
-                <Skeleton width={24} height={24} className="shrink-0" />
-              )}
-            </div>
-          </div>
+          <OrganizationDomainCnameRecords
+            domain={watchDomain}
+            target={validationDomain}
+            loading={isLoadingValidationDomain}
+          />
         ) : null}
         <Controller
           name="use_cdn"
@@ -175,46 +148,35 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
             const targetKey = target ? getDomainTargetKey(target) : undefined
             const removed = targetKey ? removedTargetKeys.includes(targetKey) : false
             return (
-              <li
+              <OrganizationDomainRouteItem
                 key={route.id}
-                className="flex items-center justify-between gap-3 border-b border-neutral px-4 py-3 text-ssm last:border-b-0"
-              >
-                <div className={removed ? 'min-w-0 opacity-50' : 'min-w-0'}>
-                  <p
-                    className={
-                      removed ? 'truncate font-medium text-neutral line-through' : 'truncate font-medium text-neutral'
-                    }
-                  >
-                    {route.path}
-                  </p>
-                  <p className="mt-1 flex gap-2 text-neutral-subtle">
-                    <span className="truncate">
-                      Service: {domain.project.name}/{domain.environment.name}/{route.service.name}
-                    </span>
-                    <span className="shrink-0">Port: {route.port?.internal_port ?? 'none'}</span>
-                  </p>
-                </div>
-                {targetKey ? (
-                  <Tooltip content={removed ? 'Keep route' : 'Remove route'}>
-                    <Button
-                      type="button"
-                      aria-label={`${removed ? 'Keep' : 'Remove'} route ${route.path} of ${route.service.name}`}
-                      iconOnly
-                      variant="outline"
-                      color="neutral"
-                      size="xs"
-                      disabled={isSaving}
-                      onClick={() =>
-                        setRemovedTargetKeys((keys) =>
-                          removed ? keys.filter((key) => key !== targetKey) : [...keys, targetKey]
-                        )
-                      }
-                    >
-                      <Icon iconName={removed ? 'arrow-rotate-left' : 'trash'} iconStyle="regular" />
-                    </Button>
-                  </Tooltip>
-                ) : null}
-              </li>
+                path={route.path}
+                service={`${domain.project.name}/${domain.environment.name}/${route.service.name}`}
+                port={route.port?.internal_port ?? null}
+                removed={removed}
+                actions={
+                  targetKey ? (
+                    <Tooltip content={removed ? 'Keep route' : 'Remove route'}>
+                      <Button
+                        type="button"
+                        aria-label={`${removed ? 'Keep' : 'Remove'} route ${route.path} of ${route.service.name}`}
+                        iconOnly
+                        variant="outline"
+                        color="neutral"
+                        size="xs"
+                        disabled={isSaving}
+                        onClick={() =>
+                          setRemovedTargetKeys((keys) =>
+                            removed ? keys.filter((key) => key !== targetKey) : [...keys, targetKey]
+                          )
+                        }
+                      >
+                        <Icon iconName={removed ? 'arrow-rotate-left' : 'trash'} iconStyle="regular" />
+                      </Button>
+                    </Tooltip>
+                  ) : null
+                }
+              />
             )
           })}
         </ul>

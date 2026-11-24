@@ -263,7 +263,7 @@ export function OrganizationDomainsContent() {
           <Button
             size="md"
             onClick={() =>
-              openModal({ content: <OrganizationDomainCreateModal onClose={closeModal} />, options: { width: 488 } })
+              openModal({ content: <OrganizationDomainCreateModal onClose={closeModal} />, options: { width: 560 } })
             }
           >
             <Icon iconName="circle-plus" iconStyle="regular" />
