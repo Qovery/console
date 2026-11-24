@@ -121,6 +121,8 @@ function OrganizationDomainRouteForm({
       <div className="flex flex-col gap-3">
         <InputSelect
           label="Project"
+          // Render the menu outside the modal so it is not clipped by it.
+          portal
           value={projectId}
           disabled={Boolean(lockedTo)}
           options={projects.map(({ id, name }) => ({ label: name, value: id }))}
@@ -133,6 +135,7 @@ function OrganizationDomainRouteForm({
         />
         <InputSelect
           label="Environment"
+          portal
           value={environmentId}
           disabled={!projectId || Boolean(lockedTo)}
           options={environments.map(({ id, name }) => ({ label: name, value: id }))}
@@ -144,6 +147,7 @@ function OrganizationDomainRouteForm({
         />
         <InputSelect
           label="Service"
+          portal
           value={serviceId}
           disabled={!environmentId}
           options={availableServices.map(({ id, name }) => ({ label: name, value: id }))}
