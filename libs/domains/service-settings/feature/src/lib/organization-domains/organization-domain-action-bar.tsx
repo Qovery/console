@@ -106,7 +106,7 @@ export function OrganizationDomainActionBar({
           if (pending.length) {
             setFeedback({
               selection,
-              text: `${pending.length} service configuration(s) could not be deleted. Confirm again to retry only those failures.`,
+              text: `${pending.length} service ${pluralize(pending.length, 'configuration')} could not be deleted. Confirm again to retry only those failures.`,
             })
             toast(
               'error',

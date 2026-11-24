@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type CustomDomainRequest } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/services/data-access'
+import { pluralize } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 
 type CustomDomainServiceType = Parameters<typeof mutations.editCustomDomain>[0]['serviceType']
@@ -70,7 +71,7 @@ export function useEditOrganizationCustomDomain({ environmentId }: { environment
           const { redeploy } = variables as EditOrganizationCustomDomainVariables
           const targets = getAffectedTargets(variables as EditOrganizationCustomDomainVariables)
           const serviceCount = new Set(targets.map(({ serviceId }) => serviceId)).size
-          const services = `${serviceCount} service${serviceCount > 1 ? 's' : ''}`
+          const services = `${serviceCount} ${pluralize(serviceCount, 'service')}`
           if (redeploy) {
             return { title: 'Your domain has been updated', description: `Redeploying ${services}.` }
           }

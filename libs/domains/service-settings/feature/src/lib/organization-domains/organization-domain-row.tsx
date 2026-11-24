@@ -15,6 +15,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 import { getDomainTargets } from '../utils/organization-domain-targets'
 import { OrganizationDomainEditModal } from './organization-domain-edit-modal'
@@ -210,7 +211,7 @@ export function OrganizationDomainRow({
                   title: 'Delete custom domain',
                   confirmationMethod: 'action',
                   name: domain.domain,
-                  description: `Remove this domain from ${targets.length} service configuration(s). Redeploy the affected services to apply the change.`,
+                  description: `Remove this domain from ${targets.length} service ${pluralize(targets.length, 'configuration')}. Redeploy the affected services to apply the change.`,
                   action: async () =>
                     Promise.all(
                       targets.map((target) =>
