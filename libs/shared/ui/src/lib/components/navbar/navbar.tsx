@@ -14,7 +14,8 @@ import {
   useRef,
   useState,
 } from 'react'
-import { twMerge } from '@qovery/shared/util-js'
+import { useHorizontalOverflowFade } from '@qovery/shared/util-hooks'
+import { scrollIntoViewHorizontally, twMerge } from '@qovery/shared/util-js'
 
 const navbarItemVariants = cva(
   [
@@ -154,6 +155,22 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
   // eslint-disable-next-line react-hooks/exhaustive-deps -- recalculate is used to trigger recalculation on resize
   const activeStyle = useMemo(() => getIndicatorStyle(activeId), [getIndicatorStyle, activeId, recalculate])
 
+  // On narrow screens the tabs overflow: keep the active tab in view and fade the edges that hide more tabs
+  const {
+    ref: scrollRef,
+    update: updateOverflow,
+    fadeClassName: overflowFadeClassName,
+  } = useHorizontalOverflowFade<HTMLDivElement>()
+
+  useEffect(() => {
+    const container = scrollRef.current
+    const activeItem = activeId ? items.get(activeId) : undefined
+    if (container && activeItem) {
+      scrollIntoViewHorizontally(container, activeItem, { align: 'nearest', margin: 16 })
+    }
+    updateOverflow()
+  }, [activeId, items, recalculate, scrollRef, updateOverflow])
+
   // Keyboard navigation
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
@@ -203,7 +220,14 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
         className={twMerge('flex flex-row items-center justify-between', className)}
         aria-label={ariaLabel}
       >
-        <div className="relative -my-1 -ml-3 -mr-1 flex touch-pan-x flex-row items-center justify-start overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div
+          ref={scrollRef}
+          onScroll={updateOverflow}
+          className={twMerge(
+            'relative -my-1 -ml-3 -mr-1 flex touch-pan-x flex-row items-center justify-start overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+            overflowFadeClassName
+          )}
+        >
           <div
             ref={listRef}
             className="relative flex h-11 items-center [&>*]:shrink-0"

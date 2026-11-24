@@ -1,6 +1,6 @@
 import selectEvent from 'react-select-event'
 import { IconEnum } from '@qovery/shared/enums'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { mockPointerCoarse, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import Icon from '../../icon/icon'
 import InputSelect, { type InputSelectProps } from './input-select'
 
@@ -153,5 +153,17 @@ describe('InputSelect', () => {
 
     expect(onChangeMock).toHaveBeenCalledWith('option2')
     expect(screen.getByTestId('select')).toHaveClass('input--filter')
+  })
+
+  it('should focus the select on mount when autoFocus is set', () => {
+    renderWithProviders(<InputSelect {...props} autoFocus />)
+    expect(screen.getByRole('combobox')).toHaveFocus()
+  })
+
+  it('should not focus the select on mount on touch screens, so the virtual keyboard stays closed', () => {
+    const restorePointer = mockPointerCoarse()
+    renderWithProviders(<InputSelect {...props} autoFocus />)
+    expect(screen.getByRole('combobox')).not.toHaveFocus()
+    restorePointer()
   })
 })
