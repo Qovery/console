@@ -75,6 +75,26 @@ it('requires a domain and at least one route before creating', async () => {
   expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled()
 })
 
+it('refuses a domain name the API would reject', async () => {
+  const { userEvent } = renderWithProviders(<OrganizationDomainCreateModal onClose={onClose} />)
+  await userEvent.type(screen.getByLabelText('Domain'), 'rmnbrd-test-01')
+  expect(screen.queryByText('Enter a full domain name, such as app.example.com.')).not.toBeInTheDocument()
+  await userEvent.tab()
+  expect(await screen.findByText('Enter a full domain name, such as app.example.com.')).toBeInTheDocument()
+
+  await userEvent.click(screen.getByRole('button', { name: 'Add route' }))
+  await addRoute('anycable')
+  await userEvent.click(screen.getByRole('button', { name: 'Add route' }))
+  await screen.findByText('Service: zipline/production/anycable')
+  // An invalid domain is not sent to the route pre-check, and cannot be created.
+  expect(mockValidate).not.toHaveBeenCalled()
+  expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled()
+
+  await userEvent.clear(screen.getByLabelText('Domain'))
+  await userEvent.type(screen.getByLabelText('Domain'), 'test-01.example.com')
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Create' })).toBeEnabled())
+})
+
 it('adds a route, shows the environment CNAME target and creates the domain on its services', async () => {
   const { userEvent } = renderWithProviders(<OrganizationDomainCreateModal onClose={onClose} />)
   await userEvent.type(screen.getByLabelText('Domain'), 'learn.acme.com')
@@ -150,6 +170,25 @@ it('removes routes and only allows one service when the environment cannot share
   expect(screen.getByRole('button', { name: 'Add route' })).toBeDisabled()
   await userEvent.click(screen.getByRole('button', { name: 'Remove route / of anycable' }))
   expect(screen.getByText('No route added')).toBeInTheDocument()
+})
+
+it('shows the API message when the creation fails without conflicts', async () => {
+  mockCreate.mockRejectedValue(
+    new AxiosError('Bad Request', '400', undefined, undefined, {
+      status: 400,
+      statusText: 'Bad Request',
+      headers: {},
+      config: { headers: new AxiosHeaders() },
+      data: { detail: 'The environment is being deleted.' },
+    })
+  )
+  const { userEvent } = renderWithProviders(<OrganizationDomainCreateModal onClose={onClose} />)
+  await userEvent.type(screen.getByLabelText('Domain'), 'learn.acme.com')
+  await userEvent.click(screen.getByRole('button', { name: 'Add route' }))
+  await addRoute('anycable')
+  await userEvent.click(screen.getByRole('button', { name: 'Add route' }))
+  await userEvent.click(await screen.findByRole('button', { name: 'Create' }))
+  expect(await screen.findByText('The environment is being deleted.')).toBeInTheDocument()
 })
 
 it('shows creation conflicts on the route they concern and keeps the modal open', async () => {

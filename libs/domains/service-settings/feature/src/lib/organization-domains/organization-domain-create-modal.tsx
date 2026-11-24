@@ -9,6 +9,7 @@ import { useCreateEnvironmentCustomDomain } from '@qovery/domains/custom-domains
 import { useLinks } from '@qovery/domains/services/feature'
 import { Button, Icon, InputSelect, InputText, InputToggle, Tooltip, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
+import { validateCustomDomain } from '../utils/validate-custom-domain'
 import { OrganizationDomainCnameRecords } from './organization-domain-cname-records'
 import { OrganizationDomainRouteItem } from './organization-domain-route-item'
 
@@ -31,8 +32,8 @@ interface DomainFormValues {
 const routeLabel = ({ project, environment, service }: NewDomainRoute) =>
   `${project.name}/${environment.name}/${service.name}`
 
-const getConflicts = (error: unknown): CustomDomainErrorResponse[] | undefined =>
-  isAxiosError<{ errors?: CustomDomainErrorResponse[] }>(error) ? error.response?.data?.errors : undefined
+const getProblem = (error: unknown) =>
+  isAxiosError<{ errors?: CustomDomainErrorResponse[]; detail?: string }>(error) ? error.response?.data : undefined
 
 interface RouteFormProps {
   title: string
@@ -90,8 +91,8 @@ function OrganizationDomainRouteForm({
       service: { id: service.id, name: service.name, type: service.serviceType as RouteServiceType },
       port,
     }
-    // Check the route against existing domains before adding it, when there is a domain to check.
-    if (domain.domain) {
+    // Check the route against existing domains before adding it, when there is a valid domain to check.
+    if (validateCustomDomain(domain.domain) === true) {
       setValidating(true)
       try {
         const errors = await mutations.validateEnvironmentCustomDomain({
@@ -196,7 +197,8 @@ export function OrganizationDomainCreateModal({ onClose }: OrganizationDomainCre
   const [createError, setCreateError] = useState<string>()
   const { control, formState, handleSubmit, setValue, watch, getValues } = useForm<DomainFormValues>({
     defaultValues: { domain: '', use_cdn: false, generate_certificate: true },
-    mode: 'onChange',
+    // Do not flag a domain while it is first typed; recheck it on every change once it has been left.
+    mode: 'onTouched',
   })
   const lockedTo = routes[0] ? { project: routes[0].project, environment: routes[0].environment } : undefined
   const environmentId = lockedTo?.environment.id ?? ''
@@ -247,9 +249,9 @@ export function OrganizationDomainCreateModal({ onClose }: OrganizationDomainCre
       })
       onClose()
     } catch (error) {
-      const errors = getConflicts(error)
-      if (errors?.length) setConflicts(errors)
-      else setCreateError('Unable to create the domain. Try again.')
+      const problem = getProblem(error)
+      if (problem?.errors?.length) setConflicts(problem.errors)
+      else setCreateError(problem?.detail || 'Unable to create the domain. Try again.')
     }
   })
 
@@ -292,7 +294,7 @@ export function OrganizationDomainCreateModal({ onClose }: OrganizationDomainCre
         <Controller
           name="domain"
           control={control}
-          rules={{ required: 'Please enter a domain' }}
+          rules={{ required: 'Please enter a domain', validate: validateCustomDomain }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               name={field.name}
@@ -301,6 +303,7 @@ export function OrganizationDomainCreateModal({ onClose }: OrganizationDomainCre
                 setConflicts([])
                 field.onChange(event)
               }}
+              onBlur={field.onBlur}
               label="Domain"
               error={error?.message}
               autoFocus

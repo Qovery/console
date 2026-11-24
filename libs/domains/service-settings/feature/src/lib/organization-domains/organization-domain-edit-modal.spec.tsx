@@ -84,6 +84,15 @@ it('keeps the CNAME layout while the target loads', () => {
   expect(screen.queryByRole('button', { name: 'Copy' })).not.toBeInTheDocument()
 })
 
+it('refuses a domain name the API would reject', async () => {
+  const { userEvent } = renderWithProviders(<OrganizationDomainEditModal domain={domain} onClose={onClose} />)
+  await userEvent.clear(screen.getByLabelText('Domain'))
+  await userEvent.type(screen.getByLabelText('Domain'), 'https://app.example.com')
+  expect(await screen.findByText('Enter the domain without http:// or https://.')).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Save and redeploy' })).toBeDisabled()
+})
+
 it('saves the settings on every service without redeploying', async () => {
   const { userEvent } = renderWithProviders(<OrganizationDomainEditModal domain={domain} onClose={onClose} />)
   await userEvent.click(screen.getByRole('switch', { name: 'Domain behind a CDN or DNS proxy' }))

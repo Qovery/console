@@ -6,6 +6,7 @@ import { useEditOrganizationCustomDomain } from '@qovery/domains/custom-domains/
 import { Button, Icon, InputText, InputToggle, Tooltip, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import { getDomainTargetKey, getDomainTargets } from '../utils/organization-domain-targets'
+import { validateCustomDomain } from '../utils/validate-custom-domain'
 import { OrganizationDomainCnameRecords } from './organization-domain-cname-records'
 import { OrganizationDomainRouteItem } from './organization-domain-route-item'
 
@@ -89,7 +90,7 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
         <Controller
           name="domain"
           control={control}
-          rules={{ required: 'Please enter a domain' }}
+          rules={{ required: 'Please enter a domain', validate: validateCustomDomain }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               name={field.name}
