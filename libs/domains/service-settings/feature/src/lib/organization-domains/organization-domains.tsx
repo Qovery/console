@@ -37,7 +37,7 @@ import { OrganizationDomainActionBar } from './organization-domain-action-bar'
 import { OrganizationDomainCreateModal } from './organization-domain-create-modal'
 import { OrganizationDomainRow } from './organization-domain-row'
 import { OrganizationDomainStatusSummary } from './organization-domain-status'
-import { DOMAIN_DNS_STATUS_DISPLAY, OrganizationDomainStatusBadge } from './organization-domain-status-badge'
+import { DOMAIN_DNS_STATUS_DISPLAY } from './organization-domain-status-badge'
 import { useOrganizationDomainDnsStatuses } from './use-organization-domain-dns-statuses'
 
 const { Table } = TablePrimitives
@@ -189,7 +189,9 @@ export function OrganizationDomainsContent() {
       accessorFn: (domain) => getStatus(domain) ?? null,
       meta: {
         facetedValues: statusFacets,
-        customFacetEntry: ({ value }: { value: DomainDnsStatus }) => <OrganizationDomainStatusBadge status={value} />,
+        customFacetEntry: ({ value }: { value: DomainDnsStatus }) => (
+          <span className="min-w-0 truncate text-sm font-medium">{DOMAIN_DNS_STATUS_DISPLAY[value].label}</span>
+        ),
         customFilterValue: ({ filterValue }: { filterValue: string[] }) =>
           DOMAIN_DNS_STATUS_DISPLAY[filterValue[0] as DomainDnsStatus]?.label,
       },
