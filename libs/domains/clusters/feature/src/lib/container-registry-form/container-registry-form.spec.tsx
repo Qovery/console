@@ -1,9 +1,12 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, ContainerRegistryKindEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
+import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useAvailableContainerRegistries from '../hooks/use-available-container-registries/use-available-container-registries'
-import ContainerRegistryForm, {
+import {
+  ContainerRegistryForm,
   type ContainerRegistryFormProps,
   getOptionsContainerRegistry,
 } from './container-registry-form'
@@ -292,5 +295,156 @@ describe('ContainerRegistryForm', () => {
     expect(screen.getByDisplayValue('https://qovery.com')).toBeInTheDocument()
     expect(screen.getByLabelText('Azure tenant ID')).toBeInTheDocument()
     expect(screen.getByLabelText('Azure subscription ID')).toBeInTheDocument()
+  })
+
+  describe('for a cluster registry', () => {
+    const onPremiseCluster = {
+      ...clusterFactoryMock(1, CloudProviderEnum.ON_PREMISE)[0],
+      kubernetes: KubernetesEnum.SELF_MANAGED,
+      is_demo: false,
+    }
+    const awsCluster = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
+
+    const getKindOptions = () => {
+      selectEvent.openMenu(screen.getByLabelText('Type'))
+      return screen.getAllByRole('option').map((option) => option.textContent)
+    }
+
+    it('hides the registry name and description and offers the on-premise kinds at cluster creation', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="creation" />, {
+          defaultValues: { kind: ContainerRegistryKindEnum.GENERIC_CR },
+        })
+      )
+
+      expect(screen.queryByLabelText('Registry name')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('Description')).not.toBeInTheDocument()
+      expect(getKindOptions()).toStrictEqual(['DOCKER_HUB', 'GENERIC_CR', 'GITHUB_CR'])
+    })
+
+    it('offers the on-premise kinds in the settings of an on-premise cluster', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={onPremiseCluster} />, {
+          defaultValues: { name: 'hello', kind: ContainerRegistryKindEnum.GENERIC_CR },
+        })
+      )
+
+      expect(screen.getByLabelText('Registry name')).toBeDisabled()
+      expect(getKindOptions()).toStrictEqual(['DOCKER_HUB', 'GENERIC_CR', 'GITHUB_CR'])
+    })
+
+    it.each([ContainerRegistryKindEnum.GITHUB_CR, ContainerRegistryKindEnum.DOCKER_HUB])(
+      'forces the account login of a %s registry at cluster creation',
+      async (kind) => {
+        renderWithProviders(
+          wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="creation" />, {
+            defaultValues: { kind: ContainerRegistryKindEnum.GENERIC_CR, config: { login_type: 'ANONYMOUS' } },
+          })
+        )
+
+        await selectEvent.select(screen.getByLabelText('Type'), kind, { container: document.body })
+
+        expect(screen.getByLabelText('Login type')).toBeDisabled()
+        expect(screen.getByText('Account')).toBeInTheDocument()
+        expect(screen.getByTestId('input-username')).toBeInTheDocument()
+        expect(screen.getByTestId('input-password')).toBeInTheDocument()
+      }
+    )
+
+    it('shows the account login of a GitHub registry loaded in the settings of an on-premise cluster', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={onPremiseCluster} />, {
+          defaultValues: { kind: ContainerRegistryKindEnum.GITHUB_CR, url: 'https://ghcr.io' },
+        })
+      )
+
+      expect(screen.getByLabelText('Login type')).toBeDisabled()
+      expect(screen.getByLabelText('Personal Access Token')).toBeInTheDocument()
+    })
+
+    it('checks a generic registry URL against the cluster registry rules in the settings of an on-premise cluster', async () => {
+      const { userEvent } = renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={onPremiseCluster} />, {
+          defaultValues: { kind: ContainerRegistryKindEnum.GENERIC_CR, url: '' },
+        })
+      )
+
+      expect(
+        screen.getByText('Expected format: https://registry.example.com or https://registry.example.com:5000')
+      ).toBeInTheDocument()
+      await userEvent.type(screen.getByLabelText('Registry url'), 'https://registry.example.com/v2')
+
+      expect(
+        await screen.findByText('The registry URL must not contain a path: keep the host and the optional port only.')
+      ).toBeInTheDocument()
+    })
+
+    it('keeps the generic registry URL check of an organization registry', async () => {
+      const { userEvent } = renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm />, {
+          defaultValues: { kind: ContainerRegistryKindEnum.GENERIC_CR, url: '' },
+        })
+      )
+
+      expect(screen.queryByText(/^Expected format/)).not.toBeInTheDocument()
+      await userEvent.type(screen.getByLabelText('Registry url'), 'https://registry.example.com/v2')
+      await userEvent.tab()
+
+      expect(screen.queryByText(/The registry URL must not contain a path/)).not.toBeInTheDocument()
+      expect(screen.queryByText('URL must be valid and start with «http(s)://»')).not.toBeInTheDocument()
+    })
+
+    it('does not encourage Docker Hub credentials where they are required', async () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="creation" />, {
+          defaultValues: { kind: ContainerRegistryKindEnum.GENERIC_CR, config: { login_type: 'ANONYMOUS' } },
+        })
+      )
+
+      await selectEvent.select(screen.getByLabelText('Type'), 'DOCKER_HUB', { container: document.body })
+
+      expect(screen.getByLabelText('Password')).toBeInTheDocument()
+      expect(screen.queryByText(/We encourage you to set credentials for Docker Hub/)).not.toBeInTheDocument()
+    })
+
+    it('still encourages Docker Hub credentials for an organization registry', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm />, {
+          defaultValues: { kind: ContainerRegistryKindEnum.DOCKER_HUB, config: { login_type: 'ACCOUNT' } },
+        })
+      )
+
+      expect(screen.getByText(/We encourage you to set credentials for Docker Hub/)).toBeInTheDocument()
+    })
+
+    it('empties the saved credentials when the kind changes in the settings of a cluster', async () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={onPremiseCluster} />, {
+          defaultValues: {
+            kind: ContainerRegistryKindEnum.GITHUB_CR,
+            url: 'https://ghcr.io',
+            config: { username: 'qovery', password: 'saved-token' },
+          },
+        })
+      )
+      expect(screen.getByLabelText('Container registry prefix')).toHaveValue('qovery')
+      expect(screen.getByLabelText('Personal Access Token')).toHaveValue('saved-token')
+
+      await selectEvent.select(screen.getByLabelText('Type'), 'DOCKER_HUB', { container: document.body })
+
+      expect(screen.getByLabelText('Username')).toHaveValue('')
+      expect(screen.getByLabelText('Password')).toHaveValue('')
+    })
+
+    it('keeps the login type of a GitHub registry free in the settings of another cluster', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<ContainerRegistryForm clusterRegistry="settings" cluster={awsCluster} />, {
+          defaultValues: { kind: ContainerRegistryKindEnum.GITHUB_CR, url: 'https://ghcr.io' },
+        })
+      )
+
+      expect(screen.getByLabelText('Login type')).toBeEnabled()
+      expect(screen.queryByLabelText('Personal Access Token')).not.toBeInTheDocument()
+    })
   })
 })

@@ -1,9 +1,4 @@
-import {
-  getSelfManagedClusterRegistryRequest,
-  validateRegistryPassword,
-  validateRegistryUrl,
-  validateRegistryUsername,
-} from './self-managed-cluster-registry'
+import { getSelfManagedClusterRegistryRequest, validateRegistryUrl } from './self-managed-cluster-registry'
 
 describe('validateRegistryUrl', () => {
   it.each([
@@ -18,6 +13,7 @@ describe('validateRegistryUrl', () => {
     'https://registry.example.com.',
     'https://registry-1.example.com:65535',
     'https://128.0.0.1',
+    'https://registry:5000',
   ])('accepts %s', (url) => {
     expect(validateRegistryUrl(url)).toBe(true)
   })
@@ -31,9 +27,9 @@ describe('validateRegistryUrl', () => {
     'https://GHCR.io',
     'https://docker.io.',
     'https://GHCR.IO.:443',
-  ])('rejects %s, which needs a registry kind this flow does not create', (url) => {
+  ])('rejects %s, which is not a generic registry', (url) => {
     expect(validateRegistryUrl(url)).toBe(
-      'Docker Hub, GitHub, GitLab and Amazon ECR Public registries cannot be used here. Use a self-hosted registry.'
+      'Use the DOCKER_HUB or GITHUB_CR type for Docker Hub or GitHub. GitLab and Amazon ECR Public registries cannot be used here.'
     )
   })
 
@@ -44,14 +40,8 @@ describe('validateRegistryUrl', () => {
     ['registry.example.com:5000', 'The registry URL must start with http:// or https://.'],
     ['ftp://registry.example.com', 'The registry URL must start with http:// or https://.'],
     ['HTTPS://registry.example.com', 'The registry URL must start with http:// or https://.'],
-    [
-      'https://user@registry.example.com',
-      'The registry URL must not contain a username or a password: use the fields below.',
-    ],
-    [
-      'https://user:secret@registry.example.com',
-      'The registry URL must not contain a username or a password: use the fields below.',
-    ],
+    ['https://user@registry.example.com', 'The registry URL must not contain a username or a password.'],
+    ['https://user:secret@registry.example.com', 'The registry URL must not contain a username or a password.'],
     ['https://', 'Please enter a valid registry URL, for example https://registry.example.com:5000.'],
     [
       'https://registry example.com',
@@ -98,63 +88,64 @@ describe('validateRegistryUrl', () => {
   })
 })
 
-describe('registry credentials', () => {
-  it('accepts no username and no password', () => {
-    expect(validateRegistryUsername('', '')).toBe(true)
-    expect(validateRegistryPassword('', '')).toBe(true)
-  })
-
-  it('accepts a username with a password', () => {
-    expect(validateRegistryUsername('robot', 'secret')).toBe(true)
-    expect(validateRegistryPassword('secret', 'robot')).toBe(true)
-  })
-
-  it.each(['', '   '])('asks for the username "%s" missing next to a password', (username) => {
-    expect(validateRegistryUsername(username, 'secret')).toBe('Please enter a username, or clear the password.')
-    expect(validateRegistryPassword('secret', username)).toBe(true)
-  })
-
-  it.each(['', '   '])('asks for the password "%s" missing next to a username', (password) => {
-    expect(validateRegistryPassword(password, 'robot')).toBe('Please enter a password, or clear the username.')
-    expect(validateRegistryUsername('robot', password)).toBe(true)
-  })
-})
-
 describe('getSelfManagedClusterRegistryRequest', () => {
-  it('sends the URL alone without credentials', () => {
+  it('sends a generic registry without credentials for an anonymous login', () => {
     expect(
       getSelfManagedClusterRegistryRequest({
-        registryUrl: ' https://registry.example.com:5000 ',
-        registryUsername: '',
-        registryPassword: '',
+        kind: 'GENERIC_CR',
+        url: ' https://registry.example.com:5000 ',
+        config: { login_type: 'ANONYMOUS' },
       })
-    ).toStrictEqual({ url: 'https://registry.example.com:5000' })
+    ).toStrictEqual({ kind: 'GENERIC_CR', url: 'https://registry.example.com:5000' })
   })
 
-  it('sends the credentials when both the username and the password are filled', () => {
+  it('sends the credentials of a generic registry with an account login, the password verbatim', () => {
     expect(
       getSelfManagedClusterRegistryRequest({
-        registryUrl: 'https://registry.example.com',
-        registryUsername: ' robot ',
-        registryPassword: ' s3cret ',
+        kind: 'GENERIC_CR',
+        url: 'https://registry.example.com',
+        config: { login_type: 'ACCOUNT', username: ' robot ', password: ' s3cret ' },
       })
     ).toStrictEqual({
+      kind: 'GENERIC_CR',
       url: 'https://registry.example.com',
       credentials: { username: 'robot', password: ' s3cret ' },
     })
   })
 
-  it.each([
-    ['robot', ''],
-    ['', 'secret'],
-    ['robot', '   '],
-  ])('never sends half credentials (username "%s", password "%s")', (registryUsername, registryPassword) => {
+  it('ignores credentials left over from an account login switched to anonymous', () => {
     expect(
       getSelfManagedClusterRegistryRequest({
-        registryUrl: 'https://registry.example.com',
-        registryUsername,
-        registryPassword,
+        kind: 'GENERIC_CR',
+        url: 'https://registry.example.com',
+        config: { login_type: 'ANONYMOUS', username: 'robot', password: 's3cret' },
       })
-    ).toStrictEqual({ url: 'https://registry.example.com' })
+    ).toStrictEqual({ kind: 'GENERIC_CR', url: 'https://registry.example.com' })
+  })
+
+  it.each(['GITHUB_CR', 'DOCKER_HUB'] as const)(
+    'sends the credentials of a %s registry whatever the stored login type, and no empty URL',
+    (kind) => {
+      expect(
+        getSelfManagedClusterRegistryRequest({
+          kind,
+          url: '',
+          config: { login_type: 'ANONYMOUS', username: 'qovery', password: 's3cret' },
+        })
+      ).toStrictEqual({ kind, credentials: { username: 'qovery', password: 's3cret' } })
+    }
+  )
+
+  it.each([
+    ['   ', 's3cret'],
+    ['robot', '   '],
+  ])('never sends a blank username or password (%j, %j)', (username, password) => {
+    expect(
+      getSelfManagedClusterRegistryRequest({
+        kind: 'GENERIC_CR',
+        url: 'https://registry.example.com',
+        config: { login_type: 'ACCOUNT', username, password },
+      })
+    ).toStrictEqual({ kind: 'GENERIC_CR', url: 'https://registry.example.com' })
   })
 })

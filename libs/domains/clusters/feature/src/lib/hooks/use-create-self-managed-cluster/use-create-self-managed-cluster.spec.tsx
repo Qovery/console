@@ -12,7 +12,11 @@ const clusterRequest: SelfManagedClusterRequest = {
   region: 'on-premise',
   credentials: { id: 'on-premise-credential-id' },
   platform: {},
-  registry: { url: 'https://registry.example.com', credentials: { username: 'robot', password: 's3cret' } },
+  registry: {
+    kind: 'GENERIC_CR',
+    url: 'https://registry.example.com',
+    credentials: { username: 'robot', password: 's3cret' },
+  },
 }
 
 describe('useCreateSelfManagedCluster', () => {
