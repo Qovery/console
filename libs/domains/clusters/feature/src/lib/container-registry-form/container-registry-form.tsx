@@ -25,9 +25,15 @@ import {
   containerRegistryKindToIcon,
 } from '@qovery/shared/util-js'
 import { useAvailableContainerRegistries } from '../hooks/use-available-container-registries/use-available-container-registries'
+import {
+  SELF_MANAGED_CLUSTER_REGISTRY_ACCOUNT_KINDS,
+  SELF_MANAGED_CLUSTER_REGISTRY_KINDS,
+  validateRegistryUrl,
+} from '../utils/self-managed-cluster-registry'
 
 export interface ContainerRegistryFormProps {
   fromEditClusterSettings?: boolean
+  fromClusterCreation?: boolean
   cluster?: Cluster
   isEdit?: boolean
   registry?: ContainerRegistryResponse
@@ -50,6 +56,7 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
 
 export function ContainerRegistryForm({
   fromEditClusterSettings = false,
+  fromClusterCreation = false,
   cluster,
   isEdit = false,
   registry,
@@ -102,6 +109,19 @@ export function ContainerRegistryForm({
   const isClusterSelfManaged = cluster?.kubernetes === 'SELF_MANAGED'
   const isClusterDemo = cluster?.is_demo
   const isClusterOnPremise = cluster?.cloud_provider === 'ON_PREMISE'
+  const isOnPremiseClusterRegistry = fromClusterCreation || (fromEditClusterSettings && isClusterOnPremise)
+  const isAccountLoginRequired = (kind?: ContainerRegistryKindEnum) =>
+    kind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR ||
+    (isOnPremiseClusterRegistry && kind !== undefined && SELF_MANAGED_CLUSTER_REGISTRY_ACCOUNT_KINDS.includes(kind))
+  const loginType = isAccountLoginRequired(watchKind) ? 'ACCOUNT' : watchLoginType
+  const isGenericClusterRegistry = isOnPremiseClusterRegistry && watchKind === ContainerRegistryKindEnum.GENERIC_CR
+  const usesAccessToken =
+    watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
+    watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
+    watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
+  const passwordRequiredMessage = usesAccessToken ? 'Please enter a personal access token.' : 'Please enter a password.'
+  const validateClusterRegistryCredential = (message: string) => (value?: string) =>
+    !isOnPremiseClusterRegistry || Boolean(value?.trim()) || message
 
   const snippet = `curl https://setup.qovery.com/create_credentials_azure.sh | bash -s -- --qovery-app-id ${watchAzureApplicationId} --subscription-id ${watchAzureSubscriptionId}`
 
@@ -123,38 +143,42 @@ export function ContainerRegistryForm({
           )}
         />
       )}
-      <Controller
-        name="name"
-        control={methods.control}
-        rules={{
-          required: 'Please enter a registry name.',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            dataTestId="input-name"
-            disabled={fromEditClusterSettings}
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Registry name"
-            error={error?.message}
+      {!fromClusterCreation && (
+        <>
+          <Controller
+            name="name"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a registry name.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-name"
+                disabled={fromEditClusterSettings}
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Registry name"
+                error={error?.message}
+              />
+            )}
           />
-        )}
-      />
-      <Controller
-        name="description"
-        control={methods.control}
-        render={({ field, fieldState: { error } }) => (
-          <InputTextArea
-            disabled={fromEditClusterSettings}
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Description"
-            error={error?.message}
+          <Controller
+            name="description"
+            control={methods.control}
+            render={({ field, fieldState: { error } }) => (
+              <InputTextArea
+                disabled={fromEditClusterSettings}
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Description"
+                error={error?.message}
+              />
+            )}
           />
-        )}
-      />
+        </>
+      )}
       <Controller
         name="kind"
         control={methods.control}
@@ -166,7 +190,13 @@ export function ContainerRegistryForm({
             disabled={fromEditClusterSettings ? !(isClusterSelfManaged && !isClusterDemo && isClusterOnPremise) : false}
             onChange={(value) => {
               methods.setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
-              methods.resetField('config')
+              if (fromClusterCreation) {
+                methods.setValue('config.username', '')
+                methods.setValue('config.password', '')
+                methods.clearErrors(['config.username', 'config.password'])
+              } else {
+                methods.resetField('config')
+              }
               field.onChange(value)
               // GitHub Enterprise doesn't support anonymous login, so we set the login type to ACCOUNT
               if (value === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR) {
@@ -185,7 +215,11 @@ export function ContainerRegistryForm({
             error={error?.message}
             options={getOptionsContainerRegistry(
               availableContainerRegistries.filter(({ kind }) =>
-                fromEditClusterSettings ? kind === 'GITHUB_CR' || kind === 'GENERIC_CR' : true
+                isOnPremiseClusterRegistry
+                  ? SELF_MANAGED_CLUSTER_REGISTRY_KINDS.includes(kind)
+                  : fromEditClusterSettings
+                    ? kind === 'GITHUB_CR' || kind === 'GENERIC_CR'
+                    : true
               )
             )}
             isSearchable
@@ -198,26 +232,28 @@ export function ContainerRegistryForm({
           name="url"
           control={methods.control}
           rules={{
-            required: 'Please enter a registry url.',
+            required: 'Please enter a registry URL.',
             validate: (input) =>
-              match(watchKind)
-                .with('GENERIC_CR', () =>
-                  // eslint-disable-next-line no-useless-escape
-                  !input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
-                    ? 'URL must be valid and start with «http(s)://»'
-                    : undefined
-                )
-                .with(ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR, () =>
-                  !input?.match(/^https:\/\/containers\.[\w.-]+\.ghe\.com$/)
-                    ? 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
-                    : undefined
-                )
-                .otherwise(() =>
-                  // eslint-disable-next-line no-useless-escape
-                  !input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
-                    ? 'URL must be valid and start with «http(s)://»'
-                    : undefined
-                ),
+              isGenericClusterRegistry
+                ? validateRegistryUrl(input ?? '')
+                : match(watchKind)
+                    .with('GENERIC_CR', () =>
+                      // eslint-disable-next-line no-useless-escape
+                      !input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                        ? 'URL must be valid and start with «http(s)://»'
+                        : undefined
+                    )
+                    .with(ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR, () =>
+                      !input?.match(/^https:\/\/containers\.[\w.-]+\.ghe\.com$/)
+                        ? 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
+                        : undefined
+                    )
+                    .otherwise(() =>
+                      // eslint-disable-next-line no-useless-escape
+                      !input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                        ? 'URL must be valid and start with «http(s)://»'
+                        : undefined
+                    ),
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
@@ -227,31 +263,41 @@ export function ContainerRegistryForm({
               value={field.value}
               label="Registry url"
               error={error?.message}
-              hint={match(watchKind)
-                .with(
-                  ContainerRegistryKindEnum.DOCKER_HUB,
-                  ContainerRegistryKindEnum.GITHUB_CR,
-                  ContainerRegistryKindEnum.GITLAB_CR,
-                  ContainerRegistryKindEnum.GENERIC_CR,
-                  ContainerRegistryKindEnum.DOCR,
-                  () => undefined
-                )
-                .with(
-                  ContainerRegistryKindEnum.ECR,
-                  () => 'Expected format: https://<aws_account_id>.dkr.ecr.<region>.amazonaws.com'
-                )
-                .with(ContainerRegistryKindEnum.SCALEWAY_CR, () => 'Expected format: https://rg.<region>.scw.cloud')
-                .with(ContainerRegistryKindEnum.PUBLIC_ECR, () => 'Expected format: https://public.ecr.aws')
-                .with(
-                  ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
-                  () => 'Expected format: https://<region>-docker.pkg.dev'
-                )
-                .with(ContainerRegistryKindEnum.AZURE_CR, () => 'Expected format: https://<registry_name>.azurecr.io')
-                .with(
-                  ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR,
-                  () => 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
-                )
-                .exhaustive()}
+              hint={
+                isGenericClusterRegistry
+                  ? 'Expected format: https://registry.example.com or https://registry.example.com:5000'
+                  : match(watchKind)
+                      .with(
+                        ContainerRegistryKindEnum.DOCKER_HUB,
+                        ContainerRegistryKindEnum.GITHUB_CR,
+                        ContainerRegistryKindEnum.GITLAB_CR,
+                        ContainerRegistryKindEnum.GENERIC_CR,
+                        ContainerRegistryKindEnum.DOCR,
+                        () => undefined
+                      )
+                      .with(
+                        ContainerRegistryKindEnum.ECR,
+                        () => 'Expected format: https://<aws_account_id>.dkr.ecr.<region>.amazonaws.com'
+                      )
+                      .with(
+                        ContainerRegistryKindEnum.SCALEWAY_CR,
+                        () => 'Expected format: https://rg.<region>.scw.cloud'
+                      )
+                      .with(ContainerRegistryKindEnum.PUBLIC_ECR, () => 'Expected format: https://public.ecr.aws')
+                      .with(
+                        ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+                        () => 'Expected format: https://<region>-docker.pkg.dev'
+                      )
+                      .with(
+                        ContainerRegistryKindEnum.AZURE_CR,
+                        () => 'Expected format: https://<registry_name>.azurecr.io'
+                      )
+                      .with(
+                        ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR,
+                        () => 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
+                      )
+                      .exhaustive()
+              }
               disabled={
                 isClusterManaged ||
                 match(watchKind)
@@ -291,9 +337,9 @@ export function ContainerRegistryForm({
                   methods.clearErrors('config.username')
                   methods.clearErrors('config.password')
                 }}
-                value={field.value}
+                value={loginType}
                 label="Login type"
-                disabled={cluster?.is_demo || watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR} // GitHub Enterprise doesn't support anonymous login
+                disabled={cluster?.is_demo || isAccountLoginRequired(watchKind)}
                 error={error?.message}
                 options={[
                   {
@@ -309,13 +355,14 @@ export function ContainerRegistryForm({
               />
             )}
           />
-          {watchLoginType === 'ACCOUNT' && (
+          {loginType === 'ACCOUNT' && (
             <>
               <Controller
                 name="config.username"
                 control={methods.control}
                 rules={{
                   required: 'Please enter a username.',
+                  validate: validateClusterRegistryCredential('Please enter a username.'),
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <InputText
@@ -374,12 +421,8 @@ export function ContainerRegistryForm({
                   name="config.password"
                   control={methods.control}
                   rules={{
-                    required:
-                      watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                      watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
-                      watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
-                        ? 'Please enter a personal access token.'
-                        : 'Please enter a password.',
+                    required: passwordRequiredMessage,
+                    validate: validateClusterRegistryCredential(passwordRequiredMessage),
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <>
@@ -389,16 +432,10 @@ export function ContainerRegistryForm({
                         name={field.name}
                         onChange={field.onChange}
                         value={field.value}
-                        label={
-                          watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                          watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
-                          watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
-                            ? 'Personal Access Token'
-                            : 'Password'
-                        }
+                        label={usesAccessToken ? 'Personal Access Token' : 'Password'}
                         error={error?.message}
                       />
-                      {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
+                      {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && !isOnPremiseClusterRegistry && (
                         <p className="my-1 text-xs text-neutral-subtle">
                           We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
                           <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
@@ -437,7 +474,7 @@ export function ContainerRegistryForm({
         />
       )}
 
-      <hr className="border-neutral" />
+      {!fromClusterCreation && <hr className="border-neutral" />}
 
       {(cluster?.cloud_provider === 'AWS' ||
         watchKind === ContainerRegistryKindEnum.ECR ||
@@ -752,5 +789,3 @@ export function ContainerRegistryForm({
     </div>
   )
 }
-
-export default ContainerRegistryForm

@@ -2,9 +2,8 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { type ContainerRegistryRequest } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCluster } from '@qovery/domains/clusters/feature'
+import { ContainerRegistryForm, useCluster } from '@qovery/domains/clusters/feature'
 import {
-  ContainerRegistryForm,
   getContainerRegistryDefaultType,
   getContainerRegistryPayloadConfig,
   useContainerRegistries,
