@@ -63,7 +63,7 @@ Match the rendered heights of selects and adjacent toolbar buttons, and center t
 
 For view tabs, follow **Environment overview → List/Pipeline**. Prefer a meaningful icon alongside each tab label, as in Services and Variables; keep icon treatment consistent across sibling tabs. For tabs inside a setup dialog, follow **Secret-manager integration**.
 
-In resource selectors, reuse the existing resource icon or identity component and its established configuration. Do not replace service icons with generic symbols chosen independently.
+In resource selectors, reuse the existing resource icon or identity component and its established configuration. Do not replace service icons with generic symbols chosen independently. For services, use `ServiceAvatar` from `libs/domains/services/feature/src/lib/service-avatar/service-avatar.tsx`; inspect its configured usage in `libs/domains/services/feature/src/lib/service-list/service-list-cells/service-name-cell.tsx`.
 
 Show the resource name and only the supporting information needed to distinguish options or make the selection. Do not reproduce all available resource metadata in each option.
 
@@ -96,6 +96,10 @@ In a form with an explicit Save action, selection controls and toggles update th
 Use compact input variants for compact control rows, not as a general replacement for standard form fields.
 
 Use component-provided labels, hints, errors, and disabled states. Place supplementary field information, including character counts, in the field's hint area.
+
+For date/time entry, inspect the existing `DatePicker` integration in `libs/domains/observability/feature/src/lib/service/service-dashboard/select-time-range/select-time-range.tsx`. It selects a range; do not force a single-date field into that API. Its manual-entry pattern uses text inputs with explicit date/time validation: inspect `date-picker-calendar/date-picker-date-time-inputs.tsx` and `date-picker-calendar/date-picker-calendar.tsx` under the shared `date-picker` component. Reuse applicable formatting and validation helpers instead of inventing another format.
+
+Do not assume `InputText` supports a native date/time input's empty presentation merely because it accepts the input type. Browser-provided format text can overlap its floating label. Check empty, focused, and filled states against the component implementation; do not add a fake placeholder just to force the label upward.
 
 For a checkbox with a title and description, associate the label correctly and align the checkbox with the complete content block.
 

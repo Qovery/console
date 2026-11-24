@@ -39,7 +39,7 @@ Follow the established settings composition:
 
 Reuse `SettingsHeading` and comparable settings implementations. Its existing spacing provides:
 
-- **8px** between title and description.
+- **8px** between its `text-2xl` title and `text-sm` description.
 - **24px** below the heading content before the divider.
 - **32px** between the divider and following content.
 
@@ -55,20 +55,29 @@ Keep supporting summaries within the relevant section when they can be expressed
 
 Use these values as starting points. Inspect component margins and padding before adding surrounding spacing. Each separation should have one owner: do not stack a parent gap and a component margin for the same space. Check the resulting distance, not just the individual utility values.
 
-| Relationship                      | Usual spacing                    | Application                                                                                                                                               |
-| --------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Main section → next main section  | `gap-8` — **32px**               | Environment, organization, and service overview sections                                                                                                  |
-| Section heading → section content | `gap-3` to `gap-4` — **12–16px** | Services section uses 12px; top-level catalog sections use 16px. Blueprint category headings use 8px (`gap-2`).                                           |
-| List-item title → supporting text | `gap-1` — **4px**                | Closely related `text-sm` lines within a row or compact item. Do not use the section or settings-heading gap here.                                        |
-| Icon → regular `text-sm` label    | `gap-1.5` — **6px**              | Compact inline groups, as in breadcrumbs and cluster links in the credentials modal. Larger avatars and other compositions may require different spacing. |
-| Consecutive form fields           | **12–16px**                      | General settings use `mb-3`; stacked forms also use `gap-4`. Follow one pattern within the form.                                                          |
-| Sibling cards in a catalog grid   | `gap-3` — **12px**               | Service catalog grids                                                                                                                                     |
-| Icon block → card text block      | `gap-3` — **12px**               | Blueprint and option cards; preserve the existing gap for other catalog variants                                                                          |
-| Card body → bottom action area    | `gap-4` — **16px**               | Blueprint and option cards with a separate action area; `mt-auto` aligns that area across sibling cards.                                                  |
+| Relationship                         | Usual spacing                    | Application                                                                                                                                               |
+| ------------------------------------ | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Main section → next main section     | `gap-8` — **32px**               | Environment, organization, and service overview sections                                                                                                  |
+| Heading/text group → section content | `gap-3` to `gap-4` — **12–16px** | Services section uses 12px; top-level catalog sections use 16px. Blueprint category headings use 8px (`gap-2`).                                           |
+| Icon → regular `text-sm` label       | `gap-1.5` — **6px**              | Compact inline groups, as in breadcrumbs and cluster links in the credentials modal. Larger avatars and other compositions may require different spacing. |
+| Consecutive form fields              | **12–16px**                      | General settings use `mb-3`; stacked forms also use `gap-4`. Follow one pattern within the form.                                                          |
+| Sibling cards in a catalog grid      | `gap-3` — **12px**               | Service catalog grids                                                                                                                                     |
+| Icon block → card text block         | `gap-3` — **12px**               | Blueprint and option cards; preserve the existing gap for other catalog variants                                                                          |
+| Card body → bottom action area       | `gap-4` — **16px**               | Blueprint and option cards with a separate action area; `mt-auto` aligns that area across sibling cards.                                                  |
 
-For two closely related lines within a list item, start with normal line-height and no extra gap; use `gap-1` (4px) if they need separation. Do not automatically add `gap-2` (8px) between a `text-sm` title and its metadata. Settings title/description spacing remains 8px as specified above.
+### Spacing between related text
 
-Group a compact item's title and supporting text together before spacing that group from its actions or other content. For example, use 0–4px inside the text group and 12px between that group and an inline action below it. Do not apply `space-y-3` to the title, description, and action as three equal siblings: it also inserts 12px between the closely related text lines. A separate card footer follows the card-body-to-action-area spacing above.
+Choose the gap between closely related text from its text sizes, not its location in a page, section, card, or row:
+
+| Text sizes                   | Gap                                                 |
+| ---------------------------- | --------------------------------------------------- |
+| `text-ssm` / `text-sm` lines | **0–4px** (`gap-1` when separation is needed)       |
+| `text-base` with `text-sm`   | **4px** (`gap-1`)                                   |
+| `text-2xl` with `text-sm`    | **8px** (`gap-2`), as supplied by `SettingsHeading` |
+
+Normal line-height already separates the lines. Do not automatically add 8px between two `text-sm` texts, or increase their gap because they introduce a section.
+
+Keep the related text in one group, then space that group from the following controls or content using the usual spacing above. For example, a `text-sm` title and description use 0–4px between them, followed by 12–16px before the content. Do not apply `space-y-3` or `space-y-4` to all three as equal siblings. Preserve spacing already owned by shared components.
 
 These values serve different relationships. Do not choose independently between 12px and 16px for every section or field. Choose the matching established pattern and repeat it consistently.
 
@@ -113,18 +122,19 @@ For repeated cards, keep their internal structure consistent. Allow the content 
 
 Paths are repository-relative. Inspect the current source.
 
-| Reference                    | What to inspect                                                              | Source                                                                                                                                 |
-| ---------------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Environment overview         | Section hierarchy, heading-to-content spacing, Services/Pipeline arrangement | `apps/console/src/routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/route.tsx` |
-| Organization overview        | Main and secondary columns, consistent section spacing                       | `libs/domains/organizations/feature/src/lib/organization-overview/organization-overview.tsx`                                           |
-| Service overview             | Operational section spacing                                                  | `libs/domains/services/feature/src/lib/service-overview/service-overview.tsx`                                                          |
-| Settings heading             | Title, description, action slot, divider, following spacing                  | `libs/shared/console-shared/src/lib/settings-heading/settings-heading.tsx`                                                             |
-| Environment general settings | Page insets, form width, field spacing                                       | `libs/domains/environments/feature/src/lib/settings-general/settings-general.tsx`                                                      |
-| Service catalog              | Section and grid gaps                                                        | `libs/domains/services/feature/src/lib/service-new/service-new.tsx`                                                                    |
-| Blueprint card               | Internal spacing and bottom action alignment                                 | `libs/domains/services/feature/src/lib/service-new/blueprint-card/blueprint-card.tsx`                                                  |
-| Secret-manager dialog        | Consistent header, body, and footer insets                                   | `libs/domains/clusters/feature/src/lib/secret-manager-modals/secret-manager-integration-modal.tsx`                                     |
-| Breadcrumbs                  | Compact icon-and-label spacing                                               | `apps/console/src/app/components/header/breadcrumbs/breadcrumb-item.tsx`                                                               |
-| Credentials cluster links    | Avatar beside a regular text label                                           | `libs/domains/clusters/feature/src/lib/credentials-list-clusters-modal/credentials-list-clusters-modal.tsx`                            |
+| Reference                    | What to inspect                                                                                                                         | Source                                                                                                                                 |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Environment overview         | Section hierarchy, heading-to-content spacing, Services/Pipeline arrangement                                                            | `apps/console/src/routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/route.tsx` |
+| Organization overview        | Main and secondary columns, consistent section spacing                                                                                  | `libs/domains/organizations/feature/src/lib/organization-overview/organization-overview.tsx`                                           |
+| Service overview             | Operational section spacing                                                                                                             | `libs/domains/services/feature/src/lib/service-overview/service-overview.tsx`                                                          |
+| Variables view toolbar       | Inspect `renderTable`: result count, search and actions, toolbar padding and bottom divider; preserve this arrangement in sibling views | `libs/domains/variables/feature/src/lib/variable-list/variable-list.tsx`                                                               |
+| Settings heading             | Title, description, action slot, divider, following spacing                                                                             | `libs/shared/console-shared/src/lib/settings-heading/settings-heading.tsx`                                                             |
+| Environment general settings | Page insets, form width, field spacing                                                                                                  | `libs/domains/environments/feature/src/lib/settings-general/settings-general.tsx`                                                      |
+| Service catalog              | Section and grid gaps                                                                                                                   | `libs/domains/services/feature/src/lib/service-new/service-new.tsx`                                                                    |
+| Blueprint card               | Internal spacing and bottom action alignment                                                                                            | `libs/domains/services/feature/src/lib/service-new/blueprint-card/blueprint-card.tsx`                                                  |
+| Secret-manager dialog        | Consistent header, body, and footer insets                                                                                              | `libs/domains/clusters/feature/src/lib/secret-manager-modals/secret-manager-integration-modal.tsx`                                     |
+| Breadcrumbs                  | Compact icon-and-label spacing                                                                                                          | `apps/console/src/app/components/header/breadcrumbs/breadcrumb-item.tsx`                                                               |
+| Credentials cluster links    | Avatar beside a regular text label                                                                                                      | `libs/domains/clusters/feature/src/lib/credentials-list-clusters-modal/credentials-list-clusters-modal.tsx`                            |
 
 ## Don't
 
