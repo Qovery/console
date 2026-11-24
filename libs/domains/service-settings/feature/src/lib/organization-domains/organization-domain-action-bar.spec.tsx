@@ -1,5 +1,6 @@
 import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/services/data-access'
+import { toast } from '@qovery/shared/ui'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OrganizationDomainActionBar } from './organization-domain-action-bar'
 
@@ -48,8 +49,11 @@ it('checks each service once across selected domains and reports results', async
     <OrganizationDomainActionBar domains={domains} disabled={false} onUnselect={jest.fn()} onDeleted={jest.fn()} />
   )
   await userEvent.click(screen.getByRole('button', { name: 'Check DNS records' }))
-  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('1 valid, 1 failing, 0 unavailable'))
+  await waitFor(() =>
+    expect(toast).toHaveBeenCalledWith('error', 'DNS records checked', '1 valid, 1 failing, 0 unavailable.')
+  )
   expect(mockFetch).toHaveBeenCalledTimes(1)
+  expect(screen.queryByRole('status')).not.toBeInTheDocument()
 })
 it('reports failed DNS requests as unavailable', async () => {
   mockFetch.mockRejectedValue(new Error('offline'))
@@ -57,7 +61,9 @@ it('reports failed DNS requests as unavailable', async () => {
     <OrganizationDomainActionBar domains={domains} disabled={false} onUnselect={jest.fn()} onDeleted={jest.fn()} />
   )
   await userEvent.click(screen.getByRole('button', { name: 'Check DNS records' }))
-  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('2 unavailable'))
+  await waitFor(() =>
+    expect(toast).toHaveBeenCalledWith('warning', 'DNS records checked', '0 valid, 0 failing, 2 unavailable.')
+  )
 })
 it('requires confirmation, deduplicates routes, and retries only failed deletions', async () => {
   const remove = jest
@@ -86,6 +92,11 @@ it('requires confirmation, deduplicates routes, and retries only failed deletion
   })
   expect(remove).toHaveBeenCalledTimes(2)
   expect(onDeleted).toHaveBeenCalledWith(['env:one.example.com'])
+  expect(toast).toHaveBeenCalledWith(
+    'error',
+    'Some domains could not be deleted',
+    '1 service configuration could not be deleted. Confirm again to retry only those.'
+  )
   await act(async () => {
     await action()
   })

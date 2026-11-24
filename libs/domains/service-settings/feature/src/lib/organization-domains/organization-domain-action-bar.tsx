@@ -29,12 +29,12 @@ export function OrganizationDomainActionBar({
   const queryClient = useQueryClient()
   const { openModalConfirmation } = useModalConfirmation()
   const [busy, setBusy] = useState(false)
-  const [feedback, setFeedback] = useState({ selection: '', text: '' })
-  const selection = domains.map(getDomainSelectionKey).sort().join('|')
+  const [checkingDns, setCheckingDns] = useState(false)
   const targets = getSelectedDomainTargets(domains)
 
   const checkDns = async () => {
     setBusy(true)
+    setCheckingDns(true)
     try {
       const services = [...new Map(targets.map(({ service }) => [service.id, service])).values()]
       const results = await Promise.allSettled(
@@ -55,9 +55,14 @@ export function OrganizationDomainActionBar({
           })
         )
       )
-      setFeedback({ selection, text: `DNS check: ${valid} valid, ${failing} failing, ${unavailable} unavailable.` })
+      toast(
+        failing ? 'error' : unavailable ? 'warning' : 'success',
+        'DNS records checked',
+        `${valid} valid, ${failing} failing, ${unavailable} unavailable.`
+      )
     } finally {
       setBusy(false)
+      setCheckingDns(false)
     }
   }
 
@@ -104,14 +109,10 @@ export function OrganizationDomainActionBar({
           if (!pending.length)
             toast('success', 'Selected domains deleted', 'Redeploy affected services to apply the changes.')
           if (pending.length) {
-            setFeedback({
-              selection,
-              text: `${pending.length} service ${pluralize(pending.length, 'configuration')} could not be deleted. Confirm again to retry only those failures.`,
-            })
             toast(
               'error',
               'Some domains could not be deleted',
-              'Confirm again to retry the failed service configurations.'
+              `${pending.length} service ${pluralize(pending.length, 'configuration')} could not be deleted. Confirm again to retry only those.`
             )
             throw new Error('Some domain configurations could not be deleted')
           }
@@ -147,6 +148,7 @@ export function OrganizationDomainActionBar({
               color="neutral"
               variant="outline"
               disabled={disabled || busy || !targets.length}
+              loading={checkingDns}
               onClick={checkDns}
             >
               <Icon iconName="arrow-rotate-right" />
@@ -164,15 +166,6 @@ export function OrganizationDomainActionBar({
             </Button>
           </div>
         </div>
-        {busy ? (
-          <p role="status" className="mt-2 text-xs text-neutral-subtle">
-            Processing selected domains…
-          </p>
-        ) : feedback.selection === selection && feedback.text ? (
-          <p role="status" className="mt-2 text-xs text-neutral-subtle">
-            {feedback.text}
-          </p>
-        ) : null}
       </div>
     </div>
   )
