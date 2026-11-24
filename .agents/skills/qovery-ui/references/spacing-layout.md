@@ -64,6 +64,8 @@ Use these values as starting points. Inspect component margins and padding befor
 
 For two closely related lines within a list item, start with normal line-height and no extra gap; use `gap-1` (4px) if they need separation. Do not automatically add `gap-2` (8px) between a `text-sm` title and its metadata. Settings title/description spacing remains 8px as specified above.
 
+Group a compact item's title and supporting text together before spacing that group from its actions or other content. For example, use 0–4px inside the text group and 12px between that group and an inline action below it. Do not apply `space-y-3` to the title, description, and action as three equal siblings: it also inserts 12px between the closely related text lines. A separate card footer follows the card-body-to-action-area spacing above.
+
 These values serve different relationships. Do not choose independently between 12px and 16px for every section or field. Choose the matching established pattern and repeat it consistently.
 
 ### Button groups

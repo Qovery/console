@@ -11,7 +11,7 @@ For sizes, weights, and spacing, use the typography and spacing references.
 Before implementing a control:
 
 1. Find the shared component that supports the required interaction.
-2. Inspect its API and an established working usage.
+2. Inspect its API and an established working usage serving the same purpose. Match the surrounding pattern as well as the individual component: a filter toolbar, a form field, and a dialog selector have different integration needs.
 3. Reuse its variants and behavior before adding custom styling.
 
 Choose by function, not visual resemblance. A select changes a value; a dropdown menu exposes actions; tabs switch views.
@@ -54,6 +54,8 @@ Use `iconOnly` for icon-only buttons and provide an accessible name. Use `CopyBu
 | Switch between related views                 | Established `Navbar` tab pattern |
 
 Use selects for filtering and grouping controls. Don't replace them with a custom segmented selector.
+
+For filter toolbars, inspect an existing Console filter toolbar and preserve its compact, inline arrangement. Do not import stacked form-field labels into filters by default; the displayed selection identifies the filter. Keep reset/clear actions alongside the controls they affect, and provide accessible names without adding unnecessary visible labels.
 
 For view tabs, follow **Environment overview → List/Pipeline**. Prefer a meaningful icon alongside each tab label, as in Services and Variables; keep icon treatment consistent across sibling tabs. For tabs inside a setup dialog, follow **Secret-manager integration**.
 
@@ -150,6 +152,8 @@ Use `Badge` for compact categories and labels, following the small badge/pill ty
 ## Charts
 
 Reuse the shared `Chart` tooltip wrapper and legend components with a comparable observability integration. Follow `libs/domains/observability/feature/src/lib/local-chart/tooltip.tsx` for tooltip content styling and the [Colors](colors.md) reference for its matched inverted tokens. Inspect `Chart.TooltipContent` before reusing it: its current normal solid background does not match that observability treatment. Do not assume a shared component already meets every convention, or fall back to the library's default tooltip content. A correctly styled hover cursor does not style the tooltip itself.
+
+Reuse the tooltip's complete presentation, not only its colors: a compact header separated by a divider, followed by series rows with colored markers beside labels and values aligned on the right. Preserve the reference's padding, typography, and row spacing; adapt the data and formatting to the chart instead of replacing the content with a stack of paragraphs.
 
 ## Tooltips and callouts
 
