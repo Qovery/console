@@ -15,7 +15,7 @@ const checkboxVariants = cva(
     'w-4',
     'rounded',
     // Touch screens: an invisible 12px halo gives the 16px box a 40px tap target
-    '[@media(pointer:coarse)]:relative',
+    'touch-target',
     '[@media(pointer:coarse)]:after:absolute',
     '[@media(pointer:coarse)]:after:-inset-3',
     "[@media(pointer:coarse)]:after:content-['']",

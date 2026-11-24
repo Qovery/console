@@ -126,7 +126,7 @@ export function ClusterAdvancedSettings({
               <LoaderSpinner className="w-6" />
             </div>
           ) : (
-            <div className="overflow-hidden rounded">
+            <div className="rounded max-md:min-w-0 md:overflow-hidden">
               <Table.Root className="w-full table-fixed text-sm max-md:min-w-[760px]">
                 <Table.Header className="text-xs">
                   <Table.Row className="divide-x divide-neutral">

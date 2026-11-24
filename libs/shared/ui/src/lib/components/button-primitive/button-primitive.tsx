@@ -20,7 +20,7 @@ const _buttonVariants = cva(
     'outline-0',
     'select-none',
     // Expand touch targets vertically without covering adjacent buttons.
-    '[@media(pointer:coarse)]:relative',
+    'touch-target',
     '[@media(pointer:coarse)]:after:absolute',
     '[@media(pointer:coarse)]:after:-inset-y-2',
     '[@media(pointer:coarse)]:after:inset-x-0',

@@ -31,7 +31,7 @@ const SpotlightTriggerBase = ({ organizationId }: { organizationId: string }) =>
         className={clsx(
           'group flex h-7 items-center gap-1.5 rounded-md border border-neutral bg-surface-neutral text-ssm transition-colors hover:border-neutral-component max-md:w-7 max-md:justify-center md:w-[200px] md:pl-2 md:pr-1.5',
           // Touch screens: an invisible halo gives the 28px icon a 44px tall tap target without reaching its neighbours
-          "[@media(pointer:coarse)]:relative [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-y-2 [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:content-['']"
+          "touch-target [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-y-2 [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:content-['']"
         )}
         onClick={() => setOpenSpotlight(!openSpotlight)}
       >
