@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
 import { PolicyApiTokenCrudModal, PolicyApiTokenPolicyModal } from '@qovery/domains/organizations/feature'
 import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/data-access'
@@ -18,6 +19,7 @@ import {
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { activityWindowEnd, tokenActor } from '../agent-activity/activity-search'
+import { AGENT_ACTIVITY_FLAG } from '../agent-activity/agent-activity-flag'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useAgentExperiencePolicyTokens } from '../hooks/use-agent-experience-policy-tokens/use-agent-experience-policy-tokens'
 import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
@@ -202,6 +204,7 @@ export function AgentExperiencePolicyTokens() {
   const { organizationId = '' } = useParams({ strict: false })
   const { canManage, isLoading: isRoleLoading } = useCanManagePolicyTokens({ organizationId })
   const { canManage: canSeeActivity } = useCanManageSkillPresets({ organizationId })
+  const isActivityEnabled = useFeatureFlagEnabled(AGENT_ACTIVITY_FLAG) === true
   const {
     data: tokens,
     isLoading,
@@ -376,7 +379,11 @@ export function AgentExperiencePolicyTokens() {
                   )}
                 </Table.Cell>
                 <Table.Cell className="text-right">
-                  <TokenMenu token={token} organizationId={organizationId} canSeeActivity={canSeeActivity} />
+                  <TokenMenu
+                    token={token}
+                    organizationId={organizationId}
+                    canSeeActivity={isActivityEnabled && canSeeActivity}
+                  />
                 </Table.Cell>
               </Table.Row>
             ))}
@@ -407,16 +414,18 @@ export function AgentExperiencePolicyTokens() {
                 </Table.Cell>
                 <Table.Cell className="text-neutral-subtle">Deleted</Table.Cell>
                 <Table.Cell className="text-right">
-                  <Link
-                    to="/organization/$organizationId/agent-experience/agent-activity"
-                    params={{ organizationId }}
-                    search={{ actor: tokenActor(row.policy_token_id) }}
-                    color="brand"
-                    size="sm"
-                    aria-label={`See the activity of ${policyTokenName(row)}`}
-                  >
-                    See activity
-                  </Link>
+                  {isActivityEnabled && (
+                    <Link
+                      to="/organization/$organizationId/agent-experience/agent-activity"
+                      params={{ organizationId }}
+                      search={{ actor: tokenActor(row.policy_token_id) }}
+                      color="brand"
+                      size="sm"
+                      aria-label={`See the activity of ${policyTokenName(row)}`}
+                    >
+                      See activity
+                    </Link>
+                  )}
                 </Table.Cell>
               </Table.Row>
             ))}

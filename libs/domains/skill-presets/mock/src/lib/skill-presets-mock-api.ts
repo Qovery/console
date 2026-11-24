@@ -1,5 +1,9 @@
-import { type OrganizationEventResponse } from 'qovery-typescript-axios'
-import { type SkillPresetsApi } from '@qovery/domains/skill-presets/data-access'
+import {
+  type OrganizationEventResponse,
+  OrganizationEventSubTargetType,
+  OrganizationEventType,
+} from 'qovery-typescript-axios'
+import { type SkillPresetsClient } from '@qovery/domains/skill-presets/data-access'
 import {
   SKILL_PRESET_AI_FEATURES_OFF_MESSAGE,
   SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
@@ -17,10 +21,6 @@ import {
 } from '@qovery/domains/skill-presets/data-access'
 import {
   type InjectedSkillResponse,
-  SKILL_LOAD_EVENT_TYPE,
-  SKILL_PRESET_REJECTED_EVENT_TYPE,
-  SKILL_PRESET_SUB_TARGET_TYPE,
-  SKILL_VIEW_EVENT_TYPE,
   type SkillLoadChange,
   type SkillPresetAssignedTo,
   type SkillPresetAssignees,
@@ -63,7 +63,7 @@ const toState = (body: SkillPresetRequest): MockPresetState => ({
   name: body.name.trim(),
   is_template: Boolean(body.is_template),
   description: body.description ?? '',
-  base: body.base,
+  base: body.base ?? 'FULL',
   team_context: body.team_context?.trim() ? body.team_context : null,
   skills: (body.skills ?? []).map((skill) => ({
     skill_name: skill.skill_name.trim(),
@@ -199,7 +199,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   }[] = []
 
   const pushEvent = (
-    event_type: string,
+    event_type: OrganizationEventType,
     triggered_by: string,
     timestamp: string,
     change: unknown,
@@ -209,14 +209,14 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     events.push({
       id: `mock-event-${idCounter}`,
       timestamp,
-      event_type: event_type as OrganizationEventResponse['event_type'],
+      event_type,
       target_type: 'ORGANIZATION',
       target_id: 'mock-organization',
       target_name: organizationName,
-      sub_target_type: SKILL_PRESET_SUB_TARGET_TYPE as OrganizationEventResponse['sub_target_type'],
+      sub_target_type: OrganizationEventSubTargetType.SKILL_PRESET,
       change: JSON.stringify(change),
       original_change: original_change ? JSON.stringify(original_change) : null,
-      origin: event_type === SKILL_LOAD_EVENT_TYPE ? 'CLI' : 'CONSOLE',
+      origin: event_type === OrganizationEventType.SKILL_LOAD ? 'CLI' : 'CONSOLE',
       triggered_by,
     })
   }
@@ -311,7 +311,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       team_context_sha256: preset?.team_context ? mockHash(preset.team_context) : null,
       from_cache: load.from_cache,
     }
-    pushEvent(SKILL_LOAD_EVENT_TYPE, memberEmail(load.member_id), load.timestamp, change)
+    pushEvent(OrganizationEventType.SKILL_LOAD, memberEmail(load.member_id), load.timestamp, change)
     loadRecords.push({
       timestamp: load.timestamp,
       user_sub: load.member_id,
@@ -346,7 +346,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     assigned_to: preset.assigned_to,
   })
 
-  const assignmentConflict = (assignedTo: SkillPresetAssignedTo, exceptId?: string) =>
+  const assignmentConflict = (assignedTo: Required<SkillPresetAssignedTo>, exceptId?: string) =>
     presets.some(
       (preset) =>
         preset.id !== exceptId &&
@@ -413,7 +413,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
         assigned_to: state.assigned_to,
         findings,
       }
-      pushEvent(SKILL_PRESET_REJECTED_EVENT_TYPE, currentUser.email, now(), rejected)
+      pushEvent(OrganizationEventType.SKILL_PRESET_REJECTED, currentUser.email, now(), rejected)
       return fail(
         422,
         `This preset was rejected to protect the members it applies to. ${findings
@@ -441,7 +441,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
   let concurrentSaveDone = false
   let listFailedOnce = false
 
-  const api: SkillPresetsApi & {
+  const api: SkillPresetsClient & {
     listAssignees: () => Promise<SkillPresetAssignees>
     listPolicyTokens: () => Promise<MockPolicyToken[]>
     deletePolicyToken: (policyTokenId: string) => Promise<void>
@@ -571,12 +571,17 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
         skill_preset_name: preset?.name ?? null,
         revision: preset?.revision ?? null,
         mode: skill?.mode ?? null,
-        content_sha256: response.content_sha256,
-        team_context_sha256: response.team_context_sha256,
+        content_sha256: response.content_sha256 ?? null,
+        team_context_sha256: response.team_context_sha256 ?? null,
         from_cache: false,
       }
       // Same change shape for both. Only an agent's LOAD counts in usage.
-      pushEvent(purpose === 'VIEW' ? SKILL_VIEW_EVENT_TYPE : SKILL_LOAD_EVENT_TYPE, currentUser.email, now(), change)
+      pushEvent(
+        purpose === 'VIEW' ? OrganizationEventType.SKILL_VIEW : OrganizationEventType.SKILL_LOAD,
+        currentUser.email,
+        now(),
+        change
+      )
       if (purpose === 'LOAD') {
         loadRecords.push({
           timestamp: now(),

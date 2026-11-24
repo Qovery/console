@@ -1,5 +1,4 @@
-import axios from 'axios'
-import { OrganizationMainCallsApi } from 'qovery-typescript-axios'
+import { AgentActivityApi, OrganizationMainCallsApi, SkillPresetsApi } from 'qovery-typescript-axios'
 import { type AgentActivityParams, type AgentActivityResponse } from './agent-activity.types'
 import {
   type InjectedSkillResponse,
@@ -10,18 +9,7 @@ import {
   type SkillPresetRevisionResponse,
 } from './skill-presets.types'
 
-/*
- * Temporary API module for skill presets.
- *
- * TODO: the skill presets and agent activity endpoints are added to qovery-openapi-spec by
- * Qovery/qovery-openapi-spec#1261. Once it is released in `qovery-typescript-axios`, replace
- * `skillPresetsApi` with the generated `SkillPresetsApi` (same method names), swap the types in
- * skill-presets.types.ts and agent-activity.types.ts for the generated ones, and delete this file's
- * axios calls. The paths have no `/api` prefix: the axios auth interceptor adds the API base URL and
- * the token, like it does for the generated client.
- */
-
-export interface SkillPresetsApi {
+export interface SkillPresetsClient {
   /** `isTemplate` filters on the template flag; omit it to list every preset, templates included. */
   listSkillPresets(organizationId: string, params?: { isTemplate?: boolean }): Promise<SkillPresetResponse[]>
   getSkillPreset(skillPresetId: string): Promise<SkillPresetResponse>
@@ -53,66 +41,65 @@ export interface SkillPresetsApi {
   ): Promise<AgentActivityResponse>
 }
 
+const presetsApi = new SkillPresetsApi()
+const activityApi = new AgentActivityApi()
 const organizationApi = new OrganizationMainCallsApi()
 
-export const skillPresetsApi: SkillPresetsApi = {
+export const skillPresetsApi: SkillPresetsClient = {
   async listSkillPresets(organizationId, { isTemplate } = {}) {
-    const response = await axios.get<{ results: SkillPresetResponse[] }>(
-      `/organization/${organizationId}/skillPreset`,
-      {
-        params: { isTemplate },
-      }
-    )
+    const response = await presetsApi.listSkillPresets(organizationId, isTemplate)
     return response.data.results
   },
   async getSkillPreset(skillPresetId) {
-    const response = await axios.get<SkillPresetResponse>(`/skillPreset/${skillPresetId}`)
+    const response = await presetsApi.getSkillPreset(skillPresetId)
     return response.data
   },
   async createSkillPreset(organizationId, body) {
-    const response = await axios.post<SkillPresetResponse>(`/organization/${organizationId}/skillPreset`, body)
+    const response = await presetsApi.createSkillPreset(organizationId, body)
     return response.data
   },
   async editSkillPreset(skillPresetId, body) {
-    const response = await axios.put<SkillPresetResponse>(`/skillPreset/${skillPresetId}`, body)
+    const response = await presetsApi.editSkillPreset(skillPresetId, body)
     return response.data
   },
   async deleteSkillPreset(skillPresetId) {
-    await axios.delete(`/skillPreset/${skillPresetId}`)
+    await presetsApi.deleteSkillPreset(skillPresetId)
   },
   async listSkillPresetRevisions(organizationId, { skillPresetId, limit } = {}) {
-    const response = await axios.get<{ results: SkillPresetRevisionResponse[] }>(
-      `/organization/${organizationId}/skillPreset/revision`,
-      { params: { skillPresetId, limit } }
-    )
+    const response = await presetsApi.listSkillPresetRevisions(organizationId, skillPresetId, limit)
     return response.data.results
   },
   async getResolvedSkill(organizationId, skillName, { purpose }) {
-    const response = await axios.get<InjectedSkillResponse>(
-      `/organization/${organizationId}/skillPreset/resolved/skill/${encodeURIComponent(skillName)}`,
-      { params: { purpose } }
-    )
+    const response = await presetsApi.getResolvedSkill(organizationId, skillName, purpose)
     return response.data
   },
   async getResolvedSkillPreset(organizationId) {
-    const response = await axios.get<SkillPresetManifestResponse>(
-      `/organization/${organizationId}/skillPreset/resolved`
-    )
+    const response = await presetsApi.getResolvedSkillPreset(organizationId)
     return response.data
   },
   async enableAiFeatures(organizationId) {
     await organizationApi.editOrganizationAiFeatures(organizationId, { enabled: true })
   },
-  async getAgentActivity(organizationId, params) {
-    const response = await axios.get<AgentActivityResponse>(`/organization/${organizationId}/agentActivity`, {
-      params,
-    })
+  async getAgentActivity(
+    organizationId,
+    { from, to, bucket, userSub, skillName, actorKind, policyTokenId, outcome, source }
+  ) {
+    const response = await activityApi.getAgentActivity(
+      organizationId,
+      from,
+      to,
+      bucket,
+      userSub,
+      skillName,
+      actorKind,
+      policyTokenId,
+      outcome,
+      source
+    )
     return response.data
   },
-  async getMyAgentActivity(organizationId, params) {
-    const response = await axios.get<AgentActivityResponse>(`/organization/${organizationId}/agentActivity/me`, {
-      params,
-    })
+  async getMyAgentActivity(organizationId, { from, to, bucket, skillName, outcome, source }) {
+    const response = await activityApi.getMyAgentActivity(organizationId, from, to, bucket, skillName, outcome, source)
     return response.data
   },
 }

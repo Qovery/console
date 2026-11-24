@@ -1,4 +1,7 @@
-import { type SelfManagedClusterRegistryRequest } from 'qovery-typescript-axios'
+import {
+  type SelfManagedClusterRegistryRequest,
+  SelfManagedClusterRegistryRequestKindEnum,
+} from 'qovery-typescript-axios'
 
 export interface SelfManagedClusterRegistryValues {
   registryUrl: string
@@ -79,6 +82,7 @@ export function getSelfManagedClusterRegistryRequest({
   const username = registryUsername.trim()
 
   return {
+    kind: SelfManagedClusterRegistryRequestKindEnum.GENERIC_CR,
     url: registryUrl.trim(),
     ...(username && registryPassword.trim() ? { credentials: { username, password: registryPassword } } : {}),
   }

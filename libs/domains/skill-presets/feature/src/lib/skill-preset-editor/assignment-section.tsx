@@ -34,13 +34,13 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
   const [showMembers, setShowMembers] = useState(false)
 
   const holderOf = (predicate: (preset: AssignablePreset) => boolean) => otherPresets.find(predicate)
-  const defaultHolder = holderOf(({ assigned_to }) => assigned_to.organization_default)
+  const defaultHolder = holderOf(({ assigned_to }) => assigned_to.organization_default === true)
 
   // The owner gets the Admin role's preset: q-core refuses Owner as a target. A preset that already
   // holds it keeps showing it, so it can be removed.
   const assignableRoles = (assignees?.roles ?? []).filter((role) => !isOwnerRole(role) || roleIds.includes(role.id))
   const roleOptions = assignableRoles.map((role) => {
-    const holder = holderOf(({ assigned_to }) => assigned_to.role_ids.includes(role.id))
+    const holder = holderOf(({ assigned_to }) => assigned_to.role_ids?.includes(role.id) === true)
     return {
       value: role.id,
       label: role.name,
@@ -50,7 +50,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
     }
   })
   const memberOptions = (assignees?.members ?? []).map((member) => {
-    const holder = holderOf(({ assigned_to }) => assigned_to.user_ids.includes(member.id))
+    const holder = holderOf(({ assigned_to }) => assigned_to.user_ids?.includes(member.id) === true)
     return {
       value: member.id,
       label: member.name,

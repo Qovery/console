@@ -2,18 +2,13 @@ import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import {
   type OrganizationEventResponse,
+  OrganizationEventSubTargetType,
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { match } from 'ts-pattern'
 import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
-import {
-  SKILL_LOAD_EVENT_TYPE,
-  SKILL_PRESET_REJECTED_EVENT_TYPE,
-  SKILL_PRESET_SUB_TARGET_TYPE,
-  SKILL_VIEW_EVENT_TYPE,
-} from '@qovery/domains/skill-presets/data-access'
 import { CodeDiffEditor, CodeEditor, type DiffStats, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { EventOriginIcon } from '@qovery/shared/util-icons'
@@ -30,8 +25,7 @@ export interface RowEventProps {
 }
 
 const formatEventName = (eventType?: OrganizationEventType) =>
-  // SKILL_VIEW is not in the generated enum yet.
-  (eventType as string | undefined) === SKILL_VIEW_EVENT_TYPE
+  eventType === OrganizationEventType.SKILL_VIEW
     ? 'Viewed in the Console'
     : match(eventType)
         .with(OrganizationEventType.MAINTENANCE_OPERATOR, () => 'Maintenance · Operator Update')
@@ -62,11 +56,11 @@ const helmRepositoriesSettingsUrl = (organizationId: string) =>
   `${organizationSettingsUrl(organizationId)}/helm-repositories`
 
 /**
- * A skill preset save the security review refused (event SKILL_PRESET_REJECTED, not in the generated enum yet):
+ * A skill preset save the security review refused (event SKILL_PRESET_REJECTED):
  * "Rejected by the security review · 2 findings (rule check, model review)". Null for other events.
  */
 const securityRejectionSummary = (event: OrganizationEventResponse) => {
-  if ((event.event_type as string | undefined) !== SKILL_PRESET_REJECTED_EVENT_TYPE) return null
+  if (event.event_type !== OrganizationEventType.SKILL_PRESET_REJECTED) return null
   let findings: { source?: string }[] = []
   try {
     const parsed = JSON.parse(event.change ?? '{}')
@@ -143,7 +137,7 @@ export function RowEvent(props: RowEventProps) {
       [OrganizationEventTargetType.ORGANIZATION]: () =>
         customLink(
           // Not in the generated enum yet: skill preset edits and loads are organization events.
-          (event.sub_target_type as string | null | undefined) === SKILL_PRESET_SUB_TARGET_TYPE
+          event.sub_target_type === OrganizationEventSubTargetType.SKILL_PRESET
             ? skillPresetsSettingsUrl(organizationId)
             : organizationSettingsUrl(organizationId)
         ),
@@ -171,7 +165,7 @@ export function RowEvent(props: RowEventProps) {
   const isEventTypeFailed =
     event.event_type === OrganizationEventType.ACCESS_DENIED ||
     // A preset save the security review refused: nothing was saved.
-    (event.event_type as string | undefined) === SKILL_PRESET_REJECTED_EVENT_TYPE ||
+    event.event_type === OrganizationEventType.SKILL_PRESET_REJECTED ||
     event.event_type?.toLowerCase().includes('fail')
 
   const eventIcon = match(event.event_type)
@@ -233,21 +227,13 @@ export function RowEvent(props: RowEventProps) {
     ))
     .with(OrganizationEventType.REMOTE_DEBUG, () => <Icon iconName="cloud-arrow-up" className="text-neutral-subtle" />)
     .with(OrganizationEventType.SHELL, () => <Icon iconName="terminal" className="text-neutral-subtle" />)
-    // A member's agent loaded a skill. SKILL_LOAD is not in the generated enum yet, hence the predicate.
-    .when(
-      (type) => (type as string | undefined) === SKILL_LOAD_EVENT_TYPE,
-      () => <Icon iconName="file-import" className="text-neutral-subtle" />
-    )
+    .with(OrganizationEventType.SKILL_LOAD, () => <Icon iconName="file-import" className="text-neutral-subtle" />)
     // Someone read a resolved skill in the Console. Audited, not an agent load.
-    .when(
-      (type) => (type as string | undefined) === SKILL_VIEW_EVENT_TYPE,
-      () => <Icon iconName="eye" className="text-neutral-subtle" />
-    )
+    .with(OrganizationEventType.SKILL_VIEW, () => <Icon iconName="eye" className="text-neutral-subtle" />)
     // A skill preset save the security review refused: nothing was saved.
-    .when(
-      (type) => (type as string | undefined) === SKILL_PRESET_REJECTED_EVENT_TYPE,
-      () => <Icon iconName="shield-exclamation" className="text-neutral-subtle" />
-    )
+    .with(OrganizationEventType.SKILL_PRESET_REJECTED, () => (
+      <Icon iconName="shield-exclamation" className="text-neutral-subtle" />
+    ))
     .otherwise(() => (isEventTypeFailed ? <Icon iconName="circle-exclamation" className="text-negative" /> : null))
 
   const isSuccess = match(event.event_type)

@@ -14,7 +14,7 @@ export interface MockPresetState {
   base: SkillPresetBase
   team_context: string | null
   skills: SkillPresetSkill[]
-  assigned_to: SkillPresetAssignedTo
+  assigned_to: Required<SkillPresetAssignedTo>
 }
 
 export interface MockRevisionSeed {

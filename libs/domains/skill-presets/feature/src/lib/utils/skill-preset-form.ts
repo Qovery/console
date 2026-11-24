@@ -91,7 +91,7 @@ export const effectiveQoverySkills = (values: Pick<SkillPresetFormValues, 'base'
  * (q-core answers 400 otherwise), even when the draft still holds text from another mode. A template
  * is never assigned.
  */
-export function toSkillPresetRequest(values: SkillPresetFormValues): SkillPresetRequest {
+export function toSkillPresetRequest(values: SkillPresetFormValues) {
   const qoverySkills: SkillPresetSkill[] = effectiveQoverySkills(values).map(
     ({ skillName, choice, description, content }) => {
       if (choice === 'DISABLE') return { skill_name: skillName, mode: 'DISABLE' }
@@ -116,7 +116,7 @@ export function toSkillPresetRequest(values: SkillPresetFormValues): SkillPreset
     assigned_to: values.isTemplate
       ? { organization_default: false, role_ids: [], user_ids: [] }
       : { organization_default: values.organizationDefault, role_ids: values.roleIds, user_ids: values.userIds },
-  }
+  } satisfies SkillPresetRequest
 }
 
 /**

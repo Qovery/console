@@ -28,9 +28,9 @@ export function resolvePresetFor<T extends AssignablePreset>(
   presets: T[],
   target: { userId?: string; roleId?: string }
 ): ResolvedPreset<T> {
-  const byUser = target.userId && presets.find(({ assigned_to }) => assigned_to.user_ids.includes(target.userId ?? ''))
+  const byUser = target.userId && presets.find(({ assigned_to }) => assigned_to.user_ids?.includes(target.userId ?? ''))
   if (byUser) return { source: 'USER', preset: byUser }
-  const byRole = target.roleId && presets.find(({ assigned_to }) => assigned_to.role_ids.includes(target.roleId ?? ''))
+  const byRole = target.roleId && presets.find(({ assigned_to }) => assigned_to.role_ids?.includes(target.roleId ?? ''))
   if (byRole) return { source: 'ROLE', preset: byRole }
   const byDefault = presets.find(({ assigned_to }) => assigned_to.organization_default)
   if (byDefault) return { source: 'ORGANIZATION', preset: byDefault }

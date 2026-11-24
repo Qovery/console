@@ -2,6 +2,7 @@ import { useLocation, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { AGENT_ACTIVITY_FLAG } from '../agent-activity/agent-activity-flag'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
@@ -69,7 +70,8 @@ describe('AgentExperienceNav', () => {
     } as never)
     renderWithProviders(<AgentExperienceNav />)
     expect(screen.getByRole('link', { name: 'Skills registry' })).toHaveAttribute('aria-current', 'page')
-    expect(screen.getByRole('link', { name: 'Activity' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Activity' })).not.toBeInTheDocument()
+    expect(useAgentActivity).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
     expect(screen.queryByRole('link', { name: /Assignments|Skill loads|Usage/ })).not.toBeInTheDocument()
   })
 
@@ -97,6 +99,7 @@ describe('AgentExperienceNav', () => {
     [1, 'Activity, 1 denied action in the last 7 days'],
     [3, 'Activity, 3 denied actions in the last 7 days'],
   ])('announces %i denied in the Activity badge', (denials, label) => {
+    jest.mocked(useFeatureFlagEnabled).mockImplementation((flag) => flag === AGENT_ACTIVITY_FLAG)
     jest.mocked(useAgentActivity).mockReturnValue({ data: { totals: { denials } } } as never)
     jest.mocked(useLocation).mockReturnValue({
       pathname: '/organization/organization-1/agent-experience/skill-presets',

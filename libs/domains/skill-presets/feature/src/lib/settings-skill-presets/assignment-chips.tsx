@@ -13,12 +13,12 @@ export function AssignmentChips({ assignedTo, assignees, max = 3 }: AssignmentCh
     ...(assignedTo.organization_default
       ? [{ key: 'default', icon: 'building' as const, label: 'Organization default' }]
       : []),
-    ...assignedTo.role_ids.map((roleId) => ({
+    ...(assignedTo.role_ids ?? []).map((roleId) => ({
       key: `role-${roleId}`,
       icon: 'user-group' as const,
       label: `Role: ${assignees?.roles.find(({ id }) => id === roleId)?.name ?? 'Unknown role'}`,
     })),
-    ...assignedTo.user_ids.map((userId) => ({
+    ...(assignedTo.user_ids ?? []).map((userId) => ({
       key: `user-${userId}`,
       icon: 'user' as const,
       label: assignees?.members.find(({ id }) => id === userId)?.name ?? 'Former member',

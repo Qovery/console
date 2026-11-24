@@ -847,7 +847,7 @@ describe('SelfManagedClusterCreationFlow', () => {
               region: 'on-premise',
               credentials: { id: 'on-premise-credential-id' },
               platform: {},
-              registry: { url: 'https://registry.example.com:5000' },
+              registry: { kind: 'GENERIC_CR', url: 'https://registry.example.com:5000' },
             },
           },
         ],
@@ -884,6 +884,7 @@ describe('SelfManagedClusterCreationFlow', () => {
                 },
               },
               registry: {
+                kind: 'GENERIC_CR',
                 url: 'https://registry.example.com:5000',
                 credentials: { username: 'robot', password: 's3cret' },
               },

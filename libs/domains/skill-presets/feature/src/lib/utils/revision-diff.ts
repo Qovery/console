@@ -25,9 +25,9 @@ const sameSkill = (a: SkillPresetSkill, b: SkillPresetSkill) =>
   a.mode === b.mode && (a.description ?? '') === (b.description ?? '') && (a.content ?? '') === (b.content ?? '')
 
 const sameAssignment = (a: SkillPresetAssignedTo, b: SkillPresetAssignedTo) =>
-  a.organization_default === b.organization_default &&
-  [...a.role_ids].sort().join() === [...b.role_ids].sort().join() &&
-  [...a.user_ids].sort().join() === [...b.user_ids].sort().join()
+  Boolean(a.organization_default) === Boolean(b.organization_default) &&
+  [...(a.role_ids ?? [])].sort().join() === [...(b.role_ids ?? [])].sort().join() &&
+  [...(a.user_ids ?? [])].sort().join() === [...(b.user_ids ?? [])].sort().join()
 
 const EMPTY_ASSIGNMENT: SkillPresetAssignedTo = { organization_default: false, role_ids: [], user_ids: [] }
 

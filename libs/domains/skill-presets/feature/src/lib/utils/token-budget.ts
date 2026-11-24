@@ -165,7 +165,7 @@ export function computeTokenBudget(preset: PresetLikeForBudget | null): TokenBud
 
 /** Same estimate from the resolved manifest a member's agent reads: it carries sizes, not text. */
 export function computeTokenBudgetFromManifest(manifest: SkillPresetManifestResponse): TokenBudget {
-  const preset = manifest.skill_preset
+  const preset = manifest.skill_preset ?? null
   return budgetOf(
     preset && {
       base: preset.base,

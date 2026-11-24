@@ -104,7 +104,7 @@ export function memberCount(activity: AgentActivityResponse) {
 }
 
 /** A token's name; older audit rows grouped under a null token have none. */
-export const policyTokenName = (row: { token_name: string | null }) => row.token_name ?? LEGACY_TOKEN_LABEL
+export const policyTokenName = (row: { token_name?: string | null }) => row.token_name ?? LEGACY_TOKEN_LABEL
 
 /**
  * q-core returns only the buckets with activity: add the empty ones between `from` and `to`, so a
@@ -183,14 +183,14 @@ export function computeAgentActivityHints(
     // A drill into one member already shows their activity.
     .filter(({ denials }) => !filtered && denials >= REPEATED)
     .forEach(({ user_sub, user_name, denials }) =>
-      hints.push({ kind: 'member-denials', userSub: user_sub, userName: user_name, count: denials })
+      hints.push({ kind: 'member-denials', userSub: user_sub ?? null, userName: user_name, count: denials })
     )
   ;(activity.by_policy_token ?? [])
     .filter(({ denials }) => !filtered && denials >= REPEATED)
     .forEach((row) =>
       hints.push({
         kind: 'token-denials',
-        tokenId: row.policy_token_id,
+        tokenId: row.policy_token_id ?? null,
         tokenName: policyTokenName(row),
         deleted: row.deleted,
         count: row.denials,

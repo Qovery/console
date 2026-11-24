@@ -18,7 +18,7 @@ describe('useResolvedSkill', () => {
 
   it('reads the text again when the member opens it again, so a newer revision shows', async () => {
     const request = jest
-      .spyOn(axios, 'get')
+      .spyOn(axios, 'request')
       .mockResolvedValueOnce({ data: resolvedSkill('Revision 1') })
       .mockResolvedValueOnce({ data: resolvedSkill('Revision 2') })
     const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } })

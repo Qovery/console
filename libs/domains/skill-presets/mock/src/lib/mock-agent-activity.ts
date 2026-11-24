@@ -330,7 +330,7 @@ export function aggregateAgentActivity(
     const time = new Date(at).getTime()
     return time >= fromTime && time < toTime
   }
-  const matches = (user: string | null, skill: string | null) =>
+  const matches = (user: MockAgentAction['user_sub'], skill: MockAgentAction['skill_name']) =>
     (!userSub || user === userSub) && (!skillName || skill === skillName)
   const tokenOnly = actorKind === 'POLICY_TOKEN' || Boolean(policyTokenId)
   const scopedActions = actions.filter(
@@ -418,12 +418,12 @@ export function aggregateAgentActivity(
   const skillNames = [
     ...new Set<string | null>([
       ...scopedLoads.map(({ skill_name }) => skill_name),
-      ...scopedActions.map(({ skill_name }) => skill_name),
+      ...scopedActions.map(({ skill_name }) => skill_name ?? null),
     ]),
   ]
   const bySkill = skillNames.map((name) => {
     const skillLoads = scopedLoads.filter(({ skill_name }) => skill_name === name)
-    const skillActions = scopedActions.filter(({ skill_name }) => skill_name === name)
+    const skillActions = scopedActions.filter(({ skill_name }) => (skill_name ?? null) === name)
     return {
       skill_name: name,
       loads: skillLoads.length,

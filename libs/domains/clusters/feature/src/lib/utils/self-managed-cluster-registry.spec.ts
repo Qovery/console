@@ -128,7 +128,7 @@ describe('getSelfManagedClusterRegistryRequest', () => {
         registryUsername: '',
         registryPassword: '',
       })
-    ).toStrictEqual({ url: 'https://registry.example.com:5000' })
+    ).toStrictEqual({ kind: 'GENERIC_CR', url: 'https://registry.example.com:5000' })
   })
 
   it('sends the credentials when both the username and the password are filled', () => {
@@ -139,6 +139,7 @@ describe('getSelfManagedClusterRegistryRequest', () => {
         registryPassword: ' s3cret ',
       })
     ).toStrictEqual({
+      kind: 'GENERIC_CR',
       url: 'https://registry.example.com',
       credentials: { username: 'robot', password: ' s3cret ' },
     })
@@ -155,6 +156,6 @@ describe('getSelfManagedClusterRegistryRequest', () => {
         registryUsername,
         registryPassword,
       })
-    ).toStrictEqual({ url: 'https://registry.example.com' })
+    ).toStrictEqual({ kind: 'GENERIC_CR', url: 'https://registry.example.com' })
   })
 })

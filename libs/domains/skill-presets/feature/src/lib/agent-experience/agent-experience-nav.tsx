@@ -3,6 +3,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactNode, useEffect } from 'react'
 import { Sidebar } from '@qovery/shared/ui'
 import { activityWindowEnd } from '../agent-activity/activity-search'
+import { AGENT_ACTIVITY_FLAG } from '../agent-activity/agent-activity-flag'
 import { useAgentActivity } from '../hooks/use-agent-activity/use-agent-activity'
 import { useCanManagePolicyTokens } from '../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
@@ -32,7 +33,8 @@ export function AgentExperienceNav() {
   const { organizationId = '' } = useParams({ strict: false })
   const { canManage, isLoading } = useCanManageSkillPresets({ organizationId })
   const isAgentTasksEnabled = Boolean(useFeatureFlagEnabled(AGENT_TASKS_FLAG))
-  const denied = useDeniedThisWeek(organizationId, canManage ? 'organization' : 'me', !isLoading)
+  const isActivityEnabled = useFeatureFlagEnabled(AGENT_ACTIVITY_FLAG) === true
+  const denied = useDeniedThisWeek(organizationId, canManage ? 'organization' : 'me', isActivityEnabled && !isLoading)
   const base = `/organization/${organizationId}/agent-experience`
   const { pathname } = useLocation()
   const { canManage: canManageTokens, isLoading: isTokenRoleLoading } = useCanManagePolicyTokens({ organizationId })
@@ -53,19 +55,21 @@ export function AgentExperienceNav() {
           Automations
         </Sidebar.Item>
       )}
-      <Sidebar.Item
-        to={`${base}/agent-activity`}
-        icon="wave-pulse"
-        iconStyle="regular"
-        badge={denied > 0 ? String(denied) : undefined}
-        aria-label={
-          denied > 0
-            ? `Activity, ${denied} denied ${denied === 1 ? 'action' : 'actions'} in the last 7 days`
-            : undefined
-        }
-      >
-        Activity
-      </Sidebar.Item>
+      {isActivityEnabled && (
+        <Sidebar.Item
+          to={`${base}/agent-activity`}
+          icon="wave-pulse"
+          iconStyle="regular"
+          badge={denied > 0 ? String(denied) : undefined}
+          aria-label={
+            denied > 0
+              ? `Activity, ${denied} denied ${denied === 1 ? 'action' : 'actions'} in the last 7 days`
+              : undefined
+          }
+        >
+          Activity
+        </Sidebar.Item>
+      )}
       {(isAdmin || canSeeTokens || isAgentTasksEnabled) && (
         <Sidebar.Group
           title="Settings"
