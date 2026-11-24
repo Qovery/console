@@ -7,7 +7,7 @@ import { CodeEditorVariable } from '../../code-editor-variable/code-editor-varia
 
 type VariableValueEditorModalScope = Extract<VariableScope, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'>
 
-const VALUE_EDITOR_HEIGHT = 'calc(100vh - 238px)'
+const VALUE_EDITOR_HEIGHT = 'calc(100dvh - 238px)'
 
 export interface VariableValueEditorModalProps {
   open: boolean
@@ -63,7 +63,7 @@ export function VariableValueEditorModal({
         <Dialog.Overlay className="fixed inset-0 bg-background-overlay" />
         <Dialog.Content
           data-testid="value-full-screen-editor"
-          className="fixed left-1/2 top-6 z-modal h-[calc(100vh-48px)] w-[calc(100vw-48px)] -translate-x-1/2 rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)]"
+          className="fixed left-1/2 top-6 z-modal h-[calc(100dvh-48px)] w-[calc(100vw-48px)] -translate-x-1/2 rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)]"
           onPointerDownOutside={(event) => event.preventDefault()}
           onInteractOutside={(event) => event.preventDefault()}
         >

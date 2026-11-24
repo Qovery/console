@@ -58,7 +58,7 @@ export function ClusterOverviewBanners({ deploymentStatus, onDeploy }: ClusterOv
       buttonLabel={banner.buttonLabel}
       onClickButton={banner.onClickButton}
     >
-      <span className="min-w-0 truncate text-center" title={banner.message}>
+      <span className="min-w-0 text-center md:truncate" title={banner.message}>
         {banner.message}
       </span>
       <BannerNavigation

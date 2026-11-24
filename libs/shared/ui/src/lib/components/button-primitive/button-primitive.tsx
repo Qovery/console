@@ -19,6 +19,12 @@ const _buttonVariants = cva(
     'focus-visible:[&:not(:active)]:outline-2',
     'outline-0',
     'select-none',
+    // Expand touch targets vertically without covering adjacent buttons.
+    '[@media(pointer:coarse)]:relative',
+    '[@media(pointer:coarse)]:after:absolute',
+    '[@media(pointer:coarse)]:after:-inset-y-2',
+    '[@media(pointer:coarse)]:after:inset-x-0',
+    "[@media(pointer:coarse)]:after:content-['']",
   ],
   {
     variants: {

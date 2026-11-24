@@ -41,7 +41,7 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
   const isLegacyRds = isLegacyRdsDatabase(service)
 
   return (
-    <Section className="w-full px-8 py-6 pb-20">
+    <Section className="w-full px-4 py-6 pb-20 md:px-8">
       <div className="mb-8 border-b border-neutral">
         <div className="flex w-full items-center justify-between pb-5">
           <Heading level={1}>Alert rules</Heading>

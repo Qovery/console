@@ -62,15 +62,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizelegibility;
   min-height: 100vh;
-  min-width: 44.5rem;
-
-  // Let the profile fit mobile screens instead of inheriting the console's desktop minimum width.
-  &:has([data-onboarding-profile]) {
-    min-width: 0;
-  }
 
   main:not(.h-screen, .layout-onboarding) {
     height: calc(100vh - theme('spacing.16'));
+
+    @media (width < 768px) {
+      height: calc(100dvh - theme('spacing.16'));
+    }
+  }
+
+  @media (width < 768px) and (pointer: coarse) {
+    button,
+    a,
+    [role='button'] {
+      touch-action: manipulation;
+    }
+
+    // iOS Safari zooms into any field below 16px on focus; keep fields at 16px on touch screens only
+    input:not([type='checkbox'], [type='radio'], [type='range']),
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
   }
 
   button,

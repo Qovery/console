@@ -34,13 +34,15 @@ export function GitTokenList() {
           {gitTokens?.map((gitToken) => (
             <li
               key={gitToken.id}
-              className="flex items-center justify-between border-b border-neutral p-4 last:border-0"
+              className="flex items-center justify-between gap-3 border-b border-neutral p-4 last:border-0"
             >
-              <div className="flex items-center">
+              <div className="flex min-w-0 items-center">
                 <Icon name={gitToken.type} width="20px" height="20px" />
-                <div className="ml-4">
-                  <p className="mb-1 flex items-center gap-2 text-xs font-medium text-neutral">
-                    <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
+                <div className="ml-4 min-w-0">
+                  <p className="mb-1 flex items-center gap-2 text-xs font-medium text-neutral max-md:flex-wrap">
+                    <span className="min-w-0 max-md:break-all">
+                      <Truncate truncateLimit={60} text={gitToken.name ?? ''} />
+                    </span>
                     <ExpiredTokenBadge token={gitToken} />
                     {gitToken.description && (
                       <Tooltip content={gitToken.description}>
@@ -50,7 +52,7 @@ export function GitTokenList() {
                       </Tooltip>
                     )}
                   </p>
-                  <p className="text-xs text-neutral-subtle">
+                  <p className="flex flex-wrap gap-x-3 text-xs text-neutral-subtle">
                     {gitToken.updated_at && (
                       <span className="inline-block" title={dateUTCString(gitToken.updated_at)}>
                         Last updated {timeAgo(new Date(gitToken.updated_at))}
@@ -58,19 +60,19 @@ export function GitTokenList() {
                     )}
 
                     {gitToken.created_at && (
-                      <span className="ml-3 inline-block" title={dateUTCString(gitToken.created_at)}>
+                      <span className="inline-block" title={dateUTCString(gitToken.created_at)}>
                         Created since {dateMediumLocalFormat(gitToken.created_at)}
                       </span>
                     )}
                     {gitToken.expired_at && (
-                      <span className="ml-3 inline-block" title={dateUTCString(gitToken.expired_at)}>
+                      <span className="inline-block" title={dateUTCString(gitToken.expired_at)}>
                         Expiration: {dateMediumLocalFormat(gitToken.expired_at)}
                       </span>
                     )}
                   </p>
                 </div>
               </div>
-              <div>
+              <div className="flex shrink-0">
                 <Button
                   variant="outline"
                   color="neutral"

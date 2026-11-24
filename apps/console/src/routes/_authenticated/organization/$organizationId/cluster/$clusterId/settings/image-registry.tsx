@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type ContainerRegistryRequest } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -11,7 +12,7 @@ import {
   useEditContainerRegistry,
 } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Callout, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, Callout, Icon, LoaderSpinner, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
@@ -22,7 +23,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="p-8">
+      <Section className="px-4 py-8 md:p-8">
         <SettingsHeading
           title="Mirroring registry"
           description="This mirroring registry is used to store the built images or mirror the container images deployed on this cluster."
@@ -95,7 +96,7 @@ function ImageRegistrySettings() {
             </Callout.Text>
           </Callout.Root>
         )}
-        <div className="mt-2 flex justify-end">
+        <div className={clsx('mt-2 flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
           <Button
             type="submit"
             size="lg"

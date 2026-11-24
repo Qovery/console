@@ -130,7 +130,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
       <Section className="my-6 gap-8 pb-6">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-x-4 gap-y-3 max-md:flex-wrap">
               <div className="flex min-w-0 items-center gap-2">
                 <Skeleton width={64} height={64} show={!cluster} rounded>
                   <ClusterAvatar cluster={cluster} />

@@ -55,8 +55,14 @@ export function ClusterTableNode({
   // Using div with flex instead of Table.Root for better alignment with cluster-table-nodepool
   // Ensures consistent column widths and spacing between both tables
   return (
-    <div className={twMerge('divide-y divide-neutral overflow-hidden border-t border-neutral text-ssm', className)}>
-      <div className="flex divide-x divide-neutral bg-surface-neutral-subtle font-medium text-neutral-subtle">
+    // Below md the six columns don't fit: rows keep a minimum width and the table scrolls horizontally
+    <div
+      className={twMerge(
+        'divide-y divide-neutral overflow-hidden border-t border-neutral text-ssm max-md:overflow-x-auto',
+        className
+      )}
+    >
+      <div className="flex divide-x divide-neutral bg-surface-neutral-subtle font-medium text-neutral-subtle max-md:min-w-[760px]">
         <div className="flex h-8 w-1/4 items-center px-3 text-neutral-subtle">Nodes</div>
         <div className="flex h-8 w-1/4 items-center px-3 text-neutral-subtle">CPU</div>
         <div className="flex h-8 w-1/4 items-center px-3 text-neutral-subtle">Memory</div>
@@ -121,7 +127,7 @@ export function ClusterTableNode({
             key={node.name}
             className={twMerge(
               clsx(
-                'flex divide-x divide-neutral bg-surface-neutral-subtle transition-colors hover:bg-surface-neutral-componentHover',
+                'flex divide-x divide-neutral bg-surface-neutral-subtle transition-colors hover:bg-surface-neutral-componentHover max-md:min-w-[760px]',
                 isWarning && 'bg-surface-warning-subtle hover:bg-surface-warning-subtle',
                 isDeploying && 'bg-surface-brand-subtle hover:bg-surface-brand-subtle'
               )

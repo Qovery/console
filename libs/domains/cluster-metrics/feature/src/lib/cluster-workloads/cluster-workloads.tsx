@@ -239,10 +239,11 @@ function ResourceCell({ type, value, total }: { type: WorkloadSortKey; value: nu
   )
 }
 
-// Same grid and cell treatment as the environment service list
+// Below md the namespace column (namespaceCellClassName) is hidden so name, pods, CPU and memory fit on a phone
 const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(260px,1.6fr)_minmax(180px,1fr)_72px_minmax(200px,1fr)_minmax(200px,1fr)]'
-const cellClassName = 'relative flex h-full min-w-0 items-center border-r border-neutral last:border-r-0'
+  'grid w-full grid-cols-[minmax(260px,1.6fr)_minmax(180px,1fr)_72px_minmax(200px,1fr)_minmax(200px,1fr)] max-md:grid-cols-[minmax(0,1.3fr)_40px_minmax(0,1fr)_minmax(0,1fr)]'
+const cellClassName = 'relative flex h-full min-w-0 items-center border-r border-neutral last:border-r-0 max-md:!px-2'
+const namespaceCellClassName = twMerge(cellClassName, 'max-md:hidden')
 
 function WorkloadsTable({
   organizationId,
@@ -374,7 +375,7 @@ function WorkloadsTable({
             </div>
           </div>
         </Table.Cell>
-        <Table.Cell className={cellClassName}>
+        <Table.Cell className={namespaceCellClassName}>
           <NamespacesCell namespaces={environment.namespaces} />
         </Table.Cell>
         {resourceCells(environment)}
@@ -390,13 +391,13 @@ function WorkloadsTable({
             }}
             className={twMerge(childRowClassName, 'cursor-pointer hover:bg-surface-neutral-component')}
           >
-            <Table.Cell className={twMerge(cellClassName, 'pl-12')}>
+            <Table.Cell className={twMerge(cellClassName, 'pl-12 max-md:!pl-8')}>
               <div className="flex min-w-0 items-center gap-2">
                 <ServiceIcon service={servicesById.get(service.id)} />
                 <span className="truncate text-sm text-neutral">{service.name}</span>
               </div>
             </Table.Cell>
-            <Table.Cell className={cellClassName}>
+            <Table.Cell className={namespaceCellClassName}>
               <NamespacesCell namespaces={service.namespaces} />
             </Table.Cell>
             <Table.Cell className={twMerge(cellClassName, 'text-sm text-neutral-subtle')}>{service.pods}</Table.Cell>
@@ -412,13 +413,13 @@ function WorkloadsTable({
   )
 
   return (
-    <Table.Root className="w-full min-w-[960px] text-xs" containerClassName="rounded-none border-none">
+    <Table.Root className="w-full text-xs md:min-w-[960px]" containerClassName="rounded-none border-none">
       <Table.Header className="border-t border-neutral">
         <Table.Row className={`h-9 w-full ${tableGridLayoutClassName}`}>
           <Table.ColumnHeaderCell className={twMerge(cellClassName, 'text-neutral-subtle')}>
             Environment
           </Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell className={twMerge(cellClassName, 'text-neutral-subtle')}>
+          <Table.ColumnHeaderCell className={twMerge(namespaceCellClassName, 'text-neutral-subtle')}>
             Namespace
           </Table.ColumnHeaderCell>
           <Table.ColumnHeaderCell className={twMerge(cellClassName, 'text-neutral-subtle')}>
@@ -437,8 +438,8 @@ function WorkloadsTable({
                 <div className="flex min-w-0 items-center gap-2">
                   {expandButton(SYSTEM_ROW_ID, 'cluster system')}
                   <Icon iconName="gear" iconStyle="regular" className="w-4 shrink-0 text-center text-neutral-subtle" />
-                  <span className="flex items-center gap-1.5 text-sm font-medium text-neutral">
-                    Cluster system
+                  <span className="flex items-center gap-1.5 text-sm font-medium text-neutral max-md:min-w-0 max-md:text-xs">
+                    <span className="max-md:truncate">Cluster system</span>
                     <Tooltip content="Pods not linked to a Qovery service: Kubernetes components, cluster add-ons and Qovery agents.">
                       <span className="text-neutral-subtle">
                         <Icon iconName="circle-question" iconStyle="regular" className="text-xs" />
@@ -447,7 +448,7 @@ function WorkloadsTable({
                   </span>
                 </div>
               </Table.Cell>
-              <Table.Cell className={twMerge(cellClassName, 'text-sm text-neutral-subtle')}>
+              <Table.Cell className={twMerge(namespaceCellClassName, 'text-sm text-neutral-subtle')}>
                 {countLabel(workloads.system.namespaces.length, 'namespace', 'namespaces')}
               </Table.Cell>
               {resourceCells(workloads.system)}
@@ -455,8 +456,8 @@ function WorkloadsTable({
             {expandedIds.has(SYSTEM_ROW_ID) &&
               namespaces.map((namespace) => (
                 <Table.Row key={namespace.name} className={childRowClassName}>
-                  <Table.Cell className={cellClassName} />
-                  <Table.Cell className={cellClassName}>
+                  <Table.Cell className={namespaceCellClassName} />
+                  <Table.Cell className={twMerge(cellClassName, 'max-md:!pl-8')}>
                     <NamespacesCell namespaces={[namespace.name]} />
                   </Table.Cell>
                   <Table.Cell className={twMerge(cellClassName, 'text-sm text-neutral-subtle')}>

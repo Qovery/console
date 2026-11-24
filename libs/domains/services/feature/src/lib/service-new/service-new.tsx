@@ -50,7 +50,7 @@ function BlueprintSectionFallback() {
   return (
     <Section className="gap-4">
       <BlueprintSectionHeader action={<Skeleton width={240} height={36} />} />
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
         {[0, 1, 2].map((item) => (
           <div
             key={item}
@@ -181,7 +181,7 @@ function BlueprintSection({
               <Heading id={`blueprint-category-${index}`} level={3}>
                 {category}
               </Heading>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
                 {blueprints.map((blueprint) => (
                   <BlueprintCard
                     // Several blueprints can share a provider and a service family; the name tells them apart.
@@ -299,7 +299,7 @@ export function ServiceNew({
               Services without pre-configuration. These are the basic blocks to deploy any technical stack.
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
             {serviceEmpty.map((service) => (
               <BaseServiceCard key={service.title} {...service} />
             ))}
@@ -364,7 +364,7 @@ export function ServiceNew({
               <p className="mb-5 text-xs text-neutral-subtle">
                 Deploy external cloud resources with Terraform or use IAC templates.
               </p>
-              <div className="mt-5 grid grid-cols-3 gap-4">
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {serviceEmpty
                   .filter((s) => s.title === 'Terraform')
                   .map((service) => (

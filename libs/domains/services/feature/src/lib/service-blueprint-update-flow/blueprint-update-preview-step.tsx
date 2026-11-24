@@ -140,7 +140,7 @@ function BlueprintUpdatePreviewContent({
     outcome.type === 'diff'
       ? layout === 'modal'
         ? 'min-h-[220px]'
-        : 'h-[min(75vh,calc(100vh-320px))] min-h-[260px]'
+        : 'h-[min(75vh,calc(100dvh-320px))] min-h-[260px]'
       : isModalPending
         ? ''
         : 'min-h-[180px]'

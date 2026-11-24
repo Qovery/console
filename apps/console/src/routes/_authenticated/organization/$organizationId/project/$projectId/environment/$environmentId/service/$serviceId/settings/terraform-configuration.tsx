@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { Suspense } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -10,7 +11,7 @@ import {
 } from '@qovery/domains/service-terraform/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, LoaderSpinner, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 export const Route = createFileRoute(
@@ -63,14 +64,14 @@ const TerraformConfigurationSettingsWrapper = () => {
 
   return (
     <FormProvider {...methods}>
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading
           title="Terraform configuration"
           description="Customize the resources assigned to the service."
         />
         <div className="max-w-content-with-navigation-left">
           <TerraformConfigurationSettings methods={methods} isSettings />
-          <div className="mt-10 flex justify-end">
+          <div className={clsx('mt-10 flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button
               type="submit"
               size="lg"
