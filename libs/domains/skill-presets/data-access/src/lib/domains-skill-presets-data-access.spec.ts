@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { buildSkillPresetApiError, getSkillPresetErrorStatus } from './skill-presets.errors'
-import { mutations, skillPresets } from './skill-presets.queries'
+import { getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/util'
+import { mutations, skillPresets } from './domains-skill-presets-data-access'
 
 jest.mock('axios', () => ({
   __esModule: true,
@@ -87,7 +87,7 @@ describe('skill preset queries and mutations, over HTTP', () => {
   })
 
   it.each([403, 409, 422, 503])('passes a %i answer on to the caller', async (status) => {
-    request.mockRejectedValue(buildSkillPresetApiError(status, 'refused'))
+    request.mockRejectedValue({ response: { status } })
     const error = await mutations
       .editSkillPreset({ organizationId: ORG, skillPresetId: PRESET, body: { name: 'Backend' } })
       .catch((e: unknown) => e)
@@ -95,10 +95,10 @@ describe('skill preset queries and mutations, over HTTP', () => {
   })
 
   it('counts deleting a preset that is already gone (404) as done, and nothing else', async () => {
-    request.mockRejectedValueOnce(buildSkillPresetApiError(404, 'not found'))
+    request.mockRejectedValueOnce({ response: { status: 404 } })
     await expect(mutations.deleteSkillPreset({ organizationId: ORG, skillPresetId: PRESET })).resolves.toBeUndefined()
 
-    request.mockRejectedValueOnce(buildSkillPresetApiError(403, 'forbidden'))
+    request.mockRejectedValueOnce({ response: { status: 403 } })
     await expect(mutations.deleteSkillPreset({ organizationId: ORG, skillPresetId: PRESET })).rejects.toMatchObject({
       response: { status: 403 },
     })

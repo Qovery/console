@@ -14,11 +14,6 @@ import {
 } from 'qovery-typescript-axios'
 import { type AgentActivityQueryParams } from '@qovery/domains/skill-presets/data-access'
 import {
-  SKILL_PRESET_AI_FEATURES_OFF_MESSAGE,
-  SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
-  buildSkillPresetApiError,
-} from '@qovery/domains/skill-presets/data-access'
-import {
   SKILL_NAME_PATTERN,
   SKILL_PRESET_LIMITS,
   approxTokens,
@@ -27,7 +22,7 @@ import {
   isQoverySkillName,
   resolvePresetFor,
   totalPresetTextLength,
-} from '@qovery/domains/skill-presets/data-access'
+} from '@qovery/domains/skill-presets/util'
 import {
   type MockAgentAction,
   agentActivityParamsError,
@@ -38,6 +33,7 @@ import { inspectSkillPresetContent } from './mock-content-inspector'
 import { MOCK_REVIEW_MODEL, MOCK_REVIEW_PROMPT_VERSION, reviewSkillPresetContent } from './mock-model-review'
 import { type SkillPresetsMockScenario } from './mock-scenario-names'
 import { type MockPresetState, buildMockSeed } from './mock-scenarios'
+import { buildSkillPresetApiError } from './mock-tools'
 
 /** Deterministic stand-in for SHA-256: 64 hex characters, clearly not a real hash of the content. */
 export function mockHash(text: string) {
@@ -364,7 +360,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     scenario === 'agent-activity-timeout' &&
     new Date(to).getTime() - new Date(from).getTime() > 7 * 24 * HOUR_MS + 60_000
   const checkWrite = (state: MockPresetState, exceptId?: string): Promise<never> | null => {
-    if (!aiFeaturesOn) return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
+    if (!aiFeaturesOn) return fail(403, 'AI features are disabled for this organization')
     const invalid = validate(state)
     if (invalid) return fail(400, invalid)
     if (presets.some((preset) => preset.id !== exceptId && preset.name === state.name)) {
@@ -387,7 +383,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
     if (unknownRole) return fail(404, `Role ${unknownRole} does not exist in this organization`)
     if (scenario === 'review-unavailable' && !reviewFailedOnce) {
       reviewFailedOnce = true
-      return fail(503, SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE, undefined, writeLatency)
+      return fail(503, 'Skill preset security review unavailable', undefined, writeLatency)
     }
     const findings = inspect(state)
     if (findings.length > 0) {
@@ -601,7 +597,7 @@ export function createSkillPresetsMockApi(scenario: SkillPresetsMockScenario, or
       if (method === 'put' && /\/organization\/[^/]+\/config\/org$/.test(path)) {
         if (!seed.isAdmin) return forbidden()
         const request = (body ? JSON.parse(body) : {}) as { enabled?: boolean; read_only?: boolean; token_mode?: 'jwt' }
-        if (request.enabled && !aiFeaturesOn) return fail(403, SKILL_PRESET_AI_FEATURES_OFF_MESSAGE)
+        if (request.enabled && !aiFeaturesOn) return fail(403, 'AI features are disabled for this organization')
         if (request.enabled && seed.copilotFailsOnce && !copilotFailedOnce) {
           copilotFailedOnce = true
           return fail(503, 'The Copilot service did not answer')

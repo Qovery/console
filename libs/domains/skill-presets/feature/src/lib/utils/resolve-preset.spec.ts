@@ -1,4 +1,4 @@
-import { effectiveRoleId, resolvePresetFor } from '@qovery/domains/skill-presets/data-access'
+import { effectiveRoleId, resolvePresetFor } from '@qovery/domains/skill-presets/util'
 import { isTemplate, membersReceiving } from './resolve-preset'
 
 const preset = (

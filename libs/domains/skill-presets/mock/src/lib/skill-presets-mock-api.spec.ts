@@ -6,7 +6,7 @@ import {
   isSkillPresetAiFeaturesOff,
   isSkillPresetConcurrentModification,
   isSkillPresetReviewUnavailable,
-} from '@qovery/domains/skill-presets/data-access'
+} from '@qovery/domains/skill-presets/util'
 import { MOCK_ROLE_IDS } from './mock-scenarios'
 import { MOCK_MODEL_ONLY_SAMPLE, MOCK_UNSAFE_SAMPLE } from './mock-tools'
 import { createSkillPresetsMockApi } from './skill-presets-mock-api'

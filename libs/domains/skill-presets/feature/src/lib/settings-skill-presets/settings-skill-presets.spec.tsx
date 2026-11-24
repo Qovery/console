@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
+import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/mock'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { SettingsSkillPresets } from './settings-skill-presets'
 

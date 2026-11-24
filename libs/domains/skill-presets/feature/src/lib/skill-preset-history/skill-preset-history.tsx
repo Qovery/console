@@ -2,12 +2,12 @@ import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { type SkillPresetRevisionResponse } from 'qovery-typescript-axios'
 import { useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { SKILL_PRESET_REVISIONS_PAGE_SIZE } from '@qovery/domains/skill-presets/data-access'
 import {
-  SKILL_PRESET_REVISIONS_PAGE_SIZE,
   getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
   getSkillPresetFindings,
-} from '@qovery/domains/skill-presets/data-access'
+} from '@qovery/domains/skill-presets/util'
 import {
   Badge,
   Button,

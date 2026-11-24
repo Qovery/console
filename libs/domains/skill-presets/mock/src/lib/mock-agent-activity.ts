@@ -1,8 +1,6 @@
 import { type AgentActivityResponse, type AgentActivitySource } from 'qovery-typescript-axios'
-import {
-  AGENT_ACTIVITY_LIMITS,
-  type AgentActivityQueryParams as AgentActivityParams,
-} from '@qovery/domains/skill-presets/data-access'
+import { type AgentActivityQueryParams as AgentActivityParams } from '@qovery/domains/skill-presets/data-access'
+import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/util'
 
 /*
  * Agent activity for the mock, shaped like q-core's: actions follow from the skill loads (a load of

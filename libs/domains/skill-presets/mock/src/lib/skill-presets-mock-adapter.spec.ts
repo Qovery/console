@@ -1,5 +1,5 @@
 import axios, { type AxiosAdapter } from 'axios'
-import { getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/data-access'
+import { getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/util'
 import { installSkillPresetsMock, setSkillPresetsMockScenario } from './skill-presets-mock-adapter'
 
 const ORG = 'organization-1'

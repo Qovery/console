@@ -1,4 +1,4 @@
-import { type AssignablePreset, effectiveRoleId, resolvePresetFor } from '@qovery/domains/skill-presets/data-access'
+import { type AssignablePreset, effectiveRoleId, resolvePresetFor } from '@qovery/domains/skill-presets/util'
 import { type SkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
 
 /**

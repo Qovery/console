@@ -1,4 +1,4 @@
-import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/data-access'
+import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/util'
 import {
   type AgentActionOutcome,
   type AgentActivityBucket,

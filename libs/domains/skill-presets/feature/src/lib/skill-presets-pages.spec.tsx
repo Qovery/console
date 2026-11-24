@@ -3,9 +3,9 @@ import { configure } from '@testing-library/react'
 import axios from 'axios'
 import { SkillPresetsApi } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
+  buildSkillPresetApiError,
   installSkillPresetsMock,
   setSkillPresetsMockScenario,
 } from '@qovery/domains/skill-presets/mock'

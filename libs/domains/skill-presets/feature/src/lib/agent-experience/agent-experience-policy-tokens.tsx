@@ -2,7 +2,7 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
 import { PolicyApiTokenCrudModal, PolicyApiTokenPolicyModal } from '@qovery/domains/organizations/feature'
-import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/data-access'
+import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/util'
 import {
   Badge,
   Button,

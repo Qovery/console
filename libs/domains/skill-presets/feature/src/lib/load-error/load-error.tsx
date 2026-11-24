@@ -1,4 +1,4 @@
-import { getSkillPresetErrorDetail, getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/data-access'
+import { getSkillPresetErrorDetail, getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/util'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
 
 export interface LoadErrorProps {

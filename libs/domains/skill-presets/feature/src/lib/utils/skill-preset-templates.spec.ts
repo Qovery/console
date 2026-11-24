@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { getSkillPresetFindings, mutations } from '@qovery/domains/skill-presets/data-access'
+import { mutations } from '@qovery/domains/skill-presets/data-access'
 import { installSkillPresetsMock, setSkillPresetsMockScenario } from '@qovery/domains/skill-presets/mock'
+import { getSkillPresetFindings } from '@qovery/domains/skill-presets/util'
 import { SKILL_PRESET_TEMPLATES } from './skill-preset-templates'
 
 describe('SKILL_PRESET_TEMPLATES', () => {

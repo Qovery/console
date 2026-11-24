@@ -52,25 +52,8 @@ export function isAgentActivityTimedOut(error: unknown) {
   return getSkillPresetErrorStatus(error) === 503
 }
 
-export const AGENT_ACTIVITY_TIMED_OUT_MESSAGE = 'This range took too long. Pick a shorter period.'
-
-export const SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE =
-  'The security review is unavailable. Nothing was saved. Try again in a minute.'
-export const SKILL_PRESET_AI_FEATURES_OFF_MESSAGE =
-  'Turn on AI features for this organization to use skill presets: every preset is reviewed by a model before it reaches members.'
-
 /** The findings of a 422 security rejection, or an empty list for any other error. */
 export function getSkillPresetFindings(error: unknown): SkillPresetRejectionFinding[] {
   if (getSkillPresetErrorStatus(error) !== 422) return []
   return asApiError(error).response?.data?.findings ?? []
-}
-
-/** Same shape as the axios auth interceptor output, for the mock and for tests. */
-export function buildSkillPresetApiError(status: number, detail: string, extra: Record<string, unknown> = {}) {
-  return {
-    message: detail,
-    name: String(status),
-    code: String(status),
-    response: { status, data: { status, detail, ...extra } },
-  }
 }

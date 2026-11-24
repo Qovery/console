@@ -4,7 +4,7 @@ import {
   SKILL_PRESET_LIMITS,
   isQoverySkillName,
   totalPresetTextLength,
-} from '@qovery/domains/skill-presets/data-access'
+} from '@qovery/domains/skill-presets/util'
 import { type SkillPresetFormValues, effectiveQoverySkills, toSkillPresetRequest } from './skill-preset-form'
 
 const formatCount = (value: number) => value.toLocaleString('en-US')

@@ -4,12 +4,12 @@ import { useLocation, useParams } from '@tanstack/react-router'
 import { configure } from '@testing-library/react'
 import axios from 'axios'
 import { type ReactNode } from 'react'
-import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/data-access'
 import {
   type SkillPresetsMockScenario,
   installSkillPresetsMock,
   setSkillPresetsMockScenario,
 } from '@qovery/domains/skill-presets/mock'
+import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/util'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import * as iamModule from '@qovery/shared/iam/feature'
 import { act, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'

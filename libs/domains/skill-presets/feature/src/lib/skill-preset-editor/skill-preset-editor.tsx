@@ -5,14 +5,13 @@ import { type ReactNode, useDeferredValue, useEffect, useMemo, useRef, useState 
 import { Controller, type FieldErrors, FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import {
   SKILL_PRESET_LIMITS,
-  SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE,
   getSkillPresetErrorDetail,
   getSkillPresetErrorStatus,
   getSkillPresetFindings,
   isSkillPresetAiFeaturesOff,
   isSkillPresetConcurrentModification,
   isSkillPresetReviewUnavailable,
-} from '@qovery/domains/skill-presets/data-access'
+} from '@qovery/domains/skill-presets/util'
 import {
   Badge,
   Button,
@@ -450,7 +449,9 @@ export function SkillPresetEditorForm({
                 <Icon iconName="triangle-exclamation" iconStyle="regular" />
               </Callout.Icon>
               <Callout.Text>
-                <Callout.TextHeading>{SKILL_PRESET_REVIEW_UNAVAILABLE_MESSAGE}</Callout.TextHeading>
+                <Callout.TextHeading>
+                  The security review is unavailable. Nothing was saved. Try again in a minute.
+                </Callout.TextHeading>
                 <Callout.TextDescription>
                   Your changes are still here. Retry sends the same draft to the review again.
                 </Callout.TextDescription>

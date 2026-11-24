@@ -8,7 +8,7 @@ import {
   useFormState,
   useWatch,
 } from 'react-hook-form'
-import { SKILL_PRESET_LIMITS } from '@qovery/domains/skill-presets/data-access'
+import { SKILL_PRESET_LIMITS } from '@qovery/domains/skill-presets/util'
 import {
   Button,
   DropdownMenu,

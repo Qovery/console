@@ -1,7 +1,7 @@
 import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFieldArray, useFormContext, useFormState, useWatch } from 'react-hook-form'
-import { SKILL_PRESET_LIMITS } from '@qovery/domains/skill-presets/data-access'
+import { SKILL_PRESET_LIMITS } from '@qovery/domains/skill-presets/util'
 import { Button, Checkbox, Icon, InputText, SegmentedControl } from '@qovery/shared/ui'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { qoverySkillDescription } from '../utils/qovery-skills'

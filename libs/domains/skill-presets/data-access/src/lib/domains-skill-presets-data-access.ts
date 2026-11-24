@@ -10,7 +10,7 @@ import {
   SkillPresetsApi,
   type SkillUsageBucket,
 } from 'qovery-typescript-axios'
-import { getSkillPresetErrorStatus } from './skill-presets.errors'
+import { getSkillPresetErrorStatus } from '@qovery/domains/skill-presets/util'
 
 /** The API's maximum: it has no offset, so older revisions than this cannot be listed. */
 export const SKILL_PRESET_REVISIONS_PAGE_SIZE = 100

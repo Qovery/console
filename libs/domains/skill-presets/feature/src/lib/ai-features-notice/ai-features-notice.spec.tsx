@@ -1,4 +1,4 @@
-import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/data-access'
+import { buildSkillPresetApiError } from '@qovery/domains/skill-presets/mock'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { AiFeaturesNotice } from './ai-features-notice'
 

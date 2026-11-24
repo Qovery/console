@@ -1,4 +1,4 @@
-import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/data-access'
+import { AGENT_ACTIVITY_LIMITS } from '@qovery/domains/skill-presets/util'
 import { type AgentActivityResponse } from '../agent-activity/agent-activity.types'
 import {
   actionLabel,

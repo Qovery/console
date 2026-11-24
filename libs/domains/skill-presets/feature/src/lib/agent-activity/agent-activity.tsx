@@ -12,11 +12,7 @@ import clsx from 'clsx'
 import { type ReactNode, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { match } from 'ts-pattern'
-import {
-  AGENT_ACTIVITY_TIMED_OUT_MESSAGE,
-  getSkillPresetErrorStatus,
-  isAgentActivityTimedOut,
-} from '@qovery/domains/skill-presets/data-access'
+import { getSkillPresetErrorStatus, isAgentActivityTimedOut } from '@qovery/domains/skill-presets/util'
 import {
   Badge,
   Button,
@@ -1099,7 +1095,7 @@ export function AgentActivity() {
               <Icon iconName="hourglass-end" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
-              <Callout.TextHeading>{AGENT_ACTIVITY_TIMED_OUT_MESSAGE}</Callout.TextHeading>
+              <Callout.TextHeading>This range took too long. Pick a shorter period.</Callout.TextHeading>
               <Callout.TextDescription>You can also filter by member or skill.</Callout.TextDescription>
             </Callout.Text>
             <Button

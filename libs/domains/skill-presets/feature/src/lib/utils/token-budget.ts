@@ -3,7 +3,7 @@ import {
   type SkillPresetManifestResponse,
   type SkillPresetSkillRequest,
 } from 'qovery-typescript-axios'
-import { approxTokens } from '@qovery/domains/skill-presets/data-access'
+import { approxTokens } from '@qovery/domains/skill-presets/util'
 import { QOVERY_SKILLS } from './qovery-skills'
 
 /**

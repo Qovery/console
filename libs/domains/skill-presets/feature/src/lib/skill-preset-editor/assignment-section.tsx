@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { type AssignablePreset, isOwnerRole } from '@qovery/domains/skill-presets/data-access'
+import { type AssignablePreset, isOwnerRole } from '@qovery/domains/skill-presets/util'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, Callout, Icon, InputSelect, InputToggle } from '@qovery/shared/ui'
 import { type SkillPresetAssignees } from '../hooks/use-skill-preset-assignees/use-skill-preset-assignees'
