@@ -7,7 +7,7 @@ export function VariableListSkeleton() {
 
   return (
     <div className="flex grow flex-col justify-between md:min-w-[1200px]">
-      <Table.Root className="w-full">
+      <Table.Root className="w-full max-md:min-w-[800px]">
         <Table.Header>
           <Table.Row>
             {[...Array(5)].map((_, index) => (

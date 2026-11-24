@@ -35,7 +35,6 @@ import {
   TablePrimitives,
   Tooltip,
   Truncate,
-  deploymentListMobileColumnClassName,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -115,7 +114,6 @@ export function EnvironmentDeploymentList() {
   const columns = useMemo(
     () => [
       columnHelper.accessor('auditing_data.created_at', {
-        id: 'created_at',
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
@@ -468,13 +466,13 @@ export function EnvironmentDeploymentList() {
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full table-fixed overflow-x-scroll text-ssm md:min-w-[1080px]">
+      <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={clsx('group font-medium', deploymentListMobileColumnClassName(header.column.id))}
+                  className="group font-medium"
                   key={header.id}
                   style={{
                     width: `${header.getSize()}px`,
@@ -536,7 +534,6 @@ export function EnvironmentDeploymentList() {
                   {row.getVisibleCells().map((cell) => (
                     <Table.Cell
                       key={cell.id}
-                      className={deploymentListMobileColumnClassName(cell.column.id)}
                       style={{
                         width: `${cell.column.getSize()}px`,
                       }}

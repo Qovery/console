@@ -11,7 +11,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import clsx from 'clsx'
 import {
   type InviteMember,
   type InviteMemberRequest,
@@ -55,17 +54,13 @@ const Skeleton = () => {
   const columnSizes = ['35%', '22%', '21%', '21%']
 
   return (
-    <Table.Root>
+    <Table.Root className="max-md:min-w-[760px]">
       <Table.Header>
         <Table.Row className="text-xs">
           {columnSizes.map((columnSize, index) => (
             <Table.ColumnHeaderCell
               key={columnSize}
-              className={clsx(
-                'border-neutral text-xs font-medium text-neutral',
-                index === 0 && 'border-r',
-                index >= 2 && 'max-md:hidden'
-              )}
+              className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''}`}
               style={{ width: columnSize }}
             >
               <SkeletonPrimitive height={16} width={index === 0 ? 140 : 72} show={true} />
@@ -91,10 +86,10 @@ const Skeleton = () => {
             <Table.Cell className="px-4" style={{ width: columnSizes[1] }}>
               <SkeletonPrimitive className="shrink-0" width={176} height={30} show={true} />
             </Table.Cell>
-            <Table.Cell className="px-4 max-md:hidden" style={{ width: columnSizes[2] }}>
+            <Table.Cell className="px-4" style={{ width: columnSizes[2] }}>
               <SkeletonPrimitive className="shrink-0" width={64} height={16} show={true} />
             </Table.Cell>
-            <Table.Cell className="px-4 max-md:hidden" style={{ width: columnSizes[3] }}>
+            <Table.Cell className="px-4" style={{ width: columnSizes[3] }}>
               <SkeletonPrimitive className="shrink-0" width={64} height={16} show={true} />
             </Table.Cell>
           </Table.Row>
@@ -240,18 +235,14 @@ const MembersTable = (props: MembersTableProps) => {
 
   return (
     <>
-      <Table.Root>
+      <Table.Root className="max-md:min-w-[760px]">
         <Table.Header>
           {membersTable.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id} className="text-xs">
               {headerGroup.headers.map((header, index) => (
                 <Table.ColumnHeaderCell
                   key={header.id}
-                  className={clsx(
-                    'border-neutral text-xs font-medium text-neutral',
-                    index === 0 && 'border-r',
-                    index >= 2 && 'max-md:hidden'
-                  )}
+                  className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''}`}
                   style={{ width: `${columnSizes[index]}%` }}
                 >
                   {header.isPlaceholder ? null : index === 0 ? (
@@ -296,18 +287,14 @@ const MembersTable = (props: MembersTableProps) => {
         </Table.Body>
       </Table.Root>
       {inviteMembers.length > 0 && (
-        <Table.Root>
+        <Table.Root className="max-md:min-w-[760px]">
           <Table.Header>
             {inviteTable.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className="text-xs">
                 {headerGroup.headers.map((header, index) => (
                   <Table.ColumnHeaderCell
                     key={header.id}
-                    className={clsx(
-                      'border-neutral text-xs font-medium text-neutral',
-                      index === 0 && 'border-r',
-                      index >= 3 && 'max-md:hidden'
-                    )}
+                    className={`border-neutral text-xs font-medium text-neutral ${index === 0 ? 'border-r' : ''}`}
                     style={{ width: `${columnSizes[index]}%` }}
                   >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
