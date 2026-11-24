@@ -4,7 +4,7 @@ Use this reference when building or changing page composition, spacing, or align
 
 ## Start with the page pattern
 
-Inspect the closest established page before composing a new layout. Reuse its section structure, content widths, and spacing rhythm. The examples below identify layout patterns, not permission to copy unrelated typography, colors, or behavior.
+Inspect the closest established page before composing a new layout or adding a sibling view. Reuse its complete structure: section grouping, content widths, spacing rhythm, toolbar placement, separators, content boundaries, and action placement. Reusing the same components inside a different arrangement is not enough to preserve the pattern. The examples below identify layout patterns, not permission to copy unrelated typography, colors, or behavior.
 
 Before placing components, identify the main sections and which elements belong together. Infer the grouping from the task and the closest established page; ask for clarification only when an ambiguity would materially change the composition.
 
@@ -45,7 +45,11 @@ Reuse `SettingsHeading` and comparable settings implementations. Its existing sp
 
 `SettingsHeading` already supplies this separation through `mb-8`. Do not add another `gap-8` between it and the next block. Put the subsequent sections in their own spaced container so their gaps do not double the heading margin.
 
-Keep form widths and content alignment consistent with other settings pages. Do not stretch a settings form across the available viewport simply because there is room.
+Reuse the closest existing settings page as a complete composition: form width, section containers, field arrangement, and save-action placement.
+
+For standard settings forms, use `max-w-content-with-navigation-left` and `BlockContent`, following General settings or Deployment rules. Keep the save actions below the form, aligned to its right edge. Do not introduce a wider form, preview sidebar, or sticky action bar without an established matching pattern.
+
+Keep supporting summaries within the relevant section when they can be expressed concisely. A summary does not automatically need its own card or column.
 
 ## Usual spacing
 

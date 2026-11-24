@@ -22,6 +22,8 @@ Correct local integration problems before changing a shared component. Extend sh
 
 Use one consistent presentation for a family of similar items: the same icon treatment, title alignment, typography, spacing, and action placement. Vary the design only when the difference communicates meaningful information. Do not decorate one item independently of its siblings.
 
+Handle potentially long names and identifiers explicitly. In compact rows, table cells, and selectors, use the established truncation and tooltip pattern so names do not wrap arbitrarily, displace adjacent controls, or expand the layout. Keep the full value accessible. Allow descriptions and other content that users need to read to wrap normally.
+
 ## Buttons and links
 
 Use `Button` for actions and `Link` for navigation. A link may have button styling through `as="button"`, but it remains navigation.
@@ -61,6 +63,10 @@ Match the rendered heights of selects and adjacent toolbar buttons, and center t
 
 For view tabs, follow **Environment overview → List/Pipeline**. Prefer a meaningful icon alongside each tab label, as in Services and Variables; keep icon treatment consistent across sibling tabs. For tabs inside a setup dialog, follow **Secret-manager integration**.
 
+In resource selectors, reuse the existing resource icon or identity component and its established configuration. Do not replace service icons with generic symbols chosen independently.
+
+Show the resource name and only the supporting information needed to distinguish options or make the selection. Do not reproduce all available resource metadata in each option.
+
 Keep the selected value visible in its control. Avoid adding a second representation that merely repeats it.
 
 Choose widths deliberately across a filter group. Leave enough space between the longest displayed value and the chevron, and verify selected values as well as the default labels. Reuse supported sizing options; inspect the shared select's padding and chevron positioning before adding local overrides. Using the shared select alone does not guarantee label clearance. If it is cramped, compare established working callers to distinguish a local sizing issue from a shared-component defect; assess other callers before changing shared defaults.
@@ -84,6 +90,8 @@ Use the shared input that matches the value:
 | Boolean setting                    | `InputToggle`   |
 | Selection checkbox                 | `Checkbox`      |
 | Mutually exclusive visible choices | `InputRadio`    |
+
+In a form with an explicit Save action, selection controls and toggles update the draft. Do not interrupt a toggle change with a confirmation dialog. If applying the change requires confirmation, handle it when saving.
 
 Use compact input variants for compact control rows, not as a general replacement for standard form fields.
 
