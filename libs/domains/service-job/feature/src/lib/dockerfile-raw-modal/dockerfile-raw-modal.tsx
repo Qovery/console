@@ -55,7 +55,7 @@ ENTRYPOINT [ "/bin/sh" ]`,
                 <CodeEditorVariable
                   environmentId={environmentId}
                   width="100%"
-                  height="calc(100vh  - 254px)"
+                  height="calc(100dvh  - 254px)"
                   value={field.value}
                   onChange={field.onChange}
                   language="dockerfile"
@@ -73,7 +73,7 @@ ENTRYPOINT [ "/bin/sh" ]`,
           >
             <CodeEditor
               width="100%"
-              height="calc(100vh  - 254px)"
+              height="calc(100dvh  - 254px)"
               defaultValue={defaultContent}
               readOnly
               language="dockerfile"

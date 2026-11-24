@@ -223,6 +223,34 @@ describe('ServiceNew', () => {
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
   })
 
+  it('should render each blueprint once after a search when two blueprints share a provider and service family', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: {
+        blueprints: [
+          { ...blueprints[1], name: 'aws-rds-mysql', displayName: 'Amazon RDS for MySQL', serviceFamily: 'mysql' },
+          { ...blueprints[1], name: 'aws-elasticache-redis', displayName: 'Amazon ElastiCache for Redis' },
+          {
+            ...blueprints[1],
+            name: 'aws-elasticache-redis-node',
+            displayName: 'Amazon ElastiCache for Redis (legacy single node)',
+          },
+        ],
+      },
+    })
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    await userEvent.type(screen.getByPlaceholderText('Search blueprints...'), 'redis')
+
+    expect(screen.getAllByRole('heading', { level: 4 }).map(({ textContent }) => textContent)).toEqual([
+      'Amazon ElastiCache for Redis',
+      'Amazon ElastiCache for Redis (legacy single node)',
+    ])
+  })
+
   it('should group blueprint cards by the primary categories returned by the catalog', () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({

@@ -1,5 +1,7 @@
+import clsx from 'clsx'
 import { type ReactNode } from 'react'
 import { Icon, Tooltip } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { REMOTE_ACCESS_COLUMN_CLASS_NAME } from '../utils/remote-access'
 
 export interface TableHead {
@@ -53,34 +55,40 @@ export function Table(props: TableProps) {
   const hasGroup = segments.some((segment) => segment.group)
 
   return (
-    <div
-      className={`flex flex-col-reverse rounded border border-neutral bg-surface-neutral text-xs text-neutral ${className}`}
-    >
-      {children}
-      <div
-        className={`sticky top-11 flex rounded-t border-b border-neutral bg-surface-neutral ${hasGroup ? 'h-16' : 'h-10'}`}
-      >
-        <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral px-4 font-medium">{title}</div>
-        {segments.map((segment) =>
-          segment.group ? (
-            <div
-              key={segment.group}
-              data-testid={`head-group-${segment.group}`}
-              className="flex h-full flex-none flex-col bg-surface-neutral-subtle"
-            >
-              <div className="flex h-6 items-center justify-center border-b border-neutral font-medium">
-                {segment.group}
+    // Below md the matrix scrolls horizontally, which disables the sticky header
+    <div className={twMerge('max-md:overflow-x-auto', className)}>
+      <div className="flex flex-col-reverse rounded border border-neutral bg-surface-neutral text-xs text-neutral max-md:min-w-[720px]">
+        {children}
+        <div
+          className={clsx(
+            'sticky top-11 flex rounded-t border-b border-neutral bg-surface-neutral max-md:static',
+            hasGroup ? 'h-16' : 'h-10'
+          )}
+        >
+          <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral px-4 font-medium">
+            {title}
+          </div>
+          {segments.map((segment) =>
+            segment.group ? (
+              <div
+                key={segment.group}
+                data-testid={`head-group-${segment.group}`}
+                className="flex h-full flex-none flex-col bg-surface-neutral-subtle"
+              >
+                <div className="flex h-6 items-center justify-center border-b border-neutral font-medium">
+                  {segment.group}
+                </div>
+                <div className="flex flex-1">
+                  {segment.heads.map((head) => (
+                    <HeadCell key={head.label} head={head} sizeClassName={REMOTE_ACCESS_COLUMN_CLASS_NAME} />
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-1">
-                {segment.heads.map((head) => (
-                  <HeadCell key={head.label} head={head} sizeClassName={REMOTE_ACCESS_COLUMN_CLASS_NAME} />
-                ))}
-              </div>
-            </div>
-          ) : (
-            <HeadCell key={segment.heads[0].label} head={segment.heads[0]} />
-          )
-        )}
+            ) : (
+              <HeadCell key={segment.heads[0].label} head={segment.heads[0]} />
+            )
+          )}
+        </div>
       </div>
     </div>
   )

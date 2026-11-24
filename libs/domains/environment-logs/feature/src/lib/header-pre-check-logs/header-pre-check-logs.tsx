@@ -57,7 +57,7 @@ export function HeaderPreCheckLogs({ preCheckStage, children }: HeaderPreCheckLo
                   <CopyToClipboardButtonIcon
                     content={deploymentId}
                     tooltipContent="Copy execution id"
-                    className="opacity-0 transition-opacity group-hover:opacity-100"
+                    className="opacity-0 transition-opacity group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                     iconClassName="text-xs"
                   />
                 )}

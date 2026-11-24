@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type Cluster, type ClusterFeatureStringResponse, KubernetesEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -6,7 +7,16 @@ import { ClusterGeneralSettings, useCluster, useEditCluster } from '@qovery/doma
 import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
-import { BlockContent, Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Callout,
+  ExternalLink,
+  Heading,
+  Icon,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
+  Section,
+} from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
@@ -96,7 +106,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
   return (
     <FormProvider {...methods}>
       <div className="flex w-full flex-col justify-between">
-        <Section className="p-8">
+        <Section className="px-4 py-8 md:p-8">
           <SettingsHeading title="General settings" />
           <div className="max-w-content-with-navigation-left">
             {cluster.cloud_provider !== 'ON_PREMISE' && (
@@ -135,7 +145,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
                   <LabelSetting filterPropagateToCloudProvider={true} />
                 </Section>
               )}
-              <div className="flex justify-end">
+              <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button
                   data-testid="submit-button"
                   type="submit"

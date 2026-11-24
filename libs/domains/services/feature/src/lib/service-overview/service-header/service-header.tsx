@@ -15,10 +15,12 @@ import {
   isAgenticWorkflow,
   isArgoCd,
   isBlueprintService,
+  isGitContainer,
 } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
+  isContainerGitSource,
   isHelmGitSource,
   isHelmRepositorySource,
   isJobContainerSource,
@@ -41,6 +43,7 @@ import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/share
 import { AgenticWorkflowServiceActions } from '../../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-service-actions'
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
+import { DeployedCommit } from '../../deployed-commit/deployed-commit'
 import { useBlueprintDatabaseMasterCredentials } from '../../hooks/use-blueprint-database-master-credentials/use-blueprint-database-master-credentials'
 import { useBlueprintDatabase } from '../../hooks/use-blueprint-database/use-blueprint-database'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
@@ -109,8 +112,8 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
 
   return (
-    <div className="flex items-center justify-between gap-4">
-      <div className="flex min-w-0 items-center gap-2">
+    <div className="flex items-center justify-between gap-x-4 gap-y-3 max-md:flex-wrap">
+      <div className="flex min-w-0 items-center gap-2 max-md:flex-wrap">
         <ServiceAvatar
           size="sm"
           radius="none"
@@ -200,6 +203,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
     ? undefined
     : match(service)
         .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+        .with({ serviceType: 'CONTAINER', source: P.when(isContainerGitSource) }, ({ source }) => source.git_repository)
         .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, ({ source }) => source.docker?.git_repository)
         .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, ({ source }) => source.git?.git_repository)
         .with({ serviceType: 'TERRAFORM' }, ({ terraform_files_source }) => terraform_files_source?.git?.git_repository)
@@ -208,6 +212,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
+    .with({ serviceType: ServiceTypeEnum.CONTAINER, source: P.when(isContainerGitSource) }, () => undefined)
     .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
       image_name,
       tag,
@@ -249,8 +254,9 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
   }
 
   return (
-    <div className="mt-3 flex items-center gap-1">
+    <div className="mt-3 flex items-center gap-1 max-md:flex-wrap">
       {gitRepository && !blueprintId && <GitRepository gitRepository={gitRepository} />}
+      {isGitContainer(service) && <DeployedCommit gitRepository={service.source.git_repository} />}
       {isArgoCdService && 'manifest_revision' in service && service.manifest_revision && (
         <CopyToClipboard text={service.manifest_revision}>
           <Button type="button" variant="outline" color="neutral" size="xs" className="pl-1">

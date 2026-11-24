@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import {
   type Cluster,
   type ClusterFeatureKarpenterParametersResponse,
@@ -17,7 +18,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type ClusterResourcesData, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
-import { Button, Section, useModal } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME, Section, useModal } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/resources'
@@ -144,7 +145,7 @@ function ClusterResourcesSettingsForm({ cluster }: { cluster: Cluster }) {
   return (
     <FormProvider {...methods}>
       <div className="flex w-full flex-col justify-between">
-        <Section className="p-8">
+        <Section className="px-4 py-8 md:p-8">
           <SettingsHeading title="Resources settings" />
           <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
             <ClusterResourcesSettings
@@ -155,7 +156,7 @@ function ClusterResourcesSettingsForm({ cluster }: { cluster: Cluster }) {
               hasAlreadyKarpenter={hasAlreadyKarpenter}
               fromDetail
             />
-            <div className="mt-10 flex justify-end">
+            <div className={clsx('mt-10 flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
               <Button
                 data-testid="submit-button"
                 type="submit"

@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import {
   type ClusterFeatureAwsExistingVpc,
   type ClusterFeatureGcpExistingVpc,
@@ -22,6 +23,7 @@ import {
   InputToggle,
   LoaderSpinner,
   ModalCrud,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Tooltip,
   useModal,
   useModalConfirmation,
@@ -104,7 +106,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
             <Icon name={IconEnum.EKS} width="16" className="mr-2" />
             EKS public subnet IDs
           </span>
-          <ul className="grid grid-cols-3 gap-4">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Subnets title="Zone A:" value={feature.eks_subnets_zone_a_ids} />
             <Subnets title="Zone B:" value={feature.eks_subnets_zone_b_ids} />
             <Subnets title="Zone C:" value={feature.eks_subnets_zone_c_ids} />
@@ -116,7 +118,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
             <Icon name={IconEnum.EKS} width="16" className="mr-2" />
             EKS private subnet IDs
           </span>
-          <ul className="grid grid-cols-3 gap-4">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Subnets title="Zone A:" value={feature.eks_karpenter_fargate_subnets_zone_a_ids} />
             <Subnets title="Zone B:" value={feature.eks_karpenter_fargate_subnets_zone_b_ids} />
             <Subnets title="Zone C:" value={feature.eks_karpenter_fargate_subnets_zone_c_ids} />
@@ -128,7 +130,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
             <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
             MongoDB subnet IDs
           </span>
-          <ul className="grid grid-cols-3 gap-4">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Subnets title="Zone A:" value={feature.documentdb_subnets_zone_a_ids} />
             <Subnets title="Zone B:" value={feature.documentdb_subnets_zone_b_ids} />
             <Subnets title="Zone C:" value={feature.documentdb_subnets_zone_c_ids} />
@@ -140,7 +142,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
             <Icon name={IconEnum.REDIS} width="16" className="mr-2" />
             Redis subnet IDs
           </span>
-          <ul className="grid grid-cols-3 gap-4">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Subnets title="Zone A:" value={feature.elasticache_subnets_zone_a_ids} />
             <Subnets title="Zone B:" value={feature.elasticache_subnets_zone_b_ids} />
             <Subnets title="Zone C:" value={feature.elasticache_subnets_zone_c_ids} />
@@ -149,7 +151,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
 
         <li className="text-neutral">
           <span className="mb-1 flex items-center text-xs font-medium">MySQL/PostgreSQL subnet IDs</span>
-          <ul className="grid grid-cols-3 gap-4">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Subnets title="Zone A:" value={feature.rds_subnets_zone_a_ids} />
             <Subnets title="Zone B:" value={feature.rds_subnets_zone_b_ids} />
             <Subnets title="Zone C:" value={feature.rds_subnets_zone_c_ids} />
@@ -668,7 +670,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
                     disabled={!canEditFeatures}
                   />
                   {canEditFeatures && (
-                    <div className="flex justify-end">
+                    <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                       <Button data-testid="submit-button" type="submit" size="lg" loading={isEditClusterLoading}>
                         Save
                       </Button>
@@ -700,7 +702,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
                     </BlockContent>
                   )}
                   {canEditFeatures && hasGcpStaticIpFeature && (
-                    <div className="flex justify-end">
+                    <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                       <Button data-testid="submit-button" type="submit" size="lg" loading={isEditClusterLoading}>
                         Save
                       </Button>

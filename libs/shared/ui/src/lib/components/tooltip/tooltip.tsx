@@ -44,11 +44,12 @@ export const Tooltip = forwardRef<ElementRef<typeof TooltipPrimitive.Trigger>, T
       <TooltipPrimitive.Portal container={container}>
         <TooltipPrimitive.Content
           className={twMerge(
-            'z-tooltip rounded bg-surface-neutralInvert-component px-2 py-1.5 text-xs font-medium text-neutralInvert',
+            'z-tooltip max-w-[calc(100vw-32px)] rounded bg-surface-neutralInvert-component px-2 py-1.5 text-xs font-medium text-neutralInvert',
             classNameContent
           )}
           side={side}
           sideOffset={6}
+          collisionPadding={8}
           align={align}
         >
           {content}

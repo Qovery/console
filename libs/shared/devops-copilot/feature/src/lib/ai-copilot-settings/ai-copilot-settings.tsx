@@ -52,7 +52,7 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
 
   return (
     <div className="w-full justify-between">
-      <Section className={embedded ? undefined : 'px-8 pb-8 pt-6'}>
+      <Section className={embedded ? undefined : 'px-4 pb-8 pt-6 md:px-8'}>
         {!embedded && (
           <SettingsHeading
             title="Copilot configuration"

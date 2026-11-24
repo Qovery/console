@@ -4,6 +4,7 @@
 // and submit logic (autoscaling/HPA/KEDA + payload).
 // DATABASE stays separate because its resources UX and managed flow are different.
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type FormEventHandler, useEffect } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -16,7 +17,7 @@ import {
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import {
   buildAutoscalingRequestFromForm,
   buildEditServicePayload,
@@ -130,22 +131,15 @@ function ServiceResourcesSettingsForm({
   advancedSettings,
 }: ServiceResourcesSettingsFormProps) {
   const { formState, watch } = useFormContext<ServiceResourcesFormData>()
-  const autoscalingMode = watch('autoscaling_mode') || 'NONE'
-
-  const currentAutoscalingMode = match(service)
-    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (resourceService) => {
-      if (resourceService.autoscaling?.mode === 'KEDA') return 'KEDA'
-      if (resourceService.min_running_instances === resourceService.max_running_instances) return 'NONE'
-      if (resourceService.min_running_instances !== resourceService.max_running_instances) return 'HPA'
-      return 'NONE'
-    })
-    .otherwise(() => 'NONE')
-
-  const isHpaToKedaMigration = currentAutoscalingMode === 'HPA' && autoscalingMode === 'KEDA'
+  // Without a scaler that has a type and a config, the payload falls back to the current policy and
+  // the switch to KEDA would be silently dropped.
+  const isKedaWithoutValidScaler =
+    watch('autoscaling_mode') === 'KEDA' &&
+    !(watch('scalers') ?? []).some((scaler) => scaler.type?.trim() && scaler.config?.trim())
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="Resources" description="Manage the resources assigned to the service." />
         <div className="max-w-content-with-navigation-left">
           <form className="space-y-10" onSubmit={onSubmit}>
@@ -154,8 +148,13 @@ function ServiceResourcesSettingsForm({
               service={service}
               advancedSettings={advancedSettings}
             />
-            <div className="flex justify-end">
-              <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid || isHpaToKedaMigration}>
+            <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
+              <Button
+                type="submit"
+                size="lg"
+                loading={loading}
+                disabled={!formState.isValid || isKedaWithoutValidScaler}
+              >
                 Save
               </Button>
             </div>

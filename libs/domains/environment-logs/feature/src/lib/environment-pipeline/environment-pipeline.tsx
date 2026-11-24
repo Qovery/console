@@ -174,7 +174,7 @@ function PipelineContent({
                               projectId: environment.project.id,
                               environmentId: environment.id,
                               serviceId: service.id,
-                              executionId: deploymentHistory?.identifier.execution_id ?? '',
+                              executionId: deploymentId,
                             }}
                             className={clsx(
                               serviceItemClassName,

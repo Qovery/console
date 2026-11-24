@@ -11,6 +11,8 @@ export function useCreateSelfManagedCluster() {
         queryKey: queries.clusters.list({ organizationId }).queryKey,
       })
     },
+    // The request can hold a registry password: do not keep it in the mutation cache once the flow is closed.
+    cacheTime: 0,
     meta: {
       notifyOnError: true,
     },

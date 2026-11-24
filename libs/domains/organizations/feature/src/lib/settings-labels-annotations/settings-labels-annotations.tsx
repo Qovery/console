@@ -10,6 +10,7 @@ import {
   Button,
   DropdownMenu,
   Icon,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
   Section,
   Skeleton,
   Tooltip,
@@ -244,7 +245,7 @@ export function SettingsLabelsAnnotations() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Labels & annotations"
@@ -253,7 +254,7 @@ export function SettingsLabelsAnnotations() {
 
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" className="absolute right-0 top-0 shrink-0">
+              <Button size="md" className={SETTINGS_HEADER_ACTION_CLASS_NAME}>
                 <Icon iconName="circle-plus" iconStyle="regular" />
                 Add new
               </Button>

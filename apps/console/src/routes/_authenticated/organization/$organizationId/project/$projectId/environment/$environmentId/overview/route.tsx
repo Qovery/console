@@ -97,8 +97,8 @@ function RouteComponent() {
     <div className="container mx-auto mt-6 pb-10">
       <Section className="gap-8">
         <div className="flex flex-col gap-6">
-          <div className="flex justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
+          <div className="flex justify-between gap-x-2 gap-y-3 max-md:flex-wrap">
+            <div className="flex min-w-0 items-center gap-2 max-md:flex-wrap">
               <EnvironmentMode mode={environment.mode} variant="shrink" className="mr-1" />
               <Tooltip content={environment.name}>
                 <Heading className="min-w-0 max-w-full truncate">{environment.name}</Heading>

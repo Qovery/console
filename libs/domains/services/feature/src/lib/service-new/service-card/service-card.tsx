@@ -287,7 +287,7 @@ export function CardService({
         className={clsx({
           'flex cursor-pointer items-center gap-6 rounded border border-neutral p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-surface-neutral-subtle':
             true,
-          'col-span-3 bg-surface-neutral-subtle p-6': expanded,
+          'col-span-full bg-surface-neutral-subtle p-6': expanded,
         })}
       >
         {expanded ? (
@@ -317,7 +317,7 @@ export function CardService({
                 <Icon iconName="xmark" />
               </Button>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
               {options
                 .filter((c) => {
                   if (c.template_id === TemplateIds.TERRAFORM && !isTerraformFeatureFlag) return true
@@ -433,7 +433,7 @@ export function SectionByTag({
     <Section>
       <Heading className="mb-1">{title}</Heading>
       {description && <p className="text-xs text-neutral-subtle">{description}</p>}
-      <div className="mt-5 grid grid-cols-3 gap-4">
+      <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {serviceTemplates
           .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
           .filter(({ tag: t }) => t === tag)
