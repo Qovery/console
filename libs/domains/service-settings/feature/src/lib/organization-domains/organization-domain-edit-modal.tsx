@@ -59,12 +59,10 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
   }, [isDirty, enableAlertClickOutside])
 
   const watchDomain = watch('domain')
-  const cnameRecords = validationDomain
-    ? [watchDomain, ...(watchDomain.includes('*') ? [] : [`*.${watchDomain}`])].map((name) => ({
-        name: `${name} CNAME`,
-        value: validationDomain,
-      }))
-    : []
+  // Record names only depend on the domain, so the block keeps its final layout while the target loads.
+  const cnameRecords = [watchDomain, ...(watchDomain.includes('*') ? [] : [`*.${watchDomain}`])].map(
+    (name) => `${name} CNAME`
+  )
 
   const save = (redeploy: boolean) =>
     handleSubmit(async (payload) => {
@@ -104,27 +102,35 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
             />
           )}
         />
-        {isLoadingValidationDomain ? (
-          <Skeleton height={102} width="100%" />
-        ) : cnameRecords.length ? (
+        {isLoadingValidationDomain || validationDomain ? (
           <div className="overflow-hidden rounded-lg border border-neutral">
             <div className="border-b border-neutral bg-surface-neutral-subtle px-3 py-2 text-xs font-medium text-neutral">
               CNAME configuration
             </div>
             <div className="flex items-start justify-between gap-3 py-2 pl-3 pr-2">
               <dl className="flex min-w-0 flex-col gap-2 font-code text-xs leading-5">
-                {cnameRecords.map(({ name, value }) => (
+                {cnameRecords.map((name) => (
                   <div key={name} className="min-w-0">
                     <dt className="truncate text-info">{name}</dt>
-                    <dd className="truncate text-neutral-subtle">{value}</dd>
+                    <dd className="h-5 truncate text-neutral-subtle">
+                      {validationDomain ?? (
+                        <span className="flex h-full items-center">
+                          <Skeleton width={240} height={12} />
+                        </span>
+                      )}
+                    </dd>
                   </div>
                 ))}
               </dl>
-              <CopyButton
-                iconOnly
-                size="xs"
-                content={cnameRecords.map(({ name, value }) => `${name} ${value}`).join('\n')}
-              />
+              {validationDomain ? (
+                <CopyButton
+                  iconOnly
+                  size="xs"
+                  content={cnameRecords.map((name) => `${name} ${validationDomain}`).join('\n')}
+                />
+              ) : (
+                <Skeleton width={24} height={24} className="shrink-0" />
+              )}
             </div>
           </div>
         ) : null}

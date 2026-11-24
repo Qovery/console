@@ -3,12 +3,15 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OrganizationDomainEditModal } from './organization-domain-edit-modal'
 
 const mockEdit = jest.fn()
+const loadedServiceDomains = [
+  { isLoading: false, data: [{ id: 'domain-web', validation_domain: 'z1-gtw.qovery.dev' }] },
+  { isLoading: false, data: [{ id: 'domain-api', validation_domain: 'z1-gtw.qovery.dev' }] },
+]
+let mockServiceDomains: { isLoading: boolean; data?: { id: string; validation_domain: string }[] }[] =
+  loadedServiceDomains
 jest.mock('@tanstack/react-query', () => ({
   ...jest.requireActual('@tanstack/react-query'),
-  useQueries: () => [
-    { isLoading: false, data: [{ id: 'domain-web', validation_domain: 'z1-gtw.qovery.dev' }] },
-    { isLoading: false, data: [{ id: 'domain-api', validation_domain: 'z1-gtw.qovery.dev' }] },
-  ],
+  useQueries: () => mockServiceDomains,
 }))
 jest.mock('@qovery/domains/custom-domains/feature', () => ({
   useEditOrganizationCustomDomain: () => ({ mutateAsync: mockEdit, isLoading: false }),
@@ -52,6 +55,7 @@ const domain: OrganizationCustomDomainResponse = {
 const onClose = jest.fn()
 beforeEach(() => {
   jest.clearAllMocks()
+  mockServiceDomains = loadedServiceDomains
   mockEdit.mockResolvedValue(undefined)
 })
 
@@ -68,6 +72,16 @@ it('shows the domain configuration, CNAME records and routes', () => {
   expect(screen.getAllByText('Service: zipline/production/web')).toHaveLength(2)
   expect(screen.getByText('Port: none')).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+})
+
+it('keeps the CNAME layout while the target loads', () => {
+  mockServiceDomains = [{ isLoading: true }, { isLoading: true }]
+  renderWithProviders(<OrganizationDomainEditModal domain={domain} onClose={onClose} />)
+  expect(screen.getByText('CNAME configuration')).toBeInTheDocument()
+  expect(screen.getByText('app.example.com CNAME')).toBeInTheDocument()
+  expect(screen.getByText('*.app.example.com CNAME')).toBeInTheDocument()
+  expect(screen.queryByText('z1-gtw.qovery.dev')).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Copy' })).not.toBeInTheDocument()
 })
 
 it('saves the settings on every service without redeploying', async () => {
