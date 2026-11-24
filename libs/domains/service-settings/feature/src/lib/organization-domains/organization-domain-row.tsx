@@ -1,7 +1,6 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
-import { useState } from 'react'
 import { useDeleteCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import {
@@ -18,7 +17,9 @@ import {
 import { pluralize } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 import { getDomainTargets } from '../utils/organization-domain-targets'
+import { type DomainDnsStatus } from '../utils/summarize-domain-dns-checks'
 import { OrganizationDomainEditModal } from './organization-domain-edit-modal'
+import { OrganizationDomainStatusBadge } from './organization-domain-status-badge'
 
 const { Table } = TablePrimitives
 
@@ -27,48 +28,25 @@ export function OrganizationDomainRow({
   selected,
   onSelectionChange,
   selectionDisabled,
+  dnsStatus = { status: 'unknown', details: [] },
+  onCheckDns,
 }: {
   domain: OrganizationCustomDomainResponse
   selected?: boolean
   onSelectionChange?: (selected: boolean) => void
   selectionDisabled?: boolean
+  dnsStatus?: { status: DomainDnsStatus; details: string[] }
+  onCheckDns?: () => void
 }) {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteDomain, isLoading: isDeleting } = useDeleteCustomDomain()
-  const queryClient = useQueryClient()
-  const [checking, setChecking] = useState(false)
-  const [dnsResult, setDnsResult] = useState('Check DNS records')
   const { data: environmentMode } = useQuery({
     ...queries.environments.list({ projectId: domain.project.id }),
     select: (environments) => environments?.find(({ id }) => id === domain.environment_id)?.mode,
   })
   const targets = getDomainTargets(domain)
-
-  const checkDns = async () => {
-    setChecking(true)
-    try {
-      const results = await Promise.all(
-        targets.map(({ service }) =>
-          queryClient.fetchQuery({
-            ...queries.services.checkCustomDomains({ serviceId: service.id, serviceType: service.type }),
-            staleTime: 0,
-          })
-        )
-      )
-      const checks = results.flatMap((items) => items ?? []).filter((item) => item.domain_name === domain.domain)
-      setDnsResult(
-        checks.length
-          ? checks.map((item) => item.error_details || 'DNS records are valid').join('\n')
-          : 'DNS check returned no result for this domain.'
-      )
-    } catch {
-      setDnsResult('Unable to check DNS records. Try again.')
-    } finally {
-      setChecking(false)
-    }
-  }
 
   return (
     <Table.Row className={selected ? 'bg-surface-brand-subtle' : undefined}>
@@ -102,6 +80,17 @@ export function OrganizationDomainRow({
             </ExternalLink>
           </Tooltip>
         </div>
+      </Table.Cell>
+      <Table.Cell className="h-12 border-r">
+        {dnsStatus.details.length ? (
+          <Tooltip content={dnsStatus.details.join('\n')}>
+            <span className="inline-flex">
+              <OrganizationDomainStatusBadge status={dnsStatus.status} />
+            </span>
+          </Tooltip>
+        ) : (
+          <OrganizationDomainStatusBadge status={dnsStatus.status} />
+        )}
       </Table.Cell>
       <Table.Cell className="h-12 border-r">
         <Link
@@ -185,15 +174,15 @@ export function OrganizationDomainRow({
               <Icon iconName="pencil" />
             </Button>
           </Tooltip>
-          <Tooltip content={dnsResult}>
+          <Tooltip content="Check DNS records">
             <Button
               aria-label={`Check DNS for ${domain.domain}`}
               iconOnly
               variant="outline"
               color="neutral"
               size="xs"
-              disabled={checking || !targets.length}
-              onClick={checkDns}
+              disabled={!onCheckDns || dnsStatus.status === 'checking' || !targets.length}
+              onClick={onCheckDns}
             >
               <Icon iconName="arrow-rotate-right" />
             </Button>
@@ -228,9 +217,6 @@ export function OrganizationDomainRow({
               <Icon iconName="trash" />
             </Button>
           </Tooltip>
-          <span role="status" className="sr-only">
-            {dnsResult}
-          </span>
         </div>
       </Table.Cell>
     </Table.Row>

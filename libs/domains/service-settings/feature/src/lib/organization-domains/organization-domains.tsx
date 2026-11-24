@@ -14,6 +14,7 @@ import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import {
+  Badge,
   Button,
   Checkbox,
   EmptyState,
@@ -32,9 +33,12 @@ import {
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { getDomainSelectionKey, getDomainTargets } from '../utils/organization-domain-targets'
+import { DOMAIN_DNS_STATUSES, type DomainDnsStatus } from '../utils/summarize-domain-dns-checks'
 import { OrganizationDomainActionBar } from './organization-domain-action-bar'
 import { OrganizationDomainCreateModal } from './organization-domain-create-modal'
 import { OrganizationDomainRow } from './organization-domain-row'
+import { DOMAIN_DNS_STATUS_DISPLAY, OrganizationDomainStatusBadge } from './organization-domain-status-badge'
+import { useOrganizationDomainDnsStatuses } from './use-organization-domain-dns-statuses'
 
 const { Table } = TablePrimitives
 
@@ -52,6 +56,9 @@ function OrganizationDomainsSkeletonRows() {
           <Skeleton width={160 + ((index * 37) % 120)} height={16} />
           <Skeleton width={24} height={24} rounded />
         </div>
+      </Table.Cell>
+      <Table.Cell className="h-12 border-r">
+        <Skeleton width={64} height={24} />
       </Table.Cell>
       <Table.Cell className="h-12 border-r">
         <Skeleton width={72 + ((index * 23) % 48)} height={16} />
@@ -111,7 +118,14 @@ export function OrganizationDomainsContent() {
   const { openModal, closeModal } = useModal()
   const navigate = route.useNavigate()
   const { page = 1 } = route.useSearch()
-  const [filterState, setFilterState] = useState({ projectId: '', environmentId: '', search: '', pageSize: 30 })
+  const [filterState, setFilterState] = useState<{
+    projectId: string
+    environmentId: string
+    search: string
+    pageSize: number
+    // Statuses are only known for the domains on screen, so this filter applies to the current page.
+    status: DomainDnsStatus | ''
+  }>({ projectId: '', environmentId: '', search: '', pageSize: 30, status: '' })
   const filters = { ...filterState, page }
   // Selection belongs to the page it was made on, including when the page changes through browser history.
   const [selection, setSelection] = useState<{ page: number; rows: RowSelectionState }>({ page, rows: {} })
@@ -147,40 +161,68 @@ export function OrganizationDomainsContent() {
     }),
     keepPreviousData: true,
   })
-  const columns = useMemo<ColumnDef<OrganizationCustomDomainResponse>[]>(
-    () => [
-      { id: 'domain', header: 'Domain', enableColumnFilter: false },
-      ...[
-        { id: 'projectId', header: 'Project', options: projects },
-        { id: 'environmentId', header: 'Environment', options: environments },
-      ].map(({ id, header, options }) => ({
-        id,
-        header,
-        accessorFn: (domain: OrganizationCustomDomainResponse) =>
-          id === 'projectId' ? domain.project.id : domain.environment_id,
-        meta: {
-          facetedValues: new Map(options.map(({ id }) => [id, 1])),
-          customFacetEntry: ({ value }: { value: string }) => (
-            <span className="min-w-0 truncate text-sm font-medium">
-              {options.find((option) => option.id === value)?.name}
-            </span>
-          ),
-          customFilterValue: ({ filterValue }: { filterValue: string[] }) => (
-            <Truncate text={options.find((option) => option.id === filterValue[0])?.name ?? ''} truncateLimit={12} />
-          ),
-        },
-      })),
-      { id: 'routes', header: 'Routes', enableColumnFilter: false },
-      { id: 'actions', header: 'Actions', enableColumnFilter: false },
-    ],
-    [projects, environments]
+  const pageDomains = useMemo(() => data?.results ?? [], [data])
+  const { statuses, recheck } = useOrganizationDomainDnsStatuses(pageDomains)
+  const getStatus = (domain: OrganizationCustomDomainResponse) =>
+    statuses.get(getDomainSelectionKey(domain)) ?? { status: 'unknown' as const, details: [] }
+  const statusCounts = new Map<DomainDnsStatus, number>()
+  pageDomains.forEach((domain) => {
+    const { status } = getStatus(domain)
+    statusCounts.set(status, (statusCounts.get(status) ?? 0) + 1)
+  })
+  const visibleDomains = filters.status
+    ? pageDomains.filter((domain) => getStatus(domain).status === filters.status)
+    : pageDomains
+  const statusFacets = new Map(
+    DOMAIN_DNS_STATUSES.filter((status) => statusCounts.has(status)).map((status) => [
+      status as string,
+      statusCounts.get(status) ?? 0,
+    ])
   )
+  // Not memoized: the status facets change with every DNS check result.
+  const columns: ColumnDef<OrganizationCustomDomainResponse>[] = [
+    { id: 'domain', header: 'Domain', enableColumnFilter: false },
+    {
+      id: 'status',
+      header: 'Status',
+      accessorFn: (domain) => getStatus(domain).status,
+      meta: {
+        facetedValues: statusFacets,
+        customFacetEntry: ({ value }: { value: DomainDnsStatus }) => <OrganizationDomainStatusBadge status={value} />,
+        customFilterValue: ({ filterValue }: { filterValue: string[] }) =>
+          DOMAIN_DNS_STATUS_DISPLAY[filterValue[0] as DomainDnsStatus]?.label,
+      },
+    },
+    ...[
+      { id: 'projectId', header: 'Project', options: projects },
+      { id: 'environmentId', header: 'Environment', options: environments },
+    ].map(({ id, header, options }) => ({
+      id,
+      header,
+      accessorFn: (domain: OrganizationCustomDomainResponse) =>
+        id === 'projectId' ? domain.project.id : domain.environment_id,
+      meta: {
+        facetedValues: new Map(options.map(({ id }) => [id, 1])),
+        customFacetEntry: ({ value }: { value: string }) => (
+          <span className="min-w-0 truncate text-sm font-medium">
+            {options.find((option) => option.id === value)?.name}
+          </span>
+        ),
+        customFilterValue: ({ filterValue }: { filterValue: string[] }) => (
+          <Truncate text={options.find((option) => option.id === filterValue[0])?.name ?? ''} truncateLimit={12} />
+        ),
+      },
+    })),
+    { id: 'routes', header: 'Routes', enableColumnFilter: false },
+    { id: 'actions', header: 'Actions', enableColumnFilter: false },
+  ]
   const columnFilters: ColumnFiltersState = [
+    ...(filters.status ? [{ id: 'status', value: [filters.status] }] : []),
     ...(filters.projectId ? [{ id: 'projectId', value: [filters.projectId] }] : []),
     ...(filters.environmentId ? [{ id: 'environmentId', value: [filters.environmentId] }] : []),
   ]
   const table = useReactTable({
-    data: data?.results ?? [],
+    data: visibleDomains,
     columns,
     state: { columnFilters, rowSelection },
     onRowSelectionChange: setRowSelection,
@@ -190,12 +232,20 @@ export function OrganizationDomainsContent() {
       const projectId = (nextFilters.find(({ id }) => id === 'projectId')?.value as string[] | undefined)?.[0] ?? ''
       const environmentId =
         (nextFilters.find(({ id }) => id === 'environmentId')?.value as string[] | undefined)?.[0] ?? ''
-      setFilters((current) => ({
-        ...current,
-        projectId,
-        environmentId: projectId === current.projectId ? environmentId : '',
-        page: 1,
-      }))
+      const status = ((nextFilters.find(({ id }) => id === 'status')?.value as string[] | undefined)?.[0] ?? '') as
+        | DomainDnsStatus
+        | ''
+      setFilters((current) => {
+        const nextEnvironmentId = projectId === current.projectId ? environmentId : ''
+        const serverFiltersChanged = projectId !== current.projectId || nextEnvironmentId !== current.environmentId
+        return {
+          ...current,
+          projectId,
+          environmentId: nextEnvironmentId,
+          status,
+          page: serverFiltersChanged ? 1 : current.page,
+        }
+      })
     },
     getRowId: getDomainSelectionKey,
     manualFiltering: true,
@@ -220,7 +270,35 @@ export function OrganizationDomainsContent() {
         <div className="space-y-4" aria-busy={isFetching}>
           <div className="overflow-hidden rounded-lg border border-neutral">
             <div className="flex items-center justify-between gap-3 bg-surface-neutral-subtle px-4 py-3">
-              <span className="text-xs text-neutral-subtle">{data?.total_count ?? 0} domains</span>
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <span className="text-xs text-neutral-subtle">{data?.total_count ?? 0} domains</span>
+                {statusFacets.size ? (
+                  <div className="flex flex-wrap items-center gap-2" role="group" aria-label="DNS status on this page">
+                    {[...statusFacets].map(([status, count]) => {
+                      const { label, color } = DOMAIN_DNS_STATUS_DISPLAY[status as DomainDnsStatus]
+                      const active = filters.status === status
+                      return (
+                        <button
+                          key={status}
+                          type="button"
+                          aria-pressed={active}
+                          className="rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
+                          onClick={() => setFilters({ ...filters, status: active ? '' : (status as DomainDnsStatus) })}
+                        >
+                          <Badge
+                            variant="surface"
+                            color={color}
+                            radius="full"
+                            className={active ? 'text-ssm font-medium ring-1 ring-current' : 'text-ssm font-medium'}
+                          >
+                            {count} {label.toLowerCase()}
+                          </Badge>
+                        </button>
+                      )
+                    })}
+                  </div>
+                ) : null}
+              </div>
               <TableFilterSearch
                 aria-label="Search domains"
                 placeholder="Search..."
@@ -228,9 +306,10 @@ export function OrganizationDomainsContent() {
                 onChange={(event) => setFilters({ ...filters, search: event.target.value, page: 1 })}
               />
             </div>
-            <Table.Root className="w-full min-w-[1100px] table-fixed" containerClassName="rounded-none border-0">
+            <Table.Root className="w-full min-w-[1240px] table-fixed" containerClassName="rounded-none border-0">
               <colgroup>
-                <col className="w-[36%]" />
+                <col className="w-[30%]" />
+                <col className="w-[140px]" />
                 <col className="w-[180px]" />
                 <col className="w-[200px]" />
                 <col />
@@ -278,7 +357,7 @@ export function OrganizationDomainsContent() {
               <Table.Body>
                 {isError ? (
                   <Table.Row>
-                    <Table.Cell colSpan={5} className="py-8 text-center">
+                    <Table.Cell colSpan={6} className="py-8 text-center">
                       <p className="mb-3 text-sm text-neutral-subtle">Unable to load domains.</p>
                       <Button variant="outline" color="neutral" onClick={() => refetch()}>
                         Retry
@@ -287,14 +366,16 @@ export function OrganizationDomainsContent() {
                   </Table.Row>
                 ) : isLoading ? (
                   <OrganizationDomainsSkeletonRows />
-                ) : !data?.results.length ? (
+                ) : !visibleDomains.length ? (
                   <Table.Row>
-                    <Table.Cell colSpan={5} className="py-8 text-center text-sm text-neutral-subtle">
-                      {filters.search || filters.projectId
-                        ? 'No matching domains. Adjust your filters or search.'
-                        : filters.page > 1
-                          ? 'No domains on this page.'
-                          : 'No domains configured. Add a custom domain to a service.'}
+                    <Table.Cell colSpan={6} className="py-8 text-center text-sm text-neutral-subtle">
+                      {filters.status && pageDomains.length
+                        ? `No ${DOMAIN_DNS_STATUS_DISPLAY[filters.status].label.toLowerCase()} domains on this page.`
+                        : filters.search || filters.projectId
+                          ? 'No matching domains. Adjust your filters or search.'
+                          : filters.page > 1
+                            ? 'No domains on this page.'
+                            : 'No domains configured. Add a custom domain to a service.'}
                     </Table.Cell>
                   </Table.Row>
                 ) : (
@@ -306,6 +387,8 @@ export function OrganizationDomainsContent() {
                         domain={row.original}
                         selected={row.getIsSelected()}
                         selectionDisabled={isFetching || !row.getCanSelect()}
+                        dnsStatus={getStatus(row.original)}
+                        onCheckDns={() => recheck(row.original)}
                         onSelectionChange={(selected) => row.toggleSelected(selected)}
                       />
                     ))

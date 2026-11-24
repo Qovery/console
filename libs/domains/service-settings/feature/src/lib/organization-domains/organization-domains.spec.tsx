@@ -25,6 +25,11 @@ jest.mock('@tanstack/react-router', () => ({
   }),
 }))
 jest.mock('@tanstack/react-query', () => ({ ...jest.requireActual('@tanstack/react-query'), useQuery: jest.fn() }))
+const mockRecheck = jest.fn()
+let mockDnsStatuses = new Map<string, { status: string; details: string[] }>()
+jest.mock('./use-organization-domain-dns-statuses', () => ({
+  useOrganizationDomainDnsStatuses: () => ({ statuses: mockDnsStatuses, recheck: mockRecheck }),
+}))
 jest.mock('@qovery/shared/iam/feature', () => ({ useUserRole: () => ({ roles: mockRoles, loading: false }) }))
 jest.mock('./organization-domain-row', () => ({
   OrganizationDomainRow: ({
@@ -71,6 +76,7 @@ let mockState = { data: result, isLoading: false, isFetching: false, isError: fa
 
 beforeEach(() => {
   mockList.mockClear()
+  mockDnsStatuses = new Map()
   mockSearch = {}
   mockNavigate
     .mockReset()
@@ -241,4 +247,44 @@ it('shows an indeterminate page checkbox for partial selection and selects only 
   expect(selectPage).toBeChecked()
   await userEvent.click(selectPage)
   expect(screen.queryByRole('region', { name: 'Selected domain actions' })).not.toBeInTheDocument()
+})
+
+it('counts DNS statuses on the page and filters the page by status', async () => {
+  mockState = {
+    ...mockState,
+    data: {
+      ...result,
+      results: [
+        result.results[0],
+        { ...result.results[0], domain: 'api.example.com' },
+        { ...result.results[0], domain: 'www.example.com' },
+      ],
+    },
+  }
+  mockDnsStatuses = new Map([
+    ['env:app.example.com', { status: 'valid', details: [] }],
+    ['env:api.example.com', { status: 'failing', details: ['Wrong host'] }],
+    ['env:www.example.com', { status: 'valid', details: [] }],
+  ])
+  const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  const summary = screen.getByRole('group', { name: 'DNS status on this page' })
+  expect(
+    within(summary)
+      .getAllByRole('button')
+      .map((button) => button.textContent)
+  ).toEqual(['1 failing', '2 valid'])
+
+  await userEvent.click(within(summary).getByRole('button', { name: '1 failing' }))
+  expect(screen.getByText('api.example.com')).toBeInTheDocument()
+  expect(screen.queryByText('app.example.com')).not.toBeInTheDocument()
+  expect(within(summary).getByRole('button', { name: '1 failing' })).toHaveAttribute('aria-pressed', 'true')
+  expect(mockNavigate).not.toHaveBeenCalled()
+
+  await userEvent.click(screen.getByRole('button', { name: 'Clear Status filter' }))
+  expect(screen.getByText('app.example.com')).toBeInTheDocument()
+
+  await userEvent.click(screen.getByRole('button', { name: 'Status' }))
+  await userEvent.click(screen.getByRole('menuitem', { name: 'Valid' }))
+  expect(screen.queryByText('api.example.com')).not.toBeInTheDocument()
+  expect(screen.getByText('www.example.com')).toBeInTheDocument()
 })

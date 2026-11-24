@@ -1,12 +1,11 @@
 import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { TablePrimitives } from '@qovery/shared/ui'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { OrganizationDomainRow } from './organization-domain-row'
 
 const mockDelete = jest.fn().mockResolvedValue(undefined)
 const mockConfirm = jest.fn()
-const mockFetch = jest.fn()
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-1' }),
@@ -14,7 +13,6 @@ jest.mock('@tanstack/react-router', () => ({
 jest.mock('@tanstack/react-query', () => ({
   ...jest.requireActual('@tanstack/react-query'),
   useQuery: () => ({ data: 'PRODUCTION' }),
-  useQueryClient: () => ({ fetchQuery: mockFetch }),
 }))
 jest.mock('@qovery/domains/custom-domains/feature', () => ({
   useDeleteCustomDomain: () => ({ mutateAsync: mockDelete, isLoading: false }),
@@ -84,12 +82,34 @@ it('requires confirmation and removes each service configuration once', async ()
   })
 })
 
-it('checks DNS on demand and reports failures', async () => {
-  mockFetch.mockRejectedValueOnce(new Error('offline'))
-  const { userEvent } = renderRow()
-  expect(mockFetch).not.toHaveBeenCalled()
+it('shows the DNS status with failure details and rechecks on demand', async () => {
+  const onCheckDns = jest.fn()
+  const { userEvent } = renderWithProviders(
+    <Table.Root>
+      <Table.Body>
+        <OrganizationDomainRow
+          domain={domain}
+          dnsStatus={{ status: 'failing', details: ['CNAME points to the wrong host'] }}
+          onCheckDns={onCheckDns}
+        />
+      </Table.Body>
+    </Table.Root>
+  )
+  expect(screen.getByText('Failing')).toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Check DNS for app.example.com' }))
-  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Unable to check DNS records'))
+  expect(onCheckDns).toHaveBeenCalled()
+})
+
+it('disables the DNS check while it runs', () => {
+  renderWithProviders(
+    <Table.Root>
+      <Table.Body>
+        <OrganizationDomainRow domain={domain} dnsStatus={{ status: 'checking', details: [] }} onCheckDns={jest.fn()} />
+      </Table.Body>
+    </Table.Root>
+  )
+  expect(screen.getByText('Checking')).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Check DNS for app.example.com' })).toBeDisabled()
 })
 
 it('renders a controlled row checkbox and reports changes', async () => {
