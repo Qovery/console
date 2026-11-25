@@ -241,7 +241,7 @@ function LlmProviderRow({ organizationId, llmProvider, currentUserSub, canManage
 
 function LlmProvidersSkeleton() {
   return (
-    <BlockContent title="Tokens" classNameContent="p-0">
+    <BlockContent title="Model tokens" classNameContent="p-0">
       {[0, 1].map((index) => (
         <div key={index} className="flex items-center justify-between gap-4 border-b border-neutral p-4 last:border-0">
           <div className="space-y-2">
