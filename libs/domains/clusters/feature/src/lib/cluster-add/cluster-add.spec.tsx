@@ -1,5 +1,6 @@
+import axios from 'axios'
 import posthog from 'posthog-js'
-import { type Gate } from '@qovery/shared/billing-kit'
+import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing-kit'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { type SelfManagedClusterCreationFlowProps } from '../self-managed-cluster-creation/self-managed-cluster-creation-flow'
 import { ClusterAdd } from './cluster-add'
@@ -36,7 +37,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
 const mockGatesCall = jest.fn()
-const originalFetch = global.fetch
+const originalAdapter = axios.defaults.adapter
 const mockGateIntro = jest.fn()
 
 const lockedManaged: Gate = {
@@ -118,7 +119,7 @@ describe('ClusterAdd', () => {
     mockBillingFlag.mockReturnValue(false)
     mockGateIntro.mockClear()
     mockGatesCall.mockClear()
-    global.fetch = jest.fn(async (input, init) => {
+    axios.defaults.adapter = createPricingFetchAdapter(async (input, init) => {
       const url = new URL(String(input))
       if (url.pathname.endsWith('/gates')) {
         mockGatesCall(Object.fromEntries(url.searchParams))
@@ -131,7 +132,7 @@ describe('ClusterAdd', () => {
     })
   })
   afterEach(() => {
-    global.fetch = originalFetch
+    axios.defaults.adapter = originalAdapter
     jest.restoreAllMocks()
   })
 

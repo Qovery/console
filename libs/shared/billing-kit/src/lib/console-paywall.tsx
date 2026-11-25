@@ -87,7 +87,6 @@ export function usePricingClient(): PricingClient {
     const client = pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: PRICING_API_URL,
-        fetch: (input, init) => fetch(input, init),
         getToken: () => window.localStorage.getItem('qovery-e2e-auth-token') ?? getAccessTokenSilently(),
       })
     )

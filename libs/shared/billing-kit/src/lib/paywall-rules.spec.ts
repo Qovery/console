@@ -416,19 +416,14 @@ describe('paywall intros', () => {
     const fetchMock = jest
       .fn()
       .mockResolvedValue({ ok: true, status: 204, headers: new Headers(), text: () => Promise.resolve('') })
-    const original = global.fetch
-    global.fetch = fetchMock as unknown as typeof fetch
-    try {
-      await createPricingClient({ pricingApiUrl: 'https://p', getToken: () => Promise.resolve('t') }).gateIntro?.(
-        'org-1',
-        {
-          sku: 'service_catalog',
-          action: 'continued',
-        }
-      )
-    } finally {
-      global.fetch = original
-    }
+    await createPricingClient({
+      pricingApiUrl: 'https://p',
+      getToken: () => Promise.resolve('t'),
+      fetch: fetchMock,
+    }).gateIntro?.('org-1', {
+      sku: 'service_catalog',
+      action: 'continued',
+    })
     const [url, init] = fetchMock.mock.calls[0]
     expect(url).toBe('https://p/organization/org-1/gates/intro')
     expect(init.method).toBe('POST')

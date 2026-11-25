@@ -1,8 +1,9 @@
 import { within } from '@testing-library/react'
+import axios from 'axios'
 import posthog from 'posthog-js'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
-import { type Gate } from '@qovery/shared/billing-kit'
+import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing-kit'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OTHER_BLUEPRINT_CATEGORY } from '../blueprint-utils/blueprint-utils'
 import { ServiceNew } from './service-new'
@@ -70,7 +71,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
 const mockGatesCall = jest.fn()
-const originalFetch = global.fetch
+const originalAdapter = axios.defaults.adapter
 
 const lockedBlueprints: Gate = {
   action: 'blueprint.create',
@@ -135,14 +136,14 @@ const blueprints: BlueprintItem[] = [
 
 describe('ServiceNew', () => {
   afterEach(() => {
-    global.fetch = originalFetch
+    axios.defaults.adapter = originalAdapter
     jest.restoreAllMocks()
   })
   beforeEach(() => {
     mockGates.current = undefined
     mockBillingFlag.mockReturnValue(false)
     mockGatesCall.mockClear()
-    global.fetch = jest.fn(async (input) => {
+    axios.defaults.adapter = createPricingFetchAdapter(async (input) => {
       const url = new URL(String(input))
       if (url.pathname.endsWith('/gates')) {
         mockGatesCall(Object.fromEntries(url.searchParams))
