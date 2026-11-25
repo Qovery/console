@@ -448,6 +448,15 @@ describe('ConnectAgentModal', () => {
       </Dialog.Root>
     )
     expect(screen.getByRole('heading', { name: 'Connect an agent' })).toBeInTheDocument()
+    const expectTabPanelAssociation = (name: string) => {
+      const tab = screen.getByRole('tab', { name, selected: true })
+      const panel = screen.getByRole('tabpanel', { name })
+      expect(tab.id).not.toBe('')
+      expect(document.getElementById(panel.getAttribute('aria-labelledby') ?? '')).toBe(tab)
+      expect(document.getElementById(tab.getAttribute('aria-controls') ?? '')).toBe(panel)
+    }
+    expectTabPanelAssociation('Qovery skills')
+
     expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
     expect(
       within(screen.getByRole('group', { name: 'Copy the skills install command' })).getByRole('button', {
@@ -458,11 +467,13 @@ describe('ConnectAgentModal', () => {
     screen.getByRole('tab', { name: 'Qovery skills' }).focus()
     await userEvent.keyboard('{ArrowRight}')
     expect(screen.getByRole('tab', { name: 'CLI', selected: true })).toHaveFocus()
+    expectTabPanelAssociation('CLI')
     expect(screen.getByText('curl -fsSL https://get.qovery.com | bash')).toBeInTheDocument()
     expect(screen.getByText('qovery auth')).toBeInTheDocument()
 
     await userEvent.keyboard('{ArrowRight}')
     expect(screen.getByRole('tab', { name: 'MCP server', selected: true })).toHaveFocus()
+    expectTabPanelAssociation('MCP server')
     expect(screen.getByText(/claude mcp add --transport http qovery/)).toBeInTheDocument()
 
     // A top-level TOML key below a [section] header would belong to that section and be ignored.

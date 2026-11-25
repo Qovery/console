@@ -25,21 +25,21 @@ export function ConnectAgentModal({ onClose, closeLabel = 'Close' }: { onClose: 
           <Tabs.List asChild className="overflow-visible">
             <Navbar.Root activeId={`${tabsId}-${activeTab}`} ariaLabel="Setup methods">
               <Tabs.Trigger id={`${tabsId}-skills`} value="skills" asChild className="h-auto border-0 px-3 py-3">
-                <Navbar.Item id={`${tabsId}-skills`}>
+                <Navbar.Item id={`${tabsId}-skills`} domId={`${tabsId}-skills`}>
                   <Icon iconName="book" iconStyle="regular" />
-                  <span id={`${tabsId}-skills`}>Qovery skills</span>
+                  Qovery skills
                 </Navbar.Item>
               </Tabs.Trigger>
               <Tabs.Trigger id={`${tabsId}-cli`} value="cli" asChild className="h-auto border-0 px-3 py-3">
-                <Navbar.Item id={`${tabsId}-cli`}>
+                <Navbar.Item id={`${tabsId}-cli`} domId={`${tabsId}-cli`}>
                   <Icon iconName="terminal" iconStyle="regular" />
-                  <span id={`${tabsId}-cli`}>CLI</span>
+                  CLI
                 </Navbar.Item>
               </Tabs.Trigger>
               <Tabs.Trigger id={`${tabsId}-mcp`} value="mcp" asChild className="h-auto border-0 px-3 py-3">
-                <Navbar.Item id={`${tabsId}-mcp`}>
+                <Navbar.Item id={`${tabsId}-mcp`} domId={`${tabsId}-mcp`}>
                   <Icon iconName="plug" iconStyle="regular" />
-                  <span id={`${tabsId}-mcp`}>MCP server</span>
+                  MCP server
                 </Navbar.Item>
               </Tabs.Trigger>
             </Navbar.Root>
