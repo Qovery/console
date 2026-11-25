@@ -46,7 +46,13 @@ const HIGHLIGHTS = ['members.seats', 'clusters.managed', 'deploy.minutes', 'obse
 
 function Cell({ e, currency }: { e?: PublicEntitlement; currency: string }) {
   if (!e) return <span className="text-neutral-subtle">—</span>
-  if (e.value === true) return <Check className="text-positive" />
+  if (e.value === true)
+    return (
+      <>
+        <Check className="text-positive" />
+        <span className="sr-only">Included</span>
+      </>
+    )
   if (e.value === false) return <span className="text-neutral-subtle">—</span>
   const over = e.overage_unit_price?.[currency]
   return (
@@ -192,14 +198,23 @@ export function PricingTable({
   useEffect(() => setLoaded(given), [given])
   useEffect(() => {
     if (given || !client) return
+    let live = true
+    setError('')
     client
       .publicPlans()
-      .then(setLoaded)
-      .catch((e) => setError(String(e?.message ?? e)))
+      .then((value) => {
+        if (live) setLoaded(value)
+      })
+      .catch((e) => {
+        if (live) setError(String(e?.message ?? e))
+      })
+    return () => {
+      live = false
+    }
   }, [given, client])
   const data = loaded
   const plans = useMemo(() => [...(data?.plans ?? [])].sort((a, b) => a.rank - b.rank), [data])
-  if (error)
+  if (!data && error)
     return (
       <div className="rounded border border-neutral p-6 text-sm text-neutral-subtle">
         The plans could not be loaded ({error}).
@@ -210,7 +225,13 @@ export function PricingTable({
     0,
     ...plans.flatMap((p) => p.yearly_saving.filter((s) => s.currency === currency).map((s) => s.saving_pct))
   )
-  const skus = plans[0]?.entitlements.map((e) => e) ?? []
+  const skus = new Map<string, PublicEntitlement>()
+  for (const plan of plans) {
+    for (const entitlement of plan.entitlements) {
+      if (!skus.has(entitlement.sku)) skus.set(entitlement.sku, entitlement)
+    }
+  }
+  const salesPlan = plans.find((p) => p.contact_sales)
 
   return (
     <div className="flex flex-col gap-8">
@@ -290,6 +311,7 @@ export function PricingTable({
                   variant="outline"
                   color="neutral"
                   className="mb-5 w-full justify-center"
+                  disabled={!onContactSales}
                   onClick={() => onContactSales?.(p)}
                 >
                   Contact sales
@@ -300,7 +322,7 @@ export function PricingTable({
                   variant={popular ? 'solid' : 'outline'}
                   color={popular ? 'brand' : 'neutral'}
                   className="mb-5 w-full justify-center"
-                  disabled={current}
+                  disabled={current || !onSelect}
                   onClick={() => onSelect?.(p, period)}
                 >
                   {current ? 'Current plan' : currentPlan ? `Switch to ${p.name}` : 'Get started'}
@@ -341,7 +363,7 @@ export function PricingTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral">
-              {skus.map((row) => (
+              {[...skus.values()].map((row) => (
                 <tr key={row.sku}>
                   <td className="px-4 py-3 text-neutral">
                     <span className="inline-flex items-center gap-1.5">
@@ -390,14 +412,7 @@ export function PricingTable({
           builders={data?.builders}
           plans={plans}
           currency={currency}
-          onContactSales={
-            onContactSales
-              ? () => {
-                  const p = plans.find((x) => x.contact_sales)
-                  if (p) onContactSales(p)
-                }
-              : undefined
-          }
+          onContactSales={onContactSales && salesPlan ? () => onContactSales(salesPlan) : undefined}
         />
       )}
 

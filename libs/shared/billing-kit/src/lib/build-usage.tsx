@@ -94,9 +94,40 @@ const pct = (x: number) => `${Math.round(x * 100)}%`
 const when = (iso: string) =>
   `${new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' })} UTC`
 
+type BuildSort = { key: BuildSortKey; desc: boolean }
+
+function BuildTableHeader({
+  k,
+  children,
+  right,
+  sort,
+  sortBy,
+}: {
+  k?: BuildSortKey
+  children: React.ReactNode
+  right?: boolean
+  sort?: BuildSort
+  sortBy?: (key: BuildSortKey) => void
+}) {
+  return (
+    <th className={`whitespace-nowrap px-3 py-2 font-medium ${right ? 'text-right' : ''}`}>
+      {k && sort && sortBy ? (
+        <button type="button" className="inline-flex items-center gap-1 hover:text-neutral" onClick={() => sortBy(k)}>
+          {children}
+          {sort.key === k && <Icon iconName={sort.desc ? 'arrow-down' : 'arrow-up'} className="text-[10px]" />}
+        </button>
+      ) : (
+        children
+      )}
+    </th>
+  )
+}
+
 export function BuildUsage({ organizationId, client, load, staff, today = new Date() }: BuildUsageProps) {
-  const loader: BuildUsageLoader | undefined =
-    load ?? (client?.buildUsage ? (r) => client.buildUsage!(organizationId, r) : undefined)
+  const loader = useMemo<BuildUsageLoader | undefined>(
+    () => load ?? (client?.buildUsage ? (r) => client.buildUsage!(organizationId, r) : undefined),
+    [load, client, organizationId]
+  )
   const [preset, setPreset] = useState<BuildPreset>('last_30')
   const [custom, setCustom] = useState(() => {
     const r = buildRange('last_3', today)
@@ -107,7 +138,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
   const [loading, setLoading] = useState(false)
   const [chart, setChart] = useState<'size' | 'split' | 'cost'>('size')
   const [filter, setFilter] = useState<BuildServiceFilter>({ q: '', type: '', size: '', built: 'all' })
-  const [sort, setSort] = useState<{ key: BuildSortKey; desc: boolean }>({ key: 'counted_build_minutes', desc: true })
+  const [sort, setSort] = useState<BuildSort>({ key: 'counted_build_minutes', desc: true })
   const [drill, setDrill] = useState<BuildServiceUsage>()
   const rangeError = preset === 'custom' ? customRangeError(custom.from, custom.to, today) : ''
   const range = useMemo(
@@ -161,19 +192,6 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
     t && t.counted_build_minutes + t.deploy_minutes > 0
       ? t.counted_build_minutes / (t.counted_build_minutes + t.deploy_minutes)
       : 0
-
-  const Th = ({ k, children, right }: { k?: BuildSortKey; children: React.ReactNode; right?: boolean }) => (
-    <th className={`whitespace-nowrap px-3 py-2 font-medium ${right ? 'text-right' : ''}`}>
-      {k ? (
-        <button type="button" className="inline-flex items-center gap-1 hover:text-neutral" onClick={() => sortBy(k)}>
-          {children}
-          {sort.key === k && <Icon iconName={sort.desc ? 'arrow-down' : 'arrow-up'} className="text-[10px]" />}
-        </button>
-      ) : (
-        children
-      )}
-    </th>
-  )
 
   return (
     <section className="rounded border border-neutral bg-surface-neutral p-5" aria-label="Build usage">
@@ -229,7 +247,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
             <Icon iconName={d.source.complete ? 'circle-check' : 'circle-info'} iconStyle="regular" className="mr-1" />
             {d.source.note}
           </p>
-          {t.deployments === 0 ? (
+          {t.deployments === 0 && t.builds === 0 ? (
             <p className="py-8 text-center text-sm text-neutral-subtle">
               No build or deployment reported in this period.
             </p>
@@ -506,33 +524,35 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                   <table className="w-full text-sm">
                     <thead className="bg-surface-neutral">
                       <tr className="text-left text-xs text-neutral-subtle">
-                        <Th k="name">Service</Th>
-                        {multiOrg && <Th>Organization</Th>}
-                        <Th k="builds" right>
+                        <BuildTableHeader sort={sort} sortBy={sortBy} k="name">
+                          Service
+                        </BuildTableHeader>
+                        {multiOrg && <BuildTableHeader>Organization</BuildTableHeader>}
+                        <BuildTableHeader sort={sort} sortBy={sortBy} k="builds" right>
                           Builds
-                        </Th>
-                        <Th k="counted_build_minutes" right>
+                        </BuildTableHeader>
+                        <BuildTableHeader sort={sort} sortBy={sortBy} k="counted_build_minutes" right>
                           Build min
-                        </Th>
-                        <Th k="deploy_minutes" right>
+                        </BuildTableHeader>
+                        <BuildTableHeader sort={sort} sortBy={sortBy} k="deploy_minutes" right>
                           Deploy min
-                        </Th>
-                        <Th k="avg_build_seconds" right>
+                        </BuildTableHeader>
+                        <BuildTableHeader sort={sort} sortBy={sortBy} k="avg_build_seconds" right>
                           Avg build
-                        </Th>
-                        <Th k="p95_build_seconds" right>
+                        </BuildTableHeader>
+                        <BuildTableHeader sort={sort} sortBy={sortBy} k="p95_build_seconds" right>
                           p95 build
-                        </Th>
-                        <Th>Builder</Th>
+                        </BuildTableHeader>
+                        <BuildTableHeader>Builder</BuildTableHeader>
                         {amounts && (
-                          <Th k="cost" right>
+                          <BuildTableHeader sort={sort} sortBy={sortBy} k="cost" right>
                             Cost
-                          </Th>
+                          </BuildTableHeader>
                         )}
-                        <Th k="share" right>
+                        <BuildTableHeader sort={sort} sortBy={sortBy} k="share" right>
                           Share
-                        </Th>
-                        <Th>Trend</Th>
+                        </BuildTableHeader>
+                        <BuildTableHeader>Trend</BuildTableHeader>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-neutral">
@@ -618,9 +638,9 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
           {d.notes.length > 0 && <p className="text-xs text-neutral-subtle">{d.notes.join(' ')}</p>}
         </div>
       )}
-      {drill && d && (
+      {drill && d && !rangeError && (
         <BuildDrill
-          service={drill}
+          service={d.services.find((service) => service.service_id === drill.service_id) ?? drill}
           load={loader}
           range={range}
           data={d}
@@ -651,13 +671,15 @@ function BuildDrill({
   const [error, setError] = useState('')
   useEffect(() => {
     let live = true
+    setRows(undefined)
+    setError('')
     load({ ...range, service: service.service_id })
       .then((x) => live && setRows(x.builds ?? []))
       .catch((e) => live && setError(errorText(e)))
     return () => {
       live = false
     }
-  }, [service.service_id]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [load, range, service.service_id])
   const cur = data.currency
   const catalog = data.builder_sizes.map((s) => s.code)
   return (
@@ -671,7 +693,7 @@ function BuildDrill({
       <div className="p-6">
         <h2 className="h4 text-neutral">{service.name}</h2>
         <p className="mb-4 text-sm text-neutral-subtle">
-          {periodLabel(data.from, true)} to {periodLabel(data.to, true)} · {num(service.builds)} builds,{' '}
+          {periodLabel(range.from, true)} to {periodLabel(range.to, true)} · {num(service.builds)} builds,{' '}
           {minutes(service.counted_build_minutes)} counted
           {amounts && service.cost != null ? `, ${money(service.cost, cur)}` : ''}
           {service.builds ? ` · p95 ${buildDuration(service.p95_build_seconds)}` : ''}

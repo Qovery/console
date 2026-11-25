@@ -384,10 +384,11 @@ describe('discounts', () => {
   })
 
   it('should show the request under review first, else the latest decided one', () => {
-    const r = (id: number, status: string) => ({ id, status })
+    const r = (id: number, status: string) => ({ id, status, requested_at: `2026-11-0${id}` })
 
     expect(currentDiscountRequest([r(3, 'declined'), r(2, 'open')])?.id).toBe(2)
     expect(currentDiscountRequest([r(3, 'withdrawn'), r(2, 'declined')])?.id).toBe(2)
+    expect(currentDiscountRequest([r(1, 'declined'), r(3, 'approved')])?.id).toBe(3)
     expect(currentDiscountRequest([r(1, 'withdrawn')])).toBeUndefined()
   })
 
@@ -467,7 +468,7 @@ describe('createPricingClient', () => {
     await c.invoices?.('o', { limit: 10, offset: 'next' })
     await c.invoice?.('o', 'INV/1')
     await c.invoicePdf?.('o', 'INV-1')
-    await c.collectInvoice?.('o', 'INV-1')
+    await c.collectInvoice?.('o', 'INV-1', 'collect-key')
     await c.paymentMethods?.('o')
     await c.paymentMethodSession?.('o', 'https://console.qovery.com/back')
     await c.paymentMethodSession?.('o')
@@ -521,6 +522,7 @@ describe('createPricingClient', () => {
     expect(sent[4].body).toEqual({ plan: 'growth', period: 'year', dry_run: true })
     expect(sent[5].body).toEqual({ plan: 'growth', period: 'year', dry_run: false })
     expect(sent[5].headers['Idempotency-Key']).toBe('key-1')
+    expect(sent.find((s) => s.url.endsWith('/collect'))?.headers['Idempotency-Key']).toBe('collect-key')
     expect(sent[25].body).toEqual({ redirect_url: 'https://console.qovery.com/back' })
     expect(sent[26].body).toEqual({})
     expect(sent[31].body).toEqual({ ids: ['logo'], message: '', accept_terms: true })

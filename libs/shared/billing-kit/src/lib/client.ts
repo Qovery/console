@@ -48,7 +48,12 @@ export interface PricingClient {
   planOptions?(organizationId: string): Promise<PlanOptions>
   quotePlanChange?(organizationId: string, plan: string, period?: Period): Promise<PlanChangeResult>
   /** idempotencyKey: one per review, so a double click or a retry applies once. */
-  changePlan?(organizationId: string, plan: string, period?: Period, idempotencyKey?: string): Promise<PlanChangeResult>
+  changePlan?(
+    organizationId: string,
+    plan: string,
+    period: Period | undefined,
+    idempotencyKey: string
+  ): Promise<PlanChangeResult>
   /** "Keep my current plan": drops the change scheduled for the renewal. */
   keepPlan?(organizationId: string): Promise<{ removed: boolean }>
   // Optional: cancellation at the end of the term (billing roles only).
@@ -117,7 +122,7 @@ export interface PricingClient {
   /** A short-lived link to the invoice's PDF: open it at once, never keep it. */
   invoicePdf?(organizationId: string, invoiceId: string): Promise<InvoiceDownload>
   /** Pay now: charges the payment method on file. 402 PAYMENT_FAILED, 409, 429 COLLECT_TOO_SOON (retryAfter). */
-  collectInvoice?(organizationId: string, invoiceId: string): Promise<CustomerInvoice>
+  collectInvoice?(organizationId: string, invoiceId: string, idempotencyKey: string): Promise<CustomerInvoice>
   paymentMethods?(organizationId: string): Promise<PaymentMethods>
   /** Chargebee's page to add or replace a card. redirectUrl is used only when it is a Qovery origin. */
   paymentMethodSession?(organizationId: string, redirectUrl?: string): Promise<PaymentSession>
@@ -210,7 +215,7 @@ export function createPricingClient(o: ClientOptions): PricingClient {
       req(o.pricingApiUrl, `/organization/${org}/planChange`, {
         method: 'POST',
         body: JSON.stringify({ plan, period, dry_run: false }),
-        headers: key ? { 'Idempotency-Key': key } : {},
+        headers: { 'Idempotency-Key': key },
       }),
     keepPlan: (org) => req(o.pricingApiUrl, `/organization/${org}/planChange/scheduled`, { method: 'DELETE' }),
     cancellation: (org) => req(o.pricingApiUrl, `/organization/${org}/cancellation`),
@@ -275,8 +280,11 @@ export function createPricingClient(o: ClientOptions): PricingClient {
     },
     invoice: (org, id) => req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}`),
     invoicePdf: (org, id) => req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}/pdf`),
-    collectInvoice: (org, id) =>
-      req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}/collect`, { method: 'POST' }),
+    collectInvoice: (org, id, key) =>
+      req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}/collect`, {
+        method: 'POST',
+        headers: { 'Idempotency-Key': key },
+      }),
     paymentMethods: (org) => req(o.pricingApiUrl, `/organization/${org}/paymentMethods`),
     paymentMethodSession: (org, redirectUrl) =>
       req(o.pricingApiUrl, `/organization/${org}/paymentMethods/session`, {

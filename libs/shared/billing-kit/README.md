@@ -13,6 +13,7 @@ What the copy changes, so the next sync can redo it:
 - `src/index.ts` re-exports from `./lib/`, and adds the `Access` type and the test mock.
 - `billing-usage-factory.mock.ts` and the `*.spec.ts(x)` files are console only.
 
-Every call goes to pricing-api with the signed-in user's Qovery token (`createPricingClient`). Invoices and their
+Authenticated calls to pricing-api carry the signed-in user's Qovery token (`createPricingClient`). The public
+`publicPlans` call is unauthenticated. Invoices and their
 details, payment methods, billing information, AWS Marketplace requests, plan changes, cancellation, reactivation,
 prepaid credits, usage history, build usage and discount requests are pricing-api's customer API; core is not involved.

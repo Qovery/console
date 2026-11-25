@@ -211,10 +211,12 @@ export function BillingUsageView() {
     <BillingPageLayout headingSlot={setHeadingElement}>
       {match({ data, error, isLoading })
         .with({ isLoading: true }, () => <BillingUsageSkeleton />)
-        .with({ data: P.not(P.nullish) }, () => (
+        .with({ data: P.not(P.nullish) }, ({ data }) => (
           <UsagePage
+            key={organizationId}
             organizationId={organizationId}
             client={client}
+            initialUsage={data}
             offers="none"
             onNavigate={goTo}
             onContactSales={showChat}

@@ -168,7 +168,7 @@ export function CancelDialog({
           <Button size="lg" variant="plain" color="neutral" onClick={onClose} disabled={busy}>
             Keep my subscription
           </Button>
-          <Button size="lg" color="red" disabled={!ready} loading={busy} onClick={submit}>
+          <Button size="lg" color="red" disabled={busy || !ready} loading={busy} onClick={submit}>
             {request ? 'Send the request' : `Cancel on ${date(view.ends_on)}`}
           </Button>
         </div>

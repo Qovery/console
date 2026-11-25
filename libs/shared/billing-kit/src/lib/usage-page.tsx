@@ -21,6 +21,7 @@ import { PrepaidCredits } from './credits'
 import { DiscountsCard } from './discounts'
 import { date, money, num, valueText } from './format'
 import { AskAdminModal, EmailPreferencesPanel, OfferHost } from './offers'
+import { errorText } from './parts'
 import { PlanChangeFlow } from './plan-change'
 import { PricingTable } from './pricing-table'
 import { ReactivateFlow, SubscriptionEndedBanner } from './reactivate'
@@ -42,6 +43,7 @@ import { UsageChart, UsageInsights } from './usage-insights'
 export interface UsagePageProps {
   organizationId: string
   client: PricingClient
+  initialUsage?: BillingUsage
   /** Called when the user asks for sales (Enterprise, a contract change). */
   onContactSales?: () => void
   /** Links to the spend limits page, when the host has one. */
@@ -103,11 +105,13 @@ const isSetting = (e: Entitlement) => e.unit === 'days'
 
 function UsageRow({
   e,
+  currency,
   onUpgrade,
   onDetails,
   onAsk,
 }: {
   e: Entitlement
+  currency: string
   onUpgrade: () => void
   onDetails?: () => void
   onAsk?: () => void
@@ -143,7 +147,7 @@ function UsageRow({
           {e.customer_note}
           {e.prepaid ? ` · ${num(e.prepaid)} prepaid` : ''}
           {e.mode === 'soft' && e.overage_unit_price > 0
-            ? ` · then ${money(e.overage_unit_price)} per ${e.unit.replace(/s$/, '')}`
+            ? ` · then ${money(e.overage_unit_price, currency)} per ${e.unit.replace(/s$/, '')}`
             : ''}
         </span>
         <span className="flex items-center gap-3">
@@ -199,6 +203,7 @@ function SeriesModal({ series, onClose }: { series: UsageSeries; onClose: () => 
 export function UsagePage({
   organizationId,
   client,
+  initialUsage,
   onContactSales,
   onManageSpendLimits,
   offers = 'all',
@@ -207,7 +212,7 @@ export function UsagePage({
   onNavigate,
   heading = PageHeading,
 }: UsagePageProps) {
-  const [u, setU] = useState<BillingUsage>()
+  const [u, setU] = useState(initialUsage)
   const [spend, setSpend] = useState<Spend>()
   const [plan, setPlan] = useState<PlanOptions>()
   const [cancellation, setCancellation] = useState<Cancellation>()
@@ -221,50 +226,59 @@ export function UsagePage({
   const [comparePeriod, setComparePeriod] = useState<Period | undefined>(open?.period)
   const [round, setRound] = useState(0)
   const [preselect, setPreselect] = useState<string | undefined>(open?.plan)
-  const load = useCallback(() => {
-    client
-      .billingUsage(organizationId)
-      .then((x) => {
-        setU(x)
-        setError('')
-        // What is planned (a plan change, a cancellation) and what can be changed: billing roles only.
-        if (x.access === 'member') return
-        client
-          .planOptions?.(organizationId)
-          .then(setPlan)
-          .catch(() => setPlan(undefined))
-        client
-          .cancellation?.(organizationId)
-          .then(setCancellation)
-          .catch(() => setCancellation(undefined))
-        // Once the subscription ended: when it ended and how to start it again.
-        if (x.billing.status === 'cancelled')
+  const load = useCallback(
+    (usage?: BillingUsage) => {
+      const request = usage ? Promise.resolve(usage) : client.billingUsage(organizationId)
+      request
+        .then((x) => {
+          setU(x)
+          setError('')
+          // What is planned (a plan change, a cancellation) and what can be changed: billing roles only.
+          if (x.access === 'member') return
           client
-            .reactivation?.(organizationId)
-            .then(setReactivation)
-            .catch(() => setReactivation(undefined))
-        else setReactivation(undefined)
-      })
-      .catch((e) => setError(e.message))
-    client
-      .spendLimits(organizationId)
-      .then(setSpend)
-      .catch(() => setSpend(undefined))
-    setRound((n) => n + 1)
-  }, [client, organizationId])
-  useEffect(load, [load])
-  if (error)
-    return (
-      <Callout.Root color="red">
-        <Callout.Text>{error}</Callout.Text>
-      </Callout.Root>
-    )
-  if (!u) return <div className="p-6 text-sm text-neutral-subtle">Loading billing…</div>
+            .planOptions?.(organizationId)
+            .then(setPlan)
+            .catch(() => setPlan(undefined))
+          client
+            .cancellation?.(organizationId)
+            .then(setCancellation)
+            .catch(() => setCancellation(undefined))
+          // Once the subscription ended: when it ended and how to start it again.
+          if (x.billing.status === 'cancelled')
+            client
+              .reactivation?.(organizationId)
+              .then(setReactivation)
+              .catch(() => setReactivation(undefined))
+          else setReactivation(undefined)
+        })
+        .catch((e) => setError(errorText(e)))
+      client
+        .spendLimits(organizationId)
+        .then(setSpend)
+        .catch(() => setSpend(undefined))
+      setRound((n) => n + 1)
+    },
+    [client, organizationId]
+  )
+  useEffect(() => load(initialUsage), [initialUsage, load])
+  const usageError = error && (
+    <Callout.Root color="red">
+      <Callout.Text>
+        <Callout.TextHeading>Usage could not be loaded</Callout.TextHeading>
+        {error}
+      </Callout.Text>
+      <Button size="sm" variant="outline" color="neutral" onClick={() => load()}>
+        Retry
+      </Button>
+    </Callout.Root>
+  )
+  if (!u) return usageError || <div className="p-6 text-sm text-neutral-subtle">Loading billing…</div>
   const cur = u.billing.currency
   const amounts = u.access !== 'member'
   // Once the subscription ended, Reactivate replaces Change plan.
   // Qovery's own organizations (internal accounts): usage as usual, nothing billed, nothing to change.
   const internal = !!u.billing.internal
+  const canReactivate = !!client.quoteReactivation && !!client.reactivate
   const canChangePlan =
     amounts && !internal && !!client.planOptions && !!client.quotePlanChange && u.billing.status !== 'cancelled'
   // A limit the plan does not include (0, nothing used) reads as "not included", with the features.
@@ -325,6 +339,7 @@ export function UsagePage({
         actions,
       })}
       <div className="flex flex-col gap-6">
+        {usageError}
         {internal && (
           <Callout.Root color="neutral">
             <Callout.Text>
@@ -345,7 +360,7 @@ export function UsagePage({
             </Callout.Text>
           </Callout.Root>
         )}
-        {amounts && ended && reactivation?.ended && (
+        {amounts && ended && reactivation?.ended && canReactivate && (
           <SubscriptionEndedBanner
             view={reactivation}
             onReactivate={() => {
@@ -356,14 +371,15 @@ export function UsagePage({
             preview={client.mode === 'preview'}
           />
         )}
-        {u.billing.locked && !(amounts && ended && reactivation) && (
-          <Callout.Root color="red">
-            <Callout.Text>
-              <Callout.TextHeading>New resources are paused</Callout.TextHeading>Your subscription is paused, cancelled
-              or unpaid. Running services are not affected.
-            </Callout.Text>
-          </Callout.Root>
-        )}
+        {(u.billing.locked || u.status.status === 'locked') &&
+          !(amounts && ended && reactivation?.ended && canReactivate) && (
+            <Callout.Root color="red">
+              <Callout.Text>
+                <Callout.TextHeading>New resources are paused</Callout.TextHeading>Your subscription is paused,
+                cancelled or unpaid. Running services are not affected.
+              </Callout.Text>
+            </Callout.Root>
+          )}
         {u.billing.phase && (
           <Callout.Root color="sky">
             <Callout.Text>
@@ -455,7 +471,9 @@ export function UsagePage({
                   ) : null}
                   {sp.account.monthly_limit != null ? (
                     <>
-                      {Math.round(sp.account.used_pct ?? 0)}% of the {money(sp.account.monthly_limit, cur)} spend limit
+                      {sp.account.used_pct == null
+                        ? `${money(sp.account.monthly_limit, cur)} spend limit`
+                        : `${Math.round(sp.account.used_pct)}% of the ${money(sp.account.monthly_limit, cur)} spend limit`}
                       {onManageSpendLimits && (
                         <>
                           {' '}
@@ -524,6 +542,7 @@ export function UsagePage({
                 <UsageRow
                   key={e.sku}
                   e={e}
+                  currency={cur}
                   onUpgrade={() => (canChangePlan ? upgrade() : setModal('compare'))}
                   onDetails={series ? () => setDetail(series) : undefined}
                   onAsk={!amounts && client.requestUpgrade ? () => setAsk(e) : undefined}
@@ -662,7 +681,7 @@ export function UsagePage({
             onContactSales={onContactSales}
           />
         )}
-        {modal === 'reactivate' && reactivating && (
+        {modal === 'reactivate' && reactivating && canReactivate && (
           <ReactivateFlow
             organizationId={organizationId}
             client={client}

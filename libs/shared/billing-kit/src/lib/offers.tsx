@@ -8,10 +8,11 @@
  * <BillingPage> mounts it with variant="card". <AskAdminModal> is the member's side of a
  * request, <EmailPreferencesPanel> the person's email settings.
  */
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Badge, Banner, Button, Callout, Icon, InputTextArea, InputToggle, Modal } from '@qovery/shared/ui'
 import type { PricingClient } from './client'
 import { date } from './format'
+import { errorText } from './parts'
 import type { EmailPreferences, Offer, Offers, Trial, UpgradeRequest } from './types'
 
 const TONE: Record<string, string> = {
@@ -239,7 +240,7 @@ export function AskAdminModal({
   const [done, setDone] = useState<{ existing?: boolean; notified: number }>()
   const [error, setError] = useState('')
   async function send() {
-    if (!client.requestUpgrade) return
+    if (!client.requestUpgrade || busy) return
     setBusy(true)
     setError('')
     try {
@@ -254,10 +255,11 @@ export function AskAdminModal({
     <Modal
       externalOpen
       setExternalOpen={(o) => {
-        if (!o) onClose()
+        if (!o && !busy) onClose()
       }}
       width="min(520px, calc(100vw - 24px))"
       buttonClose={false}
+      dismissible={!busy}
     >
       <div className="flex flex-col gap-4 p-6">
         <h2 className="h4 text-neutral">
@@ -300,7 +302,7 @@ export function AskAdminModal({
             </Button>
           ) : (
             <>
-              <Button size="lg" variant="plain" color="neutral" onClick={onClose}>
+              <Button size="lg" variant="plain" color="neutral" disabled={busy} onClick={onClose}>
                 Cancel
               </Button>
               <Button size="lg" loading={busy} onClick={send}>
@@ -316,22 +318,56 @@ export function AskAdminModal({
 
 /** The person's email preferences for this organization (billing emails cannot be turned off). */
 export function EmailPreferencesPanel({ organizationId, client }: { organizationId: string; client: PricingClient }) {
+  return <OrganizationEmailPreferences key={organizationId} organizationId={organizationId} client={client} />
+}
+
+function OrganizationEmailPreferences({ organizationId, client }: { organizationId: string; client: PricingClient }) {
   const [p, setP] = useState<EmailPreferences>()
   const [error, setError] = useState('')
+  const [attempt, setAttempt] = useState(0)
+  const [saving, setSaving] = useState(false)
+  const retry = () => setAttempt((n) => n + 1)
+
   useEffect(() => {
+    let live = true
+    setError('')
     client
       .emailPreferences?.(organizationId)
-      .then(setP)
-      .catch((e) => setError(e.message))
-  }, [client, organizationId])
+      .then((value) => live && setP(value))
+      .catch((e) => live && setError(errorText(e)))
+    return () => {
+      live = false
+    }
+  }, [client, organizationId, attempt])
+
+  async function save(category: string, enabled: boolean) {
+    if (!client.setEmailPreference || saving) return
+    setSaving(true)
+    setError('')
+    try {
+      setP(await client.setEmailPreference(organizationId, category, enabled))
+    } catch (e) {
+      setError(errorText(e))
+    } finally {
+      setSaving(false)
+    }
+  }
   if (!client.emailPreferences) return null
-  if (error)
-    return (
-      <Callout.Root color="red">
-        <Callout.Text>{error}</Callout.Text>
-      </Callout.Root>
-    )
-  if (!p) return null
+  const loadError = error && (
+    <Callout.Root color="red">
+      <Callout.Text>{error}</Callout.Text>
+      {p ? (
+        <Button size="sm" variant="outline" color="neutral" onClick={() => setError('')}>
+          Dismiss
+        </Button>
+      ) : (
+        <Button size="sm" variant="outline" color="neutral" onClick={retry}>
+          Retry
+        </Button>
+      )}
+    </Callout.Root>
+  )
+  if (!p) return loadError || null
   return (
     <div className="rounded border border-neutral bg-surface-neutral">
       <div className="border-b border-neutral px-5 py-3">
@@ -340,21 +376,17 @@ export function EmailPreferencesPanel({ organizationId, client }: { organization
           Emails about this organization's plan and usage, sent to {p.email}.
         </p>
       </div>
+      {loadError && <div className="px-5 py-3">{loadError}</div>}
       <div className="divide-y divide-neutral">
         {p.categories.map((c) => (
           <div key={c.category} className="px-5 py-3">
             <InputToggle
               small
               value={c.enabled}
-              disabled={c.locked}
+              disabled={c.locked || saving || !client.setEmailPreference}
               title={c.name}
-              description={c.locked ? `${c.description}` : c.description}
-              onChange={(v) =>
-                client
-                  .setEmailPreference?.(organizationId, c.category, v)
-                  .then(setP)
-                  .catch((e) => setError(e.message))
-              }
+              description={c.description}
+              onChange={(v) => save(c.category, v)}
             />
           </div>
         ))}
@@ -364,23 +396,37 @@ export function EmailPreferencesPanel({ organizationId, client }: { organization
 }
 
 /** Loads the person's offers and requests, and records what they see and do. */
-export function useOffers(organizationId: string, client: PricingClient) {
-  const [data, setData] = useState<Offers>()
+export function useOffers(organizationId: string, client: PricingClient, showModal = true) {
+  const [result, setResult] = useState<{ organizationId: string; data?: Offers; error?: string }>()
   const [hidden, setHidden] = useState<Set<number>>(new Set())
   const [modalDone, setModalDone] = useState<Set<number>>(new Set())
-  const load = useCallback(() => {
+  const [attempt, setAttempt] = useState(0)
+  const current = result?.organizationId === organizationId ? result : undefined
+  const data = current?.data
+  useEffect(() => {
     if (!client.offers) return
+    let live = true
     client
       .offers(organizationId)
-      .then(setData)
-      .catch(() => setData(undefined))
-  }, [client, organizationId])
-  useEffect(load, [load])
+      .then((value) => live && setResult({ organizationId, data: value }))
+      .catch((e) => {
+        if (live) {
+          setResult((previous) => ({
+            organizationId,
+            data: previous?.organizationId === organizationId ? previous.data : undefined,
+            error: errorText(e),
+          }))
+        }
+      })
+    return () => {
+      live = false
+    }
+  }, [client, organizationId, attempt])
   const event = (o: Offer, ev: 'shown' | 'clicked' | 'dismissed', surface: string) => {
     client.offerEvent?.(organizationId, o.id, ev, surface).catch(() => undefined)
   }
   const visible = (data?.offers ?? []).filter((o) => !hidden.has(o.id))
-  const modal = visible.find((o) => o.surfaces.includes('modal') && !modalDone.has(o.id))
+  const modal = showModal ? visible.find((o) => o.surfaces.includes('modal') && !modalDone.has(o.id)) : undefined
   const banners = visible.filter((o) => o.surfaces.includes('banner'))
   // Banners count as shown once per load.
   useEffect(() => {
@@ -393,7 +439,8 @@ export function useOffers(organizationId: string, client: PricingClient) {
     data,
     banners,
     modal,
-    reload: load,
+    error: current?.error,
+    reload: () => setAttempt((n) => n + 1),
     dismiss: (o: Offer) => {
       event(o, 'dismissed', 'banner')
       setHidden(new Set([...hidden, o.id]))
@@ -430,8 +477,10 @@ export function OfferHost({
   skuName = (s) => s,
   modal = true,
 }: OfferHostProps) {
-  const o = useOffers(organizationId, client)
+  const o = useOffers(organizationId, client, modal)
   const [declined, setDeclined] = useState<Set<number>>(new Set())
+  const [declineError, setDeclineError] = useState('')
+  const [declining, setDeclining] = useState(false)
   // Trial offers start the trial here, then tell the host (which can refresh the billing page).
   const [started, setStarted] = useState<{ offer: Offer; trial?: Trial; error?: string }>()
   const act = (x: Offer, surface: string) => {
@@ -453,16 +502,34 @@ export function OfferHost({
   const requests = (o.data?.upgrade_requests ?? []).filter((r) => !declined.has(r.id))
   return (
     <>
+      {(o.error || declineError) && (
+        <Callout.Root color="red">
+          <Callout.Text>{declineError || o.error}</Callout.Text>
+          {!declineError && (
+            <Button size="sm" variant="outline" color="neutral" onClick={o.reload}>
+              Retry
+            </Button>
+          )}
+        </Callout.Root>
+      )}
       {billing && requests.length > 0 && onReviewRequests && (
         <RequestsBanner
           requests={requests}
           skuName={skuName}
           onReview={onReviewRequests}
           onDecline={
-            client.closeUpgradeRequest
-              ? (r) => {
-                  client.closeUpgradeRequest?.(organizationId, r.id, 'declined').catch(() => undefined)
-                  setDeclined(new Set([...declined, r.id]))
+            client.closeUpgradeRequest && !declining
+              ? async (r) => {
+                  setDeclineError('')
+                  setDeclining(true)
+                  try {
+                    await client.closeUpgradeRequest?.(organizationId, r.id, 'declined')
+                    setDeclined((previous) => new Set([...previous, r.id]))
+                  } catch (e) {
+                    setDeclineError(errorText(e))
+                  } finally {
+                    setDeclining(false)
+                  }
                 }
               : undefined
           }

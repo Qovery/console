@@ -393,7 +393,7 @@ export function validateBillingInfo(b: BillingInfo): Partial<Record<keyof Billin
   const country = b.country.trim()
   if (country && !/^[A-Za-z]{2}$/.test(country)) errs.country = 'Use the two-letter code, e.g. FR or US'
   const vat = b.vat_number.replace(/\s/g, '')
-  if (vat && !/^[A-Za-z0-9.-]{2,20}$/.test(vat)) errs.vat_number = 'Letters and digits only, 20 characters at most'
+  if (vat && !/^[A-Za-z0-9.-]{2,20}$/.test(vat)) errs.vat_number = 'Use 2–20 letters, digits, periods or hyphens'
   return errs
 }
 
@@ -461,8 +461,8 @@ export function newIdempotencyKey(): string {
 
 /** What a change of plan or billing period is, in a few words. */
 export function changeKind(q: { direction: string; period: string; effective_at: string }, currentPeriod: string) {
-  if (q.direction === 'same') return 'Keep your current plan'
   if (q.period !== currentPeriod) return q.period === 'year' ? 'Switch to yearly billing' : 'Switch to monthly billing'
+  if (q.direction === 'same') return 'Keep your current plan'
   return q.direction === 'downgrade' ? 'Downgrade' : 'Upgrade'
 }
 
@@ -664,7 +664,7 @@ function csvCell(v: string | number | null) {
   if (v == null) return ''
   const s = String(v)
   // Quoted when needed, and never read as a formula by a spreadsheet.
-  const safe = /^[=+\-@\t\r]/.test(s) && typeof v === 'string' ? `'${s}` : s
+  const safe = /^[=+\-@\t\r]/.test(s) && typeof v === 'string' && !/^[+-]?\d+(?:\.\d+)?$/.test(s) ? `'${s}` : s
   return /[",\n\r]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe
 }
 
@@ -847,8 +847,12 @@ export function discountPercent(
 }
 
 /** The request the card shows: the one being reviewed, else the latest decided one (withdrawn ones are not shown). */
-export function currentDiscountRequest<T extends { status: string }>(requests: T[]): T | undefined {
-  return requests.find((r) => r.status === 'open') ?? requests.find((r) => r.status !== 'withdrawn')
+export function currentDiscountRequest<T extends { status: string; requested_at: string; decided_at?: string | null }>(
+  requests: T[]
+): T | undefined {
+  const order = (r: T) => Date.parse(r.decided_at ?? r.requested_at)
+  const recent = requests.filter((r) => r.status !== 'withdrawn').sort((a, b) => order(b) - order(a))
+  return recent.find((r) => r.status === 'open') ?? recent[0]
 }
 
 /**

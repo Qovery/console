@@ -503,7 +503,7 @@ function BuilderPanel({ sizes, currency, amounts }: { sizes: BuilderSize[]; curr
   )
 }
 
-/** overTime: the three months' history and the monthly deployment minutes (off when the page shows <UsageHistory>). */
+/** overTime: the three months' usage history (off when the page shows <UsageHistory>). */
 export function UsageInsights({
   usage,
   pick,
@@ -526,7 +526,7 @@ export function UsageInsights({
       {amounts && ins.value && ins.value.lines.length > 0 && <ValuePanel v={ins.value} />}
       <ProjectionPanel items={ins.projection} currency={usage.billing.currency} amounts={amounts} />
       {overTime && <HistoryPanel series={ins.series} pick={sel} setPick={setSel} />}
-      {overTime && <MonthsPanel months={ins.deployment_months} currency={usage.billing.currency} amounts={amounts} />}
+      <MonthsPanel months={ins.deployment_months} currency={usage.billing.currency} amounts={amounts} />
       {usage.builder_sizes && usage.builder_sizes.length > 1 && (
         <BuilderPanel sizes={usage.builder_sizes} currency={usage.billing.currency} amounts={amounts} />
       )}

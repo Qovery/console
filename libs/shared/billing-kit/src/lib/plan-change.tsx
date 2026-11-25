@@ -70,20 +70,24 @@ export function PlanChangeFlow({
   const currentPeriod = options?.period ?? usage.billing.period
   const current = options?.results.find((o) => o.current)
   const blocked = changeBlockedText(options?.change, 'plan')
-  const canConfirm = client.mode === 'live' && !blocked
+  const canConfirm = client.mode === 'live' && !!client.changePlan && !blocked
   const saving = Math.max(
     0,
     ...(plans?.plans ?? []).flatMap((p) => p.yearly_saving.filter((s) => s.currency === cur).map((s) => s.saving_pct))
   )
   const priceOf = (o: PlanOption) => {
     const p = plans?.plans.find((x) => x.code === o.plan.code)
-    if (!p) return o.quote && o.quote.period === period ? { amount: o.quote.total, per: period } : null
+    if (!p) {
+      if (!o.quote || o.quote.period !== period) return null
+      return period === 'year'
+        ? { amount: Math.round(o.quote.total / 12), yearly: o.quote.total }
+        : { amount: o.quote.total }
+    }
     const m = monthly(p.prices, cur, period)
     return m == null
       ? null
       : {
           amount: m,
-          per: 'month' as const,
           yearly:
             period === 'year' ? p.prices.find((x) => x.currency === cur && x.period === 'year')?.amount : undefined,
         }
@@ -142,11 +146,16 @@ export function PlanChangeFlow({
     setBusy(false)
   }
   async function confirm() {
-    if (!pick) return
+    if (busy || !pick || !q?.can_apply) return
+    if (client.mode === 'preview') {
+      setStep('done')
+      return
+    }
+    if (!canConfirm || !client.changePlan) return
     setBusy(true)
     setError('')
     try {
-      setResult(await client.changePlan!(organizationId, pick, period, key))
+      setResult(await client.changePlan(organizationId, pick, period, key))
       setStep('done')
       onDone()
     } catch (e) {
@@ -187,6 +196,7 @@ export function PlanChangeFlow({
           <button
             type="button"
             aria-label="Close"
+            disabled={busy}
             onClick={onClose}
             className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-subtle hover:bg-surface-neutral-componentHover"
           >
@@ -488,7 +498,7 @@ export function PlanChangeFlow({
                 <Button
                   size="lg"
                   loading={busy}
-                  disabled={!q?.can_apply || !(canConfirm || client.mode === 'preview')}
+                  disabled={busy || !q?.can_apply || !(canConfirm || client.mode === 'preview')}
                   onClick={confirm}
                 >
                   {q?.direction === 'same'

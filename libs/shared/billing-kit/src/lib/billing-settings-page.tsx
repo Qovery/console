@@ -9,7 +9,7 @@
  *   <BillingSettingsPage organizationId={id} client={client} />
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Badge, Button, Icon, InputText, InputTextArea } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Icon, InputText, InputTextArea } from '@qovery/shared/ui'
 import { BillingAlerts } from './billing-alerts'
 import { BillingError, type PricingClient } from './client'
 import { EmptyState } from './invoices-page'
@@ -58,17 +58,19 @@ export function BillingSettingsPage({
   alerts = true,
   onNavigate,
 }: BillingSettingsPageProps) {
-  const access = useAccess(client, organizationId, given)
-  const [aws, setAws] = useState<AwsMarketplace>()
-  const loadAws = useCallback(() => {
-    client
-      .awsMarketplace?.(organizationId)
-      .then(setAws)
-      .catch(() => setAws(undefined))
-  }, [client, organizationId])
-  useEffect(() => {
-    if (isBillingAccess(access)) loadAws()
-  }, [access, loadAws])
+  const { access, error: accessError, retry: retryAccess } = useAccess(client, organizationId, given)
+  if (accessError)
+    return (
+      <Callout.Root color="red">
+        <Callout.Text>
+          <Callout.TextHeading>Billing access could not be loaded</Callout.TextHeading>
+          {accessError}
+        </Callout.Text>
+        <Button size="sm" variant="outline" color="neutral" onClick={retryAccess}>
+          Retry
+        </Button>
+      </Callout.Root>
+    )
   if (!access)
     return (
       <div className="rounded border border-neutral bg-surface-neutral p-5">
@@ -76,6 +78,21 @@ export function BillingSettingsPage({
       </div>
     )
   if (!isBillingAccess(access) || !client.paymentMethods) return <BillingRolesOnly />
+  return <BillingSettings key={organizationId} {...{ organizationId, client, access, returnUrl, alerts, onNavigate }} />
+}
+
+function BillingSettings({ organizationId, client, access, returnUrl, alerts, onNavigate }: BillingSettingsPageProps) {
+  const { pm, paymentError, setPaymentError, loadPaymentMethods } = usePaymentMethods(client, organizationId)
+  const [aws, setAws] = useState<AwsMarketplace>()
+  const [awsError, setAwsError] = useState('')
+  const loadAws = useCallback(() => {
+    setAwsError('')
+    client
+      .awsMarketplace?.(organizationId)
+      .then(setAws)
+      .catch((e) => setAwsError(errorText(e)))
+  }, [client, organizationId])
+  useEffect(loadAws, [loadAws])
   const onAws = aws?.billing_channel === 'aws_marketplace' || aws?.request?.status === 'accepted'
   // One of Qovery's own organizations: no card, no billing information, nothing to pay.
   if (aws?.billing_channel === 'internal')
@@ -88,11 +105,21 @@ export function BillingSettingsPage({
   return (
     <div className="flex flex-col gap-6">
       {alerts && (
-        <BillingAlerts organizationId={organizationId} client={client} access={access} onNavigate={onNavigate} />
+        <BillingAlerts
+          organizationId={organizationId}
+          client={client}
+          access={access}
+          onNavigate={onNavigate}
+          paymentMethods={{ data: pm }}
+        />
       )}
-      <PaymentMethodCard organizationId={organizationId} client={client} onAws={onAws} returnUrl={returnUrl} />
+      <PaymentMethodCard
+        {...{ organizationId, client, onAws, returnUrl, pm, paymentError, setPaymentError, loadPaymentMethods }}
+      />
       {client.awsMarketplace && (
-        <AwsMarketplaceCard organizationId={organizationId} client={client} aws={aws} onChange={setAws} onAws={onAws} />
+        <AwsMarketplaceCard
+          {...{ organizationId, client, aws, onChange: setAws, onAws, loadError: awsError, onRetry: loadAws }}
+        />
       )}
       {client.billingInfo && <BillingInfoCard organizationId={organizationId} client={client} />}
     </div>
@@ -101,30 +128,17 @@ export function BillingSettingsPage({
 
 // ------------------------------------------------------------------ payment method
 
-function PaymentMethodCard({
-  organizationId,
-  client,
-  onAws,
-  returnUrl,
-}: {
-  organizationId: string
-  client: PricingClient
-  onAws: boolean
-  returnUrl?: string
-}) {
+function usePaymentMethods(client: PricingClient, organizationId: string) {
   const [pm, setPm] = useState<PaymentMethods>()
-  const [error, setError] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [link, setLink] = useState('')
-  const waiting = useRef(false)
-  const load = useCallback(() => {
+  const [paymentError, setPaymentError] = useState('')
+  const loadPaymentMethods = useCallback(() => {
     client.paymentMethods!(organizationId)
       .then((x) => {
         setPm(x)
-        setError('')
+        setPaymentError('')
       })
       .catch((e) => {
-        setError(
+        setPaymentError(
           e instanceof BillingError && e.code === 'INTERNAL_ACCOUNT'
             ? `${INTERNAL_NOTHING_BILLED}.`
             : e instanceof BillingError && e.code === 'BILLING_NOT_LINKED'
@@ -133,7 +147,28 @@ function PaymentMethodCard({
         )
       })
   }, [client, organizationId])
-  useEffect(load, [load])
+  useEffect(loadPaymentMethods, [loadPaymentMethods])
+  return { pm, paymentError, setPaymentError, loadPaymentMethods }
+}
+
+function PaymentMethodCard({
+  organizationId,
+  client,
+  onAws,
+  returnUrl,
+  pm,
+  paymentError: error,
+  setPaymentError: setError,
+  loadPaymentMethods: load,
+}: {
+  organizationId: string
+  client: PricingClient
+  onAws: boolean
+  returnUrl?: string
+} & ReturnType<typeof usePaymentMethods>) {
+  const [busy, setBusy] = useState(false)
+  const [link, setLink] = useState('')
+  const waiting = useRef(false)
   // Back from Chargebee's page (another tab): read the card again.
   useEffect(() => {
     const onFocus = () => {
@@ -258,12 +293,16 @@ function AwsMarketplaceCard({
   aws,
   onChange,
   onAws,
+  loadError,
+  onRetry,
 }: {
   organizationId: string
   client: PricingClient
   aws?: AwsMarketplace
   onChange: (a: AwsMarketplace) => void
   onAws: boolean
+  loadError: string
+  onRetry: () => void
 }) {
   const [editing, setEditing] = useState(false)
   const [accountId, setAccountId] = useState('')
@@ -338,7 +377,7 @@ function AwsMarketplaceCard({
       )}
     </div>
   )
-  const footer = editing ? (
+  const footer = !aws ? undefined : editing ? (
     <>
       <Button size="md" variant="plain" color="neutral" onClick={() => setEditing(false)}>
         Cancel
@@ -363,7 +402,18 @@ function AwsMarketplaceCard({
       description="Use your AWS commitment to pay for Qovery: we send you a private offer, you accept it in AWS, and AWS bills you."
       footer={footer}
     >
-      {!aws && <CardSkeleton lines={2} />}
+      {!aws && !loadError && <CardSkeleton lines={2} />}
+      {loadError && (
+        <Callout.Root color="red">
+          <Callout.Text>
+            <Callout.TextHeading>AWS Marketplace status could not be loaded</Callout.TextHeading>
+            {loadError}
+          </Callout.Text>
+          <Button size="sm" variant="outline" color="neutral" onClick={onRetry}>
+            Retry
+          </Button>
+        </Callout.Root>
+      )}
       {aws && !editing && status === 'none' && (
         <p className="text-sm text-neutral-subtle">Not requested. You pay by card or invoice today.</p>
       )}
@@ -510,7 +560,7 @@ function BillingInfoCard({ organizationId, client }: { organizationId: string; c
                   Discard
                 </Button>
               )}
-              <Button size="md" loading={busy} disabled={!dirty || !actions} onClick={save}>
+              <Button size="md" loading={busy} disabled={busy || !dirty || !actions} onClick={save}>
                 Save
               </Button>
             </>
@@ -528,7 +578,7 @@ function BillingInfoCard({ organizationId, client }: { organizationId: string; c
             className="grid grid-cols-1 gap-4 sm:grid-cols-2"
             onSubmit={(e) => {
               e.preventDefault()
-              if (dirty && actions) save()
+              if (dirty && actions && !busy) save()
             }}
             noValidate
           >
@@ -540,7 +590,7 @@ function BillingInfoCard({ organizationId, client }: { organizationId: string; c
                   type={f.type}
                   value={form[f.k]}
                   hint={f.hint}
-                  disabled={!actions}
+                  disabled={busy || !actions}
                   autoComplete={f.k === 'email' ? 'email' : f.k === 'company' ? 'organization' : undefined}
                   onChange={(e) => set(f.k, e.target.value)}
                   onBlur={() => {

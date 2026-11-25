@@ -4,7 +4,7 @@
  * pay as you go, the balance after), then pay with the card on file. Credits are added only once
  * the payment goes through. Members see their balances, never prices or the buy button.
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Callout, Icon, InputText, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
 import { BillingError, type PricingClient } from './client'
 import { date, money, num } from './format'
@@ -67,13 +67,15 @@ export function PrepaidCredits({
       </section>
     )
   }
-  if (error)
-    return (
-      <Callout.Root color="red">
-        <Callout.Text>{error}</Callout.Text>
-      </Callout.Root>
-    )
-  if (!credits) return null
+  const loadError = error && (
+    <Callout.Root color="red">
+      <Callout.Text>{error}</Callout.Text>
+      <Button size="sm" variant="outline" color="neutral" onClick={load}>
+        Retry
+      </Button>
+    </Callout.Root>
+  )
+  if (!credits) return loadError || null
   if (credits.options.length === 0 && credits.balances.length === 0 && credits.purchases.length === 0) return null
   const cur = credits.currency
   const blocked = changeBlockedText(credits.buy, 'credits')
@@ -89,6 +91,7 @@ export function PrepaidCredits({
           ) : undefined
         }
       />
+      {loadError && <div className="px-5 pb-4">{loadError}</div>}
       {blocked && (
         <div className="px-5 pb-4">
           <p className="text-xs text-neutral-subtle">
@@ -236,7 +239,7 @@ export function BuyCreditsDialog({
   const [step, setStep] = useState<'pick' | 'card'>(credits.payment_method_on_file === false ? 'card' : 'pick')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [key, setKey] = useState(newIdempotencyKey)
+  const attempts = useRef(new Map<string, string>())
   const n = Number(qty)
   const invalid = opt ? creditQuantityError(opt, n, annual) : 'Pick what to buy'
   const blocked = changeBlockedText(credits.buy, 'credits')
@@ -290,11 +293,15 @@ export function BuyCreditsDialog({
     setBusy(false)
   }
   async function pay() {
-    if (!quote?.quote || !client.buyCredits) return
+    if (!quote?.quote || !client.buyCredits || busy) return
+    const purchase = { sku, quantity: n, annual: annual || undefined }
+    const selection = JSON.stringify([organizationId, purchase])
+    const key = attempts.current.get(selection) ?? newIdempotencyKey()
+    attempts.current.set(selection, key)
     setBusy(true)
     setError('')
     try {
-      const r = await client.buyCredits(organizationId, { sku, quantity: n, annual: annual || undefined }, key)
+      const r = await client.buyCredits(organizationId, purchase, key)
       if (r.applied)
         notifySuccess(
           client,
@@ -304,9 +311,10 @@ export function BuyCreditsDialog({
       onDone(r.credits)
       onClose()
     } catch (e) {
-      // A new attempt is a new review: Chargebee would answer the same key with the same refusal.
-      setKey(newIdempotencyKey())
-      if (e instanceof BillingError && e.code === 'PAYMENT_METHOD_REQUIRED') setStep('card')
+      if (e instanceof BillingError) {
+        if (e.code === 'PAYMENT_FAILED' || e.code === 'PAYMENT_METHOD_REQUIRED') attempts.current.delete(selection)
+        if (e.code === 'PAYMENT_METHOD_REQUIRED') setStep('card')
+      }
       setError(
         e instanceof BillingError && e.code === 'PAYMENT_FAILED'
           ? `The payment failed: ${e.message} No credits were added.`
