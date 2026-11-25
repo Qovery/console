@@ -11,7 +11,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   validateSearch: searchSchema,
   beforeLoad: ({ params: { organizationId }, search }) => {
     throw redirect({
-      to: '/organization/$organizationId/agent-experience/skill-presets/new',
+      to: '/organization/$organizationId/agents/skill-presets/new',
       params: { organizationId },
       search,
       replace: true,

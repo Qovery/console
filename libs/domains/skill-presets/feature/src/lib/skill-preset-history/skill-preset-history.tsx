@@ -166,7 +166,7 @@ function SkillPresetHistoryPage() {
         if (recreate) {
           const created = await createSkillPreset({ organizationId, body: revisionToRequest(revision) })
           navigate({
-            to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
+            to: '/organization/$organizationId/agents/skill-presets/$skillPresetId',
             params: { organizationId, skillPresetId: created.id },
           })
         } else {
@@ -248,8 +248,8 @@ function SkillPresetHistoryPage() {
         <Link
           to={
             !presetGone
-              ? '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId'
-              : '/organization/$organizationId/agent-experience/skill-presets'
+              ? '/organization/$organizationId/agents/skill-presets/$skillPresetId'
+              : '/organization/$organizationId/agents/skill-presets'
           }
           params={{ organizationId, skillPresetId }}
           className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"

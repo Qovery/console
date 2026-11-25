@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ServiceLightResponse, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
@@ -9,6 +9,7 @@ import { AgentExperienceAutomations } from './agent-experience-automate'
 
 const mockOpenModal = jest.fn()
 const mockCloseModal = jest.fn()
+const mockNavigate = jest.fn()
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
   useModal: () => ({ openModal: mockOpenModal, closeModal: mockCloseModal }),
@@ -19,6 +20,7 @@ jest.mock('../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets')
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: jest.fn(),
   useParams: jest.fn(),
   Navigate: ({ to }: { to: string }) => <div data-testid="redirect">{to}</div>,
   Link: ({ children, to, params }: { children: ReactNode; to: string; params: Record<string, string> }) => (
@@ -45,6 +47,7 @@ const mockServices = jest.fn<Promise<ServiceLightResponse[]>, []>()
 beforeEach(() => {
   jest.clearAllMocks()
   jest.mocked(useParams).mockReturnValue({ organizationId })
+  jest.mocked(useNavigate).mockReturnValue(mockNavigate)
   jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
   jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: true, isLoading: false })
   mockServices.mockResolvedValue([
@@ -61,7 +64,7 @@ afterEach(() => {
 })
 
 it('links to the agent task and shows its project and environment as text', async () => {
-  renderWithProviders(<AgentExperienceAutomations />)
+  const { userEvent } = renderWithProviders(<AgentExperienceAutomations />)
   expect(screen.getByRole('button', { name: 'Need help here?' })).toBeInTheDocument()
   expect(await screen.findByRole('link', { name: task.name })).toHaveAttribute(
     'href',
@@ -77,6 +80,11 @@ it('links to the agent task and shows its project and environment as text', asyn
   expect(screen.getAllByRole('link')).toHaveLength(2)
   expect(screen.queryByText('Web app')).not.toBeInTheDocument()
   expect(mockServices).toHaveBeenCalledTimes(1)
+  await userEvent.click(within(dailyReport).getByRole('cell', { name: 'Staging' }))
+  expect(mockNavigate).toHaveBeenCalledWith({
+    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+    params: { organizationId, projectId: 'project-1', environmentId: 'env-1', serviceId: 'task-1' },
+  })
 })
 
 it('sends creation to the existing environment picker', async () => {
@@ -107,8 +115,6 @@ it('retries a failed organization services request', async () => {
 it('redirects to the Skills Registry with the feature flag off', () => {
   jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
   renderWithProviders(<AgentExperienceAutomations />)
-  expect(screen.getByTestId('redirect')).toHaveTextContent(
-    '/organization/$organizationId/agent-experience/skill-presets'
-  )
+  expect(screen.getByTestId('redirect')).toHaveTextContent('/organization/$organizationId/agents/skill-presets')
   expect(mockServices).not.toHaveBeenCalled()
 })

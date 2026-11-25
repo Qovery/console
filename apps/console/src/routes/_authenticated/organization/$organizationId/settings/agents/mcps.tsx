@@ -4,7 +4,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/agents/mcps')({
   beforeLoad: ({ params: { organizationId } }) => {
     throw redirect({
-      to: '/organization/$organizationId/agent-experience/mcp-servers',
+      to: '/organization/$organizationId/agents/mcp-servers',
       params: { organizationId },
       replace: true,
     })

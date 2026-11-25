@@ -45,7 +45,7 @@ export function TemplateGallery() {
 
   const open = (search: { template?: string; from?: string }) =>
     navigate({
-      to: '/organization/$organizationId/agent-experience/skill-presets/new',
+      to: '/organization/$organizationId/agents/skill-presets/new',
       params: { organizationId },
       search,
     })
@@ -54,7 +54,7 @@ export function TemplateGallery() {
     <Section className="flex flex-col gap-6 px-6 pb-8 pt-6 md:px-8">
       <div className="flex flex-col gap-3">
         <Link
-          to="/organization/$organizationId/agent-experience/skill-presets"
+          to="/organization/$organizationId/agents/skill-presets"
           params={{ organizationId }}
           className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
         >

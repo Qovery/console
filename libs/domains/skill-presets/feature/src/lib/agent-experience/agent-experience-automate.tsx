@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Navigate, useParams } from '@tanstack/react-router'
+import { Navigate, useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ServiceLightResponse, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
@@ -12,6 +12,8 @@ import { AgentTaskEnvironmentModal } from './agent-task-environment-modal'
 import { AgentExperiencePage } from './ui/agent-experience-ui'
 
 const { Table } = TablePrimitives
+const taskOverview =
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
 
 function selectAgentTasks(services: ServiceLightResponse[] = []) {
   return services
@@ -26,6 +28,7 @@ function selectAgentTasks(services: ServiceLightResponse[] = []) {
 
 export function AgentExperienceAutomations() {
   const { organizationId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const enabled = useFeatureFlagEnabled('argentic-workflow')
   const { canManage, isLoading: isRoleLoading } = useCanManageSkillPresets({ organizationId })
   const {
@@ -43,9 +46,7 @@ export function AgentExperienceAutomations() {
   useDocumentTitle('Automations - Agents')
 
   if (enabled === false) {
-    return (
-      <Navigate to="/organization/$organizationId/agent-experience/skill-presets" params={{ organizationId }} replace />
-    )
+    return <Navigate to="/organization/$organizationId/agents/skill-presets" params={{ organizationId }} replace />
   }
 
   return (
@@ -94,45 +95,51 @@ export function AgentExperienceAutomations() {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {tasks.map((task) => (
-              <Table.Row
-                key={task.id}
-                className="h-[60px] focus-within:bg-surface-neutral-subtle hover:bg-surface-neutral-subtle"
-              >
-                <Table.Cell className="border-r">
-                  <Tooltip content={task.name}>
-                    <Link
-                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                      params={{
-                        organizationId,
-                        projectId: task.project_id,
-                        environmentId: task.environment_id,
-                        serviceId: task.id,
-                      }}
-                      color="neutral"
-                      underline
-                      className="max-w-full gap-2.5"
-                    >
-                      <ServiceAvatar
-                        service={{ icon_uri: task.icon_uri, serviceType: 'AGENTIC_WORKFLOW' }}
-                        size="custom"
-                        className="size-5 shrink-0"
-                        radius="none"
-                        serviceAvatarRadius="sm"
-                        aria-hidden
-                      />
-                      <span className="min-w-0 truncate">{task.name}</span>
-                    </Link>
-                  </Tooltip>
-                </Table.Cell>
-                <Table.Cell className="border-r py-2 text-neutral-subtle [overflow-wrap:anywhere]">
-                  {task.project_name}
-                </Table.Cell>
-                <Table.Cell className="py-2 text-neutral-subtle [overflow-wrap:anywhere]">
-                  {task.environment_name}
-                </Table.Cell>
-              </Table.Row>
-            ))}
+            {tasks.map((task) => {
+              const params = {
+                organizationId,
+                projectId: task.project_id,
+                environmentId: task.environment_id,
+                serviceId: task.id,
+              }
+
+              return (
+                <Table.Row
+                  key={task.id}
+                  className="h-[60px] cursor-pointer focus-within:bg-surface-neutral-subtle hover:bg-surface-neutral-subtle"
+                  onClick={() => navigate({ to: taskOverview, params })}
+                >
+                  <Table.Cell className="border-r">
+                    <Tooltip content={task.name}>
+                      <Link
+                        to={taskOverview}
+                        params={params}
+                        onClick={(event) => event.stopPropagation()}
+                        color="neutral"
+                        underline
+                        className="max-w-full gap-2.5"
+                      >
+                        <ServiceAvatar
+                          service={{ icon_uri: task.icon_uri, serviceType: 'AGENTIC_WORKFLOW' }}
+                          size="custom"
+                          className="size-5 shrink-0"
+                          radius="none"
+                          serviceAvatarRadius="sm"
+                          aria-hidden
+                        />
+                        <span className="min-w-0 truncate">{task.name}</span>
+                      </Link>
+                    </Tooltip>
+                  </Table.Cell>
+                  <Table.Cell className="border-r py-2 text-neutral-subtle [overflow-wrap:anywhere]">
+                    {task.project_name}
+                  </Table.Cell>
+                  <Table.Cell className="py-2 text-neutral-subtle [overflow-wrap:anywhere]">
+                    {task.environment_name}
+                  </Table.Cell>
+                </Table.Row>
+              )
+            })}
           </Table.Body>
         </Table.Root>
       )}

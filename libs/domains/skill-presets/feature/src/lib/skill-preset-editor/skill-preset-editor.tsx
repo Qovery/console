@@ -342,7 +342,7 @@ export function SkillPresetEditorForm({
         await createSkillPreset({ organizationId, body })
         setSavePhase('saving')
         leavingAfterSave.current = true
-        navigate({ to: '/organization/$organizationId/agent-experience/skill-presets', params: { organizationId } })
+        navigate({ to: '/organization/$organizationId/agents/skill-presets', params: { organizationId } })
       }
     } catch (error) {
       const status = getSkillPresetErrorStatus(error)
@@ -391,7 +391,7 @@ export function SkillPresetEditorForm({
         >
           <div className="mb-2 flex flex-col gap-3 border-b border-neutral pb-6">
             <Link
-              to="/organization/$organizationId/agent-experience/skill-presets"
+              to="/organization/$organizationId/agents/skill-presets"
               params={{ organizationId }}
               className="flex w-fit items-center gap-1.5 text-sm text-neutral-subtle hover:text-neutral"
             >
@@ -406,7 +406,7 @@ export function SkillPresetEditorForm({
               <div className="flex items-center gap-2">
                 {preset && (
                   <ButtonLink
-                    to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history"
+                    to="/organization/$organizationId/agents/skill-presets/$skillPresetId/history"
                     params={{ organizationId, skillPresetId: preset.id }}
                     as="button"
                     size="md"

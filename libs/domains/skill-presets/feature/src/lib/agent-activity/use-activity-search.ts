@@ -15,7 +15,7 @@ export function useActivitySearch() {
   const setSearch = useCallback(
     (patch: Partial<ActivitySearch>) =>
       navigate({
-        to: '/organization/$organizationId/agent-experience/agent-activity',
+        to: '/organization/$organizationId/agents/agent-activity',
         params: { organizationId },
         search: clean({ ...search, ...patch }),
         replace: true,

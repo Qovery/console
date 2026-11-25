@@ -101,7 +101,7 @@ function PresetRow({
   const editor = assignees?.members.find(({ email }) => email === editedBy)
   const openPreset = () =>
     navigate({
-      to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
+      to: '/organization/$organizationId/agents/skill-presets/$skillPresetId',
       params: { organizationId, skillPresetId: preset.id },
     })
 
@@ -116,7 +116,7 @@ function PresetRow({
           <span className="flex items-center gap-2">
             <Link
               className="font-medium text-neutral hover:underline"
-              to="/organization/$organizationId/agent-experience/skill-presets/$skillPresetId"
+              to="/organization/$organizationId/agents/skill-presets/$skillPresetId"
               params={{ organizationId, skillPresetId: preset.id }}
               onClick={(event) => event.stopPropagation()}
             >
@@ -186,7 +186,7 @@ function PresetRow({
               icon={<Icon iconName="pen" iconStyle="regular" />}
               onSelect={() =>
                 navigate({
-                  to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
+                  to: '/organization/$organizationId/agents/skill-presets/$skillPresetId',
                   params: { organizationId, skillPresetId: preset.id },
                 })
               }
@@ -197,7 +197,7 @@ function PresetRow({
               icon={<Icon iconName="clock-rotate-left" iconStyle="regular" />}
               onSelect={() =>
                 navigate({
-                  to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId/history',
+                  to: '/organization/$organizationId/agents/skill-presets/$skillPresetId/history',
                   params: { organizationId, skillPresetId: preset.id },
                 })
               }
@@ -208,7 +208,7 @@ function PresetRow({
               icon={<Icon iconName="copy" iconStyle="regular" />}
               onSelect={() =>
                 navigate({
-                  to: '/organization/$organizationId/agent-experience/skill-presets/new',
+                  to: '/organization/$organizationId/agents/skill-presets/new',
                   params: { organizationId },
                   search: { from: preset.id },
                 })
@@ -295,7 +295,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
               variant="solid"
               onClick={() =>
                 navigate({
-                  to: '/organization/$organizationId/agent-experience/skill-presets/new',
+                  to: '/organization/$organizationId/agents/skill-presets/new',
                   params: { organizationId },
                 })
               }
@@ -309,7 +309,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
               color="neutral"
               onClick={() =>
                 navigate({
-                  to: '/organization/$organizationId/agent-experience/skill-presets/new',
+                  to: '/organization/$organizationId/agents/skill-presets/new',
                   params: { organizationId },
                   search: { template: 'blank' },
                 })

@@ -150,7 +150,7 @@ function TokenMenu({
             icon={<Icon iconName="wave-pulse" iconStyle="regular" />}
             onSelect={() =>
               navigate({
-                to: '/organization/$organizationId/agent-experience/agent-activity',
+                to: '/organization/$organizationId/agents/agent-activity',
                 params: { organizationId },
                 search: { actor: tokenActor(token.id) },
               })
@@ -409,7 +409,7 @@ export function AgentExperiencePolicyTokens() {
                 <Table.Cell className="text-right">
                   {isActivityEnabled && (
                     <Link
-                      to="/organization/$organizationId/agent-experience/agent-activity"
+                      to="/organization/$organizationId/agents/agent-activity"
                       params={{ organizationId }}
                       search={{ actor: tokenActor(row.policy_token_id) }}
                       color="brand"

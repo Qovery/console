@@ -4,7 +4,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/skill-presets/loads')({
   beforeLoad: ({ params: { organizationId } }) => {
     throw redirect({
-      to: '/organization/$organizationId/agent-experience/skill-presets',
+      to: '/organization/$organizationId/agents/skill-presets',
       params: { organizationId },
       replace: true,
     })

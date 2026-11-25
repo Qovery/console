@@ -80,11 +80,11 @@ const ORGANIZATION_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/audit-logs',
   },
   {
-    id: 'agent-experience',
+    id: 'agents',
     label: 'Agents',
     isNew: true,
     iconName: 'robot',
-    routeId: '/_authenticated/organization/$organizationId/agent-experience',
+    routeId: '/_authenticated/organization/$organizationId/agents',
   },
   {
     id: 'alerts',
@@ -559,7 +559,7 @@ function NavigationBar({ context }: { context: NavigationContext }) {
 
 const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/alerts',
-  '/_authenticated/organization/$organizationId/agent-experience',
+  '/_authenticated/organization/$organizationId/agents',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',

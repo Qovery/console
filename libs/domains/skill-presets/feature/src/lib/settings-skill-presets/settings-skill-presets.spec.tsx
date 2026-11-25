@@ -113,12 +113,12 @@ describe('SettingsSkillPresets', () => {
 
     await userEvent.click(within(row).getByText('Lean (CLI-first)'))
     expect(navigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
+      to: '/organization/$organizationId/agents/skill-presets/$skillPresetId',
       params: { organizationId: 'organization-1', skillPresetId: 'preset-1' },
     })
     expect(within(row).getByRole('link', { name: preset.name })).toHaveAttribute(
       'href',
-      '/organization/organization-1/agent-experience/skill-presets/preset-1'
+      '/organization/organization-1/agents/skill-presets/preset-1'
     )
   })
 

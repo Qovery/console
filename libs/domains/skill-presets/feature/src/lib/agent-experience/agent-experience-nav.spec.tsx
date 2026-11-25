@@ -15,7 +15,7 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: jest.fn(),
   useNavigate: () => mockNavigate,
   useLocation: jest.fn(),
-  useRouterState: () => ({ location: { pathname: '/organization/organization-1/agent-experience/skill-presets' } }),
+  useRouterState: () => ({ location: { pathname: '/organization/organization-1/agents/skill-presets' } }),
   Link: ({
     children,
     className,
@@ -38,9 +38,7 @@ jest.mock('../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets')
 jest.mock('../hooks/use-can-manage-policy-tokens/use-can-manage-policy-tokens')
 
 const at = (path: string) =>
-  jest
-    .mocked(useLocation)
-    .mockReturnValue({ pathname: `/organization/organization-1/agent-experience${path}` } as never)
+  jest.mocked(useLocation).mockReturnValue({ pathname: `/organization/organization-1/agents${path}` } as never)
 
 beforeEach(() => {
   mockNavigate.mockReset()
@@ -65,7 +63,7 @@ describe('AgentExperienceNav', () => {
 
   it.each(['', '/preset-1', '/preset-1/history', '/new'])('shows one Skills registry entry, current on %s', (path) => {
     jest.mocked(useLocation).mockReturnValue({
-      pathname: `/organization/organization-1/agent-experience/skill-presets${path}`,
+      pathname: `/organization/organization-1/agents/skill-presets${path}`,
     } as never)
     renderWithProviders(<AgentExperienceNav />)
     expect(screen.getByRole('link', { name: 'Skills registry' })).toHaveAttribute('aria-current', 'page')
@@ -78,7 +76,7 @@ describe('AgentExperienceNav', () => {
     jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: false })
     jest.mocked(useCanManagePolicyTokens).mockReturnValue({ canManage: false, isLoading: false })
     jest.mocked(useLocation).mockReturnValue({
-      pathname: '/organization/organization-1/agent-experience/skill-presets',
+      pathname: '/organization/organization-1/agents/skill-presets',
     } as never)
     renderWithProviders(<AgentExperienceNav />)
     expect(screen.getByRole('link', { name: 'Skills registry' })).toHaveAttribute('aria-current', 'page')
@@ -88,7 +86,7 @@ describe('AgentExperienceNav', () => {
   it('shows policy tokens to DevOps members, who manage them without the organization activity', () => {
     jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: false, isLoading: false })
     jest.mocked(useLocation).mockReturnValue({
-      pathname: '/organization/organization-1/agent-experience/policy-tokens',
+      pathname: '/organization/organization-1/agents/policy-tokens',
     } as never)
     renderWithProviders(<AgentExperienceNav />)
     expect(screen.getByRole('link', { name: 'Policy tokens' })).toBeInTheDocument()
@@ -101,7 +99,7 @@ describe('AgentExperienceNav', () => {
     jest.mocked(useFeatureFlagEnabled).mockImplementation((flag) => flag === 'agent-activity')
     jest.mocked(useAgentActivity).mockReturnValue({ data: { totals: { denials } } } as never)
     jest.mocked(useLocation).mockReturnValue({
-      pathname: '/organization/organization-1/agent-experience/skill-presets',
+      pathname: '/organization/organization-1/agents/skill-presets',
     } as never)
     renderWithProviders(<AgentExperienceNav />)
     expect(screen.getByRole('link', { name: label })).toBeInTheDocument()
@@ -136,7 +134,7 @@ describe('AgentTasksGate', () => {
     expect(screen.queryByText('Model tokens page')).not.toBeInTheDocument()
     await waitFor(() =>
       expect(mockNavigate).toHaveBeenCalledWith(
-        expect.objectContaining({ to: '/organization/$organizationId/agent-experience/skill-presets', replace: true })
+        expect.objectContaining({ to: '/organization/$organizationId/agents/skill-presets', replace: true })
       )
     )
   })
