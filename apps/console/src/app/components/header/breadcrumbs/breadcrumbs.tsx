@@ -194,7 +194,7 @@ export function Breadcrumbs() {
           key={data.item.id}
           className={
             index === breadcrumbData.length - 1
-              ? 'flex min-w-0 flex-1 items-center gap-2'
+              ? 'flex min-w-[8rem] shrink items-center gap-2 md:min-w-0 md:flex-1'
               : 'flex shrink-0 items-center gap-2'
           }
         >

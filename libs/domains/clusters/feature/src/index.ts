@@ -18,6 +18,7 @@ export * from './lib/cluster-running-status-indicator/cluster-running-status-ind
 export * from './lib/cluster-quota-warning/cluster-quota-warning'
 export * from './lib/cluster-quota-warning/cluster-quota-warning-callout'
 export * from './lib/cluster-credentials-modal/cluster-credentials-modal'
+export * from './lib/container-registry-form/container-registry-form'
 export * from './lib/credentials-list-clusters-modal/credentials-list-clusters-modal'
 export * from './lib/nodepools-resources-settings/nodepools-resources-settings'
 export * from './lib/kubeconfig-preview/kubeconfig-preview'

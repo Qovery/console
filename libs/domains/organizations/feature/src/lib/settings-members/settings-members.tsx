@@ -25,6 +25,7 @@ import {
   Button,
   Callout,
   Icon,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
   Section,
   Skeleton as SkeletonPrimitive,
   TableFilter,
@@ -53,7 +54,7 @@ const Skeleton = () => {
   const columnSizes = ['35%', '22%', '21%', '21%']
 
   return (
-    <Table.Root>
+    <Table.Root className="max-md:min-w-[760px]">
       <Table.Header>
         <Table.Row className="text-xs">
           {columnSizes.map((columnSize, index) => (
@@ -234,7 +235,7 @@ const MembersTable = (props: MembersTableProps) => {
 
   return (
     <>
-      <Table.Root>
+      <Table.Root className="max-md:min-w-[760px]">
         <Table.Header>
           {membersTable.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id} className="text-xs">
@@ -286,7 +287,7 @@ const MembersTable = (props: MembersTableProps) => {
         </Table.Body>
       </Table.Root>
       {inviteMembers.length > 0 && (
-        <Table.Root>
+        <Table.Root className="max-md:min-w-[760px]">
           <Table.Header>
             {inviteTable.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className="text-xs">
@@ -468,7 +469,7 @@ export function SettingsMembers() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Manage your team"
@@ -480,7 +481,7 @@ export function SettingsMembers() {
           />
 
           {canAddMember && (
-            <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
+            <Button className={SETTINGS_HEADER_ACTION_CLASS_NAME} size="md" onClick={onAddMember}>
               <Icon iconName="circle-plus" iconStyle="regular" />
               Add member
             </Button>

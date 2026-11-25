@@ -88,12 +88,12 @@ jobs:
       NX_PUBLIC_PRICING_API_URL: ${{ vars.NX_PUBLIC_PRICING_API_URL }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.4.0
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
           cache: yarn
@@ -149,13 +149,14 @@ jobs:
 
           yarn nx affected --target=lint --parallel=3
 
-          yarn nx affected \
+          # Run every project (unchanged ones are Nx Cloud cache hits) so each Codecov upload
+          # covers the whole repo and PR vs. base comparisons are meaningful.
+          yarn nx run-many \
             --target=test \
             --parallel=3 \
             --configuration=${{ inputs.configuration }} \
             --ci \
             --coverage \
-            --coverageReporters=lcov \
             --maxWorkers=2 \
             --forceExit
 
@@ -165,7 +166,7 @@ jobs:
 
       - name: Upload build and coverage artifacts
         if: always()
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: dist-and-coverage-artifacts
           path: |
@@ -186,15 +187,15 @@ jobs:
     name: Code Coverage
     needs: [nx-main]
     steps:
-      - uses: actions/checkout@v4.4.0
-      - uses: actions/download-artifact@v4.3.0
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/download-artifact@v8.0.2
         with:
           name: dist-and-coverage-artifacts
           path: coverage
           merge-multiple: true
       - name: Display structure of downloaded files
         run: ls -R
-      - uses: codecov/codecov-action@v4.6.0
+      - uses: codecov/codecov-action@v7.1.1
         with:
           directory: ./coverage/coverage
           flags: unittests # optional
@@ -212,8 +213,8 @@ jobs:
       CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.cloudfront-distribution-id }}
     steps:
       - name: Git clone the repository
-        uses: actions/checkout@v4.4.0
-      - uses: actions/download-artifact@v4.3.0
+        uses: actions/checkout@v7.0.1
+      - uses: actions/download-artifact@v8.0.2
         with:
           name: dist-and-coverage-artifacts
           path: dist/
@@ -235,9 +236,9 @@ jobs:
     if: ${{ inputs.flow == 'deploy-staging' }}
     steps:
       - name: Git clone the repository
-        uses: actions/checkout@v4.4.0
+        uses: actions/checkout@v7.0.1
       - name: Setup Node.js
-        uses: actions/setup-node@v4.4.0
+        uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
           cache: yarn
@@ -258,7 +259,7 @@ jobs:
         run: yarn e2e:staging
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: console-staging-smoke-report
           path: |

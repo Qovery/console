@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Icon, Section } from '@qovery/shared/ui'
+import { Button, Icon, SETTINGS_HEADER_ACTION_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { SLACK_BOT_API_URL } from '@qovery/shared/util-node-env'
 import { SlackInstallationList } from './slack-installation-list'
@@ -19,7 +19,7 @@ export function SettingsSlackIntegration() {
   if (!SLACK_BOT_API_URL) {
     return (
       <div className="w-full">
-        <Section className="px-8 pb-8 pt-6">
+        <Section className="px-4 pb-8 pt-6 md:px-8">
           <SettingsHeading
             title="Slack"
             description="Slack integration is not configured. Contact your administrator."
@@ -31,7 +31,7 @@ export function SettingsSlackIntegration() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SlackInstallationList organizationId={organizationId} onConnectSlack={addToSlack}>
           {(hasInstallation, onAddRule) => (
             <div className="relative">
@@ -40,7 +40,7 @@ export function SettingsSlackIntegration() {
                 description="Get notified in Slack when deployments fail, detect failure loops, and know when environments recover."
               />
               {hasInstallation && (
-                <Button className="absolute right-0 top-0" size="md" onClick={onAddRule}>
+                <Button className={SETTINGS_HEADER_ACTION_CLASS_NAME} size="md" onClick={onAddRule}>
                   <Icon iconName="circle-plus" iconStyle="regular" />
                   Add rule
                 </Button>

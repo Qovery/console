@@ -49,12 +49,10 @@ const SECONDARY_PROVIDERS = [
 
 function useMobileFriendlyBody() {
   useEffect(() => {
-    const { minWidth, overflowY } = document.body.style
-    document.body.style.minWidth = '0'
+    const { overflowY } = document.body.style
     document.body.style.overflowY = 'auto'
 
     return () => {
-      document.body.style.minWidth = minWidth
       document.body.style.overflowY = overflowY
     }
   }, [])

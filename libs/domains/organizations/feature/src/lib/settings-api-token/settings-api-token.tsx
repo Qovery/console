@@ -3,7 +3,7 @@ import { formatDistanceStrict } from 'date-fns'
 import { type OrganizationApiToken } from 'qovery-typescript-axios'
 import { Suspense, useState } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { SETTINGS_HEADER_ACTION_CLASS_NAME, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, Section, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -126,7 +126,7 @@ export function SettingsApiToken() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="API Token"
@@ -135,7 +135,7 @@ export function SettingsApiToken() {
           />
 
           <Button
-            className="absolute right-0 top-0"
+            className={SETTINGS_HEADER_ACTION_CLASS_NAME}
             size="md"
             onClick={() => {
               openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })

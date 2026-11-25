@@ -65,7 +65,7 @@ export function ValuesOverrideYamlModal({
                   scope="HELM"
                   disableBuiltInVariables={true}
                   width="100%"
-                  height="calc(100vh - 278px)"
+                  height="calc(100dvh - 278px)"
                   language="yaml"
                   value={field.value}
                   onChange={field.onChange}
@@ -95,7 +95,7 @@ export function ValuesOverrideYamlModal({
             {!isErrorHelmDefaultValues && !isLoadingHelmDefaultValues && (
               <CodeEditor
                 width="100%"
-                height="calc(100vh - 278px)"
+                height="calc(100dvh - 278px)"
                 language="yaml"
                 defaultValue={helmDefaultValues}
                 readOnly

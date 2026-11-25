@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type HelmRequestAllOfValuesOverrideFile } from 'qovery-typescript-axios'
 import { Controller, FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -16,7 +17,7 @@ import {
 import { AutoDeploySetting, useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isHelmRepositorySource } from '@qovery/shared/enums'
-import { Button, Callout, Icon, InputText, Section } from '@qovery/shared/ui'
+import { Button, Callout, Icon, InputText, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -232,7 +233,7 @@ export function HelmValuesOverrideFileSettings() {
 
   return (
     <FormProvider {...methods}>
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading
           title="Values override as file"
           description="Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository."
@@ -248,7 +249,7 @@ export function HelmValuesOverrideFileSettings() {
               isSetting
             />
             {methods.watch('type') !== 'YAML' ? (
-              <div className="mt-10 flex justify-end">
+              <div className={clsx('mt-10 flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledSaveButton}>
                   Save
                 </Button>

@@ -36,7 +36,7 @@ export function DockerfileFragmentInlineModal({ onClose, onSubmit, content }: Do
             render={({ field }) => (
               <CodeEditor
                 width="100%"
-                height="calc(100vh - 278px)"
+                height="calc(100dvh - 278px)"
                 language="dockerfile"
                 value={field.value}
                 onChange={field.onChange}

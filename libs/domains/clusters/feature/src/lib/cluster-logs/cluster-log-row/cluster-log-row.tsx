@@ -102,7 +102,7 @@ function ClusterLogRowRoot({ index, data, firstDate }: ClusterLogRowProps) {
         )}
       >
         <CopyToClipboardButtonIcon
-          className="mr-4 select-none text-neutral opacity-0 group-hover:opacity-100"
+          className="mr-4 select-none text-neutral opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
           content={message as string}
         />
         {data.timestamp && (
