@@ -29,7 +29,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdAuditLogsRouteImport } 
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/route'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/agents/route'
-import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/route'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/settings/index'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/index'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/agents/index'
@@ -63,7 +62,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdAgentsConnectRouteImpor
 import { Route as AuthenticatedOrganizationOrganizationIdAgentsAutomationsRouteImport } from './routes/_authenticated/organization/$organizationId/agents/automations'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentsAgentTaskTokensRouteImport } from './routes/_authenticated/organization/$organizationId/agents/agent-task-tokens'
 import { Route as AuthenticatedOrganizationOrganizationIdAgentsAgentActivityRouteImport } from './routes/_authenticated/organization/$organizationId/agents/agent-activity'
-import { Route as AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRouteImport } from './routes/_authenticated/organization/$organizationId/agent-experience/$'
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/demo-cluster'
 import { Route as AuthenticatedOnboardingOrganizationOrganizationIdClusterRouteImport } from './routes/_authenticated/onboarding/organization/$organizationId/cluster'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/settings/notifications/route'
@@ -364,14 +362,6 @@ const AuthenticatedOrganizationOrganizationIdAgentsRouteRoute =
     path: '/agents',
     getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
   } as any)
-const AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute =
-  AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteImport.update(
-    {
-      id: '/agent-experience',
-      path: '/agent-experience',
-      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
-    } as any,
-  )
 const AuthenticatedOrganizationOrganizationIdSettingsIndexRoute =
   AuthenticatedOrganizationOrganizationIdSettingsIndexRouteImport.update({
     id: '/',
@@ -625,15 +615,6 @@ const AuthenticatedOrganizationOrganizationIdAgentsAgentActivityRoute =
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdAgentsRouteRoute,
   } as any)
-const AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRoute =
-  AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRouteImport.update(
-    {
-      id: '/$',
-      path: '/$',
-      getParentRoute: () =>
-        AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute,
-    } as any,
-  )
 const AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute =
   AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRouteImport.update(
     {
@@ -2262,7 +2243,6 @@ export interface FileRoutesByFullPath {
   '/onboarding/profile': typeof AuthenticatedOnboardingProfileRoute
   '/accept-invitation': typeof AuthenticatedAcceptInvitationIndexRoute
   '/organization/': typeof AuthenticatedOrganizationIndexRoute
-  '/organization/$organizationId/agent-experience': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteWithChildren
   '/organization/$organizationId/agents': typeof AuthenticatedOrganizationOrganizationIdAgentsRouteRouteWithChildren
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRouteRouteWithChildren
   '/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
@@ -2275,7 +2255,6 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/notifications': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
-  '/organization/$organizationId/agent-experience/$': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRoute
   '/organization/$organizationId/agents/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentsAgentActivityRoute
   '/organization/$organizationId/agents/agent-task-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentsAgentTaskTokensRoute
   '/organization/$organizationId/agents/automations': typeof AuthenticatedOrganizationOrganizationIdAgentsAutomationsRoute
@@ -2501,7 +2480,6 @@ export interface FileRoutesByTo {
   '/onboarding/profile': typeof AuthenticatedOnboardingProfileRoute
   '/accept-invitation': typeof AuthenticatedAcceptInvitationIndexRoute
   '/organization': typeof AuthenticatedOrganizationIndexRoute
-  '/organization/$organizationId/agent-experience': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteWithChildren
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
@@ -2509,7 +2487,6 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/notifications': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren
   '/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
-  '/organization/$organizationId/agent-experience/$': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRoute
   '/organization/$organizationId/agents/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentsAgentActivityRoute
   '/organization/$organizationId/agents/agent-task-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentsAgentTaskTokensRoute
   '/organization/$organizationId/agents/automations': typeof AuthenticatedOrganizationOrganizationIdAgentsAutomationsRoute
@@ -2720,7 +2697,6 @@ export interface FileRoutesById {
   '/_authenticated/onboarding/profile': typeof AuthenticatedOnboardingProfileRoute
   '/_authenticated/accept-invitation/': typeof AuthenticatedAcceptInvitationIndexRoute
   '/_authenticated/organization/': typeof AuthenticatedOrganizationIndexRoute
-  '/_authenticated/organization/$organizationId/agent-experience': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/agents': typeof AuthenticatedOrganizationOrganizationIdAgentsRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
@@ -2733,7 +2709,6 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/notifications': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren
   '/_authenticated/onboarding/organization/$organizationId/cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdClusterRoute
   '/_authenticated/onboarding/organization/$organizationId/demo-cluster': typeof AuthenticatedOnboardingOrganizationOrganizationIdDemoClusterRoute
-  '/_authenticated/organization/$organizationId/agent-experience/$': typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRoute
   '/_authenticated/organization/$organizationId/agents/agent-activity': typeof AuthenticatedOrganizationOrganizationIdAgentsAgentActivityRoute
   '/_authenticated/organization/$organizationId/agents/agent-task-tokens': typeof AuthenticatedOrganizationOrganizationIdAgentsAgentTaskTokensRoute
   '/_authenticated/organization/$organizationId/agents/automations': typeof AuthenticatedOrganizationOrganizationIdAgentsAutomationsRoute
@@ -2963,7 +2938,6 @@ export interface FileRouteTypes {
     | '/onboarding/profile'
     | '/accept-invitation'
     | '/organization/'
-    | '/organization/$organizationId/agent-experience'
     | '/organization/$organizationId/agents'
     | '/organization/$organizationId/alerts'
     | '/organization/$organizationId/settings'
@@ -2976,7 +2950,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/notifications'
     | '/onboarding/organization/$organizationId/cluster'
     | '/onboarding/organization/$organizationId/demo-cluster'
-    | '/organization/$organizationId/agent-experience/$'
     | '/organization/$organizationId/agents/agent-activity'
     | '/organization/$organizationId/agents/agent-task-tokens'
     | '/organization/$organizationId/agents/automations'
@@ -3202,7 +3175,6 @@ export interface FileRouteTypes {
     | '/onboarding/profile'
     | '/accept-invitation'
     | '/organization'
-    | '/organization/$organizationId/agent-experience'
     | '/organization/$organizationId/audit-logs'
     | '/organization/$organizationId/clusters'
     | '/organization/$organizationId/overview'
@@ -3210,7 +3182,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/notifications'
     | '/onboarding/organization/$organizationId/cluster'
     | '/onboarding/organization/$organizationId/demo-cluster'
-    | '/organization/$organizationId/agent-experience/$'
     | '/organization/$organizationId/agents/agent-activity'
     | '/organization/$organizationId/agents/agent-task-tokens'
     | '/organization/$organizationId/agents/automations'
@@ -3420,7 +3391,6 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding/profile'
     | '/_authenticated/accept-invitation/'
     | '/_authenticated/organization/'
-    | '/_authenticated/organization/$organizationId/agent-experience'
     | '/_authenticated/organization/$organizationId/agents'
     | '/_authenticated/organization/$organizationId/alerts'
     | '/_authenticated/organization/$organizationId/settings'
@@ -3433,7 +3403,6 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/notifications'
     | '/_authenticated/onboarding/organization/$organizationId/cluster'
     | '/_authenticated/onboarding/organization/$organizationId/demo-cluster'
-    | '/_authenticated/organization/$organizationId/agent-experience/$'
     | '/_authenticated/organization/$organizationId/agents/agent-activity'
     | '/_authenticated/organization/$organizationId/agents/agent-task-tokens'
     | '/_authenticated/organization/$organizationId/agents/automations'
@@ -3799,13 +3768,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentsRouteRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
-    '/_authenticated/organization/$organizationId/agent-experience': {
-      id: '/_authenticated/organization/$organizationId/agent-experience'
-      path: '/agent-experience'
-      fullPath: '/organization/$organizationId/agent-experience'
-      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
-    }
     '/_authenticated/organization/$organizationId/settings/': {
       id: '/_authenticated/organization/$organizationId/settings/'
       path: '/'
@@ -4036,13 +3998,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/$organizationId/agents/agent-activity'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentsAgentActivityRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentsRouteRoute
-    }
-    '/_authenticated/organization/$organizationId/agent-experience/$': {
-      id: '/_authenticated/organization/$organizationId/agent-experience/$'
-      path: '/$'
-      fullPath: '/organization/$organizationId/agent-experience/$'
-      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute
     }
     '/_authenticated/onboarding/organization/$organizationId/demo-cluster': {
       id: '/_authenticated/onboarding/organization/$organizationId/demo-cluster'
@@ -5362,21 +5317,6 @@ const AuthenticatedOnboardingRouteRouteWithChildren =
     AuthenticatedOnboardingRouteRouteChildren,
   )
 
-interface AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren {
-  AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRoute
-}
-
-const AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren: AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren =
-  {
-    AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRoute:
-      AuthenticatedOrganizationOrganizationIdAgentExperienceSplatRoute,
-  }
-
-const AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteWithChildren =
-  AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute._addFileChildren(
-    AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteChildren,
-  )
-
 interface AuthenticatedOrganizationOrganizationIdAgentsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdAgentsAgentActivityRoute: typeof AuthenticatedOrganizationOrganizationIdAgentsAgentActivityRoute
   AuthenticatedOrganizationOrganizationIdAgentsAgentTaskTokensRoute: typeof AuthenticatedOrganizationOrganizationIdAgentsAgentTaskTokensRoute
@@ -6215,7 +6155,6 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
   )
 
 interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
-  AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute: typeof AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdAgentsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdAgentsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdAlertsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdAlertsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
@@ -6268,8 +6207,6 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
 
 const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOrganizationOrganizationIdRouteRouteChildren =
   {
-    AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRoute:
-      AuthenticatedOrganizationOrganizationIdAgentExperienceRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdAgentsRouteRoute:
       AuthenticatedOrganizationOrganizationIdAgentsRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdAlertsRouteRoute:
