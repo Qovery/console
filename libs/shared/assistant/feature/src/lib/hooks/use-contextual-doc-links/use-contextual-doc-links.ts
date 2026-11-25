@@ -1,16 +1,16 @@
 import { useSyncExternalStore } from 'react'
 
 const mapping = {
-  '/organization/:organizationId/agent-experience/automate': [
+  '/organization/:organizationId/agents/automations': [
     { link: 'https://www.qovery.com/docs/configuration/agent-tasks/overview', label: 'Agent Tasks docs' },
   ],
-  '/organization/:organizationId/agent-experience/policy-tokens': [
+  '/organization/:organizationId/agents/policy-tokens': [
     {
       link: 'https://www.qovery.com/docs/configuration/organization/api-policy-token',
       label: 'How policy tokens work',
     },
   ],
-  '/organization/:organizationId/agent-experience/copilot': [
+  '/organization/:organizationId/agents/copilot': [
     { link: 'https://www.qovery.com/docs/copilot/overview', label: 'What the Copilot does' },
     { link: 'https://www.qovery.com/docs/copilot/console', label: 'Use the Copilot in the Console' },
   ],

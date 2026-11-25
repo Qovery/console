@@ -2,7 +2,7 @@ import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { AgentExperienceNav } from '@qovery/domains/skill-presets/feature'
 import { ErrorBoundary } from '@qovery/shared/ui'
 
-export const Route = createFileRoute('/_authenticated/organization/$organizationId/agent-experience')({
+export const Route = createFileRoute('/_authenticated/organization/$organizationId/agents')({
   component: RouteComponent,
 })
 

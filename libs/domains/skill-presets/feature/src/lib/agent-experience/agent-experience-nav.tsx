@@ -34,7 +34,7 @@ export function AgentExperienceNav() {
   const isAgentTasksEnabled = Boolean(useFeatureFlagEnabled(AGENT_TASKS_FLAG))
   const isActivityEnabled = useFeatureFlagEnabled('agent-activity') === true
   const denied = useDeniedThisWeek(organizationId, canManage ? 'organization' : 'me', isActivityEnabled && !isLoading)
-  const base = `/organization/${organizationId}/agent-experience`
+  const base = `/organization/${organizationId}/agents`
   const { pathname } = useLocation()
   const { canManage: canManageTokens, isLoading: isTokenRoleLoading } = useCanManagePolicyTokens({ organizationId })
   const registryPath = `${base}/skill-presets`
@@ -50,7 +50,7 @@ export function AgentExperienceNav() {
         Skills registry
       </Sidebar.Item>
       {isAgentTasksEnabled && (
-        <Sidebar.Item to={`${base}/automate`} icon="clock-nine" iconStyle="regular">
+        <Sidebar.Item to={`${base}/automations`} icon="clock-nine" iconStyle="regular">
           Automations
         </Sidebar.Item>
       )}
@@ -96,8 +96,10 @@ export function AgentTasksGate({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (flag === false) {
       navigate({
-        to: '/organization/$organizationId/agent-experience/skill-presets',
+        to: '/organization/$organizationId/agents/skill-presets',
         params: { organizationId },
+        search: true,
+        hash: true,
         replace: true,
       })
     }

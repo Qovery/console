@@ -5,7 +5,7 @@ import { SettingsSkillPresets } from '@qovery/domains/skill-presets/feature'
 // `connect` opens the Connect an agent popup: old Connect links land here. Any other value is ignored.
 const searchSchema = z.object({ connect: z.boolean().optional().catch(undefined) })
 
-export const Route = createFileRoute('/_authenticated/organization/$organizationId/agent-experience/skill-presets/')({
+export const Route = createFileRoute('/_authenticated/organization/$organizationId/agents/skill-presets/')({
   validateSearch: searchSchema,
   component: RouteComponent,
 })
