@@ -1,6 +1,6 @@
 import posthog from 'posthog-js'
 import { type Gate } from '@qovery/shared/billing-kit'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { type SelfManagedClusterCreationFlowProps } from '../self-managed-cluster-creation/self-managed-cluster-creation-flow'
 import { ClusterAdd } from './cluster-add'
 
@@ -22,8 +22,10 @@ jest.mock('posthog-js', () => ({
   default: { capture: jest.fn() },
 }))
 const mockBillingFlag = jest.fn(() => false)
+let mockEnabledFeatureFlags: string[] = []
 jest.mock('posthog-js/react', () => ({
-  useFeatureFlagEnabled: (flag: string) => flag === 'billing-paywall' && mockBillingFlag(),
+  useFeatureFlagEnabled: (flag: string) =>
+    flag === 'billing-paywall' ? mockBillingFlag() : mockEnabledFeatureFlags.includes(flag),
 }))
 const mockShowPylonForm = jest.fn()
 const mockShowChat = jest.fn()
@@ -100,9 +102,18 @@ jest.mock('../self-managed-cluster-creation/self-managed-cluster-creation-flow',
   ),
 }))
 
+const getExistingClusterCardTitles = () => {
+  const heading = screen.getByRole('heading', { name: 'Connect existing cluster (BYOK)' })
+  const section = heading.closest('section') as HTMLElement
+  return within(section)
+    .getAllByRole('button')
+    .map((card) => card.textContent)
+}
+
 describe('ClusterAdd', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
+    mockEnabledFeatureFlags = []
     mockGates.current = undefined
     mockBillingFlag.mockReturnValue(false)
     mockGateIntro.mockClear()
@@ -154,21 +165,130 @@ describe('ClusterAdd', () => {
     expect(container.querySelectorAll('svg:not([aria-hidden="true"])')).toHaveLength(0)
   })
 
-  it.each([
-    ['AWS', 'AWS'],
-    ['GCP', 'GCP'],
-    ['Scaleway', 'SCW'],
-  ])('opens the creation flow on %s for a cluster to connect', async (title, provider) => {
-    const { userEvent } = renderWithProviders(<ClusterAdd />)
+  describe.each([
+    ['off', []],
+    ['on', ['byok-v2-on-premise']],
+  ])('with the byok-v2-on-premise flag %s', (_, enabledFeatureFlags) => {
+    beforeEach(() => {
+      mockEnabledFeatureFlags = enabledFeatureFlags
+    })
 
-    await userEvent.click(screen.getByRole('button', { name: title }))
+    it.each([
+      ['AWS', 'AWS'],
+      ['GCP', 'GCP'],
+      ['Scaleway', 'SCW'],
+    ])('opens the creation flow on %s for a cluster to connect', async (title, provider) => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
 
-    expect(await screen.findByText(`Provider ${provider}`)).toBeInTheDocument()
-    // The BYOC modal wrapper must not enable Radix's document-level scroll lock.
-    expect(document.body).not.toHaveAttribute('data-scroll-locked')
-    expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
-      selectedCloudProvider: provider,
-      selectedInstallationType: 'self-managed',
+      await userEvent.click(screen.getByRole('button', { name: title }))
+
+      expect(await screen.findByText(`Provider ${provider}`)).toBeInTheDocument()
+      // The BYOC modal wrapper must not enable Radix's document-level scroll lock.
+      expect(document.body).not.toHaveAttribute('data-scroll-locked')
+      expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
+        selectedCloudProvider: provider,
+        selectedInstallationType: 'self-managed',
+      })
+    })
+
+    it.each([
+      ['Microsoft Azure', 'AZURE'],
+      ['Digital Ocean', 'DIGITAL_OCEAN'],
+    ])('keeps the installation guide on %s', async (title, provider) => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+
+      await userEvent.click(screen.getByRole('button', { name: title }))
+
+      expect(await screen.findByRole('heading', { name: 'Install Qovery on your cluster' })).toBeInTheDocument()
+      expect(screen.queryByText('Creation flow')).not.toBeInTheDocument()
+      expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
+        selectedCloudProvider: provider,
+        selectedInstallationType: 'self-managed',
+      })
+    })
+  })
+
+  describe('with the byok-v2-on-premise flag off', () => {
+    it('lists the same clusters to connect as before', () => {
+      renderWithProviders(<ClusterAdd />)
+
+      expect(getExistingClusterCardTitles()).toEqual([
+        'Local machine (Demo)',
+        'AWS',
+        'GCP',
+        'Scaleway',
+        'Microsoft Azure',
+        'OVH Cloud',
+        'Digital Ocean',
+        'CIVO',
+        'Oracle Cloud Infrastructure',
+        'Hetzner',
+        'IBM Cloud',
+      ])
+    })
+
+    it.each([
+      ['OVH Cloud', 'OVH_CLOUD'],
+      ['CIVO', 'CIVO'],
+      ['Oracle Cloud Infrastructure', 'ORACLE_CLOUD'],
+      ['Hetzner', 'HETZNER'],
+      ['IBM Cloud', 'IBM_CLOUD'],
+    ])('opens the installation guide on %s', async (title, provider) => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+
+      await userEvent.click(screen.getByRole('button', { name: title }))
+
+      expect(await screen.findByRole('heading', { name: 'Install Qovery on your cluster' })).toBeInTheDocument()
+      expect(screen.queryByText('Creation flow')).not.toBeInTheDocument()
+      expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
+        selectedCloudProvider: provider,
+        selectedInstallationType: 'self-managed',
+      })
+    })
+  })
+
+  describe('with the byok-v2-on-premise flag on', () => {
+    beforeEach(() => {
+      mockEnabledFeatureFlags = ['byok-v2-on-premise']
+    })
+
+    it('adds a card for any other Kubernetes cluster', () => {
+      renderWithProviders(<ClusterAdd />)
+
+      expect(getExistingClusterCardTitles()).toEqual([
+        'Local machine (Demo)',
+        'AWS',
+        'GCP',
+        'Scaleway',
+        'Microsoft Azure',
+        'OVH Cloud',
+        'Digital Ocean',
+        'CIVO',
+        'Oracle Cloud Infrastructure',
+        'Hetzner',
+        'IBM Cloud',
+        'Other Kubernetes',
+      ])
+    })
+
+    it.each([
+      ['OVH Cloud', 'OVH', 'OVH_CLOUD'],
+      ['CIVO', 'CIVO', 'CIVO'],
+      ['Oracle Cloud Infrastructure', 'ORACLE', 'ORACLE_CLOUD'],
+      ['Hetzner', 'HETZNER', 'HETZNER'],
+      ['IBM Cloud', 'IBM', 'IBM_CLOUD'],
+      ['Other Kubernetes', 'ON_PREMISE', 'OTHER'],
+    ])('opens the creation flow on %s with the provider %s', async (title, provider, analyticsProvider) => {
+      const { userEvent } = renderWithProviders(<ClusterAdd />)
+
+      await userEvent.click(screen.getByRole('button', { name: title }))
+
+      expect(await screen.findByText(`Provider ${provider}`)).toBeInTheDocument()
+      expect(screen.queryByRole('heading', { name: 'Install Qovery on your cluster' })).not.toBeInTheDocument()
+      expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
+        selectedCloudProvider: analyticsProvider,
+        selectedInstallationType: 'self-managed',
+      })
     })
   })
 

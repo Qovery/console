@@ -1,10 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SettingsAiSkills } from '@qovery/domains/organizations/feature'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/skills')({
-  component: RouteComponent,
+  beforeLoad: ({ params: { organizationId } }) => {
+    throw redirect({
+      to: '/organization/$organizationId/agents/skill-presets',
+      params: { organizationId },
+      search: true,
+      hash: true,
+      replace: true,
+    })
+  },
 })
-
-function RouteComponent() {
-  return <SettingsAiSkills />
-}

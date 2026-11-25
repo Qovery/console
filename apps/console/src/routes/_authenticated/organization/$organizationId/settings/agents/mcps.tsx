@@ -1,6 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SettingsAgentMcps } from '@qovery/domains/organizations/feature'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
+// Moved to Agents. Kept so old links and bookmarks still work.
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/agents/mcps')({
-  component: SettingsAgentMcps,
+  beforeLoad: ({ params: { organizationId } }) => {
+    throw redirect({
+      to: '/organization/$organizationId/agents/mcp-servers',
+      params: { organizationId },
+      search: true,
+      hash: true,
+      replace: true,
+    })
+  },
 })

@@ -6,12 +6,14 @@ import {
   McpServerScope,
 } from 'qovery-typescript-axios'
 import { type ReactElement, type ReactNode } from 'react'
+import { useUserRole } from '@qovery/shared/iam/feature'
 import * as sharedUi from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useDeleteLlmProviderHook from '../hooks/use-delete-llm-provider/use-delete-llm-provider'
 import * as useDeleteMcpServerHook from '../hooks/use-delete-mcp-server/use-delete-mcp-server'
 import * as useLlmProvidersHook from '../hooks/use-llm-providers/use-llm-providers'
 import * as useMcpServersHook from '../hooks/use-mcp-servers/use-mcp-servers'
+import { type LlmProviderCreateEditModalProps } from '../llm-provider-create-edit-modal/llm-provider-create-edit-modal'
 import { type McpServerCreateEditModalProps } from '../mcp-server-create-edit-modal/mcp-server-create-edit-modal'
 import { SettingsAgentMcps, SettingsAgentTokens } from './settings-agent-personalization'
 
@@ -37,6 +39,8 @@ jest.mock('@auth0/auth0-react', () => ({
   useAuth0: () => ({ user: { sub: 'auth0|current-user' } }),
 }))
 
+jest.mock('@qovery/shared/iam/feature', () => ({ useUserRole: jest.fn() }))
+
 const mcpServers: McpServerResponse[] = [
   {
     id: 'mcp-zulu',
@@ -58,6 +62,7 @@ const mcpServers: McpServerResponse[] = [
     created_at: '2026-08-01T10:00:00Z',
     updated_at: '2026-08-02T10:00:00Z',
     scope: McpServerScope.USER,
+    owner_user_sub: 'auth0|current-user',
     owner_name: 'Rémi Bonnet',
     attachable: true,
   },
@@ -70,6 +75,7 @@ const mcpServers: McpServerResponse[] = [
     created_at: '2026-08-01T10:00:00Z',
     updated_at: '2026-08-02T10:00:00Z',
     scope: McpServerScope.USER,
+    owner_user_sub: 'auth0|other-user',
     owner_name: 'Romaric Philogène',
     attachable: false,
   },
@@ -116,6 +122,11 @@ describe('Agent settings pages', () => {
   beforeEach(() => {
     jest.useFakeTimers()
     jest.clearAllMocks()
+    jest.mocked(useUserRole).mockReturnValue({
+      roles: ['organization:org-1:admin'],
+      isQoveryAdminUser: false,
+      loading: false,
+    })
     useModalMock.mockReturnValue({ openModal, closeModal })
     useModalConfirmationMock.mockReturnValue({ openModalConfirmation })
     useDeleteMcpServerMock.mockReturnValue({ mutateAsync: deleteMcpServer })
@@ -132,7 +143,7 @@ describe('Agent settings pages', () => {
 
     renderWithProviders(<SettingsAgentTokens />)
 
-    expect(screen.getByRole('heading', { name: 'Tokens' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Model tokens' })).toBeInTheDocument()
     expect(screen.getByText('No tokens')).toBeInTheDocument()
     expect(screen.queryByText('No MCPs')).not.toBeInTheDocument()
   })
@@ -197,6 +208,17 @@ describe('Agent settings pages', () => {
     renderWithProviders(<SettingsAgentMcps />)
     expect(screen.getByRole('button', { name: 'Add MCP' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Add token' })).not.toBeInTheDocument()
+  })
+
+  it('waits for the organization role before enabling token creation', () => {
+    jest.mocked(useUserRole).mockReturnValue({
+      roles: [],
+      loading: true,
+      isQoveryAdminUser: false,
+    })
+    renderWithProviders(<SettingsAgentTokens />)
+
+    expect(screen.getByRole('button', { name: 'Add token' })).toBeDisabled()
   })
 
   it('should render and manage provider tokens', async () => {
@@ -305,5 +327,36 @@ describe('Agent settings pages', () => {
 
     expect(confirmation).toEqual(expect.objectContaining({ title: 'Delete MCP', name: 'Zulu' }))
     expect(deleteMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1', mcpServerId: 'mcp-zulu' })
+  })
+
+  it('limits members to managing their own tokens and MCPs', async () => {
+    jest.mocked(useUserRole).mockReturnValue({
+      roles: ['organization:org-1:developer', 'organization:another-org:admin'],
+      isQoveryAdminUser: false,
+      loading: false,
+    })
+    useLlmProvidersMock.mockReturnValue({ data: llmProviders })
+    useMcpServersMock.mockReturnValue({ data: [mcpServers[0], mcpServers[1], { ...mcpServers[2], attachable: true }] })
+    const { userEvent } = renderWithProviders(
+      <>
+        <SettingsAgentTokens />
+        <SettingsAgentMcps />
+      </>
+    )
+
+    for (const name of ['Claude production', 'Other Claude', 'Zulu', 'Bravo']) {
+      expect(screen.getByText(name)).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: `Edit ${name}` })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: `Delete ${name}` })).not.toBeInTheDocument()
+    }
+
+    for (const name of ['My Claude', 'Alpha']) {
+      expect(screen.getByRole('button', { name: `Edit ${name}` })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: `Delete ${name}` })).toBeInTheDocument()
+    }
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
+    const createModal = openModal.mock.lastCall?.[0].content as ReactElement<LlmProviderCreateEditModalProps>
+    expect(createModal.props.personalOnly).toBe(true)
   })
 })

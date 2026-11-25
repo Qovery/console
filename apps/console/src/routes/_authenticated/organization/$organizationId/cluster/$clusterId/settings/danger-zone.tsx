@@ -27,7 +27,7 @@ function RouteComponent() {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <div className="max-w-content-with-navigation-left p-8">
+      <div className="max-w-content-with-navigation-left px-4 py-8 md:p-8">
         <BlockContentDelete
           title="Uninstall cluster"
           ctaLabel="Delete cluster"

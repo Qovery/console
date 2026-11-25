@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import {
   CloudProviderEnum,
   DatabaseModeEnum,
@@ -24,6 +25,7 @@ import {
   InputSelect,
   InputText,
   Link,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
   Section,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
@@ -115,7 +117,7 @@ function DatabaseResourcesSettingsForm({
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="Resources" description="Manage the database resources." />
         <div className="max-w-content-with-navigation-left">
           <form className="space-y-10" onSubmit={onSubmit}>
@@ -310,7 +312,7 @@ function DatabaseResourcesSettingsForm({
               )}
             </Section>
 
-            <div className="flex justify-end">
+            <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
               <Button
                 data-testid="submit-button"
                 size="lg"

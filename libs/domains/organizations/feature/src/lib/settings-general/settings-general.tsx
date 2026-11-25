@@ -1,11 +1,21 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { type Organization } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FormEventHandler } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, InputFile, InputTags, InputText, InputTextArea, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  InputFile,
+  InputTags,
+  InputText,
+  InputTextArea,
+  STICKY_FORM_ACTIONS_CLASS_NAME,
+  Section,
+} from '@qovery/shared/ui'
 import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useEditOrganization } from '../hooks/use-edit-organization/use-edit-organization'
@@ -31,7 +41,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <SettingsHeading title="General" />
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Organization profile">
@@ -121,7 +131,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               downtime...)
             </p>
           </BlockContent>
-          <div className="flex justify-end">
+          <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button data-testid="submit-button" size="lg" type="submit" disabled={!formState.isValid} loading={loading}>
               Save
             </Button>

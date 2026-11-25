@@ -98,7 +98,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
                     <CopyToClipboardButtonIcon
                       content={data.identifier.execution_id ?? data.identifier.deployment_id}
                       tooltipContent={data.identifier.execution_id ? 'Copy execution ID' : 'Copy deployment ID'}
-                      className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                      className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                       iconClassName="text-xs"
                     />
                   </span>

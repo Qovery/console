@@ -152,7 +152,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
       {children}
       {service && (
         <motion.aside
-          className="relative my-1 -mr-[317px] flex h-[calc(100vh-72px)] w-[330px] border border-r-0 border-neutral bg-surface-neutral-component"
+          className="relative my-1 -mr-[317px] flex h-[calc(100dvh-72px)] w-[330px] border border-r-0 border-neutral bg-surface-neutral-component"
           animate={{
             marginRight: open ? '0' : '-317px',
           }}

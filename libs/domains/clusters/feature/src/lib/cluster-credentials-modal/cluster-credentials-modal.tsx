@@ -196,7 +196,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
     }))
     .with('ON_PREMISE', (cp) => ({
       cloudProvider: cp,
-      payload: undefined,
+      payload: currentData,
     }))
     .exhaustive()
 }

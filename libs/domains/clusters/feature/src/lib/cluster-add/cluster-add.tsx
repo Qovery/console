@@ -167,6 +167,7 @@ export function ClusterAdd() {
   const { openModal, closeModal } = useModal()
   const { showPylonForm, showChat } = useSupportChat()
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
+  const isByokV2OnPremiseEnabled = Boolean(useFeatureFlagEnabled('byok-v2-on-premise'))
   const { isClusterCreationRestricted: disabled } = useClusterCreationRestriction({ organizationId })
   const [isCreationFlowOpen, setIsCreationFlowOpen] = useState(false)
   const [creationCloudProvider, setCreationCloudProvider] = useState<SelfManagedClusterCloudProvider>('AWS')
@@ -216,6 +217,25 @@ export function ClusterAdd() {
     selectedCloudProvider,
     selectedInstallationType: 'self-managed',
   })
+  const otherProviders: {
+    title: string
+    icon: ProviderIconSource
+    provider: string
+    creationProvider?: SelfManagedClusterCloudProvider
+  }[] = [
+    { title: 'Microsoft Azure', icon: Azure, provider: 'AZURE' },
+    { title: 'OVH Cloud', icon: <Icon name="OVH_CLOUD" />, provider: 'OVH_CLOUD', creationProvider: 'OVH' },
+    { title: 'Digital Ocean', icon: DigitalOcean, provider: 'DIGITAL_OCEAN' },
+    { title: 'CIVO', icon: <Icon name="CIVO" />, provider: 'CIVO', creationProvider: 'CIVO' },
+    {
+      title: 'Oracle Cloud Infrastructure',
+      icon: <Icon name="ORACLE_CLOUD" />,
+      provider: 'ORACLE_CLOUD',
+      creationProvider: 'ORACLE',
+    },
+    { title: 'Hetzner', icon: <Icon name="HETZNER" />, provider: 'HETZNER', creationProvider: 'HETZNER' },
+    { title: 'IBM Cloud', icon: <Icon name="IBM_CLOUD" />, provider: 'IBM_CLOUD', creationProvider: 'IBM' },
+  ]
 
   return (
     <div className="mt-8 flex w-full flex-col gap-10">
@@ -334,26 +354,31 @@ export function ClusterAdd() {
           locked={selfManagedLock}
           intro={selfManagedIntro}
         />
-        {[
-          { title: 'Microsoft Azure', icon: Azure, provider: 'AZURE' },
-          { title: 'OVH Cloud', icon: <Icon name="OVH_CLOUD" />, provider: 'OVH_CLOUD' },
-          { title: 'Digital Ocean', icon: DigitalOcean, provider: 'DIGITAL_OCEAN' },
-          { title: 'CIVO', icon: <Icon name="CIVO" />, provider: 'CIVO' },
-          { title: 'Oracle Cloud Infrastructure', icon: <Icon name="ORACLE_CLOUD" />, provider: 'ORACLE_CLOUD' },
-          { title: 'Hetzner', icon: <Icon name="HETZNER" />, provider: 'HETZNER' },
-          { title: 'IBM Cloud', icon: <Icon name="IBM_CLOUD" />, provider: 'IBM_CLOUD' },
-        ].map(({ title, icon, provider }) => (
+        {otherProviders.map(({ title, icon, provider, creationProvider }) => (
           <ProviderCard
             key={title}
             title={title}
             icon={icon}
-            onClick={() => openInstallationGuideModal()}
+            onClick={() =>
+              isByokV2OnPremiseEnabled && creationProvider
+                ? openCreationFlow(creationProvider)
+                : openInstallationGuideModal()
+            }
             disabled={disabled}
             analytics={selfManaged(provider)}
             locked={selfManagedLock}
             intro={selfManagedIntro}
           />
         ))}
+        {isByokV2OnPremiseEnabled && (
+          <ProviderCard
+            title="Other Kubernetes"
+            icon={Kubernetes}
+            onClick={() => openCreationFlow('ON_PREMISE')}
+            disabled={disabled}
+            analytics={selfManaged('OTHER')}
+          />
+        )}
       </ProviderSection>
 
       {paywall.element}

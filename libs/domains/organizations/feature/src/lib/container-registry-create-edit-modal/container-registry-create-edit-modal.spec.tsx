@@ -1,12 +1,12 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
+  ContainerRegistriesApi,
   ContainerRegistryKindEnum,
   type ContainerRegistryRequest,
   type ContainerRegistryResponse,
 } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import * as useAvailableContainerRegistries from '../hooks/use-available-container-registries/use-available-container-registries'
 import * as useCreateContainerRegistry from '../hooks/use-create-container-registry/use-create-container-registry'
 import * as useEditContainerRegistry from '../hooks/use-edit-container-registry/use-edit-container-registry'
 import ContainerRegistryCreateEditModal, {
@@ -21,9 +21,9 @@ const useCreateContainerRegistryMockSpy = jest.spyOn(
   'useCreateContainerRegistry'
 ) as jest.Mock
 const useEditContainerRegistryMockSpy = jest.spyOn(useEditContainerRegistry, 'useEditContainerRegistry') as jest.Mock
-const useAvailableContainerRegistriesMockSpy = jest.spyOn(
-  useAvailableContainerRegistries,
-  'useAvailableContainerRegistries'
+const listAvailableContainerRegistryMockSpy = jest.spyOn(
+  ContainerRegistriesApi.prototype,
+  'listAvailableContainerRegistry'
 ) as jest.Mock
 const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
 
@@ -44,54 +44,56 @@ describe('ContainerRegistryCreateEditModal', () => {
     useEditContainerRegistryMockSpy.mockReturnValue({
       mutateAsync: jest.fn(),
     })
-    useAvailableContainerRegistriesMockSpy.mockReturnValue({
-      data: [
-        {
-          kind: 'ECR',
-          required_config: ['region', 'access_key_id', 'secret_access_key'],
-          is_mandatory: true,
-        },
-        {
-          kind: 'DOCR',
-          required_config: ['token'],
-          is_mandatory: true,
-        },
-        {
-          kind: 'SCALEWAY_CR',
-          required_config: ['region', 'scaleway_access_key', 'scaleway_secret_key'],
-          is_mandatory: true,
-        },
-        {
-          kind: 'DOCKER_HUB',
-          required_config: ['username', 'password'],
-          is_mandatory: false,
-        },
-        {
-          kind: 'PUBLIC_ECR',
-          required_config: [],
-          is_mandatory: false,
-        },
-        {
-          kind: 'GENERIC_CR',
-          required_config: ['username', 'password'],
-          is_mandatory: false,
-        },
-        {
-          kind: 'GITHUB_CR',
-          required_config: ['username', 'password'],
-          is_mandatory: false,
-        },
-        {
-          kind: 'GITLAB_CR',
-          required_config: ['username', 'password'],
-          is_mandatory: false,
-        },
-        {
-          kind: 'GCP_ARTIFACT_REGISTRY',
-          required_config: ['region', 'json_credentials'],
-          is_mandatory: true,
-        },
-      ],
+    listAvailableContainerRegistryMockSpy.mockResolvedValue({
+      data: {
+        results: [
+          {
+            kind: 'ECR',
+            required_config: ['region', 'access_key_id', 'secret_access_key'],
+            is_mandatory: true,
+          },
+          {
+            kind: 'DOCR',
+            required_config: ['token'],
+            is_mandatory: true,
+          },
+          {
+            kind: 'SCALEWAY_CR',
+            required_config: ['region', 'scaleway_access_key', 'scaleway_secret_key'],
+            is_mandatory: true,
+          },
+          {
+            kind: 'DOCKER_HUB',
+            required_config: ['username', 'password'],
+            is_mandatory: false,
+          },
+          {
+            kind: 'PUBLIC_ECR',
+            required_config: [],
+            is_mandatory: false,
+          },
+          {
+            kind: 'GENERIC_CR',
+            required_config: ['username', 'password'],
+            is_mandatory: false,
+          },
+          {
+            kind: 'GITHUB_CR',
+            required_config: ['username', 'password'],
+            is_mandatory: false,
+          },
+          {
+            kind: 'GITLAB_CR',
+            required_config: ['username', 'password'],
+            is_mandatory: false,
+          },
+          {
+            kind: 'GCP_ARTIFACT_REGISTRY',
+            required_config: ['region', 'json_credentials'],
+            is_mandatory: true,
+          },
+        ],
+      },
     })
 
     useFeatureFlagEnabledMock.mockReturnValue(true)

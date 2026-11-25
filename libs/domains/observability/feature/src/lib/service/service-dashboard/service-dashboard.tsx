@@ -174,9 +174,9 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
 
   return (
     <div className="isolate">
-      <div className="bg-surface sticky top-[45px] z-header h-14 w-full bg-background">
-        <div className="mx-8 flex h-full items-center justify-between gap-3 border-b border-neutral">
-          <div className="flex gap-2">
+      <div className="bg-surface sticky top-[45px] z-header h-14 w-full bg-background max-md:h-auto">
+        <div className="mx-4 flex h-full flex-wrap items-center justify-between gap-3 border-b border-neutral max-md:py-2 md:mx-8">
+          <div className="flex flex-wrap gap-2">
             <Tooltip
               content={
                 <span>
@@ -234,7 +234,7 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
           </div>
         </div>
       </div>
-      <div className="space-y-10 px-8 py-10">
+      <div className="space-y-10 px-4 py-10 md:px-8">
         <Section className="gap-4">
           <Heading weight="medium" level={2}>
             Service health check

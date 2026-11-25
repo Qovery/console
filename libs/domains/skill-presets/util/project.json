@@ -1,0 +1,20 @@
+{
+  "name": "domains-skill-presets-util",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/skill-presets/util/src",
+  "projectType": "library",
+  "tags": ["scope:domain", "type:util", "slice:skill-presets"],
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
+    }
+  }
+}

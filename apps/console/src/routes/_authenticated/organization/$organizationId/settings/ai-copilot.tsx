@@ -1,20 +1,14 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
-import { useOrganization } from '@qovery/domains/organizations/feature'
-import { AICopilotSettings } from '@qovery/shared/devops-copilot/feature'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
+// Moved to Agents. Kept so old links and bookmarks still work.
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/ai-copilot')({
-  component: RouteComponent,
+  beforeLoad: ({ params: { organizationId } }) => {
+    throw redirect({
+      to: '/organization/$organizationId/agents/copilot',
+      params: { organizationId },
+      search: true,
+      hash: true,
+      replace: true,
+    })
+  },
 })
-
-function RouteComponent() {
-  const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('Copilot - Organization settings')
-  const { data: organization } = useOrganization({ organizationId })
-
-  if (!organization) {
-    return null
-  }
-
-  return <AICopilotSettings organization={organization} />
-}

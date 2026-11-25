@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import equal from 'fast-deep-equal'
 import {
   AgenticWorkflowExecutionMode,
@@ -26,7 +27,7 @@ import {
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Section, toastError } from '@qovery/shared/ui'
+import { Button, STICKY_FORM_ACTIONS_CLASS_NAME, Section, toastError } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { AgenticWorkflowAdvancedSettings } from './agentic-workflow-advanced-settings/agentic-workflow-advanced-settings'
@@ -307,7 +308,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const hasOverlaySave = ['connections', 'automations', 'outputs', 'advanced-settings'].includes(page)
 
   return (
-    <Section className="px-8 pb-8 pt-6">
+    <Section className="px-4 pb-8 pt-6 md:px-8">
       <SettingsHeading title={content.title} description={content.description} />
       <form onSubmit={submit} className="max-w-content-with-navigation-left space-y-4">
         {page === 'general' ? <AgenticWorkflowGeneralSettings form={form} /> : null}
@@ -340,7 +341,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           <AgenticWorkflowAdvancedSettings form={form} isSaving={isLoading} onSave={saveSettings} />
         ) : null}
         {!hasOverlaySave ? (
-          <div className="flex justify-end pt-2">
+          <div className={clsx('flex justify-end pt-2', STICKY_FORM_ACTIONS_CLASS_NAME)}>
             <Button
               type="submit"
               size="lg"

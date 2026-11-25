@@ -196,4 +196,67 @@ describe('RowEvent', () => {
 
     expect(screen.getByText('target-name')).toHaveAttribute('href', href)
   })
+
+  it('should link skill preset events to the skill presets settings', () => {
+    const skillLoad = {
+      ...mockEvent,
+      event_type: 'SKILL_LOAD',
+      target_type: OrganizationEventTargetType.ORGANIZATION,
+      sub_target_type: 'SKILL_PRESET',
+      target_name: 'Acme',
+      change: JSON.stringify({ skill_name: 'qovery-deploy', source: 'ROLE', from_cache: true }),
+    } as unknown as OrganizationEventResponse
+    renderWithProviders(<RowEvent {...props} event={skillLoad} />)
+
+    expect(screen.getByRole('link', { name: 'Acme' })).toHaveAttribute('href', '/organization/1/agents/skill-presets')
+  })
+
+  it('should describe a skill preset save refused by the security review', () => {
+    const rejected = {
+      ...mockEvent,
+      event_type: 'SKILL_PRESET_REJECTED',
+      target_type: OrganizationEventTargetType.ORGANIZATION,
+      sub_target_type: 'SKILL_PRESET',
+      change: JSON.stringify({
+        attempted_change: 'UPDATE',
+        name: 'Backend team',
+        findings: [
+          { source: 'RULES', rule_id: 'dump-secrets', location: 'team context', line: 1, reason: 'r' },
+          { source: 'MODEL', rule_id: 'data-exfiltration', location: 'team context', line: 2, reason: 'r' },
+        ],
+      }),
+    } as unknown as OrganizationEventResponse
+    renderWithProviders(<RowEvent {...props} event={rejected} />)
+
+    expect(
+      screen.getByText('· Rejected by the security review · 2 findings (rule check, model review)', { exact: false })
+    ).toBeInTheDocument()
+    expect(screen.getByText('Skill Preset Rejected')).toHaveClass('text-negative')
+  })
+
+  it('should still describe a refused save whose findings are not a list', () => {
+    const rejected = {
+      ...mockEvent,
+      event_type: 'SKILL_PRESET_REJECTED',
+      target_type: OrganizationEventTargetType.ORGANIZATION,
+      sub_target_type: 'SKILL_PRESET',
+      change: JSON.stringify({ findings: { source: 'RULES' } }),
+    } as unknown as OrganizationEventResponse
+    renderWithProviders(<RowEvent {...props} event={rejected} />)
+
+    expect(screen.getByText('· Rejected by the security review · 0 findings', { exact: false })).toBeInTheDocument()
+  })
+
+  it('should render a skill viewed in the Console', () => {
+    const viewed = {
+      ...mockEvent,
+      event_type: 'SKILL_VIEW',
+      target_type: OrganizationEventTargetType.ORGANIZATION,
+      sub_target_type: 'SKILL_PRESET',
+      change: JSON.stringify({ skill_name: 'qovery-deploy', source: 'ROLE', from_cache: false }),
+    } as unknown as OrganizationEventResponse
+    renderWithProviders(<RowEvent {...props} event={viewed} />)
+
+    expect(screen.getByText('Viewed in the Console')).toBeInTheDocument()
+  })
 })

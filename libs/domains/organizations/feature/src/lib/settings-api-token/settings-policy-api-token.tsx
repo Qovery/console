@@ -3,7 +3,16 @@ import posthog from 'posthog-js'
 import { type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, ExternalLink, Icon, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ExternalLink,
+  Icon,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
+  Section,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useDeletePolicyApiToken } from '../hooks/use-delete-policy-api-token/use-delete-policy-api-token'
 import { PolicyApiTokenCrudModal } from './policy-api-token/policy-api-token-crud-modal'
@@ -21,7 +30,7 @@ export function SettingsPolicyApiToken() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Policy API Token (New)"
@@ -41,7 +50,7 @@ export function SettingsPolicyApiToken() {
           />
 
           <Button
-            className="absolute right-0 top-0"
+            className={SETTINGS_HEADER_ACTION_CLASS_NAME}
             size="md"
             aria-label="Add new policy API token"
             onClick={() => {

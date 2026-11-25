@@ -27,6 +27,7 @@ export function DevopsCopilotButton() {
       type="button"
       variant="surface"
       color="brand"
+      className="max-md:h-7 max-md:w-7 max-md:justify-center max-md:px-0"
       onClick={() => {
         setDevopsCopilotOpen(true)
         posthog.capture('ai-copilot-opened', {
@@ -35,7 +36,7 @@ export function DevopsCopilotButton() {
       }}
     >
       <Icon iconName="sparkles" iconStyle="solid" className="text-xs text-brand" />
-      AI Copilot
+      <span className="sr-only md:not-sr-only">AI Copilot</span>
     </Button>
   )
 }
