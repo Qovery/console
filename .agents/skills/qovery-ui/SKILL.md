@@ -19,6 +19,8 @@ Infer the approach from the request:
 
 Let the request determine whether to explain findings or implement corrections. Do not require a command or a separate design proposal.
 
+Treat violations of the documented Console conventions—including layout, spacing, typography, colors, and component usage—as actionable findings, even when the interface functions correctly. Separate these from optional suggestions that are not supported by a convention or concrete user impact.
+
 ## Reviewing and improving existing UI
 
 Establish the scope before reviewing. For a page, include its relevant tabs, dialogs, and interaction states. For an area, identify its pages and creation/editing flows so nested screens are not overlooked. Keep this proportional to the request.
@@ -33,8 +35,6 @@ Review from the outside inward:
 4. Interaction and accessibility behavior.
 
 Inspect the components that render the UI, including nested or reused components. A conforming page wrapper does not establish that its contents follow the conventions.
-
-For each finding, identify the concrete mismatch or user impact and the relevant convention or comparison. Distinguish necessary corrections from optional preferences.
 
 When improvements are requested, correct structural and integration issues before visual details. Preserve working behavior and unrelated code, but do not preserve an unsuitable layout solely to minimize the diff.
 
