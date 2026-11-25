@@ -241,7 +241,7 @@ function LlmProviderRow({ organizationId, llmProvider, currentUserSub, canManage
 
 function LlmProvidersSkeleton() {
   return (
-    <BlockContent title="Tokens" classNameContent="p-0">
+    <BlockContent title="Model tokens" classNameContent="p-0">
       {[0, 1].map((index) => (
         <div key={index} className="flex items-center justify-between gap-4 border-b border-neutral p-4 last:border-0">
           <div className="space-y-2">
@@ -379,7 +379,7 @@ function useOrganizationCredentialPermissions(organizationId: string) {
 }
 
 export function SettingsAgentTokens() {
-  useDocumentTitle('Agent tokens - Organization settings')
+  useDocumentTitle('Model tokens - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
   const { canManageOrganization, isRoleLoading } = useOrganizationCredentialPermissions(organizationId)
   const { openModal, closeModal } = useModal()
@@ -392,9 +392,13 @@ export function SettingsAgentTokens() {
   }
 
   return (
-    <Section className="px-4 pb-8 pt-6 md:px-8">
+    <Section className="px-6 pb-8 pt-6">
       <div className="space-y-6">
-        <SettingsHeading title="Tokens" description="Configure the provider credentials used by your agent tasks.">
+        <SettingsHeading
+          title="Model tokens"
+          description="Configure the provider credentials used by your agent tasks."
+          stackActionsOnMobile
+        >
           <Button size="md" onClick={onAddToken} disabled={isRoleLoading}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add token
@@ -427,9 +431,13 @@ export function SettingsAgentMcps() {
   }
 
   return (
-    <Section className="px-4 pb-8 pt-6 md:px-8">
+    <Section className="px-6 pb-8 pt-6">
       <div className="space-y-6">
-        <SettingsHeading title="MCPs" description="Connect the tools and data sources available to your agent tasks.">
+        <SettingsHeading
+          title="MCPs"
+          description="Connect the tools and data sources available to your agent tasks."
+          stackActionsOnMobile
+        >
           <Button size="md" onClick={onAddMcp}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add MCP

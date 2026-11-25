@@ -51,7 +51,7 @@ export function TemplateGallery() {
     })
 
   return (
-    <Section className="flex flex-col gap-6 px-8 pb-8 pt-6">
+    <Section className="flex flex-col gap-6 px-6 pb-8 pt-6 md:px-8">
       <div className="flex flex-col gap-3">
         <Link
           to="/organization/$organizationId/agent-experience/skill-presets"

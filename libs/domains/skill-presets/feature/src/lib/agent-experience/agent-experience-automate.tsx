@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Navigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ServiceLightResponse, ServiceTypeEnum } from 'qovery-typescript-axios'
-import { Button, EmptyState, ExternalLink, Link, Skeleton, TablePrimitives, useModal } from '@qovery/shared/ui'
+import { Button, EmptyState, Link, Skeleton, TablePrimitives, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
@@ -51,15 +51,8 @@ export function AgentExperienceAutomations() {
     <AgentExperiencePage
       layout="dashboard"
       title="Automations"
-      description={
-        <>
-          View the agent tasks in your organization.
-          <br />
-          <ExternalLink href="https://www.qovery.com/docs/configuration/agent-tasks/overview" size="sm">
-            Agent Tasks docs
-          </ExternalLink>
-        </>
-      }
+      description="View the agent tasks in your organization."
+      showHelp
       action={
         enabled &&
         !isRoleLoading &&

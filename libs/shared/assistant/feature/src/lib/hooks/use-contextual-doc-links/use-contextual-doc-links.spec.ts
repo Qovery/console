@@ -32,6 +32,17 @@ describe('useContextualDocLinks', () => {
     })
   })
 
+  it.each([
+    ['automate', 'Agent Tasks docs', 'configuration/agent-tasks/overview'],
+    ['policy-tokens', 'How policy tokens work', 'configuration/organization/api-policy-token'],
+  ])('should link contextual docs from the Agents %s page', (page, label, path) => {
+    setPathname(`/organization/org-123/agent-experience/${page}`)
+
+    const { result } = renderHook(() => useContextualDocLinks())
+
+    expect(result.current).toContainEqual({ label, link: `https://www.qovery.com/docs/${path}` })
+  })
+
   it('should match tanstack organization settings routes', () => {
     setPathname('/organization/org-123/settings/api-token')
 

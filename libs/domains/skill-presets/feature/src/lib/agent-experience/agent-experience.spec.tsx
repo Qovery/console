@@ -206,6 +206,7 @@ describe('AgentExperiencePolicyTokens', () => {
     renderWithProviders(<AgentExperiencePolicyTokens />)
 
     const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
+    expect(screen.getByRole('button', { name: 'Need help here?' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Last 7 days' })).toBeInTheDocument()
     const usage = await within(ciDeployer).findByTestId('token-usage')
     expect(usage).toHaveTextContent(/\d+ allowed/)
@@ -416,7 +417,7 @@ describe('AgentExperienceNav', () => {
       screen.getByText('Policy tokens').closest('[data-testid=sidebar-group-content]') as HTMLElement
     )
     expect(settings.getByText('Policy tokens')).toBeInTheDocument()
-    expect(settings.getByText('Copilot settings')).toBeInTheDocument()
+    expect(settings.getByText('Copilot')).toBeInTheDocument()
     unmount()
 
     setSkillPresetsScenario('member')
@@ -424,9 +425,9 @@ describe('AgentExperienceNav', () => {
     expect(await screen.findByText('Activity')).toBeInTheDocument()
     await memberUserEvent.click(screen.getByRole('button', { name: 'Settings' }))
     expect(screen.getByText('Model tokens')).toBeInTheDocument()
-    expect(screen.getByText('MCP servers')).toBeInTheDocument()
+    expect(screen.getByText('MCPs')).toBeInTheDocument()
     expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
-    expect(screen.queryByText('Copilot settings')).not.toBeInTheDocument()
+    expect(screen.queryByText('Copilot')).not.toBeInTheDocument()
   })
 
   it('opens Settings by itself on the policy tokens page', async () => {
