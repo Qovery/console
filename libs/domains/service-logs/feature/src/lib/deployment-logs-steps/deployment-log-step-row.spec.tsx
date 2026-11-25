@@ -64,11 +64,17 @@ describe('DeploymentLogStepRow', () => {
   })
 
   it('labels the skipped status as Skipped', async () => {
-    const { container, userEvent } = renderWithProviders(<DeploymentLogStatusIcon status="SKIP" />)
+    jest.useFakeTimers()
+    try {
+      const { container, userEvent } = renderWithProviders(<DeploymentLogStatusIcon status="SKIP" />)
 
-    await userEvent.hover(container.firstElementChild as HTMLElement)
+      await userEvent.hover(container.firstElementChild as HTMLElement)
+      await act(async () => jest.runOnlyPendingTimersAsync())
 
-    expect(await screen.findByRole('tooltip')).toHaveTextContent('Skipped')
+      expect(screen.getByRole('tooltip')).toHaveTextContent('Skipped')
+    } finally {
+      jest.useRealTimers()
+    }
   })
 
   it('keeps the paused window when selecting a line that is already visible', () => {

@@ -29,6 +29,7 @@ import {
   ClusterOperatorInstallInstructions,
   INSTALLATION_DOCUMENTATION_URL,
 } from '../cluster-operator-install-instructions/cluster-operator-install-instructions'
+import { ContainerRegistryForm } from '../container-registry-form/container-registry-form'
 import { useClusterOperatorStatus } from '../hooks/use-cluster-operator-status/use-cluster-operator-status'
 import { useCreateSelfManagedCluster } from '../hooks/use-create-self-managed-cluster/use-create-self-managed-cluster'
 import { usePlatformTemplateComponentConfiguration } from '../hooks/use-platform-template-component-configuration/use-platform-template-component-configuration'
@@ -45,9 +46,6 @@ import {
 import {
   type SelfManagedClusterRegistryValues,
   getSelfManagedClusterRegistryRequest,
-  validateRegistryPassword,
-  validateRegistryUrl,
-  validateRegistryUsername,
 } from '../utils/self-managed-cluster-registry'
 import { OperatorConfigurationField, isSupportedOperatorConfigurationField } from './operator-configuration-field'
 
@@ -155,9 +153,9 @@ function GeneralStep({
       production: false,
       credentials: '',
       region: '',
-      registryUrl: '',
-      registryUsername: '',
-      registryPassword: '',
+      kind: 'GENERIC_CR',
+      url: '',
+      config: { login_type: 'ANONYMOUS' },
     },
   })
   const { data: cloudProviders = [] } = useCloudProviders()
@@ -227,56 +225,7 @@ function GeneralStep({
               <p className="text-sm text-neutral-subtle">
                 This registry is used to store the built images or mirror the container images deployed on this cluster.
               </p>
-              <Controller
-                name="registryUrl"
-                control={methods.control}
-                rules={{ validate: validateRegistryUrl }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    name={field.name}
-                    label="Registry URL"
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={error?.message}
-                    hint="Expected format: https://registry.example.com or https://registry.example.com:5000"
-                  />
-                )}
-              />
-              <Controller
-                name="registryUsername"
-                control={methods.control}
-                rules={{
-                  validate: (value, { registryPassword }) => validateRegistryUsername(value, registryPassword),
-                  deps: ['registryPassword'],
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    name={field.name}
-                    label="Username (optional)"
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={error?.message}
-                  />
-                )}
-              />
-              <Controller
-                name="registryPassword"
-                control={methods.control}
-                rules={{
-                  validate: (value, { registryUsername }) => validateRegistryPassword(value, registryUsername),
-                  deps: ['registryUsername'],
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    name={field.name}
-                    type="password"
-                    label="Password (optional)"
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={error?.message}
-                  />
-                )}
-              />
+              <ContainerRegistryForm clusterRegistry="creation" />
             </StepSection>
           ) : (
             <StepSection title="Deployment target">
