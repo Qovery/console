@@ -379,7 +379,7 @@ function useOrganizationCredentialPermissions(organizationId: string) {
 }
 
 export function SettingsAgentTokens() {
-  useDocumentTitle('Agent tokens - Organization settings')
+  useDocumentTitle('Model tokens - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
   const { canManageOrganization, isRoleLoading } = useOrganizationCredentialPermissions(organizationId)
   const { openModal, closeModal } = useModal()
@@ -395,7 +395,7 @@ export function SettingsAgentTokens() {
     <Section className="px-6 pb-8 pt-6">
       <div className="space-y-6">
         <SettingsHeading
-          title="Tokens"
+          title="Model tokens"
           description="Configure the provider credentials used by your agent tasks."
           stackActionsOnMobile
         >

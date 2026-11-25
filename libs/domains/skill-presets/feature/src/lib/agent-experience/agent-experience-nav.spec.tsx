@@ -119,7 +119,7 @@ describe('AgentExperienceNav, Settings', () => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
     renderWithProviders(<AgentExperienceNav />)
     expect(await screen.findByText('Model tokens')).toBeInTheDocument()
-    expect(screen.getByText('MCP servers')).toBeInTheDocument()
+    expect(screen.getByText('MCPs')).toBeInTheDocument()
   })
 })
 

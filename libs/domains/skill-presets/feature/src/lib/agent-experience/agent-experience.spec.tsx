@@ -425,7 +425,7 @@ describe('AgentExperienceNav', () => {
     expect(await screen.findByText('Activity')).toBeInTheDocument()
     await memberUserEvent.click(screen.getByRole('button', { name: 'Settings' }))
     expect(screen.getByText('Model tokens')).toBeInTheDocument()
-    expect(screen.getByText('MCP servers')).toBeInTheDocument()
+    expect(screen.getByText('MCPs')).toBeInTheDocument()
     expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
     expect(screen.queryByText('Copilot')).not.toBeInTheDocument()
   })

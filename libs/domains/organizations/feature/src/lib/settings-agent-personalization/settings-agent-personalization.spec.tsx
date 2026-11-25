@@ -143,7 +143,7 @@ describe('Agent settings pages', () => {
 
     renderWithProviders(<SettingsAgentTokens />)
 
-    expect(screen.getByRole('heading', { name: 'Tokens' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Model tokens' })).toBeInTheDocument()
     expect(screen.getByText('No tokens')).toBeInTheDocument()
     expect(screen.queryByText('No MCPs')).not.toBeInTheDocument()
   })

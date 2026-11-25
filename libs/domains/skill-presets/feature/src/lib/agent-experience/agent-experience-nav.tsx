@@ -79,7 +79,7 @@ export function AgentExperienceNav() {
           {canSeeTokens && <Sidebar.SubItem to={`${base}/policy-tokens`}>Policy tokens</Sidebar.SubItem>}
           {isAdmin && <Sidebar.SubItem to={`${base}/copilot`}>Copilot</Sidebar.SubItem>}
           {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>}
-          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>}
+          {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCPs</Sidebar.SubItem>}
         </Sidebar.Group>
       )}
     </Sidebar.Root>
