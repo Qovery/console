@@ -46,7 +46,15 @@ export function AgentExperienceAutomations() {
   useDocumentTitle('Automations - Agents')
 
   if (enabled === false) {
-    return <Navigate to="/organization/$organizationId/agents/skill-presets" params={{ organizationId }} replace />
+    return (
+      <Navigate
+        to="/organization/$organizationId/agents/skill-presets"
+        params={{ organizationId }}
+        search
+        hash
+        replace
+      />
+    )
   }
 
   return (

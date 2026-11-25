@@ -98,6 +98,8 @@ export function AgentTasksGate({ children }: { children: ReactNode }) {
       navigate({
         to: '/organization/$organizationId/agents/skill-presets',
         params: { organizationId },
+        search: true,
+        hash: true,
         replace: true,
       })
     }

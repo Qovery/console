@@ -13,7 +13,15 @@ function RouteComponent() {
 
   if (enabled === undefined) return null
   if (!enabled) {
-    return <Navigate to="/organization/$organizationId/agents/skill-presets" params={{ organizationId }} replace />
+    return (
+      <Navigate
+        to="/organization/$organizationId/agents/skill-presets"
+        params={{ organizationId }}
+        search
+        hash
+        replace
+      />
+    )
   }
 
   return <AgentActivity />

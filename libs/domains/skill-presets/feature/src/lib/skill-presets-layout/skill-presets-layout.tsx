@@ -46,7 +46,8 @@ export function ConnectAgentButton() {
     navigate({
       to: '/organization/$organizationId/agents/skill-presets',
       params: { organizationId },
-      search: {},
+      search: (previous) => ({ ...previous, connect: undefined }),
+      hash: true,
       replace: true,
     })
     // Once, when the page opens with the parameter.

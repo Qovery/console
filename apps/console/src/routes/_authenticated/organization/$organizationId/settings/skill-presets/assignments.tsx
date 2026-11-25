@@ -7,6 +7,8 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
       throw redirect({
         to: '/organization/$organizationId/agents/skill-presets',
         params: { organizationId },
+        search: true,
+        hash: true,
         replace: true,
       })
     },
