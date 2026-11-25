@@ -11,7 +11,7 @@ Before working on this repo, read the relevant skills in `.agents/skills/`. Each
 | `web-design-guidelines`       | UI/UX and accessibility audit                                          |
 | `qovery-ui`                   | Design review, component selection, and UI generation for the console  |
 
-For design work, use `/qovery-ui` commands: `/qovery-ui audit` (review existing UI), `/qovery-ui craft` (design something new), `/qovery-ui polish` (spacing/color refinement), `/qovery-ui component` (find the right component). Always read `.claude/design.md` first for the design context and non-negotiables.
+Before creating, modifying, or reviewing any user-facing UI, load `.agents/skills/qovery-ui/SKILL.md` and read `.claude/design.md`. This applies to feature implementation, bug fixes, styling, layout, interactions, and user-facing copy, including small changes; do not wait for an explicit skill invocation or a request described as "design work". Follow the skill and load only the references relevant to the task.
 
 Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 
