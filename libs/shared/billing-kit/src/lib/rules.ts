@@ -831,8 +831,19 @@ export function buildServiceRows(
  */
 type DiscountRule = { id: string; requires: string[]; excludes: string[] }
 
-export function discountSelectable(d: DiscountRule, selected: string[], granted: string[] = []): boolean {
-  return d.requires.length === 0 || d.requires.some((r) => selected.includes(r) || granted.includes(r))
+export function discountSelectable(
+  d: DiscountRule,
+  selected: string[],
+  granted: string[] = [],
+  types: readonly DiscountRule[] = []
+): boolean {
+  const conflictsWithContract =
+    d.excludes.some((id) => granted.includes(id)) ||
+    types.some((type) => granted.includes(type.id) && type.excludes.includes(d.id))
+  return (
+    !conflictsWithContract &&
+    (d.requires.length === 0 || d.requires.some((r) => selected.includes(r) || granted.includes(r)))
+  )
 }
 
 function pruneDiscounts(types: DiscountRule[], selected: string[], granted: string[]): string[] {
@@ -840,7 +851,7 @@ function pruneDiscounts(types: DiscountRule[], selected: string[], granted: stri
   for (;;) {
     const kept = cur.filter((id) => {
       const d = types.find((t) => t.id === id)
-      return !!d && discountSelectable(d, cur, granted)
+      return !!d && discountSelectable(d, cur, granted, types)
     })
     if (kept.length === cur.length) return kept
     cur = kept
@@ -860,7 +871,7 @@ export function toggleDiscount(
       granted
     )
   const d = types.find((t) => t.id === id)
-  if (!d || !discountSelectable(d, selected, granted)) return selected
+  if (!d || !discountSelectable(d, selected, granted, types)) return selected
   const dropped = new Set([...d.excludes, ...types.filter((t) => t.excludes.includes(id)).map((t) => t.id)])
   return pruneDiscounts(types, [...selected.filter((s) => !dropped.has(s)), id], granted)
 }
@@ -972,7 +983,8 @@ export function paywallFromBody(body: unknown): { paywall: PaywallInfo; sku?: st
 /** A 402 from core for an action pricing-api refused: the action or SKU to read the gate of. */
 export function gateKeyFromBody(status: number | undefined, body: unknown): { action?: string; sku?: string } | null {
   if (status !== 402) return null
-  for (const b of [body, (body as { data?: unknown })?.data]) {
+  const seen = [body, (body as { data?: unknown })?.data, (body as { response?: { data?: unknown } })?.response?.data]
+  for (const b of seen) {
     const x = b as { sku?: unknown; action?: unknown } | undefined
     if (x && (typeof x.action === 'string' || typeof x.sku === 'string'))
       return {
@@ -1050,7 +1062,7 @@ export function snoozeLabel(days: number): string {
 /** Who suggests what: "<Sender> from Qovery suggests <Plan>", or "The Qovery team suggests <Plan>"
  * for a proposal sent as the team (no personal name then). */
 export function proposalHeading(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan'>): string {
-  return p.send_as === 'team'
+  return p.send_as === 'team' || !p.sender_name
     ? `The Qovery team suggests ${p.plan.name}`
     : `${p.sender_name} from Qovery suggests ${p.plan.name}`
 }
@@ -1065,7 +1077,7 @@ export function proposalLine(p: Pick<PlanProposal, 'sender_name' | 'send_as' | '
 
 /** Who signs: "The Qovery team", or "Ada Lovelace, Qovery". */
 export function proposalSigner(p: Pick<PlanProposal, 'sender_name' | 'send_as'>): string {
-  return p.send_as === 'team' ? 'The Qovery team' : `${p.sender_name}, Qovery`
+  return p.send_as === 'team' || !p.sender_name ? 'The Qovery team' : `${p.sender_name}, Qovery`
 }
 
 /** The banner's short line, below 640px: the offer, else the heading. */

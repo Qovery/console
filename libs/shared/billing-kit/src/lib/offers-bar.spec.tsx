@@ -1,4 +1,4 @@
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import type { PricingClient } from './client'
 import { OfferHost } from './offers'
 import type { Offer, PlanProposal } from './types'
@@ -63,10 +63,20 @@ const bar = (c: ReturnType<typeof client>) =>
 describe('OfferHost top bar', () => {
   it('shows the proposal alone when a proposal and offers are open', async () => {
     const c = client(proposal)
+    let resolveProposal: (value: { proposal: PlanProposal }) => void = () => undefined
+    const pendingProposal = new Promise<{ proposal: PlanProposal }>((resolve) => {
+      resolveProposal = resolve
+    })
+    c.proposals.mockReturnValue(pendingProposal)
     bar(c)
+    await act(async () => {
+      await c.offers.mock.results[0].value
+    })
+    expect(screen.queryByText(offers[0].content.title)).not.toBeInTheDocument()
+    await act(async () => resolveProposal({ proposal }))
+
     const line = 'The Qovery team suggests Scale: about $2,000 less a year at your current usage'
     expect(await screen.findByText(line)).toBeInTheDocument()
-    await waitFor(() => expect(c.offers).toHaveBeenCalled())
     expect(screen.queryByText(offers[0].content.title)).not.toBeInTheDocument()
     expect(screen.queryByText(offers[1].content.title)).not.toBeInTheDocument()
     expect(screen.getAllByRole('button')).toHaveLength(1)

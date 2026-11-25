@@ -64,7 +64,7 @@ function ProviderCard({
     <>
       <ProviderIcon icon={icon} />
       <span className="min-w-0 flex-1 truncate">{title}</span>
-      {locked ? (
+      {locked && !disabled ? (
         <PaywallLock gate={locked.gate} className="shrink-0" />
       ) : actionLabel ? (
         <span className="shrink-0 text-ssm font-normal text-neutral-subtle">{actionLabel}</span>
@@ -79,7 +79,7 @@ function ProviderCard({
     return (
       <button
         type="button"
-        className={className}
+        className={twMerge(className, 'cursor-pointer')}
         onClick={() => {
           capture()
           locked.open()
@@ -253,6 +253,8 @@ export function ClusterAdd() {
             icon={<Icon name="AWS" />}
             slug="aws-eks-anywhere"
             disabled={disabled}
+            locked={managedLock}
+            intro={managedIntro}
             analytics={{ selectedCloudProvider: 'AWS', selectedInstallationType: 'partially-managed' }}
           />
         ) : (

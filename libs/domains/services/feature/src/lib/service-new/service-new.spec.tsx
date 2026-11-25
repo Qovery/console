@@ -7,6 +7,7 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OTHER_BLUEPRINT_CATEGORY } from '../blueprint-utils/blueprint-utils'
 import { ServiceNew } from './service-new'
 
+const mockBillingFlag = jest.fn(() => false)
 const mockUseFeatureFlagEnabled = jest.fn(() => false)
 const mockShowPylonForm = jest.fn()
 const mockUseBlueprintCatalog = jest.fn(() => ({ data: undefined }))
@@ -27,7 +28,8 @@ jest.mock('posthog-js', () => ({
 }))
 
 jest.mock('posthog-js/react', () => ({
-  useFeatureFlagEnabled: (flag: string) => mockUseFeatureFlagEnabled(flag),
+  useFeatureFlagEnabled: (flag: string) =>
+    flag === 'billing-paywall' ? mockBillingFlag() : mockUseFeatureFlagEnabled(flag),
 }))
 
 jest.mock('@qovery/shared/ui', () => {
@@ -67,27 +69,8 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
-jest.mock('@qovery/shared/billing-kit', () => {
-  const actual = jest.requireActual('@qovery/shared/billing-kit')
-  const client = {
-    mode: 'live',
-    publicPlans: () => Promise.resolve(),
-    billingUsage: () => Promise.resolve(),
-    spendLimits: () => Promise.resolve(),
-    gateEvent: () => Promise.resolve(),
-    get gates() {
-      return mockGates.current
-        ? (organizationId: string) =>
-            Promise.resolve({ organization_id: organizationId, access: 'billing', gates: mockGates.current })
-        : undefined
-    },
-  }
-  return {
-    ...actual,
-    useBillingPaywall: (organizationId: string, keys: object, options: object) =>
-      actual.usePaywall(client, organizationId, keys, options),
-  }
-})
+const mockGatesCall = jest.fn()
+const originalFetch = global.fetch
 
 const lockedBlueprints: Gate = {
   action: 'blueprint.create',
@@ -151,8 +134,22 @@ const blueprints: BlueprintItem[] = [
 ]
 
 describe('ServiceNew', () => {
+  afterEach(() => {
+    global.fetch = originalFetch
+    jest.restoreAllMocks()
+  })
   beforeEach(() => {
     mockGates.current = undefined
+    mockBillingFlag.mockReturnValue(false)
+    mockGatesCall.mockClear()
+    global.fetch = jest.fn(async (input) => {
+      const url = new URL(String(input))
+      if (url.pathname.endsWith('/gates')) {
+        mockGatesCall(Object.fromEntries(url.searchParams))
+        return { ok: true, status: 200, json: async () => ({ gates: mockGates.current ?? [] }) } as Response
+      }
+      return { ok: true, status: 204 } as Response
+    })
     mockUseFeatureFlagEnabled.mockReturnValue(false)
     mockShowPylonForm.mockClear()
     ;(posthog.capture as jest.Mock).mockClear()
@@ -545,9 +542,20 @@ describe('ServiceNew', () => {
 
   describe('when the plan does not include blueprints', () => {
     beforeEach(() => {
+      mockBillingFlag.mockReturnValue(true)
       mockGates.current = [lockedBlueprints]
       mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
       mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
+    })
+
+    it('keeps blueprints unlocked and skips gates with the billing flag off', () => {
+      mockBillingFlag.mockReturnValue(false)
+      renderWithProviders(
+        <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+      )
+      const section = within(screen.getByRole('heading', { name: 'Blueprints' }).closest('section') as HTMLElement)
+      expect(section.getAllByRole('link', { name: 'Deploy' })).toHaveLength(blueprints.length)
+      expect(mockGatesCall).not.toHaveBeenCalled()
     })
 
     it('keeps the catalog browsable and opens the full-page paywall from Deploy', async () => {
@@ -606,6 +614,7 @@ describe('ServiceNew', () => {
 
   describe('when the plan includes blueprints', () => {
     beforeEach(() => {
+      mockBillingFlag.mockReturnValue(true)
       mockGates.current = [{ ...lockedBlueprints, allowed: true, reason: '', paywall: undefined }]
       mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
       mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })

@@ -270,7 +270,7 @@ export function DiscountsCard({
           <div className="divide-y divide-neutral border-t border-neutral">
             {view.discounts.map((d) => {
               const on = selected.includes(d.id)
-              const can = on || discountSelectable(d, selected, have)
+              const can = on || discountSelectable(d, selected, have, view.discounts)
               const id = `discount-${d.id}`
               return (
                 <label

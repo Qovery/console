@@ -515,31 +515,41 @@ function AddonStep({
   onContactSales?: () => void
 }) {
   const [blocked, setBlocked] = useState<string>()
-  const [key, setKey] = useState(newIdempotencyKey)
+  const [key] = useState(newIdempotencyKey)
+  const [quote, setQuote] = useState<Pick<PaywallOption, 'amount' | 'currency' | 'period'>>()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [needCard, setNeedCard] = useState(false)
+  const mustQuote = !!option.addon && !!client.quoteAddon
+  const price = optionPrice(quote ? { ...option, ...quote } : option)
   useEffect(() => {
     if (!option.addon || !client.quoteAddon) return
+    let active = true
     client
       .quoteAddon(organizationId, { code: option.addon })
-      .then((r) =>
+      .then((r) => {
+        if (!active) return
+        setQuote(r.quote)
         setBlocked(
           r.buy && !r.buy.available ? r.buy.detail ?? 'This add-on cannot be bought from the console.' : undefined
         )
-      )
-      .catch((e) => setError(errorText(e)))
+      })
+      .catch((e) => {
+        if (active) setError(errorText(e))
+      })
+    return () => {
+      active = false
+    }
   }, [client, organizationId, option.addon])
   async function buy() {
-    if (!option.addon || !client.buyAddon) return
+    if (!option.addon || !client.buyAddon || (mustQuote && !quote)) return
     setBusy(true)
     setError('')
     try {
       await client.buyAddon(organizationId, { code: option.addon }, key)
-      notifySuccess(client, `${option.addon_name} added`, optionPrice(option))
+      notifySuccess(client, `${option.addon_name} added`, price)
       onBought()
     } catch (e) {
-      setKey(newIdempotencyKey())
       if (e instanceof BillingError && e.code === 'PAYMENT_METHOD_REQUIRED') setNeedCard(true)
       setError(errorText(e))
     }
@@ -553,7 +563,7 @@ function AddonStep({
         </Callout.Root>
       )}
       <Fact label={option.addon_name ?? 'Add-on'} hint="On top of your plan, prorated today, removable any time">
-        {optionPrice(option)}
+        {mustQuote && !quote ? '—' : price}
       </Fact>
       {blocked && (
         <Callout.Root color="neutral">
@@ -588,8 +598,13 @@ function AddonStep({
             Talk to us
           </Button>
         ) : (
-          <Button size="lg" loading={busy} disabled={!!blocked && client.mode !== 'preview'} onClick={buy}>
-            {option.amount != null ? `Add for ${optionPrice(option)}` : 'Add it'}
+          <Button
+            size="lg"
+            loading={busy}
+            disabled={(mustQuote && !quote) || (!!blocked && client.mode !== 'preview')}
+            onClick={buy}
+          >
+            {price && (!mustQuote || quote) ? `Add for ${price}` : 'Add it'}
           </Button>
         )}
       </div>
@@ -885,6 +900,7 @@ export function PaywallLock({ gate, onClick, className }: { gate?: Gate; onClick
 }
 
 export interface UsePaywall {
+  pending: boolean
   gates?: Gate[]
   gate: (key: string) => Gate | undefined
   locked: (key: string) => boolean
@@ -919,7 +935,13 @@ export function usePaywall(
     variant?: 'dialog' | 'page'
   } = {}
 ): UsePaywall {
-  const [gates, setGates] = useState<Gate[]>()
+  const [gateRead, setGateRead] = useState<{
+    organizationId: string
+    sig: string
+    client: PricingClient
+    gates?: Gate[]
+  }>()
+  const request = useRef(0)
   const [current, setCurrent] = useState<{
     gate?: Gate
     paywall?: PaywallData
@@ -928,14 +950,39 @@ export function usePaywall(
     run?: () => void
   }>()
   const sig = JSON.stringify(keys)
+  const canRead = Boolean(organizationId && client.gates && (keys.actions?.length || keys.skus?.length))
+  const completedRead =
+    canRead && gateRead?.organizationId === organizationId && gateRead.sig === sig && gateRead.client === client
+      ? gateRead
+      : undefined
+  const gates = completedRead?.gates
+  const pending = canRead && !completedRead
   const load = useCallback(() => {
-    if (!client.gates || (!keys.actions?.length && !keys.skus?.length)) return
-    client
-      .gates(organizationId, keys)
-      .then((r) => setGates(r.gates))
-      .catch(() => setGates(undefined))
-  }, [client, organizationId, sig]) // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(load, [load])
+    const id = ++request.current
+    if (!canRead || !client.gates) {
+      setGateRead(undefined)
+      return
+    }
+    client.gates(organizationId, keys).then(
+      (r) => {
+        if (request.current === id) setGateRead({ organizationId, sig, client, gates: r.gates })
+      },
+      () => {
+        if (request.current !== id) return
+        setGateRead((prior) =>
+          prior?.organizationId === organizationId && prior.sig === sig && prior.client === client
+            ? prior
+            : { organizationId, sig, client }
+        )
+      }
+    )
+  }, [client, organizationId, sig, canRead]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    load()
+    return () => {
+      request.current++
+    }
+  }, [load])
   const gate = useCallback((key: string) => gateFor(gates, key), [gates])
   const open = useCallback(
     (key: string | { paywall: PaywallData; action?: string }) => {
@@ -951,13 +998,14 @@ export function usePaywall(
   const intro = useCallback((key: string) => pendingIntro(organizationId, gateFor(gates, key)), [gates, organizationId])
   const proceed = useCallback(
     (key: string, run: () => void) => {
+      if (pending) return
       const g = gateFor(gates, key)
       if (isLocked(g)) return setCurrent({ gate: g })
       const due = pendingIntro(organizationId, g)
       if (due) return setCurrent({ intro: due, run })
       run()
     },
-    [gates, organizationId]
+    [gates, organizationId, pending]
   )
   const element = useMemo(() => {
     if (!current) return null
@@ -1022,6 +1070,16 @@ export function usePaywall(
         onDone={done}
       />
     )
-  }, [current, client, organizationId, load]) // eslint-disable-line react-hooks/exhaustive-deps
-  return { gates, gate, locked: (key) => isLocked(gateFor(gates, key)), open, intro, proceed, reload: load, element }
+  }, [current, client, organizationId, load, options])
+  return {
+    pending,
+    gates,
+    gate,
+    locked: (key) => isLocked(gateFor(gates, key)),
+    open,
+    intro,
+    proceed,
+    reload: load,
+    element,
+  }
 }

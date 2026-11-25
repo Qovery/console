@@ -5,7 +5,7 @@
  *  - useBillingPaywall(organizationId, { actions }) reads the gates of the actions a page gates
  *    (cluster.create, blueprint.create). With the flag off, nothing is locked.
  *  - <BillingPaywallHost> (mounted once per organization) opens the paywall when an API call fails
- *    with a 402 carrying pricing-api's paywall (offerPaywallFromError, called by the query cache):
+ *    with a 402 carrying pricing-api's paywall (offerPaywallFromError, called by the mutation cache):
  *    the full page for a feature with page content (hasGatedPage), the dialog otherwise.
  */
 import { useAuth0 } from '@auth0/auth0-react'
@@ -77,18 +77,23 @@ export function pickConsoleCalls(client: PricingClient): PricingClient {
   }
 }
 
+const pricingClients = new WeakMap<object, PricingClient>()
+
 export function usePricingClient(): PricingClient {
   const { getAccessTokenSilently } = useAuth0()
-  return useMemo(
-    () =>
-      pickConsoleCalls(
-        createPricingClient({
-          pricingApiUrl: PRICING_API_URL,
-          getToken: () => getAccessTokenSilently(),
-        })
-      ),
-    [getAccessTokenSilently]
-  )
+  return useMemo(() => {
+    const existing = pricingClients.get(getAccessTokenSilently)
+    if (existing) return existing
+    const client = pickConsoleCalls(
+      createPricingClient({
+        pricingApiUrl: PRICING_API_URL,
+        fetch: (input, init) => fetch(input, init),
+        getToken: () => getAccessTokenSilently(),
+      })
+    )
+    pricingClients.set(getAccessTokenSilently, client)
+    return client
+  }, [getAccessTokenSilently])
 }
 
 export function useIsBillingPaywallEnabled() {
@@ -106,19 +111,20 @@ export function useBillingPaywall(
   const enabled = useIsBillingPaywallEnabled()
   const client = usePricingClient()
   const gated = useMemo(() => (enabled ? client : { ...client, gates: undefined }), [enabled, client])
-  return usePaywall(gated, organizationId, keys, options)
+  const paywall = usePaywall(gated, organizationId, keys, options)
+  return enabled ? paywall : { ...paywall, element: null }
 }
 
 // ---- a 402 from core with pricing-api's paywall, opened by <BillingPaywallHost>
 
-type PaywallRequest = { paywall?: PaywallInfo; action?: string; sku?: string }
+type PaywallRequest = { paywall?: PaywallInfo; action?: string; sku?: string; onUnavailable?: () => void }
 const listeners = new Set<(r: PaywallRequest) => void>()
 
 /**
- * Called where API errors are handled (the query cache): when the error is a 402 refusal by the
- * plan and a host is mounted, the host opens the paywall and the caller skips its error toast.
+ * Called by the mutation cache when the plan refuses a call. An embedded paywall can replace
+ * the toast immediately. For a gate lookup, the caller can supply a fallback notification.
  */
-export function offerPaywallFromError(error: unknown): boolean {
+export function offerPaywallFromError(error: unknown, onUnavailable?: () => void): boolean {
   if (listeners.size === 0) return false
   const e = error as { response?: { status?: number; data?: unknown }; status?: number; code?: string }
   const status = e?.response?.status ?? e?.status ?? (e?.code === '402' ? 402 : undefined)
@@ -127,7 +133,9 @@ export function offerPaywallFromError(error: unknown): boolean {
   const found = paywallFromBody(body)
   const key = gateKeyFromBody(402, body)
   if (!found && !key) return false
-  const request: PaywallRequest = found ? { paywall: found.paywall, action: found.action, sku: found.sku } : { ...key }
+  const request: PaywallRequest = found
+    ? { paywall: found.paywall, action: found.action, sku: found.sku }
+    : { ...key, onUnavailable }
   listeners.forEach((l) => l(request))
   return true
 }
@@ -147,14 +155,15 @@ export function BillingPaywallHost({
     (r: PaywallRequest) => {
       if (r.paywall) return setOpen({ paywall: r.paywall, action: r.action })
       const key = r.action ?? r.sku
-      if (!key || !client.gates) return
+      if (!key || !client.gates) return r.onUnavailable?.()
       client
         .gates(organizationId, r.action ? { actions: [r.action] } : { skus: [r.sku as string] })
         .then((g) => {
           const gate = gateFor(g.gates, key)
           if (isLocked(gate)) setOpen({ gate })
+          else r.onUnavailable?.()
         })
-        .catch(() => undefined)
+        .catch(() => r.onUnavailable?.())
     },
     [client, organizationId]
   )
@@ -165,7 +174,7 @@ export function BillingPaywallHost({
       listeners.delete(handle)
     }
   }, [enabled, handle])
-  if (!open) return null
+  if (!enabled || !open) return null
   // A feature with page content (blueprints, clusters, members, Observe, SSO) gets the full page.
   if (hasGatedPage(open.paywall?.sku ?? open.gate?.sku)) {
     return (

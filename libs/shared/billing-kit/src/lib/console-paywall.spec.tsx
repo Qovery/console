@@ -1,5 +1,5 @@
-import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { BillingPaywallHost, offerPaywallFromError, useBillingPaywall } from './console-paywall'
+import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { BillingPaywallHost, offerPaywallFromError, useBillingPaywall, usePricingClient } from './console-paywall'
 import type { Gate, PaywallInfo } from './types'
 
 const mockFlag = jest.fn(() => true)
@@ -96,6 +96,35 @@ describe('console paywall', () => {
     })
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Single sign-on' })).toBeInTheDocument()
+  })
+
+  it('falls back to the mutation notification when the gate read cannot open a paywall', async () => {
+    fetchMock.mockImplementation(() => gatesResponse([]))
+    renderWithProviders(<BillingPaywallHost organizationId="org-1" />)
+    const notify = jest.fn()
+
+    act(() => {
+      expect(offerPaywallFromError(refusal(402, { action: 'sso.enable' }), notify)).toBe(true)
+    })
+
+    await waitFor(() => expect(notify).toHaveBeenCalledTimes(1))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('shares the client between components using the same Auth0 token getter', () => {
+    const clients = new Set()
+    function Probe() {
+      clients.add(usePricingClient())
+      return null
+    }
+
+    renderWithProviders(
+      <>
+        <Probe />
+        <Probe />
+      </>
+    )
+    expect(clients.size).toBe(1)
   })
 
   it('keeps the dialog for a feature without page content', async () => {

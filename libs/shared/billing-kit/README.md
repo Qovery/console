@@ -2,8 +2,7 @@
 
 The billing kit from pricing-api (`web/src/billing-kit` in the qovery-pricing repository), the source of truth for these
 components. Copied from pricing-api commit `2076d94` (main, 2026-11-21);
-`offers.tsx`, `proposals.tsx` and `rules.ts` from `1300b8b` (main, 2026-11-21); `types.ts`,
-`gated-page.tsx` from `6a15ee6` (main, 2026-11-21); `paywall.tsx`, `gated.ts` and `gated-previews.tsx` from `f8630a5`
+`offers.tsx` and `proposals.tsx` from `1300b8b` (main, 2026-11-21); `gated-previews.tsx` from `f8630a5`
 (main, 2026-11-21); `types.ts`, `client.ts`, `rules.ts`, `gated.ts`, `gated-page.tsx` and `paywall.tsx` from `1dced41`
 (main, 2026-11-23, paywall intros).
 

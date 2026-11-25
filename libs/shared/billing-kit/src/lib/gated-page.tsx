@@ -15,7 +15,8 @@
  * "Included in your <Plan> plan", and one button, the intro's Continue (onContinue), then Learn
  * more. No trial, upgrade or add-on. Shown, Continue and Not now are recorded (client.gateIntro).
  */
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import * as Dialog from '@radix-ui/react-dialog'
+import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
 import { Badge, Button, ExternalLink, Icon, SegmentedControl } from '@qovery/shared/ui'
 import type { PricingClient } from './client'
 import {
@@ -48,6 +49,8 @@ export interface GatedPageProps {
   onUpdatePayment?: () => void
   /** Over the whole window (the console opening it from a lock). Default: in the page's own flow. */
   overlay?: boolean
+  /** Keep a route paywall open while the host refreshes its gate after confirmation. */
+  keepOpenAfterDone?: boolean
   /** The intro of a feature the plan includes (gate.intro): shown when there is no paywall. */
   intro?: GateIntro
   /** The intro's Continue: go on with what the person was doing. */
@@ -161,6 +164,7 @@ export function GatedPage({
   onContactSales,
   onUpdatePayment,
   overlay,
+  keepOpenAfterDone = false,
   intro: introProp,
   onContinue,
 }: GatedPageProps) {
@@ -189,16 +193,20 @@ export function GatedPage({
     },
     [client, organizationId, sku]
   )
+  const isIntro = !!intro
   useEffect(() => {
+    acted.current = false
+    finished.current = false
     if (!sku) return
-    if (!intro) {
+    if (!isIntro) {
       event('shown')
       return
     }
     if (client.mode !== 'preview') markIntroSeen(organizationId, sku)
     introEvent('shown')
-  }, [sku]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sku, isIntro]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const headingId = useId()
   if (!p && !intro) return null
   const view = p ? gatedPageView(p) : introPageView(intro as GateIntro)
   const primary = view.primary
@@ -210,10 +218,15 @@ export function GatedPage({
   const choose = (o: PaywallOption) => {
     acted.current = true
     event('clicked', o.type)
-    if (o.type === 'contact_sales') return onContactSales?.()
+    if (o.type === 'contact_sales') {
+      onContactSales?.()
+      onClose?.()
+      return
+    }
     if (o.type === 'update_payment') {
       if (onUpdatePayment) onUpdatePayment()
       else openPaymentMethodPage(client, organizationId).catch(() => undefined)
+      onClose?.()
       return
     }
     setOpen(o)
@@ -233,8 +246,16 @@ export function GatedPage({
     onContinue?.()
   }
 
+  const heading = (
+    <h1 {...(!overlay && { id: headingId })} className="h4 min-[900px]:h3 text-neutral">
+      {view.title}
+    </h1>
+  )
   const page = (
-    <section aria-labelledby={`gated-${sku}`} className="flex min-h-full w-full min-w-0 flex-col bg-background">
+    <section
+      aria-labelledby={overlay ? undefined : headingId}
+      className="flex min-h-full w-full min-w-0 flex-col bg-background"
+    >
       <div className="flex min-h-12 items-center gap-2 border-b border-neutral px-4 py-2 sm:px-6">
         <Icon iconName={view.icon as 'lock'} iconStyle="regular" className="text-sm text-neutral-subtle" />
         <span className="truncate text-sm font-medium text-neutral">{view.title}</span>
@@ -260,9 +281,7 @@ export function GatedPage({
         <div className="mx-auto grid w-full min-w-0 max-w-[1200px] grid-cols-1 items-center gap-8 px-4 py-8 sm:px-6 min-[900px]:grid-cols-[340px_minmax(0,1fr)] min-[900px]:gap-12 min-[900px]:px-10 min-[900px]:py-16">
           <div className="flex min-w-0 flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <h1 id={`gated-${sku}`} className="h4 min-[900px]:h3 text-neutral">
-                {view.title}
-              </h1>
+              {overlay ? <Dialog.Title asChild>{heading}</Dialog.Title> : heading}
               {view.description && <p className="text-sm leading-6 text-neutral-subtle">{view.description}</p>}
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -365,7 +384,7 @@ export function GatedPage({
           onUpdatePayment={onUpdatePayment}
           onClose={() => {
             setOpen(undefined)
-            if (finished.current) onClose?.()
+            if (finished.current && !keepOpenAfterDone) onClose?.()
           }}
           onDone={(what) => {
             finished.current = true
@@ -377,13 +396,17 @@ export function GatedPage({
   )
   if (!overlay) return page
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={`gated-${sku}`}
-      className="fixed inset-0 z-overlay overflow-y-auto bg-background"
+    <Dialog.Root
+      open
+      onOpenChange={(open) => {
+        if (!open) dismiss?.()
+      }}
     >
-      {page}
-    </div>
+      <Dialog.Portal>
+        <Dialog.Content aria-describedby={undefined} className="fixed inset-0 z-overlay overflow-y-auto bg-background">
+          {page}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }

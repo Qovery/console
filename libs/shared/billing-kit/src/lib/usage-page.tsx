@@ -23,9 +23,9 @@ import { date, money, num, valueText } from './format'
 import { AskAdminModal, EmailPreferencesPanel, OfferHost } from './offers'
 import { PlanChangeFlow } from './plan-change'
 import { PricingTable } from './pricing-table'
-import { ProposalHost } from './proposals'
+import { ProposalHost, readProposal } from './proposals'
 import { ReactivateFlow, SubscriptionEndedBanner } from './reactivate'
-import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel } from './rules'
+import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel, signupTrialText } from './rules'
 import type {
   BillingUsage,
   Cancellation,
@@ -260,18 +260,28 @@ export function UsagePage({
     setRound((n) => n + 1)
   }, [client, organizationId])
   useEffect(load, [load])
+  const canReviewProposal =
+    !!u &&
+    u.access !== 'member' &&
+    !u.billing.internal &&
+    u.billing.status !== 'cancelled' &&
+    !!client.quoteProposal &&
+    !!client.acceptProposal
   useEffect(() => {
-    if (!open?.proposal || !client.proposals) return
-    client
-      .proposals(organizationId)
+    if (!canReviewProposal || !open?.proposal || !client.proposals) return
+    let active = true
+    readProposal(client, organizationId)
       .then((r) => {
-        if (r.proposal && r.proposal.id === open.proposal) {
+        if (active && r.proposal && r.proposal.id === open.proposal) {
           setProposal(r.proposal)
           setModal('upgrade')
         }
       })
       .catch(() => undefined)
-  }, [client, organizationId, open?.proposal])
+    return () => {
+      active = false
+    }
+  }, [canReviewProposal, client, organizationId, open?.proposal])
   if (error)
     return (
       <Callout.Root color="red">
@@ -279,6 +289,7 @@ export function UsagePage({
       </Callout.Root>
     )
   if (!u) return <div className="p-6 text-sm text-neutral-subtle">Loading billing…</div>
+  const signupTrial = u.signup_trial && signupTrialText(u.signup_trial)
   const cur = u.billing.currency
   const amounts = u.access !== 'member'
   // Once the subscription ended, Reactivate replaces Change plan.
@@ -388,15 +399,24 @@ export function UsagePage({
             </Callout.Text>
           </Callout.Root>
         )}
-        {u.billing.phase && (
+        {signupTrial ? (
           <Callout.Root color="sky">
             <Callout.Text>
-              <Callout.TextHeading>
-                {u.billing.phase.kind === 'poc' ? 'Proof of concept' : 'Trial'} until {date(u.billing.phase.until)}
-              </Callout.TextHeading>
-              Limits are not enforced until then.
+              <Callout.TextHeading>{signupTrial.title}</Callout.TextHeading>
+              {signupTrial.body}
             </Callout.Text>
           </Callout.Root>
+        ) : (
+          u.billing.phase && (
+            <Callout.Root color="sky">
+              <Callout.Text>
+                <Callout.TextHeading>
+                  {u.billing.phase.kind === 'poc' ? 'Proof of concept' : 'Trial'} until {date(u.billing.phase.until)}
+                </Callout.TextHeading>
+                Limits are not enforced until then.
+              </Callout.Text>
+            </Callout.Root>
+          )
         )}
         {amounts && !ended && (
           <PlannedBanners
@@ -444,13 +464,8 @@ export function UsagePage({
           />
         )}
         {/* A plan proposal from Qovery staff, with or without offers. */}
-        {amounts && !internal && !ended && client.quotePlanChange && (
-          <ProposalHost
-            key={'proposal' + round}
-            organizationId={organizationId}
-            client={client}
-            onReview={reviewProposal}
-          />
+        {canReviewProposal && (
+          <ProposalHost organizationId={organizationId} client={client} onReview={reviewProposal} />
         )}
 
         <div className="flex flex-col gap-2 md:flex-row">

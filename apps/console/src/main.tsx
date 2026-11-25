@@ -131,15 +131,14 @@ const queryClient = new QueryClient({
       }
     },
     onError(error, _variables, _context, mutation) {
-      // A refusal by the plan with pricing-api's paywall: the paywall opens instead of an error toast.
-      if (offerPaywallFromError(error)) return
-      if (mutation.meta?.notifyOnError) {
-        if (mutation.meta.notifyOnError === true) {
+      const notifyError = () => {
+        if (mutation.meta?.notifyOnError === true) {
           toastError(error as Error)
-        } else {
+        } else if (mutation.meta?.notifyOnError) {
           toastError(error as Error, mutation.meta.notifyOnError.title, mutation.meta.notifyOnError.description)
         }
       }
+      if (!offerPaywallFromError(error, notifyError)) notifyError()
     },
   }),
   queryCache: new QueryCache({

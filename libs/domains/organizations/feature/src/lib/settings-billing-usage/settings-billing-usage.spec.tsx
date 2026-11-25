@@ -12,7 +12,7 @@ import {
   billingUsageFactoryMock,
   createPricingClient,
 } from '@qovery/shared/billing-kit'
-import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { pickConsoleCalls, usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import {
   BILLING_USAGE_FEATURE_FLAG,
@@ -301,6 +301,7 @@ const proposalRoutes = () => ({
   ...journeyRoutes(),
   '/proposals': () => jsonResponse(200, { proposal }),
   '/proposals/7/view': () => jsonResponse(204, null),
+  '/proposals/7/dismiss': () => jsonResponse(200, { status: 'dismissed' }),
   '/proposals/7/snooze': () => jsonResponse(200, { status: 'snoozed', snoozed_until: '2026-11-28T10:00:00Z' }),
   '/proposals/7/accept': () =>
     jsonResponse(200, {
@@ -594,7 +595,25 @@ describe('BillingUsageView', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Review' }))
     expect(await screen.findByText(/already taken off above/)).toBeInTheDocument()
     expect(bodyOf(fetchMock, '/proposals/7/accept')).toEqual([{ dry_run: true }])
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+    expect(sentTo(fetchMock, '/proposals/7/accept')).toEqual([
+      { body: { dry_run: true }, key: undefined },
+      { body: { dry_run: false }, key: expect.any(String) },
+    ])
+    expect(sentTo(fetchMock, '/proposals/7/accept')[1].key).not.toBe('')
     expect(calledPaths(fetchMock).some((path) => path.endsWith('/planChange'))).toBe(false)
+  })
+
+  it('should dismiss a plan proposal with a reason and hide it', async () => {
+    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const { userEvent } = renderWithProviders(<BillingUsageView />)
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Dismiss' }))
+    await userEvent.click(screen.getByText('The price'))
+    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Dismiss' }))
+
+    expect(bodyOf(fetchMock, '/proposals/7/dismiss')).toEqual([{ reason: 'price' }])
+    await waitFor(() => expect(screen.queryByText(/from Qovery suggests Scale/)).not.toBeInTheDocument())
   })
 
   it('should snooze a plan proposal for the chosen time and hide it', async () => {
@@ -605,7 +624,7 @@ describe('BillingUsageView', () => {
     await userEvent.click(screen.getByRole('button', { name: '1 week' }))
 
     expect(bodyOf(fetchMock, '/proposals/7/snooze')).toEqual([{ days: 7 }])
-    expect(screen.queryByText(/from Qovery suggests Scale/)).not.toBeInTheDocument()
+    await waitFor(() => expect(screen.queryByText(/from Qovery suggests Scale/)).not.toBeInTheDocument())
   })
 
   it('should not read plan proposals for members', async () => {
@@ -617,13 +636,18 @@ describe('BillingUsageView', () => {
   })
 
   it('should open the proposal review from the email link', async () => {
+    const originalUrl = window.location.href
     window.history.pushState({}, '', '/organization/org-northwind/settings/billing?proposal=7')
-    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
-    renderWithProviders(<BillingUsageView />)
+    try {
+      const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+      renderWithProviders(<BillingUsageView />)
 
-    expect(await screen.findByText(/already taken off above/)).toBeInTheDocument()
-    expect(bodyOf(fetchMock, '/proposals/7/accept')).toEqual([{ dry_run: true }])
-    window.history.pushState({}, '', '/')
+      expect(await screen.findByText(/already taken off above/)).toBeInTheDocument()
+      expect(bodyOf(fetchMock, '/proposals/7/accept')).toEqual([{ dry_run: true }])
+      expect(calledPaths(fetchMock).filter((path) => path.endsWith('/proposals'))).toHaveLength(1)
+    } finally {
+      window.history.replaceState({}, '', originalUrl)
+    }
   })
 
   it('should show members their prepaid balances, never prices or the buy button', async () => {

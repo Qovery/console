@@ -21,7 +21,10 @@ jest.mock('posthog-js', () => ({
   __esModule: true,
   default: { capture: jest.fn() },
 }))
-jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: () => false }))
+const mockBillingFlag = jest.fn(() => false)
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: (flag: string) => flag === 'billing-paywall' && mockBillingFlag(),
+}))
 const mockShowPylonForm = jest.fn()
 const mockShowChat = jest.fn()
 jest.mock('@qovery/shared/util-hooks', () => ({
@@ -30,28 +33,9 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 }))
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
-jest.mock('@qovery/shared/billing-kit', () => {
-  const actual = jest.requireActual('@qovery/shared/billing-kit')
-  const client = {
-    mode: 'live',
-    publicPlans: () => Promise.resolve(),
-    billingUsage: () => Promise.resolve(),
-    spendLimits: () => Promise.resolve(),
-    gateEvent: () => Promise.resolve(),
-    gateIntro: () => Promise.resolve(),
-    get gates() {
-      return mockGates.current
-        ? (organizationId: string) =>
-            Promise.resolve({ organization_id: organizationId, access: 'billing', gates: mockGates.current })
-        : undefined
-    },
-  }
-  return {
-    ...actual,
-    useBillingPaywall: (organizationId: string, keys: object, options: object) =>
-      actual.usePaywall(client, organizationId, keys, options),
-  }
-})
+const mockGatesCall = jest.fn()
+const originalFetch = global.fetch
+const mockGateIntro = jest.fn()
 
 const lockedManaged: Gate = {
   action: 'cluster.create',
@@ -120,8 +104,25 @@ describe('ClusterAdd', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
     mockGates.current = undefined
+    mockBillingFlag.mockReturnValue(false)
+    mockGateIntro.mockClear()
+    mockGatesCall.mockClear()
+    global.fetch = jest.fn(async (input, init) => {
+      const url = new URL(String(input))
+      if (url.pathname.endsWith('/gates')) {
+        mockGatesCall(Object.fromEntries(url.searchParams))
+        return { ok: true, status: 200, json: async () => ({ gates: mockGates.current ?? [] }) } as Response
+      }
+      if (url.pathname.endsWith('/gates/intro')) {
+        mockGateIntro(url.pathname.split('/')[2], JSON.parse(String(init?.body)))
+      }
+      return { ok: true, status: 204 } as Response
+    })
   })
-  afterEach(() => jest.restoreAllMocks())
+  afterEach(() => {
+    global.fetch = originalFetch
+    jest.restoreAllMocks()
+  })
 
   async function openCreationFlow(userEvent: ReturnType<typeof renderWithProviders>['userEvent']) {
     await userEvent.click(screen.getByRole('button', { name: 'AWS' }))
@@ -225,8 +226,16 @@ describe('ClusterAdd', () => {
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 
+  it('keeps the managed card unlocked and skips gates with billing disabled', () => {
+    mockGates.current = [lockedManaged]
+    renderWithProviders(<ClusterAdd />)
+    expect(screen.getByText('Amazon Web Services').closest('a')).toBeInTheDocument()
+    expect(mockGatesCall).not.toHaveBeenCalled()
+  })
+
   describe('when the plan does not include Qovery-managed clusters', () => {
     beforeEach(() => {
+      mockBillingFlag.mockReturnValue(true)
       mockGates.current = [lockedManaged]
     })
 
@@ -269,6 +278,7 @@ describe('ClusterAdd', () => {
 
   describe('when the plan has no self-managed cluster left', () => {
     beforeEach(() => {
+      mockBillingFlag.mockReturnValue(true)
       mockGates.current = [lockedSelfManaged]
     })
 
@@ -303,6 +313,7 @@ describe('ClusterAdd', () => {
       cta: 'Continue',
     })
     beforeEach(() => {
+      mockBillingFlag.mockReturnValue(true)
       mockGates.current = [
         {
           ...lockedManaged,
@@ -335,6 +346,8 @@ describe('ClusterAdd', () => {
         to: '/organization/$organizationId/cluster/create/$slug',
         params: { organizationId: 'org-123', slug: 'aws' },
       })
+      expect(mockGateIntro).toHaveBeenCalledWith('org-123', { sku: 'clusters.managed', action: 'shown' })
+      expect(mockGateIntro).toHaveBeenCalledWith('org-123', { sku: 'clusters.managed', action: 'continued' })
     })
 
     it('shows the intro before the self-managed flow, then opens it', async () => {
@@ -345,6 +358,8 @@ describe('ClusterAdd', () => {
       expect(screen.queryByText('Provider GCP')).not.toBeInTheDocument()
       await userEvent.click(screen.getByRole('button', { name: /Continue/ }))
       expect(await screen.findByText('Provider GCP')).toBeInTheDocument()
+      expect(mockGateIntro).toHaveBeenCalledWith('org-123', { sku: 'clusters.self_managed', action: 'shown' })
+      expect(mockGateIntro).toHaveBeenCalledWith('org-123', { sku: 'clusters.self_managed', action: 'continued' })
     })
   })
 

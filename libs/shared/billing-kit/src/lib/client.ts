@@ -186,7 +186,7 @@ export interface PricingClient {
   setTrialContinue?(
     organizationId: string,
     trialId: number,
-    cont: TrialStartRequest['continue'] | null,
+    cont: NonNullable<TrialStartRequest['continue']> | null,
     acceptAutoCharge?: boolean
   ): Promise<{ trial: CustomerTrial }>
   quoteAddon?(organizationId: string, req: { code: string; quantity?: number }): Promise<AddonPurchaseResult>

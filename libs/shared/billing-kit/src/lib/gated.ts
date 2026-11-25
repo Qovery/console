@@ -242,7 +242,8 @@ export function addonAction(name?: string): string {
   const words = n.split(/\s+/)
   const first = words[0]
   const acronym = first.length > 1 && first.toUpperCase() === first && first.toLowerCase() !== first
-  if (!acronym && !first.startsWith('Qovery') && /^[A-Z][a-z]/.test(first)) n = n[0].toLowerCase() + n.slice(1)
+  if (!acronym && !first.startsWith('Qovery') && /^[A-Z][a-z]+(?:[-'’][a-z]+)*$/.test(first))
+    n = n[0].toLowerCase() + n.slice(1)
   const phrase = words.some((w) => {
     const x = w.toLowerCase().replace(/^[()[\]/.:;]+|[()[\]/.:;]+$/g, '')
     return (x.endsWith('s') && !x.endsWith('ss')) || ['on', 'per', 'with', 'for', 'of', 'in'].includes(x)
@@ -362,6 +363,7 @@ export const MAX_CAPABILITIES = 6
 /** The page for a gate's paywall: the gate's content first, the feature's entry for the rest. */
 export function gatedPageView(p: PaywallInfo, features: Record<string, GatedFeature> = GATED_FEATURES): GatedPageView {
   const f = features[p.sku]
+  const options = p.options.filter((option) => !isFree(option))
   const benefits = (p.benefits ?? []).map((b) => b.trim()).filter(Boolean)
   const labels = benefits.length ? benefits : f?.capabilities.map((c) => c.label) ?? []
   return {
@@ -374,9 +376,9 @@ export function gatedPageView(p: PaywallInfo, features: Record<string, GatedFeat
       .map((label, i) => ({ label, icon: f?.capabilities[i]?.icon ?? 'circle-check' })),
     preview: f?.preview ?? 'generic',
     learnMoreUrl: p.learn_more_url || f?.learnMoreUrl || undefined,
-    chip: gatedChip(p),
-    primary: p.options[0],
-    others: gatedOthers(p.options),
+    chip: gatedChip({ options }),
+    primary: options[0],
+    others: gatedOthers(options),
     message: p.message ?? '',
     media: p.media,
     previews: gatedPreviews(p, f),

@@ -1,5 +1,6 @@
 import { useParams } from '@tanstack/react-router'
-import { useOrganization } from '@qovery/domains/organizations/feature'
+import { useIsBillingUsageEnabled, useOrganization } from '@qovery/domains/organizations/feature'
+import { OfferHost, usePricingClient } from '@qovery/shared/billing-kit'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { AnnouncementBanner } from '@qovery/shared/posthog/feature'
 import { Banner } from '@qovery/shared/ui'
@@ -9,6 +10,9 @@ export function OrganizationBanners() {
   const { organizationId = '' } = useParams({ strict: false })
   const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
+  const billingEnabled = useIsBillingUsageEnabled()
+  const client = usePricingClient()
+  const billingPath = `/organization/${encodeURIComponent(organizationId)}/settings/billing`
 
   const displayQoveryAdminBanner = (() => {
     if (isQoveryAdminUser) {
@@ -28,6 +32,21 @@ export function OrganizationBanners() {
       ) : null}
       <AnnouncementBanner />
       <OrganizationFreeTrialBanner />
+      {billingEnabled && organizationId && (
+        <OfferHost
+          key={organizationId}
+          organizationId={organizationId}
+          client={client}
+          variant="bar"
+          modal={false}
+          onReviewProposal={(proposal) => window.location.assign(`${billingPath}?proposal=${proposal.id}`)}
+          onAction={(offer) => {
+            const action = offer.content.action
+            if (action.type === 'url' && action.url) window.open(action.url, '_blank', 'noopener')
+            else window.location.assign(billingPath)
+          }}
+        />
+      )}
     </>
   )
 }

@@ -15,7 +15,7 @@ import { BillingError, type PricingClient } from './client'
 import { date, money, monthly, valueText } from './format'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText } from './parts'
-import { ProposalNote } from './proposals'
+import { ProposalNote, hideProposal } from './proposals'
 import { changeBlockedText, changeKind, isProposalChange, newIdempotencyKey } from './rules'
 import type {
   BillingUsage,
@@ -124,9 +124,14 @@ export function PlanChangeFlow({
   )
 
   // The proposal's own change goes through the proposal (its concession); another pick does not.
-  const viaProposal = isProposalChange(proposal, pick, period) && !!client.quoteProposal && !!client.acceptProposal
+  const viaProposal = isProposalChange(proposal, pick, period)
+  const unsupportedProposal = viaProposal && (!client.quoteProposal || !client.acceptProposal)
   async function review() {
-    if (!pick) return
+    if (!pick || busy) return
+    if (unsupportedProposal) {
+      setError('This proposal cannot be reviewed here. Contact Qovery for help.')
+      return
+    }
     setBusy(true)
     setError('')
     try {
@@ -169,7 +174,11 @@ export function PlanChangeFlow({
     setBusy(false)
   }
   async function confirm() {
-    if (!pick) return
+    if (!pick || !result || busy || unsupportedProposal) return
+    if (client.mode === 'preview') {
+      setStep('done')
+      return
+    }
     setBusy(true)
     setError('')
     try {
@@ -178,6 +187,7 @@ export function PlanChangeFlow({
           ? await client.acceptProposal!(organizationId, proposal.id, key)
           : await client.changePlan!(organizationId, pick, period, key)
       )
+      if (viaProposal && proposal) hideProposal(client, organizationId, proposal.id)
       setStep('done')
       onDone()
     } catch (e) {
@@ -247,6 +257,7 @@ export function PlanChangeFlow({
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <SegmentedControl.Root
                   value={period}
+                  disabled={busy}
                   onValueChange={(v) => {
                     setPeriod(v as Period)
                     setPick(undefined)
@@ -264,7 +275,12 @@ export function PlanChangeFlow({
                 )}
               </div>
               {!options && !error && <div className="text-sm text-neutral-subtle">Loading plans…</div>}
-              <RadioGroup.Root className="flex flex-col gap-2" value={pick ?? ''} onValueChange={setPick}>
+              <RadioGroup.Root
+                className="flex flex-col gap-2"
+                value={pick ?? ''}
+                disabled={busy}
+                onValueChange={setPick}
+              >
                 {options?.results.map((o) => {
                   const price = priceOf(o)
                   const sales = contactOnly(o)
