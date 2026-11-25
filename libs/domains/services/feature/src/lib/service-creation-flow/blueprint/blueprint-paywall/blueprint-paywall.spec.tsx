@@ -1,4 +1,5 @@
-import { type Gate } from '@qovery/shared/billing-kit'
+import axios from 'axios'
+import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing-kit'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintPaywall } from './blueprint-paywall'
 
@@ -16,7 +17,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
 const mockGatesCall = jest.fn()
-const originalFetch = global.fetch
+const originalAdapter = axios.defaults.adapter
 const mockGateIntro = jest.fn()
 const mockBillingFlag = jest.fn(() => false)
 jest.mock('posthog-js/react', () => ({
@@ -51,7 +52,7 @@ describe('BlueprintPaywall', () => {
     mockGates.current = undefined
     mockBillingFlag.mockReturnValue(true)
     mockGatesCall.mockClear()
-    global.fetch = jest.fn(async (input, init) => {
+    axios.defaults.adapter = createPricingFetchAdapter(async (input, init) => {
       const url = new URL(String(input))
       if (url.pathname.endsWith('/gates')) {
         mockGatesCall(Object.fromEntries(url.searchParams))
@@ -66,7 +67,7 @@ describe('BlueprintPaywall', () => {
     mockGateIntro.mockClear()
   })
   afterEach(() => {
-    global.fetch = originalFetch
+    axios.defaults.adapter = originalAdapter
     jest.restoreAllMocks()
   })
 

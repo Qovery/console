@@ -1,5 +1,7 @@
+import axios from 'axios'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { BillingPaywallHost, offerPaywallFromError, useBillingPaywall, usePricingClient } from './console-paywall'
+import { createPricingFetchAdapter } from './pricing-transport'
 import type { Gate, PaywallInfo } from './types'
 
 const mockFlag = jest.fn(() => true)
@@ -38,12 +40,17 @@ function gatesResponse(gates: Gate[]) {
 }
 
 describe('console paywall', () => {
+  const originalAdapter = axios.defaults.adapter
   const fetchMock = jest.fn()
   beforeEach(() => {
     mockFlag.mockReturnValue(true)
     fetchMock.mockReset()
     fetchMock.mockImplementation(() => gatesResponse([locked]))
-    global.fetch = fetchMock as unknown as typeof fetch
+    axios.defaults.adapter = createPricingFetchAdapter(fetchMock)
+  })
+
+  afterEach(() => {
+    axios.defaults.adapter = originalAdapter
   })
 
   it('leaves the error to the toast when no host is mounted', () => {

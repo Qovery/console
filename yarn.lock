@@ -6726,6 +6726,7 @@ __metadata:
     prettier: 3.2.5
     prettier-plugin-tailwindcss: 0.5.14
     pretty-quick: 4.0.0
+    qovery-pricing-typescript-axios: "file:vendor/qovery-pricing-typescript-axios-0.1.1.tgz"
     qovery-typescript-axios: 1.1.1051
     qovery-ws-typescript-axios: 0.1.666
     react: 19.3.0
@@ -24945,6 +24946,15 @@ __metadata:
   dependencies:
     hookified: ^2.1.1
   checksum: e164bfec0b064730dc70b971ba6016c4ad2f304828a5806d9d249b03f69cd4bcc8b1c8851e4a5f2e5b82b09b26a206cd5f031b8bfe16ee9467dd36b13b6c6e98
+  languageName: node
+  linkType: hard
+
+"qovery-pricing-typescript-axios@file:vendor/qovery-pricing-typescript-axios-0.1.1.tgz::locator=%40qovery%2Fconsole%40workspace%3A.":
+  version: 0.1.1
+  resolution: "qovery-pricing-typescript-axios@file:vendor/qovery-pricing-typescript-axios-0.1.1.tgz::locator=%40qovery%2Fconsole%40workspace%3A."
+  dependencies:
+    axios: 1.20.0
+  checksum: 7fa0676a2cca4dd26448ab6fb1441b63b74d234d672855fdcb21b00ef01714285923e1cdc73e30a1f76e61fbcfe5c836c23f5ee30f71814003013c4e754d1ba1
   languageName: node
   linkType: hard
 
