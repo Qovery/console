@@ -34,7 +34,9 @@ jest.mock('./use-organization-domain-dns-statuses', () => ({
     recheck: mockRecheck,
   }),
 }))
-jest.mock('@qovery/shared/iam/feature', () => ({ useUserRole: () => ({ roles: mockRoles, loading: false }) }))
+jest.mock('@qovery/shared/iam/feature', () => ({
+  useUserRole: () => ({ roles: mockRoles, isQoveryAdminUser: mockRoles.includes('admin'), loading: false }),
+}))
 jest.mock('./organization-domain-row', () => ({
   OrganizationDomainRow: ({
     domain,
@@ -120,6 +122,13 @@ it('restricts organization domains to administrators', () => {
   renderWithProviders(<OrganizationDomains />)
   expect(screen.getByText('Administrator access required')).toBeInTheDocument()
   expect(mockList).not.toHaveBeenCalled()
+})
+
+it('lets Qovery administrators manage any organization domains', () => {
+  mockRoles = ['admin']
+  renderWithProviders(<OrganizationDomains />)
+  expect(screen.queryByText('Administrator access required')).not.toBeInTheDocument()
+  expect(mockList).toHaveBeenCalled()
 })
 
 it('uses server pagination and resets to the first page when searching', async () => {

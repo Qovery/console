@@ -90,10 +90,12 @@ function OrganizationDomainsSkeletonRows() {
 export function OrganizationDomains() {
   useDocumentTitle('Domains - Organization')
   const { organizationId = '' } = useParams({ strict: false })
-  const { roles, loading } = useUserRole()
-  const isAdmin = roles.some(
-    (role) => role === `organization:${organizationId}:admin` || role === `organization:${organizationId}:owner`
-  )
+  const { roles, isQoveryAdminUser, loading } = useUserRole()
+  const isAdmin =
+    isQoveryAdminUser ||
+    roles.some(
+      (role) => role === `organization:${organizationId}:admin` || role === `organization:${organizationId}:owner`
+    )
 
   if (loading)
     return (
