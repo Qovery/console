@@ -2,8 +2,7 @@
 
 The billing kit from pricing-api (`web/src/billing-kit` in the qovery-pricing repository), the source of truth for these
 components. Copied from pricing-api commit `2076d94` (main, 2026-11-21);
-`offers.tsx`, `proposals.tsx` and `rules.ts` from `1300b8b` (main, 2026-11-21); `types.ts`,
-`gated-page.tsx` from `6a15ee6` (main, 2026-11-21); `paywall.tsx`, `gated.ts` and `gated-previews.tsx` from `f8630a5`
+`offers.tsx` and `proposals.tsx` from `1300b8b` (main, 2026-11-21); `gated-previews.tsx` from `f8630a5`
 (main, 2026-11-21); `types.ts`, `client.ts`, `rules.ts`, `gated.ts`, `gated-page.tsx` and `paywall.tsx` from `1dced41`
 (main, 2026-11-23, paywall intros).
 
@@ -18,6 +17,7 @@ What the copy changes, so the next sync can redo it:
 - `billing-usage-factory.mock.ts`, `console-paywall.tsx` (the console's client, `pickConsoleCalls`, and the paywall
   wiring behind the `billing-paywall` flag) and the `*.spec.ts(x)` files are console only.
 
-Every call goes to pricing-api with the signed-in user's Qovery token (`createPricingClient`). Invoices and their
+Authenticated calls to pricing-api carry the signed-in user's Qovery token (`createPricingClient`). The public
+`publicPlans` call is unauthenticated. Invoices and their
 details, payment methods, billing information, AWS Marketplace requests, plan changes, cancellation, reactivation,
 prepaid credits, usage history, build usage, discount requests, gates, feature trials, add-on purchases and plan proposals are pricing-api's customer API; core is not involved.

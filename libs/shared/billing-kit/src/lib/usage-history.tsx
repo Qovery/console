@@ -72,9 +72,16 @@ export function UsageHistory({
   ) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!client.usageHistory || rangeError) return
+    if (!client.usageHistory || rangeError) {
+      setLoading(false)
+      setH(undefined)
+      setError('')
+      return
+    }
     let live = true
     setLoading(true)
+    setH(undefined)
+    setError('')
     client
       .usageHistory(organizationId, range)
       .then((x) => {
@@ -220,7 +227,7 @@ export function UsageHistory({
                     </div>
                   </button>
                 ))}
-                {amounts && !amounts.unavailable && (
+                {scope === 'all' && amounts && !amounts.unavailable && (
                   <div className="rounded border border-neutral px-3 py-2">
                     <div className="text-xs text-neutral-subtle">Invoiced</div>
                     <div className="text-sm font-medium text-neutral">{money(amounts.total, amounts.currency)}</div>

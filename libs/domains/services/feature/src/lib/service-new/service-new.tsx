@@ -291,7 +291,7 @@ export function ServiceNew({
   // opening a blueprint (its details or Deploy) opens the full-page paywall.
   const paywall = useBillingPaywall(
     organizationId,
-    { actions: ['blueprint.create'] },
+    { actions: isServiceCatalogEnabled ? ['blueprint.create'] : [] },
     { onContactSales: showChat, variant: 'page' }
   )
   const blueprintGate = paywall.gate('blueprint.create')

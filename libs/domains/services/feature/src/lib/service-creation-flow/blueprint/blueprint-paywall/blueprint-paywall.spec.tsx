@@ -16,35 +16,12 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
 const mockGatesCall = jest.fn()
+const originalFetch = global.fetch
 const mockGateIntro = jest.fn()
-jest.mock('@qovery/shared/billing-kit', () => {
-  const actual = jest.requireActual('@qovery/shared/billing-kit')
-  const client = {
-    mode: 'live',
-    publicPlans: () => Promise.resolve(),
-    billingUsage: () => Promise.resolve(),
-    spendLimits: () => Promise.resolve(),
-    gateEvent: () => Promise.resolve(),
-    gateIntro: (organizationId: string, e: object) => {
-      mockGateIntro(organizationId, e)
-      return Promise.resolve()
-    },
-    get gates() {
-      return mockGates.current
-        ? (organizationId: string, keys: object) => {
-            mockGatesCall(keys)
-            return Promise.resolve({ organization_id: organizationId, access: 'billing', gates: mockGates.current })
-          }
-        : undefined
-    },
-  }
-  return {
-    ...actual,
-    usePricingClient: () => client,
-    useBillingPaywall: (organizationId: string, keys: object, options: object) =>
-      actual.usePaywall(client, organizationId, keys, options),
-  }
-})
+const mockBillingFlag = jest.fn(() => false)
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: (flag: string) => flag === 'billing-paywall' && mockBillingFlag(),
+}))
 
 const lockedBlueprints: Gate = {
   action: 'blueprint.create',
@@ -72,8 +49,25 @@ const lockedBlueprints: Gate = {
 describe('BlueprintPaywall', () => {
   beforeEach(() => {
     mockGates.current = undefined
+    mockBillingFlag.mockReturnValue(true)
+    mockGatesCall.mockClear()
+    global.fetch = jest.fn(async (input, init) => {
+      const url = new URL(String(input))
+      if (url.pathname.endsWith('/gates')) {
+        mockGatesCall(Object.fromEntries(url.searchParams))
+        return { ok: true, status: 200, json: async () => ({ gates: mockGates.current ?? [] }) } as Response
+      }
+      if (url.pathname.endsWith('/gates/intro')) {
+        mockGateIntro(url.pathname.split('/')[2], JSON.parse(String(init?.body)))
+      }
+      return { ok: true, status: 204 } as Response
+    })
     mockGatesCall.mockClear()
     mockGateIntro.mockClear()
+  })
+  afterEach(() => {
+    global.fetch = originalFetch
+    jest.restoreAllMocks()
   })
 
   it('shows the full-page paywall instead of the blueprint flow when blueprints are not in the plan', async () => {
@@ -87,7 +81,7 @@ describe('BlueprintPaywall', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Blueprints' })).toBeInTheDocument()
     expect(screen.queryByText('Blueprint flow')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Start a 14-day trial' })).toBeInTheDocument()
-    expect(mockGatesCall).toHaveBeenCalledWith({ actions: ['blueprint.create'] })
+    expect(mockGatesCall).toHaveBeenCalledWith({ actions: 'blueprint.create' })
   })
 
   it('goes back to the catalog from "Not now", and opens the chat from "Talk to us"', async () => {
@@ -101,7 +95,6 @@ describe('BlueprintPaywall', () => {
 
     await userEvent.click(await screen.findByRole('button', { name: 'Talk to us' }))
     expect(mockShowChat).toHaveBeenCalled()
-    await userEvent.click(screen.getByRole('button', { name: 'Not now' }))
     expect(onExit).toHaveBeenCalled()
   })
 
@@ -113,8 +106,8 @@ describe('BlueprintPaywall', () => {
       </BlueprintPaywall>
     )
 
-    expect(screen.getByText('Blueprint flow')).toBeInTheDocument()
-    await screen.findByText('Blueprint flow')
+    expect(screen.queryByText('Blueprint flow')).not.toBeInTheDocument()
+    expect(await screen.findByText('Blueprint flow')).toBeInTheDocument()
     expect(mockGatesCall).toHaveBeenCalled()
     expect(screen.queryByRole('heading', { level: 1, name: 'Blueprints' })).not.toBeInTheDocument()
   })
@@ -171,6 +164,8 @@ describe('BlueprintPaywall', () => {
   })
 
   it('never gates without the billing-paywall flag (no gates read)', () => {
+    mockBillingFlag.mockReturnValue(false)
+    mockGates.current = [lockedBlueprints]
     renderWithProviders(
       <BlueprintPaywall onExit={jest.fn()}>
         <p>Blueprint flow</p>
@@ -178,5 +173,6 @@ describe('BlueprintPaywall', () => {
     )
 
     expect(screen.getByText('Blueprint flow')).toBeInTheDocument()
+    expect(mockGatesCall).not.toHaveBeenCalled()
   })
 })

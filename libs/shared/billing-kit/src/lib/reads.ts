@@ -5,7 +5,7 @@
  * flight and for a few seconds after; `fresh` (a reload after an action) always reads again, and
  * an action that changes what the reads return forgets them (forgetReads).
  */
-const cache = new WeakMap<object, Map<string, { at: number; value: Promise<unknown> }>>()
+const cache = new WeakMap<object, Map<string, { settledAt?: number; value: Promise<unknown> }>>()
 
 /** How long a finished read is reused, in milliseconds. */
 export const SHARED_READ_MS = 3000
@@ -15,19 +15,24 @@ export function sharedRead<T>(
   key: string,
   read: () => Promise<T>,
   fresh = false,
-  now = Date.now()
+  now = Date.now
 ): Promise<T> {
   let reads = cache.get(client)
   if (!reads) cache.set(client, (reads = new Map()))
   const hit = reads.get(key)
-  if (hit && !fresh && now - hit.at < SHARED_READ_MS) return hit.value as Promise<T>
+  if (hit && !fresh && (hit.settledAt === undefined || now() - hit.settledAt < SHARED_READ_MS))
+    return hit.value as Promise<T>
   const value = read()
-  const entry = { at: now, value }
+  const entry: { settledAt?: number; value: Promise<T> } = { value }
   reads.set(key, entry)
-  // A failed read is not kept: the next one tries again.
-  value.catch(() => {
-    if (reads?.get(key) === entry) reads.delete(key)
-  })
+  value.then(
+    () => {
+      entry.settledAt = now()
+    },
+    () => {
+      if (reads.get(key) === entry) reads.delete(key)
+    }
+  )
   return value
 }
 

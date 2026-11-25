@@ -270,28 +270,29 @@ describe('shared reads', () => {
   it('should share one read between components mounting together, a few seconds', async () => {
     const client = {}
     const c = counter()
-    const t = 1_000_000
+    let t = 1_000_000
+    const now = () => t
 
-    const [a, b] = await Promise.all([
-      sharedRead(client, 'offers:o1', c.read, false, t),
-      sharedRead(client, 'offers:o1', c.read, false, t + 800),
-    ])
+    const first = sharedRead(client, 'offers:o1', c.read, false, now)
+    t += SHARED_READ_MS + 800
+    const [a, b] = await Promise.all([first, sharedRead(client, 'offers:o1', c.read, false, now)])
     expect(c.calls()).toBe(1)
     expect(a).toBe(b)
 
-    await sharedRead(client, 'offers:o1', c.read, false, t + SHARED_READ_MS)
+    t += SHARED_READ_MS
+    await sharedRead(client, 'offers:o1', c.read, false, now)
     expect(c.calls()).toBe(2)
   })
 
   it('should read again on a reload after an action, and after forgetReads', async () => {
     const client = {}
     const c = counter()
-    const t = 3_000_000
+    const now = () => 3_000_000
 
-    await sharedRead(client, 'offers:o1', c.read, false, t)
-    expect(await sharedRead(client, 'offers:o1', c.read, true, t + 1)).toBe(2)
+    await sharedRead(client, 'offers:o1', c.read, false, now)
+    expect(await sharedRead(client, 'offers:o1', c.read, true, now)).toBe(2)
     forgetReads(client, 'offers:')
-    expect(await sharedRead(client, 'offers:o1', c.read, false, t + 2)).toBe(3)
+    expect(await sharedRead(client, 'offers:o1', c.read, false, now)).toBe(3)
     forgetReads({}, 'offers:')
   })
 
@@ -299,8 +300,8 @@ describe('shared reads', () => {
     const client = {}
     const failing = jest.fn(() => Promise.reject(new Error('down')))
 
-    await expect(sharedRead(client, 'x', failing, false, 4_000_000)).rejects.toThrow('down')
-    await expect(sharedRead(client, 'x', failing, false, 4_000_001)).rejects.toThrow('down')
+    await expect(sharedRead(client, 'x', failing, false, () => 4_000_000)).rejects.toThrow('down')
+    await expect(sharedRead(client, 'x', failing, false, () => 4_000_001)).rejects.toThrow('down')
     expect(failing).toHaveBeenCalledTimes(2)
   })
 })

@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
-import { type ReactNode, useRef, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { type GateIntro, GatedPage, useBillingPaywall, usePricingClient } from '@qovery/shared/billing-kit'
+import { LoaderSpinner } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 
 export interface BlueprintPaywallProps {
@@ -20,13 +21,13 @@ export function BlueprintPaywall({ onExit, children }: BlueprintPaywallProps) {
   const { showChat } = useSupportChat()
   const client = usePricingClient()
   const paywall = useBillingPaywall(organizationId, { actions: ['blueprint.create'] })
-  // After a trial or a plan change, the gates are read again and the flow shows: no exit then.
-  const finished = useRef(false)
   // Held once read: showing the intro marks it seen, so the gate no longer offers it.
   const due = paywall.intro('blueprint.create')
   const [intro, setIntro] = useState<GateIntro | null>()
   const [continued, setContinued] = useState(false)
   if (due && intro === undefined) setIntro(due)
+
+  if (paywall.pending) return <LoaderSpinner />
 
   if (!paywall.locked('blueprint.create')) {
     if (!intro || continued) return children
@@ -49,13 +50,9 @@ export function BlueprintPaywall({ onExit, children }: BlueprintPaywallProps) {
       gate={paywall.gate('blueprint.create')}
       overlay
       onContactSales={showChat}
-      onDone={() => {
-        finished.current = true
-        paywall.reload()
-      }}
-      onClose={() => {
-        if (!finished.current) onExit()
-      }}
+      keepOpenAfterDone
+      onDone={paywall.reload}
+      onClose={onExit}
     />
   )
 }

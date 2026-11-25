@@ -5,16 +5,18 @@
  *
  *   <BillingPage organizationId={id} client={createPricingClient({ pricingApiUrl, getToken })} />
  */
-import { useState } from 'react'
-import { twMerge } from '@qovery/shared/util-js'
+import { type MutableRefObject, useEffect, useRef, useState } from 'react'
+import { TabsPrimitives } from '@qovery/shared/ui'
 import { BillingSettingsPage } from './billing-settings-page'
 import { InvoicesPage } from './invoices-page'
 import { UsagePage, type UsagePageProps } from './usage-page'
 
+const { Tabs } = TabsPrimitives
+
 export type BillingTab = 'usage' | 'invoices' | 'billing'
 
 export interface BillingPageProps extends UsagePageProps {
-  /** The tab shown first (default: usage). */
+  /** The active tab when controlled (defaults to Usage when omitted). */
   tab?: BillingTab
   /** Called when the tab changes, to keep it in the URL. */
   onTabChange?: (tab: BillingTab) => void
@@ -26,45 +28,50 @@ const TABS: { id: BillingTab; label: string }[] = [
   { id: 'billing', label: 'Billing' },
 ]
 
-export function BillingPage({ tab: initial = 'usage', onTabChange, ...props }: BillingPageProps) {
-  const [tab, setTab] = useState<BillingTab>(initial)
-  const go = (t: BillingTab) => {
-    setTab(t)
-    onTabChange?.(t)
+function UsageTab({ initialJourney, ...props }: UsagePageProps & { initialJourney: MutableRefObject<boolean> }) {
+  const open = initialJourney.current ? undefined : props.open
+  useEffect(() => {
+    initialJourney.current = true
+  }, [initialJourney])
+  return <UsagePage {...props} open={open} />
+}
+
+export function BillingPage(props: BillingPageProps) {
+  return <BillingTabs key={props.organizationId} {...props} />
+}
+
+function BillingTabs({ tab, onTabChange, ...props }: BillingPageProps) {
+  const [selectedTab, setSelectedTab] = useState('usage')
+  const initialJourney = useRef(false)
+  const go = (value: string) => {
+    const next = TABS.find((item) => item.id === value)?.id
+    if (!next) return
+    setSelectedTab(next)
+    onTabChange?.(next)
   }
   return (
-    <div className="flex flex-col gap-6">
-      <nav role="tablist" aria-label="Billing" className="flex gap-1 overflow-x-auto border-b border-neutral">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            aria-selected={tab === t.id}
-            onClick={() => go(t.id)}
-            className={twMerge(
-              '-mb-px whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium transition-colors',
-              tab === t.id
-                ? 'border-brand-strong text-neutral'
-                : 'border-transparent text-neutral-subtle hover:text-neutral'
-            )}
-          >
-            {t.label}
-          </button>
+    <Tabs.Root value={tab ?? selectedTab} onValueChange={go} className="flex flex-col gap-6">
+      <Tabs.List aria-label="Billing" className="border-b border-neutral">
+        {TABS.map(({ id, label }) => (
+          <Tabs.Trigger key={id} value={id}>
+            {label}
+          </Tabs.Trigger>
         ))}
-      </nav>
-      {tab === 'usage' && <UsagePage {...props} onNavigate={go} />}
-      {tab === 'invoices' && (
+      </Tabs.List>
+      <Tabs.Content value="usage">
+        <UsageTab {...props} onNavigate={go} initialJourney={initialJourney} />
+      </Tabs.Content>
+      <Tabs.Content value="invoices">
         <InvoicesPage
           organizationId={props.organizationId}
           client={props.client}
           onManagePaymentMethod={() => go('billing')}
           onNavigate={go}
         />
-      )}
-      {tab === 'billing' && (
+      </Tabs.Content>
+      <Tabs.Content value="billing">
         <BillingSettingsPage organizationId={props.organizationId} client={props.client} onNavigate={go} />
-      )}
-    </div>
+      </Tabs.Content>
+    </Tabs.Root>
   )
 }

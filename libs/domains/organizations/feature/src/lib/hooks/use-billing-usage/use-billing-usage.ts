@@ -26,8 +26,8 @@ export function useBillingUsage({ organizationId }: UseBillingUsageProps) {
     queryKey: billingUsageQueryKey(organizationId),
     queryFn: () => client.billingUsage(organizationId),
     enabled: Boolean(organizationId),
-    // 401, 403 and 404 will not change by retrying
-    retry: (failureCount, error) => getBillingUsageErrorType(error) === 'unavailable' && failureCount < 2,
+    retry: (failureCount, error) =>
+      failureCount < 2 && (!(error instanceof BillingError) || (error.status >= 500 && error.status < 600)),
     refetchOnWindowFocus: false,
   })
 }

@@ -46,8 +46,10 @@ export function DiscountsCard({
   const [view, setView] = useState<Discounts>()
   const [error, setError] = useState('')
   const [selected, setSelected] = useState<string[]>([])
-  const [quote, setQuote] = useState<DiscountQuote>()
+  const [quoted, setQuoted] = useState<{ organizationId: string; selection: string[]; quote: DiscountQuote }>()
+  const quote = quoted?.organizationId === organizationId && quoted.selection === selected ? quoted.quote : undefined
   const [quoteError, setQuoteError] = useState('')
+  const [withdrawError, setWithdrawError] = useState('')
   const [terms, setTerms] = useState(false)
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
@@ -68,30 +70,27 @@ export function DiscountsCard({
 
   // The new price comes from pricing-api's engine, a dry run on every change of the selection.
   useEffect(() => {
-    if (!client.quoteDiscounts || selected.length === 0) {
-      setQuote(undefined)
-      setQuoteError('')
-      return
-    }
+    setQuoteError('')
+    if (!client.quoteDiscounts || selected.length === 0) return
     let live = true
     client
       .quoteDiscounts(organizationId, selected)
       .then((q) => {
         if (live) {
-          setQuote(q)
+          setQuoted({ organizationId, selection: selected, quote: q })
           setQuoteError('')
         }
       })
       .catch((e) => {
         if (live) {
-          setQuote(undefined)
+          setQuoted(undefined)
           setQuoteError(errorText(e))
         }
       })
     return () => {
       live = false
     }
-  }, [client, organizationId, selected.join(',')]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [client, organizationId, selected])
 
   if (!billing) return null
   if (error)
@@ -146,12 +145,13 @@ export function DiscountsCard({
     }
   }
   const withdraw = async (r: DiscountRequest) => {
+    setWithdrawError('')
     setBusy(true)
     try {
       setView(await client.withdrawDiscountRequest!(organizationId, r.id))
       notifySuccess(client, 'Request withdrawn')
     } catch (e) {
-      setError(errorText(e))
+      setWithdrawError(errorText(e))
     } finally {
       setBusy(false)
     }
@@ -241,6 +241,11 @@ export function DiscountsCard({
                 {open.labels.join(', ')}: {pct(open.percent)} off, {money(open.price_after, open.currency)} per {per}{' '}
                 instead of {money(open.price_before, open.currency)}. Asked by {open.requested_by} on{' '}
                 {date(open.requested_at)}.
+                {withdrawError && (
+                  <p className="mt-2 text-negative" role="alert">
+                    {withdrawError}
+                  </p>
+                )}
                 {client.withdrawDiscountRequest && (
                   <div className="mt-2">
                     <Button size="sm" variant="outline" color="neutral" loading={busy} onClick={() => withdraw(open)}>
@@ -270,7 +275,7 @@ export function DiscountsCard({
           <div className="divide-y divide-neutral border-t border-neutral">
             {view.discounts.map((d) => {
               const on = selected.includes(d.id)
-              const can = on || discountSelectable(d, selected, have)
+              const can = on || discountSelectable(d, selected, have, view.discounts)
               const id = `discount-${d.id}`
               return (
                 <label

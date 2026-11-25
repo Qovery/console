@@ -15,7 +15,7 @@ import { BillingError, type PricingClient } from './client'
 import { date, money, monthly, valueText } from './format'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText } from './parts'
-import { ProposalNote } from './proposals'
+import { ProposalNote, hideProposal } from './proposals'
 import { changeBlockedText, changeKind, isProposalChange, newIdempotencyKey } from './rules'
 import type {
   BillingUsage,
@@ -92,20 +92,23 @@ export function PlanChangeFlow({
   const currentPeriod = options?.period ?? usage.billing.period
   const current = options?.results.find((o) => o.current)
   const blocked = changeBlockedText(options?.change, 'plan')
-  const canConfirm = client.mode === 'live' && !blocked
   const saving = Math.max(
     0,
     ...(plans?.plans ?? []).flatMap((p) => p.yearly_saving.filter((s) => s.currency === cur).map((s) => s.saving_pct))
   )
   const priceOf = (o: PlanOption) => {
     const p = plans?.plans.find((x) => x.code === o.plan.code)
-    if (!p) return o.quote && o.quote.period === period ? { amount: o.quote.total, per: period } : null
+    if (!p) {
+      if (!o.quote || o.quote.period !== period) return null
+      return period === 'year'
+        ? { amount: Math.round(o.quote.total / 12), yearly: o.quote.total }
+        : { amount: o.quote.total }
+    }
     const m = monthly(p.prices, cur, period)
     return m == null
       ? null
       : {
           amount: m,
-          per: 'month' as const,
           yearly:
             period === 'year' ? p.prices.find((x) => x.currency === cur && x.period === 'year')?.amount : undefined,
         }
@@ -124,9 +127,15 @@ export function PlanChangeFlow({
   )
 
   // The proposal's own change goes through the proposal (its concession); another pick does not.
-  const viaProposal = isProposalChange(proposal, pick, period) && !!client.quoteProposal && !!client.acceptProposal
+  const viaProposal = isProposalChange(proposal, pick, period)
+  const unsupportedProposal = viaProposal && (!client.quoteProposal || !client.acceptProposal)
+  const canConfirm = client.mode === 'live' && !blocked && (viaProposal ? !!client.acceptProposal : !!client.changePlan)
   async function review() {
-    if (!pick) return
+    if (!pick || busy || (!viaProposal && !client.quotePlanChange)) return
+    if (unsupportedProposal) {
+      setError('This proposal cannot be reviewed here. Contact Qovery for help.')
+      return
+    }
     setBusy(true)
     setError('')
     try {
@@ -169,7 +178,12 @@ export function PlanChangeFlow({
     setBusy(false)
   }
   async function confirm() {
-    if (!pick) return
+    if (busy || !pick || !q?.can_apply || unsupportedProposal) return
+    if (client.mode === 'preview') {
+      setStep('done')
+      return
+    }
+    if (!canConfirm) return
     setBusy(true)
     setError('')
     try {
@@ -178,6 +192,7 @@ export function PlanChangeFlow({
           ? await client.acceptProposal!(organizationId, proposal.id, key)
           : await client.changePlan!(organizationId, pick, period, key)
       )
+      if (viaProposal && proposal) hideProposal(client, organizationId, proposal.id)
       setStep('done')
       onDone()
     } catch (e) {
@@ -218,6 +233,7 @@ export function PlanChangeFlow({
           <button
             type="button"
             aria-label="Close"
+            disabled={busy}
             onClick={onClose}
             className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-subtle hover:bg-surface-neutral-componentHover"
           >
@@ -247,7 +263,9 @@ export function PlanChangeFlow({
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <SegmentedControl.Root
                   value={period}
+                  aria-disabled={busy}
                   onValueChange={(v) => {
+                    if (busy) return
                     setPeriod(v as Period)
                     setPick(undefined)
                   }}
@@ -264,7 +282,12 @@ export function PlanChangeFlow({
                 )}
               </div>
               {!options && !error && <div className="text-sm text-neutral-subtle">Loading plans…</div>}
-              <RadioGroup.Root className="flex flex-col gap-2" value={pick ?? ''} onValueChange={setPick}>
+              <RadioGroup.Root
+                className="flex flex-col gap-2"
+                value={pick ?? ''}
+                disabled={busy}
+                onValueChange={setPick}
+              >
                 {options?.results.map((o) => {
                   const price = priceOf(o)
                   const sales = contactOnly(o)
@@ -526,7 +549,7 @@ export function PlanChangeFlow({
                 <Button
                   size="lg"
                   loading={busy}
-                  disabled={!q?.can_apply || !(canConfirm || client.mode === 'preview')}
+                  disabled={busy || !q?.can_apply || !(canConfirm || client.mode === 'preview')}
                   onClick={confirm}
                 >
                   {q?.direction === 'same'

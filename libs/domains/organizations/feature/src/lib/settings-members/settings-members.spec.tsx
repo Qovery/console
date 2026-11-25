@@ -193,7 +193,9 @@ describe('SettingsMembers', () => {
     mockGates.current = [{ ...seatsFull, allowed: true, reason: '', used: 2, paywall: undefined }]
     const { userEvent } = renderWithProviders(<SettingsMembers />)
 
-    await userEvent.click(screen.getByRole('button', { name: /add member/i }))
+    const invite = screen.getByRole('button', { name: /add member/i })
+    await waitFor(() => expect(invite).toBeEnabled())
+    await userEvent.click(invite)
 
     expect(mockOpenModal).toHaveBeenCalled()
     expect(screen.queryByRole('heading', { level: 1, name: 'Members' })).not.toBeInTheDocument()
@@ -217,10 +219,9 @@ describe('SettingsMembers', () => {
       },
     ]
     const { userEvent } = renderWithProviders(<SettingsMembers />)
-    // The gates are read once the page mounts.
-    await new Promise((resolve) => setTimeout(resolve, 0))
-
-    await userEvent.click(screen.getByRole('button', { name: /add member/i }))
+    const invite = screen.getByRole('button', { name: /add member/i })
+    await waitFor(() => expect(invite).toBeEnabled())
+    await userEvent.click(invite)
 
     expect(await screen.findByText('Bring your team in')).toBeInTheDocument()
     expect(mockOpenModal).not.toHaveBeenCalled()

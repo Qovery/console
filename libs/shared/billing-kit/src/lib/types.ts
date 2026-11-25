@@ -345,7 +345,7 @@ export interface PlanProposal {
   currency: string
   /** Who sent it, and their message (plain text). sender_name is the person at Qovery, or "The
    * Qovery team" when send_as is team (no personal name then); absent from older pricing-api. */
-  sender_name: string
+  sender_name?: string
   send_as?: 'person' | 'team'
   message: string
   /** The banner's one line: what it saves, what it covers, the concession, or the message's start. */

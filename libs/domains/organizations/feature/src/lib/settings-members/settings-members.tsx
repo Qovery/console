@@ -491,7 +491,7 @@ export function SettingsMembers() {
           />
 
           {canAddMember && (
-            <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
+            <Button className="absolute right-0 top-0" size="md" disabled={paywall.pending} onClick={onAddMember}>
               <Icon iconName={isInviteLocked ? 'lock' : 'circle-plus'} iconStyle="regular" />
               Add member
             </Button>

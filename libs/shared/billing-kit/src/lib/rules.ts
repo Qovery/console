@@ -400,7 +400,7 @@ export function validateBillingInfo(b: BillingInfo): Partial<Record<keyof Billin
   const country = b.country.trim()
   if (country && !/^[A-Za-z]{2}$/.test(country)) errs.country = 'Use the two-letter code, e.g. FR or US'
   const vat = b.vat_number.replace(/\s/g, '')
-  if (vat && !/^[A-Za-z0-9.-]{2,20}$/.test(vat)) errs.vat_number = 'Letters and digits only, 20 characters at most'
+  if (vat && !/^[A-Za-z0-9.-]{2,20}$/.test(vat)) errs.vat_number = 'Use 2–20 letters, digits, periods or hyphens'
   return errs
 }
 
@@ -468,8 +468,8 @@ export function newIdempotencyKey(): string {
 
 /** What a change of plan or billing period is, in a few words. */
 export function changeKind(q: { direction: string; period: string; effective_at: string }, currentPeriod: string) {
-  if (q.direction === 'same') return 'Keep your current plan'
   if (q.period !== currentPeriod) return q.period === 'year' ? 'Switch to yearly billing' : 'Switch to monthly billing'
+  if (q.direction === 'same') return 'Keep your current plan'
   return q.direction === 'downgrade' ? 'Downgrade' : 'Upgrade'
 }
 
@@ -693,7 +693,7 @@ function csvCell(v: string | number | null) {
   if (v == null) return ''
   const s = String(v)
   // Quoted when needed, and never read as a formula by a spreadsheet.
-  const safe = /^[=+\-@\t\r]/.test(s) && typeof v === 'string' ? `'${s}` : s
+  const safe = /^[=+\-@\t\r]/.test(s) && typeof v === 'string' && !/^[+-]?\d+(?:\.\d+)?$/.test(s) ? `'${s}` : s
   return /[",\n\r]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe
 }
 
@@ -831,8 +831,19 @@ export function buildServiceRows(
  */
 type DiscountRule = { id: string; requires: string[]; excludes: string[] }
 
-export function discountSelectable(d: DiscountRule, selected: string[], granted: string[] = []): boolean {
-  return d.requires.length === 0 || d.requires.some((r) => selected.includes(r) || granted.includes(r))
+export function discountSelectable(
+  d: DiscountRule,
+  selected: string[],
+  granted: string[] = [],
+  types: readonly DiscountRule[] = []
+): boolean {
+  const conflictsWithContract =
+    d.excludes.some((id) => granted.includes(id)) ||
+    types.some((type) => granted.includes(type.id) && type.excludes.includes(d.id))
+  return (
+    !conflictsWithContract &&
+    (d.requires.length === 0 || d.requires.some((r) => selected.includes(r) || granted.includes(r)))
+  )
 }
 
 function pruneDiscounts(types: DiscountRule[], selected: string[], granted: string[]): string[] {
@@ -840,7 +851,7 @@ function pruneDiscounts(types: DiscountRule[], selected: string[], granted: stri
   for (;;) {
     const kept = cur.filter((id) => {
       const d = types.find((t) => t.id === id)
-      return !!d && discountSelectable(d, cur, granted)
+      return !!d && discountSelectable(d, cur, granted, types)
     })
     if (kept.length === cur.length) return kept
     cur = kept
@@ -860,7 +871,7 @@ export function toggleDiscount(
       granted
     )
   const d = types.find((t) => t.id === id)
-  if (!d || !discountSelectable(d, selected, granted)) return selected
+  if (!d || !discountSelectable(d, selected, granted, types)) return selected
   const dropped = new Set([...d.excludes, ...types.filter((t) => t.excludes.includes(id)).map((t) => t.id)])
   return pruneDiscounts(types, [...selected.filter((s) => !dropped.has(s)), id], granted)
 }
@@ -889,8 +900,12 @@ export function discountPercent(
 }
 
 /** The request the card shows: the one being reviewed, else the latest decided one (withdrawn ones are not shown). */
-export function currentDiscountRequest<T extends { status: string }>(requests: T[]): T | undefined {
-  return requests.find((r) => r.status === 'open') ?? requests.find((r) => r.status !== 'withdrawn')
+export function currentDiscountRequest<T extends { status: string; requested_at: string; decided_at?: string | null }>(
+  requests: T[]
+): T | undefined {
+  const order = (r: T) => Date.parse(r.decided_at ?? r.requested_at)
+  const recent = requests.filter((r) => r.status !== 'withdrawn').sort((a, b) => order(b) - order(a))
+  return recent.find((r) => r.status === 'open') ?? recent[0]
 }
 
 /**
@@ -972,7 +987,8 @@ export function paywallFromBody(body: unknown): { paywall: PaywallInfo; sku?: st
 /** A 402 from core for an action pricing-api refused: the action or SKU to read the gate of. */
 export function gateKeyFromBody(status: number | undefined, body: unknown): { action?: string; sku?: string } | null {
   if (status !== 402) return null
-  for (const b of [body, (body as { data?: unknown })?.data]) {
+  const seen = [body, (body as { data?: unknown })?.data, (body as { response?: { data?: unknown } })?.response?.data]
+  for (const b of seen) {
     const x = b as { sku?: unknown; action?: unknown } | undefined
     if (x && (typeof x.action === 'string' || typeof x.sku === 'string'))
       return {
@@ -1050,7 +1066,7 @@ export function snoozeLabel(days: number): string {
 /** Who suggests what: "<Sender> from Qovery suggests <Plan>", or "The Qovery team suggests <Plan>"
  * for a proposal sent as the team (no personal name then). */
 export function proposalHeading(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan'>): string {
-  return p.send_as === 'team'
+  return p.send_as === 'team' || !p.sender_name
     ? `The Qovery team suggests ${p.plan.name}`
     : `${p.sender_name} from Qovery suggests ${p.plan.name}`
 }
@@ -1065,7 +1081,7 @@ export function proposalLine(p: Pick<PlanProposal, 'sender_name' | 'send_as' | '
 
 /** Who signs: "The Qovery team", or "Ada Lovelace, Qovery". */
 export function proposalSigner(p: Pick<PlanProposal, 'sender_name' | 'send_as'>): string {
-  return p.send_as === 'team' ? 'The Qovery team' : `${p.sender_name}, Qovery`
+  return p.send_as === 'team' || !p.sender_name ? 'The Qovery team' : `${p.sender_name}, Qovery`
 }
 
 /** The banner's short line, below 640px: the offer, else the heading. */
