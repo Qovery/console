@@ -152,7 +152,11 @@ function RouteComponent() {
             {LINKS_SETTINGS.map((link) => {
               if ('children' in link) {
                 const isChildPathActive = (childPath: string) =>
-                  pathname === childPath || pathname.startsWith(`${childPath}/`)
+                  pathname === childPath ||
+                  pathname.startsWith(`${childPath}/`) ||
+                  (!isBillingUsageEnabled &&
+                    childPath === `${pathSettings}/billing-summary` &&
+                    pathname === `${pathSettings}/billing`)
                 const groupActive = link.children.some((child) => isChildPathActive(child.to))
 
                 return (

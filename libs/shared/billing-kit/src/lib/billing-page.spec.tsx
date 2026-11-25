@@ -3,6 +3,16 @@ import { BillingPage } from './billing-page'
 import { billingUsageFactoryMock } from './billing-usage-factory.mock'
 
 describe('BillingPage', () => {
+  const scrollIntoView = Element.prototype.scrollIntoView
+
+  beforeEach(() => {
+    Element.prototype.scrollIntoView = jest.fn()
+  })
+
+  afterEach(() => {
+    Element.prototype.scrollIntoView = scrollIntoView
+  })
+
   it('should render the plan, every limit and the features', () => {
     renderWithProviders(<BillingPage usage={billingUsageFactoryMock()} />)
 
@@ -10,6 +20,8 @@ describe('BillingPage', () => {
     expect(screen.getAllByText('Managed clusters').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Deployment minutes').length).toBeGreaterThan(0)
     expect(screen.getAllByText('7,657').length).toBeGreaterThan(0)
+    expect(screen.getByText('Members')).toBeInTheDocument()
+    expect(screen.getByText('Environments')).toBeInTheDocument()
     expect(screen.getByText('Single sign-on')).toBeInTheDocument()
   })
 
@@ -26,7 +38,17 @@ describe('BillingPage', () => {
 
     await userEvent.click(screen.getAllByRole('button', { name: 'View usage' })[0])
 
-    expect(await screen.findByText(/In use each day, over three months/)).toBeInTheDocument()
+    expect(await screen.findByRole('dialog', { name: 'Managed clusters' })).toBeInTheDocument()
+  })
+
+  it('should select a usage series with the keyboard when no search field is shown', async () => {
+    const { userEvent } = renderWithProviders(<BillingPage usage={billingUsageFactoryMock()} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'SKU: Deployment minutes' }))
+    expect(await screen.findByRole('combobox', { name: 'SKU' })).toHaveFocus()
+    await userEvent.keyboard('{ArrowDown}{Enter}')
+
+    expect(await screen.findByRole('button', { name: 'SKU: Managed clusters' })).toBeInTheDocument()
   })
 
   it('should show the payment failed banner', () => {

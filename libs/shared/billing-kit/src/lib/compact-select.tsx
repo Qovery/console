@@ -39,6 +39,8 @@ export function CompactSelect({
   const searchable = options.length > 8
   const current = options.find((o) => o.value === value)
   const text = (o: Opt) => (typeof o.label === 'string' ? o.label : o.value)
+  const fieldLabel = ariaLabel ?? label
+  const selectionLabel = current ? text(current) : 'Select…'
   const shown = useMemo(
     () =>
       q
@@ -70,7 +72,7 @@ export function CompactSelect({
         <Popover.Trigger disabled={disabled}>
           <button
             type="button"
-            aria-label={ariaLabel ?? label}
+            aria-label={fieldLabel ? `${fieldLabel}: ${selectionLabel}` : undefined}
             disabled={disabled}
             className={twMerge(
               'flex h-8 min-w-28 max-w-80 items-center justify-between gap-2 rounded border border-neutral bg-surface-neutral px-3 text-left text-sm text-neutral transition-colors hover:border-neutral-strong focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text disabled:cursor-not-allowed disabled:text-neutral-disabled',
@@ -83,14 +85,8 @@ export function CompactSelect({
             <Icon iconName="angles-up-down" className="shrink-0 text-xs text-neutral-subtle" />
           </button>
         </Popover.Trigger>
-        <Popover.Content
-          align="start"
-          className="z-dropdown flex w-[320px] max-w-[calc(100vw-24px)] flex-col p-2"
-          onOpenAutoFocus={(e) => {
-            if (!searchable) e.preventDefault()
-          }}
-        >
-          <Command shouldFilter={false} loop>
+        <Popover.Content align="start" className="z-dropdown flex w-[320px] max-w-[calc(100vw-24px)] flex-col p-2">
+          <Command label={fieldLabel ?? 'Options'} shouldFilter={false} loop>
             {searchable && (
               <div className="relative mb-2">
                 <Icon
@@ -106,6 +102,7 @@ export function CompactSelect({
                 />
               </div>
             )}
+            {!searchable && <Command.Input readOnly className="sr-only" />}
             <CommandMenu.List ref={listRef} className="max-h-72 [&>[cmdk-list-sizer]]:mx-0 [&>[cmdk-list-sizer]]:my-0">
               <CommandMenu.Empty>
                 <p className="px-3 py-4 text-center text-xs font-medium text-neutral-subtle">

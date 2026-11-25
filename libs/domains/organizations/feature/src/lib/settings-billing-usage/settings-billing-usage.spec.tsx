@@ -24,7 +24,9 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-northwind' }),
-  Link: ({ children }: { children: ReactNode }) => <a href="/billing-summary">{children}</a>,
+  Link: ({ children, to, params }: { children: ReactNode; to: string; params: { organizationId: string } }) => (
+    <a href={to.replace('$organizationId', params.organizationId)}>{children}</a>
+  ),
 }))
 
 const jsonResponse = (status: number, body: unknown) =>
@@ -119,7 +121,10 @@ describe('BillingUsageView', () => {
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('No plan details for this organization yet')).toBeInTheDocument()
-    expect(screen.getByText('Open billing summary')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Open billing summary' })).toHaveAttribute(
+      'href',
+      '/organization/org-northwind/settings/billing-summary'
+    )
   })
 
   it('should explain a user who is not a member', async () => {

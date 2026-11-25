@@ -6,8 +6,9 @@
  *
  *   <BillingPage usage={billingUsage} />
  */
+import * as Dialog from '@radix-ui/react-dialog'
 import { type ReactNode, useState } from 'react'
-import { Callout, Icon, Modal } from '@qovery/shared/ui'
+import { Callout, Heading, Icon, Modal, Section } from '@qovery/shared/ui'
 import { date, money, num, valueText } from './format'
 import { type BillingUsage, type Entitlement, type UsageSeries } from './types'
 import { UsageChart, UsageInsights } from './usage-insights'
@@ -39,7 +40,7 @@ function UsageBar({ used, value, over }: { used: number; value: number; over: bo
 // Settings measured in days (log retention) are a value, not a usage.
 const isSetting = (e: Entitlement) => e.unit === 'days'
 
-function UsageRow({ e, onDetails }: { e: Entitlement; onDetails?: () => void }) {
+function UsageRow({ e, currency, onDetails }: { e: Entitlement; currency: string; onDetails?: () => void }) {
   const finite = typeof e.value === 'number' && !isSetting(e)
   return (
     <div className="flex flex-col gap-2 px-5 py-4">
@@ -69,12 +70,12 @@ function UsageRow({ e, onDetails }: { e: Entitlement; onDetails?: () => void }) 
           {e.customer_note}
           {e.prepaid ? ` · ${num(e.prepaid)} prepaid` : ''}
           {e.mode === 'soft' && e.overage_unit_price > 0
-            ? ` · then ${money(e.overage_unit_price)} per ${e.unit.replace(/s$/, '')}`
+            ? ` · then ${money(e.overage_unit_price, currency)} per ${e.unit.replace(/s$/, '')}`
             : ''}
         </span>
         <span className="flex items-center gap-3">
           {onDetails && (
-            <button type="button" className="font-medium text-brand hover:underline" onClick={onDetails}>
+            <button type="button" className="cursor-pointer font-medium text-brand hover:underline" onClick={onDetails}>
               View usage
             </button>
           )}
@@ -95,7 +96,9 @@ function SeriesModal({ series, onClose }: { series: UsageSeries; onClose: () => 
       width="min(860px, calc(100vw - 24px))"
     >
       <div className="p-6">
-        <h2 className="h4 text-neutral">{series.name}</h2>
+        <Dialog.Title asChild>
+          <Heading level={2}>{series.name}</Heading>
+        </Dialog.Title>
         <p className="mb-4 text-sm text-neutral-subtle">
           {series.kind === 'meter'
             ? 'Consumed per day and month to date, over three months.'
@@ -122,9 +125,9 @@ export function BillingPage({ usage: u }: BillingPageProps) {
     .map((e) => (e.kind === 'feature' ? e : { ...e, value: false as const }))
   const sp = u.spend
   return (
-    <div className="flex flex-col gap-6">
+    <Section className="gap-6">
       <div className="border-b border-neutral pb-5">
-        <h2 className="h4 text-neutral">Plan details</h2>
+        <Heading>Plan details</Heading>
         <p className="text-sm text-neutral-subtle">
           Your plan, what it includes and what you use. Limits are shared by every organization of your contract.
         </p>
@@ -138,7 +141,7 @@ export function BillingPage({ usage: u }: BillingPageProps) {
           </Callout.Text>
         </Callout.Root>
       )}
-      {u.billing.locked && (
+      {(u.billing.locked || u.status.status === 'locked') && (
         <Callout.Root color="red">
           <Callout.Text>
             <Callout.TextHeading>New resources are paused</Callout.TextHeading>Your subscription is paused, cancelled or
@@ -174,9 +177,11 @@ export function BillingPage({ usage: u }: BillingPageProps) {
           <Card
             label="Spend this month"
             hint={
-              sp.account.monthly_limit != null
-                ? `${Math.round(sp.account.used_pct ?? 0)}% of the ${money(sp.account.monthly_limit, cur)} limit`
-                : 'No spend limit'
+              sp.account.monthly_limit == null
+                ? 'No spend limit'
+                : sp.account.used_pct == null
+                  ? `${money(sp.account.monthly_limit, cur)} spend limit`
+                  : `${Math.round(sp.account.used_pct)}% of the ${money(sp.account.monthly_limit, cur)} limit`
             }
           >
             {money(sp.spent, cur)} <span className="text-xs font-normal text-neutral-subtle">beyond the plan</span>
@@ -201,12 +206,14 @@ export function BillingPage({ usage: u }: BillingPageProps) {
         </div>
       )}
 
-      <div>
-        <h3 className="mb-3 text-base font-medium text-neutral">Usage</h3>
+      <Section>
+        <Heading className="mb-3">Usage</Heading>
         <div className="divide-y divide-neutral rounded border border-neutral bg-surface-neutral">
           {limits.map((e) => {
             const series = u.usage_insights?.series.find((x) => x.sku === e.sku)
-            return <UsageRow key={e.sku} e={e} onDetails={series ? () => setDetail(series) : undefined} />
+            return (
+              <UsageRow key={e.sku} e={e} currency={cur} onDetails={series ? () => setDetail(series) : undefined} />
+            )
           })}
         </div>
         {features.length > 0 && (
@@ -226,19 +233,19 @@ export function BillingPage({ usage: u }: BillingPageProps) {
             ))}
           </div>
         )}
-      </div>
+      </Section>
 
-      <div>
-        <h3 className="mb-1 text-base font-medium text-neutral">Usage details</h3>
+      <Section>
+        <Heading className="mb-1">Usage details</Heading>
         <p className="mb-3 text-sm text-neutral-subtle">
           How this organization used the plan over the last three months, and where this month is heading.
         </p>
         <UsageInsights usage={u} />
-      </div>
+      </Section>
 
       {u.notes.length > 0 && <p className="text-xs text-neutral-subtle">{u.notes.join(' ')}</p>}
 
       {detail && <SeriesModal series={detail} onClose={() => setDetail(undefined)} />}
-    </div>
+    </Section>
   )
 }
