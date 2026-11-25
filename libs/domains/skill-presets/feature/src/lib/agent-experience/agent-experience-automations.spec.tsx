@@ -2,7 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ServiceLightResponse, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { queries } from '@qovery/state/util-queries'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { AgentExperienceAutomations } from './agent-experience-automate'
@@ -60,26 +60,21 @@ afterEach(() => {
   jest.restoreAllMocks()
 })
 
-it('lists only agent tasks, with links to their projects, environments and services', async () => {
+it('links to the agent task and shows its project and environment as text', async () => {
   renderWithProviders(<AgentExperienceAutomations />)
   expect(screen.getByRole('button', { name: 'Need help here?' })).toBeInTheDocument()
   expect(await screen.findByRole('link', { name: task.name })).toHaveAttribute(
     'href',
     '/organization/organization-1/project/project-1/environment/env-1/service/task-1/overview'
   )
-  expect(screen.getByRole('link', { name: 'Staging' })).toHaveAttribute(
-    'href',
-    '/organization/organization-1/project/project-1/environment/env-1/overview'
-  )
-  expect(screen.getByRole('link', { name: 'Production' })).toHaveAttribute(
-    'href',
-    '/organization/organization-1/project/project-1/environment/env-2/overview'
-  )
-  const projectLinks = screen.getAllByRole('link', { name: 'Reporting' })
-  expect(projectLinks).toHaveLength(2)
-  projectLinks.forEach((link) =>
-    expect(link).toHaveAttribute('href', '/organization/organization-1/project/project-1/overview')
-  )
+  const dailyReport = screen.getByRole('row', { name: /Daily report/ })
+  expect(within(dailyReport).getByRole('cell', { name: 'Reporting' })).toBeInTheDocument()
+  expect(within(dailyReport).getByRole('cell', { name: 'Staging' })).toBeInTheDocument()
+  expect(within(dailyReport).getAllByRole('link')).toHaveLength(1)
+  expect(
+    within(screen.getByRole('row', { name: /Weekly report/ })).getByRole('cell', { name: 'Production' })
+  ).toBeInTheDocument()
+  expect(screen.getAllByRole('link')).toHaveLength(2)
   expect(screen.queryByText('Web app')).not.toBeInTheDocument()
   expect(mockServices).toHaveBeenCalledTimes(1)
 })

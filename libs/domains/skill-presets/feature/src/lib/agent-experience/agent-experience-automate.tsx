@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Navigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ServiceLightResponse, ServiceTypeEnum } from 'qovery-typescript-axios'
-import { Button, EmptyState, Link, Skeleton, TablePrimitives, useModal } from '@qovery/shared/ui'
+import { ServiceAvatar } from '@qovery/domains/services/feature'
+import { Button, EmptyState, Link, Skeleton, TablePrimitives, Tooltip, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
@@ -84,45 +85,51 @@ export function AgentExperienceAutomations() {
           description="Agent tasks appear here once they’re created in an environment."
         />
       ) : (
-        <Table.Root>
-          <Table.Header>
+        <Table.Root className="w-full min-w-[32rem] table-fixed" containerClassName="rounded-lg">
+          <Table.Header className="text-xs text-neutral-subtle">
             <Table.Row>
-              <Table.ColumnHeaderCell>Agent task</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Project</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Environment</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="h-9 w-2/5 border-r">Agent task</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="h-9 w-1/4 border-r">Project</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="h-9">Environment</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
             {tasks.map((task) => (
-              <Table.Row key={task.id}>
-                <Table.Cell>
-                  <Link
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                    params={{
-                      organizationId,
-                      projectId: task.project_id,
-                      environmentId: task.environment_id,
-                      serviceId: task.id,
-                    }}
-                  >
-                    {task.name}
-                  </Link>
+              <Table.Row
+                key={task.id}
+                className="h-[60px] focus-within:bg-surface-neutral-subtle hover:bg-surface-neutral-subtle"
+              >
+                <Table.Cell className="border-r">
+                  <Tooltip content={task.name}>
+                    <Link
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                      params={{
+                        organizationId,
+                        projectId: task.project_id,
+                        environmentId: task.environment_id,
+                        serviceId: task.id,
+                      }}
+                      color="neutral"
+                      underline
+                      className="max-w-full gap-2.5"
+                    >
+                      <ServiceAvatar
+                        service={{ icon_uri: task.icon_uri, serviceType: 'AGENTIC_WORKFLOW' }}
+                        size="custom"
+                        className="size-5 shrink-0"
+                        radius="none"
+                        serviceAvatarRadius="sm"
+                        aria-hidden
+                      />
+                      <span className="min-w-0 truncate">{task.name}</span>
+                    </Link>
+                  </Tooltip>
                 </Table.Cell>
-                <Table.Cell>
-                  <Link
-                    to="/organization/$organizationId/project/$projectId/overview"
-                    params={{ organizationId, projectId: task.project_id }}
-                  >
-                    {task.project_name}
-                  </Link>
+                <Table.Cell className="border-r py-2 text-neutral-subtle [overflow-wrap:anywhere]">
+                  {task.project_name}
                 </Table.Cell>
-                <Table.Cell>
-                  <Link
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
-                    params={{ organizationId, projectId: task.project_id, environmentId: task.environment_id }}
-                  >
-                    {task.environment_name}
-                  </Link>
+                <Table.Cell className="py-2 text-neutral-subtle [overflow-wrap:anywhere]">
+                  {task.environment_name}
                 </Table.Cell>
               </Table.Row>
             ))}
