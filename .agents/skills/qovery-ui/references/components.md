@@ -136,7 +136,7 @@ When tabs switch between table views, reproduce the two-layer construction used 
 
 1. **Back layer — tabs:** `rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle`. Use `Navbar` and give its wrapper `pb-2` to accommodate the overlap.
 2. **Front layer — content:** a sibling positioned with `relative -mt-2`, containing `overflow-hidden rounded-lg border border-neutral bg-surface-neutral`. Its rounded top corners overlap the bottom of the tab layer by 8px. Preserve the distinct tab background and the content's own top border and rounding.
-3. **Inside the front layer:** view-specific filters/actions when needed, a divider, then the table header and rows. Pagination sits directly below the last row, with a divider and the same content background.
+3. **Inside the front layer:** view-specific filters/actions when needed, a divider, then the table header and rows. When pagination is needed, it sits directly below the last row, with a divider and the same content background. Do not add pagination solely to complete this layout pattern.
 
 Use the toolbar for controls or useful context. Do not repeat the active tab's title immediately below it unless the heading adds information beyond the selected view.
 

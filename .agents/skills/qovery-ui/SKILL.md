@@ -26,6 +26,8 @@ For a broader visual review or redesign, load the topic references relevant to t
 
 Read each selected reference in bounded chunks (for example, 80–120 lines per read), continuing through the full reference. Keep reference reads separate from component source and other files; do not concatenate them into one large output. Check every result for truncation. If any output is truncated, reread the missing range in smaller chunks before implementing; requesting a file does not mean its contents reached you. Apply the same approach when inspecting component source, ensuring the relevant implementation is visible rather than relying only on its imports or exports.
 
-Verify the rendered result when implementing UI: check typography, alignment and wrapping with representative content, including long labels and filtered results. Source classes alone do not establish how the page renders.
+For UI implementation and visual reviews, inspect the rendered result when available and permitted: check typography, alignment and wrapping with representative content, including long labels and filtered results. Source classes alone do not establish how the page renders. Respect explicit no-browser requests. If visual verification cannot be performed, state that limitation and distinguish source inspection from observed behavior.
+
+When changing interactive flows, verify the affected read-only states and existing unsaved-change behavior, including nested editors. Preserve the established save and leave-page protection where applicable.
 
 For reviews, distinguish violations of these conventions and concrete user-impacting issues from optional preferences.

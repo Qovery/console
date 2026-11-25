@@ -4,6 +4,8 @@ Use the existing semantic tokens. Choose colors by their role, not by their appe
 
 When using a shared component, select its supported variant and color rather than overriding its internal colors.
 
+Check the contrast of text, icons, and interactive states against their actual background in both themes. Semantic tokens describe roles; combining them does not automatically guarantee sufficient contrast.
+
 ## Backgrounds and surfaces
 
 | Token                                | Use                                                                    |

@@ -38,9 +38,11 @@ A compact icon-and-text group within a list item may use `text-ssm` when it supp
 
 Prefer `Section` and `Heading` for heading hierarchy instead of manually styling raw headings. Each nested `Section` increments the heading level; `Heading` uses that context unless an explicit `level` is supplied. Levels 1, 2, and 3 supply 24px, 16px, and 14px typography respectively. `Section` supplies a flex-column layout and heading context, not automatic gaps or padding. Ordinary text still needs an explicit size on the text or a containing block.
 
+Without an explicit `level`, `Heading` must be inside a `Section`; otherwise its context level is 0 and it throws at render. Outside a `Section`, supply an explicit level, such as `<Heading level={2}>`.
+
 Raw headings have global styles; a parent’s `text-sm` does not override a heading’s own font size. Do not rely on inherited typography for headings.
 
-Match the rendered size to the hierarchy above, independently of the heading level. Titles within ordinary cards and components use `text-sm`.
+`Heading` uses its resolved level for both the semantic tag and default text size. Match the section hierarchy to the roles above. When a semantic heading requires a different visual size, apply an explicit text-size override rather than changing its level solely for appearance. Titles within ordinary cards and components use `text-sm`.
 
 ## Weights
 
@@ -83,7 +85,7 @@ Component-specific conventions belong in `references/components.md`. Table-row e
 
 ## Don't
 
-- Don't use `font-code`, except for table headings already styled by the table component and commands intended to be copied.
+- Don't use `font-code` for ordinary UI text. Reserve it for table headings styled by the table component, commands intended to be copied, and established code or log viewers.
 - Don't use standalone `text-xs` to reduce the visual importance of page content.
 - Don't automatically make descriptions smaller than their titles.
 - Don't introduce three or four text sizes inside a simple card or component.
