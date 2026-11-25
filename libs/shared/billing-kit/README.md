@@ -17,6 +17,7 @@ What the copy changes, so the next sync can redo it:
 - `billing-usage-factory.mock.ts`, `console-paywall.tsx` (the console's client, `pickConsoleCalls`, and the paywall
   wiring behind the `billing-paywall` flag) and the `*.spec.ts(x)` files are console only.
 
-Every call goes to pricing-api with the signed-in user's Qovery token (`createPricingClient`). Invoices and their
+Authenticated calls to pricing-api carry the signed-in user's Qovery token (`createPricingClient`). The public
+`publicPlans` call is unauthenticated. Invoices and their
 details, payment methods, billing information, AWS Marketplace requests, plan changes, cancellation, reactivation,
 prepaid credits, usage history, build usage, discount requests, gates, feature trials, add-on purchases and plan proposals are pricing-api's customer API; core is not involved.

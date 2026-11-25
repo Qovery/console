@@ -75,10 +75,12 @@ describe('InvoicesPage', () => {
     expect(screen.getByText('INV-1')).toBeInTheDocument()
   })
 
-  it('should not show invoices to a member', () => {
-    renderWithProviders(<InvoicesPage organizationId="org-1" client={client()} access="member" alerts={false} />)
+  it('should not request invoices for a member', async () => {
+    const memberClient = client()
+    renderWithProviders(<InvoicesPage organizationId="org-1" client={memberClient} access="member" alerts={false} />)
 
-    expect(screen.queryByText('INV-1')).not.toBeInTheDocument()
+    expect(await screen.findByText(/only owners, admins and billing managers/i)).toBeInTheDocument()
+    expect(memberClient.invoices).not.toHaveBeenCalled()
   })
 
   it('should say an internal organization is never billed', async () => {

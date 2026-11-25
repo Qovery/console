@@ -20,33 +20,52 @@ export interface BillingAlertsProps {
   /** Hide one kind when the page already shows it (the invoices page has its own overdue banner). */
   hide?: ('overdue' | 'card')[]
   access?: Access
+  paymentMethods?: { data?: PaymentMethods }
 }
 
-export function BillingAlerts({ organizationId, client, onNavigate, hide = [], access: given }: BillingAlertsProps) {
-  const access = useAccess(client, organizationId, given)
-  const [invoices, setInvoices] = useState<CustomerInvoice[]>([])
-  const [pm, setPm] = useState<PaymentMethods>()
+export function BillingAlerts({
+  organizationId,
+  client,
+  onNavigate,
+  hide,
+  access: given,
+  paymentMethods,
+}: BillingAlertsProps) {
+  const { access } = useAccess(client, organizationId, given)
+  const showOverdue = !hide?.includes('overdue')
+  const showCard = !hide?.includes('card')
+  const loadCard = showCard && !paymentMethods
+  const [invoices, setInvoices] = useState<{ organizationId: string; data: CustomerInvoice[] }>()
+  const [cardResult, setCardResult] = useState<{ organizationId: string; data: PaymentMethods }>()
   useEffect(() => {
     if (!isBillingAccess(access)) return
     let live = true
-    if (!hide.includes('overdue'))
+    if (showOverdue)
       client
         .invoices?.(organizationId)
-        .then((p) => live && setInvoices(p.billing_channel === 'aws_marketplace' ? [] : p.invoices))
+        .then(
+          (p) =>
+            live && setInvoices({ organizationId, data: p.billing_channel === 'aws_marketplace' ? [] : p.invoices })
+        )
         .catch(() => undefined)
-    if (!hide.includes('card'))
+    if (loadCard)
       client
         .paymentMethods?.(organizationId)
-        .then((x) => live && setPm(x))
+        .then((x) => live && setCardResult({ organizationId, data: x }))
         .catch(() => undefined)
     return () => {
       live = false
     }
-  }, [access, client, organizationId, hide.join()]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [access, client, organizationId, showOverdue, loadCard])
   if (!isBillingAccess(access)) return null
-  const due = amountDue(invoices)
+  const due = amountDue(showOverdue && invoices?.organizationId === organizationId ? invoices.data : [])
+  const pm = paymentMethods
+    ? paymentMethods.data
+    : cardResult?.organizationId === organizationId
+      ? cardResult.data
+      : undefined
   const primary =
-    pm && pm.billing_channel !== 'aws_marketplace'
+    showCard && pm && pm.billing_channel !== 'aws_marketplace'
       ? pm.payment_methods.find((m) => m.primary) ?? pm.payment_methods[0]
       : undefined
   const card = primary ? cardState(primary) : 'ok'

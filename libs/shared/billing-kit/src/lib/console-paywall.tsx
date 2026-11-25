@@ -88,7 +88,7 @@ export function usePricingClient(): PricingClient {
       createPricingClient({
         pricingApiUrl: PRICING_API_URL,
         fetch: (input, init) => fetch(input, init),
-        getToken: () => getAccessTokenSilently(),
+        getToken: () => window.localStorage.getItem('qovery-e2e-auth-token') ?? getAccessTokenSilently(),
       })
     )
     pricingClients.set(getAccessTokenSilently, client)

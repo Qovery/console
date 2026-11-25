@@ -64,22 +64,52 @@ export function BillingRolesOnly() {
 /**
  * useAccess: the person's access on the organization. Given by the host when it knows it;
  * otherwise read from billingUsage (the plan and usage API), never from the invoice or payment
- * APIs. An organization with no plan yet counts as billing: those APIs then say it is not set up.
+ * APIs.
  */
-export function useAccess(client: PricingClient, organizationId: string, given?: Access): Access | undefined {
-  const [access, setAccess] = useState<Access | undefined>(given)
+export function useAccess(client: PricingClient, organizationId: string, given?: Access) {
+  const [attempt, setAttempt] = useState(0)
+  const [result, setResult] = useState<{
+    client: PricingClient
+    organizationId: string
+    attempt: number
+    access?: Access
+    error?: string
+  }>()
   useEffect(() => {
-    if (given) return setAccess(given)
+    if (given) return
     let live = true
+    const request = { client, organizationId, attempt }
     client
       .billingUsage(organizationId)
-      .then((u) => live && setAccess(u.access))
-      .catch((e) => live && setAccess(e instanceof BillingError && e.status === 403 ? 'member' : 'billing'))
+      .then(({ access }) => live && setResult({ ...request, access }))
+      .catch((e) => {
+        if (!live) return
+        if (e instanceof BillingError && e.status === 403) {
+          setResult({ ...request, access: 'member' })
+          return
+        }
+        const error =
+          e instanceof BillingError && e.status === 401
+            ? 'Your session has expired. Sign in again to view billing.'
+            : e instanceof BillingError && e.status === 404
+              ? 'This organization is not linked to a billing account.'
+              : errorText(e)
+        setResult({ ...request, error })
+      })
     return () => {
       live = false
     }
-  }, [client, organizationId, given])
-  return access
+  }, [client, organizationId, given, attempt])
+
+  const current =
+    result?.organizationId === organizationId && result.client === client && result.attempt === attempt
+      ? result
+      : undefined
+  return {
+    access: given ?? current?.access,
+    error: given ? '' : current?.error ?? '',
+    retry: () => setAttempt((n) => n + 1),
+  }
 }
 
 /** A billing role is required (members see the one line instead). */
@@ -95,7 +125,7 @@ export function errorText(e: unknown): string {
   if (e instanceof BillingError) {
     if (e.code === 'PAYMENT_ACTIONS_UNAVAILABLE') return 'Billing changes are not available yet.'
     if (e.code === 'BILLING_UNAVAILABLE') return 'The billing system did not answer. Try again in a minute.'
-    return e.message
+    return e.message.trim() || `Billing request failed (HTTP ${e.status}).`
   }
   return e instanceof Error ? e.message : String(e)
 }

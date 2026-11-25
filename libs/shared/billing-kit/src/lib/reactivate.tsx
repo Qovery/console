@@ -5,7 +5,7 @@
  * contract, or an account not managed from the console yet, sends a request staff act on instead.
  * Before the end date, "Keep my subscription" (PlannedBanners) is the way back.
  */
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Badge, Button, Callout, Icon, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
 import { BillingError, type PricingClient } from './client'
 import { date, money, monthly } from './format'
@@ -88,7 +88,7 @@ export function ReactivateFlow({
   const [step, setStep] = useState<'choose' | 'card' | 'review' | 'done'>('choose')
   const [result, setResult] = useState<ReactivationResult>()
   const [done, setDone] = useState<ReactivationResult>()
-  const [key, setKey] = useState('')
+  const attempts = useRef(new Map<string, string>())
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const request = view.mode === 'request'
@@ -103,7 +103,6 @@ export function ReactivateFlow({
     try {
       const r = await client.quoteReactivation!(organizationId, pick, period)
       setResult(r)
-      setKey(newIdempotencyKey())
       setStep(
         !request && r.quote && r.quote.charge_today > 0 && view.payment_method_on_file === false ? 'card' : 'review'
       )
@@ -126,11 +125,20 @@ export function ReactivateFlow({
     setBusy(false)
   }
   async function confirm() {
-    if (!pick) return
+    if (!pick || busy) return
+    if (client.mode === 'preview') {
+      setDone({ preview: true })
+      setStep('done')
+      return
+    }
+    if (!client.reactivate) return
+    const selection = JSON.stringify([organizationId, pick, period])
+    const key = attempts.current.get(selection) ?? newIdempotencyKey()
+    attempts.current.set(selection, key)
     setBusy(true)
     setError('')
     try {
-      const r = await client.reactivate!(organizationId, pick, period, key)
+      const r = await client.reactivate(organizationId, pick, period, key)
       setDone(r)
       setStep('done')
       notifySuccess(
@@ -140,8 +148,10 @@ export function ReactivateFlow({
       )
       onDone()
     } catch (e) {
-      setKey(newIdempotencyKey())
-      if (e instanceof BillingError && e.code === 'PAYMENT_METHOD_REQUIRED') setStep('card')
+      if (e instanceof BillingError) {
+        if (e.code === 'PAYMENT_FAILED' || e.code === 'PAYMENT_METHOD_REQUIRED') attempts.current.delete(selection)
+        if (e.code === 'PAYMENT_METHOD_REQUIRED') setStep('card')
+      }
       setError(
         e instanceof BillingError && e.code === 'PAYMENT_FAILED'
           ? `The payment failed: ${e.message} Nothing was started.`
@@ -167,6 +177,7 @@ export function ReactivateFlow({
       }}
       width="min(720px, calc(100vw - 24px))"
       buttonClose={false}
+      dismissible={!busy}
     >
       <div className="flex max-h-[80vh] flex-col">
         <div className="flex items-start gap-3 border-b border-neutral px-6 py-4">
@@ -185,6 +196,7 @@ export function ReactivateFlow({
           <button
             type="button"
             aria-label="Close"
+            disabled={busy}
             onClick={onClose}
             className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-subtle hover:bg-surface-neutral-componentHover"
           >
@@ -199,7 +211,16 @@ export function ReactivateFlow({
           )}
           {step === 'choose' && (
             <>
-              <SegmentedControl.Root value={period} onValueChange={(v) => setPeriod(v as Period)}>
+              <SegmentedControl.Root
+                value={period}
+                onValueChange={(v) => {
+                  if (v !== 'month' && v !== 'year') return
+                  setPeriod(v)
+                  setPick((code) =>
+                    view.plans.some((p) => p.code === code && monthly(p.prices, cur, v) != null) ? code : undefined
+                  )
+                }}
+              >
                 <SegmentedControl.Item value="month">Monthly</SegmentedControl.Item>
                 <SegmentedControl.Item value="year">Yearly</SegmentedControl.Item>
               </SegmentedControl.Root>
@@ -232,7 +253,8 @@ export function ReactivateFlow({
                             <span className="text-xs text-neutral-subtle"> / month</span>
                             {period === 'year' && (
                               <div className="text-xs text-neutral-subtle">
-                                {money(p.prices.find((x) => x.period === 'year')!.amount, cur)} billed yearly
+                                {money(p.prices.find((x) => x.period === 'year' && x.currency === cur)!.amount, cur)}{' '}
+                                billed yearly
                               </div>
                             )}
                           </>
@@ -314,12 +336,17 @@ export function ReactivateFlow({
         </div>
         <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-6 py-3">
           {step === 'choose' && (
-            <Button size="lg" disabled={!pick || busy} loading={busy} onClick={review}>
+            <Button
+              size="lg"
+              disabled={!chosen || monthly(chosen.prices, cur, period) == null || busy}
+              loading={busy}
+              onClick={review}
+            >
               Review
             </Button>
           )}
           {step === 'card' && (
-            <Button size="lg" variant="plain" color="neutral" onClick={() => setStep('choose')}>
+            <Button size="lg" variant="plain" color="neutral" disabled={busy} onClick={() => setStep('choose')}>
               Back
             </Button>
           )}
@@ -328,12 +355,19 @@ export function ReactivateFlow({
               <Button size="lg" variant="plain" color="neutral" onClick={() => setStep('choose')}>
                 Back
               </Button>
-              <Button size="lg" loading={busy} onClick={confirm}>
-                {request
-                  ? 'Send the request'
-                  : q && q.charge_today > 0
-                    ? `Reactivate and pay ${money(q.charge_today, q.currency)}`
-                    : 'Reactivate'}
+              <Button
+                size="lg"
+                disabled={busy || (client.mode !== 'preview' && !client.reactivate)}
+                loading={busy}
+                onClick={confirm}
+              >
+                {client.mode === 'preview'
+                  ? 'Finish preview'
+                  : request
+                    ? 'Send the request'
+                    : q && q.charge_today > 0
+                      ? `Reactivate and pay ${money(q.charge_today, q.currency)}`
+                      : 'Reactivate'}
               </Button>
             </>
           )}

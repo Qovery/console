@@ -437,7 +437,18 @@ function BuildsTable({ builds: b, several }: { builds: NonNullable<InvoiceLineUs
         <h4 className="text-xs font-medium text-neutral-subtle">Builds per service</h4>
         <span className="text-xs text-neutral-subtle">{b.note}</span>
       </div>
-      {b.services.length > 0 ? (
+      {b.available !== 'complete' && (
+        <Callout.Root color={b.available === 'none' ? 'neutral' : 'yellow'}>
+          <Callout.Text>
+            {b.available === 'none'
+              ? 'Build details are unavailable for this period.'
+              : b.since
+                ? `Build details are available from ${localDate(b.since)}.`
+                : 'Only part of this period has build details.'}
+          </Callout.Text>
+        </Callout.Root>
+      )}
+      {b.available !== 'none' && b.services.length > 0 && (
         <div className="max-h-[240px] overflow-auto rounded border border-neutral bg-surface-neutral">
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-surface-neutral">
@@ -480,8 +491,9 @@ function BuildsTable({ builds: b, several }: { builds: NonNullable<InvoiceLineUs
             </tbody>
           </table>
         </div>
-      ) : (
-        <p className="text-xs text-neutral-subtle">No build recorded per service for this period.</p>
+      )}
+      {b.available !== 'none' && b.services.length === 0 && (
+        <p className="text-xs text-neutral-subtle">No builds in the available data.</p>
       )}
     </div>
   )

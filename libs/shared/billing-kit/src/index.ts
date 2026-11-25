@@ -51,7 +51,7 @@ export type { BuildUsageLoader, BuildUsageProps } from './lib/build-usage'
 export { BuilderPrices, PricingTable } from './lib/pricing-table'
 export { BuilderPicker, builderSizeFor } from './lib/builder-picker'
 export type { BuilderPickerProps } from './lib/builder-picker'
-export { UsageChart, UsageInsights } from './lib/usage-insights'
+export { UsageChart, UsageInsights as UsageInsightsPanel } from './lib/usage-insights'
 export {
   AskAdminModal,
   EmailPreferencesPanel,

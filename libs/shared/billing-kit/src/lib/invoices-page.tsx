@@ -33,6 +33,7 @@ import {
   invoiceYears,
   localDate,
   minutesToWait,
+  newIdempotencyKey,
   runSequential,
 } from './rules'
 import type { CustomerInvoice, InvoicePage } from './types'
@@ -69,7 +70,19 @@ export function InvoicesPage({
   alerts = true,
   onNavigate,
 }: InvoicesPageProps) {
-  const access = useAccess(client, organizationId, given)
+  const { access, error: accessError, retry: retryAccess } = useAccess(client, organizationId, given)
+  if (accessError)
+    return (
+      <Callout.Root color="red">
+        <Callout.Text>
+          <Callout.TextHeading>Billing access could not be loaded</Callout.TextHeading>
+          {accessError}
+        </Callout.Text>
+        <Button size="sm" variant="outline" color="neutral" onClick={retryAccess}>
+          Retry
+        </Button>
+      </Callout.Root>
+    )
   if (!access)
     return (
       <div className="rounded border border-neutral bg-surface-neutral p-5">
@@ -89,7 +102,12 @@ export function InvoicesPage({
           onNavigate={onNavigate}
         />
       )}
-      <Invoices organizationId={organizationId} client={client} onManagePaymentMethod={onManagePaymentMethod} />
+      <Invoices
+        key={organizationId}
+        organizationId={organizationId}
+        client={client}
+        onManagePaymentMethod={onManagePaymentMethod}
+      />
     </div>
   )
 }
@@ -108,18 +126,38 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
   const [downloading, setDownloading] = useState('')
   const [bulk, setBulk] = useState<{ done: number; failed: number; total: number }>()
   const abort = useRef<AbortController | undefined>(undefined)
+  const pagesLoaded = useRef(1)
+  const requestVersion = useRef(0)
+  const collectKeys = useRef(new Map<string, string>())
+  const collecting = useRef(false)
   const [, tick] = useState(0)
 
-  const load = useCallback(() => {
-    client.invoices!(organizationId)
-      .then((p) => {
-        setPage(p)
-        setRows(p.invoices)
-        setError(undefined)
-      })
-      .catch(setError)
+  const load = useCallback(async () => {
+    const version = ++requestVersion.current
+    try {
+      let nextPage = await client.invoices!(organizationId)
+      const invoices = new Map(nextPage.invoices.map((invoice) => [invoice.id, invoice]))
+      let count = 1
+      while (version === requestVersion.current && count < pagesLoaded.current && nextPage.next_offset) {
+        nextPage = await client.invoices!(organizationId, { offset: nextPage.next_offset })
+        for (const invoice of nextPage.invoices) invoices.set(invoice.id, invoice)
+        count++
+      }
+      if (version !== requestVersion.current) return
+      pagesLoaded.current = count
+      setPage(nextPage)
+      setRows([...invoices.values()])
+      setError(undefined)
+    } catch (e) {
+      if (version === requestVersion.current) setError(e as Error)
+    }
   }, [client, organizationId])
-  useEffect(load, [load])
+  useEffect(() => {
+    void load()
+    return () => {
+      requestVersion.current++
+    }
+  }, [load])
   // Re-render once a minute so "try again in N minutes" counts down and the button comes back.
   useEffect(() => {
     const t = setInterval(() => tick((n) => n + 1), 30000)
@@ -174,16 +212,20 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
   const actionsWidth = !client.invoice ? 'narrow' : !aws && shown.some((i) => i.collectable) ? 'wide' : 'medium'
 
   async function loadMore() {
-    if (!page?.next_offset) return
+    if (!page?.next_offset || loadingMore) return
+    const version = requestVersion.current
     setLoadingMore(true)
     try {
       const next = await client.invoices!(organizationId, { offset: page.next_offset })
+      if (version !== requestVersion.current) return
+      pagesLoaded.current++
       setPage(next)
       setRows((r) => [...r, ...next.invoices.filter((i) => !r.some((x) => x.id === i.id))])
     } catch (e) {
-      setError(e as Error)
+      if (version === requestVersion.current) setError(e as Error)
+    } finally {
+      setLoadingMore(false)
     }
-    setLoadingMore(false)
   }
 
   async function download(inv: CustomerInvoice) {
@@ -219,15 +261,21 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
   }
 
   async function collect(inv: CustomerInvoice) {
+    if (collecting.current) return
+    collecting.current = true
+    const key = collectKeys.current.get(inv.id) ?? newIdempotencyKey()
+    collectKeys.current.set(inv.id, key)
     setPaying(inv.id)
     setPay((p) => ({ ...p, [inv.id]: {} }))
     try {
-      await client.collectInvoice!(organizationId, inv.id)
+      await client.collectInvoice!(organizationId, inv.id, key)
+      collectKeys.current.delete(inv.id)
       setConfirm(undefined)
       notifySuccess(client, 'Payment received', `Invoice ${inv.id} is paid. Thank you.`)
       load()
     } catch (e) {
       const be = e instanceof BillingError ? e : undefined
+      if (be && be.status < 500 && be.status !== 408) collectKeys.current.delete(inv.id)
       if (be?.code === 'PAYMENT_FAILED')
         setPay((p) => ({ ...p, [inv.id]: { error: `The payment failed: ${be.message}`, payment: true } }))
       else if (be?.code === 'COLLECT_TOO_SOON') {
@@ -245,6 +293,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
       } else setPay((p) => ({ ...p, [inv.id]: { error: errorText(e) } }))
       setConfirm(undefined)
     }
+    collecting.current = false
     setPaying('')
   }
 
@@ -267,7 +316,10 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
             <Icon iconName="circle-exclamation" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text>
-            <Callout.TextHeading>{due.map((d) => amount(d.amount, d.currency)).join(' + ')} is due</Callout.TextHeading>
+            <Callout.TextHeading>
+              {due.map((d) => amount(d.amount, d.currency)).join(' + ')} is due
+              {page.next_offset ? ' on loaded invoices' : ''}
+            </Callout.TextHeading>
             {due.reduce((n, d) => n + d.count, 0) === 1
               ? 'One invoice is unpaid.'
               : `${due.reduce((n, d) => n + d.count, 0)} invoices are unpaid.`}{' '}
@@ -338,7 +390,8 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
             onClick={downloadAll}
           >
             <Icon iconName="download" iconStyle="regular" />
-            Download all{shown.length ? ` (${shown.length})` : ''}
+            {page.next_offset ? 'Download loaded invoices' : 'Download all'}
+            {shown.length ? ` (${shown.length})` : ''}
           </Button>
         )}
       </div>
@@ -472,7 +525,14 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
           </ul>
           {page.next_offset && (
             <div className="border-t border-neutral px-5 py-3 text-center">
-              <Button size="md" variant="plain" color="neutral" loading={loadingMore} onClick={loadMore}>
+              <Button
+                size="md"
+                variant="plain"
+                color="neutral"
+                loading={loadingMore}
+                disabled={loadingMore}
+                onClick={loadMore}
+              >
                 Load more
               </Button>
             </div>
@@ -520,7 +580,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
               >
                 Cancel
               </Button>
-              <Button size="lg" loading={paying === confirm.id} onClick={() => collect(confirm)}>
+              <Button size="lg" loading={paying === confirm.id} disabled={!!paying} onClick={() => collect(confirm)}>
                 Pay {amount(confirm.amount_due, confirm.currency)}
               </Button>
             </div>

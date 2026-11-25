@@ -24,7 +24,7 @@ export interface BuilderPickerProps {
 
 /** The size a builder counts as: the smallest that fits both its CPU and its RAM (as pricing-api counts it). */
 export function builderSizeFor(sizes: BuilderSize[], cpuMilli: number, ramGiB: number): BuilderSize | undefined {
-  return sizes.find((s) => cpuMilli <= s.max_cpu_milli && ramGiB <= s.max_ram_gib) ?? sizes.at(-1)
+  return sizes.find((s) => cpuMilli <= s.max_cpu_milli && ramGiB <= s.max_ram_gib)
 }
 
 export function BuilderPicker({

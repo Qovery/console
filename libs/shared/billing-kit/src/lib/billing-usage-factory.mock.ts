@@ -108,6 +108,27 @@ export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billin
     prepaid_credits: [],
     ...(amounts
       ? {
+          spend: {
+            month: '2026-10',
+            resets_at: '2026-11-01',
+            currency: 'USD',
+            spent: 2500,
+            projected: 4000,
+            account: {
+              scope: 'account' as const,
+              scope_id: 'northwind',
+              name: 'Northwind',
+              spent: 2500,
+              monthly_limit: 10000,
+              used_pct: 25,
+              thresholds: [],
+              reached: [],
+              editable: false,
+            },
+            organizations: [],
+            skus: [],
+            suggestions: [],
+          },
           estimate: {
             plan: 'Growth',
             currency: 'USD',

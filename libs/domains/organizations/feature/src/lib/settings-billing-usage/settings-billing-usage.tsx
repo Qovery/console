@@ -213,10 +213,12 @@ export function BillingUsageView() {
     <BillingPageLayout headingSlot={setHeadingElement}>
       {match({ data, error, isLoading })
         .with({ isLoading: true }, () => <BillingUsageSkeleton />)
-        .with({ data: P.not(P.nullish) }, () => (
+        .with({ data: P.not(P.nullish) }, ({ data }) => (
           <UsagePage
+            key={organizationId}
             organizationId={organizationId}
             client={client}
+            initialUsage={data}
             offers="none"
             open={proposalId ? { modal: 'upgrade', proposal: proposalId } : undefined}
             onNavigate={goTo}
@@ -237,7 +239,9 @@ export function BillingUsageView() {
 }
 
 export function SettingsBillingUsage() {
-  const isBillingUsageEnabled = useIsBillingUsageEnabled()
+  const isBillingUsageEnabled = useFeatureFlagEnabled(BILLING_USAGE_FEATURE_FLAG)
+
+  if (isBillingUsageEnabled === undefined) return <BillingUsageSkeleton />
 
   // Emails and upgrade links point here: without the flag, show the billing summary as today
   if (!isBillingUsageEnabled) return <SettingsBillingSummary />
