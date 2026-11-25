@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Navigate, createFileRoute } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { z } from 'zod'
 import { OrganizationDomains } from '@qovery/domains/service-settings/feature'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/domains')({
-  component: OrganizationDomains,
+  component: RouteComponent,
   validateSearch: z.object({
     page: z.number().int().min(1).optional().catch(undefined),
     // Only the sizes offered by the pagination select.
@@ -13,3 +14,10 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
       .catch(undefined),
   }),
 })
+
+function RouteComponent() {
+  const params = Route.useParams()
+  const enabled = Boolean(useFeatureFlagEnabled('organization-domains'))
+  if (!enabled) return <Navigate to="/organization/$organizationId/overview" params={params} replace />
+  return <OrganizationDomains />
+}
