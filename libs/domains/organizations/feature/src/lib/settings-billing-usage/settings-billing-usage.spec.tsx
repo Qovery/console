@@ -160,8 +160,8 @@ describe('BillingUsageView', () => {
 })
 
 describe('SettingsBillingUsage', () => {
-  it('should show the billing summary when the flag is off', () => {
-    jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
+  it.each([false, undefined])('should show the billing summary when the flag is %s', (flag) => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(flag)
     mockUsage(billingUsageFactoryMock())
     renderWithProviders(<SettingsBillingUsage />)
 
