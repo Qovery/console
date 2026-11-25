@@ -1,8 +1,8 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { z } from 'zod'
 import { OrganizationDomains } from '@qovery/domains/service-settings/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
-import { useFeatureFlagResolved } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/domains')({
   component: RouteComponent,
@@ -18,8 +18,8 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function RouteComponent() {
   const params = Route.useParams()
-  const enabled = useFeatureFlagResolved('organization-domains')
-  // Wait for PostHog before redirecting, or a cold load would leave the page even with the flag on.
+  // `undefined` until PostHog has loaded the flags: wait instead of redirecting a user who has the flag.
+  const enabled = useFeatureFlagEnabled('organization-domains')
   if (enabled === undefined)
     return (
       <div className="container mx-auto mt-6 flex justify-center py-12">
