@@ -73,12 +73,13 @@ export function SkillPresetsLayout({ children }: SkillPresetsLayoutProps) {
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
 
   return (
-    <Section className="px-8 pb-8 pt-6">
+    <Section className="px-6 pb-8 pt-6">
       <SettingsHeading
         title="Skills registry"
         description={isLoading ? undefined : canManage ? ADMIN_DESCRIPTION : MEMBER_DESCRIPTION}
+        stackActionsOnMobile
       >
-        <div className="flex shrink-0 items-start gap-2">
+        <div className="flex shrink-0 flex-wrap items-start gap-2">
           <ConnectAgentButton />
           {!isLoading && canManage && (
             <Tooltip content={AI_FEATURES_OFF_TOOLTIP} disabled={aiFeaturesEnabled}>

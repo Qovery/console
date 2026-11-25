@@ -394,7 +394,11 @@ export function SettingsAgentTokens() {
   return (
     <Section className="px-4 pb-8 pt-6 md:px-8">
       <div className="space-y-6">
-        <SettingsHeading title="Tokens" description="Configure the provider credentials used by your agent tasks.">
+        <SettingsHeading
+          title="Tokens"
+          description="Configure the provider credentials used by your agent tasks."
+          stackActionsOnMobile
+        >
           <Button size="md" onClick={onAddToken} disabled={isRoleLoading}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add token
@@ -429,7 +433,11 @@ export function SettingsAgentMcps() {
   return (
     <Section className="px-4 pb-8 pt-6 md:px-8">
       <div className="space-y-6">
-        <SettingsHeading title="MCPs" description="Connect the tools and data sources available to your agent tasks.">
+        <SettingsHeading
+          title="MCPs"
+          description="Connect the tools and data sources available to your agent tasks."
+          stackActionsOnMobile
+        >
           <Button size="md" onClick={onAddMcp}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add MCP

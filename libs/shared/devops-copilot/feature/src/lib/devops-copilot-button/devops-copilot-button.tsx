@@ -27,6 +27,7 @@ export function DevopsCopilotButton() {
       type="button"
       variant="surface"
       color="brand"
+      className="max-md:h-7 max-md:w-7 max-md:justify-center max-md:px-0"
       onClick={() => {
         setDevopsCopilotOpen(true)
         posthog.capture('ai-copilot-opened', {

@@ -383,7 +383,12 @@ export function SkillPresetEditorForm({
   return (
     <FormProvider {...methods}>
       <Section>
-        <form id="skill-preset-editor-top" onSubmit={submit} noValidate className="flex flex-col gap-6 px-8 pt-6">
+        <form
+          id="skill-preset-editor-top"
+          onSubmit={submit}
+          noValidate
+          className="flex flex-col gap-6 px-6 pt-6 md:px-8"
+        >
           <div className="mb-2 flex flex-col gap-3 border-b border-neutral pb-6">
             <Link
               to="/organization/$organizationId/agent-experience/skill-presets"
@@ -610,7 +615,7 @@ export function SkillPresetEditorForm({
             </div>
           </div>
 
-          <div className="mt-4 flex max-w-content-with-navigation-left items-center justify-end gap-3 pb-8">
+          <div className="mt-4 flex max-w-content-with-navigation-left flex-wrap items-center justify-end gap-3 pb-8">
             {isSubmitted && totalTextError && (
               <span className="flex items-center gap-1.5 text-sm text-negative" data-testid="total-text-error">
                 <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
@@ -700,7 +705,7 @@ function SkillPresetEditorPage() {
   // A failed background refetch keeps the cached preset: the form stays mounted, so the draft is kept.
   if (skillPresetId && !preset) {
     return (
-      <Section className="p-8">
+      <Section className="p-6 md:p-8">
         <LoadError
           title="This preset could not be loaded"
           error={presetError}
@@ -714,7 +719,7 @@ function SkillPresetEditorPage() {
   // Duplicate needs its source: never fall back to a blank form that looks like a copy.
   if (search.from && !source) {
     return (
-      <Section className="p-8">
+      <Section className="p-6 md:p-8">
         {listError ? (
           <LoadError title="The preset to copy could not be loaded" error={listError} onRetry={() => refetchList()} />
         ) : (

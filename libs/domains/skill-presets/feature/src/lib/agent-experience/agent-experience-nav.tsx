@@ -50,7 +50,7 @@ export function AgentExperienceNav() {
         Skills registry
       </Sidebar.Item>
       {isAgentTasksEnabled && (
-        <Sidebar.Item to={`${base}/automate`} icon="stairs" iconStyle="regular">
+        <Sidebar.Item to={`${base}/automate`} icon="clock-nine" iconStyle="regular">
           Automations
         </Sidebar.Item>
       )}

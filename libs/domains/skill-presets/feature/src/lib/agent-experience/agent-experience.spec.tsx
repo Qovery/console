@@ -206,6 +206,7 @@ describe('AgentExperiencePolicyTokens', () => {
     renderWithProviders(<AgentExperiencePolicyTokens />)
 
     const ciDeployer = await screen.findByTestId('policy-token-ci-deployer')
+    expect(screen.getByRole('button', { name: 'Need help here?' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Last 7 days' })).toBeInTheDocument()
     const usage = await within(ciDeployer).findByTestId('token-usage')
     expect(usage).toHaveTextContent(/\d+ allowed/)

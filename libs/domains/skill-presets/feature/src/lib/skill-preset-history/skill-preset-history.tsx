@@ -242,7 +242,7 @@ function SkillPresetHistoryPage() {
   const review = reviewSummary(selected)
 
   return (
-    <Section className="flex flex-col gap-6 px-8 pb-8 pt-6">
+    <Section className="flex flex-col gap-6 px-6 pb-8 pt-6 md:px-8">
       {Boolean(error) && <LoadError title="The history could not be refreshed" error={error} onRetry={refetch} />}
       <div className="flex flex-col gap-3">
         <Link

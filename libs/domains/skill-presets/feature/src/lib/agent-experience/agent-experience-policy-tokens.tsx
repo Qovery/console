@@ -262,14 +262,8 @@ export function AgentExperiencePolicyTokens() {
   return (
     <AgentExperiencePage
       title="Policy tokens"
-      description={
-        <>
-          {POLICY_TOKENS_EXPLANATION}{' '}
-          <ExternalLink href="https://www.qovery.com/docs/configuration/organization/api-policy-token" size="sm">
-            How policy tokens work
-          </ExternalLink>
-        </>
-      }
+      description={POLICY_TOKENS_EXPLANATION}
+      showHelp
       action={
         canManage && (
           <div className="flex flex-wrap items-center gap-2">
