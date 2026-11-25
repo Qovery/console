@@ -239,9 +239,7 @@ export function BillingUsageView() {
 }
 
 export function SettingsBillingUsage() {
-  const isBillingUsageEnabled = useFeatureFlagEnabled(BILLING_USAGE_FEATURE_FLAG)
-
-  if (isBillingUsageEnabled === undefined) return <BillingUsageSkeleton />
+  const isBillingUsageEnabled = useIsBillingUsageEnabled()
 
   // Emails and upgrade links point here: without the flag, show the billing summary as today
   if (!isBillingUsageEnabled) return <SettingsBillingSummary />
