@@ -67,6 +67,7 @@ export function AgentExperienceCopilot() {
   return (
     <AgentExperiencePage
       title="Copilot"
+      className="px-4 md:px-8"
       titleBadge={
         <Badge variant="surface" color="brand" size="sm" className="font-medium">
           Preview

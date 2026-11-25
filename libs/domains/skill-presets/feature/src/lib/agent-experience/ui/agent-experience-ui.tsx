@@ -4,6 +4,7 @@ import { type ReactNode } from 'react'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Badge, Heading, Icon, Section } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 
 /*
  * The shared pieces of the Agents pages, so every page reads the same way: one header
@@ -19,6 +20,7 @@ export function AgentExperiencePage({
   width = 'full',
   showHelp = false,
   layout = 'settings',
+  className,
   children,
 }: {
   title: string
@@ -28,10 +30,11 @@ export function AgentExperiencePage({
   width?: 'full' | 'reading'
   showHelp?: boolean
   layout?: 'settings' | 'dashboard'
+  className?: string
   children: ReactNode
 }) {
   return (
-    <Section className={clsx('px-6 pt-6 text-sm', layout === 'dashboard' ? 'pb-6' : 'pb-8')}>
+    <Section className={twMerge('px-6 pt-6 text-sm', layout === 'dashboard' ? 'pb-6' : 'pb-8', className)}>
       {layout === 'dashboard' ? (
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-col gap-2">

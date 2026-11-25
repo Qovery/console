@@ -91,8 +91,8 @@ export function SectionAICopilotConfiguration({
             <LoaderSpinner className="w-5" />
           </div>
         ) : (
-          <div className="space-y-6 p-6">
-            <div className="-mx-6 border-b border-neutral px-6 pb-6">
+          <div className="space-y-4 p-4">
+            <div className="-mx-4 border-b border-neutral px-4 pb-4">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <div className="flex items-center">
@@ -117,7 +117,7 @@ export function SectionAICopilotConfiguration({
               </div>
             </div>
 
-            <div className="-mx-6 border-b border-neutral px-6 pb-6">
+            <div className="-mx-4 border-b border-neutral px-4 pb-4">
               <div className="mb-3 flex items-center gap-1">
                 <p className="text-sm font-medium text-neutral">Access source</p>
                 <Tooltip content="Choose which identity Copilot uses to access your infrastructure.">
