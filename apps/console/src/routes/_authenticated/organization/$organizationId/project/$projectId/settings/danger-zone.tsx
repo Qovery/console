@@ -54,7 +54,7 @@ function ProjectDangerZone() {
   }
 
   return (
-    <Section className="max-w-content-with-navigation-left px-8 pb-8 pt-6">
+    <Section className="max-w-content-with-navigation-left px-4 pb-8 pt-6 md:px-8">
       <BlockContentDelete
         title="Delete project"
         ctaLabel="Delete project"

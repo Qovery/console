@@ -61,7 +61,7 @@ export function MessageList({
       className={twMerge(
         clsx('relative flex grow flex-col gap-4 overflow-y-auto p-4', {
           'h-[220px]': !expand && thread.length > 0,
-          'h-[calc(100vh-316px)]': expand && thread.length > 0,
+          'h-[calc(100dvh-316px)]': expand && thread.length > 0,
         })
       )}
     >

@@ -55,7 +55,7 @@ const sidebarSubItemVariants = cva(
     'font-medium',
     'cursor-pointer',
     'truncate',
-    'pl-[39px]',
+    'pl-[41.5px]',
     'border-r',
     'border-r-transparent',
   ],

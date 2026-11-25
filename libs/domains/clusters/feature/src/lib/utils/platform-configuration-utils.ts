@@ -14,6 +14,10 @@ import {
 import { match } from 'ts-pattern'
 import { type SchemaField, type SchemaFieldValue, getSchemaFieldValue } from '@qovery/shared/schema-fields/feature'
 
+export function toPlatformCloudVendor(cloudProvider: CloudProviderEnum | CloudVendorEnum): PlatformCloudVendor
+export function toPlatformCloudVendor(
+  cloudProvider: CloudProviderEnum | CloudVendorEnum | undefined
+): PlatformCloudVendor | undefined
 export function toPlatformCloudVendor(
   cloudProvider: CloudProviderEnum | CloudVendorEnum | undefined
 ): PlatformCloudVendor | undefined {

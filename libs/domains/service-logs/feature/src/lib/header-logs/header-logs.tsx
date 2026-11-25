@@ -84,16 +84,17 @@ export function HeaderLogs({
     serviceStatus?.state === 'STOPPED'
 
   return (
-    <div className="flex h-12 w-full items-center justify-between border-b border-neutral bg-background pr-4">
-      <div className="flex h-full">
-        <div className="flex h-full items-center gap-3 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral">
+    <div className="flex h-12 w-full shrink-0 items-center justify-between border-b border-neutral bg-background pr-4 max-md:h-auto max-md:flex-wrap max-md:pb-2.5 max-md:pl-4">
+      {/* h-full only from md: below md the header wraps, and a percentage height would cap it at its first line */}
+      <div className="flex min-w-0 md:h-full">
+        <div className="flex items-center gap-3 py-2.5 pr-0.5 text-sm font-medium text-neutral max-md:min-w-0 max-md:flex-wrap max-md:gap-y-2 md:h-full md:pl-4">
           {match(type)
             .with('DEPLOYMENT', () => {
               const triggerAction = getTriggerAction(serviceStatus?.status_details)
               const actionStatus = serviceStatus?.status_details?.status
 
               return (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 max-md:flex-wrap max-md:gap-y-2">
                   <div className="flex items-center gap-1.5">
                     <Button onClick={onBack} variant="plain" iconOnly>
                       <Icon className="text-base" iconName="arrow-left" iconStyle="regular" />

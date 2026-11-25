@@ -5,6 +5,13 @@ import { Button, CopyButton, Heading, Icon, Navbar, Section, useModal } from '@q
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import CrudModalFeature from '../settings-api-token/crud-modal-feature/crud-modal-feature'
 
+export const QOVERY_MCP_SERVER_URL = 'https://mcp.qovery.com/mcp'
+
+const QOVERY_MCP_OAUTH_CALLBACK_PORT = 4242
+export const QOVERY_MCP_CLAUDE_COMMAND = `claude mcp add --transport http qovery ${QOVERY_MCP_SERVER_URL} --callback-port ${QOVERY_MCP_OAUTH_CALLBACK_PORT}`
+export const QOVERY_MCP_CODEX_CONFIG = `mcp_oauth_callback_port = ${QOVERY_MCP_OAUTH_CALLBACK_PORT}`
+export const QOVERY_MCP_CODEX_COMMAND = `codex mcp add qovery --url '${QOVERY_MCP_SERVER_URL}'`
+
 interface CommandBlockProps {
   content: string
   showPrompt?: boolean
@@ -59,7 +66,7 @@ export function SettingsMcpServer() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="mb-8 flex w-full justify-between gap-2 border-b border-neutral">
           <div className="flex w-full items-start justify-between gap-4 pb-6">
             <div className="flex flex-col gap-2">
@@ -115,10 +122,7 @@ export function SettingsMcpServer() {
                       title="Run this command"
                       description="Authenticate through OAuth and add the Qovery MCP server to Claude Code."
                     >
-                      <CommandBlock
-                        content="claude mcp add --transport http qovery https://mcp.qovery.com/mcp --callback-port 4242"
-                        showPrompt
-                      />
+                      <CommandBlock content={QOVERY_MCP_CLAUDE_COMMAND} showPrompt />
                     </InstructionSection>
                   ) : (
                     <div className="flex flex-col gap-5">
@@ -127,14 +131,14 @@ export function SettingsMcpServer() {
                         title="Update your config.toml"
                         description="Add this setting to your Codex configuration file to use the OAuth callback port."
                       >
-                        <CommandBlock content="mcp_oauth_callback_port = 4242" />
+                        <CommandBlock content={QOVERY_MCP_CODEX_CONFIG} />
                       </InstructionSection>
                       <InstructionSection
                         number={2}
                         title="Run this command"
                         description="Authenticate through OAuth and add the Qovery MCP server to Codex."
                       >
-                        <CommandBlock content="codex mcp add qovery --url 'https://mcp.qovery.com/mcp'" showPrompt />
+                        <CommandBlock content={QOVERY_MCP_CODEX_COMMAND} showPrompt />
                       </InstructionSection>
                     </div>
                   )}

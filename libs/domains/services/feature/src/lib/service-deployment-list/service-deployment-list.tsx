@@ -157,7 +157,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                         <CopyToClipboardButtonIcon
                           content={data.identifier.execution_id}
                           tooltipContent="Copy execution id"
-                          className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                          className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100 [@media(hover:none)]:opacity-100"
                           iconClassName="text-xs"
                         />
                       </span>

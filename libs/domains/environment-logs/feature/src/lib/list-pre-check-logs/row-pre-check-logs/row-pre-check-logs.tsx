@@ -17,7 +17,7 @@ export function RowPreCheckLogs({ original }: RowPreCheckLogsProps) {
   const error = type === LogsType.ERROR || step === 'DeployedError'
 
   return (
-    <Table.Row className="mb-0.5 flex min-h-6 select-none text-xs hover:bg-surface-neutral-subtle">
+    <Table.Row className="mb-0.5 flex min-h-6 select-none text-xs hover:bg-surface-neutral-subtle max-md:flex-wrap">
       <Table.Cell className="h-6 min-w-10 py-1 pl-2 pr-1 text-left font-code font-bold text-neutral">
         <span className="relative block text-neutral-subtle">{original.id}</span>
       </Table.Cell>
@@ -27,11 +27,14 @@ export function RowPreCheckLogs({ original }: RowPreCheckLogsProps) {
         </span>
       </Table.Cell>
       <Table.Cell
-        className={clsx('relative h-fit w-full select-text overflow-hidden py-1 pl-3 pr-6 font-code font-bold', {
-          'text-negative': error,
-          'text-positive': success,
-          'text-neutral': !error && !success,
-        })}
+        className={clsx(
+          'relative h-fit w-full select-text overflow-hidden py-1 pl-3 pr-6 font-code font-bold max-md:basis-full max-md:pl-2 max-md:pr-2 max-md:pt-0',
+          {
+            'text-negative': error,
+            'text-positive': success,
+            'text-neutral': !error && !success,
+          }
+        )}
       >
         <span className="truncate whitespace-pre-wrap break-all">
           {type === LogsType.ERROR ? (

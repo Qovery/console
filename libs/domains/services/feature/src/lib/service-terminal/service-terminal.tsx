@@ -285,8 +285,8 @@ export function ServiceTerminal({
 
   return (
     <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background">
-      <div className="flex h-12 items-center justify-between gap-3 border-b border-neutral px-3">
-        <div className="flex min-w-0 items-center gap-3 text-xs text-neutral-subtle">
+      <div className="flex h-12 items-center justify-between gap-3 border-b border-neutral px-3 max-md:h-auto max-md:flex-wrap max-md:py-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-3 text-xs text-neutral-subtle">
           {ephemeralConfig ? (
             <>
               <Button variant="surface" color="neutral" size="md" onClick={() => resetTerminalSession(null)}>

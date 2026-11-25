@@ -1,0 +1,6 @@
+---
+description: Load Qovery UI guidance before any user-facing UI change
+alwaysApply: true
+---
+
+Before creating, modifying, or reviewing user-facing UI, load `.agents/skills/qovery-ui/SKILL.md` and read `.claude/design.md`, as required by `AGENTS.md`. This includes feature work, bug fixes, styling, layout, interactions, and copy, even for small changes or when the user does not name the skill. Load only references relevant to the task; no UI skill is needed for work that does not affect the UI.

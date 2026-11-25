@@ -30,7 +30,7 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
           onClick={() => handleOpenChange(false)}
         />
         <Dialog.Content
-          className="modal__content fixed left-1/2 top-6 z-modal h-[calc(100vh-48px)] w-[calc(100vw-48px)] rounded-lg bg-surface-neutral shadow-[0_0_32px_rgba(0,0,0,0.08)]"
+          className="modal__content fixed left-1/2 top-6 z-modal h-[calc(100dvh-48px)] w-[calc(100vw-48px)] rounded-lg bg-surface-neutral shadow-[0_0_32px_rgba(0,0,0,0.08)]"
           aria-describedby={description ? 'modal-description' : undefined}
         >
           <Section>
@@ -78,7 +78,7 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                 </Dialog.Close>
               </div>
             </div>
-            <div className="h-[calc(100vh-48px-56px)] overflow-hidden">{children}</div>
+            <div className="h-[calc(100dvh-48px-56px)] overflow-hidden">{children}</div>
           </Section>
         </Dialog.Content>
       </Dialog.Portal>

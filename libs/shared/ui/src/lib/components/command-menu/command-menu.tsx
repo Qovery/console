@@ -32,7 +32,7 @@ const CommandDialog = forwardRef<ElementRef<typeof CmdK.Dialog>, CommandDialogPr
           <CmdK
             ref={ref}
             className={twMerge(
-              'mx-auto w-[640px] overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0_16px_70px_rgba(0,0,0,0.2)] transition-transform duration-100',
+              'mx-auto w-[640px] max-w-[calc(100vw-32px)] overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0_16px_70px_rgba(0,0,0,0.2)] transition-transform duration-100',
               className
             )}
             {...props}

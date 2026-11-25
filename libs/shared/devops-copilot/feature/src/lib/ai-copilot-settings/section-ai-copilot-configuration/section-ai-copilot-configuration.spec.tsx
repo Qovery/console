@@ -51,7 +51,7 @@ describe('SectionAICopilotConfiguration', () => {
   it('should display current mode', () => {
     renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />)
 
-    expect(screen.getByText('Read-Only Mode')).toBeInTheDocument()
+    expect(screen.getByText('Read-only mode')).toBeInTheDocument()
     expect(
       screen.getByText(/Copilot can view your infrastructure configuration but cannot make changes/)
     ).toBeInTheDocument()
@@ -60,7 +60,7 @@ describe('SectionAICopilotConfiguration', () => {
   it('should display read-write mode description', () => {
     renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} currentMode="read-write" />)
 
-    expect(screen.getByText('Read-Write Mode')).toBeInTheDocument()
+    expect(screen.getByText('Read-write mode')).toBeInTheDocument()
     expect(screen.getByText(/Copilot can view and modify your infrastructure configuration/)).toBeInTheDocument()
   })
 
@@ -69,7 +69,7 @@ describe('SectionAICopilotConfiguration', () => {
     const { userEvent } = renderWithProviders(
       <SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />
     )
-    const select = screen.getByRole('combobox', { name: 'Right access' })
+    const select = screen.getByRole('combobox', { name: 'Access' })
     await userEvent.click(select)
     await userEvent.keyboard('{ArrowDown}{Enter}')
 
@@ -84,7 +84,7 @@ describe('SectionAICopilotConfiguration', () => {
     const { userEvent } = renderWithProviders(
       <SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />
     )
-    const select = screen.getByRole('combobox', { name: 'Right access' })
+    const select = screen.getByRole('combobox', { name: 'Access' })
     await userEvent.click(select)
     await userEvent.keyboard('{ArrowDown}{Enter}')
 
@@ -99,7 +99,7 @@ describe('SectionAICopilotConfiguration', () => {
     const { userEvent } = renderWithProviders(
       <SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />
     )
-    const select = screen.getByRole('combobox', { name: 'Right access' })
+    const select = screen.getByRole('combobox', { name: 'Access' })
     await userEvent.click(select)
     await userEvent.keyboard('{ArrowDown}{Enter}')
 
@@ -114,28 +114,28 @@ describe('SectionAICopilotConfiguration', () => {
   it('should disable inputs when updating', () => {
     renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} isUpdating={true} />)
 
-    const select = screen.getByLabelText('Right access')
+    const select = screen.getByLabelText('Access')
     expect(select).toBeDisabled()
   })
 
   it('should show loading state on buttons when updating', () => {
     renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} isUpdating={true} />)
 
-    const disableButton = screen.getByRole('button', { name: /disable/i })
+    const disableButton = screen.getByRole('button', { name: /turn off copilot/i })
     expect(disableButton).toBeInTheDocument()
   })
 
-  it('should render disable button', () => {
+  it('should render the turn off button', () => {
     renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} />)
 
-    const disableButton = screen.getByRole('button', { name: /disable/i })
+    const disableButton = screen.getByRole('button', { name: /turn off copilot/i })
     expect(disableButton).toBeInTheDocument()
   })
 
   it('should have mode select with correct options', () => {
     renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} />)
 
-    const select = screen.getByLabelText('Right access')
+    const select = screen.getByLabelText('Access')
     expect(select).toBeInTheDocument()
   })
 })

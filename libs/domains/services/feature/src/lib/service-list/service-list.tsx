@@ -56,7 +56,7 @@ export const ServiceListSkeleton = () => {
       <hr className="w-full border-neutral" />
       <div className="flex flex-col gap-8">
         <Section className="flex flex-col gap-3.5">
-          <Table.Root className="w-full" containerClassName="rounded-lg border-none">
+          <Table.Root className="w-full max-md:min-w-[1080px]" containerClassName="rounded-lg border-none">
             <Table.Header>
               <Table.Row className={tableGridLayoutClassName}>
                 {[...Array(6)].map((_, index) => (
