@@ -392,7 +392,7 @@ export function SettingsAgentTokens() {
   }
 
   return (
-    <Section className="px-4 pb-8 pt-6 md:px-8">
+    <Section className="px-6 pb-8 pt-6">
       <div className="space-y-6">
         <SettingsHeading
           title="Tokens"
@@ -431,7 +431,7 @@ export function SettingsAgentMcps() {
   }
 
   return (
-    <Section className="px-4 pb-8 pt-6 md:px-8">
+    <Section className="px-6 pb-8 pt-6">
       <div className="space-y-6">
         <SettingsHeading
           title="MCPs"

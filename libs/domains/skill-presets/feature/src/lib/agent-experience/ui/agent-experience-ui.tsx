@@ -31,7 +31,7 @@ export function AgentExperiencePage({
   children: ReactNode
 }) {
   return (
-    <Section className={clsx('px-6 pt-6', layout === 'dashboard' ? 'pb-6' : 'pb-8 md:px-8')}>
+    <Section className={clsx('px-6 pt-6', layout === 'dashboard' ? 'pb-6' : 'pb-8')}>
       {layout === 'dashboard' ? (
         <header className="mb-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
