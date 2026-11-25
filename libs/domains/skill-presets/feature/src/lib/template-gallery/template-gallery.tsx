@@ -22,14 +22,14 @@ function TemplateOption({
       <button
         type="button"
         onClick={onSelect}
-        className="flex h-full w-full cursor-pointer items-start gap-3 rounded-md border border-neutral bg-surface-neutral p-3 text-left transition-colors hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong"
+        className="flex h-full w-full cursor-pointer flex-col items-start gap-3 rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition-colors hover:border-neutral-component hover:bg-surface-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong"
       >
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-surface-neutral-component text-neutral-subtle">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-surface-neutral-component text-neutral-subtle">
           {icon}
         </span>
-        <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-ssm font-medium text-neutral">{title}</span>
-          <span className="text-ssm text-neutral-subtle">{summary}</span>
+        <span className="flex min-w-0 flex-col gap-1">
+          <span className="text-sm font-medium text-neutral">{title}</span>
+          <span className="text-sm text-neutral-subtle">{summary}</span>
         </span>
       </button>
     </li>
@@ -51,7 +51,7 @@ export function TemplateGallery() {
     })
 
   return (
-    <Section className="flex flex-col gap-6 px-6 pb-8 pt-6">
+    <Section className="flex flex-col gap-8 px-6 pb-8 pt-6 text-sm">
       <div className="flex flex-col gap-3">
         <Link
           to="/organization/$organizationId/agents/skill-presets"
@@ -61,16 +61,17 @@ export function TemplateGallery() {
           <Icon iconName="arrow-left" iconStyle="regular" />
           Skills registry
         </Link>
-        <Heading>Create preset</Heading>
-        <p className="max-w-2xl text-sm text-neutral-subtle">
-          Start from a profile and adjust it, or start blank. A template only fills the editor: nothing is assigned
-          until you choose who receives the preset.
-        </p>
+        <div className="flex flex-col gap-2">
+          <Heading>Create preset</Heading>
+          <p className="max-w-2xl text-sm text-neutral-subtle">
+            Choose a template to customize, or start with a blank preset.
+          </p>
+        </div>
       </div>
 
       <Section aria-labelledby="gallery-qovery" className="gap-3">
         <Heading id="gallery-qovery">Qovery templates</Heading>
-        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           <TemplateOption
             title="Blank preset"
             summary="Full Qovery skills, nothing changed. Build it yourself."

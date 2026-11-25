@@ -82,7 +82,7 @@ function TokenUsage({
           </span>
         ))}
       </span>
-      <span className="text-xs tabular-nums">
+      <span className="text-sm tabular-nums">
         <span className="text-neutral">{actions} allowed</span>
         {denials > 0 && <span className="text-negative">, {denials} denied</span>}
       </span>
@@ -325,7 +325,7 @@ export function AgentExperiencePolicyTokens() {
                     <span className="font-medium text-neutral">
                       <ActorChip kind="policy-token" name={token.name ?? ''} prefix={false} />
                     </span>
-                    {token.description && <span className="text-xs text-neutral-subtle">{token.description}</span>}
+                    {token.description && <span className="text-sm text-neutral-subtle">{token.description}</span>}
                   </span>
                 </Table.Cell>
                 <Table.Cell className="capitalize">{token.role_name ?? 'None'}</Table.Cell>
@@ -354,7 +354,12 @@ export function AgentExperiencePolicyTokens() {
                     dateFullFormat(token.expires_at, undefined, 'dd MMM yyyy')
                   ) : (
                     // A token that never expires stays valid if it leaks: flag it.
-                    <Badge variant="surface" color="yellow" className="gap-1 whitespace-nowrap" data-testid="no-expiry">
+                    <Badge
+                      variant="surface"
+                      color="yellow"
+                      className="gap-1 whitespace-nowrap font-medium"
+                      data-testid="no-expiry"
+                    >
                       <Icon iconName="triangle-exclamation" iconStyle="regular" aria-hidden="true" />
                       No expiry
                     </Badge>
@@ -373,7 +378,7 @@ export function AgentExperiencePolicyTokens() {
               // Deleted tokens keep their history: greyed, with the Deleted badge, still linked to Activity.
               <Table.Row
                 key={row.policy_token_id}
-                className="opacity-70"
+                className="text-neutral-subtle"
                 data-testid={`deleted-token-${row.token_name}`}
               >
                 <Table.Cell>

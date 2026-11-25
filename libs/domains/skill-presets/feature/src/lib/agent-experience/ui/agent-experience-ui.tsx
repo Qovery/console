@@ -31,10 +31,10 @@ export function AgentExperiencePage({
   children: ReactNode
 }) {
   return (
-    <Section className={clsx('px-6 pt-6', layout === 'dashboard' ? 'pb-6' : 'pb-8')}>
+    <Section className={clsx('px-6 pt-6 text-sm', layout === 'dashboard' ? 'pb-6' : 'pb-8')}>
       {layout === 'dashboard' ? (
-        <header className="mb-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-col gap-1">
+        <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-col gap-2">
             <Heading level={1}>{title}</Heading>
             {description && <p className="text-sm text-neutral-subtle">{description}</p>}
             {showHelp && <NeedHelp className="mt-3" />}
@@ -49,10 +49,10 @@ export function AgentExperiencePage({
           showNeedHelp={showHelp}
           stackActionsOnMobile
         >
-          {action}
+          {action && <div className="flex shrink-0 items-start">{action}</div>}
         </SettingsHeading>
       )}
-      <div className={clsx('flex flex-col gap-6', width === 'reading' && 'max-w-content-with-navigation-left')}>
+      <div className={clsx('flex flex-col gap-8', width === 'reading' && 'max-w-content-with-navigation-left')}>
         {children}
       </div>
     </Section>
@@ -157,9 +157,9 @@ export function Stat({
 }) {
   return (
     <div
-      className={`flex flex-col rounded-md border border-neutral px-4 py-3 ${prominent ? 'min-h-28 justify-between gap-3 bg-surface-neutral' : 'gap-0.5'}`}
+      className={`flex flex-col rounded-md border border-neutral bg-surface-neutral px-4 py-3 ${prominent ? 'min-h-28 justify-between gap-3' : 'gap-0.5'}`}
     >
-      <dt className="flex items-center gap-1.5 text-xs text-neutral-subtle">
+      <dt className="flex items-center gap-1.5 text-sm text-neutral-subtle">
         {icon && <Icon iconName={icon} iconStyle="regular" aria-hidden="true" />}
         {label}
       </dt>
@@ -169,7 +169,7 @@ export function Stat({
         </span>
         {delta !== undefined && delta !== 0 && (
           <span
-            className={`text-xs ${riseIsBad && delta > 0 ? 'text-negative' : 'text-neutral-subtle'}`}
+            className={`text-sm ${riseIsBad && delta > 0 ? 'text-negative' : 'text-neutral-subtle'}`}
             data-testid="stat-delta"
           >
             {delta > 0 ? '+' : ''}

@@ -227,13 +227,15 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
 })
 
 interface NavbarItemProps extends ComponentPropsWithoutRef<'a'> {
+  /** DOM id for integrations such as tab triggers; id remains the navigation item key. */
+  domId?: string
   id: string
   active?: boolean
   to?: string
 }
 
 const NavbarItem = forwardRef<ElementRef<'a'>, NavbarItemProps>(function NavbarItem(
-  { id, active, children, className, to, ...props },
+  { id, domId, active, children, className, to, ...props },
   forwardedRef
 ) {
   const { activeId, registerItem, unregisterItem } = useNavbarContext()
@@ -272,6 +274,7 @@ const NavbarItem = forwardRef<ElementRef<'a'>, NavbarItemProps>(function NavbarI
   return to ? (
     <Link
       to={to}
+      id={domId}
       ref={setRefs}
       className={twMerge(navbarItemVariants({ active: isActive }), className)}
       data-active={isActive}
@@ -285,6 +288,7 @@ const NavbarItem = forwardRef<ElementRef<'a'>, NavbarItemProps>(function NavbarI
   ) : (
     <a
       {...props}
+      id={domId}
       ref={setRefs}
       data-active={isActive}
       className={twMerge(navbarItemVariants({ active: isActive }), className)}

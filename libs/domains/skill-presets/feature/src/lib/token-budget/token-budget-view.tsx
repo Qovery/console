@@ -40,7 +40,7 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
   const hasPreset = alwaysInContext.loader > 0
 
   return (
-    <div className={twMerge('flex flex-col gap-4 text-xs', className)}>
+    <div className={twMerge('flex flex-col gap-6 text-sm', className)}>
       <Section aria-labelledby={`${id}-always`} className="flex flex-col gap-2">
         <div className="flex items-center gap-1">
           <Heading level={3} id={`${id}-always`} className="text-sm">
@@ -102,8 +102,8 @@ export function TokenBudgetView({ budget, compact = false, className }: TokenBud
           <Table.Root aria-label="Tokens added per skill when a task loads it">
             <Table.Header className="text-xs">
               <Table.Row>
-                <Table.ColumnHeaderCell className="font-sans font-medium">Skill</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="text-right font-sans font-medium">Per task</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Skill</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="text-right">Per task</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>

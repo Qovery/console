@@ -27,6 +27,7 @@ export const Primary: Story = {
       <Navbar.Root activeId={activeTab}>
         <Navbar.Item
           id="projects"
+          domId="primary-navbar-projects"
           href="#"
           onClick={(e) => {
             e.preventDefault()

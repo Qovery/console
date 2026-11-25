@@ -94,11 +94,11 @@ function McpServerRow({ organizationId, mcpServer, currentUserSub, canManageOrga
           ) : null}
           {owner ? (
             <Tooltip content={owner}>
-              <span className="min-w-0 truncate text-xs font-normal text-neutral-subtle">{owner}</span>
+              <span className="min-w-0 truncate text-sm font-normal text-neutral-subtle">{owner}</span>
             </Tooltip>
           ) : null}
         </div>
-        <p className="break-all text-xs text-neutral-subtle">{mcpServer.url}</p>
+        <p className="break-all text-sm text-neutral-subtle">{mcpServer.url}</p>
       </Section>
       {canDelete && (
         <div className="flex shrink-0 gap-2">
@@ -207,9 +207,13 @@ function LlmProviderRow({ organizationId, llmProvider, currentUserSub, canManage
               </span>
             </Tooltip>
           ) : null}
-          {!llmProvider.has_credential ? <Badge color="yellow">No token</Badge> : null}
+          {!llmProvider.has_credential ? (
+            <Badge color="yellow" className="font-medium">
+              No token
+            </Badge>
+          ) : null}
         </div>
-        {owner ? <p className="truncate text-xs text-neutral-subtle">{owner}</p> : null}
+        {owner ? <p className="truncate text-sm text-neutral-subtle">{owner}</p> : null}
       </Section>
       {canManage ? (
         <div className="flex shrink-0 gap-2">
@@ -392,8 +396,8 @@ export function SettingsAgentTokens() {
   }
 
   return (
-    <Section className="px-6 pb-8 pt-6">
-      <div className="space-y-6">
+    <Section className="px-4 pb-8 pt-6 text-sm md:px-8">
+      <div>
         <SettingsHeading
           title="Model tokens"
           description="Configure the provider credentials used by your agent tasks."
@@ -431,8 +435,8 @@ export function SettingsAgentMcps() {
   }
 
   return (
-    <Section className="px-6 pb-8 pt-6">
-      <div className="space-y-6">
+    <Section className="px-4 pb-8 pt-6 text-sm md:px-8">
+      <div>
         <SettingsHeading
           title="MCPs"
           description="Connect the tools and data sources available to your agent tasks."

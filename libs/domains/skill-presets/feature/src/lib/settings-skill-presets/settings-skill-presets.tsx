@@ -114,14 +114,16 @@ function PresetRow({
       <Table.Cell className="h-auto py-3">
         <div className="flex flex-col gap-0.5">
           <span className="flex items-center gap-2">
-            <Link
-              className="font-medium text-neutral hover:underline"
-              to="/organization/$organizationId/agents/skill-presets/$skillPresetId"
-              params={{ organizationId, skillPresetId: preset.id }}
-              onClick={(event) => event.stopPropagation()}
-            >
-              {preset.name}
-            </Link>
+            <Tooltip content={preset.name} classNameContent="[overflow-wrap:anywhere]">
+              <Link
+                className="max-w-xs truncate font-medium text-neutral hover:underline"
+                to="/organization/$organizationId/agents/skill-presets/$skillPresetId"
+                params={{ organizationId, skillPresetId: preset.id }}
+                onClick={(event) => event.stopPropagation()}
+              >
+                {preset.name}
+              </Link>
+            </Tooltip>
             {preset.description && (
               <Tooltip content={preset.description}>
                 <span
@@ -165,7 +167,7 @@ function PresetRow({
           )}
           <div className="flex flex-col">
             {editedBy && <span>{editor?.name ?? editedBy}</span>}
-            <time className="text-xs text-neutral-subtle" dateTime={editedAt} title={dateFullFormat(editedAt)}>
+            <time className="text-sm text-neutral-subtle" dateTime={editedAt} title={dateFullFormat(editedAt)}>
               {timeAgo(new Date(editedAt))} ago
             </time>
           </div>
@@ -286,7 +288,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
         <EmptyState
           icon="wand-magic-sparkles"
           title="No presets yet"
-          description="A preset decides which Qovery skills your members’ agents load, adds your team’s instructions and your own skills, and applies to the whole organization, a role or specific members. Until you create one, agents use the Qovery skills as published."
+          description="Create a preset to customize your agents’ skills and instructions. Until then, agents use the default Qovery skills."
         >
           <div className="flex gap-2">
             <Button
@@ -349,7 +351,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
         />
       )}
       <Table.Root>
-        <Table.Header className="[&_th]:whitespace-nowrap [&_th]:text-xs [&_th]:font-medium">
+        <Table.Header className="[&_th]:whitespace-nowrap [&_th]:text-xs ">
           {table.getHeaderGroups().map((group) => (
             <Table.Row key={group.id}>
               {group.headers.map((header) => (
@@ -407,7 +409,7 @@ function PresetsContent({ organizationId }: { organizationId: string }) {
           ))}
         </Table.Body>
       </Table.Root>
-      <p className="text-xs text-neutral-subtle">
+      <p className="text-sm text-neutral-subtle">
         A member gets the preset assigned to them, otherwise their role’s, otherwise the organization default.
       </p>
     </div>
