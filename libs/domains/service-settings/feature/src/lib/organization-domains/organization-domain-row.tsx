@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
-import { useDeleteCustomDomain } from '@qovery/domains/custom-domains/feature'
+import { useDeleteOrganizationCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import {
   Button,
@@ -40,7 +40,7 @@ export function OrganizationDomainRow({
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { mutateAsync: deleteDomain, isLoading: isDeleting } = useDeleteCustomDomain()
+  const { mutateAsync: deleteDomain, isLoading: isDeleting } = useDeleteOrganizationCustomDomain()
   const { data: environmentMode } = useQuery({
     ...queries.environments.list({ projectId: domain.project.id }),
     select: (environments) => environments?.find(({ id }) => id === domain.environment_id)?.mode,
@@ -192,16 +192,14 @@ export function OrganizationDomainRow({
                   confirmationMethod: 'action',
                   name: domain.domain,
                   description: `Remove this domain from ${targets.length} service ${pluralize(targets.length, 'configuration')}. Redeploy the affected services to apply the change.`,
-                  action: async () =>
-                    Promise.all(
-                      targets.map((target) =>
-                        deleteDomain({
-                          serviceId: target.service.id,
-                          serviceType: target.service.type,
-                          customDomainId: target.custom_domain_id,
-                        })
-                      )
-                    ).then(() => undefined),
+                  action: () =>
+                    deleteDomain({
+                      targets: targets.map((target) => ({
+                        serviceId: target.service.id,
+                        serviceType: target.service.type,
+                        customDomainId: target.custom_domain_id,
+                      })),
+                    }),
                 })
               }
             >

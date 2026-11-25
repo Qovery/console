@@ -15,7 +15,7 @@ jest.mock('@tanstack/react-query', () => ({
   useQuery: () => ({ data: 'PRODUCTION' }),
 }))
 jest.mock('@qovery/domains/custom-domains/feature', () => ({
-  useDeleteCustomDomain: () => ({ mutateAsync: mockDelete, isLoading: false }),
+  useDeleteOrganizationCustomDomain: () => ({ mutateAsync: mockDelete, isLoading: false }),
 }))
 jest.mock('./organization-domain-status', () => ({
   OrganizationDomainStatusCell: ({ domain }: { domain: OrganizationCustomDomainResponse }) => (
@@ -81,9 +81,7 @@ it('requires confirmation and removes each service configuration once', async ()
   await mockConfirm.mock.calls[0][0].action()
   expect(mockDelete).toHaveBeenCalledTimes(1)
   expect(mockDelete).toHaveBeenCalledWith({
-    serviceId: 'app-1',
-    serviceType: 'APPLICATION',
-    customDomainId: 'domain-1',
+    targets: [{ serviceId: 'app-1', serviceType: 'APPLICATION', customDomainId: 'domain-1' }],
   })
 })
 

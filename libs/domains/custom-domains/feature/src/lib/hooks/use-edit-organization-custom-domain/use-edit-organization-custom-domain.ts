@@ -3,14 +3,14 @@ import { type CustomDomainRequest } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/services/data-access'
 import { pluralize } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
+import {
+  type OrganizationCustomDomainTarget,
+  deleteOrganizationCustomDomainCopy,
+  invalidateOrganizationCustomDomainTargets,
+  settleOrganizationCustomDomainOperations,
+} from '../../utils/organization-custom-domain-operations'
 
-type CustomDomainServiceType = Parameters<typeof mutations.editCustomDomain>[0]['serviceType']
-
-export interface OrganizationCustomDomainTarget {
-  serviceId: string
-  serviceType: CustomDomainServiceType
-  customDomainId: string
-}
+export type { OrganizationCustomDomainTarget }
 
 export interface EditOrganizationCustomDomainVariables {
   // Service configurations that keep serving the domain.
@@ -26,14 +26,21 @@ const getAffectedTargets = ({ targets, removedTargets }: EditOrganizationCustomD
   ...removedTargets,
 ]
 
-const deployServices = (targets: OrganizationCustomDomainTarget[]) =>
-  Promise.all(
-    [...new Map(targets.map((target) => [target.serviceId, target])).values()].map(({ serviceId, serviceType }) =>
-      mutations.deployService({ serviceId, serviceType })
-    )
+const deployServices = (targets: OrganizationCustomDomainTarget[]) => {
+  const services = [...new Map(targets.map((target) => [target.serviceId, target])).values()]
+  return settleOrganizationCustomDomainOperations(
+    services.map(
+      ({ serviceId, serviceType }) =>
+        () =>
+          mutations.deployService({ serviceId, serviceType })
+    ),
+    (failed, total) =>
+      `The domain was saved, but ${failed} of ${total} ${pluralize(total, 'service')} could not be redeployed.`
   )
+}
 
-// An organization domain is stored once per service it serves: edit or delete every copy, then optionally redeploy.
+// Edit or delete every copy of the domain, then optionally redeploy.
+// Edits replace the whole copy and deleting a missing copy succeeds, so saving again after a partial failure is safe.
 export function useEditOrganizationCustomDomain({ environmentId }: { environmentId: string }) {
   const queryClient = useQueryClient()
 
@@ -46,24 +53,24 @@ export function useEditOrganizationCustomDomain({ environmentId }: { environment
 
   return useMutation(
     async (variables: EditOrganizationCustomDomainVariables) => {
-      await Promise.all([
-        ...variables.targets.map((target) => mutations.editCustomDomain({ ...target, payload: variables.payload })),
-        ...variables.removedTargets.map((target) => mutations.deleteCustomDomain(target)),
-      ])
+      await settleOrganizationCustomDomainOperations(
+        [
+          ...variables.targets.map(
+            (target) => () => mutations.editCustomDomain({ ...target, payload: variables.payload })
+          ),
+          ...variables.removedTargets.map((target) => () => deleteOrganizationCustomDomainCopy(target)),
+        ],
+        (failed, total) =>
+          `${failed} of ${total} service ${pluralize(total, 'configuration')} could not be updated. Save again to retry.`
+      )
       if (variables.redeploy) await deployServices(getAffectedTargets(variables))
     },
     {
-      onSuccess(_, variables) {
+      // Refresh on failure too: some copies may have changed.
+      onSettled(_, __, variables) {
+        if (!variables) return
         const targets = getAffectedTargets(variables)
-        queryClient.invalidateQueries({ queryKey: queries.customDomains.organizationList._def })
-        targets.forEach(({ serviceId, serviceType }) => {
-          queryClient.invalidateQueries({
-            queryKey: queries.services.customDomains({ serviceId, serviceType }).queryKey,
-          })
-          queryClient.invalidateQueries({
-            queryKey: queries.services.listLinks({ serviceId, serviceType }).queryKey,
-          })
-        })
+        invalidateOrganizationCustomDomainTargets(queryClient, targets)
         if (variables.redeploy) invalidateServices(targets)
       },
       meta: {
@@ -84,7 +91,7 @@ export function useEditOrganizationCustomDomain({ environmentId }: { environment
             },
           }
         },
-        notifyOnError: true,
+        notifyOnError: { title: 'Your domain was not fully updated' },
       },
     }
   )
