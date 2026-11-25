@@ -42,10 +42,8 @@ export function Header() {
               <Breadcrumbs />
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-2">
-              <div className="hidden md:block">
-                <SpotlightTrigger />
-              </div>
-              <Button onClick={handleFeedbackClick} variant="outline">
+              <SpotlightTrigger />
+              <Button onClick={handleFeedbackClick} variant="outline" className="hidden md:inline-flex">
                 Feedback
               </Button>
               <AssistantTrigger />

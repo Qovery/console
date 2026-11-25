@@ -15,7 +15,7 @@ function RouteComponent() {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="p-8">
+      <Section className="px-4 py-8 md:p-8">
         <SettingsHeading
           title="Advanced Settings"
           description="Any change to this section will be applied after triggering a cluster update."

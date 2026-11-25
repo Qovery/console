@@ -77,6 +77,6 @@ describe('EnableCopilotScreen', () => {
   it('links to the AI Copilot settings for the current organization', () => {
     render(<EnableCopilotScreen {...defaultProps} />)
 
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/organization/org-123/settings/ai-copilot')
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/organization/org-123/agents/copilot')
   })
 })

@@ -9,6 +9,7 @@ import {
   type GcpCredentialsRequest,
   type KubernetesEnum,
   ListAWSEKSInstanceTypeGpuEnum,
+  type OnPremiseCredentialsRequest,
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
@@ -45,7 +46,7 @@ type CredentialRequest =
   | {
       organizationId: string
       cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
-      payload: undefined
+      payload: OnPremiseCredentialsRequest
       credentialId: string
     }
 
@@ -172,7 +173,10 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           const response = await cloudProviderCredentialsApi.listAzureCredentials(organizationId)
           return response.data.results
         })
-        .with('ON_PREMISE', async () => undefined)
+        .with('ON_PREMISE', async () => {
+          const response = await cloudProviderCredentialsApi.listOnPremiseCredentials(organizationId)
+          return response.data.results
+        })
         .exhaustive()
 
       return cloudProviders
@@ -238,7 +242,10 @@ export const mutations = {
         const response = await cloudProviderCredentialsApi.createAzureCredentials(organizationId, payload)
         return response.data
       })
-      .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
+      .with({ cloudProvider: 'ON_PREMISE' }, async ({ organizationId, payload }) => {
+        const response = await cloudProviderCredentialsApi.createOnPremiseCredentials(organizationId, payload)
+        return response.data
+      })
       .exhaustive()
 
     return cloudProviderCredential

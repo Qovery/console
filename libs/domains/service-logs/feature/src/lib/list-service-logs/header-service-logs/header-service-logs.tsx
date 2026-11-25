@@ -94,8 +94,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
       />
-      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral bg-background px-4 py-2.5">
-        <div className="flex w-full items-center gap-2">
+      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral bg-background px-4 py-2.5 max-md:flex-wrap">
+        <div className="flex w-full items-center gap-2 max-md:flex-wrap">
           <Button
             variant="surface"
             color={isLiveMode ? 'brand' : 'neutral'}

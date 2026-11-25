@@ -54,7 +54,7 @@ export function McpServerSetting({ isLoading, mcpServers, organizationId, value,
             No MCP is configured. Create one here or manage MCPs in{' '}
             <a
               className="font-medium text-brand hover:underline"
-              href={`/organization/${organizationId}/settings/agents/mcps`}
+              href={`/organization/${organizationId}/agents/mcp-servers`}
             >
               Agents → MCPs
             </a>
