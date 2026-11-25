@@ -33,7 +33,7 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: jest.fn(),
   useLocation: jest.fn(),
   useNavigate: () => jest.fn(),
-  useRouterState: () => ({ location: { pathname: '/organization/organization-1/agent-experience' } }),
+  useRouterState: () => ({ location: { pathname: '/organization/organization-1/agents' } }),
   Link: ({ children, className }: { children: ReactNode; className?: string }) => (
     <a href="/" className={className}>
       {children}
@@ -63,7 +63,7 @@ beforeEach(() => {
   window.localStorage.clear()
   setSkillPresetsScenario()
   jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-1' })
-  jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agent-experience' } as never)
+  jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agents' } as never)
 })
 
 describe('AgentExperienceCopilot', () => {
@@ -432,9 +432,7 @@ describe('AgentExperienceNav', () => {
 
   it('opens Settings by itself on the policy tokens page', async () => {
     setSkillPresetsScenario('agent-experience-active')
-    jest
-      .mocked(useLocation)
-      .mockReturnValue({ pathname: '/organization/organization-1/agent-experience/policy-tokens' } as never)
+    jest.mocked(useLocation).mockReturnValue({ pathname: '/organization/organization-1/agents/policy-tokens' } as never)
     renderWithProviders(<AgentExperienceNav />)
     expect(await screen.findByText('Policy tokens')).toBeInTheDocument()
   })

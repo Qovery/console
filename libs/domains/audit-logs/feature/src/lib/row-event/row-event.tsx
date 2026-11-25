@@ -76,8 +76,7 @@ const securityRejectionSummary = (event: OrganizationEventResponse) => {
   return `Rejected by the security review · ${count}${sources.length ? ` (${sources.join(', ')})` : ''}`
 }
 
-const skillPresetsSettingsUrl = (organizationId: string) =>
-  `/organization/${organizationId}/agent-experience/skill-presets`
+const skillPresetsSettingsUrl = (organizationId: string) => `/organization/${organizationId}/agents/skill-presets`
 
 export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth, validTargetIds } = props

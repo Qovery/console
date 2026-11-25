@@ -44,9 +44,10 @@ export function ConnectAgentButton() {
     if (!connect) return
     open()
     navigate({
-      to: '/organization/$organizationId/agent-experience/skill-presets',
+      to: '/organization/$organizationId/agents/skill-presets',
       params: { organizationId },
-      search: {},
+      search: (previous) => ({ ...previous, connect: undefined }),
+      hash: true,
       replace: true,
     })
     // Once, when the page opens with the parameter.
@@ -90,7 +91,7 @@ export function SkillPresetsLayout({ children }: SkillPresetsLayoutProps) {
                   disabled={!aiFeaturesEnabled}
                   onClick={() =>
                     navigate({
-                      to: '/organization/$organizationId/agent-experience/skill-presets/new',
+                      to: '/organization/$organizationId/agents/skill-presets/new',
                       params: { organizationId },
                     })
                   }

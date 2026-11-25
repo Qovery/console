@@ -4,8 +4,10 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/agents/')({
   beforeLoad: ({ params: { organizationId } }) => {
     throw redirect({
-      to: '/organization/$organizationId/agent-experience/agent-task-tokens',
+      to: '/organization/$organizationId/agents/agent-task-tokens',
       params: { organizationId },
+      search: true,
+      hash: true,
       replace: true,
     })
   },

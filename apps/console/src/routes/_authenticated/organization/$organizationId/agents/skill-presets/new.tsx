@@ -7,12 +7,10 @@ const searchSchema = z.object({
   from: z.string().optional(),
 })
 
-export const Route = createFileRoute('/_authenticated/organization/$organizationId/agent-experience/skill-presets/new')(
-  {
-    validateSearch: searchSchema,
-    component: RouteComponent,
-  }
-)
+export const Route = createFileRoute('/_authenticated/organization/$organizationId/agents/skill-presets/new')({
+  validateSearch: searchSchema,
+  component: RouteComponent,
+})
 
 function RouteComponent() {
   return <SkillPresetCreate />

@@ -38,7 +38,7 @@ describe('LlmProviderSetting', () => {
 
     expect(screen.getByRole('link', { name: 'Agents → Tokens' })).toHaveAttribute(
       'href',
-      '/organization/organization-1/agent-experience/agent-task-tokens'
+      '/organization/organization-1/agents/agent-task-tokens'
     )
     selectEvent.openMenu(screen.getByLabelText('Token'))
     screen.getByTestId('input-menu-list-button').click()

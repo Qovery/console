@@ -130,7 +130,11 @@ describe('Connect an agent', () => {
     jest.mocked(useSearch).mockReturnValue({ connect: true })
     renderWithProviders(<SettingsSkillPresets />)
     expect(await screen.findByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
-    expect(mockNavigate).toHaveBeenCalledWith(expect.objectContaining({ search: {}, replace: true }))
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.objectContaining({ search: expect.any(Function), hash: true, replace: true })
+    )
+    const [{ search }] = mockNavigate.mock.lastCall as [{ search: (previous: object) => object }]
+    expect(search({ connect: true, ref: 'legacy' })).toEqual({ connect: undefined, ref: 'legacy' })
   })
 })
 

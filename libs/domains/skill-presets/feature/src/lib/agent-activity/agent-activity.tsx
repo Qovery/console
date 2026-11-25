@@ -213,8 +213,8 @@ export function HintLine({
     <Link
       to={
         card.destination === 'presets'
-          ? '/organization/$organizationId/agent-experience/skill-presets'
-          : '/organization/$organizationId/agent-experience/policy-tokens'
+          ? '/organization/$organizationId/agents/skill-presets'
+          : '/organization/$organizationId/agents/policy-tokens'
       }
       params={{ organizationId }}
       className={suggestionCardClassName}
@@ -473,7 +473,7 @@ function BreakdownTable({
                   <Table.Cell colSpan={5} className="text-neutral-subtle">
                     No policy token acted in this period.{' '}
                     <Link
-                      to="/organization/$organizationId/agent-experience/policy-tokens"
+                      to="/organization/$organizationId/agents/policy-tokens"
                       params={{ organizationId }}
                       className="font-medium text-brand hover:underline"
                     >
@@ -564,7 +564,7 @@ function BreakdownTable({
           Never loaded in this period: <span className="font-sans">{unused.join(', ')}</span>. Consider turning them off
           in the preset.{' '}
           <Link
-            to="/organization/$organizationId/agent-experience/skill-presets"
+            to="/organization/$organizationId/agents/skill-presets"
             params={{ organizationId }}
             className="font-medium text-brand hover:underline"
           >

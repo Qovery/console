@@ -6,8 +6,10 @@ export const Route = createFileRoute(
 )({
   beforeLoad: ({ params: { organizationId, skillPresetId } }) => {
     throw redirect({
-      to: '/organization/$organizationId/agent-experience/skill-presets/$skillPresetId',
+      to: '/organization/$organizationId/agents/skill-presets/$skillPresetId',
       params: { organizationId, skillPresetId },
+      search: true,
+      hash: true,
       replace: true,
     })
   },
