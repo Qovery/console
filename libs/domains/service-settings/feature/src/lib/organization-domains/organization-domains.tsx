@@ -123,33 +123,42 @@ export function OrganizationDomainsContent() {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const navigate = route.useNavigate()
-  const { page = 1 } = route.useSearch()
+  const { page = 1, pageSize = 30 } = route.useSearch()
   const [filterState, setFilterState] = useState<{
     projectId: string
     environmentId: string
     search: string
-    pageSize: number
     // Statuses are only known for the domains on screen, so this filter applies to the current page.
     status: DomainDnsStatus | ''
-  }>({ projectId: '', environmentId: '', search: '', pageSize: 30, status: '' })
-  const filters = { ...filterState, page }
+  }>({ projectId: '', environmentId: '', search: '', status: '' })
+  const filters = { ...filterState, page, pageSize }
   // Selection belongs to the page it was made on, including when the page changes through browser history.
-  const [selection, setSelection] = useState<{ page: number; rows: RowSelectionState }>({ page, rows: {} })
-  const rowSelection = selection.page === page ? selection.rows : {}
+  const [selection, setSelection] = useState<{ page: number; pageSize: number; rows: RowSelectionState }>({
+    page,
+    pageSize,
+    rows: {},
+  })
+  const rowSelection = selection.page === page && selection.pageSize === pageSize ? selection.rows : {}
   const setRowSelection: OnChangeFn<RowSelectionState> = (updater) =>
-    setSelection({ page, rows: functionalUpdate(updater, rowSelection) })
+    setSelection({ page, pageSize, rows: functionalUpdate(updater, rowSelection) })
   const setFilters = (next: typeof filters | ((current: typeof filters) => typeof filters)) => {
-    const { page: nextPage, ...nextFilterState } = functionalUpdate(next, filters)
-    const filtersChanged = (Object.keys(nextFilterState) as (keyof typeof filterState)[]).some(
+    const { page: nextPage, pageSize: nextPageSize, ...nextFilterState } = functionalUpdate(next, filters)
+    const filterStateChanged = (Object.keys(nextFilterState) as (keyof typeof filterState)[]).some(
       (key) => nextFilterState[key] !== filterState[key]
     )
-    if (filtersChanged) {
-      setFilterState(nextFilterState)
-      setRowSelection({})
-    }
-    if (nextPage !== page) {
-      // Paging adds a history entry; resetting the page after a filter change replaces it.
-      navigate({ search: (prev) => ({ ...prev, page: nextPage }), replace: filtersChanged })
+    const filtersChanged = filterStateChanged || nextPageSize !== pageSize
+    if (filterStateChanged) setFilterState(nextFilterState)
+    if (filtersChanged) setRowSelection({})
+    if (nextPage !== page || nextPageSize !== pageSize) {
+      // Paging adds a history entry; resetting the page after a filter or page size change replaces it.
+      navigate({
+        search: (prev) => ({
+          ...prev,
+          page: nextPage,
+          pageSize: nextPageSize === pageSize ? prev.pageSize : nextPageSize,
+        }),
+        replace: filtersChanged,
+      })
     }
   }
   const { data: projects = [] } = useQuery(queries.projects.list({ organizationId }))
@@ -390,7 +399,9 @@ export function OrganizationDomainsContent() {
             nextDisabled={isFetching || !data || filters.page * filters.pageSize >= data.total_count}
             onPrevious={() => setFilters({ ...filters, page: filters.page - 1 })}
             onNext={() => setFilters({ ...filters, page: filters.page + 1 })}
-            onPageSizeChange={(pageSize) => setFilters({ ...filters, pageSize: Number(pageSize), page: 1 })}
+            onPageSizeChange={(nextPageSize) =>
+              setFilters({ ...filters, pageSize: Number(nextPageSize) as typeof pageSize, page: 1 })
+            }
           />
         </div>
       </Section>

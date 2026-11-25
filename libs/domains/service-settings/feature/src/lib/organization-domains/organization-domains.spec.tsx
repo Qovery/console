@@ -6,7 +6,7 @@ import { OrganizationDomains, OrganizationDomainsContent } from './organization-
 
 const mockList = jest.fn()
 let mockRoles = ['organization:org-1:admin']
-let mockSearch: { page?: number } = {}
+let mockSearch: { page?: number; pageSize?: number } = {}
 const mockSearchListeners = new Set<() => void>()
 const mockNavigate = jest.fn()
 jest.mock('@tanstack/react-router', () => ({
@@ -292,4 +292,22 @@ it('counts DNS statuses on the page and filters the page by status', async () =>
   await userEvent.click(screen.getByRole('menuitem', { name: 'Valid' }))
   expect(screen.queryByText('api.example.com')).not.toBeInTheDocument()
   expect(screen.getByText('www.example.com')).toBeInTheDocument()
+})
+
+it('reads the page size from the URL and writes it back on the first page', async () => {
+  mockSearch = { page: 1, pageSize: 10 }
+  const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  expect(mockList.mock.lastCall[0]).toEqual(
+    expect.arrayContaining([expect.objectContaining({ page: 1, pageSize: 10 })])
+  )
+  expect(screen.getByTestId('select-page-size')).toHaveValue('10')
+  // Paging keeps the page size.
+  await userEvent.click(screen.getByTestId('button-next-page'))
+  expect(mockSearch).toEqual({ page: 2, pageSize: 10 })
+  await userEvent.selectOptions(screen.getByTestId('select-page-size'), '100')
+  expect(mockNavigate).toHaveBeenLastCalledWith(expect.objectContaining({ replace: true }))
+  expect(mockSearch).toEqual({ page: 1, pageSize: 100 })
+  expect(mockList.mock.lastCall[0]).toEqual(
+    expect.arrayContaining([expect.objectContaining({ page: 1, pageSize: 100 })])
+  )
 })
