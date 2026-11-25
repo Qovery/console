@@ -147,7 +147,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
         </Callout.Root>
       )}
 
-      <div className="rounded-md border border-neutral bg-surface-neutral-subtle p-3 text-sm">
+      <div className="rounded-md border border-neutral bg-surface-neutral p-4 text-sm">
         <div className="flex items-center justify-between gap-3">
           <span className="flex items-center gap-2 text-neutral">
             <Icon iconName="users" iconStyle="regular" className="text-neutral-subtle" aria-hidden="true" />
@@ -179,7 +179,7 @@ export function AssignmentSection({ draftId, otherPresets, assignees, conflictDe
           )}
         </div>
         {showMembers && (
-          <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-1 text-xs sm:grid-cols-2">
+          <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2 text-sm sm:grid-cols-2">
             {receiving.map((member) => (
               <li key={member.id} className="flex justify-between gap-2">
                 <span className="truncate text-neutral">{member.name}</span>

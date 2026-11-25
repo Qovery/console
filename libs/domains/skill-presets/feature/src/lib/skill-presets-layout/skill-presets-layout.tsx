@@ -16,8 +16,7 @@ export interface SkillPresetsLayoutProps {
   children: ReactNode
 }
 
-const ADMIN_DESCRIPTION =
-  'Your organization’s skills: which Qovery skills agents load, your team’s rules and your own skills, as presets assigned to teams and people.'
+const ADMIN_DESCRIPTION = 'Manage the skills and instructions assigned to your teams and members.'
 const MEMBER_DESCRIPTION = 'What your coding agent receives from Qovery, readable in full.'
 
 function AccessSkeleton() {
@@ -74,7 +73,7 @@ export function SkillPresetsLayout({ children }: SkillPresetsLayoutProps) {
   const aiFeaturesEnabled = useAiFeaturesEnabled({ organizationId })
 
   return (
-    <Section className="px-6 pb-8 pt-6">
+    <Section className="px-6 pb-8 pt-6 text-sm">
       <SettingsHeading
         title="Skills registry"
         description={isLoading ? undefined : canManage ? ADMIN_DESCRIPTION : MEMBER_DESCRIPTION}
@@ -104,7 +103,7 @@ export function SkillPresetsLayout({ children }: SkillPresetsLayoutProps) {
           )}
         </div>
       </SettingsHeading>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         {!isLoading && canManage && !aiFeaturesEnabled && (
           <AiFeaturesNotice organizationId={organizationId} canEnable={canManage} />
         )}

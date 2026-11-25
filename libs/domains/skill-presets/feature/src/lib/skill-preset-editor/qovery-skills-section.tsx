@@ -2,7 +2,7 @@ import { type SkillPresetRejectionFinding } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFieldArray, useFormContext, useFormState, useWatch } from 'react-hook-form'
 import { SKILL_PRESET_LIMITS } from '@qovery/domains/skill-presets/util'
-import { Button, Checkbox, Icon, InputText, SegmentedControl } from '@qovery/shared/ui'
+import { Button, Checkbox, Icon, InputSelectSmall, InputText, Tooltip } from '@qovery/shared/ui'
 import { MarkdownField } from '../markdown-field/markdown-field'
 import { qoverySkillDescription } from '../utils/qovery-skills'
 import { findingFieldId, findingsAsText, findingsFor } from '../utils/skill-preset-findings'
@@ -53,65 +53,54 @@ function QoverySkillRow({ index, skillName, findings, selected, onSelect }: Qove
       (contentFindings.length > 0 || getFieldState(`qoverySkills.${index}.content`, formState).invalid))
 
   return (
-    <li className="flex flex-col gap-3 p-3" data-testid={`qovery-skill-${skillName}`}>
-      <div className="flex items-start gap-3">
+    <li className="flex flex-col gap-4 bg-surface-neutral p-4" data-testid={`qovery-skill-${skillName}`}>
+      <div className="flex items-center gap-3">
         <Checkbox
-          className="mt-0.5"
           checked={selected}
           onCheckedChange={(checked) => onSelect(checked === true)}
           aria-label={`Select ${skillName}`}
         />
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="flex items-center gap-2">
-            <span className="font-code text-sm font-medium text-neutral">{skillName}</span>
+            <span className="text-sm font-medium text-neutral">{skillName}</span>
+            {size && choice !== 'DISABLE' && choice !== 'REPLACE' && (
+              <Tooltip content={`${formatTokens(size.skillMd)} tokens when loaded`}>
+                <span tabIndex={0} aria-label={`Estimated size of ${skillName}`}>
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                </span>
+              </Tooltip>
+            )}
             {hasIssue && (
-              <span className="flex items-center gap-1 text-xs text-negative">
+              <span className="flex items-center gap-1.5 text-sm text-negative">
                 <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
                 Needs a change
               </span>
             )}
           </span>
-          <span className="text-xs text-neutral-subtle">
-            {qoverySkillDescription(skillName)}
-            {size && choice !== 'DISABLE' && choice !== 'REPLACE' && (
-              <> · {formatTokens(size.skillMd)} tokens when loaded</>
-            )}
-          </span>
+          <span className="text-sm text-neutral-subtle">{qoverySkillDescription(skillName)}</span>
         </div>
-      </div>
-      <div className="-my-1 min-w-0 overflow-x-auto py-1 pl-7 pr-1">
         <Controller
           control={control}
           name={`qoverySkills.${index}.choice`}
           render={({ field }) => (
-            <SegmentedControl.Root
-              value={field.value}
-              onValueChange={(value) => {
+            <InputSelectSmall
+              name={field.name}
+              defaultValue={field.value}
+              items={CHOICES}
+              ariaLabel={`How agents use ${skillName}`}
+              className="w-44 shrink-0"
+              onChange={(value) => {
+                if (!value) return
                 field.onChange(value as QoverySkillChoice)
                 clearErrors(hiddenFields(index, value as QoverySkillChoice))
               }}
-              aria-label={`How agents use ${skillName}`}
-              className="text-xs"
-            >
-              {CHOICES.map((item) => (
-                // SegmentedControl.Item renders its label twice (active and inactive layers), so screen
-                // readers read it twice. The aria-label gives each item a single name.
-                <SegmentedControl.Item
-                  key={item.value}
-                  value={item.value}
-                  aria-label={item.label}
-                  className="[&_span]:px-2.5"
-                >
-                  {item.label}
-                </SegmentedControl.Item>
-              ))}
-            </SegmentedControl.Root>
+            />
           )}
         />
       </div>
 
       {choice === 'DISABLE' && (
-        <p className="pl-7 text-xs text-neutral-subtle">
+        <p className="pl-7 text-sm text-neutral-subtle">
           <Icon iconName="ban" iconStyle="regular" className="mr-1.5" aria-hidden="true" />
           Agents never load this skill.
         </p>
@@ -194,7 +183,7 @@ export function QoverySkillsSection({ findings }: QoverySkillsSectionProps) {
 
   return (
     <div className="flex flex-col overflow-hidden rounded-md border border-neutral">
-      <div className="flex h-11 items-center gap-3 border-b border-neutral bg-surface-neutral-subtle px-3 text-xs text-neutral-subtle">
+      <div className="flex min-h-12 items-center gap-3 border-b border-neutral bg-surface-neutral-subtle px-4 py-2 text-sm text-neutral-subtle">
         <Checkbox
           checked={allSelected ? true : selected.length > 0 ? 'indeterminate' : false}
           onCheckedChange={(checked) => setSelected(checked === true ? fields.map(({ skillName }) => skillName) : [])}

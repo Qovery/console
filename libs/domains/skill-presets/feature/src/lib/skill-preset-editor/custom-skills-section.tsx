@@ -40,7 +40,7 @@ function CustomSkillRow({ index, findings, originalSkillName }: CustomSkillRowPr
   const contentFindings = findingsFor(findings, { field: 'skillContent', skillName: originalSkillName })
 
   return (
-    <fieldset className="flex flex-col gap-3" aria-label={skillName ? `Skill ${skillName}` : `New skill ${index + 1}`}>
+    <fieldset className="flex flex-col gap-4" aria-label={skillName ? `Skill ${skillName}` : `New skill ${index + 1}`}>
       <div className="flex items-start gap-2">
         <Controller
           control={control}
@@ -218,7 +218,7 @@ export function CustomSkillsSection({ findings, librarySkills, onRename }: Custo
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <Heading level={3} id="section-custom-skills">
+          <Heading level={3} className="text-sm" id="section-custom-skills">
             Custom skills
           </Heading>
           <p className="text-sm text-neutral-subtle">
@@ -244,11 +244,11 @@ export function CustomSkillsSection({ findings, librarySkills, onRename }: Custo
       </div>
       {fields.length === 0 && (
         <p className="rounded-md border border-dashed border-neutral p-4 text-sm text-neutral-subtle">
-          No skills of your own yet. Add one to teach agents a process Qovery can’t know, like your release checklist.
+          No custom skills yet. Add a skill or choose one from the library.
         </p>
       )}
       {fields.length > 0 && (
-        <ul className="rounded border border-neutral bg-surface-neutral-subtle" aria-label="Custom skills">
+        <ul className="rounded border border-neutral bg-surface-neutral" aria-label="Custom skills">
           {fields.map((field, index) => {
             const issues = findings.filter(
               (finding) =>
@@ -276,7 +276,7 @@ export function CustomSkillsSection({ findings, librarySkills, onRename }: Custo
                     )}
                   </div>
                   {(hasError || issues.length > 0) && (
-                    <p className="text-xs text-negative">
+                    <p className="text-sm text-negative">
                       Review required: {hasError ? 'check the skill fields.' : findingsAsText(issues)}
                     </p>
                   )}
@@ -313,7 +313,7 @@ export function CustomSkillsSection({ findings, librarySkills, onRename }: Custo
           })}
         </ul>
       )}
-      {limitError && <p className="text-xs text-negative">{limitError}</p>}
+      {limitError && <p className="text-sm text-negative">{limitError}</p>}
     </div>
   )
 }

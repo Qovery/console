@@ -149,7 +149,7 @@ describe('SkillPresetEditorForm', () => {
     const { userEvent } = renderEditor()
     const row = screen.getByTestId('qovery-skill-qovery-deploy')
 
-    await userEvent.click(within(row).getByRole('radio', { name: 'Add instructions' }))
+    await userEvent.selectOptions(within(row).getByRole('combobox'), 'OVERLAY')
 
     expect(screen.getByRole('textbox', { name: 'Team instructions for qovery-deploy' })).toBeInTheDocument()
   })
@@ -556,7 +556,7 @@ describe('SkillPresetEditorForm', () => {
     await userEvent.click(within(dialog).getByRole('button', { name: 'Apply changes' }))
     expect(screen.getByText('release-checks')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Remove release-checks' }))
-    expect(screen.getByText(/No skills of your own yet/)).toBeInTheDocument()
+    expect(screen.getByText(/No custom skills yet/)).toBeInTheDocument()
   })
 
   it('copies a skill from another preset through the library', async () => {
@@ -597,7 +597,7 @@ describe('SkillPresetEditorForm', () => {
   it('focuses the first Markdown field that needs a change', async () => {
     const { userEvent } = renderEditor()
     const row = screen.getByTestId('qovery-skill-qovery-deploy')
-    await userEvent.click(within(row).getByRole('radio', { name: 'Add instructions' }))
+    await userEvent.selectOptions(within(row).getByRole('combobox'), 'OVERLAY')
 
     await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
 
@@ -607,12 +607,12 @@ describe('SkillPresetEditorForm', () => {
   it('drops the errors of fields a Qovery skill no longer shows', async () => {
     const { userEvent } = renderEditor()
     const row = screen.getByTestId('qovery-skill-qovery-deploy')
-    await userEvent.click(within(row).getByRole('radio', { name: 'Replace' }))
+    await userEvent.selectOptions(within(row).getByRole('combobox'), 'REPLACE')
     await userEvent.click(screen.getByRole('button', { name: 'Create preset' }))
     expect(within(row).getByText('Needs a change')).toBeInTheDocument()
     expect(screen.getByText(/fields? needs? a change/)).toBeInTheDocument()
 
-    await userEvent.click(within(row).getByRole('radio', { name: 'As is' }))
+    await userEvent.selectOptions(within(row).getByRole('combobox'), 'AS_IS')
 
     expect(within(row).queryByText('Needs a change')).not.toBeInTheDocument()
     expect(screen.queryByText(/fields? needs? a change/)).not.toBeInTheDocument()

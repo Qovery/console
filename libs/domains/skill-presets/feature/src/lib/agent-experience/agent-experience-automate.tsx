@@ -59,7 +59,6 @@ export function AgentExperienceAutomations() {
 
   return (
     <AgentExperiencePage
-      layout="dashboard"
       title="Automations"
       description="View the agent tasks in your organization."
       showHelp

@@ -11,12 +11,12 @@ import { AgentExperiencePage } from './ui/agent-experience-ui'
 
 export function OnOffBadge({ on, label }: { on: boolean; label?: string }) {
   return on ? (
-    <Badge variant="surface" color="green" className="gap-1 whitespace-nowrap">
+    <Badge variant="surface" color="green" className="gap-1 whitespace-nowrap font-medium">
       <Icon iconName="circle-check" iconStyle="regular" aria-hidden="true" />
       {label ?? 'On'}
     </Badge>
   ) : (
-    <Badge variant="outline" color="neutral" className="gap-1">
+    <Badge variant="outline" color="neutral" className="gap-1 font-medium">
       <Icon iconName="circle" iconStyle="regular" aria-hidden="true" />
       {label ?? 'Off'}
     </Badge>
@@ -68,7 +68,7 @@ export function AgentExperienceCopilot() {
     <AgentExperiencePage
       title="Copilot"
       titleBadge={
-        <Badge variant="surface" color="brand" size="sm">
+        <Badge variant="surface" color="brand" size="sm" className="font-medium">
           Preview
         </Badge>
       }
@@ -80,19 +80,19 @@ export function AgentExperienceCopilot() {
       <div className="flex flex-col gap-6">
         <Section
           aria-labelledby="copilot-status"
-          className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral px-4 py-3"
+          className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral bg-surface-neutral px-4 py-3"
           data-testid="copilot-state"
         >
           <div className="flex flex-col">
             <Heading id="copilot-status" className="text-sm">
               Status
             </Heading>
-            <p className="text-xs text-neutral-subtle">AI features and the Copilot</p>
+            <p className="text-sm text-neutral-subtle">AI features and the Copilot</p>
           </div>
           {isStatusLoading ? (
             <Skeleton width={160} height={20} show />
           ) : !hasKnownStatus ? (
-            <Badge variant="outline" color="neutral" className="gap-1">
+            <Badge variant="outline" color="neutral" className="gap-1 font-medium">
               <Icon iconName="circle-exclamation" iconStyle="regular" aria-hidden="true" />
               Unknown
             </Badge>
@@ -138,7 +138,7 @@ export function AgentExperienceCopilot() {
             {hasKnownStatus && !organizationError && !copilot.error && !aiOn && (
               <Section
                 aria-labelledby="copilot-turn-on"
-                className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral p-4"
+                className="flex flex-row flex-wrap items-center justify-between gap-3 rounded-md border border-neutral bg-surface-neutral p-4"
               >
                 <div className="flex flex-col gap-0.5">
                   <Heading level={2} id="copilot-turn-on">

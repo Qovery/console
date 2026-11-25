@@ -14,6 +14,7 @@ import {
 } from '@qovery/domains/skill-presets/util'
 import {
   Badge,
+  BlockContent,
   Button,
   Link as ButtonLink,
   Callout,
@@ -87,14 +88,11 @@ function EditorSection({
   id: string
 }) {
   return (
-    <Section aria-labelledby={id} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <Heading level={2} id={id}>
-          {title}
-        </Heading>
+    <Section id={id} aria-label={title}>
+      <BlockContent title={title} className="mb-0" classNameContent="flex flex-col gap-4 text-sm">
         {description && <p className="text-sm text-neutral-subtle">{description}</p>}
-      </div>
-      {children}
+        {children}
+      </BlockContent>
     </Section>
   )
 }
@@ -383,8 +381,8 @@ export function SkillPresetEditorForm({
   return (
     <FormProvider {...methods}>
       <Section>
-        <form id="skill-preset-editor-top" onSubmit={submit} noValidate className="flex flex-col gap-6 px-6 pt-6">
-          <div className="mb-2 flex flex-col gap-3 border-b border-neutral pb-6">
+        <form id="skill-preset-editor-top" onSubmit={submit} noValidate className="flex flex-col gap-8 px-6 pt-6">
+          <div className="flex flex-col gap-2 border-b border-neutral pb-6">
             <Link
               to="/organization/$organizationId/agents/skill-presets"
               params={{ organizationId }}
@@ -532,7 +530,7 @@ export function SkillPresetEditorForm({
                   {base === 'FULL' && (
                     <Section aria-labelledby="section-qovery-skills" className="flex flex-col gap-4">
                       <div className="flex flex-col gap-1">
-                        <Heading level={3} id="section-qovery-skills">
+                        <Heading level={3} className="text-sm" id="section-qovery-skills">
                           Qovery skills
                         </Heading>
                         <p className="text-sm text-neutral-subtle">Keep, customize or disable the built-in skills.</p>

@@ -87,8 +87,10 @@ function TextDiff({ title, before, after }: { title: string; before: string; aft
   const lines = Math.max(before.split('\n').length, after.split('\n').length)
   return (
     <section className="flex flex-col gap-2" aria-label={title}>
-      <Heading level={3}>{title}</Heading>
-      <div className="grid grid-cols-2 text-xs text-neutral-subtle" aria-hidden="true">
+      <Heading level={3} className="text-sm">
+        {title}
+      </Heading>
+      <div className="grid grid-cols-2 text-sm text-neutral-subtle" aria-hidden="true">
         <span>Before</span>
         <span>After</span>
       </div>
@@ -242,7 +244,7 @@ function SkillPresetHistoryPage() {
   const review = reviewSummary(selected)
 
   return (
-    <Section className="flex flex-col gap-6 px-6 pb-8 pt-6">
+    <Section className="flex flex-col gap-8 px-6 pb-8 pt-6">
       {Boolean(error) && <LoadError title="The history could not be refreshed" error={error} onRetry={refetch} />}
       <div className="flex flex-col gap-3">
         <Link
@@ -304,7 +306,7 @@ function SkillPresetHistoryPage() {
                       <Icon
                         iconName={CHANGE_ICONS[revision.change_type]}
                         iconStyle="regular"
-                        className="text-xs text-neutral-subtle"
+                        className="text-sm text-neutral-subtle"
                         aria-hidden="true"
                       />
                     </span>
@@ -315,13 +317,13 @@ function SkillPresetHistoryPage() {
                           <span className="font-normal text-neutral-subtle"> (current)</span>
                         )}
                       </span>
-                      <span className="truncate text-xs text-neutral">{revision.edited_by}</span>
+                      <span className="truncate text-sm text-neutral">{revision.edited_by}</span>
                       {/* Inside a button, so no tooltip: the full date is read out and shown in the panel. */}
-                      <span className="w-fit text-xs text-neutral-subtle">
+                      <span className="w-fit text-sm text-neutral-subtle">
                         {timeAgo(new Date(revision.edited_at))} ago
                         <span className="sr-only">, {dateFullFormat(revision.edited_at)}</span>
                       </span>
-                      {summary && <span className="text-xs text-neutral-subtle">{summary}</span>}
+                      {summary && <span className="text-sm text-neutral-subtle">{summary}</span>}
                     </span>
                   </button>
                 </li>
@@ -329,7 +331,7 @@ function SkillPresetHistoryPage() {
             })}
           </ol>
           {isCapped && (
-            <p className="mt-3 px-2 text-xs text-neutral-subtle">
+            <p className="mt-3 px-2 text-sm text-neutral-subtle">
               Older revisions are not shown: only the latest {SKILL_PRESET_REVISIONS_PAGE_SIZE} can be listed here. All
               of them stay in the audit logs.
             </p>
@@ -338,7 +340,7 @@ function SkillPresetHistoryPage() {
 
         <article
           aria-labelledby="revision-title"
-          className="flex min-w-0 flex-col gap-6 rounded-md border border-neutral p-4"
+          className="flex min-w-0 flex-col gap-6 rounded-md border border-neutral bg-surface-neutral p-4"
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex flex-col gap-1">
@@ -346,12 +348,12 @@ function SkillPresetHistoryPage() {
                 Revision {selected.revision}: {CHANGE_LABELS[selected.change_type].toLowerCase()} by{' '}
                 {selected.edited_by}
               </Heading>
-              <p className="text-xs text-neutral-subtle">
+              <p className="text-sm text-neutral-subtle">
                 {dateFullFormat(selected.edited_at)} · {baseLabel(selected.base)}
                 {previous ? ` · compared with revision ${previous.revision}` : ''}
               </p>
               {review && (
-                <p className="flex items-center gap-1.5 text-xs text-neutral-subtle">
+                <p className="flex items-center gap-1.5 text-sm text-neutral-subtle">
                   <Icon iconName="shield-check" iconStyle="regular" aria-hidden="true" />
                   <Tooltip content={`Model: ${review.model}`}>
                     <span tabIndex={0}>{review.text}</span>
@@ -412,14 +414,16 @@ function SkillPresetHistoryPage() {
           ))}
           {diff.assignments && (
             <section className="flex flex-col gap-2" aria-label="Assignments">
-              <Heading level={3}>Assignments</Heading>
+              <Heading level={3} className="text-sm">
+                Assignments
+              </Heading>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs text-neutral-subtle">Before</span>
+                  <span className="text-sm text-neutral-subtle">Before</span>
                   <AssignmentChips assignedTo={diff.assignments.before} assignees={assignees} max={8} />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs text-neutral-subtle">After</span>
+                  <span className="text-sm text-neutral-subtle">After</span>
                   <AssignmentChips assignedTo={diff.assignments.after} assignees={assignees} max={8} />
                 </div>
               </div>

@@ -35,10 +35,7 @@ export function FindingList({ findings, onSelectLine }: FindingListProps) {
               <span className="font-medium">Line {finding.line}</span>
             )}
             <span>
-              : {finding.reason}.{' '}
-              <span className={finding.source === 'MODEL' ? 'text-neutral-subtle' : 'font-code text-neutral-subtle'}>
-                {findingKindLabel(finding)}
-              </span>
+              : {finding.reason}. <span className="text-neutral-subtle">{findingKindLabel(finding)}</span>
             </span>
           </span>
         </li>

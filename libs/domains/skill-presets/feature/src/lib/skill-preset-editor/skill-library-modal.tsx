@@ -80,7 +80,7 @@ export function SkillLibraryModal({ skills, presentSkillNames, onAdd, onClose }:
               return (
                 <Section key={group.value} aria-labelledby={`library-${group.value}`} className="flex flex-col gap-2">
                   <div className="flex items-baseline justify-between">
-                    <Heading level={3} id={`library-${group.value}`}>
+                    <Heading level={3} className="text-sm" id={`library-${group.value}`}>
                       {group.title}
                     </Heading>
                   </div>
@@ -91,14 +91,13 @@ export function SkillLibraryModal({ skills, presentSkillNames, onAdd, onClose }:
                         <li key={skill.id}>
                           <label
                             className={clsx(
-                              'flex gap-3 p-3',
+                              'flex items-center gap-3 bg-surface-neutral p-4',
                               reason
                                 ? 'cursor-not-allowed opacity-60'
                                 : 'cursor-pointer hover:bg-surface-neutral-subtle'
                             )}
                           >
                             <Checkbox
-                              className="mt-0.5"
                               checked={selected.includes(skill.id)}
                               disabled={Boolean(reason)}
                               onCheckedChange={(checked) => toggle(skill, checked === true)}
@@ -108,8 +107,8 @@ export function SkillLibraryModal({ skills, presentSkillNames, onAdd, onClose }:
                               <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
                                 <span className="min-w-0 text-sm font-normal text-neutral">{skill.skillName}</span>
                               </span>
-                              <span className="text-xs text-neutral-subtle">{skill.description}</span>
-                              {reason && <span className="text-xs font-medium text-neutral">{reason}</span>}
+                              <span className="text-sm text-neutral-subtle">{skill.description}</span>
+                              {reason && <span className="text-sm text-neutral-subtle">{reason}</span>}
                             </span>
                           </label>
                         </li>
