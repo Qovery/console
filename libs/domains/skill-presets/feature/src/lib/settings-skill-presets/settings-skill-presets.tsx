@@ -114,14 +114,16 @@ function PresetRow({
       <Table.Cell className="h-auto py-3">
         <div className="flex flex-col gap-0.5">
           <span className="flex items-center gap-2">
-            <Link
-              className="max-w-xs truncate font-medium text-neutral hover:underline"
-              to="/organization/$organizationId/agents/skill-presets/$skillPresetId"
-              params={{ organizationId, skillPresetId: preset.id }}
-              onClick={(event) => event.stopPropagation()}
-            >
-              {preset.name}
-            </Link>
+            <Tooltip content={preset.name} classNameContent="[overflow-wrap:anywhere]">
+              <Link
+                className="max-w-xs truncate font-medium text-neutral hover:underline"
+                to="/organization/$organizationId/agents/skill-presets/$skillPresetId"
+                params={{ organizationId, skillPresetId: preset.id }}
+                onClick={(event) => event.stopPropagation()}
+              >
+                {preset.name}
+              </Link>
+            </Tooltip>
             {preset.description && (
               <Tooltip content={preset.description}>
                 <span

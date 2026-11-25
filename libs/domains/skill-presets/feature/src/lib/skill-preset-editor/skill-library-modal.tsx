@@ -108,7 +108,7 @@ export function SkillLibraryModal({ skills, presentSkillNames, onAdd, onClose }:
                                 <span className="min-w-0 text-sm font-normal text-neutral">{skill.skillName}</span>
                               </span>
                               <span className="text-sm text-neutral-subtle">{skill.description}</span>
-                              {reason && <span className="text-sm text-neutral-subtle">{reason}</span>}
+                              {reason && <span className="text-sm font-medium text-neutral">{reason}</span>}
                             </span>
                           </label>
                         </li>
