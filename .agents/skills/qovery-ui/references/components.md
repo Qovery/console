@@ -22,7 +22,7 @@ Correct local integration problems before changing a shared component. Extend sh
 
 Use one consistent presentation for a family of similar items: the same icon treatment, title alignment, typography, spacing, and action placement. Vary the design only when the difference communicates meaningful information. Do not decorate one item independently of its siblings.
 
-Handle potentially long names and identifiers explicitly. In compact rows, table cells, and selectors, use the established truncation and tooltip pattern so names do not wrap arbitrarily, displace adjacent controls, or expand the layout. Keep the full value accessible. Allow descriptions and other content that users need to read to wrap normally.
+Handle potentially long names and identifiers explicitly. In compact rows, table cells, and selectors, use the established truncation pattern so names do not wrap arbitrarily, displace adjacent controls, or expand the layout. Keep the unmodified full value accessible, including by keyboard, through an appropriate detail view, accessible description, or copy action. Do not assume a tooltip provides this: `Truncate` limits its tooltip to 200 characters by default and uses a non-focusable span trigger. Inspect the integration; a copy button is not required beside every label. Allow descriptions and other content that users need to read to wrap normally.
 
 ## Buttons and links
 
@@ -89,7 +89,7 @@ Use the shared input that matches the value:
 | Selection                          | `InputSelect`   |
 | Boolean setting                    | `InputToggle`   |
 | Selection checkbox                 | `Checkbox`      |
-| Mutually exclusive visible choices | `InputRadio`    |
+| Mutually exclusive visible choices | `RadioGroup`    |
 
 In a form with an explicit Save action, selection controls and toggles update the draft. Do not interrupt a toggle change with a confirmation dialog. If applying the change requires confirmation, handle it when saving.
 
@@ -105,7 +105,7 @@ For a checkbox with a title and description, associate the label correctly and a
 
 **Don't:**
 
-- Use the deprecated `InputCheckbox` for new work.
+- Use the deprecated `InputCheckbox` or `InputRadio` for new work; use `Checkbox` and `RadioGroup`.
 - Rebuild floating labels or validation styling.
 - Add a separate caption where the component already provides a hint.
 
@@ -225,7 +225,7 @@ Use:
 - `Skeleton` for loading content with a known structure.
 - `LoaderSpinner` or `LoaderDots` for an ongoing operation.
 - `EmptyState` for an empty content area.
-- `useToast` from `@qovery/shared/toast` for transient action feedback.
+- `toast` from `@qovery/shared/ui` for transient action feedback, e.g. `toast('success', 'Changes saved')`. Its implementation is `libs/shared/ui/src/lib/utils/toast.tsx`.
 
 Distinguish loading, failure, no data, and no matching results. Choose the empty-state presentation appropriate to the available area; `EmptyState` provides standard and compact variants.
 

@@ -6,6 +6,8 @@ Use this reference when building or changing page composition, spacing, or align
 
 Inspect the closest established page before composing a new layout or adding a sibling view. Reuse its complete structure: section grouping, content widths, spacing rhythm, toolbar placement, separators, content boundaries, and action placement. Reusing the same components inside a different arrangement is not enough to preserve the pattern. The examples below identify layout patterns, not permission to copy unrelated typography, colors, or behavior.
 
+Use `Section` and `Heading` to establish the heading hierarchy described in [Typography](typography.md). `Section` does not add gaps or padding; apply the layout spacing below.
+
 Before placing components, identify the main sections and which elements belong together. Infer the grouping from the task and the closest established page; ask for clarification only when an ambiguity would materially change the composition.
 
 Use tighter spacing within a group and a larger, consistent gap between independent sections. For example, summary metrics and the chart explaining them belong in one group; a detailed table is a separate section.

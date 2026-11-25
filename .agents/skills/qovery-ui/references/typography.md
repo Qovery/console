@@ -36,7 +36,9 @@ A compact icon-and-text group within a list item may use `text-ssm` when it supp
 
 ### Heading semantics
 
-Choose semantic elements for document structure and explicitly define their visual typography through a shared component or text-style classes. Raw headings have global styles; a parent’s `text-sm` does not override a heading’s own font size. Do not rely on inherited typography for headings.
+Prefer `Section` and `Heading` for heading hierarchy instead of manually styling raw headings. Each nested `Section` increments the heading level; `Heading` uses that context unless an explicit `level` is supplied. Levels 1, 2, and 3 supply 24px, 16px, and 14px typography respectively. `Section` supplies a flex-column layout and heading context, not automatic gaps or padding. Ordinary text still needs an explicit size on the text or a containing block.
+
+Raw headings have global styles; a parent’s `text-sm` does not override a heading’s own font size. Do not rely on inherited typography for headings.
 
 Match the rendered size to the hierarchy above, independently of the heading level. Titles within ordinary cards and components use `text-sm`.
 
@@ -74,6 +76,7 @@ Component-specific conventions belong in `references/components.md`. Table-row e
 ## Source references
 
 - **`Heading`** — heading sizes and exact weight variants: `libs/shared/ui/src/lib/components/heading/heading.tsx`
+- **`Section`** — heading context and layout: `libs/shared/ui/src/lib/components/section/section.tsx`
 - **Button variants** — typography by button size: `libs/shared/ui/src/lib/components/button-primitive/button-primitive.tsx`
 - **`Badge`** — compact component typography: `libs/shared/ui/src/lib/components/badge/badge.tsx`
 - **`TablePrimitives`** — component-owned column-heading typography: `libs/shared/ui/src/lib/components/table-primitives/table-primitives.tsx`
