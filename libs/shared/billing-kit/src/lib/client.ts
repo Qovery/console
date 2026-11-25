@@ -5,6 +5,7 @@
  * passes its own client (staff previews, nothing applied).
  */
 import { z } from 'zod'
+import { BillingError, billingData, createBillingApi } from './pricing-transport'
 import type {
   AwsMarketplace,
   BillingInfo,
@@ -189,21 +190,7 @@ export interface PricingClient {
   withdrawDiscountRequest?(organizationId: string, requestId: number): Promise<Discounts>
 }
 
-export class BillingError extends Error {
-  status: number
-  code: string
-  field?: string
-  retryAfter?: number
-  // Fields assigned in the body (not constructor parameter properties) so plain Node can load
-  // the client in tests.
-  constructor(status: number, code: string, message: string, field?: string, retryAfter?: number) {
-    super(message)
-    this.status = status
-    this.code = code
-    this.field = field
-    this.retryAfter = retryAfter
-  }
-}
+export { BillingError } from './pricing-transport'
 
 export interface ClientOptions {
   /** pricing-api, e.g. https://billing-api.qovery.com */
@@ -223,162 +210,92 @@ export function buildUsageQuery(r: { from: string; to: string; granularity?: Gra
   }).toString()
 }
 
-export function createPricingClient(o: ClientOptions): PricingClient {
-  const f = o.fetch ?? fetch.bind(globalThis)
-  async function req<T>(base: string, path: string, init: RequestInit = {}, auth = true): Promise<T> {
-    // Content-Type only with a body: a GET without it is a simple request, no CORS preflight.
-    const headers: Record<string, string> = init.body != null ? { 'Content-Type': 'application/json' } : {}
-    if (auth && o.getToken) headers.Authorization = `Bearer ${await o.getToken()}`
-    const res = await f(base.replace(/\/$/, '') + path, {
-      ...init,
-      headers: { ...headers, ...(init.headers as Record<string, string>) },
-    })
-    const body = res.status === 204 ? null : await res.json().catch(() => null)
-    if (!res.ok) {
-      const retry = Number(res.headers?.get?.('Retry-After'))
-      throw new BillingError(
-        res.status,
-        body?.code ?? 'ERROR',
-        body?.detail ?? res.statusText,
-        body?.field,
-        Number.isFinite(retry) && retry > 0 ? retry : undefined
-      )
-    }
-    return body as T
-  }
+export function createPricingClient(options: ClientOptions): PricingClient {
+  const api = createBillingApi(options)
   return {
     mode: 'live',
-    publicPlans: () => req(o.pricingApiUrl, '/public/v1/plans', {}, false),
-    async billingUsage(org) {
-      const body = await req<BillingUsage>(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/billingUsage`)
-      if (!billingUsageSchema.safeParse(body).success) {
+    publicPlans: () => billingData(api.publicPlans()),
+    async billingUsage(organizationId) {
+      const data = await billingData<BillingUsage>(api.billingUsage({ organizationId }))
+      if (!billingUsageSchema.safeParse(data).success) {
         throw new BillingError(502, 'INVALID_RESPONSE', 'Invalid billing usage response')
       }
-      return body
+      return data
     },
-    spendLimits: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/spendLimits`),
-    planOptions: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/planOptions`),
+    spendLimits: (org) => billingData(api.spendLimits({ organizationId: org })),
+    planOptions: (org) => billingData(api.planOptions({ organizationId: org })),
     quotePlanChange: (org, plan, period) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/planChange`, {
-        method: 'POST',
-        body: JSON.stringify({ plan, period, dry_run: true }),
-      }),
-    changePlan: (org, plan, period, key) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/planChange`, {
-        method: 'POST',
-        body: JSON.stringify({ plan, period, dry_run: false }),
-        headers: { 'Idempotency-Key': key },
-      }),
-    keepPlan: (org) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/planChange/scheduled`, { method: 'DELETE' }),
-    cancellation: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/cancellation`),
-    cancel: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/cancellation`, {
-        method: 'POST',
-        body: JSON.stringify(r),
-      }),
-    keepSubscription: (org) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/cancellation`, { method: 'DELETE' }),
-    credits: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/credits`),
-    quoteCredits: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/credits`, {
-        method: 'POST',
-        body: JSON.stringify({ ...r, dry_run: true }),
-      }),
-    buyCredits: (org, r, key) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/credits`, {
-        method: 'POST',
-        body: JSON.stringify({ ...r, dry_run: false }),
-        headers: { 'Idempotency-Key': key },
-      }),
-    reactivation: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/reactivation`),
-    quoteReactivation: (org, plan, period) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/reactivation`, {
-        method: 'POST',
-        body: JSON.stringify({ plan, period, dry_run: true }),
-      }),
-    reactivate: (org, plan, period, key) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/reactivation`, {
-        method: 'POST',
-        body: JSON.stringify({ plan, period, dry_run: false }),
-        headers: { 'Idempotency-Key': key },
-      }),
-    usageHistory: (org, r) =>
-      req(
-        o.pricingApiUrl,
-        `/organization/${encodeURIComponent(org)}/usageHistory?${new URLSearchParams({ from: r.from, to: r.to, ...(r.granularity ? { granularity: r.granularity } : {}) })}`
+      billingData(api.changePlan({ organizationId: org, changePlanRequest: { plan, period, dry_run: true } })),
+    changePlan: (org, plan, period, idempotencyKey) =>
+      billingData(
+        api.changePlan({ organizationId: org, changePlanRequest: { plan, period, dry_run: false }, idempotencyKey })
       ),
-    buildUsage: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/buildUsage?${buildUsageQuery(r)}`),
-    offers: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/offers`),
+    keepPlan: (org) => billingData(api.keepPlan({ organizationId: org })),
+    cancellation: (org) => billingData(api.cancellation({ organizationId: org })),
+    cancel: (org, request) => billingData(api.cancel({ organizationId: org, cancelRequest: request })),
+    keepSubscription: (org) => billingData(api.keepSubscription({ organizationId: org })),
+    credits: (org) => billingData(api.credits({ organizationId: org })),
+    quoteCredits: (org, request) =>
+      billingData(api.buyCredits({ organizationId: org, buyCreditsRequest: { ...request, dry_run: true } })),
+    buyCredits: (org, request, idempotencyKey) =>
+      billingData(
+        api.buyCredits({ organizationId: org, buyCreditsRequest: { ...request, dry_run: false }, idempotencyKey })
+      ),
+    reactivation: (org) => billingData(api.reactivation({ organizationId: org })),
+    quoteReactivation: (org, plan, period) =>
+      billingData(api.reactivate({ organizationId: org, reactivateRequest: { plan, period, dry_run: true } })),
+    reactivate: (org, plan, period, idempotencyKey) =>
+      billingData(
+        api.reactivate({ organizationId: org, reactivateRequest: { plan, period, dry_run: false }, idempotencyKey })
+      ),
+    usageHistory: (org, range) => billingData(api.usageHistory({ organizationId: org, ...range })),
+    buildUsage: (org, range) => billingData(api.buildUsage({ organizationId: org, ...range })),
+    offers: (org) => billingData(api.offers({ organizationId: org })),
     offerEvent: (org, id, event, surface) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/offers/${id}/events`, {
-        method: 'POST',
-        body: JSON.stringify({ event, surface }),
-      }),
-    acceptOffer: (org, id) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/offers/${id}/accept`, { method: 'POST' }),
-    requestUpgrade: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/upgradeRequests`, {
-        method: 'POST',
-        body: JSON.stringify(r),
-      }),
+      billingData(api.offerEvent({ organizationId: org, offerId: id, offerEventRequest: { event, surface } })),
+    acceptOffer: (org, id) => billingData(api.acceptOffer({ organizationId: org, offerId: id })),
+    requestUpgrade: (org, request) =>
+      billingData(api.requestUpgrade({ organizationId: org, requestUpgradeRequest: request })),
     closeUpgradeRequest: (org, id, status) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/upgradeRequests/${id}/close`, {
-        method: 'POST',
-        body: JSON.stringify({ status }),
-      }),
-    emailPreferences: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/emailPreferences`),
+      billingData(
+        api.closeUpgradeRequest({ organizationId: org, requestId: id, closeUpgradeRequestRequest: { status } })
+      ),
+    emailPreferences: (org) => billingData(api.emailPreferences({ organizationId: org })),
     setEmailPreference: (org, category, enabled) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/emailPreferences`, {
-        method: 'PUT',
-        body: JSON.stringify({ category, enabled }),
-      }),
-    invoices: (org, page) => {
-      const q = new URLSearchParams()
-      if (page?.limit) q.set('limit', String(page.limit))
-      if (page?.offset) q.set('offset', page.offset)
-      return req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/invoices${q.size ? `?${q}` : ''}`)
-    },
-    invoice: (org, id) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/invoices/${encodeURIComponent(id)}`),
-    invoicePdf: (org, id) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/invoices/${encodeURIComponent(id)}/pdf`),
-    collectInvoice: (org, id, key) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/invoices/${encodeURIComponent(id)}/collect`, {
-        method: 'POST',
-        headers: { 'Idempotency-Key': key },
-      }),
-    paymentMethods: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/paymentMethods`),
+      billingData(api.setEmailPreference({ organizationId: org, setEmailPreferenceRequest: { category, enabled } })),
+    invoices: (org, page) =>
+      billingData(
+        api.invoices({ organizationId: org, limit: page?.limit || undefined, offset: page?.offset || undefined })
+      ),
+    invoice: (org, id) => billingData(api.invoice({ organizationId: org, invoiceId: id })),
+    invoicePdf: (org, id) => billingData(api.invoicePdf({ organizationId: org, invoiceId: id })),
+    collectInvoice: (org, invoiceId, idempotencyKey) =>
+      billingData(api.collectInvoice({ organizationId: org, invoiceId, idempotencyKey })),
+    paymentMethods: (org) => billingData(api.paymentMethods({ organizationId: org })),
     paymentMethodSession: (org, redirectUrl) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/paymentMethods/session`, {
-        method: 'POST',
-        body: JSON.stringify(redirectUrl ? { redirect_url: redirectUrl } : {}),
-      }),
-    billingInfo: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/billingInfo`),
-    saveBillingInfo: (org, info) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/billingInfo`, {
-        method: 'PUT',
-        body: JSON.stringify(info),
-      }),
-    awsMarketplace: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/awsMarketplace`),
-    requestAwsOffer: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/awsMarketplace/offerRequest`, {
-        method: 'POST',
-        body: JSON.stringify(r),
-      }),
-    discounts: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/discounts`),
+      billingData(
+        api.paymentMethodSession({
+          organizationId: org,
+          paymentMethodSessionRequest: redirectUrl ? { redirect_url: redirectUrl } : {},
+        })
+      ),
+    billingInfo: (org) => billingData(api.billingInfo({ organizationId: org })),
+    saveBillingInfo: (org, request) =>
+      billingData(api.saveBillingInfo({ organizationId: org, body: request })),
+    awsMarketplace: (org) => billingData(api.awsMarketplace({ organizationId: org })),
+    requestAwsOffer: (org, request) =>
+      billingData(api.requestAwsOffer({ organizationId: org, requestAwsOfferRequest: request })),
+    discounts: (org) => billingData(api.discounts({ organizationId: org })),
     quoteDiscounts: (org, ids) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/discounts/quote`, {
-        method: 'POST',
-        body: JSON.stringify({ ids, dry_run: true }),
-      }),
-    requestDiscounts: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/discountRequests`, {
-        method: 'POST',
-        body: JSON.stringify({ ids: r.ids, message: r.message ?? '', accept_terms: r.accept_terms }),
-      }),
+      billingData(api.quoteDiscounts({ organizationId: org, quoteDiscountsRequest: { ids, dry_run: true } })),
+    requestDiscounts: (org, request) =>
+      billingData(
+        api.requestDiscounts({
+          organizationId: org,
+          requestDiscountsRequest: { ...request, message: request.message ?? '' },
+        })
+      ),
     withdrawDiscountRequest: (org, id) =>
-      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/discountRequests/${id}`, { method: 'DELETE' }),
+      billingData(api.withdrawDiscountRequest({ organizationId: org, requestId: id })),
   }
 }
