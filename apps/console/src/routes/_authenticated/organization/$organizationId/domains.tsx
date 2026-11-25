@@ -1,7 +1,8 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { z } from 'zod'
 import { OrganizationDomains } from '@qovery/domains/service-settings/feature'
+import { LoaderSpinner } from '@qovery/shared/ui'
+import { useFeatureFlagResolved } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/domains')({
   component: RouteComponent,
@@ -17,7 +18,14 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function RouteComponent() {
   const params = Route.useParams()
-  const enabled = Boolean(useFeatureFlagEnabled('organization-domains'))
+  const enabled = useFeatureFlagResolved('organization-domains')
+  // Wait for PostHog before redirecting, or a cold load would leave the page even with the flag on.
+  if (enabled === undefined)
+    return (
+      <div className="container mx-auto mt-6 flex justify-center py-12">
+        <LoaderSpinner />
+      </div>
+    )
   if (!enabled) return <Navigate to="/organization/$organizationId/overview" params={params} replace />
   return <OrganizationDomains />
 }
