@@ -16,11 +16,7 @@ function StatusCellContent({ domain }: { domain: OrganizationCustomDomainRespons
   if (!result || fetchingKeys.has(key)) return <StatusCellSkeleton />
   const badge = <OrganizationDomainStatusBadge status={result.status} />
   return result.details.length ? (
-    <Tooltip
-      content={result.details.join('\n')}
-      // DNS check details can be long API errors: wrap them and keep one line per detail.
-      classNameContent="max-w-80 whitespace-pre-line break-words"
-    >
+    <Tooltip content={result.details.join('\n')} classNameContent="max-w-80 whitespace-pre-line break-words">
       <span className="inline-flex">{badge}</span>
     </Tooltip>
   ) : (
