@@ -2,6 +2,15 @@ import { billingUsageFactoryMock } from '@qovery/shared/billing-kit'
 import { renderHook } from '@qovery/shared/util-tests'
 import { usePricingClient } from './use-pricing-client'
 
+jest.mock('@qovery/shared/billing-kit', () => {
+  const kit = jest.requireActual('@qovery/shared/billing-kit')
+  return {
+    ...kit,
+    createPricingClient: (options: Parameters<typeof kit.createPricingClient>[0]) =>
+      kit.createPricingClient({ ...options, fetch: global.fetch }),
+  }
+})
+
 const mockGetAccessTokenSilently = jest.fn()
 
 jest.mock('@auth0/auth0-react', () => ({

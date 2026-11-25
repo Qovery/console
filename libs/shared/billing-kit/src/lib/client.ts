@@ -2,6 +2,7 @@
  * Reads an organization's plan and usage from pricing-api with the signed-in user's Qovery token.
  */
 import { z } from 'zod'
+import { BillingError, billingData, createBillingApi } from './pricing-transport'
 import { type BillingUsage } from './types'
 
 const billingUsageSchema = z.object({
@@ -53,15 +54,7 @@ export interface PricingClient {
   billingUsage(organizationId: string): Promise<BillingUsage>
 }
 
-export class BillingError extends Error {
-  constructor(
-    public status: number,
-    public code: string,
-    message: string
-  ) {
-    super(message)
-  }
-}
+export { BillingError } from './pricing-transport'
 
 export interface ClientOptions {
   /** pricing-api, e.g. https://billing-api.qovery.com */
@@ -71,22 +64,15 @@ export interface ClientOptions {
   fetch?: typeof fetch
 }
 
-export function createPricingClient(o: ClientOptions): PricingClient {
-  const f = o.fetch ?? fetch.bind(globalThis)
+export function createPricingClient(options: ClientOptions): PricingClient {
+  const api = createBillingApi(options)
   return {
     async billingUsage(organizationId) {
-      const res = await f(
-        `${o.pricingApiUrl.replace(/\/$/, '')}/organization/${encodeURIComponent(organizationId)}/billingUsage`,
-        {
-          headers: { Authorization: `Bearer ${await o.getToken()}` },
-        }
-      )
-      const body = await res.json().catch(() => null)
-      if (!res.ok) throw new BillingError(res.status, body?.code ?? 'ERROR', body?.detail ?? res.statusText)
-      if (!billingUsageSchema.safeParse(body).success) {
+      const data = await billingData<BillingUsage>(api.billingUsage({ organizationId }))
+      if (!billingUsageSchema.safeParse(data).success) {
         throw new BillingError(502, 'INVALID_RESPONSE', 'Invalid billing usage response')
       }
-      return body as BillingUsage
+      return data
     },
   }
 }
