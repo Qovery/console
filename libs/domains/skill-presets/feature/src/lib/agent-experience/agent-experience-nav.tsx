@@ -77,7 +77,7 @@ export function AgentExperienceNav() {
           defaultOpen={settingsPaths.some((path) => pathname.startsWith(path))}
         >
           {canSeeTokens && <Sidebar.SubItem to={`${base}/policy-tokens`}>Policy tokens</Sidebar.SubItem>}
-          {isAdmin && <Sidebar.SubItem to={`${base}/copilot`}>Copilot settings</Sidebar.SubItem>}
+          {isAdmin && <Sidebar.SubItem to={`${base}/copilot`}>Copilot</Sidebar.SubItem>}
           {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/agent-task-tokens`}>Model tokens</Sidebar.SubItem>}
           {isAgentTasksEnabled && <Sidebar.SubItem to={`${base}/mcp-servers`}>MCP servers</Sidebar.SubItem>}
         </Sidebar.Group>

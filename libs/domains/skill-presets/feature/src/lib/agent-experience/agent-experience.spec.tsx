@@ -417,7 +417,7 @@ describe('AgentExperienceNav', () => {
       screen.getByText('Policy tokens').closest('[data-testid=sidebar-group-content]') as HTMLElement
     )
     expect(settings.getByText('Policy tokens')).toBeInTheDocument()
-    expect(settings.getByText('Copilot settings')).toBeInTheDocument()
+    expect(settings.getByText('Copilot')).toBeInTheDocument()
     unmount()
 
     setSkillPresetsScenario('member')
@@ -427,7 +427,7 @@ describe('AgentExperienceNav', () => {
     expect(screen.getByText('Model tokens')).toBeInTheDocument()
     expect(screen.getByText('MCP servers')).toBeInTheDocument()
     expect(screen.queryByText('Policy tokens')).not.toBeInTheDocument()
-    expect(screen.queryByText('Copilot settings')).not.toBeInTheDocument()
+    expect(screen.queryByText('Copilot')).not.toBeInTheDocument()
   })
 
   it('opens Settings by itself on the policy tokens page', async () => {

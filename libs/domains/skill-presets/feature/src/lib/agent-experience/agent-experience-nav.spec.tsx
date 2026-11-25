@@ -112,7 +112,7 @@ describe('AgentExperienceNav, Settings', () => {
   it('opens Settings by itself on the Copilot settings page, with the Agent Tasks pages behind their flag', async () => {
     at('/copilot')
     const { unmount } = renderWithProviders(<AgentExperienceNav />)
-    expect(await screen.findByText('Copilot settings')).toBeInTheDocument()
+    expect(await screen.findByText('Copilot')).toBeInTheDocument()
     expect(screen.queryByText('Model tokens')).not.toBeInTheDocument()
     unmount()
 
