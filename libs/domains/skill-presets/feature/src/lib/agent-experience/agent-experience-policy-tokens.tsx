@@ -34,20 +34,12 @@ export const POLICY_TOKENS_EXPLANATION =
   'Give each agent a token that can only do what its policy allows. A denied call never runs.'
 
 /** Opens the existing create form (the token is shown once, at the end). */
-function CreatePolicyTokenButton({
-  organizationId,
-  secondary = false,
-}: {
-  organizationId: string
-  secondary?: boolean
-}) {
+function CreatePolicyTokenButton({ organizationId }: { organizationId: string }) {
   const { openModal, closeModal } = useModal()
   return (
     <Button
       type="button"
       size="md"
-      variant={secondary ? 'outline' : 'solid'}
-      color={secondary ? 'neutral' : 'brand'}
       className="gap-1.5"
       onClick={() =>
         openModal({ content: <PolicyApiTokenCrudModal organizationId={organizationId} onClose={closeModal} /> })
@@ -304,19 +296,16 @@ export function AgentExperiencePolicyTokens() {
           title="No policy token yet"
           description="Create one per agent or pipeline, with a policy that says what it may do."
         >
-          <span className="flex items-center gap-2">
-            <CreatePolicyTokenButton organizationId={organizationId} secondary />
-            <ExternalLink
-              href="https://www.qovery.com/docs/configuration/organization/policy-examples/overview"
-              size="sm"
-            >
-              Policy examples
-            </ExternalLink>
-          </span>
+          <ExternalLink
+            href="https://www.qovery.com/docs/configuration/organization/policy-examples/overview"
+            size="sm"
+          >
+            Policy examples
+          </ExternalLink>
         </EmptyState>
       ) : (
         <Table.Root className="[&_[data-actor-kind]]:whitespace-normal [&_tr>:first-child]:max-w-sm [&_tr>:first-child]:[overflow-wrap:anywhere]">
-          <Table.Header className="whitespace-nowrap">
+          <Table.Header className="whitespace-nowrap text-xs text-neutral-subtle">
             <Table.Row>
               <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Role</Table.ColumnHeaderCell>

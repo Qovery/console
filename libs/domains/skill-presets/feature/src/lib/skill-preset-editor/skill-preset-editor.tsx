@@ -383,12 +383,7 @@ export function SkillPresetEditorForm({
   return (
     <FormProvider {...methods}>
       <Section>
-        <form
-          id="skill-preset-editor-top"
-          onSubmit={submit}
-          noValidate
-          className="flex flex-col gap-6 px-6 pt-6 md:px-8"
-        >
+        <form id="skill-preset-editor-top" onSubmit={submit} noValidate className="flex flex-col gap-6 px-6 pt-6">
           <div className="mb-2 flex flex-col gap-3 border-b border-neutral pb-6">
             <Link
               to="/organization/$organizationId/agents/skill-presets"
