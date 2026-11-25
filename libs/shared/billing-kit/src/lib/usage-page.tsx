@@ -11,8 +11,9 @@
  *
  *   <UsagePage organizationId={id} client={createPricingClient({ pricingApiUrl, getToken })} onNavigate={go} />
  */
+import * as Dialog from '@radix-ui/react-dialog'
 import { type ReactNode, useCallback, useEffect, useState } from 'react'
-import { Badge, Button, Callout, Icon, Modal } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Heading, Icon, Modal } from '@qovery/shared/ui'
 import { BillingAlerts } from './billing-alerts'
 import { BuildUsage } from './build-usage'
 import { CancelDialog, PlannedBanners } from './cancel'
@@ -152,17 +153,21 @@ function UsageRow({
         </span>
         <span className="flex items-center gap-3">
           {onDetails && (
-            <button type="button" className="font-medium text-brand hover:underline" onClick={onDetails}>
+            <button type="button" className="cursor-pointer font-medium text-brand hover:underline" onClick={onDetails}>
               View usage
             </button>
           )}
           {atLimit &&
             (onAsk ? (
-              <button type="button" className="font-medium text-brand hover:underline" onClick={onAsk}>
+              <button type="button" className="cursor-pointer font-medium text-brand hover:underline" onClick={onAsk}>
                 Ask an admin for more
               </button>
             ) : (
-              <button type="button" className="font-medium text-brand hover:underline" onClick={onUpgrade}>
+              <button
+                type="button"
+                className="cursor-pointer font-medium text-brand hover:underline"
+                onClick={onUpgrade}
+              >
                 Upgrade to get more
               </button>
             ))}
@@ -183,7 +188,9 @@ function SeriesModal({ series, onClose }: { series: UsageSeries; onClose: () => 
       width="min(860px, calc(100vw - 24px))"
     >
       <div className="p-6">
-        <h2 className="h4 text-neutral">{series.name}</h2>
+        <Dialog.Title asChild>
+          <Heading level={2}>{series.name}</Heading>
+        </Dialog.Title>
         <p className="mb-4 text-sm text-neutral-subtle">
           {series.kind === 'meter'
             ? 'Consumed per day and month to date, over three months.'

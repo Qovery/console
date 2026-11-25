@@ -4,6 +4,7 @@
  * none of it. The back office
  * passes its own client (staff previews, nothing applied).
  */
+import { z } from 'zod'
 import type {
   AwsMarketplace,
   BillingInfo,
@@ -37,6 +38,51 @@ import type {
   UpgradeRequest,
   UsageHistoryData,
 } from './types'
+
+const billingUsageSchema = z.object({
+  access: z.enum(['member', 'billing', 'demo']),
+  plan: z.object({ name: z.string() }),
+  billing: z.object({
+    currency: z.string().regex(/^[A-Z]{3}$/i),
+    period: z.enum(['month', 'year']),
+    term_end: z.string(),
+    locked: z.boolean(),
+  }),
+  status: z.object({ status: z.enum(['ok', 'payment_failed', 'locked']) }),
+  entitlements: z.array(
+    z.object({
+      sku: z.string(),
+      name: z.string(),
+      kind: z.enum(['feature', 'limit', 'meter']),
+      unit: z.string(),
+      value: z.union([z.number(), z.boolean(), z.literal('unlimited')]),
+      used: z.number(),
+      overage_unit_price: z.number(),
+    })
+  ),
+  notes: z.array(z.string()),
+  estimate: z
+    .object({ lines: z.array(z.object({ label: z.string(), amount: z.number() })), total: z.number() })
+    .nullish(),
+  spend: z
+    .object({
+      spent: z.number(),
+      account: z.object({ monthly_limit: z.number().nullable(), used_pct: z.number().nullish() }),
+    })
+    .nullish(),
+  usage_insights: z
+    .object({
+      series: z.array(
+        z.object({ sku: z.string(), points: z.array(z.object({ day: z.string(), quantity: z.number() })) })
+      ),
+      deployment_months: z.array(z.object({ month: z.string() })),
+      projection: z.array(z.object({ sku: z.string() })),
+      value: z
+        .object({ lines: z.array(z.object({ sku: z.string() })), per_unit: z.array(z.object({ label: z.string() })) })
+        .nullish(),
+    })
+    .nullish(),
+})
 
 export interface PricingClient {
   /** "live" applies plan changes; "preview" only quotes them (staff previews, demos). */
@@ -203,45 +249,56 @@ export function createPricingClient(o: ClientOptions): PricingClient {
   return {
     mode: 'live',
     publicPlans: () => req(o.pricingApiUrl, '/public/v1/plans', {}, false),
-    billingUsage: (org) => req(o.pricingApiUrl, `/organization/${org}/billingUsage`),
-    spendLimits: (org) => req(o.pricingApiUrl, `/organization/${org}/spendLimits`),
-    planOptions: (org) => req(o.pricingApiUrl, `/organization/${org}/planOptions`),
+    async billingUsage(org) {
+      const body = await req<BillingUsage>(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/billingUsage`)
+      if (!billingUsageSchema.safeParse(body).success) {
+        throw new BillingError(502, 'INVALID_RESPONSE', 'Invalid billing usage response')
+      }
+      return body
+    },
+    spendLimits: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/spendLimits`),
+    planOptions: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/planOptions`),
     quotePlanChange: (org, plan, period) =>
-      req(o.pricingApiUrl, `/organization/${org}/planChange`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/planChange`, {
         method: 'POST',
         body: JSON.stringify({ plan, period, dry_run: true }),
       }),
     changePlan: (org, plan, period, key) =>
-      req(o.pricingApiUrl, `/organization/${org}/planChange`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/planChange`, {
         method: 'POST',
         body: JSON.stringify({ plan, period, dry_run: false }),
         headers: { 'Idempotency-Key': key },
       }),
-    keepPlan: (org) => req(o.pricingApiUrl, `/organization/${org}/planChange/scheduled`, { method: 'DELETE' }),
-    cancellation: (org) => req(o.pricingApiUrl, `/organization/${org}/cancellation`),
+    keepPlan: (org) =>
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/planChange/scheduled`, { method: 'DELETE' }),
+    cancellation: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/cancellation`),
     cancel: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${org}/cancellation`, { method: 'POST', body: JSON.stringify(r) }),
-    keepSubscription: (org) => req(o.pricingApiUrl, `/organization/${org}/cancellation`, { method: 'DELETE' }),
-    credits: (org) => req(o.pricingApiUrl, `/organization/${org}/credits`),
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/cancellation`, {
+        method: 'POST',
+        body: JSON.stringify(r),
+      }),
+    keepSubscription: (org) =>
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/cancellation`, { method: 'DELETE' }),
+    credits: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/credits`),
     quoteCredits: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${org}/credits`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/credits`, {
         method: 'POST',
         body: JSON.stringify({ ...r, dry_run: true }),
       }),
     buyCredits: (org, r, key) =>
-      req(o.pricingApiUrl, `/organization/${org}/credits`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/credits`, {
         method: 'POST',
         body: JSON.stringify({ ...r, dry_run: false }),
         headers: { 'Idempotency-Key': key },
       }),
-    reactivation: (org) => req(o.pricingApiUrl, `/organization/${org}/reactivation`),
+    reactivation: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/reactivation`),
     quoteReactivation: (org, plan, period) =>
-      req(o.pricingApiUrl, `/organization/${org}/reactivation`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/reactivation`, {
         method: 'POST',
         body: JSON.stringify({ plan, period, dry_run: true }),
       }),
     reactivate: (org, plan, period, key) =>
-      req(o.pricingApiUrl, `/organization/${org}/reactivation`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/reactivation`, {
         method: 'POST',
         body: JSON.stringify({ plan, period, dry_run: false }),
         headers: { 'Idempotency-Key': key },
@@ -249,26 +306,31 @@ export function createPricingClient(o: ClientOptions): PricingClient {
     usageHistory: (org, r) =>
       req(
         o.pricingApiUrl,
-        `/organization/${org}/usageHistory?${new URLSearchParams({ from: r.from, to: r.to, ...(r.granularity ? { granularity: r.granularity } : {}) })}`
+        `/organization/${encodeURIComponent(org)}/usageHistory?${new URLSearchParams({ from: r.from, to: r.to, ...(r.granularity ? { granularity: r.granularity } : {}) })}`
       ),
-    buildUsage: (org, r) => req(o.pricingApiUrl, `/organization/${org}/buildUsage?${buildUsageQuery(r)}`),
-    offers: (org) => req(o.pricingApiUrl, `/organization/${org}/offers`),
+    buildUsage: (org, r) =>
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/buildUsage?${buildUsageQuery(r)}`),
+    offers: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/offers`),
     offerEvent: (org, id, event, surface) =>
-      req(o.pricingApiUrl, `/organization/${org}/offers/${id}/events`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/offers/${id}/events`, {
         method: 'POST',
         body: JSON.stringify({ event, surface }),
       }),
-    acceptOffer: (org, id) => req(o.pricingApiUrl, `/organization/${org}/offers/${id}/accept`, { method: 'POST' }),
+    acceptOffer: (org, id) =>
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/offers/${id}/accept`, { method: 'POST' }),
     requestUpgrade: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${org}/upgradeRequests`, { method: 'POST', body: JSON.stringify(r) }),
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/upgradeRequests`, {
+        method: 'POST',
+        body: JSON.stringify(r),
+      }),
     closeUpgradeRequest: (org, id, status) =>
-      req(o.pricingApiUrl, `/organization/${org}/upgradeRequests/${id}/close`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/upgradeRequests/${id}/close`, {
         method: 'POST',
         body: JSON.stringify({ status }),
       }),
-    emailPreferences: (org) => req(o.pricingApiUrl, `/organization/${org}/emailPreferences`),
+    emailPreferences: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/emailPreferences`),
     setEmailPreference: (org, category, enabled) =>
-      req(o.pricingApiUrl, `/organization/${org}/emailPreferences`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/emailPreferences`, {
         method: 'PUT',
         body: JSON.stringify({ category, enabled }),
       }),
@@ -276,42 +338,47 @@ export function createPricingClient(o: ClientOptions): PricingClient {
       const q = new URLSearchParams()
       if (page?.limit) q.set('limit', String(page.limit))
       if (page?.offset) q.set('offset', page.offset)
-      return req(o.pricingApiUrl, `/organization/${org}/invoices${q.size ? `?${q}` : ''}`)
+      return req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/invoices${q.size ? `?${q}` : ''}`)
     },
-    invoice: (org, id) => req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}`),
-    invoicePdf: (org, id) => req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}/pdf`),
+    invoice: (org, id) =>
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/invoices/${encodeURIComponent(id)}`),
+    invoicePdf: (org, id) =>
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/invoices/${encodeURIComponent(id)}/pdf`),
     collectInvoice: (org, id, key) =>
-      req(o.pricingApiUrl, `/organization/${org}/invoices/${encodeURIComponent(id)}/collect`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/invoices/${encodeURIComponent(id)}/collect`, {
         method: 'POST',
         headers: { 'Idempotency-Key': key },
       }),
-    paymentMethods: (org) => req(o.pricingApiUrl, `/organization/${org}/paymentMethods`),
+    paymentMethods: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/paymentMethods`),
     paymentMethodSession: (org, redirectUrl) =>
-      req(o.pricingApiUrl, `/organization/${org}/paymentMethods/session`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/paymentMethods/session`, {
         method: 'POST',
         body: JSON.stringify(redirectUrl ? { redirect_url: redirectUrl } : {}),
       }),
-    billingInfo: (org) => req(o.pricingApiUrl, `/organization/${org}/billingInfo`),
+    billingInfo: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/billingInfo`),
     saveBillingInfo: (org, info) =>
-      req(o.pricingApiUrl, `/organization/${org}/billingInfo`, { method: 'PUT', body: JSON.stringify(info) }),
-    awsMarketplace: (org) => req(o.pricingApiUrl, `/organization/${org}/awsMarketplace`),
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/billingInfo`, {
+        method: 'PUT',
+        body: JSON.stringify(info),
+      }),
+    awsMarketplace: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/awsMarketplace`),
     requestAwsOffer: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${org}/awsMarketplace/offerRequest`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/awsMarketplace/offerRequest`, {
         method: 'POST',
         body: JSON.stringify(r),
       }),
-    discounts: (org) => req(o.pricingApiUrl, `/organization/${org}/discounts`),
+    discounts: (org) => req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/discounts`),
     quoteDiscounts: (org, ids) =>
-      req(o.pricingApiUrl, `/organization/${org}/discounts/quote`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/discounts/quote`, {
         method: 'POST',
         body: JSON.stringify({ ids, dry_run: true }),
       }),
     requestDiscounts: (org, r) =>
-      req(o.pricingApiUrl, `/organization/${org}/discountRequests`, {
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/discountRequests`, {
         method: 'POST',
         body: JSON.stringify({ ids: r.ids, message: r.message ?? '', accept_terms: r.accept_terms }),
       }),
     withdrawDiscountRequest: (org, id) =>
-      req(o.pricingApiUrl, `/organization/${org}/discountRequests/${id}`, { method: 'DELETE' }),
+      req(o.pricingApiUrl, `/organization/${encodeURIComponent(org)}/discountRequests/${id}`, { method: 'DELETE' }),
   }
 }

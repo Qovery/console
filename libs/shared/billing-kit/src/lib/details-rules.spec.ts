@@ -1,6 +1,7 @@
 // The billing kit's rules for invoice details, build usage, discounts and payment methods, and the
 // calls the pricing-api client sends, from pricing-api's web/tests (invoice-details, build-usage,
 // discounts).
+import { billingUsageFactoryMock } from './billing-usage-factory.mock'
 import { buildUsageQuery, createPricingClient } from './client'
 import {
   amount,
@@ -443,7 +444,7 @@ describe('createPricingClient', () => {
   }
 
   it('should send each read and change to its pricing-api route', async () => {
-    const { client: c, sent } = setup()
+    const { client: c, sent } = setup({ status: 200, body: billingUsageFactoryMock() })
 
     await c.publicPlans()
     await c.billingUsage('o')

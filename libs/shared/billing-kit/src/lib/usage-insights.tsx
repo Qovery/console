@@ -229,8 +229,11 @@ function ValuePanel({ v }: { v: UsageValue }) {
               </div>
             </div>
             <div className="text-xs text-neutral-subtle sm:whitespace-nowrap sm:text-right">
-              {num(Math.min(l.used, l.included))} / {num(l.included)} {l.unit} × {money(l.unit_price, cur)} ={' '}
+              {num(l.included)} {l.unit} × {money(l.unit_price, cur)} ={' '}
               <span className="text-neutral">{money(l.included_value, cur)}</span>
+              <div>
+                {num(Math.min(l.used, l.included))} {l.unit} in use
+              </div>
             </div>
           </div>
         ))}
@@ -264,7 +267,7 @@ function ProjectionPanel({
   currency: string
   amounts: boolean
 }) {
-  const shown = items.filter((p) => p.used > 0 || p.included)
+  const shown = items.filter((p) => p.used > 0 || p.included != null)
   if (!shown.length) return null
   const d = shown[0]
   return (
@@ -278,7 +281,7 @@ function ProjectionPanel({
     >
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {shown.map((p) => {
-          const pct = p.included ? Math.round((100 * p.projected) / p.included) : null
+          const pct = p.included != null && p.included > 0 ? Math.round((100 * p.projected) / p.included) : null
           const tone =
             p.projected_over > 0 ? 'text-negative' : pct != null && pct >= 85 ? 'text-warning' : 'text-positive'
           return (
@@ -289,7 +292,7 @@ function ProjectionPanel({
               </div>
               <div className="text-xs text-neutral-subtle">
                 {num(p.used)} so far, about {num(p.daily_pace)} per day
-                {p.included ? ` · ${num(p.included)} included` : ' · unlimited'}
+                {p.included != null ? ` · ${num(p.included)} included` : ' · unlimited'}
               </div>
               <div className={`mt-2 text-xs font-medium ${tone}`}>
                 {p.projected_over > 0 ? (
@@ -313,19 +316,22 @@ function ProjectionPanel({
 
 function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[]; currency: string; amounts: boolean }) {
   if (!months.length) return null
-  const inc = months[months.length - 1]?.included
+  const inc = months[0].included
+  const commonAllowance = inc != null && months.every((month) => month.included === inc) ? inc : null
   const data = months.map((m) => ({
     label: monthLabel(m.month),
     fullTime: m.month,
     build: Math.round(m.build_minutes),
     deploy: Math.round(m.deploy_minutes),
   }))
-  const top = Math.max(inc ?? 0, ...months.map((m) => m.minutes)) * 1.1
+  const top = Math.max(commonAllowance ?? 0, ...months.map((m) => m.minutes)) * 1.1
   return (
     <Panel
       title="Deployment minutes per month"
       aside={
-        inc != null ? <span className="text-xs text-neutral-subtle">{num(inc)} included per month</span> : undefined
+        commonAllowance != null ? (
+          <span className="text-xs text-neutral-subtle">{num(commonAllowance)} included per month</span>
+        ) : undefined
       }
     >
       <Chart.Container className="h-[200px]" isEmpty={false}>
@@ -342,7 +348,9 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
               />
             }
           />
-          {inc != null && <ReferenceLine y={inc} stroke="var(--warning-9)" strokeDasharray="4 4" />}
+          {commonAllowance != null && (
+            <ReferenceLine y={commonAllowance} stroke="var(--warning-9)" strokeDasharray="4 4" />
+          )}
           <Bar dataKey="build" name="build" stackId="m" fill="var(--brand-9)" isAnimationActive={false} />
           <Bar dataKey="deploy" name="deploy" stackId="m" fill="var(--info-9)" isAnimationActive={false} />
         </BarChart>
@@ -356,7 +364,7 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
           <span className="h-2 w-2 rounded-sm bg-[var(--info-9)]" />
           Deploy
         </span>
-        {inc != null && (
+        {commonAllowance != null && (
           <span className="inline-flex items-center gap-1.5">
             <span className="w-3 border-t border-dashed border-[var(--warning-9)]" />
             Included per month
@@ -372,6 +380,7 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
               <th className="py-1 pr-4 text-right font-medium">Build</th>
               <th className="py-1 pr-4 text-right font-medium">Deploy</th>
               <th className="py-1 pr-4 text-right font-medium">Above the plan</th>
+              <th className="py-1 pr-4 text-right font-medium">Included</th>
               {amounts && <th className="py-1 text-right font-medium">Estimated cost</th>}
             </tr>
           </thead>
@@ -395,6 +404,9 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
                 <td className={`py-1.5 pr-4 text-right ${m.over_minutes > 0 ? 'text-warning' : 'text-neutral-subtle'}`}>
                   {m.over_minutes > 0 ? `${num(m.over_minutes)} min` : 'none'}
                 </td>
+                <td className="py-1.5 pr-4 text-right text-neutral">
+                  {m.included != null ? `${num(m.included)} min` : 'Unlimited'}
+                </td>
                 {amounts && <td className="py-1.5 text-right text-neutral">{money(m.cost, currency)}</td>}
               </tr>
             ))}
@@ -417,7 +429,7 @@ function HistoryPanel({
   const s = series.find((x) => x.sku === pick) ?? series[0]
   if (!s) return null
   const last = s.points[s.points.length - 1]?.quantity ?? 0
-  const first = s.points.find((p) => p.quantity > 0)?.quantity ?? 0
+  const first = s.points[0]?.quantity ?? 0
   const change = s.kind === 'limit' && first > 0 ? Math.round((100 * (last - first)) / first) : null
   return (
     <Panel
