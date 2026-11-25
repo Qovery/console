@@ -1,4 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import clsx from 'clsx'
 import { type ReactNode } from 'react'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -30,7 +31,7 @@ export function AgentExperiencePage({
   children: ReactNode
 }) {
   return (
-    <Section className={layout === 'dashboard' ? 'p-6' : 'px-6 pb-8 pt-6 md:px-8'}>
+    <Section className={clsx('px-6 pt-6', layout === 'dashboard' ? 'pb-6' : 'pb-8 md:px-8')}>
       {layout === 'dashboard' ? (
         <header className="mb-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
@@ -51,7 +52,7 @@ export function AgentExperiencePage({
           {action}
         </SettingsHeading>
       )}
-      <div className={`flex flex-col gap-6 ${width === 'reading' ? 'max-w-content-with-navigation-left' : ''}`}>
+      <div className={clsx('flex flex-col gap-6', width === 'reading' && 'max-w-content-with-navigation-left')}>
         {children}
       </div>
     </Section>
