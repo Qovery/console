@@ -203,7 +203,7 @@ function SkillPresetHistoryPage() {
 
   if (isLoading) {
     return (
-      <Section className="flex flex-col gap-4 px-6 pt-6 md:px-8">
+      <Section className="flex flex-col gap-4 px-6 pt-6">
         <Skeleton width={260} height={24} show />
         <Skeleton height={320} className="w-full" show />
       </Section>
@@ -213,7 +213,7 @@ function SkillPresetHistoryPage() {
   const errorStatus = getSkillPresetErrorStatus(error)
   if (error && (!revisions.length || errorStatus === 401 || errorStatus === 403)) {
     return (
-      <Section className="px-6 pt-6 md:px-8">
+      <Section className="px-6 pt-6">
         <LoadError title="The history could not be loaded" error={error} onRetry={() => refetch()} />
       </Section>
     )
@@ -221,7 +221,7 @@ function SkillPresetHistoryPage() {
 
   if (!latest || !selected || !selectedEntry) {
     return (
-      <Section className="px-6 pt-6 md:px-8">
+      <Section className="px-6 pt-6">
         <Callout.Root color="neutral">
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
@@ -242,7 +242,7 @@ function SkillPresetHistoryPage() {
   const review = reviewSummary(selected)
 
   return (
-    <Section className="flex flex-col gap-6 px-6 pb-8 pt-6 md:px-8">
+    <Section className="flex flex-col gap-6 px-6 pb-8 pt-6">
       {Boolean(error) && <LoadError title="The history could not be refreshed" error={error} onRetry={refetch} />}
       <div className="flex flex-col gap-3">
         <Link

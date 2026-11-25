@@ -142,8 +142,12 @@ export function AgentExperienceAutomations() {
                   <Table.Cell className="border-r py-2 text-neutral-subtle [overflow-wrap:anywhere]">
                     {task.project_name}
                   </Table.Cell>
-                  <Table.Cell className="py-2 text-neutral-subtle [overflow-wrap:anywhere]">
-                    {task.environment_name}
+                  <Table.Cell className="py-2 text-neutral-subtle">
+                    <Tooltip content={task.environment_name} classNameContent="[overflow-wrap:anywhere]">
+                      <span tabIndex={0} className="block truncate">
+                        {task.environment_name}
+                      </span>
+                    </Tooltip>
                   </Table.Cell>
                 </Table.Row>
               )
