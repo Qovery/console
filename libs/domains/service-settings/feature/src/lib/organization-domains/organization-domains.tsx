@@ -87,10 +87,6 @@ function OrganizationDomainsSkeletonRows() {
   ))
 }
 
-// TEMPORARY: the admin-only restriction is turned off so non-admins can try the page.
-// Set back to `true` (and un-skip the spec test) before merging.
-const RESTRICT_TO_ADMINS = false
-
 export function OrganizationDomains() {
   useDocumentTitle('Domains - Organization')
   const { organizationId = '' } = useParams({ strict: false })
@@ -99,13 +95,13 @@ export function OrganizationDomains() {
     (role) => role === `organization:${organizationId}:admin` || role === `organization:${organizationId}:owner`
   )
 
-  if (RESTRICT_TO_ADMINS && loading)
+  if (loading)
     return (
       <div className="container mx-auto mt-6 flex justify-center py-12">
         <LoaderSpinner />
       </div>
     )
-  if (RESTRICT_TO_ADMINS && !isAdmin)
+  if (!isAdmin)
     return (
       <div className="container mx-auto mt-6 pb-28">
         <EmptyState
