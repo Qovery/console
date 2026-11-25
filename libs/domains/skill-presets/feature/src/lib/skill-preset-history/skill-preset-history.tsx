@@ -203,7 +203,7 @@ function SkillPresetHistoryPage() {
 
   if (isLoading) {
     return (
-      <Section className="flex flex-col gap-4 px-8 pt-6">
+      <Section className="flex flex-col gap-4 px-6 pt-6 md:px-8">
         <Skeleton width={260} height={24} show />
         <Skeleton height={320} className="w-full" show />
       </Section>
@@ -213,7 +213,7 @@ function SkillPresetHistoryPage() {
   const errorStatus = getSkillPresetErrorStatus(error)
   if (error && (!revisions.length || errorStatus === 401 || errorStatus === 403)) {
     return (
-      <Section className="px-8 pt-6">
+      <Section className="px-6 pt-6 md:px-8">
         <LoadError title="The history could not be loaded" error={error} onRetry={() => refetch()} />
       </Section>
     )
@@ -221,7 +221,7 @@ function SkillPresetHistoryPage() {
 
   if (!latest || !selected || !selectedEntry) {
     return (
-      <Section className="px-8 pt-6">
+      <Section className="px-6 pt-6 md:px-8">
         <Callout.Root color="neutral">
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
