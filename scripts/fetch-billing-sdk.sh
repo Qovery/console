@@ -10,6 +10,10 @@ cd "$root"
 yarn="$root/.yarn/releases/yarn-berry.cjs"
 registry=$(node "$yarn" config get npmRegistryServer)
 cache=$(node "$yarn" config get cacheFolder)
+mirror=$(node "$yarn" config get enableMirror)
+if [ "$(node "$yarn" config get enableGlobalCache)" = true ]; then
+  mirror=false
+fi
 if [ "$registry" != 'https://npm-registry.qovery.com' ]; then
   echo 'The Billing SDK token requires the Qovery npm registry.' >&2
   exit 1
@@ -32,8 +36,9 @@ YARN_NPM_REGISTRY_SERVER="$registry" \
   YARN_NPM_AUTH_TOKEN="$QOVERY_NPM_READ_TOKEN" \
   YARN_NPM_ALWAYS_AUTH=true \
   YARN_CACHE_FOLDER="$scratch/cache" \
+  YARN_GLOBAL_FOLDER="$scratch/global" \
   YARN_ENABLE_GLOBAL_CACHE=false \
-  YARN_ENABLE_MIRROR=false \
+  YARN_ENABLE_MIRROR="$mirror" \
   YARN_ENABLE_IMMUTABLE_INSTALLS=false \
   node "$yarn" install --mode=skip-build
 
