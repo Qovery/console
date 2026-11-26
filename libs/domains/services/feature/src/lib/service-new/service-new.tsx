@@ -6,6 +6,7 @@ import {
   type LifecycleTemplateListResponseResultsInner,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
+import { useBillingPaywall } from '@qovery/shared/billing/feature'
 import { Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
@@ -17,7 +18,7 @@ import {
   isBlueprintCompatibleWithCluster,
 } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
-import { BlueprintCard } from './blueprint-card/blueprint-card'
+import { BlueprintCard, type BlueprintLock } from './blueprint-card/blueprint-card'
 import { BlueprintMissingModal } from './blueprint-missing-modal/blueprint-missing-modal'
 import { BaseServiceCard, Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
 import { getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
@@ -101,11 +102,13 @@ function BlueprintSection({
   cloudProvider,
   onBlueprintSearchInputChange,
   onViewDetails,
+  lock,
 }: {
   blueprintSearchInput: string
   cloudProvider?: CloudProviderEnum | string
   onBlueprintSearchInputChange: (value: string) => void
   onViewDetails: (blueprint: BlueprintItem) => void
+  lock?: BlueprintLock
 }) {
   const { organizationId = '' } = useParams({ strict: false })
   const { data: blueprintCatalog } = useBlueprintCatalog({
@@ -188,6 +191,7 @@ function BlueprintSection({
                     key={`${blueprint.provider}-${blueprint.name}`}
                     blueprint={blueprint}
                     onViewDetails={onViewDetails}
+                    lock={lock}
                   />
                 ))}
               </div>
@@ -218,7 +222,7 @@ export function ServiceNew({
 }: ServiceNewProps) {
   const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
   const isServiceCatalogEnabled = Boolean(useFeatureFlagEnabled('service-catalog'))
-  const { showPylonForm } = useSupportChat()
+  const { showPylonForm, showChat } = useSupportChat()
 
   const serviceEmpty: ServiceBlock[] = useMemo(
     () => [
@@ -283,10 +287,32 @@ export function ServiceNew({
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
   const [selectedBlueprint, setSelectedBlueprint] = useState<BlueprintItem | null>(null)
   const [isBlueprintDetailsOpen, setIsBlueprintDetailsOpen] = useState(false)
+  // Blueprints can be outside the plan: the list stays browsable and base services are never gated;
+  // opening a blueprint (its details or Deploy) opens the full-page paywall.
+  const paywall = useBillingPaywall(
+    organizationId,
+    { actions: isServiceCatalogEnabled ? ['blueprint.create'] : [] },
+    { onContactSales: showChat, variant: 'page' }
+  )
+  const blueprintGate = paywall.gate('blueprint.create')
+  const blueprintLock: BlueprintLock | undefined =
+    blueprintGate && paywall.locked('blueprint.create')
+      ? {
+          gate: blueprintGate,
+          open: () => {
+            setIsBlueprintDetailsOpen(false)
+            paywall.open('blueprint.create')
+          },
+        }
+      : undefined
 
   const openBlueprintDetails = (blueprint: BlueprintItem) => {
-    setSelectedBlueprint(blueprint)
-    setIsBlueprintDetailsOpen(true)
+    if (blueprintLock) return blueprintLock.open()
+    // Blueprints in the plan: the first time, the intro says so (when staff turned it on), then the details open.
+    paywall.proceed('blueprint.create', () => {
+      setSelectedBlueprint(blueprint)
+      setIsBlueprintDetailsOpen(true)
+    })
   }
 
   return (
@@ -318,6 +344,7 @@ export function ServiceNew({
               cloudProvider={cloudProvider}
               onBlueprintSearchInputChange={setBlueprintSearchInput}
               onViewDetails={openBlueprintDetails}
+              lock={blueprintLock}
             />
           </BlueprintQueryBoundary>
         )}
@@ -409,7 +436,9 @@ export function ServiceNew({
         open={isBlueprintDetailsOpen}
         onOpenChange={setIsBlueprintDetailsOpen}
         onExitComplete={() => setSelectedBlueprint(null)}
+        lock={blueprintLock}
       />
+      {paywall.element}
     </>
   )
 }

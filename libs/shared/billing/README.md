@@ -1,7 +1,8 @@
 # Billing
 
 The Console integration of the billing kit from `pricing-api` (`web/src/billing-kit`), copied from commit
-`86e2568e1940ad8e57e003fb8df14eff0fdceed7` (2026-11-20).
+`2076d94` (2026-11-21). The offers and proposals are from `1300b8b`, the gated previews from `f8630a5`, and
+the types, client, rules and paywall components from `1dced41` (2026-11-23, paywall intros).
 
 - `@qovery/shared/billing/data-access` owns the pricing-api client, transport and wire types.
 - `@qovery/shared/billing/feature` owns the billing screens, hooks and UI rules. Its `src/lib` groups code by

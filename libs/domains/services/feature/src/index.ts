@@ -120,6 +120,7 @@ export * from './lib/service-creation-flow/database/step-resources/step-resource
 export * from './lib/service-creation-flow/database/database-summary-view/database-summary-view'
 export * from './lib/service-creation-flow/database/step-summary/step-summary'
 export * from './lib/service-creation-flow/blueprint/blueprint-creation-flow'
+export * from './lib/service-creation-flow/blueprint/blueprint-paywall/blueprint-paywall'
 export * from './lib/blueprint-field-utils/blueprint-field-utils'
 export * from './lib/blueprint-manifest-variable-input/blueprint-manifest-variable-input'
 export * from './lib/hooks/use-deploy-blueprint/use-deploy-blueprint'

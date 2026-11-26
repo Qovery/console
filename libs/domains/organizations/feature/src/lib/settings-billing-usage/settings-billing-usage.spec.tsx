@@ -5,6 +5,7 @@ import {
   type Cancellation,
   type Credits,
   type PlanOptions,
+  type PlanProposal,
   type Quote,
   type Reactivation,
   type UsageHistoryData,
@@ -12,7 +13,7 @@ import {
   createPricingClient,
 } from '@qovery/shared/billing/data-access'
 import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
-import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import {
   BILLING_USAGE_FEATURE_FLAG,
   BillingUsageView,
@@ -277,6 +278,45 @@ const journeyRoutes = (change?: PlanOptions['change'], unavailable?: Cancellatio
   '/cancellation': () => jsonResponse(200, cancellation(unavailable)),
   '/usageHistory': () => jsonResponse(200, usageHistory),
 })
+
+const proposal: PlanProposal = {
+  id: 7,
+  plan: { code: 'scale', name: 'Scale', version: 1 },
+  period: 'year',
+  currency: 'USD',
+  sender_name: 'Ada Lovelace',
+  message: 'Scale covers your clusters without add-ons.',
+  headline: 'about $2,400 less a year at your current usage',
+  concession: { kind: 'discount', percent: 10, months: 6, label: '10% off the plan and add-ons for 6 months' },
+  current: { plan_name: 'Growth', yearly: 1078800 },
+  proposed: { plan_name: 'Scale', yearly: 838800 },
+  differences: [],
+  status: 'sent',
+  expires_at: '2026-12-21T23:59:59Z',
+  sent_at: '2026-11-21T10:00:00Z',
+  snooze_days: [3, 7, 14],
+  dismiss_reasons: [{ value: 'price', label: 'The price' }],
+  change: { available: true },
+}
+
+const proposalRoutes = () => ({
+  ...journeyRoutes(),
+  '/proposals': () => jsonResponse(200, { proposal }),
+  '/proposals/7/view': () => jsonResponse(204, null),
+  '/proposals/7/dismiss': () => jsonResponse(200, { status: 'dismissed' }),
+  '/proposals/7/snooze': () => jsonResponse(200, { status: 'snoozed', snoozed_until: '2026-11-28T10:00:00Z' }),
+  '/proposals/7/accept': () =>
+    jsonResponse(200, {
+      applied: false,
+      quote: quote('scale', 224910),
+      concession: { label: '10% off the plan and add-ons for 6 months', percent: 10, amount: 24990 },
+    }),
+})
+
+const bodyOf = (fetchMock: jest.Mock, suffix: string) =>
+  (fetchMock.mock.calls as unknown as [string, RequestInit][])
+    .filter(([url]) => url.endsWith(suffix))
+    .map(([, init]) => JSON.parse(String(init?.body ?? 'null')))
 
 describe('BillingUsageView', () => {
   it('should call pricing-api with the user token', async () => {
@@ -545,6 +585,73 @@ describe('BillingUsageView', () => {
     })
   })
 
+  it('should show a plan proposal to billing roles and review it through the proposal, with its concession', async () => {
+    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const { userEvent } = renderWithProviders(<BillingUsageView />)
+
+    expect(
+      await screen.findByText('Ada Lovelace from Qovery suggests Scale: about $2,400 less a year at your current usage')
+    ).toBeInTheDocument()
+    expect(calledPaths(fetchMock)).toContain('/organization/org-northwind/proposals/7/view')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Review' }))
+    expect(await screen.findByText(/already taken off above/)).toBeInTheDocument()
+    expect(bodyOf(fetchMock, '/proposals/7/accept')).toEqual([{ dry_run: true }])
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+    expect(sentTo(fetchMock, '/proposals/7/accept')).toEqual([
+      { body: { dry_run: true }, key: undefined },
+      { body: { dry_run: false }, key: expect.any(String) },
+    ])
+    expect(sentTo(fetchMock, '/proposals/7/accept')[1].key).not.toBe('')
+    expect(calledPaths(fetchMock).some((path) => path.endsWith('/planChange'))).toBe(false)
+  })
+
+  it('should dismiss a plan proposal with a reason and hide it', async () => {
+    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const { userEvent } = renderWithProviders(<BillingUsageView />)
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Dismiss' }))
+    await userEvent.click(screen.getByText('The price'))
+    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Dismiss' }))
+
+    expect(bodyOf(fetchMock, '/proposals/7/dismiss')).toEqual([{ reason: 'price' }])
+    await waitFor(() => expect(screen.queryByText(/from Qovery suggests Scale/)).not.toBeInTheDocument())
+  })
+
+  it('should snooze a plan proposal for the chosen time and hide it', async () => {
+    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const { userEvent } = renderWithProviders(<BillingUsageView />)
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Remind me later' }))
+    await userEvent.click(screen.getByRole('button', { name: '1 week' }))
+
+    expect(bodyOf(fetchMock, '/proposals/7/snooze')).toEqual([{ days: 7 }])
+    await waitFor(() => expect(screen.queryByText(/from Qovery suggests Scale/)).not.toBeInTheDocument())
+  })
+
+  it('should not read plan proposals for members', async () => {
+    const fetchMock = mockUsage(billingUsageFactoryMock('member'), proposalRoutes())
+    renderWithProviders(<BillingUsageView />)
+
+    expect(await screen.findByText('Growth')).toBeInTheDocument()
+    expect(calledPaths(fetchMock).some((path) => path.includes('/proposals'))).toBe(false)
+  })
+
+  it('should open the proposal review from the email link', async () => {
+    const originalUrl = window.location.href
+    window.history.pushState({}, '', '/organization/org-northwind/settings/billing?proposal=7')
+    try {
+      const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+      renderWithProviders(<BillingUsageView />)
+
+      expect(await screen.findByText(/already taken off above/)).toBeInTheDocument()
+      expect(bodyOf(fetchMock, '/proposals/7/accept')).toEqual([{ dry_run: true }])
+      expect(calledPaths(fetchMock).filter((path) => path.endsWith('/proposals'))).toHaveLength(1)
+    } finally {
+      window.history.replaceState({}, '', originalUrl)
+    }
+  })
+
   it('should show members their prepaid balances, never prices or the buy button', async () => {
     const usage = {
       ...billingUsageFactoryMock('member'),
@@ -673,7 +780,7 @@ describe('SettingsBillingUsage', () => {
 })
 
 describe('pickConsoleCalls', () => {
-  it('should mount plan changes, cancellation, reactivation, prepaid credits, usage history, build usage, invoice details and discounts, and leave offers and emails out', () => {
+  it('should mount plan changes, cancellation, reactivation, prepaid credits, usage history, build usage, invoice details, discounts, paywalls and plan proposals, and leave offers and emails out', () => {
     const calls = pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
@@ -704,10 +811,24 @@ describe('pickConsoleCalls', () => {
       'quoteDiscounts',
       'requestDiscounts',
       'withdrawDiscountRequest',
+      'gates',
+      'gateEvent',
+      'trials',
+      'startTrial',
+      'setTrialContinue',
+      'quoteAddon',
+      'buyAddon',
+      'requestUpgrade',
+      'proposals',
+      'viewProposal',
+      'snoozeProposal',
+      'dismissProposal',
+      'quoteProposal',
+      'acceptProposal',
     ] as const) {
       expect(calls[name]).toEqual(expect.any(Function))
     }
-    for (const name of ['offers', 'offerEvent', 'acceptOffer', 'requestUpgrade', 'emailPreferences'] as const) {
+    for (const name of ['offers', 'offerEvent', 'acceptOffer', 'emailPreferences'] as const) {
       expect(calls[name]).toBeUndefined()
     }
   })

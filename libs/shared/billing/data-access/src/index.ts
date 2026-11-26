@@ -1,4 +1,5 @@
-export { BillingError, buildUsageQuery, createPricingClient } from './lib/billing-data-access'
+export { BillingError, buildUsageQuery, createPricingClient, gatesQuery } from './lib/billing-data-access'
 export type { ClientOptions, PricingClient } from './lib/billing-data-access'
 export type * from './lib/billing.types'
 export { billingUsageFactoryMock } from './lib/billing-usage-factory.mock'
+export { createPricingFetchAdapter } from './lib/pricing-transport'

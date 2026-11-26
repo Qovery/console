@@ -160,7 +160,29 @@ export interface BillingUsage {
   spend?: Spend
   usage_insights?: UsageInsights
   status: { status: 'ok' | 'payment_failed' | 'locked'; grace_until?: string; message?: string }
+  /** The trial a new organization started with, while it runs. Absent from older servers. */
+  signup_trial?: SignupTrial
   notes: string[]
+}
+
+/**
+ * A new organization's trial: the plan tried, its end, and what happens then: the Free plan
+ * (on_end free, then_plan_name) or new resources paused until a plan is chosen (lock). keep: a
+ * billing role chose to keep the plan, charged to the card on file; keep_amount (billing roles):
+ * the plan's monthly price. chosen_plan_name: a plan chosen during the trial, starting at its end.
+ */
+export interface SignupTrial {
+  plan: string
+  plan_name: string
+  ends_at: string
+  days_left: number
+  on_end: 'free' | 'lock'
+  then_plan?: string
+  then_plan_name?: string
+  keep: boolean
+  keep_amount?: number
+  currency: string
+  chosen_plan_name?: string
 }
 
 /** A builder size. Listed sizes show on the pricing page and in the picker; the others are on request. saving: % less than its resources (big builders). */
@@ -307,6 +329,49 @@ export interface EmailPreferences {
   categories: EmailCategory[]
 }
 
+// ---- plan proposals (GET /organization/{id}/proposals): a plan Qovery staff suggest, billing roles only
+export type ProposalDismissReason = 'price' | 'timing' | 'not_needed' | 'other'
+export interface ProposalDifference {
+  sku: string
+  name: string
+  from: string
+  to: string
+  tag: 'better' | 'less' | 'new' | 'cost'
+}
+export interface PlanProposal {
+  id: number
+  plan: { code: string; name: string; version: number }
+  period: Period
+  currency: string
+  /** Who sent it, and their message (plain text). sender_name is the person at Qovery, or "The
+   * Qovery team" when send_as is team (no personal name then); absent from older pricing-api. */
+  sender_name?: string
+  send_as?: 'person' | 'team'
+  message: string
+  /** The banner's one line: what it saves, what it covers, the concession, or the message's start. */
+  headline: string
+  /** The concession as an offer ("10% off Scale for 6 months"); absent without one, or from older pricing-api. */
+  offer?: string
+  concession: { kind: 'discount' | 'price'; percent?: number; months?: number; amount?: number; label: string } | null
+  /** Per year at today's usage; null when on request or not possible. */
+  current: { plan_name: string; yearly: number | null }
+  proposed: { plan_name: string; yearly: number | null }
+  differences: ProposalDifference[]
+  status: 'sent' | 'viewed' | 'snoozed'
+  expires_at: string
+  sent_at: string
+  /** A signed, read-only page with the full comparison, when staff attached it. */
+  comparison_url?: string
+  snooze_days: number[]
+  dismiss_reasons: { value: ProposalDismissReason; label: string }[]
+  /** Whether a confirm would go through (as planOptions says it). */
+  change?: Availability
+  preview?: boolean
+}
+export interface Proposals {
+  proposal: PlanProposal | null
+}
+
 // ---- plan picker and plan change (pricing-api's customer API)
 export interface Quote {
   direction: 'upgrade' | 'downgrade' | 'migrate' | 'same'
@@ -376,6 +441,8 @@ export interface PlanChangeResult {
   quote: Quote
   bill?: PlanChangeBill
   discount?: { label: string; percent: number; amount: number } | null
+  /** A plan proposal's concession, already taken off the quote's total (accepting a proposal). */
+  concession?: { label: string; percent?: number; amount: number } | null
   change?: Availability
   duplicate?: boolean
   scheduled_change?: ScheduledChange | null
@@ -905,8 +972,15 @@ export interface Discounts {
   discounts: DiscountType[]
   granted: string[]
   requests: DiscountRequest[]
+  /**
+   * Discounts already included in the contract (negotiated with Qovery): shown ticked and locked,
+   * never asked for again. contract_points: theirs added up, counted toward max_percent.
+   * Absent from an older pricing-api.
+   */
+  in_contract?: DiscountType[]
+  contract_points?: number
 }
-/** A dry run of a selection: points add up (capped at max_percent) on plan and add-ons. */
+/** A dry run of a selection: points add up (capped at max_percent, with the contract's points) on plan and add-ons. */
 export interface DiscountQuote {
   ids: string[]
   points: number
@@ -915,6 +989,8 @@ export interface DiscountQuote {
   capped: boolean
   currency: string
   period: Period
+  /** Points already in the contract: not in percent, but counted toward max_percent. */
+  contract_points?: number
   price_before: number
   price_after: number
   saving: number
@@ -923,3 +999,145 @@ export interface DiscountQuote {
   discount_until: string
   term_months: number
 }
+
+// ---- feature gates, paywalls and feature trials (pricing-api's customer API, 3.4i)
+export type GateReason =
+  | ''
+  | 'not_in_plan'
+  | 'limit_reached'
+  | 'trial_used'
+  | 'payment_required'
+  | 'account_locked'
+  | 'not_linked'
+  | 'unknown_action'
+  | 'trial_active'
+  | 'not_applicable'
+export type PaywallOptionType =
+  | 'start_trial'
+  | 'upgrade'
+  | 'addon'
+  | 'request_admin'
+  | 'contact_sales'
+  | 'update_payment'
+export interface PaywallOption {
+  type: PaywallOptionType
+  label: string
+  detail?: string
+  recommended?: boolean
+  // start_trial
+  days?: number
+  includes?: string
+  end_behaviour?: string
+  // upgrade, addon
+  plan?: string
+  plan_name?: string
+  addon?: string
+  addon_name?: string
+  amount?: number
+  difference?: number
+  period?: Period
+  currency?: string
+}
+export interface PaywallInfo {
+  sku: string
+  title: string
+  message: string
+  headline: string
+  benefits: string[]
+  media?: { url: string; kind: 'image' | 'video' }
+  /** The same feature used from Claude Code, when staff set one (the full page's second preview). */
+  claude_media?: { url: string; kind: 'image' | 'video' }
+  /** The documentation behind "Learn more". Absent from older servers and when staff set none. */
+  learn_more_url?: string
+  options: PaywallOption[]
+  /** Who the options were ranked for: a billing role (also the check's 402) or a member. */
+  audience: 'billing' | 'member'
+  /** Why no trial is offered (used, disabled, sales_led…); absent when one is. */
+  trial_block?: string
+}
+/**
+ * The paywall shown once to a person whose plan already includes the feature ("Show when
+ * included", staff turn it on per paywall), so they learn it is there: what it does and a single
+ * button (cta, "Continue") that goes on with the action. No trial, upgrade or add-on.
+ */
+export interface GateIntro {
+  sku: string
+  title: string
+  headline: string
+  benefits: string[]
+  media?: { url: string; kind: 'image' | 'video' }
+  claude_media?: { url: string; kind: 'image' | 'video' }
+  learn_more_url?: string
+  /** The plan that includes it; absent when something else gives it (an add-on, a contract). */
+  plan?: { code: string; name: string }
+  cta: string
+}
+export interface Gate {
+  action?: string
+  sku: string
+  name: string
+  allowed: boolean
+  reason: GateReason
+  limit: Value
+  used: number
+  requested: number
+  trial?: { until: string }
+  paywall?: PaywallInfo
+  /** Allowed, and this person has not seen the feature's intro in this organization (added November 2026). */
+  intro?: GateIntro
+}
+export interface Gates {
+  organization_id: string
+  access: 'member' | 'billing' | 'demo'
+  gates: Gate[]
+}
+export interface TrialContinue {
+  type: 'plan' | 'addon'
+  code: string
+  name: string
+  period: Period
+  text?: string
+}
+export interface CustomerTrial {
+  id: number
+  sku: string
+  name: string
+  what: string
+  status: 'active' | 'converted' | 'grace' | 'cleanup_due' | 'cleaned' | 'cancelled'
+  source: 'offer' | 'paywall'
+  started_at: string
+  ends_at: string
+  grace_until?: string | null
+  started_by?: string
+  continue?: TrialContinue | null
+}
+export interface TrialStartRequest {
+  sku?: string
+  action?: string
+  continue?: { plan?: string; addon?: string; period?: Period }
+  accept_auto_charge?: boolean
+}
+export interface TrialStartResult {
+  trial: CustomerTrial
+  gate: Gate
+  preview?: boolean
+}
+export interface AddonQuote {
+  code: string
+  name: string
+  quantity: number
+  unit_amount: number
+  amount: number
+  period: Period
+  currency: string
+}
+export interface AddonPurchaseResult {
+  applied: boolean
+  quote?: AddonQuote
+  buy?: Availability
+  duplicate?: boolean
+  preview?: boolean
+}
+export type PaywallEvent = 'shown' | 'clicked' | 'dismissed'
+/** What a person did with an intro: shown, then went on with the action (continued) or closed it (dismissed). */
+export type IntroAction = 'shown' | 'continued' | 'dismissed'

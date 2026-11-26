@@ -82,7 +82,7 @@ export function CompactSelect({
             <span className="min-w-0 flex-1 truncate">
               {current ? current.label : <span className="text-neutral-subtle">Select…</span>}
             </span>
-            <Icon iconName="angles-up-down" className="shrink-0 text-xs text-neutral-subtle" />
+            <Icon iconName="angles-up-down" className="shrink-0 text-sm text-neutral-subtle" />
           </button>
         </Popover.Trigger>
         <Popover.Content align="start" className="z-dropdown flex w-[320px] max-w-[calc(100vw-24px)] flex-col p-2">
@@ -95,7 +95,7 @@ export function CompactSelect({
                 />
                 <CommandMenu.Input
                   autoFocus
-                  placeholder="Search..."
+                  placeholder="Search…"
                   value={q}
                   onValueChange={setQ}
                   className="h-9 rounded-sm border border-neutral bg-surface-neutral py-0 pl-9 pr-3 text-sm"
@@ -105,9 +105,7 @@ export function CompactSelect({
             {!searchable && <Command.Input readOnly className="sr-only" />}
             <CommandMenu.List ref={listRef} className="max-h-72 [&>[cmdk-list-sizer]]:mx-0 [&>[cmdk-list-sizer]]:my-0">
               <CommandMenu.Empty>
-                <p className="px-3 py-4 text-center text-xs font-medium text-neutral-subtle">
-                  No result for this search
-                </p>
+                <p className="px-3 py-4 text-center text-sm text-neutral-subtle">No result for this search</p>
               </CommandMenu.Empty>
               {shown.map((o) => (
                 <CommandMenu.Item
@@ -121,14 +119,14 @@ export function CompactSelect({
                   <Icon
                     iconName="check"
                     className={twMerge(
-                      'shrink-0 text-xs text-positive',
+                      'shrink-0 text-sm text-positive',
                       o.value === value ? 'opacity-100' : 'opacity-0'
                     )}
                   />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate">{o.label}</span>
                     {o.description && (
-                      <span className="block truncate text-xs text-neutral-subtle">{o.description}</span>
+                      <span className="block truncate text-sm text-neutral-subtle">{o.description}</span>
                     )}
                   </span>
                 </CommandMenu.Item>

@@ -57,28 +57,28 @@ export function BuilderPicker({
           >
             <span className="flex w-full items-center justify-between gap-2 text-sm font-medium text-neutral">
               {s.name}
-              {i === 0 && <span className="text-xs font-normal text-neutral-subtle">default</span>}
+              {i === 0 && <span className="text-sm font-normal text-neutral-subtle">default</span>}
             </span>
-            <span className="text-xs text-neutral-subtle">
+            <span className="text-sm text-neutral-subtle">
               {s.max_cpu_milli / 1000} vCPU · {s.max_ram_gib} GiB
             </span>
-            {s.description && <span className="text-xs text-neutral-subtle">{s.description}</span>}
-            <span className="text-xs text-neutral">
+            {s.description && <span className="text-sm text-neutral-subtle">{s.description}</span>}
+            <span className="text-sm text-neutral">
               {s.multiplier === 1 ? '1 build minute counts 1 minute' : `1 build minute counts ${s.multiplier} minutes`}
             </span>
             {typicalBuildMinutes != null && typicalBuildMinutes > 0 && (
-              <span className="text-xs text-neutral-subtle">
+              <span className="text-sm text-neutral-subtle">
                 A {typicalBuildMinutes}-minute build counts {Math.round(typicalBuildMinutes * s.multiplier)}
               </span>
             )}
-            {s.saving ? <span className="text-xs text-positive">{s.saving}% less than its size</span> : null}
+            {s.saving ? <span className="text-sm text-positive">{s.saving}% less than its size</span> : null}
             {s.price_per_minute ? (
-              <span className="text-xs text-neutral-subtle">
+              <span className="text-sm text-neutral-subtle">
                 {money(Math.round(s.price_per_minute), currency)} / min beyond your plan
               </span>
             ) : null}
             {s.prepaid_per_minute ? (
-              <span className="text-xs text-positive">
+              <span className="text-sm text-positive">
                 {money(Math.round(s.prepaid_per_minute), currency)} / min with a year prepaid
               </span>
             ) : null}
@@ -87,7 +87,7 @@ export function BuilderPicker({
       })}
       {onRequest.length > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-2 rounded border border-dashed border-neutral p-3 sm:col-span-3">
-          <span className="text-xs text-neutral-subtle">
+          <span className="text-sm text-neutral-subtle">
             Need more?{' '}
             {onRequest.map((s) => `${s.name} (${s.max_cpu_milli / 1000} vCPU, ${s.max_ram_gib} GiB)`).join(', ')} on
             request
@@ -103,7 +103,7 @@ export function BuilderPicker({
           )}
         </div>
       )}
-      <p className="text-xs text-neutral-subtle sm:col-span-3">
+      <p className="text-sm text-neutral-subtle sm:col-span-3">
         Deploy time always counts once. A builder above the largest size counts in proportion to its CPU and RAM.
       </p>
     </div>

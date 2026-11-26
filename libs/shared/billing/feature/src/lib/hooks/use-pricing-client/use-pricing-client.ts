@@ -4,7 +4,8 @@ import { type PricingClient, createPricingClient } from '@qovery/shared/billing/
 import { PRICING_API_URL } from '@qovery/shared/util-node-env'
 
 // Only the calls the console mounts, all to pricing-api with the user's token (core relays none of them).
-// Offers, upgrade requests and email preferences wait for customer emails.
+// Offers and email preferences wait for customer emails. Upgrade requests are mounted for the
+// paywall's "Ask an admin" (members asking their admins for a gated feature).
 export function pickConsoleCalls(client: PricingClient): PricingClient {
   return {
     mode: client.mode,
@@ -40,22 +41,38 @@ export function pickConsoleCalls(client: PricingClient): PricingClient {
     quoteDiscounts: client.quoteDiscounts,
     requestDiscounts: client.requestDiscounts,
     withdrawDiscountRequest: client.withdrawDiscountRequest,
+    gates: client.gates,
+    gateEvent: client.gateEvent,
+    gateIntro: client.gateIntro,
+    trials: client.trials,
+    startTrial: client.startTrial,
+    setTrialContinue: client.setTrialContinue,
+    quoteAddon: client.quoteAddon,
+    buyAddon: client.buyAddon,
+    requestUpgrade: client.requestUpgrade,
+    proposals: client.proposals,
+    viewProposal: client.viewProposal,
+    snoozeProposal: client.snoozeProposal,
+    dismissProposal: client.dismissProposal,
+    quoteProposal: client.quoteProposal,
+    acceptProposal: client.acceptProposal,
   }
 }
 
+const pricingClients = new WeakMap<object, PricingClient>()
+
 export function usePricingClient(): PricingClient {
   const { getAccessTokenSilently } = useAuth0()
-
-  return useMemo(
-    () =>
-      pickConsoleCalls(
-        createPricingClient({
-          pricingApiUrl: PRICING_API_URL,
-          getToken: () => window.localStorage.getItem('qovery-e2e-auth-token') ?? getAccessTokenSilently(),
-        })
-      ),
-    [getAccessTokenSilently]
-  )
+  return useMemo(() => {
+    const existing = pricingClients.get(getAccessTokenSilently)
+    if (existing) return existing
+    const client = pickConsoleCalls(
+      createPricingClient({
+        pricingApiUrl: PRICING_API_URL,
+        getToken: () => window.localStorage.getItem('qovery-e2e-auth-token') ?? getAccessTokenSilently(),
+      })
+    )
+    pricingClients.set(getAccessTokenSilently, client)
+    return client
+  }, [getAccessTokenSilently])
 }
-
-export default usePricingClient

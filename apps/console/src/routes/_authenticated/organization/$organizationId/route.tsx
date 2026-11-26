@@ -5,8 +5,9 @@ import { Suspense, useEffect, useMemo } from 'react'
 import { memo } from 'react'
 import { ClusterDeploymentProgressCard, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
+import { BillingPaywallHost } from '@qovery/shared/billing/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
-import { useLocalStorage } from '@qovery/shared/util-hooks'
+import { useLocalStorage, useSupportChat } from '@qovery/shared/util-hooks'
 import { DeploymentStatusWebSocketListener, RunningStatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { queries } from '@qovery/state/util-queries'
 import { type FileRouteTypes } from '../../../../routeTree.gen'
@@ -74,6 +75,7 @@ function RouteComponent() {
   const environmentId = mergedParams.environmentId ?? ''
   const versionId = mergedParams.versionId ?? ''
   const [, setCurrentOrganizationId] = useLocalStorage<string>('currentOrganizationId', '')
+  const { showChat } = useSupportChat()
 
   const { data: clusters } = useClusters({ organizationId })
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
@@ -136,6 +138,8 @@ function RouteComponent() {
 
   return (
     <>
+      {/* A call refused by the plan (402 with pricing-api's paywall) opens the paywall, behind the billing-paywall flag. */}
+      {organizationId && <BillingPaywallHost organizationId={organizationId} onContactSales={showChat} />}
       <Suspense fallback={<Loader />}>
         <Outlet />
       </Suspense>

@@ -3,7 +3,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactNode, useCallback, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { P, match } from 'ts-pattern'
-import { UsagePage, type UsagePageHeading, usePricingClient } from '@qovery/shared/billing/feature'
+import { UsagePage, type UsagePageHeading, proposalFromSearch, usePricingClient } from '@qovery/shared/billing/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Callout, EmptyState, Icon, Link, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
@@ -194,6 +194,8 @@ export function BillingUsageView() {
   const goTo = useBillingNavigate(organizationId)
   const { showChat } = useSupportChat()
   const [headingElement, setHeadingElement] = useState<HTMLDivElement | null>(null)
+  // The plan proposal email's "Review the plan" link: ?proposal=<id> opens its review
+  const [proposalId] = useState(() => proposalFromSearch(window.location.search))
 
   // The kit's "Plan details" heading, drawn with SettingsHeading above the page like on Invoices and Billing
   const heading = useCallback(
@@ -219,6 +221,7 @@ export function BillingUsageView() {
             client={client}
             initialUsage={data}
             offers="none"
+            open={proposalId ? { modal: 'upgrade', proposal: proposalId } : undefined}
             onNavigate={goTo}
             onContactSales={showChat}
             heading={heading}

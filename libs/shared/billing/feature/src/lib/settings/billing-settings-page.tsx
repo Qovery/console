@@ -261,23 +261,23 @@ function PaymentMethodCard({
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-medium text-neutral">{paymentMethodLabel(m)}</div>
                   {m.expiry_month && m.expiry_year ? (
-                    <div className="text-xs text-neutral-subtle">
+                    <div className="text-sm text-neutral-subtle">
                       Expires {String(m.expiry_month).padStart(2, '0')}/{m.expiry_year}
                     </div>
                   ) : null}
                 </div>
                 {m.primary && (
-                  <Badge color="neutral" variant="surface" size="sm">
+                  <Badge className="font-medium" color="neutral" variant="surface" size="sm">
                     Default
                   </Badge>
                 )}
                 {state === 'expired' && (
-                  <Badge color="red" variant="surface" size="sm">
+                  <Badge className="font-medium" color="red" variant="surface" size="sm">
                     Expired
                   </Badge>
                 )}
                 {state === 'expiring' && (
-                  <Badge color="yellow" variant="surface" size="sm">
+                  <Badge className="font-medium" color="yellow" variant="surface" size="sm">
                     Expires soon
                   </Badge>
                 )}
@@ -286,7 +286,7 @@ function PaymentMethodCard({
           })}
         </ul>
       )}
-      {pm && !actions && <p className="text-xs text-neutral-subtle">Billing changes are not available yet.</p>}
+      {pm && !actions && <p className="text-sm text-neutral-subtle">Billing changes are not available yet.</p>}
     </SectionCard>
   )
 }
@@ -425,8 +425,8 @@ function AwsMarketplaceCard({
       )}
       {aws && !editing && status === 'open' && req && (
         <p className="text-sm text-neutral">
-          Requested on {localDate(req.requested_at)} for AWS account{' '}
-          <span className="font-mono">{req.aws_account_id}</span>. Your account manager is preparing the offer.
+          Requested on {localDate(req.requested_at)} for AWS account <span>{req.aws_account_id}</span>. Your account
+          manager is preparing the offer.
         </p>
       )}
       {aws && !editing && status === 'offer_sent' && (
@@ -549,7 +549,7 @@ function BillingInfoCard({ organizationId, client }: { organizationId: string; c
           saved && (
             <>
               {!actions && (
-                <span className="mr-auto text-xs text-neutral-subtle">Billing changes are not available yet.</span>
+                <span className="mr-auto text-sm text-neutral-subtle">Billing changes are not available yet.</span>
               )}
               {dirty && (
                 <Button

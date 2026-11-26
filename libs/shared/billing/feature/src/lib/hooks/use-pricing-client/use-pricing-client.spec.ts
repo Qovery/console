@@ -1,15 +1,7 @@
-import { billingUsageFactoryMock } from '@qovery/shared/billing/data-access'
+import axios from 'axios'
+import { billingUsageFactoryMock, createPricingFetchAdapter } from '@qovery/shared/billing/data-access'
 import { renderHook } from '@qovery/shared/util-tests'
 import { usePricingClient } from './use-pricing-client'
-
-jest.mock('@qovery/shared/billing/data-access', () => {
-  const kit = jest.requireActual('@qovery/shared/billing/data-access')
-  return {
-    ...kit,
-    createPricingClient: (options: Parameters<typeof kit.createPricingClient>[0]) =>
-      kit.createPricingClient({ ...options, fetch: global.fetch }),
-  }
-})
 
 const mockGetAccessTokenSilently = jest.fn()
 
@@ -18,7 +10,7 @@ jest.mock('@auth0/auth0-react', () => ({
 }))
 
 describe('usePricingClient', () => {
-  const originalFetch = global.fetch
+  const originalAdapter = axios.defaults.adapter
   const fetchMock = jest.fn()
   const e2eTokenKey = 'qovery-e2e-auth-token'
   const usage = billingUsageFactoryMock()
@@ -31,12 +23,12 @@ describe('usePricingClient', () => {
       statusText: '',
       json: () => Promise.resolve(usage),
     })
-    global.fetch = fetchMock as unknown as typeof fetch
+    axios.defaults.adapter = createPricingFetchAdapter(fetchMock)
   })
 
   afterEach(() => {
     window.localStorage.removeItem(e2eTokenKey)
-    global.fetch = originalFetch
+    axios.defaults.adapter = originalAdapter
   })
 
   it('should read the billing usage from pricing-api with the signed-in user token', async () => {

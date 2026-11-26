@@ -10,10 +10,17 @@ import type {
   CreditOption,
   CustomerInvoice,
   EstimateLine,
+  Gate,
+  GateIntro,
   Granularity,
   InvoiceDetails,
   InvoiceLineUsage,
   PaymentMethod,
+  PaywallInfo,
+  PaywallOption,
+  Period,
+  PlanProposal,
+  SignupTrial,
   UsageHistoryData,
 } from '@qovery/shared/billing/data-access'
 
@@ -470,6 +477,28 @@ export function changeKind(q: { direction: string; period: string; effective_at:
 /** What the kit says about one of Qovery's own organizations (an internal account, never billed). */
 export const INTERNAL_NOTHING_BILLED = 'Internal organization: nothing is billed'
 
+/**
+ * The trial banner of a new organization: its title and what happens at the end, in the order
+ * the customer can act on: a plan chosen, the plan kept, then the default (Free, or a pause).
+ */
+export function signupTrialText(t: SignupTrial, locale?: string): { title: string; body: string } {
+  const left = t.days_left <= 1 ? 'ends tomorrow' : `ends in ${t.days_left} days`
+  const title = `Your ${t.plan_name} trial ${left}`
+  const on = localDate(t.ends_at, locale)
+  if (t.chosen_plan_name) return { title, body: `On ${on} you move to ${t.chosen_plan_name}, the plan you chose.` }
+  if (t.keep)
+    return {
+      title,
+      body: `On ${on} you keep ${t.plan_name}${t.keep_amount != null ? `, ${amount(t.keep_amount, t.currency, locale)} per month` : ''}, charged to your card on file. You can change your mind until then.`,
+    }
+  if (t.on_end === 'free')
+    return {
+      title,
+      body: `On ${on} your organization moves to the ${t.then_plan_name || 'Free'} plan. Nothing running is removed, but what goes beyond it can no longer be created. Choose a plan to keep what ${t.plan_name} gives you.`,
+    }
+  return { title, body: `On ${on} new resources pause until you choose a plan. Nothing running is stopped.` }
+}
+
 export function changeBlockedText(
   a: Availability | undefined,
   what: 'plan' | 'cancel' | 'credits' | 'reactivate'
@@ -802,8 +831,19 @@ export function buildServiceRows(
  */
 type DiscountRule = { id: string; requires: string[]; excludes: string[] }
 
-export function discountSelectable(d: DiscountRule, selected: string[], granted: string[] = []): boolean {
-  return d.requires.length === 0 || d.requires.some((r) => selected.includes(r) || granted.includes(r))
+export function discountSelectable(
+  d: DiscountRule,
+  selected: string[],
+  granted: string[] = [],
+  types: readonly DiscountRule[] = []
+): boolean {
+  const conflictsWithContract =
+    d.excludes.some((id) => granted.includes(id)) ||
+    types.some((type) => granted.includes(type.id) && type.excludes.includes(d.id))
+  return (
+    !conflictsWithContract &&
+    (d.requires.length === 0 || d.requires.some((r) => selected.includes(r) || granted.includes(r)))
+  )
 }
 
 function pruneDiscounts(types: DiscountRule[], selected: string[], granted: string[]): string[] {
@@ -811,7 +851,7 @@ function pruneDiscounts(types: DiscountRule[], selected: string[], granted: stri
   for (;;) {
     const kept = cur.filter((id) => {
       const d = types.find((t) => t.id === id)
-      return !!d && discountSelectable(d, cur, granted)
+      return !!d && discountSelectable(d, cur, granted, types)
     })
     if (kept.length === cur.length) return kept
     cur = kept
@@ -831,9 +871,22 @@ export function toggleDiscount(
       granted
     )
   const d = types.find((t) => t.id === id)
-  if (!d || !discountSelectable(d, selected, granted)) return selected
+  if (!d || !discountSelectable(d, selected, granted, types)) return selected
   const dropped = new Set([...d.excludes, ...types.filter((t) => t.excludes.includes(id)).map((t) => t.id)])
   return pruneDiscounts(types, [...selected.filter((s) => !dropped.has(s)), id], granted)
+}
+
+/**
+ * What a new request can still take off: the cap less the points already in the contract. Those
+ * are not applied again (the contract price includes them) but they count toward the cap.
+ */
+export function discountRoom(max: number, contractPoints = 0): number {
+  return Math.max(0, max - contractPoints)
+}
+
+/** The ids a request may never include: the discounts already in the contract. */
+export function requestableDiscounts(selected: string[], inContract: { id: string }[] = []): string[] {
+  return selected.filter((id) => !inContract.some((d) => d.id === id))
 }
 
 /** Points add up (no compounding); the customer gets at most `max`. */
@@ -887,4 +940,187 @@ export function discountsExpanded(p: {
   requests: { status: string }[]
 }): boolean {
   return p.opened ?? (p.selected.length > 0 || p.requests.some((r) => r.status !== 'withdrawn'))
+}
+
+// ---- feature gates and paywalls
+
+/** The gate for an action id (cluster.create) or a SKU (service_catalog). */
+export function gateFor(gates: Gate[] | undefined, key: string): Gate | undefined {
+  return gates?.find((g) => g.action === key) ?? gates?.find((g) => g.sku === key)
+}
+
+// The intros shown in this session, by organization and SKU: the gates read again before
+// pricing-api has the "shown" never bring one back.
+const introsSeen = new Set<string>()
+
+/** The intro to show before going on with an allowed action, unless this session already showed it. */
+export function pendingIntro(organizationId: string, g?: Gate): GateIntro | undefined {
+  if (!g?.allowed || !g.intro) return undefined
+  return introsSeen.has(`${organizationId}|${g.intro.sku}`) ? undefined : g.intro
+}
+
+export function markIntroSeen(organizationId: string, sku: string) {
+  introsSeen.add(`${organizationId}|${sku}`)
+}
+
+/** Locked: refused, with a paywall to show. Allowed, unknown and unlinked are never locked. */
+export function isLocked(g?: Gate): g is Gate & { paywall: PaywallInfo } {
+  return !!g && !g.allowed && !!g.paywall
+}
+
+/**
+ * The paywall in an error body: pricing-api's check answer as core passes it in its 402
+ * ({paywall}, or wrapped once in {data} or {response: {data}}). null when there is none.
+ */
+export function paywallFromBody(body: unknown): { paywall: PaywallInfo; sku?: string; action?: string } | null {
+  const seen = [body, (body as { data?: unknown })?.data, (body as { response?: { data?: unknown } })?.response?.data]
+  for (const b of seen) {
+    const p = (b as { paywall?: PaywallInfo } | undefined)?.paywall
+    if (p && typeof p === 'object' && Array.isArray(p.options) && typeof p.headline === 'string') {
+      const x = b as { sku?: string; action?: string }
+      return { paywall: p, sku: x.sku ?? p.sku, action: x.action }
+    }
+  }
+  return null
+}
+
+/** A 402 from core for an action pricing-api refused: the action or SKU to read the gate of. */
+export function gateKeyFromBody(status: number | undefined, body: unknown): { action?: string; sku?: string } | null {
+  if (status !== 402) return null
+  const seen = [body, (body as { data?: unknown })?.data, (body as { response?: { data?: unknown } })?.response?.data]
+  for (const b of seen) {
+    const x = b as { sku?: unknown; action?: unknown } | undefined
+    if (x && (typeof x.action === 'string' || typeof x.sku === 'string'))
+      return {
+        action: typeof x.action === 'string' ? x.action : undefined,
+        sku: typeof x.sku === 'string' ? x.sku : undefined,
+      }
+  }
+  return null
+}
+
+// format.ts's money, here so the rules load in plain Node (no runtime import).
+const cents = (c: number, currency: string) => {
+  const v = c / 100
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: Math.abs(v) >= 100 || Number.isInteger(v) ? 0 : 2,
+  }).format(v)
+}
+
+/** "$1,124 per month, $750 more than today" for an upgrade or add-on option. */
+export function optionPrice(o: PaywallOption): string {
+  if (o.amount == null || !o.currency) return ''
+  const per = `${cents(o.amount, o.currency)} per ${o.period ?? 'month'}`
+  if (o.type === 'upgrade' && o.difference != null && o.difference !== o.amount)
+    return `${per}, ${cents(o.difference, o.currency)} more than today`
+  return per
+}
+
+/** What the inline lock on a button says: the trial when there is one, else the next step. */
+export function lockLabel(g?: Gate): string {
+  if (!isLocked(g)) return ''
+  const first = g.paywall.options[0]
+  if (!first) return 'Not in your plan'
+  if (first.type === 'start_trial') return `Try it free for ${first.days ?? 14} days`
+  if (first.type === 'upgrade') return first.plan_name ? `${first.plan_name} plan` : 'Upgrade'
+  if (first.type === 'request_admin') return 'Ask an admin'
+  if (first.type === 'update_payment') return 'Payment required'
+  return 'Talk to us'
+}
+
+/** The plans and add-ons a trial can continue on at its end: the paywall's priced options. */
+export function continueChoices(p?: PaywallInfo): PaywallOption[] {
+  return (p?.options ?? [])
+    .filter((o) => (o.type === 'upgrade' && !!o.plan) || (o.type === 'addon' && !!o.addon))
+    .filter((o) => o.amount != null && o.amount > 0)
+}
+
+/** The body of a trial start: continue only with the person's explicit consent. */
+export function trialRequest(sku: string, cont: PaywallOption | undefined, consent: boolean, period?: Period) {
+  if (!cont || !consent) return { sku }
+  return {
+    sku,
+    continue:
+      cont.type === 'upgrade'
+        ? { plan: cont.plan, period: cont.period ?? period }
+        : { addon: cont.addon, period: cont.period ?? period },
+    accept_auto_charge: true,
+  }
+}
+
+/** When a trial started today ends, as a date (UTC). */
+export function trialEnds(days: number, now = new Date()): string {
+  return new Date(now.getTime() + days * 86400000).toISOString()
+}
+
+// ---- plan proposals
+
+/** "3 days", "1 week", "2 weeks": the Remind me later choices. */
+export function snoozeLabel(days: number): string {
+  if (days % 7 === 0) return days === 7 ? '1 week' : `${days / 7} weeks`
+  return days === 1 ? '1 day' : `${days} days`
+}
+
+/** Who suggests what: "<Sender> from Qovery suggests <Plan>", or "The Qovery team suggests <Plan>"
+ * for a proposal sent as the team (no personal name then). */
+export function proposalHeading(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan'>): string {
+  return p.send_as === 'team' || !p.sender_name
+    ? `The Qovery team suggests ${p.plan.name}`
+    : `${p.sender_name} from Qovery suggests ${p.plan.name}`
+}
+
+/** The banner's line: the offer first when there is one ("10% off Scale for 6 months · The Qovery
+ * team"), else the heading, then ": <one line>". */
+export function proposalLine(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan' | 'headline' | 'offer'>): string {
+  if (p.offer) return `${p.offer} · ${proposalSigner(p)}`
+  const head = proposalHeading(p)
+  return p.headline ? `${head}: ${p.headline}` : head
+}
+
+/** Who signs: "The Qovery team", or "Ada Lovelace, Qovery". */
+export function proposalSigner(p: Pick<PlanProposal, 'sender_name' | 'send_as'>): string {
+  return p.send_as === 'team' || !p.sender_name ? 'The Qovery team' : `${p.sender_name}, Qovery`
+}
+
+/** The banner's short line, below 640px: the offer, else the heading. */
+export function proposalShortLine(p: Pick<PlanProposal, 'sender_name' | 'send_as' | 'plan' | 'offer'>): string {
+  return p.offer || proposalHeading(p)
+}
+
+/** What the console's top bar shows: one banner, never stacked. The open plan proposal first, else
+ * the first offer banner (offers come newest first and carry no priority of their own). */
+export type BarBanner<O> = { kind: 'proposal'; proposal: PlanProposal } | { kind: 'offer'; offer: O }
+export function barBanner<O>(
+  proposal: PlanProposal | null | undefined,
+  offers: readonly O[]
+): BarBanner<O> | undefined {
+  if (proposal) return { kind: 'proposal', proposal }
+  return offers.length ? { kind: 'offer', offer: offers[0] } : undefined
+}
+
+/** The top bar's classes, on top of the console's <Banner>: one line at every width. The text
+ * truncates with an ellipsis (its full version in a tooltip) and gives way to the button, which
+ * never wraps; a closable bar keeps room for its close button. */
+export const BAR_TEXT = 'min-w-0 truncate whitespace-nowrap'
+export function barClass(closable: boolean): string {
+  return `justify-start overflow-hidden whitespace-nowrap px-3 sm:justify-center sm:px-4${closable ? ' pr-11 sm:pr-11' : ''}`
+}
+
+/** Whether a plan change review is the proposal's own (its plan and period): only then does
+ * Review quote and confirm through the proposal, with its concession. */
+export function isProposalChange(
+  p: Pick<PlanProposal, 'plan' | 'period'> | undefined,
+  plan: string | undefined,
+  period: string
+): boolean {
+  return !!p && p.plan.code === plan && p.period === period
+}
+
+/** The proposal id a console URL opens (?proposal=12), or undefined. */
+export function proposalFromSearch(search: string): number | undefined {
+  const v = new URLSearchParams(search).get('proposal')
+  if (!v || !/^[1-9][0-9]{0,15}$/.test(v)) return undefined
+  return Number(v)
 }

@@ -244,20 +244,20 @@ export function ReactivateFlow({
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="font-medium text-neutral">{p.name}</span>
                           {view.last_plan?.code === p.code && (
-                            <Badge color="neutral" variant="surface" size="sm">
+                            <Badge className="font-medium" color="neutral" variant="surface" size="sm">
                               Your last plan
                             </Badge>
                           )}
                         </div>
-                        {p.description && <div className="text-xs text-neutral-subtle">{p.description}</div>}
+                        {p.description && <div className="text-sm text-neutral-subtle">{p.description}</div>}
                       </div>
                       <div className="whitespace-nowrap text-right text-sm text-neutral">
                         {sold ? (
                           <>
                             {money(m, cur)}
-                            <span className="text-xs text-neutral-subtle"> / month</span>
+                            <span className="text-sm text-neutral-subtle"> / month</span>
                             {period === 'year' && (
-                              <div className="text-xs text-neutral-subtle">
+                              <div className="text-sm text-neutral-subtle">
                                 {money(p.prices.find((x) => x.period === 'year' && x.currency === cur)!.amount, cur)}{' '}
                                 billed yearly
                               </div>
@@ -312,7 +312,7 @@ export function ReactivateFlow({
                   {request ? `Every ${q.period}` : date(q.next_renewal_on)}
                 </Fact>
               </div>
-              <p className="text-xs text-neutral-subtle">{q.tax_note}</p>
+              <p className="text-sm text-neutral-subtle">{q.tax_note}</p>
             </div>
           )}
           {step === 'done' && (

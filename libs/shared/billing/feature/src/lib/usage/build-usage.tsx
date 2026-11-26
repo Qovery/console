@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import type { BuildServiceUsage, BuildUsageData, Granularity, PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Chart, Icon, InputText, Modal } from '@qovery/shared/ui'
+import { ChartTooltip } from '../components/chart-tooltip'
 import { CompactSelect } from '../components/compact-select'
 import { errorText } from '../components/parts'
 import { money, num } from '../utils/format'
@@ -67,9 +68,9 @@ function HintIcon({ kind }: { kind: string }) {
 function Tile({ label, value, hint }: { label: string; value: React.ReactNode; hint?: React.ReactNode }) {
   return (
     <div className="rounded border border-neutral px-3 py-2">
-      <div className="truncate text-xs text-neutral-subtle">{label}</div>
+      <div className="truncate text-sm text-neutral-subtle">{label}</div>
       <div className="text-sm font-medium text-neutral">{value}</div>
-      {hint && <div className="truncate text-xs text-neutral-subtle">{hint}</div>}
+      {hint && <div className="truncate text-sm text-neutral-subtle">{hint}</div>}
     </div>
   )
 }
@@ -78,7 +79,7 @@ function Sparkline({ values, color = BUILD_COLOR }: { values: number[]; color?: 
   const w = 84,
     h = 22
   const top = Math.max(...values, 0)
-  if (!values.length || top === 0) return <span className="text-xs text-neutral-subtle">—</span>
+  if (!values.length || top === 0) return <span className="text-sm text-neutral-subtle">—</span>
   const step = values.length > 1 ? w / (values.length - 1) : w
   const pts = values.map((v, i) => `${(i * step).toFixed(1)},${(h - 2 - (v / top) * (h - 4)).toFixed(1)}`).join(' ')
   return (
@@ -113,7 +114,7 @@ function BuildTableHeader({
       {k && sort && sortBy ? (
         <button type="button" className="inline-flex items-center gap-1 hover:text-neutral" onClick={() => sortBy(k)}>
           {children}
-          {sort.key === k && <Icon iconName={sort.desc ? 'arrow-down' : 'arrow-up'} className="text-[10px]" />}
+          {sort.key === k && <Icon iconName={sort.desc ? 'arrow-down' : 'arrow-up'} className="text-xs" />}
         </button>
       ) : (
         children
@@ -227,7 +228,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
             value={custom.to}
             onChange={(e) => setCustom((c) => ({ ...c, to: e.target.value }))}
           />
-          <p className="self-center text-xs text-neutral-subtle">
+          <p className="self-center text-sm text-neutral-subtle">
             {rangeError || '24 months at most. Day by day up to three months, month by month beyond.'}
           </p>
         </div>
@@ -242,7 +243,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
       )}
       {d && t && (
         <div className={`flex flex-col gap-5 ${loading ? 'opacity-60 transition-opacity' : 'transition-opacity'}`}>
-          <p className="text-xs text-neutral-subtle">
+          <p className="text-sm text-neutral-subtle">
             <Icon iconName={d.source.complete ? 'circle-check' : 'circle-info'} iconStyle="regular" className="mr-1" />
             {d.source.note}
           </p>
@@ -317,7 +318,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                     />
                     <Chart.Tooltip
                       content={
-                        <Chart.TooltipContent
+                        <ChartTooltip
                           title={chart === 'cost' ? 'Cost' : 'Minutes'}
                           formatLabel={(k) =>
                             k === 'build'
@@ -354,7 +355,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                     )}
                   </BarChart>
                 </Chart.Container>
-                <div className="mt-2 flex flex-wrap gap-4 text-xs text-neutral-subtle">
+                <div className="mt-2 flex flex-wrap gap-4 text-sm text-neutral-subtle">
                   {chart === 'size' &&
                     d.by_size.map((s) => (
                       <span key={s.size} className="inline-flex items-center gap-1.5">
@@ -384,7 +385,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                   <div className="overflow-auto rounded border border-neutral">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-xs text-neutral-subtle">
+                        <tr className="text-left text-sm text-neutral-subtle">
                           <th className="px-3 py-2 font-medium">Builder</th>
                           <th className="px-3 py-2 text-right font-medium">Builds</th>
                           <th className="px-3 py-2 text-right font-medium">Run</th>
@@ -402,9 +403,9 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                                 style={{ background: buildSizeColor(s.size, catalog) }}
                               />
                               {s.name}
-                              <span className="ml-1 text-xs text-neutral-subtle">×{s.multiplier}</span>
+                              <span className="ml-1 text-sm text-neutral-subtle">×{s.multiplier}</span>
                               {(s.unknown || s.no_builder) && (
-                                <span className="ml-2 text-xs text-neutral-subtle">
+                                <span className="ml-2 text-sm text-neutral-subtle">
                                   {s.unknown ? 'counted as Standard' : 'counts once'}
                                 </span>
                               )}
@@ -429,7 +430,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                                     style={{ width: pct(s.share), background: buildSizeColor(s.size, catalog) }}
                                   />
                                 </div>
-                                <span className="w-8 text-right text-xs text-neutral-subtle">{pct(s.share)}</span>
+                                <span className="w-8 text-right text-sm text-neutral-subtle">{pct(s.share)}</span>
                               </div>
                             </td>
                           </tr>
@@ -458,13 +459,13 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                               >
                                 {h.title}
                               </button>
-                              <span className="whitespace-nowrap text-xs text-neutral-subtle">
+                              <span className="whitespace-nowrap text-sm text-neutral-subtle">
                                 {h.kind === 'downsize' ? 'save ' : ''}
                                 {minutes(h.minutes)}
                                 {amounts && h.cost ? `, ${money(h.cost, cur)}` : ''}
                               </span>
                             </div>
-                            <p className="text-xs text-neutral-subtle">{h.detail}</p>
+                            <p className="text-sm text-neutral-subtle">{h.detail}</p>
                           </div>
                         </li>
                       ))}
@@ -522,7 +523,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                 <div className="overflow-auto rounded border border-neutral">
                   <table className="w-full text-sm">
                     <thead className="bg-surface-neutral">
-                      <tr className="text-left text-xs text-neutral-subtle">
+                      <tr className="text-left text-sm text-neutral-subtle">
                         <BuildTableHeader sort={sort} sortBy={sortBy} k="name">
                           Service
                         </BuildTableHeader>
@@ -574,7 +575,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                             >
                               {s.name}
                             </div>
-                            <div className="text-xs text-neutral-subtle">
+                            <div className="text-sm text-neutral-subtle">
                               {s.type
                                 ? s.type.charAt(0) + s.type.slice(1).toLowerCase()
                                 : 'Time no service accounts for'}
@@ -590,7 +591,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                           <td className="whitespace-nowrap px-3 py-1.5 text-right text-neutral">
                             {s.builds ? num(s.counted_build_minutes) : '—'}
                             {s.builds > 0 && s.counted_build_minutes !== s.build_minutes && (
-                              <div className="text-xs text-neutral-subtle">{num(s.build_minutes)} run</div>
+                              <div className="text-sm text-neutral-subtle">{num(s.build_minutes)} run</div>
                             )}
                           </td>
                           <td className="whitespace-nowrap px-3 py-1.5 text-right text-neutral">
@@ -605,7 +606,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
                           <td className="px-3 py-1.5">
                             <div className="flex flex-wrap gap-1">
                               {s.sizes.map((z) => (
-                                <Badge key={z} color="neutral" variant="surface" size="sm">
+                                <Badge className="font-medium" key={z} color="neutral" variant="surface" size="sm">
                                   <span
                                     className="mr-1 inline-block h-1.5 w-1.5 rounded-full"
                                     style={{ background: buildSizeColor(z, catalog) }}
@@ -634,7 +635,7 @@ export function BuildUsage({ organizationId, client, load, staff, today = new Da
               </div>
             </>
           )}
-          {d.notes.length > 0 && <p className="text-xs text-neutral-subtle">{d.notes.join(' ')}</p>}
+          {d.notes.length > 0 && <p className="text-sm text-neutral-subtle">{d.notes.join(' ')}</p>}
         </div>
       )}
       {drill && d && !rangeError && (
@@ -709,7 +710,7 @@ function BuildDrill({
           <div className="max-h-[60vh] overflow-auto rounded border border-neutral">
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-surface-neutral">
-                <tr className="text-left text-xs text-neutral-subtle">
+                <tr className="text-left text-sm text-neutral-subtle">
                   <th className="px-3 py-2 font-medium">Finished</th>
                   <th className="px-3 py-2 font-medium">Status</th>
                   <th className="px-3 py-2 text-right font-medium">Build</th>
@@ -731,7 +732,7 @@ function BuildDrill({
                   <tr key={b.execution_id}>
                     <td className="whitespace-nowrap px-3 py-1.5 text-neutral">{when(b.finished_at)}</td>
                     <td className="px-3 py-1.5">
-                      <Badge color={b.failed ? 'red' : 'green'} variant="surface" size="sm">
+                      <Badge className="font-medium" color={b.failed ? 'red' : 'green'} variant="surface" size="sm">
                         {b.failed ? 'Failed' : 'Succeeded'}
                       </Badge>
                     </td>
@@ -748,7 +749,7 @@ function BuildDrill({
                       />
                       {b.size_name}
                       {b.cpu_milli != null && (
-                        <span className="ml-1 text-xs text-neutral-subtle">
+                        <span className="ml-1 text-sm text-neutral-subtle">
                           {b.cpu_milli / 1000} vCPU{b.ram_gib != null ? `, ${b.ram_gib} GiB` : ''}
                         </span>
                       )}
@@ -768,7 +769,7 @@ function BuildDrill({
           </div>
         )}
         {rows && rows.length >= 500 && (
-          <p className="mt-2 text-xs text-neutral-subtle">
+          <p className="mt-2 text-sm text-neutral-subtle">
             The latest 500 builds. Pick a shorter period to see the others.
           </p>
         )}

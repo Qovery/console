@@ -6,13 +6,15 @@
  * mounted once in the console's layout shows the sign-in popup (once per person and offer) and
  * the banners (until dismissed); billing roles also see their team's open upgrade requests.
  * <BillingPage> mounts it with variant="card". <AskAdminModal> is the member's side of a
- * request, <EmailPreferencesPanel> the person's email settings.
+ * request, <EmailPreferencesPanel> the person's email settings. Billing roles also see a plan
+ * proposal from Qovery staff here (<ProposalBanner>), when the host passes onReviewProposal.
  */
 import { useEffect, useState } from 'react'
 import type {
   EmailPreferences,
   Offer,
   Offers,
+  PlanProposal,
   PricingClient,
   Trial,
   UpgradeRequest,
@@ -20,6 +22,9 @@ import type {
 import { Badge, Banner, Button, Callout, Icon, InputTextArea, InputToggle, Modal } from '@qovery/shared/ui'
 import { errorText } from '../components/parts'
 import { date } from '../utils/format'
+import { forgetReads, sharedRead } from '../utils/reads'
+import { BAR_TEXT, barBanner, barClass } from '../utils/rules'
+import { ProposalBanner, ProposalHost, useProposal } from './proposals'
 
 const TONE: Record<string, string> = {
   brand: 'border-brand-strong bg-surface-brand-component',
@@ -55,9 +60,15 @@ export function OfferBanner({
         onClickButton={() => onAction(offer)}
         dismissible={!!onDismiss}
         onDismiss={() => onDismiss?.(offer)}
+        className={barClass(!!onDismiss)}
+        title={c.badge ? `${c.badge}: ${c.title}` : c.title}
       >
-        {c.badge && <span className="mr-2 rounded bg-surface-neutral px-1.5 py-0.5 text-xs">{c.badge}</span>}
-        {c.title}
+        <span className={BAR_TEXT}>
+          {c.badge && (
+            <span className="mr-2 hidden rounded bg-surface-neutral px-1.5 py-0.5 text-xs sm:inline">{c.badge}</span>
+          )}
+          {c.title}
+        </span>
       </Banner>
     )
   }
@@ -68,19 +79,19 @@ export function OfferBanner({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           {c.badge && (
-            <Badge color="brand" variant="surface" size="sm">
+            <Badge className="font-medium" color="brand" variant="surface" size="sm">
               {c.badge}
             </Badge>
           )}
           {offer.preview && (
-            <Badge color="yellow" variant="surface" size="sm">
+            <Badge className="font-medium" color="yellow" variant="surface" size="sm">
               Draft preview
             </Badge>
           )}
           <span className="text-sm font-medium text-neutral">{c.title}</span>
         </div>
         {c.body && <p className="mt-1 text-sm text-neutral-subtle">{c.body.split('\n\n')[0]}</p>}
-        {offer.ends_at && <p className="mt-1 text-xs text-neutral-subtle">Until {date(offer.ends_at)}</p>}
+        {offer.ends_at && <p className="mt-1 text-sm text-neutral-subtle">Until {date(offer.ends_at)}</p>}
       </div>
       <Button size="md" onClick={() => onAction(offer)}>
         {c.cta_label}
@@ -117,12 +128,12 @@ export function OfferModal({
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           {c.badge && (
-            <Badge color="brand" variant="surface" size="sm">
+            <Badge className="font-medium" color="brand" variant="surface" size="sm">
               {c.badge}
             </Badge>
           )}
           {offer.preview && (
-            <Badge color="yellow" variant="surface" size="sm">
+            <Badge className="font-medium" color="yellow" variant="surface" size="sm">
               Draft preview
             </Badge>
           )}
@@ -145,7 +156,7 @@ export function OfferModal({
             {p}
           </p>
         ))}
-      {offer.ends_at && <p className="text-xs text-neutral-subtle">Offer valid until {date(offer.ends_at)}.</p>}
+      {offer.ends_at && <p className="text-sm text-neutral-subtle">Offer valid until {date(offer.ends_at)}.</p>}
       <div className="flex flex-wrap justify-end gap-3 pt-2">
         <Button size="lg" variant="plain" color="neutral" onClick={onClose}>
           Not now
@@ -204,11 +215,11 @@ export function RequestsBanner({
                 <span className="font-medium">{r.email}</span> needs more {skuName(r.sku).toLowerCase() || 'resources'}
                 {r.message ? `: "${r.message}"` : ''}
               </span>
-              <span className="text-xs text-neutral-subtle">{date(r.created_at)}</span>
+              <span className="text-sm text-neutral-subtle">{date(r.created_at)}</span>
               {onDecline && (
                 <button
                   type="button"
-                  className="text-xs text-neutral-subtle hover:underline"
+                  className="text-sm text-neutral-subtle hover:underline"
                   onClick={() => onDecline(r)}
                 >
                   Decline
@@ -251,6 +262,7 @@ export function AskAdminModal({
     setError('')
     try {
       const r = await client.requestUpgrade(organizationId, { sku, message })
+      forgetReads(client, `offers:${organizationId}`)
       setDone(r)
     } catch (e) {
       setError((e as Error).message)
@@ -378,7 +390,7 @@ function OrganizationEmailPreferences({ organizationId, client }: { organization
     <div className="rounded border border-neutral bg-surface-neutral">
       <div className="border-b border-neutral px-5 py-3">
         <h3 className="text-sm font-medium text-neutral">Email preferences</h3>
-        <p className="text-xs text-neutral-subtle">
+        <p className="text-sm text-neutral-subtle">
           Emails about this organization's plan and usage, sent to {p.email}.
         </p>
       </div>
@@ -402,18 +414,24 @@ function OrganizationEmailPreferences({ organizationId, client }: { organization
 }
 
 /** Loads the person's offers and requests, and records what they see and do. */
-export function useOffers(organizationId: string, client: PricingClient, showModal = true) {
+export function useOffers(organizationId: string, client: PricingClient, countBanners = true, showModal = true) {
   const [result, setResult] = useState<{ organizationId: string; data?: Offers; error?: string }>()
   const [hidden, setHidden] = useState<Set<number>>(new Set())
   const [modalDone, setModalDone] = useState<Set<number>>(new Set())
-  const [attempt, setAttempt] = useState(0)
+  const [refresh, setRefresh] = useState<{ organizationId: string }>()
   const current = result?.organizationId === organizationId ? result : undefined
   const data = current?.data
+
   useEffect(() => {
-    if (!client.offers) return
+    const offers = client.offers
+    if (!offers) return
     let live = true
-    client
-      .offers(organizationId)
+    sharedRead<Offers>(
+      client,
+      `offers:${organizationId}`,
+      () => offers.call(client, organizationId),
+      refresh?.organizationId === organizationId
+    )
       .then((value) => live && setResult({ organizationId, data: value }))
       .catch((e) => {
         if (live) {
@@ -427,16 +445,16 @@ export function useOffers(organizationId: string, client: PricingClient, showMod
     return () => {
       live = false
     }
-  }, [client, organizationId, attempt])
+  }, [client, organizationId, refresh])
   const event = (o: Offer, ev: 'shown' | 'clicked' | 'dismissed', surface: string) => {
     client.offerEvent?.(organizationId, o.id, ev, surface).catch(() => undefined)
   }
   const visible = (data?.offers ?? []).filter((o) => !hidden.has(o.id))
   const modal = showModal ? visible.find((o) => o.surfaces.includes('modal') && !modalDone.has(o.id)) : undefined
   const banners = visible.filter((o) => o.surfaces.includes('banner'))
-  // Banners count as shown once per load.
+  // Banners count as shown once per load (the top bar counts the one it shows itself).
   useEffect(() => {
-    banners.forEach((o) => event(o, 'shown', 'banner'))
+    if (countBanners) banners.forEach((o) => event(o, 'shown', 'banner'))
   }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (modal) event(modal, 'shown', 'modal')
@@ -446,7 +464,8 @@ export function useOffers(organizationId: string, client: PricingClient, showMod
     banners,
     modal,
     error: current?.error,
-    reload: () => setAttempt((n) => n + 1),
+    reload: () => setRefresh({ organizationId }),
+    shown: (o: Offer) => event(o, 'shown', 'banner'),
     dismiss: (o: Offer) => {
       event(o, 'dismissed', 'banner')
       setHidden(new Set([...hidden, o.id]))
@@ -471,6 +490,9 @@ export interface OfferHostProps {
   skuName?: (sku: string) => string
   /** Show the sign-in popup (default). Off where another host already shows it. */
   modal?: boolean
+  /** Billing roles: a plan proposal from Qovery staff. Review opens the plan change on it (the
+   * console's top bar can send people to the billing page instead). Without it, no proposal shows. */
+  onReviewProposal?: (p: PlanProposal) => void
 }
 
 /** Banners, the sign-in popup and (billing roles) the team's upgrade requests. */
@@ -482,8 +504,17 @@ export function OfferHost({
   onReviewRequests,
   skuName = (s) => s,
   modal = true,
+  onReviewProposal,
 }: OfferHostProps) {
-  const o = useOffers(organizationId, client, modal)
+  const bar = variant === 'bar'
+  // The top bar shows one banner (barBanner): it needs the proposal before picking.
+  const pr = useProposal(organizationId, client, bar && !!onReviewProposal)
+  const o = useOffers(organizationId, client, !bar, modal)
+  const one = bar && !pr.loading ? barBanner(pr.proposal, o.banners) : undefined
+  const barOffer = one?.kind === 'offer' ? one.offer : undefined
+  useEffect(() => {
+    if (barOffer) o.shown(barOffer)
+  }, [barOffer?.id]) // eslint-disable-line react-hooks/exhaustive-deps
   const [declined, setDeclined] = useState<Set<number>>(new Set())
   const [declineError, setDeclineError] = useState('')
   const [declining, setDeclining] = useState(false)
@@ -508,7 +539,7 @@ export function OfferHost({
   const requests = (o.data?.upgrade_requests ?? []).filter((r) => !declined.has(r.id))
   return (
     <>
-      {(o.error || declineError) && (
+      {((!bar && o.error) || declineError) && (
         <Callout.Root color="red">
           <Callout.Text>{declineError || o.error}</Callout.Text>
           {!declineError && (
@@ -530,6 +561,7 @@ export function OfferHost({
                   setDeclining(true)
                   try {
                     await client.closeUpgradeRequest?.(organizationId, r.id, 'declined')
+                    forgetReads(client, `offers:${organizationId}`)
                     setDeclined((previous) => new Set([...previous, r.id]))
                   } catch (e) {
                     setDeclineError(errorText(e))
@@ -565,9 +597,31 @@ export function OfferHost({
           </Callout.Text>
         </Callout.Root>
       )}
-      {o.banners.map((b) => (
-        <OfferBanner key={b.id} offer={b} variant={variant} onAction={(x) => act(x, 'banner')} onDismiss={o.dismiss} />
-      ))}
+      {bar ? (
+        <>
+          {one?.kind === 'proposal' && onReviewProposal && (
+            <ProposalBanner proposal={one.proposal} variant="bar" onReview={onReviewProposal} />
+          )}
+          {one?.kind === 'offer' && (
+            <OfferBanner offer={one.offer} variant="bar" onAction={(x) => act(x, 'banner')} onDismiss={o.dismiss} />
+          )}
+        </>
+      ) : (
+        <>
+          {onReviewProposal && (
+            <ProposalHost organizationId={organizationId} client={client} onReview={onReviewProposal} />
+          )}
+          {o.banners.map((b) => (
+            <OfferBanner
+              key={b.id}
+              offer={b}
+              variant={variant}
+              onAction={(x) => act(x, 'banner')}
+              onDismiss={o.dismiss}
+            />
+          ))}
+        </>
+      )}
       {modal && o.modal && (
         <OfferModal offer={o.modal} onClose={() => o.closeModal(o.modal as Offer)} onAction={(x) => act(x, 'modal')} />
       )}

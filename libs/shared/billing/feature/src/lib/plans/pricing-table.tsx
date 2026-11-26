@@ -66,7 +66,7 @@ function Cell({ e, currency }: { e?: PublicEntitlement; currency: string }) {
     <span>
       {valueText(e.value, e.unit === 'days' ? 'days' : undefined)}
       {over ? (
-        <span className="block text-xs text-neutral-subtle">
+        <span className="block text-sm text-neutral-subtle">
           then {money(over, currency)} / {e.unit?.replace(/s$/, '') ?? 'unit'}
         </span>
       ) : null}
@@ -120,7 +120,7 @@ export function BuilderPrices({
       <div className="overflow-x-auto rounded border border-neutral">
         <table className="w-full text-sm">
           <thead className="bg-surface-neutral-subtle">
-            <tr className="text-left text-xs text-neutral-subtle">
+            <tr className="text-left text-sm text-neutral-subtle">
               <th className="px-4 py-2 font-medium">Builder</th>
               <th className="px-4 py-2 font-medium">One build minute counts</th>
               {priced.map((x) => (
@@ -133,13 +133,13 @@ export function BuilderPrices({
           <tbody>
             {listed.map((s, i) => (
               <tr key={s.code} className="border-t border-neutral align-top">
-                <td className="px-4 py-2 text-neutral">
+                <td className="min-w-48 px-4 py-2 text-neutral">
                   {s.name}
-                  {i === 0 && <span className="text-xs text-neutral-subtle"> (default)</span>}
-                  <div className="text-xs text-neutral-subtle">
+                  {i === 0 && <span className="text-sm text-neutral-subtle"> (default)</span>}
+                  <div className="text-sm text-neutral-subtle">
                     up to {s.max_cpu_milli / 1000} vCPU, {s.max_ram_gib} GiB
                   </div>
-                  {s.description && <div className="mt-0.5 max-w-xs text-xs text-neutral-subtle">{s.description}</div>}
+                  {s.description && <div className="mt-0.5 max-w-xs text-sm text-neutral-subtle">{s.description}</div>}
                 </td>
                 <td className="whitespace-nowrap px-4 py-2 text-neutral">
                   {s.multiplier === 1 ? '1 minute' : `${s.multiplier} minutes`}
@@ -147,8 +147,8 @@ export function BuilderPrices({
                 {priced.map((x) => (
                   <td key={x.plan.code} className="whitespace-nowrap px-4 py-2 text-right text-neutral">
                     {at(x.price!, s, false)}
-                    <span className="text-xs text-neutral-subtle"> / min</span>
-                    {off > 0 && <div className="text-xs text-positive">{at(x.price!, s, true)} prepaid yearly</div>}
+                    <span className="text-sm text-neutral-subtle"> / min</span>
+                    {off > 0 && <div className="text-sm text-positive">{at(x.price!, s, true)} prepaid yearly</div>}
                   </td>
                 ))}
               </tr>
@@ -156,7 +156,7 @@ export function BuilderPrices({
           </tbody>
         </table>
       </div>
-      <p className="mt-2 text-xs text-neutral-subtle">Prices apply beyond the minutes included in each plan.</p>
+      <p className="mt-2 text-sm text-neutral-subtle">Prices apply beyond the minutes included in each plan.</p>
       {biggest && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded border border-neutral px-4 py-3">
           <div className="text-sm text-neutral">
@@ -166,7 +166,7 @@ export function BuilderPrices({
               <>, with up to {Math.max(...onRequest.map((s) => s.saving ?? 0))}% off their size</>
             )}
             .
-            <div className="text-xs text-neutral-subtle">
+            <div className="text-sm text-neutral-subtle">
               {onRequest
                 .map(
                   (s) =>
@@ -274,17 +274,17 @@ export function PricingTable({
               <div className="mb-1 flex flex-wrap items-center gap-2">
                 <h3 className="text-lg font-medium text-neutral">{p.name}</h3>
                 {popular && (
-                  <Badge color="brand" variant="surface" size="sm">
+                  <Badge className="font-medium" color="brand" variant="surface" size="sm">
                     Most popular
                   </Badge>
                 )}
                 {current && (
-                  <Badge color="neutral" variant="surface" size="sm">
+                  <Badge className="font-medium" color="neutral" variant="surface" size="sm">
                     Current plan
                   </Badge>
                 )}
                 {p.draft && (
-                  <Badge color="yellow" variant="surface" size="sm">
+                  <Badge className="font-medium" color="yellow" variant="surface" size="sm">
                     Draft v{p.version}
                   </Badge>
                 )}
@@ -294,7 +294,7 @@ export function PricingTable({
                 {p.free ? (
                   <div>
                     <span className="text-3xl font-medium text-neutral">Free</span>
-                    <div className="text-xs text-neutral-subtle">no credit card</div>
+                    <div className="text-sm text-neutral-subtle">no credit card</div>
                   </div>
                 ) : p.contact_sales || m == null ? (
                   <div className="text-2xl font-medium text-neutral">Custom</div>
@@ -304,7 +304,7 @@ export function PricingTable({
                       <span className="text-3xl font-medium text-neutral">{money(m, currency)}</span>
                       <span className="text-sm text-neutral-subtle"> / month</span>
                     </div>
-                    <div className="text-xs text-neutral-subtle">
+                    <div className="text-sm text-neutral-subtle">
                       {period === 'year' && yearly
                         ? `${money(yearly.amount, currency)} billed yearly`
                         : 'billed monthly'}
@@ -360,7 +360,7 @@ export function PricingTable({
         <div className="overflow-x-auto rounded border border-neutral">
           <table className="w-full min-w-[720px] text-sm">
             <thead>
-              <tr className="border-b border-neutral bg-surface-neutral-subtle text-left text-xs text-neutral-subtle">
+              <tr className="border-b border-neutral bg-surface-neutral-subtle text-left text-sm text-neutral-subtle">
                 <th className="px-4 py-3 font-medium">Compare plans</th>
                 {plans.map((p) => (
                   <th key={p.code} className="px-4 py-3 font-medium text-neutral">
@@ -376,7 +376,7 @@ export function PricingTable({
                     <span className="inline-flex items-center gap-1.5">
                       {row.name}
                       {row.preview && (
-                        <Badge color="sky" variant="surface" size="sm">
+                        <Badge className="font-medium" color="sky" variant="surface" size="sm">
                           Preview
                         </Badge>
                       )}
@@ -436,11 +436,11 @@ export function PricingTable({
                     {m != null && (
                       <div className="whitespace-nowrap text-sm text-neutral">
                         {money(m, currency)}
-                        <span className="text-xs text-neutral-subtle"> / month</span>
+                        <span className="text-sm text-neutral-subtle"> / month</span>
                       </div>
                     )}
                   </div>
-                  <div className="mt-1 text-xs text-neutral-subtle">
+                  <div className="mt-1 text-sm text-neutral-subtle">
                     {a.gives.map((g) => (g.enable ? g.name : `+${g.adds} ${g.name.toLowerCase()}`)).join(', ')}
                     {' · '}on{' '}
                     {plans

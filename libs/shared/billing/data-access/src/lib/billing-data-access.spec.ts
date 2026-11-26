@@ -1,4 +1,4 @@
-import { createPricingClient } from './billing-data-access'
+import { createPricingClient, gatesQuery } from './billing-data-access'
 import { billingUsageFactoryMock } from './billing-usage-factory.mock'
 
 describe('createPricingClient', () => {
@@ -137,5 +137,72 @@ describe('createPricingClient', () => {
       message: 'Too Many Requests',
       retryAfter: undefined,
     })
+  })
+})
+
+describe('createPricingClient paywall and proposal calls', () => {
+  it('should send each call to its pricing-api route', async () => {
+    const seen: { method: string; url: string; body?: string; key?: string }[] = []
+    const fetchMock = jest.fn(async (url: string, init: RequestInit = {}) => {
+      const h = init.headers as Record<string, string>
+      seen.push({ method: init.method ?? 'GET', url, body: init.body as string | undefined, key: h['Idempotency-Key'] })
+      return { ok: true, status: url.endsWith('/view') ? 204 : 200, json: async () => ({}) } as unknown as Response
+    })
+    const c = createPricingClient({
+      pricingApiUrl: 'https://billing-api.example/',
+      getToken: () => 'tok',
+      fetch: fetchMock as unknown as typeof fetch,
+    })
+
+    await c.proposals?.('o')
+    await c.viewProposal?.('o', 5)
+    await c.snoozeProposal?.('o', 5, 14)
+    await c.dismissProposal?.('o', 5, { reason: 'price' })
+    await c.quoteProposal?.('o', 5)
+    await c.acceptProposal?.('o', 5, 'review-key')
+    await c.acceptProposal?.('o', 5)
+    await c.gates?.('o', { actions: ['cluster.create'], skus: ['clusters.managed', 'blueprints'] })
+    await c.gateEvent?.('o', { sku: 'clusters.managed', event: 'shown' })
+    await c.trials?.('o')
+    await c.startTrial?.('o', { sku: 'clusters.managed' })
+    await c.setTrialContinue?.('o', 3, { plan: 'STARTER_2026', period: 'year' }, true)
+    await c.setTrialContinue?.('o', 3, null)
+    await c.quoteAddon?.('o', { code: 'additional_managed_cluster' })
+    await c.buyAddon?.('o', { code: 'additional_managed_cluster', quantity: 2 }, 'buy-key')
+
+    expect(seen.map((s) => `${s.method} ${s.url.replace('https://billing-api.example', '')}`)).toEqual([
+      'GET /organization/o/proposals',
+      'POST /organization/o/proposals/5/view',
+      'POST /organization/o/proposals/5/snooze',
+      'POST /organization/o/proposals/5/dismiss',
+      'POST /organization/o/proposals/5/accept',
+      'POST /organization/o/proposals/5/accept',
+      'POST /organization/o/proposals/5/accept',
+      'GET /organization/o/gates?actions=cluster.create&skus=clusters.managed%2Cblueprints',
+      'POST /organization/o/gates/events',
+      'GET /organization/o/trials',
+      'POST /organization/o/trials',
+      'PUT /organization/o/trials/3',
+      'PUT /organization/o/trials/3',
+      'POST /organization/o/addons',
+      'POST /organization/o/addons',
+    ])
+    expect(seen[2].body).toBe('{"days":14}')
+    expect(seen[4].body).toBe('{"dry_run":true}')
+    expect(seen[5].body).toBe('{"dry_run":false}')
+    expect(seen[5].key).toBe('review-key')
+    expect(seen[6].key).toBeUndefined()
+    expect(JSON.parse(seen[11].body ?? '')).toEqual({
+      continue: { plan: 'STARTER_2026', period: 'year' },
+      accept_auto_charge: true,
+    })
+    expect(JSON.parse(seen[12].body ?? '')).toEqual({ continue: null })
+    expect(JSON.parse(seen[14].body ?? '')).toEqual({ code: 'additional_managed_cluster', quantity: 2, dry_run: false })
+    expect(seen[14].key).toBe('buy-key')
+  })
+
+  it('should leave out empty actions and SKUs from the gates query', () => {
+    expect(gatesQuery({})).toBe('')
+    expect(gatesQuery({ skus: ['a'] })).toBe('skus=a')
   })
 })

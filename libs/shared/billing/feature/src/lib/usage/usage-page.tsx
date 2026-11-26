@@ -20,6 +20,7 @@ import type {
   Offer,
   Period,
   PlanOptions,
+  PlanProposal,
   PricingClient,
   Reactivation,
   Spend,
@@ -29,13 +30,14 @@ import { Badge, Button, Callout, Heading, Icon, Modal } from '@qovery/shared/ui'
 import { BillingAlerts } from '../components/billing-alerts'
 import { errorText } from '../components/parts'
 import { AskAdminModal, EmailPreferencesPanel, OfferHost } from '../offers/offers'
+import { ProposalHost, readProposal } from '../offers/proposals'
 import { CancelDialog, PlannedBanners } from '../plans/cancel'
 import { DiscountsCard } from '../plans/discounts'
 import { PlanChangeFlow } from '../plans/plan-change'
 import { PricingTable } from '../plans/pricing-table'
 import { ReactivateFlow, SubscriptionEndedBanner } from '../plans/reactivate'
 import { date, money, num, valueText } from '../utils/format'
-import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel } from '../utils/rules'
+import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel, signupTrialText } from '../utils/rules'
 import { BuildUsage } from './build-usage'
 import { PrepaidCredits } from './credits'
 import { UsageHistory } from './usage-history'
@@ -51,8 +53,9 @@ export interface UsagePageProps {
   onManageSpendLimits?: () => void
   /** all: offer cards and the sign-in popup (default); cards: the console's layout shows the popup. */
   offers?: 'all' | 'cards' | 'none'
-  /** Opens a journey on load: the plan comparison, or the plan change (on `plan` when given). For deep links. */
-  open?: { modal: 'compare' | 'upgrade'; plan?: string; period?: Period }
+  /** Opens a journey on load: the plan comparison, or the plan change (on `plan` when given). For deep links.
+   * `proposal`: the plan proposal of that id, opened on its review (the email's "Review the plan"). */
+  open?: { modal: 'compare' | 'upgrade'; plan?: string; period?: Period; proposal?: number }
   /** Shows <BillingAlerts> under the page heading (default). Hosts that place alerts themselves pass false. */
   alerts?: boolean
   /** Where the alerts' buttons go: the invoices page or the billing settings page. */
@@ -84,9 +87,9 @@ function PageHeading({ title, description, actions }: UsagePageHeading) {
 function Card({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {
   return (
     <div className="min-h-[114px] flex-1 rounded border border-neutral bg-surface-neutral p-5">
-      <div className="mb-1 text-xs font-medium text-neutral-subtle">{label}</div>
+      <div className="mb-1 text-sm text-neutral-subtle">{label}</div>
       <div className="mb-1 text-sm font-medium text-neutral">{children}</div>
-      {hint && <div className="text-xs text-neutral-subtle">{hint}</div>}
+      {hint && <div className="text-sm text-neutral-subtle">{hint}</div>}
     </div>
   )
 }
@@ -125,7 +128,7 @@ function UsageRow({
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <span className="text-sm font-medium text-neutral">{e.name}</span>
-          {e.kind === 'meter' && <span className="ml-2 text-xs text-neutral-subtle">this month</span>}
+          {e.kind === 'meter' && <span className="ml-2 text-sm text-neutral-subtle">this month</span>}
         </div>
         <div className="text-sm text-neutral">
           {isSetting(e) ? (
@@ -143,7 +146,7 @@ function UsageRow({
         </div>
       </div>
       {finite && <UsageBar used={e.used} value={e.value as number} over={e.over} />}
-      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-neutral-subtle">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-neutral-subtle">
         <span>
           {e.customer_note}
           {e.prepaid ? ` · ${num(e.prepaid)} prepaid` : ''}
@@ -227,7 +230,11 @@ export function UsagePage({
   // The view the reactivation flow opened with: it stays mounted after the page reloads.
   const [reactivating, setReactivating] = useState<Reactivation>()
   const [error, setError] = useState('')
-  const [modal, setModal] = useState<'compare' | 'upgrade' | 'cancel' | 'reactivate' | null>(open?.modal ?? null)
+  // A proposal deep link waits for the proposal before opening the plan change.
+  const [modal, setModal] = useState<'compare' | 'upgrade' | 'cancel' | 'reactivate' | null>(
+    open?.proposal ? null : open?.modal ?? null
+  )
+  const [proposal, setProposal] = useState<PlanProposal>()
   const [detail, setDetail] = useState<UsageSeries>()
   const [ask, setAsk] = useState<Entitlement>()
   const [comparePeriod, setComparePeriod] = useState<Period | undefined>(open?.period)
@@ -268,6 +275,28 @@ export function UsagePage({
     [client, organizationId]
   )
   useEffect(() => load(initialUsage), [initialUsage, load])
+  const canReviewProposal =
+    !!u &&
+    u.access !== 'member' &&
+    !u.billing.internal &&
+    u.billing.status !== 'cancelled' &&
+    !!client.quoteProposal &&
+    !!client.acceptProposal
+  useEffect(() => {
+    if (!canReviewProposal || !open?.proposal || !client.proposals) return
+    let active = true
+    readProposal(client, organizationId)
+      .then((r) => {
+        if (active && r.proposal && r.proposal.id === open.proposal) {
+          setProposal(r.proposal)
+          setModal('upgrade')
+        }
+      })
+      .catch(() => undefined)
+    return () => {
+      active = false
+    }
+  }, [canReviewProposal, client, organizationId, open?.proposal])
   const usageError = error && (
     <Callout.Root color="red">
       <Callout.Text>
@@ -280,6 +309,7 @@ export function UsagePage({
     </Callout.Root>
   )
   if (!u) return usageError || <div className="p-6 text-sm text-neutral-subtle">Loading billing…</div>
+  const signupTrial = u.signup_trial && signupTrialText(u.signup_trial)
   const cur = u.billing.currency
   const amounts = u.access !== 'member'
   // Once the subscription ended, Reactivate replaces Change plan.
@@ -295,7 +325,12 @@ export function UsagePage({
     .filter((e) => e.kind === 'feature' || notIncluded(e))
     .map((e) => (e.kind === 'feature' ? e : { ...e, value: false as const }))
   const upgrade = (p?: string) => {
+    setProposal(undefined)
     setPreselect(p)
+    setModal('upgrade')
+  }
+  const reviewProposal = (p: PlanProposal) => {
+    setProposal(p)
     setModal('upgrade')
   }
   const sp = spend ?? u.spend
@@ -387,15 +422,24 @@ export function UsagePage({
               </Callout.Text>
             </Callout.Root>
           )}
-        {u.billing.phase && (
+        {signupTrial ? (
           <Callout.Root color="sky">
             <Callout.Text>
-              <Callout.TextHeading>
-                {u.billing.phase.kind === 'poc' ? 'Proof of concept' : 'Trial'} until {date(u.billing.phase.until)}
-              </Callout.TextHeading>
-              Limits are not enforced until then.
+              <Callout.TextHeading>{signupTrial.title}</Callout.TextHeading>
+              {signupTrial.body}
             </Callout.Text>
           </Callout.Root>
+        ) : (
+          u.billing.phase && (
+            <Callout.Root color="sky">
+              <Callout.Text>
+                <Callout.TextHeading>
+                  {u.billing.phase.kind === 'poc' ? 'Proof of concept' : 'Trial'} until {date(u.billing.phase.until)}
+                </Callout.TextHeading>
+                Limits are not enforced until then.
+              </Callout.Text>
+            </Callout.Root>
+          )
         )}
         {amounts && !ended && (
           <PlannedBanners
@@ -433,7 +477,7 @@ export function UsagePage({
 
         {offers !== 'none' && (
           <OfferHost
-            key={round}
+            key={'offers' + round}
             modal={offers === 'all'}
             organizationId={organizationId}
             client={client}
@@ -441,6 +485,10 @@ export function UsagePage({
             onReviewRequests={canChangePlan ? () => upgrade() : undefined}
             skuName={skuName}
           />
+        )}
+        {/* A plan proposal from Qovery staff, with or without offers. */}
+        {canReviewProposal && (
+          <ProposalHost organizationId={organizationId} client={client} onReview={reviewProposal} />
         )}
 
         <div className="flex flex-col gap-2 md:flex-row">
@@ -454,7 +502,7 @@ export function UsagePage({
           >
             {u.plan.name}
             {plan?.scheduled_change && (
-              <Badge className="ml-2" color="sky" variant="surface" size="sm">
+              <Badge className="ml-2 font-medium" color="sky" variant="surface" size="sm">
                 {plan.scheduled_change.name} from {date(plan.scheduled_change.effective_on)}
               </Badge>
             )}
@@ -465,7 +513,7 @@ export function UsagePage({
               hint={`For this ${u.estimate.period}, usage so far included · next invoice ${date(u.estimate.term_end || u.billing.term_end)}`}
             >
               {money(u.estimate.total, cur)}{' '}
-              <span className="text-xs font-normal text-neutral-subtle">/ {u.estimate.period}</span>
+              <span className="text-sm font-normal text-neutral-subtle">/ {u.estimate.period}</span>
             </Card>
           )}
           {amounts && sp && (
@@ -509,7 +557,7 @@ export function UsagePage({
               }
             >
               {money(Math.max(sp.spent, estimatedAbove), cur)}{' '}
-              <span className="text-xs font-normal text-neutral-subtle">
+              <span className="text-sm font-normal text-neutral-subtle">
                 {estimatedAbove > sp.spent ? 'estimated' : 'recorded'}
               </span>
             </Card>
@@ -528,7 +576,7 @@ export function UsagePage({
               >
                 <span className="text-neutral">
                   {estimateLineLabel(l, unitOf)}
-                  {l.kind === 'overage' && <span className="text-xs text-neutral-subtle"> (estimate)</span>}
+                  {l.kind === 'overage' && <span className="text-sm text-neutral-subtle"> (estimate)</span>}
                 </span>
                 <span className={l.amount < 0 ? 'text-positive' : 'text-neutral'}>{money(l.amount, cur)}</span>
               </div>
@@ -537,7 +585,13 @@ export function UsagePage({
         )}
 
         {amounts && !ended && (
-          <DiscountsCard key={round} organizationId={organizationId} client={client} usage={u} onChanged={load} />
+          <DiscountsCard
+            key={'discounts' + round}
+            organizationId={organizationId}
+            client={client}
+            usage={u}
+            onChanged={load}
+          />
         )}
 
         <div>
@@ -600,7 +654,7 @@ export function UsagePage({
 
         <EmailPreferencesPanel organizationId={organizationId} client={client} />
 
-        {u.notes.length > 0 && <p className="text-xs text-neutral-subtle">{u.notes.join(' ')}</p>}
+        {u.notes.length > 0 && <p className="text-sm text-neutral-subtle">{u.notes.join(' ')}</p>}
 
         {amounts && !internal && cancellation && !ending && cancellation.unavailable?.code !== 'SUBSCRIPTION_ENDED' && (
           <div className="border-t border-neutral pt-4 text-sm text-neutral-subtle">
@@ -688,9 +742,11 @@ export function UsagePage({
             usage={u}
             preselect={preselect}
             prePeriod={comparePeriod}
+            proposal={proposal}
             onClose={() => {
               setModal(null)
               setComparePeriod(undefined)
+              setProposal(undefined)
             }}
             onDone={load}
             onContactSales={onContactSales}

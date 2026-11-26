@@ -6,6 +6,7 @@
  */
 import { z } from 'zod'
 import type {
+  AddonPurchaseResult,
   AwsMarketplace,
   BillingInfo,
   BillingInfoView,
@@ -17,24 +18,34 @@ import type {
   CreditPurchaseResult,
   Credits,
   CustomerInvoice,
+  CustomerTrial,
   DiscountQuote,
   Discounts,
   EmailPreferences,
+  Gates,
   Granularity,
+  IntroAction,
   InvoiceDetails,
   InvoiceDownload,
   InvoicePage,
   Offers,
   PaymentMethods,
   PaymentSession,
+  PaywallEvent,
+  PaywallOptionType,
   Period,
   PlanChangeResult,
   PlanOptions,
+  ProposalDismissReason,
+  Proposals,
   PublicPlans,
   Reactivation,
   ReactivationResult,
+  SignupTrial,
   Spend,
   Trial,
+  TrialStartRequest,
+  TrialStartResult,
   UpgradeRequest,
   UsageHistoryData,
 } from './billing.types'
@@ -103,6 +114,12 @@ export interface PricingClient {
   ): Promise<PlanChangeResult>
   /** "Keep my current plan": drops the change scheduled for the renewal. */
   keepPlan?(organizationId: string): Promise<{ removed: boolean }>
+  /** A new organization's trial: keep its plan at the end (with the consent, a card on file), or stop keeping it. */
+  keepSignupTrial?(
+    organizationId: string,
+    keep: boolean,
+    acceptAutoCharge: boolean
+  ): Promise<{ signup_trial: SignupTrial | null }>
   // Optional: cancellation at the end of the term (billing roles only).
   cancellation?(organizationId: string): Promise<Cancellation>
   cancel?(
@@ -154,11 +171,30 @@ export interface PricingClient {
   ): Promise<void>
   /** Accepts a trial offer: the trial starts at once (billing roles only). */
   acceptOffer?(organizationId: string, offerId: number): Promise<{ trial: Trial }>
+  /** source "paywall": asked from a paywall (counted in its funnel). */
   requestUpgrade?(
     organizationId: string,
-    req: { sku?: string; plan_code?: string; message?: string }
+    req: { sku?: string; plan_code?: string; message?: string; source?: 'paywall' }
   ): Promise<{ request: UpgradeRequest; notified: number; existing?: boolean }>
   closeUpgradeRequest?(organizationId: string, requestId: number, status: 'done' | 'declined'): Promise<void>
+  // Optional: plan proposals Qovery staff send (billing roles; members get { proposal: null }).
+  // Review quotes and accepts through the plan change rules, with the proposal's concession.
+  proposals?(organizationId: string): Promise<Proposals>
+  viewProposal?(organizationId: string, proposalId: number): Promise<void>
+  /** Remind me later: the banner comes back after `days` (3, 7 or 14) with a reminder email. */
+  snoozeProposal?(
+    organizationId: string,
+    proposalId: number,
+    days: number
+  ): Promise<{ status: string; snoozed_until: string }>
+  dismissProposal?(
+    organizationId: string,
+    proposalId: number,
+    req: { reason?: ProposalDismissReason; note?: string }
+  ): Promise<{ status: string }>
+  quoteProposal?(organizationId: string, proposalId: number): Promise<PlanChangeResult>
+  /** idempotencyKey: one per review, as for a plan change. */
+  acceptProposal?(organizationId: string, proposalId: number, idempotencyKey?: string): Promise<PlanChangeResult>
   emailPreferences?(organizationId: string): Promise<EmailPreferences>
   setEmailPreference?(organizationId: string, category: string, enabled: boolean): Promise<EmailPreferences>
   // Optional: the customer's own billing (billing roles only). Invoices, payment methods and
@@ -188,6 +224,29 @@ export interface PricingClient {
     req: { ids: string[]; message?: string; accept_terms: boolean }
   ): Promise<Discounts>
   withdrawDiscountRequest?(organizationId: string, requestId: number): Promise<Discounts>
+  // Optional: feature gates and paywalls (3.4i). Any member reads gates; billing roles start a
+  // trial or buy an add-on. Without gates, <Paywall> and usePaywall stay out of the way.
+  gates?(organizationId: string, q: { actions?: string[]; skus?: string[] }): Promise<Gates>
+  gateEvent?(organizationId: string, e: { sku: string; event: PaywallEvent; choice?: PaywallOptionType }): Promise<void>
+  /** Records what the person did with an intro (once shown, it never shows to them again in this organization). */
+  gateIntro?(organizationId: string, e: { sku: string; action: IntroAction }): Promise<void>
+  trials?(organizationId: string): Promise<{ trials: CustomerTrial[] }>
+  /** Starts a free trial. continue and accept_auto_charge only when the person ticked it. */
+  startTrial?(organizationId: string, req: TrialStartRequest): Promise<TrialStartResult>
+  /** null turns the automatic continuation off. */
+  setTrialContinue?(
+    organizationId: string,
+    trialId: number,
+    cont: NonNullable<TrialStartRequest['continue']> | null,
+    acceptAutoCharge?: boolean
+  ): Promise<{ trial: CustomerTrial }>
+  quoteAddon?(organizationId: string, req: { code: string; quantity?: number }): Promise<AddonPurchaseResult>
+  /** Charges the card on file (prorated by Chargebee). idempotencyKey: one per review. */
+  buyAddon?(
+    organizationId: string,
+    req: { code: string; quantity?: number },
+    idempotencyKey: string
+  ): Promise<AddonPurchaseResult>
 }
 
 export { BillingError } from './pricing-transport'
@@ -208,6 +267,14 @@ export function buildUsageQuery(r: { from: string; to: string; granularity?: Gra
     ...(r.granularity ? { granularity: r.granularity } : {}),
     ...(r.service !== undefined ? { service: r.service } : {}),
   }).toString()
+}
+
+/** The query of a gates read: actions and SKUs, comma separated. */
+export function gatesQuery(q: { actions?: string[]; skus?: string[] }) {
+  const p = new URLSearchParams()
+  if (q.actions?.length) p.set('actions', q.actions.join(','))
+  if (q.skus?.length) p.set('skus', q.skus.join(','))
+  return p.toString()
 }
 
 export function createPricingClient(options: ClientOptions): PricingClient {
@@ -231,6 +298,10 @@ export function createPricingClient(options: ClientOptions): PricingClient {
         api.changePlan({ organizationId: org, changePlanRequest: { plan, period, dry_run: false }, idempotencyKey })
       ),
     keepPlan: (org) => billingData(api.keepPlan({ organizationId: org })),
+    keepSignupTrial: (org, keep, accept) =>
+      billingData(
+        api.keepSignupTrial({ organizationId: org, keepSignupTrialRequest: { keep, accept_auto_charge: accept } })
+      ),
     cancellation: (org) => billingData(api.cancellation({ organizationId: org })),
     cancel: (org, request) => billingData(api.cancel({ organizationId: org, cancelRequest: request })),
     keepSubscription: (org) => billingData(api.keepSubscription({ organizationId: org })),
@@ -259,6 +330,25 @@ export function createPricingClient(options: ClientOptions): PricingClient {
     closeUpgradeRequest: (org, id, status) =>
       billingData(
         api.closeUpgradeRequest({ organizationId: org, requestId: id, closeUpgradeRequestRequest: { status } })
+      ),
+    proposals: (org) => billingData(api.proposals({ organizationId: org })),
+    viewProposal: (org, id) => billingData(api.viewProposal({ organizationId: org, proposalId: id })),
+    snoozeProposal: (org, id, days) =>
+      billingData(api.snoozeProposal({ organizationId: org, proposalId: id, snoozeProposalRequest: { days } })),
+    dismissProposal: (org, id, request) =>
+      billingData(api.dismissProposal({ organizationId: org, proposalId: id, dismissProposalRequest: request })),
+    quoteProposal: (org, id) =>
+      billingData(
+        api.acceptProposal({ organizationId: org, proposalId: id, acceptProposalRequest: { dry_run: true } })
+      ),
+    acceptProposal: (org, id, idempotencyKey) =>
+      billingData(
+        api.acceptProposal({
+          organizationId: org,
+          proposalId: id,
+          acceptProposalRequest: { dry_run: false },
+          idempotencyKey,
+        })
       ),
     emailPreferences: (org) => billingData(api.emailPreferences({ organizationId: org })),
     setEmailPreference: (org, category, enabled) =>
@@ -296,5 +386,29 @@ export function createPricingClient(options: ClientOptions): PricingClient {
       ),
     withdrawDiscountRequest: (org, id) =>
       billingData(api.withdrawDiscountRequest({ organizationId: org, requestId: id })),
+    gates: (org, { actions, skus }) =>
+      billingData(
+        api.gates({ organizationId: org, actions: actions?.join(',') || undefined, skus: skus?.join(',') || undefined })
+      ),
+    gateEvent: (org, request) => billingData(api.gateEvent({ organizationId: org, gateEventRequest: request })),
+    gateIntro: (org, request) => billingData(api.gateIntro({ organizationId: org, gateIntroRequest: request })),
+    trials: (org) => billingData(api.trials({ organizationId: org })),
+    startTrial: (org, request) => billingData(api.startTrial({ organizationId: org, body: request })),
+    setTrialContinue: (org, trialId, continuation, accept) =>
+      billingData(
+        api.setTrialContinue({
+          organizationId: org,
+          trialId,
+          setTrialContinueRequest: continuation
+            ? { continue: continuation, accept_auto_charge: !!accept }
+            : { continue: null },
+        })
+      ),
+    quoteAddon: (org, request) =>
+      billingData(api.buyAddon({ organizationId: org, buyAddonRequest: { ...request, dry_run: true } })),
+    buyAddon: (org, request, idempotencyKey) =>
+      billingData(
+        api.buyAddon({ organizationId: org, buyAddonRequest: { ...request, dry_run: false }, idempotencyKey })
+      ),
   }
 }

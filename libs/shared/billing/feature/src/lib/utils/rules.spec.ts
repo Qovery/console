@@ -3,6 +3,7 @@ import type { CustomerInvoice } from '@qovery/shared/billing/data-access'
 import {
   amountDue,
   cardState,
+  discountRoom,
   discountsExpanded,
   discountsUpTo,
   emptyBillingInfo,
@@ -11,6 +12,7 @@ import {
   invoiceYears,
   minutesToWait,
   normalizeBillingInfo,
+  requestableDiscounts,
   runSequential,
   validOfferURL,
   validateBillingInfo,
@@ -181,5 +183,13 @@ describe('discounts card', () => {
     expect(discountsUpTo(levers, 35)).toBe(20)
     expect(discountsUpTo(levers, 10)).toBe(10)
     expect(discountsUpTo([levers[3]], 35)).toBe(0)
+  })
+
+  it('counts the discounts in the contract toward the cap and never requests them', () => {
+    expect(discountRoom(35, 5)).toBe(30)
+    expect(discountRoom(35, 38)).toBe(0)
+    expect(discountsUpTo(levers, discountRoom(35, 30))).toBe(5)
+    expect(requestableDiscounts(['case-study', 'logo'], [{ id: 'logo' }])).toEqual(['case-study'])
+    expect(requestableDiscounts(['case-study'])).toEqual(['case-study'])
   })
 })

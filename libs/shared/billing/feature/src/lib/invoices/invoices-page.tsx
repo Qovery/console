@@ -449,14 +449,14 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
                     <span className="text-neutral">{localDate(inv.date)}</span>
                     <span className="min-w-0 truncate text-right font-medium text-neutral lg:text-left">{inv.id}</span>
                     <span>
-                      <Badge color={st.color} variant="surface" size="sm">
+                      <Badge className="font-medium" color={st.color} variant="surface" size="sm">
                         {st.label}
                       </Badge>
                     </span>
                     <span className="text-right font-medium tabular-nums text-neutral">
                       {amount(inv.total, inv.currency)}
                       {inv.collectable && inv.amount_due !== inv.total ? (
-                        <span className="block text-xs font-normal text-neutral-subtle">
+                        <span className="block text-sm font-normal text-neutral-subtle">
                           {amount(inv.amount_due, inv.currency)} due
                         </span>
                       ) : null}
@@ -512,7 +512,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
                   {ps?.error && (
                     <div
                       role="alert"
-                      className="mt-2 flex flex-wrap items-center justify-end gap-2 text-xs text-negative"
+                      className="mt-2 flex flex-wrap items-center justify-end gap-2 text-sm text-negative"
                     >
                       <span>{ps.error}</span>
                       {ps.payment && (

@@ -19,7 +19,7 @@ interface BillingTransportOptions {
   fetch?: typeof fetch
 }
 
-function fetchAdapter(fetch: typeof globalThis.fetch): AxiosAdapter {
+export function createPricingFetchAdapter(fetch: typeof globalThis.fetch): AxiosAdapter {
   return async (config) => {
     const { Accept: _accept, ...headers } = config.headers.toJSON(true)
     const method = config.method?.toUpperCase()
@@ -43,7 +43,7 @@ export function createBillingApi({ pricingApiUrl, getToken, fetch }: BillingTran
   const transport = axios.create({
     baseURL: basePath,
     validateStatus: () => true,
-    ...(fetch && { adapter: fetchAdapter(fetch) }),
+    ...(fetch && { adapter: createPricingFetchAdapter(fetch) }),
   })
   const configuration = new Configuration({ basePath, accessToken: getToken ? async () => getToken() : undefined })
   return new BillingApi(configuration, basePath, transport)
