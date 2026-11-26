@@ -13,11 +13,11 @@ import type { Offer, Offers, Trial, UpgradeRequest } from 'qovery-pricing-typesc
 import { useEffect, useState } from 'react'
 import type { PlanProposal, PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Banner, Button, Callout, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
-import { date } from './format'
 import { errorText } from './parts'
 import { ProposalBanner, ProposalHost, useProposal } from './proposals'
-import { forgetReads, sharedRead } from './reads'
-import { BAR_TEXT, barBanner, barClass } from './rules'
+import { date } from './utils/format'
+import { forgetReads, sharedRead } from './utils/reads'
+import { BAR_TEXT, barBanner, barClass } from './utils/rules'
 
 const TONE: Record<string, string> = {
   brand: 'border-brand-strong bg-surface-brand-component',

@@ -14,9 +14,9 @@ import type { ProposalDismissReason } from 'qovery-pricing-typescript-axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PlanProposal, PricingClient, Proposals } from '@qovery/shared/billing/data-access'
 import { Banner, Button, Callout, Heading, Icon, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
-import { date, money } from './format'
-import { forgetReads, sharedRead } from './reads'
-import { BAR_TEXT, barClass, proposalHeading, proposalLine, proposalShortLine, snoozeLabel } from './rules'
+import { date, money } from './utils/format'
+import { forgetReads, sharedRead } from './utils/reads'
+import { BAR_TEXT, barClass, proposalHeading, proposalLine, proposalShortLine, snoozeLabel } from './utils/rules'
 
 type ProposalListener = (proposalId: number) => void
 const proposalListeners = new WeakMap<PricingClient, Map<string, Set<ProposalListener>>>()

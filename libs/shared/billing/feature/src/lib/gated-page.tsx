@@ -27,6 +27,9 @@ import type {
 import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Button, ExternalLink, Heading, Icon, SegmentedControl } from '@qovery/shared/ui'
+import { GatedPreview } from './gated-previews'
+import { openPaymentMethodPage } from './invoices-page'
+import { Paywall, type PaywallProps } from './paywall'
 import {
   type GatedMedia,
   type GatedPreviewTab,
@@ -36,11 +39,8 @@ import {
   introPageView,
   previewRender,
   previewTabs,
-} from './gated'
-import { GatedPreview } from './gated-previews'
-import { openPaymentMethodPage } from './invoices-page'
-import { Paywall, type PaywallProps } from './paywall'
-import { markIntroSeen } from './rules'
+} from './utils/gated'
+import { markIntroSeen } from './utils/rules'
 
 export interface GatedPageProps {
   organizationId: string

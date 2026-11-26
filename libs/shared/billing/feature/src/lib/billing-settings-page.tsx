@@ -35,7 +35,7 @@ import {
   validAwsAccountId,
   validOfferURL,
   validateBillingInfo,
-} from './rules'
+} from './utils/rules'
 
 export interface BillingSettingsPageProps {
   organizationId: string

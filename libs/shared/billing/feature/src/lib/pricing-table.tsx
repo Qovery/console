@@ -15,7 +15,7 @@ import type {
 import { useEffect, useMemo, useState } from 'react'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Button, SegmentedControl, Tooltip } from '@qovery/shared/ui'
-import { money, monthly, valueText } from './format'
+import { money, monthly, valueText } from './utils/format'
 
 export interface PricingTableProps {
   /** The plans, or a client to fetch them. */

@@ -1,9 +1,8 @@
 // The billing kit's rules for paywalls, trials, plan proposals and shared reads, and the calls the
 // pricing-api client sends for them, from pricing-api's web/tests (paywall, proposals, kit-reads).
-import axios from 'axios'
+import axios, { type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios'
 import type { Gate, PaywallInfo, SignupTrial1 as SignupTrial } from 'qovery-pricing-typescript-axios'
 import { type PlanProposal, createPricingClient } from '@qovery/shared/billing/data-access'
-import { createAxiosFetchAdapter } from '@qovery/shared/util-tests'
 import { introChip, introPageView } from './gated'
 import { SHARED_READ_MS, forgetReads, sharedRead } from './reads'
 import {
@@ -348,11 +347,15 @@ describe('paywall intros', () => {
   })
 
   it('should record what the person did with an intro', async () => {
-    const fetchMock = jest
-      .fn()
-      .mockResolvedValue({ ok: true, status: 204, headers: new Headers(), text: () => Promise.resolve('') })
+    const adapter = jest.fn<ReturnType<AxiosAdapter>, [InternalAxiosRequestConfig]>(async (config) => ({
+      config,
+      data: null,
+      status: 204,
+      statusText: 'No Content',
+      headers: {},
+    }))
     const originalAdapter = axios.defaults.adapter
-    axios.defaults.adapter = createAxiosFetchAdapter(fetchMock)
+    axios.defaults.adapter = adapter
     try {
       await createPricingClient({
         pricingApiUrl: 'https://p',
@@ -364,9 +367,9 @@ describe('paywall intros', () => {
     } finally {
       axios.defaults.adapter = originalAdapter
     }
-    const [url, init] = fetchMock.mock.calls[0]
-    expect(url).toBe('https://p/organization/org-1/gates/intro')
-    expect(init.method).toBe('POST')
-    expect(JSON.parse(init.body)).toEqual({ sku: 'service_catalog', action: 'continued' })
+    const [config] = adapter.mock.calls[0]
+    expect(axios.getUri(config)).toBe('https://p/organization/org-1/gates/intro')
+    expect(config.method).toBe('post')
+    expect(JSON.parse(config.data)).toEqual({ sku: 'service_catalog', action: 'continued' })
   })
 })

@@ -1,10 +1,9 @@
-import axios from 'axios'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import type { BillingUsage, CustomerInvoice, InvoiceDetails } from 'qovery-pricing-typescript-axios'
-import { createPricingClient } from '@qovery/shared/billing/data-access'
-import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
+import { type PricingClient } from '@qovery/shared/billing/data-access'
+import { usePricingClient } from '@qovery/shared/billing/feature'
 import { billingUsageFactoryMock } from '@qovery/shared/factories'
-import { createAxiosFetchAdapter, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingSettingsView, InvoicesView, SettingsBillingSettings, SettingsInvoices } from './settings-billing-pages'
 
 const mockNavigate = jest.fn()
@@ -95,77 +94,48 @@ const invoiceDetails: InvoiceDetails = {
   ],
 }
 
-const originalAdapter = axios.defaults.adapter
-
-afterEach(() => {
-  axios.defaults.adapter = originalAdapter
-})
-
-const jsonResponse = (status: number, body: unknown) =>
-  ({
-    ok: status >= 200 && status < 300,
-    status,
-    statusText: '',
-    headers: new Headers(),
-    json: () => Promise.resolve(body),
-  }) as Response
-
-const mockPricingApi = (usage: BillingUsage, invoices: CustomerInvoice[] = [overdueInvoice]) => {
-  const fetchMock = jest.fn((url: string, init?: RequestInit) => {
-    const path = new URL(url).pathname
-    if (path.endsWith('/billingUsage')) return Promise.resolve(jsonResponse(200, usage))
-    if (path.endsWith('/collect') && init?.method === 'POST') {
-      return Promise.resolve(jsonResponse(200, { ...invoices[0], status: 'paid', collectable: false }))
-    }
-    if (path.endsWith('/invoices/INV-2026-0042')) return Promise.resolve(jsonResponse(200, invoiceDetails))
-    if (path.endsWith('/invoices')) {
-      return Promise.resolve(
-        jsonResponse(200, { invoices, next_offset: '', billing_channel: 'chargebee', actions_available: true })
-      )
-    }
-    if (path.endsWith('/paymentMethods')) {
-      return Promise.resolve(
-        jsonResponse(200, {
-          payment_methods: [
-            { type: 'card', brand: 'visa', last4: '4242', expiry_month: 12, expiry_year: 2030, primary: true },
-          ],
-          billing_channel: 'chargebee',
-          actions_available: true,
-        })
-      )
-    }
-    return Promise.resolve(jsonResponse(404, { code: 'NOT_FOUND', detail: 'not found' }))
-  })
-  axios.defaults.adapter = createAxiosFetchAdapter(fetchMock as unknown as typeof fetch)
-  jest.mocked(usePricingClient).mockReturnValue(
-    pickConsoleCalls(
-      createPricingClient({
-        pricingApiUrl: 'https://billing-api.qovery.com',
-        getToken: () => 'user-token',
-      })
-    )
-  )
-  return fetchMock
+const mockPricingClient = (usage: BillingUsage, invoices: CustomerInvoice[] = [overdueInvoice]) => {
+  const client = {
+    mode: 'live',
+    publicPlans: jest.fn(),
+    billingUsage: jest.fn().mockResolvedValue(usage),
+    spendLimits: jest.fn(),
+    invoices: jest.fn().mockResolvedValue({
+      invoices,
+      next_offset: '',
+      billing_channel: 'chargebee',
+      actions_available: true,
+    }),
+    invoice: jest.fn().mockResolvedValue(invoiceDetails),
+    collectInvoice: jest.fn().mockResolvedValue({ ...invoices[0], status: 'paid', collectable: false }),
+    paymentMethods: jest.fn().mockResolvedValue({
+      payment_methods: [
+        { type: 'card', brand: 'visa', last4: '4242', expiry_month: 12, expiry_year: 2030, primary: true },
+      ],
+      billing_channel: 'chargebee',
+      actions_available: true,
+    }),
+  } satisfies PricingClient
+  jest.mocked(usePricingClient).mockReturnValue(client)
+  return client
 }
-
-const calledPaths = (fetchMock: jest.Mock) => fetchMock.mock.calls.map(([url]) => new URL(url).pathname)
 
 describe('SettingsInvoices and SettingsBillingSettings', () => {
   it('should show the billing summary and billing details when the flag is off', () => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
-    const fetchMock = mockPricingApi(billingUsageFactoryMock())
+    jest.mocked(usePricingClient).mockClear()
 
     renderWithProviders(<SettingsInvoices />)
     expect(screen.getByText('Billing summary page')).toBeInTheDocument()
 
     renderWithProviders(<SettingsBillingSettings />)
     expect(screen.getByText('Billing details page')).toBeInTheDocument()
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(usePricingClient).not.toHaveBeenCalled()
   })
 
   it('should show the invoices page when the flag is on', async () => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
-    mockPricingApi(billingUsageFactoryMock())
+    mockPricingClient(billingUsageFactoryMock())
     renderWithProviders(<SettingsInvoices />)
 
     expect(await screen.findByText('INV-2026-0042')).toBeInTheDocument()
@@ -177,7 +147,7 @@ describe('InvoicesView', () => {
   beforeEach(() => mockNavigate.mockClear())
 
   it('should show members one line without calling the invoice or payment APIs', async () => {
-    const fetchMock = mockPricingApi(billingUsageFactoryMock('member'))
+    const client = mockPricingClient(billingUsageFactoryMock('member'))
     renderWithProviders(<InvoicesView />)
 
     expect(
@@ -185,11 +155,12 @@ describe('InvoicesView', () => {
         'Only Owners, Admins and Billing Managers can see invoices and payment details. Ask one of them.'
       )
     ).toBeInTheDocument()
-    expect(calledPaths(fetchMock).every((path) => path.endsWith('/billingUsage'))).toBe(true)
+    expect(client.invoices).not.toHaveBeenCalled()
+    expect(client.paymentMethods).not.toHaveBeenCalled()
   })
 
   it('should open the billing page to update the payment method', async () => {
-    mockPricingApi(billingUsageFactoryMock())
+    mockPricingClient(billingUsageFactoryMock())
     const { userEvent } = renderWithProviders(<InvoicesView />)
 
     await screen.findByText('INV-2026-0042')
@@ -202,7 +173,7 @@ describe('InvoicesView', () => {
   })
 
   it('should open the details of an invoice with the usage behind its usage line', async () => {
-    const fetchMock = mockPricingApi(billingUsageFactoryMock())
+    const client = mockPricingClient(billingUsageFactoryMock())
     const { userEvent } = renderWithProviders(<InvoicesView />)
 
     await screen.findByText('INV-2026-0042')
@@ -210,20 +181,20 @@ describe('InvoicesView', () => {
 
     expect(await screen.findByText('Deployment minutes above your plan')).toBeInTheDocument()
     expect(screen.getByText('Not billed (plan or prepaid)')).toBeInTheDocument()
-    expect(calledPaths(fetchMock)).toContain('/organization/org-northwind/invoices/INV-2026-0042')
+    expect(client.invoice).toHaveBeenCalledWith('org-northwind', 'INV-2026-0042')
   })
 
   it('should confirm before paying an invoice', async () => {
-    const fetchMock = mockPricingApi(billingUsageFactoryMock())
+    const client = mockPricingClient(billingUsageFactoryMock())
     const { userEvent } = renderWithProviders(<InvoicesView />)
 
     await screen.findByText('INV-2026-0042')
     await userEvent.click(screen.getByRole('button', { name: 'Pay now' }))
     expect(await screen.findByText('Pay $899.00 now?')).toBeInTheDocument()
-    expect(calledPaths(fetchMock).some((path) => path.endsWith('/collect'))).toBe(false)
+    expect(client.collectInvoice).not.toHaveBeenCalled()
 
     await userEvent.click(screen.getByRole('button', { name: 'Pay $899.00' }))
-    expect(calledPaths(fetchMock)).toContain('/organization/org-northwind/invoices/INV-2026-0042/collect')
+    expect(client.collectInvoice).toHaveBeenCalledWith('org-northwind', 'INV-2026-0042', expect.any(String))
   })
 })
 
@@ -231,7 +202,7 @@ describe('BillingSettingsView', () => {
   beforeEach(() => mockNavigate.mockClear())
 
   it('should link the overdue alert to the invoices page', async () => {
-    mockPricingApi(billingUsageFactoryMock())
+    mockPricingClient(billingUsageFactoryMock())
     const { userEvent } = renderWithProviders(<BillingSettingsView />)
 
     await userEvent.click(await screen.findByRole('button', { name: 'View invoices' }))
@@ -243,7 +214,7 @@ describe('BillingSettingsView', () => {
   })
 
   it('should show members one line', async () => {
-    mockPricingApi(billingUsageFactoryMock('member'))
+    mockPricingClient(billingUsageFactoryMock('member'))
     renderWithProviders(<BillingSettingsView />)
 
     expect(

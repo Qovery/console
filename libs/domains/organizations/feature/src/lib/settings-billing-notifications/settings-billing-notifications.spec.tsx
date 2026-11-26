@@ -1,8 +1,7 @@
-import axios from 'axios'
 import type { EmailPreferences } from 'qovery-pricing-typescript-axios'
-import { createPricingClient } from '@qovery/shared/billing/data-access'
-import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
-import { createAxiosFetchAdapter, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
+import { usePricingClient } from '@qovery/shared/billing/feature'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   SettingsBillingNotifications,
   getNotificationsSettingsLinks,
@@ -23,20 +22,6 @@ jest.mock('@tanstack/react-router', () => ({
   // jsdom has no Response, which TanStack's redirect builds
   redirect: (options: unknown) => ({ redirect: true, options }),
 }))
-
-const originalAdapter = axios.defaults.adapter
-
-afterEach(() => {
-  axios.defaults.adapter = originalAdapter
-})
-
-const jsonResponse = (status: number, body: unknown) =>
-  ({
-    ok: status >= 200 && status < 300,
-    status,
-    statusText: '',
-    json: () => Promise.resolve(body),
-  }) as Response
 
 const preferences = (overrides: Partial<Record<string, boolean>> = {}): EmailPreferences => ({
   email: 'ada@northwind.example',
@@ -63,28 +48,21 @@ const preferences = (overrides: Partial<Record<string, boolean>> = {}): EmailPre
   ],
 })
 
-const mockPreferencesApi = () => {
-  let current = preferences()
-  const fetchMock = jest.fn((url: string, init?: RequestInit) => {
-    if (!new URL(url).pathname.endsWith('/organization/org-northwind/emailPreferences')) {
-      return Promise.resolve(jsonResponse(404, { code: 'NOT_FOUND', detail: 'not found' }))
-    }
-    if (init?.method === 'PUT') {
-      const { category, enabled } = JSON.parse(String(init.body))
-      current = preferences({ [category]: enabled })
-    }
-    return Promise.resolve(jsonResponse(200, current))
-  })
-  axios.defaults.adapter = createAxiosFetchAdapter(fetchMock as unknown as typeof fetch)
-  jest.mocked(usePricingClient).mockReturnValue(
-    pickConsoleCalls(
-      createPricingClient({
-        pricingApiUrl: 'https://billing-api.qovery.com',
-        getToken: () => 'user-token',
-      })
-    )
-  )
-  return fetchMock
+const mockPreferencesClient = () => {
+  const client = {
+    mode: 'live',
+    publicPlans: jest.fn(),
+    billingUsage: jest.fn(),
+    spendLimits: jest.fn(),
+    emailPreferences: jest.fn().mockResolvedValue(preferences()),
+    setEmailPreference: jest.fn(async (_organizationId: string, category: string, enabled: boolean) => {
+      const updated = preferences({ [category]: enabled })
+      client.emailPreferences.mockResolvedValue(updated)
+      return updated
+    }),
+  } satisfies PricingClient
+  jest.mocked(usePricingClient).mockReturnValue(client)
+  return client
 }
 
 describe('getNotificationsSettingsLinks', () => {
@@ -137,7 +115,7 @@ describe('redirectLegacyBillingEmailsLink', () => {
 
 describe('SettingsBillingNotifications', () => {
   it('should show the page heading and the person email preferences', async () => {
-    mockPreferencesApi()
+    mockPreferencesClient()
     renderWithProviders(<SettingsBillingNotifications />)
 
     expect(screen.getByRole('heading', { name: 'Billing notifications' })).toBeInTheDocument()
@@ -147,7 +125,7 @@ describe('SettingsBillingNotifications', () => {
   })
 
   it('should keep Billing on and locked', async () => {
-    mockPreferencesApi()
+    mockPreferencesClient()
     renderWithProviders(<SettingsBillingNotifications />)
 
     await screen.findByText('Usage and limits')
@@ -157,31 +135,21 @@ describe('SettingsBillingNotifications', () => {
     expect(toggles[1]).toBeChecked()
   })
 
-  it('should save a change with the user token', async () => {
-    const fetchMock = mockPreferencesApi()
+  it('should save a change for the organization', async () => {
+    const client = mockPreferencesClient()
     const { userEvent } = renderWithProviders(<SettingsBillingNotifications />)
 
     await screen.findByText('Usage and limits')
     await userEvent.click(screen.getAllByRole('switch')[2])
 
-    const put = fetchMock.mock.calls.find(([, init]) => init?.method === 'PUT')
-    expect(put?.[0]).toBe('https://billing-api.qovery.com/organization/org-northwind/emailPreferences')
-    expect(JSON.parse(String(put?.[1]?.body))).toEqual({ category: 'offers', enabled: false })
-    expect((put?.[1]?.headers as Record<string, string>)['Authorization']).toBe('Bearer user-token')
+    expect(client.setEmailPreference).toHaveBeenCalledWith('org-northwind', 'offers', false)
     expect(screen.getAllByRole('switch')[2]).not.toBeChecked()
   })
 
   it('should explain when the preferences cannot be read', async () => {
-    axios.defaults.adapter = createAxiosFetchAdapter(() =>
-      Promise.resolve(jsonResponse(403, { code: 'NOT_A_MEMBER', detail: 'Not a member of this organization' }))
-    )
-    jest.mocked(usePricingClient).mockReturnValue(
-      pickConsoleCalls(
-        createPricingClient({
-          pricingApiUrl: 'https://billing-api.qovery.com',
-          getToken: () => 'user-token',
-        })
-      )
+    const client = mockPreferencesClient()
+    client.emailPreferences.mockRejectedValue(
+      new BillingError(403, 'NOT_A_MEMBER', 'Not a member of this organization')
     )
     renderWithProviders(<SettingsBillingNotifications />)
 

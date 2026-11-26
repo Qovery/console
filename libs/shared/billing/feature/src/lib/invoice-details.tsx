@@ -18,8 +18,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Chart, Heading, Icon, Modal } from '@qovery/shared/ui'
 import { ChartTooltip } from './chart-tooltip'
-import { num } from './format'
 import { errorText } from './parts'
+import { num } from './utils/format'
 import {
   amount,
   invoiceDetailsCSV,
@@ -29,7 +29,7 @@ import {
   quantity,
   usageCoverageText,
   usageDays,
-} from './rules'
+} from './utils/rules'
 
 const ORG_COLORS = [
   'var(--brand-9)',

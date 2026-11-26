@@ -8,11 +8,11 @@ import type { BillingUsage, CreditOption, CreditPurchaseResult, Credits } from '
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
 import { Button, Callout, Icon, InputText, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
-import { date, money, num } from './format'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
 import { Fact } from './plan-change'
-import { changeBlockedText, creditQuantityError, newIdempotencyKey, quantity } from './rules'
+import { date, money, num } from './utils/format'
+import { changeBlockedText, creditQuantityError, newIdempotencyKey, quantity } from './utils/rules'
 
 const NO_EXPIRY = 'No expiry date'
 

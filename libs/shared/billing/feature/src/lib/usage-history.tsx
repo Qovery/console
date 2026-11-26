@@ -14,8 +14,8 @@ import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Button, Chart, Icon, InputText } from '@qovery/shared/ui'
 import { ChartTooltip } from './chart-tooltip'
 import { CompactSelect } from './compact-select'
-import { money, num } from './format'
 import { errorText } from './parts'
+import { money, num } from './utils/format'
 import {
   HISTORY_PRESETS,
   type HistoryPreset,
@@ -26,7 +26,7 @@ import {
   periodLabel,
   presetRange,
   quantity,
-} from './rules'
+} from './utils/rules'
 
 // One color per organization, the console's chart palette.
 const ORG_COLORS = [

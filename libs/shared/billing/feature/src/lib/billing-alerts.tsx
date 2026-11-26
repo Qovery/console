@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
 import { type Access, isBillingAccess, useAccess } from './parts'
-import { amount, amountDue, cardState } from './rules'
+import { amount, amountDue, cardState } from './utils/rules'
 
 export interface BillingAlertsProps {
   organizationId: string

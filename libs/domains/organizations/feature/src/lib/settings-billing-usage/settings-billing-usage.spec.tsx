@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import type { BillingUsage, Credits, Quote, UsageHistoryData } from 'qovery-pricing-typescript-axios'
 import { type ReactNode } from 'react'
@@ -11,7 +11,7 @@ import {
 } from '@qovery/shared/billing/data-access'
 import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
 import { billingUsageFactoryMock } from '@qovery/shared/factories'
-import { createAxiosFetchAdapter, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import {
   BILLING_USAGE_FEATURE_FLAG,
   BillingUsageView,
@@ -53,25 +53,24 @@ afterEach(() => {
   axios.defaults.adapter = originalAdapter
 })
 
-const jsonResponse = (status: number, body: unknown) =>
-  ({
-    ok: status >= 200 && status < 300,
-    status,
-    statusText: '',
-    json: () => Promise.resolve(body),
-  }) as Response
+const jsonResponse = (status: number, data: unknown) => ({ status, data, statusText: '', headers: {} })
 
-type Route = (init?: RequestInit) => Response
+type Route = (config: InternalAxiosRequestConfig) => ReturnType<typeof jsonResponse>
+type AdapterMock = jest.Mock<ReturnType<AxiosAdapter>, [InternalAxiosRequestConfig]>
 
-const mockPricingApi = (billingUsage: () => Promise<Response>, routes: Record<string, Route> = {}) => {
-  // Any call without a route answers 404, which the kit treats as "not available"
-  const fetchMock = jest.fn((url: string, init?: RequestInit) => {
-    const path = new URL(url).pathname
-    if (path.endsWith('/billingUsage')) return billingUsage()
+const mockPricingApi = (
+  billingUsage: () => Promise<ReturnType<typeof jsonResponse>>,
+  routes: Record<string, Route> = {}
+) => {
+  const adapter: AdapterMock = jest.fn(async (config: InternalAxiosRequestConfig) => {
+    const path = new URL(axios.getUri(config)).pathname
     const route = Object.entries(routes).find(([suffix]) => path.endsWith(suffix))?.[1]
-    return Promise.resolve(route ? route(init) : jsonResponse(404, { code: 'NOT_FOUND', detail: 'not found' }))
+    const response = path.endsWith('/billingUsage')
+      ? await billingUsage()
+      : route?.(config) ?? jsonResponse(404, { code: 'NOT_FOUND', detail: 'not found' })
+    return { ...response, config }
   })
-  axios.defaults.adapter = createAxiosFetchAdapter(fetchMock as unknown as typeof fetch)
+  axios.defaults.adapter = adapter
   jest.mocked(usePricingClient).mockReturnValue(
     pickConsoleCalls(
       createPricingClient({
@@ -80,13 +79,14 @@ const mockPricingApi = (billingUsage: () => Promise<Response>, routes: Record<st
       })
     )
   )
-  return fetchMock
+  return adapter
 }
 
 const mockUsage = (usage: BillingUsage, routes?: Record<string, Route>) =>
-  mockPricingApi(() => Promise.resolve(jsonResponse(200, usage)), routes)
+  mockPricingApi(async () => jsonResponse(200, usage), routes)
 
-const calledPaths = (fetchMock: jest.Mock) => fetchMock.mock.calls.map(([url]) => new URL(url).pathname)
+const calledPaths = (adapter: AdapterMock) =>
+  adapter.mock.calls.map(([config]) => new URL(axios.getUri(config)).pathname)
 
 const quote = (to: string, total: number): Quote => ({
   direction: 'upgrade',
@@ -268,12 +268,12 @@ const reactivationQuote = {
   tax_note: 'Before tax.',
 }
 
-const sentTo = (fetchMock: jest.Mock, suffix: string) =>
-  (fetchMock.mock.calls as unknown as [string, RequestInit][])
-    .filter(([url, init]) => url.endsWith(suffix) && init.method === 'POST')
-    .map(([, init]) => ({
-      body: JSON.parse(String(init.body)),
-      key: (init.headers as Record<string, string>)['Idempotency-Key'],
+const sentTo = (adapter: AdapterMock, suffix: string) =>
+  adapter.mock.calls
+    .filter(([config]) => config.url?.endsWith(suffix) && config.method === 'post')
+    .map(([config]) => ({
+      body: JSON.parse(config.data),
+      key: config.headers.get('Idempotency-Key'),
     }))
 
 const journeyRoutes = (change?: PlanOptions['change'], unavailable?: Cancellation['unavailable']) => ({
@@ -317,23 +317,17 @@ const proposalRoutes = () => ({
     }),
 })
 
-const bodyOf = (fetchMock: jest.Mock, suffix: string) =>
-  (fetchMock.mock.calls as unknown as [string, RequestInit][])
-    .filter(([url]) => url.endsWith(suffix))
-    .map(([, init]) => JSON.parse(String(init?.body ?? 'null')))
+const bodyOf = (adapter: AdapterMock, suffix: string) => sentTo(adapter, suffix).map(({ body }) => body)
 
 describe('BillingUsageView', () => {
   it('should call pricing-api with the user token', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock())
+    const adapter = mockUsage(billingUsageFactoryMock())
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
-    const [url, init] = fetchMock.mock.calls.find(([u]) => u.endsWith('/billingUsage')) as unknown as [
-      string,
-      RequestInit,
-    ]
-    expect(url).toBe('https://billing-api.qovery.com/organization/org-northwind/billingUsage')
-    expect((init.headers as Record<string, string>)['Authorization']).toBe('Bearer user-token')
+    const config = adapter.mock.calls.find(([config]) => config.url?.endsWith('/billingUsage'))?.[0]
+    expect(axios.getUri(config)).toBe('https://billing-api.qovery.com/organization/org-northwind/billingUsage')
+    expect(config?.headers.get('Authorization')).toBe('Bearer user-token')
   })
 
   it('should render the plan and its limits', async () => {
@@ -386,14 +380,14 @@ describe('BillingUsageView', () => {
   })
 
   it('should send plan, cancellation and history calls to pricing-api, never offers or email preferences', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), journeyRoutes())
+    const adapter = mockUsage(billingUsageFactoryMock('billing'), journeyRoutes())
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByRole('button', { name: 'Change plan' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /compare plans/i })).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: 'Cancel subscription' })).toBeInTheDocument()
 
-    const paths = calledPaths(fetchMock)
+    const paths = calledPaths(adapter)
     expect(paths).toEqual(
       expect.arrayContaining([
         '/organization/org-northwind/planOptions',
@@ -402,20 +396,20 @@ describe('BillingUsageView', () => {
       ])
     )
     expect(paths.some((path) => /offers|emailPreferences|upgradeRequests/.test(path))).toBe(false)
-    for (const [url, init] of fetchMock.mock.calls as unknown as [string, RequestInit][]) {
-      expect(url.startsWith('https://billing-api.qovery.com/organization/org-northwind/')).toBe(true)
-      expect((init.headers as Record<string, string>)['Authorization']).toBe('Bearer user-token')
+    for (const [config] of adapter.mock.calls) {
+      expect(axios.getUri(config)).toMatch(/^https:\/\/billing-api\.qovery\.com\/organization\/org-northwind\//)
+      expect(config.headers.get('Authorization')).toBe('Bearer user-token')
     }
   })
 
   it('should link to Settings, Notifications, Billing for the email preferences instead of showing the toggles', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock('member'))
+    const adapter = mockUsage(billingUsageFactoryMock('member'))
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Email notifications')).toBeInTheDocument()
     expect(screen.getByText('Choose which billing emails you receive.')).toBeInTheDocument()
     expect(screen.queryByText('Email preferences')).not.toBeInTheDocument()
-    expect(calledPaths(fetchMock).some((path) => path.endsWith('/emailPreferences'))).toBe(false)
+    expect(calledPaths(adapter).some((path) => path.endsWith('/emailPreferences'))).toBe(false)
 
     await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
 
@@ -426,20 +420,14 @@ describe('BillingUsageView', () => {
   })
 
   it('should quote a plan change with a dry run before anything is applied', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), journeyRoutes())
+    const adapter = mockUsage(billingUsageFactoryMock('billing'), journeyRoutes())
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     await userEvent.click(await screen.findByRole('button', { name: 'Change plan' }))
     await userEvent.click(await screen.findByRole('radio', { name: /scale/i }))
     await userEvent.click(screen.getByRole('button', { name: 'Review' }))
 
-    const quoteCall = fetchMock.mock.calls.find(([url]) => url.endsWith('/planChange')) as unknown as [
-      string,
-      RequestInit,
-    ]
-    expect(quoteCall[1].method).toBe('POST')
-    expect(JSON.parse(String(quoteCall[1].body))).toMatchObject({ plan: 'scale', dry_run: true })
-    expect(fetchMock.mock.calls.filter(([url]) => url.endsWith('/planChange'))).toHaveLength(1)
+    expect(bodyOf(adapter, '/planChange')).toEqual([expect.objectContaining({ plan: 'scale', dry_run: true })])
   })
 
   it('should open the support chat when a change or a cancellation needs sales', async () => {
@@ -497,20 +485,20 @@ describe('BillingUsageView', () => {
   })
 
   it('should not read plan options or the cancellation for members', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock('member'), journeyRoutes())
+    const adapter = mockUsage(billingUsageFactoryMock('member'), journeyRoutes())
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
-    const paths = calledPaths(fetchMock)
+    const paths = calledPaths(adapter)
     expect(paths.some((path) => /planOptions|cancellation|credits|reactivation/.test(path))).toBe(false)
     expect(screen.queryByRole('button', { name: 'Change plan' })).not.toBeInTheDocument()
   })
 
   it('should show prepaid credits and buy them with a quote first, then the review key', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), {
-      '/credits': (init) => {
-        if (init?.method !== 'POST') return jsonResponse(200, credits)
-        const body = JSON.parse(String(init.body))
+    const adapter = mockUsage(billingUsageFactoryMock('billing'), {
+      '/credits': (config) => {
+        if (config.method !== 'post') return jsonResponse(200, credits)
+        const body = JSON.parse(config.data)
         return body.dry_run
           ? jsonResponse(200, creditQuote(body.quantity))
           : jsonResponse(201, { applied: true, quote: creditQuote(body.quantity).quote, credits })
@@ -523,7 +511,7 @@ describe('BillingUsageView', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Buy credits' }))
     await userEvent.click(await screen.findByRole('button', { name: /^Pay \$160 now$/ }, { timeout: 3000 }))
 
-    const posts = sentTo(fetchMock, '/credits')
+    const posts = sentTo(adapter, '/credits')
     expect(posts[0]).toEqual({ body: { sku: 'deploy.minutes', quantity: 1000, dry_run: true }, key: undefined })
     const buy = posts.find((p) => p.body.dry_run === false)
     expect(buy?.body).toEqual({ sku: 'deploy.minutes', quantity: 1000, dry_run: false })
@@ -578,7 +566,7 @@ describe('BillingUsageView', () => {
       discount_until: '2027-11-20',
       term_months: 0,
     }
-    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), {
+    const adapter = mockUsage(billingUsageFactoryMock('billing'), {
       '/discounts': () => jsonResponse(200, view),
       '/discounts/quote': () => jsonResponse(200, discountQuote),
       '/discountRequests': () => jsonResponse(201, { ...view, discounts: [] }),
@@ -598,8 +586,8 @@ describe('BillingUsageView', () => {
     await userEvent.click(screen.getByText(/I agree to deliver what each discount asks for/))
     await userEvent.click(request)
 
-    expect(sentTo(fetchMock, '/discounts/quote').at(-1)?.body).toEqual({ ids: ['logo', 'case-study'], dry_run: true })
-    expect(sentTo(fetchMock, '/discountRequests')[0].body).toEqual({
+    expect(sentTo(adapter, '/discounts/quote').at(-1)?.body).toEqual({ ids: ['logo', 'case-study'], dry_run: true })
+    expect(sentTo(adapter, '/discountRequests')[0].body).toEqual({
       ids: ['logo', 'case-study'],
       message: '',
       accept_terms: true,
@@ -607,67 +595,67 @@ describe('BillingUsageView', () => {
   })
 
   it('should show a plan proposal to billing roles and review it through the proposal, with its concession', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const adapter = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     expect(
       await screen.findByText('Ada Lovelace from Qovery suggests Scale: about $2,400 less a year at your current usage')
     ).toBeInTheDocument()
-    expect(calledPaths(fetchMock)).toContain('/organization/org-northwind/proposals/7/view')
+    expect(calledPaths(adapter)).toContain('/organization/org-northwind/proposals/7/view')
 
     await userEvent.click(screen.getByRole('button', { name: 'Review' }))
     expect(await screen.findByText(/already taken off above/)).toBeInTheDocument()
-    expect(bodyOf(fetchMock, '/proposals/7/accept')).toEqual([{ dry_run: true }])
+    expect(bodyOf(adapter, '/proposals/7/accept')).toEqual([{ dry_run: true }])
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
-    expect(sentTo(fetchMock, '/proposals/7/accept')).toEqual([
+    expect(sentTo(adapter, '/proposals/7/accept')).toEqual([
       { body: { dry_run: true }, key: undefined },
       { body: { dry_run: false }, key: expect.any(String) },
     ])
-    expect(sentTo(fetchMock, '/proposals/7/accept')[1].key).not.toBe('')
-    expect(calledPaths(fetchMock).some((path) => path.endsWith('/planChange'))).toBe(false)
+    expect(sentTo(adapter, '/proposals/7/accept')[1].key).not.toBe('')
+    expect(calledPaths(adapter).some((path) => path.endsWith('/planChange'))).toBe(false)
   })
 
   it('should dismiss a plan proposal with a reason and hide it', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const adapter = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     await userEvent.click(await screen.findByRole('button', { name: 'Dismiss' }))
     await userEvent.click(screen.getByText('The price'))
     await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Dismiss' }))
 
-    expect(bodyOf(fetchMock, '/proposals/7/dismiss')).toEqual([{ reason: 'price' }])
+    expect(bodyOf(adapter, '/proposals/7/dismiss')).toEqual([{ reason: 'price' }])
     await waitFor(() => expect(screen.queryByText(/from Qovery suggests Scale/)).not.toBeInTheDocument())
   })
 
   it('should snooze a plan proposal for the chosen time and hide it', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const adapter = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     await userEvent.click(await screen.findByRole('button', { name: 'Remind me later' }))
     await userEvent.click(screen.getByRole('button', { name: '1 week' }))
 
-    expect(bodyOf(fetchMock, '/proposals/7/snooze')).toEqual([{ days: 7 }])
+    expect(bodyOf(adapter, '/proposals/7/snooze')).toEqual([{ days: 7 }])
     await waitFor(() => expect(screen.queryByText(/from Qovery suggests Scale/)).not.toBeInTheDocument())
   })
 
   it('should not read plan proposals for members', async () => {
-    const fetchMock = mockUsage(billingUsageFactoryMock('member'), proposalRoutes())
+    const adapter = mockUsage(billingUsageFactoryMock('member'), proposalRoutes())
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
-    expect(calledPaths(fetchMock).some((path) => path.includes('/proposals'))).toBe(false)
+    expect(calledPaths(adapter).some((path) => path.includes('/proposals'))).toBe(false)
   })
 
   it('should open the proposal review from the email link', async () => {
     const originalUrl = window.location.href
     window.history.pushState({}, '', '/organization/org-northwind/settings/billing?proposal=7')
     try {
-      const fetchMock = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+      const adapter = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
       renderWithProviders(<BillingUsageView />)
 
       expect(await screen.findByText(/already taken off above/)).toBeInTheDocument()
-      expect(bodyOf(fetchMock, '/proposals/7/accept')).toEqual([{ dry_run: true }])
-      expect(calledPaths(fetchMock).filter((path) => path.endsWith('/proposals'))).toHaveLength(1)
+      expect(bodyOf(adapter, '/proposals/7/accept')).toEqual([{ dry_run: true }])
+      expect(calledPaths(adapter).filter((path) => path.endsWith('/proposals'))).toHaveLength(1)
     } finally {
       window.history.replaceState({}, '', originalUrl)
     }
@@ -680,23 +668,23 @@ describe('BillingUsageView', () => {
         { sku: 'deploy.minutes', name: 'Deployment minutes', unit: 'minutes', balance: 5000, remaining: 4200 },
       ],
     }
-    const fetchMock = mockUsage(usage, { '/credits': () => jsonResponse(200, credits) })
+    const adapter = mockUsage(usage, { '/credits': () => jsonResponse(200, credits) })
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Prepaid credits')).toBeInTheDocument()
     expect(screen.getByText(/4,200 minutes left/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Buy credits' })).not.toBeInTheDocument()
-    expect(calledPaths(fetchMock).some((path) => path.endsWith('/credits'))).toBe(false)
+    expect(calledPaths(adapter).some((path) => path.endsWith('/credits'))).toBe(false)
   })
 
   it('should offer to reactivate an ended subscription and confirm with the review key', async () => {
     const ended = billingUsageFactoryMock('billing')
     ended.billing = { ...ended.billing, status: 'cancelled', locked: true }
-    const fetchMock = mockUsage(ended, {
+    const adapter = mockUsage(ended, {
       ...journeyRoutes({ available: false, code: 'SUBSCRIPTION_ENDED' }),
-      '/reactivation': (init) => {
-        if (init?.method !== 'POST') return jsonResponse(200, reactivation)
-        return JSON.parse(String(init.body)).dry_run
+      '/reactivation': (config) => {
+        if (config.method !== 'post') return jsonResponse(200, reactivation)
+        return JSON.parse(config.data).dry_run
           ? jsonResponse(200, { applied: false, quote: reactivationQuote, mode: 'reactivate', unavailable: null })
           : jsonResponse(200, { applied: true, status: 'reactivated', quote: reactivationQuote })
       },
@@ -710,7 +698,7 @@ describe('BillingUsageView', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Reactivate and pay $10,788' }))
     expect(await screen.findByText('You are on Growth again')).toBeInTheDocument()
 
-    const posts = sentTo(fetchMock, '/reactivation')
+    const posts = sentTo(adapter, '/reactivation')
     expect(posts[0]).toEqual({ body: { plan: 'GROWTH_2026', period: 'year', dry_run: true }, key: undefined })
     expect(posts[1].body).toEqual({ plan: 'GROWTH_2026', period: 'year', dry_run: false })
     expect(posts[1].key).toEqual(expect.any(String))
@@ -769,7 +757,7 @@ describe('BillingUsageView', () => {
     mockPricingApi(() => {
       calls += 1
       return calls <= 3
-        ? Promise.reject(new TypeError('Failed to fetch'))
+        ? Promise.reject(new Error('Network Error'))
         : Promise.resolve(jsonResponse(200, billingUsageFactoryMock()))
     })
     const { userEvent } = renderWithProviders(<BillingUsageView />)

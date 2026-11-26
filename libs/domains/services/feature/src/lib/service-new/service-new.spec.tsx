@@ -1,10 +1,9 @@
 import { within } from '@testing-library/react'
-import axios from 'axios'
 import posthog from 'posthog-js'
-import type { Gate } from 'qovery-pricing-typescript-axios'
+import { BillingApi, type Gate } from 'qovery-pricing-typescript-axios'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
-import { createAxiosFetchAdapter, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OTHER_BLUEPRINT_CATEGORY } from '../blueprint-utils/blueprint-utils'
 import { ServiceNew } from './service-new'
 
@@ -71,7 +70,6 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
 const mockGatesCall = jest.fn()
-const originalAdapter = axios.defaults.adapter
 
 const lockedBlueprints: Gate = {
   action: 'blueprint.create',
@@ -136,20 +134,15 @@ const blueprints: BlueprintItem[] = [
 
 describe('ServiceNew', () => {
   afterEach(() => {
-    axios.defaults.adapter = originalAdapter
     jest.restoreAllMocks()
   })
   beforeEach(() => {
     mockGates.current = undefined
     mockBillingFlag.mockReturnValue(false)
     mockGatesCall.mockClear()
-    axios.defaults.adapter = createAxiosFetchAdapter(async (input) => {
-      const url = new URL(String(input))
-      if (url.pathname.endsWith('/gates')) {
-        mockGatesCall(Object.fromEntries(url.searchParams))
-        return { ok: true, status: 200, json: async () => ({ gates: mockGates.current ?? [] }) } as Response
-      }
-      return { ok: true, status: 204 } as Response
+    jest.spyOn(BillingApi.prototype, 'gates').mockImplementation(async (request) => {
+      mockGatesCall(request)
+      return { data: { gates: mockGates.current ?? [] }, status: 200 } as Awaited<ReturnType<BillingApi['gates']>>
     })
     mockUseFeatureFlagEnabled.mockReturnValue(false)
     mockShowPylonForm.mockClear()

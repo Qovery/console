@@ -19,11 +19,11 @@ import {
   type PricingClient,
 } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Icon, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
-import { date, money, monthly, valueText } from './format'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText } from './parts'
 import { ProposalNote, hideProposal } from './proposals'
-import { changeBlockedText, changeKind, isProposalChange, newIdempotencyKey } from './rules'
+import { date, money, monthly, valueText } from './utils/format'
+import { changeBlockedText, changeKind, isProposalChange, newIdempotencyKey } from './utils/rules'
 
 /** A labelled figure in a review (what changes, today, the next invoice). */
 export function Fact({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {

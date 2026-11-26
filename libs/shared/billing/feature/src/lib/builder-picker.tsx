@@ -5,7 +5,7 @@
  * billingUsage.builder_sizes (prices for billing roles) or GET /public/v1/builder-sizes.
  */
 import type { BuilderSize } from 'qovery-pricing-typescript-axios'
-import { money } from './format'
+import { money } from './utils/format'
 
 export interface BuilderPickerProps {
   sizes: BuilderSize[]

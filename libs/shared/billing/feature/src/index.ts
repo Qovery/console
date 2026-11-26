@@ -39,7 +39,7 @@ export {
   toggleDiscount,
   validOfferURL,
   validateBillingInfo,
-} from './lib/rules'
+} from './lib/utils/rules'
 export { Fact, PlanChangeFlow } from './lib/plan-change'
 export { CancelDialog, PlannedBanners } from './lib/cancel'
 export { BuyCreditsDialog, PrepaidCredits } from './lib/credits'
@@ -87,7 +87,7 @@ export {
   mediaSet,
   previewRender,
   previewTabs,
-} from './lib/gated'
+} from './lib/utils/gated'
 export type {
   GatedCta,
   GatedFeature,
@@ -96,7 +96,7 @@ export type {
   GatedPreviewKey,
   GatedPreviewTab,
   GatedPreviews,
-} from './lib/gated'
-export { money, valueText } from './lib/format'
+} from './lib/utils/gated'
+export { money, valueText } from './lib/utils/format'
 export { EmailPreferencesLink, EmailPreferencesPanel } from './lib/email-preferences-panel'
 export { pickConsoleCalls, usePricingClient } from './lib/hooks/use-pricing-client/use-pricing-client'

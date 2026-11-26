@@ -9,8 +9,8 @@ import type { CancelReason, ScheduledChange } from 'qovery-pricing-typescript-ax
 import { useState } from 'react'
 import type { Cancellation, PricingClient } from '@qovery/shared/billing/data-access'
 import { Button, Callout, Icon, InputText, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
-import { date } from './format'
 import { errorText, notifySuccess } from './parts'
+import { date } from './utils/format'
 
 export const CANCEL_FEEDBACK_MAX = 1000
 

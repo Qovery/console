@@ -5,8 +5,8 @@ The Console integration of the billing kit from `pricing-api` (`web/src/billing-
 the types, client, rules and paywall components from `1dced41` (2026-11-23, paywall intros).
 
 - `@qovery/shared/billing/data-access` configures the generated pricing-api client and adapts its responses for the Console.
-- `@qovery/shared/billing/feature` owns the billing screens, hooks and UI rules. Its screens, components and helpers
-  live directly in `src/lib`, with hooks in `src/lib/hooks`.
+- `@qovery/shared/billing/feature` owns the billing screens, hooks and UI rules. Screens and components live directly in
+  `src/lib`. Hooks and helpers live in `src/lib/hooks` and `src/lib/utils`.
 
 When syncing from pricing-api:
 

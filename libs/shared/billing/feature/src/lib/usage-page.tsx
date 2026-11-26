@@ -28,16 +28,16 @@ import { CancelDialog, PlannedBanners } from './cancel'
 import { PrepaidCredits } from './credits'
 import { DiscountsCard } from './discounts'
 import { EmailPreferencesLink, EmailPreferencesPanel } from './email-preferences-panel'
-import { date, money, num, valueText } from './format'
 import { AskAdminModal, OfferHost } from './offers'
 import { errorText } from './parts'
 import { PlanChangeFlow } from './plan-change'
 import { PricingTable } from './pricing-table'
 import { ProposalHost, readProposal } from './proposals'
 import { ReactivateFlow, SubscriptionEndedBanner } from './reactivate'
-import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel, signupTrialText } from './rules'
 import { UsageHistory } from './usage-history'
 import { UsageChart, UsageInsights } from './usage-insights'
+import { date, money, num, valueText } from './utils/format'
+import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel, signupTrialText } from './utils/rules'
 
 export interface UsagePageProps {
   organizationId: string

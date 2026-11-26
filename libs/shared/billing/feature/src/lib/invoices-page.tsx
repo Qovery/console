@@ -37,7 +37,7 @@ import {
   minutesToWait,
   newIdempotencyKey,
   runSequential,
-} from './rules'
+} from './utils/rules'
 
 export interface InvoicesPageProps {
   organizationId: string

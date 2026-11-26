@@ -15,8 +15,8 @@ import type { BillingUsage, DiscountQuote, DiscountRequest, Discounts } from 'qo
 import { useEffect, useId, useState } from 'react'
 import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Checkbox, Icon, InputTextArea } from '@qovery/shared/ui'
-import { date, money } from './format'
 import { errorText, notifySuccess } from './parts'
+import { date, money } from './utils/format'
 import {
   currentDiscountRequest,
   discountPercent,
@@ -26,7 +26,7 @@ import {
   discountsUpTo,
   requestableDiscounts,
   toggleDiscount,
-} from './rules'
+} from './utils/rules'
 
 const pct = (p: number) => `${Number.isInteger(p) ? p : p.toFixed(1)}%`
 const AWS_PRIVATE_OFFER = 'Your price comes from your AWS private offer. Ask us for a new offer.'

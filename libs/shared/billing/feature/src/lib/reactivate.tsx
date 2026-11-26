@@ -14,11 +14,11 @@ import {
   type ReactivationResult,
 } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Icon, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
-import { date, money, monthly } from './format'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
 import { Fact } from './plan-change'
-import { changeBlockedText, newIdempotencyKey } from './rules'
+import { date, money, monthly } from './utils/format'
+import { changeBlockedText, newIdempotencyKey } from './utils/rules'
 
 /** The banner shown while the subscription has ended. Billing roles only. */
 export function SubscriptionEndedBanner({

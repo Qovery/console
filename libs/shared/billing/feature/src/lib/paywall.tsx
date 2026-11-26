@@ -30,12 +30,12 @@ import type {
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Checkbox, ExternalLink, Heading, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
-import { date } from './format'
-import { addonAction, dialogImage, dialogTitle, introChip } from './gated'
 import { GatedPage } from './gated-page'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
 import { Fact, PlanChangeFlow } from './plan-change'
+import { date } from './utils/format'
+import { addonAction, dialogImage, dialogTitle, introChip } from './utils/gated'
 import {
   continueChoices,
   gateFor,
@@ -47,7 +47,7 @@ import {
   pendingIntro,
   trialEnds,
   trialRequest,
-} from './rules'
+} from './utils/rules'
 
 type Done = 'trial' | 'upgrade' | 'addon' | 'request'
 

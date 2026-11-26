@@ -14,8 +14,8 @@ import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Chart, Icon, InputText, Modal } from '@qovery/shared/ui'
 import { ChartTooltip } from './chart-tooltip'
 import { CompactSelect } from './compact-select'
-import { money, num } from './format'
 import { errorText } from './parts'
+import { money, num } from './utils/format'
 import {
   BUILD_PRESETS,
   type BuildPreset,
@@ -29,7 +29,7 @@ import {
   granularityFor,
   periodLabel,
   quantity,
-} from './rules'
+} from './utils/rules'
 
 export type BuildUsageLoader = (range: {
   from: string

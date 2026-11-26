@@ -20,7 +20,7 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YA
 import { Chart, SegmentedControl } from '@qovery/shared/ui'
 import { ChartTooltip } from './chart-tooltip'
 import { CompactSelect } from './compact-select'
-import { money, num } from './format'
+import { money, num } from './utils/format'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const dayLabel = (d: string) => `${MONTHS[Number(d.slice(5, 7)) - 1]} ${Number(d.slice(8))}`

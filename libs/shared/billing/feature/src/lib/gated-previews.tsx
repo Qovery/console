@@ -5,7 +5,7 @@
  */
 import type { ReactNode } from 'react'
 import { Icon } from '@qovery/shared/ui'
-import type { GatedPreviewKey } from './gated'
+import type { GatedPreviewKey } from './utils/gated'
 
 /** A console window: a title bar with a breadcrumb, then the body. Wider than its column on purpose (the page clips and fades it). */
 function Frame({ path, children }: { path: string[]; children: ReactNode }) {

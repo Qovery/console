@@ -11,11 +11,11 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import type { Gate, PaywallInfo } from 'qovery-pricing-typescript-axios'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
-import { hasGatedPage } from './gated'
 import { GatedPage } from './gated-page'
 import { usePricingClient } from './hooks/use-pricing-client/use-pricing-client'
 import { Paywall, usePaywall } from './paywall'
-import { gateFor, gateKeyFromBody, isLocked, paywallFromBody } from './rules'
+import { hasGatedPage } from './utils/gated'
+import { gateFor, gateKeyFromBody, isLocked, paywallFromBody } from './utils/rules'
 
 export const BILLING_PAYWALL_FEATURE_FLAG = 'billing-paywall'
 

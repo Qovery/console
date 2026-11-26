@@ -1,6 +1,5 @@
-import axios from 'axios'
-import type { Gate, PaywallInfo } from 'qovery-pricing-typescript-axios'
-import { act, createAxiosFetchAdapter, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { BillingApi, type Gate, type PaywallInfo } from 'qovery-pricing-typescript-axios'
+import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { BillingPaywallHost, offerPaywallFromError, useBillingPaywall } from './console-paywall'
 import { usePricingClient } from './hooks/use-pricing-client/use-pricing-client'
 
@@ -31,26 +30,21 @@ const locked: Gate = {
 const refusal = (status: number, data: unknown) => ({ message: 'refused', response: { status, data } })
 
 function gatesResponse(gates: Gate[]) {
-  return Promise.resolve({
-    ok: true,
-    status: 200,
-    headers: { get: () => null },
-    json: () => Promise.resolve({ organization_id: 'org-1', access: 'billing', gates }),
-  })
+  return { status: 200, data: { organization_id: 'org-1', access: 'billing', gates } } as Awaited<
+    ReturnType<BillingApi['gates']>
+  >
 }
 
 describe('console paywall', () => {
-  const originalAdapter = axios.defaults.adapter
-  const fetchMock = jest.fn()
+  const mockGates = jest.spyOn(BillingApi.prototype, 'gates')
+
   beforeEach(() => {
     mockFlag.mockReturnValue(true)
-    fetchMock.mockReset()
-    fetchMock.mockImplementation(() => gatesResponse([locked]))
-    axios.defaults.adapter = createAxiosFetchAdapter(fetchMock)
+    mockGates.mockReset().mockResolvedValue(gatesResponse([locked]))
   })
 
-  afterEach(() => {
-    axios.defaults.adapter = originalAdapter
+  afterAll(() => {
+    mockGates.mockRestore()
   })
 
   it('leaves the error to the toast when no host is mounted', () => {
@@ -95,7 +89,7 @@ describe('console paywall', () => {
       sku: 'sso',
       paywall: { ...paywall, sku: 'sso', title: 'Single sign-on' },
     }
-    fetchMock.mockImplementation(() => gatesResponse([sso]))
+    mockGates.mockResolvedValue(gatesResponse([sso]))
     renderWithProviders(<BillingPaywallHost organizationId="org-1" />)
 
     act(() => {
@@ -106,7 +100,7 @@ describe('console paywall', () => {
   })
 
   it('falls back to the mutation notification when the gate read cannot open a paywall', async () => {
-    fetchMock.mockImplementation(() => gatesResponse([]))
+    mockGates.mockResolvedValue(gatesResponse([]))
     renderWithProviders(<BillingPaywallHost organizationId="org-1" />)
     const notify = jest.fn()
 
@@ -171,14 +165,14 @@ describe('console paywall', () => {
     // Long enough for a gates call to go out (the token is read first).
     await act(() => new Promise((resolve) => setTimeout(resolve, 50)))
     expect(screen.getByText('open')).toBeInTheDocument()
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(mockGates).not.toHaveBeenCalled()
     unmount()
 
     mockFlag.mockReturnValue(true)
     renderWithProviders(<Probe />)
     expect(await screen.findByText('locked')).toBeInTheDocument()
-    expect(fetchMock.mock.calls[0][0]).toBe(
-      'https://billing-api.qovery.com/organization/org-1/gates?actions=cluster.create'
+    expect(mockGates).toHaveBeenCalledWith(
+      expect.objectContaining({ organizationId: 'org-1', actions: 'cluster.create' })
     )
   })
 })
