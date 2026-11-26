@@ -42,7 +42,12 @@ ENV NODE_ENV=$NODE_ENV \
 # Install dependencies with cache mount for faster rebuilds
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn .yarn
+COPY scripts/fetch-billing-sdk.sh scripts/
 RUN --mount=type=cache,target=/root/.yarn \
+    --mount=type=secret,id=QOVERY_NPM_READ_TOKEN \
+    if [ -f /run/secrets/QOVERY_NPM_READ_TOKEN ]; then \
+      QOVERY_NPM_READ_TOKEN="$(cat /run/secrets/QOVERY_NPM_READ_TOKEN)" sh scripts/fetch-billing-sdk.sh; \
+    fi && \
     yarn install --immutable
 
 # Copy source files (use .dockerignore to exclude unnecessary files)

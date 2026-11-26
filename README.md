@@ -22,10 +22,12 @@ nvm install
 nvm use
 ```
 
+Before installing dependencies, set `QOVERY_NPM_READ_TOKEN` to a read token for the private Billing SDK in the Qovery npm registry. Docker builds accept the same token as a BuildKit secret.
+
 First use
 
 ```sh
-yarn && yarn setup
+sh scripts/fetch-billing-sdk.sh && yarn && yarn setup
 ```
 
 Start the project on [localhost:4200](http://localhost:4200)

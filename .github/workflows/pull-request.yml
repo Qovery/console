@@ -19,4 +19,5 @@ jobs:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
       nx-cloud-access-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      npm-registry-read-token: ${{ secrets.QOVERY_NPM_READ_TOKEN }}
       codecov-token: ${{ secrets.CODECOV_TOKEN }}

@@ -25,6 +25,7 @@ jobs:
       s3-bucket-name: 'qovery-console-staging'
       cloudfront-distribution-id: 'EN3DKJ81R0NBQ'
       nx-cloud-access-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      npm-registry-read-token: ${{ secrets.QOVERY_NPM_READ_TOKEN }}
       codecov-token: ${{ secrets.CODECOV_TOKEN }}
       e2e-auth-token: ${{ secrets.E2E_AUTH_TOKEN }}
       e2e-project-id: ${{ secrets.E2E_PROJECT_ID }}

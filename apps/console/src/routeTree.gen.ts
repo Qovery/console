@@ -39,6 +39,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenR
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport } from './routes/_authenticated/organization/$organizationId/settings/members'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMcpServerRouteImport } from './routes/_authenticated/organization/$organizationId/settings/mcp-server'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/labels-annotations'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsInvoicesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/invoices'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/helm-repositories'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRouteImport } from './routes/_authenticated/organization/$organizationId/settings/git-repository-access'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/settings/general'
@@ -46,6 +47,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsDangerZoneRoute
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/container-registries'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/cloud-credentials'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-summary'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-settings'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-details'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRouteImport } from './routes/_authenticated/organization/$organizationId/settings/argocd-integration'
@@ -436,6 +438,13 @@ const AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute =
         AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdSettingsInvoicesRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsInvoicesRouteImport.update({
+    id: '/invoices',
+    path: '/invoices',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute =
   AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRouteImport.update(
     {
@@ -491,6 +500,15 @@ const AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute =
     {
       id: '/billing-summary',
       path: '/billing-summary',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRouteImport.update(
+    {
+      id: '/billing-settings',
+      path: '/billing-settings',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
     } as any,
@@ -2280,6 +2298,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
   '/organization/$organizationId/settings/billing': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingRoute
   '/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
+  '/organization/$organizationId/settings/billing-settings': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRoute
   '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
   '/organization/$organizationId/settings/container-registries': typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
@@ -2287,6 +2306,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/general': typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
   '/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
   '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
+  '/organization/$organizationId/settings/invoices': typeof AuthenticatedOrganizationOrganizationIdSettingsInvoicesRoute
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
@@ -2513,6 +2533,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
   '/organization/$organizationId/settings/billing': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingRoute
   '/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
+  '/organization/$organizationId/settings/billing-settings': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRoute
   '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
   '/organization/$organizationId/settings/container-registries': typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
@@ -2520,6 +2541,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/general': typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
   '/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
   '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
+  '/organization/$organizationId/settings/invoices': typeof AuthenticatedOrganizationOrganizationIdSettingsInvoicesRoute
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
@@ -2736,6 +2758,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
   '/_authenticated/organization/$organizationId/settings/billing': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingRoute
   '/_authenticated/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
+  '/_authenticated/organization/$organizationId/settings/billing-settings': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRoute
   '/_authenticated/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/_authenticated/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
   '/_authenticated/organization/$organizationId/settings/container-registries': typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
@@ -2743,6 +2766,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/general': typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
   '/_authenticated/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
   '/_authenticated/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
+  '/_authenticated/organization/$organizationId/settings/invoices': typeof AuthenticatedOrganizationOrganizationIdSettingsInvoicesRoute
   '/_authenticated/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/_authenticated/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/_authenticated/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
@@ -2978,6 +3002,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/argocd-integration'
     | '/organization/$organizationId/settings/billing'
     | '/organization/$organizationId/settings/billing-details'
+    | '/organization/$organizationId/settings/billing-settings'
     | '/organization/$organizationId/settings/billing-summary'
     | '/organization/$organizationId/settings/cloud-credentials'
     | '/organization/$organizationId/settings/container-registries'
@@ -2985,6 +3010,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/general'
     | '/organization/$organizationId/settings/git-repository-access'
     | '/organization/$organizationId/settings/helm-repositories'
+    | '/organization/$organizationId/settings/invoices'
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
@@ -3211,6 +3237,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/argocd-integration'
     | '/organization/$organizationId/settings/billing'
     | '/organization/$organizationId/settings/billing-details'
+    | '/organization/$organizationId/settings/billing-settings'
     | '/organization/$organizationId/settings/billing-summary'
     | '/organization/$organizationId/settings/cloud-credentials'
     | '/organization/$organizationId/settings/container-registries'
@@ -3218,6 +3245,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/general'
     | '/organization/$organizationId/settings/git-repository-access'
     | '/organization/$organizationId/settings/helm-repositories'
+    | '/organization/$organizationId/settings/invoices'
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
@@ -3433,6 +3461,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/argocd-integration'
     | '/_authenticated/organization/$organizationId/settings/billing'
     | '/_authenticated/organization/$organizationId/settings/billing-details'
+    | '/_authenticated/organization/$organizationId/settings/billing-settings'
     | '/_authenticated/organization/$organizationId/settings/billing-summary'
     | '/_authenticated/organization/$organizationId/settings/cloud-credentials'
     | '/_authenticated/organization/$organizationId/settings/container-registries'
@@ -3440,6 +3469,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/general'
     | '/_authenticated/organization/$organizationId/settings/git-repository-access'
     | '/_authenticated/organization/$organizationId/settings/helm-repositories'
+    | '/_authenticated/organization/$organizationId/settings/invoices'
     | '/_authenticated/organization/$organizationId/settings/labels-annotations'
     | '/_authenticated/organization/$organizationId/settings/mcp-server'
     | '/_authenticated/organization/$organizationId/settings/members'
@@ -3852,6 +3882,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
+    '/_authenticated/organization/$organizationId/settings/invoices': {
+      id: '/_authenticated/organization/$organizationId/settings/invoices'
+      path: '/invoices'
+      fullPath: '/organization/$organizationId/settings/invoices'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsInvoicesRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
     '/_authenticated/organization/$organizationId/settings/helm-repositories': {
       id: '/_authenticated/organization/$organizationId/settings/helm-repositories'
       path: '/helm-repositories'
@@ -3899,6 +3936,13 @@ declare module '@tanstack/react-router' {
       path: '/billing-summary'
       fullPath: '/organization/$organizationId/settings/billing-summary'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/billing-settings': {
+      id: '/_authenticated/organization/$organizationId/settings/billing-settings'
+      path: '/billing-settings'
+      fullPath: '/organization/$organizationId/settings/billing-settings'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/billing-details': {
@@ -5467,6 +5511,7 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
   AuthenticatedOrganizationOrganizationIdSettingsBillingRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingRoute
   AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
+  AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRoute
   AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
   AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsContainerRegistriesRoute
@@ -5474,6 +5519,7 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGeneralRoute
   AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
   AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
+  AuthenticatedOrganizationOrganizationIdSettingsInvoicesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsInvoicesRoute
   AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   AuthenticatedOrganizationOrganizationIdSettingsMembersRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
@@ -5510,6 +5556,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsBillingRoute,
     AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute:
       AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsBillingSettingsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute:
       AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute,
     AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute:
@@ -5524,6 +5572,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute,
     AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute:
       AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsInvoicesRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsInvoicesRoute,
     AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute:
       AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute:

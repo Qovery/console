@@ -1,0 +1,141 @@
+import { createPricingClient } from './billing-data-access'
+import { billingUsageFactoryMock } from './billing-usage-factory.mock'
+
+describe('createPricingClient', () => {
+  const setup = (response: { status: number; body?: unknown; retryAfter?: string } = { status: 200, body: {} }) => {
+    const sent: { url: string; method: string; headers: Record<string, string>; body?: unknown }[] = []
+    const fetchMock = jest.fn(async (url: string, init: RequestInit = {}) => {
+      sent.push({
+        url,
+        method: init.method ?? 'GET',
+        headers: init.headers as Record<string, string>,
+        body: init.body ? JSON.parse(String(init.body)) : undefined,
+      })
+      return {
+        ok: response.status >= 200 && response.status < 300,
+        status: response.status,
+        statusText: 'Too Many Requests',
+        headers: { get: (name: string) => (name === 'Retry-After' ? response.retryAfter ?? null : null) },
+        json: () => Promise.resolve(response.body),
+      } as unknown as Response
+    })
+    const client = createPricingClient({
+      pricingApiUrl: 'https://billing-api.example/',
+      getToken: () => 't',
+      fetch: fetchMock as unknown as typeof fetch,
+    })
+    return { client, sent }
+  }
+
+  it('should send each read and change to its pricing-api route', async () => {
+    const { client: c, sent } = setup({ status: 200, body: billingUsageFactoryMock() })
+
+    await c.publicPlans()
+    await c.billingUsage('o')
+    await c.spendLimits?.('o')
+    await c.planOptions?.('o')
+    await c.quotePlanChange?.('o', 'growth', 'year')
+    await c.changePlan?.('o', 'growth', 'year', 'key-1')
+    await c.keepPlan?.('o')
+    await c.cancellation?.('o')
+    await c.keepSubscription?.('o')
+    await c.credits?.('o')
+    await c.reactivation?.('o')
+    await c.quoteReactivation?.('o', 'growth', 'month')
+    await c.reactivate?.('o', 'growth', 'month', 'key-2')
+    await c.usageHistory?.('o', { from: '2026-01-01', to: '2026-02-01', granularity: 'month' })
+    await c.buildUsage?.('o', { from: '2026-01-01', to: '2026-02-01' })
+    await c.offers?.('o')
+    await c.acceptOffer?.('o', 5)
+    await c.emailPreferences?.('o')
+    await c.setEmailPreference?.('o', 'usage', false)
+    await c.invoices?.('o')
+    await c.invoices?.('o', { limit: 10, offset: 'next' })
+    await c.invoice?.('o', 'INV/1')
+    await c.invoicePdf?.('o', 'INV-1')
+    await c.collectInvoice?.('o', 'INV-1', 'collect-key')
+    await c.paymentMethods?.('o')
+    await c.paymentMethodSession?.('o', 'https://console.qovery.com/back')
+    await c.paymentMethodSession?.('o')
+    await c.billingInfo?.('o')
+    await c.awsMarketplace?.('o')
+    await c.discounts?.('o')
+    await c.quoteDiscounts?.('o', ['logo'])
+    await c.requestDiscounts?.('o', { ids: ['logo'], accept_terms: true })
+    await c.withdrawDiscountRequest?.('o', 7)
+
+    expect(sent.map((s) => `${s.method} ${s.url.replace('https://billing-api.example', '')}`)).toEqual([
+      'GET /public/v1/plans',
+      'GET /organization/o/billingUsage',
+      'GET /organization/o/spendLimits',
+      'GET /organization/o/planOptions',
+      'POST /organization/o/planChange',
+      'POST /organization/o/planChange',
+      'DELETE /organization/o/planChange/scheduled',
+      'GET /organization/o/cancellation',
+      'DELETE /organization/o/cancellation',
+      'GET /organization/o/credits',
+      'GET /organization/o/reactivation',
+      'POST /organization/o/reactivation',
+      'POST /organization/o/reactivation',
+      'GET /organization/o/usageHistory?from=2026-01-01&to=2026-02-01&granularity=month',
+      'GET /organization/o/buildUsage?from=2026-01-01&to=2026-02-01',
+      'GET /organization/o/offers',
+      'POST /organization/o/offers/5/accept',
+      'GET /organization/o/emailPreferences',
+      'PUT /organization/o/emailPreferences',
+      'GET /organization/o/invoices',
+      'GET /organization/o/invoices?limit=10&offset=next',
+      'GET /organization/o/invoices/INV%2F1',
+      'GET /organization/o/invoices/INV-1/pdf',
+      'POST /organization/o/invoices/INV-1/collect',
+      'GET /organization/o/paymentMethods',
+      'POST /organization/o/paymentMethods/session',
+      'POST /organization/o/paymentMethods/session',
+      'GET /organization/o/billingInfo',
+      'GET /organization/o/awsMarketplace',
+      'GET /organization/o/discounts',
+      'POST /organization/o/discounts/quote',
+      'POST /organization/o/discountRequests',
+      'DELETE /organization/o/discountRequests/7',
+    ])
+    // The public plans are read without the user's token, everything else with it
+    expect(sent[0].headers['Authorization']).toBeUndefined()
+    expect(sent[1].headers['Authorization']).toBe('Bearer t')
+    // A GET has no Content-Type, so the browser sends it without a CORS preflight
+    expect(sent[1].headers['Content-Type']).toBeUndefined()
+    expect(sent[4].body).toEqual({ plan: 'growth', period: 'year', dry_run: true })
+    expect(sent[5].body).toEqual({ plan: 'growth', period: 'year', dry_run: false })
+    expect(sent[5].headers['Idempotency-Key']).toBe('key-1')
+    expect(sent.find((s) => s.url.endsWith('/collect'))?.headers['Idempotency-Key']).toBe('collect-key')
+    expect(sent[25].body).toEqual({ redirect_url: 'https://console.qovery.com/back' })
+    expect(sent[26].body).toEqual({})
+    expect(sent[31].body).toEqual({ ids: ['logo'], message: '', accept_terms: true })
+  })
+
+  it('should throw a billing error with the code, the field and the delay to wait', async () => {
+    const { client } = setup({
+      status: 429,
+      body: { code: 'RATE_LIMITED', detail: 'Slow down', field: 'plan' },
+      retryAfter: '30',
+    })
+
+    await expect(client.billingUsage('o')).rejects.toMatchObject({
+      status: 429,
+      code: 'RATE_LIMITED',
+      message: 'Slow down',
+      field: 'plan',
+      retryAfter: 30,
+    })
+  })
+
+  it('should fall back to the status text when the error has no body', async () => {
+    const { client } = setup({ status: 429 })
+
+    await expect(client.billingUsage('o')).rejects.toMatchObject({
+      code: 'ERROR',
+      message: 'Too Many Requests',
+      retryAfter: undefined,
+    })
+  })
+})
