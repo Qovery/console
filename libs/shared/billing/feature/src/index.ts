@@ -52,15 +52,7 @@ export { BuilderPrices, PricingTable } from './lib/plans/pricing-table'
 export { BuilderPicker, builderSizeFor } from './lib/plans/builder-picker'
 export type { BuilderPickerProps } from './lib/plans/builder-picker'
 export { UsageChart, UsageInsights as UsageInsightsPanel } from './lib/usage/usage-insights'
-export {
-  AskAdminModal,
-  EmailPreferencesPanel,
-  OfferBanner,
-  OfferHost,
-  OfferModal,
-  RequestsBanner,
-  useOffers,
-} from './lib/offers/offers'
+export { AskAdminModal, OfferBanner, OfferHost, OfferModal, RequestsBanner, useOffers } from './lib/offers/offers'
 export type { OfferHostProps } from './lib/offers/offers'
 export { ProposalBanner, ProposalHost, ProposalNote, useProposal } from './lib/offers/proposals'
 export type { ProposalBannerProps } from './lib/offers/proposals'
@@ -106,4 +98,5 @@ export type {
   GatedPreviews,
 } from './lib/paywall/gated'
 export { money, valueText } from './lib/utils/format'
+export { EmailPreferencesLink, EmailPreferencesPanel } from './lib/settings/email-preferences-panel'
 export { pickConsoleCalls, usePricingClient } from './lib/hooks/use-pricing-client/use-pricing-client'

@@ -57,4 +57,27 @@ describe('UsagePage', () => {
 
     expect(await screen.findByText('Your last payment failed')).toBeInTheDocument()
   })
+
+  it('should link to the email settings page instead of showing the preferences', async () => {
+    const onManageEmails = jest.fn()
+    const client = { ...readOnlyClient(), emailPreferences: jest.fn(), setEmailPreference: jest.fn() }
+    const { userEvent } = renderWithProviders(
+      <UsagePage organizationId="org-northwind" client={client} offers="none" onManageEmails={onManageEmails} />
+    )
+
+    expect(await screen.findByText('Email notifications')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
+
+    expect(onManageEmails).toHaveBeenCalledTimes(1)
+    expect(client.emailPreferences).not.toHaveBeenCalled()
+  })
+
+  it('should hide the email settings link when the client has no email preferences', async () => {
+    renderWithProviders(
+      <UsagePage organizationId="org-northwind" client={readOnlyClient()} offers="none" onManageEmails={jest.fn()} />
+    )
+
+    expect(await screen.findByText('Growth')).toBeInTheDocument()
+    expect(screen.queryByText('Email notifications')).not.toBeInTheDocument()
+  })
 })

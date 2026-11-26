@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
 import {
   getBillingSettingsLinks,
+  getNotificationsSettingsLinks,
   hasBillingRole,
   useIsBillingUsageEnabled,
 } from '@qovery/domains/organizations/feature'
@@ -87,10 +88,7 @@ function RouteComponent() {
     type: 'group',
     title: 'Notifications',
     icon: 'bell' as const,
-    children: [
-      { title: 'Slack', to: `${pathSettings}/notifications/slack` },
-      { title: 'Webhook', to: `${pathSettings}/webhook` },
-    ],
+    children: getNotificationsSettingsLinks(pathSettings, isBillingUsageEnabled),
   }
 
   // Policy tokens, the Copilot, skills, skill presets, agent activity and the Agent Tasks pages live

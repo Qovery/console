@@ -404,6 +404,23 @@ describe('BillingUsageView', () => {
     }
   })
 
+  it('should link to Settings, Notifications, Billing for the email preferences instead of showing the toggles', async () => {
+    const fetchMock = mockUsage(billingUsageFactoryMock('member'))
+    const { userEvent } = renderWithProviders(<BillingUsageView />)
+
+    expect(await screen.findByText('Email notifications')).toBeInTheDocument()
+    expect(screen.getByText('Choose which billing emails you receive.')).toBeInTheDocument()
+    expect(screen.queryByText('Email preferences')).not.toBeInTheDocument()
+    expect(calledPaths(fetchMock).some((path) => path.endsWith('/emailPreferences'))).toBe(false)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/settings/notifications/billing',
+      params: { organizationId: 'org-northwind' },
+    })
+  })
+
   it('should quote a plan change with a dry run before anything is applied', async () => {
     const fetchMock = mockUsage(billingUsageFactoryMock('billing'), journeyRoutes())
     const { userEvent } = renderWithProviders(<BillingUsageView />)
@@ -780,7 +797,7 @@ describe('SettingsBillingUsage', () => {
 })
 
 describe('pickConsoleCalls', () => {
-  it('should mount plan changes, cancellation, reactivation, prepaid credits, usage history, build usage, invoice details, discounts, paywalls and plan proposals, and leave offers and emails out', () => {
+  it('should mount plan changes, cancellation, reactivation, prepaid credits, usage history, build usage, invoice details, discounts, paywalls, plan proposals and email preferences, and leave offers out', () => {
     const calls = pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
@@ -825,10 +842,12 @@ describe('pickConsoleCalls', () => {
       'dismissProposal',
       'quoteProposal',
       'acceptProposal',
+      'emailPreferences',
+      'setEmailPreference',
     ] as const) {
       expect(calls[name]).toEqual(expect.any(Function))
     }
-    for (const name of ['offers', 'offerEvent', 'acceptOffer', 'emailPreferences'] as const) {
+    for (const name of ['offers', 'offerEvent', 'acceptOffer'] as const) {
       expect(calls[name]).toBeUndefined()
     }
   })

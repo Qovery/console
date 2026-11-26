@@ -192,6 +192,7 @@ export function BillingUsageView() {
   const { data, error, isLoading, refetch, isRefetching } = useBillingUsage({ organizationId })
   const client = usePricingClient()
   const goTo = useBillingNavigate(organizationId)
+  const navigate = useNavigate()
   const { showChat } = useSupportChat()
   const [headingElement, setHeadingElement] = useState<HTMLDivElement | null>(null)
   // The plan proposal email's "Review the plan" link: ?proposal=<id> opens its review
@@ -225,6 +226,12 @@ export function BillingUsageView() {
             onNavigate={goTo}
             onContactSales={showChat}
             heading={heading}
+            onManageEmails={() =>
+              navigate({
+                to: '/organization/$organizationId/settings/notifications/billing',
+                params: { organizationId },
+              })
+            }
           />
         ))
         .otherwise(() => (

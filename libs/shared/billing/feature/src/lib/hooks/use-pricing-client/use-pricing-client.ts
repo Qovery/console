@@ -4,8 +4,8 @@ import { type PricingClient, createPricingClient } from '@qovery/shared/billing/
 import { PRICING_API_URL } from '@qovery/shared/util-node-env'
 
 // Only the calls the console mounts, all to pricing-api with the user's token (core relays none of them).
-// Offers and email preferences wait for customer emails. Upgrade requests are mounted for the
-// paywall's "Ask an admin" (members asking their admins for a gated feature).
+// Offers wait for customer emails. Email preferences are mounted for Settings → Notifications → Billing.
+// Upgrade requests are mounted for the paywall's "Ask an admin" (members asking their admins for a gated feature).
 export function pickConsoleCalls(client: PricingClient): PricingClient {
   return {
     mode: client.mode,
@@ -56,6 +56,8 @@ export function pickConsoleCalls(client: PricingClient): PricingClient {
     dismissProposal: client.dismissProposal,
     quoteProposal: client.quoteProposal,
     acceptProposal: client.acceptProposal,
+    emailPreferences: client.emailPreferences,
+    setEmailPreference: client.setEmailPreference,
   }
 }
 

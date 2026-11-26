@@ -29,13 +29,14 @@ import type {
 import { Badge, Button, Callout, Heading, Icon, Modal } from '@qovery/shared/ui'
 import { BillingAlerts } from '../components/billing-alerts'
 import { errorText } from '../components/parts'
-import { AskAdminModal, EmailPreferencesPanel, OfferHost } from '../offers/offers'
+import { AskAdminModal, OfferHost } from '../offers/offers'
 import { ProposalHost, readProposal } from '../offers/proposals'
 import { CancelDialog, PlannedBanners } from '../plans/cancel'
 import { DiscountsCard } from '../plans/discounts'
 import { PlanChangeFlow } from '../plans/plan-change'
 import { PricingTable } from '../plans/pricing-table'
 import { ReactivateFlow, SubscriptionEndedBanner } from '../plans/reactivate'
+import { EmailPreferencesLink, EmailPreferencesPanel } from '../settings/email-preferences-panel'
 import { date, money, num, valueText } from '../utils/format'
 import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel, signupTrialText } from '../utils/rules'
 import { BuildUsage } from './build-usage'
@@ -62,6 +63,8 @@ export interface UsagePageProps {
   onNavigate?: (to: 'invoices' | 'billing') => void
   /** Draws the page heading with the host's own component (the console's SettingsHeading). Default: the kit's heading, the same layout. */
   heading?: (h: UsagePageHeading) => ReactNode
+  /** Opens the host's email settings page: the page then shows a link to it instead of the email preferences. */
+  onManageEmails?: () => void
 }
 
 /** What the page heading shows: the title, its description and the plan buttons. */
@@ -221,6 +224,7 @@ export function UsagePage({
   alerts = true,
   onNavigate,
   heading = PageHeading,
+  onManageEmails,
 }: UsagePageProps) {
   const [u, setU] = useState(initialUsage)
   const [spend, setSpend] = useState<Spend>()
@@ -652,7 +656,11 @@ export function UsagePage({
           <UsageInsights usage={u} overTime={!client.usageHistory} />
         </div>
 
-        <EmailPreferencesPanel organizationId={organizationId} client={client} />
+        {onManageEmails ? (
+          client.emailPreferences && <EmailPreferencesLink onConfigure={onManageEmails} />
+        ) : (
+          <EmailPreferencesPanel organizationId={organizationId} client={client} />
+        )}
 
         {u.notes.length > 0 && <p className="text-sm text-neutral-subtle">{u.notes.join(' ')}</p>}
 
