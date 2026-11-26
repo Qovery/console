@@ -47,22 +47,31 @@ describe('PageSettingsPreviewEnvironments', () => {
     expect(screen.getByTestId('toggle-image-container')).toBeEnabled()
   })
 
-  it('should disable the preview toggle with a note for a Git container', () => {
+  it('should enable the preview toggle for a Git container', () => {
     renderPage()
 
-    expect(screen.getByTestId('toggle-git-container')).toBeDisabled()
-    expect(screen.getByText('Not available yet for Git containers')).toBeInTheDocument()
+    expect(screen.getByTestId('toggle-git-container')).toBeEnabled()
+  })
+
+  it('should explain that a preview environment follows new commits only with auto-deploy enabled', () => {
+    renderPage()
+
+    expect(
+      screen.getByText(
+        'A preview environment follows new commits on its pull request only for services with auto-deploy enabled.'
+      )
+    ).toBeInTheDocument()
   })
 })
 
 describe('SettingsPreviewEnvironmentsFeature', () => {
-  it('should turn on previews for every service except Git containers', async () => {
+  it('should turn on previews for every service, Git containers included', async () => {
     const services = [imageContainer, gitContainer]
     const { userEvent } = renderWithProviders(<SettingsPreviewEnvironmentsFeature services={services} />)
 
     await userEvent.click(screen.getByTestId('toggle-all'))
 
     expect(screen.getByTestId('toggle-image-container')).toBeChecked()
-    expect(screen.getByTestId('toggle-git-container')).not.toBeChecked()
+    expect(screen.getByTestId('toggle-git-container')).toBeChecked()
   })
 })
