@@ -16,6 +16,7 @@ import { BillingAlerts } from './billing-alerts'
 import { EmptyState } from './invoices-page'
 import {
   type Access,
+  BillingAccessError,
   BillingRolesOnly,
   CardSkeleton,
   SectionCard,
@@ -59,18 +60,7 @@ export function BillingSettingsPage({
   onNavigate,
 }: BillingSettingsPageProps) {
   const { access, error: accessError, retry: retryAccess } = useAccess(client, organizationId, given)
-  if (accessError)
-    return (
-      <Callout.Root color="red">
-        <Callout.Text>
-          <Callout.TextHeading>Billing access could not be loaded</Callout.TextHeading>
-          {accessError}
-        </Callout.Text>
-        <Button size="sm" variant="outline" color="neutral" onClick={retryAccess}>
-          Retry
-        </Button>
-      </Callout.Root>
-    )
+  if (!access && accessError) return <BillingAccessError error={accessError} onRetry={retryAccess} />
   if (!access)
     return (
       <div className="rounded border border-neutral bg-surface-neutral p-5">
@@ -78,7 +68,12 @@ export function BillingSettingsPage({
       </div>
     )
   if (!isBillingAccess(access) || !client.paymentMethods) return <BillingRolesOnly />
-  return <BillingSettings key={organizationId} {...{ organizationId, client, access, returnUrl, alerts, onNavigate }} />
+  return (
+    <div className="flex flex-col gap-6">
+      {accessError && <BillingAccessError error={accessError} onRetry={retryAccess} refreshing />}
+      <BillingSettings key={organizationId} {...{ organizationId, client, access, returnUrl, alerts, onNavigate }} />
+    </div>
+  )
 }
 
 function BillingSettings({ organizationId, client, access, returnUrl, alerts, onNavigate }: BillingSettingsPageProps) {

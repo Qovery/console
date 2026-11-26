@@ -15,7 +15,7 @@ import type { PlanProposal, PricingClient } from '@qovery/shared/billing/data-ac
 import { Badge, Banner, Button, Callout, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
 import { useProposal } from './hooks/use-proposal/use-proposal'
 import { errorText } from './parts'
-import { ProposalBanner, ProposalHost } from './proposals'
+import { ProposalBanner, ProposalHost, ProposalLoadError } from './proposals'
 import { date } from './utils/format'
 import { BAR_TEXT, barBanner, barClass } from './utils/proposal-rules'
 import { forgetReads, sharedRead } from './utils/reads'
@@ -425,7 +425,7 @@ export function OfferHost({
   // The top bar shows one banner (barBanner): it needs the proposal before picking.
   const pr = useProposal(organizationId, client, bar && !!onReviewProposal)
   const o = useOffers(organizationId, client, !bar, modal)
-  const one = bar && !pr.loading ? barBanner(pr.proposal, o.banners) : undefined
+  const one = bar && !pr.loading && (pr.proposal || !pr.loadError) ? barBanner(pr.proposal, o.banners) : undefined
   const barOffer = one?.kind === 'offer' ? one.offer : undefined
   useEffect(() => {
     if (barOffer) o.shown(barOffer)
@@ -514,6 +514,7 @@ export function OfferHost({
       )}
       {bar ? (
         <>
+          {pr.loadError && <ProposalLoadError retry={pr.retry} />}
           {one?.kind === 'proposal' && onReviewProposal && (
             <ProposalBanner proposal={one.proposal} variant="bar" onReview={onReviewProposal} />
           )}

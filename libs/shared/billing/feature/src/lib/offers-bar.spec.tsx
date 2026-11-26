@@ -117,6 +117,21 @@ describe('OfferHost top bar', () => {
     expect(c.snoozeProposal).toHaveBeenCalledWith('org-1', proposal.id, 7)
   })
 
+  it('shows a retry instead of falling back to an offer when the proposal read fails', async () => {
+    const c = client(proposal)
+    c.proposals.mockRejectedValueOnce(new Error('Temporarily unavailable'))
+    const { userEvent } = bar(c)
+
+    expect(await screen.findByText('Plan proposal could not be loaded')).toBeInTheDocument()
+    expect(screen.queryByText(offers[0].content.title)).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+
+    expect(
+      await screen.findByText('The Qovery team suggests Scale: about $2,000 less a year at your current usage')
+    ).toBeInTheDocument()
+    expect(c.proposals).toHaveBeenCalledTimes(2)
+  })
+
   it('shows one offer, the first, when there is no proposal', async () => {
     const c = client(null)
     bar(c)

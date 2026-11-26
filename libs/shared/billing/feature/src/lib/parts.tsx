@@ -4,10 +4,10 @@
  * who the person is (member or billing role) without calling the invoice or payment APIs.
  */
 import { useQuery } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import { match } from 'ts-pattern'
 import { BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
-import { Skeleton, toast } from '@qovery/shared/ui'
+import { Button, Callout, Skeleton, toast } from '@qovery/shared/ui'
 
 export type Access = 'member' | 'billing' | 'demo'
 
@@ -69,23 +69,60 @@ export function BillingRolesOnly() {
  * APIs.
  */
 export function useAccess(client: PricingClient, organizationId: string, given?: Access) {
+  const [denied, setDenied] = useState<{ client: PricingClient; organizationId: string; status: number }>()
   const usage = useQuery({
     ...billing.usage({ client, organizationId }),
     enabled: !given && Boolean(organizationId),
     retry: false,
     refetchOnWindowFocus: false,
+    onSuccess: () => setDenied(undefined),
+    onError: (error) => {
+      if (error instanceof BillingError && [401, 403, 404].includes(error.status)) {
+        setDenied({ client, organizationId, status: error.status })
+      }
+    },
   })
   const status = usage.error instanceof BillingError ? usage.error.status : undefined
-  const error = match(status)
+  const deniedStatus = denied?.client === client && denied.organizationId === organizationId ? denied.status : undefined
+  const accessStatus = deniedStatus ?? status
+  const error = match(accessStatus)
     .with(401, () => 'Your session has expired. Sign in again to view billing.')
     .with(404, () => 'This organization is not linked to a billing account.')
     .with(403, () => '')
     .otherwise(() => (usage.error ? errorText(usage.error) : ''))
+  const access = match(accessStatus)
+    .with(403, () => 'member' as const)
+    .with(401, 404, () => undefined)
+    .otherwise(() => usage.data?.access)
   return {
-    access: given ?? (status === 403 ? 'member' : usage.data?.access),
+    access: given ?? access,
     error: given || usage.isFetching ? '' : error,
     retry: () => usage.refetch(),
   }
+}
+
+export function BillingAccessError({
+  error,
+  onRetry,
+  refreshing = false,
+}: {
+  error: string
+  onRetry: () => void
+  refreshing?: boolean
+}) {
+  return (
+    <Callout.Root color="red" role="alert">
+      <Callout.Text>
+        <Callout.TextHeading>
+          {refreshing ? 'Billing access could not be refreshed' : 'Billing access could not be loaded'}
+        </Callout.TextHeading>
+        {error}
+      </Callout.Text>
+      <Button size="sm" variant="outline" color="neutral" onClick={onRetry}>
+        Retry
+      </Button>
+    </Callout.Root>
+  )
 }
 
 /** A billing role is required (members see the one line instead). */

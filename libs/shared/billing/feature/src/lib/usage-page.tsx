@@ -283,8 +283,11 @@ export function UsagePage({
     u.billing.status !== 'cancelled' &&
     !!client.quoteProposal &&
     !!client.acceptProposal
-  const linkedProposal = useProposals(organizationId, client, canReviewProposal && Boolean(open?.proposal)).data
-    ?.proposal
+  const { proposal: linkedProposal } = useProposals(
+    organizationId,
+    client,
+    canReviewProposal && Boolean(open?.proposal)
+  )
   const openedProposal = useRef<number | undefined>(undefined)
   useEffect(() => {
     if (!canReviewProposal || !linkedProposal || linkedProposal.id !== open?.proposal) return

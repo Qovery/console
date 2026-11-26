@@ -1,6 +1,8 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { BillingInfoView, CustomerInvoice, InvoicePage, PaymentMethods } from 'qovery-pricing-typescript-axios'
-import { type AwsMarketplace, BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { type AwsMarketplace, BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
+import { billingUsageFactoryMock } from '@qovery/shared/factories'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingSettingsPage } from './billing-settings-page'
 import { InvoicesPage } from './invoices-page'
 
@@ -90,6 +92,31 @@ describe('InvoicesPage', () => {
     expect(screen.getAllByText('INV-1')).toHaveLength(1)
     expect(invoices).toHaveBeenLastCalledWith('org-1', { offset: 'next' })
     expect(screen.queryByRole('button', { name: 'Load more' })).not.toBeInTheDocument()
+  })
+
+  it('keeps invoices on a transient access refresh failure and hides them after access is denied', async () => {
+    const queryClient = new QueryClient()
+    const pricingClient = client({
+      billingUsage: jest.fn().mockResolvedValue(billingUsageFactoryMock()),
+    })
+    const usage = jest.mocked(pricingClient.billingUsage)
+    const { queryKey } = billing.usage({ client: pricingClient, organizationId: 'org-1' })
+    renderWithProviders(
+      <QueryClientProvider client={queryClient}>
+        <InvoicesPage organizationId="org-1" client={pricingClient} alerts={false} />
+      </QueryClientProvider>
+    )
+    expect(await screen.findByText('INV-1')).toBeInTheDocument()
+
+    usage.mockRejectedValueOnce(new Error('Temporary network failure'))
+    await act(() => queryClient.invalidateQueries({ queryKey }))
+    expect(await screen.findByText('Billing access could not be refreshed')).toBeInTheDocument()
+    expect(screen.getByText('INV-1')).toBeInTheDocument()
+
+    usage.mockRejectedValueOnce(new BillingError(403, 'NOT_AN_ORGANIZATION_MEMBER', 'No access'))
+    await act(() => queryClient.invalidateQueries({ queryKey }))
+    expect(await screen.findByText(/only owners, admins and billing managers/i)).toBeInTheDocument()
+    expect(screen.queryByText('INV-1')).not.toBeInTheDocument()
   })
 
   it('should not request invoices for a member', async () => {

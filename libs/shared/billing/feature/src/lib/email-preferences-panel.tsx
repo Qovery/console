@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { type PricingClient, billing } from '@qovery/shared/billing/data-access'
+import { BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
 import { Button, Callout, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
 import { errorText } from './parts'
 
 /** The person's email preferences for this organization (billing emails cannot be turned off). */
 export function EmailPreferencesPanel({ organizationId, client }: { organizationId: string; client: PricingClient }) {
-  return <OrganizationEmailPreferences key={organizationId} organizationId={organizationId} client={client} />
+  const { queryKey } = billing.emailPreferences({ client, organizationId })
+  return <OrganizationEmailPreferences key={JSON.stringify(queryKey)} organizationId={organizationId} client={client} />
 }
 
 function OrganizationEmailPreferences({ organizationId, client }: { organizationId: string; client: PricingClient }) {
@@ -16,16 +17,22 @@ function OrganizationEmailPreferences({ organizationId, client }: { organization
     enabled: Boolean(client.emailPreferences),
     retry: false,
     refetchOnWindowFocus: false,
+    staleTime: 0,
   })
   const mutation = useMutation({
     mutationFn: ({ category, enabled }: { category: string; enabled: boolean }) =>
       Promise.resolve(client.setEmailPreference?.(organizationId, category, enabled)),
-    onSuccess: (updated) => {
-      if (updated) queryClient.setQueryData(options.queryKey, updated)
+    onSuccess: async (updated) => {
+      if (!updated) return
+      await queryClient.cancelQueries({ queryKey: options.queryKey, exact: true })
+      queryClient.setQueryData(options.queryKey, updated)
     },
   })
-  const p = preferences.data
-  const failure = p ? mutation.error : preferences.isFetching ? undefined : preferences.error
+  const accessDenied = preferences.error instanceof BillingError && [401, 403].includes(preferences.error.status)
+  const p = accessDenied ? undefined : preferences.data
+  const loadFailure = preferences.isFetching ? null : preferences.error
+  const failure = mutation.error ?? loadFailure
+  const saveFailed = mutation.isError
   const error = failure ? errorText(failure) : ''
   if (!client.emailPreferences) return null
   const loadError = error && (
@@ -35,11 +42,11 @@ function OrganizationEmailPreferences({ organizationId, client }: { organization
       </Callout.Icon>
       <Callout.Text>
         <Callout.TextHeading>
-          {p ? 'Preference could not be saved' : 'Email preferences could not be loaded'}
+          {saveFailed ? 'Preference could not be saved' : 'Email preferences could not be loaded'}
         </Callout.TextHeading>
         <Callout.TextDescription>{error}</Callout.TextDescription>
       </Callout.Text>
-      {p ? (
+      {saveFailed ? (
         <Button size="sm" variant="outline" color="neutral" onClick={() => mutation.reset()}>
           Dismiss
         </Button>
@@ -75,7 +82,9 @@ function OrganizationEmailPreferences({ organizationId, client }: { organization
             <InputToggle
               small
               value={c.enabled}
-              disabled={c.locked || mutation.isLoading || !client.setEmailPreference}
+              disabled={
+                c.locked || preferences.isFetching || !!loadFailure || mutation.isLoading || !client.setEmailPreference
+              }
               title={c.name}
               description={c.description}
               onChange={(enabled) => mutation.mutate({ category: c.category, enabled })}

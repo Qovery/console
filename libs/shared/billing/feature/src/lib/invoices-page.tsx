@@ -7,7 +7,7 @@
  *   <InvoicesPage organizationId={id} client={client} onManagePaymentMethod={() => navigate('…/billing')} />
  */
 import * as Dialog from '@radix-ui/react-dialog'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import type { CustomerInvoice } from 'qovery-pricing-typescript-axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
@@ -17,6 +17,7 @@ import { CompactSelect } from './compact-select'
 import { InvoiceDetailsModal } from './invoice-details'
 import {
   type Access,
+  BillingAccessError,
   BillingRolesOnly,
   CardSkeleton,
   errorText,
@@ -71,18 +72,7 @@ export function InvoicesPage({
   onNavigate,
 }: InvoicesPageProps) {
   const { access, error: accessError, retry: retryAccess } = useAccess(client, organizationId, given)
-  if (accessError)
-    return (
-      <Callout.Root color="red">
-        <Callout.Text>
-          <Callout.TextHeading>Billing access could not be loaded</Callout.TextHeading>
-          {accessError}
-        </Callout.Text>
-        <Button size="sm" variant="outline" color="neutral" onClick={retryAccess}>
-          Retry
-        </Button>
-      </Callout.Root>
-    )
+  if (!access && accessError) return <BillingAccessError error={accessError} onRetry={retryAccess} />
   if (!access)
     return (
       <div className="rounded border border-neutral bg-surface-neutral p-5">
@@ -92,6 +82,7 @@ export function InvoicesPage({
   if (!isBillingAccess(access) || !client.invoices) return <BillingRolesOnly />
   return (
     <div className="flex flex-col gap-6">
+      {accessError && <BillingAccessError error={accessError} onRetry={retryAccess} refreshing />}
       {/* The page has its own overdue banner. */}
       {alerts && (
         <BillingAlerts
@@ -113,6 +104,7 @@ export function InvoicesPage({
 }
 
 function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<InvoicesPageProps, 'access'>) {
+  const queryClient = useQueryClient()
   const [actionError, setActionError] = useState<Error>()
   const invoices = useInfiniteQuery({
     ...billing.invoices({ client, organizationId }),
@@ -128,9 +120,13 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
     }
     return [...unique.values()]
   }, [invoices.data])
-  const error = actionError ?? invoices.error
-  const reload = () => {
+  const error = invoices.error ?? actionError
+  const reload = (invoiceId?: string) => {
     setActionError(undefined)
+    if (invoiceId) {
+      const { queryKey } = billing.invoice({ client, organizationId, invoiceId })
+      void queryClient.invalidateQueries({ queryKey, exact: true })
+    }
     void invoices.refetch()
   }
   const [status, setStatus] = useState<StatusFilter>('all')
@@ -176,7 +172,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
         <Callout.Text>
           <Callout.TextHeading>Invoices could not be loaded</Callout.TextHeading>
           {errorText(error)}{' '}
-          <button type="button" className="font-medium underline" onClick={reload}>
+          <button type="button" className="font-medium underline" onClick={() => reload()}>
             Try again
           </button>
         </Callout.Text>
@@ -245,7 +241,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
       collectKeys.current.delete(inv.id)
       setConfirm(undefined)
       notifySuccess(client, 'Payment received', `Invoice ${inv.id} is paid. Thank you.`)
-      reload()
+      reload(inv.id)
     } catch (e) {
       const be = e instanceof BillingError ? e : undefined
       if (be && be.status < 500 && be.status !== 408) collectKeys.current.delete(inv.id)
@@ -262,7 +258,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
         }))
       } else if (be?.status === 409) {
         setPay((p) => ({ ...p, [inv.id]: { error: 'This invoice changed: the list is refreshed.' } }))
-        reload()
+        reload(inv.id)
       } else setPay((p) => ({ ...p, [inv.id]: { error: errorText(e) } }))
       setConfirm(undefined)
     }

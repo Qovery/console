@@ -229,6 +229,19 @@ function DismissProposal({
   )
 }
 
+export function ProposalLoadError({ retry }: { retry: () => void }) {
+  return (
+    <Callout.Root color="red" role="alert">
+      <Callout.Text>
+        <Callout.TextHeading>Plan proposal could not be loaded</Callout.TextHeading>
+      </Callout.Text>
+      <Button size="sm" variant="outline" color="neutral" onClick={retry}>
+        Retry
+      </Button>
+    </Callout.Root>
+  )
+}
+
 /** The proposal banner where it belongs (billing roles; nothing otherwise): <UsagePage> mounts it as
  * a card, and <OfferHost onReviewProposal> in the top bar. */
 export function ProposalHost({
@@ -243,17 +256,27 @@ export function ProposalHost({
   variant?: 'card' | 'bar'
 }) {
   const pr = useProposal(organizationId, client)
-  if (!pr.proposal) return null
-  if (variant === 'bar') return <ProposalBanner proposal={pr.proposal} variant="bar" onReview={onReview} />
+  const loadError = pr.loadError && <ProposalLoadError retry={pr.retry} />
+  if (!pr.proposal) return loadError
+  if (variant === 'bar')
+    return (
+      <>
+        {loadError}
+        <ProposalBanner proposal={pr.proposal} variant="bar" onReview={onReview} />
+      </>
+    )
   return (
-    <ProposalBanner
-      proposal={pr.proposal}
-      onReview={onReview}
-      error={pr.error}
-      busy={pr.busy}
-      onSnooze={client.snoozeProposal ? pr.snooze : undefined}
-      onDismiss={client.dismissProposal ? pr.dismiss : undefined}
-    />
+    <>
+      {loadError}
+      <ProposalBanner
+        proposal={pr.proposal}
+        onReview={onReview}
+        error={pr.error}
+        busy={pr.busy}
+        onSnooze={client.snoozeProposal ? pr.snooze : undefined}
+        onDismiss={client.dismissProposal ? pr.dismiss : undefined}
+      />
+    </>
   )
 }
 

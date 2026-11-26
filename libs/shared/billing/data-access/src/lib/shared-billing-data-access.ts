@@ -439,32 +439,50 @@ export function createPricingClient({ pricingApiUrl, getToken }: PricingClientOp
 
 type BillingRead = { client: PricingClient; organizationId: string }
 
+const billingClientIds = new WeakMap<PricingClient, number>()
+let nextBillingClientId = 0
+
+function billingClientId(client: PricingClient): number {
+  const existing = billingClientIds.get(client)
+  if (existing !== undefined) return existing
+  const id = nextBillingClientId++
+  billingClientIds.set(client, id)
+  return id
+}
+
 export const billing = createQueryKeys('billing', {
   usage: ({ client, organizationId }: BillingRead) => ({
-    queryKey: [organizationId],
+    queryKey: [billingClientId(client), organizationId],
     queryFn: () => client.billingUsage(organizationId),
   }),
   emailPreferences: ({ client, organizationId }: BillingRead) => ({
-    queryKey: [organizationId],
+    queryKey: [billingClientId(client), organizationId],
     queryFn: async () => (await client.emailPreferences?.(organizationId)) ?? null,
   }),
   proposals: ({ client, organizationId }: BillingRead) => ({
-    queryKey: [organizationId],
-    queryFn: async () => (await client.proposals?.(organizationId)) ?? { proposal: null },
+    queryKey: [billingClientId(client), organizationId],
+    async queryFn() {
+      try {
+        return (await client.proposals?.(organizationId)) ?? { proposal: null }
+      } catch (error) {
+        if (error instanceof BillingError && error.code === 'ORGANIZATION_NOT_LINKED') return { proposal: null }
+        throw error
+      }
+    },
   }),
   proposalView: ({ client, organizationId, proposalId }: BillingRead & { proposalId?: number }) => ({
-    queryKey: [organizationId, proposalId],
+    queryKey: [billingClientId(client), organizationId, proposalId],
     async queryFn() {
       if (proposalId !== undefined) await client.viewProposal?.(organizationId, proposalId)
       return true
     },
   }),
   invoice: ({ client, organizationId, invoiceId }: BillingRead & { invoiceId: string }) => ({
-    queryKey: [organizationId, invoiceId],
+    queryKey: [billingClientId(client), organizationId, invoiceId],
     queryFn: async () => (await client.invoice?.(organizationId, invoiceId)) ?? null,
   }),
   invoices: ({ client, organizationId }: BillingRead) => ({
-    queryKey: [organizationId],
+    queryKey: [billingClientId(client), organizationId],
     queryFn: ({ pageParam }: { pageParam?: string }) =>
       (pageParam ? client.invoices?.(organizationId, { offset: pageParam }) : client.invoices?.(organizationId)) ??
       Promise.reject(new Error('Invoices are unavailable')),

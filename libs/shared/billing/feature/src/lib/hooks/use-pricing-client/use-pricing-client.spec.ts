@@ -4,9 +4,10 @@ import { renderHook } from '@qovery/shared/util-tests'
 import { usePricingClient } from './use-pricing-client'
 
 const mockGetAccessTokenSilently = jest.fn()
+let mockSubject: string | undefined
 
 jest.mock('@auth0/auth0-react', () => ({
-  useAuth0: () => ({ getAccessTokenSilently: mockGetAccessTokenSilently }),
+  useAuth0: () => ({ getAccessTokenSilently: mockGetAccessTokenSilently, user: { sub: mockSubject } }),
 }))
 
 describe('usePricingClient', () => {
@@ -16,6 +17,7 @@ describe('usePricingClient', () => {
   const usage = billingUsageFactoryMock()
 
   beforeEach(() => {
+    mockSubject = undefined
     mockGetAccessTokenSilently.mockResolvedValue('user-token')
     adapter.mockImplementation(async (config) => ({ config, data: usage, status: 200, statusText: 'OK', headers: {} }))
     axios.defaults.adapter = adapter
@@ -74,6 +76,17 @@ describe('usePricingClient', () => {
     const url = new URL(axios.getUri(config))
     expect(url.pathname).toBe('/organization/org-1/buildUsage')
     expect(url.searchParams.get('service')).toBe('')
+  })
+
+  it('uses a different client after the authenticated subject changes', () => {
+    mockSubject = 'auth0|first'
+    const { result, rerender } = renderHook(() => usePricingClient())
+    const firstClient = result.current
+
+    mockSubject = 'auth0|second'
+    rerender()
+
+    expect(result.current).not.toBe(firstClient)
   })
 
   it('should keep the same client between renders', () => {
