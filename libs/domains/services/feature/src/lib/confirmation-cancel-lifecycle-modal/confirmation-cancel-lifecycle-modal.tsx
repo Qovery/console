@@ -46,12 +46,16 @@ export function ConfirmationCancelLifecycleModal({
       forceLabel: 'Force Lifecycle job stop',
       forceHelp:
         'Cancel the deployment and stop the execution of any lifecycle job. Make sure that interrupting its execution is safe.',
+      warning: null,
     }))
     .with('TERRAFORM', () => ({
       description:
-        'The cancellation takes effect once the running Terraform command has finished. Actions already performed are not rolled back.',
+        'Cancelling stops the deployment of the whole environment. Unless you force the stop, it waits for the running Terraform command to finish. Actions already performed are not rolled back.',
       forceLabel: 'Force Terraform stop',
-      forceHelp: 'Stop the running Terraform command now. It is killed if it does not stop within the grace period.',
+      forceHelp:
+        'Stop the running Terraform command now. It is killed if it does not stop within the grace period. The force applies to the whole environment: its other running jobs, including lifecycle jobs, are stopped too.',
+      warning:
+        'A forced stop can leave the Terraform state locked (use "Force unlock" in the service actions) and resources partly applied or orphaned. Check the state before you deploy again.',
     }))
     .exhaustive()
 
@@ -83,15 +87,12 @@ export function ConfirmationCancelLifecycleModal({
             </label>
           )}
         />
-        {serviceKind === 'TERRAFORM' && (
-          <Callout.Root color="yellow">
+        {copy.warning && (
+          <Callout.Root color="yellow" className="mt-4">
             <Callout.Icon>
               <Icon iconName="triangle-exclamation" iconStyle="regular" />
             </Callout.Icon>
-            <Callout.Text>
-              A forced stop can leave the Terraform state locked (use &quot;Force unlock&quot; in the service actions)
-              and resources partly created or orphaned. Check the state before you deploy again.
-            </Callout.Text>
+            <Callout.Text>{copy.warning}</Callout.Text>
           </Callout.Root>
         )}
       </ModalCrud>

@@ -306,6 +306,9 @@ describe('ServiceActions', () => {
     await userEvent.click(screen.getByRole('menuitem', { name: /cancel deployment/i }))
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1)
+    expect(mockOpenModal.mock.calls[0][0].content.props).toEqual(
+      expect.objectContaining({ serviceKind: 'TERRAFORM', environmentId: mockService.environment.id })
+    )
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
   })
 
