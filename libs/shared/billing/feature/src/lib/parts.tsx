@@ -3,9 +3,11 @@
  * footer with its own action), skeletons while a card loads, the "billing roles only" line, and
  * who the person is (member or billing role) without calling the invoice or payment APIs.
  */
-import { type ReactNode, useEffect, useState } from 'react'
-import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
-import { Skeleton, toast } from '@qovery/shared/ui'
+import { useQuery } from '@tanstack/react-query'
+import { type ReactNode, useState } from 'react'
+import { match } from 'ts-pattern'
+import { BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
+import { Button, Callout, Skeleton, toast } from '@qovery/shared/ui'
 
 export type Access = 'member' | 'billing' | 'demo'
 
@@ -67,49 +69,60 @@ export function BillingRolesOnly() {
  * APIs.
  */
 export function useAccess(client: PricingClient, organizationId: string, given?: Access) {
-  const [attempt, setAttempt] = useState(0)
-  const [result, setResult] = useState<{
-    client: PricingClient
-    organizationId: string
-    attempt: number
-    access?: Access
-    error?: string
-  }>()
-  useEffect(() => {
-    if (given) return
-    let live = true
-    const request = { client, organizationId, attempt }
-    client
-      .billingUsage(organizationId)
-      .then(({ access }) => live && setResult({ ...request, access }))
-      .catch((e) => {
-        if (!live) return
-        if (e instanceof BillingError && e.status === 403) {
-          setResult({ ...request, access: 'member' })
-          return
-        }
-        const error =
-          e instanceof BillingError && e.status === 401
-            ? 'Your session has expired. Sign in again to view billing.'
-            : e instanceof BillingError && e.status === 404
-              ? 'This organization is not linked to a billing account.'
-              : errorText(e)
-        setResult({ ...request, error })
-      })
-    return () => {
-      live = false
-    }
-  }, [client, organizationId, given, attempt])
-
-  const current =
-    result?.organizationId === organizationId && result.client === client && result.attempt === attempt
-      ? result
-      : undefined
+  const [denied, setDenied] = useState<{ client: PricingClient; organizationId: string; status: number }>()
+  const usage = useQuery({
+    ...billing.usage({ client, organizationId }),
+    enabled: !given && Boolean(organizationId),
+    retry: false,
+    refetchOnWindowFocus: false,
+    onSuccess: () => setDenied(undefined),
+    onError: (error) => {
+      if (error instanceof BillingError && [401, 403, 404].includes(error.status)) {
+        setDenied({ client, organizationId, status: error.status })
+      }
+    },
+  })
+  const status = usage.error instanceof BillingError ? usage.error.status : undefined
+  const deniedStatus = denied?.client === client && denied.organizationId === organizationId ? denied.status : undefined
+  const accessStatus = deniedStatus ?? status
+  const error = match(status)
+    .with(401, () => 'Your session has expired. Sign in again to view billing.')
+    .with(404, () => 'This organization is not linked to a billing account.')
+    .with(403, () => '')
+    .otherwise(() => (usage.error ? errorText(usage.error) : ''))
+  const access = match(accessStatus)
+    .with(403, () => 'member' as const)
+    .with(401, 404, () => undefined)
+    .otherwise(() => usage.data?.access)
   return {
-    access: given ?? current?.access,
-    error: given ? '' : current?.error ?? '',
-    retry: () => setAttempt((n) => n + 1),
+    access: given ?? access,
+    error: given || usage.isFetching ? '' : error,
+    retry: () => usage.refetch(),
   }
+}
+
+export function BillingAccessError({
+  error,
+  onRetry,
+  refreshing = false,
+}: {
+  error: string
+  onRetry: () => void
+  refreshing?: boolean
+}) {
+  return (
+    <Callout.Root color="red" role="alert">
+      <Callout.Text>
+        <Callout.TextHeading>
+          {refreshing ? 'Billing access could not be refreshed' : 'Billing access could not be loaded'}
+        </Callout.TextHeading>
+        {error}
+      </Callout.Text>
+      <Button size="sm" variant="outline" color="neutral" onClick={onRetry}>
+        Retry
+      </Button>
+    </Callout.Root>
+  )
 }
 
 /** A billing role is required (members see the one line instead). */

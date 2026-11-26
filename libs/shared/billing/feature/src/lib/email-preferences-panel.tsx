@@ -1,45 +1,39 @@
-import type { EmailPreferences } from 'qovery-pricing-typescript-axios'
-import { useEffect, useState } from 'react'
-import type { PricingClient } from '@qovery/shared/billing/data-access'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
 import { Button, Callout, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
 import { errorText } from './parts'
 
 /** The person's email preferences for this organization (billing emails cannot be turned off). */
 export function EmailPreferencesPanel({ organizationId, client }: { organizationId: string; client: PricingClient }) {
-  return <OrganizationEmailPreferences key={organizationId} organizationId={organizationId} client={client} />
+  const { queryKey } = billing.emailPreferences({ client, organizationId })
+  return <OrganizationEmailPreferences key={JSON.stringify(queryKey)} organizationId={organizationId} client={client} />
 }
 
 function OrganizationEmailPreferences({ organizationId, client }: { organizationId: string; client: PricingClient }) {
-  const [p, setP] = useState<EmailPreferences>()
-  const [error, setError] = useState('')
-  const [attempt, setAttempt] = useState(0)
-  const [saving, setSaving] = useState(false)
-  const retry = () => setAttempt((n) => n + 1)
-
-  useEffect(() => {
-    let live = true
-    setError('')
-    client
-      .emailPreferences?.(organizationId)
-      .then((value) => live && setP(value))
-      .catch((e) => live && setError(errorText(e)))
-    return () => {
-      live = false
-    }
-  }, [client, organizationId, attempt])
-
-  async function save(category: string, enabled: boolean) {
-    if (!client.setEmailPreference || saving) return
-    setSaving(true)
-    setError('')
-    try {
-      setP(await client.setEmailPreference(organizationId, category, enabled))
-    } catch (e) {
-      setError(errorText(e))
-    } finally {
-      setSaving(false)
-    }
-  }
+  const queryClient = useQueryClient()
+  const options = billing.emailPreferences({ client, organizationId })
+  const preferences = useQuery({
+    ...options,
+    enabled: Boolean(client.emailPreferences),
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  })
+  const mutation = useMutation({
+    mutationFn: ({ category, enabled }: { category: string; enabled: boolean }) =>
+      Promise.resolve(client.setEmailPreference?.(organizationId, category, enabled)),
+    onSuccess: async (updated) => {
+      if (!updated) return
+      await queryClient.cancelQueries({ queryKey: options.queryKey, exact: true })
+      queryClient.setQueryData(options.queryKey, updated)
+    },
+  })
+  const accessDenied = preferences.error instanceof BillingError && [401, 403].includes(preferences.error.status)
+  const p = accessDenied ? undefined : preferences.data
+  const loadFailure = preferences.isFetching ? null : preferences.error
+  const failure = mutation.error ?? loadFailure
+  const saveFailed = mutation.isError
+  const error = failure ? errorText(failure) : ''
   if (!client.emailPreferences) return null
   const loadError = error && (
     <Callout.Root color="red" role="alert">
@@ -48,16 +42,16 @@ function OrganizationEmailPreferences({ organizationId, client }: { organization
       </Callout.Icon>
       <Callout.Text>
         <Callout.TextHeading>
-          {p ? 'Preference could not be saved' : 'Email preferences could not be loaded'}
+          {saveFailed ? 'Preference could not be saved' : 'Email preferences could not be loaded'}
         </Callout.TextHeading>
         <Callout.TextDescription>{error}</Callout.TextDescription>
       </Callout.Text>
-      {p ? (
-        <Button size="sm" variant="outline" color="neutral" onClick={() => setError('')}>
+      {saveFailed ? (
+        <Button size="sm" variant="outline" color="neutral" onClick={() => mutation.reset()}>
           Dismiss
         </Button>
       ) : (
-        <Button size="sm" variant="outline" color="neutral" onClick={retry}>
+        <Button size="sm" variant="outline" color="neutral" onClick={() => preferences.refetch()}>
           Retry
         </Button>
       )}
@@ -88,10 +82,12 @@ function OrganizationEmailPreferences({ organizationId, client }: { organization
             <InputToggle
               small
               value={c.enabled}
-              disabled={c.locked || saving || !client.setEmailPreference}
+              disabled={
+                c.locked || preferences.isFetching || !!loadFailure || mutation.isLoading || !client.setEmailPreference
+              }
               title={c.name}
               description={c.description}
-              onChange={(v) => save(c.category, v)}
+              onChange={(enabled) => mutation.mutate({ category: c.category, enabled })}
             />
           </div>
         ))}

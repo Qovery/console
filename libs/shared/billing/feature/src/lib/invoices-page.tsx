@@ -7,15 +7,17 @@
  *   <InvoicesPage organizationId={id} client={client} onManagePaymentMethod={() => navigate('…/billing')} />
  */
 import * as Dialog from '@radix-ui/react-dialog'
-import type { CustomerInvoice, InvoicePage } from 'qovery-pricing-typescript-axios'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import type { CustomerInvoice } from 'qovery-pricing-typescript-axios'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Heading, Icon, Modal } from '@qovery/shared/ui'
 import { BillingAlerts } from './billing-alerts'
 import { CompactSelect } from './compact-select'
 import { InvoiceDetailsModal } from './invoice-details'
 import {
   type Access,
+  BillingAccessError,
   BillingRolesOnly,
   CardSkeleton,
   errorText,
@@ -70,18 +72,7 @@ export function InvoicesPage({
   onNavigate,
 }: InvoicesPageProps) {
   const { access, error: accessError, retry: retryAccess } = useAccess(client, organizationId, given)
-  if (accessError)
-    return (
-      <Callout.Root color="red">
-        <Callout.Text>
-          <Callout.TextHeading>Billing access could not be loaded</Callout.TextHeading>
-          {accessError}
-        </Callout.Text>
-        <Button size="sm" variant="outline" color="neutral" onClick={retryAccess}>
-          Retry
-        </Button>
-      </Callout.Root>
-    )
+  if (accessError && !isBillingAccess(access)) return <BillingAccessError error={accessError} onRetry={retryAccess} />
   if (!access)
     return (
       <div className="rounded border border-neutral bg-surface-neutral p-5">
@@ -91,6 +82,7 @@ export function InvoicesPage({
   if (!isBillingAccess(access) || !client.invoices) return <BillingRolesOnly />
   return (
     <div className="flex flex-col gap-6">
+      {accessError && <BillingAccessError error={accessError} onRetry={retryAccess} refreshing />}
       {/* The page has its own overdue banner. */}
       {alerts && (
         <BillingAlerts
@@ -112,10 +104,31 @@ export function InvoicesPage({
 }
 
 function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<InvoicesPageProps, 'access'>) {
-  const [page, setPage] = useState<InvoicePage>()
-  const [rows, setRows] = useState<CustomerInvoice[]>([])
-  const [error, setError] = useState<BillingError | Error>()
-  const [loadingMore, setLoadingMore] = useState(false)
+  const queryClient = useQueryClient()
+  const [actionError, setActionError] = useState<Error>()
+  const invoices = useInfiniteQuery({
+    ...billing.invoices({ client, organizationId }),
+    getNextPageParam: (last) => last.next_offset || undefined,
+    retry: false,
+    refetchOnWindowFocus: false,
+  })
+  const page = invoices.data?.pages.at(-1)
+  const rows = useMemo(() => {
+    const unique = new Map<string, CustomerInvoice>()
+    for (const page of invoices.data?.pages ?? []) {
+      for (const invoice of page.invoices) unique.set(invoice.id, invoice)
+    }
+    return [...unique.values()]
+  }, [invoices.data])
+  const error = invoices.error ?? actionError
+  const reload = (invoiceId?: string) => {
+    setActionError(undefined)
+    if (invoiceId) {
+      const { queryKey } = billing.invoice({ client, organizationId, invoiceId })
+      void queryClient.invalidateQueries({ queryKey, exact: true })
+    }
+    void invoices.refetch()
+  }
   const [status, setStatus] = useState<StatusFilter>('all')
   const [year, setYear] = useState<number | 'all'>('all')
   const [confirm, setConfirm] = useState<CustomerInvoice>()
@@ -125,38 +138,10 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
   const [downloading, setDownloading] = useState('')
   const [bulk, setBulk] = useState<{ done: number; failed: number; total: number }>()
   const abort = useRef<AbortController | undefined>(undefined)
-  const pagesLoaded = useRef(1)
-  const requestVersion = useRef(0)
   const collectKeys = useRef(new Map<string, string>())
   const collecting = useRef(false)
   const [, tick] = useState(0)
 
-  const load = useCallback(async () => {
-    const version = ++requestVersion.current
-    try {
-      let nextPage = await client.invoices!(organizationId)
-      const invoices = new Map(nextPage.invoices.map((invoice) => [invoice.id, invoice]))
-      let count = 1
-      while (version === requestVersion.current && count < pagesLoaded.current && nextPage.next_offset) {
-        nextPage = await client.invoices!(organizationId, { offset: nextPage.next_offset })
-        for (const invoice of nextPage.invoices) invoices.set(invoice.id, invoice)
-        count++
-      }
-      if (version !== requestVersion.current) return
-      pagesLoaded.current = count
-      setPage(nextPage)
-      setRows([...invoices.values()])
-      setError(undefined)
-    } catch (e) {
-      if (version === requestVersion.current) setError(e as Error)
-    }
-  }, [client, organizationId])
-  useEffect(() => {
-    void load()
-    return () => {
-      requestVersion.current++
-    }
-  }, [load])
   // Re-render once a minute so "try again in N minutes" counts down and the button comes back.
   useEffect(() => {
     const t = setInterval(() => tick((n) => n + 1), 30000)
@@ -187,7 +172,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
         <Callout.Text>
           <Callout.TextHeading>Invoices could not be loaded</Callout.TextHeading>
           {errorText(error)}{' '}
-          <button type="button" className="font-medium underline" onClick={load}>
+          <button type="button" className="font-medium underline" onClick={() => reload()}>
             Try again
           </button>
         </Callout.Text>
@@ -205,27 +190,10 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
   const updateCard = () =>
     onManagePaymentMethod
       ? onManagePaymentMethod()
-      : openPaymentMethodPage(client, organizationId).catch((e) => setError(e))
+      : openPaymentMethodPage(client, organizationId).catch((e) => setActionError(e))
   const oldestDue = [...rows].filter((r) => r.collectable).sort((a, b) => a.date.localeCompare(b.date))[0]
   // The actions column fits its buttons: Details and Download, and Pay now when a row has it.
   const actionsWidth = !client.invoice ? 'narrow' : !aws && shown.some((i) => i.collectable) ? 'wide' : 'medium'
-
-  async function loadMore() {
-    if (!page?.next_offset || loadingMore) return
-    const version = requestVersion.current
-    setLoadingMore(true)
-    try {
-      const next = await client.invoices!(organizationId, { offset: page.next_offset })
-      if (version !== requestVersion.current) return
-      pagesLoaded.current++
-      setPage(next)
-      setRows((r) => [...r, ...next.invoices.filter((i) => !r.some((x) => x.id === i.id))])
-    } catch (e) {
-      if (version === requestVersion.current) setError(e as Error)
-    } finally {
-      setLoadingMore(false)
-    }
-  }
 
   async function download(inv: CustomerInvoice) {
     const d = await client.invoicePdf!(organizationId, inv.id)
@@ -255,7 +223,9 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
     setBulk(undefined)
     if (r.cancelled) notifySuccess(client, 'Download stopped', `${r.done} of ${list.length} downloaded.`)
     else if (r.failed)
-      setError(new Error(`${r.failed} of ${list.length} invoices could not be downloaded. Try those again one by one.`))
+      setActionError(
+        new Error(`${r.failed} of ${list.length} invoices could not be downloaded. Try those again one by one.`)
+      )
     else notifySuccess(client, `${r.done} invoice${r.done === 1 ? '' : 's'} downloaded`)
   }
 
@@ -271,7 +241,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
       collectKeys.current.delete(inv.id)
       setConfirm(undefined)
       notifySuccess(client, 'Payment received', `Invoice ${inv.id} is paid. Thank you.`)
-      load()
+      reload(inv.id)
     } catch (e) {
       const be = e instanceof BillingError ? e : undefined
       if (be && be.status < 500 && be.status !== 408) collectKeys.current.delete(inv.id)
@@ -288,7 +258,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
         }))
       } else if (be?.status === 409) {
         setPay((p) => ({ ...p, [inv.id]: { error: 'This invoice changed: the list is refreshed.' } }))
-        load()
+        reload(inv.id)
       } else setPay((p) => ({ ...p, [inv.id]: { error: errorText(e) } }))
       setConfirm(undefined)
     }
@@ -394,7 +364,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
           </Button>
         )}
       </div>
-      {error && page && (
+      {Boolean(error) && (
         <Callout.Root color="red">
           <Callout.Text>{errorText(error)}</Callout.Text>
         </Callout.Root>
@@ -526,9 +496,9 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
                 size="md"
                 variant="plain"
                 color="neutral"
-                loading={loadingMore}
-                disabled={loadingMore}
-                onClick={loadMore}
+                loading={invoices.isFetchingNextPage}
+                disabled={invoices.isFetching}
+                onClick={() => invoices.fetchNextPage()}
               >
                 Load more
               </Button>

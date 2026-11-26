@@ -1,8 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog'
+import { useQuery } from '@tanstack/react-query'
 import type {
   CustomerInvoice,
   InvoiceDetailLine,
-  InvoiceDetails,
   InvoiceLineUsage1 as InvoiceLineUsage,
 } from 'qovery-pricing-typescript-axios'
 /*
@@ -13,14 +13,13 @@ import type {
  * back to the period. "Export CSV" saves the lines and the usage; "Download PDF" the invoice
  * itself when downloads are available. A read: it works when payments and downloads are not.
  */
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import type { PricingClient } from '@qovery/shared/billing/data-access'
+import { type PricingClient, billing } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Chart, Heading, Icon, Modal } from '@qovery/shared/ui'
 import { ChartTooltip } from './chart-tooltip'
 import { errorText } from './parts'
-import { num } from './utils/format'
-import { amount, localDate, quantity } from './utils/format'
+import { amount, localDate, num, quantity } from './utils/format'
 import { invoiceDetailsCSV, invoiceStatus, lineKindLabel, usageCoverageText, usageDays } from './utils/invoice-rules'
 
 const ORG_COLORS = [
@@ -50,25 +49,23 @@ export function InvoiceDetailsModal({
   onDownload,
   downloadAvailable,
 }: InvoiceDetailsModalProps) {
-  const [d, setD] = useState<InvoiceDetails>()
-  const [error, setError] = useState('')
-  const [open, setOpen] = useState<Record<number, boolean>>({})
+  const details = useQuery({
+    ...billing.invoice({ client, organizationId, invoiceId: invoice.id }),
+    enabled: Boolean(client.invoice),
+    retry: false,
+    refetchOnWindowFocus: false,
+  })
+  const d = details.data
+  const [downloadError, setDownloadError] = useState('')
+  const firstUsageLine = d?.lines.findIndex((line) => line.usage)
+  const [expanded, setExpanded] = useState<Record<number, boolean>>()
+  const open = expanded ?? (firstUsageLine === undefined || firstUsageLine < 0 ? {} : { [firstUsageLine]: true })
   const [downloading, setDownloading] = useState(false)
-  useEffect(() => {
-    let live = true
-    client.invoice!(organizationId, invoice.id)
-      .then((x) => {
-        if (!live) return
-        setD(x)
-        // The first usage line opens on its own: it is what people come for.
-        const first = x.lines.findIndex((l) => l.usage)
-        if (first >= 0) setOpen({ [first]: true })
-      })
-      .catch((e) => live && setError(errorText(e)))
-    return () => {
-      live = false
-    }
-  }, [client, organizationId, invoice.id])
+  const error = downloadError || (details.error ? errorText(details.error) : '')
+
+  const setOpen = (line: number) => {
+    setExpanded({ ...open, [line]: !open[line] })
+  }
 
   function exportCSV() {
     if (!d) return
@@ -88,7 +85,7 @@ export function InvoiceDetailsModal({
     try {
       await onDownload(invoice)
     } catch (e) {
-      setError(`Download failed: ${errorText(e)}`)
+      setDownloadError(`Download failed: ${errorText(e)}`)
     }
     setDownloading(false)
   }
@@ -195,12 +192,7 @@ export function InvoiceDetailsModal({
                     )}
                     {d.lines.map((l, i) => (
                       <Fragment key={i}>
-                        <LineRow
-                          line={l}
-                          currency={cur}
-                          open={!!open[i]}
-                          onToggle={() => setOpen((o) => ({ ...o, [i]: !o[i] }))}
-                        />
+                        <LineRow line={l} currency={cur} open={!!open[i]} onToggle={() => setOpen(i)} />
                         {l.usage && open[i] && (
                           <tr>
                             <td colSpan={4} className="bg-surface-neutral-subtle px-4 py-4">

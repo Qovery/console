@@ -1,6 +1,8 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { BillingInfoView, CustomerInvoice, InvoicePage, PaymentMethods } from 'qovery-pricing-typescript-axios'
-import { type AwsMarketplace, BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { type AwsMarketplace, BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
+import { billingUsageFactoryMock } from '@qovery/shared/factories'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingSettingsPage } from './billing-settings-page'
 import { InvoicesPage } from './invoices-page'
 
@@ -73,6 +75,55 @@ describe('InvoicesPage', () => {
 
     expect(await screen.findByText('INV-2')).toBeInTheDocument()
     expect(screen.getByText('INV-1')).toBeInTheDocument()
+  })
+
+  it('should pass the next offset and avoid duplicate invoices across pages', async () => {
+    const invoices = jest
+      .fn()
+      .mockResolvedValueOnce({ ...invoicePage, next_offset: 'next' })
+      .mockResolvedValueOnce({ ...invoicePage, invoices: [invoice({ id: 'INV-1' }), invoice({ id: 'INV-3' })] })
+    const { userEvent } = renderWithProviders(
+      <InvoicesPage organizationId="org-1" client={client({ invoices })} access="billing" alerts={false} />
+    )
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Load more' }))
+
+    expect(await screen.findByText('INV-3')).toBeInTheDocument()
+    expect(screen.getAllByText('INV-1')).toHaveLength(1)
+    expect(invoices).toHaveBeenLastCalledWith('org-1', { offset: 'next' })
+    expect(screen.queryByRole('button', { name: 'Load more' })).not.toBeInTheDocument()
+  })
+
+  it('keeps invoices on a transient access refresh failure and hides them after access is denied', async () => {
+    const queryClient = new QueryClient()
+    const pricingClient = client({
+      billingUsage: jest.fn().mockResolvedValue(billingUsageFactoryMock()),
+    })
+    const usage = jest.mocked(pricingClient.billingUsage)
+    const { queryKey } = billing.usage({ client: pricingClient, organizationId: 'org-1' })
+    const { userEvent } = renderWithProviders(
+      <QueryClientProvider client={queryClient}>
+        <InvoicesPage organizationId="org-1" client={pricingClient} alerts={false} />
+      </QueryClientProvider>
+    )
+    expect(await screen.findByText('INV-1')).toBeInTheDocument()
+
+    usage.mockRejectedValueOnce(new Error('Temporary network failure'))
+    await act(() => queryClient.invalidateQueries({ queryKey }))
+    expect(await screen.findByText('Billing access could not be refreshed')).toBeInTheDocument()
+    expect(screen.getByText('INV-1')).toBeInTheDocument()
+
+    usage.mockRejectedValueOnce(new BillingError(403, 'NOT_AN_ORGANIZATION_MEMBER', 'No access'))
+    await act(() => queryClient.invalidateQueries({ queryKey }))
+    expect(await screen.findByText(/only owners, admins and billing managers/i)).toBeInTheDocument()
+    expect(screen.queryByText('INV-1')).not.toBeInTheDocument()
+
+    usage.mockRejectedValueOnce(new Error('Network failure after access changed'))
+    await act(() => queryClient.invalidateQueries({ queryKey }))
+    expect(await screen.findByText('Network failure after access changed')).toBeInTheDocument()
+    expect(screen.queryByText('INV-1')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+    expect(await screen.findByText('INV-1')).toBeInTheDocument()
   })
 
   it('should not request invoices for a member', async () => {
