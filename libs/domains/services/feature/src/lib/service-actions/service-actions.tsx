@@ -223,6 +223,19 @@ function MenuManageDeployment({
           ),
         })
       })
+      .with({ serviceType: 'TERRAFORM' }, (s) => {
+        openModal({
+          content: (
+            <ConfirmationCancelLifecycleModal
+              organizationId={environment.organization.id}
+              projectId={environment.project.id}
+              environmentId={s.environment.id}
+              serviceKind="TERRAFORM"
+              onClose={closeModal}
+            />
+          ),
+        })
+      })
       .otherwise(() =>
         openModalConfirmation({
           title: 'Cancel deployment',
