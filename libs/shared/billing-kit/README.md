@@ -1,19 +1,18 @@
 # shared-billing-kit
 
-The billing kit from pricing-api (`web/src/billing-kit` in the qovery-pricing repository), the source of truth for these
-components. Copied from pricing-api commit `86e2568e1940ad8e57e003fb8df14eff0fdceed7` (main, 2026-11-20).
+The Console integration of the billing kit from `pricing-api` (`web/src/billing-kit`), copied from commit
+`86e2568e1940ad8e57e003fb8df14eff0fdceed7` (2026-11-20).
 
-What the copy changes, so the next sync can redo it:
+The public entry point is `src/index.ts`. Under `src/lib`, `usage`, `invoices`, `settings`, `plans` and `offers`
+hold the corresponding screens and journeys. Shared billing components live in `components`, pure helpers in
+`utils`, and pricing-api client wiring in `data-access`. Tests and fixtures stay next to the code they exercise.
 
-- File names in kebab-case (`UsagePage.tsx` is `usage-page.tsx`), relative imports updated, formatted with the
-  console's Prettier config.
-- Left out: `embed.tsx`, `embed.scss` and `inline.d.ts`, which build the website's web component.
-- No other change: the kit's own optional client methods (plan change, cancellation, reactivation, prepaid credits,
-  usage history, build usage, invoice details, discounts, offers) let the console pick the calls it mounts (`pickConsoleCalls`).
-- `src/index.ts` re-exports from `./lib/`, and adds the `Access` type and the test mock.
-- `billing-usage-factory.mock.ts` and the `*.spec.ts(x)` files are console only.
+When syncing from pricing-api:
 
-Authenticated calls to pricing-api carry the signed-in user's Qovery token (`createPricingClient`). The public
-`publicPlans` call is unauthenticated. Invoices and their
-details, payment methods, billing information, AWS Marketplace requests, plan changes, cancellation, reactivation,
-prepaid credits, usage history, build usage and discount requests are pricing-api's customer API; core is not involved.
+- Map upstream files to their existing Console paths. Use kebab-case file names, update relative imports, and run
+  the Console formatter.
+- Keep the Console settings layout, responsive spacing, typography and accessible headings in the affected screens.
+- Keep the generated TypeScript client, public exports, Console tests and billing usage fixture. The website's
+  `embed.tsx`, `embed.scss` and `inline.d.ts` stay in pricing-api.
+
+`createPricingClient` calls pricing-api with the signed-in user's Qovery token. Public plan reads are unauthenticated.
