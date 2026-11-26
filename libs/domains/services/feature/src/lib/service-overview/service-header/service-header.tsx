@@ -383,6 +383,9 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           .with({ serviceType: 'APPLICATION' }, { serviceType: 'TERRAFORM' }, () => (
             <AutoDeployBadge serviceId={service.id} />
           ))
+          .with({ serviceType: 'CONTAINER' }, (container) =>
+            isGitContainer(container) ? <AutoDeployBadge serviceId={service.id} /> : null
+          )
           .with({ serviceType: 'JOB' }, (job) =>
             isJobGitSource(job.source) ? <AutoDeployBadge serviceId={service.id} /> : null
           )

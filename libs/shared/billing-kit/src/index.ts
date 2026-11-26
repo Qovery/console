@@ -1,14 +1,14 @@
-export { BillingPage } from './lib/billing-page'
-export type { BillingPageProps, BillingTab } from './lib/billing-page'
-export { UsagePage } from './lib/usage-page'
-export type { UsagePageHeading, UsagePageProps } from './lib/usage-page'
-export { InvoicesPage, openPaymentMethodPage } from './lib/invoices-page'
-export type { InvoicesPageProps } from './lib/invoices-page'
-export { BillingSettingsPage } from './lib/billing-settings-page'
-export type { BillingSettingsPageProps } from './lib/billing-settings-page'
-export { BillingAlerts } from './lib/billing-alerts'
-export type { BillingAlertsProps } from './lib/billing-alerts'
-export type { Access } from './lib/parts'
+export { BillingPage } from './lib/settings/billing-page'
+export type { BillingPageProps, BillingTab } from './lib/settings/billing-page'
+export { UsagePage } from './lib/usage/usage-page'
+export type { UsagePageHeading, UsagePageProps } from './lib/usage/usage-page'
+export { InvoicesPage, openPaymentMethodPage } from './lib/invoices/invoices-page'
+export type { InvoicesPageProps } from './lib/invoices/invoices-page'
+export { BillingSettingsPage } from './lib/settings/billing-settings-page'
+export type { BillingSettingsPageProps } from './lib/settings/billing-settings-page'
+export { BillingAlerts } from './lib/components/billing-alerts'
+export type { BillingAlertsProps } from './lib/components/billing-alerts'
+export type { Access } from './lib/components/parts'
 export {
   continueChoices,
   gateFor,
@@ -39,19 +39,19 @@ export {
   toggleDiscount,
   validOfferURL,
   validateBillingInfo,
-} from './lib/rules'
-export { Fact, PlanChangeFlow } from './lib/plan-change'
-export { CancelDialog, PlannedBanners } from './lib/cancel'
-export { BuyCreditsDialog, PrepaidCredits } from './lib/credits'
-export { DiscountsCard } from './lib/discounts'
-export { ReactivateFlow, SubscriptionEndedBanner } from './lib/reactivate'
-export { UsageHistory } from './lib/usage-history'
-export { BuildUsage } from './lib/build-usage'
-export type { BuildUsageLoader, BuildUsageProps } from './lib/build-usage'
-export { BuilderPrices, PricingTable } from './lib/pricing-table'
-export { BuilderPicker, builderSizeFor } from './lib/builder-picker'
-export type { BuilderPickerProps } from './lib/builder-picker'
-export { UsageChart, UsageInsights as UsageInsightsPanel } from './lib/usage-insights'
+} from './lib/utils/rules'
+export { Fact, PlanChangeFlow } from './lib/plans/plan-change'
+export { CancelDialog, PlannedBanners } from './lib/plans/cancel'
+export { BuyCreditsDialog, PrepaidCredits } from './lib/usage/credits'
+export { DiscountsCard } from './lib/plans/discounts'
+export { ReactivateFlow, SubscriptionEndedBanner } from './lib/plans/reactivate'
+export { UsageHistory } from './lib/usage/usage-history'
+export { BuildUsage } from './lib/usage/build-usage'
+export type { BuildUsageLoader, BuildUsageProps } from './lib/usage/build-usage'
+export { BuilderPrices, PricingTable } from './lib/plans/pricing-table'
+export { BuilderPicker, builderSizeFor } from './lib/plans/builder-picker'
+export type { BuilderPickerProps } from './lib/plans/builder-picker'
+export { UsageChart, UsageInsights as UsageInsightsPanel } from './lib/usage/usage-insights'
 export {
   AskAdminModal,
   EmailPreferencesPanel,
@@ -60,12 +60,12 @@ export {
   OfferModal,
   RequestsBanner,
   useOffers,
-} from './lib/offers'
-export type { OfferHostProps } from './lib/offers'
-export { ProposalBanner, ProposalHost, ProposalNote, useProposal } from './lib/proposals'
-export type { ProposalBannerProps } from './lib/proposals'
-export type { PricingTableProps } from './lib/pricing-table'
-export { Paywall, PaywallIntroDialog, PaywallLock, usePaywall } from './lib/paywall'
+} from './lib/offers/offers'
+export type { OfferHostProps } from './lib/offers/offers'
+export { ProposalBanner, ProposalHost, ProposalNote, useProposal } from './lib/offers/proposals'
+export type { ProposalBannerProps } from './lib/offers/proposals'
+export type { PricingTableProps } from './lib/plans/pricing-table'
+export { Paywall, PaywallIntroDialog, PaywallLock, usePaywall } from './lib/paywall/paywall'
 export {
   BILLING_PAYWALL_FEATURE_FLAG,
   BillingPaywallHost,
@@ -74,11 +74,11 @@ export {
   useBillingPaywall,
   useIsBillingPaywallEnabled,
   usePricingClient,
-} from './lib/console-paywall'
-export type { PaywallIntroDialogProps, PaywallProps, UsePaywall } from './lib/paywall'
-export { GatedPage } from './lib/gated-page'
-export type { GatedPageProps } from './lib/gated-page'
-export { GatedPreview } from './lib/gated-previews'
+} from './lib/paywall/console-paywall'
+export type { PaywallIntroDialogProps, PaywallProps, UsePaywall } from './lib/paywall/paywall'
+export { GatedPage } from './lib/paywall/gated-page'
+export type { GatedPageProps } from './lib/paywall/gated-page'
+export { GatedPreview } from './lib/paywall/gated-previews'
 export {
   GATED_FEATURES,
   MAX_CAPABILITIES,
@@ -97,7 +97,7 @@ export {
   mediaSet,
   previewRender,
   previewTabs,
-} from './lib/gated'
+} from './lib/paywall/gated'
 export type {
   GatedCta,
   GatedFeature,
@@ -106,10 +106,10 @@ export type {
   GatedPreviewKey,
   GatedPreviewTab,
   GatedPreviews,
-} from './lib/gated'
-export { BillingError, buildUsageQuery, createPricingClient, gatesQuery } from './lib/client'
-export type { ClientOptions, PricingClient } from './lib/client'
+} from './lib/paywall/gated'
+export { BillingError, buildUsageQuery, createPricingClient, gatesQuery } from './lib/data-access/client'
+export type { ClientOptions, PricingClient } from './lib/data-access/client'
 export * from './lib/types'
-export { money, valueText } from './lib/format'
-export { billingUsageFactoryMock } from './lib/billing-usage-factory.mock'
-export { createPricingFetchAdapter } from './lib/pricing-transport'
+export { money, valueText } from './lib/utils/format'
+export { billingUsageFactoryMock } from './lib/usage/billing-usage-factory.mock'
+export { createPricingFetchAdapter } from './lib/data-access/pricing-transport'

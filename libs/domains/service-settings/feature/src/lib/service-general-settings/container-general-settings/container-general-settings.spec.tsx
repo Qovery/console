@@ -11,7 +11,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
 
 jest.mock('@qovery/domains/services/feature', () => ({
   ...jest.requireActual('@qovery/domains/services/feature'),
-  AutoDeploySection: () => <div>Auto-deploy section</div>,
+  AutoDeploySection: ({ source }: { source: string }) => <div>{`Auto-deploy section ${source}`}</div>,
   EntrypointCmdInputs: () => null,
   GeneralContainerSettings: () => <div>Container registry settings</div>,
   GeneralSetting: () => null,
@@ -50,7 +50,7 @@ describe('ContainerGeneralSettings', () => {
     renderSettings()
 
     expect(screen.getByText('Container registry settings')).toBeInTheDocument()
-    expect(screen.getByText('Auto-deploy section')).toBeInTheDocument()
+    expect(screen.getByText('Auto-deploy section CONTAINER_REGISTRY')).toBeInTheDocument()
     expect(screen.queryByText('Git repository settings')).not.toBeInTheDocument()
   })
 
@@ -86,12 +86,9 @@ describe('ContainerGeneralSettings', () => {
     expect(screen.getByLabelText('Dockerfile stage')).toBeDisabled()
   })
 
-  it('should replace auto-deploy with a note for a Git container', () => {
+  it('should render auto-deploy on new commits for a Git container', () => {
     renderSettings(gitContainer)
 
-    expect(screen.queryByText('Auto-deploy section')).not.toBeInTheDocument()
-    expect(
-      screen.getByText('Auto-deploy and preview environments are not available yet for Git containers.')
-    ).toBeInTheDocument()
+    expect(screen.getByText('Auto-deploy section GIT')).toBeInTheDocument()
   })
 })

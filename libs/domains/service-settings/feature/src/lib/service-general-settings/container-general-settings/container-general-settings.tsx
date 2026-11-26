@@ -8,7 +8,7 @@ import {
   GeneralSetting,
 } from '@qovery/domains/services/feature'
 import { isContainerGitSource } from '@qovery/shared/enums'
-import { Callout, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
+import { Heading, InputText, Section } from '@qovery/shared/ui'
 
 export interface ContainerGeneralSettingsProps {
   service: Container
@@ -67,16 +67,7 @@ export function ContainerGeneralSettings({
       <Section className="gap-4">
         <Heading>Deploy</Heading>
         <EntrypointCmdInputs />
-        {gitRepository ? (
-          <Callout.Root color="neutral">
-            <Callout.Icon>
-              <Icon iconName="circle-info" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>Auto-deploy and preview environments are not available yet for Git containers.</Callout.Text>
-          </Callout.Root>
-        ) : (
-          <AutoDeploySection serviceId={service.id} source="CONTAINER_REGISTRY" />
-        )}
+        <AutoDeploySection serviceId={service.id} source={gitRepository ? 'GIT' : 'CONTAINER_REGISTRY'} />
       </Section>
 
       <Section className="gap-4">

@@ -177,7 +177,7 @@ function refactoApplication({ service: application, request = {} }: applicationP
   }
 }
 
-// Without `source` and `build_settings` the API keeps the stored ones; a Git container rejects changed image fields and auto-deploy or auto-preview
+// Without `source` and `build_settings` the API keeps the stored ones; a Git container rejects changed image fields
 function omitStoredContainerFields(container: Pick<Container, 'source'>) {
   return {
     source: undefined,
@@ -186,8 +186,6 @@ function omitStoredContainerFields(container: Pick<Container, 'source'>) {
       registry_id: undefined,
       image_name: undefined,
       tag: undefined,
-      auto_deploy: undefined,
-      auto_preview: undefined,
     }),
   }
 }
