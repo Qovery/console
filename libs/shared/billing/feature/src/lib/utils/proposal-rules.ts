@@ -1,4 +1,4 @@
-import type { PlanProposal } from '@qovery/shared/billing/data-access'
+import type { PlanProposal } from 'qovery-pricing-typescript-axios'
 
 /** "3 days", "1 week", "2 weeks": the Remind me later choices. */
 export function snoozeLabel(days: number): string {

@@ -5,9 +5,9 @@
  * a request staff confirm instead. The banners on the usage page show what is planned (a plan
  * change at the renewal, the end of the subscription, a request) with the way back.
  */
-import type { CancelReason, ScheduledChange } from 'qovery-pricing-typescript-axios'
+import type { CancelReason, Cancellation, ScheduledChange } from 'qovery-pricing-typescript-axios'
 import { useState } from 'react'
-import type { Cancellation, PricingClient } from '@qovery/shared/billing/data-access'
+import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Button, Callout, Icon, InputText, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
 import { errorText, notifySuccess } from './parts'
 import { date } from './utils/format'

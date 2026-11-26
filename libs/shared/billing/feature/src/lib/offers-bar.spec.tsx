@@ -1,5 +1,5 @@
-import type { Offer } from 'qovery-pricing-typescript-axios'
-import type { PlanProposal, PricingClient } from '@qovery/shared/billing/data-access'
+import type { Offer, PlanProposal } from 'qovery-pricing-typescript-axios'
+import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OfferHost } from './offers'
 import { ProposalHost } from './proposals'

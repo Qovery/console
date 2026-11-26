@@ -1,12 +1,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type {
+  AwsMarketplace,
   BillingInfoView,
   BillingUsage,
   CustomerInvoice,
   InvoicePage,
   PaymentMethods,
 } from 'qovery-pricing-typescript-axios'
-import { type AwsMarketplace, BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
+import { BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingSettingsPage } from './billing-settings-page'
 import { InvoicesPage } from './invoices-page'

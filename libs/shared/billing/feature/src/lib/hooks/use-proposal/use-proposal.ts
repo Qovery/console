@@ -1,7 +1,7 @@
 import { type QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { DismissProposalRequest } from 'qovery-pricing-typescript-axios'
+import type { DismissProposalRequest, Proposals } from 'qovery-pricing-typescript-axios'
 import { useEffect, useRef } from 'react'
-import { BillingError, type PricingClient, type Proposals, billing } from '@qovery/shared/billing/data-access'
+import { BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
 
 const proposalsStaleTime = 3000
 

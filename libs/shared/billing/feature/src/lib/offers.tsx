@@ -9,9 +9,9 @@
  * request. Billing roles also see a plan
  * proposal from Qovery staff here (<ProposalBanner>), when the host passes onReviewProposal.
  */
-import type { Offer, Offers, Trial, UpgradeRequest } from 'qovery-pricing-typescript-axios'
+import type { Offer, Offers, PlanProposal, Trial, UpgradeRequest } from 'qovery-pricing-typescript-axios'
 import { useEffect, useState } from 'react'
-import type { PlanProposal, PricingClient } from '@qovery/shared/billing/data-access'
+import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Banner, Button, Callout, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
 import { useProposal } from './hooks/use-proposal/use-proposal'
 import { errorText } from './parts'

@@ -5,14 +5,9 @@
  * contract, or an account not managed from the console yet, sends a request staff act on instead.
  * Before the end date, "Keep my subscription" (PlannedBanners) is the way back.
  */
-import type { Period } from 'qovery-pricing-typescript-axios'
+import type { Period, Reactivation, ReactivationResult } from 'qovery-pricing-typescript-axios'
 import { useRef, useState } from 'react'
-import {
-  BillingError,
-  type PricingClient,
-  type Reactivation,
-  type ReactivationResult,
-} from '@qovery/shared/billing/data-access'
+import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Icon, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'

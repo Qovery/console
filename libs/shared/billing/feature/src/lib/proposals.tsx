@@ -10,9 +10,9 @@
  * shows it where offers show (the billing page card, the console's top bar).
  */
 import * as Dialog from '@radix-ui/react-dialog'
-import type { ProposalDismissReason } from 'qovery-pricing-typescript-axios'
+import type { PlanProposal, ProposalDismissReason } from 'qovery-pricing-typescript-axios'
 import { useState } from 'react'
-import type { PlanProposal, PricingClient } from '@qovery/shared/billing/data-access'
+import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Banner, Button, Callout, Heading, Icon, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
 import { useProposal } from './hooks/use-proposal/use-proposal'
 import { date, money } from './utils/format'

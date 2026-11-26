@@ -3,17 +3,7 @@ import axios, { type AxiosResponse } from 'axios'
 import {
   type AcceptOfferResponse,
   type AddonPurchaseResult,
-  type AwsMarketplace as ApiAwsMarketplace,
-  type Cancellation as ApiCancellation,
-  type CancellationResult as ApiCancellationResult,
-  type CustomerTrial as ApiCustomerTrial,
-  type PlanChangeResult as ApiPlanChangeResult,
-  type PlanOptions as ApiPlanOptions,
-  type PlanProposal as ApiPlanProposal,
-  type Proposals as ApiProposals,
-  type Reactivation as ApiReactivation,
-  type ReactivationResult as ApiReactivationResult,
-  type TrialStartResult as ApiTrialStartResult,
+  type AwsMarketplace,
   BillingApi,
   type BillingApiBuildUsageRequest,
   type BillingApiInvoicesRequest,
@@ -26,11 +16,14 @@ import {
   type BuyAddonRequest,
   type BuyCreditsRequest,
   type CancelRequest,
+  type Cancellation,
+  type CancellationResult,
   type CloseUpgradeRequestRequest,
   Configuration,
   type CreditPurchaseResult,
   type Credits,
   type CustomerInvoice,
+  type CustomerTrial,
   type DiscountQuote,
   type Discounts,
   type DismissProposalRequest,
@@ -49,7 +42,12 @@ import {
   type PaymentMethods,
   type PaymentSession,
   type Period,
+  type PlanChangeResult,
+  type PlanOptions,
+  type Proposals,
   type PublicPlans,
+  type Reactivation,
+  type ReactivationResult,
   type RequestAwsOfferRequest,
   type RequestDiscountsRequest,
   type RequestUpgradeRequest,
@@ -58,26 +56,10 @@ import {
   type SnoozeProposalResponse,
   type Spend,
   type TrialStartRequest,
+  type TrialStartResult,
   type UsageHistoryData,
 } from 'qovery-pricing-typescript-axios'
 import { z } from 'zod'
-
-type Nullable<T> = { [K in keyof T]: T[K] | null }
-type NullableFields<T, K extends keyof T> = Omit<T, K> & Nullable<Pick<T, K>>
-
-// The generated models narrow some nullable response fields. Keep the values the API can return.
-export type AwsMarketplace = NullableFields<ApiAwsMarketplace, 'request' | 'offer'>
-export type Cancellation = NullableFields<ApiCancellation, 'unavailable' | 'current'>
-export type CancellationResult = NullableFields<ApiCancellationResult, 'cancellation'>
-export type CustomerTrial = NullableFields<ApiCustomerTrial, 'continue'>
-export type PlanChangeResult = NullableFields<ApiPlanChangeResult, 'discount' | 'concession' | 'scheduled_change'>
-export type PlanOptions = NullableFields<ApiPlanOptions, 'scheduled_change'>
-export type PlanProposal = NullableFields<Omit<ApiPlanProposal, 'sender_name'>, 'concession'> &
-  Partial<Pick<ApiPlanProposal, 'sender_name'>>
-export type Proposals = Omit<ApiProposals, 'proposal'> & { proposal: PlanProposal | null }
-export type Reactivation = NullableFields<ApiReactivation, 'unavailable' | 'last_plan' | 'current'>
-export type ReactivationResult = NullableFields<ApiReactivationResult, 'unavailable'>
-export type TrialStartResult = Omit<ApiTrialStartResult, 'trial'> & { trial: CustomerTrial }
 
 export class BillingError extends Error {
   constructor(
@@ -155,11 +137,7 @@ export interface PricingClient {
   /** "Keep my current plan": drops the change scheduled for the renewal. */
   keepPlan?(organizationId: string): Promise<KeepPlanResponse>
   /** A new organization's trial: keep its plan at the end (with the consent, a card on file), or stop keeping it. */
-  keepSignupTrial?(
-    organizationId: string,
-    keep: boolean,
-    acceptAutoCharge: boolean
-  ): Promise<{ signup_trial: KeepSignupTrialResponse['signup_trial'] | null }>
+  keepSignupTrial?(organizationId: string, keep: boolean, acceptAutoCharge: boolean): Promise<KeepSignupTrialResponse>
   // Optional: cancellation at the end of the term (billing roles only).
   cancellation?(organizationId: string): Promise<Cancellation>
   cancel?(organizationId: string, req: CancelRequest): Promise<CancellationResult>

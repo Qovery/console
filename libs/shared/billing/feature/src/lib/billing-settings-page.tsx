@@ -8,9 +8,9 @@
  *
  *   <BillingSettingsPage organizationId={id} client={client} />
  */
-import type { BillingInfo, BillingInfoView, PaymentMethods } from 'qovery-pricing-typescript-axios'
+import type { AwsMarketplace, BillingInfo, BillingInfoView, PaymentMethods } from 'qovery-pricing-typescript-axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { type AwsMarketplace, BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
+import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Icon, InputText, InputTextArea } from '@qovery/shared/ui'
 import { BillingAlerts } from './billing-alerts'
 import { EmptyState } from './invoices-page'

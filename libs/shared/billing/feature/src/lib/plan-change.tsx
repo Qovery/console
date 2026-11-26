@@ -10,15 +10,17 @@ import { useQueryClient } from '@tanstack/react-query'
  * and quotes and confirms through the proposal, so its concession applies; picking another plan
  * makes it a plain plan change.
  */
-import type { BillingUsage, Period, PlanOption, PublicPlans } from 'qovery-pricing-typescript-axios'
+import type {
+  BillingUsage,
+  Period,
+  PlanChangeResult,
+  PlanOption,
+  PlanOptions,
+  PlanProposal,
+  PublicPlans,
+} from 'qovery-pricing-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
-import {
-  BillingError,
-  type PlanChangeResult,
-  type PlanOptions,
-  type PlanProposal,
-  type PricingClient,
-} from '@qovery/shared/billing/data-access'
+import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Icon, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
 import { hideProposal } from './hooks/use-proposal/use-proposal'
 import { openPaymentMethodPage } from './invoices-page'

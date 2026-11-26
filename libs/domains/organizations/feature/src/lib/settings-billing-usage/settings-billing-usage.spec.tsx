@@ -1,14 +1,17 @@
 import axios, { type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import type { BillingUsage, Credits, Quote, UsageHistoryData } from 'qovery-pricing-typescript-axios'
+import type {
+  BillingUsage,
+  Cancellation,
+  Credits,
+  PlanOptions,
+  PlanProposal,
+  Quote,
+  Reactivation,
+  UsageHistoryData,
+} from 'qovery-pricing-typescript-axios'
 import { type ReactNode } from 'react'
-import {
-  type Cancellation,
-  type PlanOptions,
-  type PlanProposal,
-  type Reactivation,
-  createPricingClient,
-} from '@qovery/shared/billing/data-access'
+import { createPricingClient } from '@qovery/shared/billing/data-access'
 import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import {

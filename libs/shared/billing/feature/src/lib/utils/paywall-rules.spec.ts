@@ -1,8 +1,8 @@
 // The billing kit's rules for paywalls, trials, plan proposals and shared reads, and the calls the
 // pricing-api client sends for them, from pricing-api's web/tests (paywall, proposals, kit-reads).
 import axios, { type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios'
-import type { Gate, PaywallInfo, SignupTrial1 as SignupTrial } from 'qovery-pricing-typescript-axios'
-import { type PlanProposal, createPricingClient } from '@qovery/shared/billing/data-access'
+import type { Gate, PaywallInfo, PlanProposal, SignupTrial1 as SignupTrial } from 'qovery-pricing-typescript-axios'
+import { createPricingClient } from '@qovery/shared/billing/data-access'
 import { introChip, introPageView } from './gated'
 import {
   continueChoices,
