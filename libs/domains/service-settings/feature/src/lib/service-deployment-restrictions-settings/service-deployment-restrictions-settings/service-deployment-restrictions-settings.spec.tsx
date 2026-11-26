@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { type Container } from '@qovery/domains/services/data-access'
+import { type AnyService, type Container } from '@qovery/domains/services/data-access'
 import {
   applicationFactoryMock,
   containerFactoryMock,
@@ -16,7 +16,7 @@ const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 
 const mockJob = cronjobFactoryMock(1)[0]
-let mockService = mockJob
+let mockService: AnyService = mockJob
 let mockDeploymentRestrictions = [
   {
     id: 'restriction-1',

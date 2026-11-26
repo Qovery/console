@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   containerFactoryMock,
   gitContainerFactoryMock,
@@ -8,7 +9,7 @@ import {
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceSettingsLayout } from './service-settings-layout'
 
-let mockService = terraformFactoryMock(1)[0]
+let mockService: AnyService = terraformFactoryMock(1)[0]
 
 jest.mock('@tanstack/react-router', () => ({
   useParams: () => ({
