@@ -9,9 +9,10 @@ COPY package.json .
 COPY yarn.lock .
 COPY .yarn .yarn
 COPY .yarnrc.yml .yarnrc.yml
+COPY scripts/fetch-billing-sdk.sh scripts/
 RUN --mount=type=secret,id=QOVERY_NPM_READ_TOKEN \
     if [ -f /run/secrets/QOVERY_NPM_READ_TOKEN ]; then \
-      export QOVERY_NPM_READ_TOKEN="$(cat /run/secrets/QOVERY_NPM_READ_TOKEN)"; \
+      QOVERY_NPM_READ_TOKEN="$(cat /run/secrets/QOVERY_NPM_READ_TOKEN)" sh scripts/fetch-billing-sdk.sh; \
     fi && \
     yarn install --immutable
 
