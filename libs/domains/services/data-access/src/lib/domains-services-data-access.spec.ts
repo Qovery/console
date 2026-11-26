@@ -1,4 +1,12 @@
-import { ApplicationBuildAnalysisApi, DatabaseTypeEnum, JobBuildAnalysisApi } from 'qovery-typescript-axios'
+import {
+  ApplicationBuildAnalysisApi,
+  ApplicationDeploymentRestrictionApi,
+  DatabaseTypeEnum,
+  DeploymentRestrictionModeEnum,
+  DeploymentRestrictionTypeEnum,
+  JobBuildAnalysisApi,
+  ServiceMainCallsApi,
+} from 'qovery-typescript-axios'
 import {
   type Container,
   type Database,
@@ -97,5 +105,83 @@ describe('build analysis', () => {
       mutations.startBuildAnalysis({ serviceId: 'job-1', serviceType: 'JOB', executionId: 'exec-1' })
     ).resolves.toBe(analysis)
     expect(startAnalysis).toHaveBeenCalledWith('job-1', { execution_id: 'exec-1' })
+  })
+})
+
+describe('deployment restrictions', () => {
+  const restriction = {
+    id: 'restriction-1',
+    created_at: '2026-11-25T00:00:00Z',
+    mode: DeploymentRestrictionModeEnum.EXCLUDE,
+    type: DeploymentRestrictionTypeEnum.PATH,
+    value: 'docs/',
+  }
+  const payload = { mode: restriction.mode, type: restriction.type, value: restriction.value }
+  const response = <T>(data: T) => Promise.resolve({ data }) as never
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
+  it('lists the restrictions of a container from the service endpoint', async () => {
+    const listRestrictions = jest
+      .spyOn(ServiceMainCallsApi.prototype, 'listServiceDeploymentRestrictions')
+      .mockReturnValue(response({ results: [restriction] }))
+
+    await expect(
+      services.deploymentRestrictions({ serviceId: 'container-1', serviceType: 'CONTAINER' }).queryFn({} as never)
+    ).resolves.toEqual([restriction])
+    expect(listRestrictions).toHaveBeenCalledWith('container-1')
+  })
+
+  it('creates a restriction of a container from the service endpoint', async () => {
+    const createRestriction = jest
+      .spyOn(ServiceMainCallsApi.prototype, 'createServiceDeploymentRestriction')
+      .mockReturnValue(response(restriction))
+
+    await expect(
+      mutations.createDeploymentRestriction({ serviceId: 'container-1', serviceType: 'CONTAINER', payload })
+    ).resolves.toBe(restriction)
+    expect(createRestriction).toHaveBeenCalledWith('container-1', payload)
+  })
+
+  it('edits a restriction of a container from the service endpoint', async () => {
+    const editRestriction = jest
+      .spyOn(ServiceMainCallsApi.prototype, 'editServiceDeploymentRestriction')
+      .mockReturnValue(response(restriction))
+
+    await expect(
+      mutations.editDeploymentRestriction({
+        serviceId: 'container-1',
+        serviceType: 'CONTAINER',
+        deploymentRestrictionId: 'restriction-1',
+        payload,
+      })
+    ).resolves.toBe(restriction)
+    expect(editRestriction).toHaveBeenCalledWith('container-1', 'restriction-1', payload)
+  })
+
+  it('deletes a restriction of a container from the service endpoint', async () => {
+    const deleteRestriction = jest
+      .spyOn(ServiceMainCallsApi.prototype, 'deleteServiceDeploymentRestriction')
+      .mockReturnValue(response(undefined))
+
+    await mutations.deleteDeploymentRestriction({
+      serviceId: 'container-1',
+      serviceType: 'CONTAINER',
+      deploymentRestrictionId: 'restriction-1',
+    })
+    expect(deleteRestriction).toHaveBeenCalledWith('container-1', 'restriction-1')
+  })
+
+  it('keeps listing the restrictions of an application from the application endpoint', async () => {
+    const listRestrictions = jest
+      .spyOn(ApplicationDeploymentRestrictionApi.prototype, 'getApplicationDeploymentRestrictions')
+      .mockReturnValue(response({ results: [restriction] }))
+
+    await expect(
+      services.deploymentRestrictions({ serviceId: 'application-1', serviceType: 'APPLICATION' }).queryFn({} as never)
+    ).resolves.toEqual([restriction])
+    expect(listRestrictions).toHaveBeenCalledWith('application-1')
   })
 })
