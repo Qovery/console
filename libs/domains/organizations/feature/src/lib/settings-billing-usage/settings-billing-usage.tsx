@@ -3,7 +3,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactNode, useCallback, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { P, match } from 'ts-pattern'
-import { UsagePage, type UsagePageHeading } from '@qovery/shared/billing-kit'
+import { UsagePage, type UsagePageHeading, usePricingClient } from '@qovery/shared/billing/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Callout, EmptyState, Icon, Link, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
@@ -12,7 +12,6 @@ import {
   getBillingUsageErrorType,
   useBillingUsage,
 } from '../hooks/use-billing-usage/use-billing-usage'
-import { usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import { SettingsBillingSummary } from '../settings-billing-summary/settings-billing-summary'
 
 export const BILLING_USAGE_FEATURE_FLAG = 'billing-usage-v2'
