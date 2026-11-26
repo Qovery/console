@@ -42,18 +42,22 @@ describe('handleContainerSubmit', () => {
     expect(payload).not.toHaveProperty('source')
   })
 
-  it('should send no flat image fields, no source and no auto-deploy for a Git container', () => {
-    const container = gitContainerFactoryMock(1)[0]
+  it('should send the form auto-deploy and the stored auto-preview but no flat image fields and no source for a Git container', () => {
+    const container = { ...gitContainerFactoryMock(1)[0], auto_deploy: false, auto_preview: true }
 
     const payload = toWire(handleContainerSubmit(data, container, [], []))
 
-    expect(payload).toMatchObject({ name: 'api', description: 'API service', entrypoint: '/bin/sh' })
+    expect(payload).toMatchObject({
+      name: 'api',
+      description: 'API service',
+      entrypoint: '/bin/sh',
+      auto_deploy: true,
+      auto_preview: true,
+    })
     expect(payload).not.toHaveProperty('registry_id')
     expect(payload).not.toHaveProperty('image_name')
     expect(payload).not.toHaveProperty('tag')
     expect(payload).not.toHaveProperty('source')
-    expect(payload).not.toHaveProperty('auto_deploy')
-    expect(payload).not.toHaveProperty('auto_preview')
     expect(payload).not.toHaveProperty('build_settings')
   })
 
@@ -143,7 +147,11 @@ describe('handleContainerSubmit', () => {
 
       const payload = toWire(handleContainerSubmit(formData, container, labelsGroups, annotationsGroups))
 
-      expect(payload).toEqual(expectedRequest(container))
+      expect(payload).toEqual({
+        ...expectedRequest(container),
+        auto_deploy: true,
+        auto_preview: false,
+      })
     })
   })
 })

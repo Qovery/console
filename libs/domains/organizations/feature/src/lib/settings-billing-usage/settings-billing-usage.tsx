@@ -80,10 +80,10 @@ export function BillingPageLayout({
 }) {
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="min-w-0 px-4 pb-8 pt-6 md:px-8">
         {title && <SettingsHeading title={title} description={description} showNeedHelp={false} />}
         {headingSlot && <div ref={headingSlot} />}
-        <div className="flex max-w-content-with-navigation-left flex-col gap-6">{children}</div>
+        <div className="flex min-w-0 max-w-content-with-navigation-left flex-col gap-6">{children}</div>
       </Section>
     </div>
   )
@@ -93,9 +93,11 @@ const BillingUsageSkeleton = () => (
   <div className="flex flex-col gap-6" aria-label="Loading plan and usage">
     <div className="flex flex-col gap-2 border-b border-neutral pb-5">
       <Skeleton height={24} width={132} show />
-      <Skeleton height={16} width={360} show />
+      <div className="w-full max-w-sm">
+        <Skeleton height={16} width="100%" show />
+      </div>
     </div>
-    <div className="flex gap-2">
+    <div className="grid gap-2 md:grid-cols-3">
       {Array.from({ length: 3 }).map((_, index) => (
         <div key={index} className="h-[114px] flex-1 rounded border border-neutral bg-surface-neutral p-5">
           <Skeleton height={12} width={80} show />
@@ -202,8 +204,8 @@ export function BillingUsageView() {
     ({ title, description, actions }: UsagePageHeading) =>
       headingElement &&
       createPortal(
-        <SettingsHeading title={title} description={description} showNeedHelp={false}>
-          <div className="flex shrink-0 items-start gap-2">{actions}</div>
+        <SettingsHeading title={title} description={description} showNeedHelp={false} stackActionsOnMobile>
+          <div className="flex flex-wrap items-start gap-2 md:shrink-0">{actions}</div>
         </SettingsHeading>,
         headingElement
       ),

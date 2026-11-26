@@ -210,17 +210,21 @@ describe('testing payload refactoring', () => {
       expect(payload).not.toHaveProperty('source')
     })
 
-    it('should send no flat image fields, no source and no auto-deploy for a Git container', () => {
+    it('should send auto-deploy and auto-preview but no flat image fields and no source for a Git container', () => {
       const payload = toWire(buildEditServicePayload({ service: gitContainer }))
 
-      expect(payload).toMatchObject({ name: 'api', cpu: 500 })
+      expect(payload).toMatchObject({ name: 'api', cpu: 500, auto_deploy: false, auto_preview: false })
       expect(payload).not.toHaveProperty('registry_id')
       expect(payload).not.toHaveProperty('image_name')
       expect(payload).not.toHaveProperty('tag')
       expect(payload).not.toHaveProperty('source')
-      expect(payload).not.toHaveProperty('auto_deploy')
-      expect(payload).not.toHaveProperty('auto_preview')
       expect(payload).not.toHaveProperty('build_settings')
+    })
+
+    it('should send the requested auto-deploy and the stored auto-preview of a Git container', () => {
+      const payload = toWire(buildEditServicePayload({ service: gitContainer, request: { auto_deploy: true } }))
+
+      expect(payload).toMatchObject({ auto_deploy: true, auto_preview: false })
     })
 
     it.each([
@@ -236,11 +240,10 @@ describe('testing payload refactoring', () => {
       const request = { ...gitContainer, auto_preview: true, ports: [] } as Partial<ContainerRequest>
       const payload = toWire(buildEditServicePayload({ service: gitContainer, request }))
 
-      expect(payload).toMatchObject({ ports: [] })
+      expect(payload).toMatchObject({ ports: [], auto_preview: true })
       expect(payload).not.toHaveProperty('image_name')
       expect(payload).not.toHaveProperty('tag')
       expect(payload).not.toHaveProperty('source')
-      expect(payload).not.toHaveProperty('auto_preview')
       expect(payload).not.toHaveProperty('build_settings')
     })
   })

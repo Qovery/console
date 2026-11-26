@@ -9,7 +9,6 @@ import {
   type EditableService,
   isArgoCd,
   isEditableService,
-  isGitContainer,
 } from '@qovery/domains/services/data-access'
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -27,6 +26,12 @@ import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
 
+function isPreviewEditableService(
+  service: AnyService
+): service is Exclude<EditableService, { serviceType: 'DATABASE' }> {
+  return isEditableService(service) && service.serviceType !== 'DATABASE'
+}
+
 interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void
   services?: AnyService[]
@@ -41,6 +46,8 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
   const hasArgoCdServices = services?.some(isArgoCd)
   const hasQoveryServices = services?.some(isEditableService)
   const shouldDisplayArgoCdPreviewWarning = hasArgoCdServices && hasQoveryServices
+  const hasNonDatabaseServices = services?.some((service) => service.serviceType !== 'DATABASE')
+  const hasPreviewEditableServices = services?.some(isPreviewEditableService)
 
   const getIconName = (service: AnyService) =>
     match(service)
@@ -99,10 +106,21 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
               )}
             />
             <div data-testid="toggles" className={services && services.length > 0 ? 'mt-5' : ''}>
-              {services && services.length > 0 && (
+              {hasNonDatabaseServices && (
                 <h2 data-testid="services-title" className="mb-5 text-ssm font-medium text-neutral">
                   Create Preview for PR opened on those services
                 </h2>
+              )}
+              {hasPreviewEditableServices && (
+                <Callout.Root className="mb-5" color="neutral">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    A preview environment follows new commits on its pull request only for services with auto-deploy
+                    enabled.
+                  </Callout.Text>
+                </Callout.Root>
               )}
               {services?.map(
                 (service: AnyService) =>
@@ -123,12 +141,8 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                               <span className="relative flex items-center">
                                 <Icon name={getIconName(service)} className="mr-3" />
                                 {service.name}
-                                {isGitContainer(service) && (
-                                  <span className="ml-2 text-neutral-subtle">Not available yet for Git containers</span>
-                                )}
                               </span>
                             }
-                            disabled={isGitContainer(service)}
                             small
                           />
                         )}
@@ -184,33 +198,28 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
         payload: cloneEnvironmentDeploymentRules,
       })
 
-      const updatePromises = services
-        .filter(
-          (service): service is Exclude<EditableService, { serviceType: 'DATABASE' }> =>
-            isEditableService(service) && service.serviceType !== 'DATABASE'
-        )
-        .map(async (service) => {
-          const request = {
-            auto_preview: data[service.id],
-          }
+      const updatePromises = services.filter(isPreviewEditableService).map(async (service) => {
+        const request = {
+          auto_preview: data[service.id],
+        }
 
-          const payload = match(service)
-            .with({ serviceType: 'APPLICATION' }, (s) => buildEditServicePayload({ service: s, request }))
-            .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
-            .with({ serviceType: 'JOB' }, (s) => buildEditServicePayload({ service: s, request }))
-            .with({ serviceType: 'HELM' }, (s) => buildEditServicePayload({ service: s, request }))
-            .with({ serviceType: 'TERRAFORM' }, (s) => buildEditServicePayload({ service: s }))
-            .exhaustive()
+        const payload = match(service)
+          .with({ serviceType: 'APPLICATION' }, (s) => buildEditServicePayload({ service: s, request }))
+          .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
+          .with({ serviceType: 'JOB' }, (s) => buildEditServicePayload({ service: s, request }))
+          .with({ serviceType: 'HELM' }, (s) => buildEditServicePayload({ service: s, request }))
+          .with({ serviceType: 'TERRAFORM' }, (s) => buildEditServicePayload({ service: s }))
+          .exhaustive()
 
-          try {
-            await editService({
-              serviceId: service.id,
-              payload,
-            })
-          } catch (error) {
-            console.error(error)
-          }
-        })
+        try {
+          await editService({
+            serviceId: service.id,
+            payload,
+          })
+        } catch (error) {
+          console.error(error)
+        }
+      })
 
       await Promise.all(updatePromises)
     } finally {
@@ -222,9 +231,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
     methods.setValue('on_demand_preview', value)
     //set all preview applications "true" when env preview is true
     if (loadingStatusEnvironmentDeploymentRules) {
-      services
-        .filter((service) => !isGitContainer(service))
-        .forEach((service) => methods.setValue(service.id, value, { shouldDirty: true }))
+      services.forEach((service) => methods.setValue(service.id, value, { shouldDirty: true }))
     }
   }
 
