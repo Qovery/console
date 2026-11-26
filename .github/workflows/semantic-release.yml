@@ -15,9 +15,11 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
         run: corepack enable
-      - name: yarn install
+      - name: Fetch private Billing SDK
         env:
           QOVERY_NPM_READ_TOKEN: ${{ secrets.QOVERY_NPM_READ_TOKEN }}
+        run: sh scripts/fetch-billing-sdk.sh
+      - name: yarn install
         run: yarn install --immutable
 
   semantic-release:
@@ -34,9 +36,11 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Enable Corepack
         run: corepack enable
-      - name: Install dependencies
+      - name: Fetch private Billing SDK
         env:
           QOVERY_NPM_READ_TOKEN: ${{ secrets.QOVERY_NPM_READ_TOKEN }}
+        run: sh scripts/fetch-billing-sdk.sh
+      - name: Install dependencies
         run: yarn install --immutable
       - name: Launch Semantic release
         env:
