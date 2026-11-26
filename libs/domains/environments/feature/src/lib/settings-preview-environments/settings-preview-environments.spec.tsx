@@ -26,6 +26,18 @@ jest.mock('../hooks/use-edit-deployment-rule/use-edit-deployment-rule', () => ({
 
 const imageContainer = { ...containerFactoryMock(1)[0], id: 'image-container' }
 const gitContainer = { ...gitContainerFactoryMock(1)[0], id: 'git-container' }
+const argoCdService = {
+  id: 'argocd-service',
+  name: 'ArgoCD service',
+  service_type: 'ARGOCD_APP',
+  serviceType: 'ARGOCD_APP',
+} as AnyService
+const agenticWorkflowService = {
+  id: 'agentic-workflow',
+  name: 'Review pull requests',
+  service_type: 'AGENTIC_WORKFLOW',
+  serviceType: 'AGENTIC_WORKFLOW',
+} as AnyService
 
 describe('PageSettingsPreviewEnvironments', () => {
   const renderPage = (services: AnyService[] = [imageContainer, gitContainer]) =>
@@ -68,6 +80,16 @@ describe('PageSettingsPreviewEnvironments', () => {
     renderPage(databaseFactoryMock(1))
 
     expect(screen.queryByTestId('services-title')).not.toBeInTheDocument()
+    expect(screen.queryByText(/only for services with auto-deploy enabled/)).not.toBeInTheDocument()
+  })
+
+  it.each([
+    ['ArgoCD', argoCdService],
+    ['Agentic Workflow', agenticWorkflowService],
+  ])('should hide the auto-deploy note when only %s services are listed', (_, service) => {
+    renderPage([service])
+
+    expect(screen.getByTestId('services-title')).toBeInTheDocument()
     expect(screen.queryByText(/only for services with auto-deploy enabled/)).not.toBeInTheDocument()
   })
 })

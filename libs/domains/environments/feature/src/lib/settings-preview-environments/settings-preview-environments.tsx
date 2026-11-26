@@ -26,6 +26,12 @@ import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
 
+function isPreviewEditableService(
+  service: AnyService
+): service is Exclude<EditableService, { serviceType: 'DATABASE' }> {
+  return isEditableService(service) && service.serviceType !== 'DATABASE'
+}
+
 interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void
   services?: AnyService[]
@@ -41,6 +47,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
   const hasQoveryServices = services?.some(isEditableService)
   const shouldDisplayArgoCdPreviewWarning = hasArgoCdServices && hasQoveryServices
   const hasNonDatabaseServices = services?.some((service) => service.serviceType !== 'DATABASE')
+  const hasPreviewEditableServices = services?.some(isPreviewEditableService)
 
   const getIconName = (service: AnyService) =>
     match(service)
@@ -100,20 +107,20 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
             />
             <div data-testid="toggles" className={services && services.length > 0 ? 'mt-5' : ''}>
               {hasNonDatabaseServices && (
-                <>
-                  <h2 data-testid="services-title" className="mb-5 text-ssm font-medium text-neutral">
-                    Create Preview for PR opened on those services
-                  </h2>
-                  <Callout.Root className="mb-5" color="neutral">
-                    <Callout.Icon>
-                      <Icon iconName="circle-info" iconStyle="regular" />
-                    </Callout.Icon>
-                    <Callout.Text>
-                      A preview environment follows new commits on its pull request only for services with auto-deploy
-                      enabled.
-                    </Callout.Text>
-                  </Callout.Root>
-                </>
+                <h2 data-testid="services-title" className="mb-5 text-ssm font-medium text-neutral">
+                  Create Preview for PR opened on those services
+                </h2>
+              )}
+              {hasPreviewEditableServices && (
+                <Callout.Root className="mb-5" color="neutral">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    A preview environment follows new commits on its pull request only for services with auto-deploy
+                    enabled.
+                  </Callout.Text>
+                </Callout.Root>
               )}
               {services?.map(
                 (service: AnyService) =>
@@ -191,33 +198,28 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
         payload: cloneEnvironmentDeploymentRules,
       })
 
-      const updatePromises = services
-        .filter(
-          (service): service is Exclude<EditableService, { serviceType: 'DATABASE' }> =>
-            isEditableService(service) && service.serviceType !== 'DATABASE'
-        )
-        .map(async (service) => {
-          const request = {
-            auto_preview: data[service.id],
-          }
+      const updatePromises = services.filter(isPreviewEditableService).map(async (service) => {
+        const request = {
+          auto_preview: data[service.id],
+        }
 
-          const payload = match(service)
-            .with({ serviceType: 'APPLICATION' }, (s) => buildEditServicePayload({ service: s, request }))
-            .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
-            .with({ serviceType: 'JOB' }, (s) => buildEditServicePayload({ service: s, request }))
-            .with({ serviceType: 'HELM' }, (s) => buildEditServicePayload({ service: s, request }))
-            .with({ serviceType: 'TERRAFORM' }, (s) => buildEditServicePayload({ service: s }))
-            .exhaustive()
+        const payload = match(service)
+          .with({ serviceType: 'APPLICATION' }, (s) => buildEditServicePayload({ service: s, request }))
+          .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
+          .with({ serviceType: 'JOB' }, (s) => buildEditServicePayload({ service: s, request }))
+          .with({ serviceType: 'HELM' }, (s) => buildEditServicePayload({ service: s, request }))
+          .with({ serviceType: 'TERRAFORM' }, (s) => buildEditServicePayload({ service: s }))
+          .exhaustive()
 
-          try {
-            await editService({
-              serviceId: service.id,
-              payload,
-            })
-          } catch (error) {
-            console.error(error)
-          }
-        })
+        try {
+          await editService({
+            serviceId: service.id,
+            payload,
+          })
+        } catch (error) {
+          console.error(error)
+        }
+      })
 
       await Promise.all(updatePromises)
     } finally {
