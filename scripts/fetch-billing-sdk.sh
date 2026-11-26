@@ -8,10 +8,10 @@ fi
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$root"
 yarn="$root/.yarn/releases/yarn-berry.cjs"
-registry=$(node "$yarn" config get npmRegistryServer)
-cache=$(node "$yarn" config get cacheFolder)
-mirror=$(node "$yarn" config get enableMirror)
-if [ "$(node "$yarn" config get enableGlobalCache)" = true ]; then
+registry=$(YARN_ENABLE_COLORS=0 node "$yarn" config get npmRegistryServer)
+cache=$(YARN_ENABLE_COLORS=0 node "$yarn" config get cacheFolder)
+mirror=$(node "$yarn" config get enableMirror --json)
+if [ "$(node "$yarn" config get enableGlobalCache --json)" = true ]; then
   mirror=false
 fi
 if [ "$registry" != 'https://npm-registry.qovery.com' ]; then
