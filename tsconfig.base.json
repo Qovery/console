@@ -55,6 +55,7 @@
       "@qovery/domains/variables/util": ["libs/domains/variables/util/src/index.ts"],
       "@qovery/shared/assistant/feature": ["libs/shared/assistant/feature/src/index.ts"],
       "@qovery/shared/auth": ["libs/shared/auth/src/index.ts"],
+      "@qovery/shared/billing-kit": ["libs/shared/billing-kit/src/index.ts"],
       "@qovery/shared/console-shared": ["libs/shared/console-shared/src/index.ts"],
       "@qovery/shared/devops-copilot/context": ["libs/shared/devops-copilot/context/src/index.ts"],
       "@qovery/shared/devops-copilot/data-access": ["libs/shared/devops-copilot/data-access/src/index.ts"],

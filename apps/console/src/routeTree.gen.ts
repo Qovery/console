@@ -47,6 +47,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsContainerRegist
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/cloud-credentials'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-summary'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing-details'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingRouteImport } from './routes/_authenticated/organization/$organizationId/settings/billing'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRouteImport } from './routes/_authenticated/organization/$organizationId/settings/argocd-integration'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsApiTokenRouteImport } from './routes/_authenticated/organization/$organizationId/settings/api-token'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRouteImport } from './routes/_authenticated/organization/$organizationId/settings/ai-copilot'
@@ -503,6 +504,13 @@ const AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute =
         AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdSettingsBillingRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsBillingRouteImport.update({
+    id: '/billing',
+    path: '/billing',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
 const AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute =
   AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRouteImport.update(
     {
@@ -2270,6 +2278,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   '/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
   '/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
+  '/organization/$organizationId/settings/billing': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingRoute
   '/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
   '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
@@ -2502,6 +2511,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   '/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
   '/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
+  '/organization/$organizationId/settings/billing': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingRoute
   '/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
   '/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
@@ -2724,6 +2734,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   '/_authenticated/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
   '/_authenticated/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
+  '/_authenticated/organization/$organizationId/settings/billing': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingRoute
   '/_authenticated/organization/$organizationId/settings/billing-details': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
   '/_authenticated/organization/$organizationId/settings/billing-summary': typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   '/_authenticated/organization/$organizationId/settings/cloud-credentials': typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
@@ -2965,6 +2976,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/ai-copilot'
     | '/organization/$organizationId/settings/api-token'
     | '/organization/$organizationId/settings/argocd-integration'
+    | '/organization/$organizationId/settings/billing'
     | '/organization/$organizationId/settings/billing-details'
     | '/organization/$organizationId/settings/billing-summary'
     | '/organization/$organizationId/settings/cloud-credentials'
@@ -3197,6 +3209,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/ai-copilot'
     | '/organization/$organizationId/settings/api-token'
     | '/organization/$organizationId/settings/argocd-integration'
+    | '/organization/$organizationId/settings/billing'
     | '/organization/$organizationId/settings/billing-details'
     | '/organization/$organizationId/settings/billing-summary'
     | '/organization/$organizationId/settings/cloud-credentials'
@@ -3418,6 +3431,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/ai-copilot'
     | '/_authenticated/organization/$organizationId/settings/api-token'
     | '/_authenticated/organization/$organizationId/settings/argocd-integration'
+    | '/_authenticated/organization/$organizationId/settings/billing'
     | '/_authenticated/organization/$organizationId/settings/billing-details'
     | '/_authenticated/organization/$organizationId/settings/billing-summary'
     | '/_authenticated/organization/$organizationId/settings/cloud-credentials'
@@ -3892,6 +3906,13 @@ declare module '@tanstack/react-router' {
       path: '/billing-details'
       fullPath: '/organization/$organizationId/settings/billing-details'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/billing': {
+      id: '/_authenticated/organization/$organizationId/settings/billing'
+      path: '/billing'
+      fullPath: '/organization/$organizationId/settings/billing'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/argocd-integration': {
@@ -5444,6 +5465,7 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
   AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
+  AuthenticatedOrganizationOrganizationIdSettingsBillingRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingRoute
   AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute
   AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute
   AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsCloudCredentialsRoute
@@ -5484,6 +5506,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute,
     AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute:
       AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsBillingRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsBillingRoute,
     AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute:
       AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsBillingSummaryRoute:
