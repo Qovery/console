@@ -4,7 +4,7 @@ import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
 import { isAgenticWorkflow, isBlueprintService, isEditableService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
+import { isContainerGitSource, isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { Sidebar } from '@qovery/shared/ui'
 
 export interface ServiceSettingsLayoutProps {
@@ -155,13 +155,14 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
             advancedSettingsLink,
             dangerZoneLink,
           ])
-          .with({ serviceType: 'CONTAINER' }, () => [
+          .with({ serviceType: 'CONTAINER' }, (container) => [
             generalLink,
             resourcesLink,
             storageLink,
             domainLink,
             portLink,
             healthchecksLink,
+            ...(isContainerGitSource(container.source) ? [deploymentRestrictionsLink] : []),
             advancedSettingsLink,
             dangerZoneLink,
           ])

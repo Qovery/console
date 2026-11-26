@@ -1,5 +1,10 @@
 import { type ReactNode } from 'react'
-import { helmFactoryMock, terraformFactoryMock } from '@qovery/shared/factories'
+import {
+  containerFactoryMock,
+  gitContainerFactoryMock,
+  helmFactoryMock,
+  terraformFactoryMock,
+} from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceSettingsLayout } from './service-settings-layout'
 
@@ -95,5 +100,30 @@ describe('ServiceSettingsLayout', () => {
     expect(screen.getByText('Values')).toBeInTheDocument()
     expect(screen.getByText('Networking')).toBeInTheDocument()
     expect(screen.getByText('Domain')).toBeInTheDocument()
+  })
+
+  it('shows deployment restrictions for git containers', () => {
+    mockService = gitContainerFactoryMock(1)[0]
+
+    renderWithProviders(
+      <ServiceSettingsLayout>
+        <div>Settings content</div>
+      </ServiceSettingsLayout>
+    )
+
+    expect(screen.getByText('Deployment restrictions')).toBeInTheDocument()
+  })
+
+  it('hides deployment restrictions for image containers', () => {
+    mockService = containerFactoryMock(1)[0]
+
+    renderWithProviders(
+      <ServiceSettingsLayout>
+        <div>Settings content</div>
+      </ServiceSettingsLayout>
+    )
+
+    expect(screen.getByText('Health checks')).toBeInTheDocument()
+    expect(screen.queryByText('Deployment restrictions')).not.toBeInTheDocument()
   })
 })

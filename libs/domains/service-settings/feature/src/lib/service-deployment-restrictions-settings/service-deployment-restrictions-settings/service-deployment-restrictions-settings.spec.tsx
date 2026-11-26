@@ -4,6 +4,7 @@ import {
   applicationFactoryMock,
   containerFactoryMock,
   cronjobFactoryMock,
+  gitContainerFactoryMock,
   helmFactoryMock,
   terraformFactoryMock,
 } from '@qovery/shared/factories'
@@ -118,7 +119,30 @@ describe('ServiceDeploymentRestrictionsSettings', () => {
     expect(screen.getByText('src/jobs')).toBeInTheDocument()
   })
 
-  it('does not render for unsupported service types', () => {
+  it('renders for git container services', () => {
+    mockService = gitContainerFactoryMock(1)[0]
+
+    renderWithProviders(<ServiceDeploymentRestrictionsSettings />)
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Deployment Restrictions' })).toBeInTheDocument()
+    expect(screen.getByText('src/jobs')).toBeInTheDocument()
+  })
+
+  it('deletes a restriction of a git container', async () => {
+    mockService = gitContainerFactoryMock(1)[0]
+    const { userEvent } = renderWithProviders(<ServiceDeploymentRestrictionsSettings />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete restriction' }))
+    mockOpenModalConfirmation.mock.calls[0][0].action()
+
+    expect(mockDeleteRestriction).toHaveBeenCalledWith({
+      serviceId: 'service-1',
+      serviceType: 'CONTAINER',
+      deploymentRestrictionId: 'restriction-1',
+    })
+  })
+
+  it('does not render for image container services', () => {
     mockService = containerFactoryMock(1)[0] as Container
 
     renderWithProviders(<ServiceDeploymentRestrictionsSettings />)
