@@ -9,6 +9,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Badge, Button, Callout, Chart, Icon, Modal } from '@qovery/shared/ui'
+import { ChartTooltip } from './chart-tooltip'
 import type { PricingClient } from './client'
 import { num } from './format'
 import { errorText } from './parts'
@@ -109,7 +110,7 @@ export function InvoiceDetailsModal({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="h4 text-neutral">Invoice {invoice.id}</h2>
-              <Badge color={st.color} variant="surface" size="sm">
+              <Badge className="font-medium" color={st.color} variant="surface" size="sm">
                 {st.label}
               </Badge>
             </div>
@@ -175,7 +176,7 @@ export function InvoiceDetailsModal({
               <section aria-label="Invoice lines" className="overflow-hidden rounded border border-neutral">
                 <table className="w-full text-sm">
                   <thead className="bg-surface-neutral-subtle">
-                    <tr className="text-left text-xs text-neutral-subtle">
+                    <tr className="text-left text-sm text-neutral-subtle">
                       <th className="px-4 py-2 font-medium">Description</th>
                       <th className="px-3 py-2 text-right font-medium">Quantity</th>
                       <th className="px-3 py-2 text-right font-medium">Unit price</th>
@@ -211,7 +212,7 @@ export function InvoiceDetailsModal({
                 </table>
               </section>
               {d.notes.map((n) => (
-                <p key={n} className="text-xs text-neutral-subtle">
+                <p key={n} className="text-sm text-neutral-subtle">
                   {n}
                 </p>
               ))}
@@ -238,7 +239,7 @@ function Stat({
 }) {
   return (
     <div className="rounded border border-neutral px-3 py-2" title={hint || undefined}>
-      <div className="text-xs text-neutral-subtle">{label}</div>
+      <div className="text-sm text-neutral-subtle">{label}</div>
       <div
         className={`text-sm ${strong ? 'font-semibold' : 'font-medium'} ${tone === 'negative' ? 'text-negative' : 'text-neutral'}`}
       >
@@ -266,11 +267,11 @@ function LineRow({
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
           <span className="font-medium text-neutral">{l.label}</span>
-          <Badge color={l.kind === 'usage' ? 'sky' : 'neutral'} variant="surface" size="sm">
+          <Badge className="font-medium" color={l.kind === 'usage' ? 'sky' : 'neutral'} variant="surface" size="sm">
             {lineKindLabel(l.kind)}
           </Badge>
         </div>
-        <div className="mt-0.5 text-xs text-neutral-subtle">
+        <div className="mt-0.5 text-sm text-neutral-subtle">
           {period}
           {l.description && l.description !== l.label ? `${period ? ' · ' : ''}${l.description}` : ''}
         </div>
@@ -281,7 +282,7 @@ function LineRow({
             aria-expanded={open}
             onClick={onToggle}
           >
-            <Icon iconName={open ? 'chevron-down' : 'chevron-right'} iconStyle="regular" className="text-[10px]" />
+            <Icon iconName={open ? 'chevron-down' : 'chevron-right'} iconStyle="regular" className="text-xs" />
             {open ? 'Hide usage' : 'Usage'}
           </button>
         )}
@@ -295,7 +296,7 @@ function LineRow({
       <td className="whitespace-nowrap px-4 py-3 text-right">
         <div className="font-medium text-neutral">{amount(l.net, currency)}</div>
         {l.discount > 0 && (
-          <div className="text-xs text-neutral-subtle">
+          <div className="text-sm text-neutral-subtle">
             {amount(l.amount, currency)} less {amount(l.discount, currency)}
           </div>
         )}
@@ -315,7 +316,7 @@ function UsageSection({ usage: u, line }: { usage: InvoiceLineUsage; line: Invoi
         <h3 className="text-sm font-medium text-neutral">
           {u.name}, {localDate(u.from)} to {localDate(u.to)}
         </h3>
-        <span className="text-xs text-neutral-subtle">
+        <span className="text-sm text-neutral-subtle">
           {u.source === 'billed' ? 'As recorded for billing' : 'From the deployment reports'}
         </span>
       </div>
@@ -339,7 +340,7 @@ function UsageSection({ usage: u, line }: { usage: InvoiceLineUsage; line: Invoi
           </div>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
             <div className="rounded border border-neutral bg-surface-neutral p-3">
-              <div className="mb-1 text-xs font-medium text-neutral-subtle">Per day</div>
+              <div className="mb-1 text-sm text-neutral-subtle">Per day</div>
               <Chart.Container style={{ height: 180 }} isEmpty={!days.length}>
                 <BarChart data={days} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                   <CartesianGrid horizontal vertical={false} stroke="var(--neutral-4)" />
@@ -347,7 +348,7 @@ function UsageSection({ usage: u, line }: { usage: InvoiceLineUsage; line: Invoi
                   <YAxis tickLine={false} axisLine={false} width={48} tickFormatter={(v: number) => num(v)} />
                   <Chart.Tooltip
                     content={
-                      <Chart.TooltipContent
+                      <ChartTooltip
                         title={u.name}
                         formatLabel={(k) => u.organizations.find((o) => o.organization_id === k)?.name ?? u.name}
                         formatValue={(v) => quantity(Number(v), unit)}
@@ -371,7 +372,7 @@ function UsageSection({ usage: u, line }: { usage: InvoiceLineUsage; line: Invoi
                 </BarChart>
               </Chart.Container>
               {split && (
-                <div className="mt-2 flex flex-wrap gap-3 text-xs text-neutral-subtle">
+                <div className="mt-2 flex flex-wrap gap-3 text-sm text-neutral-subtle">
                   {u.organizations.map((o, i) => (
                     <span key={o.organization_id} className="inline-flex items-center gap-1.5">
                       <span className="h-2 w-2 rounded-sm" style={{ background: ORG_COLORS[i % ORG_COLORS.length] }} />
@@ -421,7 +422,7 @@ function UsageSection({ usage: u, line }: { usage: InvoiceLineUsage; line: Invoi
       )}
       {u.builds && <BuildsTable builds={u.builds} several={split} />}
       {u.notes.map((n) => (
-        <p key={n} className="text-xs text-neutral-subtle">
+        <p key={n} className="text-sm text-neutral-subtle">
           {n}
         </p>
       ))}
@@ -434,8 +435,8 @@ function BuildsTable({ builds: b, several }: { builds: NonNullable<InvoiceLineUs
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h4 className="text-xs font-medium text-neutral-subtle">Builds per service</h4>
-        <span className="text-xs text-neutral-subtle">{b.note}</span>
+        <h4 className="text-sm text-neutral-subtle">Builds per service</h4>
+        <span className="text-sm text-neutral-subtle">{b.note}</span>
       </div>
       {b.available !== 'complete' && (
         <Callout.Root color={b.available === 'none' ? 'neutral' : 'yellow'}>
@@ -493,7 +494,7 @@ function BuildsTable({ builds: b, several }: { builds: NonNullable<InvoiceLineUs
         </div>
       )}
       {b.available !== 'none' && b.services.length === 0 && (
-        <p className="text-xs text-neutral-subtle">No builds in the available data.</p>
+        <p className="text-sm text-neutral-subtle">No builds in the available data.</p>
       )}
     </div>
   )

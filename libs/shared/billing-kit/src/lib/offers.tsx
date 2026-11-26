@@ -72,19 +72,19 @@ export function OfferBanner({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           {c.badge && (
-            <Badge color="brand" variant="surface" size="sm">
+            <Badge className="font-medium" color="brand" variant="surface" size="sm">
               {c.badge}
             </Badge>
           )}
           {offer.preview && (
-            <Badge color="yellow" variant="surface" size="sm">
+            <Badge className="font-medium" color="yellow" variant="surface" size="sm">
               Draft preview
             </Badge>
           )}
           <span className="text-sm font-medium text-neutral">{c.title}</span>
         </div>
         {c.body && <p className="mt-1 text-sm text-neutral-subtle">{c.body.split('\n\n')[0]}</p>}
-        {offer.ends_at && <p className="mt-1 text-xs text-neutral-subtle">Until {date(offer.ends_at)}</p>}
+        {offer.ends_at && <p className="mt-1 text-sm text-neutral-subtle">Until {date(offer.ends_at)}</p>}
       </div>
       <Button size="md" onClick={() => onAction(offer)}>
         {c.cta_label}
@@ -121,12 +121,12 @@ export function OfferModal({
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           {c.badge && (
-            <Badge color="brand" variant="surface" size="sm">
+            <Badge className="font-medium" color="brand" variant="surface" size="sm">
               {c.badge}
             </Badge>
           )}
           {offer.preview && (
-            <Badge color="yellow" variant="surface" size="sm">
+            <Badge className="font-medium" color="yellow" variant="surface" size="sm">
               Draft preview
             </Badge>
           )}
@@ -149,7 +149,7 @@ export function OfferModal({
             {p}
           </p>
         ))}
-      {offer.ends_at && <p className="text-xs text-neutral-subtle">Offer valid until {date(offer.ends_at)}.</p>}
+      {offer.ends_at && <p className="text-sm text-neutral-subtle">Offer valid until {date(offer.ends_at)}.</p>}
       <div className="flex flex-wrap justify-end gap-3 pt-2">
         <Button size="lg" variant="plain" color="neutral" onClick={onClose}>
           Not now
@@ -208,11 +208,11 @@ export function RequestsBanner({
                 <span className="font-medium">{r.email}</span> needs more {skuName(r.sku).toLowerCase() || 'resources'}
                 {r.message ? `: "${r.message}"` : ''}
               </span>
-              <span className="text-xs text-neutral-subtle">{date(r.created_at)}</span>
+              <span className="text-sm text-neutral-subtle">{date(r.created_at)}</span>
               {onDecline && (
                 <button
                   type="button"
-                  className="text-xs text-neutral-subtle hover:underline"
+                  className="text-sm text-neutral-subtle hover:underline"
                   onClick={() => onDecline(r)}
                 >
                   Decline
@@ -383,7 +383,7 @@ function OrganizationEmailPreferences({ organizationId, client }: { organization
     <div className="rounded border border-neutral bg-surface-neutral">
       <div className="border-b border-neutral px-5 py-3">
         <h3 className="text-sm font-medium text-neutral">Email preferences</h3>
-        <p className="text-xs text-neutral-subtle">
+        <p className="text-sm text-neutral-subtle">
           Emails about this organization's plan and usage, sent to {p.email}.
         </p>
       </div>

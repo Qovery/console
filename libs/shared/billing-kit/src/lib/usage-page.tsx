@@ -87,9 +87,9 @@ function PageHeading({ title, description, actions }: UsagePageHeading) {
 function Card({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {
   return (
     <div className="min-h-[114px] flex-1 rounded border border-neutral bg-surface-neutral p-5">
-      <div className="mb-1 text-xs font-medium text-neutral-subtle">{label}</div>
+      <div className="mb-1 text-sm text-neutral-subtle">{label}</div>
       <div className="mb-1 text-sm font-medium text-neutral">{children}</div>
-      {hint && <div className="text-xs text-neutral-subtle">{hint}</div>}
+      {hint && <div className="text-sm text-neutral-subtle">{hint}</div>}
     </div>
   )
 }
@@ -128,7 +128,7 @@ function UsageRow({
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <span className="text-sm font-medium text-neutral">{e.name}</span>
-          {e.kind === 'meter' && <span className="ml-2 text-xs text-neutral-subtle">this month</span>}
+          {e.kind === 'meter' && <span className="ml-2 text-sm text-neutral-subtle">this month</span>}
         </div>
         <div className="text-sm text-neutral">
           {isSetting(e) ? (
@@ -146,7 +146,7 @@ function UsageRow({
         </div>
       </div>
       {finite && <UsageBar used={e.used} value={e.value as number} over={e.over} />}
-      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-neutral-subtle">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-neutral-subtle">
         <span>
           {e.customer_note}
           {e.prepaid ? ` · ${num(e.prepaid)} prepaid` : ''}
@@ -502,7 +502,7 @@ export function UsagePage({
           >
             {u.plan.name}
             {plan?.scheduled_change && (
-              <Badge className="ml-2" color="sky" variant="surface" size="sm">
+              <Badge className="ml-2 font-medium" color="sky" variant="surface" size="sm">
                 {plan.scheduled_change.name} from {date(plan.scheduled_change.effective_on)}
               </Badge>
             )}
@@ -513,7 +513,7 @@ export function UsagePage({
               hint={`For this ${u.estimate.period}, usage so far included · next invoice ${date(u.estimate.term_end || u.billing.term_end)}`}
             >
               {money(u.estimate.total, cur)}{' '}
-              <span className="text-xs font-normal text-neutral-subtle">/ {u.estimate.period}</span>
+              <span className="text-sm font-normal text-neutral-subtle">/ {u.estimate.period}</span>
             </Card>
           )}
           {amounts && sp && (
@@ -557,7 +557,7 @@ export function UsagePage({
               }
             >
               {money(Math.max(sp.spent, estimatedAbove), cur)}{' '}
-              <span className="text-xs font-normal text-neutral-subtle">
+              <span className="text-sm font-normal text-neutral-subtle">
                 {estimatedAbove > sp.spent ? 'estimated' : 'recorded'}
               </span>
             </Card>
@@ -576,7 +576,7 @@ export function UsagePage({
               >
                 <span className="text-neutral">
                   {estimateLineLabel(l, unitOf)}
-                  {l.kind === 'overage' && <span className="text-xs text-neutral-subtle"> (estimate)</span>}
+                  {l.kind === 'overage' && <span className="text-sm text-neutral-subtle"> (estimate)</span>}
                 </span>
                 <span className={l.amount < 0 ? 'text-positive' : 'text-neutral'}>{money(l.amount, cur)}</span>
               </div>
@@ -650,7 +650,7 @@ export function UsagePage({
 
         <EmailPreferencesPanel organizationId={organizationId} client={client} />
 
-        {u.notes.length > 0 && <p className="text-xs text-neutral-subtle">{u.notes.join(' ')}</p>}
+        {u.notes.length > 0 && <p className="text-sm text-neutral-subtle">{u.notes.join(' ')}</p>}
 
         {amounts && !internal && cancellation && !ending && cancellation.unavailable?.code !== 'SUBSCRIPTION_ENDED' && (
           <div className="border-t border-neutral pt-4 text-sm text-neutral-subtle">

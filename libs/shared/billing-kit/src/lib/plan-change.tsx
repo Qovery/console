@@ -31,9 +31,9 @@ import type {
 export function Fact({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {
   return (
     <div className="rounded border border-neutral bg-surface-neutral p-4">
-      <div className="mb-1 text-xs font-medium text-neutral-subtle">{label}</div>
+      <div className="mb-1 text-sm text-neutral-subtle">{label}</div>
       <div className="text-sm font-medium text-neutral">{children}</div>
-      {hint && <div className="mt-0.5 text-xs text-neutral-subtle">{hint}</div>}
+      {hint && <div className="mt-0.5 text-sm text-neutral-subtle">{hint}</div>}
     </div>
   )
 }
@@ -262,6 +262,7 @@ export function PlanChangeFlow({
             <>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <SegmentedControl.Root
+                  className="max-sm:auto-cols-auto"
                   value={period}
                   aria-disabled={busy}
                   onValueChange={(v) => {
@@ -276,7 +277,7 @@ export function PlanChangeFlow({
                   </SegmentedControl.Item>
                 </SegmentedControl.Root>
                 {options?.scheduled_change && (
-                  <span className="text-xs text-neutral-subtle">
+                  <span className="text-sm text-neutral-subtle">
                     {options.scheduled_change.name} is planned from {date(options.scheduled_change.effective_on)}
                   </span>
                 )}
@@ -304,59 +305,62 @@ export function PlanChangeFlow({
                         disabled={disabled}
                         className="mt-0.5"
                       />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-medium text-neutral">{o.plan.name}</span>
-                          {o.current && (
-                            <Badge color="neutral" variant="surface" size="sm">
-                              {period === currentPeriod
-                                ? 'Current plan'
-                                : `Current plan, billed ${currentPeriod === 'year' ? 'yearly' : 'monthly'}`}
-                            </Badge>
-                          )}
-                          {recommended === o.plan.code && (
-                            <Badge color="brand" variant="surface" size="sm">
-                              Recommended
-                            </Badge>
-                          )}
-                          {!o.current && current && o.plan.rank < current.plan.rank && (
-                            <Badge color="neutral" variant="surface" size="sm">
-                              From the end of your term
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="text-xs text-neutral-subtle">
-                          {o.highlights.map((h) => `${valueText(h.value)} ${h.sku.split('.')[0]}`).join(' · ')}
-                        </div>
-                        {o.quote && o.quote.conflicts.length > 0 && (
-                          <div className="mt-1 text-xs text-warning">
-                            {o.quote.conflicts.length} limit{o.quote.conflicts.length > 1 ? 's' : ''} above this plan
-                            today
+                      {/* On a phone the price goes under the plan, so the badges keep the full width */}
+                      <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-medium text-neutral">{o.plan.name}</span>
+                            {o.current && (
+                              <Badge className="font-medium" color="neutral" variant="surface" size="sm">
+                                {period === currentPeriod
+                                  ? 'Current plan'
+                                  : `Current plan, billed ${currentPeriod === 'year' ? 'yearly' : 'monthly'}`}
+                              </Badge>
+                            )}
+                            {recommended === o.plan.code && (
+                              <Badge className="font-medium" color="brand" variant="surface" size="sm">
+                                Recommended
+                              </Badge>
+                            )}
+                            {!o.current && current && o.plan.rank < current.plan.rank && (
+                              <Badge className="font-medium" color="neutral" variant="surface" size="sm">
+                                From the end of your term
+                              </Badge>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <div className="whitespace-nowrap text-right text-sm text-neutral">
-                        {sales ? (
-                          onContactSales ? (
-                            <button type="button" className="text-brand hover:underline" onClick={onContactSales}>
-                              Talk to sales
-                            </button>
+                          <div className="text-sm text-neutral-subtle">
+                            {o.highlights.map((h) => `${valueText(h.value)} ${h.sku.split('.')[0]}`).join(' · ')}
+                          </div>
+                          {o.quote && o.quote.conflicts.length > 0 && (
+                            <div className="mt-1 text-sm text-warning">
+                              {o.quote.conflicts.length} limit{o.quote.conflicts.length > 1 ? 's' : ''} above this plan
+                              today
+                            </div>
+                          )}
+                        </div>
+                        <div className="whitespace-nowrap text-sm text-neutral sm:text-right">
+                          {sales ? (
+                            onContactSales ? (
+                              <button type="button" className="text-brand hover:underline" onClick={onContactSales}>
+                                Talk to sales
+                              </button>
+                            ) : (
+                              'On request'
+                            )
                           ) : (
-                            'On request'
-                          )
-                        ) : (
-                          price && (
-                            <>
-                              {money(price.amount, cur)}
-                              <span className="text-xs text-neutral-subtle"> / month</span>
-                              {price.yearly != null && (
-                                <div className="text-xs text-neutral-subtle">
-                                  {money(price.yearly, cur)} billed yearly
-                                </div>
-                              )}
-                            </>
-                          )
-                        )}
+                            price && (
+                              <>
+                                {money(price.amount, cur)}
+                                <span className="text-sm text-neutral-subtle"> / month</span>
+                                {price.yearly != null && (
+                                  <div className="text-sm text-neutral-subtle">
+                                    {money(price.yearly, cur)} billed yearly
+                                  </div>
+                                )}
+                              </>
+                            )
+                          )}
+                        </div>
                       </div>
                     </label>
                   )
@@ -430,7 +434,7 @@ export function PlanChangeFlow({
                       hint={bill ? `On ${date(bill.next_invoice_on)}, then every ${q.period}` : undefined}
                     >
                       {money(bill?.next_invoice ?? q.total, q.currency)}
-                      <span className="text-xs font-normal text-neutral-subtle"> / {q.period}</span>
+                      <span className="text-sm font-normal text-neutral-subtle"> / {q.period}</span>
                     </Fact>
                   </div>
                   {result?.concession && (
@@ -461,12 +465,12 @@ export function PlanChangeFlow({
                     </div>
                   )}
                   {q.kept_addons.length > 0 && (
-                    <div className="text-xs text-neutral-subtle">
+                    <div className="text-sm text-neutral-subtle">
                       Kept: {q.kept_addons.map((a) => `${a.quantity} × ${a.name}`).join(', ')}
                     </div>
                   )}
                   {q.projected_overage > 0 && (
-                    <div className="text-xs text-neutral-subtle">
+                    <div className="text-sm text-neutral-subtle">
                       At today's usage, about {money(q.projected_overage, q.currency)} per {q.period} would be billed
                       above the plan.
                     </div>
@@ -482,7 +486,7 @@ export function PlanChangeFlow({
                     </Callout.Root>
                   )}
                   {q.message && <p className="text-sm text-neutral-subtle">{q.message}</p>}
-                  <p className="text-xs text-neutral-subtle">
+                  <p className="text-sm text-neutral-subtle">
                     Amounts are estimates before tax: Chargebee computes the exact invoice.
                   </p>
                 </>

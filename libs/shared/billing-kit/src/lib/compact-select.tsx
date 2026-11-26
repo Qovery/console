@@ -82,7 +82,7 @@ export function CompactSelect({
             <span className="min-w-0 flex-1 truncate">
               {current ? current.label : <span className="text-neutral-subtle">Select…</span>}
             </span>
-            <Icon iconName="angles-up-down" className="shrink-0 text-xs text-neutral-subtle" />
+            <Icon iconName="angles-up-down" className="shrink-0 text-sm text-neutral-subtle" />
           </button>
         </Popover.Trigger>
         <Popover.Content align="start" className="z-dropdown flex w-[320px] max-w-[calc(100vw-24px)] flex-col p-2">
@@ -121,14 +121,14 @@ export function CompactSelect({
                   <Icon
                     iconName="check"
                     className={twMerge(
-                      'shrink-0 text-xs text-positive',
+                      'shrink-0 text-sm text-positive',
                       o.value === value ? 'opacity-100' : 'opacity-0'
                     )}
                   />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate">{o.label}</span>
                     {o.description && (
-                      <span className="block truncate text-xs text-neutral-subtle">{o.description}</span>
+                      <span className="block truncate text-sm text-neutral-subtle">{o.description}</span>
                     )}
                   </span>
                 </CommandMenu.Item>

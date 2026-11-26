@@ -120,7 +120,7 @@ export function CancelDialog({
                 </li>
               )}
             </ul>
-            <p className="mt-3 text-xs text-neutral-subtle">
+            <p className="mt-3 text-sm text-neutral-subtle">
               Until then, everything works as today, and you can keep your subscription at any time.
             </p>
           </div>
