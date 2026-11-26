@@ -8,27 +8,18 @@ import type {
   InvoiceLineUsage1 as InvoiceLineUsage,
   PaymentMethod,
 } from 'qovery-pricing-typescript-axios'
+import { paymentMethodLabel, validAwsAccountId } from './billing-settings-rules'
 import {
-  amount,
-  buildDuration,
-  buildRange,
-  buildServiceRows,
-  buildSizeColor,
-  changeKind,
   currentDiscountRequest,
   discountPercent,
   discountSelectable,
   discountsUpTo,
-  invoiceDetailsCSV,
-  lineKindLabel,
-  localDate,
-  matchesStatus,
-  paymentMethodLabel,
   toggleDiscount,
-  usageCoverageText,
-  usageDays,
-  validAwsAccountId,
-} from './rules'
+} from './discount-rules'
+import { amount, localDate } from './format'
+import { invoiceDetailsCSV, lineKindLabel, matchesStatus, usageCoverageText, usageDays } from './invoice-rules'
+import { changeKind } from './subscription-rules'
+import { buildDuration, buildRange, buildServiceRows, buildSizeColor } from './usage-rules'
 
 const usage = (over: Partial<InvoiceLineUsage> = {}): InvoiceLineUsage => ({
   sku: 'deploy.minutes',

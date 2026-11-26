@@ -12,7 +12,8 @@ import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
 import { Fact } from './plan-change'
 import { date, money, num } from './utils/format'
-import { changeBlockedText, creditQuantityError, newIdempotencyKey, quantity } from './utils/rules'
+import { quantity } from './utils/format'
+import { changeBlockedText, creditQuantityError, newIdempotencyKey } from './utils/subscription-rules'
 
 const NO_EXPIRY = 'No expiry date'
 

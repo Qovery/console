@@ -23,7 +23,8 @@ import { openPaymentMethodPage } from './invoices-page'
 import { errorText } from './parts'
 import { ProposalNote, hideProposal } from './proposals'
 import { date, money, monthly, valueText } from './utils/format'
-import { changeBlockedText, changeKind, isProposalChange, newIdempotencyKey } from './utils/rules'
+import { isProposalChange } from './utils/proposal-rules'
+import { changeBlockedText, changeKind, newIdempotencyKey } from './utils/subscription-rules'
 
 /** A labelled figure in a review (what changes, today, the next invoice). */
 export function Fact({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {

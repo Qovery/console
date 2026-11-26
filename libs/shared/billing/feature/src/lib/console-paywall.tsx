@@ -15,7 +15,7 @@ import { GatedPage } from './gated-page'
 import { usePricingClient } from './hooks/use-pricing-client/use-pricing-client'
 import { Paywall, usePaywall } from './paywall'
 import { hasGatedPage } from './utils/gated'
-import { gateFor, gateKeyFromBody, isLocked, paywallFromBody } from './utils/rules'
+import { gateFor, gateKeyFromBody, isLocked, paywallFromBody } from './utils/paywall-rules'
 
 export const BILLING_PAYWALL_FEATURE_FLAG = 'billing-paywall'
 

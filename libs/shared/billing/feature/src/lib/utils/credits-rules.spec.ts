@@ -1,6 +1,6 @@
 // The billing kit's rules for prepaid credits and reactivation (rules.ts), from pricing-api's
 // web/tests/credits-reactivation.test.ts.
-import { changeBlockedText, creditQuantityError } from './rules'
+import { changeBlockedText, creditQuantityError } from './subscription-rules'
 
 const minutes = {
   min: 100,

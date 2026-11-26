@@ -20,16 +20,8 @@ import { Badge, Button, Callout, Chart, Heading, Icon, Modal } from '@qovery/sha
 import { ChartTooltip } from './chart-tooltip'
 import { errorText } from './parts'
 import { num } from './utils/format'
-import {
-  amount,
-  invoiceDetailsCSV,
-  invoiceStatus,
-  lineKindLabel,
-  localDate,
-  quantity,
-  usageCoverageText,
-  usageDays,
-} from './utils/rules'
+import { amount, localDate, quantity } from './utils/format'
+import { invoiceDetailsCSV, invoiceStatus, lineKindLabel, usageCoverageText, usageDays } from './utils/invoice-rules'
 
 const ORG_COLORS = [
   'var(--brand-9)',

@@ -16,8 +16,8 @@ import { Badge, Banner, Button, Callout, Icon, InputTextArea, Modal } from '@qov
 import { errorText } from './parts'
 import { ProposalBanner, ProposalHost, useProposal } from './proposals'
 import { date } from './utils/format'
+import { BAR_TEXT, barBanner, barClass } from './utils/proposal-rules'
 import { forgetReads, sharedRead } from './utils/reads'
-import { BAR_TEXT, barBanner, barClass } from './utils/rules'
 
 const TONE: Record<string, string> = {
   brand: 'border-brand-strong bg-surface-brand-component',

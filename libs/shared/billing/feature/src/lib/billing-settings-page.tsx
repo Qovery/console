@@ -26,16 +26,16 @@ import {
   useAccess,
 } from './parts'
 import {
-  INTERNAL_NOTHING_BILLED,
   cardState,
   emptyBillingInfo,
-  localDate,
   normalizeBillingInfo,
   paymentMethodLabel,
   validAwsAccountId,
   validOfferURL,
   validateBillingInfo,
-} from './utils/rules'
+} from './utils/billing-settings-rules'
+import { localDate } from './utils/format'
+import { INTERNAL_NOTHING_BILLED } from './utils/subscription-rules'
 
 export interface BillingSettingsPageProps {
   organizationId: string

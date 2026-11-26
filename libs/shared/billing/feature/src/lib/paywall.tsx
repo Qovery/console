@@ -42,12 +42,12 @@ import {
   isLocked,
   lockLabel,
   markIntroSeen,
-  newIdempotencyKey,
   optionPrice,
   pendingIntro,
   trialEnds,
   trialRequest,
-} from './utils/rules'
+} from './utils/paywall-rules'
+import { newIdempotencyKey } from './utils/subscription-rules'
 
 type Done = 'trial' | 'upgrade' | 'addon' | 'request'
 

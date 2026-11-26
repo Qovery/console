@@ -1,22 +1,14 @@
 // The billing kit's pure rules, from pricing-api's web/tests/billing-kit.test.ts.
 import type { CustomerInvoice } from 'qovery-pricing-typescript-axios'
 import {
-  amountDue,
   cardState,
-  discountRoom,
-  discountsExpanded,
-  discountsUpTo,
   emptyBillingInfo,
-  filterInvoices,
-  invoiceStatus,
-  invoiceYears,
-  minutesToWait,
   normalizeBillingInfo,
-  requestableDiscounts,
-  runSequential,
   validOfferURL,
   validateBillingInfo,
-} from './rules'
+} from './billing-settings-rules'
+import { discountRoom, discountsExpanded, discountsUpTo, requestableDiscounts } from './discount-rules'
+import { amountDue, filterInvoices, invoiceStatus, invoiceYears, minutesToWait, runSequential } from './invoice-rules'
 
 // The same cases as the server's validOfferURL: the console links only to AWS Marketplace pages.
 const OFFER_URLS: [string, boolean][] = [

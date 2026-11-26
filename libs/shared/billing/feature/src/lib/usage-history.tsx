@@ -16,6 +16,7 @@ import { ChartTooltip } from './chart-tooltip'
 import { CompactSelect } from './compact-select'
 import { errorText } from './parts'
 import { money, num } from './utils/format'
+import { quantity } from './utils/format'
 import {
   HISTORY_PRESETS,
   type HistoryPreset,
@@ -25,8 +26,7 @@ import {
   historyTable,
   periodLabel,
   presetRange,
-  quantity,
-} from './utils/rules'
+} from './utils/usage-rules'
 
 // One color per organization, the console's chart palette.
 const ORG_COLORS = [

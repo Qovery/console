@@ -1,7 +1,5 @@
 import { type BillingUsage } from 'qovery-pricing-typescript-axios'
 
-// Shaped like pricing-api's GET /organization/{organizationId}/billingUsage (api/internal/httpapi/customerapi.go).
-// Members get the same payload without amounts: no estimate, no spend, no value, costs at 0.
 export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billing'): BillingUsage {
   const amounts = access !== 'member'
   return {
@@ -85,25 +83,14 @@ export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billin
         overage_unit_price: 0,
       },
     ],
-    organization_usage: { 'clusters.managed': 2, 'deploy.minutes': 7657, 'members.seats': 10 },
+    organization_usage: {},
     deployments: {
       from: '2026-10-01',
       to: '2026-10-30',
-      deployments: 1072,
-      build_minutes: 517.1,
-      deploy_minutes: 5913.8,
-      days: [
-        {
-          day: '2026-10-01',
-          deployments: 45,
-          failed: 1,
-          build_minutes: 21.4,
-          deploy_minutes: 246.3,
-          minutes: 267.7,
-          over_minutes: 0,
-          cost: 0,
-        },
-      ],
+      deployments: 0,
+      build_minutes: 0,
+      deploy_minutes: 0,
+      days: [],
     },
     prepaid_credits: [],
     ...(amounts
@@ -150,11 +137,7 @@ export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billin
           kind: 'meter',
           included: 8000,
           source: 'deployments',
-          points: [
-            { day: '2026-10-28', quantity: 251 },
-            { day: '2026-10-29', quantity: 268 },
-            { day: '2026-10-30', quantity: 102 },
-          ],
+          points: [{ day: '2026-10-30', quantity: 102 }],
         },
         {
           sku: 'clusters.managed',
@@ -163,47 +146,18 @@ export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billin
           kind: 'limit',
           included: 2,
           source: 'snapshot',
-          points: [
-            { day: '2026-10-28', quantity: 2 },
-            { day: '2026-10-29', quantity: 2 },
-            { day: '2026-10-30', quantity: 2 },
-          ],
+          points: [{ day: '2026-10-30', quantity: 2 }],
         },
       ],
-      deployment_months: [
-        {
-          month: '2026-10',
-          deployments: 1072,
-          build_minutes: 517.1,
-          deploy_minutes: 5913.8,
-          minutes: 6430.9,
-          included: 8000,
-          over_minutes: 0,
-          cost: 0,
-        },
-      ],
-      projection: [
-        {
-          sku: 'deploy.minutes',
-          name: 'Deployment minutes',
-          unit: 'minutes',
-          used: 7657,
-          included: 8000,
-          projected: 7912,
-          projected_over: 0,
-          ...(amounts ? { projected_cost: 0 } : {}),
-          days_elapsed: 30,
-          days_in_month: 31,
-          daily_pace: 255.2,
-        },
-      ],
+      deployment_months: [],
+      projection: [],
       ...(amounts
         ? {
             value: {
               currency: 'USD',
               monthly_fee: 89900,
-              included_value: 266700,
-              used_value: 245100,
+              included_value: 128000,
+              used_value: 122512,
               lines: [
                 {
                   sku: 'deploy.minutes',
@@ -216,7 +170,7 @@ export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billin
                   used_value: 122512,
                 },
               ],
-              per_unit: [{ label: 'per deployment', sku: 'deploy.count', count: 1072, amount: 84 }],
+              per_unit: [],
             },
           }
         : {}),

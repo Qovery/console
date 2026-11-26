@@ -40,7 +40,7 @@ import {
   previewRender,
   previewTabs,
 } from './utils/gated'
-import { markIntroSeen } from './utils/rules'
+import { markIntroSeen } from './utils/paywall-rules'
 
 export interface GatedPageProps {
   organizationId: string

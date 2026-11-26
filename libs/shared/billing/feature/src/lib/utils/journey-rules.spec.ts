@@ -1,19 +1,9 @@
 // The billing kit's rules for the plan change, the cancellation and the usage history
 // (rules.ts), from pricing-api's web/tests/journey.test.ts.
 import type { UsageHistoryData } from 'qovery-pricing-typescript-axios'
-import {
-  changeBlockedText,
-  changeKind,
-  customRangeError,
-  estimateLineLabel,
-  granularityFor,
-  historyCSV,
-  historyTable,
-  newIdempotencyKey,
-  periodLabel,
-  presetRange,
-  quantity,
-} from './rules'
+import { estimateLineLabel, quantity } from './format'
+import { changeBlockedText, changeKind, newIdempotencyKey } from './subscription-rules'
+import { customRangeError, granularityFor, historyCSV, historyTable, periodLabel, presetRange } from './usage-rules'
 
 const today = new Date('2026-11-20T10:00:00Z')
 

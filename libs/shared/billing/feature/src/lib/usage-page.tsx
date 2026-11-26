@@ -37,7 +37,8 @@ import { ReactivateFlow, SubscriptionEndedBanner } from './reactivate'
 import { UsageHistory } from './usage-history'
 import { UsageChart, UsageInsights } from './usage-insights'
 import { date, money, num, valueText } from './utils/format'
-import { INTERNAL_NOTHING_BILLED, changeBlockedText, estimateLineLabel, signupTrialText } from './utils/rules'
+import { estimateLineLabel } from './utils/format'
+import { INTERNAL_NOTHING_BILLED, changeBlockedText, signupTrialText } from './utils/subscription-rules'
 
 export interface UsagePageProps {
   organizationId: string

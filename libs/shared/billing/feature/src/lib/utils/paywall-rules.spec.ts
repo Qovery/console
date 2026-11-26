@@ -4,30 +4,32 @@ import axios, { type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios
 import type { Gate, PaywallInfo, SignupTrial1 as SignupTrial } from 'qovery-pricing-typescript-axios'
 import { type PlanProposal, createPricingClient } from '@qovery/shared/billing/data-access'
 import { introChip, introPageView } from './gated'
-import { SHARED_READ_MS, forgetReads, sharedRead } from './reads'
 import {
-  BAR_TEXT,
-  barBanner,
-  barClass,
   continueChoices,
   gateFor,
   gateKeyFromBody,
   isLocked,
-  isProposalChange,
   lockLabel,
   markIntroSeen,
   optionPrice,
   paywallFromBody,
   pendingIntro,
+  trialEnds,
+  trialRequest,
+} from './paywall-rules'
+import {
+  BAR_TEXT,
+  barBanner,
+  barClass,
+  isProposalChange,
   proposalFromSearch,
   proposalHeading,
   proposalLine,
   proposalShortLine,
-  signupTrialText,
   snoozeLabel,
-  trialEnds,
-  trialRequest,
-} from './rules'
+} from './proposal-rules'
+import { SHARED_READ_MS, forgetReads, sharedRead } from './reads'
+import { signupTrialText } from './subscription-rules'
 
 const paywall: PaywallInfo = {
   sku: 'clusters.managed',

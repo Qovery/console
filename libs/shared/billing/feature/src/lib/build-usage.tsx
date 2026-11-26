@@ -16,6 +16,7 @@ import { ChartTooltip } from './chart-tooltip'
 import { CompactSelect } from './compact-select'
 import { errorText } from './parts'
 import { money, num } from './utils/format'
+import { quantity } from './utils/format'
 import {
   BUILD_PRESETS,
   type BuildPreset,
@@ -28,8 +29,7 @@ import {
   customRangeError,
   granularityFor,
   periodLabel,
-  quantity,
-} from './utils/rules'
+} from './utils/usage-rules'
 
 export type BuildUsageLoader = (range: {
   from: string

@@ -18,7 +18,7 @@ import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
 import { Fact } from './plan-change'
 import { date, money, monthly } from './utils/format'
-import { changeBlockedText, newIdempotencyKey } from './utils/rules'
+import { changeBlockedText, newIdempotencyKey } from './utils/subscription-rules'
 
 /** The banner shown while the subscription has ended. Billing roles only. */
 export function SubscriptionEndedBanner({
