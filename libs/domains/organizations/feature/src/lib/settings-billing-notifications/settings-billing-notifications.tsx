@@ -1,7 +1,6 @@
 import { redirect, useParams } from '@tanstack/react-router'
-import { EmailPreferencesPanel } from '@qovery/shared/billing-kit'
+import { EmailPreferencesPanel, usePricingClient } from '@qovery/shared/billing/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import { BillingPageLayout } from '../settings-billing-usage/settings-billing-usage'
 
 // The Billing entry follows the new billing pages (billing-usage-v2), like Usage, Invoices and Billing

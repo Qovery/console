@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type BlueprintItem } from 'qovery-typescript-axios'
-import { type Gate, PaywallLock } from '@qovery/shared/billing-kit'
+import type { Gate } from '@qovery/shared/billing/data-access'
+import { PaywallLock } from '@qovery/shared/billing/feature'
 import { Button, Heading, Link } from '@qovery/shared/ui'
 import { getBlueprintDisplayName } from '../../blueprint-utils/blueprint-utils'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'

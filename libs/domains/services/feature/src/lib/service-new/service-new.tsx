@@ -6,7 +6,7 @@ import {
   type LifecycleTemplateListResponseResultsInner,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
-import { useBillingPaywall } from '@qovery/shared/billing-kit'
+import { useBillingPaywall } from '@qovery/shared/billing/feature'
 import { Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'

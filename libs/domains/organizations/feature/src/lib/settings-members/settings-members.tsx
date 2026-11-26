@@ -19,7 +19,7 @@ import {
 } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useBillingPaywall } from '@qovery/shared/billing-kit'
+import { useBillingPaywall } from '@qovery/shared/billing/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import {

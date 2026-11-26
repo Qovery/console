@@ -1,6 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { useIsBillingUsageEnabled, useOrganization } from '@qovery/domains/organizations/feature'
-import { OfferHost, usePricingClient } from '@qovery/shared/billing-kit'
+import { OfferHost, usePricingClient } from '@qovery/shared/billing/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { AnnouncementBanner } from '@qovery/shared/posthog/feature'
 import { Banner } from '@qovery/shared/ui'

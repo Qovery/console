@@ -1,14 +1,14 @@
-import { type EmailPreferences, createPricingClient } from '@qovery/shared/billing-kit'
+import { type EmailPreferences, createPricingClient } from '@qovery/shared/billing/data-access'
+import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { pickConsoleCalls, usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import {
   SettingsBillingNotifications,
   getNotificationsSettingsLinks,
   redirectLegacyBillingEmailsLink,
 } from './settings-billing-notifications'
 
-jest.mock('../hooks/use-pricing-client/use-pricing-client', () => ({
-  ...jest.requireActual('../hooks/use-pricing-client/use-pricing-client'),
+jest.mock('@qovery/shared/billing/feature', () => ({
+  ...jest.requireActual('@qovery/shared/billing/feature'),
   usePricingClient: jest.fn(),
 }))
 jest.mock('@qovery/shared/util-hooks', () => ({

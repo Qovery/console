@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { type ReactNode } from 'react'
-import { type Gate } from '@qovery/shared/billing-kit'
+import type { Gate } from '@qovery/shared/billing/data-access'
 import { inviteMembersMock, membersMock, organizationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useAvailableRolesHook from '../hooks/use-available-roles/use-available-roles'
@@ -37,8 +37,8 @@ const mockUser = { sub: 'owner-id' }
 
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
-jest.mock('@qovery/shared/billing-kit', () => {
-  const actual = jest.requireActual('@qovery/shared/billing-kit')
+jest.mock('@qovery/shared/billing/feature', () => {
+  const actual = jest.requireActual('@qovery/shared/billing/feature')
   const client = {
     mode: 'live',
     publicPlans: () => Promise.resolve(),

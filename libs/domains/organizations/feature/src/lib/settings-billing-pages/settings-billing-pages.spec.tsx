@@ -5,9 +5,9 @@ import {
   type InvoiceDetails,
   billingUsageFactoryMock,
   createPricingClient,
-} from '@qovery/shared/billing-kit'
+} from '@qovery/shared/billing/data-access'
+import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { pickConsoleCalls, usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import { BillingSettingsView, InvoicesView, SettingsBillingSettings, SettingsInvoices } from './settings-billing-pages'
 
 const mockNavigate = jest.fn()
@@ -15,8 +15,8 @@ const mockNavigate = jest.fn()
 jest.mock('posthog-js/react', () => ({
   useFeatureFlagEnabled: jest.fn(),
 }))
-jest.mock('../hooks/use-pricing-client/use-pricing-client', () => ({
-  ...jest.requireActual('../hooks/use-pricing-client/use-pricing-client'),
+jest.mock('@qovery/shared/billing/feature', () => ({
+  ...jest.requireActual('@qovery/shared/billing/feature'),
   usePricingClient: jest.fn(),
 }))
 jest.mock('../settings-billing-summary/settings-billing-summary', () => ({

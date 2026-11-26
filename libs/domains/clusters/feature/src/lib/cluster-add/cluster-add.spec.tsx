@@ -1,6 +1,6 @@
 import axios from 'axios'
 import posthog from 'posthog-js'
-import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing-kit'
+import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing/data-access'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { type SelfManagedClusterCreationFlowProps } from '../self-managed-cluster-creation/self-managed-cluster-creation-flow'
 import { ClusterAdd } from './cluster-add'
