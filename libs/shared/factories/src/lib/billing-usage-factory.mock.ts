@@ -2,6 +2,16 @@ import { type BillingUsage } from 'qovery-pricing-typescript-axios'
 
 export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billing'): BillingUsage {
   const amounts = access !== 'member'
+  const deploymentDay = {
+    day: '2026-10-30',
+    deployments: 45,
+    failed: 1,
+    build_minutes: 21.4,
+    deploy_minutes: 246.3,
+    minutes: 267.7,
+    over_minutes: 0,
+    cost: 0,
+  }
   return {
     organization_id: 'org-northwind',
     generated_at: '2026-10-30T07:55:11Z',
@@ -83,14 +93,14 @@ export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billin
         overage_unit_price: 0,
       },
     ],
-    organization_usage: { 'deploy.minutes': 7657 },
+    organization_usage: { 'deploy.minutes': deploymentDay.deploy_minutes },
     deployments: {
       from: '2026-10-01',
       to: '2026-10-30',
-      deployments: 0,
-      build_minutes: 0,
-      deploy_minutes: 0,
-      days: [],
+      deployments: deploymentDay.deployments,
+      build_minutes: deploymentDay.build_minutes,
+      deploy_minutes: deploymentDay.deploy_minutes,
+      days: [deploymentDay],
     },
     prepaid_credits: [],
     ...(amounts
@@ -137,7 +147,7 @@ export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billin
           kind: 'meter',
           included: 8000,
           source: 'deployments',
-          points: [{ day: '2026-10-30', quantity: 102 }],
+          points: [{ day: deploymentDay.day, quantity: deploymentDay.deploy_minutes }],
         },
         {
           sku: 'clusters.managed',
@@ -152,10 +162,10 @@ export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billin
       deployment_months: [
         {
           month: '2026-10',
-          deployments: 1072,
-          build_minutes: 517.1,
-          deploy_minutes: 5913.8,
-          minutes: 6430.9,
+          deployments: deploymentDay.deployments,
+          build_minutes: deploymentDay.build_minutes,
+          deploy_minutes: deploymentDay.deploy_minutes,
+          minutes: deploymentDay.minutes,
           included: 8000,
           over_minutes: 0,
           cost: 0,
@@ -195,7 +205,9 @@ export function billingUsageFactoryMock(access: BillingUsage['access'] = 'billin
                   used_value: 122512,
                 },
               ],
-              per_unit: [{ label: 'per deployment', sku: 'deploy.count', count: 1072, amount: 84 }],
+              per_unit: [
+                { label: 'per deployment', sku: 'deploy.count', count: deploymentDay.deployments, amount: 84 },
+              ],
             },
           }
         : {}),
