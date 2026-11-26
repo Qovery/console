@@ -1,9 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import {
-  type ApplicationDeploymentRestriction,
-  type ServiceDeploymentRestrictionResponse,
-  type TerraformDeploymentRestrictionResponse,
-} from 'qovery-typescript-axios'
+import { type ServiceDeploymentRestrictionResponse } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import {
   type AnyService,
@@ -28,10 +24,6 @@ import {
 } from '@qovery/shared/ui'
 import { ServiceDeploymentRestrictionsModal } from '../service-deployment-restrictions-modal/service-deployment-restrictions-modal'
 
-type DeploymentRestriction =
-  | ApplicationDeploymentRestriction
-  | ServiceDeploymentRestrictionResponse
-  | TerraformDeploymentRestrictionResponse
 type SupportedService = Application | Container | Job | Helm | Terraform
 
 const ContentFallback = () => (
@@ -56,7 +48,7 @@ export function ServiceDeploymentRestrictionsSettings() {
     return null
   }
 
-  const openCrudModal = (deploymentRestriction?: DeploymentRestriction) => {
+  const openCrudModal = (deploymentRestriction?: ServiceDeploymentRestrictionResponse) => {
     if (!isSupportedService(service)) {
       return
     }
@@ -117,7 +109,7 @@ export function ServiceDeploymentRestrictionsSettings() {
 interface ServiceDeploymentRestrictionsSettingsInnerProps {
   environmentId: string
   serviceId: string
-  onOpenCrudModal: (deploymentRestriction?: DeploymentRestriction) => void
+  onOpenCrudModal: (deploymentRestriction?: ServiceDeploymentRestrictionResponse) => void
 }
 
 function ServiceDeploymentRestrictionsSettingsInner({
@@ -137,7 +129,7 @@ function ServiceDeploymentRestrictionsSettingsInner({
     return null
   }
 
-  const onDeleteRestriction = (deploymentRestriction: DeploymentRestriction) => {
+  const onDeleteRestriction = (deploymentRestriction: ServiceDeploymentRestrictionResponse) => {
     openModalConfirmation({
       title: 'Delete restriction',
       name: `${deploymentRestriction.mode}/${deploymentRestriction.type}/${deploymentRestriction.value}`,
@@ -168,7 +160,7 @@ function ServiceDeploymentRestrictionsSettingsInner({
 
   return (
     <BlockContent title="Deployment restrictions" classNameContent="p-0">
-      {deploymentRestrictions.map((deploymentRestriction: DeploymentRestriction, index: number) => (
+      {deploymentRestrictions.map((deploymentRestriction: ServiceDeploymentRestrictionResponse, index: number) => (
         <div
           key={deploymentRestriction.id}
           className="flex w-full items-center justify-between gap-2 border-b border-neutral px-4 py-3 last:border-0"

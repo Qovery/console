@@ -1,9 +1,7 @@
 import {
-  type ApplicationDeploymentRestriction,
   DeploymentRestrictionModeEnum,
   DeploymentRestrictionTypeEnum,
   type ServiceDeploymentRestrictionResponse,
-  type TerraformDeploymentRestrictionResponse,
 } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -17,14 +15,10 @@ import {
 import { useCreateDeploymentRestriction, useEditDeploymentRestriction } from '@qovery/domains/services/feature'
 import { ExternalLink, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 
-type DeploymentRestriction =
-  | ApplicationDeploymentRestriction
-  | ServiceDeploymentRestrictionResponse
-  | TerraformDeploymentRestrictionResponse
 type SupportedService = Application | Container | Job | Helm | Terraform
 
 interface ServiceDeploymentRestrictionsModalProps {
-  deploymentRestriction?: DeploymentRestriction
+  deploymentRestriction?: ServiceDeploymentRestrictionResponse
   onClose: () => void
   serviceId: string
   serviceType: SupportedService['serviceType']
