@@ -50,7 +50,7 @@ export function ConfirmationCancelLifecycleModal({
     }))
     .with('TERRAFORM', () => ({
       description:
-        'Cancelling stops the deployment of the whole environment. Unless you force the stop, it waits for the running Terraform command to finish. Actions already performed are not rolled back.',
+        'Cancelling stops the deployment of the whole environment. Unless you force the stop, it waits for the running Terraform command to finish. Terraform actions already applied are not rolled back.',
       forceLabel: 'Force Terraform stop',
       forceHelp:
         'Stop the running Terraform command now. It is killed if it does not stop within the grace period. The force applies to the whole environment: its other running jobs, including lifecycle jobs, are stopped too.',
@@ -88,7 +88,7 @@ export function ConfirmationCancelLifecycleModal({
           )}
         />
         {copy.warning && (
-          <Callout.Root color="yellow" className="mt-4">
+          <Callout.Root color="yellow" className="mt-2">
             <Callout.Icon>
               <Icon iconName="triangle-exclamation" iconStyle="regular" />
             </Callout.Icon>
