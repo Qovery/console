@@ -9,20 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - name: Cache node modules
-        id: cache
-        uses: actions/cache@v6.1.0
-        with:
-          path: node_modules
-          key: node-${{ hashFiles('.nvmrc') }}-cache-node-${{ hashFiles('yarn.lock') }}
       - name: Setup Node
         uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
-          cache: 'yarn'
       - name: Enable Corepack
         run: corepack enable
       - name: yarn install
+        env:
+          QOVERY_NPM_READ_TOKEN: ${{ secrets.QOVERY_NPM_READ_TOKEN }}
         run: yarn install --immutable
 
   semantic-release:
@@ -33,20 +28,15 @@ jobs:
         name: Checkout main
         with:
           fetch-depth: 0
-      - name: Cache node modules
-        id: cache
-        uses: actions/cache@v6.1.0
-        with:
-          path: node_modules
-          key: node-${{ hashFiles('.nvmrc') }}-cache-node-${{ hashFiles('yarn.lock') }}
       - name: Setup Node
         uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
-          cache: 'yarn'
       - name: Enable Corepack
         run: corepack enable
       - name: Install dependencies
+        env:
+          QOVERY_NPM_READ_TOKEN: ${{ secrets.QOVERY_NPM_READ_TOKEN }}
         run: yarn install --immutable
       - name: Launch Semantic release
         env:
