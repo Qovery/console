@@ -1,5 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { containerFactoryMock, gitContainerFactoryMock } from '@qovery/shared/factories'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { containerFactoryMock, databaseFactoryMock, gitContainerFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { PageSettingsPreviewEnvironments, SettingsPreviewEnvironmentsFeature } from './settings-preview-environments'
 
@@ -27,12 +28,12 @@ const imageContainer = { ...containerFactoryMock(1)[0], id: 'image-container' }
 const gitContainer = { ...gitContainerFactoryMock(1)[0], id: 'git-container' }
 
 describe('PageSettingsPreviewEnvironments', () => {
-  const renderPage = () =>
+  const renderPage = (services: AnyService[] = [imageContainer, gitContainer]) =>
     renderWithProviders(
       wrapWithReactHookForm(
         <PageSettingsPreviewEnvironments
           onSubmit={jest.fn()}
-          services={[imageContainer, gitContainer]}
+          services={services}
           loading={false}
           toggleAll={jest.fn()}
           toggleEnablePreview={jest.fn()}
@@ -61,6 +62,13 @@ describe('PageSettingsPreviewEnvironments', () => {
         'A preview environment follows new commits on its pull request only for services with auto-deploy enabled.'
       )
     ).toBeInTheDocument()
+  })
+
+  it('should hide the services title and the auto-deploy note when only databases are listed', () => {
+    renderPage(databaseFactoryMock(1))
+
+    expect(screen.queryByTestId('services-title')).not.toBeInTheDocument()
+    expect(screen.queryByText(/only for services with auto-deploy enabled/)).not.toBeInTheDocument()
   })
 })
 

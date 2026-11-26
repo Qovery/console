@@ -40,6 +40,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
   const hasArgoCdServices = services?.some(isArgoCd)
   const hasQoveryServices = services?.some(isEditableService)
   const shouldDisplayArgoCdPreviewWarning = hasArgoCdServices && hasQoveryServices
+  const hasNonDatabaseServices = services?.some((service) => service.serviceType !== 'DATABASE')
 
   const getIconName = (service: AnyService) =>
     match(service)
@@ -98,7 +99,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
               )}
             />
             <div data-testid="toggles" className={services && services.length > 0 ? 'mt-5' : ''}>
-              {services && services.length > 0 && (
+              {hasNonDatabaseServices && (
                 <>
                   <h2 data-testid="services-title" className="mb-5 text-ssm font-medium text-neutral">
                     Create Preview for PR opened on those services
