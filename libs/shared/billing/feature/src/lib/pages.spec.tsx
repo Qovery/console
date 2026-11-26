@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { BillingInfoView, CustomerInvoice, InvoicePage, PaymentMethods } from 'qovery-pricing-typescript-axios'
 import { type AwsMarketplace, BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
-import { billingUsageFactoryMock } from '@qovery/shared/factories'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingSettingsPage } from './billing-settings-page'
 import { InvoicesPage } from './invoices-page'
@@ -97,7 +96,7 @@ describe('InvoicesPage', () => {
   it('keeps invoices on a transient access refresh failure and hides them after access is denied', async () => {
     const queryClient = new QueryClient()
     const pricingClient = client({
-      billingUsage: jest.fn().mockResolvedValue(billingUsageFactoryMock()),
+      billingUsage: jest.fn().mockResolvedValue({ access: 'billing' }),
     })
     const usage = jest.mocked(pricingClient.billingUsage)
     const { queryKey } = billing.usage({ client: pricingClient, organizationId: 'org-1' })

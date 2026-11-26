@@ -1,12 +1,19 @@
 import type { PricingClient } from '@qovery/shared/billing/data-access'
-import { billingUsageFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingPage } from './billing-page'
 
 const client = (): PricingClient => ({
   mode: 'live',
   publicPlans: jest.fn().mockReturnValue(new Promise(() => undefined)),
-  billingUsage: jest.fn().mockResolvedValue(billingUsageFactoryMock()),
+  billingUsage: jest.fn().mockResolvedValue({
+    access: 'billing',
+    plan: { code: 'growth', name: 'Growth' },
+    billing: { currency: 'USD', period: 'year', term_end: '2027-03-30', status: 'active' },
+    entitlements: [],
+    prepaid_credits: [],
+    status: { status: 'ok' },
+    notes: [],
+  }),
   spendLimits: jest.fn().mockRejectedValue(new Error('no spend limits')),
 })
 

@@ -2,7 +2,6 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import type { BillingUsage, CustomerInvoice, InvoiceDetails } from 'qovery-pricing-typescript-axios'
 import { type PricingClient } from '@qovery/shared/billing/data-access'
 import { usePricingClient } from '@qovery/shared/billing/feature'
-import { billingUsageFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingSettingsView, InvoicesView, SettingsBillingSettings, SettingsInvoices } from './settings-billing-pages'
 
@@ -94,11 +93,14 @@ const invoiceDetails: InvoiceDetails = {
   ],
 }
 
-const mockPricingClient = (usage: BillingUsage, invoices: CustomerInvoice[] = [overdueInvoice]) => {
+const mockPricingClient = (
+  access: BillingUsage['access'] = 'billing',
+  invoices: CustomerInvoice[] = [overdueInvoice]
+) => {
   const client = {
     mode: 'live',
     publicPlans: jest.fn(),
-    billingUsage: jest.fn().mockResolvedValue(usage),
+    billingUsage: jest.fn().mockResolvedValue({ access }),
     spendLimits: jest.fn(),
     invoices: jest.fn().mockResolvedValue({
       invoices,
@@ -135,7 +137,7 @@ describe('SettingsInvoices and SettingsBillingSettings', () => {
 
   it('should show the invoices page when the flag is on', async () => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
-    mockPricingClient(billingUsageFactoryMock())
+    mockPricingClient()
     renderWithProviders(<SettingsInvoices />)
 
     expect(await screen.findByText('INV-2026-0042')).toBeInTheDocument()
@@ -147,7 +149,7 @@ describe('InvoicesView', () => {
   beforeEach(() => mockNavigate.mockClear())
 
   it('should show members one line without calling the invoice or payment APIs', async () => {
-    const client = mockPricingClient(billingUsageFactoryMock('member'))
+    const client = mockPricingClient('member')
     renderWithProviders(<InvoicesView />)
 
     expect(
@@ -160,7 +162,7 @@ describe('InvoicesView', () => {
   })
 
   it('should open the billing page to update the payment method', async () => {
-    mockPricingClient(billingUsageFactoryMock())
+    mockPricingClient()
     const { userEvent } = renderWithProviders(<InvoicesView />)
 
     await screen.findByText('INV-2026-0042')
@@ -173,7 +175,7 @@ describe('InvoicesView', () => {
   })
 
   it('should open the details of an invoice with the usage behind its usage line', async () => {
-    const client = mockPricingClient(billingUsageFactoryMock())
+    const client = mockPricingClient()
     const { userEvent } = renderWithProviders(<InvoicesView />)
 
     await screen.findByText('INV-2026-0042')
@@ -185,7 +187,7 @@ describe('InvoicesView', () => {
   })
 
   it('should confirm before paying an invoice', async () => {
-    const client = mockPricingClient(billingUsageFactoryMock())
+    const client = mockPricingClient()
     const { userEvent } = renderWithProviders(<InvoicesView />)
 
     await screen.findByText('INV-2026-0042')
@@ -202,7 +204,7 @@ describe('BillingSettingsView', () => {
   beforeEach(() => mockNavigate.mockClear())
 
   it('should link the overdue alert to the invoices page', async () => {
-    mockPricingClient(billingUsageFactoryMock())
+    mockPricingClient()
     const { userEvent } = renderWithProviders(<BillingSettingsView />)
 
     await userEvent.click(await screen.findByRole('button', { name: 'View invoices' }))
@@ -214,7 +216,7 @@ describe('BillingSettingsView', () => {
   })
 
   it('should show members one line', async () => {
-    mockPricingClient(billingUsageFactoryMock('member'))
+    mockPricingClient('member')
     renderWithProviders(<BillingSettingsView />)
 
     expect(

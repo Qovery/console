@@ -1,5 +1,4 @@
 import axios, { type AxiosAdapter, type InternalAxiosRequestConfig } from 'axios'
-import { billingUsageFactoryMock } from '@qovery/shared/factories'
 import { renderHook } from '@qovery/shared/util-tests'
 import { usePricingClient } from './use-pricing-client'
 
@@ -14,7 +13,14 @@ describe('usePricingClient', () => {
   const originalAdapter = axios.defaults.adapter
   const adapter = jest.fn<ReturnType<AxiosAdapter>, [InternalAxiosRequestConfig]>()
   const e2eTokenKey = 'qovery-e2e-auth-token'
-  const usage = billingUsageFactoryMock()
+  const usage = {
+    access: 'billing',
+    plan: { name: 'Growth' },
+    billing: { currency: 'USD', period: 'month', term_end: '2027-03-30', locked: false },
+    entitlements: [],
+    status: { status: 'ok' },
+    notes: [],
+  }
 
   beforeEach(() => {
     mockSubject = undefined

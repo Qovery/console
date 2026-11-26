@@ -13,7 +13,6 @@ When syncing from pricing-api:
 - Map upstream files to their existing Console paths. Use kebab-case file names, update relative imports, and run
   the Console formatter.
 - Keep the Console settings layout, responsive spacing, typography and accessible headings in the affected screens.
-- Use the generated SDK types. Keep Console fixtures in the shared factories library. The website's
-  `embed.tsx`, `embed.scss` and `inline.d.ts` stay in pricing-api.
+- Use the generated SDK types. The website's `embed.tsx`, `embed.scss` and `inline.d.ts` stay in pricing-api.
 
 `createPricingClient` calls pricing-api with the signed-in user's Qovery token. Public plan reads are unauthenticated.

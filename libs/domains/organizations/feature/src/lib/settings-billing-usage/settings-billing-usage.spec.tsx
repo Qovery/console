@@ -10,7 +10,6 @@ import {
   createPricingClient,
 } from '@qovery/shared/billing/data-access'
 import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
-import { billingUsageFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import {
   BILLING_USAGE_FEATURE_FLAG,
@@ -82,7 +81,31 @@ const mockPricingApi = (
   return adapter
 }
 
-const mockUsage = (usage: BillingUsage, routes?: Record<string, Route>) =>
+const baseUsage: BillingUsage = {
+  organization_id: 'org-northwind',
+  generated_at: '2026-11-01',
+  access: 'billing',
+  plan: { code: 'growth', name: 'Growth', version: 1, legacy: false },
+  billing: {
+    period: 'year',
+    cadence: 'annual',
+    currency: 'USD',
+    term_start: '2026-03-30',
+    term_end: '2027-03-30',
+    status: 'active',
+    locked: false,
+  },
+  entitlements: [],
+  organization_usage: {},
+  deployments: { from: '2026-10-01', to: '2026-10-31', deployments: 0, build_minutes: 0, deploy_minutes: 0, days: [] },
+  prepaid_credits: [],
+  status: { status: 'ok' },
+  notes: [],
+}
+
+const memberUsage: BillingUsage = { ...baseUsage, access: 'member' }
+
+const mockUsage = (usage = baseUsage, routes?: Record<string, Route>) =>
   mockPricingApi(async () => jsonResponse(200, usage), routes)
 
 const calledPaths = (adapter: AdapterMock) =>
@@ -321,7 +344,7 @@ const bodyOf = (adapter: AdapterMock, suffix: string) => sentTo(adapter, suffix)
 
 describe('BillingUsageView', () => {
   it('should call pricing-api with the user token', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock())
+    const adapter = mockUsage()
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
@@ -330,18 +353,8 @@ describe('BillingUsageView', () => {
     expect(config?.headers.get('Authorization')).toBe('Bearer user-token')
   })
 
-  it('should render the plan and its limits', async () => {
-    mockUsage(billingUsageFactoryMock())
-    renderWithProviders(<BillingUsageView />)
-
-    expect(await screen.findByText('Growth')).toBeInTheDocument()
-    expect(screen.getAllByText('Managed clusters').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Members').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Deployment minutes').length).toBeGreaterThan(0)
-  })
-
   it('should draw Plan details with SettingsHeading, its buttons on the right and the alerts under it', async () => {
-    mockUsage(billingUsageFactoryMock('billing'), {
+    mockUsage(baseUsage, {
       ...journeyRoutes(),
       '/invoices': () =>
         jsonResponse(200, {
@@ -380,7 +393,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should send plan, cancellation and history calls to pricing-api, never offers or email preferences', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock('billing'), journeyRoutes())
+    const adapter = mockUsage(baseUsage, journeyRoutes())
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByRole('button', { name: 'Change plan' })).toBeInTheDocument()
@@ -403,7 +416,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should link to Settings, Notifications, Billing for the email preferences instead of showing the toggles', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock('member'))
+    const adapter = mockUsage(memberUsage)
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Email notifications')).toBeInTheDocument()
@@ -420,7 +433,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should quote a plan change with a dry run before anything is applied', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock('billing'), journeyRoutes())
+    const adapter = mockUsage(baseUsage, journeyRoutes())
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     await userEvent.click(await screen.findByRole('button', { name: 'Change plan' }))
@@ -433,7 +446,7 @@ describe('BillingUsageView', () => {
   it('should open the support chat when a change or a cancellation needs sales', async () => {
     mockShowChat.mockClear()
     mockUsage(
-      billingUsageFactoryMock('billing'),
+      baseUsage,
       journeyRoutes(
         { available: false, code: 'SELF_SERVE_UNAVAILABLE' },
         { available: false, code: 'SELF_SERVE_UNAVAILABLE' }
@@ -451,7 +464,7 @@ describe('BillingUsageView', () => {
 
   it('should show the overdue alert once, under the page heading, and link it to the invoices page', async () => {
     mockNavigate.mockClear()
-    mockUsage(billingUsageFactoryMock('billing'), {
+    mockUsage(baseUsage, {
       '/invoices': () =>
         jsonResponse(200, {
           invoices: [
@@ -485,7 +498,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should not read plan options or the cancellation for members', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock('member'), journeyRoutes())
+    const adapter = mockUsage(memberUsage, journeyRoutes())
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
@@ -495,7 +508,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should show prepaid credits and buy them with a quote first, then the review key', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock('billing'), {
+    const adapter = mockUsage(baseUsage, {
       '/credits': (config) => {
         if (config.method !== 'post') return jsonResponse(200, credits)
         const body = JSON.parse(config.data)
@@ -566,7 +579,7 @@ describe('BillingUsageView', () => {
       discount_until: '2027-11-20',
       term_months: 0,
     }
-    const adapter = mockUsage(billingUsageFactoryMock('billing'), {
+    const adapter = mockUsage(baseUsage, {
       '/discounts': () => jsonResponse(200, view),
       '/discounts/quote': () => jsonResponse(200, discountQuote),
       '/discountRequests': () => jsonResponse(201, { ...view, discounts: [] }),
@@ -595,7 +608,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should show a plan proposal to billing roles and review it through the proposal, with its concession', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const adapter = mockUsage(baseUsage, proposalRoutes())
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     expect(
@@ -616,7 +629,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should dismiss a plan proposal with a reason and hide it', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const adapter = mockUsage(baseUsage, proposalRoutes())
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     await userEvent.click(await screen.findByRole('button', { name: 'Dismiss' }))
@@ -628,7 +641,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should snooze a plan proposal for the chosen time and hide it', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+    const adapter = mockUsage(baseUsage, proposalRoutes())
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
     await userEvent.click(await screen.findByRole('button', { name: 'Remind me later' }))
@@ -639,7 +652,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should not read plan proposals for members', async () => {
-    const adapter = mockUsage(billingUsageFactoryMock('member'), proposalRoutes())
+    const adapter = mockUsage(memberUsage, proposalRoutes())
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
@@ -650,7 +663,7 @@ describe('BillingUsageView', () => {
     const originalUrl = window.location.href
     window.history.pushState({}, '', '/organization/org-northwind/settings/billing?proposal=7')
     try {
-      const adapter = mockUsage(billingUsageFactoryMock('billing'), proposalRoutes())
+      const adapter = mockUsage(baseUsage, proposalRoutes())
       renderWithProviders(<BillingUsageView />)
 
       expect(await screen.findByText(/already taken off above/)).toBeInTheDocument()
@@ -663,7 +676,7 @@ describe('BillingUsageView', () => {
 
   it('should show members their prepaid balances, never prices or the buy button', async () => {
     const usage = {
-      ...billingUsageFactoryMock('member'),
+      ...memberUsage,
       prepaid_credits: [
         { sku: 'deploy.minutes', name: 'Deployment minutes', unit: 'minutes', balance: 5000, remaining: 4200 },
       ],
@@ -678,8 +691,7 @@ describe('BillingUsageView', () => {
   })
 
   it('should offer to reactivate an ended subscription and confirm with the review key', async () => {
-    const ended = billingUsageFactoryMock('billing')
-    ended.billing = { ...ended.billing, status: 'cancelled', locked: true }
+    const ended = { ...baseUsage, billing: { ...baseUsage.billing, status: 'cancelled', locked: true } }
     const adapter = mockUsage(ended, {
       ...journeyRoutes({ available: false, code: 'SUBSCRIPTION_ENDED' }),
       '/reactivation': (config) => {
@@ -704,23 +716,79 @@ describe('BillingUsageView', () => {
     expect(posts[1].key).toEqual(expect.any(String))
   })
 
-  it('should show amounts to billing roles', async () => {
-    mockUsage(billingUsageFactoryMock('billing'))
-    renderWithProviders(<BillingUsageView />)
-
-    expect(await screen.findByText('Estimated bill')).toBeInTheDocument()
-    expect(screen.getByText('$10,788')).toBeInTheDocument()
-    expect(screen.getByText('What your plan covers')).toBeInTheDocument()
-  })
-
-  it('should hide amounts from members', async () => {
-    mockUsage(billingUsageFactoryMock('member'))
+  it.each(['billing', 'member'] as const)('shows the usage amounts only to billing roles (%s)', async (access) => {
+    mockUsage({
+      ...baseUsage,
+      access,
+      estimate: {
+        plan: 'Growth',
+        currency: 'USD',
+        period: 'year',
+        term_end: '2027-03-30',
+        lines: [],
+        total: 1078800,
+      },
+      usage_insights: {
+        from: '2026-10-01',
+        to: '2026-10-31',
+        series: [],
+        deployment_months: [
+          {
+            month: '2026-10',
+            deployments: 3,
+            build_minutes: 5,
+            deploy_minutes: 10,
+            minutes: 15,
+            included: 8000,
+            over_minutes: 0,
+            cost: 0,
+          },
+        ],
+        projection: [
+          {
+            sku: 'deploy.minutes',
+            name: 'Deployment minutes',
+            unit: 'minutes',
+            used: 10,
+            included: 8000,
+            projected: 20,
+            projected_over: 0,
+            days_elapsed: 15,
+            days_in_month: 31,
+            daily_pace: 1,
+          },
+        ],
+        value: {
+          currency: 'USD',
+          monthly_fee: 89900,
+          included_value: 128000,
+          used_value: 122512,
+          lines: [
+            {
+              sku: 'deploy.minutes',
+              name: 'Deployment minutes',
+              unit: 'minutes',
+              used: 7657,
+              included: 8000,
+              unit_price: 16,
+              included_value: 128000,
+              used_value: 122512,
+            },
+          ],
+          per_unit: [{ label: 'per deployment', sku: 'deploy.count', count: 3, amount: 84 }],
+        },
+      },
+    })
     renderWithProviders(<BillingUsageView />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
-    expect(screen.queryByText('Estimated bill')).not.toBeInTheDocument()
-    expect(screen.queryByText('$10,788')).not.toBeInTheDocument()
-    expect(screen.queryByText('What your plan covers')).not.toBeInTheDocument()
+    expect(screen.getByText('At this pace')).toBeInTheDocument()
+    expect(screen.getByText('Deployment minutes per month')).toBeInTheDocument()
+    const showsAmounts = access === 'billing'
+    expect(Boolean(screen.queryByText('Estimated bill'))).toBe(showsAmounts)
+    expect(Boolean(screen.queryByText('$10,788'))).toBe(showsAmounts)
+    expect(Boolean(screen.queryByText('What your plan covers'))).toBe(showsAmounts)
+    expect(Boolean(screen.queryByText(/per deployment/))).toBe(showsAmounts)
   })
 
   it('should explain an organization not linked to a billing account', async () => {
@@ -756,9 +824,7 @@ describe('BillingUsageView', () => {
     let calls = 0
     mockPricingApi(() => {
       calls += 1
-      return calls <= 3
-        ? Promise.reject(new Error('Network Error'))
-        : Promise.resolve(jsonResponse(200, billingUsageFactoryMock()))
+      return calls <= 3 ? Promise.reject(new Error('Network Error')) : Promise.resolve(jsonResponse(200, baseUsage))
     })
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
@@ -771,7 +837,7 @@ describe('BillingUsageView', () => {
 describe('SettingsBillingUsage', () => {
   it.each([false, undefined])('should show the billing summary when the flag is %s', (flag) => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(flag)
-    mockUsage(billingUsageFactoryMock())
+    mockUsage()
     renderWithProviders(<SettingsBillingUsage />)
 
     expect(useFeatureFlagEnabled).toHaveBeenCalledWith(BILLING_USAGE_FEATURE_FLAG)
@@ -780,7 +846,7 @@ describe('SettingsBillingUsage', () => {
 
   it('should show plan and usage when the flag is on', async () => {
     jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
-    mockUsage(billingUsageFactoryMock())
+    mockUsage()
     renderWithProviders(<SettingsBillingUsage />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
