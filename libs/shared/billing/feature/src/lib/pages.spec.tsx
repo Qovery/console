@@ -1,5 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { BillingInfoView, CustomerInvoice, InvoicePage, PaymentMethods } from 'qovery-pricing-typescript-axios'
+import type {
+  BillingInfoView,
+  BillingUsage,
+  CustomerInvoice,
+  InvoicePage,
+  PaymentMethods,
+} from 'qovery-pricing-typescript-axios'
 import { type AwsMarketplace, BillingError, type PricingClient, billing } from '@qovery/shared/billing/data-access'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingSettingsPage } from './billing-settings-page'
@@ -95,9 +101,35 @@ describe('InvoicesPage', () => {
 
   it('keeps invoices on a transient access refresh failure and hides them after access is denied', async () => {
     const queryClient = new QueryClient()
-    const pricingClient = client({
-      billingUsage: jest.fn().mockResolvedValue({ access: 'billing' }),
-    })
+    const usageResponse: BillingUsage = {
+      organization_id: 'org-1',
+      generated_at: '2026-11-01',
+      access: 'billing',
+      plan: { code: 'growth', name: 'Growth', version: 1, legacy: false },
+      billing: {
+        currency: 'USD',
+        period: 'year',
+        cadence: 'annual',
+        term_start: '2026-03-30',
+        term_end: '2027-03-30',
+        status: 'active',
+        locked: false,
+      },
+      entitlements: [],
+      organization_usage: {},
+      deployments: {
+        from: '2026-10-01',
+        to: '2026-10-31',
+        deployments: 0,
+        build_minutes: 0,
+        deploy_minutes: 0,
+        days: [],
+      },
+      prepaid_credits: [],
+      status: { status: 'ok' },
+      notes: [],
+    }
+    const pricingClient = client({ billingUsage: jest.fn().mockResolvedValue(usageResponse) })
     const usage = jest.mocked(pricingClient.billingUsage)
     const { queryKey } = billing.usage({ client: pricingClient, organizationId: 'org-1' })
     const { userEvent } = renderWithProviders(

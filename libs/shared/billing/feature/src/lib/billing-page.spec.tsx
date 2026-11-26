@@ -1,19 +1,34 @@
+import type { BillingUsage } from 'qovery-pricing-typescript-axios'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingPage } from './billing-page'
 
+const usage: BillingUsage = {
+  organization_id: 'org-1',
+  generated_at: '2026-11-01',
+  access: 'billing',
+  plan: { code: 'growth', name: 'Growth', version: 1, legacy: false },
+  billing: {
+    currency: 'USD',
+    period: 'year',
+    cadence: 'annual',
+    term_start: '2026-03-30',
+    term_end: '2027-03-30',
+    status: 'active',
+    locked: false,
+  },
+  entitlements: [],
+  organization_usage: {},
+  deployments: { from: '2026-10-01', to: '2026-10-31', deployments: 0, build_minutes: 0, deploy_minutes: 0, days: [] },
+  prepaid_credits: [],
+  status: { status: 'ok' },
+  notes: [],
+}
+
 const client = (): PricingClient => ({
   mode: 'live',
   publicPlans: jest.fn().mockReturnValue(new Promise(() => undefined)),
-  billingUsage: jest.fn().mockResolvedValue({
-    access: 'billing',
-    plan: { code: 'growth', name: 'Growth' },
-    billing: { currency: 'USD', period: 'year', term_end: '2027-03-30', status: 'active' },
-    entitlements: [],
-    prepaid_credits: [],
-    status: { status: 'ok' },
-    notes: [],
-  }),
+  billingUsage: jest.fn().mockResolvedValue(usage),
   spendLimits: jest.fn().mockRejectedValue(new Error('no spend limits')),
 })
 
