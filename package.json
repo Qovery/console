@@ -79,7 +79,7 @@
     "monaco-editor": "0.53.0",
     "posthog-js": "1.345.1",
     "qovery-pricing-typescript-axios": "file:vendor/qovery-pricing-typescript-axios-0.1.1.tgz",
-    "qovery-typescript-axios": "1.1.1051",
+    "qovery-typescript-axios": "1.1.1053",
     "react": "19.3.0",
     "react-country-flag": "3.0.2",
     "react-datepicker": "4.12.0",
