@@ -22,6 +22,8 @@ nvm install
 nvm use
 ```
 
+Before installing dependencies, set `QOVERY_NPM_READ_TOKEN` to a read token for the private Billing SDK in the Qovery npm registry. Docker builds accept the same token as a BuildKit secret.
+
 First use
 
 ```sh
