@@ -1,7 +1,6 @@
 import { useParams } from '@tanstack/react-router'
-import { BillingSettingsPage, InvoicesPage } from '@qovery/shared/billing-kit'
+import { BillingSettingsPage, InvoicesPage, usePricingClient } from '@qovery/shared/billing/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { usePricingClient } from '../hooks/use-pricing-client/use-pricing-client'
 import { SettingsBillingDetails } from '../settings-billing-details/settings-billing-details'
 import { SettingsBillingSummary } from '../settings-billing-summary/settings-billing-summary'
 import {

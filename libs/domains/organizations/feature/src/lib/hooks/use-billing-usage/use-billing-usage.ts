@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { BillingError } from '@qovery/shared/billing-kit'
-import { usePricingClient } from '../use-pricing-client/use-pricing-client'
+import { BillingError } from '@qovery/shared/billing/data-access'
+import { usePricingClient } from '@qovery/shared/billing/feature'
 
 export type BillingUsageErrorType = 'session-expired' | 'not-a-member' | 'not-linked' | 'unavailable'
 

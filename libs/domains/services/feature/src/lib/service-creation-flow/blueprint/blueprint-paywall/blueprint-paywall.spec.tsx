@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing-kit'
+import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing/data-access'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintPaywall } from './blueprint-paywall'
 
