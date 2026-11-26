@@ -55,9 +55,10 @@ export function amount(cents: number, currency: string, locale?: string) {
 
 /** A quantity with its unit: "1,025 minutes", "1 member", "12.5 minutes". */
 export function quantity(n: number, unit: string) {
-  const v = Number.isInteger(n) ? num(n) : (Math.round(n * 10) / 10).toLocaleString('en-US')
+  const rounded = Number.isInteger(n) ? n : Math.round(n * 10) / 10
+  const v = rounded.toLocaleString('en-US')
   if (!unit) return v
-  return `${v} ${n === 1 ? unit.replace(/s$/, '') : unit}`
+  return `${v} ${rounded === 1 ? unit.replace(/s$/, '') : unit}`
 }
 
 /** A line of the estimate as the customer reads it: usage with its unit, several add-ons counted. */

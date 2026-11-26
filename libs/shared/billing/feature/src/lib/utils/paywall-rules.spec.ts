@@ -255,6 +255,8 @@ describe('plan proposals', () => {
   it('should open a proposal id from the email deep link, nothing else', () => {
     expect(proposalFromSearch('?proposal=12')).toBe(12)
     expect(proposalFromSearch('?tab=usage&proposal=7')).toBe(7)
+    expect(proposalFromSearch(`?proposal=${Number.MAX_SAFE_INTEGER}`)).toBe(Number.MAX_SAFE_INTEGER)
+    expect(proposalFromSearch('?proposal=9007199254740993')).toBeUndefined()
     for (const bad of ['', '?proposal=', '?proposal=0', '?proposal=-1', '?proposal=1e3', '?proposal=12abc']) {
       expect(proposalFromSearch(bad)).toBeUndefined()
     }

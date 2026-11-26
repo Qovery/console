@@ -67,5 +67,6 @@ export function isProposalChange(
 export function proposalFromSearch(search: string): number | undefined {
   const v = new URLSearchParams(search).get('proposal')
   if (!v || !/^[1-9][0-9]{0,15}$/.test(v)) return undefined
-  return Number(v)
+  const id = Number(v)
+  return Number.isSafeInteger(id) ? id : undefined
 }

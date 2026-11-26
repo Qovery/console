@@ -1,4 +1,5 @@
 import type { Gate, GateIntro, PaywallInfo, PaywallOption, Period } from 'qovery-pricing-typescript-axios'
+import { money } from './format'
 
 /** The gate for an action id (cluster.create) or a SKU (service_catalog). */
 export function gateFor(gates: Gate[] | undefined, key: string): Gate | undefined {
@@ -55,22 +56,12 @@ export function gateKeyFromBody(status: number | undefined, body: unknown): { ac
   return null
 }
 
-// format.ts's money, here so the rules load in plain Node (no runtime import).
-const cents = (c: number, currency: string) => {
-  const v = c / 100
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: Math.abs(v) >= 100 || Number.isInteger(v) ? 0 : 2,
-  }).format(v)
-}
-
 /** "$1,124 per month, $750 more than today" for an upgrade or add-on option. */
 export function optionPrice(o: PaywallOption): string {
   if (o.amount == null || !o.currency) return ''
-  const per = `${cents(o.amount, o.currency)} per ${o.period ?? 'month'}`
+  const per = `${money(o.amount, o.currency)} per ${o.period ?? 'month'}`
   if (o.type === 'upgrade' && o.difference != null && o.difference !== o.amount)
-    return `${per}, ${cents(o.difference, o.currency)} more than today`
+    return `${per}, ${money(o.difference, o.currency)} more than today`
   return per
 }
 

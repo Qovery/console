@@ -60,6 +60,22 @@ describe('usePricingClient', () => {
     await expect(result.current.billingUsage('org-1')).rejects.toMatchObject({ code: 'INVALID_RESPONSE' })
   })
 
+  it('should retain the empty service filter for unattributed build usage', async () => {
+    const { result } = renderHook(() => usePricingClient())
+
+    await result.current.buildUsage?.('org-1', {
+      from: '2026-11-01',
+      to: '2026-11-30',
+      granularity: 'day',
+      service: '',
+    })
+
+    const [config] = adapter.mock.calls[0]
+    const url = new URL(axios.getUri(config))
+    expect(url.pathname).toBe('/organization/org-1/buildUsage')
+    expect(url.searchParams.get('service')).toBe('')
+  })
+
   it('should keep the same client between renders', () => {
     const { result, rerender } = renderHook(() => usePricingClient())
     const first = result.current

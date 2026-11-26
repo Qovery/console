@@ -1,5 +1,3 @@
-// The billing kit's rules for the plan change, the cancellation and the usage history
-// (rules.ts), from pricing-api's web/tests/journey.test.ts.
 import type { UsageHistoryData } from 'qovery-pricing-typescript-axios'
 import { estimateLineLabel, quantity } from './format'
 import { changeBlockedText, changeKind, newIdempotencyKey } from './subscription-rules'
@@ -36,6 +34,7 @@ test('a custom range follows the server: dates, order, no future, 24 months at m
 test('quantities read with their unit, estimate lines without "× 1025"', () => {
   expect(quantity(1025, 'minutes')).toBe('1,025 minutes')
   expect(quantity(1, 'members')).toBe('1 member')
+  expect(quantity(1.04, 'minutes')).toBe('1 minute')
   expect(quantity(12.46, 'minutes')).toBe('12.5 minutes')
   expect(quantity(3, '')).toBe('3')
   const unit = (sku: string) => (({ 'deploy.minutes': 'minutes' }) as Record<string, string>)[sku] ?? ''
