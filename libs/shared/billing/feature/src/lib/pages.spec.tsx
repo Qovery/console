@@ -101,7 +101,7 @@ describe('InvoicesPage', () => {
     })
     const usage = jest.mocked(pricingClient.billingUsage)
     const { queryKey } = billing.usage({ client: pricingClient, organizationId: 'org-1' })
-    renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <QueryClientProvider client={queryClient}>
         <InvoicesPage organizationId="org-1" client={pricingClient} alerts={false} />
       </QueryClientProvider>
@@ -117,6 +117,13 @@ describe('InvoicesPage', () => {
     await act(() => queryClient.invalidateQueries({ queryKey }))
     expect(await screen.findByText(/only owners, admins and billing managers/i)).toBeInTheDocument()
     expect(screen.queryByText('INV-1')).not.toBeInTheDocument()
+
+    usage.mockRejectedValueOnce(new Error('Network failure after access changed'))
+    await act(() => queryClient.invalidateQueries({ queryKey }))
+    expect(await screen.findByText('Network failure after access changed')).toBeInTheDocument()
+    expect(screen.queryByText('INV-1')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+    expect(await screen.findByText('INV-1')).toBeInTheDocument()
   })
 
   it('should not request invoices for a member', async () => {

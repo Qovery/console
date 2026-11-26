@@ -85,7 +85,7 @@ export function useAccess(client: PricingClient, organizationId: string, given?:
   const status = usage.error instanceof BillingError ? usage.error.status : undefined
   const deniedStatus = denied?.client === client && denied.organizationId === organizationId ? denied.status : undefined
   const accessStatus = deniedStatus ?? status
-  const error = match(accessStatus)
+  const error = match(status)
     .with(401, () => 'Your session has expired. Sign in again to view billing.')
     .with(404, () => 'This organization is not linked to a billing account.')
     .with(403, () => '')

@@ -72,7 +72,7 @@ export function InvoicesPage({
   onNavigate,
 }: InvoicesPageProps) {
   const { access, error: accessError, retry: retryAccess } = useAccess(client, organizationId, given)
-  if (!access && accessError) return <BillingAccessError error={accessError} onRetry={retryAccess} />
+  if (accessError && !isBillingAccess(access)) return <BillingAccessError error={accessError} onRetry={retryAccess} />
   if (!access)
     return (
       <div className="rounded border border-neutral bg-surface-neutral p-5">
