@@ -180,7 +180,7 @@ export function ProposalBanner({
           {p.message && (
             <p className="mt-1 line-clamp-3 whitespace-pre-line text-sm text-neutral-subtle">{p.message}</p>
           )}
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-neutral-subtle">
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-neutral-subtle">
             {p.current.yearly != null && p.proposed.yearly != null && (
               <span>
                 {p.current.plan_name} today about {money(p.current.yearly, p.currency)} a year, {p.plan.name} about{' '}

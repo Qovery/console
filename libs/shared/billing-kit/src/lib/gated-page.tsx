@@ -259,11 +259,11 @@ export function GatedPage({
       <div className="flex min-h-12 items-center gap-2 border-b border-neutral px-4 py-2 sm:px-6">
         <Icon iconName={view.icon as 'lock'} iconStyle="regular" className="text-sm text-neutral-subtle" />
         <span className="truncate text-sm font-medium text-neutral">{view.title}</span>
-        <Badge color={intro ? 'green' : 'neutral'} variant="surface" size="sm" className="shrink-0">
+        <Badge color={intro ? 'green' : 'neutral'} variant="surface" size="sm" className="shrink-0 font-medium">
           {view.chip}
         </Badge>
         {client.mode === 'preview' && (
-          <Badge color="yellow" variant="surface" size="sm" className="shrink-0">
+          <Badge color="yellow" variant="surface" size="sm" className="shrink-0 font-medium">
             Preview
           </Badge>
         )}
@@ -271,7 +271,7 @@ export function GatedPage({
           <button
             type="button"
             onClick={dismiss}
-            className="ml-auto shrink-0 text-xs text-neutral-subtle hover:text-neutral hover:underline"
+            className="ml-auto shrink-0 text-sm text-neutral-subtle hover:text-neutral hover:underline"
           >
             Not now
           </button>
@@ -304,7 +304,7 @@ export function GatedPage({
               )}
             </div>
             {view.others.length > 0 && (
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-subtle">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-neutral-subtle">
                 <span>Or</span>
                 {view.others.map((o) => (
                   <button
@@ -332,7 +332,7 @@ export function GatedPage({
                 ))}
               </ul>
             )}
-            {view.message && <p className="text-xs text-neutral-subtle">{view.message}</p>}
+            {view.message && <p className="text-sm text-neutral-subtle">{view.message}</p>}
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             {tabs.length > 1 && (

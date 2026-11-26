@@ -59,7 +59,7 @@ export function PrepaidCredits({
               <span className="font-medium text-neutral">{c.name}</span>
               <span className="text-neutral">
                 {quantity(c.remaining, c.unit)} left{' '}
-                <span className="text-xs text-neutral-subtle">· {NO_EXPIRY.toLowerCase()}</span>
+                <span className="text-sm text-neutral-subtle">· {NO_EXPIRY.toLowerCase()}</span>
               </span>
             </div>
           ))}
@@ -94,7 +94,7 @@ export function PrepaidCredits({
       {loadError && <div className="px-5 pb-4">{loadError}</div>}
       {blocked && (
         <div className="px-5 pb-4">
-          <p className="text-xs text-neutral-subtle">
+          <p className="text-sm text-neutral-subtle">
             {blocked.title}. {blocked.body}
           </p>
         </div>
@@ -108,7 +108,7 @@ export function PrepaidCredits({
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-xs text-neutral-subtle">
+              <tr className="text-left text-sm text-neutral-subtle">
                 <th className="px-5 py-2 font-medium">Credits</th>
                 <th className="px-3 py-2 text-right font-medium">Bought</th>
                 <th className="px-3 py-2 text-right font-medium">Used this month</th>
@@ -137,7 +137,7 @@ export function PrepaidCredits({
       {credits.auto_reload
         .filter((a) => a.enabled)
         .map((a) => (
-          <p key={a.sku} className="border-t border-neutral px-5 py-3 text-xs text-neutral-subtle">
+          <p key={a.sku} className="border-t border-neutral px-5 py-3 text-sm text-neutral-subtle">
             Auto-reload is on for {a.name.toLowerCase()}: {quantity(a.reload_units, '')} more are bought when{' '}
             {quantity(a.below_units, '')} or fewer are left.
           </p>
@@ -148,7 +148,7 @@ export function PrepaidCredits({
           <div className="max-h-[320px] overflow-auto">
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-surface-neutral">
-                <tr className="text-left text-xs text-neutral-subtle">
+                <tr className="text-left text-sm text-neutral-subtle">
                   <th className="px-5 py-2 font-medium">Date</th>
                   <th className="px-3 py-2 font-medium">Credits</th>
                   <th className="px-3 py-2 text-right font-medium">Quantity</th>
@@ -163,7 +163,7 @@ export function PrepaidCredits({
                     <td className="px-3 py-2 text-neutral">
                       <span className="whitespace-nowrap">{p.name}</span>
                       {p.invoice_id && (
-                        <span className="block whitespace-nowrap text-xs text-neutral-subtle">
+                        <span className="block whitespace-nowrap text-sm text-neutral-subtle">
                           Invoice {p.invoice_id}
                         </span>
                       )}
@@ -403,13 +403,13 @@ export function BuyCreditsDialog({
                       <RadioGroup.Item id={`credit-${o.sku}`} value={o.sku} />
                       <span className="flex-1 text-sm text-neutral">
                         {o.name}
-                        <span className="block text-xs text-neutral-subtle">
+                        <span className="block text-sm text-neutral-subtle">
                           {num(o.allowance)} {o.unit} included per month in your plan
                         </span>
                       </span>
                       <span className="whitespace-nowrap text-sm text-neutral">
                         {money(o.unit_price, cur)}
-                        <span className="text-xs text-neutral-subtle"> / {o.unit.replace(/s$/, '')}</span>
+                        <span className="text-sm text-neutral-subtle"> / {o.unit.replace(/s$/, '')}</span>
                       </span>
                     </label>
                   ))}
@@ -482,7 +482,7 @@ export function BuyCreditsDialog({
                       {q.expires_on ? date(q.expires_on) : NO_EXPIRY}
                     </Fact>
                   </div>
-                  <p className="text-xs text-neutral-subtle">
+                  <p className="text-sm text-neutral-subtle">
                     {q.tax_note} The credits are added once the payment goes through.
                   </p>
                 </div>

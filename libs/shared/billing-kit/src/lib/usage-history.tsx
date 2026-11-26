@@ -10,6 +10,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { Button, Chart, Icon, InputText } from '@qovery/shared/ui'
+import { ChartTooltip } from './chart-tooltip'
 import type { PricingClient } from './client'
 import { CompactSelect } from './compact-select'
 import { money, num } from './format'
@@ -182,7 +183,7 @@ export function UsageHistory({
             value={custom.to}
             onChange={(e) => setCustom((c) => ({ ...c, to: e.target.value }))}
           />
-          <p className="self-center text-xs text-neutral-subtle">
+          <p className="self-center text-sm text-neutral-subtle">
             {rangeError || '24 months at most. Day by day up to three months, month by month beyond.'}
           </p>
         </div>
@@ -200,7 +201,7 @@ export function UsageHistory({
           {h.notes
             .filter((n) => n.startsWith('No data before') || n.startsWith('No usage'))
             .map((n) => (
-              <p key={n} className="mb-3 text-xs text-neutral-subtle">
+              <p key={n} className="mb-3 text-sm text-neutral-subtle">
                 <Icon iconName="circle-info" iconStyle="regular" className="mr-1" />
                 {n.replace(/(\d{4}-\d{2}-\d{2})/, (d) => periodLabel(d, true))}
               </p>
@@ -210,15 +211,15 @@ export function UsageHistory({
           )}
           {series && (
             <>
-              <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+              <div className="mb-4 grid grid-cols-2 gap-2 lg:grid-cols-4">
                 {h.series.map((s, j) => (
                   <button
                     key={s.sku}
                     type="button"
                     onClick={() => setMetric(s.sku)}
-                    className={`rounded border px-3 py-2 text-left transition-colors hover:bg-surface-neutral-subtle ${s.sku === series.sku ? 'border-brand-strong' : 'border-neutral'}`}
+                    className={`min-w-0 rounded border px-3 py-2 text-left transition-colors hover:bg-surface-neutral-subtle ${s.sku === series.sku ? 'border-brand-strong' : 'border-neutral'}`}
                   >
-                    <div className="truncate text-xs text-neutral-subtle">
+                    <div className="truncate text-sm text-neutral-subtle">
                       {s.name}
                       {s.aggregate === 'peak' ? ' (peak)' : ''}
                     </div>
@@ -229,7 +230,7 @@ export function UsageHistory({
                 ))}
                 {scope === 'all' && amounts && !amounts.unavailable && (
                   <div className="rounded border border-neutral px-3 py-2">
-                    <div className="text-xs text-neutral-subtle">Invoiced</div>
+                    <div className="text-sm text-neutral-subtle">Invoiced</div>
                     <div className="text-sm font-medium text-neutral">{money(amounts.total, amounts.currency)}</div>
                   </div>
                 )}
@@ -241,7 +242,7 @@ export function UsageHistory({
                   <YAxis tickLine={false} axisLine={false} width={52} tickFormatter={(v: number) => num(v)} />
                   <Chart.Tooltip
                     content={
-                      <Chart.TooltipContent
+                      <ChartTooltip
                         title={series.name}
                         formatLabel={(k) => orgs.find((o) => o.id === k)?.name ?? k}
                         formatValue={(v) => quantity(Number(v), series.unit)}
@@ -273,7 +274,7 @@ export function UsageHistory({
                   ))}
                 </BarChart>
               </Chart.Container>
-              <div className="mt-2 flex flex-wrap gap-4 text-xs text-neutral-subtle">
+              <div className="mt-2 flex flex-wrap gap-4 text-sm text-neutral-subtle">
                 {split &&
                   shownOrgs.map((o, i) => (
                     <span key={o.id} className="inline-flex items-center gap-1.5">
@@ -301,7 +302,7 @@ export function UsageHistory({
               <div className="max-h-[360px] overflow-auto rounded border border-neutral">
                 <table className="w-full text-sm">
                   <thead className="sticky top-0 bg-surface-neutral">
-                    <tr className="text-left text-xs text-neutral-subtle">
+                    <tr className="text-left text-sm text-neutral-subtle">
                       <th className="px-3 py-2 font-medium">{h.granularity === 'month' ? 'Month' : 'Day'}</th>
                       {table.columns.map((c) => (
                         <th key={c.sku} className="whitespace-nowrap px-3 py-2 text-right font-medium">
@@ -351,7 +352,7 @@ export function UsageHistory({
                   </tfoot>
                 </table>
               </div>
-              <p className="mt-2 text-xs text-neutral-subtle">
+              <p className="mt-2 text-sm text-neutral-subtle">
                 {amounts
                   ? amounts.unavailable
                     ? UNAVAILABLE[amounts.unavailable]

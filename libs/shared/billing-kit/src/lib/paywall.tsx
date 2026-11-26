@@ -184,12 +184,12 @@ export function Paywall({
       <div className="flex items-start gap-3 border-b border-neutral px-6 py-4">
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-2">
-            <Badge color="brand" variant="surface" size="sm">
+            <Badge className="font-medium" color="brand" variant="surface" size="sm">
               <Icon iconName="lock" iconStyle="regular" className="mr-1 text-xs" />
               {p.title}
             </Badge>
             {client.mode === 'preview' && (
-              <Badge color="yellow" variant="surface" size="sm">
+              <Badge className="font-medium" color="yellow" variant="surface" size="sm">
                 Preview
               </Badge>
             )}
@@ -344,7 +344,7 @@ function Promotion({ p }: { p: PaywallData }) {
           ))}
         </ul>
       )}
-      {p.message && <p className="text-xs text-neutral-subtle">{p.message}</p>}
+      {p.message && <p className="text-sm text-neutral-subtle">{p.message}</p>}
     </div>
   )
 }
@@ -360,7 +360,7 @@ function Options({ p, onChoose }: { p: PaywallData; onChoose: (o: PaywallOption)
           <div className="min-w-0 flex-1">
             <div className="text-sm font-medium text-neutral">{o.label}</div>
             {(optionPrice(o) || o.detail) && (
-              <div className="text-xs text-neutral-subtle">
+              <div className="text-sm text-neutral-subtle">
                 {o.type === 'upgrade' || o.type === 'addon' ? optionPrice(o) || o.detail : o.detail}
               </div>
             )}
@@ -474,7 +474,7 @@ function TrialStep({
             Continue on {target.plan_name ?? target.addon_name} automatically when the trial ends ({optionPrice(target)}
             )
             {cont && (
-              <span className="mt-1 block text-xs text-neutral-subtle">
+              <span className="mt-1 block text-sm text-neutral-subtle">
                 Your card on file is charged from {date(ends)}. We email you 3 days before, and you can turn this off in
                 Billing until then.
               </span>
@@ -814,12 +814,12 @@ export function PaywallIntroDialog({
       <div className="flex items-start gap-3 border-b border-neutral px-6 py-4">
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-2">
-            <Badge color="green" variant="surface" size="sm">
+            <Badge className="font-medium" color="green" variant="surface" size="sm">
               <Icon iconName="circle-check" iconStyle="regular" className="mr-1 text-xs" />
               {introChip(intro)}
             </Badge>
             {client.mode === 'preview' && (
-              <Badge color="yellow" variant="surface" size="sm">
+              <Badge className="font-medium" color="yellow" variant="surface" size="sm">
                 Preview
               </Badge>
             )}

@@ -10,6 +10,7 @@
 import { useMemo, useState } from 'react'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { Chart, SegmentedControl } from '@qovery/shared/ui'
+import { ChartTooltip } from './chart-tooltip'
 import { CompactSelect } from './compact-select'
 import { money, num } from './format'
 import type { BillingUsage, BuilderSize, DeploymentMonth, UsageProjection, UsageSeries, UsageValue } from './types'
@@ -118,7 +119,7 @@ export function UsageChart({
             <YAxis tickLine={false} axisLine={false} width={48} tickFormatter={(v: number) => num(v)} />
             <Chart.Tooltip
               content={
-                <Chart.TooltipContent
+                <ChartTooltip
                   title={series.name}
                   formatLabel={() => 'Per day'}
                   formatValue={(v) => `${num(Number(v))} ${unit}`}
@@ -141,7 +142,7 @@ export function UsageChart({
             />
             <Chart.Tooltip
               content={
-                <Chart.TooltipContent
+                <ChartTooltip
                   title={series.name}
                   formatLabel={() => (meter ? 'Month to date' : 'In use')}
                   formatValue={(v) => `${num(Number(v))} ${unit}`}
@@ -186,36 +187,36 @@ function ValuePanel({ v }: { v: UsageValue }) {
   return (
     <Panel
       title="What your plan covers"
-      aside={<span className="text-xs text-neutral-subtle">at list price, per month</span>}
+      aside={<span className="text-sm text-neutral-subtle">at list price, per month</span>}
     >
       <div className="mb-4 flex flex-wrap items-end gap-x-8 gap-y-2">
         <div>
-          <div className="text-xs text-neutral-subtle">You pay</div>
+          <div className="text-sm text-neutral-subtle">You pay</div>
           <div className="text-2xl font-medium text-neutral">
             {money(v.monthly_fee, cur)}
             <span className="text-sm font-normal text-neutral-subtle"> / month</span>
           </div>
         </div>
         <div>
-          <div className="text-xs text-neutral-subtle">Included at list price</div>
+          <div className="text-sm text-neutral-subtle">Included at list price</div>
           <div className="text-2xl font-medium text-neutral">{money(v.included_value, cur)}</div>
         </div>
         <div>
-          <div className="text-xs text-neutral-subtle">In use</div>
+          <div className="text-sm text-neutral-subtle">In use</div>
           <div className="text-2xl font-medium text-neutral">{money(v.used_value, cur)}</div>
         </div>
         {ratio >= 1.1 && <div className="pb-1 text-sm text-positive">{ratio.toFixed(1)}× what you pay</div>}
       </div>
       <div className="flex flex-col gap-3">
         {v.lines.map((l) => (
-          // Phones: name, figures, then the bar, one under the other. Wider: name, bar, figures.
+          // Phones and tablets: name, figures, then the bar, one under the other. Wider: name, bar, figures.
           <div
             key={l.sku}
-            className="grid grid-cols-1 items-center gap-x-3 gap-y-1 text-sm sm:grid-cols-[minmax(120px,1fr)_2fr_auto]"
+            className="grid grid-cols-1 items-center gap-x-3 gap-y-1 text-sm lg:grid-cols-[minmax(120px,1fr)_2fr_auto]"
           >
             <div className="min-w-0 text-neutral">{l.name}</div>
             <div
-              className="order-last h-2 overflow-hidden rounded-full bg-surface-neutral-component sm:order-none"
+              className="order-last h-2 overflow-hidden rounded-full bg-surface-neutral-component lg:order-none"
               title={`${num(Math.min(l.used, l.included))} of ${num(l.included)} ${l.unit} in use`}
             >
               <div
@@ -228,7 +229,7 @@ function ValuePanel({ v }: { v: UsageValue }) {
                 />
               </div>
             </div>
-            <div className="text-xs text-neutral-subtle sm:whitespace-nowrap sm:text-right">
+            <div className="text-sm text-neutral-subtle lg:whitespace-nowrap lg:text-right">
               {num(l.included)} {l.unit} × {money(l.unit_price, cur)} ={' '}
               <span className="text-neutral">{money(l.included_value, cur)}</span>
               <div>
@@ -243,7 +244,7 @@ function ValuePanel({ v }: { v: UsageValue }) {
           {v.per_unit.map((p) => (
             <div key={p.label} className="rounded border border-neutral px-3 py-2">
               <div className="text-sm font-medium text-neutral">{money(p.amount, cur)}</div>
-              <div className="text-xs text-neutral-subtle">
+              <div className="text-sm text-neutral-subtle">
                 {p.label} ({num(p.count)}
                 {p.sku === 'deploy.count' ? ' in 30 days' : ''})
               </div>
@@ -251,7 +252,7 @@ function ValuePanel({ v }: { v: UsageValue }) {
           ))}
         </div>
       )}
-      <p className="mt-3 text-xs text-neutral-subtle">
+      <p className="mt-3 text-sm text-neutral-subtle">
         Each allowance priced at what one more unit costs. Dark: in use. Light: included and still available.
       </p>
     </Panel>
@@ -274,7 +275,7 @@ function ProjectionPanel({
     <Panel
       title="At this pace"
       aside={
-        <span className="text-xs text-neutral-subtle">
+        <span className="text-sm text-neutral-subtle">
           day {d.days_elapsed} of {d.days_in_month}
         </span>
       }
@@ -286,11 +287,11 @@ function ProjectionPanel({
             p.projected_over > 0 ? 'text-negative' : pct != null && pct >= 85 ? 'text-warning' : 'text-positive'
           return (
             <div key={p.sku} className="rounded border border-neutral p-4">
-              <div className="mb-1 text-xs font-medium text-neutral-subtle">{p.name}</div>
+              <div className="mb-1 text-sm text-neutral-subtle">{p.name}</div>
               <div className="text-sm text-neutral">
                 <span className="text-lg font-medium">{num(p.projected)}</span> {p.unit} by the end of the month
               </div>
-              <div className="text-xs text-neutral-subtle">
+              <div className="text-sm text-neutral-subtle">
                 {num(p.used)} so far, about {num(p.daily_pace)} per day
                 {p.included != null ? ` · ${num(p.included)} included` : ' · unlimited'}
               </div>
@@ -330,7 +331,7 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
       title="Deployment minutes per month"
       aside={
         commonAllowance != null ? (
-          <span className="text-xs text-neutral-subtle">{num(commonAllowance)} included per month</span>
+          <span className="text-sm text-neutral-subtle">{num(commonAllowance)} included per month</span>
         ) : undefined
       }
     >
@@ -341,7 +342,7 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
           <YAxis tickLine={false} axisLine={false} width={48} domain={[0, top]} tickFormatter={(v: number) => num(v)} />
           <Chart.Tooltip
             content={
-              <Chart.TooltipContent
+              <ChartTooltip
                 title="Minutes"
                 formatLabel={(k) => (k === 'build' ? 'Build' : 'Deploy')}
                 formatValue={(v) => `${num(Number(v))} min`}
@@ -355,7 +356,7 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
           <Bar dataKey="deploy" name="deploy" stackId="m" fill="var(--info-9)" isAnimationActive={false} />
         </BarChart>
       </Chart.Container>
-      <div className="mt-2 flex flex-wrap gap-4 text-xs text-neutral-subtle">
+      <div className="mt-2 flex flex-wrap gap-4 text-sm text-neutral-subtle">
         <span className="inline-flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-sm bg-[var(--brand-9)]" />
           Build
@@ -374,7 +375,7 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
       <div className="mt-3 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs text-neutral-subtle">
+            <tr className="text-left text-sm text-neutral-subtle">
               <th className="py-1 pr-4 font-medium">Month</th>
               <th className="py-1 pr-4 text-right font-medium">Deployments</th>
               <th className="py-1 pr-4 text-right font-medium">Build</th>
@@ -389,13 +390,13 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
               <tr key={m.month}>
                 <td className="py-1.5 pr-4 text-neutral">
                   {monthLabel(m.month)}
-                  {i === months.length - 1 ? <span className="text-xs text-neutral-subtle"> (so far)</span> : ''}
+                  {i === months.length - 1 ? <span className="text-sm text-neutral-subtle"> (so far)</span> : ''}
                 </td>
                 <td className="py-1.5 pr-4 text-right text-neutral">{num(m.deployments)}</td>
                 <td className="py-1.5 pr-4 text-right text-neutral">
                   {num(m.build_minutes)} min
                   {m.build_billed_minutes != null && m.build_billed_minutes > m.build_minutes + 0.5 && (
-                    <div className="text-xs text-neutral-subtle">
+                    <div className="text-sm text-neutral-subtle">
                       counts {num(m.build_billed_minutes)} (bigger builders)
                     </div>
                   )}
@@ -443,7 +444,7 @@ function HistoryPanel({
         />
       }
     >
-      <div className="mb-1 text-xs text-neutral-subtle">
+      <div className="mb-1 text-sm text-neutral-subtle">
         {s.kind === 'meter'
           ? `Consumed by this organization${s.included != null ? `, against the ${num(s.included)} ${s.unit} included each month` : ''}.`
           : `${num(last)} ${s.unit} today${s.included != null ? ` of ${num(s.included)} included` : ''}${change != null && change !== 0 ? `, ${change > 0 ? '+' : ''}${change}% in three months` : ''}.`}
@@ -460,12 +461,12 @@ function BuilderPanel({ sizes, currency, amounts }: { sizes: BuilderSize[]; curr
   return (
     <Panel
       title="Build time by builder size"
-      aside={<span className="text-xs text-neutral-subtle">deploy time always counts once</span>}
+      aside={<span className="text-sm text-neutral-subtle">deploy time always counts once</span>}
     >
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs text-neutral-subtle">
+            <tr className="text-left text-sm text-neutral-subtle">
               <th className="py-1 pr-4 font-medium">Builder</th>
               <th className="hidden py-1 pr-4 font-medium sm:table-cell">Up to</th>
               <th className="py-1 pr-4 text-right font-medium">One build minute counts</th>
@@ -480,9 +481,9 @@ function BuilderPanel({ sizes, currency, amounts }: { sizes: BuilderSize[]; curr
               <tr key={s.code} className="border-t border-neutral">
                 <td className="py-1.5 pr-4 text-neutral">
                   {s.name}
-                  {i === 0 && <span className="text-xs text-neutral-subtle"> (default)</span>}
-                  {s.listed === false && <span className="text-xs text-neutral-subtle"> (on request)</span>}
-                  <div className="text-xs text-neutral-subtle sm:hidden">
+                  {i === 0 && <span className="text-sm text-neutral-subtle"> (default)</span>}
+                  {s.listed === false && <span className="text-sm text-neutral-subtle"> (on request)</span>}
+                  <div className="text-sm text-neutral-subtle sm:hidden">
                     up to {num(s.max_cpu_milli / 1000)} vCPU, {num(s.max_ram_gib)} GiB
                   </div>
                 </td>
@@ -507,7 +508,7 @@ function BuilderPanel({ sizes, currency, amounts }: { sizes: BuilderSize[]; curr
           </tbody>
         </table>
       </div>
-      <p className="mt-3 text-xs text-neutral-subtle">
+      <p className="mt-3 text-sm text-neutral-subtle">
         The builder size is set per service (build CPU and RAM in the advanced settings). Larger builders use the plan's
         minutes faster; beyond the largest size, the count grows with CPU and RAM.
       </p>
