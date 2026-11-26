@@ -1,13 +1,10 @@
+import axios from 'axios'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import {
-  type BillingUsage,
-  type CustomerInvoice,
-  type InvoiceDetails,
-  billingUsageFactoryMock,
-  createPricingClient,
-} from '@qovery/shared/billing/data-access'
+import type { BillingUsage, CustomerInvoice, InvoiceDetails } from 'qovery-pricing-typescript-axios'
+import { createPricingClient } from '@qovery/shared/billing/data-access'
 import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { billingUsageFactoryMock } from '@qovery/shared/factories'
+import { createAxiosFetchAdapter, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BillingSettingsView, InvoicesView, SettingsBillingSettings, SettingsInvoices } from './settings-billing-pages'
 
 const mockNavigate = jest.fn()
@@ -98,6 +95,12 @@ const invoiceDetails: InvoiceDetails = {
   ],
 }
 
+const originalAdapter = axios.defaults.adapter
+
+afterEach(() => {
+  axios.defaults.adapter = originalAdapter
+})
+
 const jsonResponse = (status: number, body: unknown) =>
   ({
     ok: status >= 200 && status < 300,
@@ -133,12 +136,12 @@ const mockPricingApi = (usage: BillingUsage, invoices: CustomerInvoice[] = [over
     }
     return Promise.resolve(jsonResponse(404, { code: 'NOT_FOUND', detail: 'not found' }))
   })
+  axios.defaults.adapter = createAxiosFetchAdapter(fetchMock as unknown as typeof fetch)
   jest.mocked(usePricingClient).mockReturnValue(
     pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
         getToken: () => 'user-token',
-        fetch: fetchMock as unknown as typeof fetch,
       })
     )
   )

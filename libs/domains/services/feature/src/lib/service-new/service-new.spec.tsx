@@ -1,10 +1,10 @@
 import { within } from '@testing-library/react'
 import axios from 'axios'
 import posthog from 'posthog-js'
+import type { Gate } from 'qovery-pricing-typescript-axios'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
-import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing/data-access'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { createAxiosFetchAdapter, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OTHER_BLUEPRINT_CATEGORY } from '../blueprint-utils/blueprint-utils'
 import { ServiceNew } from './service-new'
 
@@ -143,7 +143,7 @@ describe('ServiceNew', () => {
     mockGates.current = undefined
     mockBillingFlag.mockReturnValue(false)
     mockGatesCall.mockClear()
-    axios.defaults.adapter = createPricingFetchAdapter(async (input) => {
+    axios.defaults.adapter = createAxiosFetchAdapter(async (input) => {
       const url = new URL(String(input))
       if (url.pathname.endsWith('/gates')) {
         mockGatesCall(Object.fromEntries(url.searchParams))

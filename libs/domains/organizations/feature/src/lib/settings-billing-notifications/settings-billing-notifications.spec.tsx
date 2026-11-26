@@ -1,6 +1,8 @@
-import { type EmailPreferences, createPricingClient } from '@qovery/shared/billing/data-access'
+import axios from 'axios'
+import type { EmailPreferences } from 'qovery-pricing-typescript-axios'
+import { createPricingClient } from '@qovery/shared/billing/data-access'
 import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { createAxiosFetchAdapter, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   SettingsBillingNotifications,
   getNotificationsSettingsLinks,
@@ -21,6 +23,12 @@ jest.mock('@tanstack/react-router', () => ({
   // jsdom has no Response, which TanStack's redirect builds
   redirect: (options: unknown) => ({ redirect: true, options }),
 }))
+
+const originalAdapter = axios.defaults.adapter
+
+afterEach(() => {
+  axios.defaults.adapter = originalAdapter
+})
 
 const jsonResponse = (status: number, body: unknown) =>
   ({
@@ -67,12 +75,12 @@ const mockPreferencesApi = () => {
     }
     return Promise.resolve(jsonResponse(200, current))
   })
+  axios.defaults.adapter = createAxiosFetchAdapter(fetchMock as unknown as typeof fetch)
   jest.mocked(usePricingClient).mockReturnValue(
     pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
         getToken: () => 'user-token',
-        fetch: fetchMock as unknown as typeof fetch,
       })
     )
   )
@@ -164,14 +172,14 @@ describe('SettingsBillingNotifications', () => {
   })
 
   it('should explain when the preferences cannot be read', async () => {
+    axios.defaults.adapter = createAxiosFetchAdapter(() =>
+      Promise.resolve(jsonResponse(403, { code: 'NOT_A_MEMBER', detail: 'Not a member of this organization' }))
+    )
     jest.mocked(usePricingClient).mockReturnValue(
       pickConsoleCalls(
         createPricingClient({
           pricingApiUrl: 'https://billing-api.qovery.com',
           getToken: () => 'user-token',
-          fetch: jest.fn(() =>
-            Promise.resolve(jsonResponse(403, { code: 'NOT_A_MEMBER', detail: 'Not a member of this organization' }))
-          ) as unknown as typeof fetch,
         })
       )
     )

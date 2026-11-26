@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import type { Gate } from 'qovery-pricing-typescript-axios'
 import { type ReactNode } from 'react'
-import type { Gate } from '@qovery/shared/billing/data-access'
 import { inviteMembersMock, membersMock, organizationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useAvailableRolesHook from '../hooks/use-available-roles/use-available-roles'

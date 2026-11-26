@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing/data-access'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import type { Gate } from 'qovery-pricing-typescript-axios'
+import { createAxiosFetchAdapter, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintPaywall } from './blueprint-paywall'
 
 // An intro shown is remembered for the session per organization: each intro test uses its own.
@@ -52,7 +52,7 @@ describe('BlueprintPaywall', () => {
     mockGates.current = undefined
     mockBillingFlag.mockReturnValue(true)
     mockGatesCall.mockClear()
-    axios.defaults.adapter = createPricingFetchAdapter(async (input, init) => {
+    axios.defaults.adapter = createAxiosFetchAdapter(async (input, init) => {
       const url = new URL(String(input))
       if (url.pathname.endsWith('/gates')) {
         mockGatesCall(Object.fromEntries(url.searchParams))

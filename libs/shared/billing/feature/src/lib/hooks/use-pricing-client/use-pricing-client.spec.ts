@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { billingUsageFactoryMock, createPricingFetchAdapter } from '@qovery/shared/billing/data-access'
-import { renderHook } from '@qovery/shared/util-tests'
+import { billingUsageFactoryMock } from '@qovery/shared/factories'
+import { createAxiosFetchAdapter, renderHook } from '@qovery/shared/util-tests'
 import { usePricingClient } from './use-pricing-client'
 
 const mockGetAccessTokenSilently = jest.fn()
@@ -23,7 +23,7 @@ describe('usePricingClient', () => {
       statusText: '',
       json: () => Promise.resolve(usage),
     })
-    axios.defaults.adapter = createPricingFetchAdapter(fetchMock)
+    axios.defaults.adapter = createAxiosFetchAdapter(fetchMock)
   })
 
   afterEach(() => {

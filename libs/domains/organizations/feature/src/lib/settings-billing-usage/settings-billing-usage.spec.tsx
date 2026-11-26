@@ -1,19 +1,17 @@
+import axios from 'axios'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import type { BillingUsage, Credits, Quote, UsageHistoryData } from 'qovery-pricing-typescript-axios'
 import { type ReactNode } from 'react'
 import {
-  type BillingUsage,
   type Cancellation,
-  type Credits,
   type PlanOptions,
   type PlanProposal,
-  type Quote,
   type Reactivation,
-  type UsageHistoryData,
-  billingUsageFactoryMock,
   createPricingClient,
 } from '@qovery/shared/billing/data-access'
 import { pickConsoleCalls, usePricingClient } from '@qovery/shared/billing/feature'
-import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
+import { billingUsageFactoryMock } from '@qovery/shared/factories'
+import { createAxiosFetchAdapter, renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import {
   BILLING_USAGE_FEATURE_FLAG,
   BillingUsageView,
@@ -49,6 +47,12 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
+const originalAdapter = axios.defaults.adapter
+
+afterEach(() => {
+  axios.defaults.adapter = originalAdapter
+})
+
 const jsonResponse = (status: number, body: unknown) =>
   ({
     ok: status >= 200 && status < 300,
@@ -67,12 +71,12 @@ const mockPricingApi = (billingUsage: () => Promise<Response>, routes: Record<st
     const route = Object.entries(routes).find(([suffix]) => path.endsWith(suffix))?.[1]
     return Promise.resolve(route ? route(init) : jsonResponse(404, { code: 'NOT_FOUND', detail: 'not found' }))
   })
+  axios.defaults.adapter = createAxiosFetchAdapter(fetchMock as unknown as typeof fetch)
   jest.mocked(usePricingClient).mockReturnValue(
     pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
         getToken: () => 'user-token',
-        fetch: fetchMock as unknown as typeof fetch,
       })
     )
   )
@@ -802,7 +806,6 @@ describe('pickConsoleCalls', () => {
       createPricingClient({
         pricingApiUrl: 'https://billing-api.qovery.com',
         getToken: () => 'user-token',
-        fetch: jest.fn(),
       })
     )
 
