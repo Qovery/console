@@ -1,3 +1,4 @@
+import { createQueryKeys } from '@lukemorales/query-key-factory'
 import axios, { type AxiosResponse } from 'axios'
 import {
   type AcceptOfferResponse,
@@ -435,3 +436,37 @@ export function createPricingClient({ pricingApiUrl, getToken }: PricingClientOp
       ),
   }
 }
+
+type BillingRead = { client: PricingClient; organizationId: string }
+
+export const billing = createQueryKeys('billing', {
+  usage: ({ client, organizationId }: BillingRead) => ({
+    queryKey: [organizationId],
+    queryFn: () => client.billingUsage(organizationId),
+  }),
+  emailPreferences: ({ client, organizationId }: BillingRead) => ({
+    queryKey: [organizationId],
+    queryFn: async () => (await client.emailPreferences?.(organizationId)) ?? null,
+  }),
+  proposals: ({ client, organizationId }: BillingRead) => ({
+    queryKey: [organizationId],
+    queryFn: async () => (await client.proposals?.(organizationId)) ?? { proposal: null },
+  }),
+  proposalView: ({ client, organizationId, proposalId }: BillingRead & { proposalId?: number }) => ({
+    queryKey: [organizationId, proposalId],
+    async queryFn() {
+      if (proposalId !== undefined) await client.viewProposal?.(organizationId, proposalId)
+      return true
+    },
+  }),
+  invoice: ({ client, organizationId, invoiceId }: BillingRead & { invoiceId: string }) => ({
+    queryKey: [organizationId, invoiceId],
+    queryFn: async () => (await client.invoice?.(organizationId, invoiceId)) ?? null,
+  }),
+  invoices: ({ client, organizationId }: BillingRead) => ({
+    queryKey: [organizationId],
+    queryFn: ({ pageParam }: { pageParam?: string }) =>
+      (pageParam ? client.invoices?.(organizationId, { offset: pageParam }) : client.invoices?.(organizationId)) ??
+      Promise.reject(new Error('Invoices are unavailable')),
+  }),
+})

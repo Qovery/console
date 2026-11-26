@@ -1,10 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { BillingError } from '@qovery/shared/billing/data-access'
+import { BillingError, billing } from '@qovery/shared/billing/data-access'
 import { usePricingClient } from '@qovery/shared/billing/feature'
 
 export type BillingUsageErrorType = 'session-expired' | 'not-a-member' | 'not-linked' | 'unavailable'
-
-const billingUsageQueryKey = (organizationId: string) => ['pricingApi', 'billingUsage', organizationId] as const
 
 export function getBillingUsageErrorType(error: unknown): BillingUsageErrorType {
   if (error instanceof BillingError) {
@@ -23,8 +21,7 @@ export function useBillingUsage({ organizationId }: UseBillingUsageProps) {
   const client = usePricingClient()
 
   return useQuery({
-    queryKey: billingUsageQueryKey(organizationId),
-    queryFn: () => client.billingUsage(organizationId),
+    ...billing.usage({ client, organizationId }),
     enabled: Boolean(organizationId),
     retry: (failureCount, error) =>
       failureCount < 2 && (!(error instanceof BillingError) || (error.status >= 500 && error.status < 600)),

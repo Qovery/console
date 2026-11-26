@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 /*
  * Change plan: pick a plan (monthly or yearly, the current one marked), review what changes and
  * what it costs today and on the next invoice, then confirm. A paid plan without a card on file
@@ -19,9 +20,10 @@ import {
   type PricingClient,
 } from '@qovery/shared/billing/data-access'
 import { Badge, Button, Callout, Icon, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
+import { hideProposal } from './hooks/use-proposal/use-proposal'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText } from './parts'
-import { ProposalNote, hideProposal } from './proposals'
+import { ProposalNote } from './proposals'
 import { date, money, monthly, valueText } from './utils/format'
 import { isProposalChange } from './utils/proposal-rules'
 import { changeBlockedText, changeKind, newIdempotencyKey } from './utils/subscription-rules'
@@ -59,6 +61,7 @@ export function PlanChangeFlow({
   /** A plan proposal to review: its plan, period and concession. */
   proposal?: PlanProposal
 }) {
+  const queryClient = useQueryClient()
   const [options, setOptions] = useState<PlanOptions>()
   const [plans, setPlans] = useState<PublicPlans>()
   const [period, setPeriod] = useState<Period>(proposal?.period ?? prePeriod ?? usage.billing.period)
@@ -191,7 +194,7 @@ export function PlanChangeFlow({
           ? await client.acceptProposal!(organizationId, proposal.id, key)
           : await client.changePlan!(organizationId, pick, period, key)
       )
-      if (viaProposal && proposal) hideProposal(client, organizationId, proposal.id)
+      if (viaProposal && proposal) await hideProposal(queryClient, organizationId, client, proposal.id)
       setStep('done')
       onDone()
     } catch (e) {

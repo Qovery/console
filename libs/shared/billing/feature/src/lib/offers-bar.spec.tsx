@@ -2,6 +2,7 @@ import type { Offer } from 'qovery-pricing-typescript-axios'
 import type { PlanProposal, PricingClient } from '@qovery/shared/billing/data-access'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OfferHost } from './offers'
+import { ProposalHost } from './proposals'
 
 const offer = (id: number, title: string): Offer => ({
   id,
@@ -81,6 +82,39 @@ describe('OfferHost top bar', () => {
     expect(screen.queryByText(offers[1].content.title)).not.toBeInTheDocument()
     expect(screen.getAllByRole('button')).toHaveLength(1)
     expect(c.offerEvent).not.toHaveBeenCalled()
+  })
+
+  it('shares the proposal between the card and top bar and hides both after snoozing', async () => {
+    const c = { ...client(proposal), snoozeProposal: jest.fn().mockResolvedValue({ status: 'snoozed' }) }
+    const pricingClient: PricingClient = {
+      mode: 'live',
+      publicPlans: jest.fn(),
+      billingUsage: jest.fn(),
+      spendLimits: jest.fn(),
+      ...c,
+    }
+    const { userEvent } = renderWithProviders(
+      <>
+        <OfferHost
+          variant="bar"
+          modal={false}
+          organizationId="org-1"
+          client={pricingClient}
+          onAction={jest.fn()}
+          onReviewProposal={jest.fn()}
+        />
+        <ProposalHost organizationId="org-1" client={pricingClient} onReview={jest.fn()} />
+      </>
+    )
+
+    await waitFor(() => expect(screen.getAllByRole('button', { name: 'Review' })).toHaveLength(2))
+    expect(c.proposals).toHaveBeenCalledTimes(1)
+    expect(c.viewProposal).toHaveBeenCalledTimes(1)
+    await userEvent.click(screen.getByRole('button', { name: 'Remind me later' }))
+    await userEvent.click(screen.getByRole('button', { name: '1 week' }))
+
+    await waitFor(() => expect(screen.queryAllByRole('button', { name: 'Review' })).toHaveLength(0))
+    expect(c.snoozeProposal).toHaveBeenCalledWith('org-1', proposal.id, 7)
   })
 
   it('shows one offer, the first, when there is no proposal', async () => {

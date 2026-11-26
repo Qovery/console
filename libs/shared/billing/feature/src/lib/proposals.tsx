@@ -11,9 +11,10 @@
  */
 import * as Dialog from '@radix-ui/react-dialog'
 import type { ProposalDismissReason } from 'qovery-pricing-typescript-axios'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import type { PlanProposal, PricingClient, Proposals } from '@qovery/shared/billing/data-access'
+import { useState } from 'react'
+import type { PlanProposal, PricingClient } from '@qovery/shared/billing/data-access'
 import { Banner, Button, Callout, Heading, Icon, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
+import { useProposal } from './hooks/use-proposal/use-proposal'
 import { date, money } from './utils/format'
 import {
   BAR_TEXT,
@@ -23,122 +24,6 @@ import {
   proposalShortLine,
   snoozeLabel,
 } from './utils/proposal-rules'
-import { forgetReads, sharedRead } from './utils/reads'
-
-type ProposalListener = (proposalId: number) => void
-const proposalListeners = new WeakMap<PricingClient, Map<string, Set<ProposalListener>>>()
-
-export function hideProposal(client: PricingClient, organizationId: string, proposalId: number) {
-  forgetReads(client, `proposals:${organizationId}`)
-  proposalListeners
-    .get(client)
-    ?.get(organizationId)
-    ?.forEach((listener) => listener(proposalId))
-}
-
-export function readProposal(client: PricingClient, organizationId: string, fresh = false) {
-  const proposals = client.proposals
-  if (!proposals) return Promise.resolve<Proposals>({ proposal: null })
-  return sharedRead<Proposals>(
-    client,
-    `proposals:${organizationId}`,
-    () => proposals.call(client, organizationId),
-    fresh
-  )
-}
-
-/** Loads the organization's proposal, records the first view, and snoozes or dismisses it. */
-export function useProposal(organizationId: string, client: PricingClient, enabled = true) {
-  const [proposal, setProposal] = useState<PlanProposal | null>()
-  const [error, setError] = useState('')
-  const viewed = useRef<number | undefined>(undefined)
-  const request = useRef(0)
-  const hidden = useRef<number | undefined>(undefined)
-  const [busy, setBusy] = useState(false)
-  // The top bar and the billing page's card share one read (reads.ts); a reload reads again.
-  const read = useCallback(
-    (fresh: boolean) => {
-      if (!enabled || !client.proposals) return
-      const id = ++request.current
-      readProposal(client, organizationId, fresh).then(
-        (r) => {
-          if (request.current === id) setProposal(r.proposal?.id === hidden.current ? null : r.proposal)
-        },
-        () => {
-          if (request.current === id) setProposal(null)
-        }
-      )
-    },
-    [client, organizationId, enabled]
-  )
-  useEffect(() => {
-    if (!enabled) return
-    setProposal(undefined)
-    hidden.current = undefined
-    let groups = proposalListeners.get(client)
-    if (!groups) proposalListeners.set(client, (groups = new Map()))
-    let group = groups.get(organizationId)
-    if (!group) groups.set(organizationId, (group = new Set()))
-    const listener = (proposalId: number) => {
-      hidden.current = proposalId
-      setProposal((current) => (current?.id === proposalId ? null : current))
-    }
-    group.add(listener)
-    read(false)
-    return () => {
-      request.current++
-      group.delete(listener)
-      if (group.size === 0) groups.delete(organizationId)
-    }
-  }, [client, enabled, organizationId, read])
-  const load = useCallback(() => read(true), [read])
-  useEffect(() => {
-    if (!proposal || proposal.preview || viewed.current === proposal.id) return
-    const recordView = client.viewProposal
-    if (!recordView) return
-    viewed.current = proposal.id
-    sharedRead(client, `proposal-view:${organizationId}:${proposal.id}`, () =>
-      recordView.call(client, organizationId, proposal.id)
-    ).catch(() => undefined)
-  }, [proposal, client, organizationId])
-  return {
-    proposal: proposal ?? null,
-    error,
-    busy,
-    reload: load,
-    /** Not answered yet (the top bar waits, so an offer does not flash before the proposal). */
-    loading: enabled && !!client.proposals && proposal === undefined,
-    snooze: async (days: number) => {
-      if (!proposal || busy) return
-      setError('')
-      setBusy(true)
-      try {
-        await client.snoozeProposal?.(organizationId, proposal.id, days)
-        hideProposal(client, organizationId, proposal.id)
-      } catch (e) {
-        setError((e as Error).message)
-      } finally {
-        setBusy(false)
-      }
-    },
-    dismiss: async (reason?: ProposalDismissReason, note?: string) => {
-      if (!proposal || busy) return
-      setError('')
-      setBusy(true)
-      try {
-        await client.dismissProposal?.(organizationId, proposal.id, {
-          ...(reason ? { reason } : {}),
-          ...(note ? { note } : {}),
-        })
-        hideProposal(client, organizationId, proposal.id)
-      } catch (e) {
-        setError((e as Error).message)
-      } finally {
-        setBusy(false)
-      }
-    },
-  }
-}
 
 export interface ProposalBannerProps {
   proposal: PlanProposal

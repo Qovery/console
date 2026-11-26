@@ -75,6 +75,23 @@ describe('InvoicesPage', () => {
     expect(screen.getByText('INV-1')).toBeInTheDocument()
   })
 
+  it('should pass the next offset and avoid duplicate invoices across pages', async () => {
+    const invoices = jest
+      .fn()
+      .mockResolvedValueOnce({ ...invoicePage, next_offset: 'next' })
+      .mockResolvedValueOnce({ ...invoicePage, invoices: [invoice({ id: 'INV-1' }), invoice({ id: 'INV-3' })] })
+    const { userEvent } = renderWithProviders(
+      <InvoicesPage organizationId="org-1" client={client({ invoices })} access="billing" alerts={false} />
+    )
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Load more' }))
+
+    expect(await screen.findByText('INV-3')).toBeInTheDocument()
+    expect(screen.getAllByText('INV-1')).toHaveLength(1)
+    expect(invoices).toHaveBeenLastCalledWith('org-1', { offset: 'next' })
+    expect(screen.queryByRole('button', { name: 'Load more' })).not.toBeInTheDocument()
+  })
+
   it('should not request invoices for a member', async () => {
     const memberClient = client()
     renderWithProviders(<InvoicesPage organizationId="org-1" client={memberClient} access="member" alerts={false} />)

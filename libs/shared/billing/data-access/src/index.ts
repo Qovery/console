@@ -1,5 +1,6 @@
 export {
   BillingError,
+  billing,
   createPricingClient,
   type AwsMarketplace,
   type Cancellation,

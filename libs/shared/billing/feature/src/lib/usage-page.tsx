@@ -13,7 +13,7 @@
  */
 import * as Dialog from '@radix-ui/react-dialog'
 import type { BillingUsage, Entitlement, Offer, Period, Spend, UsageSeries } from 'qovery-pricing-typescript-axios'
-import { type ReactNode, useCallback, useEffect, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import type {
   Cancellation,
   PlanOptions,
@@ -28,11 +28,12 @@ import { CancelDialog, PlannedBanners } from './cancel'
 import { PrepaidCredits } from './credits'
 import { DiscountsCard } from './discounts'
 import { EmailPreferencesLink, EmailPreferencesPanel } from './email-preferences-panel'
+import { useProposals } from './hooks/use-proposal/use-proposal'
 import { AskAdminModal, OfferHost } from './offers'
 import { errorText } from './parts'
 import { PlanChangeFlow } from './plan-change'
 import { PricingTable } from './pricing-table'
-import { ProposalHost, readProposal } from './proposals'
+import { ProposalHost } from './proposals'
 import { ReactivateFlow, SubscriptionEndedBanner } from './reactivate'
 import { UsageHistory } from './usage-history'
 import { UsageChart, UsageInsights } from './usage-insights'
@@ -282,21 +283,16 @@ export function UsagePage({
     u.billing.status !== 'cancelled' &&
     !!client.quoteProposal &&
     !!client.acceptProposal
+  const linkedProposal = useProposals(organizationId, client, canReviewProposal && Boolean(open?.proposal)).data
+    ?.proposal
+  const openedProposal = useRef<number | undefined>(undefined)
   useEffect(() => {
-    if (!canReviewProposal || !open?.proposal || !client.proposals) return
-    let active = true
-    readProposal(client, organizationId)
-      .then((r) => {
-        if (active && r.proposal && r.proposal.id === open.proposal) {
-          setProposal(r.proposal)
-          setModal('upgrade')
-        }
-      })
-      .catch(() => undefined)
-    return () => {
-      active = false
-    }
-  }, [canReviewProposal, client, organizationId, open?.proposal])
+    if (!canReviewProposal || !linkedProposal || linkedProposal.id !== open?.proposal) return
+    if (openedProposal.current === linkedProposal.id) return
+    openedProposal.current = linkedProposal.id
+    setProposal(linkedProposal)
+    setModal('upgrade')
+  }, [canReviewProposal, linkedProposal, open?.proposal])
   const usageError = error && (
     <Callout.Root color="red">
       <Callout.Text>
