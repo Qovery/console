@@ -453,6 +453,22 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText(container.tag)).not.toBeInTheDocument()
   })
 
+  it('renders the auto-deploy badge of a Git container with auto-deploy enabled', () => {
+    const container = { ...gitContainerFactoryMock(1)[0], auto_deploy: true }
+
+    renderWithProviders(<ServiceHeader environment={environment} service={container} />)
+
+    expect(screen.getByText('auto-deploy-badge')).toBeInTheDocument()
+  })
+
+  it('renders no auto-deploy badge for an image container', () => {
+    const container = { ...containerFactoryMock(1)[0], auto_deploy: true }
+
+    renderWithProviders(<ServiceHeader environment={environment} service={container} />)
+
+    expect(screen.queryByText('auto-deploy-badge')).not.toBeInTheDocument()
+  })
+
   it('renders database badges and copies the connection URI', async () => {
     const { userEvent } = renderServiceHeader('database-mock')
 
