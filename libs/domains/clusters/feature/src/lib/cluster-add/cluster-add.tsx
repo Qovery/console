@@ -6,6 +6,8 @@ import Kubernetes from 'devicon/icons/kubernetes/kubernetes-original.svg'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactElement, type ReactNode, cloneElement, useState } from 'react'
+import type { Gate } from '@qovery/shared/billing/data-access'
+import { PaywallLock, useBillingPaywall } from '@qovery/shared/billing/feature'
 import { Callout, Heading, Icon, Modal, Section, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
@@ -26,6 +28,10 @@ type ProviderCardProps = {
   disabled?: boolean
   actionLabel?: string
   analytics: { selectedCloudProvider: string; selectedInstallationType: string }
+  /** The plan does not include it: the card shows the lock and opens the paywall. */
+  locked?: { gate: Gate; open: () => void }
+  /** The plan includes it and its intro is due: shown first, then go (on Continue). */
+  intro?: (go: () => void) => void
 } & ({ slug: string } | { onClick: () => void })
 
 // Decorative: the card title already names the provider.
@@ -37,8 +43,18 @@ function ProviderIcon({ icon }: { icon: ProviderIconSource }) {
   )
 }
 
-function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, ...props }: ProviderCardProps) {
+function ProviderCard({
+  title,
+  icon,
+  disabled = false,
+  actionLabel,
+  analytics,
+  locked,
+  intro,
+  ...props
+}: ProviderCardProps) {
   const { organizationId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const className = twMerge(
     'flex h-[52px] items-center gap-2 rounded-md border border-neutral bg-surface-neutral px-4 text-left text-sm font-medium text-neutral transition-colors',
     disabled ? 'cursor-not-allowed bg-surface-neutral-component text-neutral-subtle' : 'hover:border-brand-strong',
@@ -49,7 +65,9 @@ function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, .
     <>
       <ProviderIcon icon={icon} />
       <span className="min-w-0 flex-1 truncate">{title}</span>
-      {actionLabel ? (
+      {locked && !disabled ? (
+        <PaywallLock gate={locked.gate} className="shrink-0" />
+      ) : actionLabel ? (
         <span className="shrink-0 text-ssm font-normal text-neutral-subtle">{actionLabel}</span>
       ) : (
         <Icon iconName="angle-right" iconStyle="regular" className="text-neutral-subtle" />
@@ -57,6 +75,43 @@ function ProviderCard({ title, icon, disabled = false, actionLabel, analytics, .
     </>
   )
   const capture = () => posthog.capture('select-cluster', analytics)
+
+  if (locked && !disabled) {
+    return (
+      <button
+        type="button"
+        className={twMerge(className, 'cursor-pointer')}
+        onClick={() => {
+          capture()
+          locked.open()
+        }}
+      >
+        {content}
+      </button>
+    )
+  }
+
+  if (intro && !disabled) {
+    const go = () =>
+      'slug' in props
+        ? navigate({
+            to: '/organization/$organizationId/cluster/create/$slug',
+            params: { organizationId, slug: props.slug },
+          })
+        : props.onClick()
+    return (
+      <button
+        type="button"
+        className={className}
+        onClick={() => {
+          capture()
+          intro(go)
+        }}
+      >
+        {content}
+      </button>
+    )
+  }
 
   if ('slug' in props && !disabled) {
     return (
@@ -111,13 +166,31 @@ export function ClusterAdd() {
   const { organizationId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
-  const { showPylonForm } = useSupportChat()
+  const { showPylonForm, showChat } = useSupportChat()
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
   const isByokV2OnPremiseEnabled = Boolean(useFeatureFlagEnabled('byok-v2-on-premise'))
   const { isClusterCreationRestricted: disabled } = useClusterCreationRestriction({ organizationId })
   const [isCreationFlowOpen, setIsCreationFlowOpen] = useState(false)
   const [creationCloudProvider, setCreationCloudProvider] = useState<SelfManagedClusterCloudProvider>('AWS')
   const [creationStep, setCreationStep] = useState<SelfManagedClusterCreationStep>('general')
+  // Qovery-managed clusters can be outside the plan (Free runs self-managed clusters only), and each
+  // kind has its own limit: the cards stay visible, locked, and open the full-page paywall.
+  const paywall = useBillingPaywall(
+    organizationId,
+    { actions: ['cluster.create', 'cluster.create_self_managed'] },
+    { onContactSales: showChat, variant: 'page' }
+  )
+  const lockFor = (action: string) => {
+    const gate = paywall.gate(action)
+    return gate && paywall.locked(action) ? { gate, open: () => paywall.open(action) } : undefined
+  }
+  const managedLock = lockFor('cluster.create')
+  const selfManagedLock = lockFor('cluster.create_self_managed')
+  // Included in the plan, with an intro due for this person: the card shows it before going on.
+  const introFor = (action: string) =>
+    paywall.intro(action) ? (go: () => void) => paywall.proceed(action, go) : undefined
+  const managedIntro = introFor('cluster.create')
+  const selfManagedIntro = introFor('cluster.create_self_managed')
 
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
@@ -192,6 +265,8 @@ export function ClusterAdd() {
           slug="aws"
           disabled={disabled}
           analytics={managed('AWS')}
+          locked={managedLock}
+          intro={managedIntro}
         />
         {isEksAnywhereEnabled ? (
           <ProviderCard
@@ -199,6 +274,8 @@ export function ClusterAdd() {
             icon={<Icon name="AWS" />}
             slug="aws-eks-anywhere"
             disabled={disabled}
+            locked={managedLock}
+            intro={managedIntro}
             analytics={{ selectedCloudProvider: 'AWS', selectedInstallationType: 'partially-managed' }}
           />
         ) : (
@@ -216,6 +293,8 @@ export function ClusterAdd() {
           slug="gcp"
           disabled={disabled}
           analytics={managed('GCP')}
+          locked={managedLock}
+          intro={managedIntro}
         />
         <ProviderCard
           title="Scaleway"
@@ -223,6 +302,8 @@ export function ClusterAdd() {
           slug="scw"
           disabled={disabled}
           analytics={managed('SCW')}
+          locked={managedLock}
+          intro={managedIntro}
         />
         <ProviderCard
           title="Microsoft Azure"
@@ -230,6 +311,8 @@ export function ClusterAdd() {
           slug="azure"
           disabled={disabled}
           analytics={managed('AZURE')}
+          locked={managedLock}
+          intro={managedIntro}
         />
       </ProviderSection>
 
@@ -242,6 +325,8 @@ export function ClusterAdd() {
           icon={Kubernetes}
           onClick={() => openInstallationGuideModal({ isDemo: true })}
           analytics={{ selectedCloudProvider: 'OTHER', selectedInstallationType: 'demo' }}
+          locked={selfManagedLock}
+          intro={selfManagedIntro}
         />
         <ProviderCard
           title="AWS"
@@ -249,6 +334,8 @@ export function ClusterAdd() {
           onClick={() => openCreationFlow('AWS')}
           disabled={disabled}
           analytics={selfManaged('AWS')}
+          locked={selfManagedLock}
+          intro={selfManagedIntro}
         />
         <ProviderCard
           title="GCP"
@@ -256,6 +343,8 @@ export function ClusterAdd() {
           onClick={() => openCreationFlow('GCP')}
           disabled={disabled}
           analytics={selfManaged('GCP')}
+          locked={selfManagedLock}
+          intro={selfManagedIntro}
         />
         <ProviderCard
           title="Scaleway"
@@ -263,6 +352,8 @@ export function ClusterAdd() {
           onClick={() => openCreationFlow('SCW')}
           disabled={disabled}
           analytics={selfManaged('SCW')}
+          locked={selfManagedLock}
+          intro={selfManagedIntro}
         />
         {otherProviders.map(({ title, icon, provider, creationProvider }) => (
           <ProviderCard
@@ -276,6 +367,8 @@ export function ClusterAdd() {
             }
             disabled={disabled}
             analytics={selfManaged(provider)}
+            locked={selfManagedLock}
+            intro={selfManagedIntro}
           />
         ))}
         {isByokV2OnPremiseEnabled && (
@@ -288,6 +381,8 @@ export function ClusterAdd() {
           />
         )}
       </ProviderSection>
+
+      {paywall.element}
 
       <Modal
         fakeModal

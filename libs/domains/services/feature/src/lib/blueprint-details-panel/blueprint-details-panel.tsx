@@ -10,6 +10,7 @@ import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-qu
 import { getBlueprintDisplayName } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
+import { type BlueprintLock } from '../service-new/blueprint-card/blueprint-card'
 
 function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) {
   return `qovery-blueprints/${serviceFamily || provider}`
@@ -148,12 +149,14 @@ function BlueprintDetailsPanelContent({
   open,
   onExitComplete,
   onOpenChange,
+  lock,
 }: {
   blueprint: BlueprintItem
   footerMode: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void
   onOpenChange: (open: boolean) => void
+  lock?: BlueprintLock
 }) {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? ''
@@ -234,21 +237,27 @@ function BlueprintDetailsPanelContent({
                   <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
                     Cancel
                   </Button>
-                  <Link
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
-                    params={{
-                      organizationId,
-                      projectId,
-                      environmentId,
-                      provider: blueprint.provider,
-                      serviceFamily: blueprint.serviceFamily ?? '',
-                    }}
-                    as="button"
-                    color="brand"
-                    size="lg"
-                  >
-                    Deploy blueprint
-                  </Link>
+                  {lock ? (
+                    <Button type="button" color="brand" size="lg" onClick={lock.open}>
+                      Deploy blueprint
+                    </Button>
+                  ) : (
+                    <Link
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
+                      params={{
+                        organizationId,
+                        projectId,
+                        environmentId,
+                        provider: blueprint.provider,
+                        serviceFamily: blueprint.serviceFamily ?? '',
+                      }}
+                      as="button"
+                      color="brand"
+                      size="lg"
+                    >
+                      Deploy blueprint
+                    </Link>
+                  )}
                 </>
               )}
             </div>
@@ -265,12 +274,15 @@ export function BlueprintDetailsPanel({
   open,
   onExitComplete,
   onOpenChange,
+  lock,
 }: {
   blueprint: BlueprintItem | null
   footerMode?: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void
   onOpenChange: (open: boolean) => void
+  /** The plan does not include blueprints: Deploy opens the paywall. */
+  lock?: BlueprintLock
 }) {
   if (!blueprint) return null
 
@@ -281,6 +293,7 @@ export function BlueprintDetailsPanel({
       open={open}
       onExitComplete={onExitComplete}
       onOpenChange={onOpenChange}
+      lock={lock}
     />
   )
 }

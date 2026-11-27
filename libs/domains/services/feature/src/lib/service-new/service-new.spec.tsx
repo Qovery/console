@@ -1,11 +1,14 @@
 import { within } from '@testing-library/react'
+import axios from 'axios'
 import posthog from 'posthog-js'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
+import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing/data-access'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OTHER_BLUEPRINT_CATEGORY } from '../blueprint-utils/blueprint-utils'
 import { ServiceNew } from './service-new'
 
+const mockBillingFlag = jest.fn(() => false)
 const mockUseFeatureFlagEnabled = jest.fn(() => false)
 const mockShowPylonForm = jest.fn()
 const mockUseBlueprintCatalog = jest.fn(() => ({ data: undefined }))
@@ -26,7 +29,8 @@ jest.mock('posthog-js', () => ({
 }))
 
 jest.mock('posthog-js/react', () => ({
-  useFeatureFlagEnabled: (flag: string) => mockUseFeatureFlagEnabled(flag),
+  useFeatureFlagEnabled: (flag: string) =>
+    flag === 'billing-paywall' ? mockBillingFlag() : mockUseFeatureFlagEnabled(flag),
 }))
 
 jest.mock('@qovery/shared/ui', () => {
@@ -61,8 +65,33 @@ jest.mock('@qovery/shared/ui', () => {
 
 jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
-  useSupportChat: () => ({ showPylonForm: mockShowPylonForm }),
+  useSupportChat: () => ({ showPylonForm: mockShowPylonForm, showChat: jest.fn() }),
 }))
+
+// The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
+const mockGates: { current: Gate[] | undefined } = { current: undefined }
+const mockGatesCall = jest.fn()
+const originalAdapter = axios.defaults.adapter
+
+const lockedBlueprints: Gate = {
+  action: 'blueprint.create',
+  sku: 'service_catalog',
+  name: 'Service catalog (blueprints)',
+  allowed: false,
+  reason: 'not_in_plan',
+  limit: false,
+  used: 0,
+  requested: 1,
+  paywall: {
+    sku: 'service_catalog',
+    title: 'Blueprints',
+    message: 'Service catalog (blueprints) is not included in your Starter plan.',
+    headline: 'Create databases, caches and storage from a catalog',
+    benefits: ['Pick a blueprint (RDS, ElastiCache, S3 and more) and fill a short form.'],
+    audience: 'billing',
+    options: [{ type: 'start_trial', label: 'Try it free for 14 days', days: 14, includes: 'Blueprints' }],
+  },
+}
 
 const mockUseBlueprintCatalogServiceReadme = jest.fn(() => ({
   data: blueprintReadmeResponse,
@@ -106,7 +135,22 @@ const blueprints: BlueprintItem[] = [
 ]
 
 describe('ServiceNew', () => {
+  afterEach(() => {
+    axios.defaults.adapter = originalAdapter
+    jest.restoreAllMocks()
+  })
   beforeEach(() => {
+    mockGates.current = undefined
+    mockBillingFlag.mockReturnValue(false)
+    mockGatesCall.mockClear()
+    axios.defaults.adapter = createPricingFetchAdapter(async (input) => {
+      const url = new URL(String(input))
+      if (url.pathname.endsWith('/gates')) {
+        mockGatesCall(Object.fromEntries(url.searchParams))
+        return { ok: true, status: 200, json: async () => ({ gates: mockGates.current ?? [] }) } as Response
+      }
+      return { ok: true, status: 204 } as Response
+    })
     mockUseFeatureFlagEnabled.mockReturnValue(false)
     mockShowPylonForm.mockClear()
     ;(posthog.capture as jest.Mock).mockClear()
@@ -495,5 +539,103 @@ describe('ServiceNew', () => {
         'a[href="/organization/org-1/project/project-1/environment/env-1/organization/org-1/project/project-1/environment/env-1/service/create/application"]'
       )
     ).not.toBeInTheDocument()
+  })
+
+  describe('when the plan does not include blueprints', () => {
+    beforeEach(() => {
+      mockBillingFlag.mockReturnValue(true)
+      mockGates.current = [lockedBlueprints]
+      mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+      mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
+    })
+
+    it('keeps blueprints unlocked and skips gates with the billing flag off', () => {
+      mockBillingFlag.mockReturnValue(false)
+      renderWithProviders(
+        <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+      )
+      const section = within(screen.getByRole('heading', { name: 'Blueprints' }).closest('section') as HTMLElement)
+      expect(section.getAllByRole('link', { name: 'Deploy' })).toHaveLength(blueprints.length)
+      expect(mockGatesCall).not.toHaveBeenCalled()
+    })
+
+    it('keeps the catalog browsable and opens the full-page paywall from Deploy', async () => {
+      const { userEvent } = renderWithProviders(
+        <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+      )
+      const section = within(screen.getByRole('heading', { name: 'Blueprints' }).closest('section') as HTMLElement)
+
+      expect(await section.findAllByText('Try it free for 14 days')).toHaveLength(2)
+      expect(section.getByText('AWS S3 Bucket')).toBeInTheDocument()
+      expect(section.queryByRole('link', { name: 'Deploy' })).not.toBeInTheDocument()
+
+      await userEvent.click(section.getAllByRole('button', { name: 'Deploy' })[0])
+
+      expect(await screen.findByText('Create databases, caches and storage from a catalog')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Start a 14-day trial' })).toBeInTheDocument()
+    })
+
+    it('opens the full-page paywall instead of the blueprint details', async () => {
+      const { userEvent } = renderWithProviders(
+        <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+      )
+      const section = within(screen.getByRole('heading', { name: 'Blueprints' }).closest('section') as HTMLElement)
+      await section.findAllByText('Try it free for 14 days')
+
+      await userEvent.click(section.getAllByRole('button', { name: 'View details' })[0])
+
+      expect(await screen.findByRole('button', { name: 'Start a 14-day trial' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Not now' })).toBeInTheDocument()
+      expect(screen.queryByRole('dialog', { name: 'AWS S3 Bucket' })).not.toBeInTheDocument()
+      expect(mockUseBlueprintCatalogServiceReadme).not.toHaveBeenCalledWith(expect.objectContaining({ enabled: true }))
+    })
+
+    it('never gates the base services: no lock, and each one still links to its creation flow', async () => {
+      const { container } = renderWithProviders(
+        <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+      )
+      const blueprintsSection = within(
+        screen.getByRole('heading', { name: 'Blueprints' }).closest('section') as HTMLElement
+      )
+      await blueprintsSection.findAllByText('Try it free for 14 days')
+      const base = within(screen.getByRole('heading', { name: 'Base services' }).closest('section') as HTMLElement)
+
+      expect(base.queryByText('Try it free for 14 days')).not.toBeInTheDocument()
+      expect(screen.getAllByText('Try it free for 14 days')).toHaveLength(blueprints.length)
+      for (const type of ['application', 'lifecycle-job', 'cron-job', 'helm']) {
+        expect(
+          container.querySelector(
+            `a[href="/organization/org-1/project/project-1/environment/env-1/service/create/${type}"]`
+          )
+        ).toBeInTheDocument()
+      }
+      expect(screen.queryByRole('button', { name: 'Not now' })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('when the plan includes blueprints', () => {
+    beforeEach(() => {
+      mockBillingFlag.mockReturnValue(true)
+      mockGates.current = [{ ...lockedBlueprints, allowed: true, reason: '', paywall: undefined }]
+      mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+      mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
+    })
+
+    it('opens the blueprint details and links Deploy straight to the creation flow, with no lock', async () => {
+      const { userEvent } = renderWithProviders(
+        <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+      )
+      const section = within(screen.getByRole('heading', { name: 'Blueprints' }).closest('section') as HTMLElement)
+
+      expect(section.getAllByRole('link', { name: 'Deploy' })[0]).toHaveAttribute(
+        'href',
+        '/organization/org-1/project/project-1/environment/env-1/service/create/blueprint/aws/s3'
+      )
+      await userEvent.click(section.getAllByRole('button', { name: 'View details' })[0])
+
+      expect(screen.getByRole('dialog', { name: 'AWS S3 Bucket' })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Not now' })).not.toBeInTheDocument()
+      expect(screen.queryByText('Try it free for 14 days')).not.toBeInTheDocument()
+    })
   })
 })

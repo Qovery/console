@@ -1,4 +1,10 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
+import {
+  getBillingSettingsLinks,
+  getNotificationsSettingsLinks,
+  hasBillingRole,
+  useIsBillingUsageEnabled,
+} from '@qovery/domains/organizations/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
@@ -12,6 +18,7 @@ function RouteComponent() {
     location: { pathname },
   } = useRouterState()
   const { roles } = useUserRole()
+  const isBillingUsageEnabled = useIsBillingUsageEnabled()
 
   const isOrganizationAdmin = roles.some((role) => role.includes(`organization:${organizationId}:admin`))
 
@@ -43,10 +50,7 @@ function RouteComponent() {
     type: 'group',
     title: 'Billing & plans',
     icon: 'credit-card' as const,
-    children: [
-      { title: 'Billing summary', to: `${pathSettings}/billing-summary` },
-      { title: 'Billing details', to: `${pathSettings}/billing-details` },
-    ],
+    children: getBillingSettingsLinks(pathSettings, isBillingUsageEnabled, hasBillingRole(roles, organizationId)),
   }
 
   const containerRegistriesLink = {
@@ -84,10 +88,7 @@ function RouteComponent() {
     type: 'group',
     title: 'Notifications',
     icon: 'bell' as const,
-    children: [
-      { title: 'Slack', to: `${pathSettings}/notifications/slack` },
-      { title: 'Webhook', to: `${pathSettings}/webhook` },
-    ],
+    children: getNotificationsSettingsLinks(pathSettings, isBillingUsageEnabled),
   }
 
   // Policy tokens, the Copilot, skills, skill presets, agent activity and the Agent Tasks pages live
@@ -127,7 +128,11 @@ function RouteComponent() {
             {LINKS_SETTINGS.map((link) => {
               if ('children' in link) {
                 const isChildPathActive = (childPath: string) =>
-                  pathname === childPath || pathname.startsWith(`${childPath}/`)
+                  pathname === childPath ||
+                  pathname.startsWith(`${childPath}/`) ||
+                  (!isBillingUsageEnabled &&
+                    childPath === `${pathSettings}/billing-summary` &&
+                    pathname === `${pathSettings}/billing`)
                 const groupActive = link.children.some((child) => isChildPathActive(child.to))
 
                 return (

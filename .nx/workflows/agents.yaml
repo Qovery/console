@@ -14,5 +14,8 @@ launch-templates:
       - name: Enable Corepack
         script: corepack enable
 
+      - name: Fetch private Billing SDK
+        script: sh scripts/fetch-billing-sdk.sh
+
       - name: Install dependencies
         uses: 'nrwl/nx-cloud-workflows/v6/workflow-steps/install-node-modules/main.yaml'

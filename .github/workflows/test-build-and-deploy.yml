@@ -40,6 +40,8 @@ on:
         required: false
       nx-cloud-access-token:
         required: true
+      npm-registry-read-token:
+        required: true
       codecov-token:
         required: true
       e2e-auth-token:
@@ -85,6 +87,7 @@ jobs:
       NX_PUBLIC_PYLON_APP_ID: ${{ vars.NX_PUBLIC_PYLON_APP_ID }}
       NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL: ${{ vars.NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL }}
       NX_PUBLIC_SLACK_BOT_API_URL: ${{ vars.NX_PUBLIC_SLACK_BOT_API_URL }}
+      NX_PUBLIC_PRICING_API_URL: ${{ vars.NX_PUBLIC_PRICING_API_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
@@ -95,10 +98,14 @@ jobs:
         uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
-          cache: yarn
 
       - name: Enable Corepack
         run: corepack enable
+
+      - name: Fetch private Billing SDK
+        env:
+          QOVERY_NPM_READ_TOKEN: ${{ secrets.npm-registry-read-token }}
+        run: sh scripts/fetch-billing-sdk.sh
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -127,12 +134,14 @@ jobs:
 
       - name: Start Nx Agents
         id: start-agents
+        env:
+          QOVERY_NPM_READ_TOKEN: ${{ secrets.npm-registry-read-token }}
         run: |
           yarn nx start-ci-run \
             --distribute-on="3 console-ci" \
             --require-explicit-completion \
             --stop-agents-on-failure=true \
-            --with-env-vars="NX_PUBLIC_GIT_SHA,NX_PUBLIC_GTM,NX_PUBLIC_OAUTH_AUDIENCE,NX_PUBLIC_OAUTH_DOMAIN,NX_PUBLIC_OAUTH_KEY,NX_PUBLIC_POSTHOG,NX_PUBLIC_POSTHOG_APIHOST,NX_PUBLIC_QOVERY_API,NX_PUBLIC_QOVERY_WS,NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY,NX_PUBLIC_INSTATUS_APP_ID,NX_PUBLIC_MINTLIFY_API_KEY,NX_PUBLIC_CARGO_API_TOKEN,NX_PUBLIC_PYLON_APP_ID,NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL,NX_PUBLIC_SLACK_BOT_API_URL"
+            --with-env-vars="NX_PUBLIC_GIT_SHA,NX_PUBLIC_GTM,NX_PUBLIC_OAUTH_AUDIENCE,NX_PUBLIC_OAUTH_DOMAIN,NX_PUBLIC_OAUTH_KEY,NX_PUBLIC_POSTHOG,NX_PUBLIC_POSTHOG_APIHOST,NX_PUBLIC_QOVERY_API,NX_PUBLIC_QOVERY_WS,NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY,NX_PUBLIC_INSTATUS_APP_ID,NX_PUBLIC_MINTLIFY_API_KEY,NX_PUBLIC_CARGO_API_TOKEN,NX_PUBLIC_PYLON_APP_ID,NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL,NX_PUBLIC_SLACK_BOT_API_URL,NX_PUBLIC_PRICING_API_URL,QOVERY_NPM_READ_TOKEN"
 
       - name: Check formatting
         run: yarn nx-cloud record -- yarn nx format:check
@@ -240,9 +249,12 @@ jobs:
         uses: actions/setup-node@v7.1.0
         with:
           node-version-file: '.nvmrc'
-          cache: yarn
       - name: Enable Corepack
         run: corepack enable
+      - name: Fetch private Billing SDK
+        env:
+          QOVERY_NPM_READ_TOKEN: ${{ secrets.npm-registry-read-token }}
+        run: sh scripts/fetch-billing-sdk.sh
       - name: Install dependencies
         run: yarn install --immutable
       - name: Install Playwright browser

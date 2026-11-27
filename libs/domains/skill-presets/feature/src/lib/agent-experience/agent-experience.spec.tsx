@@ -353,12 +353,11 @@ describe('AgentExperiencePolicyTokens', () => {
     expect(screen.queryByText(/policy token settings/)).not.toBeInTheDocument()
   })
 
-  it('offers two ways to start when there is no token', async () => {
+  it('offers one create action and policy examples when there is no token', async () => {
     setSkillPresetsScenario('agent-experience-empty')
     renderWithProviders(<AgentExperiencePolicyTokens />)
     expect(await screen.findByText('No policy token yet')).toBeInTheDocument()
-    // The header action and the empty-state action.
-    expect(screen.getAllByRole('button', { name: /Create policy token/ })).toHaveLength(2)
+    expect(screen.getByRole('button', { name: /Create policy token/ })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Policy examples' })).toBeInTheDocument()
   })
 
