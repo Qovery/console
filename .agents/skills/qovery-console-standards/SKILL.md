@@ -50,6 +50,7 @@ Reference these guidelines when:
 - Functional components only, no `React.FC`, destructure props in signature
 - Route-scoped components read URL identifiers with TanStack Router `useParams({ strict: false })`; do not forward route IDs through props solely for data access
 - React Query for server state, `clsx` for conditional classes, `twMerge` for conflicting Tailwind classes
+- API integrations: reuse data-access clients, shared auth/error handling, and React Query hooks, including for external services. Read [API Integrations](rules/react-typescript-standards.md#api-integrations) before adding requests or reviewing a new integration.
 
 ### Styling
 
