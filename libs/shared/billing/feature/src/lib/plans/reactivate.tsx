@@ -1,3 +1,4 @@
+import * as Dialog from '@radix-ui/react-dialog'
 /*
  * Once the subscription has ended: the usage page says so ("Your subscription ended on …") with
  * the way back. "Reactivate" opens a plan picker (monthly or yearly, the last plan picked), then
@@ -13,7 +14,8 @@ import {
   type Reactivation,
   type ReactivationResult,
 } from '@qovery/shared/billing/data-access'
-import { Badge, Button, Callout, Icon, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Heading, Icon, Modal, RadioGroup } from '@qovery/shared/ui'
+import { CompactSelect } from '../components/compact-select'
 import { errorText, notifySuccess } from '../components/parts'
 import { openPaymentMethodPage } from '../invoices/invoices-page'
 import { date, money, monthly } from '../utils/format'
@@ -184,11 +186,15 @@ export function ReactivateFlow({
       buttonClose={false}
       dismissible={!busy}
     >
-      <div className="flex max-h-[80vh] flex-col">
-        <div className="flex items-start gap-3 border-b border-neutral px-6 py-4">
+      <div className="flex max-h-[80vh] flex-col text-sm">
+        <div className="flex items-start gap-3 border-b border-neutral px-5 py-4">
           <div className="min-w-0 flex-1">
-            <h2 className="h4 text-neutral">{title}</h2>
-            <p className="text-sm text-neutral-subtle">
+            <Dialog.Title asChild>
+              <Heading level={2} className="break-words pr-8">
+                {title}
+              </Heading>
+            </Dialog.Title>
+            <p className="mt-1 text-sm text-neutral-subtle">
               {step === 'choose' &&
                 (request
                   ? 'Pick the plan you want. Your account manager starts it with you.'
@@ -198,17 +204,20 @@ export function ReactivateFlow({
                 (request ? 'Check the plan before you send the request.' : 'Check what you pay before you confirm.')}
             </p>
           </div>
-          <button
+          <Button
             type="button"
             aria-label="Close"
+            iconOnly
+            size="md"
+            variant="plain"
+            color="neutral"
             disabled={busy}
             onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-subtle hover:bg-surface-neutral-componentHover"
           >
             <Icon iconName="xmark" iconStyle="solid" />
-          </button>
+          </Button>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
           {client.mode === 'preview' && step !== 'done' && (
             <Callout.Root color="sky">
               <Callout.Text>Preview: quotes are real, nothing is applied.</Callout.Text>
@@ -216,19 +225,22 @@ export function ReactivateFlow({
           )}
           {step === 'choose' && (
             <>
-              <SegmentedControl.Root
+              <CompactSelect
+                ariaLabel="Billing period"
                 value={period}
-                onValueChange={(v) => {
+                disabled={busy}
+                onChange={(v) => {
                   if (v !== 'month' && v !== 'year') return
                   setPeriod(v)
                   setPick((code) =>
                     view.plans.some((p) => p.code === code && monthly(p.prices, cur, v) != null) ? code : undefined
                   )
                 }}
-              >
-                <SegmentedControl.Item value="month">Monthly</SegmentedControl.Item>
-                <SegmentedControl.Item value="year">Yearly</SegmentedControl.Item>
-              </SegmentedControl.Root>
+                options={[
+                  { value: 'month', label: 'Monthly' },
+                  { value: 'year', label: 'Yearly' },
+                ]}
+              />
               <RadioGroup.Root className="flex flex-col gap-2" value={pick ?? ''} onValueChange={setPick}>
                 {view.plans.map((p) => {
                   const m = monthly(p.prices, cur, period)
@@ -339,7 +351,7 @@ export function ReactivateFlow({
             </Callout.Root>
           )}
         </div>
-        <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-6 py-3">
+        <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-5 py-4">
           {step === 'choose' && (
             <Button
               size="lg"

@@ -8,6 +8,7 @@ export interface PaginationProps {
   className?: string
   onNext: () => void
   onPrevious: () => void
+  hidePageSize?: boolean
   pageSize?: string
   onPageSizeChange?: (pageSize: string) => void
 }
@@ -43,34 +44,36 @@ export function Pagination(props: PaginationProps) {
           <Icon iconName="chevron-right" />
         </Button>
       </div>
-      <div className="flex items-center gap-3">
-        <InputSelectSmall
-          dataTestId="select-page-size"
-          ariaLabel="Rows per page"
-          name="pageSize"
-          className="!w-16"
-          defaultValue={props.pageSize || '30'}
-          onChange={(e) => props.onPageSizeChange && props.onPageSizeChange(e || '')}
-          items={[
-            {
-              label: '10',
-              value: '10',
-            },
-            {
-              label: '30',
-              value: '30',
-            },
-            {
-              label: '50',
-              value: '50',
-            },
-            {
-              label: '100',
-              value: '100',
-            },
-          ]}
-        />
-      </div>
+      {!props.hidePageSize && (
+        <div className="flex items-center gap-3">
+          <InputSelectSmall
+            dataTestId="select-page-size"
+            ariaLabel="Rows per page"
+            name="pageSize"
+            className="!w-16"
+            defaultValue={props.pageSize || '30'}
+            onChange={(e) => props.onPageSizeChange && props.onPageSizeChange(e || '')}
+            items={[
+              {
+                label: '10',
+                value: '10',
+              },
+              {
+                label: '30',
+                value: '30',
+              },
+              {
+                label: '50',
+                value: '50',
+              },
+              {
+                label: '100',
+                value: '100',
+              },
+            ]}
+          />
+        </div>
+      )}
     </div>
   )
 }

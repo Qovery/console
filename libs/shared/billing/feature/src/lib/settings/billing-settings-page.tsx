@@ -109,7 +109,7 @@ function BillingSettings({ organizationId, client, access, returnUrl, alerts, on
       />
     )
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {alerts && (
         <BillingAlerts
           organizationId={organizationId}
@@ -225,12 +225,19 @@ function PaymentMethodCard({
               href={link}
               target="_blank"
               rel="noopener noreferrer"
-              className="mr-auto text-sm text-brand hover:underline"
+              className="w-full text-sm text-brand hover:underline"
             >
               The page did not open? Open it here
             </a>
           )}
-          <Button size="md" loading={busy} disabled={!pm || !actions} onClick={update}>
+          <Button
+            size="md"
+            variant="outline"
+            color="neutral"
+            loading={busy}
+            disabled={!pm || !actions}
+            onClick={update}
+          >
             {pm && pm.payment_methods.length === 0 ? 'Add a payment method' : 'Update payment method'}
           </Button>
         </>
@@ -252,7 +259,10 @@ function PaymentMethodCard({
           {pm.payment_methods.map((m, i) => {
             const state = cardState(m)
             return (
-              <li key={i} className="flex flex-wrap items-center gap-3 rounded border border-neutral px-4 py-3">
+              <li
+                key={i}
+                className="flex flex-wrap items-center gap-3 rounded border border-neutral bg-surface-neutral-component px-4 py-3"
+              >
                 <Icon
                   iconName={m.type === 'card' ? 'credit-card' : 'building-columns'}
                   iconStyle="regular"
@@ -286,7 +296,6 @@ function PaymentMethodCard({
           })}
         </ul>
       )}
-      {pm && !actions && <p className="text-sm text-neutral-subtle">Billing changes are not available yet.</p>}
     </SectionCard>
   )
 }
@@ -388,7 +397,7 @@ function AwsMarketplaceCard({
       <Button size="md" variant="plain" color="neutral" onClick={() => setEditing(false)}>
         Cancel
       </Button>
-      <Button size="md" loading={busy} onClick={submit}>
+      <Button size="md" variant="outline" color="neutral" loading={busy} onClick={submit}>
         {status === 'none' ? 'Request a private offer' : 'Save request'}
       </Button>
     </>
@@ -419,9 +428,6 @@ function AwsMarketplaceCard({
             Retry
           </Button>
         </Callout.Root>
-      )}
-      {aws && !editing && status === 'none' && (
-        <p className="text-sm text-neutral-subtle">Not requested. You pay by card or invoice today.</p>
       )}
       {aws && !editing && status === 'open' && req && (
         <p className="text-sm text-neutral">
@@ -548,9 +554,6 @@ function BillingInfoCard({ organizationId, client }: { organizationId: string; c
         footer={
           saved && (
             <>
-              {!actions && (
-                <span className="mr-auto text-sm text-neutral-subtle">Billing changes are not available yet.</span>
-              )}
               {dirty && (
                 <Button
                   size="md"

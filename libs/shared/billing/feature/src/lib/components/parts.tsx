@@ -5,7 +5,7 @@
  */
 import { type ReactNode, useEffect, useState } from 'react'
 import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
-import { Skeleton, toast } from '@qovery/shared/ui'
+import { BlockContent, Skeleton, toast } from '@qovery/shared/ui'
 
 export type Access = 'member' | 'billing' | 'demo'
 
@@ -23,19 +23,12 @@ export function SectionCard({
   id?: string
 }) {
   return (
-    <section id={id} className="rounded border border-neutral bg-surface-neutral">
-      <div className="flex flex-col gap-4 p-5 sm:p-6">
-        <div>
-          <h3 className="text-base font-medium text-neutral">{title}</h3>
-          {description && <p className="mt-1 text-sm text-neutral-subtle">{description}</p>}
-        </div>
+    <section id={id} className="text-sm">
+      <BlockContent title={title} className="mb-0" classNameContent="flex flex-col gap-4">
+        {description && <p className="text-neutral-subtle">{description}</p>}
         {children}
-      </div>
-      {footer && (
-        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-neutral px-5 py-3 sm:px-6">
-          {footer}
-        </div>
-      )}
+        {footer && <div className="flex flex-wrap items-center justify-start gap-2">{footer}</div>}
+      </BlockContent>
     </section>
   )
 }

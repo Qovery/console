@@ -372,7 +372,7 @@ describe('BillingUsageView', () => {
     // The same h1 as Invoices and Billing, in a SettingsHeading that holds the description and both buttons
     const title = await screen.findByRole('heading', { level: 1, name: 'Plan details' })
     const header = title.closest('.border-b') as HTMLElement
-    expect(within(header).getByText(/Limits are shared by every organization/)).toHaveClass('max-w-2xl')
+    expect(within(header).getByText(/Your plan and monthly consumption/)).toHaveClass('max-w-2xl')
     expect(await within(header).findByRole('button', { name: 'Change plan' })).toBeInTheDocument()
     expect(within(header).getByRole('button', { name: 'Compare plans' })).toBeInTheDocument()
 
@@ -581,11 +581,11 @@ describe('BillingUsageView', () => {
     })
     const { userEvent } = renderWithProviders(<BillingUsageView />)
 
-    const toggle = await screen.findByRole('button', { name: 'See available discounts' })
+    const toggle = await screen.findByRole('button', { name: /Available discounts/ })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
     expect(screen.getByText('Up to 8% off')).toBeInTheDocument()
     await userEvent.click(toggle)
-    expect(screen.getByRole('button', { name: 'Hide discounts' })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: /Available discounts/ })).toHaveAttribute('aria-expanded', 'true')
     await userEvent.click(screen.getByText('Logo rights'))
     await userEvent.click(screen.getByText('Public case study'))
     expect(await screen.findByText('$9,925')).toBeInTheDocument()
@@ -718,7 +718,7 @@ describe('BillingUsageView', () => {
 
     expect(await screen.findByText('Estimated bill')).toBeInTheDocument()
     expect(screen.getByText('$10,788')).toBeInTheDocument()
-    expect(screen.getByText('What your plan covers')).toBeInTheDocument()
+    expect(screen.queryByText('What your plan covers')).not.toBeInTheDocument()
   })
 
   it('should hide amounts from members', async () => {

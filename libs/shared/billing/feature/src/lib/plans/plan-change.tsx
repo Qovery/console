@@ -1,3 +1,4 @@
+import * as Dialog from '@radix-ui/react-dialog'
 /*
  * Change plan: pick a plan (monthly or yearly, the current one marked), review what changes and
  * what it costs today and on the next invoice, then confirm. A paid plan without a card on file
@@ -21,7 +22,8 @@ import {
   type PricingClient,
   type PublicPlans,
 } from '@qovery/shared/billing/data-access'
-import { Badge, Button, Callout, Icon, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Heading, Icon, Modal, RadioGroup } from '@qovery/shared/ui'
+import { CompactSelect } from '../components/compact-select'
 import { errorText } from '../components/parts'
 import { openPaymentMethodPage } from '../invoices/invoices-page'
 import { ProposalNote, hideProposal } from '../offers/proposals'
@@ -219,29 +221,37 @@ export function PlanChangeFlow({
       }}
       width="min(760px, calc(100vw - 24px))"
       buttonClose={false}
+      dismissible={!busy}
     >
-      <div className="flex max-h-[75vh] flex-col">
-        <div className="flex items-start gap-3 border-b border-neutral px-6 py-4">
+      <div className="flex max-h-[75vh] flex-col text-sm">
+        <div className="flex items-start gap-3 border-b border-neutral px-5 py-4">
           <div className="min-w-0 flex-1">
-            <h2 className="h4 text-neutral">{title}</h2>
-            <p className="text-sm text-neutral-subtle">
+            <Dialog.Title asChild>
+              <Heading level={2} className="break-words pr-8">
+                {title}
+              </Heading>
+            </Dialog.Title>
+            <p className="mt-1 text-sm text-neutral-subtle">
               {step === 'choose' &&
                 `You are on ${usage.plan.name}, billed ${currentPeriod === 'year' ? 'yearly' : 'monthly'}.`}
               {step === 'card' && 'The new plan is paid by card. Add one, then come back here.'}
               {step === 'review' && 'Check what changes and what you pay before you confirm.'}
             </p>
           </div>
-          <button
+          <Button
             type="button"
             aria-label="Close"
+            iconOnly
+            size="md"
+            variant="plain"
+            color="neutral"
             disabled={busy}
             onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-subtle hover:bg-surface-neutral-componentHover"
           >
             <Icon iconName="xmark" iconStyle="solid" />
-          </button>
+          </Button>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
           {client.mode === 'preview' && step !== 'done' && (
             <Callout.Root color="sky">
               <Callout.Text>Preview: quotes are real, nothing is applied.</Callout.Text>
@@ -262,21 +272,20 @@ export function PlanChangeFlow({
           {step === 'choose' && (
             <>
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <SegmentedControl.Root
-                  className="max-sm:auto-cols-auto"
+                <CompactSelect
+                  ariaLabel="Billing period"
                   value={period}
-                  aria-disabled={busy}
-                  onValueChange={(v) => {
+                  disabled={busy}
+                  onChange={(v) => {
                     if (busy) return
                     setPeriod(v as Period)
                     setPick(undefined)
                   }}
-                >
-                  <SegmentedControl.Item value="month">Monthly</SegmentedControl.Item>
-                  <SegmentedControl.Item value="year">
-                    Yearly{saving ? ` (save ${Math.round(saving)}%)` : ''}
-                  </SegmentedControl.Item>
-                </SegmentedControl.Root>
+                  options={[
+                    { value: 'month', label: 'Monthly' },
+                    { value: 'year', label: saving ? `Yearly (save ${Math.round(saving)}%)` : 'Yearly' },
+                  ]}
+                />
                 {options?.scheduled_change && (
                   <span className="text-sm text-neutral-subtle">
                     {options.scheduled_change.name} is planned from {date(options.scheduled_change.effective_on)}
@@ -523,7 +532,7 @@ export function PlanChangeFlow({
             </Callout.Root>
           )}
         </div>
-        <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-6 py-3">
+        <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-5 py-4">
           {step === 'choose' && (
             <>
               {blocked?.contact && onContactSales && (

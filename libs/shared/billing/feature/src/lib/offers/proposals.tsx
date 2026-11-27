@@ -173,7 +173,7 @@ export function ProposalBanner({
     )
   }
   return (
-    <div className="rounded border border-brand-strong bg-surface-brand-component px-5 py-4">
+    <div className="rounded border border-neutral bg-surface-neutral p-4">
       <div className="flex flex-wrap items-start gap-4">
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium text-neutral">{proposalLine(p)}</div>
@@ -202,7 +202,7 @@ export function ProposalBanner({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Button size="md" disabled={busy} onClick={() => onReview(p)}>
+          <Button size="md" variant="outline" color="neutral" disabled={busy} onClick={() => onReview(p)}>
             Review
           </Button>
           {onSnooze && (
@@ -235,7 +235,7 @@ export function ProposalBanner({
               {snoozeLabel(d)}
             </Button>
           ))}
-          <span className="text-xs">We will email you a reminder then.</span>
+          <span className="text-sm">We will email you a reminder then.</span>
         </div>
       )}
       {error && !dismissing && (
@@ -282,14 +282,16 @@ function DismissProposal({
       width="min(480px, calc(100vw - 24px))"
       buttonClose={false}
     >
-      <div className="flex flex-col gap-4 p-6">
-        <Dialog.Title asChild>
-          <Heading level={2}>Dismiss the suggestion</Heading>
-        </Dialog.Title>
-        <Dialog.Description className="text-sm text-neutral-subtle">
-          {p.sender_name || 'The Qovery team'} will know you passed on {p.plan.name}. Telling them why is optional and
-          helps them suggest something better.
-        </Dialog.Description>
+      <div className="flex flex-col gap-4 p-5">
+        <div className="flex flex-col gap-1">
+          <Dialog.Title asChild>
+            <Heading level={2}>Dismiss the suggestion</Heading>
+          </Dialog.Title>
+          <Dialog.Description className="text-sm text-neutral-subtle">
+            {p.sender_name || 'The Qovery team'} will know you passed on {p.plan.name}. Telling them why is optional and
+            helps them suggest something better.
+          </Dialog.Description>
+        </div>
         <RadioGroup.Root
           aria-label="Reason for dismissing the suggestion"
           className="flex flex-col gap-2"
@@ -367,14 +369,14 @@ export function ProposalHost({
 /** In the plan change review: who suggested it, their message, and the concession. */
 export function ProposalNote({ proposal: p }: { proposal: PlanProposal }) {
   return (
-    <Callout.Root color="purple">
+    <Callout.Root color="sky">
       <Callout.Icon>
         <Icon iconName="envelope-open-text" iconStyle="regular" />
       </Callout.Icon>
       <Callout.Text>
         <Callout.TextHeading>{proposalHeading(p)}</Callout.TextHeading>
         {p.message && <div className="whitespace-pre-line">{p.message}</div>}
-        <div className="mt-1 text-xs">Open until {date(p.expires_at)}.</div>
+        <div className="mt-1 text-sm">Open until {date(p.expires_at)}.</div>
       </Callout.Text>
     </Callout.Root>
   )

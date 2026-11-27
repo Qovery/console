@@ -14,7 +14,17 @@ import {
   type InvoicePage,
   type PricingClient,
 } from '@qovery/shared/billing/data-access'
-import { Badge, Button, Callout, Heading, Icon, Modal } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Callout,
+  EmptyState as ConsoleEmptyState,
+  Heading,
+  Icon,
+  Modal,
+  TablePrimitives,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { BillingAlerts } from '../components/billing-alerts'
 import { CompactSelect } from '../components/compact-select'
 import {
@@ -96,7 +106,7 @@ export function InvoicesPage({
     )
   if (!isBillingAccess(access) || !client.invoices) return <BillingRolesOnly />
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {/* The page has its own overdue banner. */}
       {alerts && (
         <BillingAlerts
@@ -213,8 +223,6 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
       ? onManagePaymentMethod()
       : openPaymentMethodPage(client, organizationId).catch((e) => setError(e))
   const oldestDue = [...rows].filter((r) => r.collectable).sort((a, b) => a.date.localeCompare(b.date))[0]
-  // The actions column fits its buttons: Details and Download, and Pay now when a row has it.
-  const actionsWidth = !client.invoice ? 'narrow' : !aws && shown.some((i) => i.collectable) ? 'wide' : 'medium'
 
   async function loadMore() {
     if (!page?.next_offset || loadingMore) return
@@ -303,7 +311,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       {aws && (
         <Callout.Root color="sky">
           <Callout.Icon>
@@ -333,7 +341,7 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
               {oldestDue && (
                 <Button
                   size="md"
-                  color="red"
+                  color="brand"
                   disabled={!actions || !!paying || payBlocked(pay[oldestDue.id])}
                   onClick={() => setConfirm(oldestDue)}
                 >
@@ -347,12 +355,6 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
           </Callout.Text>
         </Callout.Root>
       )}
-      {!actions && (
-        <p className="text-sm text-neutral-subtle">
-          Payments and downloads are not available yet. Your invoices are listed below.
-        </p>
-      )}
-
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-2">
           <CompactSelect
@@ -430,38 +432,46 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
         />
       ) : (
         <div className="overflow-hidden rounded border border-neutral bg-surface-neutral">
-          <div className="hidden grid-cols-[1.1fr_1.3fr_0.9fr_1fr_1fr_auto] gap-3 border-b border-neutral px-5 py-2 text-xs font-medium text-neutral-subtle lg:grid">
-            <span>Date</span>
-            <span>Number</span>
-            <span>Status</span>
-            <span className="text-right">Amount</span>
-            <span>Due</span>
-            <span className={`${ACTIONS_WIDTH[actionsWidth]} text-right`}>Actions</span>
-          </div>
-          <ul className="divide-y divide-neutral">
-            {shown.map((inv) => {
-              const st = invoiceStatus(inv)
-              const ps = pay[inv.id]
-              const blocked = payBlocked(ps)
-              return (
-                <li key={inv.id} className="px-5 py-3">
-                  <div className="grid grid-cols-2 items-center gap-x-3 gap-y-1 text-sm lg:grid-cols-[1.1fr_1.3fr_0.9fr_1fr_1fr_auto]">
-                    <span className="text-neutral">{localDate(inv.date)}</span>
-                    <span className="min-w-0 truncate text-right font-medium text-neutral lg:text-left">{inv.id}</span>
-                    <span>
+          <TablePrimitives.Table.Root containerClassName="border-0 rounded-none">
+            <TablePrimitives.Table.Header className="text-xs">
+              <TablePrimitives.Table.Row>
+                <TablePrimitives.Table.ColumnHeaderCell>Date</TablePrimitives.Table.ColumnHeaderCell>
+                <TablePrimitives.Table.ColumnHeaderCell>Number</TablePrimitives.Table.ColumnHeaderCell>
+                <TablePrimitives.Table.ColumnHeaderCell>Status</TablePrimitives.Table.ColumnHeaderCell>
+                <TablePrimitives.Table.ColumnHeaderCell className="text-right">
+                  Amount
+                </TablePrimitives.Table.ColumnHeaderCell>
+                <TablePrimitives.Table.ColumnHeaderCell>Due</TablePrimitives.Table.ColumnHeaderCell>
+                <TablePrimitives.Table.ColumnHeaderCell className="text-right">
+                  Actions
+                </TablePrimitives.Table.ColumnHeaderCell>
+              </TablePrimitives.Table.Row>
+            </TablePrimitives.Table.Header>
+            <TablePrimitives.Table.Body>
+              {shown.map((inv) => {
+                const st = invoiceStatus(inv)
+                const ps = pay[inv.id]
+                const blocked = payBlocked(ps)
+                return (
+                  <TablePrimitives.Table.Row key={inv.id}>
+                    <TablePrimitives.Table.Cell className="whitespace-nowrap font-medium">
+                      {localDate(inv.date)}
+                    </TablePrimitives.Table.Cell>
+                    <TablePrimitives.Table.Cell className="whitespace-nowrap">{inv.id}</TablePrimitives.Table.Cell>
+                    <TablePrimitives.Table.Cell>
                       <Badge className="font-medium" color={st.color} variant="surface" size="sm">
                         {st.label}
                       </Badge>
-                    </span>
-                    <span className="text-right font-medium tabular-nums text-neutral">
+                    </TablePrimitives.Table.Cell>
+                    <TablePrimitives.Table.Cell className="whitespace-nowrap text-right tabular-nums">
                       {amount(inv.total, inv.currency)}
                       {inv.collectable && inv.amount_due !== inv.total ? (
                         <span className="block text-sm font-normal text-neutral-subtle">
                           {amount(inv.amount_due, inv.currency)} due
                         </span>
                       ) : null}
-                    </span>
-                    <span className="text-sm text-neutral-subtle">
+                    </TablePrimitives.Table.Cell>
+                    <TablePrimitives.Table.Cell className="whitespace-nowrap text-neutral-subtle">
                       {inv.status === 'paid'
                         ? inv.paid_at
                           ? `Paid ${localDate(inv.paid_at)}`
@@ -469,63 +479,73 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
                         : inv.due_date
                           ? `Due ${localDate(inv.due_date)}`
                           : ''}
-                    </span>
-                    <span
-                      className={`col-span-2 flex flex-wrap justify-end gap-2 lg:col-span-1 ${ROW_ACTIONS_WIDTH[actionsWidth]}`}
-                    >
-                      {client.invoice && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          color="neutral"
-                          onClick={() => setDetails(inv)}
-                          aria-label={`Details of invoice ${inv.id}`}
+                    </TablePrimitives.Table.Cell>
+                    <TablePrimitives.Table.Cell className="py-3">
+                      <div className="flex justify-end gap-1">
+                        {client.invoice && (
+                          <Tooltip content="Invoice details">
+                            <Button
+                              iconOnly
+                              size="sm"
+                              variant="outline"
+                              color="neutral"
+                              onClick={() => setDetails(inv)}
+                              aria-label={`Details of invoice ${inv.id}`}
+                            >
+                              <Icon iconName="file-lines" iconStyle="regular" />
+                            </Button>
+                          </Tooltip>
+                        )}
+                        <Tooltip content="Download invoice">
+                          <Button
+                            iconOnly
+                            size="sm"
+                            variant="outline"
+                            color="neutral"
+                            disabled={!actions || downloading === inv.id || !!bulk}
+                            loading={downloading === inv.id}
+                            onClick={() => downloadOne(inv)}
+                            aria-label={`Download invoice ${inv.id}`}
+                          >
+                            <Icon iconName="download" iconStyle="regular" />
+                          </Button>
+                        </Tooltip>
+                        {inv.collectable && !aws && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            color="neutral"
+                            disabled={!actions || blocked || !!paying}
+                            loading={paying === inv.id}
+                            onClick={() => setConfirm(inv)}
+                          >
+                            {ps?.payment ? 'Retry payment' : 'Pay now'}
+                          </Button>
+                        )}
+                      </div>
+                      {ps?.error && (
+                        <div
+                          role="alert"
+                          className="mt-2 flex flex-wrap items-center justify-end gap-2 text-sm text-negative"
                         >
-                          <Icon iconName="file-lines" iconStyle="regular" />
-                          Details
-                        </Button>
+                          <span>{ps.error}</span>
+                          {ps.payment && (
+                            <button
+                              type="button"
+                              className="font-medium text-brand hover:underline"
+                              onClick={updateCard}
+                            >
+                              Update payment method
+                            </button>
+                          )}
+                        </div>
                       )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        color="neutral"
-                        disabled={!actions || downloading === inv.id || !!bulk}
-                        loading={downloading === inv.id}
-                        onClick={() => downloadOne(inv)}
-                        aria-label={`Download invoice ${inv.id}`}
-                      >
-                        <Icon iconName="download" iconStyle="regular" />
-                        Download
-                      </Button>
-                      {inv.collectable && !aws && (
-                        <Button
-                          size="sm"
-                          disabled={!actions || blocked || !!paying}
-                          loading={paying === inv.id}
-                          onClick={() => setConfirm(inv)}
-                        >
-                          {ps?.payment ? 'Retry payment' : 'Pay now'}
-                        </Button>
-                      )}
-                    </span>
-                  </div>
-                  {ps?.error && (
-                    <div
-                      role="alert"
-                      className="mt-2 flex flex-wrap items-center justify-end gap-2 text-sm text-negative"
-                    >
-                      <span>{ps.error}</span>
-                      {ps.payment && (
-                        <button type="button" className="font-medium text-brand hover:underline" onClick={updateCard}>
-                          Update payment method
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </li>
-              )
-            })}
-          </ul>
+                    </TablePrimitives.Table.Cell>
+                  </TablePrimitives.Table.Row>
+                )
+              })}
+            </TablePrimitives.Table.Body>
+          </TablePrimitives.Table.Root>
           {page.next_offset && (
             <div className="border-t border-neutral px-5 py-3 text-center">
               <Button
@@ -562,14 +582,18 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
           }}
           width="min(480px, calc(100vw - 24px))"
         >
-          <div className="flex flex-col gap-4 p-6">
-            <Dialog.Title asChild>
-              <Heading level={2}>Pay {amount(confirm.amount_due, confirm.currency)} now?</Heading>
-            </Dialog.Title>
-            <p className="text-sm text-neutral-subtle">
-              The card on file will be charged {amount(confirm.amount_due, confirm.currency)} for invoice {confirm.id},
-              dated {localDate(confirm.date)}.
-            </p>
+          <div className="flex flex-col gap-4 p-5">
+            <div className="flex flex-col gap-1">
+              <Dialog.Title asChild>
+                <Heading level={2} className="pr-8">
+                  Pay {amount(confirm.amount_due, confirm.currency)} now?
+                </Heading>
+              </Dialog.Title>
+              <p className="text-sm text-neutral-subtle">
+                The card on file will be charged {amount(confirm.amount_due, confirm.currency)} for invoice {confirm.id}
+                , dated {localDate(confirm.date)}.
+              </p>
+            </div>
             {client.mode === 'preview' && (
               <Callout.Root color="sky">
                 <Callout.Text>Preview: nothing is charged.</Callout.Text>
@@ -596,9 +620,6 @@ function Invoices({ organizationId, client, onManagePaymentMethod }: Omit<Invoic
   )
 }
 
-const ACTIONS_WIDTH = { narrow: 'w-[180px]', medium: 'w-[190px]', wide: 'w-[270px]' }
-const ROW_ACTIONS_WIDTH = { narrow: 'lg:w-[180px]', medium: 'lg:w-[190px]', wide: 'lg:w-[270px]' }
-
 const payBlocked = (ps?: PayState) => !!ps?.until && ps.until > Date.now()
 
 export function EmptyState({
@@ -611,15 +632,12 @@ export function EmptyState({
   action?: { label: string; onClick: () => void }
 }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded border border-dashed border-neutral px-6 py-10 text-center">
-      <Icon iconName="file-invoice" iconStyle="regular" className="text-xl text-neutral-subtle" />
-      <div className="text-sm font-medium text-neutral">{title}</div>
-      <p className="max-w-md text-sm text-neutral-subtle">{body}</p>
+    <ConsoleEmptyState icon="file-invoice" title={title} description={body}>
       {action && (
         <Button size="md" variant="outline" color="neutral" className="mt-2" onClick={action.onClick}>
           {action.label}
         </Button>
       )}
-    </div>
+    </ConsoleEmptyState>
   )
 }
