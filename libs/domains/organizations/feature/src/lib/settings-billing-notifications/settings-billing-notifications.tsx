@@ -1,5 +1,5 @@
 import { redirect, useParams } from '@tanstack/react-router'
-import { EmailPreferencesPanel, usePricingClient } from '@qovery/shared/billing/feature'
+import { EmailPreferencesPanel, proposalFromSearch, usePricingClient } from '@qovery/shared/billing/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { BillingPageLayout } from '../settings-billing-usage/settings-billing-usage'
 
@@ -12,18 +12,28 @@ export function getNotificationsSettingsLinks(pathSettings: string, isBillingUsa
   ]
 }
 
-// Billing emails sent before this page link to /settings/billing?section=emails: the Usage route's beforeLoad sends them here
-export function redirectLegacyBillingEmailsLink({
+// Earlier billing emails link to /settings/billing for preferences and plan proposals.
+export function redirectLegacyBillingEmailLinks({
   params,
   search,
 }: {
   params: { organizationId: string }
-  search: unknown
+  search: string
 }) {
-  if ((search as { section?: unknown } | undefined)?.section === 'emails') {
+  if (new URLSearchParams(search).get('section') === 'emails') {
     throw redirect({
       to: '/organization/$organizationId/settings/notifications/billing',
       params: { organizationId: params.organizationId },
+      replace: true,
+    })
+  }
+
+  const proposal = proposalFromSearch(search)
+  if (proposal !== undefined) {
+    throw redirect({
+      to: '/organization/$organizationId/settings/usage',
+      params,
+      search: { proposal },
       replace: true,
     })
   }
