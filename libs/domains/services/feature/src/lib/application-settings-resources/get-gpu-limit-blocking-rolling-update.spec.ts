@@ -194,8 +194,8 @@ describe('getGpuLimitBlockingRollingUpdate', () => {
       expect(getGpuLimitBlockingRollingUpdate({ ...withInstances(1, 2), savedGpu: 2, gpu: 1 })).toBe(2)
     })
 
-    it('ignores a service that had no GPU, whose old pods hold none', () => {
-      expect(getGpuLimitBlockingRollingUpdate({ ...withInstances(1, 2), savedGpu: 0, gpu: 1 })).toBeUndefined()
+    it('warns for the updates after the first GPU rollout of a service that had no GPU', () => {
+      expect(getGpuLimitBlockingRollingUpdate({ ...withInstances(1, 1), savedGpu: 0, gpu: 1 })).toBe(1)
     })
 
     it('ignores old pods that already exceed the limit', () => {
