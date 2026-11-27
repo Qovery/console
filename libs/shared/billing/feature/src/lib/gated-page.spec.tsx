@@ -234,7 +234,7 @@ describe('GatedPage previews', () => {
 
       expect(observed).toEqual([screen.getByTestId('gated-preview')])
       act(() => report([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver))
-      expect(screen.getByTestId('gated-preview-video')).toBeInTheDocument()
+      expect(screen.getByTestId('gated-preview-video')).toHaveAttribute('autoplay')
     } finally {
       window.IntersectionObserver = realObserver
     }
