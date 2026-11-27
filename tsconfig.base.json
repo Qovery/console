@@ -22,6 +22,8 @@
       "@qovery/domains/cluster-metrics/feature": ["libs/domains/cluster-metrics/feature/src/index.ts"],
       "@qovery/domains/clusters/data-access": ["libs/domains/clusters/data-access/src/index.ts"],
       "@qovery/domains/clusters/feature": ["libs/domains/clusters/feature/src/index.ts"],
+      "@qovery/domains/cost-management/data-access": ["libs/domains/cost-management/data-access/src/index.ts"],
+      "@qovery/domains/cost-management/feature": ["libs/domains/cost-management/feature/src/index.ts"],
       "@qovery/domains/custom-domains/data-access": ["libs/domains/custom-domains/data-access/src/index.ts"],
       "@qovery/domains/custom-domains/feature": ["libs/domains/custom-domains/feature/src/index.ts"],
       "@qovery/domains/environment-logs/feature": ["libs/domains/environment-logs/feature/src/index.ts"],
