@@ -1,6 +1,6 @@
 import type { PaywallInfo, PaywallOption } from 'qovery-pricing-typescript-axios'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { GatedPage } from './gated-page'
 import { Paywall } from './paywall'
 
@@ -219,6 +219,25 @@ describe('GatedPage previews', () => {
 
     expect(sources(screen.getByTestId('gated-preview-video'))).toEqual(['https://www.qovery.com/blueprints.mp4'])
     expect(screen.getByTestId('gated-preview-switch')).toBeInTheDocument()
+  })
+
+  it('plays the loop in the overlay, whose content mounts after the page', () => {
+    const observed: Element[] = []
+    let report: IntersectionObserverCallback = () => undefined
+    const realObserver = window.IntersectionObserver
+    window.IntersectionObserver = jest.fn((cb: IntersectionObserverCallback) => {
+      report = cb
+      return { observe: (el: Element) => observed.push(el), disconnect: jest.fn(), unobserve: jest.fn() }
+    }) as unknown as typeof IntersectionObserver
+    try {
+      renderWithProviders(<GatedPage organizationId="org-1" client={client} paywall={blueprints([trial])} overlay />)
+
+      expect(observed).toEqual([screen.getByTestId('gated-preview')])
+      act(() => report([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver))
+      expect(screen.getByTestId('gated-preview-video')).toBeInTheDocument()
+    } finally {
+      window.IntersectionObserver = realObserver
+    }
   })
 })
 
