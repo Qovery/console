@@ -94,7 +94,7 @@ const result = {
   total_count: 61,
 }
 const refetch = jest.fn()
-let mockState = { data: result, isLoading: false, isFetching: false, isError: false, refetch }
+let mockState = { data: result, isLoading: false, isFetching: false, isPreviousData: false, isError: false, refetch }
 
 beforeEach(() => {
   mockList.mockClear()
@@ -107,7 +107,7 @@ beforeEach(() => {
       mockSearchListeners.forEach((listener) => listener())
     })
   mockRoles = ['organization:org-1:admin']
-  mockState = { data: result, isLoading: false, isFetching: false, isError: false, refetch }
+  mockState = { data: result, isLoading: false, isFetching: false, isPreviousData: false, isError: false, refetch }
   jest.mocked(useQuery).mockImplementation((options: unknown) => {
     const key = (options as { queryKey: unknown[] }).queryKey
     if (key[0] === 'customDomains') {
@@ -169,6 +169,31 @@ it('waits for typing to pause before searching', async () => {
   expect(searchedKeys()).not.toContain('a')
   await waitFor(() => expect(searchedKeys()).toContain('api.example'))
   expect(searchedKeys().filter((search) => search && search !== 'api.example')).toEqual([])
+})
+
+it('shows skeleton rows instead of the previous results while a search is pending or loading', async () => {
+  const { container, userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  const skeletonRows = () => container.querySelectorAll('tbody tr[aria-hidden="true"]')
+  expect(skeletonRows()).toHaveLength(0)
+
+  // Waiting for typing to pause.
+  await userEvent.type(screen.getByRole('textbox', { name: 'Search domains' }), 'api')
+  expect(skeletonRows()).toHaveLength(10)
+  expect(screen.queryByText('app.example.com')).not.toBeInTheDocument()
+
+  // The request for the new search is running; the previous results are still kept by the query.
+  mockState = { ...mockState, isFetching: true, isPreviousData: true }
+  await waitFor(() =>
+    expect(mockList.mock.lastCall[0]).toEqual(expect.arrayContaining([expect.objectContaining({ search: 'api' })]))
+  )
+  expect(skeletonRows()).toHaveLength(10)
+})
+
+it('keeps the rows during a background refresh of the same results', () => {
+  mockState = { ...mockState, isFetching: true }
+  const { container } = renderWithProviders(<OrganizationDomainsContent />)
+  expect(container.querySelectorAll('tbody tr[aria-hidden="true"]')).toHaveLength(0)
+  expect(screen.getByText('app.example.com')).toBeInTheDocument()
 })
 
 it('shows skeleton rows while domains are loading', () => {

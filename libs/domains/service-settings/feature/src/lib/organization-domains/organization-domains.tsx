@@ -178,11 +178,14 @@ export function OrganizationDomainsContent() {
     page: filters.page,
     pageSize: filters.pageSize,
   }
-  const { data, isLoading, isFetching, isError, refetch } = useQuery({
+  const { data, isLoading, isFetching, isPreviousData, isError, refetch } = useQuery({
     ...queries.customDomains.organizationList(listFilters),
     keepPreviousData: true,
   })
   const pageDomains = useMemo(() => data?.results ?? [], [data])
+  // Rows of another search, page or filter are not shown as results while the new ones load, or while the search
+  // waits for typing to pause. A background refresh of the same results keeps them.
+  const isLoadingResults = isLoading || isPreviousData || filters.search.trim() !== debouncedSearch
   // Non-blocking: rows render right away and their status cells show a skeleton until the checks arrive.
   const { getStatus: getDnsStatus, isChecking: isCheckingDns, recheck } = useOrganizationDomainDnsStatuses(listFilters)
   const getStatus = (domain: OrganizationCustomDomainResponse) => getDnsStatus(domain)?.status
@@ -373,7 +376,7 @@ export function OrganizationDomainsContent() {
                       </Button>
                     </Table.Cell>
                   </Table.Row>
-                ) : isLoading ? (
+                ) : isLoadingResults ? (
                   <OrganizationDomainsSkeletonRows />
                 ) : !visibleDomains.length ? (
                   <Table.Row>
