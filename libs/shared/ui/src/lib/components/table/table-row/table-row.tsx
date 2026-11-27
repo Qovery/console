@@ -1,5 +1,5 @@
+import { Link } from '@tanstack/react-router'
 import { type PropsWithChildren, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { type TableFilterProps } from '../table'
 import TableRowFilter from '../table-row-filter/table-row-filter'
 

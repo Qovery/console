@@ -4,12 +4,6 @@ import CreateProjectModalFeature, { type CreateProjectModalProps } from './creat
 
 const useCreateProjectMockSpy = jest.spyOn(useCreateProject, 'useCreateProject') as jest.Mock
 
-const mockedUsedNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
-}))
-
 const props: CreateProjectModalProps = {
   onClose: jest.fn(),
   organizationId: '0',

@@ -1,10 +1,10 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type Stage, type Status } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
@@ -26,7 +26,7 @@ export interface StageItemProps {
 }
 
 export function StageItem({ stage, index, getService, serviceId, versionId, searchTerm, hideSkipped }: StageItemProps) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
 
   const [isOpen, setIsOpen] = useState(() => {
     // Initialize open state based on whether there are any non-skipped services

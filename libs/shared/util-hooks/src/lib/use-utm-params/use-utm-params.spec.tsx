@@ -1,5 +1,8 @@
 import { renderHook } from '@testing-library/react'
-import { getStoredUtmParams, useCaptureUtmParams } from './use-utm-params'
+import { act, renderWithRouter, screen, waitFor } from '@qovery/shared/util-tests'
+import { getStoredUtmParams, useCaptureUtmParams, useUtmParams } from './use-utm-params'
+
+jest.unmock('@tanstack/react-router')
 
 describe('UTM params', () => {
   afterEach(() => {
@@ -42,4 +45,17 @@ describe('UTM params', () => {
 
     setItem.mockRestore()
   })
+})
+
+it('updates attribution from the real router search string after navigation', async () => {
+  function Attribution() {
+    const params = useUtmParams()
+    return <output>{JSON.stringify(params)}</output>
+  }
+  const { router } = await renderWithRouter(<Attribution />, { route: '/?utm_source=google&gclid=abc&other=ignored' })
+  expect(screen.getByRole('status')).toHaveTextContent(JSON.stringify({ utm_source: 'google', gclid: 'abc' }))
+  await act(async () => {
+    await router.navigate({ to: '/', search: { utm_campaign: 'summer' } })
+  })
+  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(JSON.stringify({ utm_campaign: 'summer' })))
 })

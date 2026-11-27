@@ -1,11 +1,11 @@
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { SETTINGS_GIT_REPOSITORY_ACCESS_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { useConnectGithubApp } from '../hooks/use-connect-github-app/use-connect-github-app'
 
 export function GithubApplicationCallbackFeature() {
-  const { search } = useLocation()
+  const search = useLocation({ select: (location) => location.searchStr })
   const navigate = useNavigate()
   const { mutateAsync: mutateAsyncConnectGithubApp } = useConnectGithubApp()
 
@@ -22,14 +22,14 @@ export function GithubApplicationCallbackFeature() {
             organizationId,
             appConnectRequest: { code: code, installation_id: installationId },
           })
-          navigate(SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL)
+          navigate({ to: SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL })
         } catch (error) {
           console.error(error)
-          navigate(SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL)
+          navigate({ to: SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL })
         }
       } else {
         toast('error', `Github application connection error`, 'Invalid parameters')
-        navigate('/')
+        navigate({ to: '/' })
       }
     }
     connectGithubApp()

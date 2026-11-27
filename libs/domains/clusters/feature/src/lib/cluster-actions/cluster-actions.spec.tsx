@@ -20,11 +20,6 @@ let mockClusterStatus: ClusterStatus = {
   is_deployed: true,
 }
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => jest.fn(),
-}))
-
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => jest.fn(),

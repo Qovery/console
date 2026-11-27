@@ -1,5 +1,5 @@
+import { useLocation } from '@tanstack/react-router'
 import { useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
 
 export interface UtmParams {
   utm_source?: string
@@ -35,9 +35,9 @@ export function getUtmParams(searchParams: URLSearchParams): UtmParams {
 }
 
 export function useUtmParams(): UtmParams {
-  const [searchParams] = useSearchParams()
+  const search = useLocation({ select: (location) => location.searchStr })
 
-  const utmParams = useMemo(() => getUtmParams(searchParams), [searchParams])
+  const utmParams = useMemo(() => getUtmParams(new URLSearchParams(search)), [search])
 
   return utmParams
 }
