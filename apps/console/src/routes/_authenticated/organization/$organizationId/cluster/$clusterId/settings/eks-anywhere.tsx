@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
@@ -12,7 +13,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { GitRepositorySettings } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, LoaderSpinner, STICKY_FORM_ACTIONS_CLASS_NAME, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
@@ -81,7 +82,7 @@ function RouteComponent() {
   if (isClusterLoading) {
     return (
       <div className="flex w-full flex-col justify-between">
-        <Section className="max-w-content-with-navigation-left p-8">
+        <Section className="max-w-content-with-navigation-left px-4 py-8 md:p-8">
           <div className="flex items-start justify-center p-10">
             <LoaderSpinner className="w-5" />
           </div>
@@ -93,7 +94,7 @@ function RouteComponent() {
   return (
     <FormProvider {...methods}>
       <div className="flex w-full flex-col justify-between">
-        <Section className="max-w-content-with-navigation-left p-8">
+        <Section className="max-w-content-with-navigation-left px-4 py-8 md:p-8">
           <SettingsHeading title="EKS Anywhere configuration" />
           <form onSubmit={onSubmit}>
             <div className="space-y-10">
@@ -112,7 +113,7 @@ function RouteComponent() {
                   />
                 }
               />
-              <div className="flex justify-end">
+              <div className={clsx('flex justify-end', STICKY_FORM_ACTIONS_CLASS_NAME)}>
                 <Button
                   data-testid="submit-button"
                   type="submit"

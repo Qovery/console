@@ -1,10 +1,27 @@
-import { type SelfManagedClusterRegistryRequest } from 'qovery-typescript-axios'
+import {
+  type ContainerRegistryKindEnum,
+  type SelfManagedClusterRegistryRequest,
+  SelfManagedClusterRegistryRequestKindEnum,
+} from 'qovery-typescript-axios'
 
 export interface SelfManagedClusterRegistryValues {
-  registryUrl: string
-  registryUsername: string
-  registryPassword: string
+  kind: SelfManagedClusterRegistryRequestKindEnum
+  url: string
+  config: {
+    login_type?: 'ACCOUNT' | 'ANONYMOUS'
+    username?: string
+    password?: string
+  }
 }
+
+export const SELF_MANAGED_CLUSTER_REGISTRY_KINDS: ContainerRegistryKindEnum[] = Object.values(
+  SelfManagedClusterRegistryRequestKindEnum
+)
+
+export const SELF_MANAGED_CLUSTER_REGISTRY_ACCOUNT_KINDS: ContainerRegistryKindEnum[] = [
+  SelfManagedClusterRegistryRequestKindEnum.GITHUB_CR,
+  SelfManagedClusterRegistryRequestKindEnum.DOCKER_HUB,
+]
 
 const URL_PARTS_PATTERN = /^([^:/?#]*):\/\/([^/?#]*)([^?#]*)(\?[^#]*)?(#.*)?$/
 const HOST_AND_PORT_PATTERN = /^(\[[0-9A-Fa-f:.]+\]|[A-Za-z0-9.-]+)(?::(\d+))?$/
@@ -40,8 +57,7 @@ export function validateRegistryUrl(value: string) {
 
   const [, scheme, authority = '', path, query, fragment] = url.match(URL_PARTS_PATTERN) ?? []
   if (scheme !== 'http' && scheme !== 'https') return 'The registry URL must start with http:// or https://.'
-  if (authority.includes('@'))
-    return 'The registry URL must not contain a username or a password: use the fields below.'
+  if (authority.includes('@')) return 'The registry URL must not contain a username or a password.'
   const [, rawHost = '', port] = authority.match(HOST_AND_PORT_PATTERN) ?? []
   const host = rawHost.toLowerCase().replace(/\.$/, '')
   const ipv4 = parseIpv4(host)
@@ -55,7 +71,7 @@ export function validateRegistryUrl(value: string) {
   )
     return 'The registry URL cannot target localhost.'
   if (DEDICATED_REGISTRY_HOSTS.includes(host))
-    return 'Docker Hub, GitHub, GitLab and Amazon ECR Public registries cannot be used here. Use a self-hosted registry.'
+    return 'Use the DOCKER_HUB or GITHUB_CR type for Docker Hub or GitHub. GitLab and Amazon ECR Public registries cannot be used here.'
   if (path) return 'The registry URL must not contain a path: keep the host and the optional port only.'
   if (query) return 'The registry URL must not contain query parameters.'
   if (fragment) return 'The registry URL must not contain a fragment.'
@@ -63,23 +79,20 @@ export function validateRegistryUrl(value: string) {
   return true
 }
 
-export function validateRegistryUsername(username: string, password: string) {
-  return Boolean(username.trim()) || !password.trim() || 'Please enter a username, or clear the password.'
-}
-
-export function validateRegistryPassword(password: string, username: string) {
-  return Boolean(password.trim()) || !username.trim() || 'Please enter a password, or clear the username.'
-}
-
 export function getSelfManagedClusterRegistryRequest({
-  registryUrl,
-  registryUsername,
-  registryPassword,
+  kind,
+  url,
+  config: { login_type, username = '', password = '' },
 }: SelfManagedClusterRegistryValues): SelfManagedClusterRegistryRequest {
-  const username = registryUsername.trim()
+  const hasAccountLogin = SELF_MANAGED_CLUSTER_REGISTRY_ACCOUNT_KINDS.includes(kind) || login_type === 'ACCOUNT'
+  const trimmedUrl = url.trim()
+  const trimmedUsername = username.trim()
 
   return {
-    url: registryUrl.trim(),
-    ...(username && registryPassword.trim() ? { credentials: { username, password: registryPassword } } : {}),
+    kind,
+    ...(trimmedUrl ? { url: trimmedUrl } : {}),
+    ...(hasAccountLogin && trimmedUsername && password.trim()
+      ? { credentials: { username: trimmedUsername, password } }
+      : {}),
   }
 }

@@ -112,8 +112,8 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
 
   return (
-    <div className="flex items-center justify-between gap-4">
-      <div className="flex min-w-0 items-center gap-2">
+    <div className="flex items-center justify-between gap-x-4 gap-y-3 max-md:flex-wrap">
+      <div className="flex min-w-0 items-center gap-2 max-md:flex-wrap">
         <ServiceAvatar
           size="sm"
           radius="none"
@@ -254,7 +254,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
   }
 
   return (
-    <div className="mt-3 flex items-center gap-1">
+    <div className="mt-3 flex items-center gap-1 max-md:flex-wrap">
       {gitRepository && !blueprintId && <GitRepository gitRepository={gitRepository} />}
       {isGitContainer(service) && <DeployedCommit gitRepository={service.source.git_repository} />}
       {isArgoCdService && 'manifest_revision' in service && service.manifest_revision && (
@@ -383,6 +383,9 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           .with({ serviceType: 'APPLICATION' }, { serviceType: 'TERRAFORM' }, () => (
             <AutoDeployBadge serviceId={service.id} />
           ))
+          .with({ serviceType: 'CONTAINER' }, (container) =>
+            isGitContainer(container) ? <AutoDeployBadge serviceId={service.id} /> : null
+          )
           .with({ serviceType: 'JOB' }, (job) =>
             isJobGitSource(job.source) ? <AutoDeployBadge serviceId={service.id} /> : null
           )

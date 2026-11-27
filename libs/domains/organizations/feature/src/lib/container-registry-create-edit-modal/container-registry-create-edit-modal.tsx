@@ -6,9 +6,9 @@ import {
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { P, match } from 'ts-pattern'
+import { ContainerRegistryForm } from '@qovery/domains/clusters/feature'
 import { ExternalLink, ModalCrud, useModal } from '@qovery/shared/ui'
 import { stripUrlTrailingSlash } from '@qovery/shared/util-js'
-import ContainerRegistryForm from '../container-registry-form/container-registry-form'
 import { useCreateContainerRegistry } from '../hooks/use-create-container-registry/use-create-container-registry'
 import { useEditContainerRegistry } from '../hooks/use-edit-container-registry/use-edit-container-registry'
 

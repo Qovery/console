@@ -20,6 +20,7 @@ ARG NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL
 ARG NX_PUBLIC_MINTLIFY_API_KEY
 ARG NX_PUBLIC_INSTATUS_APP_ID
 ARG NX_PUBLIC_SLACK_BOT_API_URL
+ARG NX_PUBLIC_PRICING_API_URL
 
 ENV NODE_ENV=$NODE_ENV \
     NX_PUBLIC_QOVERY_API=$NX_PUBLIC_QOVERY_API \
@@ -35,12 +36,18 @@ ENV NODE_ENV=$NODE_ENV \
     NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL=$NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL \
     NX_PUBLIC_MINTLIFY_API_KEY=$NX_PUBLIC_MINTLIFY_API_KEY \
     NX_PUBLIC_INSTATUS_APP_ID=$NX_PUBLIC_INSTATUS_APP_ID \
-    NX_PUBLIC_SLACK_BOT_API_URL=$NX_PUBLIC_SLACK_BOT_API_URL
+    NX_PUBLIC_SLACK_BOT_API_URL=$NX_PUBLIC_SLACK_BOT_API_URL \
+    NX_PUBLIC_PRICING_API_URL=$NX_PUBLIC_PRICING_API_URL
 
 # Install dependencies with cache mount for faster rebuilds
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn .yarn
+COPY scripts/fetch-billing-sdk.sh scripts/
 RUN --mount=type=cache,target=/root/.yarn \
+    --mount=type=secret,id=QOVERY_NPM_READ_TOKEN \
+    if [ -f /run/secrets/QOVERY_NPM_READ_TOKEN ]; then \
+      QOVERY_NPM_READ_TOKEN="$(cat /run/secrets/QOVERY_NPM_READ_TOKEN)" sh scripts/fetch-billing-sdk.sh; \
+    fi && \
     yarn install --immutable
 
 # Copy source files (use .dockerignore to exclude unnecessary files)

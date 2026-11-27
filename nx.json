@@ -39,6 +39,9 @@
         },
         {
           "env": "NX_PUBLIC_SLACK_BOT_API_URL"
+        },
+        {
+          "env": "NX_PUBLIC_PRICING_API_URL"
         }
       ],
       "cache": true

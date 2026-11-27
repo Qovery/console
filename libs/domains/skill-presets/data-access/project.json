@@ -1,0 +1,20 @@
+{
+  "name": "domains-skill-presets-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/skill-presets/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:domain", "type:data-access", "slice:skill-presets"],
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
+    }
+  }
+}

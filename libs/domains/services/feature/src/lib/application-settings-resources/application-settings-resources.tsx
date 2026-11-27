@@ -23,6 +23,7 @@ import { useRunningStatus } from '../hooks/use-running-status/use-running-status
 import { KedaSettings } from '../keda/components/keda-settings'
 import { canChooseCpuArchitecture } from './can-choose-cpu-architecture'
 import { FixedInstancesMode } from './fixed-instances-mode'
+import { getGpuLimitBlockingRollingUpdate } from './get-gpu-limit-blocking-rolling-update'
 import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 
 const CPU_ARCHITECTURE_OPTIONS = [
@@ -49,7 +50,7 @@ export function ApplicationSettingsResources({
   advancedSettings,
 }: ApplicationSettingsResourcesProps) {
   const { control, watch, setValue } = useFormContext()
-  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId, suspense: true })
@@ -84,6 +85,16 @@ export function ApplicationSettingsResources({
   const hpaAverageUtilizationPercent = watch('hpa_cpu_average_utilization_percent') ?? 60
   const hpaMemoryAverageUtilizationPercent = watch('hpa_memory_average_utilization_percent') ?? 60
   const previousAutoscalingModeRef = useRef(autoscalingMode)
+  const gpuLimitBlockingRollingUpdate = getGpuLimitBlockingRollingUpdate({
+    serviceType: service?.serviceType,
+    hasStorage: Boolean(service && 'storage' in service && service.storage?.length),
+    cluster,
+    advancedSettings,
+    savedGpu: service && 'gpu' in service ? service.gpu : undefined,
+    gpu: Number(watch('gpu')),
+    minRunningInstances: Number(minRunningInstances),
+    maxRunningInstances: Number(maxRunningInstances),
+  })
 
   useEffect(() => {
     const previousMode = previousAutoscalingModeRef.current
@@ -303,6 +314,27 @@ export function ApplicationSettingsResources({
               />
             )}
           />
+        )}
+        {gpuLimitBlockingRollingUpdate !== undefined && (
+          <Callout.Root color="yellow">
+            <Callout.Icon>
+              <Icon iconName="triangle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Updates can wait for a free GPU</Callout.TextHeading>
+              <Callout.TextDescription>
+                The GPU node pool limit ({gpuLimitBlockingRollingUpdate}) can leave no room for the extra pod a rolling
+                update starts. Set deployment.update_strategy.type to Recreate in the{' '}
+                <Link
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/advanced-settings"
+                  params={{ organizationId, projectId, environmentId, serviceId }}
+                >
+                  advanced settings
+                </Link>{' '}
+                to stop the old pods first, with a short downtime, or raise the GPU limit of the node pool.
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
         )}
 
         {service?.serviceType === 'TERRAFORM' && (

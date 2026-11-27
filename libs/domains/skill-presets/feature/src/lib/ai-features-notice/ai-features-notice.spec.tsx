@@ -1,0 +1,188 @@
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { buildSkillPresetApiError } from '../test-fixtures/skill-presets'
+import { AiFeaturesNotice } from './ai-features-notice'
+
+const mockEnableAiFeatures = jest.fn()
+const mockUpdateOrgConfig = jest.fn()
+const mockAiFeaturesEnabled = jest.fn()
+const mockCopilotQuery = jest.fn()
+const mockRefetchCopilot = jest.fn()
+
+jest.mock('../hooks/use-enable-ai-features/use-enable-ai-features', () => ({
+  useEnableAiFeatures: () => ({ mutateAsync: mockEnableAiFeatures }),
+}))
+jest.mock('../hooks/use-ai-features-enabled/use-ai-features-enabled', () => ({
+  useAiFeaturesEnabled: () => mockAiFeaturesEnabled(),
+}))
+jest.mock('@qovery/shared/devops-copilot/feature', () => ({
+  ...jest.requireActual('@qovery/shared/devops-copilot/feature'),
+  useAICopilotConfig: () => mockCopilotQuery(),
+}))
+jest.mock('@qovery/shared/devops-copilot/data-access', () => ({
+  ...jest.requireActual('@qovery/shared/devops-copilot/data-access'),
+  mutations: { updateOrgConfig: (...args: unknown[]) => mockUpdateOrgConfig(...args) },
+}))
+
+const copilot = (enabled: boolean, instructions?: string) => ({
+  data: { org_config: { enabled, read_only: true, instructions } },
+  isLoading: false,
+  isFetching: false,
+  error: null,
+  refetch: mockRefetchCopilot,
+})
+
+const openModal = async (onEnabled = jest.fn()) => {
+  const rendered = renderWithProviders(
+    <AiFeaturesNotice organizationId="organization-1" canEnable onEnabled={onEnabled} />
+  )
+  await rendered.userEvent.click(screen.getByRole('button', { name: 'Turn on AI' }))
+  return { ...rendered, onEnabled }
+}
+
+describe('AiFeaturesNotice and the Turn on AI modal', () => {
+  beforeEach(() => {
+    mockEnableAiFeatures.mockReset().mockResolvedValue(undefined)
+    mockUpdateOrgConfig.mockReset().mockResolvedValue({})
+    mockAiFeaturesEnabled.mockReturnValue(false)
+    mockCopilotQuery.mockReturnValue(copilot(false))
+    mockRefetchCopilot.mockReset()
+  })
+
+  it('offers no button to people who cannot change the setting', () => {
+    renderWithProviders(<AiFeaturesNotice organizationId="organization-1" canEnable={false} />)
+
+    expect(screen.getByText('The Skills registry needs AI features')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Turn on AI' })).not.toBeInTheDocument()
+  })
+
+  it('turns on AI features, then the Copilot read-only, once the terms are accepted', async () => {
+    const { userEvent, onEnabled } = await openModal()
+
+    expect(screen.getByText('This turns on two things for your organization.')).toBeInTheDocument()
+    expect(screen.getByText(/the organization’s opt-in to AI/)).toBeInTheDocument()
+    expect(screen.getByText(/It starts read-only and acts as you/)).toBeInTheDocument()
+    expect(screen.getByTestId('submit-button')).toBeDisabled()
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(mockEnableAiFeatures).toHaveBeenCalledWith({ organizationId: 'organization-1' })
+    expect(mockUpdateOrgConfig).toHaveBeenCalledWith(
+      expect.objectContaining({ organizationId: 'organization-1', enabled: true, readOnly: true })
+    )
+    expect(onEnabled).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps AI features on when the Copilot step fails, and retries only the Copilot', async () => {
+    mockUpdateOrgConfig.mockRejectedValueOnce({ response: { data: { error: 'The Copilot service did not answer' } } })
+    const { userEvent, onEnabled } = await openModal()
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(await screen.findByText('AI features are on, but the Copilot could not be turned on')).toBeInTheDocument()
+    expect(screen.getByText(/The Copilot service did not answer. Retry turns on the Copilot only./)).toBeInTheDocument()
+    expect(screen.getByTestId('submit-button')).toHaveTextContent('Retry')
+    // AI features are on: presets can be saved even if the Copilot never turns on.
+    expect(onEnabled).toHaveBeenCalledTimes(1)
+
+    await userEvent.click(screen.getByTestId('submit-button'))
+    expect(mockEnableAiFeatures).toHaveBeenCalledTimes(1)
+    expect(mockUpdateOrgConfig).toHaveBeenCalledTimes(2)
+  })
+
+  it('keeps the Copilot instructions the organization saved before', async () => {
+    mockCopilotQuery.mockReturnValue(copilot(false, 'Answer in French.'))
+    const { userEvent } = await openModal()
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(mockUpdateOrgConfig).toHaveBeenCalledWith(expect.objectContaining({ instructions: 'Answer in French.' }))
+  })
+
+  it('waits for the Copilot status before it can submit', async () => {
+    mockCopilotQuery.mockReturnValue({ isLoading: true, isFetching: true })
+    await openModal()
+
+    expect(screen.getByRole('status')).toHaveTextContent('Checking the Copilot status')
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    expect(screen.getByTestId('submit-button')).toBeDisabled()
+  })
+
+  it.each([undefined, copilot(true).data])(
+    'blocks changes when the Copilot status cannot be verified',
+    async (data) => {
+      mockCopilotQuery.mockReturnValue({ data, error: new Error('Network error'), refetch: mockRefetchCopilot })
+      const { userEvent } = await openModal()
+
+      expect(screen.getByRole('alert')).toHaveTextContent('Unable to load the Copilot status')
+      expect(screen.getByTestId('submit-button')).toBeDisabled()
+      await userEvent.click(screen.getByTestId('submit-button'))
+      expect(mockEnableAiFeatures).not.toHaveBeenCalled()
+      expect(mockUpdateOrgConfig).not.toHaveBeenCalled()
+      await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
+      expect(mockRefetchCopilot).toHaveBeenCalledTimes(1)
+    }
+  )
+
+  it('keeps the modal open while saving and allows dismissal after an error', async () => {
+    let rejectSave!: (reason: Error) => void
+    mockUpdateOrgConfig.mockReturnValue(
+      new Promise((_resolve, reject) => {
+        rejectSave = reject
+      })
+    )
+    const { userEvent } = await openModal()
+    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
+    await userEvent.click(screen.getByTestId('submit-button'))
+    await waitFor(() => expect(mockUpdateOrgConfig).toHaveBeenCalledTimes(1))
+
+    await userEvent.keyboard('{Escape}')
+    await userEvent.click(screen.getByTestId('cancel-button'))
+    await userEvent.click(screen.getByTestId('overlay'))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    rejectSave(new Error('Network error'))
+    await screen.findByText('AI features are on, but the Copilot could not be turned on')
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+  })
+
+  it('only turns on the Copilot when AI features are already on', async () => {
+    mockAiFeaturesEnabled.mockReturnValue(true)
+    const { userEvent } = await openModal()
+
+    expect(screen.getByText('AI features are already on. This turns on the Copilot.')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(mockEnableAiFeatures).not.toHaveBeenCalled()
+    expect(mockUpdateOrgConfig).toHaveBeenCalledTimes(1)
+  })
+
+  it('only turns on AI features when the Copilot is already on, with no terms to accept', async () => {
+    mockCopilotQuery.mockReturnValue(copilot(true))
+    const { userEvent } = await openModal()
+
+    expect(screen.getByText('The Copilot is already on. This turns on AI features.')).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(mockEnableAiFeatures).toHaveBeenCalledTimes(1)
+    expect(mockUpdateOrgConfig).not.toHaveBeenCalled()
+  })
+
+  it('stops with the error when AI features cannot be turned on', async () => {
+    mockEnableAiFeatures.mockRejectedValue(buildSkillPresetApiError(403, 'You need to be an owner or an admin'))
+    const { userEvent, onEnabled } = await openModal()
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'I have read and accept the Copilot Terms of Service' }))
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(await screen.findByText('AI features could not be turned on')).toBeInTheDocument()
+    expect(screen.getByText(/You need to be an owner or an admin/)).toBeInTheDocument()
+    expect(mockUpdateOrgConfig).not.toHaveBeenCalled()
+    expect(onEnabled).not.toHaveBeenCalled()
+  })
+})

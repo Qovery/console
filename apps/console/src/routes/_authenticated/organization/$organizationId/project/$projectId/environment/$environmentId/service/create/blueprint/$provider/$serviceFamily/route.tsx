@@ -2,6 +2,7 @@ import { Outlet, createFileRoute, useLocation, useNavigate } from '@tanstack/rea
 import { useCallback, useEffect } from 'react'
 import {
   BlueprintCreationFlow,
+  BlueprintPaywall,
   BlueprintQueryBoundary,
   blueprintCreationSteps,
   useBlueprintCatalog,
@@ -41,7 +42,10 @@ function RouteComponent() {
       resetKeys={[organizationId, projectId, environmentId, provider, serviceFamily]}
       title="blueprint configuration"
     >
-      <BlueprintCreationFlowContent onExit={navigateToServiceCatalog} />
+      {/* Without blueprints in the plan, opening one (a deep link included) shows the full-page paywall. */}
+      <BlueprintPaywall onExit={navigateToServiceCatalog}>
+        <BlueprintCreationFlowContent onExit={navigateToServiceCatalog} />
+      </BlueprintPaywall>
     </BlueprintQueryBoundary>
   )
 }

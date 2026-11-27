@@ -25,6 +25,7 @@ jobs:
       s3-bucket-name: 'qovery-console-prod'
       cloudfront-distribution-id: 'E28PPG1VH7VZ9R'
       nx-cloud-access-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+      npm-registry-read-token: ${{ secrets.QOVERY_NPM_READ_TOKEN }}
       codecov-token: ${{ secrets.CODECOV_TOKEN }}
 
       # Qovery secrets

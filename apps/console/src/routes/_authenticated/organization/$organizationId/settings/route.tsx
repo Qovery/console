@@ -1,5 +1,10 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
+import {
+  getBillingSettingsLinks,
+  getNotificationsSettingsLinks,
+  hasBillingRole,
+  useIsBillingUsageEnabled,
+} from '@qovery/domains/organizations/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
@@ -13,7 +18,7 @@ function RouteComponent() {
     location: { pathname },
   } = useRouterState()
   const { roles } = useUserRole()
-  const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
+  const isBillingUsageEnabled = useIsBillingUsageEnabled()
 
   const isOrganizationAdmin = roles.some((role) => role.includes(`organization:${organizationId}:admin`))
 
@@ -45,10 +50,7 @@ function RouteComponent() {
     type: 'group',
     title: 'Billing & plans',
     icon: 'credit-card' as const,
-    children: [
-      { title: 'Billing summary', to: `${pathSettings}/billing-summary` },
-      { title: 'Billing details', to: `${pathSettings}/billing-details` },
-    ],
+    children: getBillingSettingsLinks(pathSettings, isBillingUsageEnabled, hasBillingRole(roles, organizationId)),
   }
 
   const containerRegistriesLink = {
@@ -86,40 +88,15 @@ function RouteComponent() {
     type: 'group',
     title: 'Notifications',
     icon: 'bell' as const,
-    children: [
-      { title: 'Slack', to: `${pathSettings}/notifications/slack` },
-      { title: 'Webhook', to: `${pathSettings}/webhook` },
-    ],
+    children: getNotificationsSettingsLinks(pathSettings, isBillingUsageEnabled),
   }
 
+  // Policy tokens, the Copilot, skills, skill presets, agent activity and the Agent Tasks pages live
+  // in the Agents tab. Their old settings paths redirect there.
   const apiTokenLink = {
-    type: 'group',
     title: 'API token',
+    to: `${pathSettings}/api-token`,
     icon: 'rectangle-api' as const,
-    children: [
-      { title: 'Token', to: `${pathSettings}/api-token` },
-      { title: 'Policy token (New)', to: `${pathSettings}/policy-api-token` },
-    ],
-  }
-
-  const aiLink = {
-    type: 'group',
-    title: 'AI settings',
-    icon: 'sparkles' as const,
-    children: [
-      { title: 'Copilot', to: `${pathSettings}/ai-copilot` },
-      { title: 'Skills', to: `${pathSettings}/skills` },
-    ],
-  }
-
-  const agentsLink = {
-    type: 'group',
-    title: 'Agent',
-    icon: 'robot' as const,
-    children: [
-      { title: 'Token', to: `${pathSettings}/agents/tokens` },
-      { title: 'MCP', to: `${pathSettings}/agents/mcps` },
-    ],
   }
 
   const dangerZoneLink = {
@@ -140,20 +117,22 @@ function RouteComponent() {
     gitRepositoriesAccessLink,
     notificationsLink,
     apiTokenLink,
-    aiLink,
-    ...(isAgenticWorkflowEnabled ? [agentsLink] : []),
     ...(isOrganizationAdmin ? [dangerZoneLink] : []),
   ]
 
   return (
-    <div className="flex min-h-0 flex-1">
-      <aside className="relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral">
-        <div className="sticky top-16">
+    <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+      <aside className="relative shrink-0 self-stretch border-b border-neutral pb-4 md:min-h-[calc(100dvh-2.75rem-4rem)] md:w-52 md:border-b-0 md:border-r md:pb-0">
+        <div className="md:sticky md:top-16">
           <Sidebar.Root className="mt-6">
             {LINKS_SETTINGS.map((link) => {
               if ('children' in link) {
                 const isChildPathActive = (childPath: string) =>
-                  pathname === childPath || pathname.startsWith(`${childPath}/`)
+                  pathname === childPath ||
+                  pathname.startsWith(`${childPath}/`) ||
+                  (!isBillingUsageEnabled &&
+                    childPath === `${pathSettings}/billing-summary` &&
+                    pathname === `${pathSettings}/billing`)
                 const groupActive = link.children.some((child) => isChildPathActive(child.to))
 
                 return (

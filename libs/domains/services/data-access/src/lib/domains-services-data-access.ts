@@ -70,6 +70,7 @@ import {
   type JobRequest,
   JobsApi,
   type RebootServicesRequest,
+  type ServiceDeploymentRestrictionRequest,
   ServiceMainCallsApi,
   type Status,
   TerraformActionsApi,
@@ -508,6 +509,7 @@ export const services = createQueryKeys('services', {
             applicationDeploymentRestrictionApi
           )
         )
+        .with('CONTAINER', () => serviceMainCallsApi.listServiceDeploymentRestrictions.bind(serviceMainCallsApi))
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () =>
           jobDeploymentRestrictionApi.getJobDeploymentRestrictions.bind(jobDeploymentRestrictionApi)
         )
@@ -517,7 +519,7 @@ export const services = createQueryKeys('services', {
         .with('TERRAFORM', () =>
           terraformDeploymentRestrictionApi.getTerraformDeploymentRestrictions.bind(terraformDeploymentRestrictionApi)
         )
-        .with('CONTAINER', 'DATABASE', () => null)
+        .with('DATABASE', () => null)
         .with(
           'AGENTIC_WORKFLOW',
           () => () =>
@@ -864,6 +866,12 @@ type DeploymentRestrictionRequest =
     }
   | {
       serviceId: string
+      serviceType: ContainerType
+      deploymentRestrictionId: string
+      payload: ServiceDeploymentRestrictionRequest
+    }
+  | {
+      serviceId: string
       serviceType: JobType
       deploymentRestrictionId: string
       payload: JobDeploymentRestrictionRequest
@@ -1067,6 +1075,10 @@ export const mutations = {
         ),
         serviceType,
       }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: serviceMainCallsApi.editServiceDeploymentRestriction.bind(serviceMainCallsApi),
+        serviceType,
+      }))
       .with('JOB', (serviceType) => ({
         mutation: jobDeploymentRestrictionApi.editJobDeploymentRestriction.bind(jobDeploymentRestrictionApi),
         serviceType,
@@ -1097,6 +1109,10 @@ export const mutations = {
         ),
         serviceType,
       }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: serviceMainCallsApi.createServiceDeploymentRestriction.bind(serviceMainCallsApi),
+        serviceType,
+      }))
       .with('JOB', (serviceType) => ({
         mutation: jobDeploymentRestrictionApi.createJobDeploymentRestriction.bind(jobDeploymentRestrictionApi),
         serviceType,
@@ -1125,6 +1141,10 @@ export const mutations = {
         mutation: applicationDeploymentRestrictionApi.deleteApplicationDeploymentRestriction.bind(
           applicationDeploymentRestrictionApi
         ),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: serviceMainCallsApi.deleteServiceDeploymentRestriction.bind(serviceMainCallsApi),
         serviceType,
       }))
       .with('JOB', (serviceType) => ({

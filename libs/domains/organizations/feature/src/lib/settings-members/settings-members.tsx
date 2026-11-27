@@ -19,12 +19,14 @@ import {
 } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
+import { useBillingPaywall } from '@qovery/shared/billing/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import {
   Button,
   Callout,
   Icon,
+  SETTINGS_HEADER_ACTION_CLASS_NAME,
   Section,
   Skeleton as SkeletonPrimitive,
   TableFilter,
@@ -32,7 +34,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { pluralize } from '@qovery/shared/util-js'
 import { type SerializedError } from '@qovery/shared/utils'
 import { useAvailableRoles } from '../hooks/use-available-roles/use-available-roles'
@@ -53,7 +55,7 @@ const Skeleton = () => {
   const columnSizes = ['35%', '22%', '21%', '21%']
 
   return (
-    <Table.Root>
+    <Table.Root className="max-md:min-w-[760px]">
       <Table.Header>
         <Table.Row className="text-xs">
           {columnSizes.map((columnSize, index) => (
@@ -234,7 +236,7 @@ const MembersTable = (props: MembersTableProps) => {
 
   return (
     <>
-      <Table.Root>
+      <Table.Root className="max-md:min-w-[760px]">
         <Table.Header>
           {membersTable.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id} className="text-xs">
@@ -286,7 +288,7 @@ const MembersTable = (props: MembersTableProps) => {
         </Table.Body>
       </Table.Root>
       {inviteMembers.length > 0 && (
-        <Table.Root>
+        <Table.Root className="max-md:min-w-[760px]">
           <Table.Header>
             {inviteTable.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className="text-xs">
@@ -394,6 +396,14 @@ export function SettingsMembers() {
   const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
 
   const { openModalConfirmation } = useModalConfirmation()
+  const { showChat } = useSupportChat()
+  // Every seat of the plan in use: Add member opens the full-page paywall instead of the invite.
+  const paywall = useBillingPaywall(
+    organizationId,
+    { actions: ['member.invite'] },
+    { onContactSales: showChat, variant: 'page' }
+  )
+  const isInviteLocked = paywall.locked('member.invite')
 
   const onClickEditMemberRole = async (userId: string, roleId: string) => {
     const data = { user_id: userId, role_id: roleId }
@@ -447,14 +457,16 @@ export function SettingsMembers() {
     }
   }
 
-  const onAddMember = () => {
-    openModal({
-      content: <CreateModal organizationId={organizationId} onClose={closeModal} availableRoles={availableRoles} />,
-      options: {
-        fakeModal: true,
-      },
-    })
-  }
+  // A seat left: the intro first when one is due, then the invite. No seat left: the paywall.
+  const onAddMember = () =>
+    paywall.proceed('member.invite', () =>
+      openModal({
+        content: <CreateModal organizationId={organizationId} onClose={closeModal} availableRoles={availableRoles} />,
+        options: {
+          fakeModal: true,
+        },
+      })
+    )
 
   useEffect(() => {
     if (isSuccessMembers) {
@@ -468,7 +480,7 @@ export function SettingsMembers() {
 
   return (
     <div className="w-full">
-      <Section className="px-8 pb-8 pt-6">
+      <Section className="px-4 pb-8 pt-6 md:px-8">
         <div className="relative">
           <SettingsHeading
             title="Manage your team"
@@ -480,11 +492,17 @@ export function SettingsMembers() {
           />
 
           {canAddMember && (
-            <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
-              <Icon iconName="circle-plus" iconStyle="regular" />
+            <Button
+              className={SETTINGS_HEADER_ACTION_CLASS_NAME}
+              size="md"
+              disabled={paywall.pending}
+              onClick={onAddMember}
+            >
+              <Icon iconName={isInviteLocked ? 'lock' : 'circle-plus'} iconStyle="regular" />
               Add member
             </Button>
           )}
+          {paywall.element}
         </div>
         {shouldShowPermissionError && (
           <Callout.Root color="yellow" className="mb-8">

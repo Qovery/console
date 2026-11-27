@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   type ApplicationType,
+  type ContainerType,
   type HelmType,
   type JobType,
   type TerraformType,
@@ -9,7 +10,7 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseDeploymentRestrictionsProps {
   serviceId: string
-  serviceType: ApplicationType | JobType | HelmType | TerraformType
+  serviceType: ApplicationType | ContainerType | JobType | HelmType | TerraformType
 }
 
 export function useDeploymentRestrictions({ serviceId, serviceType }: UseDeploymentRestrictionsProps) {

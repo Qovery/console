@@ -1,19 +1,17 @@
 import { useParams } from '@tanstack/react-router'
-import {
-  type ApplicationDeploymentRestriction,
-  type TerraformDeploymentRestrictionResponse,
-} from 'qovery-typescript-axios'
+import { type ServiceDeploymentRestrictionResponse } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import {
   type AnyService,
   type Application,
+  type Container,
   type Helm,
   type Job,
   type Terraform,
 } from '@qovery/domains/services/data-access'
 import { useDeleteDeploymentRestriction, useDeploymentRestrictions, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { isHelmGitSource } from '@qovery/shared/enums'
+import { isContainerGitSource, isHelmGitSource } from '@qovery/shared/enums'
 import {
   BlockContent,
   Button,
@@ -26,8 +24,7 @@ import {
 } from '@qovery/shared/ui'
 import { ServiceDeploymentRestrictionsModal } from '../service-deployment-restrictions-modal/service-deployment-restrictions-modal'
 
-type DeploymentRestriction = ApplicationDeploymentRestriction | TerraformDeploymentRestrictionResponse
-type SupportedService = Application | Job | Helm | Terraform
+type SupportedService = Application | Container | Job | Helm | Terraform
 
 const ContentFallback = () => (
   <div className="flex justify-center py-12">
@@ -37,6 +34,7 @@ const ContentFallback = () => (
 
 const isSupportedService = (service?: AnyService): service is SupportedService =>
   service?.serviceType === 'APPLICATION' ||
+  (service?.serviceType === 'CONTAINER' && isContainerGitSource(service.source)) ||
   service?.serviceType === 'JOB' ||
   service?.serviceType === 'TERRAFORM' ||
   (service?.serviceType === 'HELM' && isHelmGitSource(service.source))
@@ -50,7 +48,7 @@ export function ServiceDeploymentRestrictionsSettings() {
     return null
   }
 
-  const openCrudModal = (deploymentRestriction?: DeploymentRestriction) => {
+  const openCrudModal = (deploymentRestriction?: ServiceDeploymentRestrictionResponse) => {
     if (!isSupportedService(service)) {
       return
     }
@@ -71,7 +69,7 @@ export function ServiceDeploymentRestrictionsSettings() {
   }
 
   return (
-    <Section className="px-8 pb-8 pt-6">
+    <Section className="px-4 pb-8 pt-6 md:px-8">
       <div className="space-y-6">
         <SettingsHeading
           title="Deployment Restrictions"
@@ -111,7 +109,7 @@ export function ServiceDeploymentRestrictionsSettings() {
 interface ServiceDeploymentRestrictionsSettingsInnerProps {
   environmentId: string
   serviceId: string
-  onOpenCrudModal: (deploymentRestriction?: DeploymentRestriction) => void
+  onOpenCrudModal: (deploymentRestriction?: ServiceDeploymentRestrictionResponse) => void
 }
 
 function ServiceDeploymentRestrictionsSettingsInner({
@@ -131,7 +129,7 @@ function ServiceDeploymentRestrictionsSettingsInner({
     return null
   }
 
-  const onDeleteRestriction = (deploymentRestriction: DeploymentRestriction) => {
+  const onDeleteRestriction = (deploymentRestriction: ServiceDeploymentRestrictionResponse) => {
     openModalConfirmation({
       title: 'Delete restriction',
       name: `${deploymentRestriction.mode}/${deploymentRestriction.type}/${deploymentRestriction.value}`,
@@ -162,7 +160,7 @@ function ServiceDeploymentRestrictionsSettingsInner({
 
   return (
     <BlockContent title="Deployment restrictions" classNameContent="p-0">
-      {deploymentRestrictions.map((deploymentRestriction: DeploymentRestriction, index: number) => (
+      {deploymentRestrictions.map((deploymentRestriction: ServiceDeploymentRestrictionResponse, index: number) => (
         <div
           key={deploymentRestriction.id}
           className="flex w-full items-center justify-between gap-2 border-b border-neutral px-4 py-3 last:border-0"

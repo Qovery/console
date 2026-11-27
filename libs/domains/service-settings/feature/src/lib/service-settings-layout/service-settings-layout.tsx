@@ -4,7 +4,7 @@ import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
 import { isAgenticWorkflow, isBlueprintService, isEditableService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
+import { isContainerGitSource, isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { Sidebar } from '@qovery/shared/ui'
 
 export interface ServiceSettingsLayoutProps {
@@ -155,13 +155,14 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
             advancedSettingsLink,
             dangerZoneLink,
           ])
-          .with({ serviceType: 'CONTAINER' }, () => [
+          .with({ serviceType: 'CONTAINER' }, (container) => [
             generalLink,
             resourcesLink,
             storageLink,
             domainLink,
             portLink,
             healthchecksLink,
+            ...(isContainerGitSource(container.source) ? [deploymentRestrictionsLink] : []),
             advancedSettingsLink,
             dangerZoneLink,
           ])
@@ -207,9 +208,9 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
       : []
 
   return (
-    <div className="flex min-h-0 flex-1">
-      <aside className="relative min-h-[calc(100vh-2.75rem-4rem)] w-52 shrink-0 self-stretch border-r border-neutral">
-        <div className="sticky top-16">
+    <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+      <aside className="relative shrink-0 self-stretch border-b border-neutral pb-4 md:min-h-[calc(100dvh-2.75rem-4rem)] md:w-52 md:border-b-0 md:border-r md:pb-0">
+        <div className="md:sticky md:top-16">
           <Sidebar.Root className="mt-6">
             {linksSettings.map((link) =>
               'subLinks' in link ? (

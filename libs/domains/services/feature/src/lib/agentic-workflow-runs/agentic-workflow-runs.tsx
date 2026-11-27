@@ -155,7 +155,7 @@ function CopyRunIdButton({
         aria-label="Copy run ID"
         className={
           compact
-            ? 'shrink-0 cursor-pointer opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100'
+            ? 'shrink-0 cursor-pointer opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100'
             : 'cursor-pointer'
         }
         onClick={(event) => {

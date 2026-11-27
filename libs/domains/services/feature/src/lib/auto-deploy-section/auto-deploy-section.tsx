@@ -23,7 +23,7 @@ export function AutoDeploySection({ serviceId, source, className, children }: Au
 
   return (
     <div className="overflow-hidden rounded-md border border-neutral">
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between gap-3 p-4 max-md:flex-wrap">
         <AutoDeploySetting
           source={source}
           className={className}

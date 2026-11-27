@@ -72,7 +72,7 @@ export function NotificationChannelOverview() {
   }
 
   return (
-    <Section className="w-full px-8 py-6">
+    <Section className="w-full px-4 py-6 md:px-8">
       <div className="border-b border-neutral">
         <div className="flex w-full items-center justify-between pb-5">
           <Heading level={1}>Notification channel</Heading>
