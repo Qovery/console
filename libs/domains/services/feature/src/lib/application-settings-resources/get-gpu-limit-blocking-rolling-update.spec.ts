@@ -189,6 +189,20 @@ describe('getGpuLimitBlockingRollingUpdate', () => {
     })
   })
 
+  describe('when the GPU request changes', () => {
+    it('warns when the old pods keep the saved GPU and the new pod does not fit next to them', () => {
+      expect(getGpuLimitBlockingRollingUpdate({ ...withInstances(1, 2), savedGpu: 2, gpu: 1 })).toBe(2)
+    })
+
+    it('ignores a service that had no GPU, whose old pods hold none', () => {
+      expect(getGpuLimitBlockingRollingUpdate({ ...withInstances(1, 2), savedGpu: 0, gpu: 1 })).toBeUndefined()
+    })
+
+    it('ignores old pods that already exceed the limit', () => {
+      expect(getGpuLimitBlockingRollingUpdate({ ...withInstances(1, 2), savedGpu: 3, gpu: 1 })).toBeUndefined()
+    })
+  })
+
   describe('with autoscaling', () => {
     it('warns when a replica count in the range cannot roll out', () => {
       expect(

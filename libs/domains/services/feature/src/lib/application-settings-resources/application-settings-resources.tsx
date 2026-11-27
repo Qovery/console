@@ -90,6 +90,7 @@ export function ApplicationSettingsResources({
     hasStorage: Boolean(service && 'storage' in service && service.storage?.length),
     cluster,
     advancedSettings,
+    savedGpu: service && 'gpu' in service ? service.gpu : undefined,
     gpu: Number(watch('gpu')),
     minRunningInstances: Number(minRunningInstances),
     maxRunningInstances: Number(maxRunningInstances),
