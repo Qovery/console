@@ -1,8 +1,9 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { BillingApi, type Gate } from 'qovery-pricing-typescript-axios'
 import { type ServiceLightResponse, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { queries } from '@qovery/state/util-queries'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { AgentExperienceAutomations } from './agent-experience-automate'
@@ -43,12 +44,58 @@ const task: ServiceLightResponse = {
 }
 
 const mockServices = jest.fn<Promise<ServiceLightResponse[]>, []>()
+// The billing-paywall flag (off by default) and the gates pricing-api answers when it is on.
+const mockBillingFlag = jest.fn(() => false)
+const mockGates: { current: Gate[] } = { current: [] }
+const mockGatesCall = jest.fn()
+
+const lockedAgentTasks: Gate = {
+  action: 'agent_task.create',
+  sku: 'agents',
+  name: 'Agent tasks',
+  allowed: false,
+  reason: 'not_in_plan',
+  limit: false,
+  used: 0,
+  requested: 1,
+  paywall: {
+    sku: 'agents',
+    title: 'Agent tasks',
+    message: 'Agent tasks is not included in your Starter plan.',
+    headline: 'Hand recurring jobs to AI agents that run in your environments.',
+    benefits: [],
+    audience: 'billing',
+    options: [
+      {
+        type: 'addon',
+        label: 'Add Agent tasks',
+        addon: 'agents',
+        addon_name: 'Agent tasks',
+        amount: 10000,
+        currency: 'USD',
+        period: 'month',
+      },
+      { type: 'upgrade', label: 'Move to Growth', plan: 'GROWTH_2026', plan_name: 'Growth' },
+    ],
+  },
+}
 
 beforeEach(() => {
   jest.clearAllMocks()
   jest.mocked(useParams).mockReturnValue({ organizationId })
   jest.mocked(useNavigate).mockReturnValue(mockNavigate)
-  jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
+  jest
+    .mocked(useFeatureFlagEnabled)
+    .mockImplementation((flag: string) => (flag === 'billing-paywall' ? mockBillingFlag() : true))
+  mockBillingFlag.mockReturnValue(false)
+  mockGates.current = []
+  jest.spyOn(BillingApi.prototype, 'gates').mockImplementation(async (request) => {
+    mockGatesCall(request)
+    return { data: { gates: mockGates.current }, status: 200 } as Awaited<ReturnType<BillingApi['gates']>>
+  })
+  jest
+    .spyOn(BillingApi.prototype, 'gateIntro')
+    .mockResolvedValue({ status: 204 } as Awaited<ReturnType<BillingApi['gateIntro']>>)
   jest.mocked(useCanManageSkillPresets).mockReturnValue({ canManage: true, isLoading: false })
   mockServices.mockResolvedValue([
     task,
@@ -92,6 +139,54 @@ it('sends creation to the existing environment picker', async () => {
   const { userEvent } = renderWithProviders(<AgentExperienceAutomations />)
   expect(await screen.findByText('No agent tasks yet')).toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
+  expect(mockOpenModal).toHaveBeenCalledWith({
+    content: expect.objectContaining({ props: { organizationId, onClose: mockCloseModal } }),
+  })
+  expect(mockGatesCall).not.toHaveBeenCalled()
+})
+
+it('opens the full-page paywall instead of the picker when agent tasks are not in the plan', async () => {
+  mockBillingFlag.mockReturnValue(true)
+  mockGates.current = [lockedAgentTasks]
+  mockServices.mockResolvedValue([])
+  const { userEvent } = renderWithProviders(<AgentExperienceAutomations />)
+  expect(await screen.findByText('No agent tasks yet')).toBeInTheDocument()
+  await screen.findByRole('button', { name: 'Create agent task' })
+  await waitFor(() =>
+    expect(mockGatesCall).toHaveBeenCalledWith(expect.objectContaining({ actions: 'agent_task.create' }))
+  )
+  await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
+  expect(await screen.findByRole('heading', { level: 1, name: 'Agent tasks' })).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Add agent tasks for $100/month' })).toBeInTheDocument()
+  expect(mockOpenModal).not.toHaveBeenCalled()
+})
+
+it('shows the intro first when agent tasks are in the plan, then Continue opens the picker', async () => {
+  mockBillingFlag.mockReturnValue(true)
+  mockGates.current = [
+    {
+      ...lockedAgentTasks,
+      allowed: true,
+      reason: '',
+      paywall: undefined,
+      intro: {
+        sku: 'agents',
+        title: 'Agent tasks',
+        headline: 'Included in your plan',
+        benefits: ['Runs on a schedule, a webhook or by hand'],
+        plan: { code: 'GROWTH_2026', name: 'Growth' },
+        cta: 'Continue',
+      },
+    },
+  ]
+  mockServices.mockResolvedValue([])
+  const { userEvent } = renderWithProviders(<AgentExperienceAutomations />)
+  await screen.findByText('No agent tasks yet')
+  await waitFor(() => expect(mockGatesCall).toHaveBeenCalled())
+  await userEvent.click(screen.getByRole('button', { name: 'Create agent task' }))
+  expect(await screen.findByText('Included in your Growth plan')).toBeInTheDocument()
+  expect(mockOpenModal).not.toHaveBeenCalled()
+  await userEvent.click(screen.getByRole('button', { name: /Continue/ }))
   expect(mockOpenModal).toHaveBeenCalledWith({
     content: expect.objectContaining({ props: { organizationId, onClose: mockCloseModal } }),
   })

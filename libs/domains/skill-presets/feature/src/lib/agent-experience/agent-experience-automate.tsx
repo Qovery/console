@@ -3,8 +3,9 @@ import { Navigate, useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ServiceLightResponse, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
+import { useBillingPaywall } from '@qovery/shared/billing/feature'
 import { Button, EmptyState, Link, Skeleton, TablePrimitives, Tooltip, useModal } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { useCanManageSkillPresets } from '../hooks/use-can-manage-skill-presets/use-can-manage-skill-presets'
 import { LoadError } from '../load-error/load-error'
@@ -12,6 +13,7 @@ import { AgentTaskEnvironmentModal } from './agent-task-environment-modal'
 import { AgentExperiencePage } from './ui/agent-experience-ui'
 
 const { Table } = TablePrimitives
+const AGENT_TASK_CREATE_ACTION = 'agent_task.create'
 const taskOverview =
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview'
 
@@ -43,6 +45,15 @@ export function AgentExperienceAutomations() {
     staleTime: 0,
   })
   const { openModal, closeModal } = useModal()
+  const { showChat } = useSupportChat()
+  const canCreate = enabled === true && !isRoleLoading && canManage
+  // Without agent tasks in the plan, "Create agent task" opens the full-page paywall; with them, the
+  // intro first when staff turned it on, then the environment picker.
+  const paywall = useBillingPaywall(
+    organizationId,
+    { actions: canCreate ? [AGENT_TASK_CREATE_ACTION] : [] },
+    { onContactSales: showChat, variant: 'page' }
+  )
   useDocumentTitle('Automations - Agents')
 
   if (enabled === false) {
@@ -64,13 +75,15 @@ export function AgentExperienceAutomations() {
       description="View the agent tasks in your organization."
       showHelp
       action={
-        enabled &&
-        !isRoleLoading &&
-        canManage && (
+        canCreate && (
           <Button
             size="md"
             onClick={() =>
-              openModal({ content: <AgentTaskEnvironmentModal organizationId={organizationId} onClose={closeModal} /> })
+              paywall.proceed(AGENT_TASK_CREATE_ACTION, () =>
+                openModal({
+                  content: <AgentTaskEnvironmentModal organizationId={organizationId} onClose={closeModal} />,
+                })
+              )
             }
           >
             Create agent task
@@ -78,6 +91,7 @@ export function AgentExperienceAutomations() {
         )
       }
     >
+      {paywall.element}
       {Boolean(error) && tasks && (
         <LoadError title="Agent tasks could not be refreshed" error={error} onRetry={refetch} />
       )}

@@ -189,6 +189,31 @@ describe('GatedPage previews', () => {
     expect(screen.getByTestId('gated-preview')).toHaveTextContent('Okta')
   })
 
+  it('fills agent tasks from its entry, with the drawn preview and the add-on as the main action', () => {
+    renderWithProviders(
+      <GatedPage
+        organizationId="org-1"
+        client={client}
+        paywall={{
+          ...blueprints([{ ...addon, addon: 'agents', addon_name: 'Agent tasks', amount: 10000 }, upgrade]),
+          sku: 'agents',
+          title: '',
+          headline: '',
+          benefits: [],
+        }}
+      />
+    )
+    expect(screen.getByRole('heading', { level: 1, name: 'Agent tasks' })).toBeInTheDocument()
+    expect(screen.getAllByText('Runs on a schedule, a webhook or by hand').length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Add agent tasks for $100/month' })).toBeInTheDocument()
+    expect(screen.queryByTestId('gated-preview-switch')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('gated-preview-image')).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Learn more/ })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/getting-started/agent-tasks'
+    )
+  })
+
   it('shows the still instead of the loop under reduced motion', () => {
     window.matchMedia = jest.fn().mockImplementation((query: string) => ({
       matches: query.includes('prefers-reduced-motion'),

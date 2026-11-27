@@ -1,7 +1,11 @@
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useEffect } from 'react'
-import { AgenticWorkflowCreationFlow, getAgenticWorkflowTemplate } from '@qovery/domains/services/feature'
+import {
+  AgenticWorkflowCreationFlow,
+  AgenticWorkflowPaywall,
+  getAgenticWorkflowTemplate,
+} from '@qovery/domains/services/feature'
 import { serviceCreateParamsSchema } from '@qovery/shared/router'
 
 export const Route = createFileRoute(
@@ -28,17 +32,18 @@ function RouteComponent() {
 
   if (!isAgenticWorkflowEnabled) return null
 
+  const navigateToAutomations = () =>
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
+      params: { organizationId, projectId, environmentId },
+    })
+
   return (
-    <AgenticWorkflowCreationFlow
-      selectedTemplate={selectedTemplate}
-      onExit={() =>
-        navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automation',
-          params: { organizationId, projectId, environmentId },
-        })
-      }
-    >
-      <Outlet />
-    </AgenticWorkflowCreationFlow>
+    // Without agent tasks in the plan, opening the flow (a deep link included) shows the full-page paywall.
+    <AgenticWorkflowPaywall onExit={navigateToAutomations}>
+      <AgenticWorkflowCreationFlow selectedTemplate={selectedTemplate} onExit={navigateToAutomations}>
+        <Outlet />
+      </AgenticWorkflowCreationFlow>
+    </AgenticWorkflowPaywall>
   )
 }
