@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
 import { Checkbox as MockCheckbox } from '@qovery/shared/ui'
-import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { OrganizationDomains, OrganizationDomainsContent } from './organization-domains'
 
 const mockList = jest.fn()
@@ -25,6 +25,21 @@ jest.mock('@tanstack/react-router', () => ({
   }),
 }))
 jest.mock('@tanstack/react-query', () => ({ ...jest.requireActual('@tanstack/react-query'), useQuery: jest.fn() }))
+// The global test setup stubs `useDebounce`; this one really waits, like the real hook.
+jest.mock('@qovery/shared/util-hooks', () => {
+  const { useEffect, useState } = jest.requireActual('react')
+  return {
+    ...jest.requireActual('@qovery/shared/util-hooks'),
+    useDebounce: <T,>(value: T, delay: number) => {
+      const [debounced, setDebounced] = useState(value)
+      useEffect(() => {
+        const timeout = setTimeout(() => setDebounced(value), delay)
+        return () => clearTimeout(timeout)
+      }, [value, delay])
+      return debounced
+    },
+  }
+})
 const mockRecheck = jest.fn()
 let mockDnsStatuses = new Map<string, { status: string; details: string[] }>()
 jest.mock('./use-organization-domain-dns-statuses', () => ({
@@ -137,9 +152,23 @@ it('uses server pagination and resets to the first page when searching', async (
   await userEvent.click(screen.getByTestId('button-next-page'))
   expect(mockList.mock.lastCall[0]).toEqual(expect.arrayContaining([expect.objectContaining({ page: 2 })]))
   await userEvent.type(screen.getByRole('textbox', { name: 'Search domains' }), 'example')
-  expect(mockList.mock.lastCall[0]).toEqual(
-    expect.arrayContaining([expect.objectContaining({ page: 1, search: 'example' })])
+  await waitFor(() =>
+    expect(mockList.mock.lastCall[0]).toEqual(
+      expect.arrayContaining([expect.objectContaining({ page: 1, search: 'example' })])
+    )
   )
+})
+
+it('waits for typing to pause before searching', async () => {
+  const { userEvent } = renderWithProviders(<OrganizationDomainsContent />)
+  await userEvent.type(screen.getByRole('textbox', { name: 'Search domains' }), 'api.example')
+  expect(screen.getByRole('textbox', { name: 'Search domains' })).toHaveValue('api.example')
+  const searchedKeys = () =>
+    mockList.mock.calls.map(([key]) => (key as [string, string, string, { search?: string }])[3]?.search)
+  // No request for the partial values typed before the pause.
+  expect(searchedKeys()).not.toContain('a')
+  await waitFor(() => expect(searchedKeys()).toContain('api.example'))
+  expect(searchedKeys().filter((search) => search && search !== 'api.example')).toEqual([])
 })
 
 it('shows skeleton rows while domains are loading', () => {

@@ -29,7 +29,7 @@ import {
   Truncate,
   useModal,
 } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import { getDomainSelectionKey, getDomainTargets } from '../utils/organization-domain-targets'
 import { DOMAIN_DNS_STATUSES, type DomainDnsStatus } from '../utils/summarize-domain-dns-checks'
@@ -43,6 +43,9 @@ import { useOrganizationDomainDnsStatuses } from './use-organization-domain-dns-
 const { Table } = TablePrimitives
 
 const route = getRouteApi('/_authenticated/organization/$organizationId/domains')
+
+// Each search runs a list request and a DNS check of the whole page.
+const SEARCH_DEBOUNCE_MS = 300
 
 const SKELETON_ROWS = 10
 const SKELETON_ROUTE_WIDTHS = [[120], [96, 112], [140], [104, 88, 120]]
@@ -164,12 +167,14 @@ export function OrganizationDomainsContent() {
     ...queries.environments.list({ projectId: filters.projectId }),
     enabled: Boolean(filters.projectId),
   })
+  // The input updates on every keystroke; the requests wait for the user to pause typing.
+  const debouncedSearch = useDebounce(filters.search, SEARCH_DEBOUNCE_MS).trim()
   // The list and its DNS checks select the same page of domains.
   const listFilters = {
     organizationId,
     projectId: filters.projectId || undefined,
     environmentId: filters.environmentId || undefined,
-    search: filters.search || undefined,
+    search: debouncedSearch || undefined,
     page: filters.page,
     pageSize: filters.pageSize,
   }
