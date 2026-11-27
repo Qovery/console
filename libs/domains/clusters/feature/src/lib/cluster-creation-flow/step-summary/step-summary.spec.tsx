@@ -15,6 +15,7 @@ const mockCreateCluster = jest.fn()
 const mockEditCloudProviderInfo = jest.fn()
 const mockEditClusterKubeconfig = jest.fn()
 const mockDeployCluster = jest.fn()
+const mockSetClusterZonesCount = jest.fn()
 
 jest.mock('posthog-js/react', () => ({
   useFeatureFlagEnabled: jest.fn(() => true),
@@ -71,6 +72,12 @@ jest.mock('../../hooks/use-deploy-cluster/use-deploy-cluster', () => ({
   useDeployCluster: () => ({
     mutateAsync: mockDeployCluster,
     isLoading: false,
+  }),
+}))
+
+jest.mock('../../hooks/use-set-cluster-zones-count/use-set-cluster-zones-count', () => ({
+  useSetClusterZonesCount: () => ({
+    mutateAsync: mockSetClusterZonesCount,
   }),
 }))
 
@@ -153,6 +160,51 @@ describe('StepSummary', () => {
       )
     }
   )
+
+  it('should set the zones count after creating a non-production Azure cluster', async () => {
+    mockContextValue.generalData = {
+      name: 'test-cluster',
+      cloud_provider: CloudProviderEnum.AZURE,
+      region: 'westeurope',
+      installation_type: 'MANAGED',
+      production: false,
+    }
+    mockContextValue.resourcesData = { ...defaultResourcesData, zones_count: '1' }
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditCloudProviderInfo.mockResolvedValue({})
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+    await userEvent.click(screen.getByTestId('button-create-deploy'))
+
+    await waitFor(() => expect(mockDeployCluster).toHaveBeenCalled())
+    expect(mockSetClusterZonesCount).toHaveBeenCalledWith({
+      organizationId: 'org-123',
+      clusterId: 'cluster-123',
+      zonesCount: 1,
+    })
+    expect(mockSetClusterZonesCount.mock.invocationCallOrder[0]).toBeLessThan(
+      mockDeployCluster.mock.invocationCallOrder[0]
+    )
+  })
+
+  it('should not set the zones count on a production cluster', async () => {
+    mockContextValue.generalData = {
+      name: 'test-cluster',
+      cloud_provider: CloudProviderEnum.AZURE,
+      region: 'westeurope',
+      installation_type: 'MANAGED',
+      production: true,
+    }
+    mockContextValue.resourcesData = { ...defaultResourcesData, zones_count: '1' }
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditCloudProviderInfo.mockResolvedValue({})
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+    await userEvent.click(screen.getByTestId('button-create-deploy'))
+
+    await waitFor(() => expect(mockDeployCluster).toHaveBeenCalled())
+    expect(mockSetClusterZonesCount).not.toHaveBeenCalled()
+  })
 
   it('should set current step on mount', async () => {
     renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
