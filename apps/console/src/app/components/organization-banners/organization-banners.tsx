@@ -12,7 +12,7 @@ export function OrganizationBanners() {
   const { roles, isQoveryAdminUser } = useUserRole()
   const billingEnabled = useIsBillingUsageEnabled()
   const client = usePricingClient()
-  const billingPath = `/organization/${encodeURIComponent(organizationId)}/settings/billing`
+  const usagePath = `/organization/${encodeURIComponent(organizationId)}/settings/usage`
 
   const displayQoveryAdminBanner = (() => {
     if (isQoveryAdminUser) {
@@ -39,11 +39,11 @@ export function OrganizationBanners() {
           client={client}
           variant="bar"
           modal={false}
-          onReviewProposal={(proposal) => window.location.assign(`${billingPath}?proposal=${proposal.id}`)}
+          onReviewProposal={(proposal) => window.location.assign(`${usagePath}?proposal=${proposal.id}`)}
           onAction={(offer) => {
             const action = offer.content.action
             if (action.type === 'url' && action.url) window.open(action.url, '_blank', 'noopener')
-            else window.location.assign(billingPath)
+            else window.location.assign(usagePath)
           }}
         />
       )}

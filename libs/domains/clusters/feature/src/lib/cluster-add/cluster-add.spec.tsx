@@ -1,6 +1,5 @@
-import axios from 'axios'
 import posthog from 'posthog-js'
-import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing/data-access'
+import { BillingApi, type Gate } from 'qovery-pricing-typescript-axios'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { type SelfManagedClusterCreationFlowProps } from '../self-managed-cluster-creation/self-managed-cluster-creation-flow'
 import { ClusterAdd } from './cluster-add'
@@ -37,7 +36,6 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
 const mockGatesCall = jest.fn()
-const originalAdapter = axios.defaults.adapter
 const mockGateIntro = jest.fn()
 
 const lockedManaged: Gate = {
@@ -119,20 +117,16 @@ describe('ClusterAdd', () => {
     mockBillingFlag.mockReturnValue(false)
     mockGateIntro.mockClear()
     mockGatesCall.mockClear()
-    axios.defaults.adapter = createPricingFetchAdapter(async (input, init) => {
-      const url = new URL(String(input))
-      if (url.pathname.endsWith('/gates')) {
-        mockGatesCall(Object.fromEntries(url.searchParams))
-        return { ok: true, status: 200, json: async () => ({ gates: mockGates.current ?? [] }) } as Response
-      }
-      if (url.pathname.endsWith('/gates/intro')) {
-        mockGateIntro(url.pathname.split('/')[2], JSON.parse(String(init?.body)))
-      }
-      return { ok: true, status: 204 } as Response
+    jest.spyOn(BillingApi.prototype, 'gates').mockImplementation(async (request) => {
+      mockGatesCall(request)
+      return { data: { gates: mockGates.current ?? [] }, status: 200 } as Awaited<ReturnType<BillingApi['gates']>>
+    })
+    jest.spyOn(BillingApi.prototype, 'gateIntro').mockImplementation(async ({ organizationId, gateIntroRequest }) => {
+      mockGateIntro(organizationId, gateIntroRequest)
+      return { status: 204 } as Awaited<ReturnType<BillingApi['gateIntro']>>
     })
   })
   afterEach(() => {
-    axios.defaults.adapter = originalAdapter
     jest.restoreAllMocks()
   })
 

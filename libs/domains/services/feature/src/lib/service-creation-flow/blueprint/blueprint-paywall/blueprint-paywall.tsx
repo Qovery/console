@@ -1,6 +1,6 @@
 import { useParams } from '@tanstack/react-router'
+import type { GateIntro } from 'qovery-pricing-typescript-axios'
 import { type ReactNode, useState } from 'react'
-import type { GateIntro } from '@qovery/shared/billing/data-access'
 import { GatedPage, useBillingPaywall, usePricingClient } from '@qovery/shared/billing/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'

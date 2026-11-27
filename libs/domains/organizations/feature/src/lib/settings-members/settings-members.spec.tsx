@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { BillingApi, type Gate } from 'qovery-pricing-typescript-axios'
 import { type ReactNode } from 'react'
-import type { Gate } from '@qovery/shared/billing/data-access'
 import { inviteMembersMock, membersMock, organizationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useAvailableRolesHook from '../hooks/use-available-roles/use-available-roles'
@@ -37,28 +37,10 @@ const mockUser = { sub: 'owner-id' }
 
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
-jest.mock('@qovery/shared/billing/feature', () => {
-  const actual = jest.requireActual('@qovery/shared/billing/feature')
-  const client = {
-    mode: 'live',
-    publicPlans: () => Promise.resolve(),
-    billingUsage: () => Promise.resolve(),
-    spendLimits: () => Promise.resolve(),
-    gateEvent: () => Promise.resolve(),
-    gateIntro: () => Promise.resolve(),
-    get gates() {
-      return mockGates.current
-        ? (organizationId: string) =>
-            Promise.resolve({ organization_id: organizationId, access: 'billing', gates: mockGates.current })
-        : undefined
-    },
-  }
-  return {
-    ...actual,
-    useBillingPaywall: (organizationId: string, keys: object, options: object) =>
-      actual.usePaywall(client, organizationId, keys, options),
-  }
-})
+jest.mock('posthog-js/react', () => ({
+  ...jest.requireActual('posthog-js/react'),
+  useFeatureFlagEnabled: (key: string) => key === 'billing-paywall' && Boolean(mockGates.current),
+}))
 
 const seatsFull: Gate = {
   action: 'member.invite',
@@ -138,12 +120,34 @@ describe('SettingsMembers', () => {
   const transferOwnershipMemberRoleMock = jest.fn()
   const createInviteMemberMock = jest.fn()
 
+  const gates = jest.spyOn(BillingApi.prototype, 'gates')
+  const gateEvent = jest.spyOn(BillingApi.prototype, 'gateEvent')
+  const gateIntro = jest.spyOn(BillingApi.prototype, 'gateIntro')
+
+  afterAll(() => {
+    gates.mockRestore()
+    gateEvent.mockRestore()
+    gateIntro.mockRestore()
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
     mockGates.current = undefined
 
     const useAuth0Mock = useAuth0 as jest.MockedFunction<typeof useAuth0>
-    useAuth0Mock.mockReturnValue({ user: mockUser } as ReturnType<typeof useAuth0>)
+    useAuth0Mock.mockReturnValue({
+      user: mockUser,
+      getAccessTokenSilently: jest.fn().mockResolvedValue('test-token'),
+    } as ReturnType<typeof useAuth0>)
+    gates.mockImplementation(
+      async ({ organizationId }) =>
+        ({
+          status: 200,
+          data: { organization_id: organizationId, access: 'billing', gates: mockGates.current ?? [] },
+        }) as Awaited<ReturnType<BillingApi['gates']>>
+    )
+    gateEvent.mockResolvedValue({ status: 204 } as Awaited<ReturnType<BillingApi['gateEvent']>>)
+    gateIntro.mockResolvedValue({ status: 204 } as Awaited<ReturnType<BillingApi['gateIntro']>>)
 
     useMembersMock.mockReturnValue({
       data: [ownerMember, adminMember],

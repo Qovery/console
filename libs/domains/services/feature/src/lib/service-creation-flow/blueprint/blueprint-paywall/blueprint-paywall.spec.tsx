@@ -1,5 +1,4 @@
-import axios from 'axios'
-import { type Gate, createPricingFetchAdapter } from '@qovery/shared/billing/data-access'
+import { BillingApi, type Gate } from 'qovery-pricing-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintPaywall } from './blueprint-paywall'
 
@@ -17,7 +16,6 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 // The gates pricing-api answers (the billing-paywall flag on): none by default, nothing locked.
 const mockGates: { current: Gate[] | undefined } = { current: undefined }
 const mockGatesCall = jest.fn()
-const originalAdapter = axios.defaults.adapter
 const mockGateIntro = jest.fn()
 const mockBillingFlag = jest.fn(() => false)
 jest.mock('posthog-js/react', () => ({
@@ -52,22 +50,17 @@ describe('BlueprintPaywall', () => {
     mockGates.current = undefined
     mockBillingFlag.mockReturnValue(true)
     mockGatesCall.mockClear()
-    axios.defaults.adapter = createPricingFetchAdapter(async (input, init) => {
-      const url = new URL(String(input))
-      if (url.pathname.endsWith('/gates')) {
-        mockGatesCall(Object.fromEntries(url.searchParams))
-        return { ok: true, status: 200, json: async () => ({ gates: mockGates.current ?? [] }) } as Response
-      }
-      if (url.pathname.endsWith('/gates/intro')) {
-        mockGateIntro(url.pathname.split('/')[2], JSON.parse(String(init?.body)))
-      }
-      return { ok: true, status: 204 } as Response
+    jest.spyOn(BillingApi.prototype, 'gates').mockImplementation(async (request) => {
+      mockGatesCall(request)
+      return { data: { gates: mockGates.current ?? [] }, status: 200 } as Awaited<ReturnType<BillingApi['gates']>>
     })
-    mockGatesCall.mockClear()
+    jest.spyOn(BillingApi.prototype, 'gateIntro').mockImplementation(async ({ organizationId, gateIntroRequest }) => {
+      mockGateIntro(organizationId, gateIntroRequest)
+      return { status: 204 } as Awaited<ReturnType<BillingApi['gateIntro']>>
+    })
     mockGateIntro.mockClear()
   })
   afterEach(() => {
-    axios.defaults.adapter = originalAdapter
     jest.restoreAllMocks()
   })
 
@@ -82,7 +75,7 @@ describe('BlueprintPaywall', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Blueprints' })).toBeInTheDocument()
     expect(screen.queryByText('Blueprint flow')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Start a 14-day trial' })).toBeInTheDocument()
-    expect(mockGatesCall).toHaveBeenCalledWith({ actions: 'blueprint.create' })
+    expect(mockGatesCall).toHaveBeenCalledWith(expect.objectContaining({ actions: 'blueprint.create' }))
   })
 
   it('goes back to the catalog from "Not now", and opens the chat from "Talk to us"', async () => {

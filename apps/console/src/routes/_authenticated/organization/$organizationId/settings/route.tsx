@@ -131,8 +131,8 @@ function RouteComponent() {
                   pathname === childPath ||
                   pathname.startsWith(`${childPath}/`) ||
                   (!isBillingUsageEnabled &&
-                    childPath === `${pathSettings}/billing-summary` &&
-                    pathname === `${pathSettings}/billing`)
+                    ((childPath === `${pathSettings}/billing-summary` && pathname === `${pathSettings}/usage`) ||
+                      (childPath === `${pathSettings}/billing-details` && pathname === `${pathSettings}/billing`)))
                 const groupActive = link.children.some((child) => isChildPathActive(child.to))
 
                 return (
