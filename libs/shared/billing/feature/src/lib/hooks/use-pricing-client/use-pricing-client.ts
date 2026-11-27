@@ -61,20 +61,21 @@ export function pickConsoleCalls(client: PricingClient): PricingClient {
   }
 }
 
-const pricingClients = new WeakMap<object, PricingClient>()
+const pricingClients = new WeakMap<object, { subject?: string; client: PricingClient }>()
 
 export function usePricingClient(): PricingClient {
-  const { getAccessTokenSilently } = useAuth0()
+  const { getAccessTokenSilently, user } = useAuth0()
+  const subject = user?.sub
   return useMemo(() => {
     const existing = pricingClients.get(getAccessTokenSilently)
-    if (existing) return existing
+    if (existing && existing.subject === subject) return existing.client
     const client = pickConsoleCalls(
       createPricingClient({
         pricingApiUrl: PRICING_API_URL,
         getToken: () => window.localStorage.getItem('qovery-e2e-auth-token') ?? getAccessTokenSilently(),
       })
     )
-    pricingClients.set(getAccessTokenSilently, client)
+    pricingClients.set(getAccessTokenSilently, { subject, client })
     return client
-  }, [getAccessTokenSilently])
+  }, [getAccessTokenSilently, subject])
 }

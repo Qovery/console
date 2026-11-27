@@ -1,35 +1,25 @@
 // The billing kit's rules for invoice details, build usage, discounts and payment methods, and the
 // calls the pricing-api client sends, from pricing-api's web/tests (invoice-details, build-usage,
 // discounts).
+import type {
+  BuildServiceUsage,
+  CustomerInvoice,
+  InvoiceDetails,
+  InvoiceLineUsage1 as InvoiceLineUsage,
+  PaymentMethod,
+} from 'qovery-pricing-typescript-axios'
+import { paymentMethodLabel, validAwsAccountId } from './billing-settings-rules'
 import {
-  type BuildServiceUsage,
-  type CustomerInvoice,
-  type InvoiceDetails,
-  type InvoiceLineUsage,
-  type PaymentMethod,
-  buildUsageQuery,
-} from '@qovery/shared/billing/data-access'
-import {
-  amount,
-  buildDuration,
-  buildRange,
-  buildServiceRows,
-  buildSizeColor,
-  changeKind,
   currentDiscountRequest,
   discountPercent,
   discountSelectable,
   discountsUpTo,
-  invoiceDetailsCSV,
-  lineKindLabel,
-  localDate,
-  matchesStatus,
-  paymentMethodLabel,
   toggleDiscount,
-  usageCoverageText,
-  usageDays,
-  validAwsAccountId,
-} from './rules'
+} from './discount-rules'
+import { amount, localDate } from './format'
+import { invoiceDetailsCSV, lineKindLabel, matchesStatus, usageCoverageText, usageDays } from './invoice-rules'
+import { changeKind } from './subscription-rules'
+import { buildDuration, buildRange, buildServiceRows, buildSizeColor } from './usage-rules'
 
 const usage = (over: Partial<InvoiceLineUsage> = {}): InvoiceLineUsage => ({
   sku: 'deploy.minutes',
@@ -334,16 +324,6 @@ describe('build usage', () => {
       'web',
       'Not attributed to a service',
     ])
-  })
-
-  it('should name the period and, for a drill, the service (empty included) in the query', () => {
-    expect(buildUsageQuery({ from: '2026-11-01', to: '2026-11-20' })).toBe('from=2026-11-01&to=2026-11-20')
-    expect(buildUsageQuery({ from: '2026-11-01', to: '2026-11-20', granularity: 'day', service: 'abc' })).toBe(
-      'from=2026-11-01&to=2026-11-20&granularity=day&service=abc'
-    )
-    expect(buildUsageQuery({ from: '2026-11-01', to: '2026-11-20', service: '' })).toBe(
-      'from=2026-11-01&to=2026-11-20&service='
-    )
   })
 })
 
