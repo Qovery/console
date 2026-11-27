@@ -18,7 +18,7 @@ exports[`renders the domains list 1`] = `
             Domains
           </h1>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none touch-target [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-y-2 [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:content-[''] outline-brand-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
           >
             <i
               aria-hidden="true"
@@ -99,7 +99,7 @@ exports[`renders the domains list 1`] = `
                         <button
                           aria-checked="false"
                           aria-label="Select all domains on this page"
-                          class="group inline-flex shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong h-3.5 w-3.5"
+                          class="group inline-flex shrink-0 items-center justify-center rounded touch-target [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong h-3.5 w-3.5"
                           data-state="unchecked"
                           role="checkbox"
                           type="button"
@@ -117,7 +117,7 @@ exports[`renders the domains list 1`] = `
                         <button
                           aria-expanded="false"
                           aria-haspopup="dialog"
-                          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none touch-target [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-y-2 [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                           data-state="closed"
                           type="button"
                         >
@@ -138,7 +138,7 @@ exports[`renders the domains list 1`] = `
                         <button
                           aria-expanded="false"
                           aria-haspopup="dialog"
-                          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none touch-target [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-y-2 [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                           data-state="closed"
                           type="button"
                         >
@@ -159,7 +159,7 @@ exports[`renders the domains list 1`] = `
                         <button
                           aria-expanded="false"
                           aria-haspopup="dialog"
-                          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none touch-target [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-y-2 [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                           data-state="closed"
                           disabled=""
                           type="button"
@@ -192,7 +192,7 @@ exports[`renders the domains list 1`] = `
                       <button
                         aria-checked="false"
                         aria-label="Select app.example.com"
-                        class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                        class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded touch-target [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-3 [@media(pointer:coarse)]:after:content-[''] border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
                         data-state="unchecked"
                         role="checkbox"
                         type="button"
@@ -212,7 +212,8 @@ exports[`renders the domains list 1`] = `
               class="flex items-center gap-0.5"
             >
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-8 justify-center"
+                aria-label="Previous page"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none touch-target [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-y-2 [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-8 justify-center"
                 data-testid="button-previous-page"
                 disabled=""
                 type="button"
@@ -223,7 +224,8 @@ exports[`renders the domains list 1`] = `
                 />
               </button>
               <button
-                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-8 justify-center"
+                aria-label="Next page"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none touch-target [@media(pointer:coarse)]:after:absolute [@media(pointer:coarse)]:after:-inset-y-2 [@media(pointer:coarse)]:after:inset-x-0 [@media(pointer:coarse)]:after:content-[''] outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral w-8 justify-center"
                 data-testid="button-next-page"
                 type="button"
               >
@@ -240,6 +242,7 @@ exports[`renders the domains list 1`] = `
                 class="!w-16 group relative flex items-center gap-4"
               >
                 <select
+                  aria-label="Rows per page"
                   class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral bg-surface-neutral px-3 pr-6 text-sm text-neutral transition-colors hover:bg-surface-neutral-component focus:border-brand-strong focus:outline focus:outline-[2px] focus:outline-offset-0 focus:outline-brand-outline disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-neutral-subtle disabled:hover:bg-surface-neutral"
                   data-testid="select-page-size"
                   name="pageSize"
