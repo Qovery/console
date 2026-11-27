@@ -664,7 +664,7 @@ describe('BillingUsageView', () => {
 
   it('should open the proposal review from the email link', async () => {
     const originalUrl = window.location.href
-    window.history.pushState({}, '', '/organization/org-northwind/settings/billing?proposal=7')
+    window.history.pushState({}, '', '/organization/org-northwind/settings/usage?proposal=7')
     try {
       const adapter = mockUsage(baseUsage, proposalRoutes())
       renderWithProviders(<BillingUsageView />)
@@ -923,15 +923,15 @@ describe('getBillingSettingsLinks', () => {
 
   it('should list usage, invoices and billing for billing roles when the flag is on', () => {
     expect(getBillingSettingsLinks('/organization/1/settings', true, true)).toEqual([
-      { title: 'Usage', to: '/organization/1/settings/billing' },
+      { title: 'Usage', to: '/organization/1/settings/usage' },
       { title: 'Invoices', to: '/organization/1/settings/invoices' },
-      { title: 'Billing', to: '/organization/1/settings/billing-settings' },
+      { title: 'Billing', to: '/organization/1/settings/billing' },
     ])
   })
 
   it('should only list usage for other roles when the flag is on', () => {
     expect(getBillingSettingsLinks('/organization/1/settings', true, false)).toEqual([
-      { title: 'Usage', to: '/organization/1/settings/billing' },
+      { title: 'Usage', to: '/organization/1/settings/usage' },
     ])
   })
 })

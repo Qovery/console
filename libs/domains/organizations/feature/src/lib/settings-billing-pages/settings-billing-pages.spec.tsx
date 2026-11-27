@@ -169,7 +169,7 @@ describe('InvoicesView', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Update payment method' }))
 
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/settings/billing-settings',
+      to: '/organization/$organizationId/settings/billing',
       params: { organizationId: 'org-northwind' },
     })
   })

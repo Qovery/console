@@ -5,7 +5,7 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   SettingsBillingNotifications,
   getNotificationsSettingsLinks,
-  redirectLegacyBillingEmailsLink,
+  redirectLegacyBillingEmailLinks,
 } from './settings-billing-notifications'
 
 jest.mock('@qovery/shared/billing/feature', () => ({
@@ -82,10 +82,10 @@ describe('getNotificationsSettingsLinks', () => {
   })
 })
 
-describe('redirectLegacyBillingEmailsLink', () => {
-  const thrownBy = (search: unknown) => {
+describe('redirectLegacyBillingEmailLinks', () => {
+  const thrownBy = (search: string) => {
     try {
-      redirectLegacyBillingEmailsLink({ params: { organizationId: 'org-1' }, search })
+      redirectLegacyBillingEmailLinks({ params: { organizationId: 'org-1' }, search })
     } catch (error) {
       return error
     }
@@ -93,7 +93,7 @@ describe('redirectLegacyBillingEmailsLink', () => {
   }
 
   it('should send the emails link ?section=emails to Settings, Notifications, Billing', () => {
-    const error = thrownBy({ section: 'emails' })
+    const error = thrownBy('?section=emails')
 
     expect(error).toEqual({
       redirect: true,
@@ -105,12 +105,24 @@ describe('redirectLegacyBillingEmailsLink', () => {
     })
   })
 
-  it('should keep the Usage page for any other link', () => {
-    expect(thrownBy({})).toBeUndefined()
-    expect(thrownBy(undefined)).toBeUndefined()
-    expect(thrownBy({ proposal: '12' })).toBeUndefined()
-    expect(thrownBy({ section: 'usage' })).toBeUndefined()
+  it('should send an earlier plan proposal link to Usage with the proposal selected', () => {
+    expect(thrownBy('?proposal=12')).toEqual({
+      redirect: true,
+      options: {
+        to: '/organization/$organizationId/settings/usage',
+        params: { organizationId: 'org-1' },
+        search: { proposal: 12 },
+        replace: true,
+      },
+    })
   })
+
+  it.each(['', '?section=usage', '?proposal=1e3', '?proposal=9007199254740993'])(
+    'should keep Billing for search %s',
+    (search) => {
+      expect(thrownBy(search)).toBeUndefined()
+    }
+  )
 })
 
 describe('SettingsBillingNotifications', () => {

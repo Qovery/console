@@ -42,11 +42,11 @@ export function getBillingSettingsLinks(
   }
 
   return [
-    { title: 'Usage', to: `${pathSettings}/billing` },
+    { title: 'Usage', to: `${pathSettings}/usage` },
     ...(canManageBilling
       ? [
           { title: 'Invoices', to: `${pathSettings}/invoices` },
-          { title: 'Billing', to: `${pathSettings}/billing-settings` },
+          { title: 'Billing', to: `${pathSettings}/billing` },
         ]
       : []),
   ]
@@ -59,7 +59,7 @@ export function useBillingNavigate(organizationId: string) {
     (to: 'invoices' | 'billing') =>
       to === 'invoices'
         ? navigate({ to: '/organization/$organizationId/settings/invoices', params: { organizationId } })
-        : navigate({ to: '/organization/$organizationId/settings/billing-settings', params: { organizationId } }),
+        : navigate({ to: '/organization/$organizationId/settings/billing', params: { organizationId } }),
     [navigate, organizationId]
   )
 }
