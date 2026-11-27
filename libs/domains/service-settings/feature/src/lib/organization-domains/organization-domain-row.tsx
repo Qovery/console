@@ -192,14 +192,9 @@ export function OrganizationDomainRow({
                   confirmationMethod: 'action',
                   name: domain.domain,
                   description: `Remove this domain from ${targets.length} service ${pluralize(targets.length, 'configuration')}. Redeploy the affected services to apply the change.`,
-                  action: () =>
-                    deleteDomain({
-                      targets: targets.map((target) => ({
-                        serviceId: target.service.id,
-                        serviceType: target.service.type,
-                        customDomainId: target.custom_domain_id,
-                      })),
-                    }),
+                  action: async () => {
+                    await deleteDomain({ environmentId: domain.environment_id, domainName: domain.domain })
+                  },
                 })
               }
             >

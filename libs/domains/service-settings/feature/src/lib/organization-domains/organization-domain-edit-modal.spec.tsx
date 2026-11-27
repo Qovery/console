@@ -93,23 +93,43 @@ it('refuses a domain name the API would reject', async () => {
   expect(screen.getByRole('button', { name: 'Save and redeploy' })).toBeDisabled()
 })
 
-it('saves the settings on every service without redeploying', async () => {
+it('saves the settings on every service in one request without redeploying', async () => {
   const { userEvent } = renderWithProviders(<OrganizationDomainEditModal domain={domain} onClose={onClose} />)
   await userEvent.click(screen.getByRole('switch', { name: 'Domain behind a CDN or DNS proxy' }))
   expect(screen.getByRole('switch', { name: 'Generate certificate' })).not.toBeChecked()
   await userEvent.click(screen.getByRole('button', { name: 'Save' }))
   await waitFor(() =>
     expect(mockEdit).toHaveBeenCalledWith({
-      payload: { domain: 'app.example.com', use_cdn: true, generate_certificate: false },
+      environmentId: 'env',
+      domainName: 'app.example.com',
+      payload: {
+        domain: 'app.example.com',
+        use_cdn: true,
+        generate_certificate: false,
+        services: [
+          { id: 'web', type: 'APPLICATION' },
+          { id: 'api', type: 'CONTAINER' },
+        ],
+      },
       redeploy: false,
-      targets: [
-        { serviceId: 'web', serviceType: 'APPLICATION', customDomainId: 'domain-web' },
-        { serviceId: 'api', serviceType: 'CONTAINER', customDomainId: 'domain-api' },
-      ],
-      removedTargets: [],
     })
   )
   expect(onClose).toHaveBeenCalled()
+})
+
+it('renames the domain from its current name', async () => {
+  const { userEvent } = renderWithProviders(<OrganizationDomainEditModal domain={domain} onClose={onClose} />)
+  await userEvent.clear(screen.getByLabelText('Domain'))
+  await userEvent.type(screen.getByLabelText('Domain'), 'www.example.com')
+  await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+  await waitFor(() =>
+    expect(mockEdit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        domainName: 'app.example.com',
+        payload: expect.objectContaining({ domain: 'www.example.com' }),
+      })
+    )
+  )
 })
 
 it('removes every route of a service and redeploys', async () => {
@@ -121,20 +141,55 @@ it('removes every route of a service and redeploys', async () => {
     expect(mockEdit).toHaveBeenCalledWith(
       expect.objectContaining({
         redeploy: true,
-        targets: [{ serviceId: 'api', serviceType: 'CONTAINER', customDomainId: 'domain-api' }],
-        removedTargets: [{ serviceId: 'web', serviceType: 'APPLICATION', customDomainId: 'domain-web' }],
+        payload: expect.objectContaining({ services: [{ id: 'api', type: 'CONTAINER' }] }),
       })
     )
   )
 })
 
-it('warns when every route is removed and keeps the modal open on error', async () => {
-  mockEdit.mockRejectedValue(new Error('boom'))
+it('sends no service when every route is removed', async () => {
   const { userEvent } = renderWithProviders(<OrganizationDomainEditModal domain={domain} onClose={onClose} />)
   await userEvent.click(screen.getByRole('button', { name: 'Remove route / of web' }))
   await userEvent.click(screen.getByRole('button', { name: 'Remove route /api of api' }))
   expect(screen.getByText('Saving removes this domain from every service.')).toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Save' }))
-  await waitFor(() => expect(mockEdit).toHaveBeenCalled())
+  await waitFor(() =>
+    expect(mockEdit).toHaveBeenCalledWith(
+      expect.objectContaining({ payload: expect.objectContaining({ services: [] }) })
+    )
+  )
+})
+
+it('shows conflicts next to their route and keeps the modal open', async () => {
+  // The HTTP interceptor rejects with the response, not an AxiosError.
+  mockEdit.mockRejectedValue({
+    message: 'Conflict',
+    response: {
+      status: 400,
+      data: {
+        errors: [
+          { service_id: 'api', message: 'www.example.com is already used by another service.' },
+          { service_id: 'other', message: 'The environment cannot share this domain.' },
+        ],
+      },
+    },
+  })
+  const { userEvent } = renderWithProviders(<OrganizationDomainEditModal domain={domain} onClose={onClose} />)
+  await userEvent.clear(screen.getByLabelText('Domain'))
+  await userEvent.type(screen.getByLabelText('Domain'), 'www.example.com')
+  await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+  expect(await screen.findByText('www.example.com is already used by another service.')).toBeInTheDocument()
+  expect(screen.getByText('The environment cannot share this domain.')).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+  expect(onClose).not.toHaveBeenCalled()
+  await userEvent.type(screen.getByLabelText('Domain'), 'x')
+  expect(screen.queryByText('www.example.com is already used by another service.')).not.toBeInTheDocument()
+})
+
+it('shows other errors and keeps the modal open', async () => {
+  mockEdit.mockRejectedValue({ message: 'You are not allowed to manage this environment.' })
+  const { userEvent } = renderWithProviders(<OrganizationDomainEditModal domain={domain} onClose={onClose} />)
+  await userEvent.click(screen.getByRole('button', { name: 'Save and redeploy' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('You are not allowed to manage this environment.')
   expect(onClose).not.toHaveBeenCalled()
 })

@@ -1,36 +1,52 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { pluralize } from '@qovery/shared/util-js'
+import { type ImpactedServiceResponse } from 'qovery-typescript-axios'
+import { mutations } from '@qovery/domains/custom-domains/data-access'
+import { isHttpStatus } from '@qovery/shared/utils'
 import {
-  type OrganizationCustomDomainTarget,
-  deleteOrganizationCustomDomainCopy,
-  invalidateOrganizationCustomDomainTargets,
-  settleOrganizationCustomDomainOperations,
-} from '../../utils/organization-custom-domain-operations'
+  describeServiceCount,
+  invalidateCustomDomainServices,
+  redeployCustomDomainServices,
+} from '../../utils/impacted-services'
 
 export interface DeleteOrganizationCustomDomainVariables {
-  targets: OrganizationCustomDomainTarget[]
+  environmentId: string
+  domainName: string
 }
 
-// Delete every copy of the domain. Copies already deleted by an earlier attempt count as deleted, so retrying is safe.
+// Deletes every copy of the domain in its environment at once.
 export function useDeleteOrganizationCustomDomain() {
   const queryClient = useQueryClient()
 
   return useMutation(
-    ({ targets }: DeleteOrganizationCustomDomainVariables) =>
-      settleOrganizationCustomDomainOperations(
-        targets.map((target) => () => deleteOrganizationCustomDomainCopy(target)),
-        (failed, total) =>
-          `${failed} of ${total} service ${pluralize(total, 'configuration')} could not be deleted. Confirm again to retry.`
-      ),
+    async (variables: DeleteOrganizationCustomDomainVariables): Promise<ImpactedServiceResponse[]> => {
+      try {
+        const { impacted_services } = await mutations.deleteEnvironmentCustomDomain(variables)
+        return impacted_services
+      } catch (error) {
+        // Already deleted, for example from another tab: the list is refreshed below.
+        if (isHttpStatus(error, 404)) return []
+        throw error
+      }
+    },
     {
-      // Refresh on failure too: some copies may be gone.
-      onSettled(_, __, variables) {
-        if (variables) invalidateOrganizationCustomDomainTargets(queryClient, variables.targets)
+      onSuccess(impactedServices) {
+        invalidateCustomDomainServices(queryClient, impactedServices)
       },
       meta: {
-        notifyOnSuccess: { title: 'Your domain is being deleted' },
-        notifyOnError: { title: 'Your domain was not fully deleted' },
+        notifyOnSuccess(data: unknown) {
+          const impactedServices = data as ImpactedServiceResponse[]
+          if (!impactedServices.length) return { title: 'Your domain has been deleted' }
+          return {
+            title: 'Your domain has been deleted',
+            description: `Redeploy ${describeServiceCount(impactedServices)} to apply the change.`,
+            labelAction: 'Redeploy',
+            callback: () => redeployCustomDomainServices(queryClient, impactedServices, { announce: true }),
+          }
+        },
+        notifyOnError: { title: 'Your domain could not be deleted' },
       },
     }
   )
 }
+
+export default useDeleteOrganizationCustomDomain

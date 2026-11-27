@@ -73,16 +73,14 @@ it('renders a route without a public port', () => {
   expect(screen.getByText('/')).toBeInTheDocument()
 })
 
-it('requires confirmation and removes each service configuration once', async () => {
+it('requires confirmation and deletes the domain from its environment', async () => {
   const route = domain.routes[0]
   const { userEvent } = renderRow({ ...domain, routes: [route, { ...route, id: 'route-2', path: '/api' }] })
   await userEvent.click(screen.getByRole('button', { name: 'Delete app.example.com' }))
   expect(mockDelete).not.toHaveBeenCalled()
   await mockConfirm.mock.calls[0][0].action()
   expect(mockDelete).toHaveBeenCalledTimes(1)
-  expect(mockDelete).toHaveBeenCalledWith({
-    targets: [{ serviceId: 'app-1', serviceType: 'APPLICATION', customDomainId: 'domain-1' }],
-  })
+  expect(mockDelete).toHaveBeenCalledWith({ environmentId: 'env', domainName: 'app.example.com' })
 })
 
 it('renders the DNS status cell and rechecks on demand', async () => {

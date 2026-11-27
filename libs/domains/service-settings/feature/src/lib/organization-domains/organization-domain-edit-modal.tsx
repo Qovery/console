@@ -1,22 +1,19 @@
 import { useQueries } from '@tanstack/react-query'
-import { type CustomDomainRequest, type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
+import {
+  type CustomDomainErrorResponse,
+  type CustomDomainRequest,
+  type OrganizationCustomDomainResponse,
+} from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useEditOrganizationCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { Button, Icon, InputText, InputToggle, Tooltip, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
-import { getDomainTargetKey, getDomainTargets } from '../utils/organization-domain-targets'
+import { getCustomDomainProblem } from '../utils/get-custom-domain-problem'
+import { getDomainTargets } from '../utils/organization-domain-targets'
 import { validateCustomDomain } from '../utils/validate-custom-domain'
 import { OrganizationDomainCnameRecords } from './organization-domain-cname-records'
 import { OrganizationDomainRouteItem } from './organization-domain-route-item'
-
-type DomainTarget = ReturnType<typeof getDomainTargets>[number]
-
-const toMutationTarget = ({ service, custom_domain_id }: DomainTarget) => ({
-  serviceId: service.id,
-  serviceType: service.type,
-  customDomainId: custom_domain_id,
-})
 
 export interface OrganizationDomainEditModalProps {
   domain: OrganizationCustomDomainResponse
@@ -26,8 +23,11 @@ export interface OrganizationDomainEditModalProps {
 export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDomainEditModalProps) {
   const { enableAlertClickOutside } = useModal()
   const targets = getDomainTargets(domain)
-  // Routes of one service share its domain configuration, so removing a route removes that whole configuration.
-  const [removedTargetKeys, setRemovedTargetKeys] = useState<string[]>([])
+  const services = [...new Map(targets.map(({ service }) => [service.id, service])).values()]
+  // The API edits a domain per service, so removing a route removes every route of its service.
+  const [removedServiceIds, setRemovedServiceIds] = useState<string[]>([])
+  const [conflicts, setConflicts] = useState<CustomDomainErrorResponse[]>([])
+  const [saveError, setSaveError] = useState<string>()
   const { control, formState, handleSubmit, setValue, watch } = useForm<CustomDomainRequest>({
     defaultValues: {
       domain: domain.domain,
@@ -36,13 +36,7 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
     },
     mode: 'onChange',
   })
-  const {
-    mutateAsync: editDomain,
-    isLoading: isSaving,
-    variables,
-  } = useEditOrganizationCustomDomain({
-    environmentId: domain.environment_id,
-  })
+  const { mutateAsync: editDomain, isLoading: isSaving, variables } = useEditOrganizationCustomDomain()
   const serviceDomains = useQueries({
     queries: targets.map(({ service }) =>
       queries.services.customDomains({ serviceId: service.id, serviceType: service.type })
@@ -55,7 +49,7 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
     )
     .find(Boolean)
   const isLoadingValidationDomain = serviceDomains.some(({ isLoading }) => isLoading)
-  const isDirty = formState.isDirty || removedTargetKeys.length > 0
+  const isDirty = formState.isDirty || removedServiceIds.length > 0
 
   useEffect(() => {
     enableAlertClickOutside(isDirty)
@@ -65,22 +59,33 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
 
   const save = (redeploy: boolean) =>
     handleSubmit(async (payload) => {
+      setConflicts([])
+      setSaveError(undefined)
       try {
         await editDomain({
-          payload,
+          environmentId: domain.environment_id,
+          domainName: domain.domain,
+          payload: {
+            ...payload,
+            services: services
+              .filter(({ id }) => !removedServiceIds.includes(id))
+              .map(({ id, type }) => ({ id, type })),
+          },
           redeploy,
-          targets: targets
-            .filter((target) => !removedTargetKeys.includes(getDomainTargetKey(target)))
-            .map(toMutationTarget),
-          removedTargets: targets
-            .filter((target) => removedTargetKeys.includes(getDomainTargetKey(target)))
-            .map(toMutationTarget),
         })
         onClose()
-      } catch {
-        // The mutation notifies the error; keep the modal open so the user can retry.
+      } catch (error) {
+        // Nothing was changed: show why and keep the modal open.
+        const problem = getCustomDomainProblem(error)
+        if (problem?.errors?.length) setConflicts(problem.errors)
+        else
+          setSaveError(
+            problem?.detail || (error as { message?: string }).message || 'Unable to save the domain. Try again.'
+          )
       }
     })()
+
+  const unmatchedConflicts = conflicts.filter(({ service_id }) => !services.some(({ id }) => id === service_id))
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -95,7 +100,10 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
             <InputText
               name={field.name}
               value={field.value}
-              onChange={field.onChange}
+              onChange={(event) => {
+                setConflicts([])
+                field.onChange(event)
+              }}
               label="Domain"
               error={error?.message}
             />
@@ -142,12 +150,8 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
         <h3 className="text-sm font-medium text-neutral-subtle">Routes</h3>
         <ul className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral-subtle">
           {domain.routes.map((route) => {
-            const target = targets.find(
-              ({ service, custom_domain_id }) =>
-                service.id === route.service.id && custom_domain_id === route.custom_domain_id
-            )
-            const targetKey = target ? getDomainTargetKey(target) : undefined
-            const removed = targetKey ? removedTargetKeys.includes(targetKey) : false
+            const removable = services.some(({ id }) => id === route.service.id)
+            const removed = removedServiceIds.includes(route.service.id)
             return (
               <OrganizationDomainRouteItem
                 key={route.id}
@@ -155,8 +159,12 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
                 service={`${domain.project.name}/${domain.environment.name}/${route.service.name}`}
                 port={route.port?.internal_port ?? null}
                 removed={removed}
+                error={conflicts
+                  .filter(({ service_id }) => service_id === route.service.id)
+                  .map(({ message }) => message)
+                  .join(' ')}
                 actions={
-                  targetKey ? (
+                  removable ? (
                     <Tooltip content={removed ? 'Keep route' : 'Remove route'}>
                       <Button
                         type="button"
@@ -166,11 +174,12 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
                         color="neutral"
                         size="xs"
                         disabled={isSaving}
-                        onClick={() =>
-                          setRemovedTargetKeys((keys) =>
-                            removed ? keys.filter((key) => key !== targetKey) : [...keys, targetKey]
+                        onClick={() => {
+                          setConflicts([])
+                          setRemovedServiceIds((ids) =>
+                            removed ? ids.filter((id) => id !== route.service.id) : [...ids, route.service.id]
                           )
-                        }
+                        }}
                       >
                         <Icon iconName={removed ? 'arrow-rotate-left' : 'trash-can'} iconStyle="regular" />
                       </Button>
@@ -181,9 +190,14 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
             )
           })}
         </ul>
-        {targets.length > 0 && removedTargetKeys.length === targets.length ? (
+        {services.length > 0 && removedServiceIds.length === services.length ? (
           <p className="text-xs text-warning">Saving removes this domain from every service.</p>
         ) : null}
+        {[...unmatchedConflicts.map(({ message }) => message), ...(saveError ? [saveError] : [])].map((message) => (
+          <p key={message} role="alert" className="text-xs text-negative">
+            {message}
+          </p>
+        ))}
       </section>
       <div className="flex justify-end gap-3">
         <Button
@@ -191,7 +205,7 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
           variant="outline"
           color="neutral"
           size="md"
-          disabled={!isDirty || !formState.isValid || isSaving}
+          disabled={!isDirty || !formState.isValid || isSaving || conflicts.length > 0}
           loading={isSaving && variables?.redeploy === false}
           onClick={() => save(false)}
         >
@@ -200,7 +214,7 @@ export function OrganizationDomainEditModal({ domain, onClose }: OrganizationDom
         <Button
           type="button"
           size="md"
-          disabled={!formState.isValid || isSaving}
+          disabled={!formState.isValid || isSaving || conflicts.length > 0}
           loading={isSaving && variables?.redeploy === true}
           onClick={() => save(true)}
         >

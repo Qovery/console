@@ -1,11 +1,11 @@
 import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
-import { mutations } from '@qovery/domains/services/data-access'
 import { toast } from '@qovery/shared/ui'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { OrganizationDomainActionBar } from './organization-domain-action-bar'
 
 const mockConfirm = jest.fn()
 const mockFetch = jest.fn()
+const mockBulkDelete = jest.fn()
 const mockInvalidate = jest.fn()
 jest.mock('@tanstack/react-query', () => ({
   ...jest.requireActual('@tanstack/react-query'),
@@ -15,6 +15,13 @@ jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
   useModalConfirmation: () => ({ openModalConfirmation: mockConfirm }),
   toast: jest.fn(),
+}))
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: 'org' }),
+}))
+jest.mock('@qovery/domains/custom-domains/feature', () => ({
+  useBulkDeleteOrganizationCustomDomains: () => ({ mutateAsync: mockBulkDelete, isLoading: false }),
 }))
 function domain(name: string, configId: string): OrganizationCustomDomainResponse {
   return {
@@ -65,42 +72,35 @@ it('reports failed DNS requests as unavailable', async () => {
     expect(toast).toHaveBeenCalledWith('warning', 'DNS records checked', '0 valid, 0 failing, 2 unavailable.')
   )
 })
-it('requires confirmation, deduplicates routes, and retries only failed deletions', async () => {
-  const remove = jest
-    .spyOn(mutations, 'deleteCustomDomain')
-    .mockResolvedValueOnce(undefined)
-    .mockRejectedValueOnce(new Error('offline'))
-    .mockResolvedValueOnce(undefined)
+it('deletes the selected domains in one request after confirmation', async () => {
+  mockBulkDelete.mockResolvedValue([])
   const onDeleted = jest.fn()
-  const repeatedRoutes = {
-    ...domains[0],
-    routes: [...domains[0].routes, { ...domains[0].routes[0], id: 'other-route', path: '/api' }],
-  }
   const { userEvent } = renderWithProviders(
-    <OrganizationDomainActionBar
-      domains={[repeatedRoutes, domains[1]]}
-      disabled={false}
-      onUnselect={jest.fn()}
-      onDeleted={onDeleted}
-    />
+    <OrganizationDomainActionBar domains={domains} disabled={false} onUnselect={jest.fn()} onDeleted={onDeleted} />
   )
   await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
-  expect(remove).not.toHaveBeenCalled()
-  const action = mockConfirm.mock.calls[0][0].action
+  expect(mockBulkDelete).not.toHaveBeenCalled()
   await act(async () => {
-    await expect(action()).rejects.toThrow('Some domain configurations')
+    await mockConfirm.mock.calls[0][0].action()
   })
-  expect(remove).toHaveBeenCalledTimes(2)
-  expect(onDeleted).toHaveBeenCalledWith(['env:one.example.com'])
-  expect(toast).toHaveBeenCalledWith(
-    'error',
-    'Some domains could not be deleted',
-    '1 service configuration could not be deleted. Confirm again to retry only those.'
+  expect(mockBulkDelete).toHaveBeenCalledWith({
+    organizationId: 'org',
+    domains: [
+      { environment_id: 'env', domain: 'one.example.com' },
+      { environment_id: 'env', domain: 'two.example.com' },
+    ],
+  })
+  expect(onDeleted).toHaveBeenCalledWith(['env:one.example.com', 'env:two.example.com'])
+})
+it('keeps the selection and the confirmation open when nothing could be deleted', async () => {
+  mockBulkDelete.mockRejectedValue(new Error('forbidden'))
+  const onDeleted = jest.fn()
+  const { userEvent } = renderWithProviders(
+    <OrganizationDomainActionBar domains={domains} disabled={false} onUnselect={jest.fn()} onDeleted={onDeleted} />
   )
+  await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
   await act(async () => {
-    await action()
+    await expect(mockConfirm.mock.calls[0][0].action()).rejects.toThrow('forbidden')
   })
-  expect(remove).toHaveBeenCalledTimes(3)
-  expect(remove).toHaveBeenLastCalledWith({ serviceId: 'service', serviceType: 'APPLICATION', customDomainId: 'two' })
-  expect(mockInvalidate).toHaveBeenCalled()
+  expect(onDeleted).not.toHaveBeenCalled()
 })

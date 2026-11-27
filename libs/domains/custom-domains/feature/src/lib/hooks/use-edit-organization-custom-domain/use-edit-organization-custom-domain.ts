@@ -1,97 +1,53 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { type CustomDomainRequest } from 'qovery-typescript-axios'
-import { mutations } from '@qovery/domains/services/data-access'
-import { pluralize } from '@qovery/shared/util-js'
-import { queries } from '@qovery/state/util-queries'
+import { type CustomDomainDeletionResponse, type EnvironmentCustomDomainRequest } from 'qovery-typescript-axios'
+import { mutations } from '@qovery/domains/custom-domains/data-access'
 import {
-  type OrganizationCustomDomainTarget,
-  deleteOrganizationCustomDomainCopy,
-  invalidateOrganizationCustomDomainTargets,
-  settleOrganizationCustomDomainOperations,
-} from '../../utils/organization-custom-domain-operations'
-
-export type { OrganizationCustomDomainTarget }
+  describeServiceCount,
+  invalidateCustomDomainServices,
+  redeployCustomDomainServices,
+} from '../../utils/impacted-services'
 
 export interface EditOrganizationCustomDomainVariables {
-  // Service configurations that keep serving the domain.
-  targets: OrganizationCustomDomainTarget[]
-  // Service configurations that stop serving the domain.
-  removedTargets: OrganizationCustomDomainTarget[]
-  payload: CustomDomainRequest
+  environmentId: string
+  // The current name: the payload may rename the domain.
+  domainName: string
+  // `services` lists the services that keep serving the domain. An empty list deletes it.
+  payload: EnvironmentCustomDomainRequest
   redeploy: boolean
 }
 
-const getAffectedTargets = ({ targets, removedTargets }: EditOrganizationCustomDomainVariables) => [
-  ...targets,
-  ...removedTargets,
-]
-
-const deployServices = (targets: OrganizationCustomDomainTarget[]) => {
-  const services = [...new Map(targets.map((target) => [target.serviceId, target])).values()]
-  return settleOrganizationCustomDomainOperations(
-    services.map(
-      ({ serviceId, serviceType }) =>
-        () =>
-          mutations.deployService({ serviceId, serviceType })
-    ),
-    (failed, total) =>
-      `The domain was saved, but ${failed} of ${total} ${pluralize(total, 'service')} could not be redeployed.`
-  )
-}
-
-// Edit or delete every copy of the domain, then optionally redeploy.
-// Edits replace the whole copy and deleting a missing copy succeeds, so saving again after a partial failure is safe.
-export function useEditOrganizationCustomDomain({ environmentId }: { environmentId: string }) {
+// Edits every copy of the domain in its environment at once: all of them change, or none.
+export function useEditOrganizationCustomDomain() {
   const queryClient = useQueryClient()
 
-  const invalidateServices = (targets: OrganizationCustomDomainTarget[]) => {
-    queryClient.invalidateQueries({ queryKey: queries.services.listStatuses(environmentId).queryKey })
-    targets.forEach(({ serviceId, serviceType }) =>
-      queryClient.invalidateQueries({ queryKey: queries.services.status({ id: serviceId, serviceType }).queryKey })
-    )
-  }
-
   return useMutation(
-    async (variables: EditOrganizationCustomDomainVariables) => {
-      await settleOrganizationCustomDomainOperations(
-        [
-          ...variables.targets.map(
-            (target) => () => mutations.editCustomDomain({ ...target, payload: variables.payload })
-          ),
-          ...variables.removedTargets.map((target) => () => deleteOrganizationCustomDomainCopy(target)),
-        ],
-        (failed, total) =>
-          `${failed} of ${total} service ${pluralize(total, 'configuration')} could not be updated. Save again to retry.`
-      )
-      if (variables.redeploy) await deployServices(getAffectedTargets(variables))
+    async ({ environmentId, domainName, payload }: EditOrganizationCustomDomainVariables) => {
+      const { impacted_services }: CustomDomainDeletionResponse = payload.services.length
+        ? await mutations.editEnvironmentCustomDomain({ environmentId, domainName, payload })
+        : await mutations.deleteEnvironmentCustomDomain({ environmentId, domainName })
+      return impacted_services
     },
     {
-      // Refresh on failure too: some copies may have changed.
-      onSettled(_, __, variables) {
-        if (!variables) return
-        const targets = getAffectedTargets(variables)
-        invalidateOrganizationCustomDomainTargets(queryClient, targets)
-        if (variables.redeploy) invalidateServices(targets)
+      onSuccess(impactedServices, { redeploy }) {
+        invalidateCustomDomainServices(queryClient, impactedServices)
+        if (redeploy) redeployCustomDomainServices(queryClient, impactedServices)
       },
       meta: {
-        notifyOnSuccess(_: unknown, variables: unknown) {
-          const { redeploy } = variables as EditOrganizationCustomDomainVariables
-          const targets = getAffectedTargets(variables as EditOrganizationCustomDomainVariables)
-          const serviceCount = new Set(targets.map(({ serviceId }) => serviceId)).size
-          const services = `${serviceCount} ${pluralize(serviceCount, 'service')}`
-          if (redeploy) {
-            return { title: 'Your domain has been updated', description: `Redeploying ${services}.` }
-          }
+        notifyOnSuccess(data: unknown, variables: unknown) {
+          const impactedServices = data as CustomDomainDeletionResponse['impacted_services']
+          const { payload, redeploy } = variables as EditOrganizationCustomDomainVariables
+          const title = payload.services.length ? 'Your domain has been updated' : 'Your domain has been deleted'
+          const services = describeServiceCount(impactedServices)
+          if (redeploy) return { title, description: `Redeploying ${services}.` }
           return {
-            title: 'Your domain has been updated',
+            title,
             description: `Redeploy ${services} to apply the change.`,
             labelAction: 'Redeploy',
-            callback() {
-              deployServices(targets).then(() => invalidateServices(targets))
-            },
+            callback: () => redeployCustomDomainServices(queryClient, impactedServices, { announce: true }),
           }
         },
-        notifyOnError: { title: 'Your domain was not fully updated' },
+        // Conflicts and other errors are shown in the edit modal.
+        notifyOnError: false,
       },
     }
   )

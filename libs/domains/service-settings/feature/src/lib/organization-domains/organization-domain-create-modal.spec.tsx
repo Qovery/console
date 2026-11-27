@@ -192,15 +192,14 @@ it('shows the API message when the creation fails without conflicts', async () =
 })
 
 it('shows creation conflicts on the route they concern and keeps the modal open', async () => {
-  mockCreate.mockRejectedValue(
-    new AxiosError('Conflict', '400', undefined, undefined, {
+  // The console's HTTP interceptor rejects with `{ message, response }`, not an AxiosError.
+  mockCreate.mockRejectedValue({
+    message: 'Conflict',
+    response: {
       status: 400,
-      statusText: 'Bad Request',
-      headers: {},
-      config: { headers: new AxiosHeaders() },
       data: { errors: [{ service_id: 'anycable', message: 'learn.acme.com is used in another environment.' }] },
-    })
-  )
+    },
+  })
   const { userEvent } = renderWithProviders(<OrganizationDomainCreateModal onClose={onClose} />)
   await userEvent.type(screen.getByLabelText('Domain'), 'learn.acme.com')
   await userEvent.click(screen.getByRole('button', { name: 'Add route' }))

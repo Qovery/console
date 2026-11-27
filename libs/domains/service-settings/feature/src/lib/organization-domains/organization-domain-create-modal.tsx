@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { isAxiosError } from 'axios'
 import { type CustomDomainErrorResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -9,6 +8,7 @@ import { useCreateEnvironmentCustomDomain } from '@qovery/domains/custom-domains
 import { useLinks } from '@qovery/domains/services/feature'
 import { Button, Icon, InputSelect, InputText, InputToggle, Tooltip, useModal } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
+import { getCustomDomainProblem } from '../utils/get-custom-domain-problem'
 import { validateCustomDomain } from '../utils/validate-custom-domain'
 import { OrganizationDomainCnameRecords } from './organization-domain-cname-records'
 import { OrganizationDomainRouteItem } from './organization-domain-route-item'
@@ -31,9 +31,6 @@ interface DomainFormValues {
 
 const routeLabel = ({ project, environment, service }: NewDomainRoute) =>
   `${project.name}/${environment.name}/${service.name}`
-
-const getProblem = (error: unknown) =>
-  isAxiosError<{ errors?: CustomDomainErrorResponse[]; detail?: string }>(error) ? error.response?.data : undefined
 
 interface RouteFormProps {
   title: string
@@ -212,7 +209,7 @@ export function OrganizationDomainCreateModal({ onClose }: OrganizationDomainCre
     select: (environments) =>
       environments?.find(({ id }) => id === environmentId)?.routing_capabilities?.can_share ?? true,
   })
-  const { mutateAsync: createDomain, isLoading: isCreating } = useCreateEnvironmentCustomDomain({ environmentId })
+  const { mutateAsync: createDomain, isLoading: isCreating } = useCreateEnvironmentCustomDomain()
   const isDirty = formState.isDirty || routes.length > 0
 
   useEffect(() => {
@@ -249,7 +246,7 @@ export function OrganizationDomainCreateModal({ onClose }: OrganizationDomainCre
       })
       onClose()
     } catch (error) {
-      const problem = getProblem(error)
+      const problem = getCustomDomainProblem(error)
       if (problem?.errors?.length) setConflicts(problem.errors)
       else setCreateError(problem?.detail || 'Unable to create the domain. Try again.')
     }

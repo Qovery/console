@@ -1,8 +1,8 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { isAxiosError } from 'axios'
 import {
   ApplicationCustomDomainApi,
   ContainerCustomDomainApi,
+  type CustomDomainBulkDeleteItemRequest,
   type CustomDomainRequest,
   type CustomDomainValidationRequest,
   EnvironmentCustomDomainApi,
@@ -38,7 +38,8 @@ export const customDomains = createQueryKeys('customDomains', {
         const response = await environmentCustomDomainApi.getEnvironmentCustomDomainCnameTarget(environmentId)
         return response.data.cname_target
       } catch (error) {
-        if (isAxiosError(error) && error.response?.status === 404) return null
+        // Both AxiosError and the console interceptor's `{ message, response }` carry the status.
+        if ((error as { response?: { status?: number } } | undefined)?.response?.status === 404) return null
         throw error
       }
     },
@@ -103,6 +104,34 @@ export const mutations = {
     payload: EnvironmentCustomDomainRequest
   }) {
     const response = await environmentCustomDomainApi.createEnvironmentCustomDomain(environmentId, payload)
+    return response.data
+  },
+  // Replaces every copy of the domain in the environment at once: all of them change, or none.
+  async editEnvironmentCustomDomain({
+    environmentId,
+    domainName,
+    payload,
+  }: {
+    environmentId: string
+    domainName: string
+    payload: EnvironmentCustomDomainRequest
+  }) {
+    const response = await environmentCustomDomainApi.editEnvironmentCustomDomain(environmentId, domainName, payload)
+    return response.data
+  },
+  async deleteEnvironmentCustomDomain({ environmentId, domainName }: { environmentId: string; domainName: string }) {
+    const response = await environmentCustomDomainApi.deleteEnvironmentCustomDomain(environmentId, domainName)
+    return response.data
+  },
+  // Deletes domains of several environments: all of them, or none.
+  async bulkDeleteOrganizationCustomDomain({
+    organizationId,
+    domains,
+  }: {
+    organizationId: string
+    domains: CustomDomainBulkDeleteItemRequest[]
+  }) {
+    const response = await organizationCustomDomainApi.bulkDeleteOrganizationCustomDomain(organizationId, domains)
     return response.data
   },
   async validateEnvironmentCustomDomain({
