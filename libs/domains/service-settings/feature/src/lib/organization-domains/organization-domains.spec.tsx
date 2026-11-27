@@ -29,8 +29,9 @@ const mockRecheck = jest.fn()
 let mockDnsStatuses = new Map<string, { status: string; details: string[] }>()
 jest.mock('./use-organization-domain-dns-statuses', () => ({
   useOrganizationDomainDnsStatuses: () => ({
-    statuses: mockDnsStatuses,
-    fetchingKeys: new Set(),
+    getStatus: ({ environment_id, domain }: OrganizationCustomDomainResponse) =>
+      mockDnsStatuses.get(`${environment_id}:${domain}`),
+    isChecking: false,
     recheck: mockRecheck,
   }),
 }))

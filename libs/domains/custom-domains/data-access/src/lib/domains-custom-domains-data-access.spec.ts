@@ -85,3 +85,19 @@ it('edits, deletes and bulk deletes domains through the environment and organiza
   expect(bulkDelete).toHaveBeenCalledWith('org', domains)
   jest.restoreAllMocks()
 })
+
+it('checks the DNS of a page of organization domains with the list filters', async () => {
+  const results = [{ environment_id: 'env', domain: 'app.example.com', checks: [] }]
+  const check = jest.spyOn(OrganizationCustomDomainApi.prototype, 'checkOrganizationCustomDomains').mockResolvedValue({
+    data: { results },
+    status: 200,
+    statusText: 'OK',
+    headers: {},
+    config: { headers: new AxiosHeaders() },
+  })
+  const signal = new AbortController().signal
+  const query = customDomains.organizationCheck({ organizationId: 'org', search: 'app', page: 2, pageSize: 10 })
+  expect(await query.queryFn({ signal } as Parameters<typeof query.queryFn>[0])).toEqual(results)
+  expect(check).toHaveBeenCalledWith('org', undefined, undefined, 'app', 2, 10, { signal })
+  check.mockRestore()
+})

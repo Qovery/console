@@ -1,17 +1,20 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
+import {
+  type OrganizationCustomDomainCheckResponse,
+  type OrganizationCustomDomainResponse,
+} from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useBulkDeleteOrganizationCustomDomains } from '@qovery/domains/custom-domains/feature'
 import { Button, Icon, toast, useModalConfirmation } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { queries } from '@qovery/state/util-queries'
 import { getDomainSelectionKey, getSelectedDomainTargets } from '../utils/organization-domain-targets'
-import { summarizeDomainDnsChecks } from '../utils/summarize-domain-dns-checks'
+import { getDomainDnsStatus, summarizeDomainDnsStatuses } from '../utils/summarize-domain-dns-checks'
 
 interface OrganizationDomainActionBarProps {
   domains: OrganizationCustomDomainResponse[]
   disabled: boolean
+  // Re-runs the DNS checks of the page. Rejects when they could not run.
+  checkDns: () => Promise<OrganizationCustomDomainCheckResponse[]>
   onUnselect: () => void
   onDeleted: (keys: string[]) => void
 }
@@ -19,10 +22,10 @@ interface OrganizationDomainActionBarProps {
 export function OrganizationDomainActionBar({
   domains,
   disabled,
+  checkDns,
   onUnselect,
   onDeleted,
 }: OrganizationDomainActionBarProps) {
-  const queryClient = useQueryClient()
   const { organizationId = '' } = useParams({ strict: false })
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteDomains, isLoading: isDeleting } = useBulkDeleteOrganizationCustomDomains()
@@ -30,33 +33,20 @@ export function OrganizationDomainActionBar({
   const busy = checkingDns || isDeleting
   const targets = getSelectedDomainTargets(domains)
 
-  const checkDns = async () => {
+  const checkDomainsDns = async () => {
     setCheckingDns(true)
     try {
-      const services = [...new Map(targets.map(({ service }) => [service.id, service])).values()]
-      const results = await Promise.allSettled(
-        services.map((service) =>
-          queryClient.fetchQuery({
-            ...queries.services.checkCustomDomains({ serviceId: service.id, serviceType: service.type }),
-            staleTime: 0,
-            retry: false,
-          })
-        )
-      )
-      const { valid, failing, unavailable } = summarizeDomainDnsChecks(
-        domains,
-        new Map(
-          services.map((service, index) => {
-            const result = results[index]
-            return [service.id, result.status === 'fulfilled' ? result.value : undefined]
-          })
-        )
+      const results = new Map((await checkDns()).map((result) => [getDomainSelectionKey(result), result]))
+      const { valid, failing, unknown } = summarizeDomainDnsStatuses(
+        domains.map((domain) => getDomainDnsStatus(results.get(getDomainSelectionKey(domain))))
       )
       toast(
-        failing ? 'error' : unavailable ? 'warning' : 'success',
+        failing ? 'error' : unknown ? 'warning' : 'success',
         'DNS records checked',
-        `${valid} valid, ${failing} failing, ${unavailable} unavailable.`
+        `${valid} valid, ${failing} failing, ${unknown} unknown.`
       )
+    } catch (error) {
+      toast('error', 'DNS records could not be checked', (error as { message?: string }).message)
     } finally {
       setCheckingDns(false)
     }
@@ -105,7 +95,7 @@ export function OrganizationDomainActionBar({
               variant="outline"
               disabled={disabled || busy || !targets.length}
               loading={checkingDns}
-              onClick={checkDns}
+              onClick={checkDomainsDns}
             >
               <Icon iconName="arrow-rotate-right" />
               Check DNS records

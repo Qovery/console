@@ -66,6 +66,29 @@ export const customDomains = createQueryKeys('customDomains', {
       return response.data
     },
   }),
+  // The DNS checks of the same page of domains as `organizationList` with the same filters, in one request.
+  organizationCheck: ({
+    organizationId,
+    projectId,
+    environmentId,
+    search,
+    page,
+    pageSize,
+  }: OrganizationCustomDomainFilters) => ({
+    queryKey: [organizationId, { projectId, environmentId, search, page, pageSize }],
+    async queryFn({ signal }: { signal?: AbortSignal }) {
+      const response = await organizationCustomDomainApi.checkOrganizationCustomDomains(
+        organizationId,
+        projectId,
+        environmentId,
+        search,
+        page,
+        pageSize,
+        { signal }
+      )
+      return response.data.results
+    },
+  }),
   customDomains: ({
     serviceId,
     serviceType,

@@ -44,8 +44,8 @@ exports[`renders a route without a public port 1`] = `
               class="border-neutral px-4 py-0 h-12 border-r"
             >
               <span>
-                Status of 
-                app.example.com
+                Status: 
+                loading
               </span>
             </td>
             <td

@@ -13,7 +13,8 @@ export function getDomainTargets(domain: OrganizationCustomDomainResponse) {
   })
 }
 
-export function getDomainSelectionKey(domain: OrganizationCustomDomainResponse) {
+// Identifies a domain of one environment, in the domain list as in its DNS checks.
+export function getDomainSelectionKey(domain: Pick<OrganizationCustomDomainResponse, 'environment_id' | 'domain'>) {
   return `${domain.environment_id}:${domain.domain}`
 }
 

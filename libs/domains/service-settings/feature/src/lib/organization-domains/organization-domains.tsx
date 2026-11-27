@@ -164,33 +164,42 @@ export function OrganizationDomainsContent() {
     ...queries.environments.list({ projectId: filters.projectId }),
     enabled: Boolean(filters.projectId),
   })
+  // The list and its DNS checks select the same page of domains.
+  const listFilters = {
+    organizationId,
+    projectId: filters.projectId || undefined,
+    environmentId: filters.environmentId || undefined,
+    search: filters.search || undefined,
+    page: filters.page,
+    pageSize: filters.pageSize,
+  }
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
-    ...queries.customDomains.organizationList({
-      ...filters,
-      organizationId,
-      projectId: filters.projectId || undefined,
-      environmentId: filters.environmentId || undefined,
-      search: filters.search || undefined,
-    }),
+    ...queries.customDomains.organizationList(listFilters),
     keepPreviousData: true,
   })
   const pageDomains = useMemo(() => data?.results ?? [], [data])
-  // Non-blocking: rows render right away; status cells and the summary suspend on their own.
-  // Domains whose checks have not settled have no status yet, so they are left out of status facets and filters.
-  const { statuses, fetchingKeys, recheck } = useOrganizationDomainDnsStatuses(pageDomains)
-  const getStatus = (domain: OrganizationCustomDomainResponse) => statuses.get(getDomainSelectionKey(domain))?.status
-  const statusCounts = new Map<DomainDnsStatus, number>()
-  pageDomains.forEach((domain) => {
-    const status = getStatus(domain)
-    if (status) statusCounts.set(status, (statusCounts.get(status) ?? 0) + 1)
-  })
+  // Non-blocking: rows render right away and their status cells show a skeleton until the checks arrive.
+  const { getStatus: getDnsStatus, isChecking: isCheckingDns, recheck } = useOrganizationDomainDnsStatuses(listFilters)
+  const getStatus = (domain: OrganizationCustomDomainResponse) => getDnsStatus(domain)?.status
+  // `undefined` while the checks load: domains without a status are left out of status facets and filters.
+  const statusCounts = pageDomains.some((domain) => !getStatus(domain))
+    ? undefined
+    : pageDomains.reduce((counts, domain) => {
+        const status = getStatus(domain) as DomainDnsStatus
+        return counts.set(status, (counts.get(status) ?? 0) + 1)
+      }, new Map<DomainDnsStatus, number>())
+  const checkDns = async () => {
+    const { data: checks, isError: checkFailed, error } = await recheck()
+    if (checkFailed || !checks) throw error ?? new Error('The DNS check could not run.')
+    return checks
+  }
   const visibleDomains = filters.status
     ? pageDomains.filter((domain) => getStatus(domain) === filters.status)
     : pageDomains
   const statusFacets = new Map(
-    DOMAIN_DNS_STATUSES.filter((status) => statusCounts.has(status)).map((status) => [
+    DOMAIN_DNS_STATUSES.filter((status) => statusCounts?.has(status)).map((status) => [
       status as string,
-      statusCounts.get(status) ?? 0,
+      statusCounts?.get(status) ?? 0,
     ])
   )
   // Not memoized: the status facets change with every DNS check result.
@@ -289,7 +298,7 @@ export function OrganizationDomainsContent() {
               <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <span className="text-xs text-neutral-subtle">{data?.total_count ?? 0} domains</span>
                 <OrganizationDomainStatusSummary
-                  domains={pageDomains}
+                  counts={pageDomains.length ? statusCounts : new Map()}
                   status={filters.status}
                   onStatusChange={(status) => setFilters({ ...filters, status })}
                 />
@@ -374,19 +383,19 @@ export function OrganizationDomainsContent() {
                     </Table.Cell>
                   </Table.Row>
                 ) : (
-                  table
-                    .getRowModel()
-                    .rows.map((row) => (
-                      <OrganizationDomainRow
-                        key={row.id}
-                        domain={row.original}
-                        selected={row.getIsSelected()}
-                        selectionDisabled={isFetching || !row.getCanSelect()}
-                        dnsChecking={fetchingKeys.has(getDomainSelectionKey(row.original))}
-                        onCheckDns={() => recheck(row.original)}
-                        onSelectionChange={(selected) => row.toggleSelected(selected)}
-                      />
-                    ))
+                  table.getRowModel().rows.map((row) => (
+                    <OrganizationDomainRow
+                      key={row.id}
+                      domain={row.original}
+                      selected={row.getIsSelected()}
+                      selectionDisabled={isFetching || !row.getCanSelect()}
+                      dnsStatus={getDnsStatus(row.original)}
+                      // One request checks the whole page, so a re-check refreshes every row.
+                      dnsChecking={isCheckingDns}
+                      onCheckDns={() => recheck()}
+                      onSelectionChange={(selected) => row.toggleSelected(selected)}
+                    />
+                  ))
                 )}
               </Table.Body>
             </Table.Root>
@@ -406,6 +415,7 @@ export function OrganizationDomainsContent() {
       <OrganizationDomainActionBar
         domains={table.getSelectedRowModel().rows.map(({ original }) => original)}
         disabled={isFetching}
+        checkDns={checkDns}
         onUnselect={() => table.resetRowSelection()}
         onDeleted={(keys) =>
           setRowSelection((current) =>

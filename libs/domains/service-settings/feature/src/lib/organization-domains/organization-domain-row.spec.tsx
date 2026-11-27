@@ -18,8 +18,8 @@ jest.mock('@qovery/domains/custom-domains/feature', () => ({
   useDeleteOrganizationCustomDomain: () => ({ mutateAsync: mockDelete, isLoading: false }),
 }))
 jest.mock('./organization-domain-status', () => ({
-  OrganizationDomainStatusCell: ({ domain }: { domain: OrganizationCustomDomainResponse }) => (
-    <span>Status of {domain.domain}</span>
+  OrganizationDomainStatusCell: ({ result, checking }: { result?: { status: string }; checking?: boolean }) => (
+    <span>Status: {checking ? 'checking' : result?.status ?? 'loading'}</span>
   ),
 }))
 jest.mock('@qovery/shared/ui', () => ({
@@ -88,11 +88,11 @@ it('renders the DNS status cell and rechecks on demand', async () => {
   const { userEvent } = renderWithProviders(
     <Table.Root>
       <Table.Body>
-        <OrganizationDomainRow domain={domain} onCheckDns={onCheckDns} />
+        <OrganizationDomainRow domain={domain} dnsStatus={{ status: 'failing', details: [] }} onCheckDns={onCheckDns} />
       </Table.Body>
     </Table.Root>
   )
-  expect(screen.getByText('Status of app.example.com')).toBeInTheDocument()
+  expect(screen.getByText('Status: failing')).toBeInTheDocument()
   await userEvent.click(screen.getByRole('button', { name: 'Check DNS for app.example.com' }))
   expect(onCheckDns).toHaveBeenCalled()
 })

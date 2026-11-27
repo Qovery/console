@@ -17,6 +17,7 @@ import {
 import { pluralize } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 import { getDomainTargets } from '../utils/organization-domain-targets'
+import { type DomainDnsStatusResult } from '../utils/summarize-domain-dns-checks'
 import { OrganizationDomainEditModal } from './organization-domain-edit-modal'
 import { OrganizationDomainStatusCell } from './organization-domain-status'
 
@@ -27,6 +28,7 @@ export function OrganizationDomainRow({
   selected,
   onSelectionChange,
   selectionDisabled,
+  dnsStatus,
   dnsChecking = false,
   onCheckDns,
 }: {
@@ -34,6 +36,8 @@ export function OrganizationDomainRow({
   selected?: boolean
   onSelectionChange?: (selected: boolean) => void
   selectionDisabled?: boolean
+  // `undefined` while the DNS checks load.
+  dnsStatus?: DomainDnsStatusResult
   dnsChecking?: boolean
   onCheckDns?: () => void
 }) {
@@ -81,7 +85,7 @@ export function OrganizationDomainRow({
         </div>
       </Table.Cell>
       <Table.Cell className="h-12 border-r">
-        <OrganizationDomainStatusCell domain={domain} />
+        <OrganizationDomainStatusCell result={dnsStatus} checking={dnsChecking} />
       </Table.Cell>
       <Table.Cell className="h-12 border-r">
         <Link

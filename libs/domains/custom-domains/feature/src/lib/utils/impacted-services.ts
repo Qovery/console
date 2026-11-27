@@ -25,6 +25,8 @@ export const describeServiceCount = (services: ImpactedServiceResponse[]) => {
 
 export function invalidateCustomDomainServices(queryClient: QueryClient, services: ImpactedServiceResponse[]) {
   queryClient.invalidateQueries({ queryKey: queries.customDomains.organizationList._def })
+  // A renamed or deleted domain must not keep the DNS status of its previous state.
+  queryClient.invalidateQueries({ queryKey: queries.customDomains.organizationCheck._def })
   getCustomDomainServices(services).forEach(({ id, type }) => {
     queryClient.invalidateQueries({
       queryKey: queries.services.customDomains({ serviceId: id, serviceType: type }).queryKey,

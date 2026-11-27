@@ -4,13 +4,7 @@ import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-t
 import { OrganizationDomainActionBar } from './organization-domain-action-bar'
 
 const mockConfirm = jest.fn()
-const mockFetch = jest.fn()
 const mockBulkDelete = jest.fn()
-const mockInvalidate = jest.fn()
-jest.mock('@tanstack/react-query', () => ({
-  ...jest.requireActual('@tanstack/react-query'),
-  useQueryClient: () => ({ fetchQuery: mockFetch, invalidateQueries: mockInvalidate }),
-}))
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
   useModalConfirmation: () => ({ openModalConfirmation: mockConfirm }),
@@ -47,36 +41,92 @@ const domains = [domain('one.example.com', 'one'), domain('two.example.com', 'tw
 beforeEach(() => jest.clearAllMocks())
 afterEach(() => jest.restoreAllMocks())
 
-it('checks each service once across selected domains and reports results', async () => {
-  mockFetch.mockResolvedValue([
-    { domain_name: 'one.example.com', status: 'MATCHES_LOAD_BALANCER_HOST' },
-    { domain_name: 'two.example.com', status: 'DOMAIN_LINKED_TO_WRONG_HOST', error_details: 'Wrong CNAME' },
+it('rechecks the page and reports the statuses of the selected domains only', async () => {
+  const checkDns = jest.fn().mockResolvedValue([
+    {
+      environment_id: 'env',
+      domain: 'one.example.com',
+      checks: [
+        {
+          service_id: 'service',
+          service_type: 'APPLICATION',
+          status: 'MATCHES_LOAD_BALANCER_HOST',
+          error_details: null,
+        },
+      ],
+    },
+    {
+      environment_id: 'env',
+      domain: 'two.example.com',
+      checks: [
+        {
+          service_id: 'service',
+          service_type: 'APPLICATION',
+          status: 'DOMAIN_LINKED_TO_WRONG_HOST',
+          error_details: 'Wrong CNAME',
+        },
+      ],
+    },
+    { environment_id: 'env', domain: 'unselected.example.com', checks: [] },
   ])
   const { userEvent } = renderWithProviders(
-    <OrganizationDomainActionBar domains={domains} disabled={false} onUnselect={jest.fn()} onDeleted={jest.fn()} />
+    <OrganizationDomainActionBar
+      domains={domains}
+      disabled={false}
+      checkDns={checkDns}
+      onUnselect={jest.fn()}
+      onDeleted={jest.fn()}
+    />
   )
   await userEvent.click(screen.getByRole('button', { name: 'Check DNS records' }))
   await waitFor(() =>
-    expect(toast).toHaveBeenCalledWith('error', 'DNS records checked', '1 valid, 1 failing, 0 unavailable.')
+    expect(toast).toHaveBeenCalledWith('error', 'DNS records checked', '1 valid, 1 failing, 0 unknown.')
   )
-  expect(mockFetch).toHaveBeenCalledTimes(1)
-  expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  expect(checkDns).toHaveBeenCalledTimes(1)
 })
-it('reports failed DNS requests as unavailable', async () => {
-  mockFetch.mockRejectedValue(new Error('offline'))
+it('reports selected domains missing from the checks as unknown', async () => {
+  const checkDns = jest.fn().mockResolvedValue([])
   const { userEvent } = renderWithProviders(
-    <OrganizationDomainActionBar domains={domains} disabled={false} onUnselect={jest.fn()} onDeleted={jest.fn()} />
+    <OrganizationDomainActionBar
+      domains={domains}
+      disabled={false}
+      checkDns={checkDns}
+      onUnselect={jest.fn()}
+      onDeleted={jest.fn()}
+    />
   )
   await userEvent.click(screen.getByRole('button', { name: 'Check DNS records' }))
   await waitFor(() =>
-    expect(toast).toHaveBeenCalledWith('warning', 'DNS records checked', '0 valid, 0 failing, 2 unavailable.')
+    expect(toast).toHaveBeenCalledWith('warning', 'DNS records checked', '0 valid, 0 failing, 2 unknown.')
+  )
+})
+it('reports a DNS check that could not run', async () => {
+  const checkDns = jest.fn().mockRejectedValue({ message: 'Service unavailable' })
+  const { userEvent } = renderWithProviders(
+    <OrganizationDomainActionBar
+      domains={domains}
+      disabled={false}
+      checkDns={checkDns}
+      onUnselect={jest.fn()}
+      onDeleted={jest.fn()}
+    />
+  )
+  await userEvent.click(screen.getByRole('button', { name: 'Check DNS records' }))
+  await waitFor(() =>
+    expect(toast).toHaveBeenCalledWith('error', 'DNS records could not be checked', 'Service unavailable')
   )
 })
 it('deletes the selected domains in one request after confirmation', async () => {
   mockBulkDelete.mockResolvedValue([])
   const onDeleted = jest.fn()
   const { userEvent } = renderWithProviders(
-    <OrganizationDomainActionBar domains={domains} disabled={false} onUnselect={jest.fn()} onDeleted={onDeleted} />
+    <OrganizationDomainActionBar
+      domains={domains}
+      disabled={false}
+      checkDns={jest.fn()}
+      onUnselect={jest.fn()}
+      onDeleted={onDeleted}
+    />
   )
   await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
   expect(mockBulkDelete).not.toHaveBeenCalled()
@@ -96,7 +146,13 @@ it('keeps the selection and the confirmation open when nothing could be deleted'
   mockBulkDelete.mockRejectedValue(new Error('forbidden'))
   const onDeleted = jest.fn()
   const { userEvent } = renderWithProviders(
-    <OrganizationDomainActionBar domains={domains} disabled={false} onUnselect={jest.fn()} onDeleted={onDeleted} />
+    <OrganizationDomainActionBar
+      domains={domains}
+      disabled={false}
+      checkDns={jest.fn()}
+      onUnselect={jest.fn()}
+      onDeleted={onDeleted}
+    />
   )
   await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
   await act(async () => {

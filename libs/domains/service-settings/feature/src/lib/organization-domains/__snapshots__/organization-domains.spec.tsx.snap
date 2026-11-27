@@ -46,6 +46,21 @@ exports[`renders the domains list 1`] = `
                   61
                    domains
                 </span>
+                <div
+                  aria-hidden="true"
+                  class="flex items-center gap-2"
+                >
+                  <div
+                    aria-busy="true"
+                    class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded-full"
+                    style="width: 64px; height: 24px;"
+                  />
+                  <div
+                    aria-busy="true"
+                    class="block animate-pulse bg-gradient-to-r from-surface-neutral-componentHover to-surface-neutral-componentActive bg-[length:400%_100%] duration-[6s] rounded-full"
+                    style="width: 64px; height: 24px;"
+                  />
+                </div>
               </div>
               <span
                 class="group relative"

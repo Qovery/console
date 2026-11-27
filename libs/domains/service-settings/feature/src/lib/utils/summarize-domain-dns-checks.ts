@@ -1,44 +1,44 @@
-import { type CheckedCustomDomainResponse, type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
+import { type OrganizationCustomDomainCheckResponse } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { getDomainTargets } from './organization-domain-targets'
 
 export const DOMAIN_DNS_STATUSES = ['failing', 'unknown', 'valid'] as const
 export type DomainDnsStatus = (typeof DOMAIN_DNS_STATUSES)[number]
 
-const isFailingCheck = ({ status }: CheckedCustomDomainResponse) =>
-  match(status)
-    .with('RESOLVES_TO_IP', 'MATCHES_LOAD_BALANCER_HOST', () => false)
-    .otherwise(() => true)
+export interface DomainDnsStatusResult {
+  status: DomainDnsStatus
+  details: string[]
+}
 
-// A domain is served by one or several services; its DNS is valid only when every service check for it passes.
-export function getDomainDnsStatus(
-  domain: OrganizationCustomDomainResponse,
-  serviceChecks: Map<string, CheckedCustomDomainResponse[] | undefined>
-): { status: DomainDnsStatus; details: string[] } {
-  const services = [...new Set(getDomainTargets(domain).map(({ service }) => service.id))]
-  const checks = services.map((id) => serviceChecks.get(id)?.find((check) => check.domain_name === domain.domain))
-  const failing = checks.filter((check): check is CheckedCustomDomainResponse =>
-    Boolean(check && isFailingCheck(check))
-  )
+type ServiceCheck = OrganizationCustomDomainCheckResponse['checks'][number]
+
+const isPassingCheck = ({ status }: ServiceCheck) =>
+  match(status)
+    .with('RESOLVES_TO_IP', 'MATCHES_LOAD_BALANCER_HOST', () => true)
+    .otherwise(() => false)
+
+// A domain is served by one or several services: it is valid only when the check of every service passes.
+// A `null` status means the check could not run, which makes the domain unknown rather than failing.
+export function getDomainDnsStatus(result: OrganizationCustomDomainCheckResponse | undefined): DomainDnsStatusResult {
+  const checks = result?.checks ?? []
+  const failing = checks.filter((check) => check.status !== null && !isPassingCheck(check))
   if (failing.length) {
-    return { status: 'failing', details: failing.map((check) => check.error_details || check.status) }
+    return { status: 'failing', details: failing.map((check) => check.error_details || check.status || '') }
   }
-  if (!checks.length || checks.some((check) => !check)) return { status: 'unknown', details: [] }
+  const notRun = checks.filter((check) => check.status === null)
+  if (!checks.length || notRun.length) {
+    return { status: 'unknown', details: notRun.flatMap((check) => (check.error_details ? [check.error_details] : [])) }
+  }
   return { status: 'valid', details: [] }
 }
 
-export function summarizeDomainDnsChecks(
-  domains: OrganizationCustomDomainResponse[],
-  serviceChecks: Map<string, CheckedCustomDomainResponse[] | undefined>
-) {
+export function summarizeDomainDnsStatuses(statuses: (DomainDnsStatusResult | undefined)[]) {
   let valid = 0
   let failing = 0
-  let unavailable = 0
-  for (const domain of domains) {
-    const { status } = getDomainDnsStatus(domain, serviceChecks)
-    if (status === 'failing') failing++
-    else if (status === 'valid') valid++
-    else unavailable++
+  let unknown = 0
+  for (const result of statuses) {
+    if (result?.status === 'failing') failing++
+    else if (result?.status === 'valid') valid++
+    else unknown++
   }
-  return { valid, failing, unavailable }
+  return { valid, failing, unknown }
 }

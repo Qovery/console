@@ -1,66 +1,65 @@
-import { type CheckedCustomDomainResponse, type OrganizationCustomDomainResponse } from 'qovery-typescript-axios'
-import { getDomainDnsStatus, summarizeDomainDnsChecks } from './summarize-domain-dns-checks'
+import { type OrganizationCustomDomainCheckResponse } from 'qovery-typescript-axios'
+import { getDomainDnsStatus, summarizeDomainDnsStatuses } from './summarize-domain-dns-checks'
 
-const route = (serviceId: string) => ({
-  id: `route-${serviceId}`,
-  custom_domain_id: `domain-${serviceId}`,
-  service: { id: serviceId, name: serviceId, type: 'APPLICATION' as const },
-  port: null,
-  path: '/',
-  path_rewrite: null,
-})
-const domain = (name: string, serviceIds: string[]): OrganizationCustomDomainResponse => ({
-  domain: name,
-  environment_id: 'env',
-  project: { id: 'project', name: 'project' },
-  environment: { id: 'env', name: 'production', routing_mode: 'PER_HOSTNAME_LISTENER_SET' },
-  generate_certificate: true,
-  use_cdn: false,
-  routes: serviceIds.map(route),
-})
+type ServiceCheck = OrganizationCustomDomainCheckResponse['checks'][number]
+
 const check = (
-  domain_name: string,
-  status: CheckedCustomDomainResponse['status'],
-  error_details?: string
-): CheckedCustomDomainResponse => ({ domain_name, status, error_details })
+  service_id: string,
+  status: ServiceCheck['status'],
+  error_details: string | null = null
+): ServiceCheck => ({ service_id, service_type: 'APPLICATION', status, error_details })
+const result = (checks: ServiceCheck[]): OrganizationCustomDomainCheckResponse => ({
+  environment_id: 'env',
+  domain: 'app.example.com',
+  checks,
+})
 
 describe('getDomainDnsStatus', () => {
   it('is valid when every service check passes', () => {
-    const checks = new Map([
-      ['web', [check('app.example.com', 'MATCHES_LOAD_BALANCER_HOST')]],
-      ['api', [check('app.example.com', 'RESOLVES_TO_IP')]],
-    ])
-    expect(getDomainDnsStatus(domain('app.example.com', ['web', 'api']), checks)).toEqual({
-      status: 'valid',
-      details: [],
-    })
+    expect(
+      getDomainDnsStatus(result([check('web', 'MATCHES_LOAD_BALANCER_HOST'), check('api', 'RESOLVES_TO_IP')]))
+    ).toEqual({ status: 'valid', details: [] })
   })
 
   it('is failing when one service check fails, with its details or status', () => {
-    const checks = new Map([
-      ['web', [check('app.example.com', 'DOMAIN_LINKED_TO_WRONG_HOST', 'Points to another host')]],
-      ['api', [check('app.example.com', 'DOMAIN_NOT_CONFIGURED')]],
-    ])
-    expect(getDomainDnsStatus(domain('app.example.com', ['web', 'api']), checks)).toEqual({
-      status: 'failing',
-      details: ['Points to another host', 'DOMAIN_NOT_CONFIGURED'],
-    })
+    expect(
+      getDomainDnsStatus(
+        result([
+          check('web', 'MATCHES_LOAD_BALANCER_HOST'),
+          check('api', 'DOMAIN_LINKED_TO_WRONG_HOST', 'Wrong CNAME'),
+          check('worker', 'DOMAIN_NOT_CONFIGURED'),
+        ])
+      )
+    ).toEqual({ status: 'failing', details: ['Wrong CNAME', 'DOMAIN_NOT_CONFIGURED'] })
   })
 
-  it('is unknown when a check is missing', () => {
-    const checks = new Map([['web', [check('other.example.com', 'RESOLVES_TO_IP')]]])
-    expect(getDomainDnsStatus(domain('app.example.com', ['web']), checks).status).toBe('unknown')
+  it('prefers failing over a check that could not run', () => {
+    expect(
+      getDomainDnsStatus(result([check('web', 'GENERIC_FAILURE', 'Lookup failed'), check('api', null, 'Timeout')]))
+    ).toEqual({ status: 'failing', details: ['Lookup failed'] })
+  })
+
+  it('is unknown with the reason when a check could not run', () => {
+    expect(
+      getDomainDnsStatus(
+        result([check('web', 'MATCHES_LOAD_BALANCER_HOST'), check('api', null, 'Cluster unreachable')])
+      )
+    ).toEqual({ status: 'unknown', details: ['Cluster unreachable'] })
+  })
+
+  it('is unknown when no service could be checked or the domain has no result', () => {
+    expect(getDomainDnsStatus(result([]))).toEqual({ status: 'unknown', details: [] })
+    expect(getDomainDnsStatus(undefined)).toEqual({ status: 'unknown', details: [] })
   })
 })
 
-it('summarizes statuses for the bulk DNS check', () => {
-  const checks = new Map([
-    ['web', [check('a.example.com', 'RESOLVES_TO_IP'), check('b.example.com', 'GENERIC_FAILURE')]],
-  ])
+it('summarizes statuses, counting missing ones as unknown', () => {
   expect(
-    summarizeDomainDnsChecks(
-      [domain('a.example.com', ['web']), domain('b.example.com', ['web']), domain('c.example.com', ['web'])],
-      checks
-    )
-  ).toEqual({ valid: 1, failing: 1, unavailable: 1 })
+    summarizeDomainDnsStatuses([
+      { status: 'valid', details: [] },
+      { status: 'failing', details: [] },
+      { status: 'unknown', details: [] },
+      undefined,
+    ])
+  ).toEqual({ valid: 1, failing: 1, unknown: 2 })
 })
