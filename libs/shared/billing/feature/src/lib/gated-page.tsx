@@ -83,12 +83,14 @@ const subscribeMotion = (onChange: () => void) => {
 }
 const prefersReducedMotion = () => typeof window !== 'undefined' && !!window.matchMedia?.(REDUCED_MOTION).matches
 
-/** True once the element has come near the viewport: the video loads only then. */
+/**
+ * True once the element has come near the viewport: the video loads only then. A callback ref, so
+ * an element that mounts after the first render (the page waits for its gate) is still watched.
+ */
 function useNearViewport<T extends Element>() {
-  const ref = useRef<T>(null)
+  const [el, setEl] = useState<T | null>(null)
   const [near, setNear] = useState(false)
   useEffect(() => {
-    const el = ref.current
     if (near || !el) return
     if (typeof IntersectionObserver === 'undefined') return setNear(true)
     const io = new IntersectionObserver(
@@ -102,8 +104,8 @@ function useNearViewport<T extends Element>() {
     )
     io.observe(el)
     return () => io.disconnect()
-  }, [near])
-  return [ref, near] as const
+  }, [el, near])
+  return [setEl, near] as const
 }
 
 const MEDIA_CLASS = 'w-[760px] max-w-none rounded-lg border border-neutral'
