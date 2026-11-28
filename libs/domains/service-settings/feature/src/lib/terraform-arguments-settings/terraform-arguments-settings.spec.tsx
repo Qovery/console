@@ -23,13 +23,18 @@ jest.mock('@tanstack/react-router', () => ({
   ),
 }))
 
+const mockDropdownVariableProps = jest.fn()
+
 jest.mock('@qovery/domains/variables/feature', () => ({
   ...jest.requireActual('@qovery/domains/variables/feature'),
-  DropdownVariable: ({ children, onChange }: { children: React.ReactNode; onChange: (value: string) => void }) => (
-    <div data-testid="dropdown-variable" onClick={() => onChange('MY_VARIABLE')}>
-      {children}
-    </div>
-  ),
+  DropdownVariable: (props: { children: React.ReactNode; onChange: (value: string) => void }) => {
+    mockDropdownVariableProps(props)
+    return (
+      <div data-testid="dropdown-variable" onClick={() => props.onChange('MY_VARIABLE')}>
+        {props.children}
+      </div>
+    )
+  },
 }))
 
 // Mocking the Terraform service
@@ -193,5 +198,14 @@ describe('PageSettingsTerraformArgumentsFeature', () => {
         },
       },
     })
+  })
+
+  it('should list the Terraform service variables in the wand', async () => {
+    renderWithProviders(wrapWithReactHookForm(<TerraformArgumentsSettings />))
+
+    await screen.findAllByTestId('dropdown-variable')
+    expect(mockDropdownVariableProps).toHaveBeenCalledWith(
+      expect.objectContaining({ serviceId: mockService.id, scope: 'TERRAFORM' })
+    )
   })
 })

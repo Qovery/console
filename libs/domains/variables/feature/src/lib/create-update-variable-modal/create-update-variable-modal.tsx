@@ -418,6 +418,8 @@ export function VariableFormModal(props: VariableFormModalProps) {
                   {props.environmentId && (
                     <DropdownVariable
                       environmentId={props.environmentId}
+                      serviceId={valueEditorServiceId}
+                      scope={valueEditorScope}
                       onChange={(variableKey) => handleInsertVariable({ variableKey, value: value || '', onChange })}
                     >
                       <Button

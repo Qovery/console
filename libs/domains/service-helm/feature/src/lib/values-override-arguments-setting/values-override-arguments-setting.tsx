@@ -39,7 +39,17 @@ export interface ValuesOverrideArgumentsSettingBaseProps extends PropsWithChildr
   isSetting?: boolean
 }
 
-function Row({ index, remove, environmentId }: { index: number; remove: UseFieldArrayRemove; environmentId: string }) {
+function Row({
+  index,
+  remove,
+  environmentId,
+  serviceId,
+}: {
+  index: number
+  remove: UseFieldArrayRemove
+  environmentId: string
+  serviceId?: string
+}) {
   const { watch, control } = useFormContext<HelmValuesArgumentsData>()
 
   const [openEditor, setOpenEditor] = useState(true)
@@ -110,6 +120,8 @@ function Row({ index, remove, environmentId }: { index: number; remove: UseField
               <FieldVariableSuggestion
                 value={field.value}
                 environmentId={environmentId}
+                serviceId={serviceId}
+                scope="HELM"
                 onChange={field.onChange}
                 inputProps={{
                   className: 'w-full',
@@ -143,6 +155,8 @@ function Row({ index, remove, environmentId }: { index: number; remove: UseField
           render={({ field }) => (
             <CodeEditorVariable
               environmentId={environmentId}
+              serviceId={serviceId}
+              scope="HELM"
               language="json"
               height="496px"
               className="mt-3 overflow-hidden rounded border border-neutral"
@@ -163,7 +177,7 @@ export function ValuesOverrideArgumentsSetting({
   source,
   isSetting = false,
 }: ValuesOverrideArgumentsSettingBaseProps) {
-  const { environmentId = '' } = useParams({ strict: false })
+  const { environmentId = '', serviceId } = useParams({ strict: false })
 
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
@@ -262,7 +276,7 @@ export function ValuesOverrideArgumentsSetting({
                 <span></span>
               </li>
               {fields.map((field, index) => (
-                <Row key={field.id} index={index} remove={remove} environmentId={environmentId} />
+                <Row key={field.id} index={index} remove={remove} environmentId={environmentId} serviceId={serviceId} />
               ))}
             </ul>
           ) : (
@@ -281,7 +295,7 @@ export function ValuesOverrideArgumentsSetting({
                 <span></span>
               </li>
               {fields.map((field, index) => (
-                <Row key={field.id} index={index} remove={remove} environmentId={environmentId} />
+                <Row key={field.id} index={index} remove={remove} environmentId={environmentId} serviceId={serviceId} />
               ))}
             </ul>
           ) : (

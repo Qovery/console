@@ -44,7 +44,7 @@ export function DockerfileSettings({
   defaultContent,
   templateType,
 }: DockerfileSettingsProps) {
-  const { environmentId = '' } = useParams({ strict: false })
+  const { environmentId = '', serviceId } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const { setValue, control, watch } = methods
 
@@ -71,6 +71,7 @@ export function DockerfileSettings({
       content: (
         <DockerfileRawModal
           environmentId={environmentId}
+          serviceId={serviceId}
           content={field.value ?? ''}
           description={match(templateType)
             .with(
