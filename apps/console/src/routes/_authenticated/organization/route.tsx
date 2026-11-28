@@ -74,6 +74,12 @@ const ORGANIZATION_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/clusters',
   },
   {
+    id: 'domains',
+    label: 'Domains',
+    iconName: 'globe',
+    routeId: '/_authenticated/organization/$organizationId/domains',
+  },
+  {
     id: 'audit-logs',
     label: 'Audit Logs',
     iconName: 'lock-keyhole',
@@ -392,6 +398,7 @@ function useNavigationContext(): NavigationContext | null {
   const pathname = location.pathname
   const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
+  const isOrganizationDomainsEnabled = Boolean(useFeatureFlagEnabled('organization-domains'))
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
@@ -406,6 +413,9 @@ function useNavigationContext(): NavigationContext | null {
   })
   const hasAlerting = clusters.some((cluster) => cluster.metrics_parameters?.configuration?.alerting?.enabled)
   const currentCluster = clusters.find((cluster) => cluster.id === environment?.cluster_id)
+  const organizationTabs = ORGANIZATION_TABS.filter(
+    (tab) => (hasAlerting || tab.id !== 'alerts') && (isOrganizationDomainsEnabled || tab.id !== 'domains')
+  )
   const isProfileAvailable = Boolean(clusters.find((cluster) => cluster.id === params.clusterId)?.is_catalog_managed)
   const blueprintId = service && isBlueprintService(service) && isTerraform(service) ? service.blueprint_id : ''
   const { data: blueprint } = useBlueprint({
@@ -436,7 +446,7 @@ function useNavigationContext(): NavigationContext | null {
           context.type === 'service'
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled, blueprint)
             : context.type === 'organization'
-              ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
+              ? organizationTabs
               : context.type === 'cluster'
                 ? context.tabs.filter((tab) => isProfileAvailable || tab.id !== 'profile')
                 : context.type === 'environment'
@@ -456,7 +466,7 @@ function useNavigationContext(): NavigationContext | null {
     return {
       type: 'organization',
       params: { organizationId },
-      tabs: ORGANIZATION_TABS.filter((tab) => hasAlerting || tab.id !== 'alerts'),
+      tabs: organizationTabs,
     }
   }
 

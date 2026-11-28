@@ -24,6 +24,7 @@ import { Route as AuthenticatedOnboardingProfileRouteImport } from './routes/_au
 import { Route as AuthenticatedOrganizationOrganizationIdRouteRouteImport } from './routes/_authenticated/organization/$organizationId/route'
 import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
+import { Route as AuthenticatedOrganizationOrganizationIdDomainsRouteImport } from './routes/_authenticated/organization/$organizationId/domains'
 import { Route as AuthenticatedOrganizationOrganizationIdClustersRouteImport } from './routes/_authenticated/organization/$organizationId/clusters'
 import { Route as AuthenticatedOrganizationOrganizationIdAuditLogsRouteImport } from './routes/_authenticated/organization/$organizationId/audit-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/settings/route'
@@ -335,6 +336,12 @@ const AuthenticatedOrganizationOrganizationIdOverviewRoute =
   AuthenticatedOrganizationOrganizationIdOverviewRouteImport.update({
     id: '/overview',
     path: '/overview',
+    getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdDomainsRoute =
+  AuthenticatedOrganizationOrganizationIdDomainsRouteImport.update({
+    id: '/domains',
+    path: '/domains',
     getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
   } as any)
 const AuthenticatedOrganizationOrganizationIdClustersRoute =
@@ -2292,6 +2299,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
+  '/organization/$organizationId/domains': typeof AuthenticatedOrganizationOrganizationIdDomainsRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   '/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
@@ -2531,6 +2539,7 @@ export interface FileRoutesByTo {
   '/organization': typeof AuthenticatedOrganizationIndexRoute
   '/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
+  '/organization/$organizationId/domains': typeof AuthenticatedOrganizationOrganizationIdDomainsRoute
   '/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/organization/$organizationId/settings/notifications': typeof AuthenticatedOrganizationOrganizationIdSettingsNotificationsRouteRouteWithChildren
@@ -2756,6 +2765,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings': typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/audit-logs': typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   '/_authenticated/organization/$organizationId/clusters': typeof AuthenticatedOrganizationOrganizationIdClustersRoute
+  '/_authenticated/organization/$organizationId/domains': typeof AuthenticatedOrganizationOrganizationIdDomainsRoute
   '/_authenticated/organization/$organizationId/overview': typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   '/_authenticated/organization/$organizationId/': typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
@@ -3002,6 +3012,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings'
     | '/organization/$organizationId/audit-logs'
     | '/organization/$organizationId/clusters'
+    | '/organization/$organizationId/domains'
     | '/organization/$organizationId/overview'
     | '/organization/$organizationId/'
     | '/organization/$organizationId/cluster/$clusterId'
@@ -3241,6 +3252,7 @@ export interface FileRouteTypes {
     | '/organization'
     | '/organization/$organizationId/audit-logs'
     | '/organization/$organizationId/clusters'
+    | '/organization/$organizationId/domains'
     | '/organization/$organizationId/overview'
     | '/organization/$organizationId'
     | '/organization/$organizationId/settings/notifications'
@@ -3465,6 +3477,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings'
     | '/_authenticated/organization/$organizationId/audit-logs'
     | '/_authenticated/organization/$organizationId/clusters'
+    | '/_authenticated/organization/$organizationId/domains'
     | '/_authenticated/organization/$organizationId/overview'
     | '/_authenticated/organization/$organizationId/'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId'
@@ -3805,6 +3818,13 @@ declare module '@tanstack/react-router' {
       path: '/overview'
       fullPath: '/organization/$organizationId/overview'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdOverviewRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/domains': {
+      id: '/_authenticated/organization/$organizationId/domains'
+      path: '/domains'
+      fullPath: '/organization/$organizationId/domains'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdDomainsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/clusters': {
@@ -6284,6 +6304,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdAuditLogsRoute: typeof AuthenticatedOrganizationOrganizationIdAuditLogsRoute
   AuthenticatedOrganizationOrganizationIdClustersRoute: typeof AuthenticatedOrganizationOrganizationIdClustersRoute
+  AuthenticatedOrganizationOrganizationIdDomainsRoute: typeof AuthenticatedOrganizationOrganizationIdDomainsRoute
   AuthenticatedOrganizationOrganizationIdOverviewRoute: typeof AuthenticatedOrganizationOrganizationIdOverviewRoute
   AuthenticatedOrganizationOrganizationIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdIndexRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdRouteRouteWithChildren
@@ -6341,6 +6362,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdAuditLogsRoute,
     AuthenticatedOrganizationOrganizationIdClustersRoute:
       AuthenticatedOrganizationOrganizationIdClustersRoute,
+    AuthenticatedOrganizationOrganizationIdDomainsRoute:
+      AuthenticatedOrganizationOrganizationIdDomainsRoute,
     AuthenticatedOrganizationOrganizationIdOverviewRoute:
       AuthenticatedOrganizationOrganizationIdOverviewRoute,
     AuthenticatedOrganizationOrganizationIdIndexRoute:

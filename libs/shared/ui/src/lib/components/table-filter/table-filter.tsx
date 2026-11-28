@@ -13,16 +13,26 @@ declare module '@tanstack/table-core' {
   interface ColumnMeta<TData extends RowData, TValue> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     customFacetEntry?: ({ value, count, row }: { value: any; count: number; row?: Row<TData> }) => ReactNode
+    // Supply complete facets for server-filtered tables whose current page may be empty.
+    facetedValues?: Map<string, number>
     customFilterValue?: ({ filterValue }: { filterValue: string[] }) => ReactNode
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function TableFilter({ column }: { column: Column<any, unknown> }) {
+export function TableFilter<TData extends RowData>({
+  column,
+  multiple = true,
+  disabled = false,
+}: {
+  column: Column<TData, unknown>
+  multiple?: boolean
+  disabled?: boolean
+}) {
   const [open, setOpen] = useState(false)
+  const uniqueValues = column.columnDef.meta?.facetedValues ?? column.getFacetedUniqueValues()
   const sortedUniqueValues = useMemo(
-    () => Array.from(column.getFacetedUniqueValues().entries()).sort(([a], [b]) => a?.localeCompare?.(b) ?? 0),
-    [column.getFacetedUniqueValues()]
+    () => Array.from(uniqueValues.entries()).sort(([a], [b]) => a?.localeCompare?.(b) ?? 0),
+    [uniqueValues]
   )
 
   const hideCount = sortedUniqueValues.every(([, count]) => count === 1)
@@ -39,6 +49,7 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
         <div className="relative inline-block">
           <Popover.Trigger>
             <Button
+              disabled={disabled}
               className={twMerge('whitespace-nowrap text-xs', column.getIsFiltered() ? 'pr-6' : '')}
               color={column.getIsFiltered() ? 'brand' : 'neutral'}
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
@@ -64,6 +75,8 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
             <button
               type="button"
               className="absolute right-0 h-7 cursor-pointer px-2 text-center leading-7"
+              aria-label={`Clear ${column.columnDef.header?.toString()} filter`}
+              disabled={disabled}
               onClick={() => column.setFilterValue(undefined)}
             >
               <Icon iconName="xmark" className="text-neutralInvert" />
@@ -82,7 +95,9 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
                           dropdownMenuItemVariants({ color: 'brand' }),
                           'min-w-0 justify-between gap-2'
                         )}
-                        onSelect={() => column.setFilterValue((arr: [] = []) => [...new Set([...arr, value])])}
+                        onSelect={() =>
+                          column.setFilterValue((arr: [] = []) => (multiple ? [...new Set([...arr, value])] : [value]))
+                        }
                       >
                         {column.columnDef.meta?.customFacetEntry ? (
                           column.columnDef.meta.customFacetEntry({
