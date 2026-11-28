@@ -31,12 +31,12 @@ export const ChartTooltip = forwardRef<HTMLDivElement, ChartTooltipProps>(functi
   const shown = maxItems ? entries.slice(0, maxItems) : entries
   const time = payload[0]?.payload?.fullTime
   return (
-    <div ref={ref} className="rounded-md bg-surface-neutralInvert-component text-sm shadow-lg">
+    <div ref={ref} className="rounded-md bg-surface-neutralInvert-component text-xs shadow-lg">
       <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutralInvert px-3 py-2">
         <span className="font-medium text-neutralInvert">{title}</span>
         {time && <span className="text-neutralInvert-subtle">{time}</span>}
       </div>
-      <div className="space-y-1 px-3 pb-2">
+      <div className="space-y-1 px-2 pb-2">
         {shown.map((e) => {
           const key = String(e.dataKey ?? '')
           const value = e.value == null ? '' : String(e.value)

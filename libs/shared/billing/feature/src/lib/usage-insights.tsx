@@ -17,7 +17,7 @@ import type {
 } from 'qovery-pricing-typescript-axios'
 import { useMemo, useState } from 'react'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from 'recharts'
-import { Chart, SegmentedControl } from '@qovery/shared/ui'
+import { Chart, Heading, TablePrimitives } from '@qovery/shared/ui'
 import { ChartTooltip } from './chart-tooltip'
 import { CompactSelect } from './compact-select'
 import { money, num } from './utils/format'
@@ -36,9 +36,11 @@ function Panel({
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded border border-neutral bg-surface-neutral p-5">
+    <div className="rounded border border-neutral bg-surface-neutral p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-medium text-neutral">{title}</h3>
+        <Heading level={3} className="text-sm font-medium text-neutral">
+          {title}
+        </Heading>
         {aside}
       </div>
       {children}
@@ -108,15 +110,25 @@ export function UsageChart({
     <div>
       <div className="mb-2 flex flex-wrap items-center justify-end gap-2">
         {meter && (
-          <SegmentedControl.Root value={view} onValueChange={(v) => setView(v as MeterView)}>
-            <SegmentedControl.Item value="month">Month to date</SegmentedControl.Item>
-            <SegmentedControl.Item value="daily">Per day</SegmentedControl.Item>
-          </SegmentedControl.Root>
+          <CompactSelect
+            ariaLabel="Aggregation"
+            value={view}
+            onChange={(v) => setView(v as MeterView)}
+            options={[
+              { value: 'month', label: 'Month to date' },
+              { value: 'daily', label: 'Per day' },
+            ]}
+          />
         )}
-        <SegmentedControl.Root value={range} onValueChange={(v) => setRange(v as Range)}>
-          <SegmentedControl.Item value="30">30 days</SegmentedControl.Item>
-          <SegmentedControl.Item value="90">3 months</SegmentedControl.Item>
-        </SegmentedControl.Root>
+        <CompactSelect
+          ariaLabel="Period"
+          value={range}
+          onChange={(v) => setRange(v as Range)}
+          options={[
+            { value: '30', label: '30 days' },
+            { value: '90', label: '3 months' },
+          ]}
+        />
       </div>
       <Chart.Container style={{ height }} isEmpty={!data.length}>
         {meter && view === 'daily' ? (
@@ -125,6 +137,7 @@ export function UsageChart({
             <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={28} />
             <YAxis tickLine={false} axisLine={false} width={48} tickFormatter={(v: number) => num(v)} />
             <Chart.Tooltip
+              cursor={{ fill: 'var(--neutral-2)' }}
               content={
                 <ChartTooltip
                   title={series.name}
@@ -199,18 +212,18 @@ function ValuePanel({ v }: { v: UsageValue }) {
       <div className="mb-4 flex flex-wrap items-end gap-x-8 gap-y-2">
         <div>
           <div className="text-sm text-neutral-subtle">You pay</div>
-          <div className="text-2xl font-medium text-neutral">
+          <div className="text-sm font-medium text-neutral">
             {money(v.monthly_fee, cur)}
             <span className="text-sm font-normal text-neutral-subtle"> / month</span>
           </div>
         </div>
         <div>
           <div className="text-sm text-neutral-subtle">Included at list price</div>
-          <div className="text-2xl font-medium text-neutral">{money(v.included_value, cur)}</div>
+          <div className="text-sm font-medium text-neutral">{money(v.included_value, cur)}</div>
         </div>
         <div>
           <div className="text-sm text-neutral-subtle">In use</div>
-          <div className="text-2xl font-medium text-neutral">{money(v.used_value, cur)}</div>
+          <div className="text-sm font-medium text-neutral">{money(v.used_value, cur)}</div>
         </div>
         {ratio >= 1.1 && <div className="pb-1 text-sm text-positive">{ratio.toFixed(1)}× what you pay</div>}
       </div>
@@ -296,13 +309,13 @@ function ProjectionPanel({
             <div key={p.sku} className="rounded border border-neutral p-4">
               <div className="mb-1 text-sm text-neutral-subtle">{p.name}</div>
               <div className="text-sm text-neutral">
-                <span className="text-lg font-medium">{num(p.projected)}</span> {p.unit} by the end of the month
+                <span className="text-sm font-medium">{num(p.projected)}</span> {p.unit} by the end of the month
               </div>
               <div className="text-sm text-neutral-subtle">
                 {num(p.used)} so far, about {num(p.daily_pace)} per day
                 {p.included != null ? ` · ${num(p.included)} included` : ' · unlimited'}
               </div>
-              <div className={`mt-2 text-xs font-medium ${tone}`}>
+              <div className={`mt-2 text-sm ${tone}`}>
                 {p.projected_over > 0 ? (
                   <>
                     {num(p.projected_over)} {p.unit} above the plan
@@ -348,6 +361,7 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
           <XAxis dataKey="label" tickLine={false} axisLine={false} />
           <YAxis tickLine={false} axisLine={false} width={48} domain={[0, top]} tickFormatter={(v: number) => num(v)} />
           <Chart.Tooltip
+            cursor={{ fill: 'var(--neutral-2)' }}
             content={
               <ChartTooltip
                 title="Minutes"
@@ -380,46 +394,72 @@ function MonthsPanel({ months, currency, amounts }: { months: DeploymentMonth[];
         )}
       </div>
       <div className="mt-3 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-sm text-neutral-subtle">
-              <th className="py-1 pr-4 font-medium">Month</th>
-              <th className="py-1 pr-4 text-right font-medium">Deployments</th>
-              <th className="py-1 pr-4 text-right font-medium">Build</th>
-              <th className="py-1 pr-4 text-right font-medium">Deploy</th>
-              <th className="py-1 pr-4 text-right font-medium">Above the plan</th>
-              <th className="py-1 pr-4 text-right font-medium">Included</th>
-              {amounts && <th className="py-1 text-right font-medium">Estimated cost</th>}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-neutral">
+        <TablePrimitives.Table.Root containerClassName="rounded-none border-0" className="w-full text-sm">
+          <TablePrimitives.Table.Header className="text-xs">
+            <TablePrimitives.Table.Row className="text-left text-neutral-subtle">
+              <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                Month
+              </TablePrimitives.Table.ColumnHeaderCell>
+              <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                Deployments
+              </TablePrimitives.Table.ColumnHeaderCell>
+              <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                Build
+              </TablePrimitives.Table.ColumnHeaderCell>
+              <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                Deploy
+              </TablePrimitives.Table.ColumnHeaderCell>
+              <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                Above the plan
+              </TablePrimitives.Table.ColumnHeaderCell>
+              <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                Included
+              </TablePrimitives.Table.ColumnHeaderCell>
+              {amounts && (
+                <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                  Estimated cost
+                </TablePrimitives.Table.ColumnHeaderCell>
+              )}
+            </TablePrimitives.Table.Row>
+          </TablePrimitives.Table.Header>
+          <TablePrimitives.Table.Body className="divide-y divide-neutral">
             {months.map((m, i) => (
-              <tr key={m.month}>
-                <td className="py-1.5 pr-4 text-neutral">
+              <TablePrimitives.Table.Row key={m.month}>
+                <TablePrimitives.Table.Cell className="text-neutral">
                   {monthLabel(m.month)}
                   {i === months.length - 1 ? <span className="text-sm text-neutral-subtle"> (so far)</span> : ''}
-                </td>
-                <td className="py-1.5 pr-4 text-right text-neutral">{num(m.deployments)}</td>
-                <td className="py-1.5 pr-4 text-right text-neutral">
-                  {num(m.build_minutes)} min
+                </TablePrimitives.Table.Cell>
+                <TablePrimitives.Table.Cell className="text-right text-neutral">
+                  {num(m.deployments)}
+                </TablePrimitives.Table.Cell>
+                <TablePrimitives.Table.Cell className="text-right text-neutral">
+                  <span className="whitespace-nowrap">{num(m.build_minutes)} min</span>
                   {m.build_billed_minutes != null && m.build_billed_minutes > m.build_minutes + 0.5 && (
                     <div className="text-sm text-neutral-subtle">
                       counts {num(m.build_billed_minutes)} (bigger builders)
                     </div>
                   )}
-                </td>
-                <td className="py-1.5 pr-4 text-right text-neutral">{num(m.deploy_minutes)} min</td>
-                <td className={`py-1.5 pr-4 text-right ${m.over_minutes > 0 ? 'text-warning' : 'text-neutral-subtle'}`}>
+                </TablePrimitives.Table.Cell>
+                <TablePrimitives.Table.Cell className="text-right text-neutral">
+                  <span className="whitespace-nowrap">{num(m.deploy_minutes)} min</span>
+                </TablePrimitives.Table.Cell>
+                <TablePrimitives.Table.Cell
+                  className={`text-right ${m.over_minutes > 0 ? 'text-warning' : 'text-neutral-subtle'}`}
+                >
                   {m.over_minutes > 0 ? `${num(m.over_minutes)} min` : 'none'}
-                </td>
-                <td className="py-1.5 pr-4 text-right text-neutral">
+                </TablePrimitives.Table.Cell>
+                <TablePrimitives.Table.Cell className="text-right text-neutral">
                   {m.included != null ? `${num(m.included)} min` : 'Unlimited'}
-                </td>
-                {amounts && <td className="py-1.5 text-right text-neutral">{money(m.cost, currency)}</td>}
-              </tr>
+                </TablePrimitives.Table.Cell>
+                {amounts && (
+                  <TablePrimitives.Table.Cell className="text-right text-neutral">
+                    {money(m.cost, currency)}
+                  </TablePrimitives.Table.Cell>
+                )}
+              </TablePrimitives.Table.Row>
             ))}
-          </tbody>
-        </table>
+          </TablePrimitives.Table.Body>
+        </TablePrimitives.Table.Root>
       </div>
     </Panel>
   )
@@ -471,49 +511,61 @@ function BuilderPanel({ sizes, currency, amounts }: { sizes: BuilderSize[]; curr
       aside={<span className="text-sm text-neutral-subtle">deploy time always counts once</span>}
     >
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-sm text-neutral-subtle">
-              <th className="py-1 pr-4 font-medium">Builder</th>
-              <th className="hidden py-1 pr-4 font-medium sm:table-cell">Up to</th>
-              <th className="py-1 pr-4 text-right font-medium">One build minute counts</th>
-              {priced && <th className="py-1 text-right font-medium">Beyond the plan</th>}
-              {priced && sizes.some((s) => s.prepaid_per_minute) && (
-                <th className="hidden py-1 pl-4 text-right font-medium sm:table-cell">Prepaid yearly</th>
+        <TablePrimitives.Table.Root containerClassName="rounded-none border-0" className="w-full text-sm">
+          <TablePrimitives.Table.Header className="text-xs">
+            <TablePrimitives.Table.Row className="text-left text-neutral-subtle">
+              <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                Builder
+              </TablePrimitives.Table.ColumnHeaderCell>
+              <TablePrimitives.Table.ColumnHeaderCell className="hidden font-normal sm:table-cell">
+                Up to
+              </TablePrimitives.Table.ColumnHeaderCell>
+              <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                One build minute counts
+              </TablePrimitives.Table.ColumnHeaderCell>
+              {priced && (
+                <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                  Beyond the plan
+                </TablePrimitives.Table.ColumnHeaderCell>
               )}
-            </tr>
-          </thead>
-          <tbody>
+              {priced && sizes.some((s) => s.prepaid_per_minute) && (
+                <TablePrimitives.Table.ColumnHeaderCell className="hidden text-right font-normal sm:table-cell">
+                  Prepaid yearly
+                </TablePrimitives.Table.ColumnHeaderCell>
+              )}
+            </TablePrimitives.Table.Row>
+          </TablePrimitives.Table.Header>
+          <TablePrimitives.Table.Body>
             {sizes.map((s, i) => (
-              <tr key={s.code} className="border-t border-neutral">
-                <td className="py-1.5 pr-4 text-neutral">
+              <TablePrimitives.Table.Row key={s.code} className="border-t border-neutral">
+                <TablePrimitives.Table.Cell className="text-neutral">
                   {s.name}
                   {i === 0 && <span className="text-sm text-neutral-subtle"> (default)</span>}
                   {s.listed === false && <span className="text-sm text-neutral-subtle"> (on request)</span>}
                   <div className="text-sm text-neutral-subtle sm:hidden">
                     up to {num(s.max_cpu_milli / 1000)} vCPU, {num(s.max_ram_gib)} GiB
                   </div>
-                </td>
-                <td className="hidden whitespace-nowrap py-1.5 pr-4 text-neutral-subtle sm:table-cell">
+                </TablePrimitives.Table.Cell>
+                <TablePrimitives.Table.Cell className="hidden whitespace-nowrap text-neutral-subtle sm:table-cell">
                   {num(s.max_cpu_milli / 1000)} vCPU, {num(s.max_ram_gib)} GiB
-                </td>
-                <td className="whitespace-nowrap py-1.5 pr-4 text-right text-neutral">
+                </TablePrimitives.Table.Cell>
+                <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral">
                   {s.multiplier === 1 ? '1 min' : `${num(s.multiplier)} min`}
-                </td>
+                </TablePrimitives.Table.Cell>
                 {priced && (
-                  <td className="whitespace-nowrap py-1.5 text-right text-neutral">
+                  <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral">
                     {s.price_per_minute ? `${money(Math.round(s.price_per_minute), currency)}/min` : '—'}
-                  </td>
+                  </TablePrimitives.Table.Cell>
                 )}
                 {priced && sizes.some((x) => x.prepaid_per_minute) && (
-                  <td className="hidden whitespace-nowrap py-1.5 pl-4 text-right text-positive sm:table-cell">
+                  <TablePrimitives.Table.Cell className="hidden whitespace-nowrap text-right text-positive sm:table-cell">
                     {s.prepaid_per_minute ? `${money(Math.round(s.prepaid_per_minute), currency)}/min` : '—'}
-                  </td>
+                  </TablePrimitives.Table.Cell>
                 )}
-              </tr>
+              </TablePrimitives.Table.Row>
             ))}
-          </tbody>
-        </table>
+          </TablePrimitives.Table.Body>
+        </TablePrimitives.Table.Root>
       </div>
       <p className="mt-3 text-sm text-neutral-subtle">
         The builder size is set per service (build CPU and RAM in the advanced settings). Larger builders use the plan's

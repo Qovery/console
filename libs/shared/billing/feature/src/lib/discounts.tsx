@@ -12,9 +12,9 @@
  * price comes from their private offer.
  */
 import type { BillingUsage, DiscountQuote, DiscountRequest, Discounts } from 'qovery-pricing-typescript-axios'
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
-import { Badge, Button, Callout, Checkbox, Icon, InputTextArea } from '@qovery/shared/ui'
+import { Accordion, Badge, Button, Callout, Checkbox, Heading, Icon, InputTextArea } from '@qovery/shared/ui'
 import { errorText, notifySuccess } from './parts'
 import {
   currentDiscountRequest,
@@ -54,7 +54,6 @@ export function DiscountsCard({
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
   const [opened, setOpened] = useState<boolean>()
-  const listId = useId()
   // A pricing-api without discounts (404) shows no card rather than an error.
   const load = () =>
     client
@@ -101,7 +100,7 @@ export function DiscountsCard({
     )
   if (view?.availability.code === 'AWS_PRIVATE_OFFER') {
     return (
-      <p className="rounded border border-neutral bg-surface-neutral px-5 py-4 text-sm text-neutral-subtle">
+      <p className="rounded border border-neutral bg-surface-neutral px-4 py-4 text-sm text-neutral-subtle">
         {view.availability.detail || AWS_PRIVATE_OFFER}
       </p>
     )
@@ -157,234 +156,229 @@ export function DiscountsCard({
     }
   }
 
+  const requestButton = (
+    <Button size="md" variant="outline" color="neutral" disabled={!canRequest} loading={busy} onClick={request}>
+      Request discount
+    </Button>
+  )
+
   return (
-    <section className="rounded border border-neutral bg-surface-neutral">
-      <div className="p-5">
-        <h3 className="text-base font-medium text-neutral">Discounts</h3>
-        <p className="mt-1 text-sm text-neutral-subtle">
-          Pay less in exchange for your logo, your story or a longer commitment. Qovery reviews each request and
-          confirms your new price.
-        </p>
-        {view.discounts.length > 0 && (
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <Button
-              size="md"
-              variant="outline"
-              color="neutral"
-              aria-expanded={expanded}
-              aria-controls={listId}
-              onClick={() => setOpened(!expanded)}
-            >
-              <Icon iconName={expanded ? 'chevron-up' : 'chevron-down'} iconStyle="regular" />
-              {expanded ? 'Hide discounts' : 'See available discounts'}
-            </Button>
-            {!expanded && upTo > 0 && <span className="text-sm text-neutral-subtle">Up to {pct(upTo)} off</span>}
-          </div>
-        )}
+    <section>
+      <div className="mb-4">
+        <Heading level={2} className="text-base font-medium text-neutral">
+          Discounts
+        </Heading>
       </div>
 
-      {contract.length > 0 && (
-        <div className="flex flex-col gap-3 border-t border-neutral px-5 py-4">
-          <div className="text-sm text-neutral-subtle">Included in your contract</div>
-          {contract.map((d) => (
-            <div key={d.id} className="flex items-start gap-3">
-              <Checkbox
-                id={`discount-contract-${d.id}`}
-                className="mt-0.5"
-                checked
-                disabled
-                aria-label={`${d.label}: included in your contract`}
-              />
-              <span className="flex min-w-0 flex-1 flex-col">
-                <span className="text-sm font-medium text-neutral">{d.label}</span>
-                <span className="text-sm text-neutral-subtle">{d.gives}</span>
-              </span>
-              <Badge className="font-medium" color="neutral" variant="surface" size="sm">
-                Included · −{pct(d.percent)}
-              </Badge>
-            </div>
-          ))}
-          <p className="text-sm text-neutral-subtle">
-            Already in your price.{' '}
-            {room > 0
-              ? `${pct(contractPoints)} of the ${pct(view.max_percent)} maximum is used, so you can ask for up to ${pct(room)} more.`
-              : `Your contract already includes the ${pct(view.max_percent)} maximum.`}
-          </p>
-        </div>
-      )}
-
-      {(open || running.length > 0 || declined) && (
-        <div className="flex flex-col gap-3 border-t border-neutral px-5 py-4">
-          {running.map((r) => (
-            <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
-              <span className="text-neutral">
-                <Icon iconName="circle-check" iconStyle="regular" className="mr-2 text-positive" />
-                {r.labels.join(', ')}
-              </span>
-              <span className="flex items-center gap-2">
-                <Badge className="font-medium" color="green" variant="surface" size="sm">
-                  {pct(r.percent)} off{r.discount_until ? ` until ${date(r.discount_until)}` : ''}
+      <div className="overflow-hidden rounded border border-neutral bg-surface-neutral [&>div:first-child]:border-t-0">
+        {contract.length > 0 && (
+          <div className="flex flex-col gap-3 border-t border-neutral px-4 py-4">
+            {contract.map((d) => (
+              <div key={d.id} className="flex items-center gap-3">
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="text-sm font-medium text-neutral">{d.label}</span>
+                  <span className="text-sm text-neutral-subtle">{d.gives}</span>
+                </span>
+                <Badge className="font-medium" color="neutral" variant="surface" size="sm">
+                  {pct(d.percent)}
                 </Badge>
-                {!r.applied && (
-                  <span className="text-sm text-neutral-subtle">Approved. We're applying it to your subscription.</span>
-                )}
-              </span>
-            </div>
-          ))}
-          {open && (
-            <Callout.Root color="sky">
-              <Callout.Icon>
-                <Icon iconName="hourglass-half" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Qovery is reviewing your request.</Callout.TextHeading>
-                {open.labels.join(', ')}: {pct(open.percent)} off, {money(open.price_after, open.currency)} per {per}{' '}
-                instead of {money(open.price_before, open.currency)}. Asked by {open.requested_by} on{' '}
-                {date(open.requested_at)}.
-                {withdrawError && (
-                  <p className="mt-2 text-negative" role="alert">
-                    {withdrawError}
-                  </p>
-                )}
-                {client.withdrawDiscountRequest && (
-                  <div className="mt-2">
-                    <Button size="sm" variant="outline" color="neutral" loading={busy} onClick={() => withdraw(open)}>
-                      Withdraw request
-                    </Button>
-                  </div>
-                )}
-              </Callout.Text>
-            </Callout.Root>
-          )}
-          {declined && (
-            <Callout.Root color="neutral">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Your request for {declined.labels.join(', ')} was declined</Callout.TextHeading>
-                {declined.decline_reason}
-              </Callout.Text>
-            </Callout.Root>
-          )}
-        </div>
-      )}
-
-      {view.discounts.length > 0 && (
-        <div id={listId} hidden={!expanded}>
-          <div className="divide-y divide-neutral border-t border-neutral">
-            {view.discounts.map((d) => {
-              const on = selected.includes(d.id)
-              const can = on || discountSelectable(d, selected, have, view.discounts)
-              const id = `discount-${d.id}`
-              return (
-                <label
-                  key={d.id}
-                  htmlFor={id}
-                  className={`flex items-start gap-3 px-5 py-3 ${can ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-                >
-                  <Checkbox
-                    id={id}
-                    className="mt-0.5"
-                    checked={on}
-                    disabled={!can}
-                    onCheckedChange={() => setSelected((s) => toggleDiscount(view.discounts, s, d.id, have))}
-                  />
-                  <span className="flex min-w-0 flex-1 flex-col">
-                    <span className={`text-sm font-medium ${can ? 'text-neutral' : 'text-neutral-subtle'}`}>
-                      {d.label}
-                    </span>
-                    <span className="text-sm text-neutral-subtle">
-                      {!can && d.requires_label ? d.requires_label : d.gives}
-                    </span>
-                  </span>
-                  <span
-                    className={`whitespace-nowrap text-sm font-medium ${can ? 'text-positive' : 'text-neutral-subtle'}`}
-                  >
-                    −{pct(d.percent)}
-                  </span>
-                </label>
-              )
-            })}
-          </div>
-          <div className="flex flex-col gap-4 border-t border-neutral px-5 py-4">
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <div className="text-sm">
-                <div className="text-sm text-neutral-subtle">Your price</div>
-                {quote ? (
-                  <div className="text-neutral">
-                    <span className="mr-2 text-neutral-subtle line-through">{money(quote.price_before, cur)}</span>
-                    <span className="text-lg font-medium">{money(quote.price_after, cur)}</span>{' '}
-                    <span className="text-sm text-neutral-subtle">/ {per}</span>
-                  </div>
-                ) : (
-                  <div className="text-neutral">
-                    <span className="text-lg font-medium">{money(view.price, cur)}</span>{' '}
-                    <span className="text-sm text-neutral-subtle">/ {per}</span>
-                  </div>
-                )}
               </div>
-              {selected.length > 0 && (
-                <div className="text-right text-sm">
-                  <div className="text-sm text-neutral-subtle">Total discount</div>
-                  <div className="font-medium text-positive">
-                    −{pct(quote?.percent ?? local.percent)}
-                    {quote && (
-                      <span className="ml-1 text-sm font-normal text-neutral-subtle">
-                        ({money(quote.saving, cur)} per {per})
-                      </span>
-                    )}
-                  </div>
-                  {contractPoints > 0 && (
-                    <div className="text-sm text-neutral-subtle">
-                      On top of the {pct(contractPoints)} in your contract
+            ))}
+          </div>
+        )}
+
+        {(open || running.length > 0 || declined) && (
+          <div className="flex flex-col gap-3 border-t border-neutral px-4 py-4">
+            {running.map((r) => (
+              <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                <span className="text-neutral">
+                  <Icon iconName="circle-check" iconStyle="regular" className="mr-2 text-positive" />
+                  {r.labels.join(', ')}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Badge className="font-medium" color="green" variant="surface" size="sm">
+                    {pct(r.percent)} off{r.discount_until ? ` until ${date(r.discount_until)}` : ''}
+                  </Badge>
+                  {!r.applied && (
+                    <span className="text-sm text-neutral-subtle">
+                      Approved. We're applying it to your subscription.
+                    </span>
+                  )}
+                </span>
+              </div>
+            ))}
+            {open && (
+              <Callout.Root color="sky">
+                <Callout.Icon>
+                  <Icon iconName="hourglass-half" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Qovery is reviewing your request.</Callout.TextHeading>
+                  {open.labels.join(', ')}: {pct(open.percent)} off, {money(open.price_after, open.currency)} per {per}{' '}
+                  instead of {money(open.price_before, open.currency)}. Asked by {open.requested_by} on{' '}
+                  {date(open.requested_at)}.
+                  {withdrawError && (
+                    <p className="mt-2 text-negative" role="alert">
+                      {withdrawError}
+                    </p>
+                  )}
+                  {client.withdrawDiscountRequest && (
+                    <div className="mt-2">
+                      <Button size="sm" variant="outline" color="neutral" loading={busy} onClick={() => withdraw(open)}>
+                        Withdraw request
+                      </Button>
                     </div>
                   )}
-                </div>
-              )}
-            </div>
-            {(quote?.capped ?? local.capped) && (
-              <p className="text-sm text-neutral-subtle">
-                Discounts add up to {pct(quote?.points ?? local.points)}; the most we offer is {pct(view.max_percent)}
-                {contractPoints > 0 ? `, ${pct(contractPoints)} of it already in your contract` : ''}.
-              </p>
+                </Callout.Text>
+              </Callout.Root>
             )}
-            {quote && (
-              <p className="text-sm text-neutral-subtle">
-                On your plan and add-ons, not on usage beyond the plan, until {date(quote.discount_until)}
-                {quote.term_months ? `, with a ${quote.term_months / 12}-year commitment` : ''}.
-              </p>
+            {declined && (
+              <Callout.Root color="neutral">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Your request for {declined.labels.join(', ')} was declined</Callout.TextHeading>
+                  {declined.decline_reason}
+                </Callout.Text>
+              </Callout.Root>
             )}
-            {quoteError && <p className="text-sm text-negative">{quoteError}</p>}
-            {selected.length > 0 && (
-              <>
-                <InputTextArea
-                  name="discount_message"
-                  label="Message for Qovery (optional)"
-                  value={message}
-                  onChange={(e) => setMessage(e.currentTarget.value)}
-                />
-                <label htmlFor="discount-terms" className="flex cursor-pointer items-start gap-3 text-sm text-neutral">
-                  <Checkbox
-                    id="discount-terms"
-                    className="mt-0.5"
-                    checked={terms}
-                    onCheckedChange={(v) => setTerms(v === true)}
-                  />
-                  <span>
-                    I agree to deliver what each discount asks for. Qovery can withdraw a discount that isn't delivered.
-                  </span>
-                </label>
-              </>
-            )}
-            <div className="flex justify-end">
-              <Button size="md" disabled={!canRequest} loading={busy} onClick={request}>
-                Request discount
-              </Button>
-            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {view.discounts.length > 0 && (
+          <Accordion.Root
+            type="single"
+            collapsible
+            value={expanded ? 'available' : ''}
+            onValueChange={(value) => setOpened(value === 'available')}
+            className="border-t border-neutral"
+          >
+            <Accordion.Item value="available">
+              <h3>
+                <Accordion.Trigger
+                  className="w-full cursor-pointer justify-between gap-3 px-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-strong"
+                  iconClassName="order-2 ml-auto"
+                >
+                  <span className="flex-1 font-medium">Available discounts</span>
+                  {upTo > 0 && <span className="text-sm font-normal text-neutral-subtle">Up to {pct(upTo)} off</span>}
+                </Accordion.Trigger>
+              </h3>
+              <Accordion.Content>
+                <div className="divide-y divide-neutral border-t border-neutral">
+                  {view.discounts.map((d) => {
+                    const on = selected.includes(d.id)
+                    const can = on || discountSelectable(d, selected, have, view.discounts)
+                    const id = `discount-${d.id}`
+                    return (
+                      <label
+                        key={d.id}
+                        htmlFor={id}
+                        className={`flex items-center gap-3 px-4 py-3 ${can ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                      >
+                        <Checkbox
+                          id={id}
+                          checked={on}
+                          disabled={!can}
+                          onCheckedChange={() => setSelected((s) => toggleDiscount(view.discounts, s, d.id, have))}
+                        />
+                        <span className="flex min-w-0 flex-1 flex-col">
+                          <span className={`text-sm font-medium ${can ? 'text-neutral' : 'text-neutral-subtle'}`}>
+                            {d.label}
+                          </span>
+                          <span className="text-sm text-neutral-subtle">
+                            {!can && d.requires_label ? d.requires_label : d.gives}
+                          </span>
+                        </span>
+                        <span
+                          className={`whitespace-nowrap text-sm font-medium ${can ? 'text-positive' : 'text-neutral-subtle'}`}
+                        >
+                          {pct(d.percent)}
+                        </span>
+                      </label>
+                    )
+                  })}
+                </div>
+                <div className="flex flex-col gap-4 border-t border-neutral px-4 py-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="text-sm">
+                      <div className="text-sm text-neutral-subtle">Your price</div>
+                      {quote ? (
+                        <div className="text-neutral">
+                          <span className="mr-2 text-neutral-subtle line-through">
+                            {money(quote.price_before, cur)}
+                          </span>
+                          <span className="text-sm font-medium">{money(quote.price_after, cur)}</span>{' '}
+                          <span className="text-sm text-neutral-subtle">/ {per}</span>
+                        </div>
+                      ) : (
+                        <div className="text-neutral">
+                          <span className="text-sm font-medium">{money(view.price, cur)}</span>{' '}
+                          <span className="text-sm text-neutral-subtle">/ {per}</span>
+                        </div>
+                      )}
+                    </div>
+                    {selected.length === 0 && requestButton}
+                    {selected.length > 0 && (
+                      <div className="text-right text-sm">
+                        <div className="text-sm text-neutral-subtle">Total discount</div>
+                        <div className="font-medium text-positive">
+                          {pct(quote?.percent ?? local.percent)}
+                          {quote && (
+                            <span className="ml-1 text-sm font-normal text-neutral-subtle">
+                              ({money(quote.saving, cur)} per {per})
+                            </span>
+                          )}
+                        </div>
+                        {contractPoints > 0 && (
+                          <div className="text-sm text-neutral-subtle">
+                            On top of the {pct(contractPoints)} in your contract
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {(quote?.capped ?? local.capped) && (
+                    <p className="text-sm text-neutral-subtle">
+                      Discounts add up to {pct(quote?.points ?? local.points)}; the most we offer is{' '}
+                      {pct(view.max_percent)}
+                      {contractPoints > 0 ? `, ${pct(contractPoints)} of it already in your contract` : ''}.
+                    </p>
+                  )}
+                  {quote && (
+                    <p className="text-sm text-neutral-subtle">
+                      On your plan and add-ons, not on usage beyond the plan, until {date(quote.discount_until)}
+                      {quote.term_months ? `, with a ${quote.term_months / 12}-year commitment` : ''}.
+                    </p>
+                  )}
+                  {quoteError && <p className="text-sm text-negative">{quoteError}</p>}
+                  {selected.length > 0 && (
+                    <>
+                      <InputTextArea
+                        name="discount_message"
+                        label="Message for Qovery (optional)"
+                        value={message}
+                        onChange={(e) => setMessage(e.currentTarget.value)}
+                      />
+                      <label
+                        htmlFor="discount-terms"
+                        className="flex cursor-pointer items-center gap-3 text-sm text-neutral"
+                      >
+                        <Checkbox id="discount-terms" checked={terms} onCheckedChange={(v) => setTerms(v === true)} />
+                        <span>
+                          I agree to deliver what each discount asks for. Qovery can withdraw a discount that isn't
+                          delivered.
+                        </span>
+                      </label>
+                    </>
+                  )}
+                  {selected.length > 0 && <div className="flex justify-start">{requestButton}</div>}
+                </div>
+              </Accordion.Content>
+            </Accordion.Item>
+          </Accordion.Root>
+        )}
+      </div>
     </section>
   )
 }

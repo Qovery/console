@@ -49,14 +49,45 @@ const readOnlyClient = (overrides: Partial<BillingUsage> = {}): PricingClient =>
 })
 
 describe('UsagePage', () => {
-  it('should render the plan, every limit and the features', async () => {
+  it('should render finite allowances without feature tags', async () => {
     renderWithProviders(<UsagePage organizationId="org-northwind" client={readOnlyClient()} offers="none" />)
 
     expect(await screen.findByText('Growth')).toBeInTheDocument()
     expect(screen.getAllByText('Managed clusters').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Members').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Deployment minutes').length).toBeGreaterThan(0)
-    expect(screen.getByText('Single sign-on')).toBeInTheDocument()
+    expect(screen.queryByText('Single sign-on')).not.toBeInTheDocument()
+  })
+
+  it('hides unlimited allowances', async () => {
+    const unlimitedUsage = {
+      ...usage,
+      entitlements: usage.entitlements.map((e) => ({ ...e, value: 'unlimited' as const })),
+    }
+    const client = {
+      ...readOnlyClient(unlimitedUsage),
+      usageHistory: jest.fn().mockReturnValue(new Promise(() => undefined)),
+    }
+    renderWithProviders(<UsagePage organizationId="org-northwind" client={client} offers="none" />)
+    expect(await screen.findByText('Growth')).toBeInTheDocument()
+    expect(screen.queryByText('Plan allowances')).not.toBeInTheDocument()
+  })
+
+  it('loads one usage view at a time', async () => {
+    const client = {
+      ...readOnlyClient(),
+      usageHistory: jest.fn().mockReturnValue(new Promise(() => undefined)),
+      buildUsage: jest.fn().mockReturnValue(new Promise(() => undefined)),
+    }
+    const { userEvent } = renderWithProviders(
+      <UsagePage organizationId="org-northwind" client={client} offers="none" />
+    )
+    expect(await screen.findByRole('region', { name: 'Usage history' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Build and deploy usage' })).toBeInTheDocument()
+    await userEvent.click(screen.getByText('Services', { exact: true }))
+    expect(screen.getByRole('region', { name: 'Service usage' })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Usage history' })).not.toBeInTheDocument()
+    expect(client.buildUsage).toHaveBeenCalled()
   })
 
   it('should hide plan changes when the client cannot change plans', async () => {
@@ -78,35 +109,6 @@ describe('UsagePage', () => {
 
     expect(await screen.findByRole('button', { name: 'Change plan' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /compare plans/i })).toBeInTheDocument()
-  })
-
-  it('should open the usage chart of a limit', async () => {
-    const client = readOnlyClient({
-      usage_insights: {
-        from: '2026-09-01',
-        to: '2026-10-31',
-        series: [
-          {
-            sku: 'clusters.managed',
-            name: 'Managed clusters',
-            unit: 'clusters',
-            kind: 'limit',
-            included: 10,
-            source: 'snapshot',
-            points: [{ day: '2026-10-31', quantity: 2 }],
-          },
-        ],
-        deployment_months: [],
-        projection: [],
-      },
-    })
-    const { userEvent } = renderWithProviders(
-      <UsagePage organizationId="org-northwind" client={client} offers="none" />
-    )
-
-    await userEvent.click((await screen.findAllByRole('button', { name: 'View usage' }))[0])
-
-    expect(await screen.findByText(/In use each day, over three months/)).toBeInTheDocument()
   })
 
   it('should show the payment failed banner', async () => {

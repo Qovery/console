@@ -4,10 +4,13 @@ import { join, resolve } from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const envDir = resolve(process.env.QOVERY_CONSOLE_ENV_DIR ?? process.cwd())
   const clientEnv = loadEnv(mode, envDir, '')
   delete clientEnv.QOVERY_CONSOLE_ENV_DIR
+  const pricingApiTarget = clientEnv.NX_PUBLIC_PRICING_API_URL || 'https://billing-api.qovery.com'
+  // The billing API does not allow localhost origins. Keep local browser requests on the dev server.
+  if (command === 'serve') clientEnv.NX_PUBLIC_PRICING_API_URL = '/__billing-api'
 
   return {
     root: __dirname,
@@ -18,6 +21,13 @@ export default defineConfig(({ mode }) => {
       port: 4200,
       host: 'localhost',
       hmr: mode !== 'production',
+      proxy: {
+        '/__billing-api': {
+          target: pricingApiTarget,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/__billing-api/, ''),
+        },
+      },
       cors: {
         origin: '*',
         methods: ['GET'],

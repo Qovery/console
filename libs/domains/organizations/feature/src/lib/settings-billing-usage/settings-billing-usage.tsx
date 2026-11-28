@@ -82,7 +82,7 @@ export function BillingPageLayout({
       <Section className="min-w-0 px-4 pb-8 pt-6 md:px-8">
         {title && <SettingsHeading title={title} description={description} showNeedHelp={false} />}
         {headingSlot && <div ref={headingSlot} />}
-        <div className="flex min-w-0 max-w-content-with-navigation-left flex-col gap-6">{children}</div>
+        <div className="flex min-w-0 max-w-content-with-navigation-left flex-col gap-8">{children}</div>
       </Section>
     </div>
   )
@@ -90,12 +90,6 @@ export function BillingPageLayout({
 
 const BillingUsageSkeleton = () => (
   <div className="flex flex-col gap-6" aria-label="Loading plan and usage">
-    <div className="flex flex-col gap-2 border-b border-neutral pb-5">
-      <Skeleton height={24} width={132} show />
-      <div className="w-full max-w-sm">
-        <Skeleton height={16} width="100%" show />
-      </div>
-    </div>
     <div className="grid gap-2 md:grid-cols-3">
       {Array.from({ length: 3 }).map((_, index) => (
         <div key={index} className="h-[114px] flex-1 rounded border border-neutral bg-surface-neutral p-5">
@@ -212,7 +206,11 @@ export function BillingUsageView() {
   )
 
   return (
-    <BillingPageLayout headingSlot={setHeadingElement}>
+    <BillingPageLayout
+      title={!data ? 'Usage' : undefined}
+      description={!data ? 'Your plan, included resources, and usage.' : undefined}
+      headingSlot={setHeadingElement}
+    >
       {match({ data, error, isLoading })
         .with({ isLoading: true }, () => <BillingUsageSkeleton />)
         .with({ data: P.not(P.nullish) }, ({ data }) => (

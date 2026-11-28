@@ -14,7 +14,8 @@ import type {
 } from 'qovery-pricing-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
-import { Badge, Button, SegmentedControl, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, Heading, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { CompactSelect } from './compact-select'
 import { money, monthly, valueText } from './utils/format'
 
 export interface PricingTableProps {
@@ -25,6 +26,7 @@ export interface PricingTableProps {
   defaultPeriod?: Period
   /** Marks the plan the customer is on (console). */
   currentPlan?: string
+  currentPlanName?: string
   /** Called with the plan picked; contact-sales plans call onContactSales. */
   onSelect?: (plan: PublicPlan, period: Period) => void
   onContactSales?: (plan: PublicPlan) => void
@@ -106,55 +108,64 @@ export function BuilderPrices({
   const biggest = onRequest.at(-1)
   return (
     <div>
-      <h3 className="mb-1 text-base font-medium text-neutral">Builders</h3>
+      <Heading level={2} className="mb-1 text-base font-medium text-neutral">
+        Builders
+      </Heading>
       <p className="mb-3 text-sm text-neutral-subtle">
         Pick the builder per service. A build minute on a bigger builder counts more of your plan's minutes, and costs
         more beyond them. Deploy time always counts once.
       </p>
       {off > 0 && (
-        <div className="mb-3 rounded border border-brand-strong bg-surface-brand-subtle px-4 py-3 text-sm text-neutral">
+        <div className="mb-3 rounded border border-neutral bg-surface-neutral-subtle px-4 py-3 text-sm text-neutral">
           <span className="font-medium">Prepay a year of build minutes and save {off}%.</span> The minutes stay until
           you use them, on any builder.
         </div>
       )}
       <div className="overflow-x-auto rounded border border-neutral">
-        <table className="w-full text-sm">
-          <thead className="bg-surface-neutral-subtle">
-            <tr className="text-left text-sm text-neutral-subtle">
-              <th className="px-4 py-2 font-medium">Builder</th>
-              <th className="px-4 py-2 font-medium">One build minute counts</th>
+        <TablePrimitives.Table.Root containerClassName="rounded-none border-0" className="w-full text-sm">
+          <TablePrimitives.Table.Header className="bg-surface-neutral-subtle text-xs">
+            <TablePrimitives.Table.Row className="text-left text-neutral-subtle">
+              <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                Builder
+              </TablePrimitives.Table.ColumnHeaderCell>
+              <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                One build minute counts
+              </TablePrimitives.Table.ColumnHeaderCell>
               {priced.map((x) => (
-                <th key={x.plan.code} className="whitespace-nowrap px-4 py-2 text-right font-medium">
+                <TablePrimitives.Table.ColumnHeaderCell
+                  key={x.plan.code}
+                  className="whitespace-nowrap text-right font-normal"
+                >
                   {x.plan.name}
-                </th>
+                </TablePrimitives.Table.ColumnHeaderCell>
               ))}
-            </tr>
-          </thead>
-          <tbody>
+            </TablePrimitives.Table.Row>
+          </TablePrimitives.Table.Header>
+          <TablePrimitives.Table.Body>
             {listed.map((s, i) => (
-              <tr key={s.code} className="border-t border-neutral align-top">
-                <td className="min-w-48 px-4 py-2 text-neutral">
+              <TablePrimitives.Table.Row key={s.code} className="border-t border-neutral align-top [&>td]:py-3">
+                <TablePrimitives.Table.Cell className="min-w-48 text-neutral">
                   {s.name}
                   {i === 0 && <span className="text-sm text-neutral-subtle"> (default)</span>}
                   <div className="text-sm text-neutral-subtle">
                     up to {s.max_cpu_milli / 1000} vCPU, {s.max_ram_gib} GiB
                   </div>
                   {s.description && <div className="mt-0.5 max-w-xs text-sm text-neutral-subtle">{s.description}</div>}
-                </td>
-                <td className="whitespace-nowrap px-4 py-2 text-neutral">
+                </TablePrimitives.Table.Cell>
+                <TablePrimitives.Table.Cell className="whitespace-nowrap text-neutral">
                   {s.multiplier === 1 ? '1 minute' : `${s.multiplier} minutes`}
-                </td>
+                </TablePrimitives.Table.Cell>
                 {priced.map((x) => (
-                  <td key={x.plan.code} className="whitespace-nowrap px-4 py-2 text-right text-neutral">
+                  <TablePrimitives.Table.Cell key={x.plan.code} className="whitespace-nowrap text-right text-neutral">
                     {at(x.price!, s, false)}
                     <span className="text-sm text-neutral-subtle"> / min</span>
                     {off > 0 && <div className="text-sm text-positive">{at(x.price!, s, true)} prepaid yearly</div>}
-                  </td>
+                  </TablePrimitives.Table.Cell>
                 ))}
-              </tr>
+              </TablePrimitives.Table.Row>
             ))}
-          </tbody>
-        </table>
+          </TablePrimitives.Table.Body>
+        </TablePrimitives.Table.Root>
       </div>
       <p className="mt-2 text-sm text-neutral-subtle">Prices apply beyond the minutes included in each plan.</p>
       {biggest && (
@@ -192,6 +203,7 @@ export function PricingTable({
   currency: cur0 = 'USD',
   defaultPeriod = 'year',
   currentPlan,
+  currentPlanName,
   onSelect,
   onContactSales,
   details = true,
@@ -241,46 +253,56 @@ export function PricingTable({
   const salesPlan = plans.find((p) => p.contact_sales)
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 text-sm">
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <SegmentedControl.Root value={period} onValueChange={(v) => setPeriod(v as Period)}>
-          <SegmentedControl.Item value="month">Monthly</SegmentedControl.Item>
-          <SegmentedControl.Item value="year">
-            Yearly{saving ? ` (save ${Math.round(saving)}%)` : ''}
-          </SegmentedControl.Item>
-        </SegmentedControl.Root>
+        <CompactSelect
+          ariaLabel="Billing period"
+          value={period}
+          onChange={(v) => setPeriod(v as Period)}
+          options={[
+            { value: 'month', label: 'Monthly' },
+            { value: 'year', label: saving ? `Yearly (save ${Math.round(saving)}%)` : 'Yearly' },
+          ]}
+        />
         {currencySwitch && data.currencies.length > 1 && (
-          <SegmentedControl.Root value={currency} onValueChange={setCurrency}>
-            {data.currencies.map((c) => (
-              <SegmentedControl.Item key={c} value={c}>
-                {c}
-              </SegmentedControl.Item>
-            ))}
-          </SegmentedControl.Root>
+          <CompactSelect
+            ariaLabel="Currency"
+            value={currency}
+            onChange={setCurrency}
+            options={data.currencies.map((c) => ({ value: c, label: c }))}
+          />
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+      {currentPlan && !plans.some((p) => p.code === currentPlan) && (
+        <div className="rounded border border-brand-strong bg-surface-brand-subtle p-4 text-sm">
+          Current plan: <span className="font-medium">{currentPlanName ?? currentPlan}</span>
+        </div>
+      )}
+      <div
+        className={`grid grid-cols-1 gap-3 md:grid-cols-2 ${plans.length === 5 ? 'xl:grid-cols-5' : 'xl:grid-cols-4'}`}
+      >
         {plans.map((p, i) => {
           const m = monthly(p.prices, currency, period)
           const yearly = p.prices.find((x) => x.currency === currency && x.period === 'year')
           const current = currentPlan === p.code
-          const popular = !p.contact_sales && i === Math.min(1, plans.length - 1)
           return (
             <div
               key={p.code}
-              className={`flex flex-col rounded border bg-surface-neutral p-6 ${popular ? 'border-brand-strong' : 'border-neutral'}`}
+              className={`flex flex-col rounded border p-4 text-sm ${current ? 'border-brand-strong bg-surface-brand-subtle' : 'border-neutral bg-surface-neutral'}`}
             >
               <div className="mb-1 flex flex-wrap items-center gap-2">
-                <h3 className="text-lg font-medium text-neutral">{p.name}</h3>
-                {popular && (
-                  <Badge className="font-medium" color="brand" variant="surface" size="sm">
-                    Most popular
-                  </Badge>
-                )}
+                <Heading level={3} className="text-sm font-medium text-neutral">
+                  {p.name}
+                </Heading>
                 {current && (
                   <Badge className="font-medium" color="neutral" variant="surface" size="sm">
                     Current plan
+                  </Badge>
+                )}
+                {!p.contact_sales && i === Math.min(1, plans.length - 1) && (
+                  <Badge color="neutral" variant="surface" size="sm">
+                    Most popular
                   </Badge>
                 )}
                 {p.draft && (
@@ -289,19 +311,19 @@ export function PricingTable({
                   </Badge>
                 )}
               </div>
-              <p className="mb-5 min-h-10 text-sm text-neutral-subtle">{p.description}</p>
-              <div className="mb-5 min-h-16">
+              <p className="mb-4 text-sm text-neutral-subtle">{p.description}</p>
+              <div className="mb-4 min-h-10">
                 {p.free ? (
                   <div>
-                    <span className="text-3xl font-medium text-neutral">Free</span>
+                    <span className="text-sm font-medium text-neutral">Free</span>
                     <div className="text-sm text-neutral-subtle">no credit card</div>
                   </div>
                 ) : p.contact_sales || m == null ? (
-                  <div className="text-2xl font-medium text-neutral">Custom</div>
+                  <div className="text-sm font-medium text-neutral">Custom</div>
                 ) : (
                   <>
                     <div>
-                      <span className="text-3xl font-medium text-neutral">{money(m, currency)}</span>
+                      <span className="text-sm font-medium text-neutral">{money(m, currency)}</span>
                       <span className="text-sm text-neutral-subtle"> / month</span>
                     </div>
                     <div className="text-sm text-neutral-subtle">
@@ -312,30 +334,7 @@ export function PricingTable({
                   </>
                 )}
               </div>
-              {p.contact_sales ? (
-                <Button
-                  size="lg"
-                  variant="outline"
-                  color="neutral"
-                  className="mb-5 w-full justify-center"
-                  disabled={!onContactSales}
-                  onClick={() => onContactSales?.(p)}
-                >
-                  Contact sales
-                </Button>
-              ) : (
-                <Button
-                  size="lg"
-                  variant={popular ? 'solid' : 'outline'}
-                  color={popular ? 'brand' : 'neutral'}
-                  className="mb-5 w-full justify-center"
-                  disabled={current || !onSelect}
-                  onClick={() => onSelect?.(p, period)}
-                >
-                  {current ? 'Current plan' : currentPlan ? `Switch to ${p.name}` : 'Get started'}
-                </Button>
-              )}
-              <ul className="flex flex-col gap-2 text-sm text-neutral">
+              <ul className="flex flex-1 flex-col gap-2 text-sm text-neutral">
                 {HIGHLIGHTS.map((k) => p.entitlements.find((e) => e.sku === k))
                   .filter((e): e is PublicEntitlement => !!e && e.value !== false && e.value !== 0)
                   .map((e) => (
@@ -351,6 +350,29 @@ export function PricingTable({
                   </li>
                 )}
               </ul>
+              {p.contact_sales ? (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  color="neutral"
+                  className="mt-4 w-full justify-center"
+                  disabled={!onContactSales}
+                  onClick={() => onContactSales?.(p)}
+                >
+                  Contact sales
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  color="neutral"
+                  className="mt-4 w-full justify-center"
+                  disabled={current || !onSelect}
+                  onClick={() => onSelect?.(p, period)}
+                >
+                  {current ? 'Current plan' : currentPlan ? `Switch to ${p.name}` : 'Get started'}
+                </Button>
+              )}
             </div>
           )
         })}
@@ -358,21 +380,26 @@ export function PricingTable({
 
       {details && (
         <div className="overflow-x-auto rounded border border-neutral">
-          <table className="w-full min-w-[720px] text-sm">
-            <thead>
-              <tr className="border-b border-neutral bg-surface-neutral-subtle text-left text-sm text-neutral-subtle">
-                <th className="px-4 py-3 font-medium">Compare plans</th>
+          <TablePrimitives.Table.Root
+            containerClassName="rounded-none border-0"
+            className="w-full min-w-[720px] text-sm"
+          >
+            <TablePrimitives.Table.Header className="text-xs">
+              <TablePrimitives.Table.Row className="border-b border-neutral bg-surface-neutral-subtle text-left text-neutral-subtle">
+                <TablePrimitives.Table.ColumnHeaderCell className="py-3 font-normal">
+                  Compare plans
+                </TablePrimitives.Table.ColumnHeaderCell>
                 {plans.map((p) => (
-                  <th key={p.code} className="px-4 py-3 font-medium text-neutral">
+                  <TablePrimitives.Table.ColumnHeaderCell key={p.code} className="py-3 font-normal text-neutral">
                     {p.name}
-                  </th>
+                  </TablePrimitives.Table.ColumnHeaderCell>
                 ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral">
+              </TablePrimitives.Table.Row>
+            </TablePrimitives.Table.Header>
+            <TablePrimitives.Table.Body className="divide-y divide-neutral">
               {[...skus.values()].map((row) => (
-                <tr key={row.sku}>
-                  <td className="px-4 py-3 text-neutral">
+                <TablePrimitives.Table.Row key={row.sku}>
+                  <TablePrimitives.Table.Cell className="py-3 text-neutral">
                     <span className="inline-flex items-center gap-1.5">
                       {row.name}
                       {row.preview && (
@@ -382,35 +409,35 @@ export function PricingTable({
                       )}
                       {row.description &&
                         (tooltips ? (
-                          <Tooltip content={<span className="max-w-64 text-xs">{row.description}</span>}>
-                            <span className="cursor-help text-neutral-subtle">
+                          <Tooltip content={<span className="max-w-64 text-sm">{row.description}</span>}>
+                            <span tabIndex={0} className="cursor-help text-neutral-subtle">
                               <InfoIcon />
                             </span>
                           </Tooltip>
                         ) : (
-                          <span title={row.description} className="cursor-help text-neutral-subtle">
+                          <span title={row.description} tabIndex={0} className="cursor-help text-neutral-subtle">
                             <InfoIcon />
                           </span>
                         ))}
                     </span>
-                  </td>
+                  </TablePrimitives.Table.Cell>
                   {plans.map((p) => (
-                    <td key={p.code} className="px-4 py-3 text-neutral">
+                    <TablePrimitives.Table.Cell key={p.code} className="py-3 text-neutral">
                       <Cell e={p.entitlements.find((e) => e.sku === row.sku)} currency={currency} />
-                    </td>
+                    </TablePrimitives.Table.Cell>
                   ))}
-                </tr>
+                </TablePrimitives.Table.Row>
               ))}
-              <tr>
-                <td className="px-4 py-3 text-neutral">Support</td>
+              <TablePrimitives.Table.Row>
+                <TablePrimitives.Table.Cell className="py-3 text-neutral">Support</TablePrimitives.Table.Cell>
                 {plans.map((p) => (
-                  <td key={p.code} className="px-4 py-3 text-neutral">
+                  <TablePrimitives.Table.Cell key={p.code} className="py-3 text-neutral">
                     {p.support || '—'}
-                  </td>
+                  </TablePrimitives.Table.Cell>
                 ))}
-              </tr>
-            </tbody>
-          </table>
+              </TablePrimitives.Table.Row>
+            </TablePrimitives.Table.Body>
+          </TablePrimitives.Table.Root>
         </div>
       )}
 
@@ -425,7 +452,9 @@ export function PricingTable({
 
       {details && plans.some((p) => p.addons.length) && (
         <div>
-          <h3 className="mb-3 text-base font-medium text-neutral">Add-ons</h3>
+          <Heading level={2} className="mb-3 text-base font-medium text-neutral">
+            Add-ons
+          </Heading>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {[...new Map(plans.flatMap((p) => p.addons).map((a) => [a.code, a])).values()].map((a) => {
               const m = monthly(a.prices, currency, period)

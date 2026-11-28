@@ -22,11 +22,10 @@ import type {
   PlanProposal,
   Reactivation,
   Spend,
-  UsageSeries,
 } from 'qovery-pricing-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
-import { Badge, Button, Callout, Heading, Icon, Modal } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Heading, Icon, Modal, Navbar } from '@qovery/shared/ui'
 import { BillingAlerts } from './billing-alerts'
 import { BuildUsage } from './build-usage'
 import { CancelDialog, PlannedBanners } from './cancel'
@@ -41,7 +40,6 @@ import { PricingTable } from './pricing-table'
 import { ProposalHost } from './proposals'
 import { ReactivateFlow, SubscriptionEndedBanner } from './reactivate'
 import { UsageHistory } from './usage-history'
-import { UsageChart, UsageInsights } from './usage-insights'
 import { date, money, num, valueText } from './utils/format'
 import { estimateLineLabel } from './utils/format'
 import { INTERNAL_NOTHING_BILLED, changeBlockedText, signupTrialText } from './utils/subscription-rules'
@@ -91,7 +89,7 @@ function PageHeading({ title, description, actions }: UsagePageHeading) {
 
 function Card({ label, children, hint }: { label: string; children: React.ReactNode; hint?: React.ReactNode }) {
   return (
-    <div className="min-h-[114px] flex-1 rounded border border-neutral bg-surface-neutral p-5">
+    <div className="flex-1 rounded border border-neutral bg-surface-neutral p-4">
       <div className="mb-1 text-sm text-neutral-subtle">{label}</div>
       <div className="mb-1 text-sm font-medium text-neutral">{children}</div>
       {hint && <div className="text-sm text-neutral-subtle">{hint}</div>}
@@ -116,20 +114,18 @@ function UsageRow({
   e,
   currency,
   onUpgrade,
-  onDetails,
   onAsk,
 }: {
   e: Entitlement
   currency: string
   onUpgrade: () => void
-  onDetails?: () => void
   onAsk?: () => void
 }) {
   const finite = typeof e.value === 'number' && !isSetting(e)
   // A hard limit refuses the next one at the limit, not above it.
   const atLimit = e.mode === 'hard' && (e.over || (finite && e.used >= (e.value as number) && (e.value as number) > 0))
   return (
-    <div className="flex flex-col gap-2 px-5 py-4">
+    <div className="flex flex-col gap-1 px-4 py-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
           <span className="text-sm font-medium text-neutral">{e.name}</span>
@@ -150,7 +146,11 @@ function UsageRow({
           )}
         </div>
       </div>
-      {finite && <UsageBar used={e.used} value={e.value as number} over={e.over} />}
+      {finite && (
+        <div className="my-1">
+          <UsageBar used={e.used} value={e.value as number} over={e.over} />
+        </div>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-neutral-subtle">
         <span>
           {e.customer_note}
@@ -160,11 +160,6 @@ function UsageRow({
             : ''}
         </span>
         <span className="flex items-center gap-3">
-          {onDetails && (
-            <button type="button" className="cursor-pointer font-medium text-brand hover:underline" onClick={onDetails}>
-              View usage
-            </button>
-          )}
           {atLimit &&
             (onAsk ? (
               <button type="button" className="cursor-pointer font-medium text-brand hover:underline" onClick={onAsk}>
@@ -183,33 +178,6 @@ function UsageRow({
         </span>
       </div>
     </div>
-  )
-}
-
-function SeriesModal({ series, onClose }: { series: UsageSeries; onClose: () => void }) {
-  return (
-    <Modal
-      externalOpen
-      setExternalOpen={(o) => {
-        if (!o) onClose()
-      }}
-      width="min(860px, calc(100vw - 24px))"
-    >
-      <div className="p-6">
-        <Dialog.Title asChild>
-          <Heading level={2}>{series.name}</Heading>
-        </Dialog.Title>
-        <p className="mb-4 text-sm text-neutral-subtle">
-          {series.kind === 'meter'
-            ? 'Consumed per day and month to date, over three months.'
-            : 'In use each day, over three months.'}
-          {series.included != null
-            ? ` ${series.included.toLocaleString('en-US')} ${series.unit} included${series.kind === 'meter' ? ' per month' : ''}.`
-            : ''}
-        </p>
-        <UsageChart series={series} height={280} />
-      </div>
-    </Modal>
   )
 }
 
@@ -241,7 +209,7 @@ export function UsagePage({
     open?.proposal ? null : open?.modal ?? null
   )
   const [proposal, setProposal] = useState<PlanProposal>()
-  const [detail, setDetail] = useState<UsageSeries>()
+  const [usageView, setUsageView] = useState('organization')
   const [ask, setAsk] = useState<Entitlement>()
   const [comparePeriod, setComparePeriod] = useState<Period | undefined>(open?.period)
   const [round, setRound] = useState(0)
@@ -324,10 +292,9 @@ export function UsagePage({
     amounts && !internal && !!client.planOptions && !!client.quotePlanChange && u.billing.status !== 'cancelled'
   // A limit the plan does not include (0, nothing used) reads as "not included", with the features.
   const notIncluded = (e: Entitlement) => e.kind !== 'feature' && e.value === 0 && e.used === 0
-  const limits = u.entitlements.filter((e) => e.kind !== 'feature' && e.lifecycle !== 'preview' && !notIncluded(e))
-  const features = u.entitlements
-    .filter((e) => e.kind === 'feature' || notIncluded(e))
-    .map((e) => (e.kind === 'feature' ? e : { ...e, value: false as const }))
+  const limits = u.entitlements.filter(
+    (e) => e.kind !== 'feature' && e.value !== 'unlimited' && e.lifecycle !== 'preview' && !notIncluded(e)
+  )
   const upgrade = (p?: string) => {
     setProposal(undefined)
     setPreselect(p)
@@ -380,17 +347,15 @@ export function UsagePage({
     <div>
       {heading({
         title: 'Plan details',
-        description:
-          'Your plan, what it includes and what you use. Limits are shared by every organization of your contract.',
+        description: 'Your plan and monthly consumption.',
         actions,
       })}
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         {usageError}
         {internal && (
           <Callout.Root color="neutral">
             <Callout.Text>
-              <Callout.TextHeading>{INTERNAL_NOTHING_BILLED}</Callout.TextHeading>This organization is one of Qovery's
-              own. Usage and limits show as usual; amounts are $0 and no invoice is ever sent.
+              <Callout.TextHeading>{INTERNAL_NOTHING_BILLED}</Callout.TextHeading>
             </Callout.Text>
           </Callout.Root>
         )}
@@ -501,7 +466,7 @@ export function UsagePage({
             hint={
               ended
                 ? `Ended ${date(reactivation?.ended_on ?? u.billing.term_end)}`
-                : `${u.billing.period === 'year' ? 'Yearly' : 'Monthly'} · term ends ${date(u.billing.term_end)}`
+                : `${u.billing.period === 'year' ? 'Yearly' : 'Monthly'}, term ends ${date(u.billing.term_end)}`
             }
           >
             {u.plan.name}
@@ -512,17 +477,14 @@ export function UsagePage({
             )}
           </Card>
           {amounts && u.estimate && !ended && (
-            <Card
-              label="Estimated bill"
-              hint={`For this ${u.estimate.period}, usage so far included · next invoice ${date(u.estimate.term_end || u.billing.term_end)}`}
-            >
+            <Card label="Estimated bill" hint="Includes plan and usage">
               {money(u.estimate.total, cur)}{' '}
               <span className="text-sm font-normal text-neutral-subtle">/ {u.estimate.period}</span>
             </Card>
           )}
           {amounts && sp && (
             <Card
-              label="Above the plan this month"
+              label="Additional usage this month"
               hint={
                 <>
                   {estimatedAbove > sp.spent ? (
@@ -570,13 +532,13 @@ export function UsagePage({
 
         {amounts && !ended && u.estimate && u.estimate.lines.length > 1 && (
           <div className="rounded border border-neutral bg-surface-neutral">
-            <div className="border-b border-neutral px-5 py-2 text-xs font-medium text-neutral-subtle">
+            <div className="border-b border-neutral px-4 py-2 text-sm font-medium text-neutral-subtle">
               Estimated bill for this {u.estimate.period}
             </div>
             {u.estimate.lines.map((l, i) => (
               <div
                 key={i}
-                className="flex justify-between gap-3 border-b border-neutral px-5 py-2 text-sm last:border-b-0"
+                className="flex justify-between gap-3 border-b border-neutral px-4 py-2 text-sm last:border-b-0"
               >
                 <span className="text-neutral">
                   {estimateLineLabel(l, unitOf)}
@@ -598,43 +560,24 @@ export function UsagePage({
           />
         )}
 
-        <div>
-          <Heading level={2} className="mb-3">
-            Usage
-          </Heading>
-          <div className="divide-y divide-neutral rounded border border-neutral bg-surface-neutral">
-            {limits.map((e) => {
-              const series = u.usage_insights?.series.find((x) => x.sku === e.sku)
-              return (
+        {limits.length > 0 && (
+          <div>
+            <Heading level={2} className="mb-3">
+              Plan allowances
+            </Heading>
+            <div className="divide-y divide-neutral rounded border border-neutral bg-surface-neutral">
+              {limits.map((e) => (
                 <UsageRow
                   key={e.sku}
                   e={e}
                   currency={cur}
                   onUpgrade={() => (canChangePlan ? upgrade() : setModal('compare'))}
-                  onDetails={series ? () => setDetail(series) : undefined}
                   onAsk={!amounts && client.requestUpgrade ? () => setAsk(e) : undefined}
                 />
-              )
-            })}
-          </div>
-          {features.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2 text-xs">
-              {features.map((f) => (
-                <span
-                  key={f.sku}
-                  className={`inline-flex items-center gap-1.5 rounded border px-2 py-1 ${f.value === true ? 'border-neutral text-neutral' : 'border-neutral text-neutral-subtle'}`}
-                >
-                  <Icon
-                    iconName={f.value === true ? 'check' : 'lock'}
-                    iconStyle="regular"
-                    className={f.value === true ? 'text-positive' : ''}
-                  />
-                  {f.name}
-                </span>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <PrepaidCredits
           organizationId={organizationId}
@@ -644,17 +587,73 @@ export function UsagePage({
           onChanged={load}
         />
 
-        {client.usageHistory && <UsageHistory organizationId={organizationId} client={client} />}
-
-        {client.buildUsage && <BuildUsage organizationId={organizationId} client={client} />}
-
-        <div>
-          <Heading level={2} className="mb-1">
-            Usage details
-          </Heading>
-          <p className="mb-3 text-sm text-neutral-subtle">What the plan covers, and where this month is heading.</p>
-          <UsageInsights usage={u} overTime={!client.usageHistory} />
-        </div>
+        {(client.usageHistory || client.buildUsage) && (
+          <div>
+            <Heading level={2} className="mb-3">
+              Usage
+            </Heading>
+            <div className="rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle px-4 pb-2">
+              <Navbar.Root activeId={usageView} ariaLabel="Usage views">
+                {(client.usageHistory || client.buildUsage) && (
+                  <Navbar.Item
+                    id="organization"
+                    active={usageView === 'organization'}
+                    href="#"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      setUsageView('organization')
+                    }}
+                  >
+                    Organization
+                  </Navbar.Item>
+                )}
+                {client.buildUsage && (
+                  <Navbar.Item
+                    id="services"
+                    active={usageView === 'services'}
+                    href="#"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      setUsageView('services')
+                    }}
+                  >
+                    Services
+                  </Navbar.Item>
+                )}
+              </Navbar.Root>
+            </div>
+            <div className="relative -mt-2 overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+              {usageView === 'organization' ? (
+                <div className="divide-y divide-neutral">
+                  {client.usageHistory ? (
+                    <UsageHistory
+                      organizationId={organizationId}
+                      client={client}
+                      embedded
+                      renderDetails={
+                        client.buildUsage
+                          ? (range) => (
+                              <BuildUsage
+                                organizationId={organizationId}
+                                client={client}
+                                view="summary"
+                                embedded
+                                periodRange={range}
+                              />
+                            )
+                          : undefined
+                      }
+                    />
+                  ) : client.buildUsage ? (
+                    <BuildUsage organizationId={organizationId} client={client} view="summary" embedded />
+                  ) : null}
+                </div>
+              ) : (
+                <BuildUsage organizationId={organizationId} client={client} view="services" embedded />
+              )}
+            </div>
+          </div>
+        )}
 
         {onManageEmails ? (
           client.emailPreferences && <EmailPreferencesLink onConfigure={onManageEmails} />
@@ -662,18 +661,12 @@ export function UsagePage({
           <EmailPreferencesPanel organizationId={organizationId} client={client} />
         )}
 
-        {u.notes.length > 0 && <p className="text-sm text-neutral-subtle">{u.notes.join(' ')}</p>}
-
         {amounts && !internal && cancellation && !ending && cancellation.unavailable?.code !== 'SUBSCRIPTION_ENDED' && (
-          <div className="border-t border-neutral pt-4 text-sm text-neutral-subtle">
+          <div className="text-sm text-neutral-subtle">
             {!cancelBlocked ? (
-              <button
-                type="button"
-                className="text-neutral-subtle underline-offset-2 hover:text-neutral hover:underline"
-                onClick={() => setModal('cancel')}
-              >
+              <Button type="button" size="md" variant="outline" color="red" onClick={() => setModal('cancel')}>
                 Cancel subscription
-              </button>
+              </Button>
             ) : cancelBlocked.contact &&
               onContactSales &&
               cancellation.unavailable?.code !== 'PAYMENT_ACTIONS_UNAVAILABLE' ? (
@@ -705,9 +698,9 @@ export function UsagePage({
             }}
             width="min(1200px, calc(100vw - 24px))"
           >
-            <div className="max-h-[85vh] overflow-y-auto p-6">
+            <div className="max-h-[75vh] overflow-y-auto p-5">
               <Dialog.Title asChild>
-                <Heading level={2} className="mb-4">
+                <Heading level={2} className="mb-4 pr-8">
                   Compare plans
                 </Heading>
               </Dialog.Title>
@@ -716,6 +709,7 @@ export function UsagePage({
                 currency={cur}
                 defaultPeriod={comparePeriod ?? u.billing.period}
                 currentPlan={u.plan.code}
+                currentPlanName={u.plan.name}
                 onSelect={
                   canChangePlan
                     ? (p, period) => {
@@ -742,7 +736,6 @@ export function UsagePage({
             }}
           />
         )}
-        {detail && <SeriesModal series={detail} onClose={() => setDetail(undefined)} />}
         {modal === 'upgrade' && (
           <PlanChangeFlow
             organizationId={organizationId}

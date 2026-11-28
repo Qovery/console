@@ -1,3 +1,4 @@
+import * as Dialog from '@radix-ui/react-dialog'
 /*
  * Offers and upgrade requests in the console, from pricing-api's GET /organization/{id}/offers.
  *
@@ -12,7 +13,7 @@
 import type { Offer, Offers, PlanProposal, Trial, UpgradeRequest } from 'qovery-pricing-typescript-axios'
 import { useEffect, useState } from 'react'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
-import { Badge, Banner, Button, Callout, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
+import { Badge, Banner, Button, Callout, Heading, Icon, InputTextArea, Modal } from '@qovery/shared/ui'
 import { useProposal } from './hooks/use-proposal/use-proposal'
 import { errorText } from './parts'
 import { ProposalBanner, ProposalHost, ProposalLoadError } from './proposals'
@@ -118,7 +119,7 @@ export function OfferModal({
 }) {
   const c = offer.content
   const body = (
-    <div className="flex flex-col gap-4 p-6">
+    <div className="flex flex-col gap-4 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           {c.badge && (
@@ -132,26 +133,25 @@ export function OfferModal({
             </Badge>
           )}
         </div>
-        <button
-          type="button"
-          aria-label="Close"
-          onClick={onClose}
-          className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-subtle hover:bg-surface-neutral-componentHover"
-        >
+        <Button type="button" aria-label="Close" iconOnly size="md" variant="plain" color="neutral" onClick={onClose}>
           <Icon iconName="xmark" iconStyle="solid" />
-        </button>
+        </Button>
       </div>
-      <h2 className="h4 text-neutral">{c.title}</h2>
-      {c.body
-        .split('\n\n')
-        .filter(Boolean)
-        .map((p, i) => (
-          <p key={i} className="text-sm text-neutral-subtle">
-            {p}
-          </p>
-        ))}
+      <div className="flex flex-col gap-1">
+        <Heading level={2} className="break-words">
+          {c.title}
+        </Heading>
+        {c.body
+          .split('\n\n')
+          .filter(Boolean)
+          .map((p, i) => (
+            <p key={i} className="text-sm text-neutral-subtle">
+              {p}
+            </p>
+          ))}
+      </div>
       {offer.ends_at && <p className="text-sm text-neutral-subtle">Offer valid until {date(offer.ends_at)}.</p>}
-      <div className="flex flex-wrap justify-end gap-3 pt-2">
+      <div className="flex flex-wrap justify-end gap-3">
         <Button size="lg" variant="plain" color="neutral" onClick={onClose}>
           Not now
         </Button>
@@ -173,7 +173,10 @@ export function OfferModal({
       width="min(520px, calc(100vw - 24px))"
       buttonClose={false}
     >
-      {body}
+      <div>
+        <Dialog.Title className="sr-only">{c.title}</Dialog.Title>
+        {body}
+      </div>
     </Modal>
   )
 }
@@ -273,29 +276,33 @@ export function AskAdminModal({
       buttonClose={false}
       dismissible={!busy}
     >
-      <div className="flex flex-col gap-4 p-6">
-        <h2 className="h4 text-neutral">
-          {done ? 'Request sent' : `Ask for more ${skuName?.toLowerCase() ?? ''}`.trim()}
-        </h2>
-        {done ? (
-          <p className="text-sm text-neutral-subtle">
-            {done.existing
-              ? 'You already asked: your request is still open.'
-              : "Your organization's Owners, Admins and Billing Managers got an email and see your request on the billing page."}{' '}
-            We will email you when the plan changes.
-          </p>
-        ) : (
-          <>
+      <div className="flex flex-col gap-4 p-5">
+        <div className="flex flex-col gap-1">
+          <Dialog.Title asChild>
+            <Heading level={2} className="break-words pr-8">
+              {done ? 'Request sent' : `Ask for more ${skuName?.toLowerCase() ?? ''}`.trim()}
+            </Heading>
+          </Dialog.Title>
+          {done ? (
+            <p className="text-sm text-neutral-subtle">
+              {done.existing
+                ? 'You already asked: your request is still open.'
+                : "Your organization's Owners, Admins and Billing Managers got an email and see your request on the billing page."}{' '}
+              We will email you when the plan changes.
+            </p>
+          ) : (
             <p className="text-sm text-neutral-subtle">
               Only Owners, Admins and Billing Managers can change the plan. They get an email with your request.
             </p>
-            <InputTextArea
-              name="message"
-              label="Message (optional)"
-              value={message}
-              onChange={(e) => setMessage((e.target as HTMLTextAreaElement).value)}
-            />
-          </>
+          )}
+        </div>
+        {!done && (
+          <InputTextArea
+            name="message"
+            label="Message (optional)"
+            value={message}
+            onChange={(e) => setMessage((e.target as HTMLTextAreaElement).value)}
+          />
         )}
         {client.mode === 'preview' && !done && (
           <Callout.Root color="sky">

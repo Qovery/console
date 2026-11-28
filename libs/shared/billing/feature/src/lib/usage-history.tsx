@@ -8,20 +8,19 @@
  *   <UsageHistory organizationId={id} client={client} />
  */
 import type { UsageHistoryData as History } from 'qovery-pricing-typescript-axios'
-import { useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from 'recharts'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
 import { Button, Chart, Icon, InputText } from '@qovery/shared/ui'
 import { ChartTooltip } from './chart-tooltip'
 import { CompactSelect } from './compact-select'
 import { errorText } from './parts'
-import { money, num } from './utils/format'
+import { num } from './utils/format'
 import { quantity } from './utils/format'
 import {
   HISTORY_PRESETS,
   type HistoryPreset,
   customRangeError,
-  granularityFor,
   historyCSV,
   historyTable,
   periodLabel,
@@ -38,22 +37,20 @@ const ORG_COLORS = [
   'var(--negative-9)',
 ]
 
-const UNAVAILABLE: Record<string, string> = {
-  aws_marketplace: 'Your invoices come from AWS Marketplace: see them in AWS.',
-  not_linked: 'Billing is not set up for this organization yet.',
-  billing_unavailable: 'Invoices could not be read right now. Try again in a minute.',
-}
-
 export function UsageHistory({
   organizationId,
   client,
   today = new Date(),
+  embedded = false,
+  renderDetails,
 }: {
   organizationId: string
   client: PricingClient
+  renderDetails?: (range: { from: string; to: string; granularity: 'month' }) => ReactNode
+  embedded?: boolean
   today?: Date
 }) {
-  const [preset, setPreset] = useState<HistoryPreset>('this_month')
+  const [preset, setPreset] = useState<HistoryPreset>('last_3')
   const [custom, setCustom] = useState(() => {
     const r = presetRange('last_3', today)
     return { from: r.from, to: r.to }
@@ -62,15 +59,15 @@ export function UsageHistory({
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [metric, setMetric] = useState('')
-  const [scope, setScope] = useState('all')
+  const [scope, setScope] = useState(organizationId)
   const rangeError = preset === 'custom' ? customRangeError(custom.from, custom.to, today) : ''
   const range = useMemo(
     () =>
       preset === 'custom'
-        ? { ...custom, granularity: granularityFor(custom.from, custom.to) }
-        : presetRange(preset, today),
+        ? { ...custom, granularity: 'month' as const }
+        : { ...presetRange(preset, today), granularity: 'month' as const },
     [preset, custom.from, custom.to]
-  ) // eslint-disable-line react-hooks/exhaustive-deps
+  )
 
   useEffect(() => {
     if (!client.usageHistory || rangeError) {
@@ -99,12 +96,13 @@ export function UsageHistory({
   }, [client, organizationId, range.from, range.to, range.granularity, rangeError]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!client.usageHistory) return null
-  const series =
-    h?.series.find((s) => s.sku === metric) ?? h?.series.find((s) => s.sku === 'deploy.minutes') ?? h?.series[0]
+  const metrics =
+    h?.series.filter((s) => s.kind === 'meter' && (s.unit === 'minutes' || s.source !== 'deployments')) ?? []
+  const series = metrics.find((s) => s.sku === metric) ?? metrics.find((s) => s.sku === 'deploy.minutes') ?? metrics[0]
+  const metricName = (s: History['series'][number]) => (s.sku === 'deploy.minutes' ? 'Build + deploy minutes' : s.name)
   const orgs = h?.organizations ?? []
   const split = orgs.length > 1
   const table = h ? historyTable(h, scope) : undefined
-  const amounts = h?.amounts
   const shownOrgs = scope === 'all' ? orgs : orgs.filter((o) => o.id === scope)
   const data = series
     ? series.points.map((p) => {
@@ -129,243 +127,151 @@ export function UsageHistory({
   }
 
   return (
-    <section className="rounded border border-neutral bg-surface-neutral p-5" aria-label="Usage history">
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h3 className="text-base font-medium text-neutral">Usage history</h3>
-          <p className="text-sm text-neutral-subtle">
-            {split
-              ? 'Every organization of your contract, or one of them.'
-              : 'This organization, over the period you pick.'}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <CompactSelect
-            ariaLabel="Period"
-            value={preset}
-            onChange={(v) => setPreset(v as HistoryPreset)}
-            options={HISTORY_PRESETS.map((p) => ({ value: p.id, label: p.label }))}
-          />
-          {split && (
+    <>
+      <section
+        className={embedded ? 'p-4' : 'rounded border border-neutral bg-surface-neutral p-4'}
+        aria-label="Usage history"
+      >
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          {h && series && (
+            <p className="text-sm font-medium">
+              {metricName(series)}: {quantity(table?.totals[h.series.indexOf(series)] ?? 0, series.unit)}
+            </p>
+          )}
+          <div className="flex flex-wrap items-center gap-2">
+            {split && (
+              <CompactSelect
+                ariaLabel="Organization"
+                value={scope}
+                onChange={setScope}
+                options={[
+                  { value: 'all', label: 'All organizations' },
+                  ...orgs.map((o) => ({ value: o.id, label: o.name })),
+                ]}
+              />
+            )}
             <CompactSelect
-              ariaLabel="Organization"
-              value={scope}
-              onChange={setScope}
-              options={[
-                { value: 'all', label: 'All organizations' },
-                ...orgs.map((o) => ({ value: o.id, label: o.name })),
-              ]}
+              ariaLabel="Period"
+              value={preset}
+              onChange={(v) => setPreset(v as HistoryPreset)}
+              options={HISTORY_PRESETS.map((p) => ({ value: p.id, label: p.label }))}
             />
-          )}
-          {h && h.series.length > 0 && (
-            <CompactSelect
-              ariaLabel="Metric"
-              value={series?.sku ?? ''}
-              onChange={setMetric}
-              options={h.series.map((s) => ({ value: s.sku, label: s.name }))}
-            />
-          )}
+            {h && metrics.length > 1 && (
+              <CompactSelect
+                ariaLabel="Metric"
+                value={series?.sku ?? ''}
+                onChange={setMetric}
+                options={metrics.map((s) => ({ value: s.sku, label: metricName(s) }))}
+              />
+            )}
+            {h && series && (
+              <Button size="sm" variant="outline" color="neutral" onClick={exportCSV}>
+                <Icon iconName="download" iconStyle="regular" />
+                Export CSV
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
-      {preset === 'custom' && (
-        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-[200px_200px_1fr]">
-          <InputText
-            name="history_from"
-            label="From"
-            type="date"
-            value={custom.from}
-            onChange={(e) => setCustom((c) => ({ ...c, from: e.target.value }))}
-          />
-          <InputText
-            name="history_to"
-            label="To"
-            type="date"
-            value={custom.to}
-            onChange={(e) => setCustom((c) => ({ ...c, to: e.target.value }))}
-          />
-          <p className="self-center text-sm text-neutral-subtle">
-            {rangeError || '24 months at most. Day by day up to three months, month by month beyond.'}
+        {preset === 'custom' && (
+          <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-[200px_200px_1fr]">
+            <InputText
+              name="history_from"
+              label="From"
+              type="date"
+              value={custom.from}
+              onChange={(e) => setCustom((c) => ({ ...c, from: e.target.value }))}
+            />
+            <InputText
+              name="history_to"
+              label="To"
+              type="date"
+              value={custom.to}
+              onChange={(e) => setCustom((c) => ({ ...c, to: e.target.value }))}
+            />
+            <p className="self-center text-sm text-neutral-subtle">{rangeError || 'Up to 24 months.'}</p>
+          </div>
+        )}
+        {error && (
+          <p role="alert" className="mb-3 text-sm text-negative">
+            {error}
           </p>
-        </div>
-      )}
-      {error && (
-        <p role="alert" className="mb-3 text-sm text-negative">
-          {error}
-        </p>
-      )}
-      {!h && !error && (
-        <div className="h-[260px] animate-pulse rounded bg-surface-neutral-subtle" aria-label="Loading" />
-      )}
-      {h && (
-        <div className={loading ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-          {h.notes
-            .filter((n) => n.startsWith('No data before') || n.startsWith('No usage'))
-            .map((n) => (
-              <p key={n} className="mb-3 text-sm text-neutral-subtle">
-                <Icon iconName="circle-info" iconStyle="regular" className="mr-1" />
-                {n.replace(/(\d{4}-\d{2}-\d{2})/, (d) => periodLabel(d, true))}
-              </p>
-            ))}
-          {h.series.length === 0 && (
-            <p className="py-8 text-center text-sm text-neutral-subtle">No usage recorded in this period.</p>
-          )}
-          {series && (
-            <>
-              <div className="mb-4 grid grid-cols-2 gap-2 lg:grid-cols-4">
-                {h.series.map((s, j) => (
-                  <button
-                    key={s.sku}
-                    type="button"
-                    onClick={() => setMetric(s.sku)}
-                    className={`min-w-0 rounded border px-3 py-2 text-left transition-colors hover:bg-surface-neutral-subtle ${s.sku === series.sku ? 'border-brand-strong' : 'border-neutral'}`}
-                  >
-                    <div className="truncate text-sm text-neutral-subtle">
-                      {s.name}
-                      {s.aggregate === 'peak' ? ' (peak)' : ''}
-                    </div>
-                    <div className="text-sm font-medium text-neutral">
-                      {table?.totals[j] == null ? 'No data' : quantity(table.totals[j] as number, s.unit)}
-                    </div>
-                  </button>
-                ))}
-                {scope === 'all' && amounts && !amounts.unavailable && (
-                  <div className="rounded border border-neutral px-3 py-2">
-                    <div className="text-sm text-neutral-subtle">Invoiced</div>
-                    <div className="text-sm font-medium text-neutral">{money(amounts.total, amounts.currency)}</div>
-                  </div>
-                )}
-              </div>
-              <Chart.Container style={{ height: 240 }} isEmpty={!data.length}>
-                <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                  <CartesianGrid horizontal vertical={false} stroke="var(--neutral-4)" />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={24} />
-                  <YAxis tickLine={false} axisLine={false} width={52} tickFormatter={(v: number) => num(v)} />
-                  <Chart.Tooltip
-                    content={
-                      <ChartTooltip
-                        title={series.name}
-                        formatLabel={(k) => orgs.find((o) => o.id === k)?.name ?? k}
-                        formatValue={(v) => quantity(Number(v), series.unit)}
+        )}
+        {!h && !error && (
+          <div className="h-[260px] animate-pulse rounded bg-surface-neutral-subtle" aria-label="Loading" />
+        )}
+        {h && (
+          <div className={loading ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
+            {h.notes
+              .filter((n) => n.startsWith('No data before') || n.startsWith('No usage'))
+              .map((n) => (
+                <p key={n} className="mb-3 text-sm text-neutral-subtle">
+                  <Icon iconName="circle-info" iconStyle="regular" className="mr-1" />
+                  {n.replace(/(\d{4}-\d{2}-\d{2})/, (d) => periodLabel(d, true))}
+                </p>
+              ))}
+            {metrics.length === 0 && (
+              <p className="py-8 text-center text-sm text-neutral-subtle">No usage recorded in this period.</p>
+            )}
+            {series && (
+              <>
+                <Chart.Container style={{ height: 240 }} isEmpty={!data.length}>
+                  <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                    <CartesianGrid horizontal vertical={false} stroke="var(--neutral-4)" />
+                    <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={24} />
+                    <YAxis tickLine={false} axisLine={false} width={52} tickFormatter={(v: number) => num(v)} />
+                    <Chart.Tooltip
+                      cursor={{ fill: 'var(--neutral-2)' }}
+                      content={
+                        <ChartTooltip
+                          title={metricName(series)}
+                          formatLabel={(k) => orgs.find((o) => o.id === k)?.name ?? k}
+                          formatValue={(v) => quantity(Number(v), series.unit)}
+                        />
+                      }
+                    />
+                    {included != null && (
+                      <ReferenceLine
+                        y={included}
+                        stroke="var(--warning-9)"
+                        strokeDasharray="4 4"
+                        label={{
+                          value: `Included: ${num(included)}${series.kind === 'meter' ? ' / month' : ''}`,
+                          position: 'insideTopLeft',
+                          fontSize: 11,
+                          fill: 'var(--neutral-11)',
+                        }}
                       />
-                    }
-                  />
-                  {included != null && (
-                    <ReferenceLine
-                      y={included}
-                      stroke="var(--warning-9)"
-                      strokeDasharray="4 4"
-                      label={{
-                        value: `Included: ${num(included)}${series.kind === 'meter' ? ' / month' : ''}`,
-                        position: 'insideTopLeft',
-                        fontSize: 11,
-                        fill: 'var(--neutral-11)',
-                      }}
-                    />
-                  )}
-                  {shownOrgs.map((o, i) => (
-                    <Bar
-                      key={o.id}
-                      dataKey={o.id}
-                      name={o.id}
-                      stackId="o"
-                      fill={ORG_COLORS[i % ORG_COLORS.length]}
-                      isAnimationActive={false}
-                    />
-                  ))}
-                </BarChart>
-              </Chart.Container>
-              <div className="mt-2 flex flex-wrap gap-4 text-sm text-neutral-subtle">
-                {split &&
-                  shownOrgs.map((o, i) => (
-                    <span key={o.id} className="inline-flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-sm" style={{ background: ORG_COLORS[i % ORG_COLORS.length] }} />
-                      {o.name}
-                    </span>
-                  ))}
-                <span>
-                  {series.aggregate === 'peak'
-                    ? `The most in use on a day of each ${h.granularity}.`
-                    : `Consumed per ${h.granularity}.`}
-                </span>
-              </div>
-            </>
-          )}
-          {table && table.rows.length > 0 && h.series.length > 0 && (
-            <div className="mt-5">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <h4 className="text-sm font-medium text-neutral">Per {h.granularity}</h4>
-                <Button size="sm" variant="outline" color="neutral" onClick={exportCSV}>
-                  <Icon iconName="download" iconStyle="regular" />
-                  Export CSV
-                </Button>
-              </div>
-              <div className="max-h-[360px] overflow-auto rounded border border-neutral">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-surface-neutral">
-                    <tr className="text-left text-sm text-neutral-subtle">
-                      <th className="px-3 py-2 font-medium">{h.granularity === 'month' ? 'Month' : 'Day'}</th>
-                      {table.columns.map((c) => (
-                        <th key={c.sku} className="whitespace-nowrap px-3 py-2 text-right font-medium">
-                          {c.label}
-                          {c.aggregate === 'peak' ? ' (peak)' : ''}
-                        </th>
-                      ))}
-                      {table.invoiced && (
-                        <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Invoiced</th>
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral">
-                    {table.rows.map((r) => (
-                      <tr key={r.period}>
-                        <td className="whitespace-nowrap px-3 py-1.5 text-neutral">{r.label}</td>
-                        {r.cells.map((v, j) => (
-                          <td
-                            key={j}
-                            className={`whitespace-nowrap px-3 py-1.5 text-right ${v == null ? 'text-neutral-subtle' : 'text-neutral'}`}
-                          >
-                            {v == null ? 'No data' : quantity(v, table.columns[j].unit)}
-                          </td>
-                        ))}
-                        {table.invoiced && (
-                          <td className="whitespace-nowrap px-3 py-1.5 text-right text-neutral">
-                            {r.invoiced ? money(r.invoiced, table.invoiced.currency) : '—'}
-                          </td>
-                        )}
-                      </tr>
+                    )}
+                    {shownOrgs.map((o, i) => (
+                      <Bar
+                        key={o.id}
+                        dataKey={o.id}
+                        name={o.id}
+                        stackId="o"
+                        fill={ORG_COLORS[i % ORG_COLORS.length]}
+                        isAnimationActive={false}
+                      />
                     ))}
-                  </tbody>
-                  <tfoot className="border-t border-neutral">
-                    <tr className="font-medium">
-                      <td className="px-3 py-2 text-neutral">Total</td>
-                      {table.totals.map((v, j) => (
-                        <td key={j} className="whitespace-nowrap px-3 py-2 text-right text-neutral">
-                          {v == null ? 'No data' : quantity(v, table.columns[j].unit)}
-                        </td>
-                      ))}
-                      {table.invoiced && (
-                        <td className="whitespace-nowrap px-3 py-2 text-right text-neutral">
-                          {money(table.invoiced.total, table.invoiced.currency)}
-                        </td>
-                      )}
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-              <p className="mt-2 text-sm text-neutral-subtle">
-                {amounts
-                  ? amounts.unavailable
-                    ? UNAVAILABLE[amounts.unavailable]
-                    : h.granularity === 'month'
-                      ? `Invoiced: what your invoices for the whole contract total each month, as on the Invoices page${scope === 'all' ? '' : ' (shown for all organizations only)'}.`
-                      : `Invoiced in this period: ${money(amounts.total, amounts.currency)} for the whole contract. Pick months to see it per month.`
-                  : 'Quantities only. Owners, Admins and Billing Managers also see the amounts invoiced.'}
-                {split && scope === 'all' ? ' Counts are added across organizations on their busiest day.' : ''}
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-    </section>
+                  </BarChart>
+                </Chart.Container>
+                <div className="mt-2 flex flex-wrap gap-4 text-sm text-neutral-subtle">
+                  {split &&
+                    shownOrgs.map((o, i) => (
+                      <span key={o.id} className="inline-flex items-center gap-1.5">
+                        <span
+                          className="h-2 w-2 rounded-sm"
+                          style={{ background: ORG_COLORS[i % ORG_COLORS.length] }}
+                        />
+                        {o.name}
+                      </span>
+                    ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </section>
+      {!rangeError && renderDetails?.(range)}
+    </>
   )
 }

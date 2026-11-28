@@ -1,16 +1,17 @@
+import * as Dialog from '@radix-ui/react-dialog'
 /*
  * Prepaid credits on the usage page: what is left of each balance, the purchases, and "Buy
- * credits": pick what to buy and how much, see the live quote (today's charge, the saving against
- * pay as you go, the balance after), then pay with the card on file. Credits are added only once
+ * credits": pick what to buy and how much, see the quoted charge on the pay button,
+ * then pay with the card on file. Credits are added only once
  * the payment goes through. Members see their balances, never prices or the buy button.
  */
 import type { BillingUsage, CreditOption, CreditPurchaseResult, Credits } from 'qovery-pricing-typescript-axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BillingError, type PricingClient } from '@qovery/shared/billing/data-access'
-import { Button, Callout, Icon, InputText, Modal, RadioGroup, SegmentedControl } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, InputText, Modal, RadioGroup, TablePrimitives } from '@qovery/shared/ui'
+import { CompactSelect } from './compact-select'
 import { openPaymentMethodPage } from './invoices-page'
 import { errorText, notifySuccess } from './parts'
-import { Fact } from './plan-change'
 import { date, money, num } from './utils/format'
 import { quantity } from './utils/format'
 import { changeBlockedText, creditQuantityError, newIdempotencyKey } from './utils/subscription-rules'
@@ -52,18 +53,23 @@ export function PrepaidCredits({
     // Members: balances only, from the plan and usage answer.
     if (usage.prepaid_credits.length === 0) return null
     return (
-      <section className="rounded border border-neutral bg-surface-neutral">
-        <Header />
-        <div className="divide-y divide-neutral border-t border-neutral">
-          {usage.prepaid_credits.map((c) => (
-            <div key={c.sku} className="flex flex-wrap items-baseline justify-between gap-2 px-5 py-3 text-sm">
-              <span className="font-medium text-neutral">{c.name}</span>
-              <span className="text-neutral">
-                {quantity(c.remaining, c.unit)} left{' '}
-                <span className="text-sm text-neutral-subtle">· {NO_EXPIRY.toLowerCase()}</span>
-              </span>
-            </div>
-          ))}
+      <section>
+        <Heading level={2} className="mb-3">
+          Prepaid credits
+        </Heading>
+        <div className="overflow-hidden rounded border border-neutral bg-surface-neutral">
+          <Header />
+          <div className="divide-y divide-neutral border-t border-neutral">
+            {usage.prepaid_credits.map((c) => (
+              <div key={c.sku} className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3 text-sm">
+                <span className="font-medium text-neutral">{c.name}</span>
+                <span className="text-neutral">
+                  {quantity(c.remaining, c.unit)} left{' '}
+                  <span className="text-sm text-neutral-subtle">· {NO_EXPIRY.toLowerCase()}</span>
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     )
@@ -81,130 +87,156 @@ export function PrepaidCredits({
   const cur = credits.currency
   const blocked = changeBlockedText(credits.buy, 'credits')
   return (
-    <section className="rounded border border-neutral bg-surface-neutral">
-      <Header
-        action={
-          credits.options.length > 0 && client.buyCredits ? (
-            <Button size="md" onClick={() => setOpen(true)}>
+    <section>
+      <Heading level={2} className="mb-3">
+        Prepaid credits
+      </Heading>
+      <div className="overflow-hidden rounded border border-neutral bg-surface-neutral">
+        <div className="flex flex-col items-start gap-4 p-4">
+          <div className="text-sm text-neutral-subtle">
+            {credits.balances.length === 0 && <p>No prepaid credits yet.</p>}
+            {blocked ? <p>{blocked.body}</p> : <p>Prepaid credits never expire.</p>}
+          </div>
+          {loadError}
+          {credits.options.length > 0 && client.buyCredits && (
+            <Button size="md" variant="outline" color="neutral" onClick={() => setOpen(true)}>
               <Icon iconName="plus" iconStyle="regular" />
               Buy credits
             </Button>
-          ) : undefined
-        }
-      />
-      {loadError && <div className="px-5 pb-4">{loadError}</div>}
-      {blocked && (
-        <div className="px-5 pb-4">
-          <p className="text-sm text-neutral-subtle">
-            {blocked.title}. {blocked.body}
-          </p>
+          )}
         </div>
-      )}
-      <div className="border-t border-neutral">
-        {credits.balances.length === 0 ? (
-          <p className="px-5 py-4 text-sm text-neutral-subtle">
-            No prepaid credits yet. Prepaid units cost the same as pay as you go, are paid upfront and are used before
-            any overage.
-          </p>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-sm text-neutral-subtle">
-                <th className="px-5 py-2 font-medium">Credits</th>
-                <th className="px-3 py-2 text-right font-medium">Bought</th>
-                <th className="px-3 py-2 text-right font-medium">Used this month</th>
-                <th className="px-3 py-2 text-right font-medium">Left</th>
-                <th className="px-5 py-2 text-right font-medium">Expires</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral">
-              {credits.balances.map((b) => (
-                <tr key={b.sku}>
-                  <td className="px-5 py-2 text-neutral">{b.name}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right text-neutral">{quantity(b.bought, b.unit)}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right text-neutral">{quantity(b.drawing, b.unit)}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-right font-medium text-neutral">
-                    {quantity(b.remaining, b.unit)}
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-2 text-right text-neutral-subtle">
-                    {b.expires_on ? date(b.expires_on) : NO_EXPIRY}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {credits.balances.length > 0 && (
+          <div className="border-t border-neutral">
+            <TablePrimitives.Table.Root containerClassName="rounded-none border-0" className="w-full text-sm">
+              <TablePrimitives.Table.Header className="text-xs">
+                <TablePrimitives.Table.Row className="text-left text-neutral-subtle">
+                  <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                    Credits
+                  </TablePrimitives.Table.ColumnHeaderCell>
+                  <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                    Bought
+                  </TablePrimitives.Table.ColumnHeaderCell>
+                  <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                    Used this month
+                  </TablePrimitives.Table.ColumnHeaderCell>
+                  <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                    Left
+                  </TablePrimitives.Table.ColumnHeaderCell>
+                  <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                    Expires
+                  </TablePrimitives.Table.ColumnHeaderCell>
+                </TablePrimitives.Table.Row>
+              </TablePrimitives.Table.Header>
+              <TablePrimitives.Table.Body className="divide-y divide-neutral">
+                {credits.balances.map((b) => (
+                  <TablePrimitives.Table.Row key={b.sku}>
+                    <TablePrimitives.Table.Cell className="text-neutral">{b.name}</TablePrimitives.Table.Cell>
+                    <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral">
+                      {quantity(b.bought, b.unit)}
+                    </TablePrimitives.Table.Cell>
+                    <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral">
+                      {quantity(b.drawing, b.unit)}
+                    </TablePrimitives.Table.Cell>
+                    <TablePrimitives.Table.Cell className="whitespace-nowrap text-right font-medium text-neutral">
+                      {quantity(b.remaining, b.unit)}
+                    </TablePrimitives.Table.Cell>
+                    <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral-subtle">
+                      {b.expires_on ? date(b.expires_on) : NO_EXPIRY}
+                    </TablePrimitives.Table.Cell>
+                  </TablePrimitives.Table.Row>
+                ))}
+              </TablePrimitives.Table.Body>
+            </TablePrimitives.Table.Root>
+          </div>
+        )}
+        {credits.auto_reload
+          .filter((a) => a.enabled)
+          .map((a) => (
+            <p key={a.sku} className="border-t border-neutral px-4 py-3 text-sm text-neutral-subtle">
+              Auto-reload is on for {a.name.toLowerCase()}: {quantity(a.reload_units, '')} more are bought when{' '}
+              {quantity(a.below_units, '')} or fewer are left.
+            </p>
+          ))}
+        {credits.purchases.length > 0 && (
+          <div className="border-t border-neutral">
+            <Heading level={3} className="px-4 pb-1 pt-4 text-sm font-medium text-neutral">
+              Purchases
+            </Heading>
+            <div className="max-h-[320px] overflow-auto">
+              <TablePrimitives.Table.Root containerClassName="rounded-none border-0" className="w-full text-sm">
+                <TablePrimitives.Table.Header className="sticky top-0 bg-surface-neutral text-xs">
+                  <TablePrimitives.Table.Row className="text-left text-neutral-subtle">
+                    <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                      Date
+                    </TablePrimitives.Table.ColumnHeaderCell>
+                    <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                      Credits
+                    </TablePrimitives.Table.ColumnHeaderCell>
+                    <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                      Quantity
+                    </TablePrimitives.Table.ColumnHeaderCell>
+                    <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                      Amount
+                    </TablePrimitives.Table.ColumnHeaderCell>
+                    <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                      Bought by
+                    </TablePrimitives.Table.ColumnHeaderCell>
+                  </TablePrimitives.Table.Row>
+                </TablePrimitives.Table.Header>
+                <TablePrimitives.Table.Body className="divide-y divide-neutral">
+                  {credits.purchases.map((p) => (
+                    <TablePrimitives.Table.Row key={p.id}>
+                      <TablePrimitives.Table.Cell className="whitespace-nowrap text-neutral">
+                        {date(p.date)}
+                      </TablePrimitives.Table.Cell>
+                      <TablePrimitives.Table.Cell className="text-neutral">
+                        <span className="whitespace-nowrap">{p.name}</span>
+                        {p.invoice_id && (
+                          <span className="block whitespace-nowrap text-sm text-neutral-subtle">
+                            Invoice {p.invoice_id}
+                          </span>
+                        )}
+                      </TablePrimitives.Table.Cell>
+                      <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral">
+                        {num(p.quantity)}
+                      </TablePrimitives.Table.Cell>
+                      <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral">
+                        {money(p.amount, p.currency || cur)}
+                      </TablePrimitives.Table.Cell>
+                      <TablePrimitives.Table.Cell className="whitespace-nowrap text-neutral-subtle">
+                        {p.by}
+                      </TablePrimitives.Table.Cell>
+                    </TablePrimitives.Table.Row>
+                  ))}
+                </TablePrimitives.Table.Body>
+              </TablePrimitives.Table.Root>
+            </div>
+          </div>
+        )}
+        {open && (
+          <BuyCreditsDialog
+            organizationId={organizationId}
+            client={client}
+            credits={credits}
+            onClose={() => setOpen(false)}
+            onContactSales={onContactSales}
+            onDone={(c) => {
+              if (c) setCredits(c)
+              else load()
+              onChanged?.()
+            }}
+          />
         )}
       </div>
-      {credits.auto_reload
-        .filter((a) => a.enabled)
-        .map((a) => (
-          <p key={a.sku} className="border-t border-neutral px-5 py-3 text-sm text-neutral-subtle">
-            Auto-reload is on for {a.name.toLowerCase()}: {quantity(a.reload_units, '')} more are bought when{' '}
-            {quantity(a.below_units, '')} or fewer are left.
-          </p>
-        ))}
-      {credits.purchases.length > 0 && (
-        <div className="border-t border-neutral">
-          <h4 className="px-5 pb-1 pt-4 text-sm font-medium text-neutral">Purchases</h4>
-          <div className="max-h-[320px] overflow-auto">
-            <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-surface-neutral">
-                <tr className="text-left text-sm text-neutral-subtle">
-                  <th className="px-5 py-2 font-medium">Date</th>
-                  <th className="px-3 py-2 font-medium">Credits</th>
-                  <th className="px-3 py-2 text-right font-medium">Quantity</th>
-                  <th className="px-3 py-2 text-right font-medium">Amount</th>
-                  <th className="px-5 py-2 font-medium">Bought by</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral">
-                {credits.purchases.map((p) => (
-                  <tr key={p.id}>
-                    <td className="whitespace-nowrap px-5 py-2 text-neutral">{date(p.date)}</td>
-                    <td className="px-3 py-2 text-neutral">
-                      <span className="whitespace-nowrap">{p.name}</span>
-                      {p.invoice_id && (
-                        <span className="block whitespace-nowrap text-sm text-neutral-subtle">
-                          Invoice {p.invoice_id}
-                        </span>
-                      )}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2 text-right text-neutral">{num(p.quantity)}</td>
-                    <td className="whitespace-nowrap px-3 py-2 text-right text-neutral">
-                      {money(p.amount, p.currency || cur)}
-                    </td>
-                    <td className="whitespace-nowrap px-5 py-2 text-neutral-subtle">{p.by}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-      {open && (
-        <BuyCreditsDialog
-          organizationId={organizationId}
-          client={client}
-          credits={credits}
-          onClose={() => setOpen(false)}
-          onContactSales={onContactSales}
-          onDone={(c) => {
-            if (c) setCredits(c)
-            else load()
-            onChanged?.()
-          }}
-        />
-      )}
     </section>
   )
 }
 
 function Header({ action }: { action?: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-start justify-between gap-3 p-5">
+    <div className="flex flex-wrap items-start justify-between gap-3 p-4">
       <div>
-        <h3 className="text-base font-medium text-neutral">Prepaid credits</h3>
-        <p className="mt-1 text-sm text-neutral-subtle">
+        <p className="text-sm text-neutral-subtle">
           Units paid upfront, used before any overage. They have no expiry date.
         </p>
       </div>
@@ -334,27 +366,36 @@ export function BuyCreditsDialog({
       }}
       width="min(640px, calc(100vw - 24px))"
       buttonClose={false}
+      dismissible={!busy}
     >
-      <div className="flex max-h-[80vh] flex-col">
-        <div className="flex items-start gap-3 border-b border-neutral px-6 py-4">
+      <div className="flex max-h-[80vh] flex-col text-sm">
+        <div className="flex items-start gap-3 border-b border-neutral px-5 py-4">
           <div className="min-w-0 flex-1">
-            <h2 className="h4 text-neutral">{step === 'card' ? 'Add a payment method' : 'Buy prepaid credits'}</h2>
-            <p className="text-sm text-neutral-subtle">
+            <Dialog.Title asChild>
+              <Heading level={2} className="break-words pr-8">
+                {step === 'card' ? 'Add a payment method' : 'Buy prepaid credits'}
+              </Heading>
+            </Dialog.Title>
+            <p className="mt-1 text-sm text-neutral-subtle">
               {step === 'card'
                 ? 'Prepaid credits are paid by card when you buy them.'
                 : 'Paid now with the card on file, used before any overage.'}
             </p>
           </div>
-          <button
+          <Button
             type="button"
             aria-label="Close"
+            disabled={busy}
+            iconOnly
+            size="md"
+            variant="plain"
+            color="neutral"
             onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-full text-neutral-subtle hover:bg-surface-neutral-componentHover"
           >
             <Icon iconName="xmark" iconStyle="solid" />
-          </button>
+          </Button>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
           {client.mode === 'preview' && (
             <Callout.Root color="sky">
               <Callout.Text>Preview: quotes are real, nothing is charged.</Callout.Text>
@@ -417,19 +458,19 @@ export function BuyCreditsDialog({
                 </RadioGroup.Root>
               </fieldset>
               {opt?.annual && (
-                <SegmentedControl.Root
+                <CompactSelect
+                  ariaLabel="Purchase period"
                   value={annual ? 'year' : 'pack'}
-                  onValueChange={(v) => {
+                  onChange={(v) => {
                     const a = v === 'year'
                     setAnnual(a)
                     setQty(String(a ? opt.annual!.min : opt.packs[0] ?? opt.min))
                   }}
-                >
-                  <SegmentedControl.Item value="pack">A pack</SegmentedControl.Item>
-                  <SegmentedControl.Item value="year">
-                    A year upfront ({opt.annual.discount_pct}% off)
-                  </SegmentedControl.Item>
-                </SegmentedControl.Root>
+                  options={[
+                    { value: 'pack', label: 'A pack' },
+                    { value: 'year', label: `A year upfront (${opt.annual.discount_pct}% off)` },
+                  ]}
+                />
               )}
               {opt && (
                 <div className="flex flex-col gap-2">
@@ -458,35 +499,7 @@ export function BuyCreditsDialog({
                 </div>
               )}
               {q ? (
-                <div className="flex flex-col gap-3">
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <Fact
-                      label="Today"
-                      hint={`${quantity(q.quantity, q.unit)} at ${money(q.unit_price, q.currency)} each`}
-                    >
-                      {money(q.amount, q.currency)}
-                    </Fact>
-                    <Fact
-                      label="Against pay as you go"
-                      hint={
-                        q.saving > 0
-                          ? `${money(q.payg_amount, q.currency)} as overage`
-                          : 'Paid upfront, used before any overage'
-                      }
-                    >
-                      {q.saving > 0 ? `You save ${money(q.saving, q.currency)}` : 'Same price per unit'}
-                    </Fact>
-                    <Fact label="Balance after" hint="Prepaid units left once this is added">
-                      {quantity(q.balance_after, q.unit)}
-                    </Fact>
-                    <Fact label="Expires" hint="Prepaid units stay until used">
-                      {q.expires_on ? date(q.expires_on) : NO_EXPIRY}
-                    </Fact>
-                  </div>
-                  <p className="text-sm text-neutral-subtle">
-                    {q.tax_note} The credits are added once the payment goes through.
-                  </p>
-                </div>
+                <p className="text-sm text-neutral-subtle">{q.tax_note}</p>
               ) : quoting && !invalid ? (
                 <p className="text-sm text-neutral-subtle">Pricing…</p>
               ) : null}
@@ -498,7 +511,7 @@ export function BuyCreditsDialog({
             </Callout.Root>
           )}
         </div>
-        <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-6 py-3">
+        <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-5 py-4">
           <Button size="lg" variant="plain" color="neutral" onClick={onClose} disabled={busy}>
             Cancel
           </Button>

@@ -16,7 +16,7 @@ import type {
 import { Fragment, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { type PricingClient, billing } from '@qovery/shared/billing/data-access'
-import { Badge, Button, Callout, Chart, Heading, Icon, Modal } from '@qovery/shared/ui'
+import { Badge, Button, Callout, Chart, Heading, Icon, Modal, TablePrimitives } from '@qovery/shared/ui'
 import { ChartTooltip } from './chart-tooltip'
 import { errorText } from './parts'
 import { amount, localDate, num, quantity } from './utils/format'
@@ -24,11 +24,11 @@ import { invoiceDetailsCSV, invoiceStatus, lineKindLabel, usageCoverageText, usa
 
 const ORG_COLORS = [
   'var(--brand-9)',
-  'var(--sky-9)',
-  'var(--green-9)',
-  'var(--yellow-9)',
-  'var(--purple-9)',
-  'var(--red-9)',
+  'var(--info-9)',
+  'var(--positive-9)',
+  'var(--warning-9)',
+  'var(--accent-9, var(--neutral-9))',
+  'var(--negative-9)',
 ]
 
 export interface InvoiceDetailsModalProps {
@@ -100,8 +100,8 @@ export function InvoiceDetailsModal({
       }}
       width="min(1040px, calc(100vw - 24px))"
     >
-      <div className="flex max-h-[85vh] flex-col">
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-neutral px-6 pb-4 pt-6">
+      <div className="flex max-h-[75vh] flex-col">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-neutral px-5 pb-4 pt-5">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <Dialog.Title asChild>
@@ -145,7 +145,7 @@ export function InvoiceDetailsModal({
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 overflow-y-auto px-6 py-5">
+        <div className="flex flex-col gap-5 overflow-y-auto p-5">
           {error && (
             <Callout.Root color="red">
               <Callout.Text>{error}</Callout.Text>
@@ -173,37 +173,45 @@ export function InvoiceDetailsModal({
               </div>
 
               <section aria-label="Invoice lines" className="overflow-hidden rounded border border-neutral">
-                <table className="w-full text-sm">
-                  <thead className="bg-surface-neutral-subtle">
-                    <tr className="text-left text-sm text-neutral-subtle">
-                      <th className="px-4 py-2 font-medium">Description</th>
-                      <th className="px-3 py-2 text-right font-medium">Quantity</th>
-                      <th className="px-3 py-2 text-right font-medium">Unit price</th>
-                      <th className="px-4 py-2 text-right font-medium">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral">
+                <TablePrimitives.Table.Root containerClassName="rounded-none border-0" className="w-full text-sm">
+                  <TablePrimitives.Table.Header className="bg-surface-neutral-subtle text-xs">
+                    <TablePrimitives.Table.Row className="text-left text-neutral-subtle">
+                      <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                        Description
+                      </TablePrimitives.Table.ColumnHeaderCell>
+                      <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                        Quantity
+                      </TablePrimitives.Table.ColumnHeaderCell>
+                      <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                        Unit price
+                      </TablePrimitives.Table.ColumnHeaderCell>
+                      <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                        Amount
+                      </TablePrimitives.Table.ColumnHeaderCell>
+                    </TablePrimitives.Table.Row>
+                  </TablePrimitives.Table.Header>
+                  <TablePrimitives.Table.Body className="divide-y divide-neutral">
                     {d.lines.length === 0 && (
-                      <tr>
-                        <td colSpan={4} className="px-4 py-6 text-center text-neutral-subtle">
+                      <TablePrimitives.Table.Row>
+                        <TablePrimitives.Table.Cell colSpan={4} className="py-6 text-center text-neutral-subtle">
                           This invoice has no line detail: the PDF shows what it bills.
-                        </td>
-                      </tr>
+                        </TablePrimitives.Table.Cell>
+                      </TablePrimitives.Table.Row>
                     )}
                     {d.lines.map((l, i) => (
                       <Fragment key={i}>
                         <LineRow line={l} currency={cur} open={!!open[i]} onToggle={() => setOpen(i)} />
                         {l.usage && open[i] && (
-                          <tr>
-                            <td colSpan={4} className="bg-surface-neutral-subtle px-4 py-4">
+                          <TablePrimitives.Table.Row>
+                            <TablePrimitives.Table.Cell colSpan={4} className="bg-surface-neutral-subtle py-4">
                               <UsageSection usage={l.usage} line={l} />
-                            </td>
-                          </tr>
+                            </TablePrimitives.Table.Cell>
+                          </TablePrimitives.Table.Row>
                         )}
                       </Fragment>
                     ))}
-                  </tbody>
-                </table>
+                  </TablePrimitives.Table.Body>
+                </TablePrimitives.Table.Root>
               </section>
               {d.notes.map((n) => (
                 <p key={n} className="text-sm text-neutral-subtle">
@@ -235,7 +243,7 @@ function Stat({
     <div className="rounded border border-neutral px-3 py-2" title={hint || undefined}>
       <div className="text-sm text-neutral-subtle">{label}</div>
       <div
-        className={`text-sm ${strong ? 'font-semibold' : 'font-medium'} ${tone === 'negative' ? 'text-negative' : 'text-neutral'}`}
+        className={`text-sm ${strong ? 'font-medium' : 'font-medium'} ${tone === 'negative' ? 'text-negative' : 'text-neutral'}`}
       >
         {value}
       </div>
@@ -257,8 +265,8 @@ function LineRow({
   const period =
     l.from && l.to && l.from !== l.to ? `${localDate(l.from)} to ${localDate(l.to)}` : l.from ? localDate(l.from) : ''
   return (
-    <tr className="align-top">
-      <td className="px-4 py-3">
+    <TablePrimitives.Table.Row className="align-top">
+      <TablePrimitives.Table.Cell className="py-3">
         <div className="flex items-center gap-2">
           <span className="font-medium text-neutral">{l.label}</span>
           <Badge className="font-medium" color={l.kind === 'usage' ? 'sky' : 'neutral'} variant="surface" size="sm">
@@ -272,7 +280,7 @@ function LineRow({
         {l.usage && (
           <button
             type="button"
-            className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-medium text-brand hover:underline"
+            className="mt-1.5 inline-flex items-center gap-1.5 text-sm font-medium text-brand hover:underline"
             aria-expanded={open}
             onClick={onToggle}
           >
@@ -280,22 +288,24 @@ function LineRow({
             {open ? 'Hide usage' : 'Usage'}
           </button>
         )}
-      </td>
-      <td className="whitespace-nowrap px-3 py-3 text-right text-neutral">{quantity(l.quantity, l.unit ?? '')}</td>
-      <td className="whitespace-nowrap px-3 py-3 text-right text-neutral-subtle">
+      </TablePrimitives.Table.Cell>
+      <TablePrimitives.Table.Cell className="whitespace-nowrap py-3 text-right text-neutral">
+        {quantity(l.quantity, l.unit ?? '')}
+      </TablePrimitives.Table.Cell>
+      <TablePrimitives.Table.Cell className="whitespace-nowrap py-3 text-right text-neutral-subtle">
         {l.unit_price != null
           ? `${amount(l.unit_price, currency)}${l.unit ? ` / ${l.unit.replace(/s$/, '')}` : ''}`
           : '—'}
-      </td>
-      <td className="whitespace-nowrap px-4 py-3 text-right">
+      </TablePrimitives.Table.Cell>
+      <TablePrimitives.Table.Cell className="whitespace-nowrap py-3 text-right">
         <div className="font-medium text-neutral">{amount(l.net, currency)}</div>
         {l.discount > 0 && (
           <div className="text-sm text-neutral-subtle">
             {amount(l.amount, currency)} less {amount(l.discount, currency)}
           </div>
         )}
-      </td>
-    </tr>
+      </TablePrimitives.Table.Cell>
+    </TablePrimitives.Table.Row>
   )
 }
 
@@ -377,39 +387,48 @@ function UsageSection({ usage: u, line }: { usage: InvoiceLineUsage; line: Invoi
               )}
             </div>
             <div className="max-h-[260px] overflow-auto rounded border border-neutral bg-surface-neutral">
-              <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-surface-neutral text-xs">
-                  <tr className="text-left text-neutral-subtle">
-                    <th className="px-3 py-2 font-medium">Day</th>
+              <TablePrimitives.Table.Root containerClassName="rounded-none border-0" className="w-full text-sm">
+                <TablePrimitives.Table.Header className="sticky top-0 bg-surface-neutral text-xs text-xs">
+                  <TablePrimitives.Table.Row className="text-left text-neutral-subtle">
+                    <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                      Day
+                    </TablePrimitives.Table.ColumnHeaderCell>
                     {split &&
                       u.organizations.map((o) => (
-                        <th key={o.organization_id} className="px-3 py-2 text-right font-medium">
+                        <TablePrimitives.Table.ColumnHeaderCell
+                          key={o.organization_id}
+                          className="text-right font-normal"
+                        >
                           {o.name}
-                        </th>
+                        </TablePrimitives.Table.ColumnHeaderCell>
                       ))}
-                    <th className="px-3 py-2 text-right font-medium">{split ? 'Total' : 'Quantity'}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral">
+                    <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                      {split ? 'Total' : 'Quantity'}
+                    </TablePrimitives.Table.ColumnHeaderCell>
+                  </TablePrimitives.Table.Row>
+                </TablePrimitives.Table.Header>
+                <TablePrimitives.Table.Body className="divide-y divide-neutral">
                   {u.days.map((x) => (
-                    <tr key={x.day}>
-                      <td className="whitespace-nowrap px-3 py-1.5 text-neutral">{localDate(x.day)}</td>
+                    <TablePrimitives.Table.Row key={x.day}>
+                      <TablePrimitives.Table.Cell className="whitespace-nowrap text-neutral">
+                        {localDate(x.day)}
+                      </TablePrimitives.Table.Cell>
                       {split &&
                         u.organizations.map((o) => (
-                          <td
+                          <TablePrimitives.Table.Cell
                             key={o.organization_id}
-                            className="whitespace-nowrap px-3 py-1.5 text-right text-neutral-subtle"
+                            className="whitespace-nowrap text-right text-neutral-subtle"
                           >
                             {num(x.organizations?.[o.organization_id] ?? 0)}
-                          </td>
+                          </TablePrimitives.Table.Cell>
                         ))}
-                      <td className="whitespace-nowrap px-3 py-1.5 text-right text-neutral">
+                      <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral">
                         {quantity(x.quantity, unit)}
-                      </td>
-                    </tr>
+                      </TablePrimitives.Table.Cell>
+                    </TablePrimitives.Table.Row>
                   ))}
-                </tbody>
-              </table>
+                </TablePrimitives.Table.Body>
+              </TablePrimitives.Table.Root>
             </div>
           </div>
         </>
@@ -445,46 +464,68 @@ function BuildsTable({ builds: b, several }: { builds: NonNullable<InvoiceLineUs
       )}
       {b.available !== 'none' && b.services.length > 0 && (
         <div className="max-h-[240px] overflow-auto rounded border border-neutral bg-surface-neutral">
-          <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-surface-neutral text-xs">
-              <tr className="text-left text-neutral-subtle">
-                <th className="px-3 py-2 font-medium">Service</th>
-                {several && <th className="px-3 py-2 font-medium">Organization</th>}
-                <th className="px-3 py-2 font-medium">Builder</th>
-                <th className="px-3 py-2 text-right font-medium">Builds</th>
-                <th className="px-3 py-2 text-right font-medium">Build time</th>
-                <th className="px-3 py-2 text-right font-medium">Counted</th>
-                <th className="px-3 py-2 text-right font-medium">Deploy time</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral">
+          <TablePrimitives.Table.Root containerClassName="rounded-none border-0" className="w-full text-sm">
+            <TablePrimitives.Table.Header className="sticky top-0 bg-surface-neutral text-xs text-xs">
+              <TablePrimitives.Table.Row className="text-left text-neutral-subtle">
+                <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                  Service
+                </TablePrimitives.Table.ColumnHeaderCell>
+                {several && (
+                  <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                    Organization
+                  </TablePrimitives.Table.ColumnHeaderCell>
+                )}
+                <TablePrimitives.Table.ColumnHeaderCell className="font-normal">
+                  Builder
+                </TablePrimitives.Table.ColumnHeaderCell>
+                <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                  Builds
+                </TablePrimitives.Table.ColumnHeaderCell>
+                <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                  Build time
+                </TablePrimitives.Table.ColumnHeaderCell>
+                <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                  Counted
+                </TablePrimitives.Table.ColumnHeaderCell>
+                <TablePrimitives.Table.ColumnHeaderCell className="text-right font-normal">
+                  Deploy time
+                </TablePrimitives.Table.ColumnHeaderCell>
+              </TablePrimitives.Table.Row>
+            </TablePrimitives.Table.Header>
+            <TablePrimitives.Table.Body className="divide-y divide-neutral">
               {b.services.map((s, i) => (
-                <tr key={i}>
-                  <td className="px-3 py-1.5 text-neutral">
+                <TablePrimitives.Table.Row key={i}>
+                  <TablePrimitives.Table.Cell className="text-neutral">
                     {s.name}
                     <span className="ml-1.5 text-neutral-subtle">{s.type.toLowerCase()}</span>
-                  </td>
-                  {several && <td className="px-3 py-1.5 text-neutral-subtle">{s.organization}</td>}
-                  <td className="px-3 py-1.5 text-neutral-subtle">{s.sizes.join(', ') || '—'}</td>
-                  <td className="whitespace-nowrap px-3 py-1.5 text-right text-neutral">
+                  </TablePrimitives.Table.Cell>
+                  {several && (
+                    <TablePrimitives.Table.Cell className="text-neutral-subtle">
+                      {s.organization}
+                    </TablePrimitives.Table.Cell>
+                  )}
+                  <TablePrimitives.Table.Cell className="text-neutral-subtle">
+                    {s.sizes.join(', ') || '—'}
+                  </TablePrimitives.Table.Cell>
+                  <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral">
                     {num(s.builds)}
                     {s.failed_builds ? (
                       <span className="text-neutral-subtle"> ({num(s.failed_builds)} failed)</span>
                     ) : null}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-1.5 text-right text-neutral-subtle">
+                  </TablePrimitives.Table.Cell>
+                  <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral-subtle">
                     {min(s.build_minutes)}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-1.5 text-right text-neutral">
+                  </TablePrimitives.Table.Cell>
+                  <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral">
                     {min(s.counted_build_minutes)}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-1.5 text-right text-neutral-subtle">
+                  </TablePrimitives.Table.Cell>
+                  <TablePrimitives.Table.Cell className="whitespace-nowrap text-right text-neutral-subtle">
                     {min(s.deploy_minutes)}
-                  </td>
-                </tr>
+                  </TablePrimitives.Table.Cell>
+                </TablePrimitives.Table.Row>
               ))}
-            </tbody>
-          </table>
+            </TablePrimitives.Table.Body>
+          </TablePrimitives.Table.Root>
         </div>
       )}
       {b.available !== 'none' && b.services.length === 0 && (

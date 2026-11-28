@@ -1,14 +1,15 @@
+import * as Dialog from '@radix-ui/react-dialog'
 /*
  * Cancelling at the end of the term, and changing one's mind. The dialog says plainly when the
- * subscription ends, what stops and what keeps running, asks why (required) and for optional
- * feedback, and has the organization's name typed to confirm. A contract or a notice period sends
+ * subscription ends, what stops and what keeps running, offers optional reasons and feedback,
+ * then asks for one explicit confirmation. A contract or a notice period sends
  * a request staff confirm instead. The banners on the usage page show what is planned (a plan
  * change at the renewal, the end of the subscription, a request) with the way back.
  */
 import type { CancelReason, Cancellation, ScheduledChange } from 'qovery-pricing-typescript-axios'
 import { useState } from 'react'
 import type { PricingClient } from '@qovery/shared/billing/data-access'
-import { Button, Callout, Icon, InputText, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, InputTextArea, Modal, RadioGroup } from '@qovery/shared/ui'
 import { errorText, notifySuccess } from './parts'
 import { date } from './utils/format'
 
@@ -29,18 +30,21 @@ export function CancelDialog({
 }) {
   const [reason, setReason] = useState<CancelReason | ''>('')
   const [feedback, setFeedback] = useState('')
-  const [confirm, setConfirm] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const request = view.mode === 'request'
   const tooLong = [...feedback].length > CANCEL_FEEDBACK_MAX
-  const ready = !!reason && confirm === view.organization_name && !tooLong
+  const ready = !tooLong
   async function submit() {
-    if (!ready || !reason) return
+    if (!ready || busy) return
     setBusy(true)
     setError('')
     try {
-      const r = await client.cancel!(organizationId, { confirm, reason, feedback: feedback.trim() || undefined })
+      const r = await client.cancel!(organizationId, {
+        confirm: view.organization_name,
+        reason: reason || 'other',
+        feedback: feedback.trim() || undefined,
+      })
       notifySuccess(
         client,
         r.status === 'requested' ? 'Request sent' : 'Subscription cancelled',
@@ -63,15 +67,18 @@ export function CancelDialog({
       }}
       width="min(600px, calc(100vw - 24px))"
       buttonClose={false}
+      dismissible={!busy}
     >
-      <div className="flex max-h-[75vh] flex-col">
-        <div className="border-b border-neutral px-6 py-4">
-          <h2 className="h4 text-neutral">
-            {request ? 'Ask to cancel your subscription' : 'Cancel your subscription'}
-          </h2>
-          <p className="text-sm text-neutral-subtle">{view.organization_name}</p>
+      <div className="flex max-h-[75vh] flex-col text-sm">
+        <div className="border-b border-neutral px-5 py-4">
+          <Dialog.Title asChild>
+            <Heading level={2} className="break-words pr-8">
+              {request ? 'Ask to cancel your subscription' : 'Cancel your subscription'}
+            </Heading>
+          </Dialog.Title>
+          <p className="mt-1 text-sm text-neutral-subtle">{view.organization_name}</p>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-5 text-sm text-neutral">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5 text-sm text-neutral">
           {client.mode === 'preview' && (
             <Callout.Root color="sky">
               <Callout.Text>Preview: nothing is cancelled.</Callout.Text>
@@ -125,7 +132,7 @@ export function CancelDialog({
             </p>
           </div>
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-2 font-medium">Why are you leaving?</legend>
+            <legend className="mb-2 font-medium">Why are you leaving? (optional)</legend>
             <RadioGroup.Root
               className="grid grid-cols-1 gap-2 sm:grid-cols-2"
               value={reason}
@@ -151,25 +158,18 @@ export function CancelDialog({
             hint={`${[...feedback].length} / ${CANCEL_FEEDBACK_MAX}`}
             error={tooLong ? `${CANCEL_FEEDBACK_MAX} characters at most` : undefined}
           />
-          <InputText
-            name="cancel_confirm"
-            label={`Type ${view.organization_name} to confirm`}
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            autoComplete="off"
-          />
           {error && (
             <p role="alert" className="text-negative">
               {error}
             </p>
           )}
         </div>
-        <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-6 py-3">
+        <div className="flex flex-wrap justify-end gap-3 border-t border-neutral px-5 py-4">
           <Button size="lg" variant="plain" color="neutral" onClick={onClose} disabled={busy}>
-            Keep my subscription
+            Go back
           </Button>
           <Button size="lg" color="red" disabled={busy || !ready} loading={busy} onClick={submit}>
-            {request ? 'Send the request' : `Cancel on ${date(view.ends_on)}`}
+            {request ? 'Request cancellation' : 'Cancel subscription'}
           </Button>
         </div>
       </div>
