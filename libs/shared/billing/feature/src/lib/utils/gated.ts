@@ -216,6 +216,23 @@ export const GATED_FEATURES: Record<string, GatedFeature> = {
     media: mediaSet('environments'),
     learnMoreUrl: 'https://www.qovery.com/docs/configuration/environment',
   },
+  // No rendered previews yet: the drawn generic preview.
+  agents: {
+    icon: 'robot',
+    title: 'Agent tasks',
+    description:
+      'Hand recurring jobs to AI agents that run in your environments, with the same guardrails as your services.',
+    capabilities: [
+      { icon: 'magnifying-glass', label: 'Investigate incidents, optimize builds or pick up tickets' },
+      { icon: 'clock', label: 'Runs on a schedule, a webhook or by hand' },
+      { icon: 'server', label: 'Runs on your own cluster, in your cloud account' },
+      { icon: 'shield-check', label: 'Scoped access with policy tokens and a domain allowlist' },
+      { icon: 'list-check', label: 'Every run listed with its trigger, logs and cost' },
+      { icon: 'grid-2', label: 'Ready-made templates, or build your own' },
+    ],
+    preview: 'generic',
+    learnMoreUrl: 'https://www.qovery.com/docs/getting-started/agent-tasks',
+  },
 }
 
 /** The feature has page content (an entry above): the console opens <GatedPage> for it rather than the dialog. */
