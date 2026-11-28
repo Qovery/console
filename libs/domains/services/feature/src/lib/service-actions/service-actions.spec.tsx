@@ -5,6 +5,7 @@ import {
   environmentFactoryMock,
   gitContainerFactoryMock,
   helmFactoryMock,
+  terraformFactoryMock,
 } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceActions } from './service-actions'
@@ -285,6 +286,30 @@ describe('ServiceActions', () => {
         name: mockService.name,
       })
     )
+  })
+
+  it('should open the cancel modal with the force option for a terraform service', async () => {
+    mockService = terraformFactoryMock(1)[0]
+    mockDeploymentStatus = {
+      state: 'DEPLOYING',
+      service_deployment_status: 'UP_TO_DATE',
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /cancel deployment/i }))
+
+    expect(mockOpenModal).toHaveBeenCalledTimes(1)
+    expect(mockOpenModal.mock.calls[0][0].content.props).toEqual(
+      expect.objectContaining({ serviceKind: 'TERRAFORM', environmentId: mockService.environment.id })
+    )
+    expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
   })
 
   it('should use a simple delete confirmation when the service has never been deployed', async () => {

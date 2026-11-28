@@ -43,4 +43,39 @@ describe('ConfirmationCancelLifecycleModal', () => {
       force: true,
     })
   })
+
+  describe('with a Terraform service', () => {
+    const terraformProps = { ...props, serviceKind: 'TERRAFORM' as const }
+
+    it('should show the Terraform stop option unchecked with the state lock warning', () => {
+      renderWithProviders(<ConfirmationCancelLifecycleModal {...terraformProps} />)
+
+      expect(screen.getByLabelText(/force terraform stop/i)).not.toBeChecked()
+      expect(screen.queryByLabelText(/force lifecycle/i)).not.toBeInTheDocument()
+      expect(screen.getByText(/force unlock/i)).toBeInTheDocument()
+    })
+
+    it('should cancel without force by default', async () => {
+      const { userEvent } = renderWithProviders(<ConfirmationCancelLifecycleModal {...terraformProps} />)
+
+      await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
+
+      expect(useCancelDeploymentService({ projectId: '' }).mutate).toHaveBeenLastCalledWith({
+        environmentId: '1',
+        force: false,
+      })
+    })
+
+    it('should cancel with force when the option is checked', async () => {
+      const { userEvent } = renderWithProviders(<ConfirmationCancelLifecycleModal {...terraformProps} />)
+
+      await userEvent.click(screen.getByLabelText(/force terraform stop/i))
+      await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
+
+      expect(useCancelDeploymentService({ projectId: '' }).mutate).toHaveBeenLastCalledWith({
+        environmentId: '1',
+        force: true,
+      })
+    })
+  })
 })
